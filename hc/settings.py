@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import json
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+hc_config = json.loads(open(os.path.expanduser("~/hc_config.json")).read())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -39,7 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'hc.accounts',
-    'hc.checks'
+    'hc.checks',
+    'hc.front'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -107,3 +109,10 @@ USE_TZ = True
 SITE_ROOT = "http://localhost:8000"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
+# AWS
+EMAIL_BACKEND = 'django_ses_backend.SESBackend'
+AWS_SES_ACCESS_KEY_ID = hc_config["aws_ses_access_key"]
+AWS_SES_SECRET_ACCESS_KEY = hc_config["aws_ses_secret_key"]
+AWS_SES_REGION_NAME = 'eu-west-1'
+AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'

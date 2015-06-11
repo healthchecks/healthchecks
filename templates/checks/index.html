@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+    <h1>Hello World</h1>
+    <table class="table">
+        <tr>
+            <th>Code</th>
+            <th>Last Ping</th>
+        </tr>
+        {% for canary in canaries %}
+        <tr>
+            <td>{{ canary.code }}</td>
+            <td>{{ canary.last_ping }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    </div>
+</div>
+{% endblock %}
