@@ -1,0 +1,13 @@
+html, body {
+    background: #EEE;
+}
+
+#login_dialog {
+    background: #FFF;
+    padding: 2em;
+    margin-top: 100px;
+}
+
+#login_dialog h1 {
+    margin: 0;
+}
