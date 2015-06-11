@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block content %}
+    <h1>Log In</h1>
+
+    <p>
+        Please enter your email address.
+        Next, we'll send you an email with log-in instructions!
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">
+            Submit
+        </button>
+        {% endbuttons %}
+    </form>
+{% endblock %}
