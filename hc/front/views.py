@@ -3,6 +3,11 @@ from django.shortcuts import render
 
 from hc.api.models import Check
 
+
+def index(request):
+    return render(request, "index.html")
+
+
 @login_required
 def checks(request):
 
@@ -12,4 +17,4 @@ def checks(request):
         "checks": checks
     }
 
-    return render(request, "checks/index.html", ctx)
+    return render(request, "front/index.html", ctx)

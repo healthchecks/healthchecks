@@ -11,14 +11,41 @@ from django.shortcuts import redirect, render
 from hc.accounts.forms import EmailForm
 
 
-def login(request):
+def create(request):
+    assert request.method == "POST"
 
+    form = EmailForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data["email"]
+
+        num_existing = User.objects.filter(email=email).count()
+        if num_existing > 0:
+            # FIXME be more polite about this
+            return HttpResponseBadRequest()
+
+        username = str(uuid.uuid4())[:30]
+        temp_password = str(uuid.uuid4())
+
+        user = User(username=username, email=email)
+        user.set_password(temp_password)
+        user.save()
+
+        user = authenticate(username=username, password=temp_password)
+        user.set_unusable_password()
+        user.save()
+
+        auth_login(request, user)
+        return redirect("hc-checks")
+
+    # FIXME do something nicer here
+    return HttpResponseBadRequest()
+
+
+def login(request):
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
         form = EmailForm(request.POST)
-        # check whether it's valid:
         if form.is_valid():
-            email = form.cleaned_data["email"]
+            email = form.cleaned_data["email"].lower()
             user = User.objects.get(email=email)
 
             # We don't want to reset passwords of staff users :-)
@@ -36,16 +63,12 @@ def login(request):
             send_mail('Log In', body, 'cuu508@gmail.com', [email],
                       fail_silently=False)
 
-            # FIXME send login token here
             return redirect("hc-login-link-sent")
 
     else:
         form = EmailForm()
 
-    ctx = {
-        "form": form
-    }
-
+    ctx = {"form": form}
     return render(request, "accounts/login.html", ctx)
 
 

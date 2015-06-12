@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-12">
-    <h1>Hello World</h1>
+    <h1>Hello {{ request.user.email }}</h1>
     <table class="table">
         <tr>
             <th>Code</th>
