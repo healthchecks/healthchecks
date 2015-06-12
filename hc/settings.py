@@ -40,7 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'hc.accounts',
-    'hc.checks',
+    'hc.api',
     'hc.front'
 )
 

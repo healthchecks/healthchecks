@@ -1,16 +1,16 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
 
-from hc.checks.models import Canary
+from hc.api.models import Check
 
 
 def ping(request, code):
     try:
-        canary = Canary.objects.get(code=code)
-    except Canary.DoesNotExist:
+        check = Check.objects.get(code=code)
+    except Check.DoesNotExist:
         return HttpResponseBadRequest()
 
-    canary.last_ping = timezone.now()
-    canary.save()
+    check.last_ping = timezone.now()
+    check.save()
 
     return HttpResponse()

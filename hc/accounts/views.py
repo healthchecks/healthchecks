@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 
 from hc.accounts.forms import EmailForm
@@ -19,6 +20,11 @@ def login(request):
         if form.is_valid():
             email = form.cleaned_data["email"]
             user = User.objects.get(email=email)
+
+            # We don't want to reset passwords of staff users :-)
+            if user.is_staff:
+                return HttpResponseBadRequest()
+
             token = str(uuid.uuid4())
             user.set_password(token)
             user.save()

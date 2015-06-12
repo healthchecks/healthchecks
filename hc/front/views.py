@@ -1,15 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from hc.checks.models import Canary
+from hc.api.models import Check
 
 @login_required
 def checks(request):
 
-    canaries = Canary.objects.filter(user=request.user)
+    checks = Check.objects.filter(user=request.user)
 
     ctx = {
-        "canaries": canaries
+        "checks": checks
     }
 
     return render(request, "checks/index.html", ctx)

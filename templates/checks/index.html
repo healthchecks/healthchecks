@@ -9,10 +9,10 @@
             <th>Code</th>
             <th>Last Ping</th>
         </tr>
-        {% for canary in canaries %}
+        {% for check in checks %}
         <tr>
-            <td>{{ canary.code }}</td>
-            <td>{{ canary.last_ping }}</td>
+            <td>{{ check.code }}</td>
+            <td>{{ check.last_ping }}</td>
         </tr>
         {% endfor %}
 
