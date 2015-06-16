@@ -6,18 +6,56 @@
     <h1>Hello {{ request.user.email }}</h1>
     <table class="table">
         <tr>
+            <th></th>
+            <th>Name</th>
             <th>Code</th>
+            <th>Frequency</th>
             <th>Last Ping</th>
         </tr>
         {% for check in checks %}
         <tr>
-            <td>{{ check.code }}</td>
+            <td>
+                {% if check.status == "up" %}
+                    <span
+                        data-toggle="tooltip"
+                        data-placement="right"
+                        title="This check is UP"
+                        class="label label-success">&nbsp;</span>
+                {% endif %}
+
+                {% if check.status == "down" %}
+                    <span
+                        data-toggle="tooltip"
+                        data-placement="right"
+                        title="This check is DOWN"
+                        class="label label-danger">&nbsp;</span>
+                {% endif %}
+
+                {% if check.status == "new" %}
+                    <span
+                        data-toggle="tooltip"
+                        data-placement="right"
+                        title="This check has not yet been triggered"
+                        class="label label-warning">&nbsp;</span>
+                {% endif %}
+            </td>
+            <td></td>
+            <td><code>{{ check.code }}</code></td>
+            <td>{{ check.timeout }}</td>
             <td>{{ check.last_ping }}</td>
         </tr>
         {% endfor %}
 
     </table>
-
     </div>
+</div>
+<div class="row">
+    <div class="col-sm-4 center-block"></div>
+        <form method="post" action="{% url 'hc-add-check' %}">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-primary btn-lg" value="Add Check">
+        </form>
+    </div>
+
 </div>
 {% endblock %}

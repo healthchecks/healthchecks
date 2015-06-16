@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from hc.api.models import Check
 
@@ -18,3 +18,12 @@ def checks(request):
     }
 
     return render(request, "front/index.html", ctx)
+
+
+@login_required
+def add_check(request):
+    assert request.method == "POST"
+
+    check = Check(user=request.user)
+    check.save()
+    return redirect("hc-checks")

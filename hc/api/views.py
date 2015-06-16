@@ -16,4 +16,4 @@ def ping(request, code):
 
     check.save()
 
-    return HttpResponse()
+    return HttpResponse("OK")
