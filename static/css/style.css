@@ -11,3 +11,26 @@ html, body {
 #login_dialog h1 {
     margin: 0;
 }
+
+.setup-link {
+    opacity: 0;
+}
+
+.checks-row:hover .setup-link {
+    opacity: 1;
+}
+
+.name-edit.inactive .input-name {
+    border: 1px solid rgba(0, 0, 0, 0);
+    background: none;
+    box-shadow: none;
+}
+
+.name-edit.inactive button {
+    opacity: 0;
+}
+
+.name-edit button {
+    opacity: 1;
+}
+

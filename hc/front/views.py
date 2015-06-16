@@ -11,7 +11,7 @@ def index(request):
 @login_required
 def checks(request):
 
-    checks = Check.objects.filter(user=request.user)
+    checks = Check.objects.filter(user=request.user).order_by("created")
 
     ctx = {
         "checks": checks
@@ -26,4 +26,15 @@ def add_check(request):
 
     check = Check(user=request.user)
     check.save()
+    return redirect("hc-checks")
+
+
+@login_required
+def update_name(request, code):
+    assert request.method == "POST"
+
+    check = Check.objects.get(code=code)
+    check.name = request.POST["name"]
+    check.save()
+
     return redirect("hc-checks")

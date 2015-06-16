@@ -22,9 +22,10 @@ DURATIONS = (
 
 
 class Check(models.Model):
+    name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User)
-    enabled = models.BooleanField(default=True)
+    created = models.DateTimeField(auto_now_add=True)
     timeout = models.DurationField(default=ONEDAY)
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)

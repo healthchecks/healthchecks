@@ -1,24 +1,25 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block content %}
 <div class="row">
     <div class="col-sm-12">
     <h1>Hello {{ request.user.email }}</h1>
-    <table class="table">
+    <table class="table table-hover">
         <tr>
             <th></th>
             <th>Name</th>
             <th>Code</th>
             <th>Frequency</th>
             <th>Last Ping</th>
+            <th></th>
         </tr>
         {% for check in checks %}
-        <tr>
+        <tr class="checks-row">
             <td>
                 {% if check.status == "up" %}
                     <span
                         data-toggle="tooltip"
-                        data-placement="right"
                         title="This check is UP"
                         class="label label-success">&nbsp;</span>
                 {% endif %}
@@ -26,7 +27,6 @@
                 {% if check.status == "down" %}
                     <span
                         data-toggle="tooltip"
-                        data-placement="right"
                         title="This check is DOWN"
                         class="label label-danger">&nbsp;</span>
                 {% endif %}
@@ -34,15 +34,51 @@
                 {% if check.status == "new" %}
                     <span
                         data-toggle="tooltip"
-                        data-placement="right"
                         title="This check has not yet been triggered"
                         class="label label-warning">&nbsp;</span>
                 {% endif %}
             </td>
-            <td></td>
-            <td><code>{{ check.code }}</code></td>
+            <td>
+                <form
+                    method="post"
+                    action="{% url 'hc-update-name' check.code %}"
+                    class="name-edit form-inline inactive">
+                    {% csrf_token %}
+                    <input
+                        name="name"
+                        type="text"
+                        value="{{ check.name }}"
+                        placeholder="unnamed"
+                        class="input-name form-control" />
+
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                    <button class="btn btn-default name-edit-cancel">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </form>
+            </td>
+            <td>
+                <small>
+                    <code>{{ check.code }}</code>
+                </small>
+            </td>
             <td>{{ check.timeout }}</td>
-            <td>{{ check.last_ping }}</td>
+            <td>
+            {% if check.last_ping %}
+                <span
+                    data-toggle="tooltip"
+                    title="{{ check.last_ping }}">
+                    {{ check.last_ping|naturaltime }}
+                </span>
+            {% else %}
+                Never
+            {% endif %}
+            </td>
+            <td>
+                <a class="setup-link" href="#">Setup Instructions</a>
+            </td>
         </tr>
         {% endfor %}
 
