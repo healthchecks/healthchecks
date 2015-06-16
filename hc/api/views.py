@@ -11,6 +11,9 @@ def ping(request, code):
         return HttpResponseBadRequest()
 
     check.last_ping = timezone.now()
+    if check.status == "new":
+        check.status = "up"
+
     check.save()
 
     return HttpResponse()

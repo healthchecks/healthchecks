@@ -85,7 +85,7 @@ DATABASES = {
         'NAME':     'hc',
         'USER':     'hc',
         'PASSWORD': '',
-        'HOST':     '192.168.1.111',
+        'HOST':     '192.168.1.112',
         'PORT':     5432,
         'TEST': {'CHARSET': 'UTF8'}
     }
