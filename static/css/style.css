@@ -2,6 +2,22 @@ html, body {
     background: #EEE;
 }
 
+.glyphicon.up, .glyphicon.new, .glyphicon.down {
+    font-size: 22px;
+}
+
+.glyphicon.up {
+    color: #5cb85c;
+}
+
+.glyphicon.new {
+    color: #AAA;
+}
+
+.glyphicon.down {
+    color: #d9534f;
+}
+
 #login_dialog {
     background: #FFF;
     padding: 2em;
@@ -12,8 +28,21 @@ html, body {
     margin: 0;
 }
 
+/* Checks */
+
+table.table tr > th.th-name {
+    padding-left: 21px;
+}
+
 .setup-link {
     opacity: 0;
+}
+
+.indicator-cell {
+    vertical-align: middle;
+}
+table.table tr.checks-row > td {
+    vertical-align: middle;
 }
 
 .checks-row:hover .setup-link {

@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import timezone
 
 from hc.api.models import Check
 
@@ -14,7 +15,8 @@ def checks(request):
     checks = Check.objects.filter(user=request.user).order_by("created")
 
     ctx = {
-        "checks": checks
+        "checks": checks,
+        "now": timezone.now
     }
 
     return render(request, "front/index.html", ctx)
