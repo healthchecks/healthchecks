@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-12">
-        <h3>Checks and pinging</h3>
+        <h3>Summary</h3>
         <p>
         Each check you create in <a href="{% url 'hc-checks' %}">My Checks</a>
         page has an unique "ping" URL. Whenever you access this URL,
@@ -14,12 +14,10 @@
         check is considered "late", and Health Checks sends an email notification.
         It is all very simple, really.</p>
 
-
-
         <h3>Executing a ping</h3>
         <p>
-            At the end of your batch job, add a bit of code to ping
-            one of your checks.
+            At the end of your batch job, add a bit of code to request
+            one of your ping URLs.
         </p>
         <ul>
             <li>HTTP and HTTPS protocols both are fine</li>
@@ -41,6 +39,8 @@ wget https://healthchecks.io/ping/b2012751-c542-4deb-b054-ff51322102b9/
         <h3>When notifications are sent</h3>
         <p>
             Each check has a configurable "Frequency" parameter, with default value of <strong>one day</strong>.
+        </p>
+        <p>
             When time since last ping exceeds the configured amount, the check is considered late.
             When a check is <strong>1 hour late</strong>, Health Checks sends you an email notification.
         </p>

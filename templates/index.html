@@ -50,7 +50,7 @@
 
     <div id="get-started" class="col-sm-6 col-sm-offset-3">
         <h3>E-mail Address to Receive Notifications:</h3>
-        <form action="{% url 'hc-create-account' %}" method="post">
+        <form action="{% url 'hc-login' %}" method="post">
             {% csrf_token %}
 
             <div class="form-group">

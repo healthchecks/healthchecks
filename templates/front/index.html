@@ -5,6 +5,7 @@
 <div class="row">
     <div class="col-sm-12">
     <h1>My Checks</h1>
+    {% if checks %}
     <table id="checks-table" class="table table-hover">
         <tr>
             <th></th>
@@ -12,7 +13,6 @@
             <th>URL</th>
             <th>Frequency</th>
             <th>Last Ping</th>
-            <th></th>
         </tr>
         {% for check in checks %}
         <tr class="checks-row">
@@ -95,13 +95,13 @@
                 Never
             {% endif %}
             </td>
-            <td>
-                <a class="setup-link" href="#">Setup Instructions</a>
-            </td>
         </tr>
         {% endfor %}
 
     </table>
+    {% else %}
+    <div class="alert alert-info">You don't have any checks yet.</div>
+    {% endif %}
     </div>
 </div>
 <div class="row">

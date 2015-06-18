@@ -1,7 +1,8 @@
 import uuid
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
@@ -11,42 +12,23 @@ from django.shortcuts import redirect, render
 from hc.accounts.forms import EmailForm
 
 
-def create(request):
-    assert request.method == "POST"
+def _make_user(email):
+    username = str(uuid.uuid4())[:30]
+    user = User(username=username, email=email)
+    user.save()
 
-    form = EmailForm(request.POST)
-    if form.is_valid():
-        email = form.cleaned_data["email"]
-
-        num_existing = User.objects.filter(email=email).count()
-        if num_existing > 0:
-            # FIXME be more polite about this
-            return HttpResponseBadRequest()
-
-        username = str(uuid.uuid4())[:30]
-        temp_password = str(uuid.uuid4())
-
-        user = User(username=username, email=email)
-        user.set_password(temp_password)
-        user.save()
-
-        user = authenticate(username=username, password=temp_password)
-        user.set_unusable_password()
-        user.save()
-
-        auth_login(request, user)
-        return redirect("hc-checks")
-
-    # FIXME do something nicer here
-    return HttpResponseBadRequest()
+    return user
 
 
 def login(request):
     if request.method == 'POST':
         form = EmailForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data["email"].lower()
-            user = User.objects.get(email=email)
+            email = form.cleaned_data["email"]
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                user = _make_user(email)
 
             # We don't want to reset passwords of staff users :-)
             if user.is_staff:
@@ -70,6 +52,11 @@ def login(request):
 
     ctx = {"form": form}
     return render(request, "accounts/login.html", ctx)
+
+
+def logout(request):
+    auth_logout(request)
+    return redirect("hc-index")
 
 
 def login_link_sent(request):

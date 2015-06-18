@@ -43,7 +43,7 @@
         <ul class="nav navbar-nav navbar-right">
         {% if request.user.is_authenticated %}
             <li><a href="#">{{ request.user.email }}</a></li>
-            <li><a href="#">Log Out</a></li>
+            <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
         {% else %}
             <li><a href="{% url 'hc-login' %}">Log In</a></li>
         {% endif %}
