@@ -3,49 +3,53 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-12">
-        <h1>Get Notified When Your CRON Jobs Fail</h1>
-        <ol>
-            <li>Create a pingback address on healtchecks.io <br />
-            <img
-                src="{% static 'img/intro-create-check.png' %}"
-                alt="Screenshot of 'My Checks'"
-                class="img-thumbnail" />
+<div class="col-sm-12">
+    <h1 id="pitch">Get Notified When Your Cron Jobs Fail</h1>
+</div>
+</div>
 
-            </li>
-            <li>Add a single line at the bottom of your batch processing task:
-
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active">
-                        <a href="#bash" aria-controls="home" role="tab" data-toggle="tab">Bash</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#python" aria-controls="profile" role="tab" data-toggle="tab">Python</a>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="bash">
-                        <pre>wget https://healthchecks.io/ping/b2012751-something-something/
-                        </pre>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="python">
-                        <pre>
->>> import urllib2
->>> urllib2.urlopen("http://localhost:8000/ping/b2012751-c542-4deb-b054-ff51322102b9")
-
-                        </pre>
-                    </div>
-                </div>
-
-
-            </li>
-            <li>Receive an email from healthchecks.io when the task has an issue:</li>
-        </ol>
+<div class="row">
+    <div class="col-sm-4">
+        <p class="step-number">1</p>
+        <p>
+            Create a ping URL on healtchecks.io
+        </p>
     </div>
-    <div class="col-sm-12">
+    <div class="col-sm-4">
+        <p class="step-number">2</p>
+        Add a single line at the bottom of your batch processing task:
 
-        <h1>E-mail Address to Receive Notifications:</h1>
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#bash" aria-controls="home" role="tab" data-toggle="tab">Bash</a>
+            </li>
+            <li role="presentation">
+                <a href="#python" aria-controls="profile" role="tab" data-toggle="tab">Python</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="bash">
+                <pre>wget https://healthchecks.io/ping/b2012751-c542-4deb-b054-ff51322102b9/
+                </pre>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="python">
+                <pre>
+>>> import urllib2
+>>> urllib2.urlopen("https://healthchecks.io/ping/b2012751-c542-4deb-b054-ff51322102b9/")
+
+                </pre>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-sm-4">
+        <p class="step-number">3</p>
+        Receive an email from healthchecks.io when the task has an issue
+    </div>
+
+
+    <div id="get-started" class="col-sm-6 col-sm-offset-3">
+        <h3>E-mail Address to Receive Notifications:</h3>
         <form action="{% url 'hc-create-account' %}" method="post">
             {% csrf_token %}
 

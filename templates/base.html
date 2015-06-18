@@ -7,6 +7,7 @@
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/pricing.css' %}" type="text/css">
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -19,24 +20,32 @@
             <li {% if page == 'welcome' %} class="active" {% endif %}>
                 <a href="{% url 'hc-index' %}">Welcome</a>
             </li>
-            {% if request.user %}
+
+            {% if request.user.is_authenticated %}
             <li {% if page == 'checks' %} class="active" {% endif %}>
                 <a href="{% url 'hc-checks' %}">My Checks</a>
             </li>
             {% endif %}
-            <li><a href="#">Pricing</a></li>
-            <li><a href="#">Documentation</a></li>
-            <li><a href="#">About</a></li>
 
+            <li {% if page == 'pricing' %} class="active" {% endif %}>
+                <a href="{% url 'hc-pricing' %}">Pricing</a>
+            </li>
 
+            <li {% if page == 'docs' %} class="active" {% endif %}>
+                <a href="{% url 'hc-docs' %}">Documentation</a>
+            </li>
+
+            <li {% if page == 'about' %} class="active" {% endif %}>
+                <a href="{% url 'hc-about' %}">About</a>
+            </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-        {% if request.user %}
+        {% if request.user.is_authenticated %}
             <li><a href="#">{{ request.user.email }}</a></li>
             <li><a href="#">Log Out</a></li>
         {% else %}
-            <li><a href="#">Log In</a></li>
+            <li><a href="{% url 'hc-login' %}">Log In</a></li>
         {% endif %}
         </ul>
         </div>

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<!-- Plans -->
+<section id="plans">
+    <div class="container">
+        <div class="row">
+
+            <!-- item -->
+            <div class="col-md-4 text-center col-md-offset-4">
+                <div class="panel panel-success panel-pricing">
+                    <div class="panel-heading">
+                        <i class="fa fa-desktop"></i>
+                        <h3>Free Plan</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <p><strong>€0 / Month</strong></p>
+                    </div>
+                    <ul class="list-group text-center">
+                        <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
+                        <li class="list-group-item"><i class="fa fa-check"></i> Unlimited projects</li>
+                        <li class="list-group-item"><i class="fa fa-check"></i> Unlimited notifications</li>
+                    </ul>
+                    <div class="panel-footer">
+                        <a class="btn btn-lg btn-block btn-success" href="#">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /item -->
+
+        </div>
+    </div>
+</section>
+<!-- /Plans -->
+
+
+{% endblock %}

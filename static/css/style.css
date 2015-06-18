@@ -2,6 +2,23 @@ html, body {
     background: #EEE;
 }
 
+#pitch {
+    text-align: center;
+    padding: 3em;
+}
+
+.step-number {
+    text-align: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: #777;
+
+}
+
+#get-started {
+    margin-top: 3em;
+}
+
 .glyphicon.up, .glyphicon.new, .glyphicon.down {
     font-size: 22px;
 }
@@ -38,10 +55,11 @@ table.table tr > th.th-name {
     opacity: 0;
 }
 
-.indicator-cell {
-    vertical-align: middle;
+#checks-table .indicator-cell {
+    text-align: center;
 }
-table.table tr.checks-row > td {
+
+#checks-table td {
     vertical-align: middle;
 }
 
@@ -61,6 +79,10 @@ table.table tr.checks-row > td {
 
 .name-edit button {
     opacity: 1;
+}
+
+.url-cell {
+    font-size: small;
 }
 
 td.inactive .popover {

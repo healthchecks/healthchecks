@@ -5,11 +5,11 @@
 <div class="row">
     <div class="col-sm-12">
     <h1>My Checks</h1>
-    <table class="table table-hover">
+    <table id="checks-table" class="table table-hover">
         <tr>
             <th></th>
             <th class="th-name">Name</th>
-            <th>Code</th>
+            <th>URL</th>
             <th>Frequency</th>
             <th>Last Ping</th>
             <th></th>
@@ -25,7 +25,7 @@
                     <span class="glyphicon glyphicon-exclamation-sign down"></span>
                 {% endif %}
             </td>
-            <td>
+            <td class="name-cell">
                 <form
                     method="post"
                     action="{% url 'hc-update-name' check.code %}"
@@ -46,10 +46,8 @@
                     </button>
                 </form>
             </td>
-            <td>
-                <small>
-                    <code>{{ check.code }}</code>
-                </small>
+            <td class="url-cell">
+                <code>https://healthchecks.io{% url 'hc-ping' check.code %}</code>
             </td>
             <td class="timeout-cell inactive">
                 <div class="timeout-dialog popover bottom">
