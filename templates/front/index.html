@@ -51,7 +51,41 @@
                     <code>{{ check.code }}</code>
                 </small>
             </td>
-            <td>{{ check.timeout }}</td>
+            <td class="timeout-cell inactive">
+                <div class="timeout-dialog popover bottom">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                <form
+                    method="post"
+                    action="{% url 'hc-update-timeout' check.code %}"
+                    class="form-inline">
+                    {% csrf_token %}
+                    <select class="form-control" name="timeout">
+                        {% for label, value in timeout_choices %}
+                            {% if check.timeout == value %}
+                                <option selected>{{ label }}</option>
+                            {% else %}
+                                <option>{{ label }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                    <button class="btn btn-default timeout-edit-cancel">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </form>
+                </div>
+                </div>
+                <span class="timeout">
+                    {% for label, value in timeout_choices %}
+                        {% if check.timeout == value %}
+                            {{ label }}
+                        {% endif %}
+                    {% endfor %}
+                </span>
+            </td>
             <td>
             {% if check.last_ping %}
                 <span
@@ -81,6 +115,7 @@
     </div>
 
 </div>
+
 
 
 {% endblock %}

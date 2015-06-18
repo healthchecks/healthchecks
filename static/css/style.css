@@ -63,3 +63,21 @@ table.table tr.checks-row > td {
     opacity: 1;
 }
 
+td.inactive .popover {
+    visibility: hidden;
+}
+
+.popover.timeout-dialog.bottom {
+    display: block;
+    position: absolute;
+    top: auto;
+    left: auto;
+    margin-top: 32px;
+    margin-left: -77px;
+}
+
+.timeout:hover {
+    color: #337ab7;
+    text-decoration: underline;
+    cursor: pointer;
+}

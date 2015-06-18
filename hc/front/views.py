@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from hc.api.models import Check
+from hc.front.forms import TimeoutForm, TIMEOUT_CHOICES
 
 
 def index(request):
@@ -16,7 +17,8 @@ def checks(request):
 
     ctx = {
         "checks": checks,
-        "now": timezone.now
+        "now": timezone.now,
+        "timeout_choices": TIMEOUT_CHOICES
     }
 
     return render(request, "front/index.html", ctx)
@@ -38,5 +40,18 @@ def update_name(request, code):
     check = Check.objects.get(code=code)
     check.name = request.POST["name"]
     check.save()
+
+    return redirect("hc-checks")
+
+
+@login_required
+def update_timeout(request, code):
+    assert request.method == "POST"
+
+    form = TimeoutForm(request.POST)
+    if form.is_valid():
+        check = Check.objects.get(code=code)
+        check.timeout = form.cleaned_data["timeout"]
+        check.save()
 
     return redirect("hc-checks")

@@ -26,5 +26,18 @@ $(function () {
         return false;
     });
 
+    $(".timeout").click(function() {
+        $(".timeout-cell").addClass("inactive");
+
+        $cell = $(this.parentNode);
+        $cell.removeClass("inactive");
+    });
+
+    $(".timeout-edit-cancel").click(function() {
+        console.log("aaa");
+        $(this).parents("td").addClass("inactive");
+        return false;
+    });
+
 
 });
