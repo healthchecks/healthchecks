@@ -7,7 +7,11 @@ from hc.front.forms import TimeoutForm, TIMEOUT_CHOICES
 
 
 def index(request):
-    return render(request, "index.html")
+    ctx = {
+        "page": "welcome"
+    }
+
+    return render(request, "index.html", ctx)
 
 
 @login_required
@@ -18,7 +22,8 @@ def checks(request):
     ctx = {
         "checks": checks,
         "now": timezone.now,
-        "timeout_choices": TIMEOUT_CHOICES
+        "timeout_choices": TIMEOUT_CHOICES,
+        "page": "checks"
     }
 
     return render(request, "front/index.html", ctx)

@@ -9,6 +9,39 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
 </head>
 <body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'hc-index' %}">Health Checks</a>
+        </div>
+
+        <ul class="nav navbar-nav">
+            <li {% if page == 'welcome' %} class="active" {% endif %}>
+                <a href="{% url 'hc-index' %}">Welcome</a>
+            </li>
+            {% if request.user %}
+            <li {% if page == 'checks' %} class="active" {% endif %}>
+                <a href="{% url 'hc-checks' %}">My Checks</a>
+            </li>
+            {% endif %}
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">About</a></li>
+
+
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+        {% if request.user %}
+            <li><a href="#">{{ request.user.email }}</a></li>
+            <li><a href="#">Log Out</a></li>
+        {% else %}
+            <li><a href="#">Log In</a></li>
+        {% endif %}
+        </ul>
+        </div>
+    </nav>
+
     <div class="container">
         {% block content %}{% endblock %}
     </div>
