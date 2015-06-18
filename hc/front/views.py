@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
@@ -51,6 +52,9 @@ def update_name(request, code):
     assert request.method == "POST"
 
     check = Check.objects.get(code=code)
+    if check.user != request.user:
+        return HttpResponseForbidden()
+
     check.name = request.POST["name"]
     check.save()
 
@@ -61,9 +65,12 @@ def update_name(request, code):
 def update_timeout(request, code):
     assert request.method == "POST"
 
+    check = Check.objects.get(code=code)
+    if check.user != request.user:
+        return HttpResponseForbidden()
+
     form = TimeoutForm(request.POST)
     if form.is_valid():
-        check = Check.objects.get(code=code)
         check.timeout = form.cleaned_data["timeout"]
         check.save()
 
