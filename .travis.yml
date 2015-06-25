@@ -5,4 +5,4 @@ install: "pip install -r requirements.txt"
 addons:
   postgresql: "9.4"
 script:
-  - python manage.py test hc.front
+  - python manage.py test hc.api hc.front
