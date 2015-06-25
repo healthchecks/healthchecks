@@ -15,7 +15,12 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-hc_config = json.loads(open(os.path.expanduser("~/hc_config.json")).read())
+p = os.path.expanduser("~/hc_config.json")
+if os.path.exists(p):
+    hc_config = json.loads(open(p).read())
+else:
+    print("~/hc_config.json does not exist, using defaults")
+    hc_config = {}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -84,10 +89,8 @@ DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql_psycopg2',
         'NAME':     'hc',
-        'USER':     'hc',
+        'USER':     'postgres',
         'PASSWORD': '',
-        'HOST':     '192.168.1.112',
-        'PORT':     5432,
         'TEST': {'CHARSET': 'UTF8'}
     }
 }
@@ -113,7 +116,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # AWS
 EMAIL_BACKEND = 'django_ses_backend.SESBackend'
-AWS_SES_ACCESS_KEY_ID = hc_config["aws_ses_access_key"]
-AWS_SES_SECRET_ACCESS_KEY = hc_config["aws_ses_secret_key"]
+AWS_SES_ACCESS_KEY_ID = hc_config.get("aws_ses_access_key")
+AWS_SES_SECRET_ACCESS_KEY = hc_config.get("aws_ses_secret_key")
 AWS_SES_REGION_NAME = 'eu-west-1'
 AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
