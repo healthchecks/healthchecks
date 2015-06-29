@@ -11,25 +11,16 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 import os
-from os import environ as env
 import warnings
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-SECRET_KEY = env.get("HC_SECRET_KEY", "---")
-if SECRET_KEY is "---":
-    warnings.warn("HC_SECRET_KEY environment variable is not set!")
-
-
-# SECURITY WARNING: don't run with debug turned on in production!
+HOST = "localhost"
+SECRET_KEY = "---"
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
-
-# Application definition
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -76,22 +67,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hc.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql_psycopg2',
         'NAME':     'hc',
-        'USER':     env.get("PG_USER", "postgres"),
+        'USER':     'postgres',
         'TEST': {'CHARSET': 'UTF8'}
     }
 }
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -103,15 +86,20 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-SITE_ROOT = env.get("HC_SITE_ROOT", "http://localhost:8000")
+SITE_ROOT = "http://localhost:8000"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static-collected')
 
 # AWS
 EMAIL_BACKEND = 'django_ses_backend.SESBackend'
-AWS_SES_ACCESS_KEY_ID = env.get("AWS_SES_ACCESS_KEY_ID")
-AWS_SES_SECRET_ACCESS_KEY = env.get("AWS_SES_SECRET_ACCESS_KEY")
+AWS_SES_ACCESS_KEY_ID = "---"
+AWS_SES_SECRET_ACCESS_KEY = "---"
 AWS_SES_REGION_NAME = 'eu-west-1'
 AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
+
+
+try:
+    from local_settings import *
+except ImportError as e:
+    warnings.warn("local_settings.py not found, using defaults")
