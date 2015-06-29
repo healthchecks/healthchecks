@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 import os
-import os.environ as env
+from os import environ as env
 import warnings
 
 
