@@ -17,10 +17,11 @@ import warnings
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-try:
-    p = os.path.expanduser("~/.hc.json")
+
+p = os.path.expanduser("~/.hc.json")
+if os.path.exists(p):
     env = json.loads(open(p).read())
-except FileNotFoundError:
+else:
     warnings.warn("~/.hc.json does not exist, using defaults")
     env = {}
 
