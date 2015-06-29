@@ -92,8 +92,7 @@ DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql_psycopg2',
         'NAME':     'hc',
-        'USER':     'postgres',
-        'PASSWORD': '',
+        'USER':     env.get("pg_user", "postgres"),
         'TEST': {'CHARSET': 'UTF8'}
     }
 }
