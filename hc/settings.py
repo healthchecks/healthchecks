@@ -12,21 +12,23 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 import json
 import os
+import warnings
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-p = os.path.expanduser("~/hc_config.json")
-if os.path.exists(p):
-    hc_config = json.loads(open(p).read())
-else:
-    print("~/hc_config.json does not exist, using defaults")
-    hc_config = {}
+try:
+    p = os.path.expanduser("~/.hc.json")
+    env = json.loads(open(p).read())
+except FileNotFoundError:
+    warnings.warn("~/.hc.json does not exist, using defaults")
+    env = {}
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '9)gjy!j50uvbcy#y9ifoh@9pf%3m5^-9h0jv@+3^ln$%az8e(7'
+SECRET_KEY = env.get("secret_key", "---")
+if SECRET_KEY is "---":
+    warnings.warn("SECRET_KEY is not set, this is insecure")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -110,13 +112,14 @@ USE_L10N = True
 USE_TZ = True
 
 
-SITE_ROOT = "http://localhost:8000"
+SITE_ROOT = env.get("site_root", "http://localhost:8000")
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static-collected')
 
 # AWS
 EMAIL_BACKEND = 'django_ses_backend.SESBackend'
-AWS_SES_ACCESS_KEY_ID = hc_config.get("aws_ses_access_key")
-AWS_SES_SECRET_ACCESS_KEY = hc_config.get("aws_ses_secret_key")
+AWS_SES_ACCESS_KEY_ID = env.get("aws_ses_access_key")
+AWS_SES_SECRET_ACCESS_KEY = env.get("aws_ses_secret_key")
 AWS_SES_REGION_NAME = 'eu-west-1'
 AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
