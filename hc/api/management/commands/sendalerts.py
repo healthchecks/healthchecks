@@ -22,7 +22,7 @@ class Command(BaseCommand):
             # Gone down?
             query = Check.objects
             query = query.filter(alert_after__lt=timezone.now())
-            query = query.filter(enabled=True, status="up")
+            query = query.filter(status="up")
             for check in query:
                 check.status = "down"
                 check.save()
