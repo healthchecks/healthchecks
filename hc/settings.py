@@ -10,25 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
-import json
 import os
+import os.environ as env
 import warnings
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-p = os.path.expanduser("~/.hc.json")
-if os.path.exists(p):
-    env = json.loads(open(p).read())
-else:
-    warnings.warn("~/.hc.json does not exist, using defaults")
-    env = {}
-
-
-SECRET_KEY = env.get("secret_key", "---")
+SECRET_KEY = env.get("HC_SECRET_KEY", "---")
 if SECRET_KEY is "---":
-    warnings.warn("SECRET_KEY is not set, this is insecure")
+    warnings.warn("HC_SECRET_KEY environment variable is not set!")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -92,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql_psycopg2',
         'NAME':     'hc',
-        'USER':     env.get("pg_user", "postgres"),
+        'USER':     env.get("PG_USER", "postgres"),
         'TEST': {'CHARSET': 'UTF8'}
     }
 }
@@ -112,14 +104,14 @@ USE_L10N = True
 USE_TZ = True
 
 
-SITE_ROOT = env.get("site_root", "http://localhost:8000")
+SITE_ROOT = env.get("HC_SITE_ROOT", "http://localhost:8000")
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static-collected')
 
 # AWS
 EMAIL_BACKEND = 'django_ses_backend.SESBackend'
-AWS_SES_ACCESS_KEY_ID = env.get("aws_ses_access_key")
-AWS_SES_SECRET_ACCESS_KEY = env.get("aws_ses_secret_key")
+AWS_SES_ACCESS_KEY_ID = env.get("AWS_SES_ACCESS_KEY_ID")
+AWS_SES_SECRET_ACCESS_KEY = env.get("AWS_SES_SECRET_ACCESS_KEY")
 AWS_SES_REGION_NAME = 'eu-west-1'
 AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
