@@ -33,7 +33,7 @@ class Command(BaseCommand):
             # Gone up?
             query = Check.objects
             query = query.filter(alert_after__gt=timezone.now())
-            query = query.filter(enabled=True, status="down")
+            query = query.filter(status="down")
             for check in query:
                 check.status = "up"
                 check.save()
