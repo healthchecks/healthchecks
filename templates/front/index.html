@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load humanize %}
+{% load humanize staticfiles %}
 
 {% block content %}
 <div class="row">
@@ -47,7 +47,7 @@
                 </form>
             </td>
             <td class="url-cell">
-                <code>https://healthchecks.io{% url 'hc-ping' check.code %}</code>
+                <code>http://healthchecks.io{% url 'hc-ping' check.code %}</code>
             </td>
             <td class="timeout-cell inactive">
                 <div class="timeout-dialog popover bottom">
@@ -116,4 +116,8 @@
 
 
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/checks.js' %}"></script>
 {% endblock %}

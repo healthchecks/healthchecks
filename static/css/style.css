@@ -4,18 +4,20 @@ html, body {
 
 #pitch {
     text-align: center;
-    padding: 2em 0 3em 0;
+    padding: 2em 0 2em 0;
 }
 
-.step-number {
+#pitch-subtitle {
     text-align: center;
-    font-size: 48px;
-    font-weight: bold;
-    color: #777;
-
 }
 
-#get-started {
+#pitch-url {
+    text-align: center;
+    font-family: monospace;
+    padding-bottom: 2em;
+}
+
+#welcome-status, #get-started {
     margin-top: 4em;
 }
 

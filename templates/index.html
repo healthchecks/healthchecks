@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load humanize staticfiles %}
 
 {% block content %}
 <div class="row">
@@ -9,47 +9,89 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-4">
-        <p class="step-number">1</p>
-        <p>
-            Create a ping URL on healtchecks.io
-        </p>
-    </div>
-    <div class="col-sm-4">
-        <p class="step-number">2</p>
-        Add a single line at the bottom of your batch processing task:
+<div class="col-sm-12">
+    <h2 id="pitch-subtitle">Here's an unique ping address for you:</h2>
+    <div id="pitch-url">{{ ping_url }}</div>
+</div>
+</div>
 
+
+<div class="row">
+    <div class="col-sm-12">
         <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active">
-                <a href="#bash" aria-controls="home" role="tab" data-toggle="tab">Bash</a>
+            <li class="active">
+                <a href="#crontab" data-toggle="tab">Crontab</a>
             </li>
-            <li role="presentation">
-                <a href="#python" aria-controls="profile" role="tab" data-toggle="tab">Python</a>
+            <li>
+                <a href="#bash" data-toggle="tab">Bash</a>
+            </li>
+            <li>
+                <a href="#python" data-toggle="tab">Python</a>
+            </li>
+            <li>
+                <a href="#node" data-toggle="tab">Node.js</a>
+            </li>
+            <li>
+                <a href="#php" data-toggle="tab">PHP</a>
+            </li>
+            <li>
+                <a href="#browser" data-toggle="tab">Browser</a>
             </li>
         </ul>
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="bash">
-                <pre>wget https://healthchecks.io/ping/b2012751-c542-4deb-b054-ff51322102b9/ -O /dev/null
-                </pre>
+            <div role="tabpanel" class="tab-pane active" id="crontab">
+                <pre>{% include "front/snippets/crontab.txt" %}</pre>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="bash">
+                <pre>{% include "front/snippets/bash.txt" %}</pre>
             </div>
             <div role="tabpanel" class="tab-pane" id="python">
-                <pre>
->>> import urllib2
->>> urllib2.urlopen("https://healthchecks.io/ping/b2012751-c542-4deb-b054-ff51322102b9/")
-
-                </pre>
+                <pre>{% include "front/snippets/python.txt" %}</pre>
+            </div>
+            <div class="tab-pane" id="browser">
+                <pre>{% include "front/snippets/browser.txt" %}</pre>
+                <div class="welcome-browser-controls">
+                    <button id="run-it" class="btn btn-default">Run It!</button>
+                </div>
             </div>
         </div>
 
     </div>
-    <div class="col-sm-4">
-        <p class="step-number">3</p>
-        Receive an email from healthchecks.io when the task has an issue
+
+
+    <div id="welcome-status" class="col-sm-6">
+        <h2>Status
+        <small>{{ check.code }}</small>
+        </h2>
+        <table class="table">
+            <tr>
+                <th>Last ping</th>
+                <th>Frequency</th>
+                <th>Alert in</th>
+            </tr>
+            <tr>
+                <td id="last-ping">
+                    {% if check.last_ping %}
+                        {{ check.last_ping|naturaltime }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </td>
+                <td>1 day
+                    <span
+                        class="glyphicon glyphicon-question-sign"
+                        data-toggle="tooltip"
+                        title="Sign in to change frequency"></span>
+                </td>
+                <td id="timer" data-timer="{{ timer}}">
+                    {{ timer_formatted }}
+                </td>
+            </tr>
+        </table>
     </div>
 
-
-    <div id="get-started" class="col-sm-6 col-sm-offset-3">
-        <h3>E-mail Address to Receive Notifications:</h3>
+    <div id="get-started" class="col-sm-6">
+        <h3>E-mail Address to Receive Alerts:</h3>
         <form action="{% url 'hc-login' %}" method="post">
             {% csrf_token %}
 
@@ -75,4 +117,8 @@
 
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

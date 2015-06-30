@@ -1,5 +1,8 @@
+import json
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
@@ -8,7 +11,32 @@ from hc.front.forms import TimeoutForm, TIMEOUT_CHOICES
 
 
 def index(request):
-    return render(request, "index.html", {"page": "welcome"})
+    if "welcome_code" not in request.session:
+        check = Check()
+        check.save()
+        code = str(check.code)
+        request.session["welcome_code"] = code
+    else:
+        code = request.session["welcome_code"]
+        check = Check.objects.get(code=code)
+
+    if check.alert_after:
+        duration = check.alert_after - timezone.now()
+        timer = int(duration.total_seconds())
+        timer_formatted = "%dh %dm %ds" % (timer / 3600, (timer / 60) % 60, timer % 60)
+    else:
+        timer = 0
+        timer_formatted = "Never"
+
+    ctx = {
+        "page": "welcome",
+        "check": check,
+        "timer": timer,
+        "timer_formatted": timer_formatted,
+        "ping_url": "http://healthchecks.io/ping/%s/" % check.code
+    }
+
+    return render(request, "index.html", ctx)
 
 
 def pricing(request):
@@ -21,6 +49,24 @@ def docs(request):
 
 def about(request):
     return render(request, "about.html", {"page": "about"})
+
+
+def welcome_timer(request):
+    code = request.session["welcome_code"]
+
+    check = Check.objects.get(code=code)
+    if check.last_ping and check.alert_after:
+        duration = check.alert_after - timezone.now()
+        response = {
+            "last_ping": check.last_ping.isoformat(),
+            "last_ping_human": naturaltime(check.last_ping),
+            "timer": int(duration.total_seconds())
+        }
+    else:
+        response = {"last_ping": None, "timer": None}
+
+    return HttpResponse(json.dumps(response),
+                        content_type="application/javascript")
 
 
 @login_required

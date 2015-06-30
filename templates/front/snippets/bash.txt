@@ -1,0 +1,5 @@
+# using curl:
+curl {{ ping_url }}
+
+# using wget:
+wget {{ ping_url }} -O /dev/null

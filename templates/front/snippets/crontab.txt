@@ -1,0 +1,2 @@
+# m h  dom mon dow   command
+  8 6 *   *   *     /home/user/tasks/backup_all.sh && curl {{ ping_url }}

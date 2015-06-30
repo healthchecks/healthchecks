@@ -34,7 +34,6 @@ $(function () {
     });
 
     $(".timeout-edit-cancel").click(function() {
-        console.log("aaa");
         $(this).parents("td").addClass("inactive");
         return false;
     });

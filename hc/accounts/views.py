@@ -10,6 +10,7 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 
 from hc.accounts.forms import EmailForm
+from hc.api.models import Check
 
 
 def _make_user(email):
@@ -18,6 +19,13 @@ def _make_user(email):
     user.save()
 
     return user
+
+
+def _associate_demo_check(request, user):
+    if "welcome_code" in request.session:
+        check = Check.objects.get(code=request.session["welcome_code"])
+        check.user = user
+        check.save()
 
 
 def login(request):
@@ -29,6 +37,7 @@ def login(request):
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
                 user = _make_user(email)
+                _associate_demo_check(request, user)
 
             # We don't want to reset passwords of staff users :-)
             if user.is_staff:

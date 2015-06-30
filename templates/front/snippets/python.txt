@@ -1,0 +1,7 @@
+>>> # using urllib2:
+>>> import urllib2
+>>> urllib2.urlopen("{{ ping_url }}")
+
+>>> # using requests:
+>>> import requests
+>>> requests.get("{{ ping_url }}")

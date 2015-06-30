@@ -57,6 +57,6 @@
 
     <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/checks.js' %}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
