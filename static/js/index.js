@@ -16,7 +16,8 @@ $(function () {
                 $("#timer").data("timer", data.timer);
             }
 
-            if (data.last_ping_human.indexOf("seconds ago") > 0)
+            var lph = data.last_ping_human;
+            if (lph && lph.indexOf("seconds ago") > 0)
                 data.last_ping_human = "seconds ago";
 
             if (data.last_ping_human != lastPingHuman) {
