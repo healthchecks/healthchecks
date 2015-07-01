@@ -1,29 +1,76 @@
-html, body {
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px;
+    color: #AAA;
+    text-align: center;
+}
+
+.page-welcome .navbar {
+    margin-bottom: 0;
+}
+
+.navbar-nav {
+    text-transform: uppercase;
+    font-size: small;
+}
+
+.navbar-text {
+    font-size: small;
+}
+
+.index-bleed {
     background: #EEE;
+    padding-bottom: 2em;
 }
 
 #pitch {
     text-align: center;
-    padding: 2em 0 2em 0;
+    padding: 72px 0;
+    margin: 0;
 }
 
 #pitch-subtitle {
+    margin-top: 0;
     text-align: center;
 }
 
 #pitch-url {
     text-align: center;
     font-family: monospace;
-    padding-bottom: 2em;
+    padding-bottom: 72px;
 }
 
-.highlight pre {
+.nav-tabs {
+    margin-bottom: 0;
+}
+
+.page-welcome .highlight pre {
     background: #FFF;
     border-top: 0;
+    border-radius: 0;
+    border-color: #dddddd;
 }
 
 #welcome-status, #get-started {
     margin-top: 4em;
+}
+
+.welcome-browser-controls {
+    text-align: right;
 }
 
 .glyphicon.up, .glyphicon.new, .glyphicon.down {

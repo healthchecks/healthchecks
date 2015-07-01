@@ -108,8 +108,8 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-4 center-block"></div>
-        <form method="post" action="{% url 'hc-add-check' %}">
+    <div class="col-sm-12"></div>
+        <form method="post" action="{% url 'hc-add-check' %}" class="text-center">
             {% csrf_token %}
             <input type="submit" class="btn btn-primary btn-lg" value="Add Check">
         </form>
