@@ -1,6 +1,7 @@
 from datetime import timedelta as td
 import uuid
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -17,3 +18,6 @@ class Check(models.Model):
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
+
+    def url(self):
+        return settings.PING_ENDPOINT + str(self.code)

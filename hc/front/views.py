@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.http import HttpResponse, HttpResponseForbidden
@@ -33,7 +34,7 @@ def index(request):
         "check": check,
         "timer": timer,
         "timer_formatted": timer_formatted,
-        "ping_url": "http://healthchecks.io/ping/%s/" % check.code
+        "ping_url": check.url()
     }
 
     return render(request, "index.html", ctx)

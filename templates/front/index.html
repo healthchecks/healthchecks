@@ -50,7 +50,7 @@
                 </form>
             </td>
             <td class="url-cell">
-                <code>http://healthchecks.io{% url 'hc-ping' check.code %}</code>
+                <code>{{ check.url }}</code>
             </td>
             <td class="timeout-cell inactive">
                 <div class="timeout-dialog popover bottom">

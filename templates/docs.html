@@ -13,10 +13,10 @@
         the "Last Ping" value of corresponding check is updated.
         </p>
         <p>When a certain amount of time passes since last received ping, the
-        check is considered "late", and Health Checks sends an email notification.
+        check is considered "late", and Health Checks sends an email alert.
         It is all very simple, really.</p>
 
-        <h3>Executing a ping</h3>
+        <h3>Executing a Ping</h3>
         <p>
             At the end of your batch job, add a bit of code to request
             one of your ping URLs.
@@ -35,16 +35,16 @@
             In bash scripts, you can use <code>wget</code> or <code>curl</code> to run the requests:
         </p>
         <pre>
-wget https://healthchecks.io/ping/b2012751-c542-4deb-b054-ff51322102b9/ -O /dev/null
+curl http://healthchecks.io/ping/uuid-goes-here
 </pre>
 
-        <h3>When notifications are sent</h3>
+        <h3>When Alerts Are Sent</h3>
         <p>
             Each check has a configurable "Frequency" parameter, with default value of <strong>one day</strong>.
         </p>
         <p>
             When time since last ping exceeds the configured amount, the check is considered late.
-            When a check is <strong>1 hour late</strong>, Health Checks sends you an email notification.
+            When a check is <strong>1 hour late</strong>, Health Checks sends you an email alert.
         </p>
 
 
