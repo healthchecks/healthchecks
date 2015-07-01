@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/pricing.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/syntax.css' %}" type="text/css">
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -17,10 +18,6 @@
         </div>
 
         <ul class="nav navbar-nav">
-            <li {% if page == 'welcome' %} class="active" {% endif %}>
-                <a href="{% url 'hc-index' %}">Welcome</a>
-            </li>
-
             {% if request.user.is_authenticated %}
             <li {% if page == 'checks' %} class="active" {% endif %}>
                 <a href="{% url 'hc-checks' %}">My Checks</a>
@@ -32,7 +29,7 @@
             </li>
 
             <li {% if page == 'docs' %} class="active" {% endif %}>
-                <a href="{% url 'hc-docs' %}">Documentation</a>
+                <a href="{% url 'hc-docs' %}">Docs</a>
             </li>
 
             <li {% if page == 'about' %} class="active" {% endif %}>

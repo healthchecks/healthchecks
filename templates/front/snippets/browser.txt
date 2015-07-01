@@ -1,3 +1,3 @@
 var xhr = new XMLHttpRequest();
-xhr.open('GET', '{{ ping_url }}', true);
+xhr.open('GET', 'PING_URL', true);
 xhr.send(null);

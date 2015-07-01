@@ -17,6 +17,11 @@ html, body {
     padding-bottom: 2em;
 }
 
+.highlight pre {
+    background: #FFF;
+    border-top: 0;
+}
+
 #welcome-status, #get-started {
     margin-top: 4em;
 }

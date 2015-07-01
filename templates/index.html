@@ -40,16 +40,16 @@
         </ul>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="crontab">
-                <pre>{% include "front/snippets/crontab.txt" %}</pre>
+                {% include "front/snippets/crontab.html" %}
             </div>
             <div role="tabpanel" class="tab-pane" id="bash">
-                <pre>{% include "front/snippets/bash.txt" %}</pre>
+                {% include "front/snippets/bash.html" %}
             </div>
             <div role="tabpanel" class="tab-pane" id="python">
-                <pre>{% include "front/snippets/python.txt" %}</pre>
+                {% include "front/snippets/python.html" %}
             </div>
             <div class="tab-pane" id="browser">
-                <pre>{% include "front/snippets/browser.txt" %}</pre>
+                {% include "front/snippets/browser.html" %}
                 <div class="welcome-browser-controls">
                     <button id="run-it" class="btn btn-default">Run It!</button>
                 </div>
