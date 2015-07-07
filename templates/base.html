@@ -19,12 +19,6 @@
         </div>
 
         <ul class="nav navbar-nav">
-            {% if request.user.is_authenticated %}
-            <li {% if page == 'checks' %} class="active" {% endif %}>
-                <a href="{% url 'hc-checks' %}">My Checks</a>
-            </li>
-            {% endif %}
-
             <li {% if page == 'pricing' %} class="active" {% endif %}>
                 <a href="{% url 'hc-pricing' %}">Pricing</a>
             </li>

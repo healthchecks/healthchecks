@@ -7,7 +7,7 @@ from hc.api.models import Check
 from hc.front.forms import TimeoutForm, TIMEOUT_CHOICES
 
 
-def index(request):
+def _welcome(request):
     if "welcome_code" not in request.session:
         check = Check()
         check.save()
@@ -26,40 +26,44 @@ def index(request):
         timer_formatted = "Never"
 
     ctx = {
-        "page": "welcome",
         "check": check,
         "timer": timer,
         "timer_formatted": timer_formatted,
         "ping_url": check.url()
     }
 
-    return render(request, "index.html", ctx)
+    return render(request, "front/welcome.html", ctx)
 
 
-def pricing(request):
-    return render(request, "pricing.html", {"page": "pricing"})
-
-
-def docs(request):
-    return render(request, "docs.html", {"page": "docs"})
-
-
-def about(request):
-    return render(request, "about.html", {"page": "about"})
-
-
-@login_required
-def checks(request):
+def _my_checks(request):
     checks = Check.objects.filter(user=request.user).order_by("created")
 
     ctx = {
         "checks": checks,
         "now": timezone.now,
-        "timeout_choices": TIMEOUT_CHOICES,
-        "page": "checks"
+        "timeout_choices": TIMEOUT_CHOICES
     }
 
-    return render(request, "front/index.html", ctx)
+    return render(request, "front/my_checks.html", ctx)
+
+
+def index(request):
+    if request.user.is_authenticated():
+        return _my_checks(request)
+    else:
+        return _welcome(request)
+
+
+def pricing(request):
+    return render(request, "front/pricing.html", {"page": "pricing"})
+
+
+def docs(request):
+    return render(request, "front/docs.html", {"page": "docs"})
+
+
+def about(request):
+    return render(request, "front/about.html", {"page": "about"})
 
 
 @login_required
