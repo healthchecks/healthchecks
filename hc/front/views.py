@@ -26,6 +26,7 @@ def _welcome(request):
         timer_formatted = "Never"
 
     ctx = {
+        "page": "welcome",
         "check": check,
         "timer": timer,
         "timer_formatted": timer_formatted,

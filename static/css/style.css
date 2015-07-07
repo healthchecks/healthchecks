@@ -69,6 +69,10 @@ body {
     margin-top: 4em;
 }
 
+#welcome-status th {
+    border-top: 0;
+}
+
 .welcome-browser-controls {
     text-align: right;
 }
@@ -111,6 +115,10 @@ table.table tr > th.th-name {
 
 #checks-table .indicator-cell {
     text-align: center;
+}
+
+#checks-table th {
+    border-top: 0;
 }
 
 #checks-table td {
