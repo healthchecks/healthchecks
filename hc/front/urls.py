@@ -11,5 +11,4 @@ urlpatterns = [
     url(r'^pricing/$',              views.pricing, name="hc-pricing"),
     url(r'^docs/$',                 views.docs, name="hc-docs"),
     url(r'^about/$',                views.about, name="hc-about"),
-    url(r'^welcome/timer/$',        views.welcome_timer, name="hc-welcome-timer"),
 ]

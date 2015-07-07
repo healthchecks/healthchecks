@@ -1,6 +1,7 @@
 $(function () {
     $('[data-toggle="tooltip"]').tooltip();
 
+    var code = $("#check-code").text();
     var url = $("#pitch-url").text();
     var lastPing = null;
     var lastPingHuman = null;
@@ -10,10 +11,10 @@ $(function () {
     });
 
     function checkLastPing() {
-        $.getJSON("/welcome/timer/", function(data) {
+        $.getJSON("/status/" + code + "/", function(data) {
             if (data.last_ping != lastPing) {
                 lastPing = data.last_ping;
-                $("#timer").data("timer", data.timer);
+                $("#timer").data("timer", data.secs_to_alert);
             }
 
             var lph = data.last_ping_human;

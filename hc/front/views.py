@@ -1,9 +1,5 @@
-import json
-
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
@@ -52,27 +48,8 @@ def about(request):
     return render(request, "about.html", {"page": "about"})
 
 
-def welcome_timer(request):
-    code = request.session["welcome_code"]
-
-    check = Check.objects.get(code=code)
-    if check.last_ping and check.alert_after:
-        duration = check.alert_after - timezone.now()
-        response = {
-            "last_ping": check.last_ping.isoformat(),
-            "last_ping_human": naturaltime(check.last_ping),
-            "timer": int(duration.total_seconds())
-        }
-    else:
-        response = {"last_ping": None, "timer": None}
-
-    return HttpResponse(json.dumps(response),
-                        content_type="application/javascript")
-
-
 @login_required
 def checks(request):
-
     checks = Check.objects.filter(user=request.user).order_by("created")
 
     ctx = {
