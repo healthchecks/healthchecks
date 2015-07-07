@@ -86,7 +86,7 @@ def update_name(request, code):
     check.name = request.POST["name"]
     check.save()
 
-    return redirect("hc-checks")
+    return redirect("hc-index")
 
 
 @login_required
@@ -102,4 +102,4 @@ def update_timeout(request, code):
         check.timeout = form.cleaned_data["timeout"]
         check.save()
 
-    return redirect("hc-checks")
+    return redirect("hc-index")
