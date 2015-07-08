@@ -51,7 +51,7 @@ def login(request):
             login_link = settings.SITE_ROOT + login_link
             body = "login link: %s" % login_link
 
-            send_mail('Log In', body, 'cuu508@gmail.com', [email],
+            send_mail('Log In', body, settings.DEFAULT_FROM_EMAIL, [email],
                       fail_silently=False)
 
             return redirect("hc-login-link-sent")

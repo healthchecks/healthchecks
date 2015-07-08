@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.mail import send_mail
 
 
@@ -11,5 +12,5 @@ def send_status_notification(check):
     else:
         raise NotImplemented("Unexpected status: %s" % check.status)
 
-    send_mail(subject, body, 'cuu508@gmail.com', [check.user.email],
+    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [check.user.email],
               fail_silently=False)

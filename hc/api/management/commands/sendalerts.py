@@ -18,28 +18,38 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        ticks = 0
         while True:
             # Gone down?
             query = Check.objects
             query = query.filter(alert_after__lt=timezone.now())
+            query = query.filter(user__isnull=False)
             query = query.filter(status="up")
             for check in query:
                 check.status = "down"
-                check.save()
 
                 _log("\nSending email about going down for %s\n" % check.code)
                 send_status_notification(check)
+                ticks = 0
+
+                # Save status after the notification is sent
+                check.save()
 
             # Gone up?
             query = Check.objects
             query = query.filter(alert_after__gt=timezone.now())
+            query = query.filter(user__isnull=False)
             query = query.filter(status="down")
             for check in query:
                 check.status = "up"
-                check.save()
 
                 _log("\nSending email about going up for %s\n" % check.code)
                 send_status_notification(check)
+                ticks = 0
+
+                # Save status after the notification is sent
+                check.save()
 
             time.sleep(1)
-            _log(".")
+            ticks = (ticks + 1) % 80
+            _log("." + ("\n" if ticks == 0 else ""))
