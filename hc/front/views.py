@@ -73,7 +73,7 @@ def add_check(request):
 
     check = Check(user=request.user)
     check.save()
-    return redirect("hc-checks")
+    return redirect("hc-index")
 
 
 @login_required
