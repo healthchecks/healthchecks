@@ -2,4 +2,5 @@ Django==1.8.2
 django-ses
 psycopg2==2.6
 django-ses-backend
+djrill
 pygments

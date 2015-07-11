@@ -1,16 +1,18 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
-def send_status_notification(check):
-    if check.status == "down":
-        subject = "Alert DOWN"
-        body = "Hi, the check %s has gone down" % check.code
-    elif check.status == "up":
-        subject = "Alert UP"
-        body = "Hi, the check %s has gone up" % check.code
-    else:
-        raise NotImplemented("Unexpected status: %s" % check.status)
+def send(to, template_directory, ctx):
+    """ Send HTML email using Mandrill.
 
-    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [check.user.email],
-              fail_silently=False)
+    Expect template_directory to be a path containing
+        - subject.txt
+        - body.html
+
+    """
+
+    from_email = settings.DEFAULT_FROM_EMAIL
+    subject = render_to_string("%s/subject.txt" % template_directory, ctx)
+    body = render_to_string("%s/body.html" % template_directory, ctx)
+    send_mail(subject, "", from_email, [to], html_message=body)

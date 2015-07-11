@@ -5,8 +5,22 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 
+from hc.lib.emails import send
+
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"))
 DEFAULT_TIMEOUT = td(days=1)
+TIMEOUT_CHOICES = (
+    ("15 minutes", td(minutes=15)),
+    ("30 minutes", td(minutes=30)),
+    ("1 hour", td(hours=1)),
+    ("3 hours", td(hours=3)),
+    ("6 hours", td(hours=6)),
+    ("12 hours", td(hours=12)),
+    ("1 day", td(days=1)),
+    ("2 days", td(days=2)),
+    ("3 days", td(days=3)),
+    ("1 week", td(weeks=1))
+)
 
 
 class Check(models.Model):
@@ -21,3 +35,15 @@ class Check(models.Model):
 
     def url(self):
         return settings.PING_ENDPOINT + str(self.code)
+
+    def send_alert(self):
+        ctx = {
+            "timeout_choices": TIMEOUT_CHOICES,
+            "check": self,
+            "checks": self.user.check_set.order_by("created")
+        }
+
+        if self.status in ("up", "down"):
+            send(self.user.email, "emails/alert", ctx)
+        else:
+            raise NotImplemented("Unexpected status: %s" % self.status)

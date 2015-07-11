@@ -8,9 +8,11 @@ from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
+from django.template import loader
 
 from hc.accounts.forms import EmailForm
 from hc.api.models import Check
+from hc.lib.emails import send
 
 
 def _make_user(email):
@@ -28,6 +30,18 @@ def _associate_demo_check(request, user):
         check.save()
 
 
+def _send_login_link(user):
+    token = str(uuid.uuid4())
+    user.set_password(token)
+    user.save()
+
+    login_link = reverse("hc-check-token", args=[user.username, token])
+    login_link = settings.SITE_ROOT + login_link
+    ctx = {"login_link": login_link}
+
+    send(user.email, "emails/login", ctx)
+
+
 def login(request):
     if request.method == 'POST':
         form = EmailForm(request.POST)
@@ -43,16 +57,7 @@ def login(request):
             if user.is_staff:
                 return HttpResponseBadRequest()
 
-            token = str(uuid.uuid4())
-            user.set_password(token)
-            user.save()
-
-            login_link = reverse("hc-check-token", args=[user.username, token])
-            login_link = settings.SITE_ROOT + login_link
-            body = "login link: %s" % login_link
-
-            send_mail('Log In', body, settings.DEFAULT_FROM_EMAIL, [email],
-                      fail_silently=False)
+            _send_login_link(user)
 
             return redirect("hc-login-link-sent")
 

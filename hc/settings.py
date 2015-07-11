@@ -30,6 +30,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djrill',
 
     'hc.accounts',
     'hc.api',
@@ -92,13 +93,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static-collected')
 
-# AWS
-EMAIL_BACKEND = 'django_ses_backend.SESBackend'
-AWS_SES_ACCESS_KEY_ID = "---"
-AWS_SES_SECRET_ACCESS_KEY = "---"
-AWS_SES_REGION_NAME = 'us-east-1'
-AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
-
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 
 try:
     from local_settings import *

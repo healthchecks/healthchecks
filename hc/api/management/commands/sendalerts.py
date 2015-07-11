@@ -5,7 +5,6 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from hc.api.models import Check
-from hc.lib.emails import send_status_notification
 
 
 def _log(message):
@@ -14,7 +13,7 @@ def _log(message):
 
 
 class Command(BaseCommand):
-    help = 'Ensures triggers exist in database'
+    help = 'Sends UP/DOWN email alerts'
 
     def handle(self, *args, **options):
 
@@ -29,7 +28,7 @@ class Command(BaseCommand):
                 check.status = "down"
 
                 _log("\nSending email about going down for %s\n" % check.code)
-                send_status_notification(check)
+                check.send_alert()
                 ticks = 0
 
                 # Save status after the notification is sent
@@ -44,7 +43,7 @@ class Command(BaseCommand):
                 check.status = "up"
 
                 _log("\nSending email about going up for %s\n" % check.code)
-                send_status_notification(check)
+                check.send_alert()
                 ticks = 0
 
                 # Save status after the notification is sent
