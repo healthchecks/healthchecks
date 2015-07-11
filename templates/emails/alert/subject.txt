@@ -1,2 +1,2 @@
-{{ check.name }} is {{ check.status }}
+{{ check.name|default:check.code }} is {{ check.status }}
 
