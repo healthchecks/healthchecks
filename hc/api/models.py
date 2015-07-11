@@ -4,6 +4,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 from hc.lib.emails import send
 
@@ -40,7 +41,9 @@ class Check(models.Model):
         ctx = {
             "timeout_choices": TIMEOUT_CHOICES,
             "check": self,
-            "checks": self.user.check_set.order_by("created")
+            "checks": self.user.check_set.order_by("created"),
+            "now": timezone.now()
+
         }
 
         if self.status in ("up", "down"):

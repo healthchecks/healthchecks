@@ -41,7 +41,7 @@ def _my_checks(request):
 
     ctx = {
         "checks": checks,
-        "now": timezone.now,
+        "now": timezone.now(),
         "timeout_choices": TIMEOUT_CHOICES
     }
 
@@ -104,3 +104,27 @@ def update_timeout(request, code):
         check.save()
 
     return redirect("hc-index")
+
+
+@login_required
+def email_preview(request, code):
+    """ A debug view to see how email will look.
+
+    Will keep it around until I'm happy with email stying.
+
+    """
+
+    check = Check.objects.get(code=code)
+    if check.user != request.user:
+        return HttpResponseForbidden()
+
+    from hc.api.models import TIMEOUT_CHOICES
+    ctx = {
+        "check": check,
+        "checks": check.user.check_set.all(),
+        "timeout_choices": TIMEOUT_CHOICES,
+        "now": timezone.now()
+
+    }
+
+    return render(request, "emails/alert/body.html", ctx)

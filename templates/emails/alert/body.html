@@ -1,8 +1,36 @@
 {% load humanize %}
 
+<style>
+    th {
+        text-align: left;
+        padding: 8px;
+    }
+
+    td {
+        border-top: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .badge {
+        font-size: 10px;
+        color: white;
+        padding: 4px;
+        font-family: sans;
+    }
+
+    .new { background: #AAA; }
+    .up { background: #5cb85c; }
+    .down { background: #d9534f; }
+    .unnamed {
+        color: #888;
+        font-style: italic;
+    }
+
+</style>
+
 <p>Hello,</p>
-<p>This is a notification sent by healthchecks.io</p>
-<p>The check "{{ check.name }}" has gone {{ check.status }}.</p>
+<p>This is a notification sent by <a href="https://healthchecks.io">healthchecks.io</a>.</p>
+<p>The check "{{ check.name|default:check.code }}" has gone {{ check.status }}.</p>
 <p>Here is a summary of all your checks:</p>
 
 <table>
@@ -17,15 +45,19 @@
     <tr>
         <td>
             {% if check.status == "new" %}
-                <span class="glyphicon glyphicon-question-sign new"></span>
+                <span class="badge new">NEW</span>
             {% elif now < check.alert_after %}
-                <span class="glyphicon glyphicon-ok-sign up"></span>
+                <span class="badge up">UP</span>
             {% else %}
-                <span class="glyphicon glyphicon-exclamation-sign down"></span>
+                <span class="badge down">DOWN</span>
             {% endif %}
         </td>
         <td>
-            {{ check.name }}
+            {% if check.name %}
+                {{ check.name }}
+            {% else %}
+                <span class="unnamed">unnamed</span>
+            {% endif %}
         </td>
         <td class="url-cell">
             <code>{{ check.url }}</code>
@@ -48,4 +80,8 @@
     {% endfor %}
 </table>
 
-
+<p>
+    --<br />
+    Regards,<br />
+    healthchecks.io
+</p>
