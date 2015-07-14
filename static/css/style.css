@@ -133,10 +133,15 @@ table.table tr > th.th-name {
     border: 1px solid rgba(0, 0, 0, 0);
     background: none;
     box-shadow: none;
+    transition: none;
+}
+
+.name-edit.inactive .input-name:hover {
+    border: 1px dotted #AAA;
 }
 
 .name-edit.inactive button {
-    opacity: 0;
+    visibility: hidden;
 }
 
 .name-edit button {
@@ -160,8 +165,13 @@ td.inactive .popover {
     margin-left: -77px;
 }
 
+.timeout {
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 6px;
+}
+
+
 .timeout:hover {
     color: #337ab7;
-    text-decoration: underline;
-    cursor: pointer;
+    border: 1px dotted #AAA;
 }
