@@ -38,5 +38,14 @@ $(function () {
         return false;
     });
 
+    $(".check-menu-remove").click(function() {
+        var $this = $(this);
+
+        $("#remove-check-form").attr("action", $this.data("url"));
+        $(".remove-check-name").text($this.data("name"));
+        $('#remove-check-modal').modal("show");
+
+        return false;
+    });
 
 });

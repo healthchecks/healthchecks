@@ -128,3 +128,16 @@ def email_preview(request, code):
     }
 
     return render(request, "emails/alert/body.html", ctx)
+
+
+@login_required
+def remove(request, code):
+    assert request.method == "POST"
+
+    check = Check.objects.get(code=code)
+    if check.user != request.user:
+        return HttpResponseForbidden()
+
+    check.delete()
+
+    return redirect("hc-index")

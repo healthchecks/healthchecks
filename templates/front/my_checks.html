@@ -16,6 +16,7 @@
             <th>URL</th>
             <th>Frequency</th>
             <th>Last Ping</th>
+            <th></th>
         </tr>
         {% for check in checks %}
         <tr class="checks-row">
@@ -98,6 +99,23 @@
                 Never
             {% endif %}
             </td>
+            <td>
+                <div class="check-menu dropdown">
+                    <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" class="check-menu-remove"
+                                data-name="{{ check.name|default:check.code }}"
+                                data-url="{% url 'hc-remove-check' check.code %}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                Remove
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
         </tr>
         {% endfor %}
 
@@ -117,6 +135,32 @@
 
 </div>
 
+<div id="remove-check-modal" class="modal fade">
+    <div class="modal-dialog">
+        <form id="remove-check-form" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="code" class="remove-check-code" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+                    <h4 class="remove-check-title">Remove Check <span class="remove-check-name"></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to remove check
+                        <strong class="remove-check-name">---</strong>.
+                    </p>
+                    <p>Once it's gone there is no "undo" and you cannot get
+                    the old ping URL back.</p>
+                    <p>Are you sure?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 {% endblock %}

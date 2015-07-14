@@ -109,10 +109,6 @@ table.table tr > th.th-name {
     padding-left: 21px;
 }
 
-.setup-link {
-    opacity: 0;
-}
-
 #checks-table .indicator-cell {
     text-align: center;
 }
@@ -123,10 +119,6 @@ table.table tr > th.th-name {
 
 #checks-table td {
     vertical-align: middle;
-}
-
-.checks-row:hover .setup-link {
-    opacity: 1;
 }
 
 .name-edit.inactive .input-name {
@@ -174,4 +166,12 @@ td.inactive .popover {
 .timeout:hover {
     color: #337ab7;
     border: 1px dotted #AAA;
+}
+
+.check-menu {
+    visibility: hidden;
+}
+
+tr:hover .check-menu {
+    visibility: visible;
 }
