@@ -10,7 +10,13 @@ from hc.lib.emails import send
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"))
 DEFAULT_TIMEOUT = td(days=1)
-TIMEOUT_CHOICES = (
+DEFAULT_GRACE = td(hours=1)
+
+DURATION_CHOICES = (
+    ("1 minute", td(minutes=1)),
+    ("2 minutes", td(minutes=2)),
+    ("5 minutes", td(minutes=5)),
+    ("10 minutes", td(minutes=10)),
     ("15 minutes", td(minutes=15)),
     ("30 minutes", td(minutes=30)),
     ("1 hour", td(hours=1)),
@@ -30,6 +36,7 @@ class Check(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     timeout = models.DurationField(default=DEFAULT_TIMEOUT)
+    grace = models.DurationField(default=DEFAULT_GRACE)
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
@@ -39,7 +46,7 @@ class Check(models.Model):
 
     def send_alert(self):
         ctx = {
-            "timeout_choices": TIMEOUT_CHOICES,
+            "timeout_choices": DURATION_CHOICES,
             "check": self,
             "checks": self.user.check_set.order_by("created"),
             "now": timezone.now()

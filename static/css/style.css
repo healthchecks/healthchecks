@@ -121,23 +121,14 @@ table.table tr > th.th-name {
     vertical-align: middle;
 }
 
-.name-edit.inactive .input-name {
+.my-checks-name {
     border: 1px solid rgba(0, 0, 0, 0);
-    background: none;
-    box-shadow: none;
-    transition: none;
+    padding: 6px;
+    display: block;
 }
 
-.name-edit.inactive .input-name:hover {
+.my-checks-name:hover {
     border: 1px dotted #AAA;
-}
-
-.name-edit.inactive button {
-    visibility: hidden;
-}
-
-.name-edit button {
-    opacity: 1;
 }
 
 .url-cell {
@@ -153,19 +144,26 @@ td.inactive .popover {
     position: absolute;
     top: auto;
     left: auto;
-    margin-top: 32px;
+    margin-top: 57px;
     margin-left: -77px;
 }
 
-.timeout {
-    border: 1px solid rgba(0, 0, 0, 0);
-    padding: 6px;
+#checks-table > tbody > tr > th.th-frequency {
+    padding-left: 15px;
 }
 
+.timeout_grace {
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 6px;
+    display: block;
+}
 
-.timeout:hover {
-    color: #337ab7;
+.timeout_grace:hover {
     border: 1px dotted #AAA;
+}
+
+.checks-subline {
+    color: #888;
 }
 
 .check-menu {
@@ -174,4 +172,42 @@ td.inactive .popover {
 
 tr:hover .check-menu {
     visibility: visible;
+}
+
+
+.update-timeout-info {
+    line-height: 22px;
+}
+
+.update-timeout-label {
+    position: relative;
+    right: 3px;
+    display: inline-block;
+    text-align: right;
+    width: 100px;
+}
+
+.update-timeout-value {
+    font-size: 22px;
+    display: inline-block;
+    width: 100px;
+    text-align: left;
+    white-space: nowrap;
+
+}
+
+#frequency-slider {
+    margin: 20px 50px 80px 50px;
+}
+
+#frequency-slider.noUi-connect {
+  background: #5cb85c;
+}
+
+#grace-slider {
+    margin: 20px 50px 60px 50px;
+}
+
+#grace-slider.noUi-connect {
+  background: #f0ad4e;
 }

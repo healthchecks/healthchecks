@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION update_alert_after()
 RETURNS trigger AS $update_alert_after$
     BEGIN
         IF NEW.last_ping IS NOT NULL THEN
-            NEW.alert_after := NEW.last_ping + NEW.timeout + '1 hour';
+            NEW.alert_after := NEW.last_ping + NEW.timeout + NEW.grace;
         END IF;
         RETURN NEW;
     END;

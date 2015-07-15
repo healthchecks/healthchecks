@@ -1,40 +1,97 @@
 $(function () {
-    $('[data-toggle="tooltip"]').tooltip();
 
-    $(".name-edit input").click(function() {
-        $form = $(this.parentNode);
-        if (!$form.hasClass("inactive"))
-            return;
+    var secsToText = function(total) {
+        total = Math.floor(total / 60);
+        var m = total % 60; total = Math.floor(total / 60);
+        var h = total % 24; total = Math.floor(total / 24);
+        var d = total % 7; total = Math.floor(total / 7);
+        var w = total;
 
-        // Click on all X buttons
-        $(".name-edit:not(.inactive) .name-edit-cancel").click();
+        var result = "";
+        if (w) result += w + (w == 1 ? " week " : " weeks ");
+        if (d) result += d + (d == 1 ? " day " : " days ");
+        if (h) result += h + (h == 1 ? " hour " : " hours ");
+        if (m) result += m + (m == 1 ? " minute " : " minutes ");
 
-        // Make this form editable and store its initial value
-        $form
-            .removeClass("inactive")
-            .data("originalValue", this.value);
+        return result;
+    }
+
+    var frequencySlider = document.getElementById("frequency-slider");
+    noUiSlider.create(frequencySlider, {
+        start: [20],
+        connect: "lower",
+        range: {
+            'min': [60, 60],
+            '30%': [3600, 3600],
+            '82.80%': [86400, 86400],
+            'max': 604800
+        },
+        pips: {
+            mode: 'values',
+            values: [60, 1800, 3600, 43200, 86400, 604800],
+            density: 5,
+            format: {
+                to: secsToText,
+                from: function() {}
+            }
+        }
     });
 
-    $(".name-edit-cancel").click(function(){
-        var $form = $(this.parentNode);
-        var v = $form.data("originalValue");
+    frequencySlider.noUiSlider.on("update", function(a, b, value) {
+        var rounded = Math.round(value);
+        $("#frequency-slider-value").text(secsToText(rounded));
+        $("#update-timeout-timeout").val(rounded);
+    });
 
-        $form
-            .addClass("inactive")
-            .find(".input-name").val(v);
+
+    var graceSlider = document.getElementById("grace-slider");
+    noUiSlider.create(graceSlider, {
+        start: [20],
+        connect: "lower",
+        range: {
+            'min': [60, 60],
+            '30%': [3600, 3600],
+            '82.80%': [86400, 86400],
+            'max': 604800
+        },
+        pips: {
+            mode: 'values',
+            values: [60, 1800, 3600, 43200, 86400, 604800],
+            density: 5,
+            format: {
+                to: secsToText,
+                from: function() {}
+            }
+        }
+    });
+
+    graceSlider.noUiSlider.on("update", function(a, b, value) {
+        var rounded = Math.round(value);
+        $("#grace-slider-value").text(secsToText(rounded));
+        $("#update-timeout-grace").val(rounded);
+    });
+
+
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $(".my-checks-name").click(function() {
+        var $this = $(this);
+
+        $("#update-name-form").attr("action", $this.data("url"));
+        $("#update-name-input").val($this.text());
+        $('#update-name-modal').modal("show");
 
         return false;
     });
 
-    $(".timeout").click(function() {
-        $(".timeout-cell").addClass("inactive");
+    $(".timeout_grace").click(function() {
+        var $this = $(this);
 
-        $cell = $(this.parentNode);
-        $cell.removeClass("inactive");
-    });
+        $("#update-timeout-form").attr("action", $this.data("url"));
+        frequencySlider.noUiSlider.set($this.data("timeout"))
+        graceSlider.noUiSlider.set($this.data("grace"))
+        $('#update-timeout-modal').modal("show");
 
-    $(".timeout-edit-cancel").click(function() {
-        $(this).parents("td").addClass("inactive");
         return false;
     });
 
@@ -47,5 +104,6 @@ $(function () {
 
         return false;
     });
+
 
 });

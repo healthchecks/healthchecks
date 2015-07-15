@@ -1,7 +1,6 @@
 from django import forms
 
-from hc.api.models import TIMEOUT_CHOICES
-
 
 class TimeoutForm(forms.Form):
-    timeout = forms.ChoiceField(choices=TIMEOUT_CHOICES)
+    timeout = forms.IntegerField(min_value=60, max_value=604800)
+    grace = forms.IntegerField(min_value=60, max_value=604800)

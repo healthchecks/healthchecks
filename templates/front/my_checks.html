@@ -14,7 +14,10 @@
             <th></th>
             <th class="th-name">Name</th>
             <th>URL</th>
-            <th>Frequency</th>
+            <th class="th-frequency">
+                Frequency <br />
+                <span class="checks-subline">Grace</span>
+            </th>
             <th>Last Ping</th>
             <th></th>
         </tr>
@@ -30,62 +33,31 @@
                 {% endif %}
             </td>
             <td class="name-cell">
-                <form
-                    method="post"
-                    action="{% url 'hc-update-name' check.code %}"
-                    class="name-edit form-inline inactive">
-                    {% csrf_token %}
-                    <input
-                        name="name"
-                        type="text"
-                        value="{{ check.name }}"
-                        placeholder="unnamed"
-                        class="input-name form-control" />
-
-                    <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </button>
-                    <button class="btn btn-default name-edit-cancel">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </button>
-                </form>
+                <span data-url="{% url 'hc-update-name' check.code %}"
+                    class="my-checks-name">{{ check.name }}</span>
             </td>
             <td class="url-cell">
                 <code>{{ check.url }}</code>
             </td>
             <td class="timeout-cell inactive">
-                <div class="timeout-dialog popover bottom">
-                <div class="arrow"></div>
-                <div class="popover-content">
-                <form
-                    method="post"
-                    action="{% url 'hc-update-timeout' check.code %}"
-                    class="form-inline">
-                    {% csrf_token %}
-                    <select class="form-control" name="timeout">
-                        {% for label, value in timeout_choices %}
-                            {% if check.timeout == value %}
-                                <option selected>{{ label }}</option>
-                            {% else %}
-                                <option>{{ label }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                    <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-ok"></span>
-                    </button>
-                    <button class="btn btn-default timeout-edit-cancel">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </button>
-                </form>
-                </div>
-                </div>
-                <span class="timeout">
-                    {% for label, value in timeout_choices %}
+                <span
+                    data-url="{% url 'hc-update-timeout' check.code %}"
+                    data-timeout="{{ check.timeout.total_seconds }}"
+                    data-grace="{{ check.grace.total_seconds }}"
+                    class="timeout_grace">
+                    {% for label, value in duration_choices %}
                         {% if check.timeout == value %}
                             {{ label }}
                         {% endif %}
                     {% endfor %}
+                    <br />
+                    <span class="checks-subline">
+                    {% for label, value in duration_choices %}
+                        {% if check.grace == value %}
+                            {{ label }}
+                        {% endif %}
+                    {% endfor %}
+                    </span>
                 </span>
             </td>
             <td>
@@ -135,11 +107,89 @@
 
 </div>
 
+<div id="update-name-modal" class="modal fade">
+    <div class="modal-dialog">
+        <form id="update-name-form" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+                    <h4 class="update-timeout-title">Update Name</h4>
+                </div>                <div class="modal-body">
+                    <p>Name:</p>
+                    <input
+                        id="update-name-input"
+                        name="name"
+                        type="text"
+                        value="---"
+                        placeholder="unnamed"
+                        class="input-name form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="update-timeout-modal" class="modal fade">
+    <div class="modal-dialog">
+        <form id="update-timeout-form" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="timeout" id="update-timeout-timeout" />
+            <input type="hidden" name="grace" id="update-timeout-grace" />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+                    <h4 class="update-timeout-title">Update Frequency and Grace Period</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="update-timeout-info text-center">
+                        <span
+                            class="update-timeout-label"
+                            data-toggle="tooltip"
+                            title="Expected time between pings.">
+                            Frequency
+                        </span>
+                        <span
+                            id="frequency-slider-value"
+                            class="update-timeout-value">
+                            1 day
+                        </span>
+                    </div>
+                    <div id="frequency-slider"></div>
+
+                    <div class="update-timeout-info text-center">
+                        <span
+                            class="update-timeout-label"
+                            data-toggle="tooltip"
+                            title="When check is late, how much time to wait until alert is sent">
+                            Grace Period
+                        </span>
+                        <span
+                            id="grace-slider-value"
+                            class="update-timeout-value">
+                            1 day
+                        </span>
+                    </div>
+
+                    <div id="grace-slider"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="remove-check-modal" class="modal fade">
     <div class="modal-dialog">
         <form id="remove-check-form" method="post">
             {% csrf_token %}
-            <input type="hidden" name="code" class="remove-check-code" />
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</span></button>
@@ -166,5 +216,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/nouislider.min.js' %}"></script>
 <script src="{% static 'js/checks.js' %}"></script>
 {% endblock %}

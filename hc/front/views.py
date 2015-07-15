@@ -1,10 +1,12 @@
+from datetime import timedelta as td
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from hc.api.models import Check
-from hc.front.forms import TimeoutForm, TIMEOUT_CHOICES
+from hc.api.models import Check, DURATION_CHOICES
+from hc.front.forms import TimeoutForm
 
 
 def _welcome(request):
@@ -42,7 +44,7 @@ def _my_checks(request):
     ctx = {
         "checks": checks,
         "now": timezone.now(),
-        "timeout_choices": TIMEOUT_CHOICES
+        "duration_choices": DURATION_CHOICES
     }
 
     return render(request, "front/my_checks.html", ctx)
@@ -100,7 +102,8 @@ def update_timeout(request, code):
 
     form = TimeoutForm(request.POST)
     if form.is_valid():
-        check.timeout = form.cleaned_data["timeout"]
+        check.timeout = td(seconds=form.cleaned_data["timeout"])
+        check.grace = td(seconds=form.cleaned_data["grace"])
         check.save()
 
     return redirect("hc-index")
