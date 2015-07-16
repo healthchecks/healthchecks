@@ -24,17 +24,23 @@
         {% for check in checks %}
         <tr class="checks-row">
             <td class="indicator-cell">
-                {% if check.status == "new" %}
+                {% if check.get_status == "new" %}
                     <span class="glyphicon glyphicon-question-sign new"></span>
-                {% elif now < check.alert_after %}
+                {% elif check.get_status == "up" %}
                     <span class="glyphicon glyphicon-ok-sign up"></span>
-                {% else %}
+                {% elif check.get_status == "grace" %}
+                    <span class="glyphicon glyphicon-exclamation-sign grace"></span>
+                {% elif check.get_status == "down" %}
                     <span class="glyphicon glyphicon-exclamation-sign down"></span>
                 {% endif %}
             </td>
             <td class="name-cell">
-                <span data-url="{% url 'hc-update-name' check.code %}"
-                    class="my-checks-name">{{ check.name }}</span>
+                <span
+                    data-name="{{ check.name }}"
+                    data-url="{% url 'hc-update-name' check.code %}"
+                    class="my-checks-name {% if not check.name %}unnamed{% endif %}">
+                    {{ check.name|default:"unnamed" }}
+                </span>
             </td>
             <td class="url-cell">
                 <code>{{ check.url }}</code>

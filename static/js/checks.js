@@ -78,7 +78,7 @@ $(function () {
         var $this = $(this);
 
         $("#update-name-form").attr("action", $this.data("url"));
-        $("#update-name-input").val($this.text());
+        $("#update-name-input").val($this.data("name"));
         $('#update-name-modal').modal("show");
 
         return false;

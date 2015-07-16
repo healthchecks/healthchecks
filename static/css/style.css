@@ -77,7 +77,7 @@ body {
     text-align: right;
 }
 
-.glyphicon.up, .glyphicon.new, .glyphicon.down {
+.glyphicon.up, .glyphicon.new, .glyphicon.grace, .glyphicon.down {
     font-size: 22px;
 }
 
@@ -87,6 +87,10 @@ body {
 
 .glyphicon.new {
     color: #AAA;
+}
+
+.glyphicon.grace {
+    color: #f0ad4e;
 }
 
 .glyphicon.down {
@@ -129,6 +133,11 @@ table.table tr > th.th-name {
 
 .my-checks-name:hover {
     border: 1px dotted #AAA;
+}
+
+.my-checks-name.unnamed {
+    color: #999;
+    font-style: italic;
 }
 
 .url-cell {

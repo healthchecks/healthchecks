@@ -20,7 +20,10 @@
 
     .new { background: #AAA; }
     .up { background: #5cb85c; }
+    .grace { background: #f0ad4e; }
     .down { background: #d9534f; }
+
+
     .unnamed {
         color: #888;
         font-style: italic;
@@ -44,11 +47,13 @@
     {% for check in checks %}
     <tr>
         <td>
-            {% if check.status == "new" %}
+            {% if check.get_status == "new" %}
                 <span class="badge new">NEW</span>
-            {% elif now < check.alert_after %}
+            {% elif check.get_status == "up" %}
                 <span class="badge up">UP</span>
-            {% else %}
+            {% elif check.get_status == "grace" %}
+                <span class="badge grace">LATE</span>
+            {% elif check.get_status == "down" %}
                 <span class="badge down">DOWN</span>
             {% endif %}
         </td>

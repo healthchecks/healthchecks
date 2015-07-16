@@ -57,3 +57,17 @@ class Check(models.Model):
             send(self.user.email, "emails/alert", ctx)
         else:
             raise NotImplemented("Unexpected status: %s" % self.status)
+
+    def get_status(self):
+        if self.status == "new":
+            return "new"
+
+        now = timezone.now()
+
+        if self.last_ping + self.timeout > now:
+            return "up"
+
+        if self.last_ping + self.timeout + self.grace > now:
+            return "grace"
+
+        return "down"
