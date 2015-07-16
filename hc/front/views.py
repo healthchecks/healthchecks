@@ -5,7 +5,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from hc.api.models import Check, DURATION_CHOICES
+from hc.api.models import Check
 from hc.front.forms import TimeoutForm
 
 
@@ -43,8 +43,7 @@ def _my_checks(request):
 
     ctx = {
         "checks": checks,
-        "now": timezone.now(),
-        "duration_choices": DURATION_CHOICES
+        "now": timezone.now()
     }
 
     return render(request, "front/my_checks.html", ctx)
@@ -121,11 +120,9 @@ def email_preview(request, code):
     if check.user != request.user:
         return HttpResponseForbidden()
 
-    from hc.api.models import TIMEOUT_CHOICES
     ctx = {
         "check": check,
         "checks": check.user.check_set.all(),
-        "timeout_choices": TIMEOUT_CHOICES,
         "now": timezone.now()
 
     }

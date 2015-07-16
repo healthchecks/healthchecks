@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load humanize staticfiles %}
+{% load humanize staticfiles hc_extras %}
 
 {% block title %}My Checks - healthchecks.io{% endblock %}
 
@@ -51,18 +51,10 @@
                     data-timeout="{{ check.timeout.total_seconds }}"
                     data-grace="{{ check.grace.total_seconds }}"
                     class="timeout_grace">
-                    {% for label, value in duration_choices %}
-                        {% if check.timeout == value %}
-                            {{ label }}
-                        {% endif %}
-                    {% endfor %}
+                    {{ check.timeout|hc_duration }}
                     <br />
                     <span class="checks-subline">
-                    {% for label, value in duration_choices %}
-                        {% if check.grace == value %}
-                            {{ label }}
-                        {% endif %}
-                    {% endfor %}
+                    {{ check.grace|hc_duration }}
                     </span>
                 </span>
             </td>

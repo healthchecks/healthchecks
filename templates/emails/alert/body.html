@@ -1,4 +1,4 @@
-{% load humanize %}
+{% load humanize hc_extras %}
 
 <style>
     th {
@@ -68,11 +68,7 @@
             <code>{{ check.url }}</code>
         </td>
         <td>
-            {% for label, value in timeout_choices %}
-                {% if check.timeout == value %}
-                    {{ label }}
-                {% endif %}
-            {% endfor %}
+            {{ check.timeout|hc_duration }}
         </td>
         <td>
             {% if check.last_ping %}
