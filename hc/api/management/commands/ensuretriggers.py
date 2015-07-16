@@ -22,6 +22,6 @@ $update_alert_after$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS update_alert_after ON api_check;
 
 CREATE TRIGGER update_alert_after
-BEFORE INSERT OR UPDATE OF last_ping, timeout  ON api_check
+BEFORE INSERT OR UPDATE OF last_ping, timeout, grace  ON api_check
 FOR EACH ROW EXECUTE PROCEDURE update_alert_after();
         """)

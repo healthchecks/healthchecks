@@ -175,6 +175,10 @@ tr:hover .check-menu {
 }
 
 
+#update-timeout-modal .modal-body {
+    padding-top: 40px;
+}
+
 .update-timeout-info {
     line-height: 22px;
 }
@@ -205,9 +209,28 @@ tr:hover .check-menu {
 }
 
 #grace-slider {
-    margin: 20px 50px 60px 50px;
+    margin: 20px 50px 110px 50px;
 }
 
 #grace-slider.noUi-connect {
   background: #f0ad4e;
 }
+
+#frequency-slider .noUi-value, #grace-slider .noUi-value {
+    width: 60px;
+    margin-left: -30px;
+}
+
+.update-timeout-terms {
+    color: #999;
+}
+
+.update-timeout-terms p {
+    margin: 0;
+}
+
+
+.update-timeout-terms span {
+    font-weight: bold;
+}
+

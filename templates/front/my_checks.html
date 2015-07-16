@@ -114,9 +114,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</span></button>
-                    <h4 class="update-timeout-title">Update Name</h4>
-                </div>                <div class="modal-body">
-                    <p>Name:</p>
+                    <h4 class="update-timeout-title">Name</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Give this check a human-friendly name, so you can
+                    easily recognize it later:</p>
                     <input
                         id="update-name-input"
                         name="name"
@@ -141,10 +143,6 @@
             <input type="hidden" name="timeout" id="update-timeout-timeout" />
             <input type="hidden" name="grace" id="update-timeout-grace" />
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
-                    <h4 class="update-timeout-title">Update Frequency and Grace Period</h4>
-                </div>
                 <div class="modal-body">
                     <div class="update-timeout-info text-center">
                         <span
@@ -176,6 +174,18 @@
                     </div>
 
                     <div id="grace-slider"></div>
+
+                    <div class="update-timeout-terms">
+                        <p>
+                            <span>Frequency</span>
+                            Expected time between pings.
+                        </p>
+                        <p>
+                            <span>Grace Period</span>
+                            When a check is late, how much time to wait until alert is sent.
+                        </p>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
