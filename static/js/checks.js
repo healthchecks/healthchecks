@@ -90,7 +90,7 @@ $(function () {
         $("#update-timeout-form").attr("action", $this.data("url"));
         frequencySlider.noUiSlider.set($this.data("timeout"))
         graceSlider.noUiSlider.set($this.data("grace"))
-        $('#update-timeout-modal').modal("show");
+        $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
 
         return false;
     });
