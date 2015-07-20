@@ -1,5 +1,6 @@
 from datetime import timedelta as td
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
@@ -61,7 +62,12 @@ def pricing(request):
 
 
 def docs(request):
-    return render(request, "front/docs.html", {"page": "docs"})
+    ctx = {
+        "page": "docs",
+        "ping_endpoint": settings.PING_ENDPOINT
+    }
+
+    return render(request, "front/docs.html", ctx)
 
 
 def about(request):

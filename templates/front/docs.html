@@ -35,18 +35,64 @@
             In bash scripts, you can use <code>wget</code> or <code>curl</code> to run the requests:
         </p>
         <pre>
-curl http://healthchecks.io/ping/uuid-goes-here
+curl {{ ping_endpoint }}{uuid-goes-here}
 </pre>
 
         <h3>When Alerts Are Sent</h3>
         <p>
-            Each check has a configurable "Frequency" parameter, with default value of <strong>one day</strong>.
+            Each check has a configurable <strong>Frequency</strong> parameter, with the default value of one day.
+            For periodic tasks, this is the expected time gap between two runs.
         </p>
         <p>
-            When time since last ping exceeds the configured amount, the check is considered late.
-            When a check is <strong>1 hour late</strong>, Health Checks sends you an email alert.
+            Additionally, each check has a <strong>Grace</strong> parameter, with default value of one hour.
+            You can use this parameter to account for run time variance of tasks.
+            For example, if a backup task completes in 50 seconds one day, and
+            completes in 60 seconds the following day, you might not want to get
+            alerted because the backups are 10 seconds late.
         </p>
+        <p>Each check can be in one of the following states:</p>
 
+        <table class="table">
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-question-sign new"></span>
+                </td>
+                <td>
+                    <strong>New.</strong>
+                    A check that has been created, but has not received any pings yet.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-ok-sign up"></span>
+                </td>
+                <td>
+                    <strong>Up.</strong>
+                    Time since last ping has not exceeded <strong>Frequency</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-exclamation-sign grace"></span>
+                </td>
+                <td>
+                    <strong>Late.</strong>
+                    Time since last ping has exceeded <strong>Frequency</strong>,
+                    but has not yet exceeded <strong>Frequency</strong> + <strong>Grace</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-exclamation-sign down"></span>
+                </td>
+                <td>
+                    <strong>Down.</strong>
+                    Time since last ping has exceeded <strong>Frequency</strong> + <strong>Grace</strong>.
+                    When check goes from "Late" to "Down", healthchecks.io
+                    sends you an email alert.
+                </td>
+            </tr>
+        </table>
 
     </div>
 </div>
