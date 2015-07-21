@@ -19,7 +19,9 @@ def ping(request, code):
 
     check.save()
 
-    return HttpResponse("OK")
+    response = HttpResponse("OK")
+    response["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 def status(request, code):
