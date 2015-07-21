@@ -3,6 +3,8 @@ $(function () {
 
     var code = $("#check-code").text();
     var url = $("#pitch-url").text();
+    url = url.replace("http://", "//");
+
     var lastPing = null;
     var lastPingHuman = null;
 
