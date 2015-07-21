@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load humanize staticfiles %}
+{% load compress humanize staticfiles %}
 
 {% block containers %}
 <div class="index-bleed">
@@ -126,5 +126,9 @@
 {% endblock %}
 
 {% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/index.js' %}"></script>
+{% endcompress %}
 {% endblock %}

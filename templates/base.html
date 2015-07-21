@@ -6,14 +6,17 @@
     <meta name="description" content="Monitor and Get Notified When Your Cron Jobs Fail. Free alternative to Cronitor and Dead Man's Snitch.">
     <meta name="keywords" content="monitor cron jobs daemon background worker service cronjob monitoring crontab alert notify cronitor deadmanssnitch">
 
-    {% load staticfiles %}
     <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
+
+    {% load compress staticfiles %}
+    {% compress css %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/nouislider.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/nouislider.pips.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/pricing.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/syntax.css' %}" type="text/css">
+    {% endcompress %}
 </head>
 <body class="page-{{ page }}">
     <nav class="navbar navbar-default">
@@ -66,8 +69,6 @@
         </div>
     </footer>
 
-    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

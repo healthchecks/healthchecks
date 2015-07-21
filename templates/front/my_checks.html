@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load humanize staticfiles hc_extras %}
+{% load compress humanize staticfiles hc_extras %}
 
 {% block title %}My Checks - healthchecks.io{% endblock %}
 
@@ -224,7 +224,10 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/moment.min.js' %}"></script>
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>
 <script src="{% static 'js/checks.js' %}"></script>
+{% endcompress %}
 {% endblock %}
