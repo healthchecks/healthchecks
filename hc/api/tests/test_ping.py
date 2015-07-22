@@ -1,5 +1,4 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
 
 from hc.api.models import Check
 
@@ -7,10 +6,7 @@ from hc.api.models import Check
 class PingTestCase(TestCase):
 
     def test_it_works(self):
-        user = User(username="jdoe")
-        user.save()
-
-        check = Check(user=user)
+        check = Check()
         check.save()
 
         r = self.client.get("/ping/%s/" % check.code)
@@ -18,3 +14,11 @@ class PingTestCase(TestCase):
 
         same_check = Check.objects.get(code=check.code)
         assert same_check.status == "up"
+
+    def test_post_works(self):
+        check = Check()
+        check.save()
+
+        csrf_client = Client(enforce_csrf_checks=True)
+        r = csrf_client.post("/ping/%s/" % check.code)
+        assert r.status_code == 200

@@ -3,10 +3,12 @@ import json
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from hc.api.models import Check
 
 
+@csrf_exempt
 def ping(request, code):
     try:
         check = Check.objects.get(code=code)
