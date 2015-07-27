@@ -6,7 +6,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from hc.api.models import Check
+from hc.api.models import Check, Ping
 from hc.front.forms import TimeoutForm
 
 
@@ -147,3 +147,21 @@ def remove(request, code):
     check.delete()
 
     return redirect("hc-index")
+
+
+@login_required
+def log(request, code):
+
+    check = Check.objects.get(code=code)
+    if check.user != request.user:
+        return HttpResponseForbidden()
+
+    pings = Ping.objects.filter(owner=check).order_by("-created")[:100]
+
+    ctx = {
+        "check": check,
+        "pings": pings
+
+    }
+
+    return render(request, "front/log.html", ctx)

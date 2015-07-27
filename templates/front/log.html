@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load compress humanize staticfiles hc_extras %}
+
+{% block title %}My Checks - healthchecks.io{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+    <h1>Log for {{ check.name|default:check.code }}</h1>
+    {% if pings %}
+    <table class="table table-striped log-table">
+        <tr>
+            <th>Time</th>
+            <th>Remote IP</th>
+            <th>Method</th>
+            <th>User Agent</th>
+        </tr>
+        {% for ping in pings %}
+        <tr>
+            <td>
+                <span
+                    data-toggle="tooltip"
+                    title="{{ ping.created }}">
+                    {{ ping.created }}
+                </span>
+            </td>
+            <td class="remote-addr">{{ ping.remote_addr }}</td>
+            <td class="method">
+                <span class="label label-default">{{ ping.method }}</span>
+            </td>
+            <td class="ua">{{ ping.ua }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from datetime import timedelta as td
 import uuid
 
@@ -23,6 +25,9 @@ class Check(models.Model):
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
+
+    def __str__(self):
+        return "Check(%s)" % self.code
 
     def url(self):
         return settings.PING_ENDPOINT + str(self.code)
@@ -53,3 +58,12 @@ class Check(models.Model):
             return "grace"
 
         return "down"
+
+
+class Ping(models.Model):
+    owner = models.ForeignKey(Check)
+    created = models.DateTimeField(auto_now_add=True)
+    remote_addr = models.GenericIPAddressField()
+    method = models.CharField(max_length=10)
+    ua = models.CharField(max_length=100, blank=True)
+    body = models.TextField(blank=True)

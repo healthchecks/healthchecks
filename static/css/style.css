@@ -131,7 +131,7 @@ table.table tr > th.th-name {
     display: block;
 }
 
-.my-checks-name:hover {
+#checks-table tr:hover .my-checks-name {
     border: 1px dotted #AAA;
 }
 
@@ -142,6 +142,7 @@ table.table tr > th.th-name {
 
 .url-cell {
     font-size: small;
+    position: relative;
 }
 
 td.inactive .popover {
@@ -167,7 +168,7 @@ td.inactive .popover {
     display: block;
 }
 
-.timeout_grace:hover {
+#checks-table tr:hover .timeout_grace {
     border: 1px dotted #AAA;
 }
 
@@ -243,3 +244,8 @@ tr:hover .check-menu {
     font-weight: bold;
 }
 
+/* Log */
+
+.log-table .remote-addr, .log-table .ua {
+    font-family: monospace;
+}

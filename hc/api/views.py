@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-from hc.api.models import Check
+from hc.api.models import Check, Ping
 
 
 @csrf_exempt
@@ -20,6 +20,14 @@ def ping(request, code):
         check.status = "up"
 
     check.save()
+
+    ping = Ping(owner=check)
+    headers = request.META
+    ping.remote_addr = headers.get("X_REAL_IP", headers["REMOTE_ADDR"])
+    ping.method = headers["REQUEST_METHOD"]
+    ping.ua = headers.get("HTTP_USER_AGENT", "")
+    ping.body = request.body
+    ping.save()
 
     response = HttpResponse("OK")
     response["Access-Control-Allow-Origin"] = "*"

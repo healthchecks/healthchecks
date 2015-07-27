@@ -1,16 +1,18 @@
 from django.contrib import admin
 
-from hc.api.models import Check
+from hc.api.models import Check, Ping
 
 
 @admin.register(Check)
 class ChecksAdmin(admin.ModelAdmin):
+
     class Media:
         css = {
          'all': ('css/admin/checks.css',)
         }
 
-    list_display = ("id", "name", "created", "code", "status", "email", "last_ping")
+    list_display = ("id", "name", "created", "code", "status", "email",
+                    "last_ping")
     list_select_related = ("user", )
     actions = ["send_alert"]
 
@@ -24,3 +26,8 @@ class ChecksAdmin(admin.ModelAdmin):
         self.message_user(request, "%d alert(s) sent" % qs.count())
 
     send_alert.short_description = "Send Alert"
+
+
+@admin.register(Ping)
+class PingsAdmin(admin.ModelAdmin):
+    list_display = ("id", "created", "owner", "method", "ua")

@@ -76,6 +76,13 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
+                            <a href="{% url 'hc-log' check.code %}">
+                                <span class="glyphicon glyphicon-time"></span>
+                                Log
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
                             <a href="#" class="check-menu-remove"
                                 data-name="{{ check.name|default:check.code }}"
                                 data-url="{% url 'hc-remove-check' check.code %}">
