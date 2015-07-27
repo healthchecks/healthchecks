@@ -50,11 +50,14 @@
                 <div role="tabpanel" class="tab-pane" id="python">
                     {% include "front/snippets/python.html" %}
                 </div>
+                <div role="tabpanel" class="tab-pane" id="node">
+                    {% include "front/snippets/node.html" %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="php">
+                    {% include "front/snippets/php.html" %}
+                </div>
                 <div class="tab-pane" id="browser">
                     {% include "front/snippets/browser.html" %}
-                    <div class="welcome-browser-controls">
-                        <button id="run-it" class="btn btn-default">Run It!</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -62,38 +65,10 @@
 </div>
 </div>
 
+<div class="get-started-bleed">
 <div class="container">
     <div class="row">
-        <div id="welcome-status" class="col-sm-6">
-            <h2>Status
-            <small id="check-code">{{ check.code }}</small>
-            </h2>
-            <table class="table">
-                <tr>
-                    <th>Last ping</th>
-                    <th>Period</th>
-                    <th>Alert in</th>
-                </tr>
-                <tr>
-                    <td id="last-ping">
-                        {% if check.last_ping %}
-                            {{ check.last_ping|naturaltime }}
-                        {% else %}
-                            Never
-                        {% endif %}
-                    </td>
-                    <td>
-                        1 day
-                        (log in to change)
-                    </td>
-                    <td id="timer" data-timer="{{ timer}}">
-                        {{ timer_formatted }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <div id="get-started" class="col-sm-6">
+        <div id="get-started" class="col-sm-6 col-sm-offset-3">
             <h3>E-mail Address to Receive Alerts:</h3>
             <form action="{% url 'hc-login' %}" method="post">
                 {% csrf_token %}
@@ -121,12 +96,100 @@
         </div>
     </div>
 </div>
+</div>
+
+<div class="container">
+    <div class="row">
+    <div class="col-sm-12">
+        <h2 class="tour-title">A quick peek of what's inside:</h2>
+    </div>
+    </div>
+
+    <div class="row tour-section">
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/my_checks.png' %}" alt="My Checks page" />
+    </div>
+    <div class="col-sm-4">
+        <p>
+            A list of your checks, one for each Cron job, daemon or
+            periodically running task you want to monitor.
+        </p>
+        <p>
+            Give names to your checks to easily recognize them
+            later. Adjust Period and Grace time to match periodicity
+            and duration of your tasks.
+        </p>
+    </div>
+    </div>
+
+    <div class="row tour-section">
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/period_grace.png' %}" alt="Period/Grace Time dialog" />
+    </div>
+    <div class="col-sm-4">
+        Each check has configurable <strong>Period</strong> and <strong>Grace Time</strong> parameters.
+        Depending on these parameters and time since the last ping, the check is in one of the
+        following states:
+
+        <table class="table">
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-question-sign new"></span>
+                </td>
+                <td>
+                    New.
+                    A check that has been created, but has not received any pings yet.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-ok-sign up"></span>
+                </td>
+                <td>
+                    Up.
+                    Time since last ping has not exceeded <strong>Period</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-exclamation-sign grace"></span>
+                </td>
+                <td>
+                    Late.
+                    Time since last ping has exceeded <strong>Period</strong>,
+                    but has not yet exceeded <strong>Period</strong> + <strong>Grace</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-exclamation-sign down"></span>
+                </td>
+                <td>
+                    Down.
+                    Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
+                    When check goes from "Late" to "Down", HealthChecks
+                    sends you an email alert.
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    </div>
+
+</div>
+
+
+
+
 {% endblock %}
 
 {% block scripts %}
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/index.js' %}"></script>
 {% endcompress %}
 {% endblock %}

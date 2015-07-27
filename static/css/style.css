@@ -33,8 +33,13 @@ body {
 }
 
 .index-bleed {
-    background: #e5ece5;
+    background: #FFF;
     padding-bottom: 2em;
+}
+
+.get-started-bleed {
+    background: #e5ece5;
+    padding-bottom: 3em;
 }
 
 #pitch {
@@ -65,16 +70,8 @@ body {
     border-color: #dddddd;
 }
 
-#welcome-status, #get-started {
+#get-started {
     margin-top: 4em;
-}
-
-#welcome-status th {
-    border-top: 0;
-}
-
-.welcome-browser-controls {
-    text-align: right;
 }
 
 .glyphicon.up, .glyphicon.new, .glyphicon.grace, .glyphicon.down {
@@ -105,6 +102,15 @@ body {
 
 #login_dialog h1 {
     margin: 0;
+}
+
+.tour-title {
+    margin: 50px 0;
+}
+
+
+.tour-section {
+    margin-bottom: 50px;
 }
 
 /* Checks */
