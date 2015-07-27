@@ -1,5 +1,11 @@
 # healthchecks
 
+![Screenshot of Welcome page](/stuff/screenshots/welcome.png?raw=true "Welcome Page")
+
+![Screenshot of My Checks page](/stuff/screenshots/my_checks.png?raw=true "My Checks Page")
+
+![Screenshot of Period/Grace dialog](/stuff/screenshots/period_grace.png?raw=true "Period/Grace Dialog")
+
 healthchecks is a watchdog for your cron jobs. It's a web server that listens for pings from your cron jobs, plus a web interface.
 
 It is live here: [http://healthchecks.io/](http://healthchecks.io/)
