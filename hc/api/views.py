@@ -23,7 +23,7 @@ def ping(request, code):
 
     ping = Ping(owner=check)
     headers = request.META
-    ping.remote_addr = headers.get("X_REAL_IP", headers["REMOTE_ADDR"])
+    ping.remote_addr = headers.get("HTTP_X_REAL_IP", headers["REMOTE_ADDR"])
     ping.method = headers["REQUEST_METHOD"]
     ping.ua = headers.get("HTTP_USER_AGENT", "")
     ping.body = request.body
