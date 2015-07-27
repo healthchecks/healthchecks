@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row">
     <div class="col-sm-12">
-        <h1 id="pitch">Get Notified When Your Cron Jobs Fail</h1>
+        <h1 id="pitch">Cron Monitoring. Get Notified When Your Cron Jobs Fail</h1>
     </div>
     </div>
 
@@ -71,7 +71,7 @@
             <table class="table">
                 <tr>
                     <th>Last ping</th>
-                    <th>Frequency</th>
+                    <th>Period</th>
                     <th>Alert in</th>
                 </tr>
                 <tr>
@@ -82,11 +82,9 @@
                             Never
                         {% endif %}
                     </td>
-                    <td>1 day
-                        <span
-                            class="glyphicon glyphicon-question-sign"
-                            data-toggle="tooltip"
-                            title="Sign in to change frequency"></span>
+                    <td>
+                        1 day
+                        (log in to change)
                     </td>
                     <td id="timer" data-timer="{{ timer}}">
                         {{ timer_formatted }}

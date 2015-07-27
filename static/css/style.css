@@ -157,7 +157,7 @@ td.inactive .popover {
     margin-left: -77px;
 }
 
-#checks-table > tbody > tr > th.th-frequency {
+#checks-table > tbody > tr > th.th-period {
     padding-left: 15px;
 }
 
@@ -209,11 +209,11 @@ tr:hover .check-menu {
 
 }
 
-#frequency-slider {
+#period-slider {
     margin: 20px 50px 80px 50px;
 }
 
-#frequency-slider.noUi-connect {
+#period-slider.noUi-connect {
   background: #5cb85c;
 }
 
@@ -225,7 +225,7 @@ tr:hover .check-menu {
   background: #f0ad4e;
 }
 
-#frequency-slider .noUi-value, #grace-slider .noUi-value {
+#period-slider .noUi-value, #grace-slider .noUi-value {
     width: 60px;
     margin-left: -30px;
 }

@@ -40,7 +40,7 @@ curl {{ ping_endpoint }}{uuid-goes-here}
 
         <h3>When Alerts Are Sent</h3>
         <p>
-            Each check has a configurable <strong>Frequency</strong> parameter, with the default value of one day.
+            Each check has a configurable <strong>Period</strong> parameter, with the default value of one day.
             For periodic tasks, this is the expected time gap between two runs.
         </p>
         <p>
@@ -68,7 +68,7 @@ curl {{ ping_endpoint }}{uuid-goes-here}
                 </td>
                 <td>
                     <strong>Up.</strong>
-                    Time since last ping has not exceeded <strong>Frequency</strong>.
+                    Time since last ping has not exceeded <strong>Period</strong>.
                 </td>
             </tr>
             <tr>
@@ -77,8 +77,8 @@ curl {{ ping_endpoint }}{uuid-goes-here}
                 </td>
                 <td>
                     <strong>Late.</strong>
-                    Time since last ping has exceeded <strong>Frequency</strong>,
-                    but has not yet exceeded <strong>Frequency</strong> + <strong>Grace</strong>.
+                    Time since last ping has exceeded <strong>Period</strong>,
+                    but has not yet exceeded <strong>Period</strong> + <strong>Grace</strong>.
                 </td>
             </tr>
             <tr>
@@ -87,7 +87,7 @@ curl {{ ping_endpoint }}{uuid-goes-here}
                 </td>
                 <td>
                     <strong>Down.</strong>
-                    Time since last ping has exceeded <strong>Frequency</strong> + <strong>Grace</strong>.
+                    Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
                     When check goes from "Late" to "Down", healthchecks.io
                     sends you an email alert.
                 </td>

@@ -16,8 +16,8 @@ $(function () {
         return result;
     }
 
-    var frequencySlider = document.getElementById("frequency-slider");
-    noUiSlider.create(frequencySlider, {
+    var periodSlider = document.getElementById("period-slider");
+    noUiSlider.create(periodSlider, {
         start: [20],
         connect: "lower",
         range: {
@@ -37,9 +37,9 @@ $(function () {
         }
     });
 
-    frequencySlider.noUiSlider.on("update", function(a, b, value) {
+    periodSlider.noUiSlider.on("update", function(a, b, value) {
         var rounded = Math.round(value);
-        $("#frequency-slider-value").text(secsToText(rounded));
+        $("#period-slider-value").text(secsToText(rounded));
         $("#update-timeout-timeout").val(rounded);
     });
 
@@ -88,7 +88,7 @@ $(function () {
         var $this = $(this);
 
         $("#update-timeout-form").attr("action", $this.data("url"));
-        frequencySlider.noUiSlider.set($this.data("timeout"))
+        periodSlider.noUiSlider.set($this.data("timeout"))
         graceSlider.noUiSlider.set($this.data("grace"))
         $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
 
