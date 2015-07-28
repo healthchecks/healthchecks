@@ -22,3 +22,7 @@ class PingTestCase(TestCase):
         csrf_client = Client(enforce_csrf_checks=True)
         r = csrf_client.post("/ping/%s/" % check.code)
         assert r.status_code == 200
+
+    def test_it_handles_bad_uuid(self):
+        r = self.client.get("/ping/not-uuid/")
+        assert r.status_code == 400

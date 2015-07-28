@@ -4,7 +4,7 @@ from django.test import TestCase
 from hc.api.models import Check
 
 
-class UpdateNameTestCase(TestCase):
+class UpdateTimeoutTestCase(TestCase):
 
     def setUp(self):
         self.alice = User(username="alice")
@@ -15,32 +15,20 @@ class UpdateNameTestCase(TestCase):
         self.check.save()
 
     def test_it_works(self):
-        url = "/checks/%s/name/" % self.check.code
-        payload = {"name": "Alice Was Here"}
+        url = "/checks/%s/timeout/" % self.check.code
+        payload = {"timeout": 3600, "grace": 60}
 
         self.client.login(username="alice", password="password")
         r = self.client.post(url, data=payload)
         assert r.status_code == 302
 
         check = Check.objects.get(code=self.check.code)
-        assert check.name == "Alice Was Here"
-
-    def test_it_checks_ownership(self):
-
-        charlie = User(username="charlie")
-        charlie.set_password("password")
-        charlie.save()
-
-        url = "/checks/%s/name/" % self.check.code
-        payload = {"name": "Charlie Sent This"}
-
-        self.client.login(username="charlie", password="password")
-        r = self.client.post(url, data=payload)
-        assert r.status_code == 403
+        assert check.timeout.total_seconds() == 3600
+        assert check.grace.total_seconds() == 60
 
     def test_it_handles_bad_uuid(self):
-        url = "/checks/not-uuid/name/"
-        payload = {"name": "Alice Was Here"}
+        url = "/checks/not-uuid/timeout/"
+        payload = {"timeout": 3600, "grace": 60}
 
         self.client.login(username="alice", password="password")
         r = self.client.post(url, data=payload)

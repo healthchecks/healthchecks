@@ -5,10 +5,12 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
+from hc.api.decorators import uuid_or_400
 from hc.api.models import Check, Ping
 
 
 @csrf_exempt
+@uuid_or_400
 def ping(request, code):
     try:
         check = Check.objects.get(code=code)
@@ -34,6 +36,7 @@ def ping(request, code):
     return response
 
 
+@uuid_or_400
 def status(request, code):
     response = {
         "last_ping": None,

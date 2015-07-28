@@ -6,6 +6,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
+from hc.api.decorators import uuid_or_400
 from hc.api.models import Check, Ping
 from hc.front.forms import TimeoutForm
 
@@ -84,6 +85,7 @@ def add_check(request):
 
 
 @login_required
+@uuid_or_400
 def update_name(request, code):
     assert request.method == "POST"
 
@@ -98,6 +100,7 @@ def update_name(request, code):
 
 
 @login_required
+@uuid_or_400
 def update_timeout(request, code):
     assert request.method == "POST"
 
@@ -115,6 +118,7 @@ def update_timeout(request, code):
 
 
 @login_required
+@uuid_or_400
 def email_preview(request, code):
     """ A debug view to see how email will look.
 
@@ -137,6 +141,7 @@ def email_preview(request, code):
 
 
 @login_required
+@uuid_or_400
 def remove(request, code):
     assert request.method == "POST"
 
@@ -150,6 +155,7 @@ def remove(request, code):
 
 
 @login_required
+@uuid_or_400
 def log(request, code):
 
     check = Check.objects.get(code=code)
