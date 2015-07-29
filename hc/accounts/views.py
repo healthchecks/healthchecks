@@ -24,8 +24,12 @@ def _make_user(email):
 def _associate_demo_check(request, user):
     if "welcome_code" in request.session:
         check = Check.objects.get(code=request.session["welcome_code"])
-        check.user = user
-        check.save()
+
+        # Only associate demo check if it doesn't have an owner already.
+        if check.user is None:
+            check.user = user
+            check.save()
+            del request.session["welcome_code"]
 
 
 def _send_login_link(user):
