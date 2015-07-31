@@ -1,0 +1,79 @@
+{% load hc_extras humanize %}
+
+<ul id="checks-list" class="visible-xs">
+    {% for check in checks %}
+    <li>
+        <h2>
+            <span class="{% if not check.name %}unnamed{% endif %}">
+                {{ check.name|default:"unnamed" }}
+            </span>
+
+            <code>{{ check.code }}</code>
+        </h2>
+
+        <a
+            href="#"
+            class="btn remove-link check-menu-remove"
+            data-name="{{ check.name|default:check.code }}"
+            data-url="{% url 'hc-remove-check' check.code %}">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+
+        <table class="table">
+            <tr>
+                <th>Status</th>
+                <td>
+                    {% if check.get_status == "new" %}
+                        <span class="label label-default">NEW</span>
+                    {% elif check.get_status == "up" %}
+                        <span class="label label-success">UP</span>
+                    {% elif check.get_status == "grace" %}
+                        <span class="label label-warning">LATE</span>
+                    {% elif check.get_status == "down" %}
+                        <span class="label label-danger">DOWN</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Period</th>
+                <td>{{ check.timeout|hc_duration }}</td>
+            </tr>
+            <tr>
+                <th>Grace Time</th>
+                <td>{{ check.grace|hc_duration }}</td>
+            </tr>
+            <tr>
+                <th>Last Ping</th>
+                <td>
+                    {% if check.last_ping %}
+                        {{ check.last_ping|naturaltime }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+
+        <div>
+            <a
+                href="#"
+                data-name="{{ check.name }}"
+                data-url="{% url 'hc-update-name' check.code %}"
+                class="btn btn-default my-checks-name">
+                Rename
+            </a>
+
+            <a
+                href="#"
+                data-url="{% url 'hc-update-timeout' check.code %}"
+                data-timeout="{{ check.timeout.total_seconds }}"
+                data-grace="{{ check.grace.total_seconds }}"
+                class="btn btn-default timeout-grace">Change Period</a>
+
+            <a href="{% url 'hc-log' check.code %}" class="btn btn-default">Log</a>
+        </div>
+
+    </li>
+    {% endfor %}
+</ul>

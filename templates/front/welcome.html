@@ -30,13 +30,13 @@
                 <li>
                     <a href="#python" data-toggle="tab">Python</a>
                 </li>
-                <li>
+                <li class="hidden-xs">
                     <a href="#node" data-toggle="tab">Node.js</a>
                 </li>
-                <li>
+                <li class="hidden-xs">
                     <a href="#php" data-toggle="tab">PHP</a>
                 </li>
-                <li>
+                <li class="hidden-xs">
                     <a href="#browser" data-toggle="tab">Browser</a>
                 </li>
             </ul>
@@ -187,9 +187,4 @@
 
 {% endblock %}
 
-{% block scripts %}
-{% compress js %}
-<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-{% endcompress %}
-{% endblock %}
+

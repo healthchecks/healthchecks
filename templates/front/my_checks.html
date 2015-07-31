@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress humanize staticfiles hc_extras %}
+{% load compress staticfiles %}
 
 {% block title %}My Checks - healthchecks.io{% endblock %}
 
@@ -9,94 +9,8 @@
     <div class="col-sm-12">
     <h1>My Checks</h1>
     {% if checks %}
-    <table id="checks-table" class="table table-hover">
-        <tr>
-            <th></th>
-            <th class="th-name">Name</th>
-            <th>URL</th>
-            <th class="th-period">
-                Period <br />
-                <span class="checks-subline">Grace</span>
-            </th>
-            <th>Last Ping</th>
-            <th></th>
-        </tr>
-        {% for check in checks %}
-        <tr class="checks-row">
-            <td class="indicator-cell">
-                {% if check.get_status == "new" %}
-                    <span class="glyphicon glyphicon-question-sign new"></span>
-                {% elif check.get_status == "up" %}
-                    <span class="glyphicon glyphicon-ok-sign up"></span>
-                {% elif check.get_status == "grace" %}
-                    <span class="glyphicon glyphicon-exclamation-sign grace"></span>
-                {% elif check.get_status == "down" %}
-                    <span class="glyphicon glyphicon-exclamation-sign down"></span>
-                {% endif %}
-            </td>
-            <td class="name-cell">
-                <span
-                    data-name="{{ check.name }}"
-                    data-url="{% url 'hc-update-name' check.code %}"
-                    class="my-checks-name {% if not check.name %}unnamed{% endif %}">
-                    {{ check.name|default:"unnamed" }}
-                </span>
-            </td>
-            <td class="url-cell">
-                <code>{{ check.url }}</code>
-            </td>
-            <td class="timeout-cell inactive">
-                <span
-                    data-url="{% url 'hc-update-timeout' check.code %}"
-                    data-timeout="{{ check.timeout.total_seconds }}"
-                    data-grace="{{ check.grace.total_seconds }}"
-                    class="timeout_grace">
-                    {{ check.timeout|hc_duration }}
-                    <br />
-                    <span class="checks-subline">
-                    {{ check.grace|hc_duration }}
-                    </span>
-                </span>
-            </td>
-            <td>
-            {% if check.last_ping %}
-                <span
-                    data-toggle="tooltip"
-                    title="{{ check.last_ping }}">
-                    {{ check.last_ping|naturaltime }}
-                </span>
-            {% else %}
-                Never
-            {% endif %}
-            </td>
-            <td>
-                <div class="check-menu dropdown">
-                    <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="{% url 'hc-log' check.code %}">
-                                <span class="glyphicon glyphicon-time"></span>
-                                Log
-                            </a>
-                        </li>
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a href="#" class="check-menu-remove"
-                                data-name="{{ check.name|default:check.code }}"
-                                data-url="{% url 'hc-remove-check' check.code %}">
-                                <span class="glyphicon glyphicon-trash"></span>
-                                Remove
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-
-    </table>
+        {% include "front/my_checks_mobile.html" %}
+        {% include "front/my_checks_desktop.html" %}
     {% else %}
     <div class="alert alert-info">You don't have any checks yet.</div>
     {% endif %}

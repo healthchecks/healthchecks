@@ -80,11 +80,12 @@ $(function () {
         $("#update-name-form").attr("action", $this.data("url"));
         $("#update-name-input").val($this.data("name"));
         $('#update-name-modal').modal("show");
+        $("#update-name-input").focus();
 
         return false;
     });
 
-    $(".timeout_grace").click(function() {
+    $(".timeout-grace").click(function() {
         var $this = $(this);
 
         $("#update-timeout-form").attr("action", $this.data("url"));

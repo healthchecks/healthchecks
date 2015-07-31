@@ -5,6 +5,7 @@
     <title>{% block title %}healthchecks.io - Get Notified When Your Cron Jobs Fail{% endblock %}</title>
     <meta name="description" content="Monitor and Get Notified When Your Cron Jobs Fail. Free alternative to Cronitor and Dead Man's Snitch.">
     <meta name="keywords" content="monitor cron jobs daemon background worker service cronjob monitoring crontab alert notify cronitor deadmanssnitch webhook">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
 
@@ -14,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'css/nouislider.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/nouislider.pips.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/checks-list.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/pricing.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/syntax.css' %}" type="text/css">
     {% endcompress %}
@@ -22,37 +24,50 @@
     <nav class="navbar navbar-default">
         <div class="container">
         <div class="navbar-header">
+            <button
+                type="button"
+                class="navbar-toggle collapsed"
+                data-toggle="collapse"
+                data-target="#navbar"
+                aria-expanded="false"
+                aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
             <a class="navbar-brand" href="{% url 'hc-index' %}">Health Checks</a>
         </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li {% if page == 'pricing' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-pricing' %}">Pricing</a>
+                </li>
 
-        <ul class="nav navbar-nav">
-            <li {% if page == 'pricing' %} class="active" {% endif %}>
-                <a href="{% url 'hc-pricing' %}">Pricing</a>
-            </li>
+                <li {% if page == 'docs' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-docs' %}">Docs</a>
+                </li>
 
-            <li {% if page == 'docs' %} class="active" {% endif %}>
-                <a href="{% url 'hc-docs' %}">Docs</a>
-            </li>
-
-            <li {% if page == 'about' %} class="active" {% endif %}>
-                <a href="{% url 'hc-about' %}">About</a>
-            </li>
-        </ul>
+                <li {% if page == 'about' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-about' %}">About</a>
+                </li>
+            </ul>
 
 
-        <ul class="nav navbar-nav navbar-right">
-        {% if request.user.is_authenticated %}
-        {% else %}
-            <li><a href="{% url 'hc-login' %}">Log In</a></li>
-        {% endif %}
-        </ul>
+            {% if request.user.is_authenticated %}
+            {% else %}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'hc-login' %}">Log In</a></li>
+            </ul>
+            {% endif %}
 
-        {% if request.user.is_authenticated %}
-        <p class="navbar-text navbar-right">
-            {{ request.user.email }}
-            <a href="{% url 'hc-logout' %}">Log Out</a>
-        </p>
-        {% endif %}
+            {% if request.user.is_authenticated %}
+            <p class="navbar-text navbar-right">
+                {{ request.user.email }}
+                <a href="{% url 'hc-logout' %}">Log Out</a>
+            </p>
+            {% endif %}
+        </div>
 
         </div>
     </nav>
@@ -69,6 +84,12 @@
         </div>
     </footer>
 
-    {% block scripts %}{% endblock %}
+
+    {% block scripts %}
+    {% compress js %}
+    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% endcompress %}
+    {% endblock %}
 </body>
 </html>

@@ -1,0 +1,45 @@
+#checks-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 48px;
+}
+
+#checks-list li {
+    margin-bottom: 48px;
+    position: relative;
+}
+
+#checks-list h2 {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+#checks-list h2 .glyphicon {
+    position: relative;
+    top: 11px;
+    margin: 0 10px;
+
+}
+
+#checks-list h2 code {
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+    padding: 0;
+}
+
+#checks-list .remove-link {
+    color: #AAA;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#checks-list .unnamed {
+    color: #999;
+    font-style: italic;
+}
+
+#checks-list th {
+    width: 100px;
+}

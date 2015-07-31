@@ -9,6 +9,7 @@
     <div class="col-sm-12">
     <h1>Log for {{ check.name|default:check.code }}</h1>
     {% if pings %}
+    <div class="table-responsive">
     <table class="table table-striped log-table">
         <tr>
             <th>Time</th>
@@ -33,6 +34,7 @@
         </tr>
         {% endfor %}
     </table>
+    </div>
     {% else %}
         <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
     {% endif %}

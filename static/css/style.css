@@ -131,7 +131,7 @@ table.table tr > th.th-name {
     vertical-align: middle;
 }
 
-.my-checks-name {
+#checks-table .my-checks-name {
     border: 1px solid rgba(0, 0, 0, 0);
     padding: 6px;
     display: block;
@@ -168,13 +168,13 @@ td.inactive .popover {
     padding-left: 15px;
 }
 
-.timeout_grace {
+#checks-table .timeout-grace {
     border: 1px solid rgba(0, 0, 0, 0);
     padding: 6px;
     display: block;
 }
 
-#checks-table tr:hover .timeout_grace {
+#checks-table tr:hover .timeout-grace {
     border: 1px dotted #AAA;
 }
 
