@@ -8,10 +8,10 @@ $(function () {
         var w = total;
 
         var result = "";
-        if (w) result += w + (w == 1 ? " week " : " weeks ");
-        if (d) result += d + (d == 1 ? " day " : " days ");
-        if (h) result += h + (h == 1 ? " hour " : " hours ");
-        if (m) result += m + (m == 1 ? " minute " : " minutes ");
+        if (w) result += w + (w === 1 ? " week " : " weeks ");
+        if (d) result += d + (d === 1 ? " day " : " days ");
+        if (h) result += h + (h === 1 ? " hour " : " hours ");
+        if (m) result += m + (m === 1 ? " minute " : " minutes ");
 
         return result;
     }
