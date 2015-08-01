@@ -39,6 +39,9 @@
                 <li class="hidden-xs">
                     <a href="#browser" data-toggle="tab">Browser</a>
                 </li>
+                <li class="hidden-xs">
+                    <a href="#email" data-toggle="tab">Email</a>
+                </li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="crontab">
@@ -58,6 +61,16 @@
                 </div>
                 <div class="tab-pane" id="browser">
                     {% include "front/snippets/browser.html" %}
+                </div>
+                <div class="tab-pane" id="email">
+                    <div class="instructions">
+                        As an alternative to HTTP/HTTPS requests,
+                        you can "ping" this check by sending an
+                        email message to
+                        <div class="email-address">
+                            <a href="mailto:{{ check.email }}">{{ check.email }}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

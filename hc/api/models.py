@@ -32,6 +32,9 @@ class Check(models.Model):
     def url(self):
         return settings.PING_ENDPOINT + str(self.code)
 
+    def email(self):
+        return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
+
     def send_alert(self):
         ctx = {
             "check": self,

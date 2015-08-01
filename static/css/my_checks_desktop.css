@@ -1,0 +1,62 @@
+.my-checks-name.unnamed {
+    color: #999;
+    font-style: italic;
+}
+
+
+table.table tr > th.th-name {
+    padding-left: 21px;
+}
+
+#checks-table .indicator-cell {
+    text-align: center;
+}
+
+#checks-table th {
+    border-top: 0;
+}
+
+#checks-table td {
+    vertical-align: middle;
+}
+
+#checks-table .my-checks-name {
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 6px;
+    display: block;
+}
+
+#checks-table tr:hover .my-checks-name {
+    border: 1px dotted #AAA;
+}
+
+.url-cell {
+    font-size: small;
+    position: relative;
+}
+
+#checks-table > tbody > tr > th.th-period {
+    padding-left: 15px;
+}
+
+#checks-table .timeout-grace {
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 6px;
+    display: block;
+}
+
+#checks-table tr:hover .timeout-grace {
+    border: 1px dotted #AAA;
+}
+
+.checks-subline {
+    color: #888;
+}
+
+.check-menu {
+    visibility: hidden;
+}
+
+tr:hover .check-menu {
+    visibility: visible;
+}

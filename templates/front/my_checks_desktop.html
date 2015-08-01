@@ -36,7 +36,7 @@
         <td class="url-cell">
             <code>{{ check.url }}</code>
         </td>
-        <td class="timeout-cell inactive">
+        <td class="timeout-cell">
             <span
                 data-url="{% url 'hc-update-timeout' check.code %}"
                 data-timeout="{{ check.timeout.total_seconds }}"

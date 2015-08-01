@@ -21,19 +21,9 @@ def _welcome(request):
         code = request.session["welcome_code"]
         check = Check.objects.get(code=code)
 
-    if check.alert_after:
-        duration = check.alert_after - timezone.now()
-        timer = int(duration.total_seconds())
-        timer_formatted = "%dh %dm %ds" % (timer / 3600, (timer / 60) % 60, timer % 60)
-    else:
-        timer = 0
-        timer_formatted = "Never"
-
     ctx = {
         "page": "welcome",
         "check": check,
-        "timer": timer,
-        "timer_formatted": timer_formatted,
         "ping_url": check.url()
     }
 

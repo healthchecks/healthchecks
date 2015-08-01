@@ -1,0 +1,58 @@
+#update-timeout-modal .modal-body {
+    padding-top: 40px;
+}
+
+.update-timeout-info {
+    line-height: 22px;
+}
+
+.update-timeout-label {
+    position: relative;
+    right: 3px;
+    display: inline-block;
+    text-align: right;
+    width: 100px;
+}
+
+.update-timeout-value {
+    font-size: 22px;
+    display: inline-block;
+    width: 100px;
+    text-align: left;
+    white-space: nowrap;
+
+}
+
+#period-slider {
+    margin: 20px 50px 80px 50px;
+}
+
+#period-slider.noUi-connect {
+  background: #5cb85c;
+}
+
+#grace-slider {
+    margin: 20px 50px 110px 50px;
+}
+
+#grace-slider.noUi-connect {
+  background: #f0ad4e;
+}
+
+#period-slider .noUi-value, #grace-slider .noUi-value {
+    width: 60px;
+    margin-left: -30px;
+}
+
+.update-timeout-terms {
+    color: #999;
+}
+
+.update-timeout-terms p {
+    margin: 0;
+}
+
+
+.update-timeout-terms span {
+    font-weight: bold;
+}

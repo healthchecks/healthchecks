@@ -1,0 +1,59 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px;
+    color: #AAA;
+    text-align: center;
+}
+
+.navbar-nav {
+    text-transform: uppercase;
+    font-size: small;
+}
+
+.navbar-text {
+    font-size: small;
+}
+
+.glyphicon.up, .glyphicon.new, .glyphicon.grace, .glyphicon.down {
+    font-size: 22px;
+}
+
+.glyphicon.up {
+    color: #5cb85c;
+}
+
+.glyphicon.new {
+    color: #AAA;
+}
+
+.glyphicon.grace {
+    color: #f0ad4e;
+}
+
+.glyphicon.down {
+    color: #d9534f;
+}
+
+#login_dialog {
+    background: #FFF;
+    padding: 2em;
+    margin-top: 100px;
+}
+
+#login_dialog h1 {
+    margin: 0;
+}
