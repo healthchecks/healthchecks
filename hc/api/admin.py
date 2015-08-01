@@ -3,6 +3,21 @@ from django.contrib import admin
 from hc.api.models import Check, Ping
 
 
+class OwnershipListFilter(admin.SimpleListFilter):
+    title = "Ownership"
+    parameter_name = 'ownership'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('assigned', "Assigned"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'assigned':
+            return queryset.filter(user__isnull=False)
+        return queryset
+
+
 @admin.register(Check)
 class ChecksAdmin(admin.ModelAdmin):
 
@@ -15,6 +30,8 @@ class ChecksAdmin(admin.ModelAdmin):
                     "last_ping")
     list_select_related = ("user", )
     actions = ["send_alert"]
+
+    list_filter = ("status", OwnershipListFilter)
 
     def email(self, obj):
         return obj.user.email if obj.user else None
@@ -30,4 +47,12 @@ class ChecksAdmin(admin.ModelAdmin):
 
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
-    list_display = ("id", "created", "owner", "method", "ua")
+    list_select_related = ("owner", )
+    list_display = ("id", "created", "check_name", "email", "scheme", "method",
+                    "ua")
+
+    def check_name(self, obj):
+        return obj.owner.name if obj.owner.name else obj.owner.code
+
+    def email(self, obj):
+        return obj.owner.user.email if obj.owner.user else None
