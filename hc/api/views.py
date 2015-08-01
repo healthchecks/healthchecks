@@ -40,10 +40,13 @@ def ping(request, code):
 
 @csrf_exempt
 def handle_email(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest()
+
     events = json.loads(request.POST["mandrill_events"])
     for event in events:
-        for to_address in event["msg"]["to"]:
-            code, domain = to_address.split("@")
+        for recipient_address, recipient_name in event["msg"]["to"]:
+            code, domain = recipient_address.split("@")
             try:
                 check = Check.objects.get(code=code)
             except ValueError:

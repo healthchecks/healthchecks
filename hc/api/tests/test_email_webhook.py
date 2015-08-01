@@ -15,7 +15,10 @@ class EmailTestCase(TestCase):
             "event": "inbound",
             "msg": {
                 "raw_msg": "This is raw message",
-                "to": ["somewhere@example.com", "%s@example.com" % check.code]
+                "to": [
+                    ["somewhere@example.com", "Somebody"],
+                    ["%s@example.com" % check.code, "Healthchecks"]
+                ]
             }
         }]
 
@@ -29,3 +32,7 @@ class EmailTestCase(TestCase):
         pings = list(Ping.objects.all())
         assert pings[0].scheme == "email"
         assert pings[0].body == "This is raw message"
+
+    def test_it_rejects_get(self):
+        r = self.client.get("/handle_email/")
+        assert r.status_code == 400
