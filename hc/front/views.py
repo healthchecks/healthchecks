@@ -53,9 +53,17 @@ def pricing(request):
 
 
 def docs(request):
+    if "welcome_code" in request.session:
+        code = request.session["welcome_code"]
+        check = Check.objects.get(code=code)
+    else:
+        check = Check(code="uuid-goes-here")
+
     ctx = {
         "page": "docs",
-        "ping_endpoint": settings.PING_ENDPOINT
+        "ping_endpoint": settings.PING_ENDPOINT,
+        "check": check,
+        "ping_url": check.url()
     }
 
     return render(request, "front/docs.html", ctx)

@@ -83,9 +83,13 @@ def check_token(request, username, token):
     user = authenticate(username=username, password=token)
     if user is not None:
         if user.is_active:
+            # This should get rid of "welcome_code" in session
+            request.session.flush()
+
             user.set_unusable_password()
             user.save()
             auth_login(request, user)
+
             return redirect("hc-index")
 
     return render(request, "bad_link.html")
