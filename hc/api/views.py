@@ -26,6 +26,7 @@ def ping(request, code):
     ping = Ping(owner=check)
     headers = request.META
     ping.remote_addr = headers.get("HTTP_X_REAL_IP", headers["REMOTE_ADDR"])
+    ping.scheme = headers.get("HTTP_X_SCHEME", "http")
     ping.method = headers["REQUEST_METHOD"]
     # If User-Agent is longer than 200 characters, truncate it:
     ping.ua = headers.get("HTTP_USER_AGENT", "")[:200]
@@ -34,6 +35,34 @@ def ping(request, code):
 
     response = HttpResponse("OK")
     response["Access-Control-Allow-Origin"] = "*"
+    return response
+
+
+@csrf_exempt
+def handle_email(request):
+    events = json.loads(request.POST["mandrill_events"])
+    for event in events:
+        for to_address in event["msg"]["to"]:
+            code, domain = to_address.split("@")
+            try:
+                check = Check.objects.get(code=code)
+            except ValueError:
+                continue
+            except Check.DoesNotExist:
+                continue
+
+            check.last_ping = timezone.now()
+            if check.status == "new":
+                check.status = "up"
+
+            check.save()
+
+            ping = Ping(owner=check)
+            ping.scheme = "email"
+            ping.body = event["msg"]["raw_msg"]
+            ping.save()
+
+    response = HttpResponse("OK")
     return response
 
 

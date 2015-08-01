@@ -63,7 +63,8 @@ class Check(models.Model):
 class Ping(models.Model):
     owner = models.ForeignKey(Check)
     created = models.DateTimeField(auto_now_add=True)
-    remote_addr = models.GenericIPAddressField()
-    method = models.CharField(max_length=10)
+    scheme = models.CharField(max_length=10, default="http")
+    remote_addr = models.GenericIPAddressField(blank=True, null=True)
+    method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
     body = models.TextField(blank=True)

@@ -15,6 +15,9 @@ class PingTestCase(TestCase):
         same_check = Check.objects.get(code=check.code)
         assert same_check.status == "up"
 
+        pings = list(Ping.objects.all())
+        assert pings[0].scheme == "http"
+
     def test_post_works(self):
         check = Check()
         check.save()
