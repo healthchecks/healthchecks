@@ -65,5 +65,5 @@ class Ping(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     remote_addr = models.GenericIPAddressField()
     method = models.CharField(max_length=10)
-    ua = models.CharField(max_length=100, blank=True)
+    ua = models.CharField(max_length=200, blank=True)
     body = models.TextField(blank=True)

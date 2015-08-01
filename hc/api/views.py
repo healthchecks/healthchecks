@@ -27,7 +27,8 @@ def ping(request, code):
     headers = request.META
     ping.remote_addr = headers.get("HTTP_X_REAL_IP", headers["REMOTE_ADDR"])
     ping.method = headers["REQUEST_METHOD"]
-    ping.ua = headers.get("HTTP_USER_AGENT", "")
+    # If User-Agent is longer than 200 characters, truncate it:
+    ping.ua = headers.get("HTTP_USER_AGENT", "")[:200]
     ping.body = request.body
     ping.save()
 
