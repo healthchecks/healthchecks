@@ -4,7 +4,10 @@
     <tr>
         <th></th>
         <th class="th-name">Name</th>
-        <th>URL</th>
+        <th>
+            <a id="show-urls" class="active" href="#">URL</a>
+            <a id="show-emails" href="#">Email</a>
+        </th>
         <th class="th-period">
             Period <br />
             <span class="checks-subline">Grace</span>
@@ -34,7 +37,8 @@
             </span>
         </td>
         <td class="url-cell">
-            <code>{{ check.url }}</code>
+            <code class="my-checks-url">{{ check.url }}</code>
+            <code class="my-checks-email">{{ check.email }}</code>
         </td>
         <td class="timeout-cell">
             <span

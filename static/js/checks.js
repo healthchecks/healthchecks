@@ -106,5 +106,21 @@ $(function () {
         return false;
     });
 
+    $("#show-urls").click(function() {
+        $("#show-urls").addClass("active");
+        $(".my-checks-url").show();
+
+        $("#show-emails").removeClass("active");
+        $(".my-checks-email").hide();
+    });
+
+    $("#show-emails").click(function() {
+        $("#show-urls").removeClass("active");
+        $(".my-checks-url").hide();
+
+        $("#show-emails").addClass("active");
+        $(".my-checks-email").show();
+    });
+
 
 });
