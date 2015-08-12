@@ -1,0 +1,47 @@
+{% load compress humanize staticfiles hc_extras %}
+
+<form method="post">
+{% csrf_token %}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+    <h4 class="update-timeout-title">Assign Checks to Channel {{ channel.value }}</h4>
+</div>
+
+<input type="hidden" name="channel" value="{{ channel.code }}" />
+<table class="table channel-checks-table">
+    <tr>
+        <th class="check-all-cell">
+            <input
+                id="toggle-all"
+                type="checkbox"
+                class="toggle" />
+        </th>
+        <th class="check-all-cell">
+            Check / Uncheck All
+        </th>
+    </tr>
+    {% for check in checks %}
+    <tr>
+        <td>
+            <input
+                type="checkbox"
+                class="toggle"
+                data-toggle="checkbox-x"
+                {% if check.code in assigned %} checked {% endif %}
+                name="check-{{ check.code }}">
+
+        </td>
+        <td>
+            {{ check.name|default:check.code }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button type="submit" class="btn btn-primary">Save</button>
+</div>
+</form>
+

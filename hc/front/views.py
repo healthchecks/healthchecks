@@ -7,8 +7,8 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from hc.api.decorators import uuid_or_400
-from hc.api.models import Check, Ping
-from hc.front.forms import TimeoutForm
+from hc.api.models import Channel, Check, Ping
+from hc.front.forms import AddChannelForm, TimeoutForm
 
 
 def _welcome(request):
@@ -79,6 +79,9 @@ def add_check(request):
 
     check = Check(user=request.user)
     check.save()
+
+    check.assign_all_channels()
+
     return redirect("hc-index")
 
 
@@ -169,3 +172,67 @@ def log(request, code):
     }
 
     return render(request, "front/log.html", ctx)
+
+
+@login_required
+def channels(request):
+    if request.method == "POST":
+        code = request.POST["channel"]
+        channel = Channel.objects.get(code=code)
+        assert channel.user == request.user
+
+        channel.checks = []
+        print (request.POST)
+        for key in request.POST:
+            if key.startswith("check-"):
+                code = key[6:]
+                check = Check.objects.get(code=code)
+                assert check.user == request.user
+                channel.checks.add(check)
+
+        channel.save()
+        return redirect("hc-channels")
+
+
+    channels = Channel.objects.filter(user=request.user).order_by("created")
+    num_checks = Check.objects.filter(user=request.user).count()
+
+    ctx = {
+        "channels": channels,
+        "num_checks": num_checks
+
+    }
+    return render(request, "front/channels.html", ctx)
+
+
+@login_required
+def add_channel(request):
+    assert request.method == "POST"
+    form = AddChannelForm(request.POST)
+    if form.is_valid():
+        channel = form.save(commit=False)
+        channel.user = request.user
+        channel.save()
+
+        checks = Check.objects.filter(user=request.user)
+        channel.checks.add(*checks)
+        channel.save()
+
+    return redirect("hc-channels")
+
+
+@login_required
+@uuid_or_400
+def channel_checks(request, code):
+
+    channel = Channel.objects.get(code=code)
+    assigned = set([check.code for check in channel.checks.all()])
+    checks = Check.objects.filter(user=request.user).order_by("created")
+
+    ctx = {
+        "checks": checks,
+        "assigned": assigned,
+        "channel": channel
+    }
+
+    return render(request, "front/channel_checks.html", ctx)

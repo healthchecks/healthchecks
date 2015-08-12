@@ -1,0 +1,44 @@
+.channels-table {
+    margin-top: 36px;
+}
+
+table.channels-table > tbody > tr > th {
+    border-top: 0;
+}
+
+.channels-table .channels-add-title {
+    border-top: 0;
+    padding-top: 20px
+}
+
+.channels-table .channels-add-help {
+    color: #888;
+    border-top: 0;
+}
+
+.word-up {
+    color: #5cb85c;
+    font-weight: bold
+}
+
+.word-down {
+    color: #d9534f;
+    font-weight: bold
+}
+
+.preposition {
+    color: #888;
+}
+
+.channel-unconfirmed {
+    font-size: small;
+}
+
+.channels-help-hidden {
+    display: none;
+}
+
+.channels-table .channels-num-checks {
+    padding-left: 40px;
+}
+

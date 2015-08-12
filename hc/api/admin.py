@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from hc.api.models import Check, Ping
+from hc.api.models import Channel, Check, Ping
 
 
 class OwnershipListFilter(admin.SimpleListFilter):
@@ -56,3 +56,9 @@ class PingsAdmin(admin.ModelAdmin):
 
     def email(self, obj):
         return obj.owner.user.email if obj.owner.user else None
+
+
+@admin.register(Channel)
+class ChannelsAdmin(admin.ModelAdmin):
+    list_select_related = ("user", )
+    list_display = ("id", "code", "user", "kind", "value")

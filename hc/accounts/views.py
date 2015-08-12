@@ -9,7 +9,7 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 
 from hc.accounts.forms import EmailForm
-from hc.api.models import Check
+from hc.api.models import Channel, Check
 from hc.lib.emails import send
 
 
@@ -17,6 +17,13 @@ def _make_user(email):
     username = str(uuid.uuid4())[:30]
     user = User(username=username, email=email)
     user.save()
+
+    channel = Channel()
+    channel.user = user
+    channel.kind = "email"
+    channel.value = email
+    channel.email_verified = True
+    channel.save()
 
     return user
 
@@ -29,6 +36,9 @@ def _associate_demo_check(request, user):
         if check.user is None:
             check.user = user
             check.save()
+
+            check.assign_all_channels()
+
             del request.session["welcome_code"]
 
 

@@ -13,6 +13,8 @@ from hc.lib.emails import send
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"))
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
+CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
+                 ("pd", "PagerDuty"))
 
 
 class Check(models.Model):
@@ -62,6 +64,11 @@ class Check(models.Model):
 
         return "down"
 
+    def assign_all_channels(self):
+        for channel in Channel.objects.filter(user=self.user):
+            channel.checks.add(self)
+            channel.save()
+
 
 class Ping(models.Model):
     owner = models.ForeignKey(Check)
@@ -71,3 +78,13 @@ class Ping(models.Model):
     method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
     body = models.TextField(blank=True)
+
+
+class Channel(models.Model):
+    code = models.UUIDField(default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User)
+    created = models.DateTimeField(auto_now_add=True)
+    kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
+    value = models.CharField(max_length=200, blank=True)
+    email_verified = models.BooleanField(default=False)
+    checks = models.ManyToManyField(Check)

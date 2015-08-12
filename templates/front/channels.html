@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load compress humanize staticfiles hc_extras %}
+
+{% block title %}Notification Channels - healthchecks.io{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+    <h1>Notification Channels</h1>
+    <table class="table channels-table">
+        <tr>
+            <th>Type</th>
+            <th>Value</th>
+            <th>Assigned Checks</th>
+            <th></th>
+        </tr>
+        {% for ch in channels %}
+        <tr>
+            <td>
+            {% if ch.kind == "email" %} Email {% endif %}
+            {% if ch.kind == "webhook" %} Webhook {% endif %}
+            {% if ch.kind == "pd" %} PagerDuty {% endif %}
+            </td>
+            <td>
+                <span class="preposition">
+                {% if ch.kind == "email" %} to {% endif %}
+                {% if ch.kind == "pd" %} service key {% endif %}
+                </span>
+
+                {{ ch.value }}
+
+                {% if ch.kind == "email" and not ch.email_verified %}
+                <span class="channel-unconfirmed">(unconfirmed)
+                {% endif %}
+            </td>
+            <td class="channels-num-checks">
+                <a
+                    class="edit-checks"
+                    href="{% url 'hc-channel-checks' ch.code %}">
+                    {{ ch.checks.count }} of {{ num_checks }}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="2" class="channels-add-title">
+                Add Notification Channel
+            </th>
+        </tr>
+        <tr>
+            <form method="post" action="{% url 'hc-add-channel' %}">
+            <td>
+                <select id="add-check-kind" class="form-control" name="kind">
+                    <option value="email">Email</option>
+                    <option value="webhook">Webhook</option>
+                    <option value="pd">PagerDuty</option>
+                </select>
+            </td>
+            <td class="form-inline">
+                {% csrf_token %}
+                <input
+                    id="add-check-value"
+                    name="value"
+                    class="form-control"
+                    type="text"
+                    placeholder="address@example.org" />
+                <button type="submit" class="btn btn-success">Add</button>
+            </td>
+            <td>
+
+            </td>
+            </form>
+        </tr>
+        <tr>
+            <td colspan="3" class="channels-add-help">
+                <p class="email">
+                    Healthchecks.io will send an email to the specified
+                    address when a check goes
+                    <span class="word-up">up</span> or <span class="word-down">down</span>.
+                </p>
+                <p class="channels-help-hidden webhook">
+                    Healthchecks.io will request the specified URL when
+                    a check goes
+                    <span class="word-down">down</span>.
+                </p>
+                <p class="channels-help-hidden pd">
+                    Healthchecks.io will create an incident on PagerDuty  when
+                    a check goes
+                    <span class="word-down">down</span> and will resolve it
+                    when same check goes <span class="word-up">up</span>
+                </p>
+            </td>
+        </tr>
+
+    </table>
+    </div>
+</div>
+
+<div id="checks-modal" class="modal">
+    <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/channels.js' %}"></script>
+{% endcompress %}
+{% endblock %}
