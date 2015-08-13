@@ -4,7 +4,7 @@ python:
   - "3.4"
 install:
     - pip install -r requirements.txt
-    - pip install coveralls
+    - pip install coveralls mysqlclient
 env:
   - DB=sqlite
   - DB=mysql
