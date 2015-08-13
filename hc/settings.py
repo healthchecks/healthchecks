@@ -78,6 +78,24 @@ DATABASES = {
     }
 }
 
+if os.environ.get("DB") == "mysql":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'USER':     'root',
+            'NAME':     'hc',
+            'TEST': {'CHARSET': 'UTF8'}
+        }
+    }
+
+if os.environ.get("DB") == "sqlite":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME':   './hc.sqlite',
+        }
+    }
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'

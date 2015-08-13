@@ -5,6 +5,10 @@ python:
 install:
     - pip install -r requirements.txt
     - pip install coveralls
+env:
+  - DB=sqlite
+  - DB=mysql
+  - DB=postgres
 addons:
   postgresql: "9.4"
 script:
