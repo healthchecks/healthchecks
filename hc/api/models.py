@@ -65,9 +65,8 @@ class Check(models.Model):
         return "down"
 
     def assign_all_channels(self):
-        for channel in Channel.objects.filter(user=self.user):
-            channel.checks.add(self)
-            channel.save()
+        channels = Channel.objects.filter(user=self.user)
+        self.channel_set.add(*channels)
 
 
 class Ping(models.Model):

@@ -179,20 +179,20 @@ def channels(request):
     if request.method == "POST":
         code = request.POST["channel"]
         channel = Channel.objects.get(code=code)
-        assert channel.user == request.user
+        if channel.user != request.user:
+            return HttpResponseForbidden()
 
-        channel.checks = []
-        print (request.POST)
+        new_checks = []
         for key in request.POST:
             if key.startswith("check-"):
                 code = key[6:]
                 check = Check.objects.get(code=code)
-                assert check.user == request.user
-                channel.checks.add(check)
+                if check.user != request.user:
+                    return HttpResponseForbidden()
+                new_checks.append(check)
 
-        channel.save()
+        channel.checks = new_checks
         return redirect("hc-channels")
-
 
     channels = Channel.objects.filter(user=request.user).order_by("created")
     num_checks = Check.objects.filter(user=request.user).count()
@@ -216,7 +216,6 @@ def add_channel(request):
 
         checks = Check.objects.filter(user=request.user)
         channel.checks.add(*checks)
-        channel.save()
 
     return redirect("hc-channels")
 
