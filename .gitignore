@@ -1,4 +1,5 @@
 __pycache__/
+*.pyc
 .coverage
 local_settings.py
 static-collected
