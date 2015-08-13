@@ -32,6 +32,22 @@ def _mysql(cursor):
     """)
 
 
+def _sqlite(cursor):
+    cursor.execute("""
+    DROP TRIGGER IF EXISTS update_alert_after;
+    """)
+
+    cursor.execute("""
+    CREATE TRIGGER update_alert_after
+    AFTER UPDATE OF last_ping, timeout, grace ON api_check
+    FOR EACH ROW BEGIN
+        UPDATE api_check
+        SET alert_after = datetime(strftime('%s', last_ping) + timeout/1000000 + grace/1000000, 'unixepoch')
+        WHERE id = OLD.id;
+    END;
+    """)
+
+
 class Command(BaseCommand):
     help = 'Ensures triggers exist in database'
 
@@ -44,3 +60,6 @@ class Command(BaseCommand):
         if connection.vendor == "mysql":
             _mysql(cursor)
             print("Created MySQL trigger")
+        if connection.vendor == "sqlite":
+            _sqlite(cursor)
+            print("Created SQLite trigger")
