@@ -69,14 +69,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hc.wsgi.application'
 
+# Default database engine is SQLite. So one can just check out code,
+# install requirements.txt and do manage.py runserver and it works
 DATABASES = {
     'default': {
-        'ENGINE':   'django.db.backends.postgresql_psycopg2',
-        'NAME':     'hc',
-        'USER':     'postgres',
-        'TEST': {'CHARSET': 'UTF8'}
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME':   './hc.sqlite',
     }
 }
+
+# You can switch database engine to postgres or mysql using environment
+# variable 'DB'. Travis CI does this.
+if os.environ.get("DB") == "postgres":
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql_psycopg2',
+            'NAME':     'hc',
+            'USER':     'postgres',
+            'TEST': {'CHARSET': 'UTF8'}
+        }
+    }
 
 if os.environ.get("DB") == "mysql":
     DATABASES = {
@@ -85,14 +97,6 @@ if os.environ.get("DB") == "mysql":
             'USER':     'root',
             'NAME':     'hc',
             'TEST': {'CHARSET': 'UTF8'}
-        }
-    }
-
-if os.environ.get("DB") == "sqlite":
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME':   './hc.sqlite',
         }
     }
 
@@ -126,3 +130,5 @@ try:
     from local_settings import *
 except ImportError as e:
     warnings.warn("local_settings.py not found, using defaults")
+
+print ("db engine: %s" % DATABASES["default"]["ENGINE"])
