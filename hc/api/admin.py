@@ -26,12 +26,13 @@ class ChecksAdmin(admin.ModelAdmin):
          'all': ('css/admin/checks.css',)
         }
 
+    search_fields = ["name", "user__email"]
     list_display = ("id", "name", "created", "code", "status", "email",
                     "last_ping")
     list_select_related = ("user", )
+    list_filter = ("status", OwnershipListFilter, "last_ping")
     actions = ["send_alert"]
 
-    list_filter = ("status", OwnershipListFilter)
 
     def email(self, obj):
         return obj.user.email if obj.user else None
@@ -47,9 +48,11 @@ class ChecksAdmin(admin.ModelAdmin):
 
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
+    search_fields = ("owner__name", "owner__code", "owner__user__email")
     list_select_related = ("owner", )
     list_display = ("id", "created", "check_name", "email", "scheme", "method",
                     "ua")
+    list_filter = ("created", "scheme", "method")
 
     def check_name(self, obj):
         return obj.owner.name if obj.owner.name else obj.owner.code
@@ -60,8 +63,13 @@ class PingsAdmin(admin.ModelAdmin):
 
 @admin.register(Channel)
 class ChannelsAdmin(admin.ModelAdmin):
+    search_fields = ["value", "user__email"]
     list_select_related = ("user", )
-    list_display = ("id", "code", "user", "formatted_kind", "value")
+    list_display = ("id", "code", "email", "formatted_kind", "value",
+                    "num_notifications")
+
+    def email(self, obj):
+        return obj.user.email if obj.user else None
 
     def formatted_kind(self, obj):
         if obj.kind == "pd":
@@ -78,11 +86,19 @@ class ChannelsAdmin(admin.ModelAdmin):
     formatted_kind.short_description = "Kind"
     formatted_kind.allow_tags = True
 
+    def num_notifications(self, obj):
+        return Notification.objects.filter(channel=obj).count()
+
+    num_notifications.short_description = "# Notifications"
+
+
 @admin.register(Notification)
 class NotificationsAdmin(admin.ModelAdmin):
+    search_fields = ["owner__name", "owner__code", "channel__value"]
     list_select_related = ("owner", "channel")
     list_display = ("id", "created", "check_status", "check_name",
                     "channel_kind", "channel_value", "status")
+    list_filter = ("created", "check_status", "channel__kind")
 
     def check_name(self, obj):
         return obj.owner.name_then_code()
