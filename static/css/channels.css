@@ -2,6 +2,16 @@
     margin-top: 36px;
 }
 
+.channels-table .channel-row > td {
+    line-height: 40px;
+}
+
+.channels-table .channel-row:hover > td {
+    background: #f5f5f5;
+}
+
+
+
 table.channels-table > tbody > tr > th {
     border-top: 0;
 }
@@ -38,7 +48,22 @@ table.channels-table > tbody > tr > th {
     display: none;
 }
 
-.channels-table .channels-num-checks {
-    padding-left: 40px;
+.edit-checks {
+    display: inline-block;
+    width: 120px;
+    padding: 6px;
+    text-align: center;
+    line-height: 28px;
+    border: 1px solid #FFF;
+    color: #333;
+
 }
 
+.edit-checks:hover {
+    text-decoration: none;
+    color: #000;
+}
+
+.channel-row:hover .edit-checks {
+    border: 1px dotted #AAA;
+}

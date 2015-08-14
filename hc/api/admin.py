@@ -71,10 +71,12 @@ class ChannelsAdmin(admin.ModelAdmin):
         elif obj.kind == "email" and obj.email_verified:
             return "Email"
         elif obj.kind == "email" and not obj.email_verified:
-            return "Email (unverified)"
+            return "Email <i>(unverified)</i>"
         else:
             raise NotImplementedError("Bad channel kind: %s" % obj.kind)
 
+    formatted_kind.short_description = "Kind"
+    formatted_kind.allow_tags = True
 
 @admin.register(Notification)
 class NotificationsAdmin(admin.ModelAdmin):

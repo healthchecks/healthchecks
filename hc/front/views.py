@@ -34,6 +34,7 @@ def _my_checks(request):
     checks = Check.objects.filter(user=request.user).order_by("created")
 
     ctx = {
+        "page": "checks",
         "checks": checks,
         "now": timezone.now()
     }
@@ -198,6 +199,7 @@ def channels(request):
     num_checks = Check.objects.filter(user=request.user).count()
 
     ctx = {
+        "page": "channels",
         "channels": channels,
         "num_checks": num_checks
 

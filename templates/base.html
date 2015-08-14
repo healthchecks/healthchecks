@@ -45,6 +45,18 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
+                {% if request.user.is_authenticated %}
+                    <li {% if page == 'checks' %} class="active" {% endif %}>
+                        <a href="{% url 'hc-index' %}">Checks</a>
+                    </li>
+
+                    <li {% if page == 'channels' %} class="active" {% endif %}>
+                        <a href="{% url 'hc-channels' %}">Channels</a>
+                    </li>
+
+                {% endif %}
+
+
                 <li {% if page == 'pricing' %} class="active" {% endif %}>
                     <a href="{% url 'hc-pricing' %}">Pricing</a>
                 </li>

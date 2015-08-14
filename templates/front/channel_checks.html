@@ -17,8 +17,8 @@
                 type="checkbox"
                 class="toggle" />
         </th>
-        <th class="check-all-cell">
-            Check / Uncheck All
+        <th class="check-all-cell" colspan="2">
+            Select / Unselect All
         </th>
     </tr>
     {% for check in checks %}
@@ -33,7 +33,14 @@
 
         </td>
         <td>
-            {{ check.name|default:check.code }}
+            {% if check.name %}
+                {{ check.name }}
+            {% else %}
+                <span class="unnamed">unnamed</span>
+            {% endif %}
+        </td>
+        <td>
+            <code>{{ check.code }}</code>
         </td>
     </tr>
     {% endfor %}

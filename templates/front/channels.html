@@ -16,7 +16,7 @@
             <th></th>
         </tr>
         {% for ch in channels %}
-        <tr>
+        <tr class="channel-row">
             <td>
             {% if ch.kind == "email" %} Email {% endif %}
             {% if ch.kind == "webhook" %} Webhook {% endif %}
@@ -40,6 +40,9 @@
                     href="{% url 'hc-channel-checks' ch.code %}">
                     {{ ch.checks.count }} of {{ num_checks }}
                 </a>
+            </td>
+            <td>
+
             </td>
         </tr>
         {% endfor %}

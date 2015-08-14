@@ -24,3 +24,8 @@
     padding-top: 2px;
     font-size: 9px;
 }
+
+.channel-checks-table .unnamed {
+    color: #999;
+    font-style: italic;
+}
