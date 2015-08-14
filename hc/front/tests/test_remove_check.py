@@ -4,7 +4,7 @@ from django.test import TestCase
 from hc.api.models import Check
 
 
-class RemoveTestCase(TestCase):
+class RemoveCheckTestCase(TestCase):
 
     def setUp(self):
         self.alice = User(username="alice")
@@ -29,3 +29,14 @@ class RemoveTestCase(TestCase):
         self.client.login(username="alice", password="password")
         r = self.client.post(url)
         assert r.status_code == 400
+
+    def test_it_checks_owner(self):
+        url = "/checks/%s/remove/" % self.check.code
+
+        mallory = User(username="mallory")
+        mallory.set_password("password")
+        mallory.save()
+
+        self.client.login(username="mallory", password="password")
+        r = self.client.post(url)
+        assert r.status_code == 403

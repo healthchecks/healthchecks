@@ -159,7 +159,6 @@ def remove_check(request, code):
 @login_required
 @uuid_or_400
 def log(request, code):
-
     check = Check.objects.get(code=code)
     if check.user != request.user:
         return HttpResponseForbidden()
@@ -228,8 +227,10 @@ def add_channel(request):
 @login_required
 @uuid_or_400
 def channel_checks(request, code):
-
     channel = Channel.objects.get(code=code)
+    if channel.user != request.user:
+        return HttpResponseForbidden()
+
     assigned = set([check.code for check in channel.checks.all()])
     checks = Check.objects.filter(user=request.user).order_by("created")
 
