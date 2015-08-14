@@ -79,7 +79,7 @@
                     <li role="separator" class="divider"></li>
                     <li>
                         <a href="#" class="check-menu-remove"
-                            data-name="{{ check.name|default:check.code }}"
+                            data-name="{{ check.name_then_code }}"
                             data-url="{% url 'hc-remove-check' check.code %}">
                             <span class="glyphicon glyphicon-trash"></span>
                             Remove

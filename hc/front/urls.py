@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^checks/([\w-]+)/name/$',     views.update_name, name="hc-update-name"),
     url(r'^checks/([\w-]+)/timeout/$',  views.update_timeout, name="hc-update-timeout"),
     url(r'^checks/([\w-]+)/email/$',    views.email_preview),
-    url(r'^checks/([\w-]+)/remove/$',   views.remove, name="hc-remove-check"),
+    url(r'^checks/([\w-]+)/remove/$',   views.remove_check, name="hc-remove-check"),
     url(r'^checks/([\w-]+)/log/$',      views.log, name="hc-log"),
     url(r'^pricing/$',                  views.pricing, name="hc-pricing"),
     url(r'^docs/$',                     views.docs, name="hc-docs"),
@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^channels/$',                 views.channels, name="hc-channels"),
     url(r'^channels/add/$',             views.add_channel, name="hc-add-channel"),
     url(r'^channels/([\w-]+)/checks/$', views.channel_checks, name="hc-channel-checks"),
+    url(r'^channels/([\w-]+)/remove/$', views.remove_channel, name="hc-remove-channel"),
     url(r'^channels/([\w-]+)/verify/([\w-]+)/$',
         views.verify_email, name="hc-verify-email"),
 

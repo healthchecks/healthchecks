@@ -9,6 +9,7 @@
     <div class="col-sm-12">
     <h1>Notification Channels</h1>
     <table class="table channels-table">
+        {% if channels %}
         <tr>
             <th>Type</th>
             <th>Value</th>
@@ -42,10 +43,20 @@
                 </a>
             </td>
             <td>
+                <button
+                    data-name="{{ ch.value }}"
+                    data-url="{% url 'hc-remove-channel' ch.code %}"
+                    class="btn btn-sm btn-default channel-remove"
+                    type="button">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </td>
+            <td>
 
             </td>
         </tr>
         {% endfor %}
+        {% endif %}
         <tr>
             <th colspan="2" class="channels-add-title">
                 Add Notification Channel
@@ -71,7 +82,6 @@
                 <button type="submit" class="btn btn-success">Add</button>
             </td>
             <td>
-
             </td>
             </form>
         </tr>
@@ -104,6 +114,32 @@
     <div class="modal-dialog">
             <div class="modal-content">
 
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="remove-channel-modal" class="modal">
+    <div class="modal-dialog">
+        <form id="remove-channel-form" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+                    <h4 class="remove-check-title">Remove Channel <span class="remove-channel-name"></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to remove channel
+                        <strong class="remove-channel-name">---</strong>.
+                    </p>
+                    <p>Once it's gone it's gone. But, if you change your
+                    mind later, you can create a similar channel again.</p>
+                    <p>Do you want to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </div>
             </div>
         </form>
     </div>

@@ -26,7 +26,6 @@ $(function() {
         return false;
     });
 
-
     var $cm = $("#checks-modal");
     $cm.on("click", "#toggle-all", function() {
         var value = $(this).prop("checked");
@@ -34,5 +33,16 @@ $(function() {
         console.log("aaa", value);
 
     });
+
+    $(".channel-remove").click(function() {
+        var $this = $(this);
+
+        $("#remove-channel-form").attr("action", $this.data("url"));
+        $(".remove-channel-name").text($this.data("name"));
+        $('#remove-channel-modal').modal("show");
+
+        return false;
+    });
+
 
 });

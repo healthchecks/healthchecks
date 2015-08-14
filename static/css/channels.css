@@ -67,3 +67,11 @@ table.channels-table > tbody > tr > th {
 .channel-row:hover .edit-checks {
     border: 1px dotted #AAA;
 }
+
+.channel-remove {
+    visibility: hidden;
+}
+
+.channel-row:hover .channel-remove {
+    visibility: visible;
+}

@@ -144,7 +144,7 @@ def email_preview(request, code):
 
 @login_required
 @uuid_or_400
-def remove(request, code):
+def remove_check(request, code):
     assert request.method == "POST"
 
     check = Check.objects.get(code=code)
@@ -251,3 +251,17 @@ def verify_email(request, code, token):
         return render(request, "front/verify_email_success.html")
 
     return render(request, "bad_link.html")
+
+
+@login_required
+@uuid_or_400
+def remove_channel(request, code):
+    assert request.method == "POST"
+
+    channel = Channel.objects.get(code=code)
+    if channel.user != request.user:
+        return HttpResponseForbidden()
+
+    channel.delete()
+
+    return redirect("hc-channels")
