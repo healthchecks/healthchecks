@@ -31,7 +31,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
-    'djrill',
+    'djmail',
 
     'hc.accounts',
     'hc.api',
@@ -123,12 +123,9 @@ STATICFILES_FINDERS = (
 )
 COMPRESS_OFFLINE = True
 
-
-EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
 
 try:
     from local_settings import *
 except ImportError as e:
     warnings.warn("local_settings.py not found, using defaults")
-
-print ("db engine: %s" % DATABASES["default"]["ENGINE"])

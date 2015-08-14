@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from hc.api.models import Channel, Check, Ping
+from hc.api.models import Channel, Check, Notification, Ping
 
 
 class OwnershipListFilter(admin.SimpleListFilter):
@@ -61,4 +61,32 @@ class PingsAdmin(admin.ModelAdmin):
 @admin.register(Channel)
 class ChannelsAdmin(admin.ModelAdmin):
     list_select_related = ("user", )
-    list_display = ("id", "code", "user", "kind", "value")
+    list_display = ("id", "code", "user", "formatted_kind", "value")
+
+    def formatted_kind(self, obj):
+        if obj.kind == "pd":
+            return "PagerDuty"
+        elif obj.kind == "webhook":
+            return "Webhook"
+        elif obj.kind == "email" and obj.email_verified:
+            return "Email"
+        elif obj.kind == "email" and not obj.email_verified:
+            return "Email (unverified)"
+        else:
+            raise NotImplementedError("Bad channel kind: %s" % obj.kind)
+
+
+@admin.register(Notification)
+class NotificationsAdmin(admin.ModelAdmin):
+    list_select_related = ("owner", "channel")
+    list_display = ("id", "created", "check_status", "check_name",
+                    "channel_kind", "channel_value", "status")
+
+    def check_name(self, obj):
+        return obj.owner.name_then_code()
+
+    def channel_kind(self, obj):
+        return obj.channel.kind
+
+    def channel_value(self, obj):
+        return obj.channel.value

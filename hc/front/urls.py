@@ -16,4 +16,7 @@ urlpatterns = [
     url(r'^channels/$',                 views.channels, name="hc-channels"),
     url(r'^channels/add/$',             views.add_channel, name="hc-add-channel"),
     url(r'^channels/([\w-]+)/checks/$', views.channel_checks, name="hc-channel-checks"),
+    url(r'^channels/([\w-]+)/verify/([\w-]+)/$',
+        views.verify_email, name="hc-verify-email"),
+
 ]

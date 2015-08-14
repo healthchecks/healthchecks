@@ -1,5 +1,7 @@
 Django==1.8.2
 django_compressor
 psycopg2==2.6
-djrill
+djmail
+premailer
 pygments
+requests

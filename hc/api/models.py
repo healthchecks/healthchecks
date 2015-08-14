@@ -1,14 +1,19 @@
 # coding: utf-8
 
 from datetime import timedelta as td
+import hashlib
+import json
 import uuid
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+import requests
 
-from hc.lib.emails import send
+from hc.lib import emails
+
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -31,6 +36,12 @@ class Check(models.Model):
     def __str__(self):
         return "Check(%s)" % self.code
 
+    def name_then_code(self):
+        if self.name:
+            return self.name
+
+        return str(self.code)
+
     def url(self):
         return settings.PING_ENDPOINT + str(self.code)
 
@@ -38,17 +49,11 @@ class Check(models.Model):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 
     def send_alert(self):
-        ctx = {
-            "check": self,
-            "checks": self.user.check_set.order_by("created"),
-            "now": timezone.now()
-
-        }
-
-        if self.status in ("up", "down"):
-            send(self.user.email, "emails/alert", ctx)
-        else:
+        if self.status not in ("up", "down"):
             raise NotImplemented("Unexpected status: %s" % self.status)
+
+        for channel in self.channel_set.all():
+            channel.notify(self)
 
     def get_status(self):
         if self.status == "new":
@@ -65,8 +70,9 @@ class Check(models.Model):
         return "down"
 
     def assign_all_channels(self):
-        channels = Channel.objects.filter(user=self.user)
-        self.channel_set.add(*channels)
+        if self.user:
+            channels = Channel.objects.filter(user=self.user)
+            self.channel_set.add(*channels)
 
 
 class Ping(models.Model):
@@ -87,3 +93,62 @@ class Channel(models.Model):
     value = models.CharField(max_length=200, blank=True)
     email_verified = models.BooleanField(default=False)
     checks = models.ManyToManyField(Check)
+
+    def make_token(self):
+        seed = "%s%s" % (self.code, settings.SECRET_KEY)
+        seed = seed.encode("utf8")
+        return hashlib.sha1(seed).hexdigest()
+
+    def send_verify_link(self):
+        args = [self.code, self.make_token()]
+        verify_link = reverse("hc-verify-email", args=args)
+        verify_link = settings.SITE_ROOT + verify_link
+        emails.verify_email(self.value, {"verify_link": verify_link})
+
+    def notify(self, check):
+        n = Notification(owner=check, channel=self)
+        n.check_status = check.status
+
+        if self.kind == "email" and self.email_verified:
+            ctx = {
+                "check": check,
+                "checks": self.user.check_set.order_by("created"),
+                "now": timezone.now()
+            }
+            emails.alert(self.value, ctx)
+            n.save()
+        elif self.kind == "webhook" and self.status == "down":
+            r = requests.get(self.value)
+            n.status = r.status_code
+            n.save()
+        elif self.kind == "pd":
+            if check.status == "down":
+                event_type = "trigger"
+                description = "%s is DOWN" % check.name_then_code()
+            else:
+                event_type = "resolve"
+                description = "%s received a ping and is now UP" % \
+                    check.name_then_code()
+
+            payload = {
+                "service_key": self.value,
+                "incident_key": str(check.code),
+                "event_type": event_type,
+                "description": description,
+                "client": "healthchecks.io",
+                "client_url": settings.SITE_ROOT
+            }
+
+            url = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
+            r = requests.post(url, data=json.dumps(payload))
+
+            n.status = r.status_code
+            n.save()
+
+
+class Notification(models.Model):
+    owner = models.ForeignKey(Check)
+    check_status = models.CharField(max_length=6)
+    channel = models.ForeignKey(Channel)
+    created = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(default=0)

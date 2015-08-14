@@ -217,6 +217,9 @@ def add_channel(request):
         checks = Check.objects.filter(user=request.user)
         channel.checks.add(*checks)
 
+        if channel.kind == "email":
+            channel.send_verify_link()
+
     return redirect("hc-channels")
 
 
@@ -235,3 +238,14 @@ def channel_checks(request, code):
     }
 
     return render(request, "front/channel_checks.html", ctx)
+
+
+@uuid_or_400
+def verify_email(request, code, token):
+    channel = Channel.objects.get(code=code)
+    if channel.make_token() == token:
+        channel.email_verified = True
+        channel.save()
+        return render(request, "front/verify_email_success.html")
+
+    return render(request, "bad_link.html")

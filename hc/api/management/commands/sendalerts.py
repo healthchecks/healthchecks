@@ -27,7 +27,7 @@ class Command(BaseCommand):
             for check in query:
                 check.status = "down"
 
-                _log("\nSending email about going down for %s\n" % check.code)
+                _log("\nSending notification(s) about going down for %s\n" % check.code)
                 check.send_alert()
                 ticks = 0
 
@@ -42,7 +42,7 @@ class Command(BaseCommand):
             for check in query:
                 check.status = "up"
 
-                _log("\nSending email about going up for %s\n" % check.code)
+                _log("\nSending notification(s) about going up for %s\n" % check.code)
                 check.send_alert()
                 ticks = 0
 

@@ -10,7 +10,7 @@ from django.shortcuts import redirect, render
 
 from hc.accounts.forms import EmailForm
 from hc.api.models import Channel, Check
-from hc.lib.emails import send
+from hc.lib import emails
 
 
 def _make_user(email):
@@ -51,7 +51,7 @@ def _send_login_link(user):
     login_link = settings.SITE_ROOT + login_link
     ctx = {"login_link": login_link}
 
-    send(user.email, "emails/login", ctx)
+    emails.login(user.email, ctx)
 
 
 def login(request):
