@@ -41,3 +41,11 @@ class RemoveChannelTestCase(TestCase):
         self.client.login(username="mallory", password="password")
         r = self.client.post(url)
         assert r.status_code == 403
+
+    def test_it_handles_missing_uuid(self):
+        # Valid UUID but there is no channel for it:
+        url = "/channels/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/remove/"
+
+        self.client.login(username="alice", password="password")
+        r = self.client.post(url)
+        assert r.status_code == 404

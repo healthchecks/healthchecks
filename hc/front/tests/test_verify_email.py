@@ -33,3 +33,12 @@ class VerifyEmailTestCase(TestCase):
 
         channel = Channel.objects.get(code=self.channel.code)
         assert not channel.email_verified
+
+    def test_missing_channel(self):
+        # Valid UUID, and even valid token but there is no channel for it:
+        code = "6837d6ec-fc08-4da5-a67f-08a9ed1ccf62"
+        token = self.channel.make_token()
+        url = "/channels/%s/verify/%s/" % (code, token)
+
+        r = self.client.post(url)
+        assert r.status_code == 404

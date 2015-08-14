@@ -45,3 +45,12 @@ class UpdateNameTestCase(TestCase):
         self.client.login(username="alice", password="password")
         r = self.client.post(url, data=payload)
         assert r.status_code == 400
+
+    def test_it_handles_missing_uuid(self):
+        # Valid UUID but there is no check for it:
+        url = "/checks/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/name/"
+        payload = {"name": "Alice Was Here"}
+
+        self.client.login(username="alice", password="password")
+        r = self.client.post(url, data=payload)
+        assert r.status_code == 404

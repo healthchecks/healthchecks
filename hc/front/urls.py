@@ -4,6 +4,7 @@ from hc.front import views
 
 urlpatterns = [
     url(r'^$',                          views.index,  name="hc-index"),
+    url(r'^checks/$',                   views.my_checks, name="hc-checks"),
     url(r'^checks/add/$',               views.add_check, name="hc-add-check"),
     url(r'^checks/([\w-]+)/name/$',     views.update_name, name="hc-update-name"),
     url(r'^checks/([\w-]+)/timeout/$',  views.update_timeout, name="hc-update-timeout"),

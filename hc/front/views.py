@@ -2,8 +2,8 @@ from datetime import timedelta as td
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
-from django.shortcuts import redirect, render
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from hc.api.decorators import uuid_or_400
@@ -11,7 +11,23 @@ from hc.api.models import Channel, Check, Ping
 from hc.front.forms import AddChannelForm, TimeoutForm
 
 
-def _welcome(request):
+@login_required
+def my_checks(request):
+    checks = Check.objects.filter(user=request.user).order_by("created")
+
+    ctx = {
+        "page": "checks",
+        "checks": checks,
+        "now": timezone.now()
+    }
+
+    return render(request, "front/my_checks.html", ctx)
+
+
+def index(request):
+    if request.user.is_authenticated():
+        return redirect("hc-checks")
+
     if "welcome_code" not in request.session:
         check = Check()
         check.save()
@@ -28,25 +44,6 @@ def _welcome(request):
     }
 
     return render(request, "front/welcome.html", ctx)
-
-
-def _my_checks(request):
-    checks = Check.objects.filter(user=request.user).order_by("created")
-
-    ctx = {
-        "page": "checks",
-        "checks": checks,
-        "now": timezone.now()
-    }
-
-    return render(request, "front/my_checks.html", ctx)
-
-
-def index(request):
-    if request.user.is_authenticated():
-        return _my_checks(request)
-    else:
-        return _welcome(request)
 
 
 def pricing(request):
@@ -83,7 +80,7 @@ def add_check(request):
 
     check.assign_all_channels()
 
-    return redirect("hc-index")
+    return redirect("hc-checks")
 
 
 @login_required
@@ -91,14 +88,14 @@ def add_check(request):
 def update_name(request, code):
     assert request.method == "POST"
 
-    check = Check.objects.get(code=code)
+    check = get_object_or_404(Check, code=code)
     if check.user != request.user:
         return HttpResponseForbidden()
 
     check.name = request.POST["name"]
     check.save()
 
-    return redirect("hc-index")
+    return redirect("hc-checks")
 
 
 @login_required
@@ -106,7 +103,7 @@ def update_name(request, code):
 def update_timeout(request, code):
     assert request.method == "POST"
 
-    check = Check.objects.get(code=code)
+    check = get_object_or_404(Check, code=code)
     if check.user != request.user:
         return HttpResponseForbidden()
 
@@ -116,7 +113,7 @@ def update_timeout(request, code):
         check.grace = td(seconds=form.cleaned_data["grace"])
         check.save()
 
-    return redirect("hc-index")
+    return redirect("hc-checks")
 
 
 @login_required
@@ -147,19 +144,19 @@ def email_preview(request, code):
 def remove_check(request, code):
     assert request.method == "POST"
 
-    check = Check.objects.get(code=code)
+    check = get_object_or_404(Check, code=code)
     if check.user != request.user:
         return HttpResponseForbidden()
 
     check.delete()
 
-    return redirect("hc-index")
+    return redirect("hc-checks")
 
 
 @login_required
 @uuid_or_400
 def log(request, code):
-    check = Check.objects.get(code=code)
+    check = get_object_or_404(Check, code=code)
     if check.user != request.user:
         return HttpResponseForbidden()
 
@@ -178,7 +175,10 @@ def log(request, code):
 def channels(request):
     if request.method == "POST":
         code = request.POST["channel"]
-        channel = Channel.objects.get(code=code)
+        try:
+            channel = Channel.objects.get(code=code)
+        except Channel.DoesNotExist:
+            return HttpResponseBadRequest()
         if channel.user != request.user:
             return HttpResponseForbidden()
 
@@ -186,7 +186,10 @@ def channels(request):
         for key in request.POST:
             if key.startswith("check-"):
                 code = key[6:]
-                check = Check.objects.get(code=code)
+                try:
+                    check = Check.objects.get(code=code)
+                except Check.DoesNotExist:
+                    return HttpResponseBadRequest()
                 if check.user != request.user:
                     return HttpResponseForbidden()
                 new_checks.append(check)
@@ -227,7 +230,7 @@ def add_channel(request):
 @login_required
 @uuid_or_400
 def channel_checks(request, code):
-    channel = Channel.objects.get(code=code)
+    channel = get_object_or_404(Channel, code=code)
     if channel.user != request.user:
         return HttpResponseForbidden()
 
@@ -245,7 +248,7 @@ def channel_checks(request, code):
 
 @uuid_or_400
 def verify_email(request, code, token):
-    channel = Channel.objects.get(code=code)
+    channel = get_object_or_404(Channel, code=code)
     if channel.make_token() == token:
         channel.email_verified = True
         channel.save()
@@ -259,7 +262,7 @@ def verify_email(request, code, token):
 def remove_channel(request, code):
     assert request.method == "POST"
 
-    channel = Channel.objects.get(code=code)
+    channel = get_object_or_404(Channel, code=code)
     if channel.user != request.user:
         return HttpResponseForbidden()
 

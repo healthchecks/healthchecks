@@ -64,3 +64,22 @@ class UpdateChannelTestCase(TestCase):
 
         # mc belongs to mallorym but self.check does not--
         assert r.status_code == 403
+
+    def test_it_handles_missing_channel(self):
+        # Correct UUID but there is no channel for it:
+        payload = {"channel": "6837d6ec-fc08-4da5-a67f-08a9ed1ccf62"}
+
+        self.client.login(username="alice", password="password")
+        r = self.client.post("/channels/", data=payload)
+        assert r.status_code == 400
+
+    def test_it_handles_missing_check(self):
+        # check- key has a correct UUID but there's no check object for it
+        payload = {
+            "channel": self.channel.code,
+            "check-6837d6ec-fc08-4da5-a67f-08a9ed1ccf62": True
+        }
+
+        self.client.login(username="alice", password="password")
+        r = self.client.post("/channels/", data=payload)
+        assert r.status_code == 400

@@ -100,6 +100,6 @@ def check_token(request, username, token):
             user.save()
             auth_login(request, user)
 
-            return redirect("hc-index")
+            return redirect("hc-checks")
 
     return render(request, "bad_link.html")
