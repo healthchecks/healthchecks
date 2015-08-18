@@ -42,3 +42,15 @@ class UpdateTimeoutTestCase(TestCase):
         self.client.login(username="alice", password="password")
         r = self.client.post(url, data=payload)
         assert r.status_code == 404
+
+    def test_it_checks_ownership(self):
+        charlie = User(username="charlie")
+        charlie.set_password("password")
+        charlie.save()
+
+        url = "/checks/%s/timeout/" % self.check.code
+        payload = {"timeout": 3600, "grace": 60}
+
+        self.client.login(username="charlie", password="password")
+        r = self.client.post(url, data=payload)
+        assert r.status_code == 403

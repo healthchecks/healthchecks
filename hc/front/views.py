@@ -224,7 +224,9 @@ def add_channel(request):
         if channel.kind == "email":
             channel.send_verify_link()
 
-    return redirect("hc-channels")
+        return redirect("hc-channels")
+    else:
+        return HttpResponseBadRequest()
 
 
 @login_required
