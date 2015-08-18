@@ -118,8 +118,13 @@ class Channel(models.Model):
             emails.alert(self.value, ctx)
             n.save()
         elif self.kind == "webhook" and check.status == "down":
-            r = requests.get(self.value)
-            n.status = r.status_code
+            try:
+                r = requests.get(self.value, timeout=5)
+                n.status = r.status_code
+            except requests.exceptions.Timeout:
+                # Well, we tried
+                pass
+
             n.save()
         elif self.kind == "pd":
             if check.status == "down":
