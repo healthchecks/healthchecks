@@ -11,9 +11,20 @@
     </div>
 
     <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-6">
         <h2 id="pitch-subtitle">Here's an unique ping address for you:</h2>
-        <div id="pitch-url">{{ ping_url }}</div>
+        <div id="pitch-url">
+            <input
+                id="pitch-url-input"
+                class="form-control"
+                type="text"
+                value="{{ ping_url }}"
+                readonly />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <p id="pitch-text">Make a HTTP GET request to this address from your cron job, daemon, script or long running task.
+        <strong>When this address is not requested for a set time period, you will get alerted.</strong> Below are snippets that are ready to be copy/pasted into your own scripts.</p>
     </div>
     </div>
 
@@ -209,10 +220,14 @@
     </div>
 
 </div>
+{% endblock %}
 
-
-
-
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/welcome.js' %}"></script>
+{% endcompress %}
 {% endblock %}
 
 

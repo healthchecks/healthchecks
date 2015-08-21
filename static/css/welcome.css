@@ -14,7 +14,7 @@
 
 #pitch {
     text-align: center;
-    padding: 72px 0;
+    padding: 100px 0;
     margin: 0;
 }
 
@@ -26,7 +26,21 @@
 #pitch-url {
     text-align: center;
     font-family: monospace;
-    padding-bottom: 72px;
+    width: 500px;
+    margin: 10px auto;
+}
+
+#pitch-url-input {
+    text-align: center;
+    background: #FFF;
+    border: 0;
+    box-shadow: none;
+    cursor: text;
+}
+
+#pitch-text {
+    width: 500px;
+    margin: 0 auto 72px auto;
 }
 
 .nav-tabs {
