@@ -45,12 +45,15 @@
             <a class="navbar-brand"
                 href="{% url 'hc-index' %}"
                 title="healthchecks.io - Monitor Cron Jobs">
+                {% block logo %}
                 <img
                     id="logo"
                     height="50"
-                    width="200"
+                    width="50"
                     src="{% static 'img/logo.png'%}"
+                    srcset="{% static 'img/logo.png'%} 1x, {% static 'img/logo@2x.png'%} 2x"
                     alt="healthchecks.io">
+                {% endblock %}
             </a>
 
         </div>

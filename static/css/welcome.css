@@ -12,6 +12,11 @@
     padding-bottom: 3em;
 }
 
+.footer-jumbo-bleed {
+    background: #eee;
+}
+
+
 #pitch {
     text-align: center;
     padding: 100px 0;
@@ -38,7 +43,6 @@
 }
 
 #pitch-text {
-    width: 500px;
     margin: 0 auto 72px auto;
 }
 

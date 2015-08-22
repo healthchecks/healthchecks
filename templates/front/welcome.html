@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles %}
 
+{% block logo %}
+<img
+    id="logo"
+    height="50"
+    width="200"
+    src="{% static 'img/logo-full.png'%}"
+    srcset="{% static 'img/logo.png'%} 1x, {% static 'img/logo-full@2x.png'%} 2x"
+    alt="healthchecks.io">
+{% endblock %}
+
 {% block containers %}
 <div class="index-bleed">
 <div class="container">
@@ -221,6 +231,7 @@
 
     <div class="row">
 
+    <div class="footer-jumbo-bleed">
     <div class="col-sm-12">
         <div class="jumbotron">
             <div class="row">
@@ -259,6 +270,7 @@
             </div>
 
         </div>
+    </div>
     </div>
 
     </div>
