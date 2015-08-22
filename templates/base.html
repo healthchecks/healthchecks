@@ -8,8 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
-
     {% load compress staticfiles %}
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
     {% compress css %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/nouislider.min.css' %}" type="text/css">
@@ -41,7 +42,17 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'hc-index' %}">Health Checks</a>
+            <a class="navbar-brand"
+                href="{% url 'hc-index' %}"
+                title="healthchecks.io - Monitor Cron Jobs">
+                <img
+                    id="logo"
+                    height="50"
+                    width="200"
+                    src="{% static 'img/logo.png'%}"
+                    alt="healthchecks.io">
+            </a>
+
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">

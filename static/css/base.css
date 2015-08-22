@@ -19,6 +19,11 @@ body {
     text-align: center;
 }
 
+#logo {
+    max-height: 50px;
+    margin-top: -13px;
+}
+
 .navbar-nav {
     text-transform: uppercase;
     font-size: small;
