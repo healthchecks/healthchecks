@@ -21,13 +21,22 @@ body {
 
 #logo {
     max-height: 50px;
-    margin-top: -13px;
+    margin-top: -16px;
 }
 
-.navbar-nav {
+.navbar-default .navbar-nav > li > a {
     text-transform: uppercase;
     font-size: small;
 }
+
+@media (min-width: 768px) {
+    .navbar-default .navbar-nav > li.active > a, .navbar-default .navbar-nav > li > a:hover {
+        background: none;
+        border-bottom: 5px solid #eee;
+        padding-bottom: 25px;
+    }
+}
+
 
 .navbar-text {
     font-size: small;
