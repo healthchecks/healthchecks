@@ -9,6 +9,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db import models
+from django.template.loader import render_to_string
 from django.utils import timezone
 import requests
 
@@ -19,7 +20,7 @@ STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"))
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
 CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
-                 ("pd", "PagerDuty"))
+                 ("slack", "Slack"), ("pd", "PagerDuty"))
 
 
 class Check(models.Model):
@@ -123,6 +124,19 @@ class Channel(models.Model):
                 pass
 
             n.save()
+        elif self.kind == "slack":
+            text = render_to_string("slack_message.html", {"check": check})
+            payload = {
+                "text": text,
+                "username": "healthchecks.io",
+                "icon_url": "https://healthchecks.io/static/img/logo@2x.png"
+            }
+
+            r = requests.post(self.value, data=json.dumps(payload))
+
+            n.status = r.status_code
+            n.save()
+
         elif self.kind == "pd":
             if check.status == "down":
                 event_type = "trigger"

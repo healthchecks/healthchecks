@@ -2,6 +2,7 @@ $(function() {
     var placeholders = {
         email: "address@example.org",
         webhook: "http://",
+        slack: "https://hooks.slack.com/...",
         pd: "service key"
     }
 
