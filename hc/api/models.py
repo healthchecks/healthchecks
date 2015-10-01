@@ -20,6 +20,7 @@ STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"))
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
 CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
+                 ("hipchat", "HipChat"),
                  ("slack", "Slack"), ("pd", "PagerDuty"))
 
 
@@ -132,7 +133,18 @@ class Channel(models.Model):
                 "icon_url": "https://healthchecks.io/static/img/logo@2x.png"
             }
 
-            r = requests.post(self.value, data=json.dumps(payload))
+            r = requests.post(self.value, json=payload)
+
+            n.status = r.status_code
+            n.save()
+        elif self.kind == "hipchat":
+            text = render_to_string("hipchat_message.html", {"check": check})
+            payload = {
+                "message": text,
+                "color": "green" if check.status == "up" else "red",
+            }
+
+            r = requests.post(self.value, json=payload)
 
             n.status = r.status_code
             n.save()

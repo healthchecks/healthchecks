@@ -3,16 +3,17 @@ $(function() {
         email: "address@example.org",
         webhook: "http://",
         slack: "https://hooks.slack.com/...",
+        hipchat: "https://api.hipchat.com/...",
         pd: "service key"
     }
 
-    $("#add-check-kind").change(function() {
+    $("#add-channel-kind").change(function() {
         $(".channels-add-help p").hide();
 
-        var v = $("#add-check-kind").val();
+        var v = $("#add-channel-kind").val();
         $(".channels-add-help p." + v).show();
 
-        $("#add-check-value").attr("placeholder", placeholders[v]);
+        $("#add-channel-value").attr("placeholder", placeholders[v]);
     });
 
     $(".edit-checks").click(function() {

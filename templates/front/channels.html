@@ -22,6 +22,7 @@
             {% if ch.kind == "email" %} Email {% endif %}
             {% if ch.kind == "webhook" %} Webhook {% endif %}
             {% if ch.kind == "slack" %} Slack {% endif %}
+            {% if ch.kind == "hipchat" %} HipChat {% endif %}
             {% if ch.kind == "pd" %} PagerDuty {% endif %}
             </td>
             <td>
@@ -66,17 +67,18 @@
         <tr>
             <form method="post" action="{% url 'hc-add-channel' %}">
             <td>
-                <select id="add-check-kind" class="form-control" name="kind">
+                <select id="add-channel-kind" class="form-control" name="kind">
                     <option value="email">Email</option>
                     <option value="webhook">Webhook</option>
                     <option value="slack">Slack</option>
+                    <option value="hipchat">HipChat</option>
                     <option value="pd">PagerDuty</option>
                 </select>
             </td>
             <td class="form-inline">
                 {% csrf_token %}
                 <input
-                    id="add-check-value"
+                    id="add-channel-value"
                     name="value"
                     class="form-control"
                     type="text"
@@ -107,6 +109,11 @@
                 </p>
                 <p class="channels-help-hidden slack">
                     Healthchecks.io will post to a Slack channel when
+                    a check goes
+                    <span class="word-up">up</span> or <span class="word-down">down</span>.
+                </p>
+                <p class="channels-help-hidden hipchat">
+                    Healthchecks.io will post to a HipChat channel when
                     a check goes
                     <span class="word-up">up</span> or <span class="word-down">down</span>.
                 </p>

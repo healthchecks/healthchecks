@@ -67,6 +67,7 @@ class ChannelsAdmin(admin.ModelAdmin):
     list_select_related = ("user", )
     list_display = ("id", "code", "email", "formatted_kind", "value",
                     "num_notifications")
+    list_filter = ("kind", )
 
     def email(self, obj):
         return obj.user.email if obj.user else None
@@ -76,6 +77,10 @@ class ChannelsAdmin(admin.ModelAdmin):
             return "PagerDuty"
         elif obj.kind == "webhook":
             return "Webhook"
+        elif obj.kind == "slack":
+            return "Slack"
+        elif obj.kind == "hipchat":
+            return "HipChat"
         elif obj.kind == "email" and obj.email_verified:
             return "Email"
         elif obj.kind == "email" and not obj.email_verified:
