@@ -9,7 +9,55 @@
 <div class="col-sm-12">
     <h1>HipChat</h1>
 
-    <p>Group and private chat, file sharing, and integrations.</p>
+    <p>If your team uses <a href="https://www.hipchat.com/">HipChat</a>,
+    you can set up healthchecks.io to post status updates directly to an
+    appropriate HipChat room.</p>
+
+    <h2>Setup Guide</h2>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            Log into your HipChat account and
+            pick an appropriate room. From the options menu
+            select <strong>Integrations...</strong>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                src="{% static 'img/integrations/setup_hipchat_1.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            <p>
+                From the list of available integrations, select
+                <strong>Build Your Own</strong>. It's at the very top.
+            </p>
+            <p>
+                Give it a descriptive name
+                and click <strong>Create</strong>.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                src="{% static 'img/integrations/setup_hipchat_2.png' %}">
+        </div>    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>Copy the displayed <strong>URL</strong> and paste it down below.</p>
+            <p>Save the integration, and it's done!</p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                src="{% static 'img/integrations/setup_hipchat_3.png' %}">
+        </div>
+    </div>
+
 
     <h2>Integration Settings</h2>
 
@@ -18,7 +66,7 @@
         <input type="hidden" name="kind" value="hipchat" />
         <div class="form-group">
             <label for="inputEmail3" class="col-sm-2 control-label">Callback URL</label>
-            <div class="col-sm-3">
+            <div class="col-sm-10">
                 <input type="text" class="form-control" name="value" placeholder="">
             </div>
         </div>
