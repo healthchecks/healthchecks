@@ -271,3 +271,33 @@ def remove_channel(request, code):
     channel.delete()
 
     return redirect("hc-channels")
+
+
+@login_required
+def add_email(request):
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_email.html", ctx)
+
+
+@login_required
+def add_webhook(request):
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_webhook.html", ctx)
+
+
+@login_required
+def add_pd(request):
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_pd.html", ctx)
+
+
+@login_required
+def add_slack(request):
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_slack.html", ctx)
+
+
+@login_required
+def add_hipchat(request):
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_hipchat.html", ctx)

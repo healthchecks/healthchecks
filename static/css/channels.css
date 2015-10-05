@@ -75,3 +75,61 @@ table.channels-table > tbody > tr > th {
 .channel-row:hover .channel-remove {
     visibility: visible;
 }
+
+.ai-title {
+    margin-top: 2em;
+}
+
+.add-integration {
+    list-style: none;
+    padding: 0;
+}
+
+.add-integration li {
+    position: relative;
+    padding: 8px 0;
+    border-radius: 4px;
+}
+
+.add-integration li:hover {
+    background: #eee;
+}
+
+.add-integration img {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    margin-top: -20px;
+    width: 40px;
+    height: 40px;
+}
+
+.add-integration h2 {
+    font-size: 18px;
+    margin-left: 72px;
+}
+
+.add-integration p {
+    margin-left: 72px;
+}
+
+.add-integration a {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    margin-top: -17px;
+}
+
+
+.ai-icon img {
+    width: 48px;
+    height: 48px;
+}
+
+.add-integration h2 {
+    margin-top: 0;
+}
+
+.setup-guide h2, .integration-settings h2 {
+    margin: 0 0 1em 0;
+}

@@ -6,8 +6,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-12">
-    <h1>Notification Channels</h1>
+<div class="col-sm-12">
     <table class="table channels-table">
         {% if channels %}
         <tr>
@@ -59,75 +58,68 @@
         </tr>
         {% endfor %}
         {% endif %}
-        <tr>
-            <th colspan="2" class="channels-add-title">
-                Add Notification Channel
-            </th>
-        </tr>
-        <tr>
-            <form method="post" action="{% url 'hc-add-channel' %}">
-            <td>
-                <select id="add-channel-kind" class="form-control" name="kind">
-                    <option value="email">Email</option>
-                    <option value="webhook">Webhook</option>
-                    <option value="slack">Slack</option>
-                    <option value="hipchat">HipChat</option>
-                    <option value="pd">PagerDuty</option>
-                </select>
-            </td>
-            <td class="form-inline">
-                {% csrf_token %}
-                <input
-                    id="add-channel-value"
-                    name="value"
-                    class="form-control"
-                    type="text"
-                    placeholder="address@example.org" />
-                <button type="submit" class="btn btn-success">Add</button>
-            </td>
-            <td>
-            </td>
-            </form>
-        </tr>
-        <tr>
-            <td colspan="3" class="channels-add-help">
-                <p class="email">
-                    Healthchecks.io will send an email to the specified
-                    address when a check goes
-                    <span class="word-up">up</span> or <span class="word-down">down</span>.
-                </p>
-                <p class="channels-help-hidden webhook">
-                    Healthchecks.io will request the specified URL when
-                    a check goes
-                    <span class="word-down">down</span>.
-                </p>
-                <p class="channels-help-hidden pd">
-                    Healthchecks.io will create an incident on PagerDuty  when
-                    a check goes
-                    <span class="word-down">down</span> and will resolve it
-                    when same check goes <span class="word-up">up</span>
-                </p>
-                <p class="channels-help-hidden slack">
-                    Healthchecks.io will post to a Slack channel when
-                    a check goes
-                    <span class="word-up">up</span> or <span class="word-down">down</span>.
-                </p>
-                <p class="channels-help-hidden hipchat">
-                    Healthchecks.io will post to a HipChat channel when
-                    a check goes
-                    <span class="word-up">up</span> or <span class="word-down">down</span>.
-                </p>
-            </td>
-        </tr>
-
     </table>
-    </div>
+
+
+    <h1 class="ai-title">Add More</h1>
+    <ul class="add-integration">
+        <li>
+            <img src="{% static 'img/integrations/email.png' %}"
+                alt="Email icon" />
+
+            <h2>Email</h2>
+            <p>Get an email message when check goes up or down.</p>
+
+            <a href="{% url 'hc-add-email' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/webhook.png' %}"
+                alt="Webhook icon" />
+
+            <h2>WebHook</h2>
+            <p>Receive a HTTP callback when a check goes down.</p>
+
+            <a href="{% url 'hc-add-webhook' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/pd.png' %}"
+                alt="PagerDuty icon" />
+
+            <h2>PagerDuty</h2>
+            <p>On-call scheduling, alerting, and incident tracking.</p>
+
+            <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/slack.png' %}"
+                alt="Slack icon" />
+
+            <h2>Slack</h2>
+            <p>A messaging app for teams.</p>
+
+            <a href="{% url 'hc-add-slack' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/hipchat.png' %}"
+                alt="HipChat icon" />
+
+            <h2>HipChat</h2>
+            <p>Group and private chat, file sharing, and integrations.</p>
+
+            <a href="{% url 'hc-add-hipchat' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+    </ul>
+
+
+
+</div>
 </div>
 
 <div id="checks-modal" class="modal">
     <div class="modal-dialog">
             <div class="modal-content">
-
+                <h2>Email</h2>
+                <p>Get an email message when check goes up or down</p>
             </div>
         </form>
     </div>

@@ -126,7 +126,8 @@ class Channel(models.Model):
 
             n.save()
         elif self.kind == "slack":
-            text = render_to_string("slack_message.html", {"check": check})
+            tmpl = "integrations/slack_message.html"
+            text = render_to_string(tmpl, {"check": check})
             payload = {
                 "text": text,
                 "username": "healthchecks.io",
@@ -138,7 +139,8 @@ class Channel(models.Model):
             n.status = r.status_code
             n.save()
         elif self.kind == "hipchat":
-            text = render_to_string("hipchat_message.html", {"check": check})
+            tmpl = "integrations/hipchat_message.html"
+            text = render_to_string(tmpl, {"check": check})
             payload = {
                 "message": text,
                 "color": "green" if check.status == "up" else "red",
