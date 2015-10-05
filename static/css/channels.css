@@ -133,3 +133,29 @@ table.channels-table > tbody > tr > th {
 .setup-guide h2, .integration-settings h2 {
     margin: 0 0 1em 0;
 }
+
+.ai-step {
+    margin: 2em 0;
+}
+
+.ai-step .step-no {
+    display: block;
+    float: left;
+    font-size: 24px;
+    width: 48px;
+    heigth: 48px;
+    background: #7ec1ea;
+    border-radius: 32px;
+    text-align: center;
+    line-height: 48px;
+    margin-right: 32px;
+    margin-bottom: 32px;
+    color: #fff;
+    font-weight: 300;
+}
+
+.ai-guide-screenshot {
+    border: ;
+    max-width: 100%;
+    border: 6px solid #EEE;
+}

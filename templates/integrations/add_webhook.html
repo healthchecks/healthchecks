@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Notification Channels - healthchecks.io{% endblock %}
+{% block title %}Add WebHook - healthchecks.io{% endblock %}
 
 
 {% block content %}
 <div class="row">
 <div class="col-sm-12">
-    <h1>Webhook</h1>
+    <h1>WebHook</h1>
 
-    <p>Receive a HTTP callback when a check goes down.</p>
+    <p>WebHooks are a simple way to notify an external system when a check
+    goes down. healthcheks.io will run a normal HTTP GET call to your
+    specified URL.</p>
 
     <h2>Integration Settings</h2>
 
