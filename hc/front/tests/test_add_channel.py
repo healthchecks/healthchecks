@@ -29,3 +29,10 @@ class AddChannelTestCase(TestCase):
         r = self.client.post(url, form)
 
         assert r.status_code == 400, r.status_code
+
+    def test_instructions_work(self):
+        self.client.login(username="alice", password="password")
+        for frag in ("email", "webhook", "pd", "slack", "hipchat"):
+            url = "/integrations/add_%s/" % frag
+            r = self.client.get(url)
+            self.assertContains(r, "Integration Settings", status_code=200)
