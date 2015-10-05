@@ -16,7 +16,7 @@ class RemoveChannelTestCase(TestCase):
         self.channel.save()
 
     def test_it_works(self):
-        url = "/channels/%s/remove/" % self.channel.code
+        url = "/integrations/%s/remove/" % self.channel.code
 
         self.client.login(username="alice", password="password")
         r = self.client.post(url)
@@ -25,14 +25,14 @@ class RemoveChannelTestCase(TestCase):
         assert Channel.objects.count() == 0
 
     def test_it_handles_bad_uuid(self):
-        url = "/channels/not-uuid/remove/"
+        url = "/integrations/not-uuid/remove/"
 
         self.client.login(username="alice", password="password")
         r = self.client.post(url)
         assert r.status_code == 400
 
     def test_it_checks_owner(self):
-        url = "/channels/%s/remove/" % self.channel.code
+        url = "/integrations/%s/remove/" % self.channel.code
 
         mallory = User(username="mallory")
         mallory.set_password("password")
@@ -44,7 +44,7 @@ class RemoveChannelTestCase(TestCase):
 
     def test_it_handles_missing_uuid(self):
         # Valid UUID but there is no channel for it:
-        url = "/channels/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/remove/"
+        url = "/integrations/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/remove/"
 
         self.client.login(username="alice", password="password")
         r = self.client.post(url)

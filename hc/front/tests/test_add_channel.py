@@ -12,7 +12,7 @@ class AddChannelTestCase(TestCase):
         self.alice.save()
 
     def test_it_works(self):
-        url = "/channels/add/"
+        url = "/integrations/add/"
         form = {"kind": "email", "value": "alice@example.org"}
 
         self.client.login(username="alice", password="password")
@@ -22,7 +22,7 @@ class AddChannelTestCase(TestCase):
         assert Channel.objects.count() == 1
 
     def test_it_rejects_bad_kind(self):
-        url = "/channels/add/"
+        url = "/integrations/add/"
         form = {"kind": "dog", "value": "Lassie"}
 
         self.client.login(username="alice", password="password")

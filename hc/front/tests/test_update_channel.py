@@ -25,7 +25,7 @@ class UpdateChannelTestCase(TestCase):
         }
 
         self.client.login(username="alice", password="password")
-        r = self.client.post("/channels/", data=payload)
+        r = self.client.post("/integrations/", data=payload)
         assert r.status_code == 302
 
         channel = Channel.objects.get(code=self.channel.code)
@@ -41,7 +41,7 @@ class UpdateChannelTestCase(TestCase):
         payload = {"channel": self.channel.code}
 
         self.client.login(username="mallory", password="password")
-        r = self.client.post("/channels/", data=payload)
+        r = self.client.post("/integrations/", data=payload)
 
         # self.channel does not belong to mallory, this should fail--
         assert r.status_code == 403
@@ -60,7 +60,7 @@ class UpdateChannelTestCase(TestCase):
             "check-%s" % self.check.code: True
         }
         self.client.login(username="mallory", password="password")
-        r = self.client.post("/channels/", data=payload)
+        r = self.client.post("/integrations/", data=payload)
 
         # mc belongs to mallorym but self.check does not--
         assert r.status_code == 403
@@ -70,7 +70,7 @@ class UpdateChannelTestCase(TestCase):
         payload = {"channel": "6837d6ec-fc08-4da5-a67f-08a9ed1ccf62"}
 
         self.client.login(username="alice", password="password")
-        r = self.client.post("/channels/", data=payload)
+        r = self.client.post("/integrations/", data=payload)
         assert r.status_code == 400
 
     def test_it_handles_missing_check(self):
@@ -81,5 +81,5 @@ class UpdateChannelTestCase(TestCase):
         }
 
         self.client.login(username="alice", password="password")
-        r = self.client.post("/channels/", data=payload)
+        r = self.client.post("/integrations/", data=payload)
         assert r.status_code == 400

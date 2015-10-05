@@ -16,7 +16,7 @@ class ChannelChecksTestCase(TestCase):
         self.channel.save()
 
     def test_it_works(self):
-        url = "/channels/%s/checks/" % self.channel.code
+        url = "/integrations/%s/checks/" % self.channel.code
 
         self.client.login(username="alice", password="password")
         r = self.client.get(url)
@@ -29,14 +29,14 @@ class ChannelChecksTestCase(TestCase):
 
         # channel does not belong to mallory so this should come back
         # with 403 Forbidden:
-        url = "/channels/%s/checks/" % self.channel.code
+        url = "/integrations/%s/checks/" % self.channel.code
         self.client.login(username="mallory", password="password")
         r = self.client.get(url)
         assert r.status_code == 403
 
     def test_missing_channel(self):
         # Valid UUID but there is no channel for it:
-        url = "/channels/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/checks/"
+        url = "/integrations/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/checks/"
 
         self.client.login(username="alice", password="password")
         r = self.client.get(url)
