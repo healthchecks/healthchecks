@@ -26,7 +26,7 @@ CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
 
 class Check(models.Model):
     name = models.CharField(max_length=100, blank=True)
-    code = models.UUIDField(default=uuid.uuid4, editable=False)
+    code = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
     user = models.ForeignKey(User, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     timeout = models.DurationField(default=DEFAULT_TIMEOUT)
