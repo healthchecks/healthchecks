@@ -25,6 +25,11 @@ CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
 
 
 class Check(models.Model):
+
+    class Meta:
+        # sendalerts command will query using these
+        index_together = ["status", "user", "alert_after"]
+
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
     user = models.ForeignKey(User, blank=True, null=True)
