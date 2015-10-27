@@ -126,6 +126,6 @@ COMPRESS_OFFLINE = True
 EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
 
 try:
-    from local_settings import *
+    from .local_settings import *
 except ImportError as e:
     warnings.warn("local_settings.py not found, using defaults")
