@@ -1,5 +1,6 @@
 Django==1.8.2
 django_compressor
+django-appconf
 django-ses-backend
 psycopg2==2.6
 djmail
