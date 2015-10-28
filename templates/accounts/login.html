@@ -3,13 +3,23 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
-        <div id="login_dialog">
+        <div class="hc-dialog">
+            {% if bad_link %}
+            <h1>Incorrect Login Link</h1>
+            <div class="dialog-body">
+                <p>The login link you just used is either incorrect or expired.</p>
+                <p>Please use the form below to request a fresh login link:</p>
+            </div>
+            {% else %}
             <h1>Health Checks</h1>
+            <div class="dialog-body">
+                <p>
+                    Please enter your email address.
+                    Next, we'll send you an email with log-in instructions!
+                </p>
+            </div>
+            {% endif %}
 
-            <p>
-                Please enter your email address.
-                Next, we'll send you an email with log-in instructions!
-            </p>
 
             <form method="post">
                 {% csrf_token %}

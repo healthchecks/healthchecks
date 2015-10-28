@@ -62,12 +62,16 @@ body {
     color: #d9534f;
 }
 
-#login_dialog {
+.hc-dialog {
     background: #FFF;
     padding: 2em;
     margin-top: 100px;
 }
 
-#login_dialog h1 {
+.hc-dialog h1 {
     margin: 0;
+}
+
+.dialog-body {
+    margin: 24px 0;
 }

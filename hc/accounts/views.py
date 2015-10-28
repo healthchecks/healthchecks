@@ -102,4 +102,5 @@ def check_token(request, username, token):
 
             return redirect("hc-checks")
 
-    return render(request, "bad_link.html")
+    ctx = {"bad_link": True}
+    return render(request, "accounts/login.html", ctx)
