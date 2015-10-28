@@ -49,7 +49,7 @@ class ChecksAdmin(admin.ModelAdmin):
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
     search_fields = ("owner__name", "owner__code", "owner__user__email")
-    list_select_related = ("owner", )
+    list_select_related = ("owner", "owner__user")
     list_display = ("id", "created", "check_name", "email", "scheme", "method",
                     "ua")
     list_filter = ("created", "scheme", "method")
