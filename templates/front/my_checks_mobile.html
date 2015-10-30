@@ -31,6 +31,8 @@
                         <span class="label label-warning">LATE</span>
                     {% elif check.get_status == "down" %}
                         <span class="label label-danger">DOWN</span>
+                    {% elif check.get_status == "paused" %}
+                        <span class="label label-default">PAUSED</span>
                     {% endif %}
                 </td>
             </tr>

@@ -15,8 +15,12 @@ import requests
 
 from hc.lib import emails
 
-
-STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"))
+STATUSES = (
+    ("up", "Up"),
+    ("down", "Down"),
+    ("new", "New"),
+    ("paused", "Paused")
+)
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
 CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
@@ -60,8 +64,8 @@ class Check(models.Model):
             channel.notify(self)
 
     def get_status(self):
-        if self.status == "new":
-            return "new"
+        if self.status in ("new", "paused"):
+            return self.status
 
         now = timezone.now()
 

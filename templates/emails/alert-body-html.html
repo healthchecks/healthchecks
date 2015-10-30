@@ -19,6 +19,7 @@
     }
 
     .new { background: #AAA; }
+    .paused { background: #AAA; }
     .up { background: #5cb85c; }
     .grace { background: #f0ad4e; }
     .down { background: #d9534f; }
@@ -55,6 +56,8 @@
                 <span class="badge grace">LATE</span>
             {% elif check.get_status == "down" %}
                 <span class="badge down">DOWN</span>
+            {% elif check.get_status == "paused" %}
+                <span class="badge paused">PAUSED</span>
             {% endif %}
         </td>
         <td>
