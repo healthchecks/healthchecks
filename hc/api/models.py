@@ -143,7 +143,7 @@ class Channel(models.Model):
                 "icon_url": "https://healthchecks.io/static/img/logo@2x.png"
             }
 
-            r = requests.post(self.value, json=payload)
+            r = requests.post(self.value, json=payload, timeout=5)
 
             n.status = r.status_code
             n.save()
@@ -155,7 +155,7 @@ class Channel(models.Model):
                 "color": "green" if check.status == "up" else "red",
             }
 
-            r = requests.post(self.value, json=payload)
+            r = requests.post(self.value, json=payload, timeout=5)
 
             n.status = r.status_code
             n.save()
@@ -179,7 +179,7 @@ class Channel(models.Model):
             }
 
             url = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
-            r = requests.post(url, data=json.dumps(payload))
+            r = requests.post(url, data=json.dumps(payload), timeout=5)
 
             n.status = r.status_code
             n.save()
