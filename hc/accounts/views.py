@@ -1,13 +1,13 @@
 import uuid
 
 from django.conf import settings
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
-from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
-
 from hc.accounts.forms import EmailForm
 from hc.api.models import Channel, Check
 from hc.lib import emails

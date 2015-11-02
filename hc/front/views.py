@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Channel, Check, Ping
 from hc.front.forms import AddChannelForm, TimeoutForm

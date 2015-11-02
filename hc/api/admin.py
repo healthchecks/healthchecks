@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from hc.api.models import Channel, Check, Notification, Ping
 
 

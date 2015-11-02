@@ -4,7 +4,6 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Check, Ping
 

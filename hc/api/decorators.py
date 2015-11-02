@@ -1,6 +1,7 @@
-from functools import wraps
-from django.http import HttpResponseBadRequest
 import uuid
+from functools import wraps
+
+from django.http import HttpResponseBadRequest
 
 
 def uuid_or_400(f):

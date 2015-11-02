@@ -1,18 +1,17 @@
 # coding: utf-8
 
-from datetime import timedelta as td
 import hashlib
 import json
 import uuid
+from datetime import timedelta as td
 
+import requests
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
-import requests
-
 from hc.lib import emails
 
 STATUSES = (

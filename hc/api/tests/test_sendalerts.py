@@ -1,11 +1,10 @@
 from datetime import datetime
-from mock import patch
 
 from django.contrib.auth.models import User
 from django.test import TestCase
-
-from hc.api.models import Check
 from hc.api.management.commands.sendalerts import handle_many
+from hc.api.models import Check
+from mock import patch
 
 
 class SendAlertsTestCase(TestCase):

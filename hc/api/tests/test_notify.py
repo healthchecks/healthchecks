@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
+from hc.api.models import Channel, Check, Notification
 from mock import patch
 from requests.exceptions import ReadTimeout
-
-from hc.api.models import Channel, Check, Notification
 
 
 class NotifyTestCase(TestCase):

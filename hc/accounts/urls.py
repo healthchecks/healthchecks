@@ -1,5 +1,4 @@
 from django.conf.urls import url
-
 from hc.accounts import views
 
 urlpatterns = [
