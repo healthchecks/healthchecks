@@ -2,12 +2,14 @@ import logging
 import sys
 import time
 
+from concurrent.futures import ThreadPoolExecutor
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db.models import Q
 from django.utils import timezone
-
 from hc.api.models import Check
 
+executor = ThreadPoolExecutor(max_workers=10)
 logger = logging.getLogger(__name__)
 
 
@@ -16,26 +18,31 @@ def _stdout(message):
     sys.stdout.flush()
 
 
-def handle_one():
-    """ Send an alert for a single check.
-
-    Return True if an appropriate check was selected and processed.
-    Return False if no checks need to be processed.
-
-    """
-
+def handle_many():
+    """ Send alerts for many checks simultaneously. """
     query = Check.objects.filter(user__isnull=False)
 
     now = timezone.now()
     going_down = Q(alert_after__lt=now, status="up")
     going_up = Q(alert_after__gt=now, status="down")
     query = query.filter(going_down | going_up)
-
-    try:
-        check = query[0]
-    except IndexError:
+    checks = list(query.iterator())
+    if not checks:
         return False
 
+    for future in [executor.submit(handle_one, check) for check in checks]:
+        future.result()
+
+    return True
+
+
+def handle_one(check):
+    """ Send an alert for a single check.
+
+    Return True if an appropriate check was selected and processed.
+    Return False if no checks need to be processed.
+
+    """
     check.status = check.get_status()
 
     tmpl = "\nSending alert, status=%s, code=%s\n"
@@ -54,6 +61,7 @@ def handle_one():
         check.status = "paused"
     finally:
         check.save()
+        connection.close()
 
     return True
 
@@ -65,10 +73,10 @@ class Command(BaseCommand):
 
         ticks = 0
         while True:
-            success = True
-            while success:
-                success = handle_one()
-                ticks = 0 if success else ticks + 1
+            if handle_many():
+                ticks = 0
+            else:
+                ticks += 1
 
             time.sleep(1)
             _stdout(".")
