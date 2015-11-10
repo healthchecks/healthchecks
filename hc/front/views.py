@@ -161,10 +161,30 @@ def log(request, code):
 
     pings = Ping.objects.filter(owner=check).order_by("-created")[:100]
 
+    # Now go through pings, calculate time gaps, and decorate
+    # the pings list for convenient use in template
+    wrapped = []
+    for i, ping in enumerate(pings):
+        prev = timezone.now() if i == 0 else pings[i - 1].created
+
+        duration = prev - ping.created
+        if duration > check.timeout:
+            downtime = {"prev_date": prev, "date": ping.created}
+            if i > 0:
+                wrapped[-1]["status"] = "late"
+
+            if duration > check.timeout + check.grace:
+                downtime["down"] = True
+                if i > 0:
+                    wrapped[-1]["status"] = "down"
+
+            wrapped.append(downtime)
+
+        wrapped.append({"ping": ping})
+
     ctx = {
         "check": check,
-        "pings": pings
-
+        "pings": wrapped
     }
 
     return render(request, "front/log.html", ctx)

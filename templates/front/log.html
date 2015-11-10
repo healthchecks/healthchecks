@@ -5,39 +5,82 @@
 
 
 {% block content %}
+
 <div class="row">
     <div class="col-sm-12">
-    <h1>Log for “{{ check.name_then_code }}”</h1>
+        <ol class="breadcrumb">
+            <li><a href="{% url 'hc-checks' %}">Checks</a></li>
+            <li>{{ check.name_then_code }}</li>
+            <li class="active">Log</li>
+        </ol>
+
     {% if pings %}
+
+    <p class="log-notes">
+        Note: Dates and times are displayed in <strong>UTC</strong>.
+    </p>
+
+
     <div class="table-responsive">
-    <table class="table table-striped log-table">
+    <table class="table" id="log">
         <tr>
-            <th>Transport</th>
-            <th>Time</th>
-            <th>Remote IP</th>
-            <th>User Agent</th>
+            <th></th>
+            <th class="datetime">
+                <span class="date">Date</span>
+                <span class="time">Time</span>
+            </th>
+            <th class="ip">IP</th>
+            <th class="protocol">Protocol</th>
+            <th class="ua">User Agent</th>
         </tr>
-        {% for ping in pings %}
+        {% for record in pings %}
+        {% if record.ping %}
         <tr>
-            <td>
-                {% if ping.scheme == "email" %}
-                    Email
-                {% elif ping.scheme == "http" %}
-                    HTTP
-                {% elif ping.scheme == "https" %}
-                    HTTPS
-                {% endif %}
+            <td class="tl-cell">
+                <div class="tl top"></div>
+                <div class="tl bottom {{ record.status }}"></div>
+                <div class="bullet"></div>
             </td>
-            <td>
-                <span
-                    data-toggle="tooltip"
-                    title="{{ ping.created }} GMT">
-                        {{ ping.created|naturaltime }}
-                </span>
+            <td class="datetime">
+                <div>
+                    <span class="date">
+                        {{ record.ping.created|date:"N j" }}
+                    </span>
+                    <span class="time">
+                        {{ record.ping.created|date:"H:i" }}
+                    </span>
+                </div>
             </td>
-            <td class="remote-addr">{{ ping.remote_addr }}</td>
-            <td class="ua">{{ ping.ua }}</td>
+            <td class="ip">
+                {{ record.ping.remote_addr|default:"" }}
+            </td>
+            <td class="protocol">
+                {{ record.ping.scheme }}
+            </td>
+
+            <td class="ua">
+                {{ record.ping.ua }}
+            </td>
         </tr>
+        {% else %}
+        {% if record.down %}
+        <tr>
+            <td class="tl-cell">
+                <div class="tl full-down"></div>
+            </td>
+            <td class="downtime-cell" colspan="4">
+                <p>No ping received for {{ record.date|timesince:record.prev_date }}</p>
+
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td class="tl-cell">
+                <div class="tl top late"></div>
+                <div class="tl bottom"></div>
+            </td>
+        </tr>
+        {% endif %}
         {% endfor %}
     </table>
     </div>

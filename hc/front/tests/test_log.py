@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
-from hc.api.models import Check
+from hc.api.models import Check, Ping
 
 
 class LogTestCase(TestCase):
@@ -13,12 +13,15 @@ class LogTestCase(TestCase):
         self.check = Check(user=self.alice)
         self.check.save()
 
+        ping = Ping(owner=self.check)
+        ping.save()
+
     def test_it_works(self):
         url = "/checks/%s/log/" % self.check.code
 
         self.client.login(username="alice", password="password")
         r = self.client.get(url)
-        self.assertContains(r, "Log for", status_code=200)
+        self.assertContains(r, "Dates and times are", status_code=200)
 
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/log/"
