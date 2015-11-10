@@ -45,13 +45,43 @@ class ChecksAdmin(admin.ModelAdmin):
     send_alert.short_description = "Send Alert"
 
 
+class SchemeListFilter(admin.SimpleListFilter):
+    title = "Scheme"
+    parameter_name = 'scheme'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('http', "HTTP"),
+            ('https', "HTTPS"),
+            ('email', "Email"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            queryset = queryset.filter(scheme=self.value())
+        return queryset
+
+
+class MethodListFilter(admin.SimpleListFilter):
+    title = "Method"
+    parameter_name = 'method'
+
+    def lookups(self, request, model_admin):
+        return [(m, m) for m in ("HEAD", "GET", "POST", "PUT", "DELETE")]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            queryset = queryset.filter(method=self.value())
+        return queryset
+
+
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
     search_fields = ("owner__name", "owner__code", "owner__user__email")
     list_select_related = ("owner", "owner__user")
     list_display = ("id", "created", "check_name", "email", "scheme", "method",
                     "ua")
-    list_filter = ("created", "scheme", "method")
+    list_filter = ("created", SchemeListFilter, MethodListFilter)
 
     def check_name(self, obj):
         return obj.owner.name if obj.owner.name else obj.owner.code
