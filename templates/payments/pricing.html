@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load staticfiles compress %}
 
 {% block title %}Pricing - It's Free! - healthchecks.io{% endblock %}
 
@@ -11,10 +11,10 @@
         <div class="row">
 
             <!-- item -->
-            <div class="col-md-4 text-center col-md-offset-4">
+            <div class="col-md-4 text-center">
                 <div class="panel panel-success panel-pricing">
                     <div class="panel-heading">
-                        <i class="glyphicon glyphicon-heart-empty"></i>
+                        <i class="glyphicon glyphicon-heart"></i>
                         <h3>Free Plan</h3>
                     </div>
                     <div class="panel-body text-center">
@@ -24,9 +24,50 @@
                         <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Checks</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Alerts</li>
+                        <li class="list-group-item">&nbsp;</li>
                     </ul>
                     <div class="panel-footer">
-                        <a class="btn btn-lg btn-block btn-success" href="{% url 'hc-login' %}">Get Started</a>
+                        <a class="btn btn-lg btn-success" href="{% url 'hc-login' %}">Get Started</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /item -->
+
+            <!-- item -->
+            <div class="col-md-8 text-center">
+                <div class="panel panel-success panel-pricing">
+                    <div class="panel-heading">
+                        <div id="piggy">
+                            <i class="glyphicon glyphicon-piggy-bank"></i>
+                        </div>
+                        <h3>Pay What You Want Plan</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        <p>
+                        <strong>€<span id="pricing-value">10</span> / Month</strong>
+
+                        <span class="btn-group" role="group">
+                            <button id="pay-minus" type="button" class="btn btn-default">
+                                <i class="glyphicon glyphicon-chevron-down"></i>
+                            </button>
+                            <button id="pay-plus" type="button" class="btn btn-default">
+                                <i class="glyphicon glyphicon-chevron-up"></i>
+
+                            </button>
+                        </span>
+
+
+                        </p>
+                    </div>
+
+                    <ul class="list-group text-center">
+                        <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
+                        <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Checks</li>
+                        <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Alerts</li>
+                        <li class="list-group-item"><i class="fa fa-check"></i> Priority Support</li>
+                    </ul>
+                    <div class="panel-footer">
+                        <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">Get Started</a>
                     </div>
                 </div>
             </div>
@@ -37,4 +78,12 @@
 </section>
 <!-- /Plans -->
 
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/pricing.js' %}"></script>
+{% endcompress %}
 {% endblock %}
