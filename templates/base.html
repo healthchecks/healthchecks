@@ -20,7 +20,9 @@
     <link rel="stylesheet" href="{% static 'css/my_checks.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/my_checks_mobile.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/my_checks_desktop.css' %}" type="text/css">
+    {% if USE_PAYMENTS %}
     <link rel="stylesheet" href="{% static 'css/pricing.css' %}" type="text/css">
+    {% endif %}
     <link rel="stylesheet" href="{% static 'css/syntax.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/channels.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/channel_checks.css' %}" type="text/css">
@@ -80,9 +82,11 @@
                 {% endif %}
 
 
+                {% if USE_PAYMENTS %}
                 <li {% if page == 'pricing' %} class="active" {% endif %}>
                     <a href="{% url 'hc-pricing' %}">Pricing</a>
                 </li>
+                {% endif %}
 
                 <li {% if page == 'docs' %} class="active" {% endif %}>
                     <a href="{% url 'hc-docs' %}">Docs</a>

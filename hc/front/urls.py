@@ -11,7 +11,6 @@ urlpatterns = [
     url(r'^checks/([\w-]+)/email/$',    views.email_preview),
     url(r'^checks/([\w-]+)/remove/$',   views.remove_check, name="hc-remove-check"),
     url(r'^checks/([\w-]+)/log/$',      views.log, name="hc-log"),
-    url(r'^pricing/$',                  views.pricing, name="hc-pricing"),
     url(r'^docs/$',                     views.docs, name="hc-docs"),
     url(r'^about/$',                    views.about, name="hc-about"),
     url(r'^integrations/$',                 views.channels, name="hc-channels"),

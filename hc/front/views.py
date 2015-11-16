@@ -47,10 +47,6 @@ def index(request):
     return render(request, "front/welcome.html", ctx)
 
 
-def pricing(request):
-    return render(request, "front/pricing.html", {"page": "pricing"})
-
-
 def docs(request):
     if "welcome_code" in request.session:
         code = request.session["welcome_code"]

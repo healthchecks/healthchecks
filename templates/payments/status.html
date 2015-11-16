@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Pricing - It's Free! - healthchecks.io{% endblock %}
+
+{% block content %}
+
+<h1>Subscription Status</h1>
+
+<dl>
+    <dt>Status</dt>
+    <dd>{{ subscription.status }}</dd>
+
+    <dt>Next Billing Date:</dt>
+    <dd>{{ subscription.next_billing_date }}</dd>
+
+
+    <dt>Amount</dt>
+    <dd>{{ subscription.price }} / Month</dd>
+
+
+</dl>
+
+<h2>Transactions</h2>
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+    </tr>
+    {% for tx in subscription.transactions %}
+    <tr>
+        <td>???</td>
+        <td>{{ tx.amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}

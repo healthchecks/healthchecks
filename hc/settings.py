@@ -20,6 +20,7 @@ SECRET_KEY = "---"
 DEBUG = True
 ALLOWED_HOSTS = []
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
+USE_PAYMENTS = False
 
 
 INSTALLED_APPS = (
@@ -35,7 +36,8 @@ INSTALLED_APPS = (
 
     'hc.accounts',
     'hc.api',
-    'hc.front'
+    'hc.front',
+    'hc.payments'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -62,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'hc.payments.context_processors.payments'
             ],
         },
     },
