@@ -2,6 +2,7 @@ import braintree
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from .models import Subscription
 
@@ -17,14 +18,6 @@ def setup_braintree():
 
 
 def pricing(request):
-    ctx = {
-        "page": "pricing",
-    }
-    return render(request, "payments/pricing.html", ctx)
-
-
-@login_required
-def create(request):
     setup_braintree()
 
     try:
@@ -33,13 +26,27 @@ def create(request):
         sub = Subscription(user=request.user)
         sub.save()
 
-    if request.method == "POST":
-        if not sub.customer_id:
-            result = braintree.Customer.create({})
-            assert result.is_success
-            sub.customer_id = result.customer.id
-            sub.save()
+    ctx = {
+        "page": "pricing",
+        "sub": sub,
+        "client_token": braintree.ClientToken.generate()
+    }
 
+    return render(request, "payments/pricing.html", ctx)
+
+
+@login_required
+@require_POST
+def create_plan(request):
+    setup_braintree()
+    sub = Subscription.objects.get(user=request.user)
+    if not sub.customer_id:
+        result = braintree.Customer.create({})
+        assert result.is_success
+        sub.customer_id = result.customer.id
+        sub.save()
+
+    if "payment_method_nonce" in request.POST:
         result = braintree.PaymentMethod.create({
             "customer_id": sub.customer_id,
             "payment_method_nonce": request.POST["payment_method_nonce"]
@@ -48,34 +55,47 @@ def create(request):
         sub.payment_method_token = result.payment_method.token
         sub.save()
 
-        result = braintree.Subscription.create({
-            "payment_method_token": sub.payment_method_token,
-            "plan_id": "pww",
-            "price": 5
-        })
+    price = int(request.POST["price"])
+    assert price in (2, 5, 10, 15, 20, 25, 50, 100)
 
-        sub.subscription_id = result.subscription.id
-        sub.save()
+    result = braintree.Subscription.create({
+        "payment_method_token": sub.payment_method_token,
+        "plan_id": "P%d" % price,
+        "price": price
+    })
 
-        return redirect("hc-subscription-status")
+    sub.subscription_id = result.subscription.id
+    sub.save()
 
-    ctx = {
-        "page": "pricing",
-        "client_token": braintree.ClientToken.generate()
-    }
-    return render(request, "payments/create_subscription.html", ctx)
+    return redirect("hc-pricing")
 
 
 @login_required
-def status(request):
+@require_POST
+def update_plan(request):
     setup_braintree()
-
     sub = Subscription.objects.get(user=request.user)
-    subscription = braintree.Subscription.find(sub.subscription_id)
 
-    ctx = {
-        "page": "pricing",
-        "subscription": subscription
+    price = int(request.POST["price"])
+    assert price in (2, 5, 10, 15, 20, 25, 50, 100)
+
+    fields = {
+        "plan_id": "P%s" % price,
+        "price": price
     }
 
-    return render(request, "payments/status.html", ctx)
+    braintree.Subscription.update(sub.subscription_id, fields)
+    return redirect("hc-pricing")
+
+
+@login_required
+@require_POST
+def cancel_plan(request):
+    setup_braintree()
+    sub = Subscription.objects.get(user=request.user)
+
+    braintree.Subscription.cancel(sub.subscription_id)
+    sub.subscription_id = ""
+    sub.save()
+
+    return redirect("hc-pricing")

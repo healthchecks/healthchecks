@@ -100,3 +100,11 @@
   -webkit-animation-name: tadaIn;
   animation-name: tadaIn;
 }
+
+#pww-switch-btn {
+    display: none;
+}
+
+#subscription-status form {
+    display: inline-block;
+}
