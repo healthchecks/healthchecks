@@ -36,8 +36,7 @@ INSTALLED_APPS = (
 
     'hc.accounts',
     'hc.api',
-    'hc.front',
-    'hc.payments'
+    'hc.front'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -128,7 +127,7 @@ COMPRESS_OFFLINE = True
 
 EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
 
-try:
+if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
-except ImportError as e:
+else:
     warnings.warn("local_settings.py not found, using defaults")
