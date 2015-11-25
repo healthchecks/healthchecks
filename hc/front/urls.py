@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^integrations/add_pd/$',          views.add_pd, name="hc-add-pd"),
     url(r'^integrations/add_slack/$',       views.add_slack, name="hc-add-slack"),
     url(r'^integrations/add_hipchat/$',     views.add_hipchat, name="hc-add-hipchat"),
+    url(r'^integrations/add_pushover/$',    views.add_pushover, name="hc-add-pushover"),
     url(r'^integrations/([\w-]+)/checks/$', views.channel_checks, name="hc-channel-checks"),
     url(r'^integrations/([\w-]+)/remove/$', views.remove_channel, name="hc-remove-channel"),
     url(r'^integrations/([\w-]+)/verify/([\w-]+)/$',

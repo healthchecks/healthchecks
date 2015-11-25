@@ -5,7 +5,7 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</span></button>
-    <h4 class="update-timeout-title">Assign Checks to Channel {{ channel.value }}</h4>
+    <h4 class="update-timeout-title">Assign Checks to Channel {% if channel.kind == "po" %}{{ channel.po_value|join:" / " }}{% else %}{{ channel.value }}{% endif %}</h4>
 </div>
 
 <input type="hidden" name="channel" value="{{ channel.code }}" />

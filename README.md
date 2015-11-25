@@ -63,3 +63,14 @@ in development environment.
 
         $ ./manage.py runserver
 
+## Integrations
+
+### Pushover
+
+To enable Pushover integration, you will need to:
+
+* register a new application on https://pushover.net/apps/build
+* enable subscriptions in your application and make sure to enable the URL
+  subscription type
+* add the application token and subscription URL to `hc/local_settings.py`, as
+  `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL`
