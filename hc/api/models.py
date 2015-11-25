@@ -204,6 +204,9 @@ class Channel(models.Model):
                 "html": 1,
                 "priority": priority,
             }
+            if priority == 2:  # Emergency notification
+                payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
+                payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
             url = "https://api.pushover.net/1/messages.json"
             r = requests.post(url, data=payload, timeout=5)

@@ -377,5 +377,9 @@ def add_pushover(request):
             })
 
     else:
-        ctx = {"page": "channels"}
+        ctx = {
+            "page": "channels",
+            "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
+            "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
+        }
         return render(request, "integrations/add_pushover.html", ctx)

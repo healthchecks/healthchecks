@@ -26,6 +26,14 @@
                     <option value="-1">Low</option>
                     <option value="0" selected>Normal</option>
                     <option value="1">High</option>
+                    <option value="2"
+                            data-toggle="tooltip" data-placement="right"
+                            title="Emergency notifications will be repeated every
+                                   {{po_retry_delay|hc_duration }} for at most
+                                   {{ po_expiration|hc_duration }} until you
+                                   acknowledge them.">
+                        Emergency
+                    </option>
                 </select>
             </div>
         </div>
@@ -47,4 +55,7 @@
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 {% endcompress %}
+<script>$(function() {
+    $('[data-toggle="tooltip"]').tooltip({container: 'body'});
+})</script>
 {% endblock %}
