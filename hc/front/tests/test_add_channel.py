@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from hc.api.models import Channel
@@ -9,6 +10,9 @@ class AddChannelTestCase(TestCase):
         self.alice = User(username="alice")
         self.alice.set_password("password")
         self.alice.save()
+
+        settings.PUSHOVER_API_TOKEN = "bogus_token"
+        settings.PUSHOVER_SUBSCRIPTION_URL = "bogus_url"
 
     def test_it_works(self):
         url = "/integrations/add/"
