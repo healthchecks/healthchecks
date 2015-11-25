@@ -20,6 +20,7 @@ SECRET_KEY = "---"
 DEBUG = True
 ALLOWED_HOSTS = []
 DEFAULT_FROM_EMAIL = 'healthchecks@example.org'
+USE_PAYMENTS = False
 
 
 INSTALLED_APPS = (
@@ -62,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'hc.payments.context_processors.payments'
             ],
         },
     },
@@ -131,7 +133,7 @@ PUSHOVER_SUBSCRIPTION_URL = None
 PUSHOVER_EMERGENCY_RETRY_DELAY = 300
 PUSHOVER_EMERGENCY_EXPIRATION = 86400
 
-try:
+if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
-except ImportError as e:
+else:
     warnings.warn("local_settings.py not found, using defaults")
