@@ -162,8 +162,9 @@ def log(request, code):
     # Now go through pings, calculate time gaps, and decorate
     # the pings list for convenient use in template
     wrapped = []
+    now = timezone.now()
     for i, ping in enumerate(pings):
-        prev = timezone.now() if i == 0 else pings[i - 1].created
+        prev = now if i == 0 else pings[i - 1].created
 
         duration = prev - ping.created
         if duration > check.timeout:
