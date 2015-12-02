@@ -29,11 +29,12 @@
                 <span class="preposition">
                 {% if ch.kind == "email" %} to {% endif %}
                 {% if ch.kind == "pd" %} API key {% endif %}
-                {% if ch.kind == "po" %} User key / priority {% endif %}
+                {% if ch.kind == "po" %} user key {% endif %}
                 </span>
 
                 {% if ch.kind == "po" %}
-                    {{ ch.po_value|join:" / " }}
+                    {{ ch.po_value|first }}
+                    ({{ ch.po_value|last }} priority)
                 {% else %}
                     {{ ch.value }}
                 {% endif %}

@@ -358,11 +358,8 @@ def add_pushover(request):
 
         if request.GET.get("pushover_unsubscribed", "0") == "1":
             # Unsubscription: delete all Pushover channels for this user
-            for channel in Channel.objects.filter(user=request.user, kind="po"):
-                channel.delete()
-
+            Channel.objects.filter(user=request.user, kind="po").delete()
             return redirect("hc-channels")
-
         else:
             # Subscription
             user_key = request.GET["pushover_user_key"]
@@ -373,10 +370,10 @@ def add_pushover(request):
                 "value": "%s|%d" % (user_key, priority),
             })
 
-    else:
-        ctx = {
-            "page": "channels",
-            "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
-            "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
-        }
-        return render(request, "integrations/add_pushover.html", ctx)
+    # Integration Settings form
+    ctx = {
+        "page": "channels",
+        "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
+        "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
+    }
+    return render(request, "integrations/add_pushover.html", ctx)

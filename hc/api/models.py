@@ -26,6 +26,14 @@ CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
                  ("hipchat", "HipChat"),
                  ("slack", "Slack"), ("pd", "PagerDuty"), ("po", "Pushover"))
 
+PO_PRIORITIES = {
+    -2: "lowest",
+    -1: "low",
+    0: "normal",
+    1: "high",
+    2: "emergency"
+}
+
 
 class Check(models.Model):
 
@@ -195,7 +203,7 @@ class Channel(models.Model):
             else:
                 title = "%s is now UP" % check.name_then_code()
 
-            user_key, priority = self.po_value
+            user_key, priority, _ = self.po_value
             payload = {
                 "token": settings.PUSHOVER_API_TOKEN,
                 "user": user_key,
@@ -219,7 +227,7 @@ class Channel(models.Model):
         assert self.kind == "po"
         user_key, prio = self.value.split("|")
         prio = int(prio)
-        return user_key, prio
+        return user_key, prio, PO_PRIORITIES[prio]
 
 
 class Notification(models.Model):
