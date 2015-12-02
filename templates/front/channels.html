@@ -23,14 +23,20 @@
             {% if ch.kind == "slack" %} Slack {% endif %}
             {% if ch.kind == "hipchat" %} HipChat {% endif %}
             {% if ch.kind == "pd" %} PagerDuty {% endif %}
+            {% if ch.kind == "po" %} Pushover {% endif %}
             </td>
             <td>
                 <span class="preposition">
                 {% if ch.kind == "email" %} to {% endif %}
                 {% if ch.kind == "pd" %} API key {% endif %}
+                {% if ch.kind == "po" %} User key / priority {% endif %}
                 </span>
 
-                {{ ch.value }}
+                {% if ch.kind == "po" %}
+                    {{ ch.po_value|join:" / " }}
+                {% else %}
+                    {{ ch.value }}
+                {% endif %}
 
                 {% if ch.kind == "email" and not ch.email_verified %}
                 <span class="channel-unconfirmed">(unconfirmed)
@@ -108,6 +114,17 @@
 
             <a href="{% url 'hc-add-hipchat' %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% if enable_pushover %}
+        <li>
+            <img src="{% static 'img/integrations/pushover.png' %}"
+                 alt="Pushover icon" />
+
+            <h2>Pushover</h2>
+            <p>Receive instant push notifications on your phone or tablet.</p>
+
+            <a href="{% url 'hc-add-pushover' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
     </ul>
 
 

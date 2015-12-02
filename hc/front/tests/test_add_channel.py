@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from hc.api.models import Channel
@@ -9,6 +10,9 @@ class AddChannelTestCase(TestCase):
         self.alice = User(username="alice")
         self.alice.set_password("password")
         self.alice.save()
+
+        settings.PUSHOVER_API_TOKEN = "bogus_token"
+        settings.PUSHOVER_SUBSCRIPTION_URL = "bogus_url"
 
     def test_it_works(self):
         url = "/integrations/add/"
@@ -31,7 +35,7 @@ class AddChannelTestCase(TestCase):
 
     def test_instructions_work(self):
         self.client.login(username="alice", password="password")
-        for frag in ("email", "webhook", "pd", "slack", "hipchat"):
+        for frag in ("email", "webhook", "pd", "pushover", "slack", "hipchat"):
             url = "/integrations/add_%s/" % frag
             r = self.client.get(url)
             self.assertContains(r, "Integration Settings", status_code=200)

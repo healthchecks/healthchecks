@@ -1,10 +1,13 @@
 from datetime import timedelta as td
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.six.moves.urllib.parse import urlencode
+from django.utils.crypto import get_random_string
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Channel, Check, Ping
 from hc.front.forms import AddChannelForm, TimeoutForm
@@ -220,16 +223,14 @@ def channels(request):
     ctx = {
         "page": "channels",
         "channels": channels,
-        "num_checks": num_checks
-
+        "num_checks": num_checks,
+        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
     }
     return render(request, "front/channels.html", ctx)
 
 
-@login_required
-def add_channel(request):
-    assert request.method == "POST"
-    form = AddChannelForm(request.POST)
+def do_add_channel(request, data):
+    form = AddChannelForm(data)
     if form.is_valid():
         channel = form.save(commit=False)
         channel.user = request.user
@@ -245,6 +246,11 @@ def add_channel(request):
     else:
         return HttpResponseBadRequest()
 
+
+@login_required
+def add_channel(request):
+    assert request.method == "POST"
+    return do_add_channel(request, request.POST)
 
 @login_required
 @uuid_or_400
@@ -318,3 +324,58 @@ def add_slack(request):
 def add_hipchat(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_hipchat.html", ctx)
+
+
+@login_required
+def add_pushover(request):
+    if settings.PUSHOVER_API_TOKEN is None or settings.PUSHOVER_SUBSCRIPTION_URL is None:
+        return HttpResponseForbidden()
+
+    if request.method == "POST":
+        # Initiate the subscription
+        nonce = get_random_string()
+        request.session["po_nonce"] = nonce
+
+        failure_url = request.build_absolute_uri(reverse("hc-channels"))
+        success_url = request.build_absolute_uri(reverse("hc-add-pushover")) + "?" + urlencode({
+            "nonce": nonce,
+            "prio": request.POST.get("po_priority", "0"),
+        })
+        subscription_url = settings.PUSHOVER_SUBSCRIPTION_URL + "?" + urlencode({
+            "success": success_url,
+            "failure": failure_url,
+        })
+
+        return redirect(subscription_url)
+
+    # Handle successful subscriptions
+    if "pushover_user_key" in request.GET and "nonce" in request.GET and "prio" in request.GET:
+        # Validate nonce
+        if request.GET["nonce"] != request.session.get("po_nonce", None):
+            return HttpResponseForbidden()
+        del request.session["po_nonce"]
+
+        if request.GET.get("pushover_unsubscribed", "0") == "1":
+            # Unsubscription: delete all Pushover channels for this user
+            for channel in Channel.objects.filter(user=request.user, kind="po"):
+                channel.delete()
+
+            return redirect("hc-channels")
+
+        else:
+            # Subscription
+            user_key = request.GET["pushover_user_key"]
+            priority = int(request.GET["prio"])
+
+            return do_add_channel(request, {
+                "kind": "po",
+                "value": "%s|%d" % (user_key, priority),
+            })
+
+    else:
+        ctx = {
+            "page": "channels",
+            "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
+            "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
+        }
+        return render(request, "integrations/add_pushover.html", ctx)

@@ -127,6 +127,12 @@ COMPRESS_OFFLINE = True
 
 EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
 
+# Pushover integration -- override these in local_settings
+PUSHOVER_API_TOKEN = None
+PUSHOVER_SUBSCRIPTION_URL = None
+PUSHOVER_EMERGENCY_RETRY_DELAY = 300
+PUSHOVER_EMERGENCY_EXPIRATION = 86400
+
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:
