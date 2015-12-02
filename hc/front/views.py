@@ -337,8 +337,8 @@ def add_pushover(request):
         nonce = get_random_string()
         request.session["po_nonce"] = nonce
 
-        failure_url = request.build_absolute_uri(reverse("hc-channels"))
-        success_url = request.build_absolute_uri(reverse("hc-add-pushover")) + "?" + urlencode({
+        failure_url = settings.SITE_ROOT + reverse("hc-channels")
+        success_url = settings.SITE_ROOT + reverse("hc-add-pushover") + "?" + urlencode({
             "nonce": nonce,
             "prio": request.POST.get("po_priority", "0"),
         })
