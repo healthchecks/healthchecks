@@ -4,14 +4,25 @@ from django.test import TestCase
 
 class CheckTokenTestCase(TestCase):
 
-    def test_it_redirects(self):
-        alice = User(username="alice")
-        alice.set_password("secret-token")
-        alice.save()
+    def setUp(self):
+      super(CheckTokenTestCase, self).setUp()
 
+      self.alice = User(username="alice")
+      self.alice.set_password("secret-token")
+      self.alice.save()
+
+    def test_it_redirects(self):
         r = self.client.get("/accounts/check_token/alice/secret-token/")
         assert r.status_code == 302
 
         # After login, password should be unusable
-        alice_again = User.objects.get(username="alice")
-        assert not alice_again.has_usable_password()
+        self.alice.refresh_from_db()
+        assert not self.alice.has_usable_password()
+
+    def test_it_redirects_already_logged_in(self):
+        # Login
+        self.client.get("/accounts/check_token/alice/secret-token/")
+
+        # Login again, when already authenticated
+        r = self.client.get("/accounts/check_token/alice/secret-token/")
+        assert r.status_code == 302
