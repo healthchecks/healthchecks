@@ -350,13 +350,22 @@ def add_pushover(request):
         return redirect(subscription_url)
 
     # Handle successful subscriptions
-    if "pushover_user_key" in request.GET and "nonce" in request.GET and "prio" in request.GET:
+    if "pushover_user_key" in request.GET:
+        if "nonce" not in request.GET or "prio" not in request.GET:
+            return HttpResponseBadRequest()
+
         # Validate nonce
-        if request.GET["nonce"] != request.session.get("po_nonce", None):
+        if request.GET["nonce"] != request.session.get("po_nonce"):
             return HttpResponseForbidden()
+
+        # Validate priority
+        if request.GET["prio"] not in ("-2", "-1", "0", "1", "2"):
+            return HttpResponseBadRequest()
+
+        # All looks well--
         del request.session["po_nonce"]
 
-        if request.GET.get("pushover_unsubscribed", "0") == "1":
+        if request.GET.get("pushover_unsubscribed") == "1":
             # Unsubscription: delete all Pushover channels for this user
             Channel.objects.filter(user=request.user, kind="po").delete()
             return redirect("hc-channels")
@@ -370,7 +379,7 @@ def add_pushover(request):
                 "value": "%s|%d" % (user_key, priority),
             })
 
-    # Integration Settings form
+    # Show Integration Settings form
     ctx = {
         "page": "channels",
         "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
