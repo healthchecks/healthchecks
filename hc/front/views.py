@@ -200,7 +200,7 @@ def channels(request):
             channel = Channel.objects.get(code=code)
         except Channel.DoesNotExist:
             return HttpResponseBadRequest()
-        if channel.user != request.user:
+        if channel.user_id != request.user.id:
             return HttpResponseForbidden()
 
         new_checks = []
@@ -211,11 +211,12 @@ def channels(request):
                     check = Check.objects.get(code=code)
                 except Check.DoesNotExist:
                     return HttpResponseBadRequest()
-                if check.user != request.user:
+                if check.user_id != request.user.id:
                     return HttpResponseForbidden()
                 new_checks.append(check)
 
-        channel.checks = new_checks
+        channel.checks.clear()
+        channel.checks.add(*new_checks)
         return redirect("hc-channels")
 
     channels = Channel.objects.filter(user=request.user).order_by("created")
@@ -257,10 +258,10 @@ def add_channel(request):
 @uuid_or_400
 def channel_checks(request, code):
     channel = get_object_or_404(Channel, code=code)
-    if channel.user != request.user:
+    if channel.user_id != request.user.id:
         return HttpResponseForbidden()
 
-    assigned = set([check.code for check in channel.checks.all()])
+    assigned = set(channel.checks.values_list('code', flat=True).distinct())
     checks = Check.objects.filter(user=request.user).order_by("created")
 
     ctx = {
