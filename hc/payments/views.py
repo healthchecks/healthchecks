@@ -1,5 +1,4 @@
 import braintree
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
@@ -7,16 +6,6 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
 from .models import Subscription
-
-
-def setup_braintree():
-    kw = {
-        "merchant_id": settings.BRAINTREE_MERCHANT_ID,
-        "public_key": settings.BRAINTREE_PUBLIC_KEY,
-        "private_key": settings.BRAINTREE_PRIVATE_KEY
-    }
-
-    braintree.Configuration.configure(settings.BRAINTREE_ENV, **kw)
 
 
 @login_required
@@ -30,8 +19,6 @@ def get_client_token(request):
 
 
 def pricing(request):
-    setup_braintree()
-
     sub = None
     if request.user.is_authenticated():
         try:
@@ -61,7 +48,6 @@ def create_plan(request):
     price = int(request.POST["price"])
     assert price in (2, 5, 10, 15, 20, 25, 50, 100)
 
-    setup_braintree()
     sub = Subscription.objects.get(user=request.user)
     if not sub.customer_id:
         result = braintree.Customer.create({})
@@ -101,7 +87,6 @@ def create_plan(request):
 @login_required
 @require_POST
 def update_plan(request):
-    setup_braintree()
     sub = Subscription.objects.get(user=request.user)
 
     price = int(request.POST["price"])
@@ -119,7 +104,6 @@ def update_plan(request):
 @login_required
 @require_POST
 def cancel_plan(request):
-    setup_braintree()
     sub = Subscription.objects.get(user=request.user)
 
     braintree.Subscription.cancel(sub.subscription_id)
