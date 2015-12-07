@@ -1,6 +1,8 @@
 import braintree
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
@@ -17,32 +19,55 @@ def setup_braintree():
     braintree.Configuration.configure(settings.BRAINTREE_ENV, **kw)
 
 
+@login_required
+def get_client_token(request):
+    sub = Subscription.objects.get(user=request.user)
+    client_token = braintree.ClientToken.generate({
+        "customer_id": sub.customer_id
+    })
+
+    return JsonResponse({"client_token": client_token})
+
+
 def pricing(request):
     setup_braintree()
 
-    try:
-        sub = Subscription.objects.get(user=request.user)
-    except Subscription.DoesNotExist:
-        sub = Subscription(user=request.user)
-        sub.save()
+    sub = None
+    if request.user.is_authenticated():
+        try:
+            sub = Subscription.objects.get(user=request.user)
+        except Subscription.DoesNotExist:
+            sub = Subscription(user=request.user)
+            sub.save()
 
     ctx = {
         "page": "pricing",
-        "sub": sub,
-        "client_token": braintree.ClientToken.generate()
+        "sub": sub
     }
 
     return render(request, "payments/pricing.html", ctx)
 
 
+def log_and_bail(request, result):
+    for error in result.errors.deep_errors:
+        messages.error(request, error.message)
+
+    return redirect("hc-pricing")
+
+
 @login_required
 @require_POST
 def create_plan(request):
+    price = int(request.POST["price"])
+    assert price in (2, 5, 10, 15, 20, 25, 50, 100)
+
     setup_braintree()
     sub = Subscription.objects.get(user=request.user)
     if not sub.customer_id:
         result = braintree.Customer.create({})
-        assert result.is_success
+        if not result.is_success:
+            return log_and_bail(request, result)
+
         sub.customer_id = result.customer.id
         sub.save()
 
@@ -51,18 +76,21 @@ def create_plan(request):
             "customer_id": sub.customer_id,
             "payment_method_nonce": request.POST["payment_method_nonce"]
         })
-        assert result.is_success
+
+        if not result.is_success:
+            return log_and_bail(request, result)
+
         sub.payment_method_token = result.payment_method.token
         sub.save()
-
-    price = int(request.POST["price"])
-    assert price in (2, 5, 10, 15, 20, 25, 50, 100)
 
     result = braintree.Subscription.create({
         "payment_method_token": sub.payment_method_token,
         "plan_id": "P%d" % price,
         "price": price
     })
+
+    if not result.is_success:
+        return log_and_bail(request, result)
 
     sub.subscription_id = result.subscription.id
     sub.save()

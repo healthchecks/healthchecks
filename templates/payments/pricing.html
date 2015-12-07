@@ -8,17 +8,38 @@
 <!-- Plans -->
 <section id="plans">
     <div class="container">
+        {% if messages %}
+        <div class="alert alert-danger">
+            <p>
+                <strong>We're sorry!</strong> There was a problem setting
+                up the subscription. Response from payment processor:</p>
+
+            {% for message in messages %}
+            <p class="error-message">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% if sub.is_active %}
         <div class="row">
             <div class="col-md-12">
                 <div id="subscription-status" class="jumbotron">
                     <p>
-                        You are currently paying <strong>${{ sub.price }}/month</strong>.
-                        Next billing date will be {{ sub.next_billing_date }}.</p>
+                        You are currently paying <strong>${{ sub.price }}/month</strong>
+
+                        {% if sub.pm_is_credit_card %}
+                        using {{ sub.card_type }} card
+                        ending with {{ sub.last_4 }}.
+                        {% endif %}
+
+                        {% if sub.pm_is_paypal %}
+                        using PayPal account {{ sub.paypal_email }}.
+                        {% endif %}
+                    </p>
                     <p>
+                        Next billing date will be {{ sub.next_billing_date }}.
                         Thank you for supporting healthchecks.io!
                     </p>
-                    <a class="btn btn-default" href="#">Update Payment Method</a>
                     <form method="post" action="{% url 'hc-cancel-plan' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-default">
@@ -125,22 +146,9 @@
                                     </button>
                                 </form>
                             {% else %}
-                                {% if sub.payment_method_token %}
-                                <form method="post" action="{% url 'hc-create-plan' %}">
-                                    {% csrf_token %}
-                                    <input class="selected-price" type="hidden" name="price" value="10" />
-                                    <button
-                                        type="submit"
-                                        class="btn btn-lg btn-default">
-                                        Select (direct)
-                                    </button>
-                                </form>
-                                {% else %}
                                 <button
                                     id="pww-create-payment-method"
-                                    class="btn btn-lg btn-default">Select (form)</button>
-                                {% endif %}
-
+                                    class="btn btn-lg btn-default">Select</button>
                             {% endif %}
                         {% else %}
                             <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">Get Started</a>

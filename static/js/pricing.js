@@ -43,15 +43,14 @@ $(function () {
 
     });
 
-    $("#pww-create-payment-method").click(function(){
-        var $modal = $("#payment-method-modal");
-        var clientToken = $modal.attr("data-client-token");
-
-        braintree.setup(clientToken, "dropin", {
-            container: "payment-form"
-        });
-
-        $modal.modal("show");
+    $("#pww-create-payment-method").click(function() {
+        $.getJSON("/pricing/get_client_token/", function(data) {
+            var $modal = $("#payment-method-modal");
+            braintree.setup(data.client_token, "dropin", {
+                container: "payment-form"
+            });
+            $modal.modal("show");
+        })
     });
 
 });

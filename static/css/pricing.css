@@ -108,3 +108,18 @@
 #subscription-status form {
     display: inline-block;
 }
+
+#payment-method-modal .modal-header {
+    border-bottom: 0;
+}
+
+#payment-method-modal .modal-footer {
+    border-top: 0;
+}
+
+
+.error-message {
+    font-family: monospace;
+}
+
+

@@ -19,4 +19,8 @@ urlpatterns = [
         views.cancel_plan,
         name="hc-cancel-plan"),
 
+    url(r'^pricing/get_client_token/$',
+        views.get_client_token,
+        name="hc-get-client-token"),
+
 ]
