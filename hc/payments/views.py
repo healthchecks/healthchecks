@@ -50,7 +50,9 @@ def create_plan(request):
 
     sub = Subscription.objects.get(user=request.user)
     if not sub.customer_id:
-        result = braintree.Customer.create({})
+        result = braintree.Customer.create({
+            "email": request.user.email
+        })
         if not result.is_success:
             return log_and_bail(request, result)
 
