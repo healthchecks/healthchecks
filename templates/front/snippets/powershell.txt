@@ -1,0 +1,1 @@
+Invoke-RestMethod PING_URL

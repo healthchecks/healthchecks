@@ -20,4 +20,6 @@ class Command(BaseCommand):
         _process("crontab.txt", "crontab.html", lexers.BashLexer())
         _process("python.txt", "python.html", lexers.PythonLexer())
         _process("php.txt", "php.html", lexers.PhpLexer())
+        _process("powershell.txt", "powershell.html",
+                 lexers.shell.PowerShellLexer())
         _process("node.txt", "node.html", lexers.JavascriptLexer())
