@@ -71,6 +71,15 @@
     <h1 class="ai-title">Add More</h1>
     <ul class="add-integration">
         <li>
+            <img src="{% static 'img/integrations/slack.png' %}"
+                alt="Slack icon" />
+
+            <h2>Slack</h2>
+            <p>A messaging app for teams.</p>
+
+            <a href="{% url 'hc-add-slack' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
             <img src="{% static 'img/integrations/email.png' %}"
                 alt="Email icon" />
 
@@ -96,15 +105,6 @@
             <p>On-call scheduling, alerting, and incident tracking.</p>
 
             <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        <li>
-            <img src="{% static 'img/integrations/slack.png' %}"
-                alt="Slack icon" />
-
-            <h2>Slack</h2>
-            <p>A messaging app for teams.</p>
-
-            <a href="{% url 'hc-add-slack' %}" class="btn btn-primary">Add Integration</a>
         </li>
         <li>
             <img src="{% static 'img/integrations/hipchat.png' %}"
