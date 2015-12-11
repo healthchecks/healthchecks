@@ -24,6 +24,18 @@ class AddChannelTestCase(TestCase):
         assert r.status_code == 302
         assert Channel.objects.count() == 1
 
+    def test_it_trims_whitespace(self):
+        """ Leading and trailing whitespace should get trimmed. """
+
+        url = "/integrations/add/"
+        form = {"kind": "email", "value": "   alice@example.org   "}
+
+        self.client.login(username="alice", password="password")
+        self.client.post(url, form)
+
+        q = Channel.objects.filter(value="alice@example.org")
+        self.assertEqual(q.count(), 1)
+
     def test_it_rejects_bad_kind(self):
         url = "/integrations/add/"
         form = {"kind": "dog", "value": "Lassie"}

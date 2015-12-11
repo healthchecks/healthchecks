@@ -12,3 +12,7 @@ class AddChannelForm(forms.ModelForm):
     class Meta:
         model = Channel
         fields = ['kind', 'value']
+
+    def clean_value(self):
+        value = self.cleaned_data["value"]
+        return value.strip()
