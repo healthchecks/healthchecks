@@ -1,3 +1,4 @@
+from collections import Counter
 from datetime import timedelta as td
 
 from django.conf import settings
@@ -10,17 +11,35 @@ from django.utils.six.moves.urllib.parse import urlencode
 from django.utils.crypto import get_random_string
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Channel, Check, Ping
-from hc.front.forms import AddChannelForm, TimeoutForm
+from hc.front.forms import AddChannelForm, NameTagsForm, TimeoutForm
 
 
 @login_required
 def my_checks(request):
     checks = Check.objects.filter(user=request.user).order_by("created")
 
+    counter = Counter()
+    down_tags, grace_tags = set(), set()
+    for check in checks:
+        status = check.get_status()
+        for tag in check.tags_list():
+            if tag == "":
+                continue
+
+            counter[tag] += 1
+
+            if status == "down":
+                down_tags.add(tag)
+            elif status == "grace":
+                grace_tags.add(tag)
+
     ctx = {
         "page": "checks",
         "checks": checks,
-        "now": timezone.now()
+        "now": timezone.now(),
+        "tags": counter.most_common(),
+        "down_tags": down_tags,
+        "grace_tags": grace_tags
     }
 
     return render(request, "front/my_checks.html", ctx)
@@ -89,11 +108,14 @@ def update_name(request, code):
     assert request.method == "POST"
 
     check = get_object_or_404(Check, code=code)
-    if check.user != request.user:
+    if check.user_id != request.user.id:
         return HttpResponseForbidden()
 
-    check.name = request.POST["name"]
-    check.save()
+    form = NameTagsForm(request.POST)
+    if form.is_valid():
+        check.name = form.cleaned_data["name"]
+        check.tags = form.cleaned_data["tags"]
+        check.save()
 
     return redirect("hc-checks")
 

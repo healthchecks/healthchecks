@@ -53,3 +53,13 @@ class UpdateNameTestCase(TestCase):
         self.client.login(username="alice", password="password")
         r = self.client.post(url, data=payload)
         assert r.status_code == 404
+
+    def test_it_sanitizes_tags(self):
+        url = "/checks/%s/name/" % self.check.code
+        payload = {"tags": "  foo  bar\r\t \n  baz \n"}
+
+        self.client.login(username="alice", password="password")
+        self.client.post(url, data=payload)
+
+        check = Check.objects.get(id=self.check.id)
+        self.assertEqual(check.tags, "foo bar baz")

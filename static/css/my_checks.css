@@ -56,3 +56,8 @@
 .update-timeout-terms span {
     font-weight: bold;
 }
+
+.label-tag {
+    background-color: #eee;
+    color: #555;
+}

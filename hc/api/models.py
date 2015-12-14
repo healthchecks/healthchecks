@@ -42,6 +42,7 @@ class Check(models.Model):
         index_together = ["status", "user", "alert_after"]
 
     name = models.CharField(max_length=100, blank=True)
+    tags = models.CharField(max_length=500, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
     user = models.ForeignKey(User, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -88,6 +89,9 @@ class Check(models.Model):
         if self.user:
             channels = Channel.objects.filter(user=self.user)
             self.channel_set.add(*channels)
+
+    def tags_list(self):
+        return self.tags.split(" ")
 
 
 class Ping(models.Model):

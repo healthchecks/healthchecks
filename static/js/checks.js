@@ -79,6 +79,7 @@ $(function () {
 
         $("#update-name-form").attr("action", $this.data("url"));
         $("#update-name-input").val($this.data("name"));
+        $("#update-tags-input").val($this.data("tags"));
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
 
@@ -121,6 +122,46 @@ $(function () {
         $("#show-emails").addClass("active");
         $(".my-checks-email").show();
     });
+
+    $("#my-checks-tags button").click(function() {
+        // .active has not been updated yet by bootstrap code,
+        // so cannot use it
+        $(this).toggleClass('checked');
+
+        // Make a list of currently checked tags:
+        var checked = [];
+        $("#my-checks-tags button.checked").each(function(index, el) {
+            checked.push(el.textContent);
+        });
+
+        // No checked tags: show all
+        if (checked.length == 0) {
+            $("#checks-table tr.checks-row").show();
+            $("#checks-list > li").show();
+            return;
+        }
+
+        function applyFilters(index, element) {
+            var tags = $(".my-checks-name", element).data("tags").split(" ");
+            for (var i=0, tag; tag=checked[i]; i++) {
+                if (tags.indexOf(tag) == -1) {
+                    $(element).hide();
+                    return;
+                }
+            }
+
+            $(element).show();
+        }
+
+        // Desktop: for each row, see if it needs to be shown or hidden
+        $("#checks-table tr.checks-row").each(applyFilters);
+        // Mobile: for each list item, see if it needs to be shown or hidden
+        $("#checks-list > li").each(applyFilters);
+
+    });
+
+
+
 
 
 });

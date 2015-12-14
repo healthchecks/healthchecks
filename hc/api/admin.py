@@ -28,7 +28,7 @@ class ChecksAdmin(admin.ModelAdmin):
         }
 
     search_fields = ["name", "user__email"]
-    list_display = ("id", "name", "created", "code", "status", "email",
+    list_display = ("id", "name_tags", "created", "code", "status", "email",
                     "last_ping")
     list_select_related = ("user", )
     list_filter = ("status", OwnershipListFilter, "last_ping")
@@ -37,6 +37,13 @@ class ChecksAdmin(admin.ModelAdmin):
 
     def email(self, obj):
         return obj.user.email if obj.user else None
+
+    def name_tags(self, obj):
+        if not obj.tags:
+            return obj.name
+
+        return "%s [%s]" % (obj.name, obj.tags)
+
 
     def send_alert(self, request, qs):
         for check in qs:

@@ -36,6 +36,16 @@
                     {% endif %}
                 </td>
             </tr>
+            {% if check.tags %}
+            <tr>
+                <th>Tags</th>
+                <td>
+                    {% for tag in check.tags_list %}
+                    <span class="label label-tag">{{ tag }}</span>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endif %}
             <tr>
                 <th>Period</th>
                 <td>{{ check.timeout|hc_duration }}</td>
@@ -61,6 +71,7 @@
             <a
                 href="#"
                 data-name="{{ check.name }}"
+                data-tags="{{ check.tags }}"
                 data-url="{% url 'hc-update-name' check.code %}"
                 class="btn btn-default my-checks-name">
                 Rename

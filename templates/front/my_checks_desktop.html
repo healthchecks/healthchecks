@@ -1,6 +1,6 @@
 {% load hc_extras humanize %}
 
-<table id="checks-table" class="table table-hover hidden-xs">
+<table id="checks-table" class="table hidden-xs">
     <tr>
         <th></th>
         <th class="th-name">Name</th>
@@ -31,12 +31,15 @@
             {% endif %}
         </td>
         <td class="name-cell">
-            <span
-                data-name="{{ check.name }}"
-                data-url="{% url 'hc-update-name' check.code %}"
-                class="my-checks-name {% if not check.name %}unnamed{% endif %}">
-                {{ check.name|default:"unnamed" }}
-            </span>
+            <div data-name="{{ check.name }}"
+                    data-tags="{{ check.tags }}"
+                    data-url="{% url 'hc-update-name' check.code %}"
+                    class="my-checks-name {% if not check.name %}unnamed{% endif %}">
+                <div>{{ check.name|default:"unnamed" }}</div>
+                {% for tag in check.tags_list %}
+                <span class="label label-tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
         </td>
         <td class="url-cell">
             <code class="my-checks-url">{{ check.url }}</code>
