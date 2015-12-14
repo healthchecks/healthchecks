@@ -12,7 +12,7 @@
         <div class="alert alert-danger">
             <p>
                 <strong>We're sorry!</strong> There was a problem setting
-                up the subscription. Response from payment processor:</p>
+                up the subscription. Response from payment gateway:</p>
 
             {% for message in messages %}
             <p class="error-message">{{ message }}</p>
@@ -25,7 +25,11 @@
             <div class="col-md-12">
                 <div id="subscription-status" class="jumbotron">
                     <p>
+                        {% if first_charge %}
+                        You just paid <strong>${{ sub.price }}</strong>
+                        {% else %}
                         You are currently paying <strong>${{ sub.price }}/month</strong>
+                        {% endif %}
 
                         {% if sub.pm_is_credit_card %}
                         using {{ sub.card_type }} card
@@ -178,8 +182,12 @@
                     <div id="payment-form"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Set Up Subscription</button>
+                    <button id="payment-method-cancel" type="button" class="btn btn-default">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Set Up Subscription
+                    </button>
                 </div>
             </div>
         </form>

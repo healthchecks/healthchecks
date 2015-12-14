@@ -11,14 +11,12 @@ class Subscription(models.Model):
 
     def _get_braintree_sub(self):
         if not hasattr(self, "_sub"):
-            print("getting subscription over network")
             self._sub = braintree.Subscription.find(self.subscription_id)
 
         return self._sub
 
     def _get_braintree_payment_method(self):
         if not hasattr(self, "_pm"):
-            print("getting payment method over network")
             self._pm = braintree.PaymentMethod.find(self.payment_method_token)
 
         return self._pm

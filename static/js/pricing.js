@@ -53,4 +53,8 @@ $(function () {
         })
     });
 
+    $("#payment-method-cancel").click(function() {
+        location.reload();
+    });
+
 });

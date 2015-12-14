@@ -27,9 +27,15 @@ def pricing(request):
             sub = Subscription(user=request.user)
             sub.save()
 
+    first_charge = False
+    if "first_charge" in request.session:
+        first_charge = True
+        del request.session["first_charge"]
+
     ctx = {
         "page": "pricing",
-        "sub": sub
+        "sub": sub,
+        "first_charge": first_charge
     }
 
     return render(request, "payments/pricing.html", ctx)
@@ -38,6 +44,8 @@ def pricing(request):
 def log_and_bail(request, result):
     for error in result.errors.deep_errors:
         messages.error(request, error.message)
+    else:
+        messages.error(request, result.message)
 
     return redirect("hc-pricing")
 
@@ -83,6 +91,7 @@ def create_plan(request):
     sub.subscription_id = result.subscription.id
     sub.save()
 
+    request.session["first_charge"] = True
     return redirect("hc-pricing")
 
 
