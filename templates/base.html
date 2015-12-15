@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{% static 'css/channel_checks.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/log.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/add_pushover.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/settings.css' %}" type="text/css">
     {% endcompress %}
 </head>
 <body class="page-{{ page }}">
@@ -68,7 +69,7 @@
 
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
+            <ul id="nav-main-sections" class="nav navbar-nav">
                 {% if request.user.is_authenticated %}
                     <li {% if page == 'checks' %} class="active" {% endif %}>
                         <a href="{% url 'hc-checks' %}">Checks</a>
@@ -105,10 +106,18 @@
             {% endif %}
 
             {% if request.user.is_authenticated %}
-            <p class="navbar-text navbar-right">
-                {{ request.user.email }}
-                <a href="{% url 'hc-logout' %}">Log Out</a>
-            </p>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        {{ request.user.email }} <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'hc-profile' %}">Settings</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
+                    </ul>
+                </li>
+            </ul>
             {% endif %}
         </div>
 

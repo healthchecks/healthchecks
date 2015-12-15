@@ -33,9 +33,7 @@
 </style>
 
 <p>Hello,</p>
-<p>This is a notification sent by <a href="https://healthchecks.io">healthchecks.io</a>.</p>
-<p>The check "{{ check.name_then_code }}" has gone {{ check.status }}.</p>
-<p>Here is a summary of all your checks:</p>
+<p>This is a monthly report sent by <a href="https://healthchecks.io">healthchecks.io</a>.</p>
 
 <table>
     <tr>
@@ -88,8 +86,17 @@
     {% endfor %}
 </table>
 
+<p><strong>Just one more thing to check:</strong>
+Do you have more cron jobs,
+not yet on this list, that would benefit from monitoring?
+Get the ball rolling by adding one more!</p>
+
 <p>
     --<br />
     Regards,<br />
     healthchecks.io
+</p>
+
+<p>
+    <a href="{{ unsub_link }}">Unsubscribe from future monthly reports</a>
 </p>

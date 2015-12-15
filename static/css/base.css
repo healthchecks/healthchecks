@@ -24,14 +24,13 @@ body {
     margin-top: -16px;
 }
 
-.navbar-default .navbar-nav > li > a {
+#nav-main-sections > li > a {
     text-transform: uppercase;
     font-size: small;
 }
 
 @media (min-width: 768px) {
     .navbar-default .navbar-nav > li.active > a, .navbar-default .navbar-nav > li > a:hover {
-        background: none;
         border-bottom: 5px solid #eee;
         padding-bottom: 25px;
     }

@@ -14,3 +14,8 @@ def alert(to, ctx):
 def verify_email(to, ctx):
     o = InlineCSSTemplateMail("verify-email")
     o.send(to, ctx)
+
+
+def report(to, ctx):
+    o = InlineCSSTemplateMail("report")
+    o.send(to, ctx)

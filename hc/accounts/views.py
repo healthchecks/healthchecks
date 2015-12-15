@@ -1,14 +1,18 @@
 import uuid
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core import signing
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
-from hc.accounts.forms import EmailForm
+from hc.accounts.forms import EmailForm, ReportSettingsForm
+from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
 from hc.lib import emails
 
@@ -108,3 +112,35 @@ def check_token(request, username, token):
 
     ctx = {"bad_link": True}
     return render(request, "accounts/login.html", ctx)
+
+
+@login_required
+def profile(request):
+    profile = Profile.objects.for_user(request.user)
+
+    if request.method == "POST":
+        form = ReportSettingsForm(request.POST)
+        if form.is_valid():
+            profile.reports_allowed = form.cleaned_data["reports_allowed"]
+            profile.save()
+            messages.info(request, "Your settings have been updated!")
+
+    ctx = {
+        "profile": profile
+    }
+
+    return render(request, "accounts/profile.html", ctx)
+
+
+def unsubscribe_reports(request, username):
+    try:
+        signing.Signer().unsign(request.GET.get("token"))
+    except signing.BadSignature:
+        return HttpResponseBadRequest()
+
+    user = User.objects.get(username=username)
+    profile = Profile.objects.for_user(user)
+    profile.reports_allowed = False
+    profile.save()
+
+    return render(request, "accounts/unsubscribed.html")

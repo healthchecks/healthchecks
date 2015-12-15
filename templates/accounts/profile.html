@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load compress staticfiles %}
+
+{% block title %}Account Settings - healthchecks.io{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1 id="settings-title">Settings</h1>
+    </div>
+    {% if messages %}
+    <div class="col-sm-12">
+        {% for message in messages %}
+            <p class="alert alert-success">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Monthly Reports</h2>
+                    <label>
+                        <input
+                            name="reports_allowed"
+                            type="checkbox"
+                            {% if profile.reports_allowed %} checked {% endif %}>
+                        Each month send me a summary of my checks
+                    </label>
+                    <button
+                        type="submit"
+                        class="btn btn-default pull-right">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
