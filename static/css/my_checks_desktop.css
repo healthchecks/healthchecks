@@ -17,6 +17,10 @@ table.table tr > th.th-name {
     padding-left: 21px;
 }
 
+table.table tr > th.th-location {
+    width: 50%;
+}
+
 #checks-table .indicator-cell {
     text-align: center;
 }
