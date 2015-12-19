@@ -80,7 +80,8 @@ def login(request):
     else:
         form = EmailForm()
 
-    ctx = {"form": form}
+    bad_link = request.session.pop("bad_link", None)
+    ctx = {"form": form, "bad_link": bad_link}
     return render(request, "accounts/login.html", ctx)
 
 
@@ -110,8 +111,8 @@ def check_token(request, username, token):
 
             return redirect("hc-checks")
 
-    ctx = {"bad_link": True}
-    return render(request, "accounts/login.html", ctx)
+    request.session["bad_link"] = True
+    return redirect("hc-login")
 
 
 @login_required

@@ -29,3 +29,8 @@ class LoginTestCase(TestCase):
         # And check should be associated with the new user
         check_again = Check.objects.get(code=check.code)
         assert check_again.user
+
+    def test_it_pops_bad_link_from_session(self):
+        self.client.session["bad_link"] = True
+        self.client.get("/accounts/login/")
+        assert "bad_link" not in self.client.session
