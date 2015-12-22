@@ -42,8 +42,23 @@
             </div>
         </td>
         <td class="url-cell">
-            <code class="my-checks-url">{{ check.url }}</code>
-            <code class="my-checks-email">{{ check.email }}</code>
+            <div class="placeholder">{{ check.url }}</div>
+            <div class="my-checks-url">
+                <input
+                    data-toggle="tooltip"
+                    title="Click to select"
+                    class="selectable"
+                    type="text"
+                    value="{{ check.url }}"
+                    readonly />
+            </div>
+            <div class="my-checks-email off">
+                <input
+                    class="selectable"
+                    type="text"
+                    value="{{ check.email }}"
+                    readonly />
+            </div>
         </td>
         <td class="timeout-cell">
             <span

@@ -109,18 +109,23 @@ $(function () {
 
     $("#show-urls").click(function() {
         $("#show-urls").addClass("active");
-        $(".my-checks-url").show();
+        $(".my-checks-url").removeClass("off");
 
         $("#show-emails").removeClass("active");
-        $(".my-checks-email").hide();
+        $(".my-checks-email").addClass("off");
     });
 
     $("#show-emails").click(function() {
         $("#show-urls").removeClass("active");
-        $(".my-checks-url").hide();
+        $(".my-checks-url").addClass("off");
 
         $("#show-emails").addClass("active");
-        $(".my-checks-email").show();
+        $(".my-checks-email").removeClass("off");
+    });
+
+    $(".selectable").click(function() {
+        $(this).tooltip("hide");
+        this.select();
     });
 
     $("#my-checks-tags button").click(function() {

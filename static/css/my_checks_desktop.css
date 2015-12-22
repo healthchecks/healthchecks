@@ -60,6 +60,7 @@ table.table tr > th.th-name {
 
 .checks-subline {
     color: #888;
+    white-space: nowrap;
 }
 
 .check-menu {
@@ -74,6 +75,22 @@ tr:hover .check-menu {
     color: #333;
 }
 
-.my-checks-email {
-    display: none;
+#checks-table .url-cell {
+    white-space: nowrap;
+}
+
+#checks-table .placeholder, #checks-table .my-checks-url.off, #checks-table .my-checks-email.off {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11.7px;
+    height: 0;
+    overflow: hidden;
+}
+
+#checks-table .selectable {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11.7px;
+    width: 100%;
+    border: 0;
+    cursor: text;
+    background: transparent;
 }
