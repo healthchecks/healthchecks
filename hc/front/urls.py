@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^checks/([\w-]+)/log/$',      views.log, name="hc-log"),
     url(r'^docs/$',                     views.docs, name="hc-docs"),
     url(r'^about/$',                    views.about, name="hc-about"),
+    url(r'^privacy/$',                  views.privacy, name="hc-privacy"),
     url(r'^integrations/$',                 views.channels, name="hc-channels"),
     url(r'^integrations/add/$',             views.add_channel, name="hc-add-channel"),
     url(r'^integrations/add_email/$',       views.add_email, name="hc-add-email"),

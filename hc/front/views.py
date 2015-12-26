@@ -408,3 +408,7 @@ def add_pushover(request):
         "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
     }
     return render(request, "integrations/add_pushover.html", ctx)
+
+
+def privacy(request):
+    return render(request, "front/privacy.html", {})

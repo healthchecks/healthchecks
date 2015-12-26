@@ -6,88 +6,51 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-12">
-        <h3>Who Runs This</h3>
+        <h3>Contact</h3>
+        <p><a href="mailto:peteris.caune@gmail.com">peteris.caune@gmail.com</a></p>
+        <p><a href="https://twitter.com/healthchecks_io">@healthchecks_io</a></p>
+        <address>
+            <strong>Monkey See Monkey Do SIA</strong><br>
+            Gaujas iela 4-2<br>
+            Valmiera, LV-4201<br>
+            Latvia
+        </address>
+
+        <h3>Open Source</h3>
         <p>
-            Hello, my name is Pēteris Caune, I live in Riga, Latvia and do programming for living.
-            You can contact me <a href="mailto:cuu508@gmail.com">via email</a>.
-        </p>
-        <p>
-            Code is on
+            healthchecks.io is an open source project. The code is on
             <a href="https://github.com/healthchecks/healthchecks">GitHub</a>,
-            BSD license.
+            it has BSD license, and is accepting contributions.
         </p>
 
         <h3>Reliability Guarantees</h3>
         <p>
-            The service is currently run on single $5 Digital Ocean box.
-            It can and will have ocassional outages. User data is however
-            being backed up to Amazon S3 daily.
+            No warranties!<br />
+
+            The service is currently run on a single $20 Digital Ocean box
+            in NYC3.
+            It does have daily database backups to Amazon S3.
+            Multi-hour or even multi-day outages are possible.
+            Still, <em>some monitoring is better
+            than no monitoring!</em>
         </p>
 
         <p>
-            If this does not sound very inspiring,
-            there are also alternative services:
+            There's also a number of alternative cron monitoring services, with
+            different feature sets, different reliability guarantees and
+            pricing options. If healthchecks.io doesn't seem like a good fit
+            for you, why not check them out:
+
+            <a href="https://cronitor.io/">Cronitor.io</a>,
+            <a href="https://deadmanssnitch.com/">Dead Man's Snitch</a>,
+            <a href="https://github.com/quantopian/coal-mine">Coal Mine</a>,
+            <a href="http://www.pushmon.com/">PushMon</a>,
+            <a href="https://steward.io">steward.io</a>,
+            <a href="https://www.cronalarm.com/">CronAlarm</a>,
+            <a href="https://wdt.io/">Watchdog Timer</a>.
         </p>
 
-        <h3>Alternative Cron Monitoring Services</h3>
-        <table class="table">
-            <tr>
-                <td>
-                    <a href="https://cronitor.io/">Cronitor.io</a>
-                </td>
-                <td>
-                    <p>One monitor is free.</p>
-                    <p>50 monitors is $24.95/mo.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="https://deadmanssnitch.com/">Dead Man's Snitch</a>
-                </td>
-                <td>
-                    <p>One snitch is free.</p>
-                    <p>3 snitches is $5/mo.</p>
-                    <p>100 snitches is $19/mo.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="https://github.com/quantopian/coal-mine">Coal Mine</a>
-                </td>
-                <td>
-                    <p>Open Source.</p>
-                    <p>No hosted service. No web UI, just API.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="http://www.pushmon.com/">PushMon</a>
-                </td>
-                <td>
-                    <p>Free during public beta.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="https://steward.io">steward.io</a>
-                </td>
-                <td>
-                    <p>15 jobs is free.</p>
-                    <p>75 jobs is $7/mo.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a href="https://www.cronalarm.com/">CronAlarm</a>
-                </td>
-                <td>
-                    <p>10 jobs is $5/mo.</p>
-                    <p>100 jobs is $20/mo.</p>
-                </td>
-            </tr>
 
-
-        </table>
     </div>
 </div>
 {% endblock %}
