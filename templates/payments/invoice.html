@@ -1,0 +1,62 @@
+{% extends "base_bare.html" %}
+
+{% block title %}Invoice MS-HC-{{ tx.id|upper }} - healthchecks.io{% endblock %}
+
+
+{% block content %}
+
+<h1>SIA Monkey See Monkey Do</h1>
+<p>
+Gaujas iela 4-2<br />
+Valmiera, LV-4201, Latvia<br />
+VAT: LV44103100701
+</p>
+
+<p class="text-right">Date Issued: {{ tx.created_at|date }}</p>
+<p class="text-right">Invoice Id: MS-HC-{{ tx.id|upper }}</p>
+
+<table class="table">
+    <tr>
+        <th>Description</th>
+        <th>Start</th>
+        <th>End</th>
+        <th class="text-right">{{ tx.currency_iso_code }}</th>
+    </tr>
+    <tr>
+        <td>healthchecks.io paid plan</td>
+        <td>{{ tx.subscription_details.billing_period_start_date }}</td>
+        <td>{{ tx.subscription_details.billing_period_end_date }}</td>
+        <td class="text-right">
+            {% if tx.currency_iso_code == "USD" %}
+                ${{ tx.amount }}
+            {% elif tx.currency_iso_code == "EUR" %}
+                €{{ tx.amount }}
+            {% else %}
+                {{ tx.currency_iso_code }} {{ tx.amount }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4" class="text-right">
+            <strong>
+                Total:
+                {% if tx.currency_iso_code == "USD" %}
+                    ${{ tx.amount }}
+                {% elif tx.currency_iso_code == "EUR" %}
+                    €{{ tx.amount }}
+                {% else %}
+                    {{ tx.currency_iso_code }} {{ tx.amount }}
+                {% endif %}
+            </strong>
+        </td>
+    </tr>
+</table>
+
+<p><strong>Bill to:</strong></p>
+<p>{{ request.user.email }}</p>
+
+<p class="text-center">
+    If you have a credit card on file it will be automatically charged within 24 hours.
+</p>
+
+{% endblock %}

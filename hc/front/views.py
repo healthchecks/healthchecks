@@ -2,13 +2,14 @@ from collections import Counter
 from datetime import timedelta as td
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.utils.six.moves.urllib.parse import urlencode
 from django.utils.crypto import get_random_string
+from django.utils.six.moves.urllib.parse import urlencode
+from hc.accounts.models import Profile
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Channel, Check, Ping
 from hc.front.forms import AddChannelForm, NameTagsForm, TimeoutForm
@@ -182,7 +183,9 @@ def log(request, code):
     if check.user != request.user:
         return HttpResponseForbidden()
 
-    pings = Ping.objects.filter(owner=check).order_by("-created")[:100]
+    profile = Profile.objects.for_user(request.user)
+    limit = profile.ping_log_limit
+    pings = Ping.objects.filter(owner=check).order_by("-created")[:limit]
 
     # Now go through pings, calculate time gaps, and decorate
     # the pings list for convenient use in template

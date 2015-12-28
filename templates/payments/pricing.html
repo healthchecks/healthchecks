@@ -20,36 +20,21 @@
         </div>
         {% endif %}
 
-        {% if sub.is_active %}
+        {% if sub.plan_id %}
         <div class="row">
             <div class="col-md-12">
                 <div id="subscription-status" class="jumbotron">
                     <p>
                         {% if first_charge %}
-                        You just paid <strong>${{ sub.price }}</strong>
+                        Success! You just paid ${{ sub.price }}.
                         {% else %}
-                        You are currently paying <strong>${{ sub.price }}/month</strong>
+                        You are currently paying ${{ sub.price }}/month.
                         {% endif %}
-
-                        {% if sub.pm_is_credit_card %}
-                        using {{ sub.card_type }} card
-                        ending with {{ sub.last_4 }}.
-                        {% endif %}
-
-                        {% if sub.pm_is_paypal %}
-                        using PayPal account {{ sub.paypal_email }}.
-                        {% endif %}
+                        <a href="{% url 'hc-billing' %}">See Billing History</a>.
                     </p>
                     <p>
-                        Next billing date will be {{ sub.next_billing_date }}.
                         Thank you for supporting healthchecks.io!
                     </p>
-                    <form method="post" action="{% url 'hc-cancel-plan' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-default">
-                            Cancel Subscription
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -58,21 +43,17 @@
 
         <div class="row">
 
-            <!-- item -->
+            <!-- Free -->
             <div class="col-sm-4 text-center">
-                <div class="panel panel-success panel-pricing">
-                    <div class="panel-heading">
-                        <i class="glyphicon glyphicon-heart"></i>
-                        <h3>Free Plan</h3>
-                    </div>
-                    <div class="panel-body text-center">
-                        <p><strong>$0 / Month</strong></p>
+                <div class="panel panel-default panel-pricing">
+                    <div class="panel-body text-center free">
+                        <p>free</p>
                     </div>
                     <ul class="list-group text-center">
                         <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Checks</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Alerts</li>
-                        <li class="list-group-item">&nbsp;</li>
+                        <li class="list-group-item">100 log entries / check</li>
                     </ul>
                     <div class="panel-footer">
                         {% if request.user.is_authenticated %}
@@ -94,73 +75,82 @@
             </div>
             <!-- /item -->
 
-            <!-- item -->
-            <div class="col-sm-8 text-center">
-                <div class="panel panel-success panel-pricing">
-                    <div class="panel-heading">
-                        <div id="piggy">
-                            <i class="glyphicon glyphicon-piggy-bank"></i>
-                        </div>
-                        <h3>Pay What You Want Plan</h3>
-                    </div>
+            <!-- P5 -->
+            <div class="col-sm-4 text-center">
+                <div class="panel panel-default panel-pricing">
                     <div class="panel-body text-center">
-                        <p>
-                        <strong>
-                        {% if sub.is_active %}
-                            $<span id="pricing-value">{{ sub.price }}</span> / Month
-                        {% else %}
-                            $<span id="pricing-value">10</span> / Month
-                        {% endif %}
-                        </strong>
-
-                        <span class="btn-group" role="group">
-                            <button id="pay-minus" type="button" class="btn btn-default">
-                                <i class="glyphicon glyphicon-chevron-down"></i>
-                            </button>
-                            <button id="pay-plus" type="button" class="btn btn-default">
-                                <i class="glyphicon glyphicon-chevron-up"></i>
-
-                            </button>
-                        </span>
-
-
-                        </p>
+                        <p>$5<span class="mo">/mo</span></p>
                     </div>
 
                     <ul class="list-group text-center">
-                        <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
-                        <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Checks</li>
-                        <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Alerts</li>
-                        <li class="list-group-item"><i class="fa fa-check"></i> Priority Support</li>
+                        <li class="list-group-item">Personal or Commercial use</li>
+                        <li class="list-group-item">Unlimited Checks</li>
+                        <li class="list-group-item">Unlimited Alerts</li>
+                        <li class="list-group-item">1000 log entries / check</li>
                     </ul>
                     <div class="panel-footer">
                         {% if request.user.is_authenticated %}
-                            {% if sub.is_active %}
-                                <button id="pww-selected-btn"
-                                    class="btn btn-lg btn-success disabled">Selected</button>
-
-                                <form method="post" action="{% url 'hc-update-plan' %}">
-                                    {% csrf_token %}
-                                    <input class="selected-price" type="hidden" name="price" />
-                                    <button
-                                        id="pww-switch-btn"
-                                        type="submit"
-                                        class="btn btn-lg btn-default">
-                                        Switch To
-                                    </button>
-                                </form>
+                            {% if sub.plan_id == "P5" %}
+                            <button  class="btn btn-lg btn-success disabled">
+                                Selected
+                            </button>
                             {% else %}
-                                <button
-                                    id="pww-create-payment-method"
-                                    class="btn btn-lg btn-default">Select</button>
+                            <button
+                                data-plan-id="P5"
+                                class="btn btn-lg btn-default btn-create-payment-method">
+                                {% if sub.plan_id == "P20" %}
+                                Switch to $5/mo
+                                {% else %}
+                                Upgrade your Account
+                                {% endif %}
+                            </button>
                             {% endif %}
                         {% else %}
-                            <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">Get Started</a>
+                            <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">
+                                Get Started
+                            </a>
                         {% endif %}
                     </div>
                 </div>
             </div>
             <!-- /item -->
+
+            <!-- P20 -->
+            <div class="col-sm-4 text-center">
+                <div class="panel panel-default panel-pricing">
+                    <div class="panel-body text-center">
+                        <p>$20<span class="mo">/mo</span></p>
+                    </div>
+
+                    <ul class="list-group text-center">
+                        <li class="list-group-item">Personal or Commercial use</li>
+                        <li class="list-group-item">Unlimited Checks</li>
+                        <li class="list-group-item">Unlimited Alerts</li>
+                        <li class="list-group-item">10'000 log entries / check</li>
+                    </ul>
+                    <div class="panel-footer">
+                        {% if request.user.is_authenticated %}
+                            {% if sub.plan_id == "P20" %}
+                            <button  class="btn btn-lg btn-success disabled">
+                                Selected
+                            </button>
+                            {% else %}
+                            <button
+                                data-plan-id="P20"
+                                class="btn btn-lg btn-default btn-create-payment-method">
+                                Upgrade Your Account
+                            </button>
+                            {% endif %}
+                        {% else %}
+                            <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">
+                                Get Started
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- /item -->
+
         </div>
 
     </div>
@@ -171,7 +161,7 @@
     <div class="modal-dialog">
         <form method="post" action="{% url 'hc-create-plan' %}">
             {% csrf_token %}
-            <input class="selected-price" type="hidden" name="price" value="10" />
+            <input id="plan_id" type="hidden" name="plan_id" value="" />
 
             <div class="modal-content">
                 <div class="modal-header">

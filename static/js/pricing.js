@@ -5,7 +5,6 @@ $(function () {
 
     function updateDisplayPrice(price) {
         $("#pricing-value").text(price);
-        $(".selected-price").val(price);
         $("#pww-switch-btn").text("Switch to $" + price + " / mo");
 
         if (price == initialPrice) {
@@ -17,33 +16,10 @@ $(function () {
         }
     }
 
-    $("#pay-plus").click(function() {
-        if (priceIdx > 6)
-            return;
-
-        priceIdx += 1;
-        updateDisplayPrice(prices[priceIdx]);
-
-        $("#piggy").removeClass().addClass("tada animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-            $(this).removeClass();
-        });;
-
-    });
-
-    $("#pay-minus").click(function() {
-        if (priceIdx <= 0)
-            return;
-
-        priceIdx -= 1;
-        updateDisplayPrice(prices[priceIdx]);
-
-        $("#piggy").removeClass().addClass("tadaIn animated").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-            $(this).removeClass();
-        });;
-
-    });
-
-    $("#pww-create-payment-method").click(function() {
+    $(".btn-create-payment-method").click(function() {
+        var planId = $(this).data("plan-id");
+        console.log(planId);
+        $("#plan_id").val(planId);
         $.getJSON("/pricing/get_client_token/", function(data) {
             var $modal = $("#payment-method-modal");
             braintree.setup(data.client_token, "dropin", {

@@ -25,6 +25,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, blank=True, null=True)
     next_report_date = models.DateTimeField(null=True, blank=True)
     reports_allowed = models.BooleanField(default=True)
+    ping_log_limit = models.IntegerField(default=100)
 
     objects = ProfileManager()
 

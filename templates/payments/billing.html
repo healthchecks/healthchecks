@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Billing History - healthchecks.io{% endblock %}
+
+
+{% block content %}
+
+<h1>Billing History</h1>
+
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Payment Method</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th></th>
+    </tr>
+    {% for tx in transactions %}
+        <tr>
+            <td>{{ tx.created_at }}</td>
+            <td>
+                {{ tx.credit_card.card_type }} ending in {{ tx.credit_card.last_4 }}
+            </td>
+            <td>
+                {% if tx.currency_iso_code == "USD" %}
+                    ${{ tx.amount }}
+                {% elif tx.currency_iso_code == "EUR" %}
+                    €{{ tx.amount }}
+                {% else %}
+                    {{ tx.currency_iso_code }} {{ tx.amount }}
+                {% endif %}
+            </td>
+            <td><code>{{ tx.status }}</code></td>
+            <td>
+                <a href="{% url 'hc-invoice' tx.id %}">View Invoice</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="5">
+                No past transactions to display here
+            </td>
+        </tr>
+    {% endfor%}
+</table>
+
+{% endblock %}

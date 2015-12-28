@@ -8,6 +8,7 @@ class Subscription(models.Model):
     customer_id = models.CharField(max_length=36, blank=True)
     payment_method_token = models.CharField(max_length=35, blank=True)
     subscription_id = models.CharField(max_length=10, blank=True)
+    plan_id = models.CharField(max_length=10, blank=True)
 
     def _get_braintree_sub(self):
         if not hasattr(self, "_sub"):
@@ -29,8 +30,12 @@ class Subscription(models.Model):
         return o.status == "Active"
 
     def price(self):
-        o = self._get_braintree_sub()
-        return int(o.price)
+        if self.plan_id == "P5":
+            return 5
+        elif self.plan_id == "P20":
+            return 20
+
+        return 0
 
     def next_billing_date(self):
         o = self._get_braintree_sub()
