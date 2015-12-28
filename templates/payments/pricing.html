@@ -157,6 +157,49 @@
 </section>
 <!-- /Plans -->
 
+<section id="faq">
+    <div class="container">
+        <div class="page-header">
+            <h1>FAQ</h1>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>What is the "log entries / check" number?</h2>
+                <p>
+                    healthchecks.io keeps a log entry for each ping it receives.
+                    The log entry contains the date, the source IP address,
+                    the protocol (http or https) and the user agent string.
+                    The log can be useful for auditing past activity of
+                    your cron jobs.
+                </p>
+                <p>
+                    There is a per-check limit of how many log entries are
+                    kept. When this limit is reached, the oldest log entries
+                    are culled. You can increase this limit by upgrading to
+                    paid plans.
+                </p>
+
+                <h2>When is 100 log entries per check sufficient?</h2>
+                <p>
+                    It depends on how frequently your cron job runs and
+                    for what time period you want to keep a log of received
+                    pings. For example, if your cron job runs once a week,
+                    then the 100 log entries will cover 2 years. On the other
+                    hand, if the cron job runs every 5 minutes, then the 100
+                    log entries will only cover 8 hours.
+                </p>
+
+                <h2>If I cancel my paid plan, do I get a refund?</h2>
+                <p>
+                    You can easily cancel your subscription at any time.
+                    There are no cancellation fees, though no refunds are
+                    provided for prorated periods.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div id="payment-method-modal" class="modal" data-client-token="{{ client_token }}">
     <div class="modal-dialog">
         <form method="post" action="{% url 'hc-create-plan' %}">
