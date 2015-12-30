@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -16,6 +17,7 @@ def ping(request, code):
     except Check.DoesNotExist:
         return HttpResponseBadRequest()
 
+    check.n_pings = F("n_pings") + 1
     check.last_ping = timezone.now()
     if check.status == "new":
         check.status = "up"
@@ -52,6 +54,7 @@ def handle_email(request):
             except Check.DoesNotExist:
                 continue
 
+            check.n_pings = F("n_pings") + 1
             check.last_ping = timezone.now()
             if check.status == "new":
                 check.status = "up"
