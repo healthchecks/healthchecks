@@ -94,6 +94,33 @@ class Check(models.Model):
     def tags_list(self):
         return self.tags.split(" ")
 
+    def prune_pings(self, keep_limit):
+        """ Prune pings for this check.
+
+        If the check has more than `keep_limit` ping objects, prune the
+        oldest ones. Return the number of pruned pings.
+
+        `keep_limit` specifies how many ping objects to keep.
+
+        """
+
+        pings = Ping.objects.filter(owner=self).order_by("-created")
+        cutoff = pings[keep_limit:keep_limit+1]
+
+        # If cutoff is empty slice then the check has less than `keep_limit`
+        # pings and there's nothing to prune yet.
+        if len(cutoff) == 0:
+            return 0
+
+        cutoff_date = cutoff[0].created
+        q = Ping.objects.filter(owner=self, created__lte=cutoff_date)
+        n_pruned, _ = q.delete()
+
+        self.n_pings = keep_limit
+        self.save(update_fields=("n_pings", ))
+
+        return n_pruned
+
 
 class Ping(models.Model):
     owner = models.ForeignKey(Check)
