@@ -26,6 +26,7 @@ class NotifyTestCase(TestCase):
     @patch("hc.api.models.requests.get")
     def test_webhook(self, mock_get):
         self._setup_data("webhook", "http://example")
+        mock_get.return_value.status_code = 200
 
         self.channel.notify(self.check)
         mock_get.assert_called_with(u"http://example", timeout=5)
@@ -54,6 +55,8 @@ class NotifyTestCase(TestCase):
     @patch("hc.api.models.requests.post")
     def test_pd(self, mock_post):
         self._setup_data("pd", "123")
+        mock_post.return_value.status_code = 200
+
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
