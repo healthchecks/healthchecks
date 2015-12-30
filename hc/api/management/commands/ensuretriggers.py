@@ -56,10 +56,10 @@ class Command(BaseCommand):
 
         if connection.vendor == "postgresql":
             _pg(cursor)
-            print("Created PostgreSQL trigger")
+            return "Created PostgreSQL trigger"
         if connection.vendor == "mysql":
             _mysql(cursor)
-            print("Created MySQL trigger")
+            return "Created MySQL trigger"
         if connection.vendor == "sqlite":
             _sqlite(cursor)
-            print("Created SQLite trigger")
+            return "Created SQLite trigger"

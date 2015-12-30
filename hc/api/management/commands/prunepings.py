@@ -19,11 +19,13 @@ class Command(BaseCommand):
         checks = checks.annotate(limit=F("user__profile__ping_log_limit"))
         checks = checks.filter(n_pings__gt=F("limit"))
 
+        total = 0
         for check in checks:
             n = check.prune_pings(check.limit)
-            print("---")
-            print("User:   %s" % check.user.email)
-            print("Check:  %s" % check.name)
-            print("Pruned: %d" % n)
+            total += n
+            self.stdout.write("---")
+            self.stdout.write("User:   %s" % check.user.email)
+            self.stdout.write("Check:  %s" % check.name)
+            self.stdout.write("Pruned: %d" % n)
 
-        print("Done.")
+        return "Done! Pruned %d pings." % total

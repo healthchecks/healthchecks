@@ -10,4 +10,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         cutoff = timezone.now() - timedelta(hours=2)
-        Check.objects.filter(user=None, created__lt=cutoff).delete()
+        n, _ = Check.objects.filter(user=None, created__lt=cutoff).delete()
+        return "Done! Pruned %d checks." % n

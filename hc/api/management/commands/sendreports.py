@@ -16,11 +16,12 @@ def num_pinged_checks(profile):
 
 class Command(BaseCommand):
     help = 'Send due monthly reports'
+    tmpl = "Sending monthly report to %s"
 
     def handle(self, *args, **options):
         # Create any missing profiles
         for u in User.objects.filter(profile__isnull=True):
-            print("Creating profile for %s" % u.email)
+            self.stdout.write("Creating profile for %s" % u.email)
             Profile.objects.for_user(u)
 
         now = timezone.now()
@@ -35,8 +36,8 @@ class Command(BaseCommand):
         sent = 0
         for profile in q:
             if num_pinged_checks(profile) > 0:
-                print("Sending monthly report to %s" % profile.user.email)
+                self.stdout.write(self.tmpl % profile.user.email)
                 profile.send_report()
                 sent += 1
 
-        print("Sent %d reports" % sent)
+        return "Sent %d reports" % sent

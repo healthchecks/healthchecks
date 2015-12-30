@@ -2,14 +2,14 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.test import TestCase
-from hc.api.management.commands.sendalerts import handle_many
+from hc.api.management.commands.sendalerts import Command
 from hc.api.models import Check
 from mock import patch
 
 
 class SendAlertsTestCase(TestCase):
 
-    @patch("hc.api.management.commands.sendalerts.handle_one")
+    @patch("hc.api.management.commands.sendalerts.Command.handle_one")
     def test_it_handles_few(self, mock):
         alice = User(username="alice")
         alice.save()
@@ -22,7 +22,7 @@ class SendAlertsTestCase(TestCase):
             check.status = "up"
             check.save()
 
-        result = handle_many()
+        result = Command().handle_many()
         assert result, "handle_many should return True"
 
         handled_names = []

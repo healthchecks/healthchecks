@@ -8,6 +8,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for check in Check.objects.all():
             check.n_pings = Ping.objects.filter(owner=check).count()
-            check.save()
+            check.save(update_fields=("n_pings", ))
 
-        print("Done.")
+        return "Done!"
