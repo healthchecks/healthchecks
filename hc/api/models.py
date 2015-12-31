@@ -48,7 +48,6 @@ class Check(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     timeout = models.DurationField(default=DEFAULT_TIMEOUT)
     grace = models.DurationField(default=DEFAULT_GRACE)
-    n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
@@ -104,7 +103,7 @@ class Check(models.Model):
 
         """
 
-        pings = Ping.objects.filter(owner=self).order_by("-created")
+        pings = Ping.objects.filter(owner=self).order_by("-id")
         cutoff = pings[keep_limit:keep_limit+1]
 
         # If cutoff is empty slice then the check has less than `keep_limit`
@@ -112,12 +111,9 @@ class Check(models.Model):
         if len(cutoff) == 0:
             return 0
 
-        cutoff_date = cutoff[0].created
-        q = Ping.objects.filter(owner=self, created__lte=cutoff_date)
+        cutoff_id = cutoff[0].id
+        q = Ping.objects.filter(owner=self, id__lte=cutoff_id)
         n_pruned, _ = q.delete()
-
-        self.n_pings = keep_limit
-        self.save(update_fields=("n_pings", ))
 
         return n_pruned
 
