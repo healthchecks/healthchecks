@@ -9,10 +9,12 @@ class CheckModelTestCase(TestCase):
         check.save()
 
         for i in range(0, 6):
-            p = Ping(owner=check, ua="UA%d" % i)
+            p = Ping(pk=100 + i, owner=check, ua="UA%d" % i)
             p.save()
 
         check.prune_pings(keep_limit=3)
+
+        self.assertEqual(check.n_pings, 3)
 
         ua_set = set(Ping.objects.values_list("ua", flat=True))
         # UA0, UA1, UA2 should have been pruned--
