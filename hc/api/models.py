@@ -112,8 +112,8 @@ class Check(models.Model):
         if len(cutoff) == 0:
             return 0
 
-        cutoff_date = cutoff[0].created
-        q = Ping.objects.filter(owner=self, created__lte=cutoff_date)
+        cutoff_id = cutoff[0].id
+        q = Ping.objects.filter(owner=self, id__lte=cutoff_id)
         n_pruned, _ = q.delete()
 
         self.n_pings = keep_limit
