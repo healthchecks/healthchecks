@@ -1,0 +1,29 @@
+from django.contrib.auth.models import User
+from django.test import TestCase
+from hc.payments.models import Subscription
+from mock import Mock, patch
+
+
+class BillingTestCase(TestCase):
+
+    def setUp(self):
+        self.alice = User(username="alice")
+        self.alice.set_password("password")
+        self.alice.save()
+
+        self.sub = Subscription(user=self.alice)
+        self.sub.subscription_id = "test-id"
+        self.sub.customer_id = "test-customer-id"
+        self.sub.save()
+
+    @patch("hc.payments.views.braintree")
+    def test_it_works(self, mock_braintree):
+
+        m1 = Mock(id="abc123", amount=123)
+        m2 = Mock(id="def456", amount=456)
+        mock_braintree.Transaction.search.return_value = [m1, m2]
+
+        self.client.login(username="alice", password="password")
+        r = self.client.get("/billing/")
+        self.assertContains(r, "123")
+        self.assertContains(r, "def456")
