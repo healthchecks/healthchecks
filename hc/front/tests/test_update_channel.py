@@ -25,7 +25,7 @@ class UpdateChannelTestCase(TestCase):
 
         self.client.login(username="alice", password="password")
         r = self.client.post("/integrations/", data=payload)
-        assert r.status_code == 302
+        self.assertRedirects(r, "/integrations/")
 
         channel = Channel.objects.get(code=self.channel.code)
         checks = channel.checks.all()

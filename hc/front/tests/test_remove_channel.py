@@ -19,7 +19,7 @@ class RemoveChannelTestCase(TestCase):
 
         self.client.login(username="alice", password="password")
         r = self.client.post(url)
-        assert r.status_code == 302
+        self.assertRedirects(r, "/integrations/")
 
         assert Channel.objects.count() == 0
 

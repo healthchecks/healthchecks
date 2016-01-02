@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 
@@ -14,7 +13,7 @@ class CheckTokenTestCase(TestCase):
 
     def test_it_redirects(self):
         r = self.client.get("/accounts/check_token/alice/secret-token/")
-        assert r.status_code == 302
+        self.assertRedirects(r, "/checks/")
 
         # After login, password should be unusable
         self.alice.refresh_from_db()
@@ -26,11 +25,11 @@ class CheckTokenTestCase(TestCase):
 
         # Login again, when already authenticated
         r = self.client.get("/accounts/check_token/alice/secret-token/")
-        assert r.status_code == 302
+        self.assertRedirects(r, "/checks/")
 
     def test_it_redirects_bad_login(self):
         # Login with a bad token
-        r = self.client.get("/accounts/check_token/alice/invalid-token/")
-        assert r.status_code == 302
-        assert r.url.endswith(reverse("hc-login"))
-        assert self.client.session["bad_link"]
+        url = "/accounts/check_token/alice/invalid-token/"
+        r = self.client.get(url, follow=True)
+        self.assertRedirects(r, "/accounts/login/")
+        self.assertContains(r, "incorrect or expired")

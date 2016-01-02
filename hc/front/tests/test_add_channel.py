@@ -21,7 +21,7 @@ class AddChannelTestCase(TestCase):
         self.client.login(username="alice", password="password")
         r = self.client.post(url, form)
 
-        assert r.status_code == 302
+        self.assertRedirects(r, "/integrations/")
         assert Channel.objects.count() == 1
 
     def test_it_trims_whitespace(self):

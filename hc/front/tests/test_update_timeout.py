@@ -19,7 +19,7 @@ class UpdateTimeoutTestCase(TestCase):
 
         self.client.login(username="alice", password="password")
         r = self.client.post(url, data=payload)
-        assert r.status_code == 302
+        self.assertRedirects(r, "/checks/")
 
         check = Check.objects.get(code=self.check.code)
         assert check.timeout.total_seconds() == 3600

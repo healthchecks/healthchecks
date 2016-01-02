@@ -14,5 +14,5 @@ class AddCheckTestCase(TestCase):
         url = "/checks/add/"
         self.client.login(username="alice", password="password")
         r = self.client.post(url)
-        assert r.status_code == 302
+        self.assertRedirects(r, "/checks/")
         assert Check.objects.count() == 1
