@@ -104,7 +104,7 @@ class Check(models.Model):
 
         """
 
-        pings = Ping.objects.filter(owner=self).order_by("-created")
+        pings = Ping.objects.filter(owner=self).order_by("-id")
         cutoff = pings[keep_limit:keep_limit+1]
 
         # If cutoff is empty slice then the check has less than `keep_limit`

@@ -9,7 +9,7 @@ class CheckModelTestCase(TestCase):
         check.save()
 
         for i in range(0, 6):
-            p = Ping(pk=100 + i, owner=check, ua="UA%d" % i)
+            p = Ping(owner=check, ua="UA%d" % i)
             p.save()
 
         check.prune_pings(keep_limit=3)
