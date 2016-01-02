@@ -278,6 +278,7 @@ def add_channel(request):
     assert request.method == "POST"
     return do_add_channel(request, request.POST)
 
+
 @login_required
 @uuid_or_400
 def channel_checks(request, code):
