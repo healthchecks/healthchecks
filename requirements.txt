@@ -1,4 +1,3 @@
-braintree
 django-appconf==1.0.1
 django-ses-backend==0.1.1
 Django==1.9
