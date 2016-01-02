@@ -27,14 +27,14 @@ class CreatePlanTestCase(TestCase):
     def run_create_plan(self, plan_id="P5"):
         form = {"plan_id": plan_id, "payment_method_nonce": "test-nonce"}
         self.client.login(username="alice", password="password")
-        return self.client.post("/pricing/create_plan/", form)
+        return self.client.post("/pricing/create_plan/", form, follow=True)
 
     @patch("hc.payments.views.braintree")
     def test_it_works(self, mock):
         self._setup_mock(mock)
 
         r = self.run_create_plan()
-        self.assertEqual(r.status_code, 302)
+        self.assertRedirects(r, "/pricing/")
 
         # Subscription should be filled out:
         sub = Subscription.objects.get(user=self.alice)
@@ -63,5 +63,38 @@ class CreatePlanTestCase(TestCase):
         sub.save()
 
         r = self.run_create_plan()
-        self.assertEqual(r.status_code, 302)
+        self.assertRedirects(r, "/pricing/")
         assert mock.Subscription.cancel.called
+
+    @patch("hc.payments.views.braintree")
+    def test_customer_creation_failure(self, mock):
+        self._setup_mock(mock)
+
+        mock.Customer.create.return_value.is_success = False
+        mock.Customer.create.return_value.message = "Test Failure"
+
+        r = self.run_create_plan()
+        self.assertRedirects(r, "/pricing/")
+        self.assertContains(r, "Test Failure")
+
+    @patch("hc.payments.views.braintree")
+    def test_pm_creation_failure(self, mock):
+        self._setup_mock(mock)
+
+        mock.PaymentMethod.create.return_value.is_success = False
+        mock.PaymentMethod.create.return_value.message = "pm failure"
+
+        r = self.run_create_plan()
+        self.assertRedirects(r, "/pricing/")
+        self.assertContains(r, "pm failure")
+
+    @patch("hc.payments.views.braintree")
+    def test_subscription_creation_failure(self, mock):
+        self._setup_mock(mock)
+
+        mock.Subscription.create.return_value.is_success = False
+        mock.Subscription.create.return_value.message = "sub failure"
+
+        r = self.run_create_plan()
+        self.assertRedirects(r, "/pricing/")
+        self.assertContains(r, "sub failure")
