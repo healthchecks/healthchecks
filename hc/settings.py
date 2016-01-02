@@ -36,7 +36,8 @@ INSTALLED_APPS = (
 
     'hc.accounts',
     'hc.api',
-    'hc.front'
+    'hc.front',
+    'hc.payments'
 )
 
 MIDDLEWARE_CLASSES = (
