@@ -23,9 +23,11 @@ def ping(request, code):
         check.status = "up"
 
     check.save()
+    check.refresh_from_db()
 
     ping = Ping(owner=check)
     headers = request.META
+    ping.n = check.n_pings
     ping.remote_addr = headers.get("HTTP_X_REAL_IP", headers["REMOTE_ADDR"])
     ping.scheme = headers.get("HTTP_X_SCHEME", "http")
     ping.method = headers["REQUEST_METHOD"]

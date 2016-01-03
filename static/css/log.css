@@ -44,3 +44,11 @@
     background: #fff3f2;
 }
 
+#log .n-cell {
+    text-align: center;
+    font-family: monospace;
+}
+
+#log .hash {
+    color: #aaa;
+}

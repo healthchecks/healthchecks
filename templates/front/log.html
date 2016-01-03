@@ -35,8 +35,10 @@
         {% for record in pings %}
         {% if record.ping %}
         <tr class="ok {% if record.early %} early {% endif %}">
-            <td class="icon">
-                <span class="glyphicon glyphicon-ok ok"></span>
+            <td class="n-cell">
+                {% if record.ping.n %}
+                <span class="hash">#</span>{{ record.ping.n }}
+                {% endif %}
             </td>
             <td class="datetime">
                 <div>
@@ -65,7 +67,7 @@
         {% endif %}
         {% if record.placeholder_date %}
         <tr class="missing">
-            <td class="icon">
+            <td class="n-cell">
                 <span class="glyphicon glyphicon-remove"></span>
             </td>
             <td class="datetime">

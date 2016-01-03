@@ -194,8 +194,12 @@ def log(request, code):
 
     profile = Profile.objects.for_user(request.user)
     limit = profile.ping_log_limit
-    pings = Ping.objects.filter(owner=check).order_by("created")[:limit]
+    pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
+
     pings = list(pings)
+    # oldest-to-newest order will be more convenient for adding
+    # "not received" placeholders:
+    pings.reverse()
 
     # Add a dummy ping object at the end. We iterate over *pairs* of pings
     # and don't want to handle a special case of a check with a single ping.
