@@ -215,9 +215,11 @@ def log(request, code):
 
         # Fill in "missed ping" placeholders:
         expected_date = older.created + check.timeout
-        while expected_date + check.grace < newer.created:
+        limit = 0
+        while expected_date + check.grace < newer.created and limit < 10:
             wrapped.append({"placeholder_date": expected_date})
             expected_date = expected_date + check.timeout
+            limit += 1
 
         # Prepare early flag for next ping to come
         early = older.created + check.timeout > newer.created + check.grace
