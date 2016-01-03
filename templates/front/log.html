@@ -20,7 +20,6 @@
         Note: Dates and times are displayed in <strong>UTC</strong>.
     </p>
 
-
     <div class="table-responsive">
     <table class="table" id="log">
         <tr>
@@ -35,11 +34,9 @@
         </tr>
         {% for record in pings %}
         {% if record.ping %}
-        <tr>
-            <td class="tl-cell">
-                <div class="tl top"></div>
-                <div class="tl bottom {{ record.status }}"></div>
-                <div class="bullet"></div>
+        <tr class="ok {% if record.early %} early {% endif %}">
+            <td class="icon">
+                <span class="glyphicon glyphicon-ok ok"></span>
             </td>
             <td class="datetime">
                 <div>
@@ -49,6 +46,9 @@
                     <span class="time">
                         {{ record.ping.created|date:"H:i" }}
                     </span>
+                    {% if record.early %}
+                        <span class="label label-tag">early</span>
+                    {% endif %}
                 </div>
             </td>
             <td class="ip">
@@ -62,22 +62,24 @@
                 {{ record.ping.ua }}
             </td>
         </tr>
-        {% else %}
-        {% if record.down %}
-        <tr>
-            <td class="tl-cell">
-                <div class="tl full-down"></div>
-            </td>
-            <td class="downtime-cell" colspan="4">
-                <p>No ping received for {{ record.date|timesince:record.prev_date }}</p>
-
-            </td>
-        </tr>
         {% endif %}
-        <tr>
-            <td class="tl-cell">
-                <div class="tl top late"></div>
-                <div class="tl bottom"></div>
+        {% if record.placeholder_date %}
+        <tr class="missing">
+            <td class="icon">
+                <span class="glyphicon glyphicon-remove"></span>
+            </td>
+            <td class="datetime">
+                <div>
+                    <span class="date">
+                        {{ record.placeholder_date|date:"N j" }}
+                    </span>
+                    <span class="time">
+                        {{ record.placeholder_date|date:"H:i" }}
+                    </span>
+                </div>
+            </td>
+            <td colspan="4">
+                <small>Ping expected but not received</small>
             </td>
         </tr>
         {% endif %}

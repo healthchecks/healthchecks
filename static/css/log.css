@@ -5,7 +5,6 @@
 
 #log td {
     color: #444;
-    padding: 16px 8px;
     position: relative;
     border: 0;
     border-bottom: 1px solid #E5E5E5;
@@ -15,7 +14,7 @@
     white-space: nowrap;
 }
 
-#log .date {
+#log .date, #log .time {
     display: inline-block;
     width: 70px;
 }
@@ -36,52 +35,12 @@
     font-size: 11px;
 }
 
-
-#log .bullet {
-    position: absolute;
-    display: block;
-    top: 50%;
-    margin-top: -6px;
-    left: 0;
-    width: 12px;
-    height: 12px;
-    border: 2px solid #FFF;
-    border-radius: 6px;
-    background: #376f37;
+#log .ok {
+    color: #5cb85c;
 }
 
-#log .tl {
-    position: absolute;
-    left: 4px;
-    width: 4px;
-    background: #5cb85c;
-}
-
-#log .top {
-    top: 0;
-    height: 50%;
-}
-
-#log .bottom {
-    top: 50%;
-    height: 50%;
-}
-
-#log .full-down {
-    top: 0;
-    height: 100%;
-    background: #d9534f;
-}
-
-#log .down { background: #d9534f; }
-#log .late { background: #f0ad4e; }
-
-#log .tl-cell {
-    border: 0;
-}
-
-#log .downtime-cell {
-    border: 0;
-    font-size: small;
+#log tr.missing td {
     color: #d9534f;
+    background: #fff3f2;
 }
+

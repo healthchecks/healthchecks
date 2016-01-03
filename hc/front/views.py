@@ -1,5 +1,6 @@
 from collections import Counter
 from datetime import timedelta as td
+from itertools import tee
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,14 @@ from hc.accounts.models import Profile
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Channel, Check, Ping
 from hc.front.forms import AddChannelForm, NameTagsForm, TimeoutForm
+
+
+# from itertools recipes:
+def pairwise(iterable):
+    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
 
 
 @login_required
@@ -185,30 +194,31 @@ def log(request, code):
 
     profile = Profile.objects.for_user(request.user)
     limit = profile.ping_log_limit
-    pings = Ping.objects.filter(owner=check).order_by("-created")[:limit]
+    pings = Ping.objects.filter(owner=check).order_by("created")[:limit]
+    pings = list(pings)
+
+    # Add a dummy ping object at the end. We iterate over *pairs* of pings
+    # and don't want to handle a special case of a check with a single ping.
+    pings.append(Ping(created=timezone.now()))
 
     # Now go through pings, calculate time gaps, and decorate
     # the pings list for convenient use in template
     wrapped = []
-    now = timezone.now()
-    for i, ping in enumerate(pings):
-        prev = now if i == 0 else pings[i - 1].created
 
-        duration = prev - ping.created
-        if duration > check.timeout:
-            downtime = {"prev_date": prev, "date": ping.created}
-            if i > 0:
-                wrapped[-1]["status"] = "late"
+    early = False
+    for older, newer in pairwise(pings):
+        wrapped.append({"ping": older, "early": early})
 
-            if duration > check.timeout + check.grace:
-                downtime["down"] = True
-                if i > 0:
-                    wrapped[-1]["status"] = "down"
+        # Fill in "missed ping" placeholders:
+        expected_date = older.created + check.timeout
+        while expected_date + check.grace < newer.created:
+            wrapped.append({"placeholder_date": expected_date})
+            expected_date = expected_date + check.timeout
 
-            wrapped.append(downtime)
+        # Prepare early flag for next ping to come
+        early = older.created + check.timeout > newer.created + check.grace
 
-        wrapped.append({"ping": ping})
-
+    wrapped.reverse()
     ctx = {
         "check": check,
         "pings": wrapped
