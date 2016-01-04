@@ -1,5 +1,8 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.test import TestCase
+
+from hc.accounts.models import Profile
 
 
 class CheckTokenTestCase(TestCase):
@@ -8,8 +11,11 @@ class CheckTokenTestCase(TestCase):
         super(CheckTokenTestCase, self).setUp()
 
         self.alice = User(username="alice")
-        self.alice.set_password("secret-token")
         self.alice.save()
+
+        self.profile = Profile(user=self.alice)
+        self.profile.token = make_password("secret-token")
+        self.profile.save()
 
     def test_it_redirects(self):
         r = self.client.get("/accounts/check_token/alice/secret-token/")
