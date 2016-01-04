@@ -6,7 +6,7 @@ from hc.api.models import Check
 class MyChecksTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -14,6 +14,6 @@ class MyChecksTestCase(TestCase):
         self.check.save()
 
     def test_it_works(self):
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/")
         self.assertContains(r, "Alice Was Here", status_code=200)

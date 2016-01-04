@@ -7,7 +7,7 @@ from mock import Mock, patch
 class BillingTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -23,7 +23,7 @@ class BillingTestCase(TestCase):
         m2 = Mock(id="def456", amount=456)
         mock_braintree.Transaction.search.return_value = [m1, m2]
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/billing/")
         self.assertContains(r, "123")
         self.assertContains(r, "def456")

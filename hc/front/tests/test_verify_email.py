@@ -6,7 +6,7 @@ from hc.api.models import Channel
 class VerifyEmailTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 

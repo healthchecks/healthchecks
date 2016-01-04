@@ -10,7 +10,8 @@ class CheckTokenTestCase(TestCase):
     def setUp(self):
         super(CheckTokenTestCase, self).setUp()
 
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
+        self.alice.set_password("password")
         self.alice.save()
 
         self.profile = Profile(user=self.alice)
@@ -21,13 +22,13 @@ class CheckTokenTestCase(TestCase):
         r = self.client.get("/accounts/check_token/alice/secret-token/")
         self.assertRedirects(r, "/checks/")
 
-        # After login, password should be unusable
-        self.alice.refresh_from_db()
-        assert not self.alice.has_usable_password()
+        # After login, token should be blank
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.token, "")
 
     def test_it_redirects_already_logged_in(self):
         # Login
-        self.client.get("/accounts/check_token/alice/secret-token/")
+        self.client.login(username="alice@example.org", password="password")
 
         # Login again, when already authenticated
         r = self.client.get("/accounts/check_token/alice/secret-token/")

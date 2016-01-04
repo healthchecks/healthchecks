@@ -6,7 +6,7 @@ from hc.payments.models import Subscription
 class PricingTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -18,7 +18,7 @@ class PricingTestCase(TestCase):
         assert Subscription.objects.count() == 0
 
     def test_authenticated(self):
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/pricing/")
         self.assertContains(r, "Unlimited Checks", status_code=200)

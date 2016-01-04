@@ -5,11 +5,13 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.core import signing
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
-from hc.accounts.forms import EmailForm, ReportSettingsForm
+from hc.accounts.forms import (EmailPasswordForm, ReportSettingsForm,
+                               SetPasswordForm)
 from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
 
@@ -45,25 +47,38 @@ def _associate_demo_check(request, user):
 
 
 def login(request):
+    bad_credentials = False
     if request.method == 'POST':
-        form = EmailForm(request.POST)
+        form = EmailPasswordForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data["email"]
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                user = _make_user(email)
-                _associate_demo_check(request, user)
+            password = form.cleaned_data["password"]
+            if len(password):
+                user = authenticate(username=email, password=password)
+                if user is not None and user.is_active:
+                    auth_login(request, user)
+                    return redirect("hc-checks")
+                bad_credentials = True
+            else:
+                try:
+                    user = User.objects.get(email=email)
+                except User.DoesNotExist:
+                    user = _make_user(email)
+                    _associate_demo_check(request, user)
 
-            profile = Profile.objects.for_user(user)
-            profile.send_instant_login_link()
-            return redirect("hc-login-link-sent")
+                profile = Profile.objects.for_user(user)
+                profile.send_instant_login_link()
+                return redirect("hc-login-link-sent")
 
     else:
-        form = EmailForm()
+        form = EmailPasswordForm()
 
     bad_link = request.session.pop("bad_link", None)
-    ctx = {"form": form, "bad_link": bad_link}
+    ctx = {
+        "form": form,
+        "bad_credentials": bad_credentials,
+        "bad_link": bad_link
+    }
     return render(request, "accounts/login.html", ctx)
 
 
@@ -74,6 +89,10 @@ def logout(request):
 
 def login_link_sent(request):
     return render(request, "accounts/login_link_sent.html")
+
+
+def set_password_link_sent(request):
+    return render(request, "accounts/set_password_link_sent.html")
 
 
 def check_token(request, username, token):
@@ -102,6 +121,10 @@ def profile(request):
     profile = Profile.objects.for_user(request.user)
 
     if request.method == "POST":
+        if "set_password" in request.POST:
+            profile.send_set_password_link()
+            return redirect("hc-set-password-link-sent")
+
         form = ReportSettingsForm(request.POST)
         if form.is_valid():
             profile.reports_allowed = form.cleaned_data["reports_allowed"]
@@ -113,6 +136,36 @@ def profile(request):
     }
 
     return render(request, "accounts/profile.html", ctx)
+
+
+@login_required
+def set_password(request, token):
+    profile = Profile.objects.for_user(request.user)
+    if not check_password(token, profile.token):
+        return HttpResponseBadRequest()
+
+    if request.method == "POST":
+        form = SetPasswordForm(request.POST)
+        if form.is_valid():
+            password = form.cleaned_data["password"]
+            request.user.set_password(password)
+            request.user.save()
+
+            profile.token = ""
+            profile.save()
+
+            # Setting a password logs the user out, so here we
+            # log them back in.
+            u = authenticate(username=request.user.email, password=password)
+            auth_login(request, u)
+
+            messages.info(request, "Your password has been set!")
+            return redirect("hc-profile")
+
+    ctx = {
+    }
+
+    return render(request, "accounts/set_password.html", ctx)
 
 
 def unsubscribe_reports(request, username):

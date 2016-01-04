@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load compress staticfiles %}
 
 {% block content %}
 <div class="row">
@@ -20,19 +21,47 @@
             </div>
             {% endif %}
 
+            {% if bad_credentials %}
+            <p class="alert alert-danger">Incorrect email or password.</p>
+            {% endif %}
 
             <form method="post">
                 {% csrf_token %}
 
                 <div class="form-group">
                     <div class="input-group input-group-lg">
-                        <div class="input-group-addon">@</div>
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-user"></span>
+                        </div>
                         <input
                             type="text"
                             class="form-control"
                             id="id_email"
                             name="email"
+                            value="{{ form.email.value|default:"" }}"
                             placeholder="Email">
+                    </div>
+                </div>
+
+                {% if not bad_credentials %}
+                <div class="checkbox" id="password-toggle">
+                    <label>
+                        <input type="checkbox"> I want to use a password
+                    </label>
+                </div>
+                {% endif %}
+
+
+                <div id="password-block" class="form-group {% if not bad_credentials %} hide {% endif %}">
+                    <div class="input-group input-group-lg">
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-lock"></span>
+                        </div>
+                        <input
+                            type="password"
+                            class="form-control"
+                            name="password"
+                            placeholder="password">
                     </div>
                 </div>
 
@@ -45,4 +74,11 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/login.js' %}"></script>
+{% endcompress %}
 {% endblock %}

@@ -6,7 +6,7 @@ from hc.api.models import Channel
 class ChannelChecksTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -17,19 +17,19 @@ class ChannelChecksTestCase(TestCase):
     def test_it_works(self):
         url = "/integrations/%s/checks/" % self.channel.code
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertContains(r, "alice@example.org", status_code=200)
 
     def test_it_checks_owner(self):
-        mallory = User(username="mallory")
+        mallory = User(username="mallory", email="mallory@example.org")
         mallory.set_password("password")
         mallory.save()
 
         # channel does not belong to mallory so this should come back
         # with 403 Forbidden:
         url = "/integrations/%s/checks/" % self.channel.code
-        self.client.login(username="mallory", password="password")
+        self.client.login(username="mallory@example.org", password="password")
         r = self.client.get(url)
         assert r.status_code == 403
 
@@ -37,6 +37,6 @@ class ChannelChecksTestCase(TestCase):
         # Valid UUID but there is no channel for it:
         url = "/integrations/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/checks/"
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         assert r.status_code == 404

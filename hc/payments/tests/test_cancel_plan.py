@@ -7,7 +7,7 @@ from mock import patch
 class CancelPlanTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -19,7 +19,7 @@ class CancelPlanTestCase(TestCase):
     @patch("hc.payments.views.braintree")
     def test_it_works(self, mock_braintree):
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.post("/pricing/cancel_plan/")
         self.assertRedirects(r, "/pricing/")
 

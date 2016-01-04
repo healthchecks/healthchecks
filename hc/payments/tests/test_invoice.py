@@ -7,7 +7,7 @@ from mock import Mock, patch
 class InvoiceTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -25,7 +25,7 @@ class InvoiceTestCase(TestCase):
         tx.created_at = None
         mock_braintree.Transaction.find.return_value = tx
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/abc123/")
         self.assertContains(r, "ABC123")  # tx.id in uppercase
 
@@ -38,6 +38,6 @@ class InvoiceTestCase(TestCase):
         tx.created_at = None
         mock_braintree.Transaction.find.return_value = tx
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/abc123/")
         self.assertEqual(r.status_code, 403)

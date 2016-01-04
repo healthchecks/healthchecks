@@ -39,6 +39,23 @@
             </div>
         </div>
     </div>
+
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Set Password</h2>
+                    Attach a password to your healthchecks.io account
+                    <input type="hidden" name="set_password" value="1" />
+                    <button
+                        type="submit"
+                        class="btn btn-default pull-right">Set Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
 

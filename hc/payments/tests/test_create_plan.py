@@ -8,7 +8,7 @@ from mock import patch
 class CreatePlanTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -26,7 +26,7 @@ class CreatePlanTestCase(TestCase):
 
     def run_create_plan(self, plan_id="P5"):
         form = {"plan_id": plan_id, "payment_method_nonce": "test-nonce"}
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         return self.client.post("/pricing/create_plan/", form, follow=True)
 
     @patch("hc.payments.views.braintree")

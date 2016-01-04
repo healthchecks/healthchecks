@@ -6,7 +6,7 @@ from hc.api.models import Channel
 class RemoveChannelTestCase(TestCase):
 
     def setUp(self):
-        self.alice = User(username="alice")
+        self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
@@ -17,7 +17,7 @@ class RemoveChannelTestCase(TestCase):
     def test_it_works(self):
         url = "/integrations/%s/remove/" % self.channel.code
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
         self.assertRedirects(r, "/integrations/")
 
@@ -26,18 +26,18 @@ class RemoveChannelTestCase(TestCase):
     def test_it_handles_bad_uuid(self):
         url = "/integrations/not-uuid/remove/"
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
         assert r.status_code == 400
 
     def test_it_checks_owner(self):
         url = "/integrations/%s/remove/" % self.channel.code
 
-        mallory = User(username="mallory")
+        mallory = User(username="mallory", email="mallory@example.org")
         mallory.set_password("password")
         mallory.save()
 
-        self.client.login(username="mallory", password="password")
+        self.client.login(username="mallory@example.org", password="password")
         r = self.client.post(url)
         assert r.status_code == 403
 
@@ -45,6 +45,6 @@ class RemoveChannelTestCase(TestCase):
         # Valid UUID but there is no channel for it:
         url = "/integrations/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/remove/"
 
-        self.client.login(username="alice", password="password")
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
         assert r.status_code == 404

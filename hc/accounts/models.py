@@ -40,6 +40,15 @@ class Profile(models.Model):
         ctx = {"login_link": settings.SITE_ROOT + path}
         emails.login(self.user.email, ctx)
 
+    def send_set_password_link(self):
+        token = str(uuid.uuid4())
+        self.token = make_password(token)
+        self.save()
+
+        path = reverse("hc-set-password", args=[token])
+        ctx = {"set_password_link": settings.SITE_ROOT + path}
+        emails.set_password(self.user.email, ctx)
+
     def send_report(self):
         # reset next report date first:
         now = timezone.now()

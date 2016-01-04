@@ -6,6 +6,11 @@ def login(to, ctx):
     o.send(to, ctx)
 
 
+def set_password(to, ctx):
+    o = InlineCSSTemplateMail("set-password")
+    o.send(to, ctx)
+
+
 def alert(to, ctx):
     o = InlineCSSTemplateMail("alert")
     o.send(to, ctx)
