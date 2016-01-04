@@ -51,6 +51,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'hc.accounts.backends.ProfileBackend'
+)
+
 ROOT_URLCONF = 'hc.urls'
 
 TEMPLATES = [

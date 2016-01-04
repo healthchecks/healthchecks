@@ -1,6 +1,5 @@
 import uuid
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -8,18 +7,17 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from hc.accounts.forms import EmailForm, ReportSettingsForm
 from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
-from hc.lib import emails
 
 
 def _make_user(email):
     username = str(uuid.uuid4())[:30]
     user = User(username=username, email=email)
+    user.set_unusable_password()
     user.save()
 
     channel = Channel()
@@ -46,18 +44,6 @@ def _associate_demo_check(request, user):
             del request.session["welcome_code"]
 
 
-def _send_login_link(user):
-    token = str(uuid.uuid4())
-    user.set_password(token)
-    user.save()
-
-    login_link = reverse("hc-check-token", args=[user.username, token])
-    login_link = settings.SITE_ROOT + login_link
-    ctx = {"login_link": login_link}
-
-    emails.login(user.email, ctx)
-
-
 def login(request):
     if request.method == 'POST':
         form = EmailForm(request.POST)
@@ -69,12 +55,8 @@ def login(request):
                 user = _make_user(email)
                 _associate_demo_check(request, user)
 
-            # We don't want to reset passwords of staff users :-)
-            if user.is_staff:
-                return HttpResponseBadRequest()
-
-            _send_login_link(user)
-
+            profile = Profile.objects.for_user(user)
+            profile.send_instant_login_link()
             return redirect("hc-login-link-sent")
 
     else:
@@ -99,17 +81,17 @@ def check_token(request, username, token):
         # User is already logged in
         return redirect("hc-checks")
 
-    user = authenticate(username=username, password=token)
-    if user is not None:
-        if user.is_active:
-            # This should get rid of "welcome_code" in session
-            request.session.flush()
+    user = authenticate(username=username, token=token)
+    if user is not None and user.is_active:
+        # This should get rid of "welcome_code" in session
+        request.session.flush()
 
-            user.set_unusable_password()
-            user.save()
-            auth_login(request, user)
+        profile = Profile.objects.for_user(user)
+        profile.token = ""
+        profile.save()
+        auth_login(request, user)
 
-            return redirect("hc-checks")
+        return redirect("hc-checks")
 
     request.session["bad_link"] = True
     return redirect("hc-login")

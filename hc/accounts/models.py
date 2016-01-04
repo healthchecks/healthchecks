@@ -1,5 +1,6 @@
 from datetime import timedelta
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core import signing
 from django.core.urlresolvers import reverse
@@ -26,8 +27,18 @@ class Profile(models.Model):
     next_report_date = models.DateTimeField(null=True, blank=True)
     reports_allowed = models.BooleanField(default=True)
     ping_log_limit = models.IntegerField(default=100)
+    token = models.CharField(max_length=128, blank=True)
 
     objects = ProfileManager()
+
+    def send_instant_login_link(self):
+        token = str(uuid.uuid4())
+        self.token = make_password(token)
+        self.save()
+
+        path = reverse("hc-check-token", args=[self.user.username, token])
+        ctx = {"login_link": settings.SITE_ROOT + path}
+        emails.login(self.user.email, ctx)
 
     def send_report(self):
         # reset next report date first:
