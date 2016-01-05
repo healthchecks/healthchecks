@@ -30,7 +30,7 @@ def my_checks(request):
 
     counter = Counter()
     down_tags, grace_tags = set(), set()
-    for check in checks:
+    for check in checks.iterator():
         status = check.get_status()
         for tag in check.tags_list():
             if tag == "":
@@ -196,7 +196,7 @@ def log(request, code):
     limit = profile.ping_log_limit
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
 
-    pings = list(pings)
+    pings = list(pings.iterator())
     # oldest-to-newest order will be more convenient for adding
     # "not received" placeholders:
     pings.reverse()

@@ -4,7 +4,7 @@
 {% csrf_token %}
 
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
     <h4 class="update-timeout-title">Assign Checks to Channel {% if channel.kind == "po" %}{{ channel.po_value|join:" / " }}{% else %}{{ channel.value }}{% endif %}</h4>
 </div>
 
