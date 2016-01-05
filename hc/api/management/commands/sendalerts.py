@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     def handle_many(self):
         """ Send alerts for many checks simultaneously. """
-        query = Check.objects.filter(user__isnull=False)
+        query = Check.objects.filter(user__isnull=False).select_related("user")
 
         now = timezone.now()
         going_down = query.filter(alert_after__lt=now, status="up")

@@ -6,6 +6,7 @@ from hc.payments.models import Subscription
 class PricingTestCase(TestCase):
 
     def setUp(self):
+        super(PricingTestCase, self).setUp()
         self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()

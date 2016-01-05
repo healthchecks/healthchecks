@@ -6,6 +6,7 @@ from hc.api.models import Check
 class UpdateTimeoutTestCase(TestCase):
 
     def setUp(self):
+        super(UpdateTimeoutTestCase, self).setUp()
         self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()

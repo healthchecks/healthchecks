@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from hc.accounts.models import Profile
 
 
-class BasicBackend:
+class BasicBackend(object):
 
     def get_user(self, user_id):
         try:
@@ -17,7 +17,8 @@ class ProfileBackend(BasicBackend):
 
     def authenticate(self, username=None, token=None):
         try:
-            profile = Profile.objects.get(user__username=username)
+            profile = (Profile.objects
+                       .select_related("user").get(user__username=username))
         except Profile.DoesNotExist:
             return None
 
@@ -27,10 +28,7 @@ class ProfileBackend(BasicBackend):
         return profile.user
 
     def get_user(self, user_id):
-        try:
-            return User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return None
+        return User.objects.filter(pk=user_id).first()
 
 
 class EmailBackend(BasicBackend):
