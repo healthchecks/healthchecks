@@ -1,4 +1,4 @@
-import braintree
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
@@ -8,6 +8,13 @@ from django.views.decorators.http import require_POST
 from hc.accounts.models import Profile
 
 from .models import Subscription
+
+if settings.USE_PAYMENTS:
+    import braintree
+else:
+    # hc.payments tests mock this object, so tests should
+    # still be able to run:
+    braintree = None
 
 
 @login_required
