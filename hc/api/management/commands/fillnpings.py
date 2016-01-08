@@ -47,21 +47,26 @@ class Command(BaseCommand):
         last_pk = Ping.objects.order_by('-pk')[0].pk
         queryset = Ping.objects.order_by('pk')
 
-        transaction.set_autocommit(False)
         while pk < last_pk:
-            for ping in queryset.filter(pk__gt=pk)[:chunksize]:
-                pk = ping.pk
-                counts[ping.owner_id] += 1
+            transaction.set_autocommit(False)
+            while pk < last_pk:
+                for ping in queryset.filter(pk__gt=pk)[:chunksize]:
+                    pk = ping.pk
+                    counts[ping.owner_id] += 1
 
-                ping.n = counts[ping.owner_id]
-                ping.save(update_fields=("n", ))
+                    ping.n = counts[ping.owner_id]
+                    ping.save(update_fields=("n", ))
 
-            gc.collect()
-            progress = 100 * pk / last_pk
-            self.stdout.write("Processed ping id %d (%.2f%%)" % (pk, progress))
+                gc.collect()
+                progress = 100 * pk / last_pk
+                self.stdout.write(
+                    "Processed ping id %d (%.2f%%)" % (pk, progress))
 
-            transaction.commit()
-        transaction.set_autocommit(True)
+                transaction.commit()
+
+            transaction.set_autocommit(True)
+            # last_pk might have increased because of influx of new pings:
+            last_pk = Ping.objects.order_by('-pk')[0].pk
 
         self.stdout.write("Updating check.n_pings")
         for check_id, n_pings in counts.items():
