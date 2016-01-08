@@ -20,8 +20,8 @@ class Command(BaseCommand):
         for user in User.objects.filter(profile=None):
             Profile.objects.for_user(user)
 
-        checks = Check.objects.annotate(
-            limit=F("user__profile__ping_log_limit"))
+        checks = Check.objects.filter(user__isnull=False)
+        checks = checks.annotate(limit=F("user__profile__ping_log_limit"))
 
         for check in checks:
             q = Ping.objects.filter(owner_id=check.id)
