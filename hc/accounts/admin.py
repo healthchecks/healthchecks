@@ -8,7 +8,8 @@ from hc.api.models import Channel, Check
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
 
-    list_display = ("id", "email", "reports_allowed", "next_report_date")
+    list_display = ("id", "email", "reports_allowed", "next_report_date",
+                    "ping_log_limit")
     search_fields = ["user__email"]
 
     def email(self, obj):

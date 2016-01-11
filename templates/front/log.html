@@ -87,6 +87,17 @@
         {% endif %}
         {% endfor %}
     </table>
+
+    {% if show_limit_notice and limit < 10000 %}
+    <p class="alert alert-info">
+        <strong>Showing last {{ limit }} pings.</strong>
+        Want to see more?
+        <a href="{% url 'hc-pricing' %}">
+            Upgrade your account!
+        </a>
+    </p>
+    {% endif %}
+
     </div>
     {% else %}
         <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>

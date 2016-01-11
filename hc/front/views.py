@@ -215,19 +215,24 @@ def log(request, code):
 
         # Fill in "missed ping" placeholders:
         expected_date = older.created + check.timeout
-        limit = 0
-        while expected_date + check.grace < newer.created and limit < 10:
+        n_blanks = 0
+        while expected_date + check.grace < newer.created and n_blanks < 10:
             wrapped.append({"placeholder_date": expected_date})
             expected_date = expected_date + check.timeout
-            limit += 1
+            n_blanks += 1
 
         # Prepare early flag for next ping to come
         early = older.created + check.timeout > newer.created + check.grace
 
+    reached_limit = len(pings) > limit
+
     wrapped.reverse()
     ctx = {
         "check": check,
-        "pings": wrapped
+        "pings": wrapped,
+        "num_pings": len(pings),
+        "limit": limit,
+        "show_limit_notice": reached_limit and settings.USE_PAYMENTS
     }
 
     return render(request, "front/log.html", ctx)
