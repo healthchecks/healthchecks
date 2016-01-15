@@ -55,10 +55,7 @@ def my_checks(request):
     return render(request, "front/my_checks.html", ctx)
 
 
-def index(request):
-    if request.user.is_authenticated():
-        return redirect("hc-checks")
-
+def _welcome_check(request):
     check = None
     if "welcome_code" in request.session:
         code = request.session["welcome_code"]
@@ -67,8 +64,16 @@ def index(request):
     if check is None:
         check = Check()
         check.save()
-        code = str(check.code)
-        request.session["welcome_code"] = code
+        request.session["welcome_code"] = str(check.code)
+
+    return check
+
+
+def index(request):
+    if request.user.is_authenticated():
+        return redirect("hc-checks")
+
+    check = _welcome_check(request)
 
     ctx = {
         "page": "welcome",
@@ -80,11 +85,7 @@ def index(request):
 
 
 def docs(request):
-    if "welcome_code" in request.session:
-        code = request.session["welcome_code"]
-        check = Check.objects.get(code=code)
-    else:
-        check = Check(code="uuid-goes-here")
+    check = _welcome_check(request)
 
     ctx = {
         "page": "docs",
