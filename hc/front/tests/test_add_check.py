@@ -1,15 +1,8 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
 from hc.api.models import Check
+from hc.test import BaseTestCase
 
 
-class AddCheckTestCase(TestCase):
-
-    def setUp(self):
-        super(AddCheckTestCase, self).setUp()
-        self.alice = User(username="alice", email="alice@example.org")
-        self.alice.set_password("password")
-        self.alice.save()
+class AddCheckTestCase(BaseTestCase):
 
     def test_it_works(self):
         url = "/checks/add/"

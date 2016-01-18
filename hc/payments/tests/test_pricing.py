@@ -1,15 +1,8 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
 from hc.payments.models import Subscription
+from hc.test import BaseTestCase
 
 
-class PricingTestCase(TestCase):
-
-    def setUp(self):
-        super(PricingTestCase, self).setUp()
-        self.alice = User(username="alice", email="alice@example.org")
-        self.alice.set_password("password")
-        self.alice.save()
+class PricingTestCase(BaseTestCase):
 
     def test_anonymous(self):
         r = self.client.get("/pricing/")

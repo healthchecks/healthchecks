@@ -14,3 +14,4 @@ addons:
 script:
   - coverage run --source=hc manage.py test
 after_success: coveralls
+cache: pip

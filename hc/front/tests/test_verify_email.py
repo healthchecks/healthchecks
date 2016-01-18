@@ -1,16 +1,11 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
 from hc.api.models import Channel
+from hc.test import BaseTestCase
 
 
-class VerifyEmailTestCase(TestCase):
+class VerifyEmailTestCase(BaseTestCase):
 
     def setUp(self):
         super(VerifyEmailTestCase, self).setUp()
-        self.alice = User(username="alice", email="alice@example.org")
-        self.alice.set_password("password")
-        self.alice.save()
-
         self.channel = Channel(user=self.alice, kind="email")
         self.channel.value = "alice@example.org"
         self.channel.save()

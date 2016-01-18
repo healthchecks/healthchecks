@@ -1,17 +1,13 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
-from hc.payments.models import Subscription
 from mock import Mock, patch
 
+from hc.payments.models import Subscription
+from hc.test import BaseTestCase
 
-class BillingTestCase(TestCase):
+
+class BillingTestCase(BaseTestCase):
 
     def setUp(self):
         super(BillingTestCase, self).setUp()
-        self.alice = User(username="alice", email="alice@example.org")
-        self.alice.set_password("password")
-        self.alice.save()
-
         self.sub = Subscription(user=self.alice)
         self.sub.subscription_id = "test-id"
         self.sub.customer_id = "test-customer-id"

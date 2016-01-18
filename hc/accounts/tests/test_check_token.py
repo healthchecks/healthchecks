@@ -1,19 +1,12 @@
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
-from django.test import TestCase
-
 from hc.accounts.models import Profile
+from hc.test import BaseTestCase
 
 
-class CheckTokenTestCase(TestCase):
+class CheckTokenTestCase(BaseTestCase):
 
     def setUp(self):
         super(CheckTokenTestCase, self).setUp()
-
-        self.alice = User(username="alice", email="alice@example.org")
-        self.alice.set_password("password")
-        self.alice.save()
-
         self.profile = Profile(user=self.alice)
         self.profile.token = make_password("secret-token")
         self.profile.save()
