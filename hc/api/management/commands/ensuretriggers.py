@@ -25,10 +25,14 @@ def _pg(cursor):
 def _mysql(cursor):
     cursor.execute("""
     DROP TRIGGER IF EXISTS update_alert_after;
+    """)
 
+    cursor.execute("""
     CREATE TRIGGER update_alert_after
     BEFORE UPDATE ON api_check
-    FOR EACH ROW SET NEW.alert_after = NEW.last_ping + INTERVAL (NEW.timeout + NEW.grace) MICROSECOND;
+    FOR EACH ROW SET
+        NEW.alert_after =
+            NEW.last_ping + INTERVAL (NEW.timeout + NEW.grace) MICROSECOND;
     """)
 
 
@@ -42,7 +46,9 @@ def _sqlite(cursor):
     AFTER UPDATE OF last_ping, timeout, grace ON api_check
     FOR EACH ROW BEGIN
         UPDATE api_check
-        SET alert_after = datetime(strftime('%s', last_ping) + timeout/1000000 + grace/1000000, 'unixepoch')
+        SET alert_after =
+            datetime(strftime('%s', last_ping) +
+            timeout/1000000 + grace/1000000, 'unixepoch')
         WHERE id = OLD.id;
     END;
     """)
@@ -52,14 +58,13 @@ class Command(BaseCommand):
     help = 'Ensures triggers exist in database'
 
     def handle(self, *args, **options):
-        cursor = connection.cursor()
-
-        if connection.vendor == "postgresql":
-            _pg(cursor)
-            return "Created PostgreSQL trigger"
-        if connection.vendor == "mysql":
-            _mysql(cursor)
-            return "Created MySQL trigger"
-        if connection.vendor == "sqlite":
-            _sqlite(cursor)
-            return "Created SQLite trigger"
+        with connection.cursor() as cursor:
+            if connection.vendor == "postgresql":
+                _pg(cursor)
+                return "Created PostgreSQL trigger"
+            if connection.vendor == "mysql":
+                _mysql(cursor)
+                return "Created MySQL trigger"
+            if connection.vendor == "sqlite":
+                _sqlite(cursor)
+                return "Created SQLite trigger"

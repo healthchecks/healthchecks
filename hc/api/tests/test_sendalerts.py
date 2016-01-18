@@ -1,24 +1,23 @@
-from datetime import datetime
+from datetime import timedelta
 
-from django.contrib.auth.models import User
-from django.test import TestCase
-from hc.api.management.commands.sendalerts import Command
-from hc.api.models import Check
+from django.utils import timezone
 from mock import patch
 
+from hc.api.management.commands.sendalerts import Command
+from hc.api.models import Check
+from hc.test import BaseTestCase
 
-class SendAlertsTestCase(TestCase):
+
+class SendAlertsTestCase(BaseTestCase):
 
     @patch("hc.api.management.commands.sendalerts.Command.handle_one")
     def test_it_handles_few(self, mock):
-        alice = User(username="alice")
-        alice.save()
-
+        yesterday = timezone.now() - timedelta(days=1)
         names = ["Check %d" % d for d in range(0, 10)]
 
         for name in names:
-            check = Check(user=alice, name=name)
-            check.alert_after = datetime(2000, 1, 1)
+            check = Check(user=self.alice, name=name)
+            check.alert_after = yesterday
             check.status = "up"
             check.save()
 

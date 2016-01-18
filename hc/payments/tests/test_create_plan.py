@@ -1,17 +1,11 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
-from hc.accounts.models import Profile
-from hc.payments.models import Subscription
 from mock import patch
 
+from hc.accounts.models import Profile
+from hc.payments.models import Subscription
+from hc.test import BaseTestCase
 
-class CreatePlanTestCase(TestCase):
 
-    def setUp(self):
-        super(CreatePlanTestCase, self).setUp()
-        self.alice = User(username="alice", email="alice@example.org")
-        self.alice.set_password("password")
-        self.alice.save()
+class CreatePlanTestCase(BaseTestCase):
 
     def _setup_mock(self, mock):
         """ Set up Braintree calls that the controller will use. """

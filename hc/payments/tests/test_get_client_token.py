@@ -1,16 +1,10 @@
-from django.contrib.auth.models import User
-from django.test import TestCase
-from hc.payments.models import Subscription
 from mock import patch
 
+from hc.payments.models import Subscription
+from hc.test import BaseTestCase
 
-class GetClientTokenTestCase(TestCase):
 
-    def setUp(self):
-        super(GetClientTokenTestCase, self).setUp()
-        self.alice = User(username="alice", email="alice@example.org")
-        self.alice.set_password("password")
-        self.alice.save()
+class GetClientTokenTestCase(BaseTestCase):
 
     @patch("hc.payments.views.braintree")
     def test_it_works(self, mock_braintree):
