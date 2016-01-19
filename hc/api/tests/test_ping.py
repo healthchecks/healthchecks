@@ -5,33 +5,28 @@ from hc.api.models import Check, Ping
 
 class PingTestCase(TestCase):
 
-    def test_it_works(self):
-        check = Check()
-        check.save()
+    def setUp(self):
+        super(PingTestCase, self).setUp()
+        self.check = Check.objects.create()
 
-        r = self.client.get("/ping/%s/" % check.code)
+    def test_it_works(self):
+        r = self.client.get("/ping/%s/" % self.check.code)
         assert r.status_code == 200
 
-        same_check = Check.objects.get(code=check.code)
+        same_check = Check.objects.get(code=self.check.code)
         assert same_check.status == "up"
 
-        pings = list(Ping.objects.all())
-        assert pings[0].scheme == "http"
+        ping = Ping.objects.latest("id")
+        assert ping.scheme == "http"
 
     def test_post_works(self):
-        check = Check()
-        check.save()
-
         csrf_client = Client(enforce_csrf_checks=True)
-        r = csrf_client.post("/ping/%s/" % check.code)
+        r = csrf_client.post("/ping/%s/" % self.check.code)
         assert r.status_code == 200
 
     def test_head_works(self):
-        check = Check()
-        check.save()
-
         csrf_client = Client(enforce_csrf_checks=True)
-        r = csrf_client.head("/ping/%s/" % check.code)
+        r = csrf_client.head("/ping/%s/" % self.check.code)
         assert r.status_code == 200
         assert Ping.objects.count() == 1
 
@@ -44,22 +39,44 @@ class PingTestCase(TestCase):
               "AppleWebKit/537.36 (KHTML, like Gecko) "
               "Chrome/44.0.2403.89 Safari/537.36")
 
-        check = Check()
-        check.save()
-        r = self.client.get("/ping/%s/" % check.code, HTTP_USER_AGENT=ua)
+        r = self.client.get("/ping/%s/" % self.check.code, HTTP_USER_AGENT=ua)
         assert r.status_code == 200
 
-        pings = list(Ping.objects.all())
-        assert pings[0].ua == ua
+        ping = Ping.objects.latest("id")
+        assert ping.ua == ua
 
     def test_it_truncates_long_ua(self):
         ua = "01234567890" * 30
 
-        check = Check()
-        check.save()
-        r = self.client.get("/ping/%s/" % check.code, HTTP_USER_AGENT=ua)
+        r = self.client.get("/ping/%s/" % self.check.code, HTTP_USER_AGENT=ua)
         assert r.status_code == 200
 
-        pings = list(Ping.objects.all())
-        assert len(pings[0].ua) == 200
-        assert ua.startswith(pings[0].ua)
+        ping = Ping.objects.latest("id")
+        assert len(ping.ua) == 200
+        assert ua.startswith(ping.ua)
+
+    def test_it_reads_forwarded_ip(self):
+        ip = "1.1.1.1"
+        r = self.client.get("/ping/%s/" % self.check.code,
+                            HTTP_X_FORWARDED_FOR=ip)
+        ping = Ping.objects.latest("id")
+        assert r.status_code == 200
+        assert ping.remote_addr == "1.1.1.1"
+
+        ip = "1.1.1.1, 2.2.2.2"
+        r = self.client.get("/ping/%s/" % self.check.code,
+                            HTTP_X_FORWARDED_FOR=ip, REMOTE_ADDR="3.3.3.3")
+        ping = Ping.objects.latest("id")
+        assert r.status_code == 200
+        assert ping.remote_addr == "1.1.1.1"
+
+    def test_it_reads_forwarded_protocol(self):
+        r = self.client.get("/ping/%s/" % self.check.code,
+                            HTTP_X_FORWARDED_PROTO="https")
+        ping = Ping.objects.latest("id")
+        assert r.status_code == 200
+        assert ping.scheme == "https"
+
+    def test_it_never_caches(self):
+        r = self.client.get("/ping/%s/" % self.check.code)
+        assert "no-cache" in r.get("Cache-Control")
