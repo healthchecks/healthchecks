@@ -336,6 +336,7 @@ def verify_email(request, code, token):
 def remove_channel(request, code):
     assert request.method == "POST"
 
+    # user may refresh the page during POST and cause two deletion attempts
     channel = Channel.objects.filter(code=code).first()
     if channel:
         if channel.user != request.user:
