@@ -336,11 +336,11 @@ def verify_email(request, code, token):
 def remove_channel(request, code):
     assert request.method == "POST"
 
-    channel = get_object_or_404(Channel, code=code)
-    if channel.user != request.user:
-        return HttpResponseForbidden()
-
-    channel.delete()
+    channel = Channel.objects.filter(code=code).first()
+    if channel:
+        if channel.user != request.user:
+            return HttpResponseForbidden()
+        channel.delete()
 
     return redirect("hc-channels")
 
