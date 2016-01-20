@@ -45,4 +45,4 @@ class RemoveChannelTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
-        assert r.status_code == 404
+        assert r.status_code == 302
