@@ -139,7 +139,8 @@ class Channel(models.Model):
             n.save()
         elif self.kind == "webhook" and check.status == "down":
             try:
-                r = requests.get(self.value, timeout=5)
+                headers = {"User-Agent": "healthchecks.io"}
+                r = requests.get(self.value, timeout=5, headers=headers)
                 n.status = r.status_code
             except requests.exceptions.Timeout:
                 # Well, we tried

@@ -26,7 +26,9 @@ class NotifyTestCase(BaseTestCase):
         mock_get.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        mock_get.assert_called_with(u"http://example", timeout=5)
+        mock_get.assert_called_with(
+            u"http://example", headers={"User-Agent": "healthchecks.io"},
+            timeout=5)
 
     @patch("hc.api.models.requests.get", side_effect=ReadTimeout)
     def test_webhooks_handle_timeouts(self, mock_get):
