@@ -1,6 +1,10 @@
 $(function () {
     var passwordInput = $("#password-block input");
-    passwordInput.detach();
+
+    if ($("#password-block").hasClass("hide")) {
+       passwordInput.detach();
+    }
+
     $("#password-toggle").click(function() {
         $("#password-toggle").hide();
         $("#password-block").removeClass("hide");
