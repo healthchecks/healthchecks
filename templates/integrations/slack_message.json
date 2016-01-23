@@ -1,0 +1,45 @@
+{% load hc_extras humanize %}
+{
+    "username": "healthchecks.io",
+    "icon_url": "https://healthchecks.io/static/img/logo@2x.png",
+    "attachments": [{
+        {% if check.status == "up" %}
+            "color": "good",
+        {% else %}
+            "color": "danger",
+        {% endif %}
+
+        "fallback": "The check \"{{ check.name_then_code|escapejs }}\" is {{ check.status|upper }}.",
+        "mrkdwn_in": ["fields"],
+        "text": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
+        "fields": [
+            {
+                "title": "Period",
+                "value": "{{ check.timeout|hc_duration }}",
+                "short": true
+            },
+            {
+                "title": "Last Ping",
+                {% if check.last_ping %}
+                    "value": "{{ check.last_ping|naturaltime }}",
+                {% else %}
+                    "value": "Never",
+                {% endif %}
+                "short": true
+            },
+            {% if check.tags_list %}
+            {
+                "title": "Tags",
+                "value": "{% for tag in check.tags_list %}`{{ tag|escapejs }}` {% endfor %}",
+                "short": true
+            },
+            {% endif %}
+            {
+                "title": "Total Pings",
+                "value": {{ check.n_pings }},
+                "short": true
+            }
+        ]
+    }]
+}
+

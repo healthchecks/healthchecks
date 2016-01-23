@@ -27,7 +27,7 @@ class ChecksAdmin(admin.ModelAdmin):
          'all': ('css/admin/checks.css',)
         }
 
-    search_fields = ["name", "user__email"]
+    search_fields = ["name", "user__email", "code"]
     list_display = ("id", "name_tags", "created", "code", "status", "email",
                     "last_ping", "n_pings")
     list_select_related = ("user", )
