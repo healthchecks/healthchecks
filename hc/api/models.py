@@ -170,8 +170,14 @@ class Channel(models.Model):
         prio = int(prio)
         return user_key, prio, PO_PRIORITIES[prio]
 
+    def latest_notification(self):
+        return Notification.objects.filter(channel=self).latest()
+
 
 class Notification(models.Model):
+    class Meta:
+        get_latest_by = "created"
+
     owner = models.ForeignKey(Check)
     check_status = models.CharField(max_length=6)
     channel = models.ForeignKey(Channel)

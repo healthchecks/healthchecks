@@ -5,6 +5,7 @@ from itertools import tee
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -266,6 +267,8 @@ def channels(request):
         return redirect("hc-channels")
 
     channels = Channel.objects.filter(user=request.user).order_by("created")
+    channels = channels.annotate(n_checks=Count("checks"))
+
     num_checks = Check.objects.filter(user=request.user).count()
 
     ctx = {

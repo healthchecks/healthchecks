@@ -13,6 +13,7 @@
             <th>Type</th>
             <th>Value</th>
             <th>Assigned Checks</th>
+            <th>Last Notification</th>
             <th></th>
         </tr>
         {% for ch in channels %}
@@ -47,8 +48,23 @@
                 <a
                     class="edit-checks"
                     href="{% url 'hc-channel-checks' ch.code %}">
-                    {{ ch.checks.count }} of {{ num_checks }}
+                    {{ ch.n_checks }} of {{ num_checks }}
                 </a>
+            </td>
+            <td>
+            {% with n=ch.latest_notification %}
+                {% if n %}
+                    {% if n.error %}
+                    <span class="text-danger" data-toggle="tooltip" title="{{ n.error }}">
+                        <strong>Failed</strong>, {{ n.created|naturaltime }}
+                    </span>
+                    {% else %}
+                    Delivered, {{ n.created|naturaltime }}
+                    {% endif %}
+                {% else %}
+                Never
+                {% endif %}
+            {% endwith %}
             </td>
             <td>
                 <button
