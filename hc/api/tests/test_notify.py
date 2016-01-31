@@ -20,17 +20,17 @@ class NotifyTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.get")
+    @patch("hc.api.transports.requests.request")
     def test_webhook(self, mock_get):
         self._setup_data("webhook", "http://example")
         mock_get.return_value.status_code = 200
 
         self.channel.notify(self.check)
         mock_get.assert_called_with(
-            u"http://example", headers={"User-Agent": "healthchecks.io"},
-            timeout=5)
+            "get",  u"http://example",
+            headers={"User-Agent": "healthchecks.io"}, timeout=5)
 
-    @patch("hc.api.transports.requests.get", side_effect=Timeout)
+    @patch("hc.api.transports.requests.request", side_effect=Timeout)
     def test_webhooks_handle_timeouts(self, mock_get):
         self._setup_data("webhook", "http://example")
         self.channel.notify(self.check)
@@ -38,7 +38,7 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
 
-    @patch("hc.api.transports.requests.get", side_effect=ConnectionError)
+    @patch("hc.api.transports.requests.request", side_effect=ConnectionError)
     def test_webhooks_handle_connection_errors(self, mock_get):
         self._setup_data("webhook", "http://example")
         self.channel.notify(self.check)
@@ -46,7 +46,7 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection failed")
 
-    @patch("hc.api.transports.requests.get")
+    @patch("hc.api.transports.requests.request")
     def test_webhooks_ignore_up_events(self, mock_get):
         self._setup_data("webhook", "http://example", status="up")
         self.channel.notify(self.check)
@@ -54,7 +54,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertFalse(mock_get.called)
         self.assertEqual(Notification.objects.count(), 0)
 
-    @patch("hc.api.transports.requests.get")
+    @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_500(self, mock_get):
         self._setup_data("webhook", "http://example")
         mock_get.return_value.status_code = 500
@@ -83,19 +83,19 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "Email not verified")
         self.assertEqual(len(mail.outbox), 0)
 
-    @patch("hc.api.transports.JsonTransport.post")
+    @patch("hc.api.transports.requests.request")
     def test_pd(self, mock_post):
         self._setup_data("pd", "123")
-        mock_post.return_value = None
+        mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-        payload = args[1]
-        self.assertEqual(payload["event_type"], "trigger")
+        json = kwargs["json"]
+        self.assertEqual(json["event_type"], "trigger")
 
-    @patch("hc.api.transports.requests.post")
+    @patch("hc.api.transports.requests.request")
     def test_slack(self, mock_post):
         self._setup_data("slack", "123")
         mock_post.return_value.status_code = 200
@@ -109,7 +109,7 @@ class NotifyTestCase(BaseTestCase):
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Never")
 
-    @patch("hc.api.transports.requests.post")
+    @patch("hc.api.transports.requests.request")
     def test_slack_handles_500(self, mock_post):
         self._setup_data("slack", "123")
         mock_post.return_value.status_code = 500
@@ -119,7 +119,7 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
 
-    @patch("hc.api.transports.requests.post", side_effect=Timeout)
+    @patch("hc.api.transports.requests.request", side_effect=Timeout)
     def test_slack_handles_timeout(self, mock_post):
         self._setup_data("slack", "123")
 
@@ -128,7 +128,7 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
 
-    @patch("hc.api.transports.requests.post")
+    @patch("hc.api.transports.requests.request")
     def test_hipchat(self, mock_post):
         self._setup_data("hipchat", "123")
         mock_post.return_value.status_code = 204
@@ -141,7 +141,7 @@ class NotifyTestCase(BaseTestCase):
         json = kwargs["json"]
         self.assertIn("DOWN", json["message"])
 
-    @patch("hc.api.transports.requests.post")
+    @patch("hc.api.transports.requests.request")
     def test_pushover(self, mock_post):
         self._setup_data("po", "123|0")
         mock_post.return_value.status_code = 200

@@ -53,51 +53,52 @@ class Email(Transport):
         emails.alert(self.channel.value, ctx)
 
 
-class Webhook(Transport):
+class HttpTransport(Transport):
+
+    def request(self, method, url, **kwargs):
+        try:
+            options = dict(kwargs)
+            options["timeout"] = 5
+            options["headers"] = {"User-Agent": "healthchecks.io"}
+            r = requests.request(method, url, **options)
+            if r.status_code not in (200, 201, 204):
+                return "Received status code %d" % r.status_code
+        except requests.exceptions.Timeout:
+            # Well, we tried
+            return "Connection timed out"
+        except requests.exceptions.ConnectionError:
+            return "Connection failed"
+
+    def get(self, url):
+        return self.request("get", url)
+
+    def post(self, url, json):
+        return self.request("post", url, json=json)
+
+    def post_form(self, url, data):
+        return self.request("post", url, data=data)
+
+
+class Webhook(HttpTransport):
     def notify(self, check):
         # Webhook integration only fires when check goes down.
         if check.status != "down":
             return "no-op"
 
-        # Webhook transport sends no arguments, so the
-        # notify and test actions are the same
-        return self.test()
+        return self.get(self.channel.value)
 
     def test(self):
-        headers = {"User-Agent": "healthchecks.io"}
-        try:
-            r = requests.get(self.channel.value, timeout=5, headers=headers)
-            if r.status_code not in (200, 201, 204):
-                return "Received status code %d" % r.status_code
-        except requests.exceptions.Timeout:
-            # Well, we tried
-            return "Connection timed out"
-        except requests.exceptions.ConnectionError:
-            return "Connection failed"
+        return self.get(self.channel.value)
 
 
-class JsonTransport(Transport):
-    def post(self, url, payload):
-        headers = {"User-Agent": "healthchecks.io"}
-        try:
-            r = requests.post(url, json=payload, timeout=5, headers=headers)
-            if r.status_code not in (200, 201, 204):
-                return "Received status code %d" % r.status_code
-        except requests.exceptions.Timeout:
-            # Well, we tried
-            return "Connection timed out"
-        except requests.exceptions.ConnectionError:
-            return "Connection failed"
-
-
-class Slack(JsonTransport):
+class Slack(HttpTransport):
     def notify(self, check):
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
         return self.post(self.channel.value, payload)
 
 
-class HipChat(JsonTransport):
+class HipChat(HttpTransport):
     def notify(self, check):
         text = tmpl("hipchat_message.html", check=check)
         payload = {
@@ -107,7 +108,7 @@ class HipChat(JsonTransport):
         return self.post(self.channel.value, payload)
 
 
-class PagerDuty(JsonTransport):
+class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
     def notify(self, check):
@@ -124,20 +125,8 @@ class PagerDuty(JsonTransport):
         return self.post(self.URL, payload)
 
 
-class Pushover(Transport):
+class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
-
-    def post(self, url, payload):
-        headers = {"User-Agent": "healthchecks.io"}
-        try:
-            r = requests.post(url, data=payload, timeout=5, headers=headers)
-            if r.status_code not in (200, 201, 204):
-                return "Received status code %d" % r.status_code
-        except requests.exceptions.Timeout:
-            # Well, we tried
-            return "Connection timed out"
-        except requests.exceptions.ConnectionError:
-            return "Connection failed"
 
     def notify(self, check):
         others = self.checks().filter(status="down").exclude(code=check.code)
@@ -162,4 +151,4 @@ class Pushover(Transport):
             payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
             payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
-        return self.post(self.URL, payload)
+        return self.post_form(self.URL, payload)
