@@ -141,7 +141,7 @@ class Channel(models.Model):
         elif self.kind == "pd":
             return transports.PagerDuty(self)
         elif self.kind == "po":
-            return transports.Pushover()
+            return transports.Pushover(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 

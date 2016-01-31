@@ -67,7 +67,7 @@ class Webhook(Transport):
         headers = {"User-Agent": "healthchecks.io"}
         try:
             r = requests.get(self.channel.value, timeout=5, headers=headers)
-            if r.status_code not in (200, 201):
+            if r.status_code not in (200, 201, 204):
                 return "Received status code %d" % r.status_code
         except requests.exceptions.Timeout:
             # Well, we tried
@@ -81,7 +81,7 @@ class JsonTransport(Transport):
         headers = {"User-Agent": "healthchecks.io"}
         try:
             r = requests.post(url, json=payload, timeout=5, headers=headers)
-            if r.status_code not in (200, 201):
+            if r.status_code not in (200, 201, 204):
                 return "Received status code %d" % r.status_code
         except requests.exceptions.Timeout:
             # Well, we tried
