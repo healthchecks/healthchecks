@@ -67,8 +67,13 @@ class Check(models.Model):
         if self.status not in ("up", "down"):
             raise NotImplementedError("Unexpected status: %s" % self.status)
 
+        errors = []
         for channel in self.channel_set.all():
-            channel.notify(self)
+            error = channel.notify(self)
+            if error not in ("", "no-op"):
+                errors.append((channel, error))
+
+        return errors
 
     def get_status(self):
         if self.status in ("new", "paused"):
@@ -152,6 +157,8 @@ class Channel(models.Model):
             n.check_status = check.status
             n.error = error
             n.save()
+
+        return error
 
     def test(self):
         return self.transport().test()

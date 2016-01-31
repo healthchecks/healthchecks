@@ -73,7 +73,7 @@ class Webhook(Transport):
             # Well, we tried
             return "Connection timed out"
         except requests.exceptions.ConnectionError:
-            return "A connection to %s failed" % self.channel.value
+            return "Connection failed"
 
 
 class JsonTransport(Transport):
@@ -87,7 +87,7 @@ class JsonTransport(Transport):
             # Well, we tried
             return "Connection timed out"
         except requests.exceptions.ConnectionError:
-            return "A connection to %s failed" % url
+            return "Connection failed"
 
 
 class Slack(JsonTransport):

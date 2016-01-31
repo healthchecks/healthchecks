@@ -44,7 +44,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
-        self.assertEqual(n.error, "A connection to http://example failed")
+        self.assertEqual(n.error, "Connection failed")
 
     @patch("hc.api.transports.requests.get")
     def test_webhooks_ignore_up_events(self, mock_get):
