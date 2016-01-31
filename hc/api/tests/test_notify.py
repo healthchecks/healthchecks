@@ -1,6 +1,6 @@
 from django.core import mail
 from mock import patch
-from requests.exceptions import ReadTimeout
+from requests.exceptions import ConnectionError, Timeout
 
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
@@ -30,7 +30,7 @@ class NotifyTestCase(BaseTestCase):
             u"http://example", headers={"User-Agent": "healthchecks.io"},
             timeout=5)
 
-    @patch("hc.api.transports.requests.get", side_effect=ReadTimeout)
+    @patch("hc.api.transports.requests.get", side_effect=Timeout)
     def test_webhooks_handle_timeouts(self, mock_get):
         self._setup_data("webhook", "http://example")
         self.channel.notify(self.check)
@@ -38,15 +38,21 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
 
+    @patch("hc.api.transports.requests.get", side_effect=ConnectionError)
+    def test_webhooks_handle_connection_errors(self, mock_get):
+        self._setup_data("webhook", "http://example")
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "A connection to http://example failed")
+
     @patch("hc.api.transports.requests.get")
     def test_webhooks_ignore_up_events(self, mock_get):
         self._setup_data("webhook", "http://example", status="up")
         self.channel.notify(self.check)
 
         self.assertFalse(mock_get.called)
-
-        n = Notification.objects.get()
-        self.assertEqual(n.error, "")
+        self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.requests.get")
     def test_webhooks_handle_500(self, mock_get):
@@ -112,6 +118,15 @@ class NotifyTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
+
+    @patch("hc.api.transports.requests.post", side_effect=Timeout)
+    def test_slack_handles_timeout(self, mock_post):
+        self._setup_data("slack", "123")
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Connection timed out")
 
     @patch("hc.api.transports.requests.post")
     def test_hipchat(self, mock_post):

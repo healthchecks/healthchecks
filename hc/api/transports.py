@@ -57,7 +57,7 @@ class Webhook(Transport):
     def notify(self, check):
         # Webhook integration only fires when check goes down.
         if check.status != "down":
-            return
+            return "no-op"
 
         # Webhook transport sends no arguments, so the
         # notify and test actions are the same
@@ -72,14 +72,22 @@ class Webhook(Transport):
         except requests.exceptions.Timeout:
             # Well, we tried
             return "Connection timed out"
+        except requests.exceptions.ConnectionError:
+            return "A connection to %s failed" % self.channel.value
 
 
 class JsonTransport(Transport):
     def post(self, url, payload):
         headers = {"User-Agent": "healthchecks.io"}
-        r = requests.post(url, json=payload, timeout=5, headers=headers)
-        if r.status_code not in (200, 201):
-            return "Received status code %d" % r.status_code
+        try:
+            r = requests.post(url, json=payload, timeout=5, headers=headers)
+            if r.status_code not in (200, 201):
+                return "Received status code %d" % r.status_code
+        except requests.exceptions.Timeout:
+            # Well, we tried
+            return "Connection timed out"
+        except requests.exceptions.ConnectionError:
+            return "A connection to %s failed" % url
 
 
 class Slack(JsonTransport):

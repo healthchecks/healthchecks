@@ -144,13 +144,14 @@ class Channel(models.Model):
         # Make 3 attempts--
         for x in range(0, 3):
             error = self.transport.notify(check) or ""
-            if error == "":
+            if error in ("", "no-op"):
                 break  # Success!
 
-        n = Notification(owner=check, channel=self)
-        n.check_status = check.status
-        n.error = error
-        n.save()
+        if error != "no-op":
+            n = Notification(owner=check, channel=self)
+            n.check_status = check.status
+            n.error = error
+            n.save()
 
     def test(self):
         return self.transport().test()
