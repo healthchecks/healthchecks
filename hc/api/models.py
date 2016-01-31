@@ -65,7 +65,7 @@ class Check(models.Model):
 
     def send_alert(self):
         if self.status not in ("up", "down"):
-            raise NotImplemented("Unexpected status: %s" % self.status)
+            raise NotImplementedError("Unexpected status: %s" % self.status)
 
         for channel in self.channel_set.all():
             channel.notify(self)
@@ -138,7 +138,7 @@ class Channel(models.Model):
         elif self.kind == "po":
             return transports.Pushover()
         else:
-            raise NotImplemented("Unknown channel kind: %s" % self.kind)
+            raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
     def notify(self, check):
         # Make 3 attempts--

@@ -8,14 +8,14 @@ from hc.test import BaseTestCase
 
 class NotifyTestCase(BaseTestCase):
 
-    def _setup_data(self, channel_kind, channel_value, email_verified=True):
+    def _setup_data(self, kind, value, status="down", email_verified=True):
         self.check = Check()
-        self.check.status = "down"
+        self.check.status = status
         self.check.save()
 
         self.channel = Channel(user=self.alice)
-        self.channel.kind = channel_kind
-        self.channel.value = channel_value
+        self.channel.kind = kind
+        self.channel.value = value
         self.channel.email_verified = email_verified
         self.channel.save()
         self.channel.checks.add(self.check)
@@ -37,6 +37,26 @@ class NotifyTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
+
+    @patch("hc.api.transports.requests.get")
+    def test_webhooks_ignore_up_events(self, mock_get):
+        self._setup_data("webhook", "http://example", status="up")
+        self.channel.notify(self.check)
+
+        self.assertFalse(mock_get.called)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+    @patch("hc.api.transports.requests.get")
+    def test_webhooks_handle_500(self, mock_get):
+        self._setup_data("webhook", "http://example")
+        mock_get.return_value.status_code = 500
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 500")
 
     def test_email(self):
         self._setup_data("email", "alice@example.org")
@@ -82,3 +102,25 @@ class NotifyTestCase(BaseTestCase):
         attachment = json["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Never")
+
+    @patch("hc.api.transports.requests.post")
+    def test_slack_handles_500(self, mock_post):
+        self._setup_data("slack", "123")
+        mock_post.return_value.status_code = 500
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 500")
+
+    @patch("hc.api.transports.requests.post")
+    def test_hipchat(self, mock_post):
+        self._setup_data("hipchat", "123")
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        json = kwargs["json"]
+        self.assertIn("DOWN", json["message"])
