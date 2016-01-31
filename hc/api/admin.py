@@ -182,7 +182,7 @@ class NotificationsAdmin(admin.ModelAdmin):
     search_fields = ["owner__name", "owner__code", "channel__value"]
     list_select_related = ("owner", "channel")
     list_display = ("id", "created", "check_status", "check_name",
-                    "channel_kind", "channel_value", "status")
+                    "channel_kind", "channel_value")
     list_filter = ("created", "check_status", "channel__kind")
 
     def check_name(self, obj):

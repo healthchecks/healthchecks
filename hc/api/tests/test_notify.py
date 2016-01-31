@@ -20,7 +20,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.models.requests.get")
+    @patch("hc.api.transports.requests.get")
     def test_webhook(self, mock_get):
         self._setup_data("webhook", "http://example")
         mock_get.return_value.status_code = 200
@@ -30,16 +30,20 @@ class NotifyTestCase(BaseTestCase):
             u"http://example", headers={"User-Agent": "healthchecks.io"},
             timeout=5)
 
-    @patch("hc.api.models.requests.get", side_effect=ReadTimeout)
+    @patch("hc.api.transports.requests.get", side_effect=ReadTimeout)
     def test_webhooks_handle_timeouts(self, mock_get):
         self._setup_data("webhook", "http://example")
         self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Connection timed out")
 
     def test_email(self):
         self._setup_data("email", "alice@example.org")
         self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
 
         # And email should have been sent
         self.assertEqual(len(mail.outbox), 1)
@@ -48,21 +52,24 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("email", "alice@example.org", email_verified=False)
         self.channel.notify(self.check)
 
-        assert Notification.objects.count() == 0
+        assert Notification.objects.count() == 1
+        n = Notification.objects.first()
+        self.assertEqual(n.error, "Email not verified")
         self.assertEqual(len(mail.outbox), 0)
 
-    @patch("hc.api.models.requests.post")
+    @patch("hc.api.transports.JsonTransport.post")
     def test_pd(self, mock_post):
         self._setup_data("pd", "123")
-        mock_post.return_value.status_code = 200
+        mock_post.return_value = None
 
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-        assert "trigger" in kwargs["data"]
+        payload = args[1]
+        self.assertEqual(payload["event_type"], "trigger")
 
-    @patch("hc.api.models.requests.post")
+    @patch("hc.api.transports.requests.post")
     def test_slack(self, mock_post):
         self._setup_data("slack", "123")
         mock_post.return_value.status_code = 200

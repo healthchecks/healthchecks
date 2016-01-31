@@ -39,27 +39,17 @@ class Command(BaseCommand):
         Return False if no checks need to be processed.
 
         """
+
+        # Save the new status. If sendalerts crashes,
+        # it won't process this check again.
         check.status = check.get_status()
+        check.save()
 
         tmpl = "\nSending alert, status=%s, code=%s\n"
         self.stdout.write(tmpl % (check.status, check.code))
+        check.send_alert()
 
-        try:
-            check.send_alert()
-        except:
-            # Catch EVERYTHING. If we crash here, what can happen is:
-            # - the sendalerts command will crash
-            # - supervisor will respawn sendalerts command
-            # - sendalerts will try same thing again, resulting in
-            #   infinite loop
-            # So instead we catch and log all exceptions, and mark
-            # the checks as paused so they are not retried.
-            logger.error("Could not alert %s" % check.code, exc_info=True)
-            check.status = "paused"
-        finally:
-            check.save()
-            connection.close()
-
+        connection.close()
         return True
 
     def handle(self, *args, **options):

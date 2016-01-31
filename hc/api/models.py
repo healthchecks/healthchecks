@@ -1,17 +1,15 @@
 # coding: utf-8
 
 import hashlib
-import json
 import uuid
 from datetime import timedelta as td
 
-import requests
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils import timezone
+from hc.api import transports
 from hc.lib import emails
 
 STATUSES = (
@@ -125,103 +123,37 @@ class Channel(models.Model):
         verify_link = settings.SITE_ROOT + verify_link
         emails.verify_email(self.value, {"verify_link": verify_link})
 
+    @property
+    def transport(self):
+        if self.kind == "email":
+            return transports.Email(self)
+        elif self.kind == "webhook":
+            return transports.Webhook(self)
+        elif self.kind == "slack":
+            return transports.Slack(self)
+        elif self.kind == "hipchat":
+            return transports.HipChat(self)
+        elif self.kind == "pd":
+            return transports.PagerDuty(self)
+        elif self.kind == "po":
+            return transports.Pushover()
+        else:
+            raise NotImplemented("Unknown channel kind: %s" % self.kind)
+
     def notify(self, check):
+        # Make 3 attempts--
+        for x in range(0, 3):
+            error = self.transport.notify(check) or ""
+            if error == "":
+                break  # Success!
+
         n = Notification(owner=check, channel=self)
         n.check_status = check.status
+        n.error = error
+        n.save()
 
-        if self.kind == "email" and self.email_verified:
-            ctx = {
-                "check": check,
-                "checks": self.user.check_set.order_by("created"),
-                "now": timezone.now()
-            }
-            emails.alert(self.value, ctx)
-            n.save()
-        elif self.kind == "webhook" and check.status == "down":
-            try:
-                headers = {"User-Agent": "healthchecks.io"}
-                r = requests.get(self.value, timeout=5, headers=headers)
-                n.status = r.status_code
-            except requests.exceptions.Timeout:
-                # Well, we tried
-                pass
-
-            n.save()
-        elif self.kind == "slack":
-            tmpl = "integrations/slack_message.json"
-            text = render_to_string(tmpl, {"check": check})
-            payload = json.loads(text)
-            r = requests.post(self.value, json=payload, timeout=5)
-
-            n.status = r.status_code
-            n.save()
-        elif self.kind == "hipchat":
-            tmpl = "integrations/hipchat_message.html"
-            text = render_to_string(tmpl, {"check": check})
-            payload = {
-                "message": text,
-                "color": "green" if check.status == "up" else "red",
-            }
-
-            r = requests.post(self.value, json=payload, timeout=5)
-
-            n.status = r.status_code
-            n.save()
-
-        elif self.kind == "pd":
-            if check.status == "down":
-                event_type = "trigger"
-                description = "%s is DOWN" % check.name_then_code()
-            else:
-                event_type = "resolve"
-                description = "%s received a ping and is now UP" % \
-                    check.name_then_code()
-
-            payload = {
-                "service_key": self.value,
-                "incident_key": str(check.code),
-                "event_type": event_type,
-                "description": description,
-                "client": "healthchecks.io",
-                "client_url": settings.SITE_ROOT
-            }
-
-            url = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
-            r = requests.post(url, data=json.dumps(payload), timeout=5)
-
-            n.status = r.status_code
-            n.save()
-
-        elif self.kind == "po":
-            tmpl = "integrations/pushover_message.html"
-            ctx = {
-                "check": check,
-                "down_checks":  self.user.check_set.filter(status="down").exclude(code=check.code).order_by("created"),
-            }
-            text = render_to_string(tmpl, ctx).strip()
-            if check.status == "down":
-                title = "%s is DOWN" % check.name_then_code()
-            else:
-                title = "%s is now UP" % check.name_then_code()
-
-            user_key, priority, _ = self.po_value
-            payload = {
-                "token": settings.PUSHOVER_API_TOKEN,
-                "user": user_key,
-                "message": text,
-                "title": title,
-                "html": 1,
-                "priority": priority,
-            }
-            if priority == 2:  # Emergency notification
-                payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
-                payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
-
-            url = "https://api.pushover.net/1/messages.json"
-            r = requests.post(url, data=payload, timeout=5)
-
-            n.status = r.status_code
-            n.save()
+    def test(self):
+        return self.transport().test()
 
     @property
     def po_value(self):
@@ -236,4 +168,4 @@ class Notification(models.Model):
     check_status = models.CharField(max_length=6)
     channel = models.ForeignKey(Channel)
     created = models.DateTimeField(auto_now_add=True)
-    status = models.IntegerField(default=0)
+    error = models.CharField(max_length=200, blank=True)
