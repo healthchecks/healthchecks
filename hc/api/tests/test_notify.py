@@ -150,5 +150,5 @@ class NotifyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-        json = kwargs["json"]
+        json = kwargs["data"]
         self.assertIn("DOWN", json["title"])

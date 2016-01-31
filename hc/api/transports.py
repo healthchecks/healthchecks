@@ -124,8 +124,20 @@ class PagerDuty(JsonTransport):
         return self.post(self.URL, payload)
 
 
-class Pushover(JsonTransport):
+class Pushover(Transport):
     URL = "https://api.pushover.net/1/messages.json"
+
+    def post(self, url, payload):
+        headers = {"User-Agent": "healthchecks.io"}
+        try:
+            r = requests.post(url, data=payload, timeout=5, headers=headers)
+            if r.status_code not in (200, 201, 204):
+                return "Received status code %d" % r.status_code
+        except requests.exceptions.Timeout:
+            # Well, we tried
+            return "Connection timed out"
+        except requests.exceptions.ConnectionError:
+            return "Connection failed"
 
     def notify(self, check):
         others = self.checks().filter(status="down").exclude(code=check.code)
