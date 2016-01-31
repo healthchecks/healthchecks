@@ -8,7 +8,7 @@
 
 <h2>Summary</h2>
 <p>
-Each check you create in <a href="{% url 'hc-index' %}">My Checks</a>
+Each check in <a href="{% url 'hc-index' %}">My Checks</a>
 page has an unique "ping" URL. Whenever you access this URL,
 the "Last Ping" value of corresponding check is updated.
 </p>
@@ -25,8 +25,7 @@ It is all very simple, really.</p>
     <li>HTTP and HTTPS protocols both are fine</li>
     <li>Request method can be GET, POST or HEAD</li>
     <li>Both IPv4 and IPv6 work</li>
-    <li>It does not matter what request headers you send</li>
-    <li>You can leave request body empty or put anything in it, it's all good</li>
+    <li>It does not matter what request headers you send, or what you put in request body.</li>
 </ul>
 
 <p>The response will have status code "200 OK" and response body will be a
@@ -39,10 +38,10 @@ short and simple string "OK".</p>
 <h3>Crontab</h3>
 
 <p>
-When using cron, probably the easiest is to append a <code>curl</code>
-or <code>wget</code> call after your command. The scheduled time comes,
-and your command runs. After it completes, the healthchecks.io check
-gets pinged.
+When using cron, probably the easiest is to append a curl
+or wget call after your command. The scheduled time comes,
+and your command runs. If it completes successfully (exit code 0),
+curl or wget runs a HTTP GET call to the ping URL.
 </p>
 
 {% include "front/snippets/crontab.html" %}
@@ -59,6 +58,46 @@ scenarios:</p>
 <p>Either way, when your task doesn't finish successfully, you will soon
 know about it.</p>
 
+<p>The extra options to curl are meant to suppress any output, unless it hits
+an error. This is to prevent cron from sending an email every time the
+task runs. Feel free to adjust the curl options to your liking.
+</p>
+<table class="table curl-opts">
+    <tr>
+        <th>&amp;&amp;</th>
+        <td>Run curl only if <code>/home/user/backup.sh</code> succeeds</td>
+    </tr>
+    <tr>
+        <th>
+            -f,  --fail
+        </th>
+        <td>Makes curl treat non-200 responses as errors</td>
+    </tr>
+    <tr>
+        <th>-s, --silent</th>
+        <td>Silent or quiet mode. Don't show progress meter or error messages.</td>
+    </tr>
+    <tr>
+        <th>-S, --show-error</th>
+        <td>When used with -s it makes curl show error message if it fails.</td>
+    </tr>
+    <tr>
+        <th>--retry &lt;num&gt;</th>
+        <td>
+            If a transient error is returned when curl tries to perform a
+            transfer, it will retry this number of times before  giving  up.
+            Setting  the number  to  0  makes curl do no retries
+            (which is the default). Transient error means either: a timeout,
+            an FTP 4xx response code or an HTTP 5xx response code.
+        </td>
+    </tr>
+    <tr>
+        <th>&gt; /dev/null</th>
+        <td>
+            Redirect curl's stdout to /dev/null (error messages go to stderr,)
+        </td>
+    </tr>
+</table>
 
 <h3>Bash or a shell script</h3>
 

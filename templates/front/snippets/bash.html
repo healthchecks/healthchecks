@@ -1,5 +1,5 @@
 <div class="highlight"><pre><span class="c"># using curl:</span>
-curl {{ ping_url }}
+curl --retry <span class="m">3</span> {{ ping_url }}
 
 <span class="c"># using wget:</span>
 wget {{ ping_url }} -O /dev/null

@@ -1,5 +1,5 @@
 # using curl:
-curl PING_URL
+curl --retry 3 PING_URL
 
 # using wget:
 wget PING_URL -O /dev/null
