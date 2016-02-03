@@ -25,12 +25,14 @@
             {% if ch.kind == "hipchat" %} HipChat {% endif %}
             {% if ch.kind == "pd" %} PagerDuty {% endif %}
             {% if ch.kind == "po" %} Pushover {% endif %}
+            {% if ch.kind == "victorops" %} VictorOps {% endif %}
             </td>
             <td class="value-cell">
                 <span class="preposition">
                 {% if ch.kind == "email" %} to {% endif %}
                 {% if ch.kind == "pd" %} API key {% endif %}
                 {% if ch.kind == "po" %} user key {% endif %}
+                {% if ch.kind == "victorops" %} Post URL {% endif %}
                 </span>
 
                 {% if ch.kind == "po" %}
@@ -130,6 +132,15 @@
             <p>Group and private chat, file sharing, and integrations.</p>
 
             <a href="{% url 'hc-add-hipchat' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/victorops.png' %}"
+                alt="VictorOp icon" />
+
+            <h2>VictorOps</h2>
+            <p>On-call scheduling, alerting, and incident tracking.</p>
+
+            <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% if enable_pushover %}
         <li>

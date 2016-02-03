@@ -153,6 +153,8 @@ class ChannelsAdmin(admin.ModelAdmin):
     def formatted_kind(self, obj):
         if obj.kind == "pd":
             return "PagerDuty"
+        elif obj.kind == "victorops":
+            return "VictorOps"
         elif obj.kind == "po":
             return "Pushover"
         elif obj.kind == "webhook":

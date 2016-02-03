@@ -439,6 +439,11 @@ def add_pushover(request):
     }
     return render(request, "integrations/add_pushover.html", ctx)
 
+@login_required
+def add_victorops(request):
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_victorops.html", ctx)
+
 
 def privacy(request):
     return render(request, "front/privacy.html", {})

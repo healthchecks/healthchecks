@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load compress humanize staticfiles hc_extras %}
+
+{% block title %}Add VictorOps - healthchecks.io{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>VictorOps</h1>
+
+    <p><a href="https://victorops.com//">VictorOps</a> is
+    another incident management system similar to PagerDuty.
+    If you use or plan on using VitorOps, you can can integrate it
+    with your healthchecks.io account in few simple steps.</p>
+
+    <h2>Setup Guide</h2>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            <p>
+                Log into your VictorOps account,
+                go to <strong>Settings > Schedules</strong>,
+                and find or create the Team Schedule you
+                would like to use for healthchecks.io alerts.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                src="{% static 'img/integrations/setup_victorops_1.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            <p>
+                Make note of the routing key.  If this team schedule
+                does not already have a routing key,
+                click <strong>Setup Routing</strong>
+                or go to <strong>Integrations</strong>
+                and scroll to the bottom to create a routing rule and routing key
+                for this team.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                src="{% static 'img/integrations/setup_victorops_2.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            Go to <strong>Settings > Integrations</strong>
+            and click on <strong>REST Endpoint</strong>.
+            Make note of the <strong>Post URL</strong>.
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                src="{% static 'img/integrations/setup_victorops_3.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">4</span>
+            <p>Paste the <strong>Post URL</strong> from step 3 in the field below, being careful to replace <strong>$routing_key</strong> with your actual routing key from step 2. Save the integration, and it's done!</p>
+        </div>
+    </div>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal" action="{% url 'hc-add-channel' %}">
+        {% csrf_token %}
+        <input type="hidden" name="kind" value="victorops" />
+        <div class="form-group">
+            <label for="inputEmail3" class="col-sm-2 control-label">API Key</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" name="value" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+</div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endcompress %}
+{% endblock %}

@@ -22,7 +22,8 @@ DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
 CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
                  ("hipchat", "HipChat"),
-                 ("slack", "Slack"), ("pd", "PagerDuty"), ("po", "Pushover"))
+                 ("slack", "Slack"), ("pd", "PagerDuty"), ("po", "Pushover"),
+                 ("victorops", "VictorOps"))
 
 PO_PRIORITIES = {
     -2: "lowest",
@@ -140,6 +141,8 @@ class Channel(models.Model):
             return transports.HipChat(self)
         elif self.kind == "pd":
             return transports.PagerDuty(self)
+        elif self.kind == "victorops":
+            return transports.VictorOps(self)
         elif self.kind == "po":
             return transports.Pushover(self)
         else:
