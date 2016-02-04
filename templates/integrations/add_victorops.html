@@ -35,12 +35,10 @@
         <div class="col-sm-6">
             <span class="step-no">2</span>
             <p>
-                Make note of the routing key.  If this team schedule
-                does not already have a routing key,
-                click <strong>Setup Routing</strong>
-                or go to <strong>Integrations</strong>
-                and scroll to the bottom to create a routing rule and routing key
-                for this team.
+                Go to <strong>Settings &gt; Integrations</strong> and scroll
+                to the bottom of the page. Choose an existing
+                <strong>Routing Key</strong> or
+                add a new one, and make note of it.
             </p>
         </div>
         <div class="col-sm-6">
@@ -52,9 +50,10 @@
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no">3</span>
-            Go to <strong>Settings > Integrations</strong>
-            and click on <strong>REST Endpoint</strong>.
-            Make note of the <strong>Post URL</strong>.
+            In the right hand side of
+            <strong>Settings &gt; Integrations</strong> page,
+            select <strong>REST Endpoint</strong>, and click on
+            <strong>Enable Integration</strong>.
         </div>
         <div class="col-sm-6">
             <img
@@ -66,7 +65,10 @@
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no">4</span>
-            <p>Paste the <strong>Post URL</strong> from step 3 in the field below, being careful to replace <strong>$routing_key</strong> with your actual routing key from step 2. Save the integration, and it's done!</p>
+            <p>Paste the <strong>Post URL</strong> from step 3 in the field
+            below, being careful to replace <strong>$routing_key</strong>
+            with your actual Routing Key from step 2. Save the integration,
+            and it's done!</p>
         </div>
     </div>
 
@@ -76,7 +78,7 @@
         {% csrf_token %}
         <input type="hidden" name="kind" value="victorops" />
         <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">API Key</label>
+            <label for="inputEmail3" class="col-sm-2 control-label">Post URL</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control" name="value" placeholder="">
             </div>

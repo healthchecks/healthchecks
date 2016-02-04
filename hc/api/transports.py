@@ -160,7 +160,8 @@ class VictorOps(HttpTransport):
         payload = {
             "entity_id": str(check.code),
             "message_type": "CRITICAL" if check.status == "down" else "RECOVERY",
-            "entity_display_name": description,
+            "entity_display_name": check.name_then_code(),
+            "state_message": description,
             "monitoring_tool": "healthchecks.io",
         }
 
