@@ -79,7 +79,8 @@ def index(request):
     ctx = {
         "page": "welcome",
         "check": check,
-        "ping_url": check.url()
+        "ping_url": check.url(),
+        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None
     }
 
     return render(request, "front/welcome.html", ctx)

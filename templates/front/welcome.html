@@ -224,12 +224,61 @@
     </div>
     <div class="col-sm-4">
         <p>
-            You can specify additional email addresses, webhooks,
-            <a href="https://www.pagerduty.com/">PagerDuty</a>,
-            <a href="https://slack.com/">Slack</a>
-            and <a href="https://www.hipchat.com/">HipChat</a>
-            accounts to send notifications to.
+            You can set up additional ways to get notified:
         </p>
+
+        <table class="table welcome-integrations">
+            <tr>
+                <td>
+                    <img src="{% static 'img/integrations/email.png' %}" alt="Email icon" />
+                </td>
+                <td>Good old email messages.</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <img src="{% static 'img/integrations/webhook.png' %}" alt="Webhook icon" />
+                </td>
+                <td>HTTP webhooks.</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <img src="{% static 'img/integrations/slack.png' %}" alt="Slack icon" />
+                </td>
+                <td>Notifications in <a href="https://slack.com/">Slack</a> channel.</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <img src="{% static 'img/integrations/hipchat.png' %}" alt="HipChat icon" />
+                </td>
+                <td>Notifications in <a href="https://hipchat.com/">HipChat</a> channel.</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <img src="{% static 'img/integrations/pd.png' %}" alt="PagerDuty icon" />
+                </td>
+                <td>Open and resolve incidents in <a href="https://www.pagerduty.com/">PagerDuty</a>.</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <img src="{% static 'img/integrations/victorops.png' %}" alt="VictorOps icon" />
+                </td>
+                <td>Open and resolve incidents in <a href="https://victorops.com/">VictorOps</a>.</td>
+            </tr>
+
+            {% if enable_pushover %}
+            <tr>
+                <td>
+                    <img src="{% static 'img/integrations/pushover.png' %}" alt="Pushover icon" />
+                </td>
+                <td>Instant push notifications with <a href="https://pushover.net/">Pushover</a>.</td>
+            </tr>
+            {% endif %}
+        </table>
     </div>
     </div>
 
