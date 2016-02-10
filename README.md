@@ -40,7 +40,7 @@ in development environment.
 
 * check out project code:
 
-        $ git clone git@github.com:healthchecks/healthchecks.git
+        $ git clone https://github.com/healthchecks/healthchecks.git
 
 * install requirements (Django, ...) into virtualenv:
 
