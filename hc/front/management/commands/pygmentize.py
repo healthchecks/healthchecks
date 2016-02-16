@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
-from pygments import highlight, lexers
-from pygments.formatters import HtmlFormatter
 
 
 def _process(fin, fout, lexer):
+    from pygments import highlight
+    from pygments.formatters import HtmlFormatter
     source = open("templates/front/snippets/" + fin).read()
     processed = highlight(source, lexer, HtmlFormatter())
     processed = processed.replace("PING_URL", "{{ ping_url }}")
@@ -12,9 +12,18 @@ def _process(fin, fout, lexer):
 
 
 class Command(BaseCommand):
-    help = 'Compiles snippets with pygmentize'
+    help = 'Compiles snippets with Pygments'
 
     def handle(self, *args, **options):
+
+        try:
+            from pygments import lexers
+        except ImportError:
+            self.stdout.write("This command requires Pygments package.")
+            self.stdout.write("Please install it with:\n\n")
+            self.stdout.write("  pip install Pygments\n\n")
+            return
+
         _process("bash.txt", "bash.html", lexers.BashLexer())
         _process("browser.txt", "browser.html", lexers.JavascriptLexer())
         _process("crontab.txt", "crontab.html", lexers.BashLexer())

@@ -6,5 +6,4 @@ djmail==0.11.0
 futures==3.0.3
 premailer==2.9.6
 psycopg2==2.6.1
-Pygments==2.0.2
 requests==2.8.1
