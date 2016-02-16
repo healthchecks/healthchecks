@@ -1,13 +1,14 @@
+from datetime import timedelta as td
 import json
 
-from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
-from hc.api.decorators import uuid_or_400
+from hc.api import schemas
+from hc.api.decorators import check_api_key, uuid_or_400, validate_json
 from hc.api.models import Check, Ping
 
 
@@ -75,22 +76,25 @@ def handle_email(request):
     return response
 
 
-@uuid_or_400
-def status(request, code):
+@csrf_exempt
+@check_api_key
+@validate_json(schemas.check)
+def create_check(request):
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    check = Check(user=request.user)
+    check.name = str(request.json.get("name", ""))
+    check.tags = str(request.json.get("tags", ""))
+    if "timeout" in request.json:
+        check.timeout = td(seconds=request.json["timeout"])
+    if "grace" in request.json:
+        check.grace = td(seconds=request.json["grace"])
+
+    check.save()
+
     response = {
-        "last_ping": None,
-        "last_ping_human": None,
-        "secs_to_alert": None
+        "ping_url": check.url()
     }
 
-    check = Check.objects.get(code=code)
-
-    if check.last_ping and check.alert_after:
-        response["last_ping"] = check.last_ping.isoformat()
-        response["last_ping_human"] = naturaltime(check.last_ping)
-
-        duration = check.alert_after - timezone.now()
-        response["secs_to_alert"] = int(duration.total_seconds())
-
-    return HttpResponse(json.dumps(response),
-                        content_type="application/javascript")
+    return JsonResponse(response, status=201)

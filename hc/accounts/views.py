@@ -174,10 +174,7 @@ def set_password(request, token):
             messages.info(request, "Your password has been set!")
             return redirect("hc-profile")
 
-    ctx = {
-    }
-
-    return render(request, "accounts/set_password.html", ctx)
+    return render(request, "accounts/set_password.html", {})
 
 
 def unsubscribe_reports(request, username):
