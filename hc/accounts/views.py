@@ -120,19 +120,31 @@ def check_token(request, username, token):
 def profile(request):
     profile = Profile.objects.for_user(request.user)
 
+    show_api_key = False
     if request.method == "POST":
         if "set_password" in request.POST:
             profile.send_set_password_link()
             return redirect("hc-set-password-link-sent")
-
-        form = ReportSettingsForm(request.POST)
-        if form.is_valid():
-            profile.reports_allowed = form.cleaned_data["reports_allowed"]
+        elif "create_api_key" in request.POST:
+            profile.set_api_key()
+            show_api_key = True
+            messages.info(request, "The API key has been created!")
+        elif "revoke_api_key" in request.POST:
+            profile.api_key = ""
             profile.save()
-            messages.info(request, "Your settings have been updated!")
+            messages.info(request, "The API key has been revoked!")
+        elif "show_api_key" in request.POST:
+            show_api_key = True
+        elif "update_reports_allowed" in request.POST:
+            form = ReportSettingsForm(request.POST)
+            if form.is_valid():
+                profile.reports_allowed = form.cleaned_data["reports_allowed"]
+                profile.save()
+                messages.info(request, "Your settings have been updated!")
 
     ctx = {
-        "profile": profile
+        "profile": profile,
+        "show_api_key": show_api_key
     }
 
     return render(request, "accounts/profile.html", ctx)
