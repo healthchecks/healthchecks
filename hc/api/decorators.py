@@ -4,6 +4,7 @@ from functools import wraps
 
 from django.contrib.auth.models import User
 from django.http import HttpResponseBadRequest, JsonResponse
+from six import string_types
 
 
 def uuid_or_400(f):
@@ -62,7 +63,7 @@ def validate_json(schema):
 
                 value = request.json[key]
                 if spec["type"] == "string":
-                    if not isinstance(value, str):
+                    if not isinstance(value, string_types):
                         return make_error("%s is not a string" % key)
                 elif spec["type"] == "number":
                     if not isinstance(value, int):
