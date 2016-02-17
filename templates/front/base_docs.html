@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-2">
+
+    <ul class="docs-nav">
+        <li {% if section == "home" %} class="active" {% endif %}>
+            <a href="{% url 'hc-docs' %}">Executing a Ping</a>
+            <ul>
+                <li><a href="{% url 'hc-docs' %}#crontab">Crontab</a></li>
+                <li><a href="{% url 'hc-docs' %}#bash">Bash</a></li>
+                <li><a href="{% url 'hc-docs' %}#python">Python</a></li>
+                <li><a href="{% url 'hc-docs' %}#node">Node</a></li>
+                <li><a href="{% url 'hc-docs' %}#php">PHP</a></li>
+                <li><a href="{% url 'hc-docs' %}#browser">Browser</a></li>
+                <li><a href="{% url 'hc-docs' %}#email">Email</a></li>
+            </ul>
+        </li>
+        <li {% if section == "api" %} class="active" {% endif %}>
+            <a href="{% url 'hc-docs-api' %}">REST API</a>
+        </li>
+    </ul>
+
+    </div>
+    <div class="col-sm-10">
+        {% block docs_content %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

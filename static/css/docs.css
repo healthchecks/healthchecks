@@ -1,4 +1,44 @@
+.docs-nav {
+    margin: 20px 0 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.docs-nav li a {
+    display: block;
+    padding-bottom: 10px;
+}
+
+.docs-nav li.active > a {
+    font-weight: bold;
+}
+
+
+.docs-nav ul {
+    margin: 0 0 0 20px;
+    padding: 0;
+    list-style: none;
+
+}
+
 .curl-opts th {
     white-space: nowrap;
     font-family: monospace;
+}
+
+h2.rule {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+h3.api-section {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.api-path {
+    font-family: monospace;
+    font-weight: bold;
+    margin-bottom: 1em;
 }

@@ -1,0 +1,113 @@
+{% extends "front/base_docs.html" %}
+{% load staticfiles %}
+
+{% block title %}REST API - healthchecks.io{% endblock %}
+
+{% block docs_content %}
+
+<h2>REST API</h2>
+<p>
+This is early days for healtchecks.io REST API. For now, there's just
+one API call: for creating a new check.
+</p>
+
+<h2 class="rule">Authentication</h2>
+<p>Your requests to healtchecks.io REST API must authenticate using an
+API key. By default, an user account on healthchecks.io doesn't have
+an API key. You can create one in the <a href="{% url 'hc-profile' %}">Settings</a> page.
+</p>
+
+<p>
+The API uses a simple authentication scheme: the API key should be
+included in the request body (a JSON document) along other fields.
+</p>
+
+<h2 class="rule">API Requests</h2>
+
+<p>
+For POST requests, the healthchecks.io API expects request body to be
+a JSON document (<em>not</em> a <code>mulitpart/form-data</code> encoded
+form data).
+</p>
+
+<h2 class="rule">API Responses</h2>
+
+<p>
+healthchecks.io uses HTTP status codes wherever possible.
+In general, 2xx class indicates success, 4xx indicates an client error,
+and 5xx indicates a server error.
+</p>
+
+<p>
+The response may contain a JSON document with additional data.
+</p>
+
+<h2 class="rule">Create a check</h2>
+
+<div class="api-path">POST {{ SITE_ROOT }}/api/v1/checks/</div>
+
+<strong></strong>
+
+<p>
+    Creates a new check and returns its ping URL.
+    All request parameters are optional and will use their default
+    values if omitted.
+</p>
+
+<h3 class="api-section">Request Parameters</h3>
+<table class="table">
+    <tr>
+        <th>name</th>
+        <td>
+            <p>string, optional, default value: ""</p>
+            <p>Name for the new check.</p>
+        </td>
+    </tr>
+    <tr>
+        <th>tags</th>
+        <td>
+            <p>string, optional, default value: ""</p>
+            <p>A comma-delimited list of tags for the new check.</p>
+        </td>
+    </tr>
+    <tr>
+        <th>timeout</th>
+        <td>
+            <p>number, optional, default value: {{ default_timeout }}.</p>
+            <p>A number of seconds, the expected period of this check.</p>
+            <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+        </td>
+    </tr>
+    <tr>
+        <th>grace</th>
+        <td>
+            <p>number, optional, default value: {{ default_grace }}.</p>
+            <p>A number of seconds, the grace period for this check.</p>
+            <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+        </td>
+    </tr>
+    <tr>
+        <th>channels</th>
+        <td>
+            <p>string, optional, default value: ""</p>
+            <p>By default, if a check is created through API, no notification
+            channels are assigned to it. So, when the check goes up or down,
+            no notifications would be sent. Set this field to a special value "*"
+            to automatically assign all existing notification channels.</p>
+        </td>
+    </tr>
+</table>
+
+<h3 class="api-section">Example Request</h3>
+<pre>
+curl {{ SITE_ROOT }}/v1/checks/ \
+    -X POST \
+    -d '{"name": "Nightly Backups", "tags": "production,www", "timeout": 3600, "grace": 60}'
+</pre>
+
+<h3 class="api-section">Example Response</h3>
+<pre>
+{"ping_url": "{{ PING_ENDPOINT }}20f2d3d0-efe4-4cc1-a114-a186a225de50"}
+</pre>
+
+{% endblock %}

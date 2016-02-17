@@ -13,7 +13,7 @@ from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.accounts.models import Profile
 from hc.api.decorators import uuid_or_400
-from hc.api.models import Channel, Check, Ping
+from hc.api.models import Channel, Check, Ping, DEFAULT_TIMEOUT, DEFAULT_GRACE
 from hc.front.forms import AddChannelForm, NameTagsForm, TimeoutForm
 
 
@@ -91,12 +91,26 @@ def docs(request):
 
     ctx = {
         "page": "docs",
+        "section": "home",
         "ping_endpoint": settings.PING_ENDPOINT,
         "check": check,
         "ping_url": check.url()
     }
 
     return render(request, "front/docs.html", ctx)
+
+
+def docs_api(request):
+    ctx = {
+        "page": "docs",
+        "section": "api",
+        "SITE_ROOT": settings.SITE_ROOT,
+        "PING_ENDPOINT": settings.PING_ENDPOINT,
+        "default_timeout": int(DEFAULT_TIMEOUT.total_seconds()),
+        "default_grace": int(DEFAULT_GRACE.total_seconds())
+    }
+
+    return render(request, "front/docs_api.html", ctx)
 
 
 def about(request):

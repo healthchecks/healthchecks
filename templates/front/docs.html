@@ -1,10 +1,9 @@
-{% extends "base.html" %}
+{% extends "front/base_docs.html" %}
 {% load staticfiles %}
 
 {% block title %}Documentation - healthchecks.io{% endblock %}
 
-{% block content %}
-<div class="row"><div class="col-sm-12">
+{% block docs_content %}
 
 <h2>Summary</h2>
 <p>
@@ -35,6 +34,7 @@ short and simple string "OK".</p>
     Here are examples of executing pings from different environments.
 </p>
 
+<a name="crontab"></a>
 <h3>Crontab</h3>
 
 <p>
@@ -99,6 +99,7 @@ task runs. Feel free to adjust the curl options to your liking.
     </tr>
 </table>
 
+<a name="bash"></a>
 <h3>Bash or a shell script</h3>
 
 <p>Both <code>curl</code> and <code>wget</code> examples accomplish the same
@@ -111,16 +112,20 @@ thing: they fire off a HTTP GET method.</p>
 
 {% include "front/snippets/bash.html" %}
 
+<a name="python"></a>
 <h3>Python</h3>
 {% include "front/snippets/python.html" %}
 
+<a name="node"></a>
 <h3>Node</h3>
 {% include "front/snippets/node.html" %}
 
 
+<a name="php"></a>
 <h3>PHP</h3>
 {% include "front/snippets/php.html" %}
 
+<a name="browser"></a>
 <h3>Browser</h3>
 <p>
     healthchecks.io includes <code>Access-Control-Allow-Origin:*</code>
@@ -129,6 +134,7 @@ thing: they fire off a HTTP GET method.</p>
 </p>
 {% include "front/snippets/browser.html" %}
 
+<a name="email"></a>
 <h3>Email</h3>
 <p>
     As an alternative to HTTP/HTTPS requests,
@@ -209,5 +215,4 @@ thing: they fire off a HTTP GET method.</p>
     </tr>
 </table>
 
-</div></div>
 {% endblock %}
