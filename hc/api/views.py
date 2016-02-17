@@ -93,6 +93,11 @@ def create_check(request):
 
     check.save()
 
+    # This needs to be done after saving the check, because of
+    # the M2M relation between checks and channels:
+    if request.json.get("channels") == "*":
+        check.assign_all_channels()
+
     response = {
         "ping_url": check.url()
     }

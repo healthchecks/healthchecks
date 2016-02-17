@@ -1,6 +1,6 @@
 import json
 
-from hc.api.models import Check
+from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 from hc.accounts.models import Profile
 
@@ -35,6 +35,19 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.timeout.total_seconds(), 3600)
         self.assertEqual(check.grace.total_seconds(), 60)
 
+    def test_it_assigns_channels(self):
+        channel = Channel(user=self.alice)
+        channel.save()
+
+        r = self.post("/api/v1/checks/", {
+            "api_key": "abc",
+            "channels": "*"
+        })
+
+        self.assertEqual(r.status_code, 201)
+        check = Check.objects.get()
+        self.assertEqual(check.channel_set.get(), channel)
+
     def test_it_handles_missing_request_body(self):
         r = self.client.post("/api/v1/checks/",
                              content_type="application/json")
@@ -50,7 +63,7 @@ class CreateCheckTestCase(BaseTestCase):
                              content_type="application/json")
         self.assertEqual(r.json()["error"], "could not parse request body")
 
-    def test_it_reject_small_timeout(self):
+    def test_it_rejects_small_timeout(self):
         r = self.post("/api/v1/checks/", {"api_key": "abc", "timeout": 0})
         self.assertEqual(r.json()["error"], "timeout is too small")
 
