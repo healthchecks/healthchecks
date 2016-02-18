@@ -100,7 +100,7 @@ The response may contain a JSON document with additional data.
 
 <h3 class="api-section">Example Request</h3>
 <pre>
-curl {{ SITE_ROOT }}api/v1/checks/ \
+curl {{ SITE_ROOT }}/api/v1/checks/ \
     -X POST \
     -d '{"api_key": "your-api-key", "name": "Backups", "tags": "prod www", "timeout": 3600, "grace": 60}'
 </pre>
