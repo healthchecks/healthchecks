@@ -7,3 +7,4 @@ futures==3.0.3
 premailer==2.9.6
 psycopg2==2.6.1
 requests==2.8.1
+six==1.10.0
