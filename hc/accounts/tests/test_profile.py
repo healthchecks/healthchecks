@@ -2,6 +2,7 @@ from django.core import mail
 
 from hc.test import BaseTestCase
 from hc.accounts.models import Profile
+from hc.api.models import Check
 
 
 class LoginTestCase(BaseTestCase):
@@ -41,3 +42,17 @@ class LoginTestCase(BaseTestCase):
 
         profile = Profile.objects.for_user(self.alice)
         self.assertEqual(profile.api_key, "")
+
+    def test_it_sends_report(self):
+        check = Check(name="Test Check", user=self.alice)
+        check.save()
+
+        profile = Profile.objects.for_user(self.alice)
+        profile.send_report()
+
+        # And an email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+
+        self.assertEqual(message.subject, 'Monthly Report')
+        self.assertIn("Test Check", message.body)

@@ -41,9 +41,9 @@
     <tr>
         <th></th>
         <th>Name</th>
-        <th>URL</th>
         <th>Period</th>
         <th>Last Ping</th>
+        <th>Actions</th>
     </tr>
     {% for check in checks %}
     <tr>
@@ -71,9 +71,6 @@
                 <small>{{ check.tags }}</small>
             {% endif %}
         </td>
-        <td class="url-cell">
-            <code>{{ check.url }}</code>
-        </td>
         <td>
             {{ check.timeout|hc_duration }}
         </td>
@@ -83,6 +80,9 @@
             {% else %}
                 Never
             {% endif %}
+        </td>
+        <td>
+            <a href="{{ check.log_url }}">View Log</a>
         </td>
     </tr>
     {% endfor %}

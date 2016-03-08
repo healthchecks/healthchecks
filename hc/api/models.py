@@ -61,6 +61,9 @@ class Check(models.Model):
     def url(self):
         return settings.PING_ENDPOINT + str(self.code)
 
+    def log_url(self):
+        return settings.SITE_ROOT + reverse("hc-log", args=[self.code])
+
     def email(self):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 
