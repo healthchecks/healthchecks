@@ -16,12 +16,7 @@ from hc.lib import emails
 class ProfileManager(models.Manager):
 
     def for_user(self, user):
-        try:
-            profile = self.get(user_id=user.id)
-        except Profile.DoesNotExist:
-            profile = Profile(user=user)
-            profile.save()
-
+        profile, created = Profile.objects.get_or_create(user_id=user.id)
         return profile
 
 

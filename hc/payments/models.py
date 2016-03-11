@@ -5,12 +5,7 @@ from django.db import models
 class SubscriptionManager(models.Manager):
 
     def for_user(self, user):
-        try:
-            sub = self.get(user_id=user.id)
-        except Subscription.DoesNotExist:
-            sub = Subscription(user=user)
-            sub.save()
-
+        sub, created = Subscription.objects.get_or_create(user_id=user.id)
         return sub
 
 
