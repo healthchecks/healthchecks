@@ -30,7 +30,9 @@ def get_client_token(request):
 def pricing(request):
     sub = None
     if request.user.is_authenticated():
-        sub = Subscription.objects.for_user(request.user)
+        # Don't use Subscription.objects.for_user method here, so a
+        # subscription object is not created just by viewing a page.
+        sub = Subscription.objects.filter(user_id=request.user.id).first()
 
     ctx = {
         "page": "pricing",

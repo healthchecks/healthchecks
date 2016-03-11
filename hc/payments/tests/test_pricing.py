@@ -17,5 +17,5 @@ class PricingTestCase(BaseTestCase):
         r = self.client.get("/pricing/")
         self.assertContains(r, "Unlimited Checks", status_code=200)
 
-        # A subscription object should have been created
-        assert Subscription.objects.count() == 1
+        # A subscription object still should have NOT been created
+        assert Subscription.objects.count() == 0
