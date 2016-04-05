@@ -63,6 +63,56 @@ in development environment.
 
         $ ./manage.py runserver
 
+The site should now be running at `http://localhost:8080`
+To log into Django administration site as a super user,
+visit `http://localhost:8080/admin`
+
+## Database Configuration
+
+Database configuration is stored in `hc/settings.py` and can be overriden
+in `hc/local_settings.py`. The default database engine is SQLite. To use
+PostgreSQL, create `hc/local_settings.py` if it does not exist, and put the
+following in it, changing it as neccessary:
+
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql',
+            'NAME':     'your-database-name-here',
+            'USER':     'your-database-user-here',
+            'PASSWORD': 'your-database-password-here',
+            'TEST': {'CHARSET': 'UTF8'}
+        }
+    }
+
+For MySQL:
+
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'your-database-name-here',
+            'USER':     'your-database-user-here',
+            'PASSWORD': 'your-database-password-here',
+            'TEST': {'CHARSET': 'UTF8'}
+        }
+    }
+
+You can also use `hc/local_settings.py` to read database
+configuration from environment variables like so:
+
+    import os
+
+    DATABASES = {
+        'default': {
+            'ENGINE':   os.env['DB_ENGINE'],
+            'NAME':     os.env['DB_NAME'],
+            'USER':     os.env['DB_USER'],
+            'PASSWORD': os.env['DB_PASSWORD'],
+            'TEST': {'CHARSET': 'UTF8'}
+        }
+    }
+
+
+
 ## Sending Emails
 
 healthchecks must be able to send email messages, so it can send out login
