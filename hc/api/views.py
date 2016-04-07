@@ -80,26 +80,39 @@ def handle_email(request):
 @check_api_key
 @validate_json(schemas.check)
 def create_check(request):
-    if request.method != "POST":
+    if request.method == "GET":
+        code = 200
+        response = {
+            "checks": [{
+                "name":          check.name,
+                "ping_url" :     check.url(),
+                "tags":          check.tags,
+                "timeout":       int(check.timeout.total_seconds()),
+                "grace":         int(check.grace.total_seconds()),
+                # "channels": check.channels,
+            } for check in Check.objects.filter(user=request.user)]
+        }
+    elif request.method == "POST":
+        check = Check(user=request.user)
+        check.name = str(request.json.get("name", ""))
+        check.tags = str(request.json.get("tags", ""))
+        if "timeout" in request.json:
+            check.timeout = td(seconds=request.json["timeout"])
+        if "grace" in request.json:
+            check.grace = td(seconds=request.json["grace"])
+
+        check.save()
+
+        # This needs to be done after saving the check, because of
+        # the M2M relation between checks and channels:
+        if request.json.get("channels") == "*":
+            check.assign_all_channels()
+
+        code = 201
+        response = {
+            "ping_url": check.url()
+        }
+    else:
         return HttpResponse(status=405)
 
-    check = Check(user=request.user)
-    check.name = str(request.json.get("name", ""))
-    check.tags = str(request.json.get("tags", ""))
-    if "timeout" in request.json:
-        check.timeout = td(seconds=request.json["timeout"])
-    if "grace" in request.json:
-        check.grace = td(seconds=request.json["grace"])
-
-    check.save()
-
-    # This needs to be done after saving the check, because of
-    # the M2M relation between checks and channels:
-    if request.json.get("channels") == "*":
-        check.assign_all_channels()
-
-    response = {
-        "ping_url": check.url()
-    }
-
-    return JsonResponse(response, status=201)
+    return JsonResponse(response, status=code)
