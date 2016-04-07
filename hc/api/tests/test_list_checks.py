@@ -31,10 +31,10 @@ class ListChecksTestCase(BaseTestCase):
         checks = { check["name"]: check for check in r.json()["checks"] }
         self.assertEqual(checks["Alice 1"]["timeout"], 3600)
         self.assertEqual(checks["Alice 1"]["grace"],   900)
-        self.assertEqual(checks["Alice 1"]["url"],     self.checks[0].url())
+        self.assertEqual(checks["Alice 1"]["ping_url"],     self.checks[0].url())
         self.assertEqual(checks["Alice 2"]["timeout"], 86400)
         self.assertEqual(checks["Alice 2"]["grace"],   3600)
-        self.assertEqual(checks["Alice 2"]["url"],     self.checks[1].url())
+        self.assertEqual(checks["Alice 2"]["ping_url"],     self.checks[1].url())
 
     def test_it_shows_only_users_checks(self):
         bob = User(username="bob", email="bob@example.com")
