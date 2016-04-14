@@ -1,0 +1,18 @@
+{
+  "checks": [
+    {
+      "ping_url": "PING_ENDPOINT848f3002-266b-482a-89ad-9d66a11aa2fb",
+      "grace": 900,
+      "name": "API test 1",
+      "timeout": 3600,
+      "tags": "foo"
+    },
+    {
+      "ping_url": "PING_ENDPOINT20324f81-5966-4e75-9734-8440df52ed75",
+      "grace": 60,
+      "name": "API test 2",
+      "timeout": 60,
+      "tags": "bar,baz"
+    }
+  ]
+}

@@ -8,7 +8,7 @@
 <h2>REST API</h2>
 <p>
 This is early days for healtchecks.io REST API. For now, there's just
-one API resource for listing/creating checks.
+one API resource for listing and creating checks.
 </p>
 
 <h2 class="rule">Authentication</h2>
@@ -47,20 +47,14 @@ The response may contain a JSON document with additional data.
 <div class="api-path">GET {{ SITE_ROOT }}/api/v1/checks/</div>
 
 <p>
-    Returns a list of checks
+    Returns a list of checks. This API call takes no parameters and returns
+    a JSON document with all checks in user's account.
 </p>
 <h3 class="api-section">Example Request</h3>
-
-<pre>
-curl {{ SITE_ROOT }}/api/v1/checks/ \
-    -X GET \
-    -d '{"api_key": "your-api-key"}'
-</pre>
+{% include "front/snippets/list_checks_request.html" %}
 
 <h3 class="api-section">Example Response</h3>
-<pre>
-{"checks": [{"url": "{{ PING_ENDPOINT }}848f3002-266b-482a-89ad-9d66a11aa2fb", "grace": 900, "name": "API test 1", "timeout": 3600, "tags": "foo"}, {"url": "{{ PING_ENDPOINT }}20324f81-5966-4e75-9734-8440df52ed75", "grace": 60, "name": "API test 2", "timeout": 60, "tags": "bar,baz"}]}
-</pre>
+{% include "front/snippets/list_checks_response.html" %}
 
 <h2 class="rule">Create a check</h2>
 
@@ -119,15 +113,9 @@ curl {{ SITE_ROOT }}/api/v1/checks/ \
 </table>
 
 <h3 class="api-section">Example Request</h3>
-<pre>
-curl {{ SITE_ROOT }}/api/v1/checks/ \
-    -X POST \
-    -d '{"api_key": "your-api-key", "name": "Backups", "tags": "prod www", "timeout": 3600, "grace": 60}'
-</pre>
+{% include "front/snippets/create_check_request.html" %}
 
 <h3 class="api-section">Example Response</h3>
-<pre>
-{"ping_url": "{{ PING_ENDPOINT }}20f2d3d0-efe4-4cc1-a114-a186a225de50"}
-</pre>
+{% include "front/snippets/create_check_response.html" %}
 
 {% endblock %}

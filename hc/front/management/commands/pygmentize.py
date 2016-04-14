@@ -1,13 +1,15 @@
 from django.core.management.base import BaseCommand
 
 
-def _process(fin, fout, lexer):
+def _process(name, lexer):
     from pygments import highlight
     from pygments.formatters import HtmlFormatter
-    source = open("templates/front/snippets/" + fin).read()
+    source = open("templates/front/snippets/%s.txt" % name).read()
     processed = highlight(source, lexer, HtmlFormatter())
     processed = processed.replace("PING_URL", "{{ ping_url }}")
-    with open("templates/front/snippets/" + fout, "w") as out:
+    processed = processed.replace("SITE_ROOT", "{{ SITE_ROOT }}")
+    processed = processed.replace("PING_ENDPOINT", "{{ PING_ENDPOINT }}")
+    with open("templates/front/snippets/%s.html" % name, "w") as out:
         out.write(processed)
 
 
@@ -24,11 +26,17 @@ class Command(BaseCommand):
             self.stdout.write("  pip install Pygments\n\n")
             return
 
-        _process("bash.txt", "bash.html", lexers.BashLexer())
-        _process("browser.txt", "browser.html", lexers.JavascriptLexer())
-        _process("crontab.txt", "crontab.html", lexers.BashLexer())
-        _process("python.txt", "python.html", lexers.PythonLexer())
-        _process("php.txt", "php.html", lexers.PhpLexer())
-        _process("powershell.txt", "powershell.html",
-                 lexers.shell.PowerShellLexer())
-        _process("node.txt", "node.html", lexers.JavascriptLexer())
+        # Invocation examples
+        _process("bash", lexers.BashLexer())
+        _process("browser", lexers.JavascriptLexer())
+        _process("crontab", lexers.BashLexer())
+        _process("python", lexers.PythonLexer())
+        _process("php", lexers.PhpLexer())
+        _process("powershell", lexers.shell.PowerShellLexer())
+        _process("node", lexers.JavascriptLexer())
+
+        # API examples
+        _process("list_checks_request", lexers.BashLexer())
+        _process("list_checks_response", lexers.JsonLexer())
+        _process("create_check_request", lexers.BashLexer())
+        _process("create_check_response", lexers.JsonLexer())
