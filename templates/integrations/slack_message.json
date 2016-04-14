@@ -36,7 +36,7 @@
             {% endif %}
             {
                 "title": "Total Pings",
-                "value": {{ check.n_pings }},
+                "value": "{{ check.n_pings }}",
                 "short": true
             }
         ]
