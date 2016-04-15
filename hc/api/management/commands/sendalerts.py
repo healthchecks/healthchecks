@@ -55,12 +55,12 @@ class Command(BaseCommand):
         return True
 
     def handle(self, *args, **options):
-        self.stdout.write("sendalerts starts up")
+        self.stdout.write("sendalerts is now running")
 
         ticks = 0
         while True:
             if self.handle_many():
-                ticks = 0
+                ticks = 1
             else:
                 ticks += 1
 
