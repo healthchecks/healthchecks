@@ -117,9 +117,13 @@ class Channel(models.Model):
     user = models.ForeignKey(User)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
-    value = models.CharField(max_length=200, blank=True)
+    value = models.TextField(blank=True)
     email_verified = models.BooleanField(default=False)
     checks = models.ManyToManyField(Check)
+
+    def assign_all_checks(self):
+        checks = Check.objects.filter(user=self.user)
+        self.checks.add(*checks)
 
     def make_token(self):
         seed = "%s%s" % (self.code, settings.SECRET_KEY)
@@ -175,6 +179,18 @@ class Channel(models.Model):
         user_key, prio = self.value.split("|")
         prio = int(prio)
         return user_key, prio, PO_PRIORITIES[prio]
+
+    @property
+    def value_down(self):
+        assert self.kind == "webhook"
+        parts = self.value.split("\n")
+        return parts[0]
+
+    @property
+    def value_up(self):
+        assert self.kind == "webhook"
+        parts = self.value.split("\n")
+        return parts[1] if len(parts) == 2 else ""
 
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()

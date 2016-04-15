@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 import json
 import requests
+from six.moves.urllib.parse import quote
 
 from hc.lib import emails
 
@@ -81,11 +82,33 @@ class HttpTransport(Transport):
 
 class Webhook(HttpTransport):
     def notify(self, check):
-        # Webhook integration only fires when check goes down.
-        if check.status != "down":
+        url = self.channel.value_down
+        if check.status == "up":
+            url = self.channel.value_up
+
+        if not url:
+            # If the URL is empty then we do nothing
             return "no-op"
 
-        return self.get(self.channel.value)
+        # Replace variables with actual values.
+        # There should be no bad translations if users use $ symbol in
+        # check's name or tags, because $ gets urlencoded to %24
+
+        if "$CODE" in url:
+            url = url.replace("$CODE", str(check.code))
+
+        if "$STATUS" in url:
+            url = url.replace("$STATUS", check.status)
+
+        if "$NAME" in url:
+            url = url.replace("$NAME", quote(check.name))
+
+        if "$TAG" in url:
+            for i, tag in enumerate(check.tags_list()):
+                placeholder = "$TAG%d" % (i + 1)
+                url = url.replace(placeholder, quote(tag))
+
+        return self.get(url)
 
     def test(self):
         return self.get(self.channel.value)

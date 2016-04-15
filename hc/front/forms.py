@@ -31,3 +31,13 @@ class AddChannelForm(forms.ModelForm):
     def clean_value(self):
         value = self.cleaned_data["value"]
         return value.strip()
+
+
+class AddWebhookForm(forms.Form):
+    error_css_class = "has-error"
+
+    value_down = forms.URLField(max_length=1000, required=False)
+    value_up = forms.URLField(max_length=1000, required=False)
+
+    def get_value(self):
+        return "{value_down}\n{value_up}".format(**self.cleaned_data)

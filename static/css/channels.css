@@ -170,3 +170,7 @@ table.channels-table > tbody > tr > th {
     max-width: 100%;
     border: 6px solid #EEE;
 }
+
+.variable-column {
+    width: 160px;
+}

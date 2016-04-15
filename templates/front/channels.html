@@ -28,22 +28,39 @@
             {% if ch.kind == "victorops" %} VictorOps {% endif %}
             </td>
             <td class="value-cell">
-                <span class="preposition">
-                {% if ch.kind == "email" %} to {% endif %}
-                {% if ch.kind == "pd" %} API key {% endif %}
-                {% if ch.kind == "po" %} user key {% endif %}
-                {% if ch.kind == "victorops" %} Post URL {% endif %}
-                </span>
-
-                {% if ch.kind == "po" %}
+                {% if ch.kind == "email" %}
+                    <span class="preposition">to</span>
+                    {{ ch.value }}
+                    {% if not ch.email_verified %}
+                        <span class="channel-unconfirmed">(unconfirmed)</span>
+                    {% endif %}
+                {% elif ch.kind == "pd" %}
+                    <span class="preposition">API key</span>
+                    {{ ch.value }}
+                {% elif ch.kind == "victorops" %}
+                    <span class="preposition">Post URL</span>
+                    {{ ch.value }}
+                {% elif ch.kind == "po" %}
+                    <span class="preposition">user key</span>
                     {{ ch.po_value|first }}
                     ({{ ch.po_value|last }} priority)
+                {% elif ch.kind == "webhook" %}
+                    <table>
+                        {% if ch.value_down %}
+                        <tr>
+                            <td class="preposition">down&nbsp;</td>
+                            <td>{{ ch.value_down }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if ch.value_up %}
+                        <tr>
+                            <td class="preposition">up&nbsp;</td>
+                            <td>{{ ch.value_up }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
                 {% else %}
                     {{ ch.value }}
-                {% endif %}
-
-                {% if ch.kind == "email" and not ch.email_verified %}
-                <span class="channel-unconfirmed">(unconfirmed)
                 {% endif %}
             </td>
             <td class="channels-num-checks">

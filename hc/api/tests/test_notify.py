@@ -64,6 +64,49 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
 
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_support_variables(self, mock_get):
+        template = "http://host/$CODE/$STATUS/$TAG1/$TAG2/?name=$NAME"
+        self._setup_data("webhook", template)
+        self.check.name = "Hello World"
+        self.check.tags = "foo bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        url = u"http://host/%s/down/foo/bar/?name=Hello%%20World" \
+            % self.check.code
+
+        mock_get.assert_called_with(
+            "get", url, headers={"User-Agent": "healthchecks.io"}, timeout=5)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_dollarsign_escaping(self, mock_get):
+        # If name or tag contains what looks like a variable reference,
+        # that should be left alone:
+
+        template = "http://host/$NAME"
+        self._setup_data("webhook", template)
+        self.check.name = "$TAG1"
+        self.check.tags = "foo"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        url = u"http://host/%24TAG1"
+        mock_get.assert_called_with(
+            "get", url, headers={"User-Agent": "healthchecks.io"}, timeout=5)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhook_fires_on_up_event(self, mock_get):
+        self._setup_data("webhook", "http://foo\nhttp://bar", status="up")
+
+        self.channel.notify(self.check)
+
+        mock_get.assert_called_with(
+            "get", "http://bar", headers={"User-Agent": "healthchecks.io"},
+            timeout=5)
+
     def test_email(self):
         self._setup_data("email", "alice@example.org")
         self.channel.notify(self.check)

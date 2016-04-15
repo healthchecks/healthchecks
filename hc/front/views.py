@@ -14,7 +14,8 @@ from django.utils.six.moves.urllib.parse import urlencode
 from hc.accounts.models import Profile
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Channel, Check, Ping, DEFAULT_TIMEOUT, DEFAULT_GRACE
-from hc.front.forms import AddChannelForm, NameTagsForm, TimeoutForm
+from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
+                            TimeoutForm)
 
 
 # from itertools recipes:
@@ -302,8 +303,7 @@ def do_add_channel(request, data):
         channel.user = request.user
         channel.save()
 
-        checks = Check.objects.filter(user=request.user)
-        channel.checks.add(*checks)
+        channel.assign_all_checks()
 
         if channel.kind == "email":
             channel.send_verify_link()
@@ -372,7 +372,19 @@ def add_email(request):
 
 @login_required
 def add_webhook(request):
-    ctx = {"page": "channels"}
+    if request.method == "POST":
+        form = AddWebhookForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.user, kind="webhook")
+            channel.value = form.get_value()
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddWebhookForm()
+
+    ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_webhook.html", ctx)
 
 
@@ -453,6 +465,7 @@ def add_pushover(request):
         "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
     }
     return render(request, "integrations/add_pushover.html", ctx)
+
 
 @login_required
 def add_victorops(request):
