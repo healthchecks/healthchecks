@@ -17,7 +17,7 @@ class ChannelChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
-        self.assertContains(r, "alice@example.org", status_code=200)
+        self.assertContains(r, "Assign Checks to Channel", status_code=200)
 
     def test_it_checks_owner(self):
         mallory = User(username="mallory", email="mallory@example.org")
