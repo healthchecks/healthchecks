@@ -46,37 +46,6 @@ def ping(request, code):
 
 
 @csrf_exempt
-def handle_email(request):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
-    events = json.loads(request.POST["mandrill_events"])
-    for event in events:
-        for recipient_address, recipient_name in event["msg"]["to"]:
-            code, domain = recipient_address.split("@")
-            try:
-                check = Check.objects.get(code=code)
-            except ValueError:
-                continue
-            except Check.DoesNotExist:
-                continue
-
-            check.n_pings = F("n_pings") + 1
-            check.last_ping = timezone.now()
-            if check.status == "new":
-                check.status = "up"
-
-            check.save()
-
-            ping = Ping(owner=check)
-            ping.scheme = "email"
-            ping.save()
-
-    response = HttpResponse("OK")
-    return response
-
-
-@csrf_exempt
 @check_api_key
 @validate_json(schemas.check)
 def create_check(request):
@@ -84,11 +53,11 @@ def create_check(request):
         code = 200
         response = {
             "checks": [{
-                "name":          check.name,
-                "ping_url" :     check.url(),
-                "tags":          check.tags,
-                "timeout":       int(check.timeout.total_seconds()),
-                "grace":         int(check.grace.total_seconds()),
+                "name": check.name,
+                "ping_url": check.url(),
+                "tags": check.tags,
+                "timeout": int(check.timeout.total_seconds()),
+                "grace": int(check.grace.total_seconds()),
                 # "channels": check.channels,
             } for check in Check.objects.filter(user=request.user)]
         }
