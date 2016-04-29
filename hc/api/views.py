@@ -1,5 +1,4 @@
 from datetime import timedelta as td
-import json
 
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
