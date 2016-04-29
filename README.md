@@ -143,6 +143,50 @@ the `sendalerts` command like so:
 In a production setup, you will want to run this command from a process
 manager like [supervisor](http://supervisord.org/) or systemd.
 
+## Database Cleanup
+
+With time and use the healthchecks database will grow in size. You may
+decide to prune old data: inactive user accounts, old checks not assigned
+to users, records of outgoing email messages and records of received pings.
+There are separate Django management commands for each task:
+
+* Remove old records from `api_ping` table. For each check, keep 100 most
+  recent pings:
+
+    ````
+    $ ./manage.py prunepings
+    ````
+
+* Remove checks older than 2 hours that are not assigned to users. Such
+  checks are by-products of random visitors and robots loading the welcome
+  page and never setting up an account:
+
+    ```
+    $ ./manage.py prunechecks
+    ```
+
+* Remove records of sent email messages older than 7 days.
+
+    ````
+    $ ./manage.py pruneemails
+    ````
+
+* Remove user accounts that match either of these conditions:
+ * Account was created more than a month ago, and user has never logged in.
+   These can happen when user enters invalid email address when signing up.
+ * Last login was more than a month ago, and the account has no checks.
+   Assume the user doesn't intend to use the account any more and would
+   probably *want* it removed.
+
+    ```
+    $ ./manage.py pruneusers
+    ```    
+
+When you first try these commands on your data, it is a good idea to 
+test them on a copy of your database, not on the live database right away. 
+In a production setup, you should also have regular, automated database 
+backups set up.
+
 ## Integrations
 
 ### Pushover
