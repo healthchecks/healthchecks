@@ -2,7 +2,6 @@ import json
 
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
-from hc.accounts.models import Profile
 
 
 class CreateCheckTestCase(BaseTestCase):
