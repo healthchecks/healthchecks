@@ -109,9 +109,11 @@ def create_plan(request):
     profile = Profile.objects.for_user(request.user)
     if plan_id == "P5":
         profile.ping_log_limit = 1000
+        profile.team_access_allowed = True
         profile.save()
     elif plan_id == "P20":
         profile.ping_log_limit = 10000
+        profile.team_access_allowed = True
         profile.save()
 
     request.session["first_charge"] = True

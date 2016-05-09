@@ -96,7 +96,61 @@
         </div>
     </div>
 
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <h2>Team Access</h2>
+                {% if profile.team_access_allowed %}
+                    {% if profile.member_set.count %}
+                        <table class="table">
+                            <tr>
+                                <td>{{ profile.user.email }}</td>
+                                <td>Owner</td>
+                                <td></td>
+                            </tr>
+                            {% for member in profile.member_set.all %}
+                            <tr>
+                                <td>{{ member.user.email }} </td>
+                                <td>Member</td>
+                                <td>
+                                    <a
+                                        href="#"
+                                        data-email="{{ member.user.email }}"
+                                        class="pull-right member-remove">Remove</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <p>
+                            <strong>Invite team members to your account.</strong>
+                        </p>
+                        <p>
+                            Share access to your checks and configured integrations
+                            without having to share a login.
+                        </p>
+                    {% endif %}
+
+                    <a
+                        href="#"
+                        class="btn btn-primary pull-right"
+                        data-toggle="modal"
+                        data-target="#invite-team-member-modal">Invite a Team Member</a>
+                {% else %}
+                    <p>
+                        <strong>Invite team members to your account.</strong>
+                        Share access to your checks and configured integrations
+                        without having to share a login.</p>
+                    <p>
+                        To enable team access, please upgrade to
+                        one of the <a href="{% url 'hc-pricing' %}">paid plans</a>.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <div id="revoke-api-key-modal" class="modal">
     <div class="modal-dialog">
@@ -127,5 +181,78 @@
     </div>
 </div>
 
+<div id="remove-team-member-modal" class="modal">
+    <div class="modal-dialog">
+        <form id="remove-team-member-form" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+                    <h4 class="remove-check-title">Remove Team Member</h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to remove <span id="rtm-email"></span> from the team.</p>
+                    <p>Are you sure?</p>
+                    <input
+                        type="hidden"
+                        name="email"
+                        id="remove-team-member-email" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        name="remove_team_member"
+                        class="btn btn-danger">Remove Member from Team</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="invite-team-member-modal" class="modal">
+    <div class="modal-dialog">
+        <form method="post" class="form-horizontal">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+                    <h4 class="remove-check-title">Invite a Team Member</h4>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        <li>Team Members can create and manage Checks and Integrations</li>
+                        <li>Only the team owner (you) can view and edit billing settings</li>
+                    </ul>
+                    <div class="form-group">
+                        <label for="itm-email" class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-9">
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="itm-email"
+                                name="email"
+                                placeholder="friend@example.org">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        name="invite_team_member"
+                        class="btn btn-primary">Send Invite</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/profile.js' %}"></script>
+{% endcompress %}
+{% endblock %}

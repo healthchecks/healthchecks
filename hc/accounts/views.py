@@ -10,9 +10,10 @@ from django.contrib.auth.models import User
 from django.core import signing
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
-from hc.accounts.forms import (EmailPasswordForm, ReportSettingsForm,
+from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
+                               RemoveTeamMemberForm, ReportSettingsForm,
                                SetPasswordForm)
-from hc.accounts.models import Profile
+from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
 
 
@@ -141,6 +142,25 @@ def profile(request):
                 profile.reports_allowed = form.cleaned_data["reports_allowed"]
                 profile.save()
                 messages.info(request, "Your settings have been updated!")
+        elif "invite_team_member" in request.POST:
+            form = InviteTeamMemberForm(request.POST)
+            if form.is_valid():
+
+                email = form.cleaned_data["email"]
+                try:
+                    user = User.objects.get(email=email)
+                except User.DoesNotExist:
+                    user = _make_user(email)
+
+                profile.invite(user)
+                messages.info(request, "Invitation to %s sent!" % email)
+        elif "remove_team_member" in request.POST:
+            form = RemoveTeamMemberForm(request.POST)
+            if form.is_valid():
+
+                email = form.cleaned_data["email"]
+                Member.objects.filter(team=profile, user__email=email).delete()
+                messages.info(request, "%s removed from team!" % email)
 
     ctx = {
         "profile": profile,

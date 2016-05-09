@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.core import mail
 
 from hc.test import BaseTestCase
-from hc.accounts.models import Profile
+from hc.accounts.models import Profile, Member
 from hc.api.models import Check
 
 
@@ -56,3 +57,35 @@ class LoginTestCase(BaseTestCase):
 
         self.assertEqual(message.subject, 'Monthly Report')
         self.assertIn("Test Check", message.body)
+
+    def test_it_adds_team_member(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "bob@example.org"}
+        r = self.client.post("/accounts/profile/", form)
+        assert r.status_code == 200
+
+        profile = Profile.objects.for_user(self.alice)
+        member = profile.member_set.get()
+
+        self.assertEqual(member.user.email, "bob@example.org")
+
+        # And an email should have been sent
+        subj = ('You have been invited to join'
+                ' alice@example.org on healthchecks.io')
+        self.assertEqual(mail.outbox[0].subject, subj)
+
+    def test_it_removes_team_member(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        bob = User(username="bob", email="bob@example.org")
+        bob.save()
+
+        m = Member(team=Profile.objects.for_user(self.alice), user=bob)
+        m.save()
+
+        form = {"remove_team_member": "1", "email": "bob@example.org"}
+        r = self.client.post("/accounts/profile/", form)
+        assert r.status_code == 200
+
+        self.assertEqual(Member.objects.count(), 0)

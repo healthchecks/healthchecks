@@ -21,7 +21,12 @@ class ProfileManager(models.Manager):
 
 
 class Profile(models.Model):
+    # Owner:
     user = models.OneToOneField(User, blank=True, null=True)
+
+    team_name = models.CharField(max_length=200, blank=True)
+    team_access_allowed = models.BooleanField(default=False)
+
     next_report_date = models.DateTimeField(null=True, blank=True)
     reports_allowed = models.BooleanField(default=True)
     ping_log_limit = models.IntegerField(default=100)
@@ -30,13 +35,19 @@ class Profile(models.Model):
 
     objects = ProfileManager()
 
-    def send_instant_login_link(self):
+    def __str__(self):
+        return self.team_name or self.user.email
+
+    def send_instant_login_link(self, inviting_profile=None):
         token = str(uuid.uuid4())
         self.token = make_password(token)
         self.save()
 
         path = reverse("hc-check-token", args=[self.user.username, token])
-        ctx = {"login_link": settings.SITE_ROOT + path}
+        ctx = {
+            "login_link": settings.SITE_ROOT + path,
+            "inviting_profile": inviting_profile
+        }
         emails.login(self.user.email, ctx)
 
     def send_set_password_link(self):
@@ -69,3 +80,14 @@ class Profile(models.Model):
         }
 
         emails.report(self.user.email, ctx)
+
+    def invite(self, user):
+        member = Member(team=self, user=user)
+        member.save()
+
+        Profile.objects.for_user(user).send_instant_login_link(self)
+
+
+class Member(models.Model):
+    team = models.ForeignKey(Profile)
+    user = models.ForeignKey(User)
