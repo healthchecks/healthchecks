@@ -1,5 +1,3 @@
-from django.contrib.auth.models import User
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
@@ -20,14 +18,10 @@ class ChannelChecksTestCase(BaseTestCase):
         self.assertContains(r, "Assign Checks to Channel", status_code=200)
 
     def test_it_checks_owner(self):
-        mallory = User(username="mallory", email="mallory@example.org")
-        mallory.set_password("password")
-        mallory.save()
-
         # channel does not belong to mallory so this should come back
         # with 403 Forbidden:
         url = "/integrations/%s/checks/" % self.channel.code
-        self.client.login(username="mallory@example.org", password="password")
+        self.client.login(username="charlie@example.org", password="password")
         r = self.client.get(url)
         assert r.status_code == 403
 

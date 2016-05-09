@@ -8,11 +8,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.core import signing
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                RemoveTeamMemberForm, ReportSettingsForm,
-                               SetPasswordForm)
+                               SetPasswordForm, TeamNameForm)
 from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
 
@@ -22,6 +22,9 @@ def _make_user(email):
     user = User(username=username, email=email)
     user.set_unusable_password()
     user.save()
+
+    profile = Profile(user=user)
+    profile.save()
 
     channel = Channel()
     channel.user = user
@@ -67,8 +70,7 @@ def login(request):
                     user = _make_user(email)
                     _associate_demo_check(request, user)
 
-                profile = Profile.objects.for_user(user)
-                profile.send_instant_login_link()
+                user.profile.send_instant_login_link()
                 return redirect("hc-login-link-sent")
 
     else:
@@ -106,9 +108,8 @@ def check_token(request, username, token):
         # This should get rid of "welcome_code" in session
         request.session.flush()
 
-        profile = Profile.objects.for_user(user)
-        profile.token = ""
-        profile.save()
+        user.profile.token = ""
+        user.profile.save()
         auth_login(request, user)
 
         return redirect("hc-checks")
@@ -119,7 +120,7 @@ def check_token(request, username, token):
 
 @login_required
 def profile(request):
-    profile = Profile.objects.for_user(request.user)
+    profile = request.user.profile
 
     show_api_key = False
     if request.method == "POST":
@@ -161,6 +162,12 @@ def profile(request):
                 email = form.cleaned_data["email"]
                 Member.objects.filter(team=profile, user__email=email).delete()
                 messages.info(request, "%s removed from team!" % email)
+        elif "set_team_name" in request.POST:
+            form = TeamNameForm(request.POST)
+            if form.is_valid():
+                profile.team_name = form.cleaned_data["team_name"]
+                profile.save()
+                messages.info(request, "Team Name updated!")
 
     ctx = {
         "profile": profile,
@@ -172,7 +179,7 @@ def profile(request):
 
 @login_required
 def set_password(request, token):
-    profile = Profile.objects.for_user(request.user)
+    profile = request.user.profile
     if not check_password(token, profile.token):
         return HttpResponseBadRequest()
 
@@ -204,8 +211,23 @@ def unsubscribe_reports(request, username):
         return HttpResponseBadRequest()
 
     user = User.objects.get(username=username)
-    profile = Profile.objects.for_user(user)
-    profile.reports_allowed = False
-    profile.save()
+    user.profile.reports_allowed = False
+    user.profile.save()
 
     return render(request, "accounts/unsubscribed.html")
+
+
+def switch_team(request, target_username):
+    other_user = User.objects.get(username=target_username)
+
+    # Superuser can switch to any team.
+    # Other users can only switch to a team they are members of.
+    if not request.user.is_superuser:
+        q = Member.objects.filter(team=other_user.profile, user=request.user)
+        if q.count() == 0:
+            return HttpResponseForbidden()
+
+    request.user.profile.current_team = other_user.profile
+    request.user.profile.save()
+
+    return redirect("hc-checks")

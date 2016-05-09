@@ -9,8 +9,6 @@ class CreateCheckTestCase(BaseTestCase):
 
     def setUp(self):
         super(CreateCheckTestCase, self).setUp()
-        self.profile = Profile(user=self.alice, api_key="abc")
-        self.profile.save()
 
     def post(self, url, data):
         return self.client.post(url, json.dumps(data),

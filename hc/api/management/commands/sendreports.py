@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils import timezone
@@ -19,11 +18,6 @@ class Command(BaseCommand):
     tmpl = "Sending monthly report to %s"
 
     def handle(self, *args, **options):
-        # Create any missing profiles
-        for u in User.objects.filter(profile__isnull=True):
-            self.stdout.write("Creating profile for %s" % u.email)
-            Profile.objects.for_user(u)
-
         now = timezone.now()
         month_before = now - timedelta(days=30)
 

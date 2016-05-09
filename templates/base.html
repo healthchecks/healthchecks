@@ -110,11 +110,26 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                        {{ request.user.email }} <span class="caret"></span>
+                        {{ request.user.profile.current_team }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{% url 'hc-profile' %}">Settings</a></li>
+                        <li class="dropdown-header">{{ request.user.profile }}</li>
+                        <li>
+                            <a href="{% url 'hc-switch-team' request.user.username %}" class="active">Checks</a>
+                        </li>
+                        <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
                         <li role="separator" class="divider"></li>
+
+
+                        {% for m in request.user.member_set.all %}
+                        <li class="dropdown-header">{{ m.team }}</li>
+                        <li>
+                            <a href="{% url 'hc-switch-team' m.team.user.username %}">Checks</a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        {% endfor %}
+
+
                         <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
                     </ul>
                 </li>

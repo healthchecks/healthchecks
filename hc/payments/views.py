@@ -106,7 +106,7 @@ def create_plan(request):
     sub.save()
 
     # Update user's profile
-    profile = Profile.objects.for_user(request.user)
+    profile = request.user.profile
     if plan_id == "P5":
         profile.ping_log_limit = 1000
         profile.team_access_allowed = True

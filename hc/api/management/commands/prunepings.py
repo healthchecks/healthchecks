@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Create any missing user profiles
         for user in User.objects.filter(profile=None):
-            Profile.objects.for_user(user)
+            Profile.objects.get_or_create(user_id=user.id)
 
         q = Ping.objects
         q = q.annotate(limit=F("owner__user__profile__ping_log_limit"))

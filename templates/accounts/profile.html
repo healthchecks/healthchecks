@@ -131,6 +131,14 @@
                         </p>
                     {% endif %}
 
+                    <br />
+
+                    <a
+                        href="#"
+                        class="btn btn-default"
+                        data-toggle="modal"
+                        data-target="#set-team-name-modal">Set Team Name</a>
+
                     <a
                         href="#"
                         class="btn btn-primary pull-right"
@@ -242,6 +250,40 @@
                         type="submit"
                         name="invite_team_member"
                         class="btn btn-primary">Send Invite</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="set-team-name-modal" class="modal">
+    <div class="modal-dialog">
+        <form method="post" class="form-horizontal">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</span></button>
+                    <h4 class="remove-check-title">Set Team Name</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="team-name" class="col-sm-4 control-label">Team Name</label>
+                        <div class="col-sm-7">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="team-name"
+                                name="team_name"
+                                value="{{ profile }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        name="set_team_name"
+                        class="btn btn-primary">Set Team Name</button>
                 </div>
             </div>
         </form>

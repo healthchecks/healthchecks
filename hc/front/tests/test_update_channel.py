@@ -1,5 +1,3 @@
-from django.contrib.auth.models import User
-
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -31,35 +29,27 @@ class UpdateChannelTestCase(BaseTestCase):
         assert checks[0].code == self.check.code
 
     def test_it_checks_channel_user(self):
-        mallory = User(username="mallory", email="mallory@example.org")
-        mallory.set_password("password")
-        mallory.save()
-
         payload = {"channel": self.channel.code}
 
-        self.client.login(username="mallory@example.org", password="password")
+        self.client.login(username="charlie@example.org", password="password")
         r = self.client.post("/integrations/", data=payload)
 
-        # self.channel does not belong to mallory, this should fail--
+        # self.channel does not belong to charlie, this should fail--
         assert r.status_code == 403
 
     def test_it_checks_check_user(self):
-        mallory = User(username="mallory", email="mallory@example.org")
-        mallory.set_password("password")
-        mallory.save()
-
-        mc = Channel(user=mallory, kind="email")
-        mc.email = "mallory@example.org"
-        mc.save()
+        charlies_channel = Channel(user=self.charlie, kind="email")
+        charlies_channel.email = "charlie@example.org"
+        charlies_channel.save()
 
         payload = {
-            "channel": mc.code,
+            "channel": charlies_channel.code,
             "check-%s" % self.check.code: True
         }
-        self.client.login(username="mallory@example.org", password="password")
+        self.client.login(username="charlie@example.org", password="password")
         r = self.client.post("/integrations/", data=payload)
 
-        # mc belongs to mallorym but self.check does not--
+        # mc belongs to charlie but self.check does not--
         assert r.status_code == 403
 
     def test_it_handles_missing_channel(self):

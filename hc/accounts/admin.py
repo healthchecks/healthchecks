@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
 
@@ -18,8 +19,8 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class HcUserAdmin(UserAdmin):
     actions = ["send_report"]
-    list_display = ('id', 'username', 'email', 'date_joined', 'involvement',
-                    'is_staff')
+    list_display = ('id', 'email', 'date_joined', 'involvement',
+                    'is_staff', 'checks')
 
     ordering = ["-id"]
 
@@ -46,10 +47,15 @@ class HcUserAdmin(UserAdmin):
 
     involvement.allow_tags = True
 
+    def checks(self, user):
+        url = reverse("hc-switch-team", args=[user.username])
+        return "<a href='%s'>Checks</a>" % url
+
+    checks.allow_tags = True
+
     def send_report(self, request, qs):
         for user in qs:
-            profile = Profile.objects.for_user(user)
-            profile.send_report()
+            user.profile.send_report()
 
         self.message_user(request, "%d email(s) sent" % qs.count())
 

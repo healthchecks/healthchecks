@@ -1,5 +1,3 @@
-from django.contrib.auth.models import User
-
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -41,10 +39,6 @@ class UpdateTimeoutTestCase(BaseTestCase):
         assert r.status_code == 404
 
     def test_it_checks_ownership(self):
-        charlie = User(username="charlie", email="charlie@example.org")
-        charlie.set_password("password")
-        charlie.save()
-
         url = "/checks/%s/timeout/" % self.check.code
         payload = {"timeout": 3600, "grace": 60}
 

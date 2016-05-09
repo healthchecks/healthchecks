@@ -1,5 +1,3 @@
-from django.contrib.auth.models import User
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
@@ -31,11 +29,7 @@ class RemoveChannelTestCase(BaseTestCase):
     def test_it_checks_owner(self):
         url = "/integrations/%s/remove/" % self.channel.code
 
-        mallory = User(username="mallory", email="mallory@example.org")
-        mallory.set_password("password")
-        mallory.save()
-
-        self.client.login(username="mallory@example.org", password="password")
+        self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(url)
         assert r.status_code == 403
 

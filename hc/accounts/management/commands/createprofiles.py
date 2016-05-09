@@ -8,7 +8,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for user in User.objects.all():
-            # this should create profile object if it does not exist
-            Profile.objects.for_user(user)
+            Profile.objects.get_or_create(user_id=user.id)
 
         print("Done.")

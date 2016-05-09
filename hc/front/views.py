@@ -11,7 +11,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
-from hc.accounts.models import Profile
 from hc.api.decorators import uuid_or_400
 from hc.api.models import Channel, Check, Ping, DEFAULT_TIMEOUT, DEFAULT_GRACE
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
@@ -28,7 +27,7 @@ def pairwise(iterable):
 
 @login_required
 def my_checks(request):
-    checks = Check.objects.filter(user=request.user).order_by("created")
+    checks = Check.objects.filter(user=request.team.user).order_by("created")
 
     counter = Counter()
     down_tags, grace_tags = set(), set()
@@ -122,7 +121,7 @@ def about(request):
 def add_check(request):
     assert request.method == "POST"
 
-    check = Check(user=request.user)
+    check = Check(user=request.team.user)
     check.save()
 
     check.assign_all_channels()
@@ -136,7 +135,7 @@ def update_name(request, code):
     assert request.method == "POST"
 
     check = get_object_or_404(Check, code=code)
-    if check.user_id != request.user.id:
+    if check.user_id != request.team.user.id:
         return HttpResponseForbidden()
 
     form = NameTagsForm(request.POST)
@@ -154,7 +153,7 @@ def update_timeout(request, code):
     assert request.method == "POST"
 
     check = get_object_or_404(Check, code=code)
-    if check.user != request.user:
+    if check.user != request.team.user:
         return HttpResponseForbidden()
 
     form = TimeoutForm(request.POST)
@@ -168,34 +167,11 @@ def update_timeout(request, code):
 
 @login_required
 @uuid_or_400
-def email_preview(request, code):
-    """ A debug view to see how email will look.
-
-    Will keep it around until I'm happy with email stying.
-
-    """
-
-    check = Check.objects.get(code=code)
-    if check.user != request.user:
-        return HttpResponseForbidden()
-
-    ctx = {
-        "check": check,
-        "checks": check.user.check_set.all(),
-        "now": timezone.now()
-
-    }
-
-    return render(request, "emails/alert/body.html", ctx)
-
-
-@login_required
-@uuid_or_400
 def remove_check(request, code):
     assert request.method == "POST"
 
     check = get_object_or_404(Check, code=code)
-    if check.user != request.user:
+    if check.user != request.team.user:
         return HttpResponseForbidden()
 
     check.delete()
@@ -207,11 +183,10 @@ def remove_check(request, code):
 @uuid_or_400
 def log(request, code):
     check = get_object_or_404(Check, code=code)
-    if check.user != request.user:
+    if check.user != request.team.user:
         return HttpResponseForbidden()
 
-    profile = Profile.objects.for_user(request.user)
-    limit = profile.ping_log_limit
+    limit = request.team.ping_log_limit
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
 
     pings = list(pings.iterator())
@@ -264,7 +239,7 @@ def channels(request):
             channel = Channel.objects.get(code=code)
         except Channel.DoesNotExist:
             return HttpResponseBadRequest()
-        if channel.user_id != request.user.id:
+        if channel.user_id != request.team.user.id:
             return HttpResponseForbidden()
 
         new_checks = []
@@ -275,17 +250,17 @@ def channels(request):
                     check = Check.objects.get(code=code)
                 except Check.DoesNotExist:
                     return HttpResponseBadRequest()
-                if check.user_id != request.user.id:
+                if check.user_id != request.team.user.id:
                     return HttpResponseForbidden()
                 new_checks.append(check)
 
         channel.checks = new_checks
         return redirect("hc-channels")
 
-    channels = Channel.objects.filter(user=request.user).order_by("created")
+    channels = Channel.objects.filter(user=request.team.user).order_by("created")
     channels = channels.annotate(n_checks=Count("checks"))
 
-    num_checks = Check.objects.filter(user=request.user).count()
+    num_checks = Check.objects.filter(user=request.team.user).count()
 
     ctx = {
         "page": "channels",
@@ -300,7 +275,7 @@ def do_add_channel(request, data):
     form = AddChannelForm(data)
     if form.is_valid():
         channel = form.save(commit=False)
-        channel.user = request.user
+        channel.user = request.team.user
         channel.save()
 
         channel.assign_all_checks()
@@ -323,11 +298,11 @@ def add_channel(request):
 @uuid_or_400
 def channel_checks(request, code):
     channel = get_object_or_404(Channel, code=code)
-    if channel.user_id != request.user.id:
+    if channel.user_id != request.team.user.id:
         return HttpResponseForbidden()
 
     assigned = set(channel.checks.values_list('code', flat=True).distinct())
-    checks = Check.objects.filter(user=request.user).order_by("created")
+    checks = Check.objects.filter(user=request.team.user).order_by("created")
 
     ctx = {
         "checks": checks,
@@ -357,7 +332,7 @@ def remove_channel(request, code):
     # user may refresh the page during POST and cause two deletion attempts
     channel = Channel.objects.filter(code=code).first()
     if channel:
-        if channel.user != request.user:
+        if channel.user != request.team.user:
             return HttpResponseForbidden()
         channel.delete()
 
@@ -375,7 +350,7 @@ def add_webhook(request):
     if request.method == "POST":
         form = AddWebhookForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.user, kind="webhook")
+            channel = Channel(user=request.team.user, kind="webhook")
             channel.value = form.get_value()
             channel.save()
 
