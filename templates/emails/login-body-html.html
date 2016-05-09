@@ -1,5 +1,11 @@
 <p>Hello,</p>
 
+{% if inviting_profile %}
+<p>Joining {{ inviting_profile }} will allow you to manage existing
+monitoring checks and set up new ones. If you already have your own account
+on healthchecks.io, you will be able to switch between the two accounts.</p>
+{% endif %}
+
 <p>Here's a link to log yourself in:</p>
 <p><a href="{{ login_link }}">{{ login_link }}</a></p>
 

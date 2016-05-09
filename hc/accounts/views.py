@@ -226,12 +226,23 @@ def unsubscribe_reports(request, username):
 def switch_team(request, target_username):
     other_user = User.objects.get(username=target_username)
 
+    # The rules:
     # Superuser can switch to any team.
-    # Other users can only switch to a team they are members of.
-    if not request.user.is_superuser:
-        q = Member.objects.filter(team=other_user.profile, user=request.user)
-        if q.count() == 0:
-            return HttpResponseForbidden()
+    access_ok = request.user.is_superuser
+
+    # Users can switch to teams they are members of.
+    if not access_ok and other_user.id == request.user.id:
+        access_ok = True
+
+    # Users can switch to their own teams.
+    if not access_ok:
+        for membership in request.user.member_set.all():
+            if membership.team.user.id == other_user.id:
+                access_ok = True
+                break
+
+    if not access_ok:
+        return HttpResponseForbidden()
 
     request.user.profile.current_team = other_user.profile
     request.user.profile.save()

@@ -75,6 +75,11 @@ class Profile(models.Model):
         member = Member(team=self, user=user)
         member.save()
 
+        # Switch the invited user over to the new team so they
+        # notice the new team on next visit:
+        user.profile.current_team = self
+        user.profile.save()
+
         user.profile.send_instant_login_link(self)
 
 
