@@ -1,37 +1,23 @@
-from django.contrib.auth.models import User
-
 from hc.test import BaseTestCase
-from hc.accounts.models import Member, Profile
+from hc.api.models import Check
 
 
 class SwitchTeamTestCase(BaseTestCase):
 
-    def setUp(self):
-        super(SwitchTeamTestCase, self).setUp()
-
-        self.bob = User(username="bob", email="bob@example.org")
-        self.bob.set_password("password")
-        self.bob.save()
-
-        bobs_profile = Profile(user=self.bob)
-        bobs_profile.save()
-
-
-        m = Member(team=bobs_profile, user=self.alice)
-        m.save()
-
     def test_it_switches(self):
-        self.client.login(username="alice@example.org", password="password")
+        c = Check(user=self.alice, name="This belongs to Alice")
+        c.save()
 
-        url = "/accounts/switch_team/%s/" % self.bob.username
+        self.client.login(username="bob@example.org", password="password")
+
+        url = "/accounts/switch_team/%s/" % self.alice.username
         r = self.client.get(url, follow=True)
 
-        self.assertContains(r, "bob@example.org")
-
+        self.assertContains(r, "This belongs to Alice")
 
     def test_it_checks_team_membership(self):
         self.client.login(username="charlie@example.org", password="password")
 
-        url = "/accounts/switch_team/%s/" % self.bob.username
+        url = "/accounts/switch_team/%s/" % self.alice.username
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)

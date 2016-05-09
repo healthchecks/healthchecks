@@ -19,6 +19,13 @@ class RemoveChannelTestCase(BaseTestCase):
 
         assert Channel.objects.count() == 0
 
+    def test_team_access_works(self):
+        url = "/integrations/%s/remove/" % self.channel.code
+
+        self.client.login(username="bob@example.org", password="password")
+        self.client.post(url)
+        assert Channel.objects.count() == 0
+
     def test_it_handles_bad_uuid(self):
         url = "/integrations/not-uuid/remove/"
 

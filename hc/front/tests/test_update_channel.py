@@ -28,6 +28,18 @@ class UpdateChannelTestCase(BaseTestCase):
         assert len(checks) == 1
         assert checks[0].code == self.check.code
 
+    def test_team_access_works(self):
+        payload = {
+            "channel": self.channel.code,
+            "check-%s" % self.check.code: True
+        }
+
+        # Logging in as bob, not alice. Bob has team access so this
+        # should work.
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post("/integrations/", data=payload, follow=True)
+        self.assertEqual(r.status_code, 200)
+
     def test_it_checks_channel_user(self):
         payload = {"channel": self.channel.code}
 

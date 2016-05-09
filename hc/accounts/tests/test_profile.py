@@ -62,13 +62,16 @@ class ProfileTestCase(BaseTestCase):
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "bob@example.org"}
+        form = {"invite_team_member": "1", "email": "frank@example.org"}
         r = self.client.post("/accounts/profile/", form)
         assert r.status_code == 200
 
-        member = self.alice.profile.member_set.get()
+        member_emails = set()
+        for member in self.alice.profile.member_set.all():
+            member_emails.add(member.user.email)
 
-        self.assertEqual(member.user.email, "bob@example.org")
+        self.assertEqual(len(member_emails), 2)
+        self.assertTrue("frank@example.org" in member_emails)
 
         # And an email should have been sent
         subj = ('You have been invited to join'
@@ -78,17 +81,14 @@ class ProfileTestCase(BaseTestCase):
     def test_it_removes_team_member(self):
         self.client.login(username="alice@example.org", password="password")
 
-        bob = User(username="bob", email="bob@example.org")
-        bob.save()
-
-        m = Member(team=self.alice.profile, user=bob)
-        m.save()
-
         form = {"remove_team_member": "1", "email": "bob@example.org"}
         r = self.client.post("/accounts/profile/", form)
         assert r.status_code == 200
 
         self.assertEqual(Member.objects.count(), 0)
+
+        self.bobs_profile.refresh_from_db()
+        self.assertEqual(self.bobs_profile.current_team, None)
 
     def test_it_sets_team_name(self):
         self.client.login(username="alice@example.org", password="password")

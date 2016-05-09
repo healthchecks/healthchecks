@@ -19,6 +19,15 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertContains(r, "Dates and times are", status_code=200)
 
+    def test_team_access_works(self):
+        url = "/checks/%s/log/" % self.check.code
+
+        # Logging in as bob, not alice. Bob has team access so this
+        # should work.
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 200)
+
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/log/"
 

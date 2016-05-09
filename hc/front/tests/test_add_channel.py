@@ -17,6 +17,17 @@ class AddChannelTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
         assert Channel.objects.count() == 1
 
+    def test_team_access_works(self):
+        url = "/integrations/add/"
+        form = {"kind": "email", "value": "bob@example.org"}
+
+        self.client.login(username="bob@example.org", password="password")
+        self.client.post(url, form)
+
+        ch = Channel.objects.get()
+        # Added by bob, but should belong to alice (bob has team access)
+        self.assertEqual(ch.user, self.alice)
+
     def test_it_trims_whitespace(self):
         """ Leading and trailing whitespace should get trimmed. """
 
@@ -90,6 +101,18 @@ class AddChannelTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
+        self.assertEqual(c.value, "http://foo.com\nhttps://bar.com")
+
+    def test_it_adds_webhook_using_team_access(self):
+        form = {"value_down": "http://foo.com", "value_up": "https://bar.com"}
+
+        # Logging in as bob, not alice. Bob has team access so this
+        # should work.
+        self.client.login(username="bob@example.org", password="password")
+        self.client.post("/integrations/add_webhook/", form)
+
+        c = Channel.objects.get()
+        self.assertEqual(c.user, self.alice)
         self.assertEqual(c.value, "http://foo.com\nhttps://bar.com")
 
     def test_it_rejects_non_http_webhook_urls(self):

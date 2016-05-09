@@ -160,7 +160,13 @@ def profile(request):
             if form.is_valid():
 
                 email = form.cleaned_data["email"]
-                Member.objects.filter(team=profile, user__email=email).delete()
+                farewell_user = User.objects.get(email=email)
+                farewell_user.profile.current_team = None
+                farewell_user.profile.save()
+
+                Member.objects.filter(team=profile,
+                                      user=farewell_user).delete()
+
                 messages.info(request, "%s removed from team!" % email)
         elif "set_team_name" in request.POST:
             form = TeamNameForm(request.POST)

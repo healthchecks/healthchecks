@@ -1,7 +1,7 @@
 import json
 from datetime import timedelta as td
 
-from hc.api.models import Check, User
+from hc.api.models import Check
 from hc.test import BaseTestCase
 
 
@@ -36,13 +36,12 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(checks["Alice 2"]["ping_url"],     self.checks[1].url())
 
     def test_it_shows_only_users_checks(self):
-        bob = User(username="bob", email="bob@example.com")
-        bob.save()
-        bob_check = Check(user=bob, name="Bob 1")
-        bob_check.save()
+        bobs_check = Check(user=self.bob, name="Bob 1")
+        bobs_check.save()
 
         r = self.get("/api/v1/checks/", {"api_key": "abc"})
 
-        self.assertEqual(len(r.json()["checks"]), 2)
-        checks = { check["name"]: check for check in r.json()["checks"] }
-        self.assertNotIn("Bob 1", checks)
+        data = r.json()
+        self.assertEqual(len(data["checks"]), 2)
+        for check in data["checks"]:
+            self.assertNotEqual(check["name"], "Bob 1")

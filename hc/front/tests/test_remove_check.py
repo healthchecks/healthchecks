@@ -18,6 +18,15 @@ class RemoveCheckTestCase(BaseTestCase):
 
         assert Check.objects.count() == 0
 
+    def test_team_access_works(self):
+        url = "/checks/%s/remove/" % self.check.code
+
+        # Logging in as bob, not alice. Bob has team access so this
+        # should work.
+        self.client.login(username="bob@example.org", password="password")
+        self.client.post(url)
+        assert Check.objects.count() == 0
+
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/remove/"
 
