@@ -100,59 +100,56 @@
         <div class="panel panel-default">
             <div class="panel-body settings-block">
                 <h2>Team Access</h2>
-                {% if profile.team_access_allowed %}
-                    {% if profile.member_set.count %}
-                        <table class="table">
-                            <tr>
-                                <td>{{ profile.user.email }}</td>
-                                <td>Owner</td>
-                                <td></td>
-                            </tr>
-                            {% for member in profile.member_set.all %}
-                            <tr>
-                                <td>{{ member.user.email }} </td>
-                                <td>Member</td>
-                                <td>
-                                    <a
-                                        href="#"
-                                        data-email="{{ member.user.email }}"
-                                        class="pull-right member-remove">Remove</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    {% else %}
-                        <p>
-                            <strong>Invite team members to your account.</strong>
-                        </p>
-                        <p>
-                            Share access to your checks and configured integrations
-                            without having to share a login.
-                        </p>
-                    {% endif %}
-
-                    <br />
-
-                    <a
-                        href="#"
-                        class="btn btn-default"
-                        data-toggle="modal"
-                        data-target="#set-team-name-modal">Set Team Name</a>
-
-                    <a
-                        href="#"
-                        class="btn btn-primary pull-right"
-                        data-toggle="modal"
-                        data-target="#invite-team-member-modal">Invite a Team Member</a>
+                {% if profile.member_set.count %}
+                    <table class="table">
+                        <tr>
+                            <td>{{ profile.user.email }}</td>
+                            <td>Owner</td>
+                            <td></td>
+                        </tr>
+                        {% for member in profile.member_set.all %}
+                        <tr>
+                            <td>{{ member.user.email }} </td>
+                            <td>Member</td>
+                            <td>
+                                <a
+                                    href="#"
+                                    data-email="{{ member.user.email }}"
+                                    class="pull-right member-remove">Remove</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
                 {% else %}
                     <p>
                         <strong>Invite team members to your account.</strong>
-                        Share access to your checks and configured integrations
-                        without having to share a login.</p>
-                    <p>
-                        To enable team access, please upgrade to
-                        one of the <a href="{% url 'hc-pricing' %}">paid plans</a>.
                     </p>
+                    <p>
+                        Share access to your checks and configured integrations
+                        without having to share a login.
+                    </p>
+                    {% if not profile.team_access_allowed %}
+                        <p>
+                            To enable team access, please upgrade to
+                            one of the <a href="{% url 'hc-pricing' %}">paid plans</a>.
+                        </p>
+                    {% endif %}
+                {% endif %}
+
+                <br />
+
+                {% if profile.team_access_allowed %}
+                <a
+                    href="#"
+                    class="btn btn-default"
+                    data-toggle="modal"
+                    data-target="#set-team-name-modal">Set Team Name</a>
+
+                <a
+                    href="#"
+                    class="btn btn-primary pull-right"
+                    data-toggle="modal"
+                    data-target="#invite-team-member-modal">Invite a Team Member</a>
                 {% endif %}
             </div>
         </div>

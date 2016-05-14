@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core import mail
 
 from hc.test import BaseTestCase
@@ -78,6 +77,13 @@ class ProfileTestCase(BaseTestCase):
                 ' alice@example.org on healthchecks.io')
         self.assertEqual(mail.outbox[0].subject, subj)
 
+    def test_add_team_member_checks_team_access_allowed_flag(self):
+        self.client.login(username="charlie@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        r = self.client.post("/accounts/profile/", form)
+        assert r.status_code == 403
+
     def test_it_removes_team_member(self):
         self.client.login(username="alice@example.org", password="password")
 
@@ -99,6 +105,13 @@ class ProfileTestCase(BaseTestCase):
 
         self.alice.profile.refresh_from_db()
         self.assertEqual(self.alice.profile.team_name, "Alpha Team")
+
+    def test_set_team_name_checks_team_access_allowed_flag(self):
+        self.client.login(username="charlie@example.org", password="password")
+
+        form = {"set_team_name": "1", "team_name": "Charlies Team"}
+        r = self.client.post("/accounts/profile/", form)
+        assert r.status_code == 403
 
     def test_it_switches_to_own_team(self):
         self.client.login(username="bob@example.org", password="password")

@@ -9,12 +9,13 @@ class BaseTestCase(TestCase):
     def setUp(self):
         super(BaseTestCase, self).setUp()
 
-        # Alice is a normal user for tests
+        # Alice is a normal user for tests. Alice has team access enabled.
         self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
 
         self.profile = Profile(user=self.alice, api_key="abc")
+        self.profile.team_access_allowed = True
         self.profile.save()
 
         # Bob is on Alice's team and should have access to her stuff

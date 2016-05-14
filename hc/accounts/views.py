@@ -149,6 +149,9 @@ def profile(request):
                 profile.save()
                 messages.info(request, "Your settings have been updated!")
         elif "invite_team_member" in request.POST:
+            if not profile.team_access_allowed:
+                return HttpResponseForbidden()
+
             form = InviteTeamMemberForm(request.POST)
             if form.is_valid():
 
@@ -174,6 +177,9 @@ def profile(request):
 
                 messages.info(request, "%s removed from team!" % email)
         elif "set_team_name" in request.POST:
+            if not profile.team_access_allowed:
+                return HttpResponseForbidden()
+
             form = TeamNameForm(request.POST)
             if form.is_valid():
                 profile.team_name = form.cleaned_data["team_name"]
