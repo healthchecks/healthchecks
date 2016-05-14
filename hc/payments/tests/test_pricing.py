@@ -27,3 +27,9 @@ class PricingTestCase(BaseTestCase):
         # Bob should not see pricing tab, as bob is currently on
         # Alice's team, but is not its owner.
         self.assertNotContains(r, "Pricing")
+
+    def test_pricing_is_visible_for_team_owners(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/about/")
+        self.assertContains(r, "Pricing")
