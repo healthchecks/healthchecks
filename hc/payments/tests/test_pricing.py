@@ -19,3 +19,11 @@ class PricingTestCase(BaseTestCase):
 
         # A subscription object still should have NOT been created
         assert Subscription.objects.count() == 0
+
+    def test_pricing_is_hidden_for_team_members(self):
+        self.client.login(username="bob@example.org", password="password")
+
+        r = self.client.get("/about/")
+        # Bob should not see pricing tab, as bob is currently on
+        # Alice's team, but is not its owner.
+        self.assertNotContains(r, "Pricing")

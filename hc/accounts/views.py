@@ -121,6 +121,11 @@ def check_token(request, username, token):
 @login_required
 def profile(request):
     profile = request.user.profile
+    # Switch user back to its default team
+    if profile.current_team_id != profile.id:
+        request.team = profile
+        profile.current_team_id = profile.id
+        profile.save()
 
     show_api_key = False
     if request.method == "POST":

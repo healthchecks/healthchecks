@@ -99,3 +99,13 @@ class ProfileTestCase(BaseTestCase):
 
         self.alice.profile.refresh_from_db()
         self.assertEqual(self.alice.profile.team_name, "Alpha Team")
+
+    def test_it_switches_to_own_team(self):
+        self.client.login(username="bob@example.org", password="password")
+
+        self.client.get("/accounts/profile/")
+
+        # After visiting the profile page, team should be switched back
+        # to user's default team.
+        self.bobs_profile.refresh_from_db()
+        self.assertEqual(self.bobs_profile.current_team, self.bobs_profile)
