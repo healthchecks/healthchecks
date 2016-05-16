@@ -4,10 +4,12 @@ $(function () {
         total = Math.floor(total / 60);
         var m = total % 60; total = Math.floor(total / 60);
         var h = total % 24; total = Math.floor(total / 24);
-        var d = total % 7; total = Math.floor(total / 7);
-        var w = total;
+        var d = total % 30 % 7;
+        var o = Math.floor(total / 30);
+        var w = Math.floor(total % 30 / 7);
 
         var result = "";
+        if (o) result += o + (o === 1 ? " month " : " months ");
         if (w) result += w + (w === 1 ? " week " : " weeks ");
         if (d) result += d + (d === 1 ? " day " : " days ");
         if (h) result += h + (h === 1 ? " hour " : " hours ");
@@ -23,12 +25,13 @@ $(function () {
         range: {
             'min': [60, 60],
             '30%': [3600, 3600],
-            '82.80%': [86400, 86400],
-            'max': 604800
+            '50%': [86400, 86400],
+            '80%': [604800, 604800],
+            'max': 2592000,
         },
         pips: {
             mode: 'values',
-            values: [60, 1800, 3600, 43200, 86400, 604800],
+            values: [60, 1800, 3600, 43200, 86400, 604800, 2592000],
             density: 5,
             format: {
                 to: secsToText,
@@ -51,12 +54,13 @@ $(function () {
         range: {
             'min': [60, 60],
             '30%': [3600, 3600],
-            '82.80%': [86400, 86400],
-            'max': 604800
+            '50%': [86400, 86400],
+            '80%': [604800, 604800],
+            'max': 2592000,
         },
         pips: {
             mode: 'values',
-            values: [60, 1800, 3600, 43200, 86400, 604800],
+            values: [60, 1800, 3600, 43200, 86400, 604800, 2592000],
             density: 5,
             format: {
                 to: secsToText,

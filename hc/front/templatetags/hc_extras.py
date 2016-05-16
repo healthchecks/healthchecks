@@ -8,9 +8,13 @@ def hc_duration(td):
     total = int(td.total_seconds() / 60)
     total, m = divmod(total, 60)
     total, h = divmod(total, 24)
-    w, d = divmod(total, 7)
+    o, rem = divmod(total, 30)
+    w, d = divmod(rem, 7)
 
     result = ""
+    if o:
+        result += "1 month " if w == 0 else "%d months " % w
+
     if w:
         result += "1 week " if w == 1 else "%d weeks " % w
 
