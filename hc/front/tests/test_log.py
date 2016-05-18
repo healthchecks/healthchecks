@@ -17,7 +17,7 @@ class LogTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
-        self.assertContains(r, "Dates and times are", status_code=200)
+        self.assertContains(r, "Local Time", status_code=200)
 
     def test_team_access_works(self):
         url = "/checks/%s/log/" % self.check.code
