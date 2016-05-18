@@ -1,3 +1,7 @@
+#log {
+    visibility: hidden;
+}
+
 #log th {
     border-top: 0;
     border-bottom: 1px solid #E5E5E5;

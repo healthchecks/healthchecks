@@ -69,7 +69,7 @@ $(function () {
         pips: {
             mode: 'values',
             values: [60, 1800, 3600, 43200, 86400, 604800, 2592000],
-            density: 5,
+            density: 4,
             format: {
                 to: secsToText,
                 from: function() {}

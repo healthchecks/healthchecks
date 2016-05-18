@@ -12,14 +12,23 @@
             <li><a href="{% url 'hc-checks' %}">Checks</a></li>
             <li>{{ check.name_then_code }}</li>
             <li class="active">Log</li>
+
+            <div class="pull-right">
+                <div id="format-switcher" class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default btn-xs" data-format="utc">
+                        <input type="radio" name="date-format" autocomplete="off" checked>
+                        UTC
+                    </label>
+
+                    <label class="btn btn-default btn-xs active" data-format="local">
+                        <input type="radio" name="date-format" autocomplete="off">
+                        Local Time
+                    </label>
+                </div>
+            </div>
         </ol>
 
     {% if pings %}
-
-    <p class="log-notes">
-        Note: Dates and times are displayed in <strong>UTC</strong>.
-    </p>
-
     <div class="table-responsive">
     <table class="table" id="log">
         <tr>
@@ -40,14 +49,10 @@
                 <span class="hash">#</span>{{ record.ping.n }}
                 {% endif %}
             </td>
-            <td class="datetime">
+            <td class="datetime" data-raw="{{ record.ping.created.isoformat }}">
                 <div>
-                    <span class="date">
-                        {{ record.ping.created|date:"N j" }}
-                    </span>
-                    <span class="time">
-                        {{ record.ping.created|date:"H:i" }}
-                    </span>
+                    <span class="date"></span>
+                    <span class="time"></span>
                     {% if record.early %}
                         <span class="label label-tag">early</span>
                     {% endif %}
@@ -70,14 +75,10 @@
             <td class="n-cell">
                 <span class="glyphicon glyphicon-remove"></span>
             </td>
-            <td class="datetime">
+            <td class="datetime" data-raw="{{ record.placeholder_date.isoformat }}">
                 <div>
-                    <span class="date">
-                        {{ record.placeholder_date|date:"N j" }}
-                    </span>
-                    <span class="time">
-                        {{ record.placeholder_date|date:"H:i" }}
-                    </span>
+                    <span class="date"></span>
+                    <span class="time"></span>
                 </div>
             </td>
             <td colspan="4">
@@ -110,6 +111,7 @@
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/log.js' %}"></script>
 {% endcompress %}
 {% endblock %}
