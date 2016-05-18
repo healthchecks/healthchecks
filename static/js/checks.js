@@ -1,19 +1,27 @@
 $(function () {
 
-    var secsToText = function(total) {
-        total = Math.floor(total / 60);
-        var m = total % 60; total = Math.floor(total / 60);
-        var h = total % 24; total = Math.floor(total / 24);
-        var d = total % 30 % 7;
-        var o = Math.floor(total / 30);
-        var w = Math.floor(total % 30 / 7);
+    var MINUTE = {name: "minute", nsecs: 60};
+    var HOUR = {name: "hour", nsecs: MINUTE.nsecs * 60};
+    var DAY = {name: "day", nsecs: HOUR.nsecs * 24};
+    var WEEK = {name: "week", nsecs: DAY.nsecs * 7};
+    var MONTH = {name: "month", nsecs: DAY.nsecs * 30};
+    var UNITS = [MONTH, WEEK, DAY, HOUR, MINUTE];
 
+    var secsToText = function(total) {
+        var remainingSeconds = Math.floor(total);
         var result = "";
-        if (o) result += o + (o === 1 ? " month " : " months ");
-        if (w) result += w + (w === 1 ? " week " : " weeks ");
-        if (d) result += d + (d === 1 ? " day " : " days ");
-        if (h) result += h + (h === 1 ? " hour " : " hours ");
-        if (m) result += m + (m === 1 ? " minute " : " minutes ");
+        for (var i=0, unit; unit=UNITS[i]; i++) {
+            var count = Math.floor(remainingSeconds / unit.nsecs);
+            remainingSeconds = remainingSeconds % unit.nsecs;
+
+            if (count == 1) {
+                result += "1 " + unit.name + " ";
+            }
+
+            if (count > 1) {
+                result += count + " " + unit.name + "s ";
+            }
+        }
 
         return result;
     }
@@ -24,15 +32,15 @@ $(function () {
         connect: "lower",
         range: {
             'min': [60, 60],
-            '30%': [3600, 3600],
-            '50%': [86400, 86400],
-            '80%': [604800, 604800],
+            '33%': [3600, 3600],
+            '66%': [86400, 86400],
+            '83%': [604800, 604800],
             'max': 2592000,
         },
         pips: {
             mode: 'values',
             values: [60, 1800, 3600, 43200, 86400, 604800, 2592000],
-            density: 5,
+            density: 4,
             format: {
                 to: secsToText,
                 from: function() {}
@@ -53,9 +61,9 @@ $(function () {
         connect: "lower",
         range: {
             'min': [60, 60],
-            '30%': [3600, 3600],
-            '50%': [86400, 86400],
-            '80%': [604800, 604800],
+            '33%': [3600, 3600],
+            '66%': [86400, 86400],
+            '83%': [604800, 604800],
             'max': 2592000,
         },
         pips: {
