@@ -3,28 +3,29 @@ from django import template
 register = template.Library()
 
 
+class Unit(object):
+    def __init__(self, name, nsecs):
+        self.name = name
+        self.plural = name + "s"
+        self.nsecs = nsecs
+
+MINUTE = Unit("minute", 60)
+HOUR = Unit("hour", MINUTE.nsecs * 60)
+DAY = Unit("day", HOUR.nsecs * 24)
+WEEK = Unit("week", DAY.nsecs * 7)
+MONTH = Unit("month", DAY.nsecs * 30)
+
+
 @register.filter
 def hc_duration(td):
-    total = int(td.total_seconds() / 60)
-    total, m = divmod(total, 60)
-    total, h = divmod(total, 24)
-    o, rem = divmod(total, 30)
-    w, d = divmod(rem, 7)
+    remaining_seconds = int(td.total_seconds())
+    result = []
 
-    result = ""
-    if o:
-        result += "1 month " if w == 0 else "%d months " % w
+    for unit in (MONTH, WEEK, DAY, HOUR, MINUTE):
+        v, remaining_seconds = divmod(remaining_seconds, unit.nsecs)
+        if v == 1:
+            result.append("1 %s" % unit.name)
+        elif v > 1:
+            result.append("%d %s" % (v, unit.plural))
 
-    if w:
-        result += "1 week " if w == 1 else "%d weeks " % w
-
-    if d:
-        result += "1 day " if d == 1 else "%d days " % d
-
-    if h:
-        result += "1 hour " if h == 1 else "%d hours " % h
-
-    if m:
-        result += "1 minute " if m == 1 else "%d minutes " % m
-
-    return result
+    return " ".join(result)
