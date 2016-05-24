@@ -14,8 +14,8 @@ class HcExtrasTestCase(TestCase):
             (86400, "1 day"),
             (604800, "1 week"),
             (2419200, "4 weeks"),
-            (2592000, "1 month"),
-            (3801600, "1 month 2 weeks")
+            (2592000, "30 days"),
+            (3801600, "44 days")
         ]
 
         for seconds, expected_result in samples:
