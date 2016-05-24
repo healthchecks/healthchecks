@@ -77,7 +77,7 @@
         {% if check.last_ping %}
             <span
                 data-toggle="tooltip"
-                title="{{ check.last_ping }} GMT">
+                title="{{ check.last_ping|date:'N j, Y, P e' }}">
                 {{ check.last_ping|naturaltime }}
             </span>
         {% else %}
