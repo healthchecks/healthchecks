@@ -139,11 +139,6 @@ $(function () {
         $(".my-checks-email").removeClass("off");
     });
 
-    $(".selectable").click(function() {
-        $(this).tooltip("hide");
-        this.select();
-    });
-
     $("#my-checks-tags button").click(function() {
         // .active has not been updated yet by bootstrap code,
         // so cannot use it
@@ -179,6 +174,20 @@ $(function () {
         // Mobile: for each list item, see if it needs to be shown or hidden
         $("#checks-list > li").each(applyFilters);
 
+    });
+
+    $(".my-checks-url").click(function(e) {
+        var a = e.target;
+        var url = a.getAttribute("href");
+        var email = a.getAttribute("data-email");
+
+        $(".ex", "#show-usage-modal").text(url);
+        $(".em", "#show-usage-modal").text(email);
+
+        $(a).tooltip("hide");
+        $("#show-usage-modal").modal("show");
+
+        return false;
     });
 
 });

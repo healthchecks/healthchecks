@@ -196,6 +196,84 @@
     </div>
 </div>
 
+<div id="show-usage-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="active">
+                        <a href="#crontab" data-toggle="tab">Crontab</a>
+                    </li>
+                    <li>
+                        <a href="#bash" data-toggle="tab">Bash</a>
+                    </li>
+                    <li>
+                        <a href="#python" data-toggle="tab">Python</a>
+                    </li>
+                    <li class="hidden-xs">
+                        <a href="#node" data-toggle="tab">Node.js</a>
+                    </li>
+                    <li class="hidden-xs">
+                        <a href="#php" data-toggle="tab">PHP</a>
+                    </li>
+                    <li class="hidden-xs">
+                        <a href="#browser" data-toggle="tab">Browser</a>
+                    </li>
+                    <li class="hidden-xs">
+                        <a href="#powershell" data-toggle="tab">PowerShell</a>
+                    </li>
+                    <li class="hidden-xs">
+                        <a href="#email" data-toggle="tab">Email</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="modal-body">
+
+
+                <div class="tab-content">
+                    {% with ping_url="<span class='ex'></span>" %}
+                    <div role="tabpanel" class="tab-pane active" id="crontab">
+                        {% include "front/snippets/crontab.html" %}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="bash">
+                        {% include "front/snippets/bash.html" %}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="python">
+                        {% include "front/snippets/python.html" %}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="node">
+                        {% include "front/snippets/node.html" %}
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="php">
+                        {% include "front/snippets/php.html" %}
+                    </div>
+                    <div class="tab-pane" id="browser">
+                        {% include "front/snippets/browser.html" %}
+                    </div>
+                    <div class="tab-pane" id="powershell">
+                        {% include "front/snippets/powershell.html" %}
+                    </div>
+                    <div class="tab-pane" id="email">
+                            As an alternative to HTTP/HTTPS requests,
+                            you can "ping" this check by sending an
+                            email message to
+                            <div class="email-address">
+                                <code class="em"></code>
+                            </div>
+                    </div>
+                    {% endwith %}
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Got It!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}
 

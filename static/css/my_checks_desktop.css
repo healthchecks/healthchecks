@@ -39,11 +39,6 @@ table.table tr > th.th-name {
     border: 1px dotted #AAA;
 }
 
-.url-cell {
-    font-size: small;
-    position: relative;
-}
-
 #checks-table > tbody > tr > th.th-period {
     padding-left: 15px;
 }
@@ -79,18 +74,11 @@ tr:hover .check-menu {
     white-space: nowrap;
 }
 
-#checks-table .placeholder, #checks-table .my-checks-url.off, #checks-table .my-checks-email.off {
+.my-checks-url {
     font-family: "Lucida Console", Monaco, monospace;
     font-size: 11.7px;
-    height: 0;
-    overflow: hidden;
+    position: relative;
+    line-height: 36px;
+    color: #333;
 }
 
-#checks-table .selectable {
-    font-family: "Lucida Console", Monaco, monospace;
-    font-size: 11.7px;
-    width: 100%;
-    border: 0;
-    cursor: text;
-    background: transparent;
-}

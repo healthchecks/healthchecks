@@ -4,10 +4,7 @@
     <tr>
         <th></th>
         <th class="th-name">Name</th>
-        <th>
-            <a id="show-urls" class="active" href="#">URL</a>
-            <a id="show-emails" href="#">Email</a>
-        </th>
+        <th>Ping URL</th>
         <th class="th-period">
             Period <br />
             <span class="checks-subline">Grace</span>
@@ -42,23 +39,14 @@
             </div>
         </td>
         <td class="url-cell">
-            <div class="placeholder">{{ check.url }}</div>
-            <div class="my-checks-url">
-                <input
-                    data-toggle="tooltip"
-                    title="Click to select"
-                    class="selectable"
-                    type="text"
-                    value="{{ check.url }}"
-                    readonly />
-            </div>
-            <div class="my-checks-email off">
-                <input
-                    class="selectable"
-                    type="text"
-                    value="{{ check.email }}"
-                    readonly />
-            </div>
+            <a
+                href="{{ check.url }}"
+                class="my-checks-url"
+                title="Click to show usage examples"
+                data-email="{{ check.email }}"
+                data-toggle="tooltip">
+                {{ check.url }}
+            </a>
         </td>
         <td class="timeout-cell">
             <span
