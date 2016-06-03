@@ -451,3 +451,7 @@ def add_victorops(request):
 
 def privacy(request):
     return render(request, "front/privacy.html", {})
+
+
+def terms(request):
+    return render(request, "front/terms.html", {})
