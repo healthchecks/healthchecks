@@ -19,7 +19,13 @@
         <tr>
             <td>{{ tx.created_at }}</td>
             <td>
+                {% if tx.payment_instrument_type == "paypal_account" %}
+                Paypal from {{ tx.paypal.payer_email }}
+                {% endif %}
+
+                {% if tx.payment_instrument_type == "credit_card" %}
                 {{ tx.credit_card.card_type }} ending in {{ tx.credit_card.last_4 }}
+                {% endif %}
             </td>
             <td>
                 {% if tx.currency_iso_code == "USD" %}
