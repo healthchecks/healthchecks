@@ -1,5 +1,4 @@
 {% load hc_extras humanize %}
-
 <table id="checks-table" class="table hidden-xs">
     <tr>
         <th></th>
@@ -39,13 +38,14 @@
             </div>
         </td>
         <td class="url-cell">
+            <span class="my-checks-url">
+                <span class="base">{{ ping_endpoint }}</span>{{ check.code }}
+            </span>
             <a
                 href="{{ check.url }}"
-                class="my-checks-url"
-                title="Click to show usage examples"
-                data-email="{{ check.email }}"
-                data-toggle="tooltip">
-                {{ check.url }}
+                class="btn btn-xs btn-default show-usage hidden-sm"
+                data-email="{{ check.email }}">
+                show usage
             </a>
         </td>
         <td class="timeout-cell">

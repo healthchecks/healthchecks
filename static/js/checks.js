@@ -176,7 +176,7 @@ $(function () {
 
     });
 
-    $(".my-checks-url").click(function(e) {
+    $(".show-usage").click(function(e) {
         var a = e.target;
         var url = a.getAttribute("href");
         var email = a.getAttribute("data-email");

@@ -62,17 +62,26 @@ table.table tr > th.th-name {
     visibility: hidden;
 }
 
+.show-usage {
+    opacity: 0
+}
+
 tr:hover .check-menu {
     visibility: visible;
 }
 
-#show-urls.active, #show-emails.active {
-    color: #333;
+tr:hover .show-usage {
+    opacity: 1
 }
 
 #checks-table .url-cell {
     white-space: nowrap;
 }
+
+.url-cell .base {
+    color: #888;
+}
+
 
 .my-checks-url {
     font-family: "Lucida Console", Monaco, monospace;
