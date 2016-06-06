@@ -1,16 +1,50 @@
-<p>Hello,</p>
+{% extends "emails/base.html" %}
+
+{% block content %}
+<h1>Hello,</h1>
 
 {% if inviting_profile %}
-<p>Joining {{ inviting_profile }} will allow you to manage existing
-monitoring checks and set up new ones. If you already have your own account
-on healthchecks.io, you will be able to switch between the two accounts.</p>
+    <p><strong>{{ inviting_profile }}</strong> invites you to their
+    <a href="https://healthchecks.io">healthchecks.io</a> account.</p>
+
+    <p>You will be able to manage their
+    existing monitoring checks and set up new ones. If you already have your
+    own account on healthchecks<span>.</span>io, you will be able to switch
+    between the two
+    accounts.</p>
 {% endif %}
 
-<p>Here's a link to log yourself in:</p>
-<p><a href="{{ login_link }}">{{ login_link }}</a></p>
+<p>To log into <a href="https://healthchecks.io">healthchecks.io</a>, please press the button below:</p>
 
+<!-- Action -->
+<table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center">
+      <div>
+        <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ login_link }}" style="height:45px;v-text-anchor:middle;width:200px;" arcsize="7%" stroke="f" fill="t">
+        <v:fill type="tile" color="#22BC66" />
+        <w:anchorlock/>
+        <center style="color:#ffffff;font-family:sans-serif;font-size:15px;">Confirm your account</center>
+      </v:roundrect><![endif]-->
+        <a href="{{ login_link }}" class="button button--green">Log In</a>
+      </div>
+    </td>
+  </tr>
+</table>
+<p>Thanks,<br>The Healthchecks<span>.</span>io</a> Team</p>
 <p>
-    --<br />
-    Regards,<br />
-    healthchecks.io
+    <strong>P.S.</strong> Need help getting started? Check out our
+    <a href="https://healthchecks.io/docs/">help documentation</a>.
+    Or, just reply to this email with any questions or issues you have.
 </p>
+<!-- Sub copy -->
+<table class="body-sub">
+  <tr>
+    <td>
+      <p class="sub">If you’re having trouble clicking the log in button, copy and paste the URL below into your web browser.
+      </p>
+      <p class="sub"><a href="{{ login_link }}">{{ login_link }}</a></p>
+    </td>
+  </tr>
+</table>
+{% endblock %}
