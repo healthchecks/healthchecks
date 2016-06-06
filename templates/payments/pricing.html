@@ -53,7 +53,7 @@
                         <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Checks</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Alerts</li>
-                        <li class="list-group-item">100 log entries / check</li>
+                        <li class="list-group-item">100 log entries per check</li>
                         <li class="list-group-item">&nbsp;</li>
                     </ul>
                     <div class="panel-footer">
@@ -87,7 +87,7 @@
                         <li class="list-group-item">Personal or Commercial use</li>
                         <li class="list-group-item">Unlimited Checks</li>
                         <li class="list-group-item">Unlimited Alerts</li>
-                        <li class="list-group-item">1000 log entries / check</li>
+                        <li class="list-group-item">1000 log entries per check</li>
                         <li class="list-group-item">Team Access</li>
                     </ul>
                     <div class="panel-footer">
@@ -128,7 +128,7 @@
                         <li class="list-group-item">Personal or Commercial use</li>
                         <li class="list-group-item">Unlimited Checks</li>
                         <li class="list-group-item">Unlimited Alerts</li>
-                        <li class="list-group-item">10'000 log entries / check</li>
+                        <li class="list-group-item">10'000 log entries per check</li>
                         <li class="list-group-item">Team Access</li>
                     </ul>
                     <div class="panel-footer">
@@ -162,23 +162,47 @@
 
 <section id="faq">
     <div class="container">
-        <div class="page-header">
-            <h1>FAQ</h1>
-        </div>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-6">
+                <h1>Billing Questions</h1>
+                <h2>What payment methods do you accept?</h2>
+                <p>
+                    We accept Visa, Master Card and PayPal.
+                </p>
+
+                <h2>Will my credit card data be safe?</h2>
+                <p>
+                    We process payments using
+                    <a href="https://braintreepayments.com">Braintree</a>,
+                    a division of PayPal. Your credit card or PayPal
+                    credentials are never directly handled by or
+                    stored on healthchecks.io servers.
+                </p>
+                <p>
+                    Braintree is a validated Level 1 PCI DSS Compliant
+                    Service Provider, it is on Visa's Global Compliant
+                    Provider List and MasterCard's SDP List.
+                    <a href="https://www.braintreepayments.com/products-and-features/data-security">Read more…</a>
+                </p>
+
+                <h2>If I cancel my paid plan, do I get a refund?</h2>
+                <p>
+                    You can easily cancel your subscription at any time, but
+                    no refunds are provided for prorated periods.
+                </p>
+            </div>
+            <div class="col-sm-6">
+                <h1>Premium Features</h1>
                 <h2>What is the "log entries / check" number?</h2>
                 <p>
-                    healthchecks.io keeps a log entry for each ping it receives.
-                    The log entry contains the date, the source IP address,
-                    the protocol (http or https) and the user agent string.
-                    The log can be useful for auditing past activity of
-                    your cron jobs.
+                    For each of your checks, healthchecks.io keeps a
+                    historic log of the received pings. The log can be useful
+                    for auditing past activity of your cron jobs.
                 </p>
                 <p>
                     There is a per-check limit of how many log entries are
                     kept. When this limit is reached, the oldest log entries
-                    are culled. You can increase this limit by upgrading to
+                    are culled. You can increase the limit by upgrading to
                     paid plans.
                 </p>
 
@@ -192,11 +216,17 @@
                     log entries will only cover 8 hours.
                 </p>
 
-                <h2>If I cancel my paid plan, do I get a refund?</h2>
+                <h2>What's Team Access?</h2>
                 <p>
-                    You can easily cancel your subscription at any time, but
-                    no refunds are provided for prorated periods.
+                    With Team Access enabled, you can "invite" your colleagues
+                    to your account. They will be able to access your checks,
+                    logs, and configured integrations.
                 </p>
+                <p>
+                    Team Access is more convenient and more secure than
+                    sharing a single login and password.
+                </p>
+
             </div>
         </div>
     </div>

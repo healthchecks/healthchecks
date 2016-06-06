@@ -45,6 +45,11 @@
     margin: 40px 0;
 }
 
+#faq h2 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
 .panel-pricing .free {
 }
 
