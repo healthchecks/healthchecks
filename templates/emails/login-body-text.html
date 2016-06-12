@@ -1,0 +1,18 @@
+{% block content %}Hello,
+{% if inviting_profile %}
+{{ inviting_profile }} invites you to their healthchecks.io account.
+
+You will be able to manage their existing monitoring checks and set up new
+ones. If you already have your own account on healthchecks.io, you will
+be able to switch between the two accounts.{% endif %}
+To log into healthchecks.io, please open the link below:
+
+{{ login_link }}
+
+Thanks,
+The Healthchecks.io Team
+
+P.S. Need help getting started? Check out our help documentation
+at https://healthchecks.io/docs/
+Or, just reply to this email with any questions or issues you have.
+{% endblock %}
