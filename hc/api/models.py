@@ -91,6 +91,9 @@ class Check(models.Model):
         return "down"
 
     def in_grace_period(self):
+        if not self.last_ping:
+            return False
+
         up_ends = self.last_ping + self.timeout
         grace_ends = up_ends + self.grace
         return up_ends < timezone.now() < grace_ends

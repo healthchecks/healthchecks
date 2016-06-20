@@ -13,3 +13,7 @@ class CheckModelTestCase(TestCase):
 
         check.tags = " "
         self.assertEquals(check.tags_list(), [])
+
+    def test_in_grace_period_handles_new_check(self):
+        check = Check()
+        self.assertFalse(check.in_grace_period())
