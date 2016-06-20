@@ -46,10 +46,10 @@
         <td>
             {% if check.get_status == "new" %}
                 <span class="badge new">NEW</span>
-            {% elif check.get_status == "up" %}
-                <span class="badge up">UP</span>
             {% elif check.in_grace_period %}
                 <span class="badge grace">LATE</span>
+            {% elif check.get_status == "up" %}
+                <span class="badge up">UP</span>
             {% elif check.get_status == "down" %}
                 <span class="badge down">DOWN</span>
             {% endif %}

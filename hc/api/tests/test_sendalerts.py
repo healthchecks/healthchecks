@@ -1,11 +1,10 @@
 from datetime import timedelta
 
 from django.utils import timezone
-from mock import patch
-
 from hc.api.management.commands.sendalerts import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
+from mock import patch
 
 
 class SendAlertsTestCase(BaseTestCase):

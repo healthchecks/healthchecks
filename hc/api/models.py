@@ -85,7 +85,7 @@ class Check(models.Model):
 
         now = timezone.now()
 
-        if self.last_ping + self.timeout > now:
+        if self.last_ping + self.timeout + self.grace > now:
             return "up"
 
         return "down"

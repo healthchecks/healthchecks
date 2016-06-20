@@ -16,10 +16,10 @@
         <td class="indicator-cell">
             {% if check.get_status == "new" %}
                 <span class="glyphicon glyphicon-question-sign new"></span>
-            {% elif check.get_status == "up" %}
-                <span class="glyphicon glyphicon-ok-sign up"></span>
             {% elif check.in_grace_period %}
                 <span class="glyphicon glyphicon-exclamation-sign grace"></span>
+            {% elif check.get_status == "up" %}
+                <span class="glyphicon glyphicon-ok-sign up"></span>
             {% elif check.get_status == "down" %}
                 <span class="glyphicon glyphicon-exclamation-sign down"></span>
             {% endif %}
