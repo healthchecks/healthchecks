@@ -27,12 +27,10 @@
                         <span class="label label-default">NEW</span>
                     {% elif check.get_status == "up" %}
                         <span class="label label-success">UP</span>
-                    {% elif check.get_status == "grace" %}
+                    {% elif check.in_grace_period %}
                         <span class="label label-warning">LATE</span>
                     {% elif check.get_status == "down" %}
                         <span class="label label-danger">DOWN</span>
-                    {% elif check.get_status == "paused" %}
-                        <span class="label label-default">PAUSED</span>
                     {% endif %}
                 </td>
             </tr>

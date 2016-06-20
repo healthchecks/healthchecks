@@ -29,3 +29,12 @@ class SendAlertsTestCase(BaseTestCase):
             handled_names.append(args[0].name)
 
         assert set(names) == set(handled_names)
+
+    def test_it_handles_grace_period(self):
+        check = Check(user=self.alice, status="up")
+        # 1 day 30 minutes after ping the check is in grace period:
+        check.last_ping = timezone.now() - timedelta(days=1, minutes=30)
+        check.save()
+
+        # Expect no exceptions--
+        Command().handle_one(check)

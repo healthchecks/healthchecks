@@ -80,7 +80,7 @@ class Check(models.Model):
         return errors
 
     def get_status(self):
-        if self.status in ("new", "paused"):
+        if self.status == "new":
             return self.status
 
         now = timezone.now()
@@ -88,10 +88,12 @@ class Check(models.Model):
         if self.last_ping + self.timeout > now:
             return "up"
 
-        if self.last_ping + self.timeout + self.grace > now:
-            return "grace"
-
         return "down"
+
+    def in_grace_period(self):
+        up_ends = self.last_ping + self.timeout
+        grace_ends = up_ends + self.grace
+        return up_ends < timezone.now() < grace_ends
 
     def assign_all_channels(self):
         if self.user:
