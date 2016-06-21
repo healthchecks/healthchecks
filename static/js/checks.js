@@ -176,18 +176,22 @@ $(function () {
 
     });
 
-    $(".show-usage").click(function(e) {
-        var a = e.target;
-        var url = a.getAttribute("href");
-        var email = a.getAttribute("data-email");
+    var clipboard = new Clipboard('button.copy-link');
+    $("button.copy-link").mouseout(function(e) {
+        setTimeout(function() {
+            e.target.textContent = "copy";
+        }, 300);
+    })
 
-        $(".ex", "#show-usage-modal").text(url);
-        $(".em", "#show-usage-modal").text(email);
-
-        $(a).tooltip("hide");
-        $("#show-usage-modal").modal("show");
-
-        return false;
+    clipboard.on('success', function(e) {
+        e.trigger.textContent = "copied!";
+        e.clearSelection();
     });
+
+    clipboard.on('error', function(e) {
+        var text = e.trigger.getAttribute("data-clipboard-text");
+        prompt("Press Ctrl+C to select:", text)
+    });
+
 
 });

@@ -62,15 +62,34 @@ table.table tr > th.th-name {
     visibility: hidden;
 }
 
-.show-usage {
-    opacity: 0
+button.copy-link {
+    opacity: 0;
+
+    display: inline-block;
+    width: 50px;
+
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    text-align: left;
+
+    font-family: "Open Sans", Arial, sans-serif;
+    color: #0091ea;
+    cursor :pointer;
+    transition: opacity 0.1s linear;
 }
+
+button.copy-link:hover {
+    text-decoration: underline;
+}
+
+
 
 tr:hover .check-menu {
     visibility: visible;
 }
 
-tr:hover .show-usage {
+tr:hover .copy-link {
     opacity: 1
 }
 

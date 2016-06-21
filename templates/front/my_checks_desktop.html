@@ -39,12 +39,11 @@
             <span class="my-checks-url">
                 <span class="base">{{ ping_endpoint }}</span>{{ check.code }}
             </span>
-            <a
-                href="{{ check.url }}"
-                class="btn btn-xs btn-default show-usage hidden-sm"
-                data-email="{{ check.email }}">
-                show usage
-            </a>
+            <button
+                class="copy-link hidden-sm"
+                data-clipboard-text="{{ check.url }}">
+                copy
+            </button>
         </td>
         <td class="timeout-cell">
             <span
