@@ -1,0 +1,6 @@
+{{ profile.user.email }}
+<ul>
+    {% for member in profile.member_set.all %}
+    <li>{{ member.user.email }}</li>
+    {% endfor %}
+</ul>

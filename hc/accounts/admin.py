@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
 from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
 
@@ -9,12 +10,26 @@ from hc.api.models import Channel, Check
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
 
-    list_display = ("id", "email", "reports_allowed", "next_report_date",
-                    "ping_log_limit")
-    search_fields = ["user__email"]
+    class Media:
+        css = {
+         'all': ('css/admin/profiles.css',)
+        }
 
-    def email(self, obj):
-        return obj.user.email
+    list_display = ("id", "users", "reports_allowed", "next_report_date",
+                    "ping_log_limit")
+    search_fields = ["id", "user__email"]
+    list_filter = ("reports_allowed", "team_access_allowed",
+                   "next_report_date")
+
+    def users(self, obj):
+        if obj.member_set.count() == 0:
+            return obj.user.email
+        else:
+            return render_to_string("admin/profile_list_team.html", {
+                "profile": obj
+            })
+
+    users.allow_tags = True
 
 
 class HcUserAdmin(UserAdmin):
