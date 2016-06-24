@@ -1,4 +1,5 @@
 from datetime import timedelta
+import time
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
@@ -17,7 +18,16 @@ class Command(BaseCommand):
     help = 'Send due monthly reports'
     tmpl = "Sending monthly report to %s"
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--loop',
+            action='store_true',
+            dest='loop',
+            default=False,
+            help='Keep running indefinitely in a 300 second wait loop',
+        )
+
+    def handle_one_run(self):
         now = timezone.now()
         month_before = now - timedelta(days=30)
 
@@ -34,4 +44,17 @@ class Command(BaseCommand):
                 profile.send_report()
                 sent += 1
 
-        return "Sent %d reports" % sent
+        return sent
+
+    def handle(self, *args, **options):
+        if not options["loop"]:
+            return "Sent %d reports" % self.handle_one_run()
+
+        self.stdout.write("sendreports is now running")
+        while True:
+            self.handle_one_run()
+
+            formatted = timezone.now().isoformat()
+            self.stdout.write("-- MARK %s --" % formatted)
+
+            time.sleep(300)
