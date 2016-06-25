@@ -79,7 +79,10 @@
       text-align: center;
     }
     .email-footer p {
-      color: #AEAEAE;
+      color: #74787E;
+    }
+    .email-footer a {
+      color: #74787E;
     }
     .body-action {
       width: 100%;
@@ -181,7 +184,7 @@
           <!-- Logo -->
           <tr>
             <td class="email-masthead">
-              <a class="email-masthead_name">Healthchecks</a>
+              <img src="{{ SITE_ROOT }}/img/logo-full.png" alt="" />
             </td>
           </tr>
           <!-- Email Body -->
@@ -202,7 +205,9 @@
               <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0">
                 <tr>
                   <td class="content-cell">
-                    <p class="sub center">&copy; 2016 healthchecks<span>.</span>io. All rights reserved.</p>
+                    <p class="sub center">&copy; 2016 healthchecks<span>.</span>io. All rights reserved.
+                    {% block unsub %}{% endblock %}
+                    </p>
                   </td>
                 </tr>
               </table>

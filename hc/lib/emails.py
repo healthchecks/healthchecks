@@ -1,26 +1,28 @@
+from django.conf import settings
 from djmail.template_mail import InlineCSSTemplateMail
 
 
-def login(to, ctx):
-    o = InlineCSSTemplateMail("login")
+def send(name, to, ctx):
+    o = InlineCSSTemplateMail(name)
+    ctx["SITE_ROOT"] = settings.SITE_ROOT
     o.send(to, ctx)
+
+
+def login(to, ctx):
+    send("login", to, ctx)
 
 
 def set_password(to, ctx):
-    o = InlineCSSTemplateMail("set-password")
-    o.send(to, ctx)
+    send("set-password", to, ctx)
 
 
 def alert(to, ctx):
-    o = InlineCSSTemplateMail("alert")
-    o.send(to, ctx)
+    send("alert", to, ctx)
 
 
 def verify_email(to, ctx):
-    o = InlineCSSTemplateMail("verify-email")
-    o.send(to, ctx)
+    send("verify-email", to, ctx)
 
 
 def report(to, ctx):
-    o = InlineCSSTemplateMail("report")
-    o.send(to, ctx)
+    send("report", to, ctx)
