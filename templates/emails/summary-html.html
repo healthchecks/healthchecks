@@ -11,11 +11,12 @@
         text-align: left;
         padding: 8px;
         font-size: 12px;
+        color: #9BA2AB;
     }
 
     .checks td {
         border-top: 1px solid #EDEFF2;
-        padding: 8px;
+        padding: 16px 8px;
     }
 
     .badge {
@@ -36,8 +37,11 @@
         font-style: italic;
     }
 
-    .view-log {
-        font-size: 13px;
+    .tag {
+        font-size: 12px;
+        background-color: #eee;
+        padding: 2px 4px;
+        color: #555;
     }
 
 </style>
@@ -46,7 +50,6 @@
     <tr>
         <th></th>
         <th>Name</th>
-        <th>Period</th>
         <th>Last Ping</th>
     </tr>
     {% for check in checks %}
@@ -64,17 +67,20 @@
         </td>
         <td>
             {% if check.name %}
-                {{ check.name }}
+                {% if check.name|length > 20 %}
+                    <small>{{ check.name }}</small>
+                {% else %}
+                    {{ check.name }}
+                {% endif %}
             {% else %}
                 <span class="unnamed">unnamed</span>
             {% endif %}
             {% if check.tags %}
                 <br />
-                <small>{{ check.tags }}</small>
+                {% for tag in check.tags_list %}
+                <span class="tag">{{ tag }}</span>
+                {% endfor %}
             {% endif %}
-        </td>
-        <td>
-            {{ check.timeout|hc_duration }}
         </td>
         <td>
             {% if check.last_ping %}
@@ -82,9 +88,10 @@
             {% else %}
                 Never
             {% endif %}
+
         </td>
         <td>
-            <a class="view-log" href="{{ check.log_url }}">View Log</a>
+            <a class="view-log" href="{{ check.log_url }}">Log</a>
         </td>
     </tr>
     {% endfor %}
