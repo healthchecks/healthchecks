@@ -1,100 +1,12 @@
 {% extends "emails/base.html" %}
-
 {% load humanize hc_extras %}
 
 {% block content %}
-<style>
-    .checks {
-        margin: 30px 0;
-        width: 100%;
-        font-size: 16px;
-    }
-
-    .checks th {
-        text-align: left;
-        padding: 8px;
-        font-size: 12px;
-    }
-
-    .checks td {
-        border-top: 1px solid #EDEFF2;
-        padding: 8px;
-    }
-
-    .badge {
-        font-size: 10px;
-        color: white;
-        padding: 4px;
-        font-family: sans;
-    }
-
-    .new { background: #AAA; }
-    .up { background: #5cb85c; }
-    .grace { background: #f0ad4e; }
-    .down { background: #d9534f; }
-
-
-    .unnamed {
-        color: #74787E;
-        font-style: italic;
-    }
-
-    .view-log {
-        font-size: 13px;
-    }
-
-</style>
 
 <h1>Hello,</h1>
 <p>This is a monthly report sent by <a href="https://healthchecks.io">healthchecks.io</a>.</p>
 
-<table class="checks" cellpadding="0" cellspacing="0">
-    <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Period</th>
-        <th>Last Ping</th>
-    </tr>
-    {% for check in checks %}
-    <tr>
-        <td>
-            {% if check.get_status == "new" %}
-                <span class="badge new">NEW</span>
-            {% elif check.in_grace_period %}
-                <span class="badge grace">LATE</span>
-            {% elif check.get_status == "up" %}
-                <span class="badge up">UP</span>
-            {% elif check.get_status == "down" %}
-                <span class="badge down">DOWN</span>
-            {% endif %}
-        </td>
-        <td>
-            {% if check.name %}
-                {{ check.name }}
-            {% else %}
-                <span class="unnamed">unnamed</span>
-            {% endif %}
-            {% if check.tags %}
-                <br />
-                <small>{{ check.tags }}</small>
-            {% endif %}
-        </td>
-        <td>
-            {{ check.timeout|hc_duration }}
-        </td>
-        <td>
-            {% if check.last_ping %}
-                {{ check.last_ping|naturaltime }}
-            {% else %}
-                Never
-            {% endif %}
-        </td>
-        <td>
-            <a class="view-log" href="{{ check.log_url }}">View Log</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{% include "emails/summary-html.html" %}
 
 <p><strong>Just one more thing to check:</strong>
 Do you have more cron jobs,
@@ -102,8 +14,8 @@ not yet on this list, that would benefit from monitoring?
 Get the ball rolling by adding one more!</p>
 
 <p>Cheers,<br>The Healthchecks<span>.</span>io</a> Team</p>
-
 {% endblock %}
+
 
 {% block unsub %}
 <br />

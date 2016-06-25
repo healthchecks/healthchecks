@@ -1,0 +1,5 @@
+{% load humanize hc_extras %}
+ Status | Name                                     | Last Ping
+--------+------------------------------------------+-----------------------{% for check in checks %}
+ {{ check.get_status|ljust:"6" }} | {{ check.name|default:'unnamed'|ljust:"40" }} | {% if check.last_ping %}{{ check.last_ping|naturaltime }}{% else %}Never{% endif %}{% endfor %}
+

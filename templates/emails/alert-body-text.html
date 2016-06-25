@@ -3,6 +3,10 @@ Hello,
 This is a notification sent by healthchecks.io.
 The check "{{ check.name_then_code }}" has gone {{ check.status }}.
 
+Here is a summary of all your checks:
+
+{% include 'emails/summary-text.html' %}
+
 --
 Regards,
 healthchecks.io
