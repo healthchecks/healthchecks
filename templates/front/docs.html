@@ -134,6 +134,28 @@ thing: they fire off a HTTP GET method.</p>
 </p>
 {% include "front/snippets/browser.html" %}
 
+<a name="powershell"></a>
+<h3>PowerShell</h3>
+<p>
+    You can use <a href="https://msdn.microsoft.com/en-us/powershell/mt173057.aspx">PowerShell</a>
+    and Windows Task Scheduler to automate various tasks on a Windows system.
+    From within a PowerShell script it is also easy to ping healthchecks.io.
+</p>
+<p>Here is a simple PowerShell script that pings healthchecks.io.
+When scheduled to run with Task Scheduler, it will essentially
+just send regular "I'm alive" messages. You can of course extend it to
+do more things.</p>
+
+{% include "front/snippets/powershell.html" %}
+
+<p>Save the above to e.g. <code>C:\Scripts\healthchecks.ps1</code>. Then use
+the following command in a Scheduled Task to run the script:
+</p>
+
+<pre>
+powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
+</pre>
+
 <a name="email"></a>
 <h3>Email</h3>
 <p>
