@@ -24,6 +24,7 @@
         <div class="col-sm-6">
             <img
                 class="ai-guide-screenshot"
+                alt="Screenshot"
                 src="{% static 'img/integrations/setup_hipchat_1.png' %}">
         </div>
     </div>
@@ -42,6 +43,7 @@
         <div class="col-sm-6">
             <img
                 class="ai-guide-screenshot"
+                alt="Screenshot"
                 src="{% static 'img/integrations/setup_hipchat_2.png' %}">
         </div>    </div>
 
@@ -54,6 +56,7 @@
         <div class="col-sm-6">
             <img
                 class="ai-guide-screenshot"
+                alt="Screenshot"
                 src="{% static 'img/integrations/setup_hipchat_3.png' %}">
         </div>
     </div>
@@ -65,9 +68,14 @@
         {% csrf_token %}
         <input type="hidden" name="kind" value="hipchat" />
         <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">Callback URL</label>
+            <label for="callback-url" class="col-sm-2 control-label">Callback URL</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="value" placeholder="">
+                <input
+                    id="callback-url"
+                    type="text"
+                    class="form-control"
+                    name="value"
+                    placeholder="">
             </div>
         </div>
         <div class="form-group">

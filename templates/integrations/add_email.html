@@ -28,9 +28,14 @@
         {% csrf_token %}
         <input type="hidden" name="kind" value="email" />
         <div class="form-group">
-            <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+            <label for="id_email" class="col-sm-2 control-label">Email</label>
             <div class="col-sm-3">
-                <input type="email" class="form-control" name="value" placeholder="you@example.org">
+                <input
+                    id="id_email"
+                    type="email"
+                    class="form-control"
+                    name="value"
+                    placeholder="you@example.org">
             </div>
         </div>
         <div class="form-group">

@@ -13,19 +13,19 @@
             <li>{{ check.name_then_code }}</li>
             <li class="active">Log</li>
 
-            <div class="pull-right">
+            <li id="format-switcher-container" class="pull-right">
                 <div id="format-switcher" class="btn-group" data-toggle="buttons">
                     <label class="btn btn-default btn-xs" data-format="utc">
-                        <input type="radio" name="date-format" autocomplete="off" checked>
+                        <input type="radio" name="date-format" checked>
                         UTC
                     </label>
 
                     <label class="btn btn-default btn-xs active" data-format="local">
-                        <input type="radio" name="date-format" autocomplete="off">
+                        <input type="radio" name="date-format">
                         Local Time
                     </label>
                 </div>
-            </div>
+            </li>
         </ol>
 
     {% if pings %}
@@ -81,7 +81,7 @@
                     <span class="time"></span>
                 </div>
             </td>
-            <td colspan="4">
+            <td colspan="3">
                 <small>Ping expected but not received</small>
             </td>
         </tr>

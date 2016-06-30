@@ -1,3 +1,7 @@
+#format-switcher-container:before {
+    content: " ";
+}
+
 #log {
     visibility: hidden;
 }
