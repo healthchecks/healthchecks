@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from hc.api import schemas
 from hc.api.decorators import check_api_key, uuid_or_400, validate_json
 from hc.api.models import Check, Ping
+from hc.lib.badges import check_signature, get_badge_svg
 
 
 @csrf_exempt
@@ -84,3 +85,25 @@ def create_check(request):
         return HttpResponse(status=405)
 
     return JsonResponse(response, status=code)
+
+
+@never_cache
+def badge(request, username, signature, tag):
+    if not check_signature(username, tag, signature):
+        return HttpResponseBadRequest()
+
+    status = "up"
+    q = Check.objects.filter(user__username=username, tags__contains=tag)
+    for check in q:
+        if tag not in check.tags_list():
+            continue
+
+        if status == "up" and check.in_grace_period():
+            status = "late"
+
+        if check.get_status() == "down":
+            status = "down"
+            break
+
+    svg = get_badge_svg(tag, status)
+    return HttpResponse(svg, content_type="image/svg+xml")

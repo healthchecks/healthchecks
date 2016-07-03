@@ -7,7 +7,7 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-12">
-        <h1 id="settings-title">Settings</h1>
+        <h1 class="settings-title">Settings</h1>
     </div>
     {% if messages %}
     <div class="col-sm-12">
@@ -53,45 +53,6 @@
                         name="set_password"
                         class="btn btn-default pull-right">Set Password</button>
                 </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-sm-6">
-        <div class="panel panel-default">
-            <div class="panel-body settings-block">
-                <h2>API Access</h2>
-                {% if profile.api_key %}
-                    {% if show_api_key %}
-                        API key: <code>{{ profile.api_key }}</code>
-                        <button
-                            data-toggle="modal"
-                            data-target="#revoke-api-key-modal"
-                            class="btn btn-danger pull-right">Revoke</button>
-
-                    {% else %}
-                        <span class="text-success glyphicon glyphicon-ok"></span>
-                        API access is enabled.
-                        <form method="post">
-                            {% csrf_token %}
-
-                            <button
-                                type="submit"
-                                name="show_api_key"
-                                class="btn btn-default pull-right">Show API key</button>
-                        </form>
-                    {% endif %}
-                {% else %}
-                    <span class="glyphicon glyphicon-remove"></span>
-                    API access is disabled.
-                    <form method="post">
-                        {% csrf_token %}
-                        <button
-                            type="submit"
-                            name="create_api_key"
-                            class="btn btn-default pull-right">Create API key</button>
-                    </form>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -154,7 +115,76 @@
             </div>
         </div>
     </div>
+
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <h2>API Access</h2>
+                {% if profile.api_key %}
+                    {% if show_api_key %}
+                        API key: <code>{{ profile.api_key }}</code>
+                        <button
+                            data-toggle="modal"
+                            data-target="#revoke-api-key-modal"
+                            class="btn btn-danger pull-right">Revoke</button>
+
+                    {% else %}
+                        <span class="text-success glyphicon glyphicon-ok"></span>
+                        API access is enabled.
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                name="show_api_key"
+                                class="btn btn-default pull-right">Show API key</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <span class="glyphicon glyphicon-remove"></span>
+                    API access is disabled.
+                    <form method="post">
+                        {% csrf_token %}
+                        <button
+                            type="submit"
+                            name="create_api_key"
+                            class="btn btn-default pull-right">Create API key</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
+
+{% if badge_urls %}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+        <div class="panel-body settings-block">
+        <h2 class="settings-title">Status Badges</h2>
+        <p id="badges-description">
+            Here are status badges for each of the tags you have used. The
+            badges have public, but hard-to-guess URLs. If you wish, you can
+            add them to your READMEs, dashboards or status pages.
+        </p>
+        <table class="badges table">
+            {% for badge_url in badge_urls %}
+            <tr>
+                <td>
+                    <img src="{{ badge_url }}" alt="" />
+                </td>
+                <td>
+                    <code>{{ badge_url }}</code>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    </div>
+    </div>
+</div>
+{% endif %}
+
 
 
 <div id="revoke-api-key-modal" class="modal">

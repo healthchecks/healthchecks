@@ -1,4 +1,5 @@
 import uuid
+import re
 
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
@@ -15,6 +16,7 @@ from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                SetPasswordForm, TeamNameForm)
 from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
+from hc.lib.badges import get_badge_url
 
 
 def _make_user(email):
@@ -186,7 +188,20 @@ def profile(request):
                 profile.save()
                 messages.info(request, "Team Name updated!")
 
+    tags = set()
+    for check in Check.objects.filter(user=request.team.user):
+        tags.update(check.tags_list())
+
+    username = request.team.user.username
+    badge_urls = []
+    for tag in sorted(tags, key=lambda s: s.lower()):
+        if not re.match("^[\w-]+$", tag):
+            continue
+
+        badge_urls.append(get_badge_url(username, tag))
+
     ctx = {
+        "badge_urls": badge_urls,
         "profile": profile,
         "show_api_key": show_api_key
     }
