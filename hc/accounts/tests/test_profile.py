@@ -122,3 +122,18 @@ class ProfileTestCase(BaseTestCase):
         # to user's default team.
         self.bobs_profile.refresh_from_db()
         self.assertEqual(self.bobs_profile.current_team, self.bobs_profile)
+
+    def test_it_shows_badges(self):
+        self.client.login(username="alice@example.org", password="password")
+        Check.objects.create(user=self.alice, tags="foo a-B_1  baz@")
+        Check.objects.create(user=self.bob, tags="bobs-tag")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "foo.svg")
+        self.assertContains(r, "a-B_1.svg")
+
+        # Expect badge URLs only for tags that match \w+
+        self.assertNotContains(r, "baz@.svg")
+
+        # Expect only Alice's tags
+        self.assertNotContains(r, "bobs-tag.svg")
