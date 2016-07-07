@@ -1,9 +1,10 @@
-from django.core import mail
-from mock import patch
-from requests.exceptions import ConnectionError, Timeout
+import json
 
+from django.core import mail
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
+from mock import patch
+from requests.exceptions import ConnectionError, Timeout
 
 
 class NotifyTestCase(BaseTestCase):
@@ -27,7 +28,7 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         mock_get.assert_called_with(
-            "get",  u"http://example",
+            "get", u"http://example",
             headers={"User-Agent": "healthchecks.io"}, timeout=5)
 
     @patch("hc.api.transports.requests.request", side_effect=Timeout)
@@ -151,6 +152,18 @@ class NotifyTestCase(BaseTestCase):
         attachment = json["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Never")
+
+    @patch("hc.api.transports.requests.request")
+    def test_slack_with_complex_value(self, mock_post):
+        v = json.dumps({"incoming_webhook": {"url": "123"}})
+        self._setup_data("slack", v)
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        self.assertEqual(args[1], "123")
 
     @patch("hc.api.transports.requests.request")
     def test_slack_handles_500(self, mock_post):

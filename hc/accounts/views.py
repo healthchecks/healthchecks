@@ -137,7 +137,7 @@ def profile(request):
         elif "create_api_key" in request.POST:
             profile.set_api_key()
             show_api_key = True
-            messages.info(request, "The API key has been created!")
+            messages.success(request, "The API key has been created!")
         elif "revoke_api_key" in request.POST:
             profile.api_key = ""
             profile.save()
@@ -149,7 +149,7 @@ def profile(request):
             if form.is_valid():
                 profile.reports_allowed = form.cleaned_data["reports_allowed"]
                 profile.save()
-                messages.info(request, "Your settings have been updated!")
+                messages.success(request, "Your settings have been updated!")
         elif "invite_team_member" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
@@ -164,7 +164,7 @@ def profile(request):
                     user = _make_user(email)
 
                 profile.invite(user)
-                messages.info(request, "Invitation to %s sent!" % email)
+                messages.success(request, "Invitation to %s sent!" % email)
         elif "remove_team_member" in request.POST:
             form = RemoveTeamMemberForm(request.POST)
             if form.is_valid():
@@ -186,7 +186,7 @@ def profile(request):
             if form.is_valid():
                 profile.team_name = form.cleaned_data["team_name"]
                 profile.save()
-                messages.info(request, "Team Name updated!")
+                messages.success(request, "Team Name updated!")
 
     tags = set()
     for check in Check.objects.filter(user=request.team.user):
@@ -230,7 +230,7 @@ def set_password(request, token):
             u = authenticate(username=request.user.email, password=password)
             auth_login(request, u)
 
-            messages.info(request, "Your password has been set!")
+            messages.success(request, "Your password has been set!")
             return redirect("hc-profile")
 
     return render(request, "accounts/set_password.html", {})

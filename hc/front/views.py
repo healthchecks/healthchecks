@@ -2,7 +2,9 @@ from collections import Counter
 from datetime import timedelta as td
 from itertools import tee
 
+import requests
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count
@@ -12,7 +14,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
-from hc.api.models import Channel, Check, Ping, DEFAULT_TIMEOUT, DEFAULT_GRACE
+from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
                             TimeoutForm)
 
@@ -269,6 +271,7 @@ def channels(request):
         "channels": channels,
         "num_checks": num_checks,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
+        "slack_client_id": settings.SLACK_CLIENT_ID
     }
     return render(request, "front/channels.html", ctx)
 
@@ -375,6 +378,34 @@ def add_pd(request):
 def add_slack(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_slack.html", ctx)
+
+
+@login_required
+def add_slack_btn(request):
+    code = request.GET.get("code", "")
+    if len(code) < 8:
+        return HttpResponseBadRequest()
+
+    result = requests.post("https://slack.com/api/oauth.access", {
+        "client_id": settings.SLACK_CLIENT_ID,
+        "client_secret": settings.SLACK_CLIENT_SECRET,
+        "code": code
+    })
+
+    doc = result.json()
+    if doc.get("ok"):
+        channel = Channel()
+        channel.user = request.team.user
+        channel.kind = "slack"
+        channel.value = result.text
+        channel.save()
+        channel.assign_all_checks()
+        messages.info(request, "The Slack integration has been added!")
+    else:
+        s = doc.get("error")
+        messages.warning(request, "Error message from slack: %s" % s)
+
+    return redirect("hc-channels")
 
 
 @login_required

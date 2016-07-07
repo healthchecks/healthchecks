@@ -6,6 +6,14 @@
 
 {% block content %}
 <div class="row">
+{% if messages %}
+<div class="col-sm-12">
+    {% for message in messages %}
+        <p class="alert alert-{{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="col-sm-12">
     <table class="table channels-table">
         {% if channels %}
@@ -44,6 +52,15 @@
                     <span class="preposition">user key</span>
                     {{ ch.po_value|first }}
                     ({{ ch.po_value|last }} priority)
+                {% elif ch.kind == "slack" %}
+                    {% if ch.slack_team %}
+                        <span class="preposition">team</span>
+                        {{ ch.slack_team }},
+                        <span class="preposition">channel</span>
+                        {{ ch.slack_channel }}
+                    {% else %}
+                        {{ ch.value }}
+                    {% endif %}
                 {% elif ch.kind == "webhook" %}
                     <table>
                         {% if ch.value_down %}
@@ -107,16 +124,22 @@
     <ul class="add-integration">
         <li>
             <img src="{% static 'img/integrations/slack.png' %}"
-                alt="Slack icon" />
+                class="icon" alt="Slack icon" />
 
             <h2>Slack</h2>
             <p>A messaging app for teams.</p>
 
+            {% if slack_client_id %}
+            <a href="https://slack.com/oauth/authorize?scope=incoming-webhook&client_id={{ slack_client_id }}">
+                <img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" />
+            </a>
+            {% else %}
             <a href="{% url 'hc-add-slack' %}" class="btn btn-primary">Add Integration</a>
+            {% endif %}
         </li>
         <li>
             <img src="{% static 'img/integrations/email.png' %}"
-                alt="Email icon" />
+                class="icon" alt="Email icon" />
 
             <h2>Email</h2>
             <p>Get an email message when check goes up or down.</p>
@@ -125,7 +148,7 @@
         </li>
         <li>
             <img src="{% static 'img/integrations/webhook.png' %}"
-                alt="Webhook icon" />
+                class="icon" alt="Webhook icon" />
 
             <h2>Webhook</h2>
             <p>Receive a HTTP callback when a check goes down.</p>
@@ -134,7 +157,7 @@
         </li>
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
-                alt="PagerDuty icon" />
+                class="icon" alt="PagerDuty icon" />
 
             <h2>PagerDuty</h2>
             <p>On-call scheduling, alerting, and incident tracking.</p>
@@ -143,7 +166,7 @@
         </li>
         <li>
             <img src="{% static 'img/integrations/hipchat.png' %}"
-                alt="HipChat icon" />
+                class="icon" alt="HipChat icon" />
 
             <h2>HipChat</h2>
             <p>Group and private chat, file sharing, and integrations.</p>
@@ -152,7 +175,7 @@
         </li>
         <li>
             <img src="{% static 'img/integrations/victorops.png' %}"
-                alt="VictorOps icon" />
+                class="icon" alt="VictorOps icon" />
 
             <h2>VictorOps</h2>
             <p>On-call scheduling, alerting, and incident tracking.</p>
@@ -162,7 +185,7 @@
         {% if enable_pushover %}
         <li>
             <img src="{% static 'img/integrations/pushover.png' %}"
-                 alt="Pushover icon" />
+                 class="icon" alt="Pushover icon" />
 
             <h2>Pushover</h2>
             <p>Receive instant push notifications on your phone or tablet.</p>

@@ -118,7 +118,7 @@ class Slack(HttpTransport):
     def notify(self, check):
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
-        return self.post(self.channel.value, payload)
+        return self.post(self.channel.slack_webhook_url, payload)
 
 
 class HipChat(HttpTransport):

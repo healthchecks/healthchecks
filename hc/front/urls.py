@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^integrations/add_webhook/$',     views.add_webhook, name="hc-add-webhook"),
     url(r'^integrations/add_pd/$',          views.add_pd, name="hc-add-pd"),
     url(r'^integrations/add_slack/$',       views.add_slack, name="hc-add-slack"),
+    url(r'^integrations/add_slack_btn/$',   views.add_slack_btn, name="hc-add-slack-btn"),
     url(r'^integrations/add_hipchat/$',     views.add_hipchat, name="hc-add-hipchat"),
     url(r'^integrations/add_pushover/$',    views.add_pushover, name="hc-add-pushover"),
     url(r'^integrations/add_victorops/$',   views.add_victorops, name="hc-add-victorops"),

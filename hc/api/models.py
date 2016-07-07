@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import hashlib
+import json
 import uuid
 from datetime import timedelta as td
 
@@ -196,6 +197,33 @@ class Channel(models.Model):
         assert self.kind == "webhook"
         parts = self.value.split("\n")
         return parts[1] if len(parts) == 2 else ""
+
+    @property
+    def slack_team(self):
+        assert self.kind == "slack"
+        if not self.value.startswith("{"):
+            return None
+
+        doc = json.loads(self.value)
+        return doc["team_name"]
+
+    @property
+    def slack_channel(self):
+        assert self.kind == "slack"
+        if not self.value.startswith("{"):
+            return None
+
+        doc = json.loads(self.value)
+        return doc["incoming_webhook"]["channel"]
+
+    @property
+    def slack_webhook_url(self):
+        assert self.kind == "slack"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        return doc["incoming_webhook"]["url"]
 
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()

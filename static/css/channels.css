@@ -43,7 +43,7 @@ table.channels-table > tbody > tr > th {
     font-weight: bold
 }
 
-.preposition {
+.preposition, .description {
     color: #888;
 }
 
@@ -102,7 +102,7 @@ table.channels-table > tbody > tr > th {
     background: #eee;
 }
 
-.add-integration img {
+.add-integration .icon {
     position: absolute;
     left: 16px;
     top: 50%;
@@ -125,6 +125,10 @@ table.channels-table > tbody > tr > th {
     right: 16px;
     top: 50%;
     margin-top: -17px;
+    width: 139px;
+    height: 40px;
+    padding: 0;
+    line-height: 40px;
 }
 
 

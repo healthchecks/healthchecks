@@ -12,7 +12,7 @@
     {% if messages %}
     <div class="col-sm-12">
         {% for message in messages %}
-            <p class="alert alert-success">{{ message }}</p>
+            <p class="alert alert-{{ message.tags }}">{{ message }}</p>
         {% endfor %}
     </div>
     {% endif %}
