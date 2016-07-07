@@ -1,4 +1,2 @@
-<div class="highlight"><pre><span></span>curl {{ SITE_ROOT }}/api/v1/checks/ <span class="se">\</span>
-    -X GET <span class="se">\</span>
-    -d <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;}&#39;</span>
+<div class="highlight"><pre><span></span>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> {{ SITE_ROOT }}/api/v1/checks/
 </pre></div>

@@ -17,9 +17,14 @@ API key. By default, an user account on healthchecks.io doesn't have
 an API key. You can create one in the <a href="{% url 'hc-profile' %}">Settings</a> page.
 </p>
 
-<p>
-The API uses a simple authentication scheme: the API key should be
-included in the request body (a JSON document) along other fields.
+<p>The client can authenticate itself by sending an appropriate HTTP
+request header. The header's name should be <code>X-Api-Key</code> and
+its value should be your API key.
+</p>
+
+<p> Alternatively, for POST requests with a JSON request body,
+    the client can include an <code>api_key</code> field in the JSON document.
+    See below the "Create a check" section for an example.
 </p>
 
 <h2 class="rule">API Requests</h2>

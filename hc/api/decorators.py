@@ -26,22 +26,26 @@ def make_error(msg):
 def check_api_key(f):
     @wraps(f)
     def wrapper(request, *args, **kwds):
-        try:
-            data = json.loads(request.body.decode("utf-8"))
-        except ValueError:
-            return make_error("could not parse request body")
+        request.json = {}
+        if request.body:
+            try:
+                request.json = json.loads(request.body.decode("utf-8"))
+            except ValueError:
+                return make_error("could not parse request body")
 
-        api_key = str(data.get("api_key", ""))
+        if "HTTP_X_API_KEY" in request.META:
+            api_key = request.META["HTTP_X_API_KEY"]
+        else:
+            api_key = request.json.get("api_key", "")
+
         if api_key == "":
             return make_error("wrong api_key")
 
         try:
-            user = User.objects.get(profile__api_key=api_key)
+            request.user = User.objects.get(profile__api_key=api_key)
         except User.DoesNotExist:
             return make_error("wrong api_key")
 
-        request.json = data
-        request.user = user
         return f(request, *args, **kwds)
 
     return wrapper

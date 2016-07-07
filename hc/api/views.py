@@ -48,7 +48,7 @@ def ping(request, code):
 @csrf_exempt
 @check_api_key
 @validate_json(schemas.check)
-def create_check(request):
+def checks(request):
     if request.method == "GET":
         code = 200
         response = {

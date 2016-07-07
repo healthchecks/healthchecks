@@ -1,4 +1,8 @@
 <div class="highlight"><pre><span></span>curl {{ SITE_ROOT }}/api/v1/checks/ <span class="se">\</span>
-    -X POST <span class="se">\</span>
-    -d <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
+    --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> <span class="se">\</span>
+    --data <span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
+
+<span class="c1"># Or, alternatively:</span>
+curl {{ SITE_ROOT }}/api/v1/checks/ <span class="se">\</span>
+    --data <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </pre></div>
