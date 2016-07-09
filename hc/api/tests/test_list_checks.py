@@ -1,5 +1,6 @@
 import json
 from datetime import timedelta as td
+from django.utils.timezone import now
 
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -10,9 +11,13 @@ class ListChecksTestCase(BaseTestCase):
     def setUp(self):
         super(ListChecksTestCase, self).setUp()
 
+        self.now = now()
+
         self.a1 = Check(user=self.alice, name="Alice 1")
         self.a1.timeout = td(seconds=3600)
         self.a1.grace = td(seconds=900)
+        self.a1.last_ping = self.now
+        self.a1.n_pings = 1
         self.a1.save()
 
         self.a2 = Check(user=self.alice, name="Alice 2")
@@ -36,6 +41,11 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(checks["Alice 1"]["timeout"], 3600)
         self.assertEqual(checks["Alice 1"]["grace"], 900)
         self.assertEqual(checks["Alice 1"]["ping_url"], self.a1.url())
+        self.assertEqual(checks["Alice 1"]["last_ping"], self.now.isoformat())
+        self.assertEqual(checks["Alice 1"]["n_pings"], 1)
+
+        next_ping = self.now + td(seconds=3600)
+        self.assertEqual(checks["Alice 1"]["next_ping"], next_ping.isoformat())
 
         self.assertEqual(checks["Alice 2"]["timeout"], 86400)
         self.assertEqual(checks["Alice 2"]["grace"], 3600)

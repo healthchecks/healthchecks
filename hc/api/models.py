@@ -107,6 +107,25 @@ class Check(models.Model):
     def tags_list(self):
         return [t.strip() for t in self.tags.split(" ") if t.strip()]
 
+    def to_dict(self):
+        result = {
+            "name": self.name,
+            "ping_url": self.url(),
+            "tags": self.tags,
+            "timeout": int(self.timeout.total_seconds()),
+            "grace": int(self.grace.total_seconds()),
+            "n_pings": self.n_pings
+        }
+
+        if self.last_ping:
+            result["last_ping"] = self.last_ping.isoformat()
+            result["next_ping"] = (self.last_ping + self.timeout).isoformat()
+        else:
+            result["last_ping"] = None
+            result["next_ping"] = None
+
+        return result
+
 
 class Ping(models.Model):
     n = models.IntegerField(null=True)

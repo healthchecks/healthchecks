@@ -1,3 +1,10 @@
 {
-  "ping_url": "PING_ENDPOINT20f2d3d0-efe4-4cc1-a114-a186a225de50"
+  "grace": 60,
+  "last_ping": null,
+  "n_pings": 0,
+  "name": "Backups",
+  "next_ping": null,
+  "ping_url": "PING_ENDPOINT0c8983c9-9d73-446f-adb5-0641fdacc9d4",
+  "tags": "prod www",
+  "timeout": 3600
 }

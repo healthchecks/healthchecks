@@ -400,7 +400,7 @@ def add_slack_btn(request):
         channel.value = result.text
         channel.save()
         channel.assign_all_checks()
-        messages.info(request, "The Slack integration has been added!")
+        messages.success(request, "The Slack integration has been added!")
     else:
         s = doc.get("error")
         messages.warning(request, "Error message from slack: %s" % s)

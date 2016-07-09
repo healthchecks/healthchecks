@@ -50,17 +50,10 @@ def ping(request, code):
 @validate_json(schemas.check)
 def checks(request):
     if request.method == "GET":
-        code = 200
-        response = {
-            "checks": [{
-                "name": check.name,
-                "ping_url": check.url(),
-                "tags": check.tags,
-                "timeout": int(check.timeout.total_seconds()),
-                "grace": int(check.grace.total_seconds()),
-                # "channels": check.channels,
-            } for check in Check.objects.filter(user=request.user)]
-        }
+        q = Check.objects.filter(user=request.user)
+        doc = {"checks": [check.to_dict() for check in q]}
+        return JsonResponse(doc)
+
     elif request.method == "POST":
         check = Check(user=request.user)
         check.name = str(request.json.get("name", ""))
@@ -77,14 +70,10 @@ def checks(request):
         if request.json.get("channels") == "*":
             check.assign_all_channels()
 
-        code = 201
-        response = {
-            "ping_url": check.url()
-        }
-    else:
-        return HttpResponse(status=405)
+        return JsonResponse(check.to_dict(), status=201)
 
-    return JsonResponse(response, status=code)
+    # If request is neither GET nor POST, return "405 Method not allowed"
+    return HttpResponse(status=405)
 
 
 @never_cache
