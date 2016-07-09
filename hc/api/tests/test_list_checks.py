@@ -11,7 +11,7 @@ class ListChecksTestCase(BaseTestCase):
     def setUp(self):
         super(ListChecksTestCase, self).setUp()
 
-        self.now = now()
+        self.now = now().replace(microsecond=0)
 
         self.a1 = Check(user=self.alice, name="Alice 1")
         self.a1.timeout = td(seconds=3600)
