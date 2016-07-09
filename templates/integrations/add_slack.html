@@ -7,6 +7,108 @@
 {% block content %}
 <div class="row">
 <div class="col-sm-12">
+
+    {% if slack_client_id %}
+    <div class="jumbotron">
+        {% if request.user.is_authenticated %}
+        <p>If your team uses <a href="http://slack.com/">Slack</a>, you can set
+        up healthchecks.io to post status updates directly to an appropriate
+        Slack channel.</p>
+
+        <div class="text-center">
+        <a href="https://slack.com/oauth/authorize?scope=incoming-webhook&client_id={{ slack_client_id }}">
+            <img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" />
+        </a>
+        </div>
+
+        {% else %}
+        <p>
+        healthchecks.io is a <strong>free</strong> and
+        <a href="https://github.com/healthchecks/healthchecks">open source</a>
+        service for monitoring your cron jobs, background processes and
+        scheduled tasks. Before adding Slack integration, please log into
+        healthchecks.io:</p>
+
+        <div class="text-center">
+        <form class="form-inline" action="{% url 'hc-login' %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <div class="input-group input-group-lg">
+                    <div class="input-group-addon">@</div>
+                    <input
+                        type="email"
+                        class="form-control"
+                        name="email"
+                        autocomplete="email"
+                        placeholder="Email">
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-lg btn-primary pull-right">
+                    Log In
+                </button>
+            </div>
+        </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <h2>Setup Guide</h2>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            <p>
+                After {% if request.user.is_authenticated %}{% else %}logging in and{% endif %}
+                clicking on "Add to Slack", you should
+                be on a page that says "healthchecks.io would like access to
+                your Slack team". Select the team you want to add the
+                healthchecks.io integration app to.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_slack_btn_1.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>
+                You should now be on a page that says "healthchecks.io would
+                like access to <i>TEAM NAME</i>". Select the channel you want to
+                post healthchecks.io notifications to.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_slack_btn_2.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">4</span>
+            <p>
+                That is all! You will now be redirected back to
+                "Integrations" page on healthchecks.io and see
+                the new integration!
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_slack_btn_3.png' %}">
+        </div>
+    </div>
+    {% else %}
     <h1>Slack</h1>
 
     <p>If your team uses <a href="http://slack.com/">Slack</a>, you can set
@@ -14,6 +116,7 @@
     Slack channel.</p>
 
     <h2>Setup Guide</h2>
+
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no">1</span>
@@ -68,6 +171,8 @@
             </div>
         </div>
     </form>
+    {% endif %}
+
 </div>
 </div>
 

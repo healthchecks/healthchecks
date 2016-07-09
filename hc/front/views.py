@@ -270,8 +270,7 @@ def channels(request):
         "page": "channels",
         "channels": channels,
         "num_checks": num_checks,
-        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
-        "slack_client_id": settings.SLACK_CLIENT_ID
+        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None
     }
     return render(request, "front/channels.html", ctx)
 
@@ -374,9 +373,14 @@ def add_pd(request):
     return render(request, "integrations/add_pd.html", ctx)
 
 
-@login_required
 def add_slack(request):
-    ctx = {"page": "channels"}
+    if not settings.SLACK_CLIENT_ID and not request.user.is_authenticated():
+        return redirect("hc-login")
+
+    ctx = {
+        "page": "channels",
+        "slack_client_id": settings.SLACK_CLIENT_ID
+    }
     return render(request, "integrations/add_slack.html", ctx)
 
 

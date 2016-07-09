@@ -51,10 +51,28 @@ class AddChannelTestCase(BaseTestCase):
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
-        for frag in ("email", "webhook", "pd", "pushover", "slack", "hipchat", "victorops"):
+        for frag in ("email", "webhook", "pd", "pushover", "hipchat", "victorops"):
             url = "/integrations/add_%s/" % frag
             r = self.client.get(url)
             self.assertContains(r, "Integration Settings", status_code=200)
+
+    @override_settings(SLACK_CLIENT_ID=None)
+    def test_slack_webhook_instructions_work(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_slack/")
+        self.assertContains(r, "Integration Settings", status_code=200)
+
+    @override_settings(SLACK_CLIENT_ID="foo")
+    def test_slack_button(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_slack/")
+        self.assertContains(r, "slack.com/oauth/authorize", status_code=200)
+
+    @override_settings(SLACK_CLIENT_ID="foo")
+    def test_slack_landing_page(self):
+        r = self.client.get("/integrations/add_slack/")
+        self.assertContains(r, "Before adding Slack integration",
+                            status_code=200)
 
     def test_it_adds_pushover_channel(self):
         self.client.login(username="alice@example.org", password="password")
