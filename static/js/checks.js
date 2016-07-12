@@ -176,6 +176,19 @@ $(function () {
 
     });
 
+    $(".usage-examples").click(function(e) {
+        var a = e.target;
+        var url = a.getAttribute("data-url");
+        var email = a.getAttribute("data-email");
+
+        $(".ex", "#show-usage-modal").text(url);
+        $(".em", "#show-usage-modal").text(email);
+
+        $("#show-usage-modal").modal("show");
+        return false;
+    });
+
+
     var clipboard = new Clipboard('button.copy-link');
     $("button.copy-link").mouseout(function(e) {
         setTimeout(function() {

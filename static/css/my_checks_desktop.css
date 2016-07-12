@@ -62,6 +62,10 @@ table.table tr > th.th-name {
     visibility: hidden;
 }
 
+.dropdown-menu > li > a.check-menu-remove {
+    color: #B71C1C;
+}
+
 button.copy-link {
     opacity: 0;
 

@@ -77,8 +77,16 @@
                 <ul class="dropdown-menu">
                     <li>
                         <a href="{% url 'hc-log' check.code %}">
-                            <span class="glyphicon glyphicon-time"></span>
                             Log
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="usage-examples"
+                            data-url="{{ check.url }}"
+                            data-email="{{ check.email }}">
+                            Usage Examples
                         </a>
                     </li>
                     <li role="separator" class="divider"></li>
@@ -86,7 +94,6 @@
                         <a href="#" class="check-menu-remove"
                             data-name="{{ check.name_then_code }}"
                             data-url="{% url 'hc-remove-check' check.code %}">
-                            <span class="glyphicon glyphicon-trash"></span>
                             Remove
                         </a>
                     </li>

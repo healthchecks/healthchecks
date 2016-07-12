@@ -62,3 +62,11 @@
     color: #555;
 }
 
+
+#show-usage-modal  .modal-dialog {
+     width: 1100px;
+ }
+
+ #show-usage-modal .tab-content {
+     margin-top: 15px;
+ }
