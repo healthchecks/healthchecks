@@ -67,6 +67,24 @@ The site should now be running at `http://localhost:8080`
 To log into Django administration site as a super user,
 visit `http://localhost:8080/admin`
 
+## Setting Up for Development using Docker
+
+You need to have [Docker](https://docs.docker.com/engine/installation/) and
+[Docker Compose](https://docs.docker.com/compose/install/) installed.
+
+* check out project code:
+
+        $ git clone https://github.com/healthchecks/healthchecks.git
+        $ cd healthchecks
+
+* run the tests:
+
+        $ docker-compose run tests
+
+* run development server:
+
+         $ docker-compose up server
+
 ## Database Configuration
 
 Database configuration is stored in `hc/settings.py` and can be overriden

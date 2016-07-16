@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -ex
+
+python manage.py migrate
+python manage.py ensuretriggers
+pip install -r /app/stuff/development/requirements_dev.txt
+python /app/manage.py test hc/api/tests

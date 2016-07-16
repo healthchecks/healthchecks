@@ -1,0 +1,14 @@
+---
+server:
+  build: .
+  ports:
+    - 8080:80
+  volumes:
+    - .:/app
+  command: /app/entrypoint
+
+tests:
+  build: .
+  volumes:
+    - .:/app
+  command: /app/stuff/development/entrypoint-tests

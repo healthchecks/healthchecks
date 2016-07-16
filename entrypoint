@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -ex
+
+python manage.py migrate
+python manage.py ensuretriggers
+python manage.py runserver 0.0.0.0:80
