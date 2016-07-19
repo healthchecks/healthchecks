@@ -13,5 +13,12 @@
 
 {% include "emails/summary-html.html" %}
 
+{% if show_upgrade_note %}
+<p><strong>P.S.</strong>
+Find this service useful? Support it by upgrading to
+a <a href="https://healthchecks.io/pricing/">premium account</a>!
+</p>
+{% endif %}
+
 <p>Thanks,<br>The Healthchecks<span>.</span>io Team</p>
 {% endblock %}
