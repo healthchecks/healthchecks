@@ -114,7 +114,8 @@ class Check(models.Model):
             "tags": self.tags,
             "timeout": int(self.timeout.total_seconds()),
             "grace": int(self.grace.total_seconds()),
-            "n_pings": self.n_pings
+            "n_pings": self.n_pings,
+            "status": self.get_status()
         }
 
         if self.last_ping:
