@@ -28,12 +28,29 @@
                         {% if first_charge %}
                         Success! You just paid ${{ sub.price }}.
                         {% else %}
-                        You are currently paying ${{ sub.price }}/month.
+                            You are currently paying ${{ sub.price }}/month
+
+                            {% if sub.pm_is_credit_card %}
+                            using {{ sub.card_type }} card
+                            ending with {{ sub.last_4 }}.
+                            {% endif %}
+
+                            {% if sub.pm_is_paypal %}
+                            using PayPal account
+                            {{ sub.paypal_email }}.
+                            {% endif %}
+
                         {% endif %}
-                        <a href="{% url 'hc-billing' %}">See Billing History</a>.
                     </p>
+                    <p>Thank you for supporting healthchecks.io!</p>
+
                     <p>
-                        Thank you for supporting healthchecks.io!
+                        <a class="btn btn-default" href="{% url 'hc-billing' %}">See Billing History</a>
+                        {% if not first_charge %}
+                        <button class="btn btn-default btn-update-payment-method">
+                            Change Payment Method
+                        </button>
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -232,7 +249,7 @@
     </div>
 </section>
 
-<div id="payment-method-modal" class="modal" data-client-token="{{ client_token }}">
+<div id="payment-method-modal" class="modal pm-modal">
     <div class="modal-dialog">
         <form method="post" action="{% url 'hc-create-plan' %}">
             {% csrf_token %}
@@ -243,15 +260,40 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4>Set Up Subscription</h4>
                 </div>
-                <div class="modal-body" id="payment-method-body">
+                <div class="modal-body">
                     <div id="payment-form"></div>
                 </div>
                 <div class="modal-footer">
-                    <button id="payment-method-cancel" type="button" class="btn btn-default">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
                         Cancel
                     </button>
                     <button type="submit" class="btn btn-primary">
                         Set Up Subscription
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="update-payment-method-modal" class="modal pm-modal">
+    <div class="modal-dialog">
+        <form method="post" action="{% url 'hc-update-payment-method' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Your Payment Method</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="update-payment-form"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Confirm Payment Method
                     </button>
                 </div>
             </div>

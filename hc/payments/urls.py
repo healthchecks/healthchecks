@@ -19,6 +19,10 @@ urlpatterns = [
         views.create_plan,
         name="hc-create-plan"),
 
+    url(r'^pricing/update_payment_method/$',
+        views.update_payment_method,
+        name="hc-update-payment-method"),
+
     url(r'^pricing/cancel_plan/$',
         views.cancel_plan,
         name="hc-cancel-plan"),
