@@ -9,8 +9,12 @@ class CheckTokenTestCase(BaseTestCase):
         self.profile.token = make_password("secret-token")
         self.profile.save()
 
-    def test_it_redirects(self):
+    def test_it_shows_form(self):
         r = self.client.get("/accounts/check_token/alice/secret-token/")
+        self.assertContains(r, "You are about to log in")
+
+    def test_it_redirects(self):
+        r = self.client.post("/accounts/check_token/alice/secret-token/")
         self.assertRedirects(r, "/checks/")
 
         # After login, token should be blank
@@ -22,12 +26,12 @@ class CheckTokenTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         # Login again, when already authenticated
-        r = self.client.get("/accounts/check_token/alice/secret-token/")
+        r = self.client.post("/accounts/check_token/alice/secret-token/")
         self.assertRedirects(r, "/checks/")
 
     def test_it_redirects_bad_login(self):
         # Login with a bad token
         url = "/accounts/check_token/alice/invalid-token/"
-        r = self.client.get(url, follow=True)
+        r = self.client.post(url, follow=True)
         self.assertRedirects(r, "/accounts/login/")
         self.assertContains(r, "incorrect or expired")

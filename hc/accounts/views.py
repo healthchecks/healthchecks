@@ -105,19 +105,28 @@ def check_token(request, username, token):
         # User is already logged in
         return redirect("hc-checks")
 
-    user = authenticate(username=username, token=token)
-    if user is not None and user.is_active:
-        # This should get rid of "welcome_code" in session
-        request.session.flush()
+    # Some email servers open links in emails to check for malicious content.
+    # To work around this, we sign user in if the method is POST.
+    #
+    # If the method is GET, we instead serve a HTML form and a piece
+    # of Javascript to automatically submit it.
 
-        user.profile.token = ""
-        user.profile.save()
-        auth_login(request, user)
+    if request.method == "POST":
+        user = authenticate(username=username, token=token)
+        if user is not None and user.is_active:
+            # This should get rid of "welcome_code" in session
+            request.session.flush()
 
-        return redirect("hc-checks")
+            user.profile.token = ""
+            user.profile.save()
+            auth_login(request, user)
 
-    request.session["bad_link"] = True
-    return redirect("hc-login")
+            return redirect("hc-checks")
+
+        request.session["bad_link"] = True
+        return redirect("hc-login")
+
+    return render(request, "accounts/check_token_submit.html")
 
 
 @login_required
