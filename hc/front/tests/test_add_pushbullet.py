@@ -7,10 +7,21 @@ from mock import patch
 
 
 @override_settings(PUSHBULLET_CLIENT_ID="t1", PUSHBULLET_CLIENT_SECRET="s1")
-class PushbulletCallbackTestCase(BaseTestCase):
+class AddPushbulletTestCase(BaseTestCase):
+
+    def test_it_shows_instructions(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_pushbullet/")
+        self.assertContains(r, "www.pushbullet.com/authorize", status_code=200)
+
+    @override_settings(PUSHBULLET_CLIENT_ID=None)
+    def test_it_requires_client_id(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_pushbullet/")
+        self.assertEqual(r.status_code, 404)
 
     @patch("hc.front.views.requests.post")
-    def test_it_works(self, mock_post):
+    def test_it_handles_oauth_response(self, mock_post):
         oauth_response = {"access_token": "test-token"}
 
         mock_post.return_value.text = json.dumps(oauth_response)

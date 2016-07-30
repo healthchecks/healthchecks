@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Count
-from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponseBadRequest, HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -421,6 +421,9 @@ def add_hipchat(request):
 
 @login_required
 def add_pushbullet(request):
+    if settings.PUSHBULLET_CLIENT_ID is None:
+        raise Http404("pushbullet integration is not available")
+
     if "code" in request.GET:
         code = request.GET.get("code", "")
         if len(code) < 8:
@@ -464,7 +467,7 @@ def add_pushbullet(request):
 @login_required
 def add_pushover(request):
     if settings.PUSHOVER_API_TOKEN is None or settings.PUSHOVER_SUBSCRIPTION_URL is None:
-        return HttpResponseForbidden()
+        raise Http404("pushover integration is not available")
 
     if request.method == "POST":
         # Initiate the subscription
