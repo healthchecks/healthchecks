@@ -34,6 +34,7 @@
             {% if ch.kind == "pd" %} PagerDuty {% endif %}
             {% if ch.kind == "po" %} Pushover {% endif %}
             {% if ch.kind == "victorops" %} VictorOps {% endif %}
+            {% if ch.kind == "pushbullet" %} Pushbullet {% endif %}
             </td>
             <td class="value-cell">
                 {% if ch.kind == "email" %}
@@ -76,6 +77,9 @@
                         </tr>
                         {% endif %}
                     </table>
+                {% elif ch.kind == "pushbullet" %}
+                    <span class="preposition">API key</span>
+                    {{ ch.value }}
                 {% else %}
                     {{ ch.value }}
                 {% endif %}
@@ -175,6 +179,17 @@
 
             <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% if enable_pushbullet %}
+        <li>
+            <img src="{% static 'img/integrations/pushbullet.png' %}"
+                 class="icon" alt="Pushbullet icon" />
+
+            <h2>Pushbullet</h2>
+            <p>Pushbullet connects your devices, making them feel like one.</p>
+
+            <a href="{% url 'hc-add-pushbullet' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
         {% if enable_pushover %}
         <li>
             <img src="{% static 'img/integrations/pushover.png' %}"

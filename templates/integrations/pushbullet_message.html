@@ -1,0 +1,7 @@
+{% load humanize %}
+
+{% if check.status == "down" %}
+The check "{{ check.name_then_code }}" is DOWN. Last ping was {{ check.last_ping|naturaltime }}
+{% else %}
+The check "{{ check.name_then_code }}" received a ping and is now UP.
+{% endif %}

@@ -150,3 +150,9 @@ class AddChannelTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.value, "\nhttp://foo.com")
+
+    @override_settings(PUSHBULLET_CLIENT_ID="foo")
+    def test_pushbullet_instructions_work(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_pushbullet/")
+        self.assertContains(r, "www.pushbullet.com/authorize", status_code=200)

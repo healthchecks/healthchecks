@@ -176,6 +176,8 @@ class Channel(models.Model):
             return transports.PagerDuty(self)
         elif self.kind == "victorops":
             return transports.VictorOps(self)
+        elif self.kind == "pushbullet":
+            return transports.Pushbullet(self)
         elif self.kind == "po":
             return transports.Pushover(self)
         else:

@@ -1,12 +1,10 @@
 import json
 
-from django.test.utils import override_settings
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 from mock import patch
 
 
-@override_settings(PUSHOVER_API_TOKEN="token", PUSHOVER_SUBSCRIPTION_URL="url")
 class SlackCallbackTestCase(BaseTestCase):
 
     @patch("hc.front.views.requests.post")

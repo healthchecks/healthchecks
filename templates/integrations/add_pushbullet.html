@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load compress humanize staticfiles hc_extras %}
+
+{% block title %}Add Pushbullet - healthchecks.io{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Pushbullet</h1>
+
+    <div class="jumbotron">
+        <p>
+            With this integration, healthchecks.io will send
+            a <a href="http://pushbullet.com/">Pushbullet</a>
+            notification when a check
+            goes <strong>up</strong> or <strong>down</strong>.
+        </p>
+
+        <form method="post" class="text-center">
+            {% csrf_token %}
+            <a href="{{ authorize_url }}" class="btn btn-default">
+                <img class="ai-icon" src="{% static 'img/integrations/pushbullet.png' %}" alt="Pushbullet" />
+                Connect Pushbullet
+            </a>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endcompress %}
+{% endblock %}

@@ -65,8 +65,12 @@ class HttpTransport(Transport):
     def request(self, method, url, **kwargs):
         try:
             options = dict(kwargs)
+            if "headers" not in options:
+                options["headers"] = {}
+
             options["timeout"] = 5
-            options["headers"] = {"User-Agent": "healthchecks.io"}
+            options["headers"]["User-Agent"] = "healthchecks.io"
+
             r = requests.request(method, url, **options)
             if r.status_code not in (200, 201, 204):
                 return "Received status code %d" % r.status_code
@@ -79,8 +83,8 @@ class HttpTransport(Transport):
     def get(self, url):
         return self.request("get", url)
 
-    def post(self, url, json):
-        return self.request("post", url, json=json)
+    def post(self, url, json, **kwargs):
+        return self.request("post", url, json=json, **kwargs)
 
     def post_form(self, url, data):
         return self.request("post", url, data=data)
@@ -154,6 +158,23 @@ class PagerDuty(HttpTransport):
         return self.post(self.URL, payload)
 
 
+class Pushbullet(HttpTransport):
+    def notify(self, check):
+        text = tmpl("pushbullet_message.html", check=check)
+        url = "https://api.pushbullet.com/v2/pushes"
+        headers = {
+            "Access-Token": self.channel.value,
+            "Conent-Type": "application/json"
+        }
+        payload = {
+            "type": "note",
+            "title": "healthchecks.io",
+            "body": text
+        }
+
+        return self.post(url, payload, headers=headers)
+
+
 class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
 
@@ -161,7 +182,7 @@ class Pushover(HttpTransport):
         others = self.checks().filter(status="down").exclude(code=check.code)
         ctx = {
             "check": check,
-            "down_checks":  others,
+            "down_checks": others,
         }
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)

@@ -131,14 +131,9 @@ table.channels-table > tbody > tr > th {
     line-height: 40px;
 }
 
-
-.ai-icon img {
-    width: 48px;
-    height: 48px;
-}
-
 .btn img.ai-icon {
    height: 1.4em;
+   margin-right: 2px;
 }
 
 .add-integration h2 {

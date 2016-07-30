@@ -270,6 +270,7 @@ def channels(request):
         "page": "channels",
         "channels": channels,
         "num_checks": num_checks,
+        "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None
     }
     return render(request, "front/channels.html", ctx)
@@ -416,6 +417,48 @@ def add_slack_btn(request):
 def add_hipchat(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_hipchat.html", ctx)
+
+
+@login_required
+def add_pushbullet(request):
+    if "code" in request.GET:
+        code = request.GET.get("code", "")
+        if len(code) < 8:
+            return HttpResponseBadRequest()
+
+        result = requests.post("https://api.pushbullet.com/oauth2/token", {
+            "client_id": settings.PUSHBULLET_CLIENT_ID,
+            "client_secret": settings.PUSHBULLET_CLIENT_SECRET,
+            "code": code,
+            "grant_type": "authorization_code"
+        })
+
+        doc = result.json()
+        if "access_token" in doc:
+            channel = Channel(kind="pushbullet")
+            channel.user = request.team.user
+            channel.value = doc["access_token"]
+            channel.save()
+            channel.assign_all_checks()
+            messages.success(request,
+                             "The Pushbullet integration has been added!")
+        else:
+            messages.warning(request, "Something went wrong")
+
+        return redirect("hc-channels")
+
+    redirect_uri = settings.SITE_ROOT + reverse("hc-add-pushbullet")
+    authorize_url = "https://www.pushbullet.com/authorize?" + urlencode({
+        "client_id": settings.PUSHBULLET_CLIENT_ID,
+        "redirect_uri": redirect_uri,
+        "response_type": "code"
+    })
+
+    ctx = {
+        "page": "channels",
+        "authorize_url": authorize_url
+    }
+    return render(request, "integrations/add_pushbullet.html", ctx)
 
 
 @login_required
