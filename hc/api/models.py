@@ -81,7 +81,7 @@ class Check(models.Model):
         return errors
 
     def get_status(self):
-        if self.status == "new":
+        if self.status in ("new", "paused"):
             return self.status
 
         now = timezone.now()
@@ -108,9 +108,12 @@ class Check(models.Model):
         return [t.strip() for t in self.tags.split(" ") if t.strip()]
 
     def to_dict(self):
+        pause_rel_url = reverse("hc-api-pause", args=[self.code])
+
         result = {
             "name": self.name,
             "ping_url": self.url(),
+            "pause_url": settings.SITE_ROOT + pause_rel_url,
             "tags": self.tags,
             "timeout": int(self.timeout.total_seconds()),
             "grace": int(self.grace.total_seconds()),

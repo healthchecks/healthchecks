@@ -42,3 +42,12 @@ h3.api-section {
     font-weight: bold;
     margin-bottom: 1em;
 }
+
+a.section {
+    color: #000;
+    text-decoration: none;
+}
+
+a.section:hover  {
+    text-decoration: none;
+}

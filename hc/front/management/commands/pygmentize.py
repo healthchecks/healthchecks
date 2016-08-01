@@ -40,3 +40,5 @@ class Command(BaseCommand):
         _process("list_checks_response", lexers.JsonLexer())
         _process("create_check_request", lexers.BashLexer())
         _process("create_check_response", lexers.JsonLexer())
+        _process("pause_check_request", lexers.BashLexer())
+        _process("pause_check_response", lexers.JsonLexer())

@@ -7,9 +7,13 @@
 
 <h2>REST API</h2>
 <p>
-This is early days for healtchecks.io REST API. For now, there's just
-one API resource for listing and creating checks.
+This is early days for healtchecks.io REST API. For now, there's API calls to:
 </p>
+<ul>
+    <li><a href="#list-checks">List existing checks</a></li>
+    <li><a href="#create-check">Create a new check</a></li>
+    <li><a href="#pause-check">Pause monitoring of a check</a></li>
+</ul>
 
 <h2 class="rule">Authentication</h2>
 <p>Your requests to healtchecks.io REST API must authenticate using an
@@ -47,7 +51,11 @@ and 5xx indicates a server error.
 The response may contain a JSON document with additional data.
 </p>
 
-<h2 class="rule">List checks</h2>
+<!-- ********************************************************************** /-->
+
+<a class="section" name="list-checks">
+    <h2 class="rule">List checks</h2>
+</a>
 
 <div class="api-path">GET {{ SITE_ROOT }}/api/v1/checks/</div>
 
@@ -61,7 +69,11 @@ The response may contain a JSON document with additional data.
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/list_checks_response.html" %}
 
+<!-- ********************************************************************** /-->
+
+<a class="section" name="create-check">
 <h2 class="rule">Create a check</h2>
+</a>
 
 <div class="api-path">POST {{ SITE_ROOT }}/api/v1/checks/</div>
 
@@ -122,5 +134,33 @@ The response may contain a JSON document with additional data.
 
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/create_check_response.html" %}
+
+
+<!-- ********************************************************************** /-->
+
+
+<a class="section" name="pause-check">
+<h2 class="rule">Pause Monitoring of a Check</h2>
+</a>
+
+<div class="api-path">POST {{ SITE_ROOT }}/api/v1/checks/&lt;uuid&gt;/pause</div>
+
+<strong></strong>
+
+<p>
+    Disables monitoring for a check, without removing it. The check goes
+    into a "paused" state. You can resume monitoring of the check by pinging
+    it.
+</p>
+<p>
+    This API call has no request parameters.
+</p>
+
+<h3 class="api-section">Example Request</h3>
+{% include "front/snippets/pause_check_request.html" %}
+
+<h3 class="api-section">Example Response</h3>
+{% include "front/snippets/pause_check_response.html" %}
+
 
 {% endblock %}

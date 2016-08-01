@@ -6,7 +6,9 @@
       "n_pings": 1,
       "name": "Api test 1",
       "next_ping": "2016-07-09T14:58:43.366568+00:00",
+      "pause_url": "SITE_ROOT/api/v1/checks/25c55e7c-8092-4d21-ad06-7dacfbb6fc10/pause",
       "ping_url": "PING_ENDPOINT25c55e7c-8092-4d21-ad06-7dacfbb6fc10",
+      "status": "up",
       "tags": "foo",
       "timeout": 3600
     },
@@ -16,7 +18,9 @@
       "n_pings": 0,
       "name": "Api test 2",
       "next_ping": null,
+      "pause_url": "SITE_ROOT/api/v1/checks/7e1b6e61-b16f-4671-bae3-e3233edd1b5e/pause",
       "ping_url": "PING_ENDPOINT7e1b6e61-b16f-4671-bae3-e3233edd1b5e",
+      "status": "new",
       "tags": "bar baz",
       "timeout": 60
     }

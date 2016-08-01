@@ -23,7 +23,7 @@ def ping(request, code):
 
     check.n_pings = F("n_pings") + 1
     check.last_ping = timezone.now()
-    if check.status == "new":
+    if check.status in ("new", "paused"):
         check.status = "up"
 
     check.save()
@@ -74,6 +74,23 @@ def checks(request):
 
     # If request is neither GET nor POST, return "405 Method not allowed"
     return HttpResponse(status=405)
+
+
+@csrf_exempt
+@check_api_key
+def pause(request, code):
+    if request.method != "POST":
+        # Method not allowed
+        return HttpResponse(status=405)
+
+    try:
+        check = Check.objects.get(code=code, user=request.user)
+    except Check.DoesNotExist:
+        return HttpResponseBadRequest()
+
+    check.status = "paused"
+    check.save()
+    return JsonResponse(check.to_dict())
 
 
 @never_cache

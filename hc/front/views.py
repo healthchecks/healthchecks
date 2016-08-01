@@ -44,7 +44,7 @@ def my_checks(request):
 
             if status == "down":
                 down_tags.add(tag)
-            elif check.in_grace_period():
+            elif check.in_grace_period() and status != "paused":
                 grace_tags.add(tag)
 
     ctx = {
@@ -165,6 +165,21 @@ def update_timeout(request, code):
         check.timeout = td(seconds=form.cleaned_data["timeout"])
         check.grace = td(seconds=form.cleaned_data["grace"])
         check.save()
+
+    return redirect("hc-checks")
+
+
+@login_required
+@uuid_or_400
+def pause(request, code):
+    assert request.method == "POST"
+
+    check = get_object_or_404(Check, code=code)
+    if check.user_id != request.team.user.id:
+        return HttpResponseForbidden()
+
+    check.status = "paused"
+    check.save()
 
     return redirect("hc-checks")
 

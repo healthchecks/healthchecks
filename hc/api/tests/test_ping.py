@@ -13,11 +13,21 @@ class PingTestCase(TestCase):
         r = self.client.get("/ping/%s/" % self.check.code)
         assert r.status_code == 200
 
-        same_check = Check.objects.get(code=self.check.code)
-        assert same_check.status == "up"
+        self.check.refresh_from_db()
+        assert self.check.status == "up"
 
         ping = Ping.objects.latest("id")
         assert ping.scheme == "http"
+
+    def test_it_changes_status_of_paused_check(self):
+        self.check.status = "paused"
+        self.check.save()
+
+        r = self.client.get("/ping/%s/" % self.check.code)
+        assert r.status_code == 200
+
+        self.check.refresh_from_db()
+        assert self.check.status == "up"
 
     def test_post_works(self):
         csrf_client = Client(enforce_csrf_checks=True)

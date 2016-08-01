@@ -123,21 +123,6 @@ $(function () {
         return false;
     });
 
-    $("#show-urls").click(function() {
-        $("#show-urls").addClass("active");
-        $(".my-checks-url").removeClass("off");
-
-        $("#show-emails").removeClass("active");
-        $(".my-checks-email").addClass("off");
-    });
-
-    $("#show-emails").click(function() {
-        $("#show-urls").removeClass("active");
-        $(".my-checks-url").addClass("off");
-
-        $("#show-emails").addClass("active");
-        $(".my-checks-email").removeClass("off");
-    });
 
     $("#my-checks-tags button").click(function() {
         // .active has not been updated yet by bootstrap code,
@@ -175,6 +160,13 @@ $(function () {
         $("#checks-list > li").each(applyFilters);
 
     });
+
+    $(".pause-check").click(function(e) {
+        var url = e.target.getAttribute("data-url");
+        $("#pause-form").attr("action", url).submit();
+        return false;
+    });
+
 
     $(".usage-examples").click(function(e) {
         var a = e.target;

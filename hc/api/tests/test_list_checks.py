@@ -47,6 +47,8 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(checks["Alice 1"]["last_ping"], self.now.isoformat())
         self.assertEqual(checks["Alice 1"]["n_pings"], 1)
         self.assertEqual(checks["Alice 1"]["status"], "new")
+        pause_url = "http://localhost:8000/api/v1/checks/%s/pause" % self.a1.code
+        self.assertEqual(checks["Alice 1"]["pause_url"], pause_url)
 
         next_ping = self.now + td(seconds=3600)
         self.assertEqual(checks["Alice 1"]["next_ping"], next_ping.isoformat())

@@ -25,6 +25,8 @@
                 <td>
                     {% if check.get_status == "new" %}
                         <span class="label label-default">NEW</span>
+                    {% elif check.get_status == "paused" %}
+                        <span class="label label-default">PAUSED</span>
                     {% elif check.in_grace_period %}
                         <span class="label label-warning">LATE</span>
                     {% elif check.get_status == "up" %}
