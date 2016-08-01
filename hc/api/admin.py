@@ -24,7 +24,7 @@ class ChecksAdmin(admin.ModelAdmin):
 
     class Media:
         css = {
-         'all': ('css/admin/checks.css',)
+            'all': ('css/admin/checks.css',)
         }
 
     search_fields = ["name", "user__email", "code"]
@@ -34,7 +34,6 @@ class ChecksAdmin(admin.ModelAdmin):
     list_filter = ("status", OwnershipListFilter, "last_ping")
     actions = ["send_alert"]
 
-
     def email(self, obj):
         return obj.user.email if obj.user else None
 
@@ -43,7 +42,6 @@ class ChecksAdmin(admin.ModelAdmin):
             return obj.name
 
         return "%s [%s]" % (obj.name, obj.tags)
-
 
     def send_alert(self, request, qs):
         for check in qs:
@@ -141,6 +139,11 @@ class PingsAdmin(admin.ModelAdmin):
 
 @admin.register(Channel)
 class ChannelsAdmin(admin.ModelAdmin):
+    class Media:
+        css = {
+            'all': ('css/admin/channels.css',)
+        }
+
     search_fields = ["value", "user__email"]
     list_select_related = ("user", )
     list_display = ("id", "code", "email", "formatted_kind", "value",
