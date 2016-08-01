@@ -155,6 +155,8 @@ class ChannelsAdmin(admin.ModelAdmin):
             return "PagerDuty"
         elif obj.kind == "victorops":
             return "VictorOps"
+        elif obj.kind == "pushbullet":
+            return "Pushbullet"
         elif obj.kind == "po":
             return "Pushover"
         elif obj.kind == "webhook":
