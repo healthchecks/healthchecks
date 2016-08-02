@@ -44,7 +44,7 @@ def my_checks(request):
 
             if status == "down":
                 down_tags.add(tag)
-            elif check.in_grace_period() and status != "paused":
+            elif check.in_grace_period():
                 grace_tags.add(tag)
 
     ctx = {

@@ -92,7 +92,7 @@ class Check(models.Model):
         return "down"
 
     def in_grace_period(self):
-        if not self.last_ping:
+        if self.status in ("new", "paused"):
             return False
 
         up_ends = self.last_ping + self.timeout

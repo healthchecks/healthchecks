@@ -57,6 +57,8 @@
         <td>
             {% if check.get_status == "new" %}
                 <span class="badge new">NEW</span>
+            {% elif check.get_status == "paused" %}
+                <span class="badge new">PAUSED</span>
             {% elif check.in_grace_period %}
                 <span class="badge grace">LATE</span>
             {% elif check.get_status == "up" %}
