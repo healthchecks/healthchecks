@@ -120,7 +120,7 @@ table.channels-table > tbody > tr > th {
     margin-left: 72px;
 }
 
-.add-integration a {
+.add-integration a.btn {
     position: absolute;
     right: 16px;
     top: 50%;
@@ -172,4 +172,12 @@ table.channels-table > tbody > tr > th {
 
 .variable-column {
     width: 160px;
+}
+
+.add-integration li.link-to-github {
+    padding: 16px 8px;
+}
+
+.link-to-github p {
+    margin-bottom: 0;
 }
