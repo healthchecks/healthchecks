@@ -1,7 +1,13 @@
-import braintree
-
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+
+if settings.USE_PAYMENTS:
+    import braintree
+else:
+    # hc.payments tests mock this object, so tests should
+    # still be able to run:
+    braintree = None
 
 
 class SubscriptionManager(models.Manager):
