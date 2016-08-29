@@ -10,7 +10,12 @@ class TeamAccessMiddleware(object):
         teams_q = teams_q.select_related("user")
         request.teams = list(teams_q)
 
-        profile = request.user.profile
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            profile = Profile(user=request.user)
+            profile.save()
+
         if profile.current_team:
             request.team = profile.current_team
         else:
