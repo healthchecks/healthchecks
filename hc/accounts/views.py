@@ -210,6 +210,7 @@ def profile(request):
         badge_urls.append(get_badge_url(username, tag))
 
     ctx = {
+        "page": "profile",
         "badge_urls": badge_urls,
         "profile": profile,
         "show_api_key": show_api_key

@@ -53,25 +53,14 @@ body {
     font-size: small;
 }
 
-.glyphicon.up, .glyphicon.new, .glyphicon.paused, .glyphicon.grace, .glyphicon.down {
-    font-size: 22px;
+.status {
+    font-size: 24px;
 }
 
-.glyphicon.up {
-    color: #5cb85c;
-}
-
-.glyphicon.new, .glyphicon.paused {
-    color: #AAA;
-}
-
-.glyphicon.grace {
-    color: #f0ad4e;
-}
-
-.glyphicon.down {
-    color: #d9534f;
-}
+.status.icon-up { color: #5cb85c; }
+.status.icon-up.new, .status.icon-paused { color: #CCC; }
+.status.icon-grace { color: #f0ad4e; }
+.status.icon-down { color: #d9534f; }
 
 .hc-dialog {
     background: #FFF;

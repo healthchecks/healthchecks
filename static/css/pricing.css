@@ -1,10 +1,6 @@
 .panel-pricing .panel-heading {
   padding: 20px 10px;
 }
-.panel-pricing .panel-heading .glyphicon {
-  margin-top: 10px;
-  font-size: 58px;
-}
 .panel-pricing .list-group-item {
   color: #777777;
   border-bottom: 1px solid rgba(250, 250, 250, 0.5);

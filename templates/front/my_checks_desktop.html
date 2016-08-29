@@ -15,17 +15,17 @@
     <tr class="checks-row">
         <td class="indicator-cell">
             {% if check.get_status == "new" %}
-                <span class="glyphicon glyphicon-question-sign new"
+                <span class="status icon-up new"
                     data-toggle="tooltip" title="New. Has never received a ping."></span>
             {% elif check.get_status == "paused" %}
-                <span class="glyphicon glyphicon-pause new"
+                <span class="status icon-paused"
                     data-toggle="tooltip" title="Monitoring paused. Ping to resume."></span>
             {% elif check.in_grace_period %}
-                <span class="glyphicon glyphicon-exclamation-sign grace"></span>
+                <span class="status icon-grace"></span>
             {% elif check.get_status == "up" %}
-                <span class="glyphicon glyphicon-ok-sign up"></span>
+                <span class="status icon-up"></span>
             {% elif check.get_status == "down" %}
-                <span class="glyphicon glyphicon-exclamation-sign down"></span>
+                <span class="status icon-down"></span>
             {% endif %}
         </td>
         <td class="name-cell">
@@ -76,7 +76,7 @@
         <td>
             <div class="check-menu dropdown">
                 <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                <span class="icon-settings" aria-hidden="true"></span>
                 </button>
                 <ul class="dropdown-menu">
                     <li {% if check.status == "new" or check.status == "paused" %}class="disabled"{% endif %}>

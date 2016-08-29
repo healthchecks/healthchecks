@@ -26,7 +26,7 @@ class MyChecksTestCase(BaseTestCase):
         r = self.client.get("/checks/")
 
         # Desktop
-        self.assertContains(r, "glyphicon-ok-sign")
+        self.assertContains(r, "icon-up")
 
         # Mobile
         self.assertContains(r, "label-success")
@@ -40,7 +40,7 @@ class MyChecksTestCase(BaseTestCase):
         r = self.client.get("/checks/")
 
         # Desktop
-        self.assertContains(r, "glyphicon-exclamation-sign")
+        self.assertContains(r, "icon-down")
 
         # Mobile
         self.assertContains(r, "label-danger")
@@ -54,7 +54,7 @@ class MyChecksTestCase(BaseTestCase):
         r = self.client.get("/checks/")
 
         # Desktop
-        self.assertContains(r, "glyphicon-exclamation-sign grace")
+        self.assertContains(r, "icon-grace")
 
         # Mobile
         self.assertContains(r, "label-warning")
