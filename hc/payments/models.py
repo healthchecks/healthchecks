@@ -40,7 +40,6 @@ class Subscription(models.Model):
         return self._pm
 
     def pm_is_credit_card(self):
-        print(self.payment_method_token, self._get_braintree_payment_method())
         return isinstance(self._get_braintree_payment_method(),
                           braintree.credit_card.CreditCard)
 

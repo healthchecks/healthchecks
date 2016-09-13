@@ -129,7 +129,7 @@
                             class="btn btn-danger pull-right">Revoke</button>
 
                     {% else %}
-                        <span class="text-success glyphicon glyphicon-ok"></span>
+                        <span class="icon-ok"></span>
                         API access is enabled.
                         <form method="post">
                             {% csrf_token %}
@@ -141,7 +141,7 @@
                         </form>
                     {% endif %}
                 {% else %}
-                    <span class="glyphicon glyphicon-remove"></span>
+                    <span class="icon-cancel"></span>
                     API access is disabled.
                     <form method="post">
                         {% csrf_token %}

@@ -181,3 +181,7 @@ table.channels-table > tbody > tr > th {
 .link-to-github p {
     margin-bottom: 0;
 }
+
+.page-channels .icon-delete {
+    font-size: 16px;
+}

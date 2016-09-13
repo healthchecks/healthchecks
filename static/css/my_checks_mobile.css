@@ -14,13 +14,6 @@
     font-weight: 400;
 }
 
-#checks-list h2 .glyphicon {
-    position: relative;
-    top: 11px;
-    margin: 0 10px;
-
-}
-
 #checks-list h2 code {
     display: block;
     font-size: 12px;
@@ -33,6 +26,7 @@
     position: absolute;
     top: 0;
     right: 0;
+    font-size: 20px;
 }
 
 #checks-list .unnamed {

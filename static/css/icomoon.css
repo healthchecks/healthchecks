@@ -1,0 +1,62 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('../fonts/icomoon.eot?j2asdo');
+  src:  url('../fonts/icomoon.eot?j2asdo#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?j2asdo') format('truetype'),
+    url('../fonts/icomoon.woff?j2asdo') format('woff'),
+    url('../fonts/icomoon.svg?j2asdo#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-cancel:before {
+  content: "\e5c9";
+}
+.icon-ok:before {
+  content: "\e86d";
+}
+.icon-up:before {
+  content: "\e86c";
+}
+.icon-close:before {
+  content: "\e5cd";
+}
+.icon-delete:before {
+  content: "\e872";
+}
+.icon-mail:before {
+  content: "\e159";
+}
+.icon-grace:before {
+  content: "\e000";
+}
+.icon-missing:before {
+  content: "\e001";
+}
+.icon-dots:before {
+  content: "\e5d3";
+}
+.icon-down:before {
+  content: "\e7f8";
+}
+.icon-paused:before {
+  content: "\e7f7";
+}
+.icon-settings:before {
+  content: "\e8b8";
+}

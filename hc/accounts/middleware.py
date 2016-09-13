@@ -2,16 +2,24 @@ from hc.accounts.models import Profile
 
 
 class TeamAccessMiddleware(object):
-    def process_request(self, request):
-        if not request.user.is_authenticated():
-            return
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-        teams_q = Profile.objects.filter(member__user_id=request.user.id)
-        teams_q = teams_q.select_related("user")
-        request.teams = list(teams_q)
+    def __call__(self, request):
+        if request.user.is_authenticated:
+            teams_q = Profile.objects.filter(member__user_id=request.user.id)
+            teams_q = teams_q.select_related("user")
+            request.teams = list(teams_q)
 
-        profile = request.user.profile
-        if profile.current_team:
-            request.team = profile.current_team
-        else:
-            request.team = profile
+            try:
+                profile = request.user.profile
+            except Profile.DoesNotExist:
+                profile = Profile(user=request.user)
+                profile.save()
+
+            if profile.current_team:
+                request.team = profile.current_team
+            else:
+                request.team = profile
+
+        return self.get_response(request)

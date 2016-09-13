@@ -1,7 +1,7 @@
 django-appconf==1.0.1
 django-ses-backend==0.1.1
-Django==1.9
-django_compressor==2.0
+Django==1.10
+django_compressor==2.1
 djmail==0.11.0
 futures==3.0.3
 premailer==2.9.6

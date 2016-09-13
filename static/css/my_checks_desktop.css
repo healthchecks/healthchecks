@@ -62,6 +62,10 @@ table.table tr > th.th-name {
     visibility: hidden;
 }
 
+.check-menu .icon-settings {
+    font-size: 16px;
+}
+
 .dropdown-menu > li > a.check-menu-remove {
     color: #B71C1C;
 }

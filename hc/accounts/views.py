@@ -101,7 +101,7 @@ def set_password_link_sent(request):
 
 
 def check_token(request, username, token):
-    if request.user.is_authenticated() and request.user.username == username:
+    if request.user.is_authenticated and request.user.username == username:
         # User is already logged in
         return redirect("hc-checks")
 
@@ -210,6 +210,7 @@ def profile(request):
         badge_urls.append(get_badge_url(username, tag))
 
     ctx = {
+        "page": "profile",
         "badge_urls": badge_urls,
         "profile": profile,
         "show_api_key": show_api_key

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.signing import base64_hmac
 from django.template.loader import render_to_string
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 WIDTHS = {"a": 7, "b": 7, "c": 6, "d": 7, "e": 6, "f": 4, "g": 7, "h": 7,
           "i": 3, "j": 3, "k": 7, "l": 3, "m": 10, "n": 7, "o": 7, "p": 7,

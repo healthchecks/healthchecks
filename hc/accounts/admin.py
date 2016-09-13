@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
+from django.urls import reverse
 from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
 
@@ -12,7 +12,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     class Media:
         css = {
-         'all': ('css/admin/profiles.css',)
+            'all': ('css/admin/profiles.css',)
         }
 
     list_display = ("id", "users", "reports_allowed", "next_report_date",
