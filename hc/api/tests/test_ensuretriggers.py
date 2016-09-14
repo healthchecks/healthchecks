@@ -19,9 +19,11 @@ class EnsureTriggersTestCase(TestCase):
         check.save()
         check.refresh_from_db()
         assert check.alert_after is not None
+        ### The above assert fails. Make it pass
+
         alert_after = check.alert_after
 
         check.last_ping += timedelta(days=1)
         check.save()
         check.refresh_from_db()
-        assert check.alert_after > alert_after
+        ### Assert that alert_after is lesser than the check's alert_after 

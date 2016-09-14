@@ -35,5 +35,4 @@ class BaseTestCase(TestCase):
         self.charlie.set_password("password")
         self.charlie.save()
 
-        charlies_profile = Profile(user=self.charlie)
-        charlies_profile.save()
+        ### Set Charles not to have access to Alice's stuff

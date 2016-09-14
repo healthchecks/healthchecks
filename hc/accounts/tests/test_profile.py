@@ -17,33 +17,9 @@ class ProfileTestCase(BaseTestCase):
         # profile.token should be set now
         self.alice.profile.refresh_from_db()
         token = self.alice.profile.token
-        self.assertTrue(len(token) > 10)
+        ### Assert that the token is set
 
-        # And an email should have been sent
-        self.assertEqual(len(mail.outbox), 1)
-        expected_subject = 'Set password on healthchecks.io'
-        self.assertEqual(mail.outbox[0].subject, expected_subject)
-
-    def test_it_creates_api_key(self):
-        self.client.login(username="alice@example.org", password="password")
-
-        form = {"create_api_key": "1"}
-        r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 200
-
-        self.alice.profile.refresh_from_db()
-        api_key = self.alice.profile.api_key
-        self.assertTrue(len(api_key) > 10)
-
-    def test_it_revokes_api_key(self):
-        self.client.login(username="alice@example.org", password="password")
-
-        form = {"revoke_api_key": "1"}
-        r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 200
-
-        self.alice.profile.refresh_from_db()
-        self.assertEqual(self.alice.profile.api_key, "")
+        ### Assert that the email was sent and check email content
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)
@@ -51,12 +27,7 @@ class ProfileTestCase(BaseTestCase):
 
         self.alice.profile.send_report()
 
-        # And an email should have been sent
-        self.assertEqual(len(mail.outbox), 1)
-        message = mail.outbox[0]
-
-        self.assertEqual(message.subject, 'Monthly Report')
-        self.assertIn("Test Check", message.body)
+        ###Assert that the email was sent and check email content
 
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -69,13 +40,11 @@ class ProfileTestCase(BaseTestCase):
         for member in self.alice.profile.member_set.all():
             member_emails.add(member.user.email)
 
-        self.assertEqual(len(member_emails), 2)
+        ### Assert the existence of the member emails
+
         self.assertTrue("frank@example.org" in member_emails)
 
-        # And an email should have been sent
-        subj = ('You have been invited to join'
-                ' alice@example.org on healthchecks.io')
-        self.assertEqual(mail.outbox[0].subject, subj)
+        ###Assert that the email was sent and check email content
 
     def test_add_team_member_checks_team_access_allowed_flag(self):
         self.client.login(username="charlie@example.org", password="password")
@@ -137,3 +106,5 @@ class ProfileTestCase(BaseTestCase):
 
         # Expect only Alice's tags
         self.assertNotContains(r, "bobs-tag.svg")
+
+    ### Test it creates and revokes API key

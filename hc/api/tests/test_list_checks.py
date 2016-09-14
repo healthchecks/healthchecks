@@ -33,30 +33,15 @@ class ListChecksTestCase(BaseTestCase):
 
     def test_it_works(self):
         r = self.get()
-        self.assertEqual(r.status_code, 200)
+        ### Assert the response status code
 
         doc = r.json()
         self.assertTrue("checks" in doc)
 
         checks = {check["name"]: check for check in doc["checks"]}
-        self.assertEqual(len(checks), 2)
-
-        self.assertEqual(checks["Alice 1"]["timeout"], 3600)
-        self.assertEqual(checks["Alice 1"]["grace"], 900)
-        self.assertEqual(checks["Alice 1"]["ping_url"], self.a1.url())
-        self.assertEqual(checks["Alice 1"]["last_ping"], self.now.isoformat())
-        self.assertEqual(checks["Alice 1"]["n_pings"], 1)
-        self.assertEqual(checks["Alice 1"]["status"], "new")
-        pause_url = "http://localhost:8000/api/v1/checks/%s/pause" % self.a1.code
-        self.assertEqual(checks["Alice 1"]["pause_url"], pause_url)
-
-        next_ping = self.now + td(seconds=3600)
-        self.assertEqual(checks["Alice 1"]["next_ping"], next_ping.isoformat())
-
-        self.assertEqual(checks["Alice 2"]["timeout"], 86400)
-        self.assertEqual(checks["Alice 2"]["grace"], 3600)
-        self.assertEqual(checks["Alice 2"]["ping_url"], self.a2.url())
-        self.assertEqual(checks["Alice 2"]["status"], "up")
+        ### Assert the expected length of checks
+        ### Assert the checks Alice 1 and Alice 2's timeout, grace, ping_url, status,
+        ### last_ping, n_pings and pause_url
 
     def test_it_shows_only_users_checks(self):
         bobs_check = Check(user=self.bob, name="Bob 1")
@@ -68,10 +53,4 @@ class ListChecksTestCase(BaseTestCase):
         for check in data["checks"]:
             self.assertNotEqual(check["name"], "Bob 1")
 
-    def test_it_accepts_api_key_from_request_body(self):
-        payload = json.dumps({"api_key": "abc"})
-        r = self.client.generic("GET", "/api/v1/checks/", payload,
-                                content_type="application/json")
-
-        self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "Alice")
+    ### Test that it accepts an api_key in the request
