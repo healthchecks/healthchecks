@@ -3,7 +3,6 @@ django-ses-backend==0.1.1
 Django==1.10
 django_compressor==2.1
 djmail==0.11.0
-futures==3.0.3
 premailer==2.9.6
 psycopg2==2.6.1
 requests==2.9.1
