@@ -12,5 +12,5 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-	url(r'^static/?P<path>.*)$', views.serve),
+	url(r'^static/(?P<path>.*)$', views.serve),
 ]
