@@ -41,9 +41,11 @@ def settings_value(name):
     return getattr(settings, name, "")
 
 
+@register.simple_tag
 def site_name(name):
     return settings.SITE_NAME
 
 
+@register.simple_tag
 def site_root(name):
     return settings.SITE_ROOT
