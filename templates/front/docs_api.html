@@ -130,9 +130,11 @@ The response may contain a JSON document with additional data.
     <tr>
         <th>unique</th>
         <td>
-            <p>bool, optional, default value: False.</p>
-            <p>When true a check won't be created if there exists a check with the
-            same name. If any existing checks match then the first one will be returned.</p>
+            <p>array of strings, optional, default value: [].</p>
+            <p>Tells the API to only create a new check if the combination of fields
+                in <code>unqiue</code> is unique. The fields currently supported are
+                name, tags, timeout, and grace. If a new check is created the API returns
+            a 201 code, otherwise it returns a 200 code.</p>
         </td>
     </tr>
 </table>
