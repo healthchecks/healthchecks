@@ -42,10 +42,10 @@ def settings_value(name):
 
 
 @register.simple_tag
-def site_name(name):
+def site_name():
     return settings.SITE_NAME
 
 
 @register.simple_tag
-def site_root(name):
+def site_root():
     return settings.SITE_ROOT
