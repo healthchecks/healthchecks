@@ -127,6 +127,14 @@ The response may contain a JSON document with additional data.
             to automatically assign all existing notification channels.</p>
         </td>
     </tr>
+    <tr>
+        <th>unique</th>
+        <td>
+            <p>bool, optional, default value: False.</p>
+            <p>When true a check won't be created if there exists a check with the
+            same name. If any existing checks match then the first one will be returned.</p>
+        </td>
+    </tr>
 </table>
 
 <h3 class="api-section">Example Request</h3>

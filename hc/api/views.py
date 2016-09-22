@@ -55,8 +55,20 @@ def checks(request):
         return JsonResponse(doc)
 
     elif request.method == "POST":
+
+        unique = bool(request.json.get("unique", False))
+        name = str(request.json.get("name", ""))
+
+        if unique:
+            existing_checks = Check.objects.filter(user=request.user, name=name)
+
+            if existing_checks.count() > 0:
+                # There might be more than one check with the same name since name
+                # uniqueness isn't enforced in the model
+                return JsonResponse(existing_checks.first().to_dict(), status=200)
+
         check = Check(user=request.user)
-        check.name = str(request.json.get("name", ""))
+        check.name = name
         check.tags = str(request.json.get("tags", ""))
         if "timeout" in request.json:
             check.timeout = td(seconds=request.json["timeout"])
