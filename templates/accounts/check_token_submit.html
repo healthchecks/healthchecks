@@ -1,8 +1,9 @@
+{% load hc_extras %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Continue to healthchecks.io</title>
+    <title>Continue to {% settings_value "SITE_NAME" %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -41,7 +42,7 @@
 </style>
 
 <noscript>
-    <p>You are about to log into healthchecks.io.</p>
+    <p>You are about to log into {% settings_value "SITE_NAME" %}.</p>
     <p>Please press the button below to continue:</p>
     <br />
     <form id="form" method="post">
@@ -50,7 +51,7 @@
             id="submit-btn"
             type="submit"
             class="btn btn-lg btn-primary"
-            value="Continue to healthchecks.io">
+            value="Continue to {% settings_value "SITE_NAME" %}">
     </form>
 </noscript>
 

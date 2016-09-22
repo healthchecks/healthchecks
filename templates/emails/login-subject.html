@@ -1,5 +1,6 @@
+{% load hc_extras %}
 {% if inviting_profile %}
-    You have been invited to join {{ inviting_profile }} on healthchecks.io
+    You have been invited to join {{ inviting_profile }} on {% settings_value "SITE_NAME" %}
 {% else %}
-    Log in to healthchecks.io
+    Log in to {% settings_value "SITE_NAME" %}
 {% endif %}

@@ -3,6 +3,7 @@ from django.core import mail
 from hc.test import BaseTestCase
 from hc.accounts.models import Member
 from hc.api.models import Check
+from django.conf import settings
 
 
 class ProfileTestCase(BaseTestCase):
@@ -21,7 +22,7 @@ class ProfileTestCase(BaseTestCase):
 
         # And an email should have been sent
         self.assertEqual(len(mail.outbox), 1)
-        expected_subject = 'Set password on healthchecks.io'
+        expected_subject = 'Set password on {0}'.format(getattr(settings, "SITE_NAME"))
         self.assertEqual(mail.outbox[0].subject, expected_subject)
 
     def test_it_creates_api_key(self):
@@ -74,7 +75,7 @@ class ProfileTestCase(BaseTestCase):
 
         # And an email should have been sent
         subj = ('You have been invited to join'
-                ' alice@example.org on healthchecks.io')
+                ' alice@example.org on {0}'.format(getattr(settings, "SITE_NAME")))
         self.assertEqual(mail.outbox[0].subject, subj)
 
     def test_add_team_member_checks_team_access_allowed_flag(self):

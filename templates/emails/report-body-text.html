@@ -1,10 +1,11 @@
+{% load hc_extras %}
 Hello,
 
-This is a monthly report sent by healthchecks.io.
+This is a monthly report sent by {% settings_value "SITE_NAME" %}.
 
 {% include 'emails/summary-text.html' %}
 
 --
 Cheers,
-healthchecks.io
+{% settings_value "SITE_NAME" %}
 

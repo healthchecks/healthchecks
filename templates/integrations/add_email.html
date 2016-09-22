@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Notification Channels - healthchecks.io{% endblock %}
+{% block title %}Notification Channels - {% settings_value "SITE_NAME" %}{% endblock %}
 
 
 {% block content %}
@@ -18,7 +18,7 @@
 
     <p>
         <strong>Confirmation needed.</strong>
-        After entering an email address, healthchecks.io will send out a confirmation link.
+        After entering an email address, {% settings_value "SITE_NAME" %} will send out a confirmation link.
         Only confirmed addresses will receive notifications.
     </p>
 

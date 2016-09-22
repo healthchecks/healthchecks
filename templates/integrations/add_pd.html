@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Add PagerDuty - healthchecks.io{% endblock %}
+{% block title %}Add PagerDuty - {% settings_value "SITE_NAME" %}{% endblock %}
 
 
 {% block content %}
@@ -13,7 +13,7 @@
     a well-known incident management system. It provides
     alerting, on-call scheduling, escalation policies and incident tracking.
     If you use or plan on using PagerDuty, you can can integrate it
-    with your healthchecks.io account in few simple steps.</p>
+    with your {% settings_value "SITE_NAME" %} account in few simple steps.</p>
 
     <h2>Setup Guide</h2>
     <div class="row ai-step">
