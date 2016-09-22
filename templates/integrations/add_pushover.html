@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Add Pushover - {% settings_value "SITE_NAME" %}{% endblock %}
+{% block title %}Add Pushover - {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -12,7 +12,7 @@
     <p><a href="https://www.pushover.net/">Pushover</a> is a service to receive
     instant push notifications on your phone or tablet from a variety of
     sources. If you bought the app on your mobile device, you can integrate it
-    with your {% settings_value "SITE_NAME" %} account in a few simple steps.</p>
+    with your {% site_name %} account in a few simple steps.</p>
 
     <h2>Integration Settings</h2>
 

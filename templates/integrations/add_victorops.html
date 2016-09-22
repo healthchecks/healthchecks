@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Add VictorOps - {% settings_value "SITE_NAME" %}{% endblock %}
+{% block title %}Add VictorOps - {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -12,7 +12,7 @@
     <p><a href="https://victorops.com/">VictorOps</a> is
     another incident management system similar to PagerDuty.
     If you use or plan on using VictorOps, you can can integrate it
-    with your {% settings_value "SITE_NAME" %} account in few simple steps.</p>
+    with your {% site_name %} account in few simple steps.</p>
 
     <h2>Setup Guide</h2>
     <div class="row ai-step">
@@ -22,7 +22,7 @@
                 Log into your VictorOps account,
                 go to <strong>Settings > Schedules</strong>,
                 and find or create the Team Schedule you
-                would like to use for {% settings_value "SITE_NAME" %} alerts.
+                would like to use for {% site_name %} alerts.
             </p>
         </div>
         <div class="col-sm-6">

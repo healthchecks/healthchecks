@@ -6,7 +6,7 @@
 
 {% if inviting_profile %}
     <p><strong>{{ inviting_profile }}</strong> invites you to their
-    <a href="{% settings_value "SITE_ROOT" %}">{% settings_value "SITE_NAME" %}</a> account.</p>
+    <a href="{% site_root %}">{% site_name %}</a> account.</p>
 
     <p>You will be able to manage their
     existing monitoring checks and set up new ones. If you already have your
@@ -15,7 +15,7 @@
     accounts.</p>
 {% endif %}
 
-<p>To log into <a href="{% settings_value "SITE_ROOT" %}">{% settings_value "SITE_NAME" %}</a>, please press the button below:</p>
+<p>To log into <a href="{% site_root %}">{% site_name %}</a>, please press the button below:</p>
 
 <!-- Action -->
 <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
@@ -35,7 +35,7 @@
 <p>Thanks,<br>The Healthchecks<span>.</span>io</a> Team</p>
 <p>
     <strong>P.S.</strong> Need help getting started? Check out our
-    <a href="{% settings_value "SITE_ROOT" %}/docs/">help documentation</a>.
+    <a href="{% site_root %}/docs/">help documentation</a>.
     Or, just reply to this email with any questions or issues you have.
 </p>
 <!-- Sub copy -->

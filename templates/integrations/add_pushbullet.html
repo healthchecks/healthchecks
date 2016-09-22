@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Add Pushbullet - {% settings_value "SITE_NAME" %}{% endblock %}
+{% block title %}Add Pushbullet - {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 
     <div class="jumbotron">
         <p>
-            With this integration, {% settings_value "SITE_NAME" %} will send
+            With this integration, {% site_name %} will send
             a <a href="http://pushbullet.com/">Pushbullet</a>
             notification when a check
             goes <strong>up</strong> or <strong>down</strong>.

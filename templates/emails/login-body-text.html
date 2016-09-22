@@ -1,19 +1,19 @@
 {% load hc_extras %}
 {% block content %}Hello,
 {% if inviting_profile %}
-{{ inviting_profile }} invites you to their {% settings_value "SITE_NAME" %} account.
+{{ inviting_profile }} invites you to their {% site_name %} account.
 
 You will be able to manage their existing monitoring checks and set up new
-ones. If you already have your own account on {% settings_value "SITE_NAME" %}, you will
+ones. If you already have your own account on {% site_name %}, you will
 be able to switch between the two accounts.{% endif %}
-To log into {% settings_value "SITE_NAME" %}, please open the link below:
+To log into {% site_name %}, please open the link below:
 
 {{ login_link }}
 
 Thanks,
-The {% settings_value "SITE_NAME" %} Team
+The {% site_name %} Team
 
 P.S. Need help getting started? Check out our help documentation
-at {% settings_value "SITE_ROOT" %}/docs/
+at {% site_root %}/docs/
 Or, just reply to this email with any questions or issues you have.
 {% endblock %}

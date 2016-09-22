@@ -1,12 +1,12 @@
 {% load hc_extras %}
 <p>Hello,</p>
 
-<p>To start receiving {% settings_value "SITE_NAME" %} notification to this address,
+<p>To start receiving {% site_name %} notification to this address,
 please click the link below:</p>
 <p><a href="{{ verify_link }}">{{ verify_link }}</a></p>
 
 <p>
     --<br />
     Regards,<br />
-    {% settings_value "SITE_NAME" %}
+    {% site_name %}
 </p>

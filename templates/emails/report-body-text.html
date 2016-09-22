@@ -1,11 +1,11 @@
 {% load hc_extras %}
 Hello,
 
-This is a monthly report sent by {% settings_value "SITE_NAME" %}.
+This is a monthly report sent by {% site_name %}.
 
 {% include 'emails/summary-text.html' %}
 
 --
 Cheers,
-{% settings_value "SITE_NAME" %}
+{% site_name %}
 

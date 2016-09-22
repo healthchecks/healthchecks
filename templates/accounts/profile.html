@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress staticfiles hc_extras %}
 
-{% block title %}Account Settings - {% settings_value "SITE_NAME" %}{% endblock %}
+{% block title %}Account Settings - {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -47,7 +47,7 @@
                 <form method="post">
                     {% csrf_token %}
                     <h2>Set Password</h2>
-                    Attach a password to your {% settings_value "SITE_NAME" %} account
+                    Attach a password to your {% site_name %} account
                     <button
                         type="submit"
                         name="set_password"

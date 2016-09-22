@@ -4,7 +4,7 @@
 {% block content %}
 
 <h1>Hello,</h1>
-<p>This is a monthly report sent by <a href="{% settings_value "SITE_ROOT" %}">{% settings_value "SITE_NAME" %}</a>.</p>
+<p>This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.</p>
 
 {% include "emails/summary-html.html" %}
 

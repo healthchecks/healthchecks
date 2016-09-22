@@ -1,6 +1,6 @@
 {% load hc_extras %}
 {% if inviting_profile %}
-    You have been invited to join {{ inviting_profile }} on {% settings_value "SITE_NAME" %}
+    You have been invited to join {{ inviting_profile }} on {% site_name %}
 {% else %}
-    Log in to {% settings_value "SITE_NAME" %}
+    Log in to {% site_name %}
 {% endif %}
