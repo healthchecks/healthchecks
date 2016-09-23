@@ -4,7 +4,7 @@ from functools import wraps
 
 from django.contrib.auth.models import User
 from django.http import HttpResponseBadRequest, JsonResponse
-from six import string_types
+from hc.lib.jsonschema import ValidationError, validate
 
 
 def uuid_or_400(f):
@@ -61,21 +61,10 @@ def validate_json(schema):
     def decorator(f):
         @wraps(f)
         def wrapper(request, *args, **kwds):
-            for key, spec in schema["properties"].items():
-                if key not in request.json:
-                    continue
-
-                value = request.json[key]
-                if spec["type"] == "string":
-                    if not isinstance(value, string_types):
-                        return make_error("%s is not a string" % key)
-                elif spec["type"] == "number":
-                    if not isinstance(value, int):
-                        return make_error("%s is not a number" % key)
-                    if "minimum" in spec and value < spec["minimum"]:
-                        return make_error("%s is too small" % key)
-                    if "maximum" in spec and value > spec["maximum"]:
-                        return make_error("%s is too large" % key)
+            try:
+                validate(request.json, schema)
+            except ValidationError as e:
+                return make_error("json validation error: %s" % e)
 
             return f(request, *args, **kwds)
         return wrapper
