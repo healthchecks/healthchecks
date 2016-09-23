@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Add Slack - healthchecks.io{% endblock %}
+{% block title %}Add Slack - {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -12,7 +12,7 @@
     <div class="jumbotron">
         {% if request.user.is_authenticated %}
         <p>If your team uses <a href="http://slack.com/">Slack</a>, you can set
-        up healthchecks.io to post status updates directly to an appropriate
+        up {% site_name %} to post status updates directly to an appropriate
         Slack channel.</p>
 
         <div class="text-center">
@@ -27,7 +27,7 @@
         <a href="https://github.com/healthchecks/healthchecks">open source</a>
         service for monitoring your cron jobs, background processes and
         scheduled tasks. Before adding Slack integration, please log into
-        healthchecks.io:</p>
+            {% site_root %}:</p>
 
         <div class="text-center">
         <form class="form-inline" action="{% url 'hc-login' %}" method="post">
@@ -97,7 +97,7 @@
             <span class="step-no">4</span>
             <p>
                 That is all! You will now be redirected back to
-                "Integrations" page on healthchecks.io and see
+                "Integrations" page on {% site_name %} and see
                 the new integration!
             </p>
         </div>
@@ -112,7 +112,7 @@
     <h1>Slack</h1>
 
     <p>If your team uses <a href="http://slack.com/">Slack</a>, you can set
-    up healthchecks.io to post status updates directly to an appropriate
+    up {% site_name %} to post status updates directly to an appropriate
     Slack channel.</p>
 
     <h2>Setup Guide</h2>

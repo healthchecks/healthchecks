@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from hc.api.models import Check
-
+from django.conf import settings
 
 class LoginTestCase(TestCase):
 
@@ -24,7 +24,7 @@ class LoginTestCase(TestCase):
 
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 'Log in to healthchecks.io')
+        self.assertEqual(mail.outbox[0].subject, 'Log in to {0}'.format(getattr(settings, "SITE_NAME")))
 
         # And check should be associated with the new user
         check_again = Check.objects.get(code=check.code)

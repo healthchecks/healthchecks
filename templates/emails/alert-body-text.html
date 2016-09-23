@@ -1,6 +1,7 @@
+{% load hc_extras %}
 Hello,
 
-This is a notification sent by healthchecks.io.
+This is a notification sent by {% site_name %}.
 The check "{{ check.name_then_code }}" has gone {{ check.status }}.
 
 Here is a summary of all your checks:
@@ -9,5 +10,5 @@ Here is a summary of all your checks:
 
 --
 Regards,
-healthchecks.io
+{% site_name %}
 

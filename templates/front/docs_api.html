@@ -1,7 +1,7 @@
 {% extends "front/base_docs.html" %}
-{% load staticfiles %}
+{% load staticfiles hc_extras %}
 
-{% block title %}REST API - healthchecks.io{% endblock %}
+{% block title %}REST API - {% site_name %}{% endblock %}
 
 {% block docs_content %}
 
@@ -17,7 +17,7 @@ This is early days for healtchecks.io REST API. For now, there's API calls to:
 
 <h2 class="rule">Authentication</h2>
 <p>Your requests to healtchecks.io REST API must authenticate using an
-API key. By default, an user account on healthchecks.io doesn't have
+API key. By default, an user account on {% site_name %} doesn't have
 an API key. You can create one in the <a href="{% url 'hc-profile' %}">Settings</a> page.
 </p>
 
@@ -34,7 +34,7 @@ its value should be your API key.
 <h2 class="rule">API Requests</h2>
 
 <p>
-For POST requests, the healthchecks.io API expects request body to be
+For POST requests, the {% site_name %} API expects request body to be
 a JSON document (<em>not</em> a <code>mulitpart/form-data</code> encoded
 form data).
 </p>
@@ -42,7 +42,7 @@ form data).
 <h2 class="rule">API Responses</h2>
 
 <p>
-healthchecks.io uses HTTP status codes wherever possible.
+{% site_name %} uses HTTP status codes wherever possible.
 In general, 2xx class indicates success, 4xx indicates an client error,
 and 5xx indicates a server error.
 </p>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
-{% block title %}Notification Channels - healthchecks.io{% endblock %}
+{% block title %}Notification Channels - {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -10,7 +10,7 @@
     <h1>HipChat</h1>
 
     <p>If your team uses <a href="https://www.hipchat.com/">HipChat</a>,
-    you can set up healthchecks.io to post status updates directly to an
+    you can set up {% site_name %} to post status updates directly to an
     appropriate HipChat room.</p>
 
     <h2>Setup Guide</h2>

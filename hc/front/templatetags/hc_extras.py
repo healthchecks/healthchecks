@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 
 register = template.Library()
 
@@ -8,6 +9,7 @@ class Unit(object):
         self.name = name
         self.plural = name + "s"
         self.nsecs = nsecs
+
 
 MINUTE = Unit("minute", 60)
 HOUR = Unit("hour", MINUTE.nsecs * 60)
@@ -32,3 +34,18 @@ def hc_duration(td):
             result.append("%d %s" % (v, unit.plural))
 
     return " ".join(result)
+
+
+@register.simple_tag
+def settings_value(name):
+    return getattr(settings, name, "")
+
+
+@register.simple_tag
+def site_name():
+    return settings.SITE_NAME
+
+
+@register.simple_tag
+def site_root():
+    return settings.SITE_ROOT

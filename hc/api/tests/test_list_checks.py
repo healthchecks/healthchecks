@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta as td
 from django.utils.timezone import now
+from django.conf import settings
 
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -47,7 +48,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(checks["Alice 1"]["last_ping"], self.now.isoformat())
         self.assertEqual(checks["Alice 1"]["n_pings"], 1)
         self.assertEqual(checks["Alice 1"]["status"], "new")
-        pause_url = "http://localhost:8000/api/v1/checks/%s/pause" % self.a1.code
+        pause_url = "{0}/api/v1/checks/%s/pause".format(getattr(settings, "SITE_ROOT")) % self.a1.code
         self.assertEqual(checks["Alice 1"]["pause_url"], pause_url)
 
         next_ping = self.now + td(seconds=3600)

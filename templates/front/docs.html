@@ -1,7 +1,7 @@
 {% extends "front/base_docs.html" %}
-{% load staticfiles %}
+{% load staticfiles hc_extras %}
 
-{% block title %}Documentation - healthchecks.io{% endblock %}
+{% block title %}Documentation - {% site_name %}{% endblock %}
 
 {% block docs_content %}
 
@@ -12,7 +12,7 @@ page has an unique "ping" URL. Whenever you access this URL,
 the "Last Ping" value of corresponding check is updated.
 </p>
 <p>When a certain amount of time passes since last received ping, the
-check is considered "late", and healthchecks.io sends an email alert.
+check is considered "late", and {% site_name %} sends an email alert.
 It is a simple idea.</p>
 
 <h2>Executing a Ping</h2>
@@ -128,7 +128,7 @@ thing: they fire off a HTTP GET method.</p>
 <a name="browser"></a>
 <h3>Browser</h3>
 <p>
-    healthchecks.io includes <code>Access-Control-Allow-Origin:*</code>
+    {% site_name %} includes <code>Access-Control-Allow-Origin:*</code>
     CORS header in its ping responses, so cross-domain AJAX requests
     should work.
 </p>
@@ -139,9 +139,9 @@ thing: they fire off a HTTP GET method.</p>
 <p>
     You can use <a href="https://msdn.microsoft.com/en-us/powershell/mt173057.aspx">PowerShell</a>
     and Windows Task Scheduler to automate various tasks on a Windows system.
-    From within a PowerShell script it is also easy to ping healthchecks.io.
+    From within a PowerShell script it is also easy to ping {% site_name %}.
 </p>
-<p>Here is a simple PowerShell script that pings healthchecks.io.
+<p>Here is a simple PowerShell script that pings {% site_name %}.
 When scheduled to run with Task Scheduler, it will essentially
 just send regular "I'm alive" messages. You can of course extend it to
 do more things.</p>
@@ -240,7 +240,7 @@ powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
         <td>
             <strong>Down.</strong>
             Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
-            When check goes from "Late" to "Down", healthchecks.io
+            When check goes from "Late" to "Down", {% site_name %}
             sends you an alert.
         </td>
     </tr>

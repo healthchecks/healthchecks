@@ -1,9 +1,10 @@
 {% extends "emails/base.html" %}
+{% load hc_extras %}
 {% block content %}
 
 <h1>Hello,</h1>
 <p>
-    This is a notification sent by <a href="https://healthchecks.io">healthchecks.io</a>.
+    This is a notification sent by <a href="{% site_root %}">{% site_name %}</a>.
     <br />
     The check <strong>{{ check.name_then_code }}</strong>
     has gone <strong>{{ check.status|upper }}</strong>.
