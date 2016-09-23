@@ -7,16 +7,17 @@ from hc.test import BaseTestCase
 class CreateCheckTestCase(BaseTestCase):
     URL = "/api/v1/checks/"
 
-    def setUp(self):
-        super(CreateCheckTestCase, self).setUp()
-
-    def post(self, data, expected_error=None):
+    def post(self, data, expected_error=None, expected_fragment=None):
         r = self.client.post(self.URL, json.dumps(data),
                              content_type="application/json")
 
         if expected_error:
             self.assertEqual(r.status_code, 400)
             self.assertEqual(r.json()["error"], expected_error)
+
+        if expected_fragment:
+            self.assertEqual(r.status_code, 400)
+            self.assertIn(expected_fragment, r.json()["error"])
 
         return r
 
@@ -63,6 +64,22 @@ class CreateCheckTestCase(BaseTestCase):
         check = Check.objects.get()
         self.assertEqual(check.channel_set.get(), channel)
 
+    def test_it_supports_unique(self):
+        existing = Check(user=self.alice, name="Foo")
+        existing.save()
+
+        r = self.post({
+            "api_key": "abc",
+            "name": "Foo",
+            "unique": ["name"]
+        })
+
+        # Expect 200 instead of 201
+        self.assertEqual(r.status_code, 200)
+
+        # And there should be only one check in the database:
+        self.assertEqual(Check.objects.count(), 1)
+
     def test_it_handles_missing_request_body(self):
         r = self.client.post(self.URL, content_type="application/json")
         self.assertEqual(r.status_code, 400)
@@ -80,16 +97,33 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_small_timeout(self):
         self.post({"api_key": "abc", "timeout": 0},
-                  expected_error="timeout is too small")
+                  expected_fragment="timeout is too small")
 
     def test_it_rejects_large_timeout(self):
         self.post({"api_key": "abc", "timeout": 604801},
-                  expected_error="timeout is too large")
+                  expected_fragment="timeout is too large")
 
     def test_it_rejects_non_number_timeout(self):
         self.post({"api_key": "abc", "timeout": "oops"},
-                  expected_error="timeout is not a number")
+                  expected_fragment="timeout is not a number")
 
     def test_it_rejects_non_string_name(self):
         self.post({"api_key": "abc", "name": False},
-                  expected_error="name is not a string")
+                  expected_fragment="name is not a string")
+
+    def test_unique_accepts_only_whitelisted_values(self):
+        existing = Check(user=self.alice, name="Foo")
+        existing.save()
+
+        self.post({
+            "api_key": "abc",
+            "name": "Foo",
+            "unique": ["status"]
+        }, expected_fragment="unexpected value")
+
+    def test_it_rejects_bad_unique_values(self):
+        self.post({
+            "api_key": "abc",
+            "name": "Foo",
+            "unique": "not a list"
+        }, expected_fragment="not an array")

@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from hc.api import schemas
 from hc.api.decorators import check_api_key, uuid_or_400, validate_json
-from hc.api.models import Check, Ping
+from hc.api.models import Check, Ping, DEFAULT_TIMEOUT, DEFAULT_GRACE
 from hc.lib.badges import check_signature, get_badge_svg
 
 
@@ -56,37 +56,36 @@ def checks(request):
         return JsonResponse(doc)
 
     elif request.method == "POST":
+        name = str(request.json.get("name", ""))
+        tags = str(request.json.get("tags", ""))
+
+        timeout = DEFAULT_TIMEOUT
+        if "timeout" in request.json:
+            timeout = td(seconds=request.json["timeout"])
+
+        grace = DEFAULT_GRACE
+        if "grace" in request.json:
+            grace = td(seconds=request.json["grace"])
 
         unique_fields = request.json.get("unique", [])
-        name = str(request.json.get("name", ""))
-
-        if len(unique_fields) > 0:
+        if unique_fields:
             existing_checks = Check.objects.filter(user=request.user)
-
-            for unique_field in unique_fields:
-
-                field_value = request.json.get(unique_field)
-
-                if unique_field == "timeout" or unique_field == "grace":
-                    field_value = td(seconds=field_value)
-
-                try:
-                    existing_checks = existing_checks.filter(**{unique_field: field_value})
-                except FieldError:
-                    return HttpResponse(status=400)
+            if "name" in unique_fields:
+                existing_checks = existing_checks.filter(name=name)
+            if "tags" in unique_fields:
+                existing_checks = existing_checks.filter(tags=tags)
+            if "timeout" in unique_fields:
+                existing_checks = existing_checks.filter(timeout=timeout)
+            if "grace" in unique_fields:
+                existing_checks = existing_checks.filter(grace=grace)
 
             if existing_checks.count() > 0:
-                # There might be more than one check with the same name since name
-                # uniqueness isn't enforced in the model
-                return JsonResponse(existing_checks.first().to_dict(), status=200)
+                # There might be more than one matching check, return first
+                first_match = existing_checks.first()
+                return JsonResponse(first_match.to_dict(), status=200)
 
-        check = Check(user=request.user)
-        check.name = name
-        check.tags = str(request.json.get("tags", ""))
-        if "timeout" in request.json:
-            check.timeout = td(seconds=request.json["timeout"])
-        if "grace" in request.json:
-            check.grace = td(seconds=request.json["grace"])
+        check = Check(user=request.user, name=name, tags=tags,
+                      timeout=timeout, grace=grace)
 
         check.save()
 
