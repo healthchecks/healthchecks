@@ -127,6 +127,16 @@ The response may contain a JSON document with additional data.
             to automatically assign all existing notification channels.</p>
         </td>
     </tr>
+    <tr>
+        <th>unique</th>
+        <td>
+            <p>array of strings, optional, default value: [].</p>
+            <p>Tells the API to only create a new check if the combination of fields
+                in <code>unqiue</code> is unique. The fields currently supported are
+                name, tags, timeout, and grace. If a new check is created the API returns
+            a 201 code, otherwise it returns a 200 code.</p>
+        </td>
+    </tr>
 </table>
 
 <h3 class="api-section">Example Request</h3>

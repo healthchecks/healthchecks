@@ -1,5 +1,6 @@
 from datetime import timedelta as td
 
+from django.core.exceptions import FieldError
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils import timezone
@@ -55,8 +56,32 @@ def checks(request):
         return JsonResponse(doc)
 
     elif request.method == "POST":
+
+        unique_fields = request.json.get("unique", [])
+        name = str(request.json.get("name", ""))
+
+        if len(unique_fields) > 0:
+            existing_checks = Check.objects.filter(user=request.user)
+
+            for unique_field in unique_fields:
+
+                field_value = request.json.get(unique_field)
+
+                if unique_field == "timeout" or unique_field == "grace":
+                    field_value = td(seconds=field_value)
+
+                try:
+                    existing_checks = existing_checks.filter(**{unique_field: field_value})
+                except FieldError:
+                    return HttpResponse(status=400)
+
+            if existing_checks.count() > 0:
+                # There might be more than one check with the same name since name
+                # uniqueness isn't enforced in the model
+                return JsonResponse(existing_checks.first().to_dict(), status=200)
+
         check = Check(user=request.user)
-        check.name = str(request.json.get("name", ""))
+        check.name = name
         check.tags = str(request.json.get("tags", ""))
         if "timeout" in request.json:
             check.timeout = td(seconds=request.json["timeout"])
