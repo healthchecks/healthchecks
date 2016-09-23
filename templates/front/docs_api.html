@@ -35,7 +35,7 @@ its value should be your API key.
 
 <p>
 For POST requests, the {% site_name %} API expects request body to be
-a JSON document (<em>not</em> a <code>mulitpart/form-data</code> encoded
+a JSON document (<em>not</em> a <code>multipart/form-data</code> encoded
 form data).
 </p>
 
@@ -99,6 +99,8 @@ The response may contain a JSON document with additional data.
         <td>
             <p>string, optional, default value: ""</p>
             <p>A space-delimited list of tags for the new check.</p>
+            <p>Example:</p>
+            <pre>{"tags": "reports staging"}</pre>
         </td>
     </tr>
     <tr>
@@ -107,6 +109,8 @@ The response may contain a JSON document with additional data.
             <p>number, optional, default value: {{ default_timeout }}.</p>
             <p>A number of seconds, the expected period of this check.</p>
             <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+            <p>Example for 5 minute timeout:</p>
+            <pre>{"timeout": 300}</pre>
         </td>
     </tr>
     <tr>
@@ -130,12 +134,35 @@ The response may contain a JSON document with additional data.
     <tr>
         <th>unique</th>
         <td>
-            <p>array of strings, optional, default value: [].</p>
-            <p>Tells the API to only create a new check if the combination of fields
-                in <code>unqiue</code> is unique. The fields currently supported are
-                name, tags, timeout, and grace. If a new check is created the API returns
-            a 201 code, otherwise it returns a 200 code.</p>
+            <p>array of string values, optional, default value: [].</p>
+            <p>Before creating a check, look for existing checks, filtered
+            by fields listed in <code>unique</code>. If a matching check is
+            found, return it with HTTP status code 200. If no matching check is
+            found, proceed as normal: create a check and return it
+            with HTTP status code 201.</p>
+
+            <p>The accepted values are: <code>name</code>,
+            <code>tags</code>, <code>timeout</code> and <code>grace</code>.</p>
+
+            <p>Example:</p>
+            <pre>{"name": "Backups", unique: ["name"]}</pre>
+            <p>In this example, if a check named "Backups" exists, it will
+            be returned. Otherwise, a new check will be created and
+            returned.</p>
         </td>
+    </tr>
+</table>
+
+<h3 class="api-section">Response Codes</h3>
+<table class="table">
+    <tr>
+        <th>201 Created</th>
+        <td>Returned if the check was successfully created.</td>
+    </tr>
+    <tr>
+        <th>200 OK</th>
+        <td>Returned if the <code>unique</code> parameter was used and an
+        existing check was matched.</td>
     </tr>
 </table>
 

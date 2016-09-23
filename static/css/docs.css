@@ -51,3 +51,11 @@ a.section {
 a.section:hover  {
     text-decoration: none;
 }
+
+.page-docs code {
+    padding: 2px 4px;
+    font-size: 90%;
+    color: #427d5e;
+    background-color: #f2f9f6;
+    border-radius: 4px;
+}

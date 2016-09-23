@@ -67,6 +67,26 @@ The site should now be running at `http://localhost:8080`
 To log into Django administration site as a super user,
 visit `http://localhost:8080/admin`
 
+## Configuration
+
+Site configuration is kept in `hc/settings.py`. Additional configuration
+is loaded from `hc/local_settings.py` file, if it exists. You
+can create this file (should be right next to `settings.py` in the filesystem)
+and override settings as needed.
+
+Some useful settings keys to override are:
+
+`SITE_ROOT` is used to build fully qualified URLs for pings, and for use in
+emails and notifications. Example:
+
+    SITE_ROOT = "https://my-monitoring-project.com"`
+
+`SITE_NAME` has the default value of "healthchecks.io" and is used throughout
+the templates. Replace it with your own name to personalize your installation.
+Example:
+
+    SITE_NAME = "My Monitoring Project"
+
 ## Database Configuration
 
 Database configuration is stored in `hc/settings.py` and can be overriden
@@ -112,7 +132,6 @@ configuration from environment variables like so:
     }
 
 
-
 ## Sending Emails
 
 healthchecks must be able to send email messages, so it can send out login
@@ -125,6 +144,7 @@ scenes. For example, the healthchecks.io site uses
 [django-ses-backend](https://github.com/piotrbulinski/django-ses-backend/)
 and the email configuration in `hc/local_settings.py` looks as follows:
 
+    DEFAULT_FROM_EMAIL = 'noreply@my-monitoring-project.com'
     DJMAIL_REAL_BACKEND = 'django_ses_backend.SESBackend'
     AWS_SES_ACCESS_KEY_ID = "put-access-key-here"
     AWS_SES_SECRET_ACCESS_KEY = "put-secret-access-key-here"
@@ -180,11 +200,11 @@ There are separate Django management commands for each task:
 
     ```
     $ ./manage.py pruneusers
-    ```    
+    ```
 
-When you first try these commands on your data, it is a good idea to 
-test them on a copy of your database, not on the live database right away. 
-In a production setup, you should also have regular, automated database 
+When you first try these commands on your data, it is a good idea to
+test them on a copy of your database, not on the live database right away.
+In a production setup, you should also have regular, automated database
 backups set up.
 
 ## Integrations
