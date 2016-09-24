@@ -103,7 +103,7 @@ class LargeTablePaginator(Paginator):
         Changed to use an estimate if the estimate is greater than 10,000
         Returns the total number of objects, across all pages.
         """
-        if self._count is None:
+        if not hasattr(self, "_count") or self._count is None:
             try:
                 estimate = 0
                 if not self.object_list.query.where:
