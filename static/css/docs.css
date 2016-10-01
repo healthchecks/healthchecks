@@ -59,3 +59,7 @@ a.section:hover  {
     background-color: #f2f9f6;
     border-radius: 4px;
 }
+
+.snippet pre {
+  border: 1px solid #cccccc;
+}

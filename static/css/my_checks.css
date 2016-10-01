@@ -71,3 +71,12 @@
  #show-usage-modal .tab-content {
      margin-top: 15px;
  }
+
+ .tab-pane {
+    border: none;
+    padding: 0;
+ }
+
+ .snippet {
+   margin-bottom: 15px;
+ }

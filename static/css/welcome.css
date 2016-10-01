@@ -87,3 +87,14 @@
     width: 22px;
     height: 22px;
 }
+
+.tab-pane {
+  border-left: 1px solid #DDD;
+  border-right: 1px solid #DDD;
+  border-bottom: 1px solid #DDD;
+  padding: 3px;
+}
+
+.tab-pane.tab-pane-email {
+  border: none;
+}

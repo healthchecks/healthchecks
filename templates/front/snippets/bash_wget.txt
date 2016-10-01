@@ -1,0 +1,2 @@
+# using wget:
+wget PING_URL -O /dev/null

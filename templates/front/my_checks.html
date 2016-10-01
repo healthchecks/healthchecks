@@ -235,25 +235,54 @@
                 <div class="tab-content">
                     {% with ping_url="<span class='ex'></span>" %}
                     <div role="tabpanel" class="tab-pane active" id="crontab">
-                        {% include "front/snippets/crontab.html" %}
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/crontab.html" %}
+                        </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="bash">
-                        {% include "front/snippets/bash.html" %}
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/bash_curl.html" %}
+                        </div>
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/bash_wget.html" %}
+                        </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="python">
-                        {% include "front/snippets/python.html" %}
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/python_urllib2.html" %}
+                        </div>
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/python_requests.html" %}
+                        </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="node">
-                        {% include "front/snippets/node.html" %}
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/node.html" %}
+                        </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="php">
-                        {% include "front/snippets/php.html" %}
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/php.html" %}
+                        </div>
                     </div>
                     <div class="tab-pane" id="browser">
-                        {% include "front/snippets/browser.html" %}
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/browser.html" %}
+                        </div>
                     </div>
                     <div class="tab-pane" id="powershell">
-                        {% include "front/snippets/powershell.html" %}
+                        <div class="snippet">
+                            <button class="copy-snippet-link hidden-sm">copy</button>
+                            {% include "front/snippets/powershell.html" %}
+                        </div>
                     </div>
                     <div class="tab-pane" id="email">
                             As an alternative to HTTP/HTTPS requests,
@@ -286,6 +315,7 @@
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
 <script src="{% static 'js/checks.js' %}"></script>
 {% endcompress %}
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends "front/base_docs.html" %}
-{% load staticfiles hc_extras %}
+{% load compress staticfiles hc_extras %}
 
 {% block title %}Documentation - {% site_name %}{% endblock %}
 
@@ -44,7 +44,10 @@ and your command runs. If it completes successfully (exit code 0),
 curl or wget runs a HTTP GET call to the ping URL.
 </p>
 
-{% include "front/snippets/crontab.html" %}
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/crontab.html" %}
+</div>
 
 <p>With this simple modification, you monitor several failure
 scenarios:</p>
@@ -110,20 +113,41 @@ thing: they fire off a HTTP GET method.</p>
     Ubuntu, for example, does not have curl installed out of the box.
 </p>
 
-{% include "front/snippets/bash.html" %}
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/bash_curl.html" %}
+</div>
+
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/bash_wget.html" %}
+</div>
 
 <a name="python"></a>
 <h3>Python</h3>
-{% include "front/snippets/python.html" %}
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/python_urllib2.html" %}
+</div>
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/python_requests.html" %}
+</div>
 
 <a name="node"></a>
 <h3>Node</h3>
-{% include "front/snippets/node.html" %}
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/node.html" %}
+</div>
 
 
 <a name="php"></a>
 <h3>PHP</h3>
-{% include "front/snippets/php.html" %}
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/php.html" %}
+</div>
 
 <a name="browser"></a>
 <h3>Browser</h3>
@@ -132,7 +156,10 @@ thing: they fire off a HTTP GET method.</p>
     CORS header in its ping responses, so cross-domain AJAX requests
     should work.
 </p>
-{% include "front/snippets/browser.html" %}
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/browser.html" %}
+</div>
 
 <a name="powershell"></a>
 <h3>PowerShell</h3>
@@ -146,15 +173,21 @@ When scheduled to run with Task Scheduler, it will essentially
 just send regular "I'm alive" messages. You can of course extend it to
 do more things.</p>
 
-{% include "front/snippets/powershell.html" %}
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    {% include "front/snippets/powershell.html" %}
+</div>
 
 <p>Save the above to e.g. <code>C:\Scripts\healthchecks.ps1</code>. Then use
 the following command in a Scheduled Task to run the script:
 </p>
 
-<pre>
-powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
-</pre>
+<div class="snippet">
+    <button class="copy-snippet-link hidden-sm">copy</button>
+    <div class="highlight">
+        <pre>powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1</pre>
+    </div>
+</div>
 
 <a name="email"></a>
 <h3>Email</h3>
@@ -246,4 +279,12 @@ powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
     </tr>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
+{% endcompress %}
 {% endblock %}

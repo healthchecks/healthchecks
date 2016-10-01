@@ -1,6 +1,3 @@
 # using curl:
 # (make sure it is installed on your system!)
 curl --retry 3 PING_URL
-
-# using wget:
-wget PING_URL -O /dev/null

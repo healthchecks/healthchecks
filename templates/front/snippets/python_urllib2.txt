@@ -1,0 +1,3 @@
+# using urllib2:
+import urllib2
+urllib2.urlopen("PING_URL")
