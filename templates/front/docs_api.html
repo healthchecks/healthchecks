@@ -64,10 +64,7 @@ The response may contain a JSON document with additional data.
     a JSON document with all checks in user's account.
 </p>
 <h3 class="api-section">Example Request</h3>
-<div class="snippet">
-    <button class="copy-snippet-link hidden-sm">copy</button>
-    {% include "front/snippets/list_checks_request.html" %}
-</div>
+{% include "front/snippets/list_checks_request.html" %}
 
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/list_checks_response.html" %}
@@ -170,16 +167,10 @@ The response may contain a JSON document with additional data.
 </table>
 
 <h3 class="api-section">Example Request</h3>
-<div class="snippet">
-    <button class="copy-snippet-link hidden-sm">copy</button>
-    {% include "front/snippets/create_check_request_a.html" %}
-</div>
+{% include "front/snippets/create_check_request_a.html" %}
 <br>
 <p>Or, alternatively:</p>
-<div class="snippet">
-    <button class="copy-snippet-link hidden-sm">copy</button>
-    {% include "front/snippets/create_check_request_b.html" %}
-</div>
+{% include "front/snippets/create_check_request_b.html" %}
 
 
 <h3 class="api-section">Example Response</h3>
@@ -208,10 +199,7 @@ The response may contain a JSON document with additional data.
 
 <h3 class="api-section">Example Request</h3>
 
-<div class="snippet">
-    <button class="copy-snippet-link hidden-sm">copy</button>
-    {% include "front/snippets/pause_check_request.html" %}
-</div>
+{% include "front/snippets/pause_check_request.html" %}
 
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/pause_check_response.html" %}
@@ -222,6 +210,7 @@ The response may contain a JSON document with additional data.
 {% block scripts %}
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
 <script src="{% static 'js/snippet-copy.js' %}"></script>
 {% endcompress %}

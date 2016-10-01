@@ -59,64 +59,35 @@
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="crontab">
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/crontab.html" %}
-                    </div>
+                    {% include "front/snippets/crontab.html" %}
                 </div>
                 <div role="tabpanel" class="tab-pane" id="bash">
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/bash_curl.html" %}
-                    </div>
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/bash_wget.html" %}
-                    </div>
+                    {% include "front/snippets/bash_curl.html" %}
+                    {% include "front/snippets/bash_wget.html" %}
                 </div>
                 <div role="tabpanel" class="tab-pane" id="python">
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/python_urllib2.html" %}
-                    </div>
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/python_requests.html" %}
-                    </div>
+                    {% include "front/snippets/python_urllib2.html" %}
+                    {% include "front/snippets/python_requests.html" %}
                 </div>
                 <div role="tabpanel" class="tab-pane" id="node">
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/node.html" %}
-                    </div>
+                    {% include "front/snippets/node.html" %}
                 </div>
                 <div role="tabpanel" class="tab-pane" id="php">
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/php.html" %}
-                    </div>
+                    {% include "front/snippets/php.html" %}
                 </div>
                 <div class="tab-pane" id="browser">
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/browser.html" %}
-                    </div>
+                    {% include "front/snippets/browser.html" %}
                 </div>
                 <div class="tab-pane" id="powershell">
-                    <div class="snippet">
-                        <button class="copy-snippet-link hidden-sm">copy</button>
-                        {% include "front/snippets/powershell.html" %}
-                    </div>
+                    {% include "front/snippets/powershell.html" %}
                 </div>
                 <div class="tab-pane tab-pane-email" id="email">
-                    <div class="instructions">
+                    <p>
                         As an alternative to HTTP/HTTPS requests,
                         you can "ping" this check by sending an
                         email message to
-                        <div class="email-address">
-                            <code>{{ check.email }}</code>
-                        </div>
-                    </div>
+                        <a href="mailto:{{ check.email }}">{{ check.email }}</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -360,9 +331,8 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/collapse-native.js' %}"></script>
-<script src="{% static 'js/tab-native.js' %}"></script>
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
 <script src="{% static 'js/snippet-copy.js' %}"></script>
 {% endcompress %}

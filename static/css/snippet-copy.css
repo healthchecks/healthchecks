@@ -1,44 +1,15 @@
-.snippet {
-  position: relative;
-  margin-bottom: 3px;
+.highlight {
+    position: relative;
 }
 
-.snippet:last-child {
-  margin-bottom: 0;
-}
-
-.snippet pre {
-  border: none;
-  background: #F6F6F6 !important;
-  margin: 0;
-}
-
-.snippet:hover .copy-snippet-link {
-    opacity: 1
-}
-
-button.copy-snippet-link {
+.highlight button {
     position: absolute;
-    top: 0;
-    right: 0;
-    margin-top: -1px;
-    margin-right: -1px;
-    z-index: 10;
-    display: block;
-    padding: 5px 8px !important;
-    font-size: 12px;
-    cursor: pointer;
-    border-radius: 0 0 0 4px;
+    top: 4px;
+    right: 4px;
     opacity: 0;
-    background: none!important;
-    border: none;
-    outline: none;
-    font-family: "Open Sans", Arial, sans-serif;
-    color: #0091ea;
-    cursor :pointer;
     transition: opacity 0.1s linear;
 }
 
-button.copy-snippet-link:hover {
-    text-decoration: underline;
+.highlight:hover button {
+    opacity: 1
 }

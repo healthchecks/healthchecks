@@ -55,11 +55,8 @@ a.section:hover  {
 .page-docs code {
     padding: 2px 4px;
     font-size: 90%;
-    color: #427d5e;
-    background-color: #f2f9f6;
+    color: #333;
+    background-color: #f5f5f5;
     border-radius: 4px;
 }
 
-.snippet pre {
-  border: 1px solid #cccccc;
-}
