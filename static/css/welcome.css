@@ -50,26 +50,6 @@
     margin-bottom: 0;
 }
 
-.page-welcome .highlight pre {
-    background: #FFF;
-    border-top: 0;
-    border-radius: 0;
-    border-color: #dddddd;
-}
-
-#email .instructions {
-    background: #FFF;
-    border: 1px solid #dddddd;
-    border-top: 0;
-    padding: 10px;
-}
-
-#email .email-address {
-    font-size: 18px;
-    padding-top: 10px;
-}
-
-
 #get-started {
     margin-top: 4em;
 }
@@ -86,4 +66,28 @@
 .welcome-integrations img {
     width: 22px;
     height: 22px;
+}
+
+.page-welcome .tab-content {
+    border: 1px solid #ddd;
+    border-top: 0;
+}
+
+.tab-pane p {
+    padding: 15px;
+    margin: 0;
+}
+
+.page-welcome .highlight:nth-child(n+2) {
+    border-top: 1px solid #ddd;
+}
+
+.page-welcome .tab-pane pre {
+    margin-bottom: 0;
+    background: transparent;
+    padding: 15px;
+}
+
+.tab-pane.tab-pane-email {
+  border: none;
 }

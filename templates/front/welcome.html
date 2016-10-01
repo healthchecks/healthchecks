@@ -62,10 +62,12 @@
                     {% include "front/snippets/crontab.html" %}
                 </div>
                 <div role="tabpanel" class="tab-pane" id="bash">
-                    {% include "front/snippets/bash.html" %}
+                    {% include "front/snippets/bash_curl.html" %}
+                    {% include "front/snippets/bash_wget.html" %}
                 </div>
                 <div role="tabpanel" class="tab-pane" id="python">
-                    {% include "front/snippets/python.html" %}
+                    {% include "front/snippets/python_urllib2.html" %}
+                    {% include "front/snippets/python_requests.html" %}
                 </div>
                 <div role="tabpanel" class="tab-pane" id="node">
                     {% include "front/snippets/node.html" %}
@@ -79,15 +81,13 @@
                 <div class="tab-pane" id="powershell">
                     {% include "front/snippets/powershell.html" %}
                 </div>
-                <div class="tab-pane" id="email">
-                    <div class="instructions">
+                <div class="tab-pane tab-pane-email" id="email">
+                    <p>
                         As an alternative to HTTP/HTTPS requests,
                         you can "ping" this check by sending an
                         email message to
-                        <div class="email-address">
-                            <code>{{ check.email }}</code>
-                        </div>
-                    </div>
+                        <a href="mailto:{{ check.email }}">{{ check.email }}</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -331,9 +331,9 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/collapse-native.js' %}"></script>
-<script src="{% static 'js/tab-native.js' %}"></script>
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
 {% endcompress %}
 {% endblock %}
-
-

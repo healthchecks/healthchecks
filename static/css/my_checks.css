@@ -63,11 +63,20 @@
     font-style: normal;
 }
 
-
 #show-usage-modal  .modal-dialog {
      width: 1100px;
- }
+}
 
- #show-usage-modal .tab-content {
-     margin-top: 15px;
- }
+#show-usage-modal .modal-body {
+    padding: 0;
+}
+
+#show-usage-modal pre {
+    margin: 0;
+    padding: 15px;
+}
+
+#show-usage-modal .highlight:nth-child(n+2) {
+    border-top: 1px solid #ddd;
+}
+

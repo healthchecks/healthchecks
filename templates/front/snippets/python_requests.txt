@@ -1,0 +1,3 @@
+# using requests:
+import requests
+requests.get("PING_URL")

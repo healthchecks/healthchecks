@@ -1,0 +1,3 @@
+curl SITE_ROOT/api/v1/checks/ \
+    --header "X-Api-Key: your-api-key" \
+    --data '{"name": "Backups", "tags": "prod www", "timeout": 3600, "grace": 60}'

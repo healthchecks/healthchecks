@@ -27,10 +27,12 @@ class Command(BaseCommand):
             return
 
         # Invocation examples
-        _process("bash", lexers.BashLexer())
+        _process("bash_curl", lexers.BashLexer())
+        _process("bash_wget", lexers.BashLexer())
         _process("browser", lexers.JavascriptLexer())
         _process("crontab", lexers.BashLexer())
-        _process("python", lexers.PythonLexer())
+        _process("python_urllib2", lexers.PythonLexer())
+        _process("python_requests", lexers.PythonLexer())
         _process("php", lexers.PhpLexer())
         _process("powershell", lexers.shell.PowerShellLexer())
         _process("node", lexers.JavascriptLexer())
@@ -38,7 +40,8 @@ class Command(BaseCommand):
         # API examples
         _process("list_checks_request", lexers.BashLexer())
         _process("list_checks_response", lexers.JsonLexer())
-        _process("create_check_request", lexers.BashLexer())
+        _process("create_check_request_a", lexers.BashLexer())
+        _process("create_check_request_b", lexers.BashLexer())
         _process("create_check_response", lexers.JsonLexer())
         _process("pause_check_request", lexers.BashLexer())
         _process("pause_check_response", lexers.JsonLexer())

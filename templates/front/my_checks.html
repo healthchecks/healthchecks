@@ -230,18 +230,18 @@
 
             </div>
             <div class="modal-body">
-
-
                 <div class="tab-content">
                     {% with ping_url="<span class='ex'></span>" %}
                     <div role="tabpanel" class="tab-pane active" id="crontab">
                         {% include "front/snippets/crontab.html" %}
                     </div>
                     <div role="tabpanel" class="tab-pane" id="bash">
-                        {% include "front/snippets/bash.html" %}
+                        {% include "front/snippets/bash_curl.html" %}
+                        {% include "front/snippets/bash_wget.html" %}
                     </div>
                     <div role="tabpanel" class="tab-pane" id="python">
-                        {% include "front/snippets/python.html" %}
+                        {% include "front/snippets/python_urllib2.html" %}
+                        {% include "front/snippets/python_requests.html" %}
                     </div>
                     <div role="tabpanel" class="tab-pane" id="node">
                         {% include "front/snippets/node.html" %}
@@ -256,12 +256,11 @@
                         {% include "front/snippets/powershell.html" %}
                     </div>
                     <div class="tab-pane" id="email">
-                            As an alternative to HTTP/HTTPS requests,
-                            you can "ping" this check by sending an
-                            email message to
-                            <div class="email-address">
-                                <code class="em"></code>
-                            </div>
+                        <p>
+                        As an alternative to HTTP/HTTPS requests,
+                        you can "ping" this check by sending an
+                        email message to <code class="em"></code>
+                        </p>
                     </div>
                     {% endwith %}
                 </div>
@@ -286,6 +285,7 @@
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
 <script src="{% static 'js/checks.js' %}"></script>
 {% endcompress %}
 {% endblock %}

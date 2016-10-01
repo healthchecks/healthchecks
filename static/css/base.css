@@ -75,3 +75,7 @@ body {
 .dialog-body {
     margin: 24px 0;
 }
+
+pre {
+  border: 0;
+}

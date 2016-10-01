@@ -1,5 +1,5 @@
 {% extends "front/base_docs.html" %}
-{% load staticfiles hc_extras %}
+{% load compress staticfiles hc_extras %}
 
 {% block title %}Documentation - {% site_name %}{% endblock %}
 
@@ -110,16 +110,17 @@ thing: they fire off a HTTP GET method.</p>
     Ubuntu, for example, does not have curl installed out of the box.
 </p>
 
-{% include "front/snippets/bash.html" %}
+{% include "front/snippets/bash_curl.html" %}
+{% include "front/snippets/bash_wget.html" %}
 
 <a name="python"></a>
 <h3>Python</h3>
-{% include "front/snippets/python.html" %}
+{% include "front/snippets/python_urllib2.html" %}
+{% include "front/snippets/python_requests.html" %}
 
 <a name="node"></a>
 <h3>Node</h3>
 {% include "front/snippets/node.html" %}
-
 
 <a name="php"></a>
 <h3>PHP</h3>
@@ -152,9 +153,9 @@ do more things.</p>
 the following command in a Scheduled Task to run the script:
 </p>
 
-<pre>
-powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
-</pre>
+<div class="highlight">
+    <pre>powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1</pre>
+</div>
 
 <a name="email"></a>
 <h3>Email</h3>
@@ -246,4 +247,13 @@ powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
     </tr>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
+{% endcompress %}
 {% endblock %}
