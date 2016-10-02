@@ -1,4 +1,5 @@
 from django import forms
+from hc.front.validators import WebhookValidator
 from hc.api.models import Channel
 
 
@@ -7,14 +8,14 @@ class NameTagsForm(forms.Form):
     tags = forms.CharField(max_length=500, required=False)
 
     def clean_tags(self):
-        l = []
+        result = []
 
         for part in self.cleaned_data["tags"].split(" "):
             part = part.strip()
             if part != "":
-                l.append(part)
+                result.append(part)
 
-        return " ".join(l)
+        return " ".join(result)
 
 
 class TimeoutForm(forms.Form):
@@ -33,11 +34,29 @@ class AddChannelForm(forms.ModelForm):
         return value.strip()
 
 
+class AddPdForm(forms.Form):
+    error_css_class = "has-error"
+    value = forms.CharField(max_length=20)
+
+
+class AddEmailForm(forms.Form):
+    error_css_class = "has-error"
+    value = forms.EmailField(max_length=100)
+
+
+class AddUrlForm(forms.Form):
+    error_css_class = "has-error"
+    value = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+
+
 class AddWebhookForm(forms.Form):
     error_css_class = "has-error"
 
-    value_down = forms.URLField(max_length=1000, required=False)
-    value_up = forms.URLField(max_length=1000, required=False)
+    value_down = forms.URLField(max_length=1000, required=False,
+                                validators=[WebhookValidator()])
+
+    value_up = forms.URLField(max_length=1000, required=False,
+                              validators=[WebhookValidator()])
 
     def get_value(self):
         return "{value_down}\n{value_up}".format(**self.cleaned_data)

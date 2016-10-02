@@ -5,6 +5,11 @@ from hc.test import BaseTestCase
 
 @override_settings(PUSHOVER_API_TOKEN="token", PUSHOVER_SUBSCRIPTION_URL="url")
 class AddPushoverTestCase(BaseTestCase):
+    def test_instructions_work(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_pushover/")
+        self.assertContains(r, "Subscribe with Pushover")
+
     def test_it_adds_channel(self):
         self.client.login(username="alice@example.org", password="password")
 

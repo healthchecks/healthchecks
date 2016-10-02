@@ -21,9 +21,13 @@ STATUSES = (
 )
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
-CHANNEL_KINDS = (("email", "Email"), ("webhook", "Webhook"),
+CHANNEL_KINDS = (("email", "Email"),
+                 ("webhook", "Webhook"),
                  ("hipchat", "HipChat"),
-                 ("slack", "Slack"), ("pd", "PagerDuty"), ("po", "Pushover"),
+                 ("slack", "Slack"),
+                 ("pd", "PagerDuty"),
+                 ("po", "Pushover"),
+                 ("pushbullet", "Pushbullet"),
                  ("victorops", "VictorOps"))
 
 PO_PRIORITIES = {

@@ -24,10 +24,9 @@
 
     <h2>Integration Settings</h2>
 
-    <form method="post" class="form-horizontal" action="{% url 'hc-add-channel' %}">
+    <form method="post" class="form-horizontal" action="{% url 'hc-add-email' %}">
         {% csrf_token %}
-        <input type="hidden" name="kind" value="email" />
-        <div class="form-group">
+        <div class="form-group {{ form.value.css_classes }}">
             <label for="id_email" class="col-sm-2 control-label">Email</label>
             <div class="col-sm-3">
                 <input
@@ -35,7 +34,14 @@
                     type="email"
                     class="form-control"
                     name="value"
-                    placeholder="you@example.org">
+                    placeholder="you@example.org"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.value.errors %}
+                <div class="help-block">
+                    {{ form.value.errors|join:"" }}
+                </div>
+                {% endif %}
             </div>
         </div>
         <div class="form-group">

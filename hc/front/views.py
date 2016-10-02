@@ -16,7 +16,7 @@ from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
-                            TimeoutForm)
+                            TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm)
 
 
 # from itertools recipes:
@@ -291,29 +291,6 @@ def channels(request):
     return render(request, "front/channels.html", ctx)
 
 
-def do_add_channel(request, data):
-    form = AddChannelForm(data)
-    if form.is_valid():
-        channel = form.save(commit=False)
-        channel.user = request.team.user
-        channel.save()
-
-        channel.assign_all_checks()
-
-        if channel.kind == "email":
-            channel.send_verify_link()
-
-        return redirect("hc-channels")
-    else:
-        return HttpResponseBadRequest()
-
-
-@login_required
-def add_channel(request):
-    assert request.method == "POST"
-    return do_add_channel(request, request.POST)
-
-
 @login_required
 @uuid_or_400
 def channel_checks(request, code):
@@ -361,7 +338,20 @@ def remove_channel(request, code):
 
 @login_required
 def add_email(request):
-    ctx = {"page": "channels"}
+    if request.method == "POST":
+        form = AddEmailForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="email")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            channel.send_verify_link()
+            return redirect("hc-channels")
+    else:
+        form = AddEmailForm()
+
+    ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_email.html", ctx)
 
 
@@ -385,7 +375,19 @@ def add_webhook(request):
 
 @login_required
 def add_pd(request):
-    ctx = {"page": "channels"}
+    if request.method == "POST":
+        form = AddPdForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="pd")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddPdForm()
+
+    ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_pd.html", ctx)
 
 
@@ -393,10 +395,24 @@ def add_slack(request):
     if not settings.SLACK_CLIENT_ID and not request.user.is_authenticated:
         return redirect("hc-login")
 
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="slack")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
     ctx = {
         "page": "channels",
+        "form": form,
         "slack_client_id": settings.SLACK_CLIENT_ID
     }
+
     return render(request, "integrations/add_slack.html", ctx)
 
 
@@ -430,7 +446,19 @@ def add_slack_btn(request):
 
 @login_required
 def add_hipchat(request):
-    ctx = {"page": "channels"}
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="hipchat")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_hipchat.html", ctx)
 
 
@@ -526,10 +554,11 @@ def add_pushover(request):
             user_key = request.GET["pushover_user_key"]
             priority = int(request.GET["prio"])
 
-            return do_add_channel(request, {
-                "kind": "po",
-                "value": "%s|%d" % (user_key, priority),
-            })
+            channel = Channel(user=request.team.user, kind="po")
+            channel.value = "%s|%d" % (user_key, priority)
+            channel.save()
+            channel.assign_all_checks()
+            return redirect("hc-channels")
 
     # Show Integration Settings form
     ctx = {
@@ -542,7 +571,19 @@ def add_pushover(request):
 
 @login_required
 def add_victorops(request):
-    ctx = {"page": "channels"}
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="victorops")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_victorops.html", ctx)
 
 

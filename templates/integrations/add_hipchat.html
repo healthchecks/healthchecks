@@ -64,10 +64,9 @@
 
     <h2>Integration Settings</h2>
 
-    <form method="post" class="form-horizontal" action="{% url 'hc-add-channel' %}">
+    <form method="post" class="form-horizontal" action="{% url 'hc-add-hipchat' %}">
         {% csrf_token %}
-        <input type="hidden" name="kind" value="hipchat" />
-        <div class="form-group">
+        <div class="form-group {{ form.value.css_classes }}">
             <label for="callback-url" class="col-sm-2 control-label">Callback URL</label>
             <div class="col-sm-10">
                 <input
@@ -75,7 +74,14 @@
                     type="text"
                     class="form-control"
                     name="value"
-                    placeholder="">
+                    placeholder="https://"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.value.errors %}
+                <div class="help-block">
+                    {{ form.value.errors|join:"" }}
+                </div>
+                {% endif %}
             </div>
         </div>
         <div class="form-group">

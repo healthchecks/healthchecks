@@ -8,16 +8,22 @@ from mock import patch
 
 @override_settings(PUSHBULLET_CLIENT_ID="t1", PUSHBULLET_CLIENT_SECRET="s1")
 class AddPushbulletTestCase(BaseTestCase):
+    url = "/integrations/add_pushbullet/"
+
+    def test_instructions_work(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "Connect Pushbullet")
 
     def test_it_shows_instructions(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/add_pushbullet/")
+        r = self.client.get(self.url)
         self.assertContains(r, "www.pushbullet.com/authorize", status_code=200)
 
     @override_settings(PUSHBULLET_CLIENT_ID=None)
     def test_it_requires_client_id(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/add_pushbullet/")
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
     @patch("hc.front.views.requests.post")
@@ -27,7 +33,7 @@ class AddPushbulletTestCase(BaseTestCase):
         mock_post.return_value.text = json.dumps(oauth_response)
         mock_post.return_value.json.return_value = oauth_response
 
-        url = "/integrations/add_pushbullet/?code=12345678"
+        url = self.url + "?code=12345678"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
