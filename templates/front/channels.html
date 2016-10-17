@@ -35,6 +35,7 @@
             {% if ch.kind == "po" %} Pushover {% endif %}
             {% if ch.kind == "victorops" %} VictorOps {% endif %}
             {% if ch.kind == "pushbullet" %} Pushbullet {% endif %}
+            {% if ch.kind == "opsgenie" %} OpsGenie {% endif %}
             </td>
             <td class="value-cell">
                 {% if ch.kind == "email" %}
@@ -44,6 +45,9 @@
                         <span class="channel-unconfirmed">(unconfirmed)</span>
                     {% endif %}
                 {% elif ch.kind == "pd" %}
+                    <span class="preposition">API key</span>
+                    {{ ch.value }}
+                {% elif ch.kind == "opsgenie" %}
                     <span class="preposition">API key</span>
                     {{ ch.value }}
                 {% elif ch.kind == "victorops" %}
@@ -178,6 +182,15 @@
             <p>On-call scheduling, alerting, and incident tracking.</p>
 
             <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/opsgenie.png' %}"
+                class="icon" alt="OpsGenie icon" />
+
+            <h2>OpsGenie</h2>
+            <p> Alerting &amp; Incident Management Solution for Dev &amp; Ops.</p>
+
+            <a href="{% url 'hc-add-opsgenie' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% if enable_pushbullet %}
         <li>

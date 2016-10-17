@@ -28,6 +28,7 @@ CHANNEL_KINDS = (("email", "Email"),
                  ("pd", "PagerDuty"),
                  ("po", "Pushover"),
                  ("pushbullet", "Pushbullet"),
+                 ("opsgenie", "OpsGenie"),
                  ("victorops", "VictorOps"))
 
 PO_PRIORITIES = {
@@ -187,6 +188,8 @@ class Channel(models.Model):
             return transports.Pushbullet(self)
         elif self.kind == "po":
             return transports.Pushover(self)
+        elif self.kind == "opsgenie":
+            return transports.OpsGenie(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 

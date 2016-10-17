@@ -16,7 +16,8 @@ from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
 from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
 from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
-                            TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm)
+                            TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
+                            AddOpsGenieForm)
 
 
 # from itertools recipes:
@@ -567,6 +568,24 @@ def add_pushover(request):
         "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
     }
     return render(request, "integrations/add_pushover.html", ctx)
+
+
+@login_required
+def add_opsgenie(request):
+    if request.method == "POST":
+        form = AddOpsGenieForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="opsgenie")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "form": form}
+    return render(request, "integrations/add_opsgenie.html", ctx)
 
 
 @login_required

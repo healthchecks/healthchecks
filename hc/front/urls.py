@@ -20,6 +20,7 @@ channel_urls = [
     url(r'^add_hipchat/$', views.add_hipchat, name="hc-add-hipchat"),
     url(r'^add_pushbullet/$', views.add_pushbullet, name="hc-add-pushbullet"),
     url(r'^add_pushover/$', views.add_pushover, name="hc-add-pushover"),
+    url(r'^add_opsgenie/$', views.add_opsgenie, name="hc-add-opsgenie"),
     url(r'^add_victorops/$', views.add_victorops, name="hc-add-victorops"),
     url(r'^([\w-]+)/checks/$', views.channel_checks, name="hc-channel-checks"),
     url(r'^([\w-]+)/remove/$', views.remove_channel, name="hc-remove-channel"),

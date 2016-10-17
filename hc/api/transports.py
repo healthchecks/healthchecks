@@ -141,6 +141,26 @@ class HipChat(HttpTransport):
         return self.post(self.channel.value, payload)
 
 
+class OpsGenie(HttpTransport):
+
+    def notify(self, check):
+        payload = {
+            "apiKey": self.channel.value,
+            "alias": str(check.code),
+            "source": "healthchecks.io"
+        }
+
+        if check.status == "down":
+            payload["tags"] = ",".join(check.tags_list())
+            payload["message"] = tmpl("opsgenie_message.html", check=check)
+            payload["note"] = tmpl("opsgenie_note.html", check=check)
+
+        url = "https://api.opsgenie.com/v1/json/alert"
+        if check.status == "up":
+            url += "/close"
+
+        return self.post(url, payload)
+
 class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 

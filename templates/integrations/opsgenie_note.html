@@ -1,0 +1,4 @@
+{% load hc_extras humanize %}
+
+Expecting to receive a ping every {{ check.timeout|hc_duration }}.
+Last ping was {{ check.last_ping|naturaltime }}.
