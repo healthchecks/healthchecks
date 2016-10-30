@@ -20,7 +20,7 @@ class AddPdTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "pd")
-        self.assertEqual(c.value, "123456")
+        self.assertEqual(c.value, "12345678901234567890123456789012")
 
     def test_it_trims_whitespace(self):
         form = {"value": "   123456   "}
