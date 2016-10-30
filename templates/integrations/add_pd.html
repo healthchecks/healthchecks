@@ -42,7 +42,7 @@
         <div class="col-sm-6">
             <span class="step-no">2</span>
             After adding the new service, take note of its
-            <strong>API key</strong>, a long string
+            <strong>Integration Key</strong>, a long string
             of letters and digits.
 
         </div>
@@ -57,7 +57,7 @@
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no">3</span>
-            <p>Paste the API key down below. Save the integration, and it's done!</p>
+            <p>Paste the Integration Key down below. Save the integration, and it's done!</p>
         </div>
     </div>
 
@@ -66,8 +66,8 @@
     <form method="post" class="form-horizontal" action="{% url 'hc-add-pd' %}">
         {% csrf_token %}
         <div class="form-group {{ form.value.css_classes }}">
-            <label for="api-key" class="col-sm-2 control-label">API Key</label>
-            <div class="col-sm-3">
+            <label for="api-key" class="col-sm-2 control-label">Integration Key</label>
+            <div class="col-sm-4">
                 <input
                     id="api-key"
                     type="text"

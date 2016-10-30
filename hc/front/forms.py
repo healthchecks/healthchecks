@@ -36,11 +36,13 @@ class AddChannelForm(forms.ModelForm):
 
 class AddPdForm(forms.Form):
     error_css_class = "has-error"
-    value = forms.CharField(max_length=20)
+    value = forms.CharField(max_length=32)
+
 
 class AddOpsGenieForm(forms.Form):
     error_css_class = "has-error"
     value = forms.CharField(max_length=40)
+
 
 class AddEmailForm(forms.Form):
     error_css_class = "has-error"

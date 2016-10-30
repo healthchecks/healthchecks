@@ -11,7 +11,8 @@ class AddPdTestCase(BaseTestCase):
         self.assertContains(r, "incident management system")
 
     def test_it_works(self):
-        form = {"value": "123456"}
+        # Integration key is 32 characters long
+        form = {"value": "12345678901234567890123456789012"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
