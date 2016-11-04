@@ -1,3 +1,4 @@
+from django.utils import timezone
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -7,6 +8,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
     def setUp(self):
         super(UpdateTimeoutTestCase, self).setUp()
         self.check = Check(user=self.alice)
+        self.check.last_ping = timezone.now()
         self.check.save()
 
     def test_it_works(self):
@@ -17,9 +19,12 @@ class UpdateTimeoutTestCase(BaseTestCase):
         r = self.client.post(url, data=payload)
         self.assertRedirects(r, "/checks/")
 
-        check = Check.objects.get(code=self.check.code)
-        assert check.timeout.total_seconds() == 3600
-        assert check.grace.total_seconds() == 60
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.timeout.total_seconds(), 3600)
+        self.assertEqual(self.check.grace.total_seconds(), 60)
+
+        # alert_after should be updated too
+        self.assertEqual(self.check.alert_after, self.check.get_alert_after())
 
     def test_team_access_works(self):
         url = "/checks/%s/timeout/" % self.check.code

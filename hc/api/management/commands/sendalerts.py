@@ -17,6 +17,11 @@ def notify(check_id, stdout):
         stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
 
 
+def notify_on_thread(check_id, stdout):
+    t = Thread(target=notify, args=(check_id, stdout))
+    t.start()
+
+
 class Command(BaseCommand):
     help = 'Sends UP/DOWN email alerts'
     owned = Check.objects.filter(user__isnull=False)
@@ -27,25 +32,31 @@ class Command(BaseCommand):
         now = timezone.now()
 
         # Look for checks that are going down
-        flipped = "down"
         q = self.owned.filter(alert_after__lt=now, status="up")
         check = q.first()
 
+        # If none found, look for checks that are going up
         if not check:
-            # If none found, look for checks that are going up
-            flipped = "up"
             q = self.owned.filter(alert_after__gt=now, status="down")
             check = q.first()
 
-        if check:
+        if check is None:
+            return False
+
+        q = Check.objects.filter(id=check.id, status=check.status)
+        current_status = check.get_status()
+        if check.status == current_status:
+            # Stored status is already up-to-date. Update alert_after
+            # as needed but don't send notifications
+            q.update(alert_after=check.get_alert_after())
+            return True
+        else:
             # Atomically update status to the opposite
-            q = Check.objects.filter(id=check.id, status=check.status)
-            num_updated = q.update(status=flipped)
+            num_updated = q.update(status=current_status)
             if num_updated == 1:
                 # Send notifications only if status update succeeded
                 # (no other sendalerts process got there first)
-                t = Thread(target=notify, args=(check.id, self.stdout))
-                t.start()
+                notify_on_thread(check.id, self.stdout)
                 return True
 
         return False

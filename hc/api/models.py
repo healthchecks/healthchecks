@@ -96,6 +96,9 @@ class Check(models.Model):
 
         return "down"
 
+    def get_alert_after(self):
+        return self.last_ping + self.timeout + self.grace
+
     def in_grace_period(self):
         if self.status in ("new", "paused"):
             return False

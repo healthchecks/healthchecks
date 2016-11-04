@@ -14,7 +14,8 @@ class PingTestCase(TestCase):
         assert r.status_code == 200
 
         self.check.refresh_from_db()
-        assert self.check.status == "up"
+        self.assertEqual(self.check.status, "up")
+        self.assertEqual(self.check.alert_after, self.check.get_alert_after())
 
         ping = Ping.objects.latest("id")
         assert ping.scheme == "http"

@@ -1,6 +1,5 @@
 from datetime import timedelta as td
 
-from django.core.exceptions import FieldError
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils import timezone
@@ -24,6 +23,7 @@ def ping(request, code):
 
     check.n_pings = F("n_pings") + 1
     check.last_ping = timezone.now()
+    check.alert_after = check.get_alert_after()
     if check.status in ("new", "paused"):
         check.status = "up"
 
