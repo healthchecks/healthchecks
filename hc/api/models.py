@@ -3,8 +3,9 @@
 import hashlib
 import json
 import uuid
-from datetime import timedelta as td
+from datetime import datetime, timedelta as td
 
+from croniter import croniter
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -53,6 +54,8 @@ class Check(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     timeout = models.DurationField(default=DEFAULT_TIMEOUT)
     grace = models.DurationField(default=DEFAULT_GRACE)
+    schedule = models.CharField(max_length=100, blank=True)
+    tz = models.CharField(max_length=36, default="UTC")
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
@@ -85,27 +88,45 @@ class Check(models.Model):
 
         return errors
 
-    def get_status(self):
+    def get_grace_start(self):
+        """ Return the datetime when grace period starts. """
+
+        # The common case, grace starts after timeout
+        if not self.schedule:
+            return self.last_ping + self.timeout
+
+        # The complex case, next ping is expected based on cron schedule
+        with timezone.override(self.tz):
+            last_naive = timezone.make_naive(self.last_ping)
+            it = croniter(self.schedule, last_naive)
+            next_naive = it.get_next(datetime)
+            return timezone.make_aware(next_naive, is_dst=False)
+
+    def get_status(self, now=None):
+        """ Return "up" if the check is up or in grace, otherwise "down". """
+
         if self.status in ("new", "paused"):
             return self.status
 
-        now = timezone.now()
+        if now is None:
+            now = timezone.now()
 
-        if self.last_ping + self.timeout + self.grace > now:
-            return "up"
-
-        return "down"
+        return "up" if self.get_grace_start() + self.grace > now else "down"
 
     def get_alert_after(self):
-        return self.last_ping + self.timeout + self.grace
+        """ Return the datetime when check potentially goes down. """
+
+        return self.get_grace_start() + self.grace
 
     def in_grace_period(self):
+        """ Return True if check is currently in grace period. """
+
         if self.status in ("new", "paused"):
             return False
 
-        up_ends = self.last_ping + self.timeout
-        grace_ends = up_ends + self.grace
-        return up_ends < timezone.now() < grace_ends
+        grace_start = self.get_grace_start()
+        grace_end = grace_start + self.grace
+        return grace_start < timezone.now() < grace_end
 
     def assign_all_channels(self):
         if self.user:

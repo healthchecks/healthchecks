@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.test import TestCase
 from django.utils import timezone
@@ -37,3 +37,40 @@ class CheckModelTestCase(TestCase):
 
         check.status = "paused"
         self.assertFalse(check.in_grace_period())
+
+    def test_status_works_with_cron_syntax(self):
+        dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
+
+        # Expect ping every midnight, default grace is 1 hour
+        check = Check()
+        check.timeout = timedelta(minutes=0)
+        check.schedule = "0 0 * * *"
+        check.status = "up"
+        check.last_ping = dt
+
+        # 00:30am
+        now = dt + timedelta(days=1, minutes=30)
+        self.assertEqual(check.get_status(now), "up")
+
+        # 1:30am
+        now = dt + timedelta(days=1, minutes=90)
+        self.assertEqual(check.get_status(now), "down")
+
+    def test_status_works_with_timezone(self):
+        dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
+
+        # Expect ping every day at 10am, default grace is 1 hour
+        check = Check()
+        check.timeout = timedelta(minutes=0)
+        check.schedule = "0 10 * * *"
+        check.status = "up"
+        check.last_ping = dt
+        check.tz = "Australia/Brisbane"  # UTC+10
+
+        # 10:30am
+        now = dt + timedelta(days=1, minutes=30)
+        self.assertEqual(check.get_status(now), "up")
+
+        # 11:30am
+        now = dt + timedelta(days=1, minutes=90)
+        self.assertEqual(check.get_status(now), "down")
