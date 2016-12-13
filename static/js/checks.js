@@ -105,7 +105,7 @@ $(function () {
         periodSlider.noUiSlider.set(this.dataset.timeout);
         graceSlider.noUiSlider.set(this.dataset.grace);
         $("#schedule").val(this.dataset.schedule);
-        $("#tz").val(this.dataset.tz);
+        document.getElementById("tz").selectize.setValue(this.dataset.tz);
 
         if (this.dataset.kind == "cron") {
             $("#type-simple").removeClass("active");
@@ -202,6 +202,7 @@ $(function () {
         return false;
     });
 
+    $("#tz").selectize();
 
     var clipboard = new Clipboard('button.copy-link');
     $("button.copy-link").mouseout(function(e) {

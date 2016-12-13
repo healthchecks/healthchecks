@@ -149,8 +149,11 @@
                         </div>
                         <div class="form-group">
                             <label for="schedule">Server's Timezone</label>
+                            <br />
                             <select id="tz" name="tz" class="form-control">
                                 <option>UTC</option>
+                                {% for tz in timezones %}
+                                <option>{{ tz }}</option>{% endfor %}
                             </select>
                         </div>
                     </div>
@@ -316,6 +319,7 @@
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
 <script src="{% static 'js/snippet-copy.js' %}"></script>

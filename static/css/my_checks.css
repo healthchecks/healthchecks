@@ -31,6 +31,10 @@
     margin: 0 50px;
 }
 
+#tz {
+    width: 300px;
+}
+
 #period-slider {
     margin: 20px 50px 80px 50px;
 }
