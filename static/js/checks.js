@@ -91,11 +91,9 @@ $(function () {
     $('[data-toggle="tooltip"]').tooltip();
 
     $(".my-checks-name").click(function() {
-        var $this = $(this);
-
-        $("#update-name-form").attr("action", $this.data("url"));
-        $("#update-name-input").val($this.data("name"));
-        $("#update-tags-input").val($this.data("tags"));
+        $("#update-name-form").attr("action", this.dataset.url);
+        $("#update-name-input").val(this.dataset.name);
+        $("#update-tags-input").val(this.dataset.tags);
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
 
@@ -103,21 +101,45 @@ $(function () {
     });
 
     $(".timeout-grace").click(function() {
-        var $this = $(this);
+        $("#update-timeout-form").attr("action", this.dataset.url);
+        periodSlider.noUiSlider.set(this.dataset.timeout);
+        graceSlider.noUiSlider.set(this.dataset.grace);
+        $("#schedule").val(this.dataset.schedule);
+        $("#tz").val(this.dataset.tz);
 
-        $("#update-timeout-form").attr("action", $this.data("url"));
-        periodSlider.noUiSlider.set($this.data("timeout"))
-        graceSlider.noUiSlider.set($this.data("grace"))
+        if (this.dataset.kind == "cron") {
+            $("#type-simple").removeClass("active");
+            $("#type-cron").addClass("active");
+            $("#type-cron input").prop("checked", true);
+
+            $("#period-block").hide();
+            $("#schedule-block").show();
+        } else {
+            $("#type-simple").addClass("active");
+            $("#type-simple input").prop("checked", true);
+            $("#type-cron").removeClass("active");
+
+            $("#period-block").show();
+            $("#schedule-block").hide();
+        }
+
         $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
-
         return false;
     });
 
-    $(".check-menu-remove").click(function() {
-        var $this = $(this);
+    $("#type-simple").click(function() {
+        $("#period-block").show();
+        $("#schedule-block").hide();
+    });
 
-        $("#remove-check-form").attr("action", $this.data("url"));
-        $(".remove-check-name").text($this.data("name"));
+    $("#type-cron").click(function() {
+        $("#period-block").hide();
+        $("#schedule-block").show();
+    });
+
+    $(".check-menu-remove").click(function() {
+        $("#remove-check-form").attr("action", this.dataset.url);
+        $(".remove-check-name").text(this.dataset.name);
         $('#remove-check-modal').modal("show");
 
         return false;

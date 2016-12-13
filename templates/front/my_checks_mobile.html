@@ -46,10 +46,17 @@
                 </td>
             </tr>
             {% endif %}
+            {% if check.kind == "simple " %}
             <tr>
                 <th>Period</th>
                 <td>{{ check.timeout|hc_duration }}</td>
             </tr>
+            {% elif check.kind == "cron" %}
+            <tr>
+                <th>Schedule</th>
+                <td>{{ check.schedule }}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <th>Grace Time</th>
                 <td>{{ check.grace|hc_duration }}</td>
@@ -79,9 +86,12 @@
 
             <a
                 href="#"
+                data-kind="{{ check.kind }}"
                 data-url="{% url 'hc-update-timeout' check.code %}"
                 data-timeout="{{ check.timeout.total_seconds }}"
                 data-grace="{{ check.grace.total_seconds }}"
+                data-schedule="{{ check.schedule }}"
+                data-tz="{{ check.tz }}"
                 class="btn btn-default timeout-grace">Change Period</a>
 
             <a href="{% url 'hc-log' check.code %}" class="btn btn-default">Log</a>

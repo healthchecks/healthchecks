@@ -163,12 +163,18 @@ def update_timeout(request, code):
 
     form = TimeoutForm(request.POST)
     if form.is_valid():
+        check.kind = form.cleaned_data["kind"]
         check.timeout = td(seconds=form.cleaned_data["timeout"])
         check.grace = td(seconds=form.cleaned_data["grace"])
+        check.schedule = form.cleaned_data["schedule"]
+        check.tz = form.cleaned_data["tz"]
+
         if check.last_ping:
             check.alert_after = check.get_alert_after()
 
         check.save()
+    else:
+        assert 0, "form is not valid! %s" % form.errors
 
     return redirect("hc-checks")
 

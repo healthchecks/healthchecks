@@ -13,22 +13,41 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def test_it_works(self):
         url = "/checks/%s/timeout/" % self.check.code
-        payload = {"timeout": 3600, "grace": 60}
+        payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url, data=payload)
         self.assertRedirects(r, "/checks/")
 
         self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "simple")
         self.assertEqual(self.check.timeout.total_seconds(), 3600)
         self.assertEqual(self.check.grace.total_seconds(), 60)
 
         # alert_after should be updated too
         self.assertEqual(self.check.alert_after, self.check.get_alert_after())
 
+    def test_it_saves_cron_expression(self):
+        url = "/checks/%s/timeout/" % self.check.code
+        payload = {
+            "kind": "cron",
+            "schedule": "* * * * *",
+            "tz": "UTC",
+            "timeout": 60,
+            "grace": 60
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url, data=payload)
+        self.assertRedirects(r, "/checks/")
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "cron")
+        self.assertEqual(self.check.schedule, "* * * * *")
+
     def test_team_access_works(self):
         url = "/checks/%s/timeout/" % self.check.code
-        payload = {"timeout": 7200, "grace": 60}
+        payload = {"kind": "simple", "timeout": 7200, "grace": 60}
 
         # Logging in as bob, not alice. Bob has team access so this
         # should work.

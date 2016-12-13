@@ -23,6 +23,14 @@
 
 }
 
+#type-simple, #type-cron {
+    width: 70px;
+}
+
+#schedule-block {
+    margin: 0 50px;
+}
+
 #period-slider {
     margin: 20px 50px 80px 50px;
 }

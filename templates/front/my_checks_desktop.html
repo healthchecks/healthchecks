@@ -52,10 +52,17 @@
         <td class="timeout-cell">
             <span
                 data-url="{% url 'hc-update-timeout' check.code %}"
+                data-kind="{{ check.kind }}"
                 data-timeout="{{ check.timeout.total_seconds }}"
                 data-grace="{{ check.grace.total_seconds }}"
+                data-schedule="{{ check.schedule }}"
+                data-tz="{{ check.tz }}"
                 class="timeout-grace">
-                {{ check.timeout|hc_duration }}
+                {% if check.kind == "simple" %}
+                    {{ check.timeout|hc_duration }}
+                {% elif check.kind == "cron" %}
+                    {{ check.schedule }}
+                {% endif %}
                 <br />
                 <span class="checks-subline">
                 {{ check.grace|hc_duration }}

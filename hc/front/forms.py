@@ -1,6 +1,6 @@
 from django import forms
 from hc.front.validators import WebhookValidator
-from hc.api.models import Channel
+from hc.api.models import CHECK_KINDS, Channel
 
 
 class NameTagsForm(forms.Form):
@@ -19,7 +19,10 @@ class NameTagsForm(forms.Form):
 
 
 class TimeoutForm(forms.Form):
+    kind = forms.ChoiceField(choices=CHECK_KINDS)
     timeout = forms.IntegerField(min_value=60, max_value=2592000)
+    schedule = forms.CharField(required=False, max_length=100)
+    tz = forms.CharField(required=False, max_length=36)
     grace = forms.IntegerField(min_value=60, max_value=2592000)
 
 
