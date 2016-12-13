@@ -97,7 +97,7 @@ class Check(models.Model):
         """ Return the datetime when grace period starts. """
 
         # The common case, grace starts after timeout
-        if not self.schedule:
+        if self.kind == "simple":
             return self.last_ping + self.timeout
 
         # The complex case, next ping is expected based on cron schedule

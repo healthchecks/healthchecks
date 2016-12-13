@@ -43,7 +43,7 @@ class CheckModelTestCase(TestCase):
 
         # Expect ping every midnight, default grace is 1 hour
         check = Check()
-        check.timeout = timedelta(minutes=0)
+        check.kind = "cron"
         check.schedule = "0 0 * * *"
         check.status = "up"
         check.last_ping = dt
@@ -61,7 +61,7 @@ class CheckModelTestCase(TestCase):
 
         # Expect ping every day at 10am, default grace is 1 hour
         check = Check()
-        check.timeout = timedelta(minutes=0)
+        check.kind = "cron"
         check.schedule = "0 10 * * *"
         check.status = "up"
         check.last_ping = dt
