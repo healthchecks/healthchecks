@@ -60,3 +60,7 @@
 #log .hash {
     color: #aaa;
 }
+
+#log .alert-info {
+    font-size: 12px;
+}

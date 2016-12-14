@@ -28,7 +28,7 @@
             </li>
         </ol>
 
-    {% if pings %}
+    {% if events %}
     <div class="table-responsive">
     <table class="table" id="log">
         <tr>
@@ -41,48 +41,67 @@
             <th class="protocol">Protocol</th>
             <th class="ua">User Agent</th>
         </tr>
-        {% for record in pings %}
-        {% if record.ping %}
+        {% for event in events %}
+        {% if event.n %}
         <tr class="ok {% if record.early %} early {% endif %}">
             <td class="n-cell">
-                {% if record.ping.n %}
-                <span class="hash">#</span>{{ record.ping.n }}
-                {% endif %}
+                <span class="hash">#</span>{{ event.n }}
             </td>
-            <td class="datetime" data-raw="{{ record.ping.created.isoformat }}">
+            <td class="datetime" data-raw="{{ event.created.isoformat }}">
                 <div>
                     <span class="date"></span>
                     <span class="time"></span>
-                    {% if record.early %}
+                    {% if 0 %}
                         <span class="label label-tag">early</span>
                     {% endif %}
                 </div>
             </td>
             <td class="ip">
-                {{ record.ping.remote_addr|default:"" }}
+                {{ event.remote_addr|default:"" }}
             </td>
             <td class="protocol">
-                {{ record.ping.scheme }}
+                {{ event.scheme }}
             </td>
 
             <td class="ua">
-                {{ record.ping.ua }}
+                {{ event.ua }}
             </td>
         </tr>
         {% endif %}
-        {% if record.placeholder_date %}
+        {% if event.check_status %}
         <tr class="missing">
             <td class="n-cell">
                 <span class="icon-missing"></span>
             </td>
-            <td class="datetime" data-raw="{{ record.placeholder_date.isoformat }}">
+            <td class="datetime" data-raw="{{ event.created.isoformat }}">
                 <div>
                     <span class="date"></span>
                     <span class="time"></span>
                 </div>
             </td>
-            <td colspan="3">
-                <small>Ping expected but not received</small>
+            <td colspan="3" class="alert-info">
+                {% if event.channel.kind == "email" %}
+                    Sent email alert to {{ event.channel.value }}
+                {% elif event.channel.kind == "slack" %}
+                    Sent Slack alert
+                    {% if event.channel.slack_channel %}
+                        to {{ event.channel.slack_channel }}
+                    {% endif %}
+                {% elif event.channel.kind == "pd" %}
+                    Sent alert to PagerDuty
+                {% elif event.channel.kind == "opsgenie" %}
+                    Sent alert to OpsGenie
+                {% elif event.channel.kind == "hipchat" %}
+                    Sent alert to HipChat
+                {% elif event.channel.kind == "webhook" %}
+                    Called webhook {{ event.channel.value_down }}
+                {% else %}
+                    Sent alert to {{ event.channel.kind|capfirst }}
+                {% endif %}
+                {% if event.error %}
+                    <br />
+                    <strong>Error: {{ event.error }}</strong>
+                {% endif %}
             </td>
         </tr>
         {% endif %}

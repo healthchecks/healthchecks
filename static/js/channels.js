@@ -32,8 +32,6 @@ $(function() {
     $cm.on("click", "#toggle-all", function() {
         var value = $(this).prop("checked");
         $cm.find(".toggle").prop("checked", value);
-        console.log("aaa", value);
-
     });
 
     $(".channel-remove").click(function() {

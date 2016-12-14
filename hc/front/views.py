@@ -14,8 +14,9 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
-from hc.api.models import DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check, Ping
-from hc.front.forms import (AddChannelForm, AddWebhookForm, NameTagsForm,
+from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
+                           Ping, Notification)
+from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
                             AddOpsGenieForm)
 from pytz import all_timezones
@@ -175,8 +176,6 @@ def update_timeout(request, code):
             check.alert_after = check.get_alert_after()
 
         check.save()
-    else:
-        assert 0, "form is not valid! %s" % form.errors
 
     return redirect("hc-checks")
 
@@ -218,45 +217,28 @@ def log(request, code):
         return HttpResponseForbidden()
 
     limit = request.team.ping_log_limit
-    pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
+    pings = Ping.objects.filter(owner=check).order_by("-id")[:limit + 1]
+    pings = list(pings)
 
-    pings = list(pings.iterator())
-    # oldest-to-newest order will be more convenient for adding
-    # "not received" placeholders:
-    pings.reverse()
+    num_pings = len(pings)
+    pings = pings[:limit]
 
-    # Add a dummy ping object at the end. We iterate over *pairs* of pings
-    # and don't want to handle a special case of a check with a single ping.
-    pings.append(Ping(created=timezone.now()))
+    alerts = []
+    if len(pings):
+        cutoff = pings[-1].created
+        alerts = Notification.objects \
+            .select_related("channel") \
+            .filter(owner=check, check_status="down", created__gt=cutoff)
 
-    # Now go through pings, calculate time gaps, and decorate
-    # the pings list for convenient use in template
-    wrapped = []
+    events = pings + list(alerts)
+    events.sort(key=lambda el: el.created, reverse=True)
 
-    early = False
-    for older, newer in pairwise(pings):
-        wrapped.append({"ping": older, "early": early})
-
-        # Fill in "missed ping" placeholders:
-        expected_date = older.created + check.timeout
-        n_blanks = 0
-        while expected_date + check.grace < newer.created and n_blanks < 10:
-            wrapped.append({"placeholder_date": expected_date})
-            expected_date = expected_date + check.timeout
-            n_blanks += 1
-
-        # Prepare early flag for next ping to come
-        early = older.created + check.timeout > newer.created + check.grace
-
-    reached_limit = len(pings) > limit
-
-    wrapped.reverse()
     ctx = {
         "check": check,
-        "pings": wrapped,
-        "num_pings": len(pings),
+        "events": events,
+        "num_pings": min(num_pings, limit),
         "limit": limit,
-        "show_limit_notice": reached_limit and settings.USE_PAYMENTS
+        "show_limit_notice": num_pings > limit and settings.USE_PAYMENTS
     }
 
     return render(request, "front/log.html", ctx)

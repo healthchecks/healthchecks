@@ -1,6 +1,6 @@
 from django import forms
 from hc.front.validators import WebhookValidator
-from hc.api.models import CHECK_KINDS, Channel
+from hc.api.models import CHECK_KINDS
 
 
 class NameTagsForm(forms.Form):
@@ -24,17 +24,6 @@ class TimeoutForm(forms.Form):
     schedule = forms.CharField(required=False, max_length=100)
     tz = forms.CharField(required=False, max_length=36)
     grace = forms.IntegerField(min_value=60, max_value=2592000)
-
-
-class AddChannelForm(forms.ModelForm):
-
-    class Meta:
-        model = Channel
-        fields = ['kind', 'value']
-
-    def clean_value(self):
-        value = self.cleaned_data["value"]
-        return value.strip()
 
 
 class AddPdForm(forms.Form):
