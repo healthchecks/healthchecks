@@ -22,6 +22,7 @@ def _sqlite(cursor):
 
 class Command(BaseCommand):
     help = 'Drops the `update_alert_after` trigger'
+    requires_system_checks = False
 
     def handle(self, *args, **options):
         with connection.cursor() as cursor:

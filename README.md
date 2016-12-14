@@ -52,11 +52,10 @@ in development environment.
         $ psql --user postgres
         postgres=# create database hc;
 
-* create database tables, triggers, superuser:
+* create database tables and the superuser account:
 
         $ cd ~/webapps/healthchecks
         $ ./manage.py migrate
-        $ ./manage.py ensuretriggers
         $ ./manage.py createsuperuser
 
 * run development server:

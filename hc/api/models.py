@@ -7,6 +7,7 @@ from datetime import datetime, timedelta as td
 
 from croniter import croniter
 from django.conf import settings
+from django.core.checks import Warning
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -163,6 +164,29 @@ class Check(models.Model):
             result["next_ping"] = None
 
         return result
+
+    @classmethod
+    def check(cls, **kwargs):
+        errors = super(Check, cls).check(**kwargs)
+
+        trigger_detected = False
+        try:
+            dummy = Check(last_ping=timezone.now())
+            dummy.save()
+            dummy.refresh_from_db()
+            trigger_detected = bool(dummy.alert_after)
+            dummy.delete()
+        except:
+            pass
+
+        if trigger_detected:
+            err = Warning(
+                "Obsolete 'update_alert_after' trigger exists in database.",
+                hint="Please remove the trigger with 'manage.py droptriggers'",
+                id="hc.api.E001")
+            errors.append(err)
+
+        return errors
 
 
 class Ping(models.Model):
