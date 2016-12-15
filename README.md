@@ -190,6 +190,13 @@ There are separate Django management commands for each task:
     $ ./manage.py pruneemails
     ````
 
+* Remove old records of sent notifications. For each check, remove
+  notifications that are older than the oldest stored ping for same check.
+
+    ````
+    $ ./manage.py prunenotifications
+    ````
+
 * Remove user accounts that match either of these conditions:
  * Account was created more than a month ago, and user has never logged in.
    These can happen when user enters invalid email address when signing up.
