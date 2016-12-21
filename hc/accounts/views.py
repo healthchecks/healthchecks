@@ -266,8 +266,12 @@ def unsubscribe_reports(request, username):
     return render(request, "accounts/unsubscribed.html")
 
 
+@login_required
 def switch_team(request, target_username):
-    other_user = User.objects.get(username=target_username)
+    try:
+        other_user = User.objects.get(username=target_username)
+    except User.DoesNotExist:
+        return HttpResponseForbidden()
 
     # The rules:
     # Superuser can switch to any team.

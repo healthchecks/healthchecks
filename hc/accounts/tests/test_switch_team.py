@@ -28,3 +28,17 @@ class SwitchTeamTestCase(BaseTestCase):
         url = "/accounts/switch_team/%s/" % self.alice.username
         r = self.client.get(url, follow=True)
         self.assertEqual(r.status_code, 200)
+
+    def test_it_handles_invalid_username(self):
+        self.client.login(username="bob@example.org", password="password")
+
+        url = "/accounts/switch_team/dave/"
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 403)
+
+    def test_it_requires_login(self):
+        url = "/accounts/switch_team/%s/" % self.alice.username
+        r = self.client.get(url)
+
+        expected_url = "/accounts/login/?next=/accounts/switch_team/alice/"
+        self.assertRedirects(r, expected_url)
