@@ -111,6 +111,10 @@ class CreateCheckTestCase(BaseTestCase):
         self.post({"api_key": "abc", "name": False},
                   expected_fragment="name is not a string")
 
+    def test_it_rejects_long_name(self):
+        self.post({"api_key": "abc", "name": "01234567890" * 20},
+                  expected_fragment="name is too long")
+
     def test_unique_accepts_only_whitelisted_values(self):
         existing = Check(user=self.alice, name="Foo")
         existing.save()

@@ -15,6 +15,8 @@ def validate(obj, schema, obj_name="value"):
     if schema.get("type") == "string":
         if not isinstance(obj, string_types):
             raise ValidationError("%s is not a string" % obj_name)
+        if "maxLength" in schema and len(obj) > schema["maxLength"]:
+            raise ValidationError("%s is too long" % obj_name)
 
     elif schema.get("type") == "number":
         if not isinstance(obj, int):
