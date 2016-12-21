@@ -66,3 +66,9 @@ class UpdateNameTestCase(BaseTestCase):
 
         check = Check.objects.get(id=self.check.id)
         self.assertEqual(check.tags, "foo bar baz")
+
+    def test_it_rejects_get(self):
+        url = "/checks/%s/name/" % self.check.code
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 400)

@@ -102,3 +102,9 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(url, data=payload)
         assert r.status_code == 403
+
+    def test_it_rejects_get(self):
+        url = "/checks/%s/timeout/" % self.check.code
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 400)

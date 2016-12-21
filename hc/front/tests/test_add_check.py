@@ -19,3 +19,9 @@ class AddCheckTestCase(BaseTestCase):
         check = Check.objects.get()
         # Added by bob, but should belong to alice (bob has team access)
         self.assertEqual(check.user, self.alice)
+
+    def test_it_rejects_get(self):
+        url = "/checks/add/"
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 400)

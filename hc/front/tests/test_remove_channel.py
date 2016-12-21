@@ -47,3 +47,9 @@ class RemoveChannelTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
         assert r.status_code == 302
+
+    def test_it_rejects_get(self):
+        url = "/integrations/%s/remove/" % self.channel.code
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 400)

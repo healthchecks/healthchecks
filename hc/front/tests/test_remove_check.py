@@ -48,3 +48,9 @@ class RemoveCheckTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
         assert r.status_code == 404
+
+    def test_it_rejects_get(self):
+        url = "/checks/%s/remove/" % self.check.code
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 400)

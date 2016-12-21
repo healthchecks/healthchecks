@@ -127,7 +127,8 @@ def about(request):
 
 @login_required
 def add_check(request):
-    assert request.method == "POST"
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
     check = Check(user=request.team.user)
     check.save()
@@ -140,7 +141,8 @@ def add_check(request):
 @login_required
 @uuid_or_400
 def update_name(request, code):
-    assert request.method == "POST"
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
     check = get_object_or_404(Check, code=code)
     if check.user_id != request.team.user.id:
@@ -158,7 +160,8 @@ def update_name(request, code):
 @login_required
 @uuid_or_400
 def update_timeout(request, code):
-    assert request.method == "POST"
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
     check = get_object_or_404(Check, code=code)
     if check.user != request.team.user:
@@ -183,7 +186,8 @@ def update_timeout(request, code):
 @login_required
 @uuid_or_400
 def pause(request, code):
-    assert request.method == "POST"
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
     check = get_object_or_404(Check, code=code)
     if check.user_id != request.team.user.id:
@@ -198,7 +202,8 @@ def pause(request, code):
 @login_required
 @uuid_or_400
 def remove_check(request, code):
-    assert request.method == "POST"
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
     check = get_object_or_404(Check, code=code)
     if check.user != request.team.user:
@@ -318,7 +323,8 @@ def verify_email(request, code, token):
 @login_required
 @uuid_or_400
 def remove_channel(request, code):
-    assert request.method == "POST"
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
     # user may refresh the page during POST and cause two deletion attempts
     channel = Channel.objects.filter(code=code).first()
