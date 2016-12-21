@@ -39,17 +39,24 @@ def _make_user(email):
 
 
 def _associate_demo_check(request, user):
-    if "welcome_code" in request.session:
+    if "welcome_code" not in request.session:
+        return
+
+    try:
         check = Check.objects.get(code=request.session["welcome_code"])
+    except Check.DoesNotExist:
+        return
 
-        # Only associate demo check if it doesn't have an owner already.
-        if check.user is None:
-            check.user = user
-            check.save()
+    # Only associate demo check if it doesn't have an owner already.
+    if check.user:
+        return
 
-            check.assign_all_channels()
+    check.user = user
+    check.save()
 
-            del request.session["welcome_code"]
+    check.assign_all_channels()
+
+    del request.session["welcome_code"]
 
 
 def login(request):
