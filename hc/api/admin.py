@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
 from hc.api.models import Channel, Check, Notification, Ping
+from hc.lib.date import format_duration
 
 
 class OwnershipListFilter(admin.SimpleListFilter):
@@ -28,10 +29,10 @@ class ChecksAdmin(admin.ModelAdmin):
         }
 
     search_fields = ["name", "user__email", "code"]
-    list_display = ("id", "name_tags", "created", "code", "status", "email",
-                    "last_ping", "n_pings")
+    list_display = ("id", "name_tags", "created", "code", "timeout_schedule",
+                    "status", "email", "last_ping", "n_pings")
     list_select_related = ("user", )
-    list_filter = ("status", OwnershipListFilter, "last_ping")
+    list_filter = ("status", OwnershipListFilter, "kind", "last_ping")
     actions = ["send_alert"]
 
     def email(self, obj):
@@ -42,6 +43,16 @@ class ChecksAdmin(admin.ModelAdmin):
             return obj.name
 
         return "%s [%s]" % (obj.name, obj.tags)
+
+    def timeout_schedule(self, obj):
+        if obj.kind == "simple":
+            return format_duration(obj.timeout)
+        elif obj.kind == "cron":
+            return obj.schedule
+        else:
+            return "Unknown"
+
+    timeout_schedule.short_description = "Schedule"
 
     def send_alert(self, request, qs):
         for check in qs:
