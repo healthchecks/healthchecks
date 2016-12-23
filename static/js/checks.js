@@ -97,21 +97,17 @@ $(function () {
     });
 
     function showSimple() {
-        console.log("show simple");
         $("#update-timeout-form").show();
         $("#update-cron-form").hide();
     }
 
     function showCron() {
-        console.log("show cron");
         $("#update-timeout-form").hide();
         $("#update-cron-form").show();
     }
 
     var currentPreviewHash = "";
     function updateCronPreview() {
-        console.log("requested to update cron preview");
-
         var schedule = $("#schedule").val();
         var tz = $("#tz").val();
         var hash = schedule + tz;
@@ -145,11 +141,13 @@ $(function () {
         graceSlider.noUiSlider.set(this.dataset.grace);
 
         // Cron
+        currentPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(this.dataset.schedule);
         document.getElementById("tz").selectize.setValue(this.dataset.tz);
         var minutes = parseInt(this.dataset.grace / 60);
         $("#update-timeout-grace-cron").val(minutes);
+        updateCronPreview();
 
         this.dataset.kind == "simple" ? showSimple() : showCron();
         $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
@@ -161,8 +159,7 @@ $(function () {
     $(".kind-cron").click(showCron);
 
     $("#schedule").on("keyup", updateCronPreview);
-    $("#tz").on("change", updateCronPreview);
-
+    $("#tz").selectize({onChange: updateCronPreview});
 
     $(".check-menu-remove").click(function() {
         $("#remove-check-form").attr("action", this.dataset.url);
@@ -217,7 +214,6 @@ $(function () {
     });
 
     $('[data-toggle="tooltip"]').tooltip();
-    $("#tz").selectize();
 
     $(".usage-examples").click(function(e) {
         var a = e.target;
