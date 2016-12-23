@@ -110,51 +110,29 @@
 
 <div id="update-timeout-modal" class="modal">
     <div class="modal-dialog">
-        <form id="update-timeout-form" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="timeout" id="update-timeout-timeout" />
-            <input type="hidden" name="grace" id="update-timeout-grace" />
-            <div class="modal-content">
+        <div class="modal-content">
+            <form id="update-timeout-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="kind" value="simple" />
+                <input type="hidden" name="timeout" id="update-timeout-timeout" />
+                <input type="hidden" name="grace" id="update-timeout-grace" />
+
                 <div class="modal-body">
-                    <div id="period-block">
-                        <div class="update-timeout-info text-center">
-                            <span
-                                class="update-timeout-label"
-                                data-toggle="tooltip"
-                                title="Expected time between pings.">
-                                Period
-                            </span>
-                            <span
-                                id="period-slider-value"
-                                class="update-timeout-value">
-                                1 day
-                            </span>
-                        </div>
-                        <div id="period-slider"></div>
+                    <div class="update-timeout-info text-center">
+                        <span
+                            class="update-timeout-label"
+                            data-toggle="tooltip"
+                            title="Expected time between pings.">
+                            Period
+                        </span>
+                        <span
+                            id="period-slider-value"
+                            class="update-timeout-value">
+                            1 day
+                        </span>
                     </div>
-                    <div id="schedule-block">
-                        <div class="form-group">
-                            <label for="schedule">
-                                Cron expression
-                                <a href="https://en.wikipedia.org/wiki/Cron#Overview">(reference)</a>
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control input-lg"
-                                id="schedule"
-                                name="schedule"
-                                placeholder="* * * * *">
-                        </div>
-                        <div class="form-group">
-                            <label for="schedule">Server's Timezone</label>
-                            <br />
-                            <select id="tz" name="tz" class="form-control">
-                                <option>UTC</option>
-                                {% for tz in timezones %}
-                                <option>{{ tz }}</option>{% endfor %}
-                            </select>
-                        </div>
-                    </div>
+
+                    <div id="period-slider"></div>
 
                     <div class="update-timeout-info text-center">
                         <span
@@ -182,25 +160,82 @@
                             When a check is late, how much time to wait until alert is sent.
                         </p>
                     </div>
-
                 </div>
+
                 <div class="modal-footer">
-                    <div class="btn-group pull-left" data-toggle="buttons">
-                        <label id="type-simple" class="btn btn-default">
-                            <input type="radio" name="kind" value="simple" autocomplete="off">
-                            Simple
-                        </label>
-                        <label id="type-cron" class="btn btn-default">
-                            <input type="radio" name="kind" value="cron" autocomplete="off">
-                            Cron
-                        </label>
+                    <div class="btn-group pull-left">
+                        <label class="btn btn-default kind-simple active">Simple</label>
+                        <label class="btn btn-default kind-cron">Cron</label>
                     </div>
 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
-            </div>
-        </form>
+            </form>
+
+            <form id="update-cron-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="kind" value="cron" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="schedule">Cron Expression</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="schedule"
+                                    name="schedule"
+                                    placeholder="* * * * *">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="tz">Server's Timezone</label>
+                                <br />
+                                <select id="tz" name="tz" class="form-control">
+                                    <option>UTC</option>
+                                    {% for tz in timezones %}
+                                    <option>{{ tz }}</option>{% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="cron-grace">Grace Time</label>
+                                <div class="input-group">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="43200"
+                                        class="form-control"
+                                        id="update-timeout-grace-cron"
+                                        name="grace">
+                                    <div class="input-group-addon">minutes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="cron-preview"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="btn-group pull-left">
+                        <label class="btn btn-default kind-simple">Simple</label>
+                        <label class="btn btn-default active kind-cron">Cron</label>
+                    </div>
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="update-cron-submit" type="submit" class="btn btn-primary">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

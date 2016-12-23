@@ -1,5 +1,9 @@
-#update-timeout-modal .modal-body {
-    padding-top: 40px;
+#update-timeout-modal .modal-dialog {
+    width: 800px;
+}
+
+#update-timeout-form .modal-body {
+    padding-top: 35px;
 }
 
 .update-timeout-info {
@@ -20,19 +24,57 @@
     width: 100px;
     text-align: left;
     white-space: nowrap;
-
 }
 
-#type-simple, #type-cron {
+.kind-simple, .kind-cron {
     width: 70px;
 }
 
-#schedule-block {
-    margin: 0 50px;
+#update-timeout-simple {
+    display: none;
+}
+
+#update-cron-form .modal-body {
+    padding: 40px;
+}
+
+#update-cron-form label {
+    font-weight: normal;
 }
 
 #tz {
     width: 300px;
+}
+
+#cron-preview {
+    background: #f8f8f8;
+    height: 256px;
+}
+
+#cron-preview p {
+    padding: 8px;
+    font-size: small;
+}
+
+#cron-preview th {
+    border-top: 0;
+    font-weight: normal;
+    font-size: small;
+}
+
+.cron-preview-date {
+    width: 120px;
+}
+
+.cron-preview-rel {
+    font-size: small;
+}
+
+.cron-preview-timestamp {
+    font-size: small;
+    font-family: monospace;
+    text-align: right;
+    color: #888;
 }
 
 #period-slider {

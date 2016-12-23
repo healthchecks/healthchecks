@@ -1,5 +1,15 @@
 $(function () {
 
+    $(".my-checks-name").click(function() {
+        $("#update-name-form").attr("action", this.dataset.url);
+        $("#update-name-input").val(this.dataset.name);
+        $("#update-tags-input").val(this.dataset.tags);
+        $('#update-name-modal').modal("show");
+        $("#update-name-input").focus();
+
+        return false;
+    });
+
     var MINUTE = {name: "minute", nsecs: 60};
     var HOUR = {name: "hour", nsecs: MINUTE.nsecs * 60};
     var DAY = {name: "day", nsecs: HOUR.nsecs * 24};
@@ -58,7 +68,6 @@ $(function () {
         $("#update-timeout-timeout").val(rounded);
     });
 
-
     var graceSlider = document.getElementById("grace-slider");
     noUiSlider.create(graceSlider, {
         start: [20],
@@ -87,55 +96,73 @@ $(function () {
         $("#update-timeout-grace").val(rounded);
     });
 
+    function showSimple() {
+        console.log("show simple");
+        $("#update-timeout-form").show();
+        $("#update-cron-form").hide();
+    }
 
-    $('[data-toggle="tooltip"]').tooltip();
+    function showCron() {
+        console.log("show cron");
+        $("#update-timeout-form").hide();
+        $("#update-cron-form").show();
+    }
 
-    $(".my-checks-name").click(function() {
-        $("#update-name-form").attr("action", this.dataset.url);
-        $("#update-name-input").val(this.dataset.name);
-        $("#update-tags-input").val(this.dataset.tags);
-        $('#update-name-modal').modal("show");
-        $("#update-name-input").focus();
+    var currentPreviewHash = "";
+    function updateCronPreview() {
+        console.log("requested to update cron preview");
 
-        return false;
-    });
+        var schedule = $("#schedule").val();
+        var tz = $("#tz").val();
+        var hash = schedule + tz;
+
+        // Don't try preview with empty values, or if values have not changed
+        if (!schedule || !tz || hash == currentPreviewHash)
+            return;
+
+        // OK, we're good
+        currentPreviewHash = hash;
+        $("#cron-preview-title").text("Updating...");
+        $.post("/checks/cron_preview/", {schedule: schedule, tz: tz},
+            function(data) {
+                if (hash != currentPreviewHash) {
+                    return;  // ignore stale results
+                }
+
+                $("#cron-preview" ).html(data);
+                var haveError = $("#invalid-cron-expression").size() > 0;
+                $("#update-cron-submit").prop("disabled", haveError);
+            }
+        );
+    }
 
     $(".timeout-grace").click(function() {
         $("#update-timeout-form").attr("action", this.dataset.url);
+        $("#update-cron-form").attr("action", this.dataset.url);
+
+        // Simple
         periodSlider.noUiSlider.set(this.dataset.timeout);
         graceSlider.noUiSlider.set(this.dataset.grace);
+
+        // Cron
+        $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(this.dataset.schedule);
         document.getElementById("tz").selectize.setValue(this.dataset.tz);
+        var minutes = parseInt(this.dataset.grace / 60);
+        $("#update-timeout-grace-cron").val(minutes);
 
-        if (this.dataset.kind == "cron") {
-            $("#type-simple").removeClass("active");
-            $("#type-cron").addClass("active");
-            $("#type-cron input").prop("checked", true);
-
-            $("#period-block").hide();
-            $("#schedule-block").show();
-        } else {
-            $("#type-simple").addClass("active");
-            $("#type-simple input").prop("checked", true);
-            $("#type-cron").removeClass("active");
-
-            $("#period-block").show();
-            $("#schedule-block").hide();
-        }
-
+        this.dataset.kind == "simple" ? showSimple() : showCron();
         $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
         return false;
     });
 
-    $("#type-simple").click(function() {
-        $("#period-block").show();
-        $("#schedule-block").hide();
-    });
+    // Wire up events for Timeout/Cron forms
+    $(".kind-simple").click(showSimple);
+    $(".kind-cron").click(showCron);
 
-    $("#type-cron").click(function() {
-        $("#period-block").hide();
-        $("#schedule-block").show();
-    });
+    $("#schedule").on("keyup", updateCronPreview);
+    $("#tz").on("change", updateCronPreview);
+
 
     $(".check-menu-remove").click(function() {
         $("#remove-check-form").attr("action", this.dataset.url);
@@ -189,6 +216,8 @@ $(function () {
         return false;
     });
 
+    $('[data-toggle="tooltip"]').tooltip();
+    $("#tz").selectize();
 
     $(".usage-examples").click(function(e) {
         var a = e.target;
@@ -201,8 +230,6 @@ $(function () {
         $("#show-usage-modal").modal("show");
         return false;
     });
-
-    $("#tz").selectize();
 
     var clipboard = new Clipboard('button.copy-link');
     $("button.copy-link").mouseout(function(e) {

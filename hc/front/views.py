@@ -1,5 +1,6 @@
 from collections import Counter
-from datetime import timedelta as td
+from croniter import croniter
+from datetime import datetime, timedelta as td
 from itertools import tee
 
 import requests
@@ -12,13 +13,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
                            Ping, Notification)
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
-                            AddOpsGenieForm)
+                            AddOpsGenieForm, CronForm)
 from pytz import all_timezones
 
 
@@ -167,20 +169,53 @@ def update_timeout(request, code):
     if check.user != request.team.user:
         return HttpResponseForbidden()
 
-    form = TimeoutForm(request.POST)
-    if form.is_valid():
-        check.kind = form.cleaned_data["kind"]
+    kind = request.POST.get("kind")
+    if kind == "simple":
+        form = TimeoutForm(request.POST)
+        if not form.is_valid():
+            return redirect("hc-checks")
+
+        check.kind = "simple"
         check.timeout = td(seconds=form.cleaned_data["timeout"])
         check.grace = td(seconds=form.cleaned_data["grace"])
+    elif kind == "cron":
+        form = CronForm(request.POST)
+        if not form.is_valid():
+            return redirect("hc-checks")
+
+        check.kind = "cron"
         check.schedule = form.cleaned_data["schedule"]
         check.tz = form.cleaned_data["tz"]
+        check.grace = td(minutes=form.cleaned_data["grace"])
 
-        if check.last_ping:
-            check.alert_after = check.get_alert_after()
+    if check.last_ping:
+        check.alert_after = check.get_alert_after()
 
-        check.save()
-
+    check.save()
     return redirect("hc-checks")
+
+
+@csrf_exempt
+def cron_preview(request):
+    schedule = request.POST.get("schedule")
+    tz = request.POST.get("tz")
+
+    ctx = {
+        "tz": tz,
+        "dates": []
+    }
+
+    try:
+        with timezone.override(tz):
+            now_naive = timezone.make_naive(timezone.now())
+            it = croniter(schedule, now_naive)
+            for i in range(0, 6):
+                date_naive = it.get_next(datetime)
+                ctx["dates"].append(timezone.make_aware(date_naive))
+    except:
+        ctx["error"] = True
+
+    return render(request, "front/cron_preview.html", ctx)
 
 
 @login_required

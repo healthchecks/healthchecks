@@ -1,0 +1,20 @@
+{% load humanize tz %}
+
+{% if error %}
+<p id="invalid-cron-expression">Invalid cron expression</p>
+{% else %}
+<table class="table">
+    <tr>
+        <th id="cron-preview-title" colspan="3">Expected Ping Dates</th>
+    </tr>
+    {% for date in dates %}
+    <tr>
+        {% timezone tz %}
+        <td class="cron-preview-date">{{ date|date:"M j, H:i" }}</td>
+        {% endtimezone %}
+        <td class="cron-preview-rel">{{ date|naturaltime }}</td>
+        <td class="cron-preview-timestamp">{{ date|date:"c" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
