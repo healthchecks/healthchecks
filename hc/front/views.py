@@ -22,6 +22,7 @@ from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
                             AddOpsGenieForm, CronForm)
 from pytz import all_timezones
+from pytz.exceptions import UnknownTimeZoneError
 
 
 # from itertools recipes:
@@ -173,7 +174,7 @@ def update_timeout(request, code):
     if kind == "simple":
         form = TimeoutForm(request.POST)
         if not form.is_valid():
-            return redirect("hc-checks")
+            return HttpResponseBadRequest()
 
         check.kind = "simple"
         check.timeout = td(seconds=form.cleaned_data["timeout"])
@@ -181,7 +182,7 @@ def update_timeout(request, code):
     elif kind == "cron":
         form = CronForm(request.POST)
         if not form.is_valid():
-            return redirect("hc-checks")
+            return HttpResponseBadRequest()
 
         check.kind = "cron"
         check.schedule = form.cleaned_data["schedule"]
@@ -197,23 +198,24 @@ def update_timeout(request, code):
 
 @csrf_exempt
 def cron_preview(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest()
+
     schedule = request.POST.get("schedule")
     tz = request.POST.get("tz")
-
-    ctx = {
-        "tz": tz,
-        "dates": []
-    }
-
+    ctx = {"tz": tz, "dates": []}
     try:
         with timezone.override(tz):
             now_naive = timezone.make_naive(timezone.now())
             it = croniter(schedule, now_naive)
             for i in range(0, 6):
-                date_naive = it.get_next(datetime)
-                ctx["dates"].append(timezone.make_aware(date_naive))
+                naive = it.get_next(datetime)
+                aware = timezone.make_aware(naive)
+                ctx["dates"].append((naive, aware))
+    except UnknownTimeZoneError:
+        ctx["bad_tz"] = True
     except:
-        ctx["error"] = True
+        ctx["bad_schedule"] = True
 
     return render(request, "front/cron_preview.html", ctx)
 

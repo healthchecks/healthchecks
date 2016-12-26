@@ -30,10 +30,6 @@
     width: 70px;
 }
 
-#update-timeout-simple {
-    display: none;
-}
-
 #update-cron-form .modal-body {
     padding: 40px;
 }
@@ -62,15 +58,15 @@
     font-size: small;
 }
 
-.cron-preview-date {
+#cron-preview-table tr td:nth-child(1) {
     width: 120px;
 }
 
-.cron-preview-rel {
+#cron-preview-table tr td:nth-child(2) {
     font-size: small;
 }
 
-.cron-preview-timestamp {
+#cron-preview-table tr td:nth-child(3) {
     font-size: small;
     font-family: monospace;
     text-align: right;
@@ -105,7 +101,6 @@
 .update-timeout-terms p {
     margin: 0;
 }
-
 
 .update-timeout-terms span {
     font-weight: bold;

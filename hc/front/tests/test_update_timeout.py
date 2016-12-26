@@ -33,7 +33,6 @@ class UpdateTimeoutTestCase(BaseTestCase):
             "kind": "cron",
             "schedule": "5 * * * *",
             "tz": "UTC",
-            "timeout": 60,
             "grace": 60
         }
 
@@ -54,13 +53,32 @@ class UpdateTimeoutTestCase(BaseTestCase):
             "kind": "cron",
             "schedule": "* invalid *",
             "tz": "UTC",
-            "timeout": 60,
             "grace": 60
         }
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url, data=payload)
-        self.assertRedirects(r, "/checks/")
+        self.assertEqual(r.status_code, 400)
+
+        # Check should still have its original data:
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "simple")
+
+    def test_it_validates_tz(self):
+        self.check.last_ping = None
+        self.check.save()
+
+        url = "/checks/%s/timeout/" % self.check.code
+        payload = {
+            "kind": "cron",
+            "schedule": "* * * * *",
+            "tz": "not-a-tz",
+            "grace": 60
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url, data=payload)
+        self.assertEqual(r.status_code, 400)
 
         # Check should still have its original data:
         self.check.refresh_from_db()

@@ -24,7 +24,7 @@
 	// ===================
 	var Tab = function( element,options ) {
 		options = options || {};
-		
+
 		this.tab = typeof element === 'object' ? element : document.querySelector(element);
 		this.tabs = this.tab.parentNode.parentNode;
 		this.dropdown = this.tabs.querySelector('.dropdown');
@@ -94,8 +94,6 @@
 				} else if ( activeTabs.length > 1 ) {
 					return activeTabs[activeTabs.length-1]
 				}
-
-				console.log(activeTabs.length)
 			},
 			this.getActiveContent = function() {
 				var a = self.getActiveTab().getElementsByTagName('A')[0].getAttribute('href').replace('#','');

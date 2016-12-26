@@ -1,6 +1,7 @@
 from croniter import croniter
 from django.core.exceptions import ValidationError
 from six.moves.urllib_parse import urlparse
+from pytz import all_timezones
 
 
 class WebhookValidator(object):
@@ -22,4 +23,12 @@ class CronExpressionValidator(object):
         try:
             croniter(value)
         except:
+            raise ValidationError(message=self.message)
+
+
+class TimezoneValidator(object):
+    message = "Not a valid time zone."
+
+    def __call__(self, value):
+        if value not in all_timezones:
             raise ValidationError(message=self.message)

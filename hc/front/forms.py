@@ -1,5 +1,6 @@
 from django import forms
-from hc.front.validators import CronExpressionValidator, WebhookValidator
+from hc.front.validators import (CronExpressionValidator, TimezoneValidator,
+                                 WebhookValidator)
 
 
 class NameTagsForm(forms.Form):
@@ -25,7 +26,8 @@ class TimeoutForm(forms.Form):
 class CronForm(forms.Form):
     schedule = forms.CharField(required=False, max_length=100,
                                validators=[CronExpressionValidator()])
-    tz = forms.CharField(required=False, max_length=36)
+    tz = forms.CharField(required=False, max_length=36,
+                         validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=1, max_value=43200)
 
 
