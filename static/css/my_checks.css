@@ -1,5 +1,7 @@
-#update-timeout-modal .modal-dialog {
-    width: 800px;
+@media (min-width: 992px) {
+    #update-timeout-modal .modal-dialog {
+        width: 800px;
+    }
 }
 
 #update-timeout-form .modal-body {

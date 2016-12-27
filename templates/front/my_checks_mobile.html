@@ -92,7 +92,13 @@
                 data-grace="{{ check.grace.total_seconds }}"
                 data-schedule="{{ check.schedule }}"
                 data-tz="{{ check.tz }}"
-                class="btn btn-default timeout-grace">Change Period</a>
+                class="btn btn-default timeout-grace">
+                {% if check.kind == "simple" %}
+                Change Period
+                {% elif check.kind == "cron" %}
+                Change Schedule
+                {% endif %}
+            </a>
 
             <a href="{% url 'hc-log' check.code %}" class="btn btn-default">Log</a>
         </div>

@@ -11,7 +11,7 @@
     <tr>
         <td>{{ naive|date:"M j, H:i" }}</td>
         <td>{{ aware|naturaltime }}</td>
-        <td>{{ aware|date:"c" }}</td>
+        <td class="hidden-xs">{{ aware|date:"c" }}</td>
     </tr>
     {% endfor %}
 </table>

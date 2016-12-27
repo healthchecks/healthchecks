@@ -6,6 +6,9 @@
     background-color: #f5f5f5;
 }
 
+.my-checks-name {
+    max-width: 250px;
+}
 
 .my-checks-name.unnamed {
     color: #999;
@@ -47,6 +50,14 @@ table.table tr > th.th-name {
     border: 1px solid rgba(0, 0, 0, 0);
     padding: 6px;
     display: block;
+}
+
+.timeout-grace .cron-expression {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 120px;
 }
 
 #checks-table tr:hover .timeout-grace {

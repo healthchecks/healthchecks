@@ -61,7 +61,7 @@
                 {% if check.kind == "simple" %}
                     {{ check.timeout|hc_duration }}
                 {% elif check.kind == "cron" %}
-                    {{ check.schedule }}
+                    <span class="cron-expression">{{ check.schedule }}</span>
                 {% endif %}
                 <br />
                 <span class="checks-subline">
