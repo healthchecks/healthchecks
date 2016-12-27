@@ -6,10 +6,6 @@
     background-color: #f5f5f5;
 }
 
-.my-checks-name {
-    max-width: 250px;
-}
-
 .my-checks-name.unnamed {
     color: #999;
     font-style: italic;
