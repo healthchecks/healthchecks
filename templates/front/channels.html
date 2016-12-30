@@ -27,15 +27,16 @@
         {% for ch in channels %}
         <tr class="channel-row">
             <td>
-            {% if ch.kind == "email" %} Email {% endif %}
-            {% if ch.kind == "webhook" %} Webhook {% endif %}
-            {% if ch.kind == "slack" %} Slack {% endif %}
-            {% if ch.kind == "hipchat" %} HipChat {% endif %}
-            {% if ch.kind == "pd" %} PagerDuty {% endif %}
-            {% if ch.kind == "po" %} Pushover {% endif %}
-            {% if ch.kind == "victorops" %} VictorOps {% endif %}
-            {% if ch.kind == "pushbullet" %} Pushbullet {% endif %}
-            {% if ch.kind == "opsgenie" %} OpsGenie {% endif %}
+            {% if ch.kind == "email" %} Email
+            {% elif ch.kind == "webhook" %} Webhook
+            {% elif ch.kind == "slack" %} Slack
+            {% elif ch.kind == "hipchat" %} HipChat
+            {% elif ch.kind == "pd" %} PagerDuty
+            {% elif ch.kind == "po" %} Pushover
+            {% elif ch.kind == "victorops" %} VictorOps
+            {% elif ch.kind == "pushbullet" %} Pushbullet
+            {% elif ch.kind == "opsgenie" %} OpsGenie
+            {% elif ch.kind == "discord" %} Discord {% endif %}
             </td>
             <td class="value-cell">
                 {% if ch.kind == "email" %}
@@ -84,6 +85,8 @@
                 {% elif ch.kind == "pushbullet" %}
                     <span class="preposition">API key</span>
                     {{ ch.value }}
+                {% elif ch.kind == "discord" %}
+                    {{ ch.discord_webhook_id }}
                 {% else %}
                     {{ ch.value }}
                 {% endif %}
@@ -212,6 +215,17 @@
             <p>Receive instant push notifications on your phone or tablet.</p>
 
             <a href="{% url 'hc-add-pushover' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+        {% if enable_discord %}
+        <li>
+            <img src="{% static 'img/integrations/discord.png' %}"
+                 class="icon" alt="Discord icon" />
+
+            <h2>Discord</h2>
+            <p>Cross-platform voice and text chat app designed for gamers.</p>
+
+            <a href="{% url 'hc-add-discord' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
         <li class="link-to-github">

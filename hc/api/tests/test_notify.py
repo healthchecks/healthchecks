@@ -155,8 +155,8 @@ class NotifyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-        json = kwargs["json"]
-        self.assertEqual(json["event_type"], "trigger")
+        payload = kwargs["json"]
+        self.assertEqual(payload["event_type"], "trigger")
 
     @patch("hc.api.transports.requests.request")
     def test_slack(self, mock_post):
@@ -167,8 +167,8 @@ class NotifyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-        json = kwargs["json"]
-        attachment = json["attachments"][0]
+        payload = kwargs["json"]
+        attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Never")
 
@@ -213,8 +213,8 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         args, kwargs = mock_post.call_args
-        json = kwargs["json"]
-        self.assertIn("DOWN", json["message"])
+        payload = kwargs["json"]
+        self.assertIn("DOWN", payload["message"])
 
     @patch("hc.api.transports.requests.request")
     def test_opsgenie(self, mock_post):
@@ -226,8 +226,8 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         args, kwargs = mock_post.call_args
-        json = kwargs["json"]
-        self.assertIn("DOWN", json["message"])
+        payload = kwargs["json"]
+        self.assertIn("DOWN", payload["message"])
 
     @patch("hc.api.transports.requests.request")
     def test_pushover(self, mock_post):
@@ -238,8 +238,8 @@ class NotifyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-        json = kwargs["data"]
-        self.assertIn("DOWN", json["title"])
+        payload = kwargs["data"]
+        self.assertIn("DOWN", payload["title"])
 
     @patch("hc.api.transports.requests.request")
     def test_victorops(self, mock_post):
@@ -250,5 +250,20 @@ class NotifyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-        json = kwargs["json"]
-        self.assertEqual(json["message_type"], "CRITICAL")
+        payload = kwargs["json"]
+        self.assertEqual(payload["message_type"], "CRITICAL")
+
+    @patch("hc.api.transports.requests.request")
+    def test_discord(self, mock_post):
+        v = json.dumps({"webhook": {"url": "123"}})
+        self._setup_data("discord", v)
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        attachment = payload["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Last Ping"], "Never")

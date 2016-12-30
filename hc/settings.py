@@ -136,6 +136,10 @@ COMPRESS_OFFLINE = True
 
 EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
 
+# Discord integration -- override these in local_settings
+DISCORD_CLIENT_ID = None
+DISCORD_CLIENT_SECRET = None
+
 # Slack integration -- override these in local_settings
 SLACK_CLIENT_ID = None
 SLACK_CLIENT_SECRET = None

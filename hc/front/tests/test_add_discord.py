@@ -6,17 +6,17 @@ from hc.test import BaseTestCase
 from mock import patch
 
 
-@override_settings(PUSHBULLET_CLIENT_ID="t1", PUSHBULLET_CLIENT_SECRET="s1")
-class AddPushbulletTestCase(BaseTestCase):
-    url = "/integrations/add_pushbullet/"
+@override_settings(DISCORD_CLIENT_ID="t1", DISCORD_CLIENT_SECRET="s1")
+class AddDiscordTestCase(BaseTestCase):
+    url = "/integrations/add_discord/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "www.pushbullet.com/authorize", status_code=200)
-        self.assertContains(r, "Connect Pushbullet")
+        self.assertContains(r, "Connect Discord", status_code=200)
+        self.assertContains(r, "discordapp.com/api/oauth2/authorize")
 
-    @override_settings(PUSHBULLET_CLIENT_ID=None)
+    @override_settings(DISCORD_CLIENT_ID=None)
     def test_it_requires_client_id(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
@@ -24,7 +24,13 @@ class AddPushbulletTestCase(BaseTestCase):
 
     @patch("hc.front.views.requests.post")
     def test_it_handles_oauth_response(self, mock_post):
-        oauth_response = {"access_token": "test-token"}
+        oauth_response = {
+            "access_token": "test-token",
+            "webhook": {
+                "url": "foo",
+                "id": "bar"
+            }
+        }
 
         mock_post.return_value.text = json.dumps(oauth_response)
         mock_post.return_value.json.return_value = oauth_response
@@ -34,7 +40,7 @@ class AddPushbulletTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
         self.assertRedirects(r, "/integrations/")
-        self.assertContains(r, "The Pushbullet integration has been added!")
+        self.assertContains(r, "The Discord integration has been added!")
 
         ch = Channel.objects.get()
-        self.assertEqual(ch.value, "test-token")
+        self.assertEqual(ch.discord_webhook_url, "foo")

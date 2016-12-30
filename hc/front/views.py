@@ -312,7 +312,8 @@ def channels(request):
         channel.checks = new_checks
         return redirect("hc-channels")
 
-    channels = Channel.objects.filter(user=request.team.user).order_by("created")
+    channels = Channel.objects.filter(user=request.team.user)
+    channels = channels.order_by("created")
     channels = channels.annotate(n_checks=Count("checks"))
 
     num_checks = Check.objects.filter(user=request.team.user).count()
@@ -322,7 +323,8 @@ def channels(request):
         "channels": channels,
         "num_checks": num_checks,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
-        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None
+        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
+        "enable_discord": settings.DISCORD_CLIENT_ID is not None
     }
     return render(request, "front/channels.html", ctx)
 
@@ -542,6 +544,53 @@ def add_pushbullet(request):
         "authorize_url": authorize_url
     }
     return render(request, "integrations/add_pushbullet.html", ctx)
+
+
+@login_required
+def add_discord(request):
+    if settings.DISCORD_CLIENT_ID is None:
+        raise Http404("discord integration is not available")
+
+    redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord")
+    if "code" in request.GET:
+        code = request.GET.get("code", "")
+        if len(code) < 8:
+            return HttpResponseBadRequest()
+
+        result = requests.post("https://discordapp.com/api/oauth2/token", {
+            "client_id": settings.DISCORD_CLIENT_ID,
+            "client_secret": settings.DISCORD_CLIENT_SECRET,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri
+        })
+
+        doc = result.json()
+        if "access_token" in doc:
+            channel = Channel(kind="discord")
+            channel.user = request.team.user
+            channel.value = result.text
+            channel.save()
+            channel.assign_all_checks()
+            messages.success(request,
+                             "The Discord integration has been added!")
+        else:
+            messages.warning(request, "Something went wrong")
+
+        return redirect("hc-channels")
+
+    authorize_url = "https://discordapp.com/api/oauth2/authorize?" + urlencode({
+        "client_id": settings.DISCORD_CLIENT_ID,
+        "scope": "webhook.incoming",
+        "redirect_uri": redirect_uri,
+        "response_type": "code"
+    })
+
+    ctx = {
+        "page": "channels",
+        "authorize_url": authorize_url
+    }
+    return render(request, "integrations/add_discord.html", ctx)
 
 
 @login_required

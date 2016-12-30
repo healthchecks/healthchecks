@@ -34,7 +34,8 @@ CHANNEL_KINDS = (("email", "Email"),
                  ("po", "Pushover"),
                  ("pushbullet", "Pushbullet"),
                  ("opsgenie", "OpsGenie"),
-                 ("victorops", "VictorOps"))
+                 ("victorops", "VictorOps"),
+                 ("discord", "Discord"))
 
 PO_PRIORITIES = {
     -2: "lowest",
@@ -243,6 +244,8 @@ class Channel(models.Model):
             return transports.Pushover(self)
         elif self.kind == "opsgenie":
             return transports.OpsGenie(self)
+        elif self.kind == "discord":
+            return transports.Discord(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -309,6 +312,24 @@ class Channel(models.Model):
 
         doc = json.loads(self.value)
         return doc["incoming_webhook"]["url"]
+
+    @property
+    def discord_webhook_url(self):
+        assert self.kind == "discord"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        return doc["webhook"]["url"]
+
+    @property
+    def discord_webhook_id(self):
+        assert self.kind == "discord"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        return doc["webhook"]["id"]
 
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()

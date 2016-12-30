@@ -237,3 +237,10 @@ class VictorOps(HttpTransport):
         }
 
         return self.post(self.channel.value, payload)
+
+
+class Discord(HttpTransport):
+    def notify(self, check):
+        text = tmpl("slack_message.json", check=check)
+        payload = json.loads(text)
+        return self.post(self.channel.discord_webhook_url + "/slack", payload)

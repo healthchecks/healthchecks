@@ -19,6 +19,7 @@ channel_urls = [
     url(r'^add_slack_btn/$', views.add_slack_btn, name="hc-add-slack-btn"),
     url(r'^add_hipchat/$', views.add_hipchat, name="hc-add-hipchat"),
     url(r'^add_pushbullet/$', views.add_pushbullet, name="hc-add-pushbullet"),
+    url(r'^add_discord/$', views.add_discord, name="hc-add-discord"),
     url(r'^add_pushover/$', views.add_pushover, name="hc-add-pushover"),
     url(r'^add_opsgenie/$', views.add_opsgenie, name="hc-add-opsgenie"),
     url(r'^add_victorops/$', views.add_victorops, name="hc-add-victorops"),
