@@ -248,12 +248,14 @@
                 <td>Notifications in <a href="https://slack.com/">Slack</a> channel.</td>
             </tr>
 
+            {% if enable_discord %}
             <tr>
                 <td>
                     <img width="22" height="22" alt="Discord icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsAQMAAAAkSshCAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAGUExURUxpcXKJ2kFuBesAAAABdFJOUwBA5thmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAb0lEQVQY053QzQmAMAwF4CceRBAcoaPoSG5gQQfrKAUXKF68FGOf8feogfDd8pKgEJEI1AkBzAP7g+gnMqMkASD+or9xJ21DQnhg34BtRmVARZzv9mG932Nl+bruepCm8PYUxE8wLFWtFEquZArsBlghj/fhSNdMAAAAAElFTkSuQmCC" />
                 </td>
                 <td>Notifications in <a href="https://discordapp.com/">Discord</a> channel.</td>
             </tr>
+            {% endif %}
 
             <tr>
                 <td>
@@ -283,14 +285,14 @@
                 <td>Open and resolve incidents in <a href="https://victorops.com/">VictorOps</a>.</td>
             </tr>
 
-
-
+            {% if enable_pushbullet %}
             <tr>
                 <td>
                     <img width="22" height="22" alt="Pushbullet icon" src="data:image/png;base64,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" />
                 </td>
                 <td>Instant push notifications with <a href="https://www.pushbullet.com/">Pushbullet</a>.</td>
             </tr>
+            {% endif %}
 
             {% if enable_pushover %}
             <tr>

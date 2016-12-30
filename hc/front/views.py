@@ -91,7 +91,9 @@ def index(request):
         "page": "welcome",
         "check": check,
         "ping_url": check.url(),
-        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None
+        "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
+        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
+        "enable_discord": settings.DISCORD_CLIENT_ID is not None
     }
 
     return render(request, "front/welcome.html", ctx)
@@ -430,6 +432,24 @@ def add_pd(request):
     return render(request, "integrations/add_pd.html", ctx)
 
 
+def _prepare_state(request, session_key):
+    state = get_random_string()
+    request.session[session_key] = state
+    return state
+
+
+def _get_validated_code(request, session_key):
+    if session_key not in request.session:
+        return None
+
+    session_state = request.session.pop(session_key)
+    request_state = request.GET.get("state")
+    if session_state is None or session_state != request_state:
+        return None
+
+    return request.GET.get("code")
+
+
 def add_slack(request):
     if not settings.SLACK_CLIENT_ID and not request.user.is_authenticated:
         return redirect("hc-login")
@@ -452,13 +472,16 @@ def add_slack(request):
         "slack_client_id": settings.SLACK_CLIENT_ID
     }
 
+    if settings.SLACK_CLIENT_ID:
+        ctx["state"] = _prepare_state(request, "slack")
+
     return render(request, "integrations/add_slack.html", ctx)
 
 
 @login_required
 def add_slack_btn(request):
-    code = request.GET.get("code", "")
-    if len(code) < 8:
+    code = _get_validated_code(request, "slack")
+    if code is None:
         return HttpResponseBadRequest()
 
     result = requests.post("https://slack.com/api/oauth.access", {
@@ -507,8 +530,8 @@ def add_pushbullet(request):
         raise Http404("pushbullet integration is not available")
 
     if "code" in request.GET:
-        code = request.GET.get("code", "")
-        if len(code) < 8:
+        code = _get_validated_code(request, "pushbullet")
+        if code is None:
             return HttpResponseBadRequest()
 
         result = requests.post("https://api.pushbullet.com/oauth2/token", {
@@ -536,7 +559,8 @@ def add_pushbullet(request):
     authorize_url = "https://www.pushbullet.com/authorize?" + urlencode({
         "client_id": settings.PUSHBULLET_CLIENT_ID,
         "redirect_uri": redirect_uri,
-        "response_type": "code"
+        "response_type": "code",
+        "state": _prepare_state(request, "pushbullet")
     })
 
     ctx = {
@@ -553,8 +577,8 @@ def add_discord(request):
 
     redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord")
     if "code" in request.GET:
-        code = request.GET.get("code", "")
-        if len(code) < 8:
+        code = _get_validated_code(request, "discord")
+        if code is None:
             return HttpResponseBadRequest()
 
         result = requests.post("https://discordapp.com/api/oauth2/token", {
@@ -579,17 +603,19 @@ def add_discord(request):
 
         return redirect("hc-channels")
 
-    authorize_url = "https://discordapp.com/api/oauth2/authorize?" + urlencode({
+    auth_url = "https://discordapp.com/api/oauth2/authorize?" + urlencode({
         "client_id": settings.DISCORD_CLIENT_ID,
         "scope": "webhook.incoming",
         "redirect_uri": redirect_uri,
-        "response_type": "code"
+        "response_type": "code",
+        "state": _prepare_state(request, "discord")
     })
 
     ctx = {
         "page": "channels",
-        "authorize_url": authorize_url
+        "authorize_url": auth_url
     }
+
     return render(request, "integrations/add_discord.html", ctx)
 
 

@@ -16,6 +16,9 @@ class AddDiscordTestCase(BaseTestCase):
         self.assertContains(r, "Connect Discord", status_code=200)
         self.assertContains(r, "discordapp.com/api/oauth2/authorize")
 
+        # There should now be a key in session
+        self.assertTrue("discord" in self.client.session)
+
     @override_settings(DISCORD_CLIENT_ID=None)
     def test_it_requires_client_id(self):
         self.client.login(username="alice@example.org", password="password")
@@ -24,6 +27,10 @@ class AddDiscordTestCase(BaseTestCase):
 
     @patch("hc.front.views.requests.post")
     def test_it_handles_oauth_response(self, mock_post):
+        session = self.client.session
+        session["discord"] = "foo"
+        session.save()
+
         oauth_response = {
             "access_token": "test-token",
             "webhook": {
@@ -35,7 +42,7 @@ class AddDiscordTestCase(BaseTestCase):
         mock_post.return_value.text = json.dumps(oauth_response)
         mock_post.return_value.json.return_value = oauth_response
 
-        url = self.url + "?code=12345678"
+        url = self.url + "?code=12345678&state=foo"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
@@ -44,3 +51,17 @@ class AddDiscordTestCase(BaseTestCase):
 
         ch = Channel.objects.get()
         self.assertEqual(ch.discord_webhook_url, "foo")
+
+        # Session should now be clean
+        self.assertFalse("discord" in self.client.session)
+
+    def test_it_avoids_csrf(self):
+        session = self.client.session
+        session["discord"] = "foo"
+        session.save()
+
+        url = self.url + "?code=12345678&state=bar"
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 400)

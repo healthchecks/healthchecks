@@ -14,6 +14,9 @@ class AddSlackBtnTestCase(BaseTestCase):
         self.assertContains(r, "Before adding Slack integration",
                             status_code=200)
 
+        # There should now be a key in session
+        self.assertTrue("slack" in self.client.session)
+
     @override_settings(SLACK_CLIENT_ID="foo")
     def test_slack_button(self):
         self.client.login(username="alice@example.org", password="password")
@@ -22,6 +25,10 @@ class AddSlackBtnTestCase(BaseTestCase):
 
     @patch("hc.front.views.requests.post")
     def test_it_handles_oauth_response(self, mock_post):
+        session = self.client.session
+        session["slack"] = "foo"
+        session.save()
+
         oauth_response = {
             "ok": True,
             "team_name": "foo",
@@ -34,7 +41,7 @@ class AddSlackBtnTestCase(BaseTestCase):
         mock_post.return_value.text = json.dumps(oauth_response)
         mock_post.return_value.json.return_value = oauth_response
 
-        url = "/integrations/add_slack_btn/?code=12345678"
+        url = "/integrations/add_slack_btn/?code=12345678&state=foo"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
@@ -46,8 +53,26 @@ class AddSlackBtnTestCase(BaseTestCase):
         self.assertEqual(ch.slack_channel, "bar")
         self.assertEqual(ch.slack_webhook_url, "http://example.org")
 
+        # Session should now be clean
+        self.assertFalse("slack" in self.client.session)
+
+    def test_it_avoids_csrf(self):
+        session = self.client.session
+        session["slack"] = "foo"
+        session.save()
+
+        url = "/integrations/add_slack_btn/?code=12345678&state=bar"
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 400)
+
     @patch("hc.front.views.requests.post")
     def test_it_handles_oauth_error(self, mock_post):
+        session = self.client.session
+        session["slack"] = "foo"
+        session.save()
+
         oauth_response = {
             "ok": False,
             "error": "something went wrong"
@@ -56,7 +81,7 @@ class AddSlackBtnTestCase(BaseTestCase):
         mock_post.return_value.text = json.dumps(oauth_response)
         mock_post.return_value.json.return_value = oauth_response
 
-        url = "/integrations/add_slack_btn/?code=12345678"
+        url = "/integrations/add_slack_btn/?code=12345678&state=foo"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
