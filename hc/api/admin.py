@@ -171,6 +171,8 @@ class ChannelsAdmin(admin.ModelAdmin):
             return "VictorOps"
         elif obj.kind == "pushbullet":
             return "Pushbullet"
+        elif obj.kind == "discord":
+            return "Discord"
         elif obj.kind == "po":
             return "Pushover"
         elif obj.kind == "webhook":
