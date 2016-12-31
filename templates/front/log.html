@@ -93,6 +93,8 @@
                     Sent alert to OpsGenie
                 {% elif event.channel.kind == "hipchat" %}
                     Sent alert to HipChat
+                {% elif event.channel.kind == "po" %}
+                    Sent a Pushover notification
                 {% elif event.channel.kind == "webhook" %}
                     Called webhook {{ event.channel.value_down }}
                 {% else %}
