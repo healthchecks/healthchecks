@@ -1,2 +1,2 @@
-var http = require('http');
-http.get("PING_URL");
+var https = require('https');
+https.get("PING_URL");
