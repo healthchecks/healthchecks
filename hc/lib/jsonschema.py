@@ -4,7 +4,9 @@ Supports only a tiny subset of jsonschema.
 
 """
 
+from croniter import croniter
 from six import string_types
+from pytz import all_timezones
 
 
 class ValidationError(Exception):
@@ -17,6 +19,14 @@ def validate(obj, schema, obj_name="value"):
             raise ValidationError("%s is not a string" % obj_name)
         if "maxLength" in schema and len(obj) > schema["maxLength"]:
             raise ValidationError("%s is too long" % obj_name)
+        if schema.get("format") == "cron":
+            try:
+                croniter(obj)
+            except:
+                raise ValidationError(
+                    "%s is not a valid cron expression" % obj_name)
+        if schema.get("format") == "timezone" and obj not in all_timezones:
+            raise ValidationError("%s is not a valid timezone" % obj_name)
 
     elif schema.get("type") == "number":
         if not isinstance(obj, int):

@@ -151,11 +151,16 @@ class Check(models.Model):
             "ping_url": self.url(),
             "pause_url": settings.SITE_ROOT + pause_rel_url,
             "tags": self.tags,
-            "timeout": int(self.timeout.total_seconds()),
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
             "status": self.get_status()
         }
+
+        if self.kind == "simple":
+            result["timeout"] = int(self.timeout.total_seconds())
+        elif self.kind == "cron":
+            result["schedule"] = self.schedule
+            result["tz"] = self.tz
 
         if self.last_ping:
             result["last_ping"] = self.last_ping.isoformat()

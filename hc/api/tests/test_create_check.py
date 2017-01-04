@@ -39,6 +39,9 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
 
+        self.assertTrue("schedule" not in doc)
+        self.assertTrue("tz" not in doc)
+
         self.assertEqual(Check.objects.count(), 1)
         check = Check.objects.get()
         self.assertEqual(check.name, "Foo")
@@ -131,3 +134,51 @@ class CreateCheckTestCase(BaseTestCase):
             "name": "Foo",
             "unique": "not a list"
         }, expected_fragment="not an array")
+
+    def test_it_supports_cron_syntax(self):
+        r = self.post({
+            "api_key": "abc",
+            "schedule": "5 * * * *",
+            "tz": "Europe/Riga",
+            "grace": 60
+        })
+
+        self.assertEqual(r.status_code, 201)
+
+        doc = r.json()
+        self.assertEqual(doc["kind"], "cron")
+        self.assertEqual(doc["schedule"], "5 * * * *")
+        self.assertEqual(doc["tz"], "Europe/Riga")
+        self.assertEqual(doc["grace"], 60)
+
+        self.assertTrue("timeout" not in doc)
+
+    def test_it_validates_cron_expression(self):
+        r = self.post({
+            "api_key": "abc",
+            "kind": "cron",
+            "schedule": "not-a-cron-expression",
+            "tz": "Europe/Riga",
+            "grace": 60
+        })
+
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_validates_timezone(self):
+        r = self.post({
+            "api_key": "abc",
+            "kind": "cron",
+            "schedule": "* * * * *",
+            "tz": "not-a-timezone",
+            "grace": 60
+        })
+
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_sets_default_timeout(self):
+        r = self.post({"api_key": "abc"})
+
+        self.assertEqual(r.status_code, 201)
+
+        doc = r.json()
+        self.assertEqual(doc["timeout"], 86400)

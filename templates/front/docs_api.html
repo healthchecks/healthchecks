@@ -85,6 +85,11 @@ The response may contain a JSON document with additional data.
     values if omitted.
 </p>
 
+<p>This API call can be used to create both "simple" and "cron" checks.
+To create a "simple" check, specify the "timeout" parameter.
+To create a "cron" check, specify the "schedule" and "tz" parameters.
+</p>
+
 <h3 class="api-section">Request Parameters</h3>
 <table class="table">
     <tr>
@@ -110,7 +115,7 @@ The response may contain a JSON document with additional data.
             <p>A number of seconds, the expected period of this check.</p>
             <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
             <p>Example for 5 minute timeout:</p>
-            <pre>{"timeout": 300}</pre>
+            <pre>{"kind": "simple", "timeout": 300}</pre>
         </td>
     </tr>
     <tr>
@@ -119,6 +124,27 @@ The response may contain a JSON document with additional data.
             <p>number, optional, default value: {{ default_grace }}.</p>
             <p>A number of seconds, the grace period for this check.</p>
             <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+        </td>
+    </tr>
+    <tr>
+        <th>schedule</th>
+        <td>
+            <p>string, optional, default value: "* * * * *".</p>
+            <p>A cron expression defining this check's schedule.</p>
+            <p>If you specify both "timeout" and "schedule" parameters,
+            "timeout" will be ignored and "schedule" will be used.</p>
+            <p>Example for a check running every half-hour:</p>
+            <pre>{"schedule": "0,30 * * * *"}</pre>
+        </td>
+    </tr>
+    <tr>
+        <th>tz</th>
+        <td>
+            <p>string, optional, default value: "UTC".</p>
+            <p>Server's timezone. This setting only has effect in combination
+            with the "schedule" paremeter.</p>
+            <p>Example:</p>
+            <pre>{"tz": "Europe/Riga"}</pre>
         </td>
     </tr>
     <tr>

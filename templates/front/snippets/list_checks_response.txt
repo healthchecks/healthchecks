@@ -1,28 +1,29 @@
 {
   "checks": [
     {
+      "last_ping": "2017-01-04T13:24:39.903464+00:00",
+      "ping_url": "PING_ENDPOINT662ebe36-ecab-48db-afe3-e20029cb71e6",
+      "next_ping": "2017-01-04T14:24:39.903464+00:00",
       "grace": 900,
-      "last_ping": "2016-07-09T13:58:43.366568+00:00",
-      "n_pings": 1,
       "name": "Api test 1",
-      "next_ping": "2016-07-09T14:58:43.366568+00:00",
-      "pause_url": "SITE_ROOT/api/v1/checks/25c55e7c-8092-4d21-ad06-7dacfbb6fc10/pause",
-      "ping_url": "PING_ENDPOINT25c55e7c-8092-4d21-ad06-7dacfbb6fc10",
-      "status": "up",
+      "n_pings": 1,
       "tags": "foo",
-      "timeout": 3600
+      "pause_url": "SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6/pause",
+      "timeout": 3600,
+      "status": "up"
     },
     {
-      "grace": 60,
       "last_ping": null,
-      "n_pings": 0,
-      "name": "Api test 2",
+      "ping_url": "PING_ENDPOINT9d17c61f-5c4f-4cab-b517-11e6b2679ced",
       "next_ping": null,
-      "pause_url": "SITE_ROOT/api/v1/checks/7e1b6e61-b16f-4671-bae3-e3233edd1b5e/pause",
-      "ping_url": "PING_ENDPOINT7e1b6e61-b16f-4671-bae3-e3233edd1b5e",
-      "status": "new",
+      "grace": 3600,
+      "name": "Api test 2",
+      "n_pings": 0,
       "tags": "bar baz",
-      "timeout": 60
+      "pause_url": "SITE_ROOT/api/v1/checks/9d17c61f-5c4f-4cab-b517-11e6b2679ced/pause",
+      "tz": "UTC",
+      "schedule": "0/10 * * * *",
+      "status": "new"
     }
   ]
 }

@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from hc.api import schemas
 from hc.api.decorators import check_api_key, uuid_or_400, validate_json
-from hc.api.models import Check, Ping, DEFAULT_TIMEOUT, DEFAULT_GRACE
+from hc.api.models import Check, Ping
 from hc.lib.badges import check_signature, get_badge_svg
 
 
@@ -46,6 +46,50 @@ def ping(request, code):
     return response
 
 
+def _create_check(user, spec):
+    check = Check(user=user)
+    check.name = spec.get("name", "")
+    check.tags = spec.get("tags", "")
+
+    if "timeout" in spec and "schedule" not in spec:
+        check.timeout = td(seconds=spec["timeout"])
+
+    if "grace" in spec:
+        check.grace = td(seconds=spec["grace"])
+
+    if "schedule" in spec:
+        check.kind = "cron"
+        check.schedule = spec["schedule"]
+        if "tz" in spec and "schedule" in spec:
+            check.tz = spec["tz"]
+
+    unique_fields = spec.get("unique", [])
+    if unique_fields:
+        existing_checks = Check.objects.filter(user=user)
+        if "name" in unique_fields:
+            existing_checks = existing_checks.filter(name=check.name)
+        if "tags" in unique_fields:
+            existing_checks = existing_checks.filter(tags=check.tags)
+        if "timeout" in unique_fields:
+            existing_checks = existing_checks.filter(timeout=check.timeout)
+        if "grace" in unique_fields:
+            existing_checks = existing_checks.filter(grace=check.grace)
+
+        if existing_checks.count() > 0:
+            # There might be more than one matching check, return first
+            first_match = existing_checks.first()
+            return JsonResponse(first_match.to_dict(), status=200)
+
+    check.save()
+
+    # This needs to be done after saving the check, because of
+    # the M2M relation between checks and channels:
+    if spec.get("channels") == "*":
+        check.assign_all_channels()
+
+    return JsonResponse(check.to_dict(), status=201)
+
+
 @csrf_exempt
 @check_api_key
 @validate_json(schemas.check)
@@ -56,45 +100,7 @@ def checks(request):
         return JsonResponse(doc)
 
     elif request.method == "POST":
-        name = str(request.json.get("name", ""))
-        tags = str(request.json.get("tags", ""))
-
-        timeout = DEFAULT_TIMEOUT
-        if "timeout" in request.json:
-            timeout = td(seconds=request.json["timeout"])
-
-        grace = DEFAULT_GRACE
-        if "grace" in request.json:
-            grace = td(seconds=request.json["grace"])
-
-        unique_fields = request.json.get("unique", [])
-        if unique_fields:
-            existing_checks = Check.objects.filter(user=request.user)
-            if "name" in unique_fields:
-                existing_checks = existing_checks.filter(name=name)
-            if "tags" in unique_fields:
-                existing_checks = existing_checks.filter(tags=tags)
-            if "timeout" in unique_fields:
-                existing_checks = existing_checks.filter(timeout=timeout)
-            if "grace" in unique_fields:
-                existing_checks = existing_checks.filter(grace=grace)
-
-            if existing_checks.count() > 0:
-                # There might be more than one matching check, return first
-                first_match = existing_checks.first()
-                return JsonResponse(first_match.to_dict(), status=200)
-
-        check = Check(user=request.user, name=name, tags=tags,
-                      timeout=timeout, grace=grace)
-
-        check.save()
-
-        # This needs to be done after saving the check, because of
-        # the M2M relation between checks and channels:
-        if request.json.get("channels") == "*":
-            check.assign_all_channels()
-
-        return JsonResponse(check.to_dict(), status=201)
+        return _create_check(request.user, request.json)
 
     # If request is neither GET nor POST, return "405 Method not allowed"
     return HttpResponse(status=405)
