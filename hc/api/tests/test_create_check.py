@@ -146,7 +146,6 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 201)
 
         doc = r.json()
-        self.assertEqual(doc["kind"], "cron")
         self.assertEqual(doc["schedule"], "5 * * * *")
         self.assertEqual(doc["tz"], "Europe/Riga")
         self.assertEqual(doc["grace"], 60)
@@ -156,7 +155,6 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_validates_cron_expression(self):
         r = self.post({
             "api_key": "abc",
-            "kind": "cron",
             "schedule": "not-a-cron-expression",
             "tz": "Europe/Riga",
             "grace": 60
@@ -167,7 +165,6 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_validates_timezone(self):
         r = self.post({
             "api_key": "abc",
-            "kind": "cron",
             "schedule": "* * * * *",
             "tz": "not-a-timezone",
             "grace": 60
