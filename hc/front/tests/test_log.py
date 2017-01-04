@@ -12,6 +12,11 @@ class LogTestCase(BaseTestCase):
         ping = Ping(owner=self.check)
         ping.save()
 
+        # Older MySQL versions don't store microseconds. This makes sure
+        # the ping is older than any notifications we may create later:
+        ping.created = "2000-01-01T00:00:00+00:00"
+        ping.save()
+
     def test_it_works(self):
         url = "/checks/%s/log/" % self.check.code
 
