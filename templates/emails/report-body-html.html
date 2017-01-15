@@ -2,22 +2,26 @@
 {% load humanize hc_extras %}
 
 {% block content %}
+Hello,<br />
+This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.
 
-<h1>Hello,</h1>
-<p>This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.</p>
-
+<br />
 {% include "emails/summary-html.html" %}
 
-<p><strong>Just one more thing to check:</strong>
+<strong>Just one more thing to check:</strong>
 Do you have more cron jobs,
 not yet on this list, that would benefit from monitoring?
-Get the ball rolling by adding one more!</p>
+Get the ball rolling by adding one more!
+<br /><br />
 
-<p>Cheers,<br>The Healthchecks<span>.</span>io Team</p>
+Cheers,<br>
+The {% escaped_site_name %} Team
 {% endblock %}
 
 
 {% block unsub %}
-<br />
-<a href="{{ unsub_link }}">Unsubscribe from future monthly reports</a>
+<br>
+<a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">
+    Unsubscribe from Monthly Reports
+</a>
 {% endblock %}

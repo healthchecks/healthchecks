@@ -1,9 +1,9 @@
 from django.conf import settings
-from djmail.template_mail import InlineCSSTemplateMail
+from djmail.template_mail import TemplateMail
 
 
 def send(name, to, ctx):
-    o = InlineCSSTemplateMail(name)
+    o = TemplateMail(name)
     ctx["SITE_ROOT"] = settings.SITE_ROOT
     o.send(to, ctx)
 

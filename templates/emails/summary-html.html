@@ -1,73 +1,31 @@
 {% load humanize hc_extras %}
-
-<style>
-    .checks {
-        margin: 30px 0;
-        width: 100%;
-        font-size: 16px;
-    }
-
-    .checks th {
-        text-align: left;
-        padding: 8px;
-        font-size: 12px;
-        color: #9BA2AB;
-    }
-
-    .checks td {
-        border-top: 1px solid #EDEFF2;
-        padding: 16px 8px;
-    }
-
-    .badge {
-        font-size: 10px;
-        color: white;
-        padding: 4px;
-        font-family: sans;
-    }
-
-    .new { background: #AAA; }
-    .up { background: #5cb85c; }
-    .grace { background: #f0ad4e; }
-    .down { background: #d9534f; }
-
-
-    .unnamed {
-        color: #74787E;
-        font-style: italic;
-    }
-
-    .tag {
-        font-size: 12px;
-        background-color: #eee;
-        padding: 2px 4px;
-        color: #555;
-    }
-
-</style>
-
-<table class="checks" cellpadding="0" cellspacing="0">
+<br />
+<table style="margin: 0; width: 100%; font-size: 16px;" cellpadding="0" cellspacing="0">
     <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Last Ping</th>
+        <td style="padding: 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;"></td>
+        <td style="padding: 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Name</td>
+        <td class="mobile-hide" style="padding: 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Last Ping</td>
     </tr>
     {% for check in checks %}
     <tr>
-        <td>
-            {% if check.get_status == "new" %}
-                <span class="badge new">NEW</span>
-            {% elif check.get_status == "paused" %}
-                <span class="badge new">PAUSED</span>
-            {% elif check.in_grace_period %}
-                <span class="badge grace">LATE</span>
-            {% elif check.get_status == "up" %}
-                <span class="badge up">UP</span>
-            {% elif check.get_status == "down" %}
-                <span class="badge down">DOWN</span>
-            {% endif %}
+        <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                {% if check.get_status == "new" %}
+                    <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;">NEW</td>
+                {% elif check.get_status == "paused" %}
+                    <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">PAUSED</td>
+                {% elif check.in_grace_period %}
+                    <td style="background: #f0ad4e; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">LATE</td>
+                {% elif check.get_status == "up" %}
+                    <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">UP</td>
+                {% elif check.get_status == "down" %}
+                    <td style="background: #d9534f; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">DOWN</td>
+                {% endif %}
+                </tr>
+            </table>
         </td>
-        <td>
+        <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
             {% if check.name %}
                 {% if check.name|length > 20 %}
                     <small>{{ check.name }}</small>
@@ -75,26 +33,37 @@
                     {{ check.name }}
                 {% endif %}
             {% else %}
-                <span class="unnamed">unnamed</span>
+                <span style="color: #74787E; font-style: italic;">unnamed</span>
             {% endif %}
             {% if check.tags %}
                 <br />
-                {% for tag in check.tags_list %}
-                <span class="tag">{{ tag }}</span>
-                {% endfor %}
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                    {% for tag in check.tags_list %}
+                    <td style="padding-right: 4px">
+                        <table cellpadding="0" cellspacing="0">
+                            <tr>
+                            <td style="background: #eee; font-family: Helvetica, Arial, sans-serif; font-size: 10px; line-height: 10px; color: #555; padding: 4px; margin: 0; border-radius: 2px;">
+                                {{ tag }}
+                            </td>
+                            </tr>
+                        </table>
+                    </td>
+                    {% endfor %}
+                    </tr>
+                </table>
             {% endif %}
         </td>
-        <td>
+        <td class="mobile-hide" style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
             {% if check.last_ping %}
                 {{ check.last_ping|naturaltime }}
+                <br />
+                <a class="view-log" href="{{ check.log_url }}">Show Log…</a>
             {% else %}
                 Never
             {% endif %}
-
-        </td>
-        <td>
-            <a class="view-log" href="{{ check.log_url }}">Log</a>
         </td>
     </tr>
     {% endfor %}
 </table>
+<br />

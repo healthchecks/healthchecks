@@ -2,24 +2,26 @@
 {% load hc_extras %}
 {% block content %}
 
-<h1>Hello,</h1>
-<p>
-    This is a notification sent by <a href="{% site_root %}">{% site_name %}</a>.
-    <br />
-    The check <strong>{{ check.name_then_code }}</strong>
-    has gone <strong>{{ check.status|upper }}</strong>.
-</p>
+Hello,<br />
 
-<p>Here is a summary of all your checks:</p>
+This is a notification sent by <a href="{% site_root %}">{% site_name %}</a>.
+<br />
+The check <strong>{{ check.name_then_code }}</strong>
+has gone <strong>{{ check.status|upper }}</strong>.
+<br /><br />
+
+Here is a summary of all your checks:
+<br />
 
 {% include "emails/summary-html.html" %}
 
 {% if show_upgrade_note %}
-<p><strong>P.S.</strong>
+<strong>P.S.</strong>
 Find this service useful? Support it by upgrading to
 a <a href="https://healthchecks.io/pricing/">premium account</a>!
-</p>
+<br /><br />
 {% endif %}
 
-<p>Thanks,<br>The Healthchecks<span>.</span>io Team</p>
+Thanks,<br>
+The {% escaped_site_name %} Team
 {% endblock %}

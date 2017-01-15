@@ -35,7 +35,8 @@ class Profile(models.Model):
 
         path = reverse("hc-check-token", args=[self.user.username, token])
         ctx = {
-            "login_link": settings.SITE_ROOT + path,
+            "button_text": "Log In",
+            "button_url": settings.SITE_ROOT + path,
             "inviting_profile": inviting_profile
         }
         emails.login(self.user.email, ctx)
@@ -46,7 +47,10 @@ class Profile(models.Model):
         self.save()
 
         path = reverse("hc-set-password", args=[token])
-        ctx = {"set_password_link": settings.SITE_ROOT + path}
+        ctx = {
+            "button_text": "Set Password",
+            "button_url": settings.SITE_ROOT + path
+        }
         emails.set_password(self.user.email, ctx)
 
     def set_api_key(self):
