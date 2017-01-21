@@ -83,14 +83,43 @@ class HttpTransport(Transport):
     def get(self, url):
         return self.request("get", url)
 
-    def post(self, url, json, **kwargs):
-        return self.request("post", url, json=json, **kwargs)
-
-    def post_form(self, url, data):
-        return self.request("post", url, data=data)
+    def post(self, url, **kwargs):
+        return self.request("post", url, **kwargs)
 
 
 class Webhook(HttpTransport):
+    def prepare(self, template, check, urlencode=False):
+        """ Replace variables with actual values.
+
+        There should be no bad translations if users use $ symbol in
+        check's name or tags, because $ gets urlencoded to %24
+
+        """
+
+        def safe(s):
+            return quote(s) if urlencode else s
+
+        result = template
+        if "$CODE" in result:
+            result = result.replace("$CODE", str(check.code))
+
+        if "$STATUS" in result:
+            result = result.replace("$STATUS", check.status)
+
+        if "$NOW" in result:
+            s = timezone.now().replace(microsecond=0).isoformat()
+            result = result.replace("$NOW", safe(s))
+
+        if "$NAME" in result:
+            result = result.replace("$NAME", safe(check.name))
+
+        if "$TAG" in result:
+            for i, tag in enumerate(check.tags_list()):
+                placeholder = "$TAG%d" % (i + 1)
+                result = result.replace(placeholder, safe(tag))
+
+        return result
+
     def notify(self, check):
         url = self.channel.value_down
         if check.status == "up":
@@ -100,35 +129,19 @@ class Webhook(HttpTransport):
             # If the URL is empty then we do nothing
             return "no-op"
 
-        # Replace variables with actual values.
-        # There should be no bad translations if users use $ symbol in
-        # check's name or tags, because $ gets urlencoded to %24
-
-        if "$CODE" in url:
-            url = url.replace("$CODE", str(check.code))
-
-        if "$STATUS" in url:
-            url = url.replace("$STATUS", check.status)
-
-        if "$NAME" in url:
-            url = url.replace("$NAME", quote(check.name))
-
-        if "$TAG" in url:
-            for i, tag in enumerate(check.tags_list()):
-                placeholder = "$TAG%d" % (i + 1)
-                url = url.replace(placeholder, quote(tag))
-
-        return self.get(url)
-
-    def test(self):
-        return self.get(self.channel.value)
+        url = self.prepare(url, check, urlencode=True)
+        if self.channel.post_data:
+            payload = self.prepare(self.channel.post_data, check)
+            return self.post(url, data=payload)
+        else:
+            return self.get(url)
 
 
 class Slack(HttpTransport):
     def notify(self, check):
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
-        return self.post(self.channel.slack_webhook_url, payload)
+        return self.post(self.channel.slack_webhook_url, json=payload)
 
 
 class HipChat(HttpTransport):
@@ -138,7 +151,7 @@ class HipChat(HttpTransport):
             "message": text,
             "color": "green" if check.status == "up" else "red",
         }
-        return self.post(self.channel.value, payload)
+        return self.post(self.channel.value, json=payload)
 
 
 class OpsGenie(HttpTransport):
@@ -159,7 +172,7 @@ class OpsGenie(HttpTransport):
         if check.status == "up":
             url += "/close"
 
-        return self.post(url, payload)
+        return self.post(url, json=payload)
 
 
 class PagerDuty(HttpTransport):
@@ -176,7 +189,7 @@ class PagerDuty(HttpTransport):
             "client_url": settings.SITE_ROOT
         }
 
-        return self.post(self.URL, payload)
+        return self.post(self.URL, json=payload)
 
 
 class Pushbullet(HttpTransport):
@@ -193,7 +206,7 @@ class Pushbullet(HttpTransport):
             "body": text
         }
 
-        return self.post(url, payload, headers=headers)
+        return self.post(url, json=payload, headers=headers)
 
 
 class Pushover(HttpTransport):
@@ -222,7 +235,7 @@ class Pushover(HttpTransport):
             payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
             payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
-        return self.post_form(self.URL, payload)
+        return self.post(self.URL, data=payload)
 
 
 class VictorOps(HttpTransport):
@@ -236,11 +249,12 @@ class VictorOps(HttpTransport):
             "monitoring_tool": "healthchecks.io",
         }
 
-        return self.post(self.channel.value, payload)
+        return self.post(self.channel.value, json=payload)
 
 
 class Discord(HttpTransport):
     def notify(self, check):
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
-        return self.post(self.channel.discord_webhook_url + "/slack", payload)
+        url = self.channel.discord_webhook_url + "/slack"
+        return self.post(url, json=payload)

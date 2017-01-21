@@ -269,9 +269,6 @@ class Channel(models.Model):
 
         return error
 
-    def test(self):
-        return self.transport().test()
-
     @property
     def po_value(self):
         assert self.kind == "po"
@@ -289,7 +286,13 @@ class Channel(models.Model):
     def value_up(self):
         assert self.kind == "webhook"
         parts = self.value.split("\n")
-        return parts[1] if len(parts) == 2 else ""
+        return parts[1] if len(parts) > 1 else ""
+
+    @property
+    def post_data(self):
+        assert self.kind == "webhook"
+        parts = self.value.split("\n")
+        return parts[2] if len(parts) > 2 else ""
 
     @property
     def slack_team(self):
@@ -321,18 +324,12 @@ class Channel(models.Model):
     @property
     def discord_webhook_url(self):
         assert self.kind == "discord"
-        if not self.value.startswith("{"):
-            return self.value
-
         doc = json.loads(self.value)
         return doc["webhook"]["url"]
 
     @property
     def discord_webhook_id(self):
         assert self.kind == "discord"
-        if not self.value.startswith("{"):
-            return self.value
-
         doc = json.loads(self.value)
         return doc["webhook"]["id"]
 

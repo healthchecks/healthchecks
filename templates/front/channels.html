@@ -81,6 +81,12 @@
                             <td>{{ ch.value_up }}</td>
                         </tr>
                         {% endif %}
+                        {% if ch.post_data %}
+                        <tr>
+                            <td class="preposition">body&nbsp;</td>
+                            <td>{{ ch.post_data }}</td>
+                        </tr>
+                        {% endif %}
                     </table>
                 {% elif ch.kind == "pushbullet" %}
                     <span class="preposition">API key</span>

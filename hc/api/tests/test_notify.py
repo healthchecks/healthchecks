@@ -80,8 +80,25 @@ class NotifyTestCase(BaseTestCase):
         url = u"http://host/%s/down/foo/bar/?name=Hello%%20World" \
             % self.check.code
 
-        mock_get.assert_called_with(
-            "get", url, headers={"User-Agent": "healthchecks.io"}, timeout=5)
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args[0], "get")
+        self.assertEqual(args[1], url)
+        self.assertEqual(kwargs["headers"], {"User-Agent": "healthchecks.io"})
+        self.assertEqual(kwargs["timeout"], 5)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_support_post(self, mock_request):
+        template = "http://example.com\n\nThe Time Is $NOW"
+        self._setup_data("webhook", template)
+        self.check.save()
+
+        self.channel.notify(self.check)
+        args, kwargs = mock_request.call_args
+        self.assertEqual(args[0], "post")
+        self.assertEqual(args[1], "http://example.com")
+
+        # spaces should not have been urlencoded:
+        self.assertTrue(kwargs["data"].startswith("The Time Is 2"))
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_dollarsign_escaping(self, mock_get):
@@ -267,3 +284,15 @@ class NotifyTestCase(BaseTestCase):
         attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Never")
+
+    @patch("hc.api.transports.requests.request")
+    def test_pushbullet(self, mock_post):
+        self._setup_data("pushbullet", "fake-token")
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        _, kwargs = mock_post.call_args
+        self.assertEqual(kwargs["json"]["type"], "note")
+        self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")

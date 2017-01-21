@@ -9,9 +9,10 @@
 <div class="col-sm-12">
     <h1>Webhook</h1>
 
-    <p>Webhooks are a simple way to notify an external system when a check
-    goes up or down. healthcheks.io will run a normal HTTP GET call to your
-    specified URL.</p>
+    <p>Runs a HTTP GET or HTTP POST to your specified URL when a check
+    goes up or down. Uses GET by default, and uses POST if you specify
+    any POST data.</p>
+
     <p>You can use the following variables in webhook URLs:</p>
     <table class="table webhook-variables">
         <tr>
@@ -24,7 +25,14 @@
         </tr>
         <tr>
             <th><code>$NAME</code></th>
-            <td>Urlencoded name of the check</td>
+            <td>Name of the check</td>
+        </tr>
+        <tr>
+            <th><code>$NOW</code></th>
+            <td>
+                Current UTC time in ISO8601 format.
+                Example: "{{ now }}"
+            </td>
         </tr>
         <tr>
             <th><code>$STATUS</code></th>
@@ -32,7 +40,7 @@
         </tr>
         <tr>
             <th><code>$TAG1, $TAG2, …</code></th>
-            <td>Urlencoded value of the first tag, the second tag, …</td>
+            <td>Value of the first tag, the second tag, …</td>
         </tr>
     </table>
 
@@ -77,6 +85,22 @@
                 {% if form.value_up.errors %}
                 <div class="help-block">
                     {{ form.value_up.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group {{ form.post_data.css_classes }}">
+            <label class="col-sm-2 control-label">POST data</label>
+            <div class="col-sm-10">
+                <input
+                    type="text"
+                    class="form-control"
+                    name="post_data"
+                    placeholder='{"status": "$STATUS"}'
+                    value="{{ form.post_data.value|default:"" }}">
+                {% if form.post_data.errors %}
+                <div class="help-block">
+                    {{ form.post_data.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>

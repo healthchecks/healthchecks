@@ -410,7 +410,11 @@ def add_webhook(request):
     else:
         form = AddWebhookForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {
+        "page": "channels",
+        "form": form,
+        "now": timezone.now().replace(microsecond=0).isoformat()
+    }
     return render(request, "integrations/add_webhook.html", ctx)
 
 

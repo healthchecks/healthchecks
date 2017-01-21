@@ -60,5 +60,8 @@ class AddWebhookForm(forms.Form):
     value_up = forms.URLField(max_length=1000, required=False,
                               validators=[WebhookValidator()])
 
+    post_data = forms.CharField(max_length=1000, required=False)
+
     def get_value(self):
-        return "{value_down}\n{value_up}".format(**self.cleaned_data)
+        d = self.cleaned_data
+        return "\n".join((d["value_down"], d["value_up"], d["post_data"]))
