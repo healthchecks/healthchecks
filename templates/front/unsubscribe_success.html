@@ -1,18 +1,19 @@
 {% extends "base.html" %}
+{% load hc_extras %}
 
 {% block content %}
 <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
         <div class="hc-dialog">
-            <h1>Incorrect Confirmation Link</h1>
+            <h1>Unsubscribed</h1>
             <div class="dialog-body">
                 <p>
-                    The confirmation link you just used is incorrect.
-                    If you copy-pasted the link, please make sure you did not
-                    miss any characters.
+                    Your email address has been unsubscribed from
+                    {% site_name %} notifications.
                 </p>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

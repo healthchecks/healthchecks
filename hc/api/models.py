@@ -229,6 +229,11 @@ class Channel(models.Model):
         verify_link = settings.SITE_ROOT + verify_link
         emails.verify_email(self.value, {"verify_link": verify_link})
 
+    def get_unsub_link(self):
+        args = [self.code, self.make_token()]
+        verify_link = reverse("hc-unsubscribe-alerts", args=args)
+        return settings.SITE_ROOT + verify_link
+
     @property
     def transport(self):
         if self.kind == "email":

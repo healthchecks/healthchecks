@@ -361,6 +361,19 @@ def verify_email(request, code, token):
     return render(request, "bad_link.html")
 
 
+@uuid_or_400
+def unsubscribe_email(request, code, token):
+    channel = get_object_or_404(Channel, code=code)
+    if channel.make_token() != token:
+        return render(request, "bad_link.html")
+
+    if channel.kind != "email":
+        return HttpResponseBadRequest()
+
+    channel.delete()
+    return render(request, "front/unsubscribe_success.html")
+
+
 @login_required
 @uuid_or_400
 def remove_channel(request, code):

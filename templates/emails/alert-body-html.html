@@ -15,13 +15,13 @@ Here is a summary of all your checks:
 
 {% include "emails/summary-html.html" %}
 
-{% if show_upgrade_note %}
-<strong>P.S.</strong>
-Find this service useful? Support it by upgrading to
-a <a href="https://healthchecks.io/pricing/">premium account</a>!
-<br /><br />
-{% endif %}
-
 Thanks,<br>
 The {% escaped_site_name %} Team
+{% endblock %}
+
+{% block unsub %}
+<br>
+<a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">
+    Unsubscribe
+</a>
 {% endblock %}

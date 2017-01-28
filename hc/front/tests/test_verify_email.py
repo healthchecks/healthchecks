@@ -14,7 +14,7 @@ class VerifyEmailTestCase(BaseTestCase):
         token = self.channel.make_token()
         url = "/integrations/%s/verify/%s/" % (self.channel.code, token)
 
-        r = self.client.post(url)
+        r = self.client.get(url)
         assert r.status_code == 200, r.status_code
 
         channel = Channel.objects.get(code=self.channel.code)
@@ -23,7 +23,7 @@ class VerifyEmailTestCase(BaseTestCase):
     def test_it_handles_bad_token(self):
         url = "/integrations/%s/verify/bad-token/" % self.channel.code
 
-        r = self.client.post(url)
+        r = self.client.get(url)
         assert r.status_code == 200, r.status_code
 
         channel = Channel.objects.get(code=self.channel.code)
@@ -35,5 +35,5 @@ class VerifyEmailTestCase(BaseTestCase):
         token = self.channel.make_token()
         url = "/integrations/%s/verify/%s/" % (code, token)
 
-        r = self.client.post(url)
+        r = self.client.get(url)
         assert r.status_code == 404

@@ -146,23 +146,6 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "Email not verified")
         self.assertEqual(len(mail.outbox), 0)
 
-    @override_settings(USE_PAYMENTS=True)
-    def test_email_contains_upgrade_notice(self):
-        self._setup_data("email", "alice@example.org", status="up")
-        self.profile.team_access_allowed = False
-        self.profile.save()
-
-        self.channel.notify(self.check)
-
-        n = Notification.objects.get()
-        self.assertEqual(n.error, "")
-
-        # Check is up, payments are enabled, and the user does not have team
-        # access: the email should contain upgrade note
-        message = mail.outbox[0]
-        html, _ = message.alternatives[0]
-        assert "/pricing/" in html
-
     @patch("hc.api.transports.requests.request")
     def test_pd(self, mock_post):
         self._setup_data("pd", "123")

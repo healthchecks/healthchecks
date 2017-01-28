@@ -46,16 +46,11 @@ class Email(Transport):
         if not self.channel.email_verified:
             return "Email not verified"
 
-        show_upgrade_note = False
-        if settings.USE_PAYMENTS and check.status == "up":
-            if not check.user.profile.team_access_allowed:
-                show_upgrade_note = True
-
         ctx = {
             "check": check,
             "checks": self.checks(),
             "now": timezone.now(),
-            "show_upgrade_note": show_upgrade_note
+            "unsub_link": self.channel.get_unsub_link()
         }
         emails.alert(self.channel.value, ctx)
 
