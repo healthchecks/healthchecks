@@ -46,11 +46,12 @@ in development environment.
 
         $ pip install -r healthchecks/requirements.txt
 
-* make sure PostgreSQL server is installed and running, create
-  database "hc":
+* healthchecks is configured to use a SQLite database by default. To use
+  PostgreSQL or MySQL database, create and edit `hc/local_settings.py` file.
+  There is a template you can copy and edit as needed:
 
-        $ psql --user postgres
-        postgres=# create database hc;
+        $ cd ~/webapps/healthchecks
+        $ cp hc/local_settings.py.example hc/local_settings.py
 
 * create database tables and the superuser account:
 
@@ -78,7 +79,7 @@ Some useful settings keys to override are:
 `SITE_ROOT` is used to build fully qualified URLs for pings, and for use in
 emails and notifications. Example:
 
-    SITE_ROOT = "https://my-monitoring-project.com"`
+    SITE_ROOT = "https://my-monitoring-project.com"
 
 `SITE_NAME` has the default value of "healthchecks.io" and is used throughout
 the templates. Replace it with your own name to personalize your installation.
