@@ -17,8 +17,8 @@ class ProfileBackend(BasicBackend):
 
     def authenticate(self, username=None, token=None):
         try:
-            profile = (Profile.objects
-                       .select_related("user").get(user__username=username))
+            profiles = Profile.objects.select_related("user")
+            profile = profiles.get(user__username=username)
         except Profile.DoesNotExist:
             return None
 
@@ -26,9 +26,6 @@ class ProfileBackend(BasicBackend):
             return None
 
         return profile.user
-
-    def get_user(self, user_id):
-        return User.objects.filter(pk=user_id).first()
 
 
 class EmailBackend(BasicBackend):

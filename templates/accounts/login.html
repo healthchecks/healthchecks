@@ -15,8 +15,12 @@
             <h1>Health Checks</h1>
             <div class="dialog-body">
                 <p>
+                {% if show_password %}
+                    Please entery your email address and password.
+                {% else %}
                     Please enter your email address.
                     Next, we'll send you an email with log-in instructions!
+                {% endif %}
                 </p>
             </div>
             {% endif %}
@@ -43,7 +47,7 @@
                     </div>
                 </div>
 
-                {% if not bad_credentials %}
+                {% if not show_password %}
                 <div class="checkbox" id="password-toggle">
                     <label>
                         <input type="checkbox"> I want to use a password
@@ -52,7 +56,7 @@
                 {% endif %}
 
 
-                <div id="password-block" class="form-group {% if not bad_credentials %} hide {% endif %}">
+                <div id="password-block" class="form-group {% if not show_password %} hide {% endif %}">
                     <div class="input-group input-group-lg">
                         <div class="input-group-addon">
                             <span class="icon-dots"></span>

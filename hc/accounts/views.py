@@ -59,7 +59,7 @@ def _associate_demo_check(request, user):
     del request.session["welcome_code"]
 
 
-def login(request):
+def login(request, show_password=False):
     bad_credentials = False
     if request.method == 'POST':
         form = EmailPasswordForm(request.POST)
@@ -72,6 +72,7 @@ def login(request):
                     auth_login(request, user)
                     return redirect("hc-checks")
                 bad_credentials = True
+                show_password = True
             else:
                 try:
                     user = User.objects.get(email=email)
@@ -89,7 +90,8 @@ def login(request):
     ctx = {
         "form": form,
         "bad_credentials": bad_credentials,
-        "bad_link": bad_link
+        "bad_link": bad_link,
+        "show_password": show_password
     }
     return render(request, "accounts/login.html", ctx)
 
