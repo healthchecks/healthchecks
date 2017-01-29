@@ -32,7 +32,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
-    'djmail',
 
     'hc.accounts',
     'hc.api',
@@ -133,8 +132,6 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 COMPRESS_OFFLINE = True
-
-EMAIL_BACKEND = "djmail.backends.default.EmailBackend"
 
 # Discord integration -- override these in local_settings
 DISCORD_CLIENT_ID = None

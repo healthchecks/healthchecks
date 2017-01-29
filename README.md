@@ -135,21 +135,17 @@ configuration from environment variables like so:
 ## Sending Emails
 
 healthchecks must be able to send email messages, so it can send out login
-links and alerts to users. You will likely need to tweak email configuration
-before emails will work. healthchecks uses
-[djmail](http://bameda.github.io/djmail/) for sending emails asynchronously.
-Djmail is a BSD Licensed, simple and nonobstructive django email middleware.
-It can be configured to use any regular Django email backend behind the
-scenes. For example, the healthchecks.io site uses
-[django-ses-backend](https://github.com/piotrbulinski/django-ses-backend/)
-and the email configuration in `hc/local_settings.py` looks as follows:
+links and alerts to users. Put your SMTP server configuration in
+`hc/local_settings.py` like so:
 
-    DEFAULT_FROM_EMAIL = 'noreply@my-monitoring-project.com'
-    DJMAIL_REAL_BACKEND = 'django_ses_backend.SESBackend'
-    AWS_SES_ACCESS_KEY_ID = "put-access-key-here"
-    AWS_SES_SECRET_ACCESS_KEY = "put-secret-access-key-here"
-    AWS_SES_REGION_NAME = 'us-east-1'
-    AWS_SES_REGION_ENDPOINT = 'email.us-east-1.amazonaws.com'
+    EMAIL_HOST = "your-smtp-server-here.com"
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = "username"
+    EMAIL_HOST_PASSWORD = "password"
+    EMAIL_USE_TLS = True
+
+For more information, have a look at Django documentation,
+[Sending Email](https://docs.djangoproject.com/en/1.10/topics/email/) section.
 
 ## Sending Status Notifications
 

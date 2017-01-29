@@ -9,4 +9,7 @@ class CustomRunner(DiscoverRunner):
         settings.PASSWORD_HASHERS = \
             ('django.contrib.auth.hashers.MD5PasswordHasher', )
 
+        # Send emails synchronously
+        settings.BLOCKING_EMAILS = True
+
         super(CustomRunner, self).__init__(*args, **kwargs)
