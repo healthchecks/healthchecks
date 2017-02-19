@@ -8,5 +8,6 @@
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
   "tags": "prod www",
-  "timeout": 3600
+  "timeout": 3600,
+  "update_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc",
 }

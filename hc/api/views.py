@@ -46,10 +46,30 @@ def ping(request, code):
     return response
 
 
-def _create_check(user, spec):
-    check = Check(user=user)
-    check.name = spec.get("name", "")
-    check.tags = spec.get("tags", "")
+def _lookup(user, spec):
+    unique_fields = spec.get("unique", [])
+    if unique_fields:
+        existing_checks = Check.objects.filter(user=user)
+        if "name" in unique_fields:
+            existing_checks = existing_checks.filter(name=spec.get("name"))
+        if "tags" in unique_fields:
+            existing_checks = existing_checks.filter(tags=spec.get("tags"))
+        if "timeout" in unique_fields:
+            timeout = td(seconds=spec["timeout"])
+            existing_checks = existing_checks.filter(timeout=timeout)
+        if "grace" in unique_fields:
+            grace = td(seconds=spec["grace"])
+            existing_checks = existing_checks.filter(grace=grace)
+
+        return existing_checks.first()
+
+
+def _update(check, spec):
+    if "name" in spec:
+        check.name = spec["name"]
+
+    if "tags" in spec:
+        check.tags = spec["tags"]
 
     if "timeout" in spec and "schedule" not in spec:
         check.timeout = td(seconds=spec["timeout"])
@@ -63,31 +83,17 @@ def _create_check(user, spec):
         if "tz" in spec and "schedule" in spec:
             check.tz = spec["tz"]
 
-    unique_fields = spec.get("unique", [])
-    if unique_fields:
-        existing_checks = Check.objects.filter(user=user)
-        if "name" in unique_fields:
-            existing_checks = existing_checks.filter(name=check.name)
-        if "tags" in unique_fields:
-            existing_checks = existing_checks.filter(tags=check.tags)
-        if "timeout" in unique_fields:
-            existing_checks = existing_checks.filter(timeout=check.timeout)
-        if "grace" in unique_fields:
-            existing_checks = existing_checks.filter(grace=check.grace)
-
-        if existing_checks.count() > 0:
-            # There might be more than one matching check, return first
-            first_match = existing_checks.first()
-            return JsonResponse(first_match.to_dict(), status=200)
-
     check.save()
 
     # This needs to be done after saving the check, because of
     # the M2M relation between checks and channels:
-    if spec.get("channels") == "*":
-        check.assign_all_channels()
+    if "channels" in spec:
+        if spec["channels"] == "*":
+            check.assign_all_channels()
+        elif spec["channels"] == "":
+            check.channel_set.clear()
 
-    return JsonResponse(check.to_dict(), status=201)
+    return check
 
 
 @csrf_exempt
@@ -100,13 +106,39 @@ def checks(request):
         return JsonResponse(doc)
 
     elif request.method == "POST":
-        return _create_check(request.user, request.json)
+        created = False
+        check = _lookup(request.user, request.json)
+        if check is None:
+            check = Check(user=request.user)
+            created = True
+
+        _update(check, request.json)
+
+        return JsonResponse(check.to_dict(), status=201 if created else 200)
 
     # If request is neither GET nor POST, return "405 Method not allowed"
     return HttpResponse(status=405)
 
 
 @csrf_exempt
+@uuid_or_400
+@check_api_key
+@validate_json(schemas.check)
+def update(request, code):
+    if request.method != "POST":
+        return HttpResponse(status=405)  # method not allowed
+
+    try:
+        check = Check.objects.get(code=code, user=request.user)
+    except Check.DoesNotExist:
+        return HttpResponseBadRequest()
+
+    _update(check, request.json)
+    return JsonResponse(check.to_dict(), status=200)
+
+
+@csrf_exempt
+@uuid_or_400
 @check_api_key
 def pause(request, code):
     if request.method != "POST":

@@ -12,6 +12,7 @@ This is early days for healtchecks.io REST API. For now, there's API calls to:
 <ul>
     <li><a href="#list-checks">List existing checks</a></li>
     <li><a href="#create-check">Create a new check</a></li>
+    <li><a href="#update-check">Update an existing check</a></li>
     <li><a href="#pause-check">Pause monitoring of a check</a></li>
 </ul>
 
@@ -202,9 +203,112 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/create_check_response.html" %}
 
-
 <!-- ********************************************************************** /-->
 
+<a class="section" name="update-check">
+<h2 class="rule">Update an existing check</h2>
+</a>
+
+<div class="api-path">POST {{ SITE_ROOT }}/api/v1/checks/&lt;code&gt;</div>
+
+<strong></strong>
+
+<p>
+    Updates an existing check. All request parameters are optional. The
+    check is updated only with the supplied request parameters.
+    If any parameter is omitted, its value is left unchanged.
+</p>
+
+<h3 class="api-section">Request Parameters</h3>
+<table class="table">
+    <tr>
+        <th>name</th>
+        <td>
+            <p>string, optional.</p>
+            <p>Name for the check.</p>
+        </td>
+    </tr>
+    <tr>
+        <th>tags</th>
+        <td>
+            <p>string, optional.</p>
+            <p>A space-delimited list of tags for the check.</p>
+            <p>Example:</p>
+            <pre>{"tags": "reports staging"}</pre>
+        </td>
+    </tr>
+    <tr>
+        <th>timeout</th>
+        <td>
+            <p>number, optional.</p>
+            <p>A number of seconds, the expected period of this check.</p>
+            <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+            <p>Example for 5 minute timeout:</p>
+            <pre>{"kind": "simple", "timeout": 300}</pre>
+        </td>
+    </tr>
+    <tr>
+        <th>grace</th>
+        <td>
+            <p>number, optional.</p>
+            <p>A number of seconds, the grace period for this check.</p>
+            <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+        </td>
+    </tr>
+    <tr>
+        <th>schedule</th>
+        <td>
+            <p>string, optional.</p>
+            <p>A cron expression defining this check's schedule.</p>
+            <p>If you specify both "timeout" and "schedule" parameters,
+            "timeout" will be ignored and "schedule" will be used.</p>
+            <p>Example for a check running every half-hour:</p>
+            <pre>{"schedule": "0,30 * * * *"}</pre>
+        </td>
+    </tr>
+    <tr>
+        <th>tz</th>
+        <td>
+            <p>string, optional.</p>
+            <p>Server's timezone. This setting only has effect in combination
+            with the "schedule" paremeter.</p>
+            <p>Example:</p>
+            <pre>{"tz": "Europe/Riga"}</pre>
+        </td>
+    </tr>
+    <tr>
+        <th>channels</th>
+        <td>
+            <p>string, optional.</p>
+            <p>Set this field to a special value "*"
+            to automatically assign all existing notification channels.
+            </p>
+            <p>Set this field to a special value "" (empty string)
+            to automatically <em>unassign</em> all notification channels.
+            </p>
+        </td>
+    </tr>
+</table>
+
+<h3 class="api-section">Response Codes</h3>
+<table class="table">
+    <tr>
+        <th>200 OK</th>
+        <td>Returned if the check was successfully updated.</td>
+    </tr>
+</table>
+
+<h3 class="api-section">Example Request</h3>
+{% include "front/snippets/update_check_request_a.html" %}
+<br>
+<p>Or, alternatively:</p>
+{% include "front/snippets/update_check_request_b.html" %}
+
+
+<h3 class="api-section">Example Response</h3>
+{% include "front/snippets/create_check_response.html" %}
+
+<!-- ********************************************************************** /-->
 
 <a class="section" name="pause-check">
 <h2 class="rule">Pause Monitoring of a Check</h2>

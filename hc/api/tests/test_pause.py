@@ -32,3 +32,17 @@ class PauseTestCase(BaseTestCase):
                              HTTP_X_API_KEY="abc")
 
         self.assertEqual(r.status_code, 400)
+
+    def test_it_validates_uuid(self):
+        url = "/api/v1/checks/not-uuid/pause"
+        r = self.client.post(url, "", content_type="application/json",
+                             HTTP_X_API_KEY="abc")
+
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_handles_missing_check(self):
+        url = "/api/v1/checks/07c2f548-9850-4b27-af5d-6c9dc157ec02/pause"
+        r = self.client.post(url, "", content_type="application/json",
+                             HTTP_X_API_KEY="abc")
+
+        self.assertEqual(r.status_code, 400)

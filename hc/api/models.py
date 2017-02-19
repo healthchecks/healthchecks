@@ -144,11 +144,13 @@ class Check(models.Model):
         return [t.strip() for t in self.tags.split(" ") if t.strip()]
 
     def to_dict(self):
+        update_rel_url = reverse("hc-api-update", args=[self.code])
         pause_rel_url = reverse("hc-api-pause", args=[self.code])
 
         result = {
             "name": self.name,
             "ping_url": self.url(),
+            "update_url": settings.SITE_ROOT + update_rel_url,
             "pause_url": settings.SITE_ROOT + pause_rel_url,
             "tags": self.tags,
             "grace": int(self.grace.total_seconds()),
