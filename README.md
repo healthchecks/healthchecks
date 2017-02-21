@@ -123,10 +123,10 @@ configuration from environment variables like so:
 
     DATABASES = {
         'default': {
-            'ENGINE':   os.env['DB_ENGINE'],
-            'NAME':     os.env['DB_NAME'],
-            'USER':     os.env['DB_USER'],
-            'PASSWORD': os.env['DB_PASSWORD'],
+            'ENGINE':   os.environ['DB_ENGINE'],
+            'NAME':     os.environ['DB_NAME'],
+            'USER':     os.environ['DB_USER'],
+            'PASSWORD': os.environ['DB_PASSWORD'],
             'TEST': {'CHARSET': 'UTF8'}
         }
     }
