@@ -1,0 +1,9 @@
+croniter
+Django
+django_compressor
+psycopg2
+pytz
+requests
+gunicorn
+whitenoise
+django-herokuify
