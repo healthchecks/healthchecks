@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
+from django.test.utils import override_settings
 from hc.api.models import Check
 from django.conf import settings
 
@@ -57,3 +58,11 @@ class LoginTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         subject = "Log in to %s" % settings.SITE_NAME
         self.assertEqual(mail.outbox[0].subject, subject)
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_it_obeys_registration_open(self):
+        form = {"email": "dan@example.org"}
+
+        r = self.client.post("/accounts/login/", form)
+        assert r.status_code == 200
+        self.assertContains(r, "Incorrect email")

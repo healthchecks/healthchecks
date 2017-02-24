@@ -1,6 +1,7 @@
 import uuid
 import re
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -25,8 +26,8 @@ def _make_user(email):
     user.set_unusable_password()
     user.save()
 
-    profile = Profile(user=user)
-    profile.save()
+    # Ensure a profile gets created
+    Profile.objects.for_user(user)
 
     channel = Channel()
     channel.user = user
@@ -74,14 +75,20 @@ def login(request, show_password=False):
                 bad_credentials = True
                 show_password = True
             else:
+                user = None
                 try:
                     user = User.objects.get(email=email)
                 except User.DoesNotExist:
-                    user = _make_user(email)
-                    _associate_demo_check(request, user)
+                    if settings.REGISTRATION_OPEN:
+                        user = _make_user(email)
+                        _associate_demo_check(request, user)
+                    else:
+                        bad_credentials = True
 
-                user.profile.send_instant_login_link()
-                return redirect("hc-login-link-sent")
+                if user:
+                    profile = Profile.objects.for_user(user)
+                    profile.send_instant_login_link()
+                    return redirect("hc-login-link-sent")
 
     else:
         form = EmailPasswordForm()

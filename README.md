@@ -87,6 +87,15 @@ Example:
 
     SITE_NAME = "My Monitoring Project"
 
+`REGISTRATION_OPEN` controls whether site visitors can create new accounts.
+Set it to `False` if you are setting up a private healthchecks instance, but
+it needs to be publicly accessible (so, for example, your cloud services
+can send pings).
+
+If you close new user registration, you can still selectively invite users
+to your team account.
+
+
 ## Database Configuration
 
 Database configuration is stored in `hc/settings.py` and can be overriden

@@ -13,6 +13,15 @@ from django.utils import timezone
 from hc.lib import emails
 
 
+class ProfileManager(models.Manager):
+    def for_user(self, user):
+        profile = self.filter(user=user).first()
+        if profile is None:
+            profile = Profile(user=user, team_access_allowed=user.is_superuser)
+            profile.save()
+        return profile
+
+
 class Profile(models.Model):
     # Owner:
     user = models.OneToOneField(User, blank=True, null=True)
@@ -24,6 +33,8 @@ class Profile(models.Model):
     token = models.CharField(max_length=128, blank=True)
     api_key = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", null=True)
+
+    objects = ProfileManager()
 
     def __str__(self):
         return self.team_name or self.user.email
