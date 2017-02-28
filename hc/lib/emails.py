@@ -6,29 +6,27 @@ from django.template.loader import render_to_string as render
 
 
 class EmailThread(Thread):
-    def __init__(self, name, to, ctx):
+    def __init__(self, subject, text, html, to):
         Thread.__init__(self)
-        self.name = name
+        self.subject = subject
+        self.text = text
+        self.html = html
         self.to = to
-        self.ctx = ctx
 
     def run(self):
-        self.ctx["SITE_ROOT"] = settings.SITE_ROOT
-
-        subject = render('emails/%s-subject.html' % self.name, self.ctx)
-        subject = subject.strip()
-
-        text = render('emails/%s-body-text.html' % self.name, self.ctx)
-        html = render('emails/%s-body-html.html' % self.name, self.ctx)
-
-        msg = EmailMultiAlternatives(subject, text, to=(self.to, ))
-
-        msg.attach_alternative(html, "text/html")
+        msg = EmailMultiAlternatives(self.subject, self.text, to=(self.to, ))
+        msg.attach_alternative(self.html, "text/html")
         msg.send()
 
 
 def send(name, to, ctx):
-    t = EmailThread(name, to, ctx)
+    ctx["SITE_ROOT"] = settings.SITE_ROOT
+
+    subject = render('emails/%s-subject.html' % name, ctx).strip()
+    text = render('emails/%s-body-text.html' % name, ctx)
+    html = render('emails/%s-body-html.html' % name, ctx)
+
+    t = EmailThread(subject, text, html, to)
     if hasattr(settings, "BLOCKING_EMAILS"):
         t.run()
     else:
