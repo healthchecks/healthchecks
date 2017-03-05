@@ -34,3 +34,9 @@ class BounceTestCase(BaseTestCase):
         url = "/api/v1/notifications/%s/bounce" % self.n.code
         r = self.client.post(url, "foo", content_type="text/plain")
         self.assertEqual(r.status_code, 400)
+
+    def test_it_handles_long_payload(self):
+        url = "/api/v1/notifications/%s/bounce" % self.n.code
+        payload = "A" * 500
+        r = self.client.post(url, payload, content_type="text/plain")
+        self.assertEqual(r.status_code, 200)

@@ -190,7 +190,7 @@ def bounce(request, code):
     if td.total_seconds() > 600:
         return HttpResponseBadRequest()
 
-    notification.error = request.body
+    notification.error = request.body[:200]
     notification.save()
 
     return HttpResponse()
