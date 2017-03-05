@@ -262,17 +262,21 @@ class Channel(models.Model):
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
     def notify(self, check):
-        # Make 3 attempts--
-        for x in range(0, 3):
-            error = self.transport.notify(check) or ""
-            if error in ("", "no-op"):
-                break  # Success!
+        if self.transport.is_noop(check):
+            return "no-op"
 
-        if error != "no-op":
-            n = Notification(owner=check, channel=self)
-            n.check_status = check.status
-            n.error = error
-            n.save()
+        n = Notification(owner=check, channel=self)
+        n.check_status = check.status
+        n.error = "Sending"
+        n.save()
+
+        if self.kind == "email":
+            error = self.transport.notify(check, n.bounce_url()) or ""
+        else:
+            error = self.transport.notify(check) or ""
+
+        n.error = error
+        n.save()
 
         return error
 
@@ -348,8 +352,12 @@ class Notification(models.Model):
     class Meta:
         get_latest_by = "created"
 
+    code = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
     owner = models.ForeignKey(Check)
     check_status = models.CharField(max_length=6)
     channel = models.ForeignKey(Channel)
     created = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=200, blank=True)
+
+    def bounce_url(self):
+        return settings.SITE_ROOT + reverse("hc-api-bounce", args=[self.code])

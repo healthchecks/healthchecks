@@ -27,24 +27,27 @@ class Transport(object):
 
         raise NotImplementedError()
 
-    def test(self):
-        """ Send test message.
+    def is_noop(self, check):
+        """ Return True if transport will ignore check's current status.
 
-        This method returns None on success, and error message
-        on error.
+        This method is overriden in Webhook subclass where the user can
+        configure webhook urls for "up" and "down" events, and both are
+        optional.
 
         """
 
-        raise NotImplementedError()
+        return False
 
     def checks(self):
         return self.channel.user.check_set.order_by("created")
 
 
 class Email(Transport):
-    def notify(self, check):
+    def notify(self, check, bounce_url):
         if not self.channel.email_verified:
             return "Email not verified"
+
+        headers = {"X-Bounce-Url": bounce_url}
 
         ctx = {
             "check": check,
@@ -52,12 +55,13 @@ class Email(Transport):
             "now": timezone.now(),
             "unsub_link": self.channel.get_unsub_link()
         }
-        emails.alert(self.channel.value, ctx)
+
+        emails.alert(self.channel.value, ctx, headers)
 
 
 class HttpTransport(Transport):
 
-    def request(self, method, url, **kwargs):
+    def _request(self, method, url, **kwargs):
         try:
             options = dict(kwargs)
             if "headers" not in options:
@@ -76,10 +80,22 @@ class HttpTransport(Transport):
             return "Connection failed"
 
     def get(self, url):
-        return self.request("get", url)
+        # Make 3 attempts--
+        for x in range(0, 3):
+            error = self._request("get", url)
+            if error is None:
+                break
+
+        return error
 
     def post(self, url, **kwargs):
-        return self.request("post", url, **kwargs)
+        # Make 3 attempts--
+        for x in range(0, 3):
+            error = self._request("post", url, **kwargs)
+            if error is None:
+                break
+
+        return error
 
 
 class Webhook(HttpTransport):
@@ -115,14 +131,21 @@ class Webhook(HttpTransport):
 
         return result
 
+    def is_noop(self, check):
+        if check.status == "down" and not self.channel.value_down:
+            return True
+
+        if check.status == "up" and not self.channel.value_up:
+            return True
+
+        return False
+
     def notify(self, check):
         url = self.channel.value_down
         if check.status == "up":
             url = self.channel.value_up
 
-        if not url:
-            # If the URL is empty then we do nothing
-            return "no-op"
+        assert url
 
         url = self.prepare(url, check, urlencode=True)
         if self.channel.post_data:
@@ -236,9 +259,10 @@ class Pushover(HttpTransport):
 class VictorOps(HttpTransport):
     def notify(self, check):
         description = tmpl("victorops_description.html", check=check)
+        mtype = "CRITICAL" if check.status == "down" else "RECOVERY"
         payload = {
             "entity_id": str(check.code),
-            "message_type": "CRITICAL" if check.status == "down" else "RECOVERY",
+            "message_type": mtype,
             "entity_display_name": check.name_then_code(),
             "state_message": description,
             "monitoring_tool": "healthchecks.io",

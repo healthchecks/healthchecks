@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from hc.api import schemas
 from hc.api.decorators import check_api_key, uuid_or_400, validate_json
-from hc.api.models import Check, Ping
+from hc.api.models import Check, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg
 
 
@@ -175,3 +175,21 @@ def badge(request, username, signature, tag):
 
     svg = get_badge_svg(tag, status)
     return HttpResponse(svg, content_type="image/svg+xml")
+
+
+@uuid_or_400
+def bounce(request, code):
+    try:
+        notification = Notification.objects.get(code=code)
+    except Notification.DoesNotExist:
+        return HttpResponseBadRequest()
+
+    # If webhook is more than 10 minutes late, don't accept it:
+    td = timezone.now() - notification.created
+    if td.total_seconds() > 600:
+        return HttpResponseBadRequest()
+
+    notification.error = request.body
+    notification.save()
+
+    return HttpResponse()
