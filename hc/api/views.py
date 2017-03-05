@@ -177,6 +177,7 @@ def badge(request, username, signature, tag):
     return HttpResponse(svg, content_type="image/svg+xml")
 
 
+@csrf_exempt
 @uuid_or_400
 def bounce(request, code):
     try:
