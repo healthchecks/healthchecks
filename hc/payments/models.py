@@ -29,8 +29,8 @@ class Subscription(models.Model):
     def price(self):
         if self.plan_id == "P5":
             return 5
-        elif self.plan_id == "P20":
-            return 20
+        elif self.plan_id == "P75":
+            return 75
 
         return 0
 

@@ -55,7 +55,7 @@ def log_and_bail(request, result):
 @require_POST
 def create_plan(request):
     plan_id = request.POST["plan_id"]
-    if plan_id not in ("P5", "P20"):
+    if plan_id not in ("P5", "P75"):
         return HttpResponseBadRequest()
 
     sub = Subscription.objects.for_user(request.user)
@@ -110,8 +110,8 @@ def create_plan(request):
         profile.ping_log_limit = 1000
         profile.team_access_allowed = True
         profile.save()
-    elif plan_id == "P20":
-        profile.ping_log_limit = 10000
+    elif plan_id == "P75":
+        profile.ping_log_limit = 1000
         profile.team_access_allowed = True
         profile.save()
 

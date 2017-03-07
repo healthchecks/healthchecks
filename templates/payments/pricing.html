@@ -72,6 +72,7 @@
                         <li class="list-group-item"><i class="fa fa-check"></i> Unlimited Alerts</li>
                         <li class="list-group-item">100 log entries per check</li>
                         <li class="list-group-item">One User</li>
+                        <li class="list-group-item">&nbsp;</li>
                     </ul>
                     <div class="panel-footer">
                         {% if request.user.is_authenticated %}
@@ -106,6 +107,7 @@
                         <li class="list-group-item">Unlimited Alerts</li>
                         <li class="list-group-item">1000 log entries per check</li>
                         <li class="list-group-item">Team Access</li>
+                        <li class="list-group-item">Email Support</li>
                     </ul>
                     <div class="panel-footer">
                         {% if request.user.is_authenticated %}
@@ -117,7 +119,7 @@
                             <button
                                 data-plan-id="P5"
                                 class="btn btn-lg btn-default btn-create-payment-method">
-                                {% if sub.plan_id == "P20" %}
+                                {% if sub.plan_id == "P75" %}
                                 Switch to $5/mo
                                 {% else %}
                                 Upgrade your Account
@@ -134,29 +136,30 @@
             </div>
             <!-- /item -->
 
-            <!-- P20 -->
+            <!-- P75 -->
             <div class="col-sm-4 text-center">
                 <div class="panel panel-default panel-pricing">
                     <div class="panel-body text-center">
-                        <p>$20<span class="mo">/mo</span></p>
+                        <p>$75<span class="mo">/mo</span></p>
                     </div>
 
                     <ul class="list-group text-center">
                         <li class="list-group-item">Personal or Commercial use</li>
                         <li class="list-group-item">Unlimited Checks</li>
                         <li class="list-group-item">Unlimited Alerts</li>
-                        <li class="list-group-item">10'000 log entries per check</li>
+                        <li class="list-group-item">1000 log entries per check</li>
                         <li class="list-group-item">Team Access</li>
+                        <li class="list-group-item">Priority Email Support</li>
                     </ul>
                     <div class="panel-footer">
                         {% if request.user.is_authenticated %}
-                            {% if sub.plan_id == "P20" %}
+                            {% if sub.plan_id == "P75" %}
                             <button  class="btn btn-lg btn-success disabled">
                                 Selected
                             </button>
                             {% else %}
                             <button
-                                data-plan-id="P20"
+                                data-plan-id="P75"
                                 class="btn btn-lg btn-default btn-create-payment-method">
                                 Upgrade Your Account
                             </button>
