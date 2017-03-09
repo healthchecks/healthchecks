@@ -26,6 +26,15 @@ class Command(BaseCommand):
     help = 'Sends UP/DOWN email alerts'
     owned = Check.objects.filter(user__isnull=False)
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--no-loop',
+            action='store_false',
+            dest='loop',
+            default=True,
+            help='Do not keep running indefinitely in a 2 second wait loop',
+        )
+
     def handle_one(self):
         """ Process a single check.  """
 
@@ -62,6 +71,13 @@ class Command(BaseCommand):
         return False
 
     def handle(self, *args, **options):
+        if not options["loop"]:
+            x = 0
+            while self.handle_one():
+                # returns True when there are more alerts to send.
+                x += 1
+            return "Sent %d alert(s)" % x
+
         self.stdout.write("sendalerts is now running")
 
         ticks = 0
