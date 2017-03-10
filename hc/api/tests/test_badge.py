@@ -13,7 +13,7 @@ class BadgeTestCase(BaseTestCase):
 
     def test_it_rejects_bad_signature(self):
         r = self.client.get("/badge/%s/12345678/foo.svg" % self.alice.username)
-        assert r.status_code == 400
+        assert r.status_code == 404
 
     def test_it_returns_svg(self):
         sig = base64_hmac(str(self.alice.username), "foo", settings.SECRET_KEY)

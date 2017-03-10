@@ -33,10 +33,16 @@ class BounceTestCase(BaseTestCase):
 
         url = "/api/v1/notifications/%s/bounce" % self.n.code
         r = self.client.post(url, "foo", content_type="text/plain")
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 403)
 
     def test_it_handles_long_payload(self):
         url = "/api/v1/notifications/%s/bounce" % self.n.code
         payload = "A" * 500
         r = self.client.post(url, payload, content_type="text/plain")
         self.assertEqual(r.status_code, 200)
+
+    def test_it_handles_missing_notification(self):
+        fake_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"
+        url = "/api/v1/notifications/%s/bounce" % fake_code
+        r = self.client.post(url, "", content_type="text/plain")
+        self.assertEqual(r.status_code, 404)

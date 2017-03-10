@@ -1,10 +1,13 @@
 from datetime import timedelta as td
 
 from django.db.models import F
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import (HttpResponse, HttpResponseForbidden,
+                         HttpResponseNotFound, JsonResponse)
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from hc.api import schemas
 from hc.api.decorators import check_api_key, uuid_or_400, validate_json
@@ -16,10 +19,7 @@ from hc.lib.badges import check_signature, get_badge_svg
 @uuid_or_400
 @never_cache
 def ping(request, code):
-    try:
-        check = Check.objects.get(code=code)
-    except Check.DoesNotExist:
-        return HttpResponseBadRequest()
+    check = get_object_or_404(Check, code=code)
 
     check.n_pings = F("n_pings") + 1
     check.last_ping = timezone.now()
@@ -122,34 +122,27 @@ def checks(request):
 
 
 @csrf_exempt
+@require_POST
 @uuid_or_400
 @check_api_key
 @validate_json(schemas.check)
 def update(request, code):
-    if request.method != "POST":
-        return HttpResponse(status=405)  # method not allowed
-
-    try:
-        check = Check.objects.get(code=code, user=request.user)
-    except Check.DoesNotExist:
-        return HttpResponseBadRequest()
+    check = get_object_or_404(Check, code=code)
+    if check.user != request.user:
+        return HttpResponseForbidden()
 
     _update(check, request.json)
     return JsonResponse(check.to_dict(), status=200)
 
 
 @csrf_exempt
+@require_POST
 @uuid_or_400
 @check_api_key
 def pause(request, code):
-    if request.method != "POST":
-        # Method not allowed
-        return HttpResponse(status=405)
-
-    try:
-        check = Check.objects.get(code=code, user=request.user)
-    except Check.DoesNotExist:
-        return HttpResponseBadRequest()
+    check = get_object_or_404(Check, code=code)
+    if check.user != request.user:
+        return HttpResponseForbidden()
 
     check.status = "paused"
     check.save()
@@ -159,7 +152,7 @@ def pause(request, code):
 @never_cache
 def badge(request, username, signature, tag):
     if not check_signature(username, tag, signature):
-        return HttpResponseBadRequest()
+        return HttpResponseNotFound()
 
     status = "up"
     q = Check.objects.filter(user__username=username, tags__contains=tag)
@@ -181,15 +174,12 @@ def badge(request, username, signature, tag):
 @csrf_exempt
 @uuid_or_400
 def bounce(request, code):
-    try:
-        notification = Notification.objects.get(code=code)
-    except Notification.DoesNotExist:
-        return HttpResponseBadRequest()
+    notification = get_object_or_404(Notification, code=code)
 
     # If webhook is more than 10 minutes late, don't accept it:
     td = timezone.now() - notification.created
     if td.total_seconds() > 600:
-        return HttpResponseBadRequest()
+        return HttpResponseForbidden()
 
     notification.error = request.body[:200]
     notification.save()

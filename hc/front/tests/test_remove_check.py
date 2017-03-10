@@ -53,4 +53,4 @@ class RemoveCheckTestCase(BaseTestCase):
         url = "/checks/%s/remove/" % self.check.code
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 405)

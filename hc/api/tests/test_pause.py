@@ -31,7 +31,7 @@ class PauseTestCase(BaseTestCase):
         r = self.client.post(url, "", content_type="application/json",
                              HTTP_X_API_KEY="abc")
 
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 403)
 
     def test_it_validates_uuid(self):
         url = "/api/v1/checks/not-uuid/pause"
@@ -45,4 +45,4 @@ class PauseTestCase(BaseTestCase):
         r = self.client.post(url, "", content_type="application/json",
                              HTTP_X_API_KEY="abc")
 
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 404)

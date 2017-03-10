@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
@@ -131,11 +132,9 @@ def about(request):
     return render(request, "front/about.html", {"page": "about"})
 
 
+@require_POST
 @login_required
 def add_check(request):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
     check = Check(user=request.team.user)
     check.save()
 
@@ -144,12 +143,10 @@ def add_check(request):
     return redirect("hc-checks")
 
 
+@require_POST
 @login_required
 @uuid_or_400
 def update_name(request, code):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
     check = get_object_or_404(Check, code=code)
     if check.user_id != request.team.user.id:
         return HttpResponseForbidden()
@@ -163,12 +160,10 @@ def update_name(request, code):
     return redirect("hc-checks")
 
 
+@require_POST
 @login_required
 @uuid_or_400
 def update_timeout(request, code):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
     check = get_object_or_404(Check, code=code)
     if check.user != request.team.user:
         return HttpResponseForbidden()
@@ -200,10 +195,8 @@ def update_timeout(request, code):
 
 
 @csrf_exempt
+@require_POST
 def cron_preview(request):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
     schedule = request.POST.get("schedule")
     tz = request.POST.get("tz")
     ctx = {"tz": tz, "dates": []}
@@ -223,12 +216,10 @@ def cron_preview(request):
     return render(request, "front/cron_preview.html", ctx)
 
 
+@require_POST
 @login_required
 @uuid_or_400
 def pause(request, code):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
     check = get_object_or_404(Check, code=code)
     if check.user_id != request.team.user.id:
         return HttpResponseForbidden()
@@ -239,12 +230,10 @@ def pause(request, code):
     return redirect("hc-checks")
 
 
+@require_POST
 @login_required
 @uuid_or_400
 def remove_check(request, code):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
     check = get_object_or_404(Check, code=code)
     if check.user != request.team.user:
         return HttpResponseForbidden()
@@ -375,12 +364,10 @@ def unsubscribe_email(request, code, token):
     return render(request, "front/unsubscribe_success.html")
 
 
+@require_POST
 @login_required
 @uuid_or_400
 def remove_channel(request, code):
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-
     # user may refresh the page during POST and cause two deletion attempts
     channel = Channel.objects.filter(code=code).first()
     if channel:

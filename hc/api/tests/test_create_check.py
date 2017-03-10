@@ -95,8 +95,8 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.json()["error"], "could not parse request body")
 
     def test_it_rejects_wrong_api_key(self):
-        self.post({"api_key": "wrong"},
-                  expected_error="wrong api_key")
+        r = self.post({"api_key": "wrong"})
+        self.assertEqual(r.status_code, 403)
 
     def test_it_rejects_small_timeout(self):
         self.post({"api_key": "abc", "timeout": 0},

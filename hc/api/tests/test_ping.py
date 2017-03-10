@@ -45,6 +45,10 @@ class PingTestCase(TestCase):
         r = self.client.get("/ping/not-uuid/")
         assert r.status_code == 400
 
+    def test_it_handles_missing_check(self):
+        r = self.client.get("/ping/07c2f548-9850-4b27-af5d-6c9dc157ec02/")
+        assert r.status_code == 404
+
     def test_it_handles_120_char_ua(self):
         ua = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) "
               "AppleWebKit/537.36 (KHTML, like Gecko) "

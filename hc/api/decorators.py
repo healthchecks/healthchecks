@@ -3,7 +3,8 @@ import uuid
 from functools import wraps
 
 from django.contrib.auth.models import User
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
+                         JsonResponse)
 from hc.lib.jsonschema import ValidationError, validate
 
 
@@ -44,7 +45,7 @@ def check_api_key(f):
         try:
             request.user = User.objects.get(profile__api_key=api_key)
         except User.DoesNotExist:
-            return make_error("wrong api_key")
+            return HttpResponseForbidden()
 
         return f(request, *args, **kwds)
 

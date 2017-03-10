@@ -29,4 +29,4 @@ class CronPreviewTestCase(BaseTestCase):
 
     def test_it_rejects_get(self):
         r = self.client.get("/checks/cron_preview/", {})
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 405)

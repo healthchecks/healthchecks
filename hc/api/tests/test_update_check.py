@@ -74,7 +74,14 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_handles_missing_check(self):
         made_up_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"
         r = self.post(made_up_code, {"api_key": "abc"})
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 404)
+
+    def test_it_validates_ownership(self):
+        check = Check(user=self.bob, status="up")
+        check.save()
+
+        r = self.post(check.code, {"api_key": "abc"})
+        self.assertEqual(r.status_code, 403)
 
     def test_it_updates_cron_to_simple(self):
         self.check.kind = "cron"
