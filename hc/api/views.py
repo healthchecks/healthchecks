@@ -72,6 +72,7 @@ def _update(check, spec):
         check.tags = spec["tags"]
 
     if "timeout" in spec and "schedule" not in spec:
+        check.kind = "simple"
         check.timeout = td(seconds=spec["timeout"])
 
     if "grace" in spec:
@@ -80,7 +81,7 @@ def _update(check, spec):
     if "schedule" in spec:
         check.kind = "cron"
         check.schedule = spec["schedule"]
-        if "tz" in spec and "schedule" in spec:
+        if "tz" in spec:
             check.tz = spec["tz"]
 
     check.save()

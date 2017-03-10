@@ -75,3 +75,14 @@ class UpdateCheckTestCase(BaseTestCase):
         made_up_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"
         r = self.post(made_up_code, {"api_key": "abc"})
         self.assertEqual(r.status_code, 400)
+
+    def test_it_updates_cron_to_simple(self):
+        self.check.kind = "cron"
+        self.check.schedule = "5 * * * *"
+        self.check.save()
+
+        r = self.post(self.check.code, {"api_key": "abc", "timeout": 3600})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "simple")
