@@ -1,3 +1,4 @@
+# source - https://github.com/haswalt/docker-healthchecks
 version: '2'
 services:
   hc:

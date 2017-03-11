@@ -1,4 +1,6 @@
 #!/bin/sh
+
+# source: https://github.com/haswalt/docker-healthchecks
 set -ex
 
 # wait for database connection to run migration

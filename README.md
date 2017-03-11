@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/healthchecks/healthchecks.svg?branch=master)](https://travis-ci.org/healthchecks/healthchecks)
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
+[![Docker Repository on Quay](https://quay.io/repository/honestbee/healthchecks/status "Docker Repository on Quay")](https://quay.io/repository/honestbee/healthchecks)
 
 
 ![Screenshot of Welcome page](/stuff/screenshots/welcome.png?raw=true "Welcome Page")
@@ -22,7 +23,86 @@ The building blocks are:
 * Django 1.9
 * PostgreSQL or MySQL
 
-## Setting Up for Development
+## Docker quick start
+
+Quick start:
+
+1. [Get Docker](https://store.docker.com/search?offering=community&platform=desktop&q=&type=edition)
+
+1. Start full stack using `docker-compose`:
+```bash
+curl -Lo docker-compose.yaml https://raw.githubusercontent.com/honestbee/healthchecks/master/docker-compose.yml
+docker-compose -p healthchecks up -d
+# monitor boot process of healthchecks app
+docker-compose -p healthchecks logs -f hc
+
+# once ready:
+# open healthchecks on localhost
+open http://localhost:9090
+
+# open mailhog for testing
+open http://localhost:8025
+```
+
+To deploy the application, set environment variables
+
+## Admin Access
+
+By default no admin user is created. To create your first admin user connect to your running docker container:
+
+```bash
+docker-compose -p healthchecks exec hc bash
+```
+
+and run:
+```bash
+./manage.py createsuperuser
+```
+
+You will now be able to login to the admin at http://localhost:9090/admin.
+
+*N.B.* There is no validation so ensure you correctly set an email address and password or you may find yourself unable to login.
+
+## Configuration
+
+The Docker images are built to take basic configuration from environment variables:
+
+| Variable                      | Default                      |
+| ----------------------------- | ---------------------------- |
+| `HEALTHCHECKS_DEBUG`          | `False`                      |
+| `HEALTHCHECKS_HOST`           | `localhost`                  |
+| `HEALTHCHECKS_SITE_ROOT`      | `"http://localhost:9090"`    |
+| `HEALTHCHECKS_DB`             | `mysql`                      |
+| `HEALTHCHECKS_DB_HOST`        | `localhost`                  |
+| `HEALTHCHECKS_DB_USER`        | `root`                       |
+| `HEALTHCHECKS_DB_PASSWORD`    | `pa55word`                   |
+| `HEALTHCHECKS_EMAIL_FROM`     | `"healthchecks@example.org"` |
+| `HEALTHCHECKS_EMAIL_HOST`     | `localhost`                  |
+| `HEALTHCHECKS_EMAIL_PORT`     | `25`                         |
+| `HEALTHCHECKS_EMAIL_USER`     | `""`                         |
+| `HEALTHCHECKS_EMAIL_PASSWORD` | `""`                         |
+| `MYSQL_ROOT_PASSWORD`         | `pa55word`                   |
+| `MYSQL_USER`                  | `hc`                         |
+| `MYSQL_PASSWORD`              | `pa55word`                   |
+| `MYSQL_DATABASE`              | `hc`                         |
+
+Docker Compose can take environment varialbes from [env_files](https://docs.docker.com/compose/compose-file/#envfile) or overwritten using the `-f docker-compose.production.yaml` flag (refer to [docker-compose documentation](https://docs.docker.com/compose/reference/overview/))
+
+Review the configuration with:
+
+```bash
+docker-compose config
+```
+
+## Building
+
+The following command will build the application with the image tag specified in the `docker-compose.yaml` file.
+
+```
+docker-compose build
+```
+
+## Setting Up for Local Development
 
 These are instructions for setting up HealthChecks Django app
 in development environment.
