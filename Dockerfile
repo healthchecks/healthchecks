@@ -1,4 +1,4 @@
-FROM python:3-alpine
+FROM python:3.4-alpine
 
 # Caching layer with bash, tini, UWSGI and mysql / pg clients
 RUN set -ex \
