@@ -1,0 +1,30 @@
+version: '2'
+services:
+  hc:
+    build: .
+    # image: haswalt/docker-healthchecks
+    image: quay.io/honestbee/healthcheck:latest
+    ports:
+      - "9090:9090"
+    depends_on:
+      - db
+    environment:
+      HEALTHCHECKS_EMAIL_HOST: mailhog
+      HEALTHCHECKS_EMAIL_PORT: 1025
+      HEALTHCHECKS_DB: mysql
+      HEALTHCHECKS_DB_HOST: db
+      HEALTHCHECKS_DB_USER: root
+      HEALTHCHECKS_DB_PASSWORD: pa55word
+      HEALTHCHECKS_SITE_ROOT: http://localhost:9090
+      HEALTHCHECKS_DEBUG: 1
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: pa55word
+      MYSQL_USER: hc
+      MYSQL_PASSWORD: pa55word
+      MYSQL_DATABASE: hc
