@@ -4,7 +4,7 @@ services:
   hc:
     build: .
     # image: haswalt/docker-healthchecks
-    image: quay.io/honestbee/healthcheck:latest
+    image: quay.io/honestbee/healthchecks:latest
     ports:
       - "9090:9090"
     depends_on:
