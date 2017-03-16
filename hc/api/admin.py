@@ -165,30 +165,10 @@ class ChannelsAdmin(admin.ModelAdmin):
         return obj.user.email if obj.user else None
 
     def formatted_kind(self, obj):
-        if obj.kind == "pd":
-            return "PagerDuty"
-        elif obj.kind == "victorops":
-            return "VictorOps"
-        elif obj.kind == "pushbullet":
-            return "Pushbullet"
-        elif obj.kind == "discord":
-            return "Discord"
-        elif obj.kind == "po":
-            return "Pushover"
-        elif obj.kind == "webhook":
-            return "Webhook"
-        elif obj.kind == "slack":
-            return "Slack"
-        elif obj.kind == "hipchat":
-            return "HipChat"
-        elif obj.kind == "opsgenie":
-            return "OpsGenie"
-        elif obj.kind == "email" and obj.email_verified:
-            return "Email"
-        elif obj.kind == "email" and not obj.email_verified:
+        if obj.kind == "email" and not obj.email_verified:
             return "Email <i>(unverified)</i>"
-        else:
-            raise NotImplementedError("Bad channel kind: %s" % obj.kind)
+
+        return obj.get_kind_display()
 
     formatted_kind.short_description = "Kind"
     formatted_kind.allow_tags = True
