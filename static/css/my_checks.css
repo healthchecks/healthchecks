@@ -112,6 +112,7 @@
     background-color: #eee;
     color: #555;
     font-style: normal;
+    font-weight: 500;
 }
 
 #show-usage-modal  .modal-dialog {

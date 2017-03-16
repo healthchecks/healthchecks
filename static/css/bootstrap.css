@@ -3274,7 +3274,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-pills > li.active > a,
 .nav-pills > li.active > a:hover,
 .nav-pills > li.active > a:focus {
-  color: #888888;
+  color: #555555;
   background-color: #eeeeee;
 }
 .nav-stacked > li {
