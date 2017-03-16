@@ -38,7 +38,7 @@ $(function() {
         var $this = $(this);
 
         $("#remove-channel-form").attr("action", $this.data("url"));
-        $(".remove-channel-name").text($this.data("name"));
+        $(".remove-channel-kind").text($this.data("kind"));
         $('#remove-channel-modal').modal("show");
 
         return false;

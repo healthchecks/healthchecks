@@ -24,3 +24,7 @@
     border-color: #d43f3a;
     color: #d43f3a;
 }
+
+#close-account:hover {
+    background-color: #ffebea;
+}

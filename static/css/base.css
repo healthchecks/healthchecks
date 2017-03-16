@@ -83,3 +83,7 @@ pre {
 .nav-pills > li > a {
     color: #888;
 }
+
+.jumbotron p {
+    font-weight: 300;
+}

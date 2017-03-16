@@ -110,7 +110,7 @@
             </td>
             <td>
                 <button
-                    data-name="{{ ch.value }}"
+                    data-kind="{{ ch.get_kind_display }}"
                     data-url="{% url 'hc-remove-channel' ch.code %}"
                     class="btn btn-sm btn-default channel-remove"
                     type="button">
@@ -250,15 +250,20 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="remove-check-title">Remove Channel <span class="remove-channel-name"></span></h4>
+                    <h4 class="remove-check-title">
+                        Remove this
+                        <span class="remove-channel-kind">---</span>
+                        Integration?
+                    </h4>
                 </div>
                 <div class="modal-body">
-                    <p>You are about to remove channel
-                        <strong class="remove-channel-name">---</strong>.
+                    <p>You are about to remove this
+                        <span class="remove-channel-kind">---</span>
+                    integration.
                     </p>
                     <p>Once it's gone it's gone. But, if you change your
-                    mind later, you can create a similar channel again.</p>
-                    <p>Do you want to continue?</p>
+                    mind later, you can create a similar channel again.
+                    Do you want to continue?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
