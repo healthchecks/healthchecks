@@ -14,6 +14,8 @@ urlpatterns = [
         views.check_token, name="hc-check-token"),
 
     url(r'^profile/$', views.profile, name="hc-profile"),
+    url(r'^profile/notifications/$', views.notifications, name="hc-notifications"),
+    url(r'^profile/badges/$', views.badges, name="hc-badges"),
 
     url(r'^unsubscribe_reports/([\w-]+)/$',
         views.unsubscribe_reports, name="hc-unsubscribe-reports"),

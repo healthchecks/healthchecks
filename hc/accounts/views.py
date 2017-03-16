@@ -169,12 +169,6 @@ def profile(request):
             messages.info(request, "The API key has been revoked!")
         elif "show_api_key" in request.POST:
             show_api_key = True
-        elif "update_reports_allowed" in request.POST:
-            form = ReportSettingsForm(request.POST)
-            if form.is_valid():
-                profile.reports_allowed = form.cleaned_data["reports_allowed"]
-                profile.save()
-                messages.success(request, "Your settings have been updated!")
         elif "invite_team_member" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
@@ -213,6 +207,48 @@ def profile(request):
                 profile.save()
                 messages.success(request, "Team Name updated!")
 
+    ctx = {
+        "page": "profile",
+        "profile": profile,
+        "show_api_key": show_api_key
+    }
+
+    return render(request, "accounts/profile.html", ctx)
+
+
+@login_required
+def notifications(request):
+    profile = request.user.profile
+    # Switch user back to its default team
+    if profile.current_team_id != profile.id:
+        request.team = profile
+        profile.current_team_id = profile.id
+        profile.save()
+
+    if request.method == "POST":
+        form = ReportSettingsForm(request.POST)
+        if form.is_valid():
+            profile.reports_allowed = form.cleaned_data["reports_allowed"]
+            profile.save()
+            messages.success(request, "Your settings have been updated!")
+
+    ctx = {
+        "page": "profile",
+        "profile": profile,
+    }
+
+    return render(request, "accounts/notifications.html", ctx)
+
+
+@login_required
+def badges(request):
+    profile = request.user.profile
+    # Switch user back to its default team
+    if profile.current_team_id != profile.id:
+        request.team = profile
+        profile.current_team_id = profile.id
+        profile.save()
+
     tags = set()
     for check in Check.objects.filter(user=request.team.user):
         tags.update(check.tags_list())
@@ -228,11 +264,9 @@ def profile(request):
     ctx = {
         "page": "profile",
         "badge_urls": badge_urls,
-        "profile": profile,
-        "show_api_key": show_api_key
     }
 
-    return render(request, "accounts/profile.html", ctx)
+    return render(request, "accounts/badges.html", ctx)
 
 
 @login_required
@@ -286,11 +320,11 @@ def switch_team(request, target_username):
     # Superuser can switch to any team.
     access_ok = request.user.is_superuser
 
-    # Users can switch to teams they are members of.
+    # Users can switch to their own teams.
     if not access_ok and other_user.id == request.user.id:
         access_ok = True
 
-    # Users can switch to their own teams.
+    # Users can switch to teams they are members of.
     if not access_ok:
         for membership in request.user.member_set.all():
             if membership.team.user.id == other_user.id:

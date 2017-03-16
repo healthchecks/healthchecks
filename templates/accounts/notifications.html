@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load compress staticfiles hc_extras %}
+
+{% block title %}Account Settings - {% site_name %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="settings-title">Settings</h1>
+    </div>
+    {% if messages %}
+    <div class="col-sm-12">
+        {% for message in messages %}
+            <p class="alert alert-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <ul class="nav nav-pills nav-stacked">
+            <li><a href="{% url 'hc-profile' %}">Account</a></li>
+            <li class="active"><a href="{% url 'hc-notifications' %}">Notifications</a></li>
+            <li><a href="{% url 'hc-badges' %}">Badges</a></li>
+        </ul>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <h2>Monthly Reports</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <label>
+                        <input
+                            name="reports_allowed"
+                            type="checkbox"
+                            {% if profile.reports_allowed %} checked {% endif %}>
+                        Each month send me a summary of my checks
+                    </label>
+                    <button
+                        name="update_reports_allowed"
+                        type="submit"
+                        class="btn btn-default pull-right">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endcompress %}
+{% endblock %}

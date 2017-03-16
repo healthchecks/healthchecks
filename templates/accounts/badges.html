@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load compress staticfiles hc_extras %}
+
+{% block title %}Account Settings - {% site_name %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="settings-title">Settings</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <ul class="nav nav-pills nav-stacked">
+            <li><a href="{% url 'hc-profile' %}">Security</a></li>
+            <li><a href="{% url 'hc-notifications' %}">Notifications</a></li>
+            <li class="active"><a href="{% url 'hc-badges' %}">Badges</a></li>
+        </ul>
+    </div>
+
+    <div class="col-sm-9">
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <h2 class="settings-title">Status Badges</h2>
+                <p id="badges-description">
+                    healthchecks.io provides status badges for each of the tags
+                    you have used. The badges have public, but hard-to-guess
+                    URLs. If you wish, you can add them to your READMEs,
+                    dashboards or status pages.
+                </p>
+                {% if badge_urls %}
+                <table class="badges table">
+                    {% for badge_url in badge_urls %}
+                    <tr>
+                        <td>
+                            <img src="{{ badge_url }}" alt="" />
+                        </td>
+                        <td>
+                            <code>{{ badge_url }}</code>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <p>
+                    To get started with status badges, add some tags to
+                    your checks!
+                </p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endcompress %}
+{% endblock %}

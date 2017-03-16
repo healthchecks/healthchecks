@@ -79,3 +79,7 @@ body {
 pre {
   border: 0;
 }
+
+.nav-pills > li > a {
+    color: #888;
+}
