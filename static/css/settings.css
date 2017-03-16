@@ -18,3 +18,9 @@
 .page-profile .icon-ok {
     color: #5cb85c;
 }
+
+#close-account {
+    margin-left: 24px;
+    border-color: #d43f3a;
+    color: #d43f3a;
+}

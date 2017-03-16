@@ -156,12 +156,7 @@ def update_payment_method(request):
 @require_POST
 def cancel_plan(request):
     sub = Subscription.objects.get(user=request.user)
-
-    braintree.Subscription.cancel(sub.subscription_id)
-    sub.subscription_id = ""
-    sub.plan_id = ""
-    sub.save()
-
+    sub.cancel()
     return redirect("hc-pricing")
 
 

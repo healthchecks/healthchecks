@@ -13,7 +13,7 @@ class CancelPlanTestCase(BaseTestCase):
         self.sub.plan_id = "P5"
         self.sub.save()
 
-    @patch("hc.payments.views.braintree")
+    @patch("hc.payments.models.braintree")
     def test_it_works(self, mock_braintree):
 
         self.client.login(username="alice@example.org", password="password")

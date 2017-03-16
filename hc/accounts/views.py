@@ -12,12 +12,14 @@ from django.contrib.auth.models import User
 from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
                                RemoveTeamMemberForm, ReportSettingsForm,
                                SetPasswordForm, TeamNameForm)
 from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
+from hc.payments.models import Subscription
 
 
 def _make_user(email):
@@ -338,3 +340,24 @@ def switch_team(request, target_username):
     request.user.profile.save()
 
     return redirect("hc-checks")
+
+
+@require_POST
+@login_required
+def close(request):
+    user = request.user
+
+    # Subscription needs to be canceled before it is deleted:
+    sub = Subscription.objects.filter(user=user).first()
+    if sub:
+        sub.cancel()
+
+    # Any users currently using this team need to switch to their own team:
+    for partner in Profile.objects.filter(current_team=user.profile):
+        partner.current_team = partner
+        partner.save()
+
+    user.delete()
+
+    request.session.flush()
+    return redirect("hc-index")

@@ -39,6 +39,14 @@ class Subscription(models.Model):
             self._pm = braintree.PaymentMethod.find(self.payment_method_token)
         return self._pm
 
+    def cancel(self):
+        if self.subscription_id:
+            braintree.Subscription.cancel(self.subscription_id)
+
+        self.subscription_id = ""
+        self.plan_id = ""
+        self.save()
+
     def pm_is_credit_card(self):
         return isinstance(self._get_braintree_payment_method(),
                           braintree.credit_card.CreditCard)

@@ -136,6 +136,22 @@
                 {% endif %}
             </div>
         </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                    {% csrf_token %}
+                    <h2>Close Account</h2>
+                    <a
+                        id="close-account"
+                        href="#"
+                        class="btn btn-default pull-right"
+                        data-toggle="modal"
+                        data-target="#close-account-modal">Close Account</a>
+                    This will permanently remove your healthchecks.io account
+                <form action="{% url 'hc-close' %}" method="post">
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -263,6 +279,33 @@
                         type="submit"
                         name="set_team_name"
                         class="btn btn-primary">Set Team Name</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="close-account-modal" class="modal">
+    <div class="modal-dialog">
+        <form id="close-account-form" method="post" action="{% url 'hc-close' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="remove-check-title">Close Account</h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                    <p>You are about to permanently remove
+                    the account <strong>{{ profile }}</strong> and all
+                    of its associated checks and integrations.</p>
+                    <p>Are you sure?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        class="btn btn-danger">Close Account</button>
                 </div>
             </div>
         </form>
