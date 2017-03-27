@@ -12,4 +12,5 @@ urlpatterns = [
         name="hc-api-bounce"),
     url(r'^badge/([\w-]+)/([\w-]{8})/([\w-]+).svg$', views.badge,
         name="hc-badge"),
+    url(r'^api/v1/status/$', views.status),
 ]

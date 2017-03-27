@@ -1,5 +1,6 @@
 from datetime import timedelta as td
 
+from django.db import connection
 from django.db.models import F
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseNotFound, JsonResponse)
@@ -185,3 +186,11 @@ def bounce(request, code):
     notification.save()
 
     return HttpResponse()
+
+
+def status(request):
+    with connection.cursor() as c:
+        c.execute("SELECT 1")
+        c.fetchone()
+
+    return HttpResponse("OK")
