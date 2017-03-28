@@ -1,6 +1,7 @@
 from datetime import timedelta
 from mock import patch
 
+from django.core.management import call_command
 from django.utils import timezone
 from hc.api.management.commands.sendalerts import Command
 from hc.api.models import Check
@@ -35,7 +36,7 @@ class SendAlertsTestCase(BaseTestCase):
         check.refresh_from_db()
         self.assertEqual(check.status, "down")
 
-        # It should call `notify`
+        # It should call `notify_on_thread`
         self.assertTrue(mock_notify.called)
 
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
@@ -54,7 +55,7 @@ class SendAlertsTestCase(BaseTestCase):
         check.refresh_from_db()
         self.assertEqual(check.status, "up")
 
-        # It should call `notify`
+        # It should call `notify_on_thread`
         self.assertTrue(mock_notify.called)
 
         # alert_after now should be set
@@ -78,5 +79,17 @@ class SendAlertsTestCase(BaseTestCase):
         # alert_after should have been increased
         self.assertTrue(check.alert_after > check.last_ping)
 
-        # notify should *not* have been called
+        # notify_on_thread should *not* have been called
         self.assertFalse(mock_notify.called)
+
+    @patch("hc.api.management.commands.sendalerts.notify")
+    def test_it_works_synchronously(self, mock_notify):
+        check = Check(user=self.alice, status="up")
+        check.last_ping = timezone.now() - timedelta(days=2)
+        check.alert_after = check.get_alert_after()
+        check.save()
+
+        call_command("sendalerts", loop=False, use_threads=False)
+
+        # It should call `notify` instead of `notify_on_thread`
+        self.assertTrue(mock_notify.called)

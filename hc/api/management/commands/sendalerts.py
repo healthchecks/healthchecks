@@ -35,7 +35,15 @@ class Command(BaseCommand):
             help='Do not keep running indefinitely in a 2 second wait loop',
         )
 
-    def handle_one(self):
+        parser.add_argument(
+            '--no-threads',
+            action='store_false',
+            dest='use_threads',
+            default=False,
+            help='Send alerts synchronously, without using threads',
+        )
+
+    def handle_one(self, use_threads=True):
         """ Process a single check.  """
 
         now = timezone.now()
@@ -65,15 +73,20 @@ class Command(BaseCommand):
             if num_updated == 1:
                 # Send notifications only if status update succeeded
                 # (no other sendalerts process got there first)
-                notify_on_thread(check.id, self.stdout)
+                if use_threads:
+                    notify_on_thread(check.id, self.stdout)
+                else:
+                    notify(check.id, self.stdout)
+
                 return True
 
         return False
 
     def handle(self, *args, **options):
+        use_threads = options["use_threads"]
         if not options["loop"]:
             x = 0
-            while self.handle_one():
+            while self.handle_one(use_threads):
                 # returns True when there are more alerts to send.
                 x += 1
             return "Sent %d alert(s)" % x
@@ -83,7 +96,7 @@ class Command(BaseCommand):
         ticks = 0
         while True:
 
-            while self.handle_one():
+            while self.handle_one(use_threads):
                 ticks = 0
 
             ticks += 1
