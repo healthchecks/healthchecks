@@ -56,6 +56,8 @@ class Command(BaseCommand):
 
             self.stdout.write(self.tmpl % profile.user.email)
             profile.send_report()
+            # Pause before next report to avoid hitting sending quota
+            time.sleep(1)
             sent += 1
 
         return sent
