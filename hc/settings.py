@@ -133,6 +133,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 COMPRESS_OFFLINE = True
+COMPRESS_CSS_HASHING_METHOD = "content"
 
 # Discord integration -- override these in local_settings
 DISCORD_CLIENT_ID = None
