@@ -24,10 +24,9 @@ class TimeoutForm(forms.Form):
 
 
 class CronForm(forms.Form):
-    schedule = forms.CharField(required=False, max_length=100,
+    schedule = forms.CharField(max_length=100,
                                validators=[CronExpressionValidator()])
-    tz = forms.CharField(required=False, max_length=36,
-                         validators=[TimezoneValidator()])
+    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=1, max_value=43200)
 
 

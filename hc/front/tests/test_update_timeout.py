@@ -84,6 +84,32 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
 
+    def test_it_rejects_missing_schedule(self):
+        url = "/checks/%s/timeout/" % self.check.code
+        # tz field is omitted so this should fail:
+        payload = {
+            "kind": "cron",
+            "grace": 60,
+            "tz": "UTC"
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url, data=payload)
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_missing_tz(self):
+        url = "/checks/%s/timeout/" % self.check.code
+        # tz field is omitted so this should fail:
+        payload = {
+            "kind": "cron",
+            "schedule": "* * * * *",
+            "grace": 60
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url, data=payload)
+        self.assertEqual(r.status_code, 400)
+
     def test_team_access_works(self):
         url = "/checks/%s/timeout/" % self.check.code
         payload = {"kind": "simple", "timeout": 7200, "grace": 60}
