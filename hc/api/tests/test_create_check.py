@@ -179,3 +179,10 @@ class CreateCheckTestCase(BaseTestCase):
 
         doc = r.json()
         self.assertEqual(doc["timeout"], 86400)
+
+    def test_it_obeys_check_limit(self):
+        self.profile.check_limit = 0
+        self.profile.save()
+
+        r = self.post({"api_key": "abc"})
+        self.assertEqual(r.status_code, 403)

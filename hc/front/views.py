@@ -54,6 +54,8 @@ def my_checks(request):
             elif check.in_grace_period():
                 grace_tags.add(tag)
 
+    can_add_more = len(checks) < request.team.check_limit
+
     ctx = {
         "page": "checks",
         "checks": checks,
@@ -62,7 +64,8 @@ def my_checks(request):
         "down_tags": down_tags,
         "grace_tags": grace_tags,
         "ping_endpoint": settings.PING_ENDPOINT,
-        "timezones": all_timezones
+        "timezones": all_timezones,
+        "can_add_more": can_add_more
     }
 
     return render(request, "front/my_checks.html", ctx)
@@ -135,6 +138,10 @@ def about(request):
 @require_POST
 @login_required
 def add_check(request):
+    num_checks = Check.objects.filter(user=request.team.user).count()
+    if num_checks >= request.team.check_limit:
+        return HttpResponseBadRequest()
+
     check = Check(user=request.team.user)
     check.save()
 

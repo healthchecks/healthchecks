@@ -38,9 +38,11 @@ class CreatePlanTestCase(BaseTestCase):
         self.assertEqual(sub.subscription_id, "t-sub-id")
         self.assertEqual(sub.plan_id, "P5")
 
-        # User's profile should have a higher ping log limit:
+        # User's profile should have a higher limits
         profile = Profile.objects.get(user=self.alice)
         self.assertEqual(profile.ping_log_limit, 1000)
+        self.assertEqual(profile.check_limit, 500)
+        self.assertTrue(profile.team_access_allowed)
 
         # braintree.Subscription.cancel should have not been called
         assert not mock.Subscription.cancel.called

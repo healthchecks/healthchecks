@@ -58,3 +58,11 @@ class MyChecksTestCase(BaseTestCase):
 
         # Mobile
         self.assertContains(r, "label-warning")
+
+    def test_it_hides_add_check_button(self):
+        self.profile.check_limit = 0
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/")
+        self.assertContains(r, "Check limit reached", status_code=200)

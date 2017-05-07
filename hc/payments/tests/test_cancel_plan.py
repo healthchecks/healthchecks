@@ -1,5 +1,6 @@
 from mock import patch
 
+from hc.accounts.models import Profile
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 
@@ -13,6 +14,10 @@ class CancelPlanTestCase(BaseTestCase):
         self.sub.plan_id = "P5"
         self.sub.save()
 
+        self.profile.ping_log_limit = 1000
+        self.profile.check_limit = 500
+        self.profile.save()
+
     @patch("hc.payments.models.braintree")
     def test_it_works(self, mock_braintree):
 
@@ -23,3 +28,9 @@ class CancelPlanTestCase(BaseTestCase):
         self.sub.refresh_from_db()
         self.assertEqual(self.sub.subscription_id, "")
         self.assertEqual(self.sub.plan_id, "")
+
+        # User's profile should have standard limits
+        profile = Profile.objects.get(user=self.alice)
+        self.assertEqual(profile.ping_log_limit, 100)
+        self.assertEqual(profile.check_limit, 20)
+        self.assertFalse(profile.team_access_allowed)

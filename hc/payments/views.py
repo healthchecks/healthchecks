@@ -108,10 +108,12 @@ def create_plan(request):
     profile = request.user.profile
     if plan_id == "P5":
         profile.ping_log_limit = 1000
+        profile.check_limit = 500
         profile.team_access_allowed = True
         profile.save()
     elif plan_id == "P75":
         profile.ping_log_limit = 1000
+        profile.check_limit = 500
         profile.team_access_allowed = True
         profile.save()
 
@@ -157,6 +159,14 @@ def update_payment_method(request):
 def cancel_plan(request):
     sub = Subscription.objects.get(user=request.user)
     sub.cancel()
+
+    # Revert to default limits--
+    profile = request.user.profile
+    profile.ping_log_limit = 100
+    profile.check_limit = 20
+    profile.team_access_allowed = False
+    profile.save()
+
     return redirect("hc-pricing")
 
 

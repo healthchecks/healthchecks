@@ -111,6 +111,10 @@ def checks(request):
         created = False
         check = _lookup(request.user, request.json)
         if check is None:
+            num_checks = Check.objects.filter(user=request.user).count()
+            if num_checks >= request.user.profile.check_limit:
+                return HttpResponseForbidden()
+
             check = Check(user=request.user)
             created = True
 

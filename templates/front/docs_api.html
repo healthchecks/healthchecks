@@ -191,6 +191,11 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
         <td>Returned if the <code>unique</code> parameter was used and an
         existing check was matched.</td>
     </tr>
+    <tr>
+        <th>403 Forbidden</th>
+        <td>Returned if the account's check limit has been reached.
+        For free accounts, the limit is 20 checks per account.</td>
+    </tr>
 </table>
 
 <h3 class="api-section">Example Request</h3>

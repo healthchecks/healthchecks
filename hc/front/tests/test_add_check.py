@@ -25,3 +25,12 @@ class AddCheckTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 405)
+
+    def test_it_obeys_check_limit(self):
+        self.profile.check_limit = 0
+        self.profile.save()
+
+        url = "/checks/add/"
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url)
+        self.assertEqual(r.status_code, 400)

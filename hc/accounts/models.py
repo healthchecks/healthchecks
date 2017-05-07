@@ -18,6 +18,10 @@ class ProfileManager(models.Manager):
         profile = self.filter(user=user).first()
         if profile is None:
             profile = Profile(user=user, team_access_allowed=user.is_superuser)
+            if not settings.USE_PAYMENTS:
+                # If not using payments, set a high check_limit
+                profile.check_limit = 500
+
             profile.save()
         return profile
 
@@ -30,6 +34,7 @@ class Profile(models.Model):
     next_report_date = models.DateTimeField(null=True, blank=True)
     reports_allowed = models.BooleanField(default=True)
     ping_log_limit = models.IntegerField(default=100)
+    check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
     api_key = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", null=True)
