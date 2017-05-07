@@ -2,7 +2,6 @@ import time
 from threading import Thread
 
 from django.core.management.base import BaseCommand
-from django.db import connection
 from django.utils import timezone
 from hc.api.models import Check
 
@@ -10,7 +9,7 @@ from hc.api.models import Check
 def notify(check_id, stdout):
     check = Check.objects.get(id=check_id)
 
-    tmpl = "\nSending alert, status=%s, code=%s\n"
+    tmpl = "Sending alert, status=%s, code=%s\n"
     stdout.write(tmpl % (check.status, check.code))
     errors = check.send_alert()
     for ch, error in errors:
@@ -82,27 +81,21 @@ class Command(BaseCommand):
 
         return False
 
-    def handle(self, *args, **options):
-        use_threads = options["use_threads"]
-        if not options["loop"]:
-            x = 0
-            while self.handle_one(use_threads):
-                # returns True when there are more alerts to send.
-                x += 1
-            return "Sent %d alert(s)" % x
+    def handle(self, use_threads=True, loop=True, *args, **options):
+        self.stdout.write("sendalerts is now running\n")
 
-        self.stdout.write("sendalerts is now running")
-
-        ticks = 0
+        i, sent = 0, 0
         while True:
-
             while self.handle_one(use_threads):
-                ticks = 0
+                sent += 1
 
-            ticks += 1
+            if not loop:
+                break
+
             time.sleep(2)
-            if ticks % 60 == 0:
-                formatted = timezone.now().isoformat()
-                self.stdout.write("-- MARK %s --" % formatted)
+            i += 1
+            if i % 60 == 0:
+                timestamp = timezone.now().isoformat()
+                self.stdout.write("-- MARK %s --\n" % timestamp)
 
-            connection.close()
+        return "Sent %d alert(s)" % sent
