@@ -26,10 +26,11 @@
 
         <h3>Reliability Guarantees</h3>
         <p>
-            The service is currently run on Digital Ocean servers in NYC3.
-            It does have daily database backups to Amazon S3.
-            The ops team consists of a single person, so multi-hour or
-            even multi-day outages are possible!
+            The service is currently run on Google Cloud Platform.
+            The app servers are load balanced, but the Postgres database
+            currently is a single point of failure. The database does have
+            daily backups. The ops team consists of a single person, so
+            multi-hour or even multi-day outages are possible!
         </p>
         <p>
             While we can only guarantee a <em>best effort</em> availability,
