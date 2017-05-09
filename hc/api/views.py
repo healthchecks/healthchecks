@@ -24,7 +24,7 @@ def ping(request, code):
 
     check.n_pings = F("n_pings") + 1
     check.last_ping = timezone.now()
-    check.last_ping_body = request.body[:1000]
+    check.last_ping_body = request.body[:10000]
     check.alert_after = check.get_alert_after()
     if check.status in ("new", "paused"):
         check.status = "up"
