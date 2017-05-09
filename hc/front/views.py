@@ -201,7 +201,6 @@ def update_timeout(request, code):
     return redirect("hc-checks")
 
 
-@csrf_exempt
 @require_POST
 def cron_preview(request):
     schedule = request.POST.get("schedule")
@@ -221,6 +220,25 @@ def cron_preview(request):
         ctx["bad_schedule"] = True
 
     return render(request, "front/cron_preview.html", ctx)
+
+
+@require_POST
+def last_ping(request, code):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+
+    check = get_object_or_404(Check, code=code)
+    if check.user_id != request.team.user.id:
+        return HttpResponseForbidden()
+
+    ping = Ping.objects.filter(owner=check).latest("created")
+
+    ctx = {
+        "check": check,
+        "ping": ping
+    }
+
+    return render(request, "front/last_ping.html", ctx)
 
 
 @require_POST

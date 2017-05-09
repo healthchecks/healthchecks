@@ -119,8 +119,14 @@ $(function () {
         // OK, we're good
         currentPreviewHash = hash;
         $("#cron-preview-title").text("Updating...");
-        $.post("/checks/cron_preview/", {schedule: schedule, tz: tz},
-            function(data) {
+
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            url: "/checks/cron_preview/",
+            type: "post",
+            headers: {"X-CSRFToken": token},
+            data: {schedule: schedule, tz: tz},
+            success: function(data) {
                 if (hash != currentPreviewHash) {
                     return;  // ignore stale results
                 }
@@ -129,7 +135,7 @@ $(function () {
                 var haveError = $("#invalid-arguments").size() > 0;
                 $("#update-cron-submit").prop("disabled", haveError);
             }
-        );
+        });
     }
 
     $(".timeout-grace").click(function() {
@@ -169,6 +175,22 @@ $(function () {
         return false;
     });
 
+    $(".last-ping").click(function() {
+        $("#last-ping-body").text("Updating...");
+        $('#last-ping-modal').modal("show");
+
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            url: this.dataset.url,
+            type: "post",
+            headers: {"X-CSRFToken": token},
+            success: function(data) {
+                $("#last-ping-body" ).html(data);
+            }
+        });
+
+        return false;
+    });
 
     $("#my-checks-tags button").click(function() {
         // .active has not been updated yet by bootstrap code,

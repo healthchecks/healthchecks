@@ -8,7 +8,7 @@
             Period <br />
             <span class="checks-subline">Grace</span>
         </th>
-        <th>Last Ping</th>
+        <th class="th-last-ping">Last Ping</th>
         <th></th>
     </tr>
     {% for check in checks %}
@@ -71,11 +71,12 @@
         </td>
         <td>
         {% if check.last_ping %}
-            <span
-                data-toggle="tooltip"
-                title="{{ check.last_ping|date:'N j, Y, P e' }}">
+            <div class="last-ping" data-url="{% url 'hc-last-ping' check.code %}">
                 {{ check.last_ping|naturaltime }}
-            </span>
+                {% if check.has_confirmation_link %}
+                <br /><span class="label label-confirmation">confirmation link</span>
+                {% endif %}
+            </div>
         {% else %}
             Never
         {% endif %}

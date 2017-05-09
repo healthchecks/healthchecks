@@ -1,0 +1,33 @@
+<div class="modal-body">
+    <h3>Ping #{{ ping.n }}</h3>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                <strong>Time Received</strong>
+                <code>{{ ping.created.isoformat }}</code>
+            </p>
+            <p>
+                <strong>Source</strong>
+                {% if ping.scheme == "email" %}
+                {{ ping.ua }}
+                {% else %}
+                {{ ping.scheme|upper }} {{ ping.method }} from {{ ping.remote_addr }}
+                {% endif %}
+            </p>
+
+        </div>
+        {% if ping.scheme != "email" %}
+        <div class="col-sm-6">
+            <p>
+                <strong>User Agent</strong>
+                <span class="ua">{{ ping.ua }}</span>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    {% if check.last_ping_body %}
+        <h4>Request Body</h4>
+        <pre>{{ check.last_ping_body }}</pre>
+    {% endif %}
+</div>

@@ -32,8 +32,15 @@ class PingTestCase(TestCase):
 
     def test_post_works(self):
         csrf_client = Client(enforce_csrf_checks=True)
-        r = csrf_client.post("/ping/%s/" % self.check.code)
+        r = csrf_client.post("/ping/%s/" % self.check.code, "hello world",
+                             content_type="text/plain")
         assert r.status_code == 200
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.last_ping_body, "hello world")
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.method, "POST")
 
     def test_head_works(self):
         csrf_client = Client(enforce_csrf_checks=True)

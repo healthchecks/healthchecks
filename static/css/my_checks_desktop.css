@@ -36,9 +36,10 @@ table.table tr > th.th-name {
 
 #checks-table tr:hover .my-checks-name {
     border: 1px dotted #AAA;
+    cursor: pointer;
 }
 
-#checks-table > tbody > tr > th.th-period {
+#checks-table > tbody > tr > th.th-period, #checks-table > tbody > tr > th.th-last-ping {
     padding-left: 15px;
 }
 
@@ -58,6 +59,17 @@ table.table tr > th.th-name {
 
 #checks-table tr:hover .timeout-grace {
     border: 1px dotted #AAA;
+    cursor: pointer;
+}
+
+#checks-table .last-ping {
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 6px;
+}
+
+#checks-table tr:hover .last-ping {
+    border: 1px dotted #AAA;
+    cursor: pointer;
 }
 
 .checks-subline {

@@ -1,5 +1,5 @@
 @media (min-width: 992px) {
-    #update-timeout-modal .modal-dialog {
+    #update-timeout-modal .modal-dialog, #last-ping-modal .modal-dialog {
         width: 800px;
     }
 }
@@ -111,6 +111,13 @@
 .label-tag {
     background-color: #eee;
     color: #555;
+    font-style: normal;
+    font-weight: 500;
+}
+
+.label-confirmation {
+    background-color: #22bc66;
+    color: #fff;
     font-style: normal;
     font-weight: 500;
 }

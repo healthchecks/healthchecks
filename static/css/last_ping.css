@@ -1,0 +1,26 @@
+#last-ping-body .modal-body {
+    padding: 40px;
+}
+
+#last-ping-body h3 {
+    font-size: 18px;
+    margin: 0 0 24px 0;
+}
+
+#last-ping-body .ua {
+    font-size: 11px;
+    font-family: monospace;
+}
+
+#last-ping-body p strong {
+    display: block;
+}
+
+#last-ping-body h4 {
+    margin-top: 24px;
+}
+
+#last-ping-body pre {
+    padding: 16px;
+    margin: 0;
+}

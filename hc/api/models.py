@@ -65,6 +65,7 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
+    last_ping_body = models.CharField(max_length=1000, blank=True)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
 
@@ -172,6 +173,9 @@ class Check(models.Model):
             result["next_ping"] = None
 
         return result
+
+    def has_confirmation_link(self):
+        return "confirm" in self.last_ping_body.lower()
 
     @classmethod
     def check(cls, **kwargs):
