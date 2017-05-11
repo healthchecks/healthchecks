@@ -761,7 +761,7 @@ def telegram_bot(request):
     try:
         doc = json.loads(request.body.decode("utf-8"))
         jsonschema.validate(doc, telegram_callback)
-    except json.decoder.JSONDecodeError:
+    except ValueError:
         return HttpResponseBadRequest()
     except jsonschema.ValidationError:
         return HttpResponseBadRequest()
