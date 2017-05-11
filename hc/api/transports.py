@@ -61,7 +61,8 @@ class Email(Transport):
 
 class HttpTransport(Transport):
 
-    def _request(self, method, url, **kwargs):
+    @classmethod
+    def _request(cls, method, url, **kwargs):
         try:
             options = dict(kwargs)
             if "headers" not in options:
@@ -79,19 +80,21 @@ class HttpTransport(Transport):
         except requests.exceptions.ConnectionError:
             return "Connection failed"
 
-    def get(self, url):
+    @classmethod
+    def get(cls, url):
         # Make 3 attempts--
         for x in range(0, 3):
-            error = self._request("get", url)
+            error = cls._request("get", url)
             if error is None:
                 break
 
         return error
 
-    def post(self, url, **kwargs):
+    @classmethod
+    def post(cls, url, **kwargs):
         # Make 3 attempts--
         for x in range(0, 3):
-            error = self._request("post", url, **kwargs)
+            error = cls._request("post", url, **kwargs)
             if error is None:
                 break
 
@@ -277,3 +280,19 @@ class Discord(HttpTransport):
         payload = json.loads(text)
         url = self.channel.discord_webhook_url + "/slack"
         return self.post(url, json=payload)
+
+
+class Telegram(HttpTransport):
+    SM = "https://api.telegram.org/bot%s/sendMessage" % settings.TELEGRAM_TOKEN
+
+    @classmethod
+    def send(cls, chat_id, text):
+        return cls.post(cls.SM, json={
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "html"
+        })
+
+    def notify(self, check):
+        text = tmpl("telegram_message.html", check=check)
+        return self.send(self.channel.telegram_id, text)

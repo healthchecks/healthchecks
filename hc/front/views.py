@@ -1,29 +1,36 @@
 from collections import Counter
-from croniter import croniter
 from datetime import datetime, timedelta as td
 from itertools import tee
+import json
 
-import requests
+from croniter import croniter
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core import signing
 from django.db.models import Count
-from django.http import Http404, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
+                         HttpResponseForbidden)
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.six.moves.urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.utils.six.moves.urllib.parse import urlencode
 from hc.api.decorators import uuid_or_400
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
                            Ping, Notification)
+from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
                             AddOpsGenieForm, CronForm)
+from hc.front.schemas import telegram_callback
+from hc.lib import jsonschema
 from pytz import all_timezones
 from pytz.exceptions import UnknownTimeZoneError
+import requests
 
 
 # from itertools recipes:
@@ -341,7 +348,8 @@ def channels(request):
         "num_checks": num_checks,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
-        "enable_discord": settings.DISCORD_CLIENT_ID is not None
+        "enable_discord": settings.DISCORD_CLIENT_ID is not None,
+        "enable_telegram": settings.TELEGRAM_TOKEN is not None
     }
     return render(request, "front/channels.html", ctx)
 
@@ -745,6 +753,60 @@ def add_victorops(request):
 
     ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_victorops.html", ctx)
+
+
+@csrf_exempt
+@require_POST
+def telegram_bot(request):
+    try:
+        doc = json.loads(request.body.decode("utf-8"))
+        jsonschema.validate(doc, telegram_callback)
+    except json.decoder.JSONDecodeError:
+        return HttpResponseBadRequest()
+    except jsonschema.ValidationError:
+        return HttpResponseBadRequest()
+
+    if "/start" not in doc["message"]["text"]:
+        return HttpResponse()
+
+    chat = doc["message"]["chat"]
+    name = max(chat.get("title", ""), chat.get("username", ""))
+
+    invite = render_to_string("integrations/telegram_invite.html", {
+        "qs": signing.dumps((chat["id"], chat["type"], name))
+    })
+
+    Telegram.send(chat["id"], invite)
+    return HttpResponse()
+
+
+@login_required
+def add_telegram(request):
+    chat_id, chat_type, chat_name = None, None, None
+    qs = request.META["QUERY_STRING"]
+    if qs:
+        chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
+
+    if request.method == "POST":
+        channel = Channel(user=request.team.user, kind="telegram")
+        channel.value = json.dumps({
+            "id": chat_id,
+            "type": chat_type,
+            "name": chat_name
+        })
+        channel.save()
+
+        channel.assign_all_checks()
+        messages.success(request, "The Telegram integration has been added!")
+        return redirect("hc-channels")
+
+    ctx = {
+        "chat_id": chat_id,
+        "chat_type": chat_type,
+        "chat_name": chat_name
+    }
+
+    return render(request, "integrations/add_telegram.html", ctx)
 
 
 def privacy(request):

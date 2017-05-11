@@ -1,7 +1,6 @@
 import json
 
 from django.core import mail
-from django.test import override_settings
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 from mock import patch
@@ -282,3 +281,17 @@ class NotifyTestCase(BaseTestCase):
         _, kwargs = mock_post.call_args
         self.assertEqual(kwargs["json"]["type"], "note")
         self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
+
+    @patch("hc.api.transports.requests.request")
+    def test_telegram(self, mock_post):
+        v = json.dumps({"id": 123})
+        self._setup_data("telegram", v)
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(payload["chat_id"], 123)
+        self.assertTrue("The check" in payload["text"])

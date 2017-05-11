@@ -82,6 +82,13 @@
                     {{ ch.value }}
                 {% elif ch.kind == "discord" %}
                     {{ ch.discord_webhook_id }}
+                {% elif ch.kind == "telegram" %}
+                    {% if ch.telegram_type == "group" %}
+                    <span class="preposition">chat</span>
+                    {% elif ch.telegram_type == "private" %}
+                    <span class="preposition">user</span>
+                    {% endif %}
+                    {{ ch.telegram_name }}
                 {% else %}
                     {{ ch.value }}
                 {% endif %}
@@ -221,6 +228,17 @@
             <p>Cross-platform voice and text chat app designed for gamers.</p>
 
             <a href="{% url 'hc-add-discord' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+        {% if enable_telegram %}
+        <li>
+            <img src="{% static 'img/integrations/telegram.png' %}"
+                 class="icon" alt="Telegram icon" />
+
+            <h2>Telegram</h2>
+            <p>A messaging app with a focus on speed and security.</p>
+
+            <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
         <li class="link-to-github">
