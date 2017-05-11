@@ -52,6 +52,13 @@ class JsonSchemaTestCase(TestCase):
                 }
             })
 
+    def test_it_handles_required_properties(self):
+        with self.assertRaises(ValidationError):
+            validate({"foo": "bar"}, {
+                "type": "object",
+                "required": ["baz"]
+            })
+
     def test_it_validates_arrays(self):
         validate(["foo", "bar"], {
             "type": "array",

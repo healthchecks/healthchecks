@@ -47,9 +47,14 @@ def validate(obj, schema, obj_name="value"):
         if not isinstance(obj, dict):
             raise ValidationError("%s is not an object" % obj_name)
 
-        for key, spec in schema["properties"].items():
+        properties = schema.get("properties", {})
+        for key, spec in properties.items():
             if key in obj:
                 validate(obj[key], spec, obj_name=key)
+
+        for key in schema.get("required", []):
+            if key not in obj:
+                raise ValidationError("key %s absent in %s" % (key, obj_name))
 
     if "enum" in schema:
         if obj not in schema["enum"]:
