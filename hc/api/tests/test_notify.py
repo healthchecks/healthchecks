@@ -206,6 +206,18 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "Connection timed out")
 
     @patch("hc.api.transports.requests.request")
+    def test_slack_with_tabs_in_schedule(self, mock_post):
+        self._setup_data("slack", "123")
+        self.check.kind = "cron"
+        self.check.schedule = "*\t* * * *"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 1)
+        self.assertTrue(mock_post.called)
+
+    @patch("hc.api.transports.requests.request")
     def test_hipchat(self, mock_post):
         self._setup_data("hipchat", "123")
         mock_post.return_value.status_code = 204

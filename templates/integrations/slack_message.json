@@ -20,7 +20,7 @@
                 },
             {% elif check.kind == "cron" %}
                 {"title": "Schedule",
-                 "value": "{{ check.schedule }}",
+                 "value": "{{ check.schedule|escapejs }}",
                  "short": true
                 },
             {% endif %}
