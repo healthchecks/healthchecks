@@ -105,6 +105,7 @@ def index(request):
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
+        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "registration_open": settings.REGISTRATION_OPEN
     }
 
