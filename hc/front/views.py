@@ -804,7 +804,8 @@ def add_telegram(request):
     ctx = {
         "chat_id": chat_id,
         "chat_type": chat_type,
-        "chat_name": chat_name
+        "chat_name": chat_name,
+        "bot_name": settings.TELEGRAM_BOT_NAME
     }
 
     return render(request, "integrations/add_telegram.html", ctx)

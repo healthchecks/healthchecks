@@ -154,6 +154,7 @@ PUSHBULLET_CLIENT_ID = None
 PUSHBULLET_CLIENT_SECRET = None
 
 # Telegram integration -- override in local_settings.py
+TELEGRAM_BOT_NAME = "ExampleBot"
 TELEGRAM_TOKEN = None
 
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):

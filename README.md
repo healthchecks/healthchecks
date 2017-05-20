@@ -230,3 +230,23 @@ To enable Pushover integration, you will need to:
   subscription type
 * add the application token and subscription URL to `hc/local_settings.py`, as
   `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL`
+
+### Telegram
+
+* Create a Telegram bot by talking to the
+[BotFather](https://core.telegram.org/bots#6-botfather). Set the bot's name,
+description, user picture, and add a "/start" command.
+* After creating the bot you will have the bot's name and token. Add them
+to your `hc/local_settings.py` file as `TELEGRAM_BOT_NAME` and
+`TELEGRAM_TOKEN` fields.
+* Now the tricky part: when a Telegram user talks to your bot,
+Telegram will use a webhook to forward received messages to your healthchecks
+instance. For this to work, your healthchecks instance needs to be publicly
+accessible over HTTPS. Using the
+[setWebhook](https://core.telegram.org/bots/api#setwebhook) API call
+set the bot's webhook to `https://yourdomain.com/integrations/telegram/bot/`.
+
+
+
+
+

@@ -12,7 +12,7 @@ class AddTelegramTestCase(BaseTestCase):
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "start@HealthchecksBot")
+        self.assertContains(r, "start@ExampleBot")
 
     def test_it_shows_confirmation(self):
         payload = signing.dumps((123, "group", "My Group"))
