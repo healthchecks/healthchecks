@@ -8,7 +8,7 @@ telegram_callback = {
                     "type": "object",
                     "properties": {
                         "id": {"type": "number"},
-                        "type": {"enum": ["group", "private"]},
+                        "type": {"enum": ["group", "private", "supergroup"]},
                         "title": {"type": "string"},
                         "username": {"type": "string"}
                     },
