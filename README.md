@@ -22,6 +22,20 @@ The building blocks are:
 * Django 1.9
 * PostgreSQL or MySQL
 
+## Deploying to Heroku
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+Upon successful deploy via the Heroku Button, the [Postgresql](https://elements.heroku.com/addons/heroku-postgresql), [Mailgun](https://elements.heroku.com/addons/mailgun), and [Scheduler](https://elements.heroku.com/addons/scheduler) add-ons will be provisioned and configured for use. The initial database migration task will also be run.
+
+The site should now be running at `https://appname.herokuapp.com/`.
+
+### Heroku Configuration
+
+1. Create a superuser manually: `$ heroku run python manage.py createsuperuser --app <appname>`.
+
+2. Refer to [Sending Status Notifications](#sending-status-notifications) and [Database Cleanup](#database-cleanup) sections for tasks that are required to be scheduled via [Heroku's Scheduler add-on](https://devcenter.heroku.com/articles/scheduler#scheduling-jobs): `$ heroku addons:open scheduler`.
+
 ## Setting Up for Development
 
 These are instructions for setting up HealthChecks Django app
