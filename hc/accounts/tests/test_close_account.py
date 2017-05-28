@@ -1,9 +1,8 @@
 from django.contrib.auth.models import User
-from mock import patch
-
-from hc.test import BaseTestCase
 from hc.api.models import Check
 from hc.payments.models import Subscription
+from hc.test import BaseTestCase
+from mock import patch
 
 
 class CloseAccountTestCase(BaseTestCase):
@@ -25,9 +24,9 @@ class CloseAccountTestCase(BaseTestCase):
         alices = User.objects.filter(username="alice")
         self.assertFalse(alices.exists())
 
-        # Bob's current team should be updated to self
+        # Bob's current team should now be None
         self.bobs_profile.refresh_from_db()
-        self.assertEqual(self.bobs_profile.current_team, self.bobs_profile)
+        self.assertIsNone(self.bobs_profile.current_team)
 
         # Check should be gone
         self.assertFalse(Check.objects.exists())
@@ -46,6 +45,7 @@ class CloseAccountTestCase(BaseTestCase):
         # Alice should be still present
         self.alice.refresh_from_db()
         self.profile.refresh_from_db()
+        self.assertEqual(self.profile.current_team, None)
 
         # Bob should be gone
         bobs = User.objects.filter(username="bob")

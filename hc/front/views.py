@@ -334,7 +334,7 @@ def channels(request):
                     return HttpResponseForbidden()
                 new_checks.append(check)
 
-        channel.checks = new_checks
+        channel.checks.set(new_checks)
         return redirect("hc-channels")
 
     channels = Channel.objects.filter(user=request.team.user)

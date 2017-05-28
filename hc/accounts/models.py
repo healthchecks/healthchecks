@@ -28,7 +28,7 @@ class ProfileManager(models.Manager):
 
 class Profile(models.Model):
     # Owner:
-    user = models.OneToOneField(User, blank=True, null=True)
+    user = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
     team_name = models.CharField(max_length=200, blank=True)
     team_access_allowed = models.BooleanField(default=False)
     next_report_date = models.DateTimeField(null=True, blank=True)
@@ -37,7 +37,7 @@ class Profile(models.Model):
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
     api_key = models.CharField(max_length=128, blank=True)
-    current_team = models.ForeignKey("self", null=True)
+    current_team = models.ForeignKey("self", models.SET_NULL, null=True)
 
     objects = ProfileManager()
 

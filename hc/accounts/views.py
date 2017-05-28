@@ -150,10 +150,10 @@ def check_token(request, username, token):
 @login_required
 def profile(request):
     profile = request.user.profile
-    # Switch user back to its default team
-    if profile.current_team_id != profile.id:
+    # Switch user back to its own team
+    if request.team != profile:
         request.team = profile
-        profile.current_team_id = profile.id
+        profile.current_team = profile
         profile.save()
 
     show_api_key = False
@@ -245,10 +245,10 @@ def notifications(request):
 @login_required
 def badges(request):
     profile = request.user.profile
-    # Switch user back to its default team
-    if profile.current_team_id != profile.id:
+    # Switch user back to its own team
+    if request.team != profile:
         request.team = profile
-        profile.current_team_id = profile.id
+        profile.current_team = profile
         profile.save()
 
     tags = set()
@@ -352,12 +352,9 @@ def close(request):
     if sub:
         sub.cancel()
 
-    # Any users currently using this team need to switch to their own team:
-    for partner in Profile.objects.filter(current_team=user.profile):
-        partner.current_team = partner
-        partner.save()
-
     user.delete()
+
+    # Deleting user also deletes its profile, checks, channels etc.
 
     request.session.flush()
     return redirect("hc-index")

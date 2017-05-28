@@ -11,10 +11,10 @@ class CheckModelTestCase(TestCase):
         check = Check()
 
         check.tags = " foo  bar "
-        self.assertEquals(check.tags_list(), ["foo", "bar"])
+        self.assertEqual(check.tags_list(), ["foo", "bar"])
 
         check.tags = " "
-        self.assertEquals(check.tags_list(), [])
+        self.assertEqual(check.tags_list(), [])
 
     def test_in_grace_period_handles_new_check(self):
         check = Check()

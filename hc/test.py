@@ -27,13 +27,11 @@ class BaseTestCase(TestCase):
         self.bobs_profile.current_team = self.profile
         self.bobs_profile.save()
 
-        m = Member(team=self.profile, user=self.bob)
-        m.save()
+        Member.objects.create(team=self.profile, user=self.bob)
 
         # Charlie should have no access to Alice's stuff
         self.charlie = User(username="charlie", email="charlie@example.org")
         self.charlie.set_password("password")
         self.charlie.save()
 
-        charlies_profile = Profile(user=self.charlie)
-        charlies_profile.save()
+        Profile.objects.create(user=self.charlie)
