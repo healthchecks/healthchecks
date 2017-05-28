@@ -1,5 +1,5 @@
 croniter
-Django==1.10.5
+Django==1.11.1
 django_compressor==2.1
 psycopg2==2.6.2
 pytz==2016.7
