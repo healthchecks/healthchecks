@@ -190,12 +190,6 @@ There are separate Django management commands for each task:
     $ ./manage.py prunechecks
     ```
 
-* Remove records of sent email messages older than 7 days.
-
-    ````
-    $ ./manage.py pruneemails
-    ````
-
 * Remove old records of sent notifications. For each check, remove
   notifications that are older than the oldest stored ping for same check.
 
