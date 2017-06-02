@@ -56,10 +56,14 @@ class ProfileAdmin(admin.ModelAdmin):
             })
 
     def checks(self, obj):
-        current = Check.objects.filter(user=obj.user).count()
-        text = "%d of %d" % (current, obj.check_limit)
-        url = reverse("hc-switch-team", args=[obj.user.username])
-        return "<a href='%s'>%s</a>" % (url, text)
+        num_checks = Check.objects.filter(user=obj.user).count()
+        pct = 100 * num_checks / max(obj.check_limit, 1)
+        pct = min(100, int(pct))
+
+        return """
+            <span class="bar"><span style="width: %dpx"></span></span>
+            &nbsp; %d of %d
+        """ % (pct, num_checks, obj.check_limit)
 
     def email(self, obj):
         return obj.user.email
@@ -70,14 +74,14 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class HcUserAdmin(UserAdmin):
     actions = ["send_report"]
-    list_display = ('id', 'email', 'date_joined', 'involvement',
+    list_display = ('id', 'email', 'date_joined', 'engagement',
                     'is_staff', 'checks')
 
     list_filter = ("last_login", "date_joined", "is_staff", "is_active")
 
     ordering = ["-id"]
 
-    def involvement(self, user):
+    def engagement(self, user):
         result = ""
         num_checks = Check.objects.filter(user=user).count()
         num_channels = Channel.objects.filter(user=user).count()
@@ -98,7 +102,7 @@ class HcUserAdmin(UserAdmin):
 
         return result
 
-    involvement.allow_tags = True
+    engagement.allow_tags = True
 
     def checks(self, user):
         url = reverse("hc-switch-team", args=[user.username])
