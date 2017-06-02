@@ -7,6 +7,27 @@ from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
 
 
+class Fieldset:
+    name = None
+    fields = []
+
+    @classmethod
+    def tuple(cls):
+        return (cls.name, {"fields": cls.fields})
+
+
+class ProfileFieldset(Fieldset):
+    name = "User Profile"
+    fields = ("email", "api_key", "current_team", "reports_allowed",
+              "next_report_date", "token")
+
+
+class TeamFieldset(Fieldset):
+    name = "Team"
+    fields = ("team_name", "team_access_allowed", "check_limit",
+              "ping_log_limit")
+
+
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
 
@@ -15,11 +36,16 @@ class ProfileAdmin(admin.ModelAdmin):
             'all': ('css/admin/profiles.css',)
         }
 
-    list_display = ("id", "users", "reports_allowed", "next_report_date",
-                    "ping_log_limit")
+    readonly_fields = ("user", "email")
+    raw_id_fields = ("current_team", )
+    list_select_related = ("user", )
+    list_display = ("id", "users", "checks", "team_access_allowed",
+                    "reports_allowed", "ping_log_limit")
     search_fields = ["id", "user__email"]
-    list_filter = ("reports_allowed", "team_access_allowed",
-                   "next_report_date")
+    list_filter = ("team_access_allowed", "reports_allowed",
+                   "check_limit", "next_report_date")
+
+    fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
     def users(self, obj):
         if obj.member_set.count() == 0:
@@ -29,13 +55,25 @@ class ProfileAdmin(admin.ModelAdmin):
                 "profile": obj
             })
 
+    def checks(self, obj):
+        current = Check.objects.filter(user=obj.user).count()
+        text = "%d of %d" % (current, obj.check_limit)
+        url = reverse("hc-switch-team", args=[obj.user.username])
+        return "<a href='%s'>%s</a>" % (url, text)
+
+    def email(self, obj):
+        return obj.user.email
+
     users.allow_tags = True
+    checks.allow_tags = True
 
 
 class HcUserAdmin(UserAdmin):
     actions = ["send_report"]
     list_display = ('id', 'email', 'date_joined', 'involvement',
                     'is_staff', 'checks')
+
+    list_filter = ("last_login", "date_joined", "is_staff", "is_active")
 
     ordering = ["-id"]
 
