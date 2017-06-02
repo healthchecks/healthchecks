@@ -104,5 +104,5 @@ class Profile(models.Model):
 
 
 class Member(models.Model):
-    team = models.ForeignKey(Profile)
-    user = models.ForeignKey(User)
+    team = models.ForeignKey(Profile, models.CASCADE)
+    user = models.ForeignKey(User, models.CASCADE)

@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from hc.accounts.models import Profile
 from hc.api.models import Channel, Check
 
@@ -47,6 +48,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
+    @mark_safe
     def users(self, obj):
         if obj.member_set.count() == 0:
             return obj.user.email
@@ -55,6 +57,7 @@ class ProfileAdmin(admin.ModelAdmin):
                 "profile": obj
             })
 
+    @mark_safe
     def checks(self, obj):
         num_checks = Check.objects.filter(user=obj.user).count()
         pct = 100 * num_checks / max(obj.check_limit, 1)
@@ -67,9 +70,6 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def email(self, obj):
         return obj.user.email
-
-    users.allow_tags = True
-    checks.allow_tags = True
 
 
 class HcUserAdmin(UserAdmin):

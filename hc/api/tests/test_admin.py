@@ -28,4 +28,4 @@ class ApiAdminTestCase(BaseTestCase):
                                value="foo@example.org")
 
         r = self.client.get("/admin/api/channel/")
-        self.assertContains(r, "Email <i>(unverified)</i>")
+        self.assertContains(r, "Email <i>(unconfirmed)</i>")

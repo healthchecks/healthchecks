@@ -5,7 +5,7 @@ from hc.accounts.views import login as hc_login
 
 urlpatterns = [
     url(r'^admin/login/', hc_login, {"show_password": True}),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('hc.accounts.urls')),
     url(r'^', include('hc.api.urls')),
     url(r'^', include('hc.front.urls')),

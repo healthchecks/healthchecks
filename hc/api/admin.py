@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
+from django.utils.safestring import mark_safe
 from hc.api.models import Channel, Check, Notification, Ping
 from hc.lib.date import format_duration
 
@@ -164,14 +165,14 @@ class ChannelsAdmin(admin.ModelAdmin):
     def email(self, obj):
         return obj.user.email if obj.user else None
 
+    @mark_safe
     def formatted_kind(self, obj):
         if obj.kind == "email" and not obj.email_verified:
-            return "Email <i>(unverified)</i>"
+            return "Email <i>(unconfirmed)</i>"
 
         return obj.get_kind_display()
 
     formatted_kind.short_description = "Kind"
-    formatted_kind.allow_tags = True
 
     def num_notifications(self, obj):
         return Notification.objects.filter(channel=obj).count()

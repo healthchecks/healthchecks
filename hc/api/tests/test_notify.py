@@ -1,6 +1,8 @@
+from datetime import timedelta as td
 import json
 
 from django.core import mail
+from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 from mock import patch
@@ -13,6 +15,7 @@ class NotifyTestCase(BaseTestCase):
         self.check = Check()
         self.check.status = status
         self.check.user = self.alice
+        self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
         self.channel = Channel(user=self.alice)
@@ -172,7 +175,7 @@ class NotifyTestCase(BaseTestCase):
         payload = kwargs["json"]
         attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Last Ping"], "Never")
+        self.assertEqual(fields["Last Ping"], "an hour ago")
 
     @patch("hc.api.transports.requests.request")
     def test_slack_with_complex_value(self, mock_post):
@@ -280,7 +283,7 @@ class NotifyTestCase(BaseTestCase):
         payload = kwargs["json"]
         attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Last Ping"], "Never")
+        self.assertEqual(fields["Last Ping"], "an hour ago")
 
     @patch("hc.api.transports.requests.request")
     def test_pushbullet(self, mock_post):

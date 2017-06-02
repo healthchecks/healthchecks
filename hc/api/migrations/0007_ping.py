@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('method', models.CharField(max_length=10)),
                 ('ua', models.CharField(max_length=100, blank=True)),
                 ('body', models.TextField(blank=True)),
-                ('owner', models.ForeignKey(to='api.Check')),
+                ('owner', models.ForeignKey(to='api.Check', on_delete=models.CASCADE)),
             ],
         ),
     ]

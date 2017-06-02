@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('value', models.CharField(max_length=200, blank=True)),
                 ('email_verified', models.BooleanField(default=False)),
                 ('checks', models.ManyToManyField(to='api.Check')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
     ]

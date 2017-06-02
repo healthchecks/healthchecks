@@ -15,7 +15,7 @@ class BasicBackend(object):
 # Authenticate against the token in user's profile.
 class ProfileBackend(BasicBackend):
 
-    def authenticate(self, username=None, token=None):
+    def authenticate(self, request=None, username=None, token=None):
         try:
             profiles = Profile.objects.select_related("user")
             profile = profiles.get(user__username=username)
@@ -30,7 +30,7 @@ class ProfileBackend(BasicBackend):
 
 class EmailBackend(BasicBackend):
 
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request=None, username=None, password=None):
         try:
             user = User.objects.get(email=username)
         except User.DoesNotExist:

@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
                 ('check_status', models.CharField(max_length=6)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('status', models.IntegerField(default=0)),
-                ('channel', models.ForeignKey(to='api.Channel')),
-                ('owner', models.ForeignKey(to='api.Check')),
+                ('channel', models.ForeignKey(to='api.Channel', on_delete=models.CASCADE)),
+                ('owner', models.ForeignKey(to='api.Check', on_delete=models.CASCADE)),
             ],
         ),
     ]
