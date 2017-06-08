@@ -1,4 +1,5 @@
 import json
+import re
 import uuid
 from functools import wraps
 
@@ -7,13 +8,13 @@ from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
                          JsonResponse)
 from hc.lib.jsonschema import ValidationError, validate
 
+RE_UUID = re.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
+
 
 def uuid_or_400(f):
     @wraps(f)
     def wrapper(request, *args, **kwds):
-        try:
-            uuid.UUID(args[0])
-        except ValueError:
+        if not RE_UUID.match(args[0]):
             return HttpResponseBadRequest()
 
         return f(request, *args, **kwds)
