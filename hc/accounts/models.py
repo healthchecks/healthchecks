@@ -38,6 +38,7 @@ class Profile(models.Model):
     token = models.CharField(max_length=128, blank=True)
     api_key = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", models.SET_NULL, null=True)
+    bill_to = models.TextField(blank=True)
 
     objects = ProfileManager()
 

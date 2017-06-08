@@ -26,7 +26,7 @@ class ProfileFieldset(Fieldset):
 class TeamFieldset(Fieldset):
     name = "Team"
     fields = ("team_name", "team_access_allowed", "check_limit",
-              "ping_log_limit")
+              "ping_log_limit", "bill_to")
 
 
 @admin.register(Profile)

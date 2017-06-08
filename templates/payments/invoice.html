@@ -53,7 +53,13 @@ VAT: LV44103100701
 </table>
 
 <p><strong>Bill to:</strong></p>
-<p>{{ request.user.email }}</p>
+<p>
+{% if request.user.profile.bill_to %}
+    {{ request.user.profile.bill_to|linebreaksbr }}
+{% else %}
+    {{ request.user.email }}
+{% endif %}
+</p>
 
 <p class="text-center">
     If you have a credit card on file it will be automatically charged within 24 hours.

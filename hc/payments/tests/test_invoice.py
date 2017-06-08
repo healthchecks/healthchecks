@@ -25,6 +25,7 @@ class InvoiceTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/abc123/")
         self.assertContains(r, "ABC123")  # tx.id in uppercase
+        self.assertContains(r, "alice@example.org")  # bill to
 
     @patch("hc.payments.views.braintree")
     def test_it_checks_customer_id(self, mock_braintree):
@@ -38,3 +39,18 @@ class InvoiceTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/abc123/")
         self.assertEqual(r.status_code, 403)
+
+    @patch("hc.payments.views.braintree")
+    def test_it_shows_company_data(self, mock_braintree):
+        self.profile.bill_to = "Alice and Partners"
+        self.profile.save()
+
+        tx = Mock()
+        tx.id = "abc123"
+        tx.customer_details.id = "test-customer-id"
+        tx.created_at = None
+        mock_braintree.Transaction.find.return_value = tx
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/invoice/abc123/")
+        self.assertContains(r, "Alice and Partners")
