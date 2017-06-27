@@ -336,6 +336,12 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
 
 {% include "front/snippets/pause_check_request.html" %}
 
+<p>Note: the <code>--data ""</code> argument forces curl to send a
+<code>Content-Length</code> request header even though the request body
+is empty. For HTTP POST requests, the <code>Content-Length</code> header
+is sometimes required by some network proxies and web servers.
+</p>
+
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/pause_check_response.html" %}
 
