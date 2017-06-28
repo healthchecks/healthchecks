@@ -167,8 +167,8 @@ class Check(models.Model):
             result["tz"] = self.tz
 
         if self.last_ping:
-            result["last_ping"] = self.last_ping.isoformat()
-            result["next_ping"] = (self.last_ping + self.timeout).isoformat()
+            result["last_ping"] = self.last_ping.replace(microsecond=0).isoformat()
+            result["next_ping"] = (self.last_ping + self.timeout).replace(microsecond=0).isoformat()
         else:
             result["last_ping"] = None
             result["next_ping"] = None
