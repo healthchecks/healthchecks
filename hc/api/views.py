@@ -138,7 +138,7 @@ def update(request, code):
         return HttpResponseForbidden()
 
     _update(check, request.json)
-    return JsonResponse(check.to_dict(), status=200)
+    return JsonResponse(check.to_dict())
 
 
 @csrf_exempt
@@ -156,7 +156,7 @@ def pause(request, code):
 
 
 @never_cache
-def badge(request, username, signature, tag):
+def badge(request, username, signature, tag, format="svg"):
     if not check_signature(username, tag, signature):
         return HttpResponseNotFound()
 
@@ -172,6 +172,9 @@ def badge(request, username, signature, tag):
         if check.get_status() == "down":
             status = "down"
             break
+
+    if format == "json":
+        return JsonResponse({"status": status})
 
     svg = get_badge_svg(tag, status)
     return HttpResponse(svg, content_type="image/svg+xml")

@@ -10,7 +10,11 @@ urlpatterns = [
     url(r'^api/v1/checks/([\w-]+)/pause$', views.pause, name="hc-api-pause"),
     url(r'^api/v1/notifications/([\w-]+)/bounce$', views.bounce,
         name="hc-api-bounce"),
+
     url(r'^badge/([\w-]+)/([\w-]{8})/([\w-]+).svg$', views.badge,
         name="hc-badge"),
+    url(r'^badge/([\w-]+)/([\w-]{8})/([\w-]+).json$', views.badge,
+        {"format": "json"}, name="hc-badge-json", ),
+
     url(r'^api/v1/status/$', views.status),
 ]

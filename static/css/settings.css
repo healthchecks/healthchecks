@@ -11,7 +11,7 @@
     padding-bottom: 24px;
 }
 
-#badges-description {
+#badges-description, #b-format {
     margin-bottom: 24px;
 }
 
@@ -27,4 +27,14 @@
 
 #close-account:hover {
     background-color: #ffebea;
+}
+
+#badges-json {
+    display: none;
+}
+
+.json-response code {
+    display: inline-block;
+    background: #eee;
+    padding: 3px;
 }

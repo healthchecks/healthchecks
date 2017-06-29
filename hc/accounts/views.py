@@ -256,16 +256,19 @@ def badges(request):
         tags.update(check.tags_list())
 
     username = request.team.user.username
-    badge_urls = []
+    urls = []
     for tag in sorted(tags, key=lambda s: s.lower()):
         if not re.match("^[\w-]+$", tag):
             continue
 
-        badge_urls.append(get_badge_url(username, tag))
+        urls.append({
+            "svg": get_badge_url(username, tag),
+            "json": get_badge_url(username, tag, format="json"),
+        })
 
     ctx = {
         "page": "profile",
-        "badge_urls": badge_urls,
+        "urls": urls
     }
 
     return render(request, "accounts/badges.html", ctx)

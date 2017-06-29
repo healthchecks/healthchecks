@@ -29,15 +29,36 @@
                     URLs. If you wish, you can add them to your READMEs,
                     dashboards or status pages.
                 </p>
-                {% if badge_urls %}
-                <table class="badges table">
-                    {% for badge_url in badge_urls %}
+                {% if urls %}
+
+                <div id="b-format" class="btn-group" data-toggle="buttons">
+                    <label id="show-svg" class="btn btn-default active">
+                        <input type="radio" autocomplete="off" checked> SVG
+                    </label>
+                    <label id="show-json" class="btn btn-default">
+                        <input type="radio" autocomplete="off"> JSON
+                    </label>
+                </div>
+
+                <table id="badges-svg" class="badges table">
+                    {% for urldict in urls %}
                     <tr>
                         <td>
-                            <img src="{{ badge_url }}" alt="" />
+                            <img src="{{ urldict.svg }}" alt="" />
                         </td>
-                        <td>
-                            <code>{{ badge_url }}</code>
+                        <td class="svg-url">
+                            <code>{{ urldict.svg }}</code>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <table id="badges-json" class="badges table">
+                    {% for urldict in urls %}
+                    <tr>
+                        <td class="json-response" data-url="{{ urldict.json }}">
+                        </td>
+                        <td class="json-url">
+                            <code>{{ urldict.json }}</code>
                         </td>
                     </tr>
                     {% endfor %}
@@ -59,5 +80,6 @@
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/badges.js' %}"></script>
 {% endcompress %}
 {% endblock %}

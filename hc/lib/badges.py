@@ -49,7 +49,8 @@ def check_signature(username, tag, sig):
     return ours == sig
 
 
-def get_badge_url(username, tag):
+def get_badge_url(username, tag, format="svg"):
+    view = "hc-badge-json" if format == "json" else "hc-badge"
     sig = base64_hmac(str(username), tag, settings.SECRET_KEY)
-    url = reverse("hc-badge", args=[username, sig[:8], tag])
+    url = reverse(view, args=[username, sig[:8], tag])
     return settings.SITE_ROOT + url
