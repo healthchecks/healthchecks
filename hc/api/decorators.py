@@ -1,6 +1,5 @@
 import json
 import re
-import uuid
 from functools import wraps
 
 from django.contrib.auth.models import User

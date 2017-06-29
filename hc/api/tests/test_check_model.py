@@ -74,3 +74,16 @@ class CheckModelTestCase(TestCase):
         # 11:30am
         now = dt + timedelta(days=1, minutes=90)
         self.assertEqual(check.get_status(now), "down")
+
+    def test_next_ping_with_cron_syntax(self):
+        dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
+
+        # Expect ping every round hour
+        check = Check()
+        check.kind = "cron"
+        check.schedule = "0 * * * *"
+        check.status = "up"
+        check.last_ping = dt
+
+        d = check.to_dict()
+        self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")

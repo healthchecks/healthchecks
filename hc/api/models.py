@@ -47,6 +47,11 @@ PO_PRIORITIES = {
 }
 
 
+def isostring(dt):
+    """Convert the datetime to ISO 8601 format with no microseconds. """
+    return dt.replace(microsecond=0).isoformat()
+
+
 class Check(models.Model):
 
     class Meta:
@@ -167,8 +172,8 @@ class Check(models.Model):
             result["tz"] = self.tz
 
         if self.last_ping:
-            result["last_ping"] = self.last_ping.replace(microsecond=0).isoformat()
-            result["next_ping"] = (self.last_ping + self.timeout).replace(microsecond=0).isoformat()
+            result["last_ping"] = isostring(self.last_ping)
+            result["next_ping"] = isostring(self.get_grace_start())
         else:
             result["last_ping"] = None
             result["next_ping"] = None
