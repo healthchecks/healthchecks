@@ -157,6 +157,11 @@ PUSHBULLET_CLIENT_SECRET = None
 TELEGRAM_BOT_NAME = "ExampleBot"
 TELEGRAM_TOKEN = None
 
+# SMS (Twilio) integration -- override in local_settings.py
+TWILIO_ACCOUNT = None
+TWILIO_AUTH = None
+TWILIO_FROM = None
+
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:

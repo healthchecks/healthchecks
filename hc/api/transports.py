@@ -296,3 +296,24 @@ class Telegram(HttpTransport):
     def notify(self, check):
         text = tmpl("telegram_message.html", check=check)
         return self.send(self.channel.telegram_id, text)
+
+
+class Sms(HttpTransport):
+    URL = 'https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json'
+
+    def is_noop(self, check):
+        return check.status != "down"
+
+    def notify(self, check):
+        url = self.URL % settings.TWILIO_ACCOUNT
+        auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
+        text = tmpl("sms_message.html", check=check,
+                    site_name=settings.SITE_NAME)
+
+        data = {
+            'From': settings.TWILIO_FROM,
+            'To': self.channel.value,
+            'Body': text,
+        }
+
+        return self.post(url, data=data, auth=auth)

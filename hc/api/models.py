@@ -36,7 +36,8 @@ CHANNEL_KINDS = (("email", "Email"),
                  ("opsgenie", "OpsGenie"),
                  ("victorops", "VictorOps"),
                  ("discord", "Discord"),
-                 ("telegram", "Telegram"))
+                 ("telegram", "Telegram"),
+                 ("sms", "SMS"))
 
 PO_PRIORITIES = {
     -2: "lowest",
@@ -270,6 +271,8 @@ class Channel(models.Model):
             return transports.Discord(self)
         elif self.kind == "telegram":
             return transports.Telegram(self)
+        elif self.kind == "sms":
+            return transports.Sms(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 

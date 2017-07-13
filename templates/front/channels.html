@@ -152,6 +152,17 @@
 
             <a href="{% url 'hc-add-email' %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% if enable_sms %}
+        <li>
+            <img src="{% static 'img/integrations/sms.png' %}"
+                class="icon" alt="SMS icon" />
+
+            <h2>SMS</h2>
+            <p>Get a text message to your phone when check goes down.</p>
+
+            <a href="{% url 'hc-add-sms' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
         <li>
             <img src="{% static 'img/integrations/webhook.png' %}"
                 class="icon" alt="Webhook icon" />

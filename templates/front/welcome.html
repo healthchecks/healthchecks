@@ -236,6 +236,15 @@
                 <td>Good old email messages.</td>
             </tr>
 
+            {% if enable_sms %}
+            <tr>
+                <td>
+                    <img width="22" height="22" alt="Email icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAYAAAAehFoBAAAFHElEQVRYw+2Ya2xURRSAv5m72+32wbbYgpSUElqUCPgAohJgoSgQpZHERIlK4gNisEL4IyEm/uCHYoIxhoeERKLiO8QEJBhJoVBKmhAoUihQ5WlTlmK3pbuw7733jj/AS7fbUkqV7iacP3cy99yTb86cOefcgfvy/4roafKz/bPyHDbb0MEEc4iwd/H0uuu9An+1f1ZmWNpXKNTbwJgUcegfCD73Gvrm1eU1ugW8/tBzQ7RofDcwNUUjoSrL1Be8WV4TkQBaLL4lhWEB5oak7VMAsf7gvMc002hIg/NmKN0sldIw56dJgtCkTc6TQqjidElpCkZJoZQtfZKwsN8RbLajgPEjKsjPKsah5RDVA1wN/cWxlm3oZhR32XKc9jwADjd/TWeoxfo2KyOfGaXLbnpIUdX0IQAZtmzGj6igILsUp91FzAjhD3s44dlOMNbRK0ufwEWuR6mYuAabdCTMl+Km6cpuAlEvJUOfIjdzOAD+iIdDF7+8pVcwk9JCt7WpVU3gchbx4uPrrEV2lUu+Y7cFln0BTypemABrKv22+mMLZycU0IeGzU7SmVC0IAG2L5v98vDQ7NHW+JcT7+HxHceuOXlwyCNE9WCSfm7mcEa4xtPqP4nLWcTwIeOSbWaVWOMDZ9dxqnUXmsygMKeMQNR7W54+PSzFrTWFYp0AxI0wLZ1HiRuhXrxc3uUperCpJdk0zBhXrp0eOPD1yN/WeM649ynIKetVNxK/BkBZ4UyksDH2ZjhE4v5Em9E2azyjrJJR+VPuOCT6BG649PONDAgU5JTx0qRNzH54JVkZyc2cP+whqgfItLuYVLyQ/KxRmMrAGziXoNfo2YFhxgHIcQyjYuLHzJ/wEflZxQMHPt9eS1XTGmvrBIJxw+fyypQtSd522HO50H4QgCkli26c+s6jCWEF4A2cZWfjKvxhjzVXMvRJXp60mdEPTB0YMMA5bw3fH3mdI83fopvRG3C2XJ4e/VaCnl1zcqZtX0Lsn2nbh11zJtls9TfyY/0Sas9tsEJGkxnMKH134MD/HrQjzd/w68kPrLn8rFGJxV7Yuew7bh2cuBHhYkcdmrT3aNNUOicv72Tb75WYyrCyTPec3++05g97rJgLx31dKqXood4rqv9ci8s5klCsg7gRSdLJcxYTjHVYWSZmBDGVnpA97hp42piljHBNIBBtQzdiCQejawbpKh5fAx5f7x3rxKIXGF9UwfVIGzEjiMs50vJqOO6zwu6ugAFs0kGes7jbdhocbfnprvsYKWy4nEVJ8/XN3w3Mwxc76rDJDLIdBdikg2Csg/bAeRo922kPXgCgI3SRiH6NWA+VD6Az1IypdJRSN/uFBvKzS8h1DMOuOQnH/XSGmjnVuguP7/jtG7ZNNc98oYRYkibt5VqppFBp08ArpaRSXE2jS5R2KZSsSxdgKcxa6VWx34AzqfgD1032v+Ped1iuLq/RTVO8BgRS+BLtrKmJRVZpXl6+p96Q2nSgPsWcHFOKDaGIfGL59D2Xk9ahFGJjzZzJUpqTBTLvZql1A893360uHzYJxNb/GtaU5qlwSNu/cl5VsM/by66ysfbZlUKxtpfXHqWb05Y9s6/5Xnl9IHcSHZpQc5feQ9h+tZfdJGwKsWCpu/r0vY7ru/GwIYR6dbl776Dk7/56WAnU4kp39Y5BKx79pF1VObN6K4Mo/QHeuMy995NBL893mMB/8Lqnr0iJfqIvBQ3zgD27843VYrXJfbkvqSf/AF8f89OScY4/AAAAAElFTkSuQmCC" />
+                </td>
+                <td>SMS text messages.</td>
+            </tr>
+            {% endif %}
+
             <tr>
                 <td>
                     <img width="22" height="22" alt="Webhook icon" src="data:image/gif;base64,R0lGODdhLAAsAOMQAEBCQEpMS8s8aF5gXmxubtRkhoWIhp2gnuGRqLi6uOm3yfHJ1tja2PHZ4+/s6/3//CwAAAAALAAsAAAE/vDJSau9OOvNu/+gtyBFWSBLGDqF4L5u0aidAt8vQmv23eK6ncUBKygoi5/LIawgXgXM0xVsPogxCcMQCBgYEuXM2hMcHQGAGhAAl6tC8cOwXg+uUOtDKRnU10x5VkpMfn8AgVlWUwIzdH93e4pNbw8MaXUHSGNWMDMMBJhsehdljRMMawakFkoCCGMEa2CsE1gvKVeqtRQNghIHs1YJtBOEFA6GAwwHBs4HxRsJaZoTlRXBh3bRF48ABBR8F4baaqsY5AADTA+MnBWpa12i5t2ZtL5UGnQEDAwODrZkqoBmTQJbcjIwu5CNDTtgBiUw0sfBgYEBAwgcfNCwmgRMtuAk3fCQDkA1WaMkOFijaQEOMxwzEnBG0xnKP0wasosH4KCpPAnKCe35IKiajTx9voxidOihg003rlSjKd+NFI8CHNjKtdmhNhyFfVQTaeIrXWpCWih5cg2FjhKSlDgyhyUGi2wGbGzq8YqovhMaBrjgj7C8hxDXaGTiIMFNANwspfmCiotdC96GnqPAU02AAfTUZWhYDrDKzNo2332sGLGFaeU2cmD2LIFrhTadyebFu7dvGhEAADs=" />

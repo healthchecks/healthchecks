@@ -25,7 +25,7 @@ from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
 from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
-                            AddOpsGenieForm, CronForm)
+                            AddOpsGenieForm, CronForm, AddSmsForm)
 from hc.front.schemas import telegram_callback
 from hc.lib import jsonschema
 from pytz import all_timezones
@@ -106,6 +106,7 @@ def index(request):
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
+        "enable_sms": settings.TWILIO_AUTH is not None,
         "registration_open": settings.REGISTRATION_OPEN
     }
 
@@ -350,7 +351,8 @@ def channels(request):
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
-        "enable_telegram": settings.TELEGRAM_TOKEN is not None
+        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
+        "enable_sms": settings.TWILIO_AUTH is not None
     }
     return render(request, "front/channels.html", ctx)
 
@@ -809,6 +811,27 @@ def add_telegram(request):
     }
 
     return render(request, "integrations/add_telegram.html", ctx)
+
+
+@login_required
+def add_sms(request):
+    if settings.TWILIO_AUTH is None:
+        raise Http404("sms integration is not available")
+
+    if request.method == "POST":
+        form = AddSmsForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="sms")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddSmsForm()
+
+    ctx = {"page": "channels", "form": form}
+    return render(request, "integrations/add_sms.html", ctx)
 
 
 def privacy(request):

@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import RegexValidator
 from hc.front.validators import (CronExpressionValidator, TimezoneValidator,
                                  WebhookValidator)
 
@@ -64,3 +65,12 @@ class AddWebhookForm(forms.Form):
     def get_value(self):
         d = self.cleaned_data
         return "\n".join((d["value_down"], d["value_up"], d["post_data"]))
+
+
+phone_validator = RegexValidator(regex='^\+\d{5,15}$',
+                                 message="Invalid phone number format.")
+
+
+class AddSmsForm(forms.Form):
+    error_css_class = "has-error"
+    value = forms.CharField(max_length=16, validators=[phone_validator])

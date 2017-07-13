@@ -7,34 +7,23 @@
 {% block content %}
 <div class="row">
 <div class="col-sm-12">
-    <h1>Email</h1>
+    <h1>SMS</h1>
 
-    <p>Get an email message when check goes up or down.</p>
-
-    <p>
-        <strong>Tip:</strong>
-        Add multiple email addresses, to notify multiple team members.
-    </p>
-
-    <p>
-        <strong>Confirmation needed.</strong>
-        After entering an email address, {% site_name %} will send out a confirmation link.
-        Only confirmed addresses will receive notifications.
-    </p>
+    <p>Get a SMS message to your specified number when check goes down.</p>
 
     <h2>Integration Settings</h2>
 
-    <form method="post" class="form-horizontal" action="{% url 'hc-add-email' %}">
+    <form method="post" class="form-horizontal" action="{% url 'hc-add-sms' %}">
         {% csrf_token %}
         <div class="form-group {{ form.value.css_classes }}">
-            <label for="id_email" class="col-sm-2 control-label">Email</label>
+            <label for="id_number" class="col-sm-2 control-label">Phone Number</label>
             <div class="col-sm-3">
                 <input
-                    id="id_email"
-                    type="email"
+                    id="id_number"
+                    type="tel"
                     class="form-control"
                     name="value"
-                    placeholder="you@example.org"
+                    placeholder="+1234567890"
                     value="{{ form.value.value|default:"" }}">
 
                 {% if form.value.errors %}
