@@ -5,6 +5,7 @@ import json
 import requests
 from six.moves.urllib.parse import quote
 
+from hc.accounts.models import Profile
 from hc.lib import emails
 
 
@@ -305,6 +306,10 @@ class Sms(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
+        profile = Profile.objects.for_user(self.channel.user)
+        if not profile.authorize_sms():
+            return "Monthly SMS limit exceeded"
+
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
         text = tmpl("sms_message.html", check=check,

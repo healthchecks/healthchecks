@@ -26,7 +26,8 @@ class ProfileFieldset(Fieldset):
 class TeamFieldset(Fieldset):
     name = "Team"
     fields = ("team_name", "team_access_allowed", "check_limit",
-              "ping_log_limit", "bill_to")
+              "ping_log_limit", "sms_limit", "sms_sent", "last_sms_date",
+              "bill_to")
 
 
 @admin.register(Profile)
@@ -41,7 +42,7 @@ class ProfileAdmin(admin.ModelAdmin):
     raw_id_fields = ("current_team", )
     list_select_related = ("user", )
     list_display = ("id", "users", "checks", "team_access_allowed",
-                    "reports_allowed", "ping_log_limit")
+                    "reports_allowed", "ping_log_limit", "sms")
     search_fields = ["id", "user__email"]
     list_filter = ("team_access_allowed", "reports_allowed",
                    "check_limit", "next_report_date")
@@ -67,6 +68,9 @@ class ProfileAdmin(admin.ModelAdmin):
             <span class="bar"><span style="width: %dpx"></span></span>
             &nbsp; %d of %d
         """ % (pct, num_checks, obj.check_limit)
+
+    def sms(self, obj):
+        return "%d of %d" % (obj.sms_sent, obj.sms_limit)
 
     def email(self, obj):
         return obj.user.email

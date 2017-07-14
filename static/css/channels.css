@@ -3,7 +3,7 @@
 }
 
 .channels-table .channel-row > td {
-    line-height: 40px;
+    padding: 10px 0;
 }
 
 .channels-table .value-cell {

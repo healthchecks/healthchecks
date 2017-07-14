@@ -346,6 +346,7 @@ def channels(request):
 
     ctx = {
         "page": "channels",
+        "profile": request.team,
         "channels": channels,
         "num_checks": num_checks,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
@@ -830,7 +831,11 @@ def add_sms(request):
     else:
         form = AddSmsForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {
+        "page": "channels",
+        "form": form,
+        "profile": request.team
+    }
     return render(request, "integrations/add_sms.html", ctx)
 
 

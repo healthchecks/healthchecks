@@ -11,6 +11,15 @@
 
     <p>Get a SMS message to your specified number when check goes down.</p>
 
+    {% if show_pricing and profile.sms_limit == 0 %}
+    <p class="alert alert-success">
+        <strong>Paid plan required.</strong>
+        SMS messaging is not available on the free plan–sending the messages
+        costs too much! Please upgrade to a
+        <a href="{% url 'hc-pricing' %}">paid plan</a> to enable SMS messaging.
+    </p>
+    {% endif %}
+
     <h2>Integration Settings</h2>
 
     <form method="post" class="form-horizontal" action="{% url 'hc-add-sms' %}">

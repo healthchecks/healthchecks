@@ -13,14 +13,20 @@ from django.utils import timezone
 from hc.lib import emails
 
 
+def month(dt):
+    """ For a given datetime, return the matching first-day-of-month date. """
+    return dt.date().replace(day=1)
+
+
 class ProfileManager(models.Manager):
     def for_user(self, user):
         profile = self.filter(user=user).first()
         if profile is None:
             profile = Profile(user=user, team_access_allowed=user.is_superuser)
             if not settings.USE_PAYMENTS:
-                # If not using payments, set a high check_limit
+                # If not using payments, set high limits
                 profile.check_limit = 500
+                profile.sms_limit = 500
 
             profile.save()
         return profile
@@ -39,6 +45,9 @@ class Profile(models.Model):
     api_key = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", models.SET_NULL, null=True)
     bill_to = models.TextField(blank=True)
+    last_sms_date = models.DateTimeField(null=True, blank=True)
+    sms_limit = models.IntegerField(default=0)
+    sms_sent = models.IntegerField(default=0)
 
     objects = ProfileManager()
 
@@ -102,6 +111,29 @@ class Profile(models.Model):
         user.profile.save()
 
         user.profile.send_instant_login_link(self)
+
+    def sms_sent_this_month(self):
+        # IF last_sms_date was never set, we have not sent any messages yet.
+        if not self.last_sms_date:
+            return 0
+
+        # If last sent date is not from this month, we've sent 0 this month.
+        if month(timezone.now()) > month(self.last_sms_date):
+            return 0
+
+        return self.sms_sent
+
+    def authorize_sms(self):
+        """ If monthly limit not exceeded, increase counter and return True """
+
+        sent_this_month = self.sms_sent_this_month()
+        if sent_this_month >= self.sms_limit:
+            return False
+
+        self.sms_sent = sent_this_month + 1
+        self.last_sms_date = timezone.now()
+        self.save()
+        return True
 
 
 class Member(models.Model):

@@ -28,6 +28,11 @@ class CreatePlanTestCase(BaseTestCase):
     def test_it_works(self, mock):
         self._setup_mock(mock)
 
+        self.profile.team_access_allowed = False
+        self.profile.sms_limit = 0
+        self.profile.sms_sent = 1
+        self.profile.save()
+
         r = self.run_create_plan()
         self.assertRedirects(r, "/pricing/")
 
@@ -39,10 +44,12 @@ class CreatePlanTestCase(BaseTestCase):
         self.assertEqual(sub.plan_id, "P5")
 
         # User's profile should have a higher limits
-        profile = Profile.objects.get(user=self.alice)
-        self.assertEqual(profile.ping_log_limit, 1000)
-        self.assertEqual(profile.check_limit, 500)
-        self.assertTrue(profile.team_access_allowed)
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.ping_log_limit, 1000)
+        self.assertEqual(self.profile.check_limit, 500)
+        self.assertEqual(self.profile.sms_limit, 50)
+        self.assertEqual(self.profile.sms_sent, 0)
+        self.assertTrue(self.profile.team_access_allowed)
 
         # braintree.Subscription.cancel should have not been called
         assert not mock.Subscription.cancel.called
