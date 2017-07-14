@@ -67,10 +67,11 @@
                         <p>free</p>
                     </div>
                     <ul class="list-group text-center">
-                        <li class="list-group-item">Single User Access</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> 20 Checks</li>
                         <li class="list-group-item">100 log entries per check</li>
                         <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
+                        <li class="list-group-item">Single User</li>
+                        <li class="list-group-item">&nbsp;</li>
                         <li class="list-group-item">&nbsp;</li>
                     </ul>
                     <div class="panel-footer">
@@ -101,10 +102,11 @@
                     </div>
 
                     <ul class="list-group text-center">
-                        <li class="list-group-item">Team Access</li>
                         <li class="list-group-item">Unlimited Checks</li>
                         <li class="list-group-item">1000 log entries per check</li>
                         <li class="list-group-item">Personal or Commercial use</li>
+                        <li class="list-group-item">Team Access</li>
+                        <li class="list-group-item">50 SMS alerts per month</li>
                         <li class="list-group-item">Email Support</li>
                     </ul>
                     <div class="panel-footer">
@@ -117,7 +119,7 @@
                             <button
                                 data-plan-id="P5"
                                 class="btn btn-lg btn-default btn-create-payment-method">
-                                {% if sub.plan_id == "P75" %}
+                                {% if sub.plan_id == "P50" %}
                                 Switch to $5/mo
                                 {% else %}
                                 Upgrade your Account
@@ -134,29 +136,30 @@
             </div>
             <!-- /item -->
 
-            <!-- P75 -->
+            <!-- P50 -->
             <div class="col-sm-4 text-center">
                 <div class="panel panel-default panel-pricing">
                     <div class="panel-body text-center">
-                        <p>$75<span class="mo">/mo</span></p>
+                        <p>$50<span class="mo">/mo</span></p>
                     </div>
 
                     <ul class="list-group text-center">
-                        <li class="list-group-item">Team Access</li>
                         <li class="list-group-item">Unlimited Checks</li>
                         <li class="list-group-item">1000 log entries per check</li>
                         <li class="list-group-item">Personal or Commercial use</li>
+                        <li class="list-group-item">Team Access</li>
+                        <li class="list-group-item">500 SMS alerts per month</li>
                         <li class="list-group-item">Priority Email Support</li>
                     </ul>
                     <div class="panel-footer">
                         {% if request.user.is_authenticated %}
-                            {% if sub.plan_id == "P75" %}
+                            {% if sub.plan_id == "P50" %}
                             <button  class="btn btn-lg btn-success disabled">
                                 Selected
                             </button>
                             {% else %}
                             <button
-                                data-plan-id="P75"
+                                data-plan-id="P50"
                                 class="btn btn-lg btn-default btn-create-payment-method">
                                 Upgrade Your Account
                             </button>
