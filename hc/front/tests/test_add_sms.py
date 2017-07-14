@@ -12,6 +12,7 @@ class AddSmsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Get a SMS message")
 
+    @override_settings(USE_PAYMENTS=True)
     def test_it_warns_about_limits(self):
         self.profile.sms_limit = 0
         self.profile.save()
