@@ -139,6 +139,10 @@ def docs_api(request):
 
     return render(request, "front/docs_api.html", ctx)
 
+def docs_cron(request):
+    ctx = {"page": "docs", "section": "cron"}
+    return render(request, "front/docs_cron.html", ctx)
+
 
 def about(request):
     return render(request, "front/about.html", {"page": "about"})

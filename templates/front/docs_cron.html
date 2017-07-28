@@ -1,0 +1,530 @@
+{% extends "front/base_docs.html" %}
+{% load compress staticfiles hc_extras %}
+
+{% block title %}Cron Syntax Cheatsheet - {% site_name %}{% endblock %}
+
+{% block docs_content %}
+
+<h2>Cron Syntax Cheatsheet</h2>
+
+<p>
+    {% site_name %} understands most of the traditional cron syntax features.
+    Under the hood, it uses the
+    <a href="https://github.com/taichino/croniter">croniter package</a>
+    to parse and interpret cron expressions. Below is a showcase of
+    supported syntax features.
+</p>
+
+<br />
+
+<div id="cron-examples">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Basics</h3>
+        </div>
+        <div class="panel-body">
+            <p>A cron expression has five fields, separated by spaces.
+            Asterisk is a wild card character and means "any value".
+            </p>
+
+            <div class="desc">"Run every minute"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>* <span></span></div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td>Day of week, 0 - 7, 1=Monday</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        Month, 1 - 12
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        Day of month, 1 - 31
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Hour of day, 0 - 23
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        Minute, 0 - 59
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Numeric values</h3>
+        </div>
+        <div class="panel-body">
+            <p>Use numeric values instead of asterisks to match specific
+               minutes, hours, days and months.
+            </p>
+
+            <div class="desc">"Run at 6PM on Fridays"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>0 <span></span></div></th>
+                    <th><div>18</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>5</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td>Run only on Fridays</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="minor">
+                        Run every month of the year
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="minor">
+                        Run every day of the month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Run at 6PM
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        Run at the start of the hour
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Commas</h3>
+        </div>
+        <div class="panel-body">
+            <p>Use <code>{v1},{v2},...,{vn}</code> to list multiple values.</p>
+
+            <div class="desc">"Run at 9AM, 12PM and 6PM every day"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>0 <span></span></div></th>
+                    <th><div>9,12,18</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td class="minor">Run on every weekday</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="minor">
+                        Run every month of the year
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="minor">
+                        Run every day of the month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Run at 9AM, 12PM and 6PM
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        Run at the start of the hour
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Ranges of values</h3>
+        </div>
+        <div class="panel-body">
+            <p>Use <code>{start}-{end}</code> to define a range of matching values.</p>
+
+            <div class="desc">"Run every minute on workdays"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>* <span></span></div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>1-5</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td>Run on Monday to Friday</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="minor">
+                        Run every month of the year
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="minor">
+                        Run every day of the month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="minor">
+                        Run every hour of the day
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="minor">
+                        Run every minute of the hour
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Ranges with a step</h3>
+        </div>
+        <div class="panel-body">
+            <p>Use <code>{start}/{step}</code> to define a range with a step.</p>
+
+            <div class="desc">"Run every quarter of an hour"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>0/15 <span></span></div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td class="minor">Run on every weekday</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="minor">
+                        Run every month of the year
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="minor">
+                        Run every day of the month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="minor">
+                        Run every hour of the day
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        Run every 15 minutes, starting from minute 0
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Combine numeric values and ranges in lists</h3>
+        </div>
+        <div class="panel-body">
+            <p>In the comma-separated lists you can combine not only
+            numeric values but also <code>{start}-{end}</code> and <code>{start}/{step}</code>
+            constructs.</p>
+
+            <div class="desc">"Run every round hour outside office hours"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>0 <span></span></div></th>
+                    <th><div>18-23,0-8</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td class="minor">Run on every weekday</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="minor">
+                        Run every month of the year
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="minor">
+                        Run every day of the month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Run at 6PM, 7PM, 8PM, ..., 7AM, 8AM
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        Run at the start of the hour
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Abbreviated day and month names</h3>
+        </div>
+        <div class="panel-body">
+            <p><code>JAN-DEC</code> can be used in the month field
+                and
+                <code>MON-SUN</code> in the weekday field.
+            </p>
+
+            <div class="desc">"Run every round hour on April 1st"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>0 <span></span></div></th>
+                    <th><div>*</div></th>
+                    <th><div>1</div></th>
+                    <th><div>APR</div></th>
+                    <th><div>*</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td class="minor">Run on every weekday</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        Run in April
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        Run on the first day of the month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="minor">
+                        Run every hour of the day
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        Run at the start of the hour
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">First, second, ... weekday</h3>
+        </div>
+        <div class="panel-body">
+            <p>
+                Use <code>{day-of-week}#{n}</code> to define constructs
+                such as "first Saturday of the month". <code>n</code> is a
+                number from 1 to 5.
+            </p>
+
+            <div class="desc">"Run at 2PM on the first Saturday
+            <br />of every month"</div>
+
+            <table class="cron-example">
+                <tr>
+                    <th><div>0 <span></span></div></th>
+                    <th><div>14</div></th>
+                    <th><div>*</div></th>
+                    <th><div>*</div></th>
+                    <th><div>6#1</div></th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="4">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="3">
+                        <div class="guide"></div>
+                    </td>
+                    <td rowspan="2">
+                        <div class="guide"></div>
+                    </td>
+                    <td>
+                        <div class="guide"></div>
+                    </td>
+                    <td>Run on the first saturday of the month</td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="minor">
+                        Run every month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="minor">
+                        Run on any day of the month
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        Run at 2PM
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        Run at the start of the hour
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Timezones</h3>
+        </div>
+        <div class="panel-body">
+            <p>
+                Cron daemon uses server's <strong>local time</strong>.
+                If your server's timezone is other than UTC, make sure
+                to set a matching timezone for your check
+                on {% site_name %} as well.
+            </p>
+
+            <p>On Ubuntu systems you can check the server's timezone
+            with:</p>
+            <pre>cat /etc/timezone</pre>
+        </div>
+    </div>
+
+
+
+</div> <!-- cron examples -->
+
+{% endblock %}

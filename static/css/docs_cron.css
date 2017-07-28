@@ -1,0 +1,54 @@
+
+
+.cron-example th {
+    background: #f5f5f5;
+}
+
+.cron-example th div {
+    padding: 5px;
+    margin: 5px;
+    font-family: monospace;
+    min-width: 28px;
+    text-align: center;
+}
+
+.cron-example td {
+    position: relative;
+    padding: 8px;
+}
+
+.cron-example .guide {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    bottom: 15px;
+    width: 40%;
+
+    border-left: 2px dotted #ddd;
+    border-bottom: 2px dotted #ddd;
+}
+
+.desc {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 20px;
+    color: #333;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+#cron-examples {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#cron-examples .panel {
+    width: 450px;
+    margin-right: 20px;
+}
+
+.cron-example td.minor {
+    color: #999;
+}

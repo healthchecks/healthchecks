@@ -19,6 +19,9 @@
                 <li><a href="{% url 'hc-docs' %}#email">Email</a></li>
             </ul>
         </li>
+        <li {% if section == "cron" %} class="active" {% endif %}>
+            <a href="{% url 'hc-docs-cron' %}">Cron Syntax</a>
+        </li>
         <li {% if section == "api" %} class="active" {% endif %}>
             <a href="{% url 'hc-docs-api' %}">REST API</a>
         </li>

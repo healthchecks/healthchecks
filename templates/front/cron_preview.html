@@ -1,7 +1,11 @@
 {% load humanize tz %}
 
 {% if bad_schedule %}
-<p id="invalid-arguments">Invalid cron expression</p>
+<p id="invalid-arguments">
+    Invalid cron expression. <br />
+    Please check the <a href="{% url 'hc-docs-cron' %}">supported cron syntax features</a>.
+
+</p>
 {% elif bad_tz %}
 <p id="invalid-arguments">Invalid timezone</p>
 {% else %}
