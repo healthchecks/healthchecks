@@ -40,6 +40,11 @@
     font-weight: normal;
 }
 
+#schedule-hint {
+    margin-left: 8px;
+    font-size: small;
+}
+
 #tz {
     width: 300px;
 }

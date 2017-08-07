@@ -54,7 +54,7 @@
                     <td>
                         <div class="guide"></div>
                     </td>
-                    <td>Day of week, 0 - 7, 1=Monday</td>
+                    <td>Day of week, 0 - 7, 0 or 7 is Sun</td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -430,70 +430,6 @@
                 <tr>
                     <td colspan="4" class="minor">
                         Run every hour of the day
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="5">
-                        Run at the start of the hour
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">First, second, ... weekday</h3>
-        </div>
-        <div class="panel-body">
-            <p>
-                Use <code>{day-of-week}#{n}</code> to define constructs
-                such as "first Saturday of the month". <code>n</code> is a
-                number from 1 to 5.
-            </p>
-
-            <div class="desc">"Run at 2PM on the first Saturday
-            <br />of every month"</div>
-
-            <table class="cron-example">
-                <tr>
-                    <th><div>0 <span></span></div></th>
-                    <th><div>14</div></th>
-                    <th><div>*</div></th>
-                    <th><div>*</div></th>
-                    <th><div>6#1</div></th>
-                </tr>
-                <tr>
-                    <td rowspan="5">
-                        <div class="guide"></div>
-                    </td>
-                    <td rowspan="4">
-                        <div class="guide"></div>
-                    </td>
-                    <td rowspan="3">
-                        <div class="guide"></div>
-                    </td>
-                    <td rowspan="2">
-                        <div class="guide"></div>
-                    </td>
-                    <td>
-                        <div class="guide"></div>
-                    </td>
-                    <td>Run on the first saturday of the month</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="minor">
-                        Run every month
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="minor">
-                        Run on any day of the month
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        Run at 2PM
                     </td>
                 </tr>
                 <tr>
