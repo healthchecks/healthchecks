@@ -4,50 +4,95 @@
 
 
 {% block content %}
-
 <h1>Billing History</h1>
+<div class="row">
+    <div class="col-sm-9">
 
-<table class="table">
-    <tr>
-        <th>Date</th>
-        <th>Payment Method</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th></th>
-    </tr>
-    {% for tx in transactions %}
-        <tr>
-            <td>{{ tx.created_at }}</td>
-            <td>
-                {% if tx.payment_instrument_type == "paypal_account" %}
-                Paypal from {{ tx.paypal.payer_email }}
-                {% endif %}
+        <table class="table">
+            <tr>
+                <th>Date</th>
+                <th>Payment Method</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            {% for tx in transactions %}
+                <tr>
+                    <td>{{ tx.created_at }}</td>
+                    <td>
+                        {% if tx.payment_instrument_type == "paypal_account" %}
+                        Paypal from {{ tx.paypal.payer_email }}
+                        {% endif %}
 
-                {% if tx.payment_instrument_type == "credit_card" %}
-                {{ tx.credit_card.card_type }} ending in {{ tx.credit_card.last_4 }}
-                {% endif %}
-            </td>
-            <td>
-                {% if tx.currency_iso_code == "USD" %}
-                    ${{ tx.amount }}
-                {% elif tx.currency_iso_code == "EUR" %}
-                    €{{ tx.amount }}
-                {% else %}
-                    {{ tx.currency_iso_code }} {{ tx.amount }}
-                {% endif %}
-            </td>
-            <td><code>{{ tx.status }}</code></td>
-            <td>
-                <a href="{% url 'hc-invoice' tx.id %}">View Invoice</a>
-            </td>
-        </tr>
-    {% empty %}
-        <tr>
-            <td colspan="5">
-                No past transactions to display here
-            </td>
-        </tr>
-    {% endfor%}
-</table>
+                        {% if tx.payment_instrument_type == "credit_card" %}
+                        {{ tx.credit_card.card_type }} ending in {{ tx.credit_card.last_4 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if tx.currency_iso_code == "USD" %}
+                            ${{ tx.amount }}
+                        {% elif tx.currency_iso_code == "EUR" %}
+                            €{{ tx.amount }}
+                        {% else %}
+                            {{ tx.currency_iso_code }} {{ tx.amount }}
+                        {% endif %}
+                    </td>
+                    <td><code>{{ tx.status }}</code></td>
+                    <td>
+                        <a href="{% url 'hc-invoice' tx.id %}">View Invoice</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">
+                        No past transactions to display here
+                    </td>
+                </tr>
+            {% endfor%}
+        </table>
+    </div>
+    <div class="col-sm-3">
+        <p><strong>Bill to:</strong></p>
+        <p>
+        {% if request.user.profile.bill_to %}
+            {{ request.user.profile.bill_to|linebreaksbr }}
+        {% else %}
+            {{ request.user.email }}
+        {% endif %}
+        </p>
+        <button
+            data-toggle="modal"
+            data-target="#bill-to-modal"
+            class="btn btn-default">
+            Edit Company Details…
+        </button>
+
+    </div>
+</div>
+
+<div id="bill-to-modal" class="modal">
+    <div class="modal-dialog">
+        <form id="bill-to-form" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Company Details for Invoice</h4>
+                </div>
+                <div class="modal-body">
+                    <textarea
+                        name="bill_to"
+                        class="form-control"
+                        rows="5">{{ request.user.profile.bill_to|default:request.user.email }}</textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 {% endblock %}

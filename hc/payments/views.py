@@ -6,7 +6,8 @@ from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from .models import Subscription
+from hc.payments.forms import BillToForm
+from hc.payments.models import Subscription
 
 if settings.USE_PAYMENTS:
     import braintree
@@ -177,6 +178,13 @@ def cancel_plan(request):
 
 @login_required
 def billing(request):
+    if request.method == "POST":
+        form = BillToForm(request.POST)
+        if form.is_valid():
+            request.user.profile.bill_to = form.cleaned_data["bill_to"]
+            request.user.profile.save()
+            return redirect("hc-billing")
+
     sub = Subscription.objects.get(user=request.user)
 
     transactions = braintree.Transaction.search(

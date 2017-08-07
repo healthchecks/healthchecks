@@ -24,3 +24,11 @@ class BillingTestCase(BaseTestCase):
         r = self.client.get("/billing/")
         self.assertContains(r, "123")
         self.assertContains(r, "def456")
+
+    def test_it_saves_company_details(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post("/billing/", {"bill_to": "foo\nbar"})
+
+        self.assertEqual(r.status_code, 302)
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.bill_to, "foo\nbar")
