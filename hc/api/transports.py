@@ -11,7 +11,9 @@ from hc.lib import emails
 
 def tmpl(template_name, **ctx):
     template_path = "integrations/%s" % template_name
-    return render_to_string(template_path, ctx).strip()
+    # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
+    # and cost twice the money.
+    return render_to_string(template_path, ctx).strip().replace(u"\xa0", " ")
 
 
 class Transport(object):

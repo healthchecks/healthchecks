@@ -314,6 +314,8 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_sms(self, mock_post):
         self._setup_data("sms", "+1234567890")
+        self.check.last_ping = now() - td(hours=2)
+
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -322,6 +324,7 @@ class NotifyTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
+        self.assertFalse(u"\xa0" in payload["Body"])
 
         # sent SMS counter should go up
         self.profile.refresh_from_db()
