@@ -10,6 +10,8 @@
 
 ![Screenshot of Period/Grace dialog](/stuff/screenshots/period_grace.png?raw=true "Period/Grace Dialog")
 
+![Screenshot of Cron dialog](/stuff/screenshots/cron.png?raw=true "Cron Dialog")
+
 ![Screenshot of Channels page](/stuff/screenshots/channels.png?raw=true "Channels Page")
 
 healthchecks is a watchdog for your cron jobs. It's a web server that listens for pings from your cron jobs, plus a web interface.
@@ -24,7 +26,7 @@ The building blocks are:
 
 ## Setting Up for Development
 
-These are instructions for setting up HealthChecks Django app
+These are instructions for setting up healthchecks Django app
 in development environment.
 
 * prepare directory for project code and virtualenv:

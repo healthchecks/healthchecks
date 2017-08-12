@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress humanize staticfiles %}
+{% load compress hc_extras humanize staticfiles %}
 
 {% block containers %}
 <div class="index-bleed">
@@ -206,12 +206,35 @@
                 <td>
                     Down.
                     Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
-                    When check goes from "Late" to "Down", HealthChecks
+                    When check goes from "Late" to "Down", {% site_name %}
                     sends you a notification.
                 </td>
             </tr>
         </table>
 
+    </div>
+    </div>
+
+    <div class="row tour-section">
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/cron.png' %}"
+            srcset="{% static 'img/cron.png'%} 1x, {% static 'img/cron@2x.png'%} 2x"
+            alt="Cron dialog" />
+    </div>
+    <div class="col-sm-4">
+        <p>
+            Alternatively, you can define the expected ping dates and times
+            using a cron expression. See
+            <a href="{% url 'hc-docs-cron' %}">Cron Syntax Cheatsheet</a>
+            for the supported syntax features.
+        </p>
+        <p>
+            <strong>Grace Time</strong> specifies how "late" a ping can
+            be before you will be alerted. Set it to be a little above
+            the expected duration of your cron job.
+        </p>
     </div>
     </div>
 
