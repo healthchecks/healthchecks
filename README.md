@@ -4,15 +4,15 @@
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
 
-![Screenshot of Welcome page](/stuff/screenshots/welcome.png?raw=true "Welcome Page")
+![Screenshot of Welcome page](/static/img/screenshots/welcome.png?raw=true "Welcome Page")
 
-![Screenshot of My Checks page](/stuff/screenshots/my_checks.png?raw=true "My Checks Page")
+![Screenshot of My Checks page](/static/img/my_checks.png?raw=true "My Checks Page")
 
-![Screenshot of Period/Grace dialog](/stuff/screenshots/period_grace.png?raw=true "Period/Grace Dialog")
+![Screenshot of Period/Grace dialog](/static/img/period_grace.png?raw=true "Period/Grace Dialog")
 
-![Screenshot of Cron dialog](/stuff/screenshots/cron.png?raw=true "Cron Dialog")
+![Screenshot of Cron dialog](/static/img/cron.png?raw=true "Cron Dialog")
 
-![Screenshot of Channels page](/stuff/screenshots/channels.png?raw=true "Channels Page")
+![Screenshot of Integrations page](/static/img/channels.png?raw=true "Integrations Page")
 
 healthchecks is a watchdog for your cron jobs. It's a web server that listens for pings from your cron jobs, plus a web interface.
 
