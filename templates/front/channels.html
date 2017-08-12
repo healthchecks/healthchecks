@@ -197,6 +197,17 @@
             <a href="{% url 'hc-add-pushbullet' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+        {% if enable_telegram %}
+        <li>
+            <img src="{% static 'img/integrations/telegram.png' %}"
+                 class="icon" alt="Telegram icon" />
+
+            <h2>Telegram</h2>
+            <p>A messaging app with a focus on speed and security.</p>
+
+            <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />
@@ -233,17 +244,6 @@
             <p>Cross-platform voice and text chat app designed for gamers.</p>
 
             <a href="{% url 'hc-add-discord' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
-        {% if enable_telegram %}
-        <li>
-            <img src="{% static 'img/integrations/telegram.png' %}"
-                 class="icon" alt="Telegram icon" />
-
-            <h2>Telegram</h2>
-            <p>A messaging app with a focus on speed and security.</p>
-
-            <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
         <li>
