@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
 
-![Screenshot of Welcome page](/static/img/screenshots/welcome.png?raw=true "Welcome Page")
+![Screenshot of Welcome page](/static/img/welcome.png?raw=true "Welcome Page")
 
 ![Screenshot of My Checks page](/static/img/my_checks.png?raw=true "My Checks Page")
 
