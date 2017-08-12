@@ -1,0 +1,2 @@
+# Without an underlying script, passing the command to PowerShell directly:
+powershell.exe -command &{Invoke-RestMethod PING_URL}

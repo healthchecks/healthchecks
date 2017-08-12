@@ -35,6 +35,7 @@ class Command(BaseCommand):
         _process("python_requests", lexers.PythonLexer())
         _process("php", lexers.PhpLexer())
         _process("powershell", lexers.shell.PowerShellLexer())
+        _process("powershell_inline", lexers.shell.BashLexer())
         _process("node", lexers.JavascriptLexer())
 
         # API examples
