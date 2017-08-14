@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from datetime import timedelta as td
 import json
 
@@ -7,6 +9,7 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 from mock import patch
 from requests.exceptions import ConnectionError, Timeout
+from six import binary_type
 
 
 class NotifyTestCase(BaseTestCase):
@@ -100,7 +103,8 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(args[1], "http://example.com")
 
         # spaces should not have been urlencoded:
-        self.assertTrue(kwargs["data"].startswith("The Time Is 2"))
+        payload = kwargs["data"].decode("utf-8")
+        self.assertTrue(payload.startswith("The Time Is 2"))
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_dollarsign_escaping(self, mock_get):
@@ -128,6 +132,18 @@ class NotifyTestCase(BaseTestCase):
         mock_get.assert_called_with(
             "get", "http://bar", headers={"User-Agent": "healthchecks.io"},
             timeout=5)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_unicode_post_body(self, mock_request):
+        template = u"http://example.com\n\n(╯°□°）╯︵ ┻━┻"
+        self._setup_data("webhook", template)
+        self.check.save()
+
+        self.channel.notify(self.check)
+        args, kwargs = mock_request.call_args
+
+        # unicode should be encoded into utf-8
+        self.assertTrue(isinstance(kwargs["data"], binary_type))
 
     def test_email(self):
         self._setup_data("email", "alice@example.org")

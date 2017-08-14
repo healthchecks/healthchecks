@@ -156,7 +156,7 @@ class Webhook(HttpTransport):
         url = self.prepare(url, check, urlencode=True)
         if self.channel.post_data:
             payload = self.prepare(self.channel.post_data, check)
-            return self.post(url, data=payload)
+            return self.post(url, data=payload.encode("utf-8"))
         else:
             return self.get(url)
 
