@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 
 
 class LowercaseEmailField(forms.EmailField):
@@ -19,6 +20,18 @@ class ReportSettingsForm(forms.Form):
 
 class SetPasswordForm(forms.Form):
     password = forms.CharField()
+
+
+class ChangeEmailForm(forms.Form):
+    error_css_class = "has-error"
+    email = LowercaseEmailField()
+
+    def clean_email(self):
+        v = self.cleaned_data["email"]
+        if User.objects.filter(email=v).exists():
+            raise forms.ValidationError("%s is not available" % v)
+
+        return v
 
 
 class InviteTeamMemberForm(forms.Form):

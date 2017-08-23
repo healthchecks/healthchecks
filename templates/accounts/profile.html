@@ -19,7 +19,6 @@
 </div>
 
 <div class="row">
-
     <div class="col-sm-3">
         <ul class="nav nav-pills nav-stacked">
             <li class="active"><a href="{% url 'hc-profile' %}">Account</a></li>
@@ -33,17 +32,29 @@
             <div class="panel-body settings-block">
                 <form method="post">
                     {% csrf_token %}
-                    <h2>Set Password</h2>
-                    Attach a password to your {% site_name %} account
-                    <button
-                        type="submit"
-                        name="set_password"
-                        class="btn btn-default pull-right">Set Password</button>
+                    <h2>Email and Password</h2>
+                    <p>
+                        Your account's email address is
+                        <code>{{ request.user.email }}</code>
+
+                        <button
+                            type="submit"
+                            name="change_email"
+                            class="btn btn-default pull-right">Change Email</button>
+                    </p>
+                    <p class="clearfix"></p>
+                    <p>
+                        Attach a password to your {% site_name %} account
+                        <button
+                            type="submit"
+                            name="set_password"
+                            class="btn btn-default pull-right">Set Password</button>
+                    </p>
                 </form>
             </div>
         </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-{{ api_status }}">
             <div class="panel-body settings-block">
                 <h2>API Access</h2>
                 {% if profile.api_key %}
@@ -78,9 +89,21 @@
                     </form>
                 {% endif %}
             </div>
+
+            {% if api_key_created %}
+            <div class="panel-footer">
+                API key created
+            </div>
+            {% endif %}
+
+           {% if api_key_revoked %}
+            <div class="panel-footer">
+                API key revoked
+            </div>
+            {% endif %}
         </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-{{ team_status }}">
             <div class="panel-body settings-block">
                 <h2>Team Access</h2>
                 {% if profile.member_set.count %}
@@ -135,6 +158,24 @@
                     data-target="#invite-team-member-modal">Invite a Team Member</a>
                 {% endif %}
             </div>
+
+           {% if team_member_invited %}
+            <div class="panel-footer">
+                {{ team_member_invited }} invited to team
+            </div>
+            {% endif %}
+
+           {% if team_member_removed %}
+            <div class="panel-footer">
+                {{ team_member_removed }} removed from team
+            </div>
+            {% endif %}
+
+           {% if team_name_updated %}
+            <div class="panel-footer">
+                Team name updated
+            </div>
+            {% endif %}
         </div>
 
         <div class="panel panel-default">

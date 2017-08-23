@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="hc-dialog">
+            <h1>Email Address Updated</h1>
+            <br />
+            <p>
+                Your account's email address has been updated.
+                You can now <a href="{% url 'hc-login' %}">sign in</a>
+                with the new email address.
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

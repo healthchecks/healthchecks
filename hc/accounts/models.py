@@ -79,6 +79,18 @@ class Profile(models.Model):
         }
         emails.set_password(self.user.email, ctx)
 
+    def send_change_email_link(self):
+        token = str(uuid.uuid4())
+        self.token = make_password(token)
+        self.save()
+
+        path = reverse("hc-change-email", args=[token])
+        ctx = {
+            "button_text": "Change Email",
+            "button_url": settings.SITE_ROOT + path
+        }
+        emails.change_email(self.user.email, ctx)
+
     def set_api_key(self):
         self.api_key = base64.urlsafe_b64encode(os.urandom(24))
         self.save()

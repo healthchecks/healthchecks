@@ -13,9 +13,10 @@ from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
-from hc.accounts.forms import (EmailPasswordForm, InviteTeamMemberForm,
-                               RemoveTeamMemberForm, ReportSettingsForm,
-                               SetPasswordForm, TeamNameForm)
+from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
+                               InviteTeamMemberForm, RemoveTeamMemberForm,
+                               ReportSettingsForm, SetPasswordForm,
+                               TeamNameForm)
 from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
@@ -114,8 +115,8 @@ def login_link_sent(request):
     return render(request, "accounts/login_link_sent.html")
 
 
-def set_password_link_sent(request):
-    return render(request, "accounts/set_password_link_sent.html")
+def link_sent(request):
+    return render(request, "accounts/link_sent.html")
 
 
 def check_token(request, username, token):
@@ -156,21 +157,33 @@ def profile(request):
         profile.current_team = profile
         profile.save()
 
-    show_api_key = False
+    ctx = {
+        "page": "profile",
+        "profile": profile,
+        "show_api_key": False,
+        "api_status": "default",
+        "team_status": "default"
+    }
+
     if request.method == "POST":
-        if "set_password" in request.POST:
+        if "change_email" in request.POST:
+            profile.send_change_email_link()
+            return redirect("hc-link-sent")
+        elif "set_password" in request.POST:
             profile.send_set_password_link()
-            return redirect("hc-set-password-link-sent")
+            return redirect("hc-link-sent")
         elif "create_api_key" in request.POST:
             profile.set_api_key()
-            show_api_key = True
-            messages.success(request, "The API key has been created!")
+            ctx["show_api_key"] = True
+            ctx["api_key_created"] = True
+            ctx["api_status"] = "success"
         elif "revoke_api_key" in request.POST:
             profile.api_key = ""
             profile.save()
-            messages.info(request, "The API key has been revoked!")
+            ctx["api_key_revoked"] = True
+            ctx["api_status"] = "info"
         elif "show_api_key" in request.POST:
-            show_api_key = True
+            ctx["show_api_key"] = True
         elif "invite_team_member" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
@@ -185,7 +198,9 @@ def profile(request):
                     user = _make_user(email)
 
                 profile.invite(user)
-                messages.success(request, "Invitation to %s sent!" % email)
+                ctx["team_member_invited"] = email
+                ctx["team_status"] = "success"
+
         elif "remove_team_member" in request.POST:
             form = RemoveTeamMemberForm(request.POST)
             if form.is_valid():
@@ -198,7 +213,8 @@ def profile(request):
                 Member.objects.filter(team=profile,
                                       user=farewell_user).delete()
 
-                messages.info(request, "%s removed from team!" % email)
+                ctx["team_member_removed"] = email
+                ctx["team_status"] = "info"
         elif "set_team_name" in request.POST:
             if not profile.team_access_allowed:
                 return HttpResponseForbidden()
@@ -207,13 +223,8 @@ def profile(request):
             if form.is_valid():
                 profile.team_name = form.cleaned_data["team_name"]
                 profile.save()
-                messages.success(request, "Team Name updated!")
-
-    ctx = {
-        "page": "profile",
-        "profile": profile,
-        "show_api_key": show_api_key
-    }
+                ctx["team_name_updated"] = True
+                ctx["team_status"] = "success"
 
     return render(request, "accounts/profile.html", ctx)
 
@@ -299,6 +310,33 @@ def set_password(request, token):
             return redirect("hc-profile")
 
     return render(request, "accounts/set_password.html", {})
+
+
+@login_required
+def change_email(request, token):
+    profile = request.user.profile
+    if not check_password(token, profile.token):
+        return HttpResponseBadRequest()
+
+    if request.method == "POST":
+        form = ChangeEmailForm(request.POST)
+        if form.is_valid():
+            request.user.email = form.cleaned_data["email"]
+            request.user.set_unusable_password()
+            request.user.save()
+
+            profile.token = ""
+            profile.save()
+
+            return redirect("hc-change-email-done")
+    else:
+        form = ChangeEmailForm()
+
+    return render(request, "accounts/change_email.html", {"form": form})
+
+
+def change_email_done(request):
+    return render(request, "accounts/change_email_done.html")
 
 
 def unsubscribe_reports(request, username):

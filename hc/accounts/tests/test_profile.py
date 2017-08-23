@@ -22,7 +22,7 @@ class ProfileTestCase(BaseTestCase):
 
         # And an email should have been sent
         self.assertEqual(len(mail.outbox), 1)
-        expected_subject = 'Set password on {0}'.format(getattr(settings, "SITE_NAME"))
+        expected_subject = "Set password on %s" % settings.SITE_NAME
         self.assertEqual(mail.outbox[0].subject, expected_subject)
 
     def test_it_creates_api_key(self):
@@ -30,7 +30,7 @@ class ProfileTestCase(BaseTestCase):
 
         form = {"create_api_key": "1"}
         r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 200
+        self.assertEqual(r.status_code, 200)
 
         self.alice.profile.refresh_from_db()
         api_key = self.alice.profile.api_key
@@ -64,7 +64,7 @@ class ProfileTestCase(BaseTestCase):
 
         form = {"invite_team_member": "1", "email": "frank@example.org"}
         r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 200
+        self.assertEqual(r.status_code, 200)
 
         member_emails = set()
         for member in self.alice.profile.member_set.all():
@@ -90,7 +90,7 @@ class ProfileTestCase(BaseTestCase):
 
         form = {"remove_team_member": "1", "email": "bob@example.org"}
         r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 200
+        self.assertEqual(r.status_code, 200)
 
         self.assertEqual(Member.objects.count(), 0)
 
@@ -102,7 +102,7 @@ class ProfileTestCase(BaseTestCase):
 
         form = {"set_team_name": "1", "team_name": "Alpha Team"}
         r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 200
+        self.assertEqual(r.status_code, 200)
 
         self.alice.profile.refresh_from_db()
         self.assertEqual(self.alice.profile.team_name, "Alpha Team")
@@ -123,3 +123,20 @@ class ProfileTestCase(BaseTestCase):
         # to user's default team.
         self.bobs_profile.refresh_from_db()
         self.assertEqual(self.bobs_profile.current_team, self.bobs_profile)
+
+    def test_it_sends_change_email_link(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"change_email": "1"}
+        r = self.client.post("/accounts/profile/", form)
+        assert r.status_code == 302
+
+        # profile.token should be set now
+        self.alice.profile.refresh_from_db()
+        token = self.alice.profile.token
+        self.assertTrue(len(token) > 10)
+
+        # And an email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+        expected_subject = "Change email address on %s" % settings.SITE_NAME
+        self.assertEqual(mail.outbox[0].subject, expected_subject)

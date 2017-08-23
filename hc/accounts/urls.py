@@ -7,8 +7,8 @@ urlpatterns = [
     url(r'^login_link_sent/$',
         views.login_link_sent, name="hc-login-link-sent"),
 
-    url(r'^set_password_link_sent/$',
-        views.set_password_link_sent, name="hc-set-password-link-sent"),
+    url(r'^link_sent/$',
+        views.link_sent, name="hc-link-sent"),
 
     url(r'^check_token/([\w-]+)/([\w-]+)/$',
         views.check_token, name="hc-check-token"),
@@ -24,8 +24,13 @@ urlpatterns = [
     url(r'^set_password/([\w-]+)/$',
         views.set_password, name="hc-set-password"),
 
+    url(r'^change_email/done/$',
+        views.change_email_done, name="hc-change-email-done"),
+
+    url(r'^change_email/([\w-]+)/$',
+        views.change_email, name="hc-change-email"),
+
    url(r'^switch_team/([\w-]+)/$',
         views.switch_team, name="hc-switch-team"),
-
 
 ]

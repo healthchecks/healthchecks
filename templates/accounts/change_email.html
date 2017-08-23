@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load hc_extras %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="hc-dialog">
+            <h1>Change Account's Email Address</h1>
+            <div class="dialog-body">
+                <p>
+                    Your account's email address is used for sending
+                    the sign-in links and monthly reports.
+
+                    <strong>
+                        Make sure you can receive emails at the new address.
+                    </strong>
+
+                    Otherwise, you may get locked out of
+                    your {% site_name %} account.
+                </p>
+
+                {% if request.user.has_usable_password %}
+                <p>
+                    Note: Changing the email address will also
+                    <strong>reset your current password</strong>
+                    and log you out.
+                </p>
+                {% endif %}
+            </div>
+
+            <form class="form-horizontal" method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Current Email</label>
+                    <div class="col-sm-9">
+                        <input
+                            type="text"
+                            class="form-control"
+                            disabled
+                            value="{{ request.user.email }}">
+                    </div>
+                </div>
+
+                <div class="form-group {{ form.email.css_classes }}">
+                    <label for="ce-email" class="col-sm-3 control-label">New Email</label>
+                    <div class="col-sm-9">
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="ce-email"
+                            name="email"
+                            placeholder="you@example.org">
+                            {% if form.email.errors %}
+                            <div class="help-block">
+                                {{ form.email.errors|join:"" }}
+                            </div>
+                            {% endif %}
+
+                    </div>
+                </div>
+
+                <div class="clearfix">
+                    <button type="submit" class="btn btn-lg btn-primary pull-right">
+                        Change Email
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

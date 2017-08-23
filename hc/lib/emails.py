@@ -44,6 +44,10 @@ def set_password(to, ctx):
     send("set-password", to, ctx)
 
 
+def change_email(to, ctx):
+    send("change-email", to, ctx)
+
+
 def alert(to, ctx, headers={}):
     send("alert", to, ctx, headers)
 

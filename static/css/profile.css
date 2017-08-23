@@ -1,0 +1,18 @@
+.panel-success .panel-footer {
+    background: #dff0d8;
+    color: #3c763d;
+    font-size: small;
+    text-align: center;
+    border-top: 0;
+    padding: 6px 15px;
+}
+
+.panel-info .panel-footer {
+    background: #d9edf7;
+    color: #31708f;
+    font-size: small;
+    text-align: center;
+    border-top: 0;
+    padding: 8px 15px;
+}
+

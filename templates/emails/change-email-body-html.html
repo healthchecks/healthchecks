@@ -1,0 +1,13 @@
+{% extends "emails/base.html" %}
+{% load hc_extras %}
+
+{% block content %}
+Hello,<br />
+To change the email address for your account on {% site_name %}, please press
+the button below:</p>
+{% endblock %}
+
+{% block content_more %}
+Regards,<br />
+The {% escaped_site_name %} Team
+{% endblock %}
