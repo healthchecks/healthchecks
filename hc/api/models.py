@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import time
 import uuid
 from datetime import datetime, timedelta as td
 
@@ -14,6 +15,7 @@ from django.urls import reverse
 from django.utils import timezone
 from hc.api import transports
 from hc.lib import emails
+import requests
 
 STATUSES = (
     ("up", "Up"),
@@ -376,6 +378,37 @@ class Channel(models.Model):
         assert self.kind == "telegram"
         doc = json.loads(self.value)
         return doc.get("name")
+
+    def refresh_hipchat_access_token(self):
+        assert self.kind == "hipchat"
+        if not self.value.startswith("{"):
+            return  # Don't have OAuth credentials
+
+        doc = json.loads(self.value)
+        if time.time() < doc.get("expires_at", 0):
+            return  # Current access token is still valid
+
+        url = "https://api.hipchat.com/v2/oauth/token"
+        auth = (doc["oauthId"], doc["oauthSecret"])
+        r = requests.post(url, auth=auth, data={
+            "grant_type": "client_credentials",
+            "scope": "send_notification"
+        })
+
+        doc.update(r.json())
+        doc["expires_at"] = int(time.time()) + doc["expires_in"] - 300
+        self.value = json.dumps(doc)
+        self.save()
+
+    @property
+    def hipchat_webhook_url(self):
+        assert self.kind == "hipchat"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        tmpl = "https://api.hipchat.com/v2/room/%s/notification?auth_token=%s"
+        return tmpl % (doc["roomId"], doc.get("access_token"))
 
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()

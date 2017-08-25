@@ -5,6 +5,7 @@
 .channels-table .channel-row > td {
     padding-top: 10px;
     padding-bottom: 10px;
+    vertical-align: middle;
 }
 
 .channels-table .value-cell {
@@ -166,7 +167,6 @@ table.channels-table > tbody > tr > th {
 }
 
 .ai-guide-screenshot {
-    border: ;
     max-width: 100%;
     border: 6px solid #EEE;
 }

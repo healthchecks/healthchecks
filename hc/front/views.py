@@ -6,11 +6,12 @@ import json
 from croniter import croniter
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.db.models import Count
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
-                         HttpResponseForbidden)
+                         HttpResponseForbidden, JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -552,22 +553,67 @@ def add_slack_btn(request):
     return redirect("hc-channels")
 
 
-@login_required
 def add_hipchat(request):
     if request.method == "POST":
-        form = AddUrlForm(request.POST)
-        if form.is_valid():
-            channel = Channel(user=request.team.user, kind="hipchat")
-            channel.value = form.cleaned_data["value"]
-            channel.save()
+        username = request.team.user.username
+        state = signing.TimestampSigner().sign(username)
+        capabilities = settings.SITE_ROOT + reverse("hc-hipchat-capabilities")
 
-            channel.assign_all_checks()
-            return redirect("hc-channels")
-    else:
-        form = AddUrlForm()
+        url = "https://www.hipchat.com/addons/install?url=%s&relayState=%s" % \
+            (capabilities, state)
 
-    ctx = {"page": "channels", "form": form}
+        return redirect(url)
+
+    ctx = {"page": "channels"}
     return render(request, "integrations/add_hipchat.html", ctx)
+
+
+def hipchat_capabilities(request):
+    return JsonResponse({
+        "name": settings.SITE_NAME,
+        "description": "Get Notified When Your Cron Jobs Fail",
+        "key": "io.healthchecks.hipchat",
+        "links": {
+            "homepage": settings.SITE_ROOT,
+            "self": settings.SITE_ROOT + reverse("hc-hipchat-capabilities")
+        },
+        "capabilities": {
+            "installable": {
+                "allowGlobal": False,
+                "allowRoom": True,
+                "callbackUrl":
+                    settings.SITE_ROOT + reverse("hc-hipchat-callback"),
+                "installedUrl":
+                    settings.SITE_ROOT + reverse("hc-channels") + "?added=hipchat"
+            },
+            "hipchatApiConsumer": {
+                "scopes": [
+                    "send_notification"
+                ]
+            }
+        }
+    })
+
+
+@csrf_exempt
+@require_POST
+def hipchat_callback(request):
+    doc = json.loads(request.body.decode("utf-8"))
+    try:
+        signer = signing.TimestampSigner()
+        username = signer.unsign(doc.get("relayState"), max_age=300)
+    except signing.BadSignature:
+        return HttpResponseBadRequest()
+
+    channel = Channel(kind="hipchat")
+    channel.user = User.objects.get(username=username)
+    channel.value = json.dumps(doc)
+    channel.save()
+
+    channel.refresh_hipchat_access_token()
+    channel.assign_all_checks()
+
+    return HttpResponse()
 
 
 @login_required

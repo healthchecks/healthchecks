@@ -9,17 +9,64 @@
 <div class="col-sm-12">
     <h1>HipChat</h1>
 
-    <p>If your team uses <a href="https://www.hipchat.com/">HipChat</a>,
-    you can set up {% site_name %} to post status updates directly to an
-    appropriate HipChat room.</p>
+    <div class="jumbotron">
+        {% if request.user.is_authenticated %}
+        <p>If your team uses <a href="https://www.hipchat.com/">HipChat</a>,
+        you can set up {% site_name %} to post status updates directly to an
+        appropriate HipChat room.</p>
+
+        <div class="text-center">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-lg btn-primary">
+                    Install HipChat Integration
+                </button>
+            </form>
+        </div>
+
+        {% else %}
+        <p>
+        {% site_name %} is a <strong>free</strong> and
+        <a href="https://github.com/healthchecks/healthchecks">open source</a>
+        service for monitoring your cron jobs, background processes and
+        scheduled tasks. Before adding HipChat integration, please log into
+        {% site_name %}:</p>
+
+        <div class="text-center">
+        <form class="form-inline" action="{% url 'hc-login' %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <div class="input-group input-group-lg">
+                    <div class="input-group-addon">@</div>
+                    <input
+                        type="email"
+                        class="form-control"
+                        name="email"
+                        autocomplete="email"
+                        placeholder="Email">
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-lg btn-primary pull-right">
+                    Log In
+                </button>
+            </div>
+        </form>
+        </div>
+        {% endif %}
+    </div>
 
     <h2>Setup Guide</h2>
+
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">1</span>
-            Log into your HipChat account and
-            pick an appropriate room. From the options menu
-            select <strong>Integrations...</strong>
+            <span class="step-no">2</span>
+            <p>
+                After {% if request.user.is_authenticated %}{% else %}logging in and{% endif %}
+                clicking on "Install HipChat Integration", you will be
+                asked to log into HipChat.
+            </p>
         </div>
         <div class="col-sm-6">
             <img
@@ -28,16 +75,13 @@
                 src="{% static 'img/integrations/setup_hipchat_1.png' %}">
         </div>
     </div>
+
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">2</span>
+            <span class="step-no">3</span>
             <p>
-                From the list of available integrations, select
-                <strong>Build Your Own</strong>. It's at the very top.
-            </p>
-            <p>
-                Give it a descriptive name
-                and click <strong>Create</strong>.
+                Next, HipChat will let you select the chat room
+                for receiving {% site_name %} notifications.
             </p>
         </div>
         <div class="col-sm-6">
@@ -45,13 +89,20 @@
                 class="ai-guide-screenshot"
                 alt="Screenshot"
                 src="{% static 'img/integrations/setup_hipchat_2.png' %}">
-        </div>    </div>
+        </div>
+    </div>
 
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">3</span>
-            <p>Copy the displayed <strong>URL</strong> and paste it down below.</p>
-            <p>Save the integration, and it's done!</p>
+            <span class="step-no">4</span>
+            <p>
+                As the final step, HipChat will show you the permissions
+                requested by {% site_name %}. There's only one permission
+                needed–"Send Notification". After clicking on "Approve"
+                you will be redirected back to
+                "Integrations" page on {% site_name %} and see
+                the new integration!
+            </p>
         </div>
         <div class="col-sm-6">
             <img
@@ -61,35 +112,6 @@
         </div>
     </div>
 
-
-    <h2>Integration Settings</h2>
-
-    <form method="post" class="form-horizontal" action="{% url 'hc-add-hipchat' %}">
-        {% csrf_token %}
-        <div class="form-group {{ form.value.css_classes }}">
-            <label for="callback-url" class="col-sm-2 control-label">Callback URL</label>
-            <div class="col-sm-10">
-                <input
-                    id="callback-url"
-                    type="text"
-                    class="form-control"
-                    name="value"
-                    placeholder="https://"
-                    value="{{ form.value.value|default:"" }}">
-
-                {% if form.value.errors %}
-                <div class="help-block">
-                    {{ form.value.errors|join:"" }}
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Save Integration</button>
-            </div>
-        </div>
-    </form>
 </div>
 </div>
 {% endblock %}

@@ -89,6 +89,8 @@
                     <span class="preposition">user</span>
                     {% endif %}
                     {{ ch.telegram_name }}
+                {% elif ch.kind == "hipchat" %}
+                    {{ ch.hipchat_webhook_url }}
                 {% else %}
                     {{ ch.value }}
                 {% endif %}

@@ -175,7 +175,9 @@ class HipChat(HttpTransport):
             "message": text,
             "color": "green" if check.status == "up" else "red",
         }
-        return self.post(self.channel.value, json=payload)
+
+        self.channel.refresh_hipchat_access_token()
+        return self.post(self.channel.hipchat_webhook_url, json=payload)
 
 
 class OpsGenie(HttpTransport):

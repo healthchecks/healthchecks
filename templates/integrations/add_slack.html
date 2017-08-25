@@ -23,11 +23,11 @@
 
         {% else %}
         <p>
-        healthchecks.io is a <strong>free</strong> and
+        {% site_name %} is a <strong>free</strong> and
         <a href="https://github.com/healthchecks/healthchecks">open source</a>
         service for monitoring your cron jobs, background processes and
         scheduled tasks. Before adding Slack integration, please log into
-            {% site_root %}:</p>
+        {% site_name %}:</p>
 
         <div class="text-center">
         <form class="form-inline" action="{% url 'hc-login' %}" method="post">
