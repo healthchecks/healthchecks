@@ -569,30 +569,8 @@ def add_hipchat(request):
 
 
 def hipchat_capabilities(request):
-    return JsonResponse({
-        "name": settings.SITE_NAME,
-        "description": "Get Notified When Your Cron Jobs Fail",
-        "key": "io.healthchecks.hipchat",
-        "links": {
-            "homepage": settings.SITE_ROOT,
-            "self": settings.SITE_ROOT + reverse("hc-hipchat-capabilities")
-        },
-        "capabilities": {
-            "installable": {
-                "allowGlobal": False,
-                "allowRoom": True,
-                "callbackUrl":
-                    settings.SITE_ROOT + reverse("hc-hipchat-callback"),
-                "installedUrl":
-                    settings.SITE_ROOT + reverse("hc-channels") + "?added=hipchat"
-            },
-            "hipchatApiConsumer": {
-                "scopes": [
-                    "send_notification"
-                ]
-            }
-        }
-    })
+    return render(request, "integrations/hipchat_capabilities.json", {},
+                  content_type="application/json")
 
 
 @csrf_exempt

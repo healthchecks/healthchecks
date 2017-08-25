@@ -1,0 +1,55 @@
+{% load hc_extras humanize staticfiles %}
+{
+    "message": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
+    {% if check.status == "up" %}
+    "color": "green",
+    {% else %}
+    "color": "red",
+    {% endif %}
+    "card": {
+        "style": "application",
+        "url": "{% site_root %}{% url 'hc-log' check.code %}",
+        "format": "medium",
+        "id": "{{ check.code }}",
+        "title": "{{ check.name_then_code|escapejs }}",
+        "icon": {
+            {% if check.status == "up" %}
+                "url": "{% site_root %}{% static 'img/up.png' %}"
+            {% else %}
+                "url": "{% site_root %}{% static 'img/down.png' %}"
+            {% endif %}
+        },
+        "attributes": [
+            {% if check.kind == "simple" %}
+                {"label": "Period",
+                 "value": {"label": "{{ check.timeout|hc_duration }}"}
+                },
+            {% elif check.kind == "cron" %}
+                {"label": "Schedule",
+                 "value": {"label": "{{ check.schedule|escapejs }}"}
+                },
+            {% endif %}
+
+            {"label": "Last Ping",
+             {% if check.last_ping %}
+               "value": {"label": "{{ check.last_ping|naturaltime }}"}
+             {% else %}
+                "value": {"label": "Never"}
+             {% endif %}
+            },
+
+            {% if check.tags_list %}
+                {"label": "Tags",
+                 "value": {"label": "{{ check.tags_list|join:", " }}"}
+                },
+            {% endif %}
+
+            {"label": "Total Pings",
+             "value": {"label": "{{ check.n_pings }}"}
+            }
+        ],
+        "activity": {
+            "html": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}."
+        }
+    }
+}

@@ -170,12 +170,8 @@ class Slack(HttpTransport):
 
 class HipChat(HttpTransport):
     def notify(self, check):
-        text = tmpl("hipchat_message.html", check=check)
-        payload = {
-            "message": text,
-            "color": "green" if check.status == "up" else "red",
-        }
-
+        text = tmpl("hipchat_message.json", check=check)
+        payload = json.loads(text)
         self.channel.refresh_hipchat_access_token()
         return self.post(self.channel.hipchat_webhook_url, json=payload)
 
