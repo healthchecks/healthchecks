@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 class ChangeEmailTestCase(BaseTestCase):
 
     def test_it_shows_form(self):
-        self.profile.token = make_password("foo")
+        self.profile.token = make_password("foo", "change-email")
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -15,7 +15,7 @@ class ChangeEmailTestCase(BaseTestCase):
         self.assertContains(r, "Change Account's Email Address")
 
     def test_it_changes_password(self):
-        self.profile.token = make_password("foo")
+        self.profile.token = make_password("foo", "change-email")
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -28,7 +28,7 @@ class ChangeEmailTestCase(BaseTestCase):
         self.assertFalse(self.alice.has_usable_password())
 
     def test_it_requires_unique_email(self):
-        self.profile.token = make_password("foo")
+        self.profile.token = make_password("foo", "change-email")
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")

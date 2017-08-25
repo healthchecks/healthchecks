@@ -4,7 +4,7 @@ import uuid
 from datetime import timedelta
 
 from django.conf import settings
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from django.core import signing
 from django.db import models
@@ -54,11 +54,17 @@ class Profile(models.Model):
     def __str__(self):
         return self.team_name or self.user.email
 
-    def send_instant_login_link(self, inviting_profile=None):
+    def prepare_token(self, salt):
         token = str(uuid.uuid4())
-        self.token = make_password(token)
+        self.token = make_password(token, salt)
         self.save()
+        return token
 
+    def check_token(self, token, salt):
+        return salt in self.token and check_password(token, self.token)
+
+    def send_instant_login_link(self, inviting_profile=None):
+        token = self.prepare_token("login")
         path = reverse("hc-check-token", args=[self.user.username, token])
         ctx = {
             "button_text": "Log In",
@@ -68,10 +74,7 @@ class Profile(models.Model):
         emails.login(self.user.email, ctx)
 
     def send_set_password_link(self):
-        token = str(uuid.uuid4())
-        self.token = make_password(token)
-        self.save()
-
+        token = self.prepare_token("set-password")
         path = reverse("hc-set-password", args=[token])
         ctx = {
             "button_text": "Set Password",
@@ -80,10 +83,7 @@ class Profile(models.Model):
         emails.set_password(self.user.email, ctx)
 
     def send_change_email_link(self):
-        token = str(uuid.uuid4())
-        self.token = make_password(token)
-        self.save()
-
+        token = self.prepare_token("change-email")
         path = reverse("hc-change-email", args=[token])
         ctx = {
             "button_text": "Change Email",

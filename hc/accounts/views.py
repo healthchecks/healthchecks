@@ -7,7 +7,6 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
@@ -288,7 +287,7 @@ def badges(request):
 @login_required
 def set_password(request, token):
     profile = request.user.profile
-    if not check_password(token, profile.token):
+    if not profile.check_token(token, "set-password"):
         return HttpResponseBadRequest()
 
     if request.method == "POST":
@@ -315,7 +314,7 @@ def set_password(request, token):
 @login_required
 def change_email(request, token):
     profile = request.user.profile
-    if not check_password(token, profile.token):
+    if not profile.check_token(token, "change-email"):
         return HttpResponseBadRequest()
 
     if request.method == "POST":

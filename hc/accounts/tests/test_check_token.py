@@ -6,7 +6,7 @@ class CheckTokenTestCase(BaseTestCase):
 
     def setUp(self):
         super(CheckTokenTestCase, self).setUp()
-        self.profile.token = make_password("secret-token")
+        self.profile.token = make_password("secret-token", "login")
         self.profile.save()
 
     def test_it_shows_form(self):

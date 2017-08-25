@@ -1,4 +1,3 @@
-from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from hc.accounts.models import Profile
 
@@ -22,7 +21,7 @@ class ProfileBackend(BasicBackend):
         except Profile.DoesNotExist:
             return None
 
-        if not check_password(token, profile.token):
+        if not profile.check_token(token, "login"):
             return None
 
         return profile.user
