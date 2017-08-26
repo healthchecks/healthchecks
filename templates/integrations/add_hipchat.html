@@ -61,7 +61,7 @@
 
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">2</span>
+            <span class="step-no">1</span>
             <p>
                 After {% if request.user.is_authenticated %}{% else %}logging in and{% endif %}
                 clicking on "Install HipChat Integration", you will be
@@ -78,7 +78,7 @@
 
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">3</span>
+            <span class="step-no">2</span>
             <p>
                 Next, HipChat will let you select the chat room
                 for receiving {% site_name %} notifications.
@@ -94,12 +94,26 @@
 
     <div class="row ai-step">
         <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>
+                Next, HipChat will show you the permissions
+                requested by {% site_name %}. There's only one permission
+                needed: "Send Notification".
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_hipchat_3.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
             <span class="step-no">4</span>
             <p>
-                As the final step, HipChat will show you the permissions
-                requested by {% site_name %}. There's only one permission
-                needed–"Send Notification". After clicking on "Approve"
-                you will be redirected back to
+                That is all! You will now be redirected back to
                 "Integrations" page on {% site_name %} and see
                 the new integration!
             </p>
@@ -108,7 +122,7 @@
             <img
                 class="ai-guide-screenshot"
                 alt="Screenshot"
-                src="{% static 'img/integrations/setup_hipchat_3.png' %}">
+                src="{% static 'img/integrations/setup_hipchat_4.png' %}">
         </div>
     </div>
 

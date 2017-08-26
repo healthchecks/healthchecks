@@ -1,6 +1,5 @@
 from collections import Counter
 from datetime import datetime, timedelta as td
-from itertools import tee
 import json
 
 from croniter import croniter
@@ -11,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.db.models import Count
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
-                         HttpResponseForbidden, JsonResponse)
+                         HttpResponseForbidden)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -32,14 +31,6 @@ from hc.lib import jsonschema
 from pytz import all_timezones
 from pytz.exceptions import UnknownTimeZoneError
 import requests
-
-
-# from itertools recipes:
-def pairwise(iterable):
-    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
-    a, b = tee(iterable)
-    next(b, None)
-    return zip(a, b)
 
 
 @login_required
@@ -139,6 +130,7 @@ def docs_api(request):
     }
 
     return render(request, "front/docs_api.html", ctx)
+
 
 def docs_cron(request):
     ctx = {"page": "docs", "section": "cron"}
@@ -358,8 +350,10 @@ def channels(request):
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
-        "enable_sms": settings.TWILIO_AUTH is not None
+        "enable_sms": settings.TWILIO_AUTH is not None,
+        "added": request.GET.get("added")
     }
+
     return render(request, "front/channels.html", ctx)
 
 

@@ -47,3 +47,10 @@ class ChannelsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "fake-key")
         self.assertContains(r, "(normal priority)")
+
+    def test_it_shows_added_message(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/?added=hipchat")
+
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "The HipChat integration has been added!")
