@@ -7,9 +7,12 @@
     <meta name="description" content="Monitor and Get Notified When Your Cron Jobs Fail. Free alternative to Cronitor and Dead Man's Snitch.">
     <meta name="keywords" content="monitor cron jobs daemon background worker service cronjob monitoring crontab alert notify cronitor deadmanssnitch webhook">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-title" content="{% site_name %}">
+    <meta name="application-name" content="{% site_name %}">
 
     {% load compress staticfiles %}
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-180.png' %}">
 
     {% compress css %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
