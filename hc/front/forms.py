@@ -31,11 +31,6 @@ class CronForm(forms.Form):
     grace = forms.IntegerField(min_value=1, max_value=43200)
 
 
-class AddPdForm(forms.Form):
-    error_css_class = "has-error"
-    value = forms.CharField(max_length=32)
-
-
 class AddOpsGenieForm(forms.Form):
     error_css_class = "has-error"
     value = forms.CharField(max_length=40)

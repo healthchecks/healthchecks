@@ -162,6 +162,9 @@ TWILIO_ACCOUNT = None
 TWILIO_AUTH = None
 TWILIO_FROM = None
 
+# PagerDuty
+PD_VENDOR_KEY = None
+
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:

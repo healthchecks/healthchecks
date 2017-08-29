@@ -24,7 +24,7 @@ from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
                            Ping, Notification)
 from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
-                            TimeoutForm, AddUrlForm, AddPdForm, AddEmailForm,
+                            TimeoutForm, AddUrlForm, AddEmailForm,
                             AddOpsGenieForm, CronForm, AddSmsForm)
 from hc.front.schemas import telegram_callback
 from hc.lib import jsonschema
@@ -99,6 +99,7 @@ def index(request):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_pd": settings.PD_VENDOR_KEY is not None,
         "registration_open": settings.REGISTRATION_OPEN
     }
 
@@ -351,6 +352,7 @@ def channels(request):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_pd": settings.PD_VENDOR_KEY is not None,
         "added": request.GET.get("added")
     }
 
@@ -455,31 +457,13 @@ def add_webhook(request):
     return render(request, "integrations/add_webhook.html", ctx)
 
 
-@login_required
-def add_pd(request):
-    if request.method == "POST":
-        form = AddPdForm(request.POST)
-        if form.is_valid():
-            channel = Channel(user=request.team.user, kind="pd")
-            channel.value = form.cleaned_data["value"]
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels")
-    else:
-        form = AddPdForm()
-
-    ctx = {"page": "channels", "form": form}
-    return render(request, "integrations/add_pd.html", ctx)
-
-
 def _prepare_state(request, session_key):
     state = get_random_string()
     request.session[session_key] = state
     return state
 
 
-def _get_validated_code(request, session_key):
+def _get_validated_code(request, session_key, key="code"):
     if session_key not in request.session:
         return None
 
@@ -488,7 +472,46 @@ def _get_validated_code(request, session_key):
     if session_state is None or session_state != request_state:
         return None
 
-    return request.GET.get("code")
+    return request.GET.get(key)
+
+
+def add_pd(request, state=None):
+    if settings.PD_VENDOR_KEY is None:
+        raise Http404("pagerduty integration is not available")
+
+    if state and request.user.is_authenticated():
+        if "pd" not in request.session:
+            return HttpResponseBadRequest()
+
+        session_state = request.session.pop("pd")
+        if session_state != state:
+            return HttpResponseBadRequest()
+
+        if request.GET.get("error") == "cancelled":
+            messages.warning(request, "PagerDuty setup was cancelled")
+            return redirect("hc-channels")
+
+        channel = Channel()
+        channel.user = request.team.user
+        channel.kind = "pd"
+        channel.value = json.dumps({
+            "service_key": request.GET.get("service_key"),
+            "account": request.GET.get("account")
+        })
+        channel.save()
+        channel.assign_all_checks()
+        messages.success(request, "The PagerDuty integration has been added!")
+        return redirect("hc-channels")
+
+    state = _prepare_state(request, "pd")
+    callback = settings.SITE_ROOT + reverse("hc-add-pd-state", args=[state])
+    connect_url = "https://connect.pagerduty.com/connect?" + urlencode({
+        "vendor": settings.PD_VENDOR_KEY,
+        "callback": callback
+    })
+
+    ctx = {"page": "channels", "connect_url": connect_url}
+    return render(request, "integrations/add_pd.html", ctx)
 
 
 def add_slack(request):

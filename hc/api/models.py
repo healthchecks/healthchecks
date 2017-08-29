@@ -410,6 +410,22 @@ class Channel(models.Model):
         tmpl = "https://api.hipchat.com/v2/room/%s/notification?auth_token=%s"
         return tmpl % (doc["roomId"], doc.get("access_token"))
 
+    @property
+    def pd_service_key(self):
+        assert self.kind == "pd"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        return doc["service_key"]
+
+    @property
+    def pd_account(self):
+        assert self.kind == "pd"
+        if self.value.startswith("{"):
+            doc = json.loads(self.value)
+            return doc["account"]
+
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()
 

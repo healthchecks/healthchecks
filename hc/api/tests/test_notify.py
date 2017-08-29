@@ -178,6 +178,20 @@ class NotifyTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         payload = kwargs["json"]
         self.assertEqual(payload["event_type"], "trigger")
+        self.assertEqual(payload["service_key"], "123")
+
+    @patch("hc.api.transports.requests.request")
+    def test_pd_complex(self, mock_post):
+        self._setup_data("pd", json.dumps({"service_key": "456"}))
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(payload["event_type"], "trigger")
+        self.assertEqual(payload["service_key"], "456")
 
     @patch("hc.api.transports.requests.request")
     def test_slack(self, mock_post):

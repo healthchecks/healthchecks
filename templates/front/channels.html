@@ -40,8 +40,12 @@
                         <span class="channel-unconfirmed">(unconfirmed)</span>
                     {% endif %}
                 {% elif ch.kind == "pd" %}
-                    <span class="preposition">API key</span>
-                    {{ ch.value }}
+                    {% if ch.pd_account %}
+                        <span class="preposition">account</span>
+                        {{ ch.pd_account}},
+                    {% endif %}
+                    <span class="preposition">service key</span>
+                    {{ ch.pd_service_key }}
                 {% elif ch.kind == "opsgenie" %}
                     <span class="preposition">API key</span>
                     {{ ch.value }}
@@ -215,6 +219,7 @@
             <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+        {% if enable_pd %}
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />
@@ -224,6 +229,7 @@
 
             <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
         <li>
             <img src="{% static 'img/integrations/hipchat.png' %}"
                 class="icon" alt="HipChat icon" />
