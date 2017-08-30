@@ -6,7 +6,7 @@ class BasicBackend(object):
 
     def get_user(self, user_id):
         try:
-            return User.objects.get(pk=user_id)
+            return User.objects.select_related("profile").get(pk=user_id)
         except User.DoesNotExist:
             return None
 

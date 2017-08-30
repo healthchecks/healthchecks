@@ -353,7 +353,8 @@ def channels(request):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
-        "added": request.GET.get("added")
+        "added": request.GET.get("added"),
+        "use_payments": settings.USE_PAYMENTS
     }
 
     return render(request, "front/channels.html", ctx)

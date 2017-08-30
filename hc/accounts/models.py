@@ -20,8 +20,9 @@ def month(dt):
 
 class ProfileManager(models.Manager):
     def for_user(self, user):
-        profile = self.filter(user=user).first()
-        if profile is None:
+        try:
+            return user.profile
+        except Profile.DoesNotExist:
             profile = Profile(user=user, team_access_allowed=user.is_superuser)
             if not settings.USE_PAYMENTS:
                 # If not using payments, set high limits
@@ -29,7 +30,7 @@ class ProfileManager(models.Manager):
                 profile.sms_limit = 500
 
             profile.save()
-        return profile
+            return profile
 
 
 class Profile(models.Model):
@@ -53,6 +54,13 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.team_name or self.user.email
+
+    def team(self):
+        # compare ids to avoid SQL queries
+        if self.current_team_id and self.current_team_id != self.id:
+            return self.current_team
+
+        return self
 
     def prepare_token(self, salt):
         token = str(uuid.uuid4())
