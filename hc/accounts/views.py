@@ -62,6 +62,15 @@ def _associate_demo_check(request, user):
     del request.session["welcome_code"]
 
 
+def _ensure_own_team(request):
+    """ Make sure user is switched to their own team. """
+
+    if request.team != request.profile:
+        request.team = request.profile
+        request.profile.current_team = request.profile
+        request.profile.save()
+
+
 def login(request, show_password=False):
     bad_credentials = False
     if request.method == 'POST':
@@ -149,12 +158,8 @@ def check_token(request, username, token):
 
 @login_required
 def profile(request):
-    profile = request.user.profile
-    # Switch user back to its own team
-    if request.team != profile:
-        request.team = profile
-        profile.current_team = profile
-        profile.save()
+    _ensure_own_team(request)
+    profile = request.profile
 
     ctx = {
         "page": "profile",
@@ -230,12 +235,8 @@ def profile(request):
 
 @login_required
 def notifications(request):
-    profile = request.user.profile
-    # Switch user back to its default team
-    if profile.current_team_id != profile.id:
-        request.team = profile
-        profile.current_team_id = profile.id
-        profile.save()
+    _ensure_own_team(request)
+    profile = request.profile
 
     if request.method == "POST":
         form = ReportSettingsForm(request.POST)
@@ -254,18 +255,13 @@ def notifications(request):
 
 @login_required
 def badges(request):
-    profile = request.user.profile
-    # Switch user back to its own team
-    if request.team != profile:
-        request.team = profile
-        profile.current_team = profile
-        profile.save()
+    _ensure_own_team(request)
 
     tags = set()
     for check in Check.objects.filter(user=request.team.user):
         tags.update(check.tags_list())
 
-    username = request.team.user.username
+    username = request.user.username
     urls = []
     for tag in sorted(tags, key=lambda s: s.lower()):
         if not re.match("^[\w-]+$", tag):
@@ -286,8 +282,7 @@ def badges(request):
 
 @login_required
 def set_password(request, token):
-    profile = request.user.profile
-    if not profile.check_token(token, "set-password"):
+    if not request.profile.check_token(token, "set-password"):
         return HttpResponseBadRequest()
 
     if request.method == "POST":
@@ -297,8 +292,8 @@ def set_password(request, token):
             request.user.set_password(password)
             request.user.save()
 
-            profile.token = ""
-            profile.save()
+            request.profile.token = ""
+            request.profile.save()
 
             # Setting a password logs the user out, so here we
             # log them back in.
@@ -313,8 +308,7 @@ def set_password(request, token):
 
 @login_required
 def change_email(request, token):
-    profile = request.user.profile
-    if not profile.check_token(token, "change-email"):
+    if not request.profile.check_token(token, "change-email"):
         return HttpResponseBadRequest()
 
     if request.method == "POST":
@@ -324,8 +318,8 @@ def change_email(request, token):
             request.user.set_unusable_password()
             request.user.save()
 
-            profile.token = ""
-            profile.save()
+            request.profile.token = ""
+            request.profile.save()
 
             return redirect("hc-change-email-done")
     else:
@@ -345,8 +339,9 @@ def unsubscribe_reports(request, username):
         return HttpResponseBadRequest()
 
     user = User.objects.get(username=username)
-    user.profile.reports_allowed = False
-    user.profile.save()
+    profile = Profile.objects.for_user(user)
+    profile.reports_allowed = False
+    profile.save()
 
     return render(request, "accounts/unsubscribed.html")
 
@@ -376,8 +371,8 @@ def switch_team(request, target_username):
     if not access_ok:
         return HttpResponseForbidden()
 
-    request.user.profile.current_team = other_user.profile
-    request.user.profile.save()
+    request.profile.current_team = other_user.profile
+    request.profile.save()
 
     return redirect("hc-checks")
 
