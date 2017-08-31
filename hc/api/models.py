@@ -388,8 +388,7 @@ class Channel(models.Model):
         if time.time() < doc.get("expires_at", 0):
             return  # Current access token is still valid
 
-        endpoints = requests.get(doc["capabilitiesUrl"])
-        url = endpoints.json()["capabilities"]["oauth2Provider"]["tokenUrl"]
+        url = "https://api.hipchat.com/v2/oauth/token"
         auth = (doc["oauthId"], doc["oauthSecret"])
         r = requests.post(url, auth=auth, data={
             "grant_type": "client_credentials",

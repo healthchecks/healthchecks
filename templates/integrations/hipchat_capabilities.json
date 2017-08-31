@@ -11,8 +11,7 @@
         "installable": {
             "allowGlobal": false,
             "allowRoom": true,
-            "callbackUrl": "{% site_root %}{% url 'hc-hipchat-callback'%}",
-            "installedUrl": "{% site_root %}{% url 'hc-channels'%}?added=hipchat"
+            "installedUrl": "{% site_root %}{% url 'hc-add-hipchat'%}"
         },
         "hipchatApiConsumer": {
             "avatar": "{% site_root %}{% static 'img/logo-512-green.png' %}",

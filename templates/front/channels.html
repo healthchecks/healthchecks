@@ -6,16 +6,11 @@
 
 {% block content %}
 <div class="row">
-{% if messages or added %}
+{% if messages %}
 <div class="col-sm-12">
     {% for message in messages %}
         <p class="alert alert-{{ message.tags }}">{{ message }}</p>
     {% endfor %}
-    {% if added == "hipchat" %}
-        <p class="alert alert-info">
-            The HipChat integration has been added!
-        </p>
-    {% endif %}
 </div>
 {% endif %}
 

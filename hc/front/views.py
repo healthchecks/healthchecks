@@ -353,7 +353,6 @@ def channels(request):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
-        "added": request.GET.get("added"),
         "use_payments": settings.USE_PAYMENTS
     }
 
@@ -571,45 +570,40 @@ def add_slack_btn(request):
     return redirect("hc-channels")
 
 
+@login_required
 def add_hipchat(request):
-    if request.method == "POST":
-        username = request.team.user.username
-        state = signing.TimestampSigner().sign(username)
-        capabilities = settings.SITE_ROOT + reverse("hc-hipchat-capabilities")
+    if "installable_url" in request.GET:
+        url = request.GET["installable_url"]
+        assert url.startswith("https://api.hipchat.com")
+        response = requests.get(url)
+        if "oauthId" not in response.json():
+            messages.warning(request, "Something went wrong!")
+            return redirect("hc-channels")
 
-        url = "https://www.hipchat.com/addons/install?url=%s&relayState=%s" % \
-            (capabilities, state)
+        channel = Channel(kind="hipchat")
+        channel.user = request.team.user
+        channel.value = response.text
+        channel.save()
 
-        return redirect(url)
+        channel.refresh_hipchat_access_token()
+        channel.assign_all_checks()
+        messages.success(request, "The HipChat integration has been added!")
+        return redirect("hc-channels")
 
-    ctx = {"page": "channels"}
+    install_url = "https://www.hipchat.com/addons/install?" + urlencode({
+        "url": settings.SITE_ROOT + reverse("hc-hipchat-capabilities")
+    })
+
+    ctx = {
+        "page": "channels",
+        "install_url": install_url
+    }
     return render(request, "integrations/add_hipchat.html", ctx)
 
 
 def hipchat_capabilities(request):
     return render(request, "integrations/hipchat_capabilities.json", {},
                   content_type="application/json")
-
-
-@csrf_exempt
-@require_POST
-def hipchat_callback(request):
-    doc = json.loads(request.body.decode("utf-8"))
-    try:
-        signer = signing.TimestampSigner()
-        username = signer.unsign(doc.get("relayState"), max_age=300)
-    except signing.BadSignature:
-        return HttpResponseBadRequest()
-
-    channel = Channel(kind="hipchat")
-    channel.user = User.objects.get(username=username)
-    channel.value = json.dumps(doc)
-    channel.save()
-
-    channel.refresh_hipchat_access_token()
-    channel.assign_all_checks()
-
-    return HttpResponse()
 
 
 @login_required
