@@ -104,7 +104,12 @@ def _update(check, spec):
 @validate_json(schemas.check)
 def checks(request):
     if request.method == "GET":
+        tags = request.GET.getlist('tags', [])
         q = Check.objects.filter(user=request.user)
+
+        for tag in tags:
+            q = q.filter(tags__icontains=tag.strip())
+
         doc = {"checks": [check.to_dict() for check in q]}
         return JsonResponse(doc)
 
