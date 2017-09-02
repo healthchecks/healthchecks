@@ -189,7 +189,7 @@ def profile(request):
         elif "show_api_key" in request.POST:
             ctx["show_api_key"] = True
         elif "invite_team_member" in request.POST:
-            if not profile.team_access_allowed:
+            if not profile.can_invite():
                 return HttpResponseForbidden()
 
             form = InviteTeamMemberForm(request.POST)
@@ -220,9 +220,6 @@ def profile(request):
                 ctx["team_member_removed"] = email
                 ctx["team_status"] = "info"
         elif "set_team_name" in request.POST:
-            if not profile.team_access_allowed:
-                return HttpResponseForbidden()
-
             form = TeamNameForm(request.POST)
             if form.is_valid():
                 profile.team_name = form.cleaned_data["team_name"]

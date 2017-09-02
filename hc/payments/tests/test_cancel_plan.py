@@ -34,5 +34,5 @@ class CancelPlanTestCase(BaseTestCase):
         profile = Profile.objects.get(user=self.alice)
         self.assertEqual(profile.ping_log_limit, 100)
         self.assertEqual(profile.check_limit, 20)
+        self.assertEqual(profile.team_limit, 2)
         self.assertEqual(profile.sms_limit, 0)
-        self.assertFalse(profile.team_access_allowed)

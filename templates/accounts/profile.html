@@ -134,23 +134,25 @@
                         Share access to your checks and configured integrations
                         without having to share a login.
                     </p>
-                    {% if not profile.team_access_allowed %}
-                        <p>
-                            To enable team access, please upgrade to
-                            one of the <a href="{% url 'hc-pricing' %}">paid plans</a>.
-                        </p>
-                    {% endif %}
                 {% endif %}
 
                 <br />
 
-                {% if profile.team_access_allowed %}
+                {% if not profile.can_invite %}
+                <div class="alert alert-info">
+                    <strong>Team size limit reached.</strong>
+                    To invite more members to your team, please
+                    <a href="{% url 'hc-pricing' %}">upgrade your account!</a>
+                </div>
+                {% endif %}
+
                 <a
                     href="#"
                     class="btn btn-default"
                     data-toggle="modal"
                     data-target="#set-team-name-modal">Set Team Name</a>
 
+                {% if profile.can_invite %}
                 <a
                     href="#"
                     class="btn btn-primary pull-right"

@@ -28,6 +28,7 @@ class ProfileManager(models.Manager):
                 # If not using payments, set high limits
                 profile.check_limit = 500
                 profile.sms_limit = 500
+                profile.team_limit = 500
 
             profile.save()
             return profile
@@ -49,6 +50,7 @@ class Profile(models.Model):
     last_sms_date = models.DateTimeField(null=True, blank=True)
     sms_limit = models.IntegerField(default=0)
     sms_sent = models.IntegerField(default=0)
+    team_limit = models.IntegerField(default=2)
 
     objects = ProfileManager()
 
@@ -120,6 +122,9 @@ class Profile(models.Model):
         }
 
         emails.report(self.user.email, ctx)
+
+    def can_invite(self):
+        return self.member_set.count() < self.team_limit
 
     def invite(self, user):
         member = Member(team=self, user=user)

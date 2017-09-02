@@ -15,7 +15,6 @@ class BaseTestCase(TestCase):
         self.alice.save()
 
         self.profile = Profile(user=self.alice, api_key="abc")
-        self.profile.team_access_allowed = True
         self.profile.sms_limit = 50
         self.profile.save()
 
