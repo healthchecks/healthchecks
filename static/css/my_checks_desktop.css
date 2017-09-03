@@ -26,6 +26,7 @@ table.table tr > th.th-name {
 
 #checks-table td {
     vertical-align: middle;
+    border-top: 1px solid #f1f1f1;
 }
 
 #checks-table .my-checks-name {

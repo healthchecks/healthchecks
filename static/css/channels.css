@@ -6,6 +6,7 @@
     padding-top: 10px;
     padding-bottom: 10px;
     vertical-align: middle;
+    border-top: 1px solid #f1f1f1;
 }
 
 .channels-table .value-cell {
