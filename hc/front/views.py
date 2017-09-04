@@ -5,7 +5,6 @@ import json
 from croniter import croniter
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.db.models import Count
@@ -43,9 +42,6 @@ def my_checks(request):
     for check in checks:
         status = check.get_status()
         for tag in check.tags_list():
-            if tag == "":
-                continue
-
             counter[tag] += 1
 
             if status == "down":
