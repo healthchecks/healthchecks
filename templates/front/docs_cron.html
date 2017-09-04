@@ -14,7 +14,11 @@
     to parse and interpret cron expressions. Below is a showcase of
     supported syntax features.
 </p>
-
+<p>
+    <strong>Pro-tip!</strong>
+    On Unix-like operating systems, you can also easily access cron syntax
+    documentation by typing <code>man 5 crontab</code> in shell.
+</p>
 <br />
 
 <div id="cron-examples">
@@ -264,13 +268,14 @@
             <h3 class="panel-title">Ranges with a step</h3>
         </div>
         <div class="panel-body">
-            <p>Use <code>{start}/{step}</code> to define a range with a step.</p>
+            <p>Use <code>{start}-{end}/{step}</code> or <code>*/{step}</code>
+               to define a range with a step.</p>
 
             <div class="desc">"Run every quarter of an hour"</div>
 
             <table class="cron-example">
                 <tr>
-                    <th><div>0/15 <span></span></div></th>
+                    <th><div>*/15 <span></span></div></th>
                     <th><div>*</div></th>
                     <th><div>*</div></th>
                     <th><div>*</div></th>
@@ -311,7 +316,7 @@
                 </tr>
                 <tr>
                     <td colspan="5">
-                        Run every 15 minutes, starting from minute 0
+                        Run every 15 minutes
                     </td>
                 </tr>
             </table>
@@ -324,8 +329,7 @@
         </div>
         <div class="panel-body">
             <p>In the comma-separated lists you can combine not only
-            numeric values but also <code>{start}-{end}</code> and <code>{start}/{step}</code>
-            constructs.</p>
+            numeric values but also ranges.</p>
 
             <div class="desc">"Run every round hour outside office hours"</div>
 
