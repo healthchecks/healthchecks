@@ -61,14 +61,20 @@ The response may contain a JSON document with additional data.
 <div class="api-path">GET {{ SITE_ROOT }}/api/v1/checks/</div>
 
 <p>
-    Returns a list of checks. This API call takes no parameters and returns
-    a JSON document with all checks in user's account.
+    Returns a list of checks. This API call takes only optional tag querystring parameter to filter checks by their tags.
+    If no parameter provided it returns a JSON document with all checks in user's account.
 </p>
 <h3 class="api-section">Example Request</h3>
 {% include "front/snippets/list_checks_request.html" %}
 
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/list_checks_response.html" %}
+
+<h3 class="api-section">Example Request To Filter Checks By Their Tags</h3>
+{% include "front/snippets/list_checks_request_filtered.html" %}
+
+<h3 class="api-section">Example Response Of Filtered Checks</h3>
+{% include "front/snippets/list_checks_response_filtered.html" %}
 
 <!-- ********************************************************************** /-->
 

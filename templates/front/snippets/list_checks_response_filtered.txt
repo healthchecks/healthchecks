@@ -1,0 +1,18 @@
+{
+  "checks": [
+    {
+      "last_ping": null,
+      "ping_url": "PING_ENDPOINT9d17c61f-5c4f-4cab-b517-11e6b2679ced",
+      "next_ping": null,
+      "grace": 3600,
+      "name": "Api test 2",
+      "n_pings": 0,
+      "tags": "bar baz",
+      "pause_url": "SITE_ROOT/api/v1/checks/9d17c61f-5c4f-4cab-b517-11e6b2679ced/pause",
+      "tz": "UTC",
+      "schedule": "0/10 * * * *",
+      "status": "new",
+      "update_url": "SITE_ROOT/api/v1/checks/9d17c61f-5c4f-4cab-b517-11e6b2679ced"
+    }
+  ]
+}
