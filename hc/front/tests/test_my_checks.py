@@ -66,3 +66,17 @@ class MyChecksTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/")
         self.assertContains(r, "Check limit reached", status_code=200)
+
+    def test_it_saves_sort_field(self):
+        self.client.login(username="alice@example.org", password="password")
+        self.client.get("/checks/?sort=name")
+
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.sort, "name")
+
+    def test_it_ignores_bad_sort_value(self):
+        self.client.login(username="alice@example.org", password="password")
+        self.client.get("/checks/?sort=invalid")
+
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.sort, "created")

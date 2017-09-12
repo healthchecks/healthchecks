@@ -2,13 +2,29 @@
 <table id="checks-table" class="table hidden-xs">
     <tr>
         <th></th>
-        <th class="th-name">Name</th>
+        <th class="th-name">
+            {% if sort == "name" %}
+            <a href="?sort=-name">Name<span class="icon-asc"></span></a>
+            {% elif sort == "-name" %}
+            <a href="?sort=created">Name<span class="icon-desc"></span></a>
+            {% else %}
+            <a href="?sort=name" class="default">Name</span></a>
+            {% endif %}
+        </th>
         <th>Ping URL</th>
         <th class="th-period">
             Period <br />
             <span class="checks-subline">Grace</span>
         </th>
-        <th class="th-last-ping">Last Ping</th>
+        <th class="th-last-ping">
+            {% if sort == "last_ping" %}
+            <a href="?sort=created">Last Ping<span class="icon-desc"></span></a>
+            {% elif sort == "-last_ping" %}
+            <a href="?sort=last_ping">Last Ping<span class="icon-asc"></span></a>
+            {% else %}
+            <a href="?sort=-last_ping" class="default">Last Ping</span></a>
+            {% endif %}
+        </th>
         <th></th>
     </tr>
     {% for check in checks %}

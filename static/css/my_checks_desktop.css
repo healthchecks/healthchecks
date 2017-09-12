@@ -24,6 +24,18 @@ table.table tr > th.th-name {
     border-top: 0;
 }
 
+#checks-table th {
+    border-top: 0;
+}
+
+#checks-table a.default {
+    color: #333;
+}
+
+#checks-table tr:hover a.default {
+    color: #0091EA;
+}
+
 #checks-table td {
     vertical-align: middle;
     border-top: 1px solid #f1f1f1;

@@ -1,4 +1,3 @@
-from collections import Counter
 from datetime import datetime, timedelta as td
 import json
 
@@ -32,17 +31,24 @@ from pytz.exceptions import UnknownTimeZoneError
 import requests
 
 
+VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
+
+
 @login_required
 def my_checks(request):
-    q = Check.objects.filter(user=request.team.user).order_by("created")
+    if request.GET.get("sort") in VALID_SORT_VALUES:
+        request.profile.sort = request.GET["sort"]
+        request.profile.save()
+
+    q = Check.objects.filter(user=request.team.user)
+    q = q.order_by(request.profile.sort)
     checks = list(q)
 
-    counter = Counter()
-    down_tags, grace_tags = set(), set()
+    tags, down_tags, grace_tags = set(), set(), set()
     for check in checks:
         status = check.get_status()
         for tag in check.tags_list():
-            counter[tag] += 1
+            tags.add(tag)
 
             if status == "down":
                 down_tags.add(tag)
@@ -55,12 +61,13 @@ def my_checks(request):
         "page": "checks",
         "checks": checks,
         "now": timezone.now(),
-        "tags": counter.most_common(),
+        "tags": sorted(tags, key=lambda s: s.lower()),
         "down_tags": down_tags,
         "grace_tags": grace_tags,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": all_timezones,
-        "can_add_more": can_add_more
+        "can_add_more": can_add_more,
+        "sort": request.profile.sort
     }
 
     return render(request, "front/my_checks.html", ctx)

@@ -17,7 +17,7 @@
     </div>
     {% if tags %}
     <div id="my-checks-tags" class="col-sm-12">
-        {% for tag, count in tags %}
+        {% for tag in tags %}
             {% if tag in down_tags %}
                 <button class="btn btn-danger btn-xs" data-toggle="button">{{ tag }}</button>
             {% elif tag in grace_tags %}
