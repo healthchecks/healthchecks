@@ -186,29 +186,6 @@ class Check(models.Model):
     def has_confirmation_link(self):
         return "confirm" in self.last_ping_body.lower()
 
-    @classmethod
-    def check(cls, **kwargs):
-        errors = super(Check, cls).check(**kwargs)
-
-        trigger_detected = False
-        try:
-            dummy = Check(last_ping=timezone.now())
-            dummy.save()
-            dummy.refresh_from_db()
-            trigger_detected = bool(dummy.alert_after)
-            dummy.delete()
-        except:
-            pass
-
-        if trigger_detected:
-            err = Warning(
-                "Obsolete 'update_alert_after' trigger exists in database.",
-                hint="Please remove the trigger with 'manage.py droptriggers'",
-                id="hc.api.E001")
-            errors.append(err)
-
-        return errors
-
 
 class Ping(models.Model):
     n = models.IntegerField(null=True)
