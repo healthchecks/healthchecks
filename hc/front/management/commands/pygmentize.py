@@ -48,3 +48,4 @@ class Command(BaseCommand):
         _process("create_check_response", lexers.JsonLexer())
         _process("pause_check_request", lexers.BashLexer())
         _process("pause_check_response", lexers.JsonLexer())
+        _process("delete_check_request", lexers.BashLexer())

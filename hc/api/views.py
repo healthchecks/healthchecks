@@ -139,7 +139,6 @@ def checks(request):
 
 
 @csrf_exempt
-@require_POST
 @uuid_or_400
 @check_api_key
 @validate_json(schemas.check)
@@ -148,8 +147,17 @@ def update(request, code):
     if check.user != request.user:
         return HttpResponseForbidden()
 
-    _update(check, request.json)
-    return JsonResponse(check.to_dict())
+    if request.method == "POST":
+        _update(check, request.json)
+        return JsonResponse(check.to_dict())
+
+    elif request.method == "DELETE":
+        response = check.to_dict()
+        check.delete()
+        return JsonResponse(response)
+
+    # Otherwise, method not allowed
+    return HttpResponse(status=405)
 
 
 @csrf_exempt

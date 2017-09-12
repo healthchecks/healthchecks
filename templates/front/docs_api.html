@@ -6,18 +6,46 @@
 {% block docs_content %}
 
 <h2>REST API</h2>
-<p>
-This is early days for healtchecks.io REST API. For now, there's API calls to:
+<p>{% site_name %} REST API supports listing, creating,
+    updating, pausing and deleting checks in user's account.
 </p>
-<ul>
-    <li><a href="#list-checks">List existing checks</a></li>
-    <li><a href="#create-check">Create a new check</a></li>
-    <li><a href="#update-check">Update an existing check</a></li>
-    <li><a href="#pause-check">Pause monitoring of a check</a></li>
-</ul>
 
-<h2 class="rule">Authentication</h2>
-<p>Your requests to healtchecks.io REST API must authenticate using an
+<h2>API Endpoints</h2>
+<table class="table table-bordered">
+    <tr>
+        <td><a href="#list-checks">Get list of existing checks</a></td>
+        <td>
+            <code>GET {{ SITE_ROOT }}/api/v1/checks/</code>
+        </td>
+    </tr>
+    <tr>
+        <td><a href="#create-check">Create a new check</a></td>
+        <td>
+            <code>POST {{ SITE_ROOT }}/api/v1/checks/</code>
+        </td>
+    </tr>
+    <tr>
+        <td><a href="#update-check">Update an existing check</a></td>
+        <td>
+            <code>POST {{ SITE_ROOT }}/api/v1/checks/&lt;code&gt;</code>
+        </td>
+    </tr>
+    <tr>
+        <td><a href="#pause-check">Pause monitoring of a check</a></td>
+        <td>
+            <code>POST {{ SITE_ROOT }}/api/v1/checks/&lt;code&gt;/pause</code>
+        </td>
+    </tr>
+    <tr>
+        <td><a href="#delete-check">Delete check</a></td>
+        <td>
+            <code>DELETE {{ SITE_ROOT }}/api/v1/checks/&lt;code&gt;</code>
+        </td>
+    </tr>
+</table>
+
+<h2>Authentication</h2>
+<p>Your requests to {% site_name %} REST API must authenticate using an
 API key. By default, an user account on {% site_name %} doesn't have
 an API key. You can create one in the <a href="{% url 'hc-profile' %}">Settings</a> page.
 </p>
@@ -55,7 +83,7 @@ The response may contain a JSON document with additional data.
 <!-- ********************************************************************** /-->
 
 <a class="section" name="list-checks">
-    <h2 class="rule">List checks</h2>
+    <h2 class="rule">Get List of Existing Checks</h2>
 </a>
 
 <div class="api-path">GET {{ SITE_ROOT }}/api/v1/checks/</div>
@@ -90,7 +118,7 @@ one or more tags.</p>
 <!-- ********************************************************************** /-->
 
 <a class="section" name="create-check">
-<h2 class="rule">Create a check</h2>
+<h2 class="rule">Create a Check</h2>
 </a>
 
 <div class="api-path">POST {{ SITE_ROOT }}/api/v1/checks/</div>
@@ -228,7 +256,7 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
 <!-- ********************************************************************** /-->
 
 <a class="section" name="update-check">
-<h2 class="rule">Update an existing check</h2>
+<h2 class="rule">Update an Existing Check</h2>
 </a>
 
 <div class="api-path">POST {{ SITE_ROOT }}/api/v1/checks/&lt;code&gt;</div>
@@ -338,8 +366,6 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
 
 <div class="api-path">POST {{ SITE_ROOT }}/api/v1/checks/&lt;uuid&gt;/pause</div>
 
-<strong></strong>
-
 <p>
     Disables monitoring for a check, without removing it. The check goes
     into a "paused" state. You can resume monitoring of the check by pinging
@@ -362,6 +388,28 @@ is sometimes required by some network proxies and web servers.
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/pause_check_response.html" %}
 
+<!-- ********************************************************************** /-->
+
+<a class="section" name="delete-check">
+<h2 class="rule">Delete Check</h2>
+</a>
+
+<div class="api-path">DELETE {{ SITE_ROOT }}/api/v1/checks/&lt;uuid&gt;</div>
+
+<p>
+    Permanently deletes the check from user's account. Returns JSON
+    representation of the check that was just deleted.
+</p>
+<p>
+    This API call has no request parameters.
+</p>
+
+<h3 class="api-section">Example Request</h3>
+
+{% include "front/snippets/delete_check_request.html" %}
+
+<h3 class="api-section">Example Response</h3>
+{% include "front/snippets/create_check_response.html" %}
 
 {% endblock %}
 
