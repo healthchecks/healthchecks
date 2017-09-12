@@ -153,6 +153,9 @@ class Check(models.Model):
     def tags_list(self):
         return [t.strip() for t in self.tags.split(" ") if t.strip()]
 
+    def matches_tag_set(self, tag_set):
+        return tag_set.issubset(self.tags_list())
+
     def to_dict(self):
         update_rel_url = reverse("hc-api-update", args=[self.code])
         pause_rel_url = reverse("hc-api-pause", args=[self.code])

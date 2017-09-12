@@ -60,21 +60,32 @@ The response may contain a JSON document with additional data.
 
 <div class="api-path">GET {{ SITE_ROOT }}/api/v1/checks/</div>
 
-<p>
-    Returns a list of checks. This API call takes only optional tag querystring parameter to filter checks by their tags.
-    If no parameter provided it returns a JSON document with all checks in user's account.
-</p>
+<p>Returns a list of checks belonging to the user, optionally filtered by
+one or more tags.</p>
+
+<h3 class="api-section">Query String Parameters</h3>
+<table class="table">
+    <tr>
+        <th>tag=&lt;value&gt;</th>
+        <td>
+            <p>
+                Filters the checks, and returns only the checks that
+                are tagged with the specified value.
+            </p>
+            <p>
+                This parameter can be repeated multiple times.
+            </p>
+            <p>Example:</p>
+            <pre>{{ SITE_ROOT }}/api/v1/checks/?tag=foo&amp;tag=bar</pre>
+        </td>
+    </tr>
+</table>
+
 <h3 class="api-section">Example Request</h3>
 {% include "front/snippets/list_checks_request.html" %}
 
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/list_checks_response.html" %}
-
-<h3 class="api-section">Example Request To Filter Checks By Their Tags</h3>
-{% include "front/snippets/list_checks_request_filtered.html" %}
-
-<h3 class="api-section">Example Response Of Filtered Checks</h3>
-{% include "front/snippets/list_checks_response_filtered.html" %}
 
 <!-- ********************************************************************** /-->
 

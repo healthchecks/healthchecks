@@ -104,24 +104,20 @@ def _update(check, spec):
 @validate_json(schemas.check)
 def checks(request):
     if request.method == "GET":
-        tags = request.GET.getlist('tag', [])
         q = Check.objects.filter(user=request.user)
 
-        doc = {"checks": []}
+        tags = set(request.GET.getlist("tag"))
+        for tag in tags:
+            # approximate filtering by tags
+            q = q.filter(tags__contains=tag)
 
-        if len(tags) > 0:
-            for tag in tags:
-                q = q.filter(tags__contains=tag.strip())
+        checks = []
+        for check in q:
+            # precise, final filtering
+            if not tags or check.matches_tag_set(tags):
+                checks.append(check.to_dict())
 
-            tags_set = set(tags)
-
-            for check in q:
-                if tags_set.issubset(set(check.tags_list())):
-                    doc["checks"].append(check.to_dict())
-        else:
-            doc["checks"] = [check.to_dict() for check in q]
-
-        return JsonResponse(doc)
+        return JsonResponse({"checks": checks})
 
     elif request.method == "POST":
         created = False
