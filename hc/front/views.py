@@ -110,14 +110,12 @@ def index(request):
 
 
 def docs(request):
-    check = _welcome_check(request)
-
     ctx = {
         "page": "docs",
         "section": "home",
         "ping_endpoint": settings.PING_ENDPOINT,
-        "check": check,
-        "ping_url": check.url()
+        "ping_email": "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN,
+        "ping_url": settings.PING_ENDPOINT + "your-uuid-here"
     }
 
     return render(request, "front/docs.html", ctx)

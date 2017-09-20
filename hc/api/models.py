@@ -8,7 +8,6 @@ from datetime import datetime, timedelta as td
 
 from croniter import croniter
 from django.conf import settings
-from django.core.checks import Warning
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
