@@ -3,15 +3,35 @@
 
 {% block content %}
 Hello,<br />
-This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.
+
+{% if nag %}
+    This is a
+    {% if nag_period == 3600 %}hourly{% endif %}
+    {% if nag_period == 86400 %}daily{% endif %}
+    reminder sent by <a href="{% site_root %}">{% site_name %}</a>.<br />
+
+    {% if num_down == 1%}
+        One check is currently <strong>DOWN</strong>.
+    {% else %}
+        {{ num_down }} checks are currently <strong>DOWN</strong>.
+    {% endif %}
+{% else %}
+    This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.
+{% endif %}
 
 <br />
 {% include "emails/summary-html.html" %}
 
+{% if nag %}
+    <strong>Too many notifications?</strong>
+    Visit the <a href="{{ notifications_url }}">Email Reports</a>
+    page on {% site_name %} to set your notification preferences.
+{% else %}
 <strong>Just one more thing to check:</strong>
 Do you have more cron jobs,
 not yet on this list, that would benefit from monitoring?
 Get the ball rolling by adding one more!
+{% endif %}
 <br /><br />
 
 Cheers,<br>
@@ -22,6 +42,6 @@ The {% escaped_site_name %} Team
 {% block unsub %}
 <br>
 <a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">
-    Unsubscribe from Monthly Reports
+    Unsubscribe
 </a>
 {% endblock %}

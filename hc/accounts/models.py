@@ -13,6 +13,12 @@ from django.utils import timezone
 from hc.lib import emails
 
 
+NO_NAG = timedelta()
+NAG_PERIODS = ((NO_NAG, "Disabled"),
+               (timedelta(hours=1), "Hourly"),
+               (timedelta(days=1), "Daily"))
+
+
 def month(dt):
     """ For a given datetime, return the matching first-day-of-month date. """
     return dt.date().replace(day=1)
@@ -23,7 +29,7 @@ class ProfileManager(models.Manager):
         try:
             return user.profile
         except Profile.DoesNotExist:
-            profile = Profile(user=user, team_access_allowed=user.is_superuser)
+            profile = Profile(user=user)
             if not settings.USE_PAYMENTS:
                 # If not using payments, set high limits
                 profile.check_limit = 500
@@ -41,6 +47,8 @@ class Profile(models.Model):
     team_access_allowed = models.BooleanField(default=False)
     next_report_date = models.DateTimeField(null=True, blank=True)
     reports_allowed = models.BooleanField(default=True)
+    nag_period = models.DurationField(default=NO_NAG, choices=NAG_PERIODS)
+    next_nag_date = models.DateTimeField(null=True, blank=True)
     ping_log_limit = models.IntegerField(default=100)
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
@@ -57,6 +65,9 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.team_name or self.user.email
+
+    def notifications_url(self):
+        return settings.SITE_ROOT + reverse("hc-notifications")
 
     def team(self):
         # compare ids to avoid SQL queries
@@ -106,11 +117,15 @@ class Profile(models.Model):
         self.api_key = base64.urlsafe_b64encode(os.urandom(24))
         self.save()
 
-    def send_report(self):
-        # reset next report date first:
-        now = timezone.now()
-        self.next_report_date = now + timedelta(days=30)
-        self.save()
+    def send_report(self, nag=False):
+        # Are there any non-new checks in the account?
+        q = self.user.check_set.filter(last_ping__isnull=False)
+        if not q.exists():
+            return False
+
+        num_down = q.filter(status="down").count()
+        if nag and num_down == 0:
+            return False
 
         token = signing.Signer().sign(uuid.uuid4())
         path = reverse("hc-unsubscribe-reports", args=[self.user.username])
@@ -118,11 +133,16 @@ class Profile(models.Model):
 
         ctx = {
             "checks": self.user.check_set.order_by("created"),
-            "now": now,
-            "unsub_link": unsub_link
+            "now": timezone.now(),
+            "unsub_link": unsub_link,
+            "notifications_url": self.notifications_url,
+            "nag": nag,
+            "nag_period": self.nag_period.total_seconds(),
+            "num_down": num_down
         }
 
         emails.report(self.user.email, ctx)
+        return True
 
     def can_invite(self):
         return self.member_set.count() < self.team_limit
@@ -160,6 +180,16 @@ class Profile(models.Model):
         self.last_sms_date = timezone.now()
         self.save()
         return True
+
+    def set_next_nag_date(self):
+        """ Set next_nag_date for all members of this team. """
+
+        is_owner = models.Q(id=self.id)
+        is_member = models.Q(user__member__team=self)
+        q = Profile.objects.filter(is_owner | is_member)
+        q = q.exclude(nag_period=NO_NAG)
+
+        q.update(next_nag_date=timezone.now() + models.F("nag_period"))
 
 
 class Member(models.Model):

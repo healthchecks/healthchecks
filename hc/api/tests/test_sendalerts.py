@@ -1,9 +1,9 @@
 from datetime import timedelta
-from mock import patch
+from mock import Mock, patch
 
 from django.core.management import call_command
 from django.utils import timezone
-from hc.api.management.commands.sendalerts import Command
+from hc.api.management.commands.sendalerts import Command, notify
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -93,3 +93,31 @@ class SendAlertsTestCase(BaseTestCase):
 
         # It should call `notify` instead of `notify_on_thread`
         self.assertTrue(mock_notify.called)
+
+    def test_it_updates_owners_next_nag_date(self):
+        self.profile.nag_period = timedelta(hours=1)
+        self.profile.save()
+
+        check = Check(user=self.alice, status="down")
+        check.last_ping = timezone.now() - timedelta(days=2)
+        check.alert_after = check.get_alert_after()
+        check.save()
+
+        notify(check.id, Mock())
+
+        self.profile.refresh_from_db()
+        self.assertIsNotNone(self.profile.next_nag_date)
+
+    def test_it_updates_members_next_nag_date(self):
+        self.bobs_profile.nag_period = timedelta(hours=1)
+        self.bobs_profile.save()
+
+        check = Check(user=self.alice, status="down")
+        check.last_ping = timezone.now() - timedelta(days=2)
+        check.alert_after = check.get_alert_after()
+        check.save()
+
+        notify(check.id, Mock())
+
+        self.bobs_profile.refresh_from_db()
+        self.assertIsNotNone(self.bobs_profile.next_nag_date)

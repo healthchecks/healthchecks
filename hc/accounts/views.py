@@ -1,3 +1,4 @@
+from datetime import timedelta as td
 import uuid
 import re
 
@@ -11,6 +12,7 @@ from django.contrib.auth.models import User
 from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
+from django.utils.timezone import now
 from django.views.decorators.http import require_POST
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
@@ -238,7 +240,22 @@ def notifications(request):
     if request.method == "POST":
         form = ReportSettingsForm(request.POST)
         if form.is_valid():
-            profile.reports_allowed = form.cleaned_data["reports_allowed"]
+            if profile.reports_allowed != form.cleaned_data["reports_allowed"]:
+                profile.reports_allowed = form.cleaned_data["reports_allowed"]
+                if profile.reports_allowed:
+                    profile.next_report_date = now() + td(days=30)
+                else:
+                    profile.next_report_date = None
+
+            if profile.nag_period != form.cleaned_data["nag_period"]:
+                # Set the new nag period
+                profile.nag_period = form.cleaned_data["nag_period"]
+                # and schedule next_nag_date:
+                if profile.nag_period:
+                    profile.next_nag_date = now() + profile.nag_period
+                else:
+                    profile.next_nag_date = None
+
             profile.save()
             messages.success(request, "Your settings have been updated!")
 
@@ -338,6 +355,7 @@ def unsubscribe_reports(request, username):
     user = User.objects.get(username=username)
     profile = Profile.objects.for_user(user)
     profile.reports_allowed = False
+    profile.nag_period = td()
     profile.save()
 
     return render(request, "accounts/unsubscribed.html")

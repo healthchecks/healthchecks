@@ -1,3 +1,4 @@
+from datetime import timedelta as td
 from django import forms
 from django.contrib.auth.models import User
 
@@ -16,6 +17,15 @@ class EmailPasswordForm(forms.Form):
 
 class ReportSettingsForm(forms.Form):
     reports_allowed = forms.BooleanField(required=False)
+    nag_period = forms.IntegerField(min_value=0, max_value=86400)
+
+    def clean_nag_period(self):
+        seconds = self.cleaned_data["nag_period"]
+
+        if seconds not in (0, 3600, 86400):
+            raise forms.ValidationError("Bad nag_period: %d" % seconds)
+
+        return td(seconds=seconds)
 
 
 class SetPasswordForm(forms.Form):

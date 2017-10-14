@@ -1,2 +1,6 @@
-Monthly Report
+{% if nag %}
+    Reminder: {{ num_down }} check{{ num_down|pluralize }} still down
+{% else %}
+    Monthly Report
+{% endif %}
 

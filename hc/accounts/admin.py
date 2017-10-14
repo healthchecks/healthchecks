@@ -21,7 +21,8 @@ class Fieldset:
 class ProfileFieldset(Fieldset):
     name = "User Profile"
     fields = ("email", "api_key", "current_team", "reports_allowed",
-              "next_report_date", "token", "sort")
+              "next_report_date", "nag_period", "next_nag_date",
+              "token", "sort")
 
 
 class TeamFieldset(Fieldset):

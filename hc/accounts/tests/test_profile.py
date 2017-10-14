@@ -1,9 +1,11 @@
+from datetime import timedelta as td
 from django.core import mail
 
+from django.conf import settings
+from django.utils.timezone import now
 from hc.test import BaseTestCase
 from hc.accounts.models import Member
 from hc.api.models import Check
-from django.conf import settings
 
 
 class ProfileTestCase(BaseTestCase):
@@ -16,8 +18,8 @@ class ProfileTestCase(BaseTestCase):
         assert r.status_code == 302
 
         # profile.token should be set now
-        self.alice.profile.refresh_from_db()
-        token = self.alice.profile.token
+        self.profile.refresh_from_db()
+        token = self.profile.token
         self.assertTrue(len(token) > 10)
 
         # And an email should have been sent
@@ -32,8 +34,8 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 200)
 
-        self.alice.profile.refresh_from_db()
-        api_key = self.alice.profile.api_key
+        self.profile.refresh_from_db()
+        api_key = self.profile.api_key
         self.assertTrue(len(api_key) > 10)
 
     def test_it_revokes_api_key(self):
@@ -43,14 +45,16 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.post("/accounts/profile/", form)
         assert r.status_code == 200
 
-        self.alice.profile.refresh_from_db()
-        self.assertEqual(self.alice.profile.api_key, "")
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.api_key, "")
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)
+        check.last_ping = now()
         check.save()
 
-        self.alice.profile.send_report()
+        sent = self.profile.send_report()
+        self.assertTrue(sent)
 
         # And an email should have been sent
         self.assertEqual(len(mail.outbox), 1)
@@ -58,6 +62,38 @@ class ProfileTestCase(BaseTestCase):
 
         self.assertEqual(message.subject, 'Monthly Report')
         self.assertIn("Test Check", message.body)
+
+    def test_it_sends_nag(self):
+        check = Check(name="Test Check", user=self.alice)
+        check.status = "down"
+        check.last_ping = now()
+        check.save()
+
+        self.profile.nag_period = td(hours=1)
+        self.profile.save()
+
+        sent = self.profile.send_report(nag=True)
+        self.assertTrue(sent)
+
+        # And an email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+
+        self.assertEqual(message.subject, 'Reminder: 1 check still down')
+        self.assertIn("Test Check", message.body)
+
+    def test_it_skips_nag_if_none_down(self):
+        check = Check(name="Test Check", user=self.alice)
+        check.last_ping = now()
+        check.save()
+
+        self.profile.nag_period = td(hours=1)
+        self.profile.save()
+
+        sent = self.profile.send_report(nag=True)
+        self.assertFalse(sent)
+
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -67,7 +103,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         member_emails = set()
-        for member in self.alice.profile.member_set.all():
+        for member in self.profile.member_set.all():
             member_emails.add(member.user.email)
 
         self.assertEqual(len(member_emails), 2)
@@ -107,8 +143,8 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 200)
 
-        self.alice.profile.refresh_from_db()
-        self.assertEqual(self.alice.profile.team_name, "Alpha Team")
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.team_name, "Alpha Team")
 
     def test_it_switches_to_own_team(self):
         self.client.login(username="bob@example.org", password="password")
@@ -128,8 +164,8 @@ class ProfileTestCase(BaseTestCase):
         assert r.status_code == 302
 
         # profile.token should be set now
-        self.alice.profile.refresh_from_db()
-        token = self.alice.profile.token
+        self.profile.refresh_from_db()
+        token = self.profile.token
         self.assertTrue(len(token) > 10)
 
         # And an email should have been sent

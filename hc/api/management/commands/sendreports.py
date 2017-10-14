@@ -15,8 +15,8 @@ def num_pinged_checks(profile):
 
 
 class Command(BaseCommand):
-    help = 'Send due monthly reports'
-    tmpl = "Sending monthly report to %s"
+    help = 'Send due monthly reports and nags'
+    tmpl = "Sent monthly report to %s"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -27,7 +27,7 @@ class Command(BaseCommand):
             help='Keep running indefinitely in a 300 second wait loop',
         )
 
-    def handle_one_run(self):
+    def handle_one_monthly_report(self):
         now = timezone.now()
         month_before = now - timedelta(days=30)
         month_after = now + timedelta(days=30)
@@ -38,39 +38,70 @@ class Command(BaseCommand):
         q = Profile.objects.filter(report_due | report_not_scheduled)
         q = q.filter(reports_allowed=True)
         q = q.filter(user__date_joined__lt=month_before)
-        profiles = list(q)
+        profile = q.first()
 
-        sent = 0
-        for profile in profiles:
-            qq = Profile.objects
-            qq = qq.filter(id=profile.id,
-                           next_report_date=profile.next_report_date)
+        if profile is None:
+            return False
 
-            num_updated = qq.update(next_report_date=month_after)
-            if num_updated != 1:
-                # Was updated elsewhere, skipping
-                continue
+        # A sort of optimistic lock. Try to update next_report_date,
+        # and if does get modified, we're in drivers seat:
+        qq = Profile.objects.filter(id=profile.id,
+                                    next_report_date=profile.next_report_date)
 
-            if num_pinged_checks(profile) == 0:
-                continue
+        num_updated = qq.update(next_report_date=month_after)
+        if num_updated != 1:
+            # next_report_date was already updated elsewhere, skipping
+            return True
 
+        if profile.send_report():
             self.stdout.write(self.tmpl % profile.user.email)
-            profile.send_report()
             # Pause before next report to avoid hitting sending quota
             time.sleep(1)
-            sent += 1
 
-        return sent
+        return True
+
+    def handle_one_nag(self):
+        now = timezone.now()
+        q = Profile.objects.filter(next_nag_date__lt=now)
+        profile = q.first()
+
+        if profile is None:
+            return False
+
+        qq = Profile.objects.filter(id=profile.id,
+                                    next_nag_date=profile.next_nag_date)
+
+        num_updated = qq.update(next_nag_date=now + profile.nag_period)
+        if num_updated != 1:
+            # next_rag_date was already updated elsewhere, skipping
+            return True
+
+        if profile.send_report(nag=True):
+            self.stdout.write("Sent nag to %s" % profile.user.email)
+            # Pause before next report to avoid hitting sending quota
+            time.sleep(1)
+        else:
+            profile.next_nag_date = None
+            profile.save()
+
+        return True
 
     def handle(self, *args, **options):
-        if not options["loop"]:
-            return "Sent %d reports" % self.handle_one_run()
-
         self.stdout.write("sendreports is now running")
         while True:
-            self.handle_one_run()
+            # Monthly reports
+            while self.handle_one_monthly_report():
+                pass
+
+            # Daily and hourly nags
+            while self.handle_one_nag():
+                pass
+
+            if not options["loop"]:
+                break
 
             formatted = timezone.now().isoformat()
             self.stdout.write("-- MARK %s --" % formatted)
 
-            time.sleep(300)
+            # Sleep for 1 minute before looking for more work
+            time.sleep(60)

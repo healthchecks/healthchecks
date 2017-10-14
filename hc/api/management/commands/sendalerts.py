@@ -8,9 +8,14 @@ from hc.api.models import Check
 
 def notify(check_id, stdout):
     check = Check.objects.get(id=check_id)
-
     tmpl = "Sending alert, status=%s, code=%s\n"
     stdout.write(tmpl % (check.status, check.code))
+
+    # Set dates for followup nags
+    if check.status == "down" and check.user.profile:
+        check.user.profile.set_next_nag_date()
+
+    # Send notifications
     errors = check.send_alert()
     for ch, error in errors:
         stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
