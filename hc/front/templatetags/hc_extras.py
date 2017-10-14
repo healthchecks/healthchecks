@@ -1,5 +1,6 @@
 from django import template
 from django.conf import settings
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 from hc.lib.date import format_duration
@@ -20,6 +21,11 @@ def site_name():
 @register.simple_tag
 def escaped_site_name():
     return mark_safe(settings.SITE_NAME.replace(".", "<span>.</span>"))
+
+
+@register.filter
+def mangle_link(s):
+    return mark_safe(escape(s).replace(".", "<span>.</span>"))
 
 
 @register.simple_tag

@@ -27,14 +27,14 @@ class Command(BaseCommand):
 
         # Old accounts, never logged in, no team memberships
         q = User.objects
-        q = q.annotate(n_teams=Count("member"))
+        q = q.annotate(n_teams=Count("memberships"))
         q = q.filter(date_joined__lt=cutoff, last_login=None, n_teams=0)
         n1, _ = q.delete()
 
         # Not logged in for 1 month, 0 checks, no team memberships
         q = User.objects
         q = q.annotate(n_checks=Count("check"))
-        q = q.annotate(n_teams=Count("member"))
+        q = q.annotate(n_teams=Count("memberships"))
         q = q.filter(last_login__lt=cutoff, n_checks=0, n_teams=0)
         n2, _ = q.delete()
 

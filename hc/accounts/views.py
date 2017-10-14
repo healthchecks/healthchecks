@@ -364,8 +364,8 @@ def unsubscribe_reports(request, username):
 @login_required
 def switch_team(request, target_username):
     try:
-        other_user = User.objects.get(username=target_username)
-    except User.DoesNotExist:
+        target_team = Profile.objects.get(user__username=target_username)
+    except Profile.DoesNotExist:
         return HttpResponseForbidden()
 
     # The rules:
@@ -373,20 +373,17 @@ def switch_team(request, target_username):
     access_ok = request.user.is_superuser
 
     # Users can switch to their own teams.
-    if not access_ok and other_user.id == request.user.id:
+    if not access_ok and target_team == request.profile:
         access_ok = True
 
     # Users can switch to teams they are members of.
     if not access_ok:
-        for membership in request.user.member_set.all():
-            if membership.team.user.id == other_user.id:
-                access_ok = True
-                break
+        access_ok = request.user.memberships.filter(team=target_team).exists()
 
     if not access_ok:
         return HttpResponseForbidden()
 
-    request.profile.current_team = other_user.profile
+    request.profile.current_team = target_team
     request.profile.save()
 
     return redirect("hc-checks")

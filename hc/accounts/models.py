@@ -116,13 +116,24 @@ class Profile(models.Model):
         self.api_key = base64.urlsafe_b64encode(os.urandom(24))
         self.save()
 
+    def checks_from_all_teams(self):
+        """ Return a queryset of checks from all teams we have access for. """
+
+        team_ids = set(self.user.memberships.values_list("team_id", flat=True))
+        team_ids.add(self.id)
+
+        from hc.api.models import Check
+        return Check.objects.filter(user__profile__id__in=team_ids)
+
     def send_report(self, nag=False):
-        # Are there any non-new checks in the account?
-        q = self.user.check_set.filter(last_ping__isnull=False)
-        if not q.exists():
+        checks = self.checks_from_all_teams()
+
+        # Is there at least one check that has received a ping?
+        if not checks.filter(last_ping__isnull=False).exists():
             return False
 
-        num_down = q.filter(status="down").count()
+        # Is there at least one check that is down?
+        num_down = checks.filter(status="down").count()
         if nag and num_down == 0:
             return False
 
@@ -130,8 +141,12 @@ class Profile(models.Model):
         path = reverse("hc-unsubscribe-reports", args=[self.user.username])
         unsub_link = "%s%s?token=%s" % (settings.SITE_ROOT, path, token)
 
+        # Sort checks by team name, then by email, and then by creation date:
+        checks = checks.order_by(
+            "user__profile__team_name", "user__email", "created")
+
         ctx = {
-            "checks": self.user.check_set.order_by("created"),
+            "checks": checks,
             "now": timezone.now(),
             "unsub_link": unsub_link,
             "notifications_url": self.notifications_url,
@@ -184,7 +199,7 @@ class Profile(models.Model):
         """ Set next_nag_date for all members of this team. """
 
         is_owner = models.Q(id=self.id)
-        is_member = models.Q(user__member__team=self)
+        is_member = models.Q(user__memberships__team=self)
         q = Profile.objects.filter(is_owner | is_member)
         q = q.exclude(nag_period=NO_NAG)
 
@@ -193,4 +208,4 @@ class Profile(models.Model):
 
 class Member(models.Model):
     team = models.ForeignKey(Profile, models.CASCADE)
-    user = models.ForeignKey(User, models.CASCADE)
+    user = models.ForeignKey(User, models.CASCADE, related_name="memberships")

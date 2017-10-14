@@ -1,12 +1,14 @@
 {% load humanize hc_extras %}
-<br />
+{% regroup checks by user as groups %}
 <table style="margin: 0; width: 100%; font-size: 16px;" cellpadding="0" cellspacing="0">
+    {% for group in groups %}
     <tr>
-        <td style="padding: 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;"></td>
-        <td style="padding: 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Name</td>
-        <td class="mobile-hide" style="padding: 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Last Ping</td>
+        <td colspan="2" style="font-weight: bold; padding: 32px 8px 8px 8px; color: #333;">
+            {{ group.grouper.profile|mangle_link }}
+        </td>
+        <td class="mobile-hide" style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Last Ping</td>
     </tr>
-    {% for check in checks %}
+    {% for check in group.list %}
     <tr>
         <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
             <table cellpadding="0" cellspacing="0">
@@ -64,6 +66,7 @@
             {% endif %}
         </td>
     </tr>
+    {% endfor %}
     {% endfor %}
 </table>
 <br />
