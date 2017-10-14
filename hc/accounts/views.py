@@ -237,6 +237,12 @@ def notifications(request):
     _ensure_own_team(request)
     profile = request.profile
 
+    ctx = {
+        "status": "default",
+        "page": "profile",
+        "profile": profile
+    }
+
     if request.method == "POST":
         form = ReportSettingsForm(request.POST)
         if form.is_valid():
@@ -257,12 +263,7 @@ def notifications(request):
                     profile.next_nag_date = None
 
             profile.save()
-            messages.success(request, "Your settings have been updated!")
-
-    ctx = {
-        "page": "profile",
-        "profile": profile,
-    }
+            ctx["status"] = "info"
 
     return render(request, "accounts/notifications.html", ctx)
 

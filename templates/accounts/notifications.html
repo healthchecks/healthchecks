@@ -8,13 +8,6 @@
     <div class="col-sm-12">
         <h1 class="settings-title">Settings</h1>
     </div>
-    {% if messages %}
-    <div class="col-sm-12">
-        {% for message in messages %}
-            <p class="alert alert-{{ message.tags }}">{{ message }}</p>
-        {% endfor %}
-    </div>
-    {% endif %}
 </div>
 
 <div class="row">
@@ -27,7 +20,7 @@
     </div>
 
     <div class="col-sm-9 col-md-6">
-        <div class="panel panel-default">
+        <div class="panel panel-{{ status }}">
             <div class="panel-body settings-block">
                 <form method="post">
                     {% csrf_token %}
@@ -91,6 +84,11 @@
                         class="btn btn-default pull-right">Save Changes</button>
                 </form>
             </div>
+            {% if status == "info" %}
+            <div class="panel-footer">
+                Your settings have been updated!
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
