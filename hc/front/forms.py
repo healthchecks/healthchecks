@@ -1,3 +1,5 @@
+from datetime import timedelta as td
+
 from django import forms
 from django.core.validators import RegexValidator
 from hc.front.validators import (CronExpressionValidator, TimezoneValidator,
@@ -22,6 +24,12 @@ class NameTagsForm(forms.Form):
 class TimeoutForm(forms.Form):
     timeout = forms.IntegerField(min_value=60, max_value=2592000)
     grace = forms.IntegerField(min_value=60, max_value=2592000)
+
+    def clean_timeout(self):
+        return td(seconds=self.cleaned_data["timeout"])
+
+    def clean_grace(self):
+        return td(seconds=self.cleaned_data["grace"])
 
 
 class CronForm(forms.Form):

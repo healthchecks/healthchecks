@@ -190,8 +190,8 @@ def update_timeout(request, code):
             return HttpResponseBadRequest()
 
         check.kind = "simple"
-        check.timeout = td(seconds=form.cleaned_data["timeout"])
-        check.grace = td(seconds=form.cleaned_data["grace"])
+        check.timeout = form.cleaned_data["timeout"]
+        check.grace = form.cleaned_data["grace"]
     elif kind == "cron":
         form = CronForm(request.POST)
         if not form.is_valid():
