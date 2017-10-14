@@ -46,7 +46,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ("id", "users", "checks", "invited",
                     "reports_allowed", "ping_log_limit", "sms")
     search_fields = ["id", "user__email"]
-    list_filter = ("team_access_allowed", "team_limit", "reports_allowed",
+    list_filter = ("team_limit", "reports_allowed",
                    "check_limit", "next_report_date")
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())

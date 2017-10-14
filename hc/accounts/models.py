@@ -44,7 +44,6 @@ class Profile(models.Model):
     # Owner:
     user = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
     team_name = models.CharField(max_length=200, blank=True)
-    team_access_allowed = models.BooleanField(default=False)
     next_report_date = models.DateTimeField(null=True, blank=True)
     reports_allowed = models.BooleanField(default=True)
     nag_period = models.DurationField(default=NO_NAG, choices=NAG_PERIODS)

@@ -113,7 +113,6 @@ def create_plan(request):
         profile.team_limit = 9
         profile.sms_limit = 50
         profile.sms_sent = 0
-        profile.team_access_allowed = True
         profile.save()
     elif plan_id == "P50":
         profile.ping_log_limit = 1000
@@ -121,7 +120,6 @@ def create_plan(request):
         profile.team_limit = 500
         profile.sms_limit = 500
         profile.sms_sent = 0
-        profile.team_access_allowed = True
         profile.save()
 
     request.session["first_charge"] = True
@@ -173,7 +171,6 @@ def cancel_plan(request):
     profile.check_limit = 20
     profile.team_limit = 2
     profile.sms_limit = 0
-    profile.team_access_allowed = False
     profile.save()
 
     return redirect("hc-pricing")
