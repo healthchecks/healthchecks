@@ -1,7 +1,7 @@
 {% load hc_extras humanize %}
 
 <ul id="checks-list" class="visible-xs">
-    {% for check in checks %}
+    {% for check in checks|sortchecks:sort %}
     <li>
         <h2>
             <span class="{% if not check.name %}unnamed{% endif %}">

@@ -40,9 +40,7 @@ def my_checks(request):
         request.profile.sort = request.GET["sort"]
         request.profile.save()
 
-    q = Check.objects.filter(user=request.team.user)
-    q = q.order_by(request.profile.sort)
-    checks = list(q)
+    checks = list(Check.objects.filter(user=request.team.user))
 
     tags, down_tags, grace_tags = set(), set(), set()
     for check in checks:

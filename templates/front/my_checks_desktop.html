@@ -27,7 +27,7 @@
         </th>
         <th></th>
     </tr>
-    {% for check in checks %}
+    {% for check in checks|sortchecks:sort %}
     <tr class="checks-row">
         <td class="indicator-cell">
             {% if check.get_status == "new" %}
@@ -94,7 +94,7 @@
                 {% endif %}
             </div>
         {% else %}
-            Never
+            <div class="last-ping-never">Never</div>
         {% endif %}
         </td>
         <td>

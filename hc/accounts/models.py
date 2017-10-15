@@ -141,12 +141,13 @@ class Profile(models.Model):
         path = reverse("hc-unsubscribe-reports", args=[self.user.username])
         unsub_link = "%s%s?token=%s" % (settings.SITE_ROOT, path, token)
 
-        # Sort checks by team name, then by email, and then by creation date:
-        checks = checks.order_by(
-            "user__profile__team_name", "user__email", "created")
+        # Sort checks by owner. Need this because will group by owner in
+        # template.
+        checks = checks.order_by("user_id")
 
         ctx = {
             "checks": checks,
+            "sort": self.sort,
             "now": timezone.now(),
             "unsub_link": unsub_link,
             "notifications_url": self.notifications_url,

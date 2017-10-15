@@ -52,7 +52,8 @@ table.table tr > th.th-name {
     cursor: pointer;
 }
 
-#checks-table > tbody > tr > th.th-period, #checks-table > tbody > tr > th.th-last-ping {
+#checks-table > tbody > tr > th.th-period,
+#checks-table > tbody > tr > th.th-last-ping {
     padding-left: 15px;
 }
 
@@ -79,6 +80,11 @@ table.table tr > th.th-name {
     border: 1px solid rgba(0, 0, 0, 0);
     padding: 6px;
 }
+
+#checks-table .last-ping-never {
+    padding: 7px;
+}
+
 
 #checks-table tr:hover .last-ping {
     border: 1px dotted #AAA;

@@ -52,9 +52,18 @@ class Email(Transport):
 
         headers = {"X-Bounce-Url": bounce_url}
 
+        try:
+            # Look up the sorting preference for this email address
+            p = Profile.objects.get(user__email=self.channel.value)
+            sort = p.sort
+        except Profile.DoesNotExist:
+            # Default sort order is by check's creation time
+            sort = "created"
+
         ctx = {
             "check": check,
             "checks": self.checks(),
+            "sort": sort,
             "now": timezone.now(),
             "unsub_link": self.channel.get_unsub_link()
         }
