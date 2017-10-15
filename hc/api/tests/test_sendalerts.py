@@ -122,8 +122,8 @@ class SendAlertsTestCase(BaseTestCase):
         self.bobs_profile.refresh_from_db()
         self.assertIsNotNone(self.bobs_profile.next_nag_date)
 
-    def test_it_does_not_touch_future_next_nag_dates(self):
-        original_nag_date = now() + timedelta(minutes=30)
+    def test_it_does_not_touch_already_set_next_nag_dates(self):
+        original_nag_date = now() - timedelta(minutes=30)
         self.profile.nag_period = timedelta(hours=1)
         self.profile.next_nag_date = original_nag_date
         self.profile.save()
