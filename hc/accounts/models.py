@@ -203,6 +203,8 @@ class Profile(models.Model):
         is_member = models.Q(user__memberships__team=self)
         q = Profile.objects.filter(is_owner | is_member)
         q = q.exclude(nag_period=NO_NAG)
+        # Exclude profiles with next_nag_date in future
+        q = q.exclude(next_nag_date__gt=timezone.now())
 
         q.update(next_nag_date=timezone.now() + models.F("nag_period"))
 
