@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^profile/badges/$', views.badges, name="hc-badges"),
     url(r'^close/$', views.close, name="hc-close"),
 
-    url(r'^unsubscribe_reports/([\w-]+)/$',
+    url(r'^unsubscribe_reports/([\w\:-]+)/$',
         views.unsubscribe_reports, name="hc-unsubscribe-reports"),
 
     url(r'^set_password/([\w-]+)/$',

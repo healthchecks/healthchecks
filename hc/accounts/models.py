@@ -6,7 +6,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
-from django.core import signing
+from django.core.signing import TimestampSigner
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -67,6 +67,12 @@ class Profile(models.Model):
 
     def notifications_url(self):
         return settings.SITE_ROOT + reverse("hc-notifications")
+
+    def reports_unsub_url(self):
+        signer = TimestampSigner(salt="reports")
+        signed_username = signer.sign(self.user.username)
+        path = reverse("hc-unsubscribe-reports", args=[signed_username])
+        return settings.SITE_ROOT + path
 
     def team(self):
         # compare ids to avoid SQL queries
@@ -137,10 +143,6 @@ class Profile(models.Model):
         if nag and num_down == 0:
             return False
 
-        token = signing.Signer().sign(uuid.uuid4())
-        path = reverse("hc-unsubscribe-reports", args=[self.user.username])
-        unsub_link = "%s%s?token=%s" % (settings.SITE_ROOT, path, token)
-
         # Sort checks by owner. Need this because will group by owner in
         # template.
         checks = checks.order_by("user_id")
@@ -149,8 +151,8 @@ class Profile(models.Model):
             "checks": checks,
             "sort": self.sort,
             "now": timezone.now(),
-            "unsub_link": unsub_link,
-            "notifications_url": self.notifications_url,
+            "unsub_link": self.reports_unsub_url(),
+            "notifications_url": self.notifications_url(),
             "nag": nag,
             "nag_period": self.nag_period.total_seconds(),
             "num_down": num_down

@@ -348,10 +348,20 @@ def change_email_done(request):
 
 
 def unsubscribe_reports(request, username):
-    try:
-        signing.Signer().unsign(request.GET.get("token"))
-    except signing.BadSignature:
-        return HttpResponseBadRequest()
+    if ":" in username:
+        signer = signing.TimestampSigner(salt="reports")
+        try:
+            username = signer.unsign(username)
+        except signing.BadSignature:
+            return render(request, "bad_link.html")
+    else:
+        # Username is not signed but there should be a ?token=... parameter
+        # This is here for backwards compatibility and will be removed
+        # at some point.
+        try:
+            signing.Signer().unsign(request.GET.get("token"))
+        except signing.BadSignature:
+            return render(request, "bad_link.html")
 
     user = User.objects.get(username=username)
     profile = Profile.objects.for_user(user)
