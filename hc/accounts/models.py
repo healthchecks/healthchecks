@@ -1,6 +1,5 @@
-import base64
+from base64 import urlsafe_b64encode
 import os
-import uuid
 from datetime import timedelta
 
 from django.conf import settings
@@ -82,7 +81,7 @@ class Profile(models.Model):
         return self
 
     def prepare_token(self, salt):
-        token = str(uuid.uuid4())
+        token = urlsafe_b64encode(os.urandom(24)).decode("utf-8")
         self.token = make_password(token, salt)
         self.save()
         return token
@@ -119,7 +118,7 @@ class Profile(models.Model):
         emails.change_email(self.user.email, ctx)
 
     def set_api_key(self):
-        self.api_key = base64.urlsafe_b64encode(os.urandom(24))
+        self.api_key = urlsafe_b64encode(os.urandom(24))
         self.save()
 
     def checks_from_all_teams(self):
