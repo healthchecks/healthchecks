@@ -10,4 +10,12 @@ $(function() {
         return false;
     });
 
+    $('#invite-team-member-modal').on('shown.bs.modal', function () {
+        $('#itm-email').focus();
+    })
+
+    $('#set-team-name-modal').on('shown.bs.modal', function () {
+        $('#team-name').focus();
+    })
+
 });
