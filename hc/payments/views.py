@@ -28,6 +28,10 @@ def get_client_token(request):
 
 
 def pricing(request):
+    if request.user.is_authenticated and request.profile != request.team:
+        ctx = {"page": "pricing"}
+        return render(request, "payments/pricing_not_owner.html", ctx)
+
     sub = None
     if request.user.is_authenticated:
         # Don't use Subscription.objects.for_user method here, so a

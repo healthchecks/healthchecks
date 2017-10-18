@@ -23,18 +23,15 @@ class PricingTestCase(BaseTestCase):
         assert Subscription.objects.count() == 0
 
     @override_settings(USE_PAYMENTS=True)
-    def test_pricing_is_hidden_for_team_members(self):
+    def test_pricing_is_visible_for_all(self):
+        for email in ("alice@example.org", "bob@example.org"):
+            self.client.login(username=email, password="password")
 
+            r = self.client.get("/about/")
+            self.assertContains(r, "Pricing")
+
+    def test_it_offers_to_switch(self):
         self.client.login(username="bob@example.org", password="password")
 
-        r = self.client.get("/about/")
-        # Bob should not see pricing tab, as bob is currently on
-        # Alice's team, but is not its owner.
-        self.assertNotContains(r, "Pricing")
-
-    @override_settings(USE_PAYMENTS=True)
-    def test_pricing_is_visible_for_team_owners(self):
-        self.client.login(username="alice@example.org", password="password")
-
-        r = self.client.get("/about/")
-        self.assertContains(r, "Pricing")
+        r = self.client.get("/pricing/")
+        self.assertContains(r, "To manage this team")

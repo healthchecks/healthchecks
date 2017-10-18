@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load staticfiles compress %}
+
+{% block title %}Pricing - healthchecks.io{% endblock %}
+
+{% block content %}
+
+<section id="plans">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="jumbotron">
+                    <p>
+                        You are currently viewing team <strong>{{ request.team }}</strong>.
+                    </p>
+                    <p>
+                        To manage this team, please log in as <strong>{{ request.team.user.email }}</strong>.
+                    </p>
+
+                    <br />
+
+                    <p>
+                        <a class="btn btn-default"
+                           href="{% url 'hc-switch-team' request.user.username %}">
+                           Switch to {{ request.profile }}
+                       </a>
+                        <a class="btn btn-default" href="{% url 'hc-logout' %}">Log Out</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
