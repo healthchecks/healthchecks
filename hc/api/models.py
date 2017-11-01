@@ -188,6 +188,26 @@ class Check(models.Model):
     def has_confirmation_link(self):
         return "confirm" in self.last_ping_body.lower()
 
+    def ping(self, remote_addr, scheme, method, ua, body):
+        self.n_pings = models.F("n_pings") + 1
+        self.last_ping = timezone.now()
+        self.last_ping_body = body[:10000]
+        self.alert_after = self.get_alert_after()
+        if self.status in ("new", "paused"):
+            self.status = "up"
+
+        self.save()
+        self.refresh_from_db()
+
+        ping = Ping(owner=self)
+        ping.n = self.n_pings
+        ping.remote_addr = remote_addr
+        ping.scheme = scheme
+        ping.method = method
+        # If User-Agent is longer than 200 characters, truncate it:
+        ping.ua = ua[:200]
+        ping.save()
+
 
 class Ping(models.Model):
     n = models.IntegerField(null=True)

@@ -1,7 +1,6 @@
 from datetime import timedelta as td
 
 from django.db import connection
-from django.db.models import F
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseNotFound, JsonResponse)
 from django.shortcuts import get_object_or_404
@@ -12,7 +11,7 @@ from django.views.decorators.http import require_POST
 
 from hc.api import schemas
 from hc.api.decorators import check_api_key, uuid_or_400, validate_json
-from hc.api.models import Check, Notification, Ping
+from hc.api.models import Check, Notification
 from hc.lib.badges import check_signature, get_badge_svg
 
 
@@ -22,26 +21,15 @@ from hc.lib.badges import check_signature, get_badge_svg
 def ping(request, code):
     check = get_object_or_404(Check, code=code)
 
-    check.n_pings = F("n_pings") + 1
-    check.last_ping = timezone.now()
-    check.last_ping_body = request.body[:10000]
-    check.alert_after = check.get_alert_after()
-    if check.status in ("new", "paused"):
-        check.status = "up"
-
-    check.save()
-    check.refresh_from_db()
-
-    ping = Ping(owner=check)
     headers = request.META
-    ping.n = check.n_pings
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
-    ping.remote_addr = remote_addr.split(",")[0]
-    ping.scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
-    ping.method = headers["REQUEST_METHOD"]
-    # If User-Agent is longer than 200 characters, truncate it:
-    ping.ua = headers.get("HTTP_USER_AGENT", "")[:200]
-    ping.save()
+    remote_addr = remote_addr.split(",")[0]
+    scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
+    method = headers["REQUEST_METHOD"]
+    ua = headers.get("HTTP_USER_AGENT", "")
+    body = request.body[:10000]
+
+    check.ping(remote_addr, scheme, method, ua, body)
 
     response = HttpResponse("OK")
     response["Access-Control-Allow-Origin"] = "*"
