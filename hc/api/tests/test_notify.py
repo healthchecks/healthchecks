@@ -5,6 +5,7 @@ import json
 
 from django.core import mail
 from django.utils.timezone import now
+from hc.api.transports import Transport
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 from mock import patch
@@ -57,6 +58,14 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_webhooks_ignore_up_events(self, mock_get):
         self._setup_data("webhook", "http://example", status="up")
+        self.channel.notify(self.check)
+
+        self.assertFalse(mock_get.called)
+        self.assertEqual(Notification.objects.count(), 0)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_ignore_down_events(self, mock_get):
+        self._setup_data("webhook", "\nhttp://example", status="down")
         self.channel.notify(self.check)
 
         self.assertFalse(mock_get.called)
@@ -145,6 +154,22 @@ class NotifyTestCase(BaseTestCase):
         # unicode should be encoded into utf-8
         self.assertTrue(isinstance(kwargs["data"], binary_type))
 
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_content_type(self, mock_request):
+        template = u"http://example.com\n\n{}\napplication/json"
+        self._setup_data("webhook", template)
+        self.check.save()
+
+        headers = {
+            "User-Agent": "healthchecks.io",
+            "Content-Type": "application/json"
+        }
+
+        self.channel.notify(self.check)
+
+        mock_request.assert_called_with(
+            "post", "http://example.com", data=b"{}", headers=headers, timeout=5)
+
     def test_email(self):
         self._setup_data("email", "alice@example.org")
         self.channel.notify(self.check)
@@ -166,6 +191,17 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.first()
         self.assertEqual(n.error, "Email not verified")
         self.assertEqual(len(mail.outbox), 0)
+
+    @patch("hc.api.transports.emails.alert")
+    def test_email_missing_profile(self, mock_emails):
+        self._setup_data("email", "not_alice@example.org")
+        self.profile.sort = "name"
+        self.profile.save()
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_emails.call_args
+        self.assertEqual(args[0], "not_alice@example.org")
+        self.assertEqual(args[1]["sort"], "created")
 
     @patch("hc.api.transports.requests.request")
     def test_pd(self, mock_post):
@@ -277,6 +313,21 @@ class NotifyTestCase(BaseTestCase):
         self.assertIn("DOWN", payload["message"])
 
     @patch("hc.api.transports.requests.request")
+    def test_opsgenie_up(self, mock_post):
+        self._setup_data("opsgenie", "123", status="up")
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        n = Notification.objects.first()
+        self.assertEqual(n.error, "")
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(args[0], "post")
+        self.assertTrue(args[1].endswith("/close"))
+        self.assertNotIn("message", payload)
+
+    @patch("hc.api.transports.requests.request")
     def test_pushover(self, mock_post):
         self._setup_data("po", "123|0")
         mock_post.return_value.status_code = 200
@@ -287,6 +338,22 @@ class NotifyTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertIn("DOWN", payload["title"])
+        self.assertNotIn("retry", payload)
+        self.assertNotIn("expire", payload)
+
+    @patch("hc.api.transports.requests.request")
+    def test_pushover_emergency(self, mock_post):
+        self._setup_data("po", "123|2")
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertIn("DOWN", payload["title"])
+        self.assertIn("retry", payload)
+        self.assertIn("expire", payload)
 
     @patch("hc.api.transports.requests.request")
     def test_victorops(self, mock_post):
@@ -387,3 +454,8 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         self.assertTrue(mock_post.called)
+
+    def test_transport_notify(self):
+        self._setup_data("webhook", "http://example")
+        with self.assertRaises(NotImplementedError):
+            Transport.notify(self.channel, self.check)
