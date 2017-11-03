@@ -458,4 +458,4 @@ class NotifyTestCase(BaseTestCase):
     def test_transport_notify(self):
         self._setup_data("webhook", "http://example")
         with self.assertRaises(NotImplementedError):
-            Transport.notify(self.channel, self.check)
+            Transport(self.channel).notify(self.check)
