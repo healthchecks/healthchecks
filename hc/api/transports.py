@@ -164,8 +164,11 @@ class Webhook(HttpTransport):
 
         url = self.prepare(url, check, urlencode=True)
         if self.channel.post_data:
+            headers = {}
+            if self.channel.content_type:
+                headers["Content-Type"] = self.channel.content_type
             payload = self.prepare(self.channel.post_data, check)
-            return self.post(url, data=payload.encode("utf-8"))
+            return self.post(url, data=payload.encode("utf-8"), headers=headers)
         else:
             return self.get(url)
 
@@ -230,7 +233,7 @@ class Pushbullet(HttpTransport):
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
             "Access-Token": self.channel.value,
-            "Conent-Type": "application/json"
+            "Content-Type": "application/json"
         }
         payload = {
             "type": "note",

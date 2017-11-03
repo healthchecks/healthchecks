@@ -322,6 +322,12 @@ class Channel(models.Model):
         return parts[2] if len(parts) > 2 else ""
 
     @property
+    def content_type(self):
+        assert self.kind == "webhook"
+        parts = self.value.split("\n")
+        return parts[3] if len(parts) > 3 else ""
+
+    @property
     def slack_team(self):
         assert self.kind == "slack"
         if not self.value.startswith("{"):

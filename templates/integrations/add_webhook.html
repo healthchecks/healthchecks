@@ -105,6 +105,22 @@
                 {% endif %}
             </div>
         </div>
+        <div class="form-group {{ form.content_type.css_classes }}">
+            <label class="col-sm-2 control-label">Content-Type</label>
+            <div class="col-sm-10">
+                <input
+                    type="text"
+                    class="form-control"
+                    name="content_type"
+                    placeholder='application/json'
+                    value="{{ form.content_type.value|default:"" }}">
+                {% if form.content_type.errors %}
+                <div class="help-block">
+                    {{ form.content_type.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-primary">Save Integration</button>
