@@ -18,7 +18,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "http://foo.com\nhttps://bar.com\n")
+        self.assertEqual(c.value, "http://foo.com\nhttps://bar.com\n\n")
 
     def test_it_adds_webhook_using_team_access(self):
         form = {"value_down": "http://foo.com", "value_up": "https://bar.com"}
@@ -30,7 +30,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.user, self.alice)
-        self.assertEqual(c.value, "http://foo.com\nhttps://bar.com\n")
+        self.assertEqual(c.value, "http://foo.com\nhttps://bar.com\n\n")
 
     def test_it_rejects_bad_urls(self):
         urls = [
@@ -59,7 +59,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "\nhttp://foo.com\n")
+        self.assertEqual(c.value, "\nhttp://foo.com\n\n")
 
     def test_it_adds_post_data(self):
         form = {"value_down": "http://foo.com", "post_data": "hello"}
@@ -69,4 +69,14 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "http://foo.com\n\nhello")
+        self.assertEqual(c.value, "http://foo.com\n\nhello\n")
+
+    def test_it_adds_content_type(self):
+        form = {"value_down": "http://foo.com", "post_data": "hello", "content_type": "application/json"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertRedirects(r, "/integrations/")
+
+        c = Channel.objects.get()
+        self.assertEqual(c.value, "http://foo.com\n\nhello\napplication/json")
