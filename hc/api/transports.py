@@ -70,6 +70,9 @@ class Email(Transport):
 
         emails.alert(self.channel.value, ctx, headers)
 
+    def is_noop(self, check):
+        return not self.channel.email_verified
+
 
 class HttpTransport(Transport):
 

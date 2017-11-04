@@ -162,9 +162,9 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("email", "alice@example.org", email_verified=False)
         self.channel.notify(self.check)
 
-        assert Notification.objects.count() == 1
-        n = Notification.objects.first()
-        self.assertEqual(n.error, "Email not verified")
+        # If an email is not verified, it should be skipped over
+        # without logging a notification:
+        self.assertEqual(Notification.objects.count(), 0)
         self.assertEqual(len(mail.outbox), 0)
 
     @patch("hc.api.transports.requests.request")
