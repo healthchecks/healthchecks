@@ -14,6 +14,7 @@ class BounceTestCase(BaseTestCase):
 
         self.channel = Channel(user=self.alice, kind="email")
         self.channel.value = "alice@example.org"
+        self.channel.email_verified = True
         self.channel.save()
 
         self.n = Notification(owner=self.check, channel=self.channel)
@@ -26,6 +27,9 @@ class BounceTestCase(BaseTestCase):
 
         self.n.refresh_from_db()
         self.assertEqual(self.n.error, "foo")
+
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.email_verified)
 
     def test_it_checks_ttl(self):
         self.n.created = self.n.created - timedelta(minutes=60)

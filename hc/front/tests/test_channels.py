@@ -1,6 +1,6 @@
 import json
 
-from hc.api.models import Channel
+from hc.api.models import Check, Channel, Notification
 from hc.test import BaseTestCase
 
 
@@ -47,3 +47,29 @@ class ChannelsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "fake-key")
         self.assertContains(r, "(normal priority)")
+
+    def test_it_shows_disabled_email(self):
+        check = Check(user=self.alice, status="up")
+        check.save()
+
+        channel = Channel(user=self.alice, kind="email")
+        channel.value = "alice@example.org"
+        channel.save()
+
+        n = Notification(owner=check, channel=channel, error="Invalid address")
+        n.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "(bounced, disabled)")
+
+    def test_it_shows_unconfirmed_email(self):
+        channel = Channel(user=self.alice, kind="email")
+        channel.value = "alice@example.org"
+        channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "(unconfirmed)")

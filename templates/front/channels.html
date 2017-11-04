@@ -32,7 +32,16 @@
                     <span class="preposition">to</span>
                     {{ ch.value }}
                     {% if not ch.email_verified %}
-                        <span class="channel-unconfirmed">(unconfirmed)</span>
+                        {% if ch.latest_notification and ch.latest_notification.error %}
+                            <span class="channel-disabled">
+                            (bounced, disabled)
+                            </span>
+                        {% else %}
+                            <span class="channel-unconfirmed">
+                            (unconfirmed)
+                            </span>
+                        {% endif %}
+                        </span>
                     {% endif %}
                 {% elif ch.kind == "pd" %}
                     {% if ch.pd_account %}

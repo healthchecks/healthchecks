@@ -54,6 +54,11 @@ table.channels-table > tbody > tr > th {
     font-size: small;
 }
 
+.channel-disabled {
+    font-size: small;
+}
+
+
 .channels-help-hidden {
     display: none;
 }

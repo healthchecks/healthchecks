@@ -200,6 +200,9 @@ def bounce(request, code):
     notification.error = request.body[:200]
     notification.save()
 
+    notification.channel.email_verified = False
+    notification.channel.save()
+
     return HttpResponse()
 
 
