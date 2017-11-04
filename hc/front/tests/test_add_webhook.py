@@ -11,17 +11,17 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertContains(r, "Runs a HTTP GET or HTTP POST")
 
     def test_it_adds_two_webhook_urls_and_redirects(self):
-        form = {"value_down": "http://foo.com", "value_up": "https://bar.com"}
+        form = {"url_down": "http://foo.com", "url_up": "https://bar.com"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "http://foo.com\nhttps://bar.com\n\n")
+        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "https://bar.com", "post_data": "", "headers": ""}')
 
     def test_it_adds_webhook_using_team_access(self):
-        form = {"value_down": "http://foo.com", "value_up": "https://bar.com"}
+        form = {"url_down": "http://foo.com", "url_up": "https://bar.com"}
 
         # Logging in as bob, not alice. Bob has team access so this
         # should work.
@@ -30,7 +30,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.user, self.alice)
-        self.assertEqual(c.value, "http://foo.com\nhttps://bar.com\n\n")
+        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "https://bar.com", "post_data": "", "headers": ""}')
 
     def test_it_rejects_bad_urls(self):
         urls = [
@@ -45,7 +45,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         for url in urls:
-            form = {"value_down": url, "value_up": ""}
+            form = {"url_down": url, "url_up": ""}
 
             r = self.client.post(self.url, form)
             self.assertContains(r, "Enter a valid URL.", msg_prefix=url)
@@ -53,30 +53,31 @@ class AddWebhookTestCase(BaseTestCase):
             self.assertEqual(Channel.objects.count(), 0)
 
     def test_it_handles_empty_down_url(self):
-        form = {"value_down": "", "value_up": "http://foo.com"}
+        form = {"url_down": "", "url_up": "http://foo.com"}
 
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "\nhttp://foo.com\n\n")
+        self.assertEqual(c.value, '{"url_down": "", "url_up": "http://foo.com", "post_data": "", "headers": ""}')
 
     def test_it_adds_post_data(self):
-        form = {"value_down": "http://foo.com", "post_data": "hello"}
+        form = {"url_down": "http://foo.com", "post_data": "hello"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "http://foo.com\n\nhello\n")
+        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "", "post_data": "hello", "headers": ""}')
 
-    def test_it_adds_content_type(self):
-        form = {"value_down": "http://foo.com", "post_data": "hello", "content_type": "application/json"}
+    def test_it_adds_headers(self):
+        form = {"url_down": "http://foo.com", "headers": '{"test": "123"}'}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "http://foo.com\n\nhello\napplication/json")
+        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "", "post_data": "", "headers": "{\\\"test\\\": \\\"123\\\"}"}')
+

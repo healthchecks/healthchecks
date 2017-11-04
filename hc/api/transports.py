@@ -147,27 +147,27 @@ class Webhook(HttpTransport):
         return result
 
     def is_noop(self, check):
-        if check.status == "down" and not self.channel.value_down:
+        if check.status == "down" and not self.channel.url_down:
             return True
 
-        if check.status == "up" and not self.channel.value_up:
+        if check.status == "up" and not self.channel.url_up:
             return True
 
         return False
 
     def notify(self, check):
-        url = self.channel.value_down
+        url = self.channel.url_down
         if check.status == "up":
-            url = self.channel.value_up
+            url = self.channel.url_up
 
         assert url
 
         url = self.prepare(url, check, urlencode=True)
         if self.channel.post_data:
-            headers = {}
-            if self.channel.content_type:
-                headers["Content-Type"] = self.channel.content_type
             payload = self.prepare(self.channel.post_data, check)
+            headers = {}
+            if self.channel.headers:
+                headers = json.loads(self.channel.headers)
             return self.post(url, data=payload.encode("utf-8"), headers=headers)
         else:
             return self.get(url)
@@ -233,7 +233,7 @@ class Pushbullet(HttpTransport):
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
             "Access-Token": self.channel.value,
-            "Content-Type": "application/json"
+            "Conent-Type": "application/json"
         }
         payload = {
             "type": "note",

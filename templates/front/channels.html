@@ -62,16 +62,16 @@
                     {% endif %}
                 {% elif ch.kind == "webhook" %}
                     <table>
-                        {% if ch.value_down %}
+                        {% if ch.url_down %}
                         <tr>
                             <td class="preposition">down&nbsp;</td>
-                            <td>{{ ch.value_down }}</td>
+                            <td>{{ ch.url_down }}</td>
                         </tr>
                         {% endif %}
-                        {% if ch.value_up %}
+                        {% if ch.url_up %}
                         <tr>
                             <td class="preposition">up&nbsp;</td>
-                            <td>{{ ch.value_up }}</td>
+                            <td>{{ ch.url_up }}</td>
                         </tr>
                         {% endif %}
                         {% if ch.post_data %}
@@ -80,10 +80,10 @@
                             <td>{{ ch.post_data }}</td>
                         </tr>
                         {% endif %}
-                        {% if ch.content_type %}
+                        {% if ch.headers %}
                         <tr>
-                            <td class="preposition">type&nbsp;</td>
-                            <td>{{ ch.content_type }}</td>
+                            <td class="preposition">headers&nbsp;</td>
+                            <td>{{ ch.headers }}</td>
                         </tr>
                         {% endif %}
                     </table>
