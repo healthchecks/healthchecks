@@ -69,7 +69,7 @@ class AddWebhookForm(forms.Form):
     headers = forms.CharField(max_length=1000, required=False)
 
     def get_value(self):
-        return json.dumps(self.cleaned_data)
+        return json.dumps(self.cleaned_data, sort_keys=True)
 
 
 phone_validator = RegexValidator(regex='^\+\d{5,15}$',

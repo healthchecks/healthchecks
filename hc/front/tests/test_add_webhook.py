@@ -18,7 +18,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "https://bar.com", "post_data": "", "headers": ""}')
+        self.assertEqual(c.value, '{"headers": "", "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}')
 
     def test_it_adds_webhook_using_team_access(self):
         form = {"url_down": "http://foo.com", "url_up": "https://bar.com"}
@@ -30,7 +30,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.user, self.alice)
-        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "https://bar.com", "post_data": "", "headers": ""}')
+        self.assertEqual(c.value, '{"headers": "", "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}')
 
     def test_it_rejects_bad_urls(self):
         urls = [
@@ -59,7 +59,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"url_down": "", "url_up": "http://foo.com", "post_data": "", "headers": ""}')
+        self.assertEqual(c.value, '{"headers": "", "post_data": "", "url_down": "", "url_up": "http://foo.com"}')
 
     def test_it_adds_post_data(self):
         form = {"url_down": "http://foo.com", "post_data": "hello"}
@@ -69,7 +69,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "", "post_data": "hello", "headers": ""}')
+        self.assertEqual(c.value, '{"headers": "", "post_data": "hello", "url_down": "http://foo.com", "url_up": ""}')
 
     def test_it_adds_headers(self):
         form = {"url_down": "http://foo.com", "headers": '{"test": "123"}'}
@@ -79,5 +79,5 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"url_down": "http://foo.com", "url_up": "", "post_data": "", "headers": "{\\\"test\\\": \\\"123\\\"}"}')
+        self.assertEqual(c.value, '{"headers": "{\\\"test\\\": \\\"123\\\"}", "post_data": "", "url_down": "http://foo.com", "url_up": ""}')
 
