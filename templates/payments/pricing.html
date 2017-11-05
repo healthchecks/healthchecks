@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load staticfiles compress %}
+{% load staticfiles compress hc_extras %}
 
 {% block title %}Pricing - It's Free! - healthchecks.io{% endblock %}
 
 {% block content %}
 
 <!-- Plans -->
-<section id="plans">
+<section id="plans" {% if request.user.is_authenticated %} data- {% endif %}>
     <div class="container">
         {% if messages %}
         <div class="alert alert-danger">
@@ -28,7 +28,7 @@
                         {% if first_charge %}
                         Success! You just paid ${{ sub.price }}.
                         {% else %}
-                            You are currently paying ${{ sub.price }}/month
+                            You are currently paying ${{ sub.price }}/{{ sub.period }}
 
                             {% if sub.pm_is_credit_card %}
                             using {{ sub.card_type }} card
@@ -47,7 +47,9 @@
                     <p>
                         <a class="btn btn-default" href="{% url 'hc-billing' %}">See Billing History</a>
                         {% if not first_charge %}
-                        <button class="btn btn-default btn-update-payment-method">
+                        <button
+                            class="btn btn-default btn-update-payment-method"
+                            data-action="{% url 'hc-update-payment-method' %}">
                             Change Payment Method
                         </button>
                         {% endif %}
@@ -55,22 +57,51 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <h1>{% site_name %} Pricing Plans</h1>
+            </div>
+        </div>
         {% endif %}
 
-
         <div class="row">
+            <div class="col-sm-12" id="period-controls">
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default {% if period == "monthly" %} active {% endif %}">
+                        <input
+                            type="radio"
+                            name="period"
+                            value="monthly"
+                            {% if period == "monthly" %} checked {% endif %}
+                            autocomplete="off"> Monthly
+                    </label>
+                    <label class="btn btn-default {% if period == "annual" %} active {% endif %}">
+                        <input
+                            type="radio"
+                            name="period"
+                            value="annual"
+                            {% if period == "annual" %} checked {% endif %}
+                            autocomplete="off"> Annual
+                    </label>
+                </div>
+                <p id="annual-note">(20% off on annual plan)</p>
+            </div>
+        </div>
 
+
+        <div id="monthly" class="row {% if period != "monthly" %} hide {% endif %}">
             <!-- Free -->
             <div class="col-sm-4 text-center">
-                <div class="panel panel-default panel-pricing">
+                <div class="panel panel-default">
                     <div class="panel-body text-center free">
-                        <p>free</p>
+                        <h1>Free</h1>
+                        <h2>$0<span class="mo">/mo</span></h2>
                     </div>
                     <ul class="list-group text-center">
                         <li class="list-group-item"><i class="fa fa-check"></i> 20 Checks</li>
-                        <li class="list-group-item">100 log entries per check</li>
-                        <li class="list-group-item"><i class="fa fa-check"></i> Personal or Commercial use</li>
                         <li class="list-group-item">3 Team Members</li>
+                        <li class="list-group-item">100 log entries per check</li>
                         <li class="list-group-item">&nbsp;</li>
                         <li class="list-group-item">&nbsp;</li>
                     </ul>
@@ -96,16 +127,16 @@
 
             <!-- P5 -->
             <div class="col-sm-4 text-center">
-                <div class="panel panel-default panel-pricing">
+                <div class="panel panel-default">
                     <div class="panel-body text-center">
-                        <p>$5<span class="mo">/mo</span></p>
+                        <h1>Standard</h1>
+                        <h2>$5<span class="mo">/mo</span></h2>
                     </div>
 
                     <ul class="list-group text-center">
                         <li class="list-group-item">Unlimited Checks</li>
-                        <li class="list-group-item">1000 log entries per check</li>
-                        <li class="list-group-item">Personal or Commercial use</li>
                         <li class="list-group-item">10 Team Members</li>
+                        <li class="list-group-item">1000 log entries per check</li>
                         <li class="list-group-item">50 SMS alerts per month</li>
                         <li class="list-group-item">Email Support</li>
                     </ul>
@@ -118,11 +149,13 @@
                             {% else %}
                             <button
                                 data-plan-id="P5"
+                                data-plan-pay="5"
+                                data-action="{% url 'hc-create-plan' %}"
                                 class="btn btn-lg btn-default btn-create-payment-method">
-                                {% if sub.plan_id == "P50" %}
-                                Switch to $5/mo
-                                {% else %}
+                                {% if not sub.subscription_id %}
                                 Upgrade your Account
+                                {% else %}
+                                Switch to $5/mo
                                 {% endif %}
                             </button>
                             {% endif %}
@@ -138,16 +171,16 @@
 
             <!-- P50 -->
             <div class="col-sm-4 text-center">
-                <div class="panel panel-default panel-pricing">
+                <div class="panel panel-default">
                     <div class="panel-body text-center">
-                        <p>$50<span class="mo">/mo</span></p>
+                        <h1>Plus</h1>
+                        <h2>$50<span class="mo">/mo</span></h2>
                     </div>
 
                     <ul class="list-group text-center">
                         <li class="list-group-item">Unlimited Checks</li>
-                        <li class="list-group-item">1000 log entries per check</li>
-                        <li class="list-group-item">Personal or Commercial use</li>
                         <li class="list-group-item">Unlimited Team Members</li>
+                        <li class="list-group-item">1000 log entries per check</li>
                         <li class="list-group-item">500 SMS alerts per month</li>
                         <li class="list-group-item">Priority Email Support</li>
                     </ul>
@@ -160,8 +193,94 @@
                             {% else %}
                             <button
                                 data-plan-id="P50"
+                                data-plan-pay="50"
+                                data-action="{% url 'hc-create-plan' %}"
                                 class="btn btn-lg btn-default btn-create-payment-method">
-                                Upgrade Your Account
+                                {% if not sub.subscription_id %}
+                                Upgrade your Account
+                                {% else %}
+                                Switch to $50/mo
+                                {% endif %}
+                            </button>
+                            {% endif %}
+                        {% else %}
+                            <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">
+                                Get Started
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- /item -->
+        </div>
+
+        <div id="annual" class="row {% if period != "annual" %} hide {% endif %}">
+            <!-- Free -->
+            <div class="col-sm-4 text-center">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center free">
+                        <h1>Free</h1>
+                        <h2>$0<span class="mo">/mo</span></h2>
+                    </div>
+                    <ul class="list-group text-center">
+                        <li class="list-group-item"><i class="fa fa-check"></i> 20 Checks</li>
+                        <li class="list-group-item">3 Team Members</li>
+                        <li class="list-group-item">100 log entries per check</li>
+                        <li class="list-group-item">&nbsp;</li>
+                        <li class="list-group-item">&nbsp;</li>
+                    </ul>
+                    <div class="panel-footer">
+                        {% if request.user.is_authenticated %}
+                            {% if sub.subscription_id %}
+                                <form method="post" action="{% url 'hc-cancel-plan' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-lg btn-default">
+                                        Switch To Free
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a class="btn btn-lg btn-success disabled" href="#">Selected</a>
+                            {% endif %}
+                        {% else %}
+                        <a class="btn btn-lg btn-success" href="{% url 'hc-login' %}">Get Started</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- /item -->
+
+            <!-- Y48 -->
+            <div class="col-sm-4 text-center">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h1>Standard</h1>
+                        <h2>$4<span class="mo">/mo</span></h2>
+                    </div>
+
+                    <ul class="list-group text-center">
+                        <li class="list-group-item">Unlimited Checks</li>
+                        <li class="list-group-item">10 Team Members</li>
+                        <li class="list-group-item">1000 log entries per check</li>
+                        <li class="list-group-item">50 SMS alerts per month</li>
+                        <li class="list-group-item">Email Support</li>
+                    </ul>
+                    <div class="panel-footer">
+                        {% if request.user.is_authenticated %}
+                            {% if sub.plan_id == "Y48" %}
+                            <button  class="btn btn-lg btn-success disabled">
+                                Selected
+                            </button>
+                            {% else %}
+                            <button
+                                data-plan-id="Y48"
+                                data-plan-pay="48"
+                                data-action="{% url 'hc-create-plan' %}"
+                                class="btn btn-lg btn-default btn-create-payment-method">
+                                {% if not sub.subscription_id %}
+                                Upgrade your Account
+                                {% else %}
+                                Switch to $4/mo
+                                {% endif %}
                             </button>
                             {% endif %}
                         {% else %}
@@ -174,6 +293,49 @@
             </div>
             <!-- /item -->
 
+            <!-- Y480 -->
+            <div class="col-sm-4 text-center">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center">
+                        <h1>Plus</h1>
+                        <h2>$40<span class="mo">/mo</span></h2>
+                    </div>
+
+                    <ul class="list-group text-center">
+                        <li class="list-group-item">Unlimited Checks</li>
+                        <li class="list-group-item">Unlimited Team Members</li>
+                        <li class="list-group-item">1000 log entries per check</li>
+                        <li class="list-group-item">500 SMS alerts per month</li>
+                        <li class="list-group-item">Priority Email Support</li>
+                    </ul>
+                    <div class="panel-footer">
+                        {% if request.user.is_authenticated %}
+                            {% if sub.plan_id == "Y480" %}
+                            <button  class="btn btn-lg btn-success disabled">
+                                Selected
+                            </button>
+                            {% else %}
+                            <button
+                                data-plan-id="Y480"
+                                data-plan-pay="480"
+                                data-action="{% url 'hc-create-plan' %}"
+                                class="btn btn-lg btn-default btn-create-payment-method">
+                                {% if not sub.subscription_id %}
+                                Upgrade your Account
+                                {% else %}
+                                Switch to $40/mo
+                                {% endif %}
+                            </button>
+                            {% endif %}
+                        {% else %}
+                            <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">
+                                Get Started
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- /item -->
         </div>
 
     </div>
@@ -257,62 +419,35 @@
 
 <div id="payment-method-modal" class="modal pm-modal">
     <div class="modal-dialog">
-        <form method="post" action="{% url 'hc-create-plan' %}">
+        <form id="payment-form" method="post" action="{% url 'hc-create-plan' %}">
             {% csrf_token %}
             <input id="plan_id" type="hidden" name="plan_id" value="" />
+            <input id="pmm-nonce" type="hidden" name="payment_method_nonce" />
 
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4>Set Up Subscription
-                        <small>for {{ request.user.profile }}</small>
-                    </h4>
+                    <h4>Subscription for {{ request.user.profile }}</h4>
                 </div>
                 <div class="modal-body">
-                    <div id="payment-form"></div>
+                    <div id="dropin"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">
                         Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary">
-                        Set Up Subscription
+                    <button id="payment-form-submit" type="button" class="btn btn-primary" disabled>
+                        Submit
                     </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
-<div id="update-payment-method-modal" class="modal pm-modal">
-    <div class="modal-dialog">
-        <form method="post" action="{% url 'hc-update-payment-method' %}">
-            {% csrf_token %}
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4>Your Payment Method</h4>
-                </div>
-                <div class="modal-body">
-                    <div id="update-payment-form"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Confirm Payment Method
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
 {% endblock %}
 
 {% block scripts %}
-<script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+<script src="https://js.braintreegateway.com/web/dropin/1.8.0/js/dropin.min.js"></script>
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>

@@ -1,6 +1,5 @@
 from mock import patch
 
-from hc.accounts.models import Profile
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 
@@ -41,6 +40,35 @@ class CreatePlanTestCase(BaseTestCase):
         self.assertEqual(sub.payment_method_token, "t-token")
         self.assertEqual(sub.subscription_id, "t-sub-id")
         self.assertEqual(sub.plan_id, "P5")
+
+        # User's profile should have a higher limits
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.ping_log_limit, 1000)
+        self.assertEqual(self.profile.check_limit, 500)
+        self.assertEqual(self.profile.team_limit, 9)
+        self.assertEqual(self.profile.sms_limit, 50)
+        self.assertEqual(self.profile.sms_sent, 0)
+
+        # braintree.Subscription.cancel should have not been called
+        assert not mock.Subscription.cancel.called
+
+    @patch("hc.payments.views.braintree")
+    def test_yearly_works(self, mock):
+        self._setup_mock(mock)
+
+        self.profile.sms_limit = 0
+        self.profile.sms_sent = 1
+        self.profile.save()
+
+        r = self.run_create_plan("Y48")
+        self.assertRedirects(r, "/pricing/")
+
+        # Subscription should be filled out:
+        sub = Subscription.objects.get(user=self.alice)
+        self.assertEqual(sub.customer_id, "test-customer-id")
+        self.assertEqual(sub.payment_method_token, "t-token")
+        self.assertEqual(sub.subscription_id, "t-sub-id")
+        self.assertEqual(sub.plan_id, "Y48")
 
         # User's profile should have a higher limits
         self.profile.refresh_from_db()

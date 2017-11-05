@@ -1,9 +1,5 @@
-.panel-pricing .panel-heading {
-  padding: 20px 10px;
-}
 .panel-pricing .list-group-item {
   color: #777777;
-  border-bottom: 1px solid rgba(250, 250, 250, 0.5);
 }
 .panel-pricing .list-group-item:last-child {
   border-bottom-right-radius: 0px;
@@ -46,10 +42,29 @@
     font-weight: bold;
 }
 
-.panel-pricing .free {
-}
-
 .mo {
     font-size: 18px;
     color: #888;
+}
+
+#period-controls {
+    text-align: center;
+    padding: 24px;
+}
+
+#period-controls .btn {
+    width: 100px;
+}
+
+#plans .panel-footer {
+    background: transparent;
+}
+
+#annual-note {
+    margin: 10px 0;
+    color: #AAA;
+}
+
+#payment-method-modal .modal-header {
+    text-align: center;
 }

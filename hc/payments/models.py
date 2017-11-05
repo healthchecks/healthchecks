@@ -31,8 +31,20 @@ class Subscription(models.Model):
             return 5
         elif self.plan_id == "P50":
             return 50
+        elif self.plan_id == "Y48":
+            return 48
+        elif self.plan_id == "Y480":
+            return 480
 
         return 0
+
+    def period(self):
+        if self.plan_id.startswith("P"):
+            return "month"
+        elif self.plan_id.startswith("Y"):
+            return "year"
+
+        raise NotImplementedError("Unexpected plan: %s" % self.plan_id)
 
     def _get_braintree_payment_method(self):
         if not hasattr(self, "_pm"):

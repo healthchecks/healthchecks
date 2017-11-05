@@ -38,9 +38,14 @@ def pricing(request):
         # subscription object is not created just by viewing a page.
         sub = Subscription.objects.filter(user_id=request.user.id).first()
 
+    period = "monthly"
+    if sub and sub.plan_id.startswith("Y"):
+        period = "annual"
+
     ctx = {
         "page": "pricing",
         "sub": sub,
+        "period": period,
         "first_charge": request.session.pop("first_charge", False)
     }
 
@@ -48,9 +53,13 @@ def pricing(request):
 
 
 def log_and_bail(request, result):
+    logged_deep_error = False
+
     for error in result.errors.deep_errors:
         messages.error(request, error.message)
-    else:
+        logged_deep_error = True
+
+    if not logged_deep_error:
         messages.error(request, result.message)
 
     return redirect("hc-pricing")
@@ -60,7 +69,7 @@ def log_and_bail(request, result):
 @require_POST
 def create_plan(request):
     plan_id = request.POST["plan_id"]
-    if plan_id not in ("P5", "P50"):
+    if plan_id not in ("P5", "P50", "Y48", "Y480"):
         return HttpResponseBadRequest()
 
     sub = Subscription.objects.for_user(request.user)
@@ -111,14 +120,14 @@ def create_plan(request):
 
     # Update user's profile
     profile = request.user.profile
-    if plan_id == "P5":
+    if plan_id in ("P5", "Y48"):
         profile.ping_log_limit = 1000
         profile.check_limit = 500
         profile.team_limit = 9
         profile.sms_limit = 50
         profile.sms_sent = 0
         profile.save()
-    elif plan_id == "P50":
+    elif plan_id in ("P50", "Y480"):
         profile.ping_log_limit = 1000
         profile.check_limit = 500
         profile.team_limit = 500
