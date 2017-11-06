@@ -1,4 +1,7 @@
 $(function() {
+    $(".webhook_header_btn:first").addClass("btn-info").text("+")
+    $(".webhook_header_btn:not(:first)").addClass("btn-danger").text("X")
+
     $("#webhook_headers").on("click", ".webhook_header_btn.btn-danger", function(e) {
         e.preventDefault();
         $(this).closest("div.row").remove();

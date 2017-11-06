@@ -108,6 +108,23 @@
         <div class="form-group {{ form.headers.css_classes }}">
             <label class="col-sm-2 control-label">Headers</label>
             <div id="webhook_headers" class="col-xs-12 col-sm-10">
+                {% if form.headers %}
+                {% for k,v in form.headers.items %}
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6" style="padding-right: 0px;">
+                        <input type="text" class="form-control" name="header_key[]" placeholder="Key" value="{{ k|default:"" }}">
+                    </div>
+                    <div class="col-xs-6 col-sm-6" style="padding-left: 0px;">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="header_value[]" placeholder="Value" value="{{ v|default:"" }}">
+                            <span class="input-group-btn">
+                                <button class="webhook_header_btn btn" type="button" class="btn"></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
                 <div class="row">
                     <div class="col-xs-6 col-sm-6" style="padding-right: 0px;">
                         <input type="text" class="form-control" name="header_key[]" placeholder="Key">
@@ -121,13 +138,8 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
-            <input type="hidden"
-                    type="text"
-                    class="form-control"
-                    name="headers"
-                    value="{{ form.headers.value|default:"" }}">
-            
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
