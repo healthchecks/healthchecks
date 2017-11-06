@@ -174,8 +174,8 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_headers(self, mock_request):
         self._setup_data("webhook", '{"url_down": "http://foo.com", '
-            '"url_up": "", "post_data": "data", "headers": '
-            '"{\\\"Content-Type\\\": \\\"application/json\\\"}"}')
+            '"url_up": "", "post_data": "data", '
+            '"headers": {"Content-Type": "application/json"}}')
         self.channel.notify(self.check)
 
         headers = {

@@ -437,7 +437,10 @@ def add_email(request):
 @login_required
 def add_webhook(request):
     if request.method == "POST":
-        form = AddWebhookForm(request.POST)
+        header_keys = request.POST.getlist('header_key[]')
+        header_values = request.POST.getlist('header_value[]')
+        form = AddWebhookForm(request.POST or None, 
+            header_keys=header_keys, header_values=header_values)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="webhook")
             channel.value = form.get_value()

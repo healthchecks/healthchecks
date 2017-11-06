@@ -167,7 +167,7 @@ class Webhook(HttpTransport):
             payload = self.prepare(self.channel.post_data, check)
             headers = {}
             if self.channel.headers:
-                headers = json.loads(self.channel.headers)
+                headers = self.channel.headers
             return self.post(url, data=payload.encode("utf-8"), headers=headers)
         else:
             return self.get(url)

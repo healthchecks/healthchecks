@@ -66,10 +66,22 @@ class AddWebhookForm(forms.Form):
 
     post_data = forms.CharField(max_length=1000, required=False)
 
-    headers = forms.CharField(max_length=1000, required=False)
+    def __init__(self, *args, **kwargs):
+        self.headers = {}
+        if all(k in kwargs for k in ("header_keys", "header_values")):
+            header_keys = kwargs.pop("header_keys")
+            header_values = kwargs.pop("header_values")
+
+            for i, (key, val) in enumerate(zip(header_keys, header_values)):
+                if key:
+                    self.headers[key] = val
+
+        super(AddWebhookForm, self).__init__(*args, **kwargs)
 
     def get_value(self):
-        return json.dumps(self.cleaned_data, sort_keys=True)
+        val = dict(self.cleaned_data)
+        val["headers"] = self.headers
+        return json.dumps(val, sort_keys=True)
 
 
 phone_validator = RegexValidator(regex='^\+\d{5,15}$',
