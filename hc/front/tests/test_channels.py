@@ -32,9 +32,10 @@ class ChannelsTestCase(BaseTestCase):
         r = self.client.get("/integrations/")
 
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "<td>http://down.example.com</td>")
-        self.assertContains(r, "<td>http://up.example.com</td>")
-        self.assertContains(r, "<td>foobar</td>")
+        # These are inside a modal:
+        self.assertContains(r, "<code>http://down.example.com</code>")
+        self.assertContains(r, "<code>http://up.example.com</code>")
+        self.assertContains(r, "<code>foobar</code>")
 
     def test_it_shows_pushover_details(self):
         ch = Channel(kind="po", user=self.alice)

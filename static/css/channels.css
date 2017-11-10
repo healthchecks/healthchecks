@@ -193,6 +193,26 @@ table.channels-table > tbody > tr > th {
     font-size: 16px;
 }
 
+.channel-details table {
+    width: 100%;
+}
+
+.channel-details td, .channel-details th {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.channel-details tr:last-child td, .channel-details tr:last-child th {
+    border-bottom: 0;
+}
+
+
+.channel-details .missing {
+    color: #999;
+    font-style: italic;
+}
+
+
 /* Add Webhook */
 
 .webhook-header input.form-control {
