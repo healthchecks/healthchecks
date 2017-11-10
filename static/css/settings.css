@@ -30,8 +30,11 @@
 }
 
 .table td.overall-status {
-    padding-top: 32px;
     border-top: 0;
+}
+
+.table td.have-tags {
+    padding-top: 32px;
 }
 
 #badges-json {

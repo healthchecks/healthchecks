@@ -29,7 +29,6 @@
                     URLs. If you wish, you can add them to your READMEs,
                     dashboards or status pages.
                 </p>
-                {% if urls %}
 
                 <div id="b-format" class="btn-group" data-toggle="buttons">
                     <label id="show-svg" class="btn btn-default active">
@@ -52,7 +51,7 @@
                     </tr>
                     {% endfor %}
                     <tr>
-                        <td class="overall-status" colspan="2">Overall status:</td>
+                        <td class="overall-status {% if urls %}have-tags{% endif %}" colspan="2">Overall status:</td>
                     </tr>
                     <tr>
                         <td>
@@ -74,7 +73,7 @@
                     </tr>
                     {% endfor %}
                     <tr>
-                        <td class="overall-status" colspan="2">Overall status:</td>
+                        <td class="overall-status {% if urls %}have-tags{% endif %}"" colspan="2">Overall status:</td>
                     </tr>
                     <tr>
                         <td class="json-response" data-url="{{ master.json }}">
@@ -83,13 +82,6 @@
                         </td>
                     </tr>
                 </table>
-                {% else %}
-                <p>
-                    To get started with status badges, add some tags to
-                    your checks!
-                </p>
-                {% endif %}
-
             </div>
         </div>
     </div>
