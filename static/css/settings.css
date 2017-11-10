@@ -29,6 +29,11 @@
     background-color: #ffebea;
 }
 
+.table td.overall-status {
+    padding-top: 32px;
+    border-top: 0;
+}
+
 #badges-json {
     display: none;
 }

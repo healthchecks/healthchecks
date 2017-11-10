@@ -51,6 +51,17 @@
                         </td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <td class="overall-status" colspan="2">Overall status:</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{{ master.svg }}" alt="" />
+                        </td>
+                        <td class="svg-url">
+                            <code>{{ master.svg }}</code>
+                        </td>
+                    </tr>
                 </table>
                 <table id="badges-json" class="badges table">
                     {% for urldict in urls %}
@@ -62,6 +73,15 @@
                         </td>
                     </tr>
                     {% endfor %}
+                    <tr>
+                        <td class="overall-status" colspan="2">Overall status:</td>
+                    </tr>
+                    <tr>
+                        <td class="json-response" data-url="{{ master.json }}">
+                        <td class="json-url">
+                            <code>{{ master.json }}</code>
+                        </td>
+                    </tr>
                 </table>
                 {% else %}
                 <p>

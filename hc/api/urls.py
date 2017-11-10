@@ -13,8 +13,15 @@ urlpatterns = [
 
     url(r'^badge/([\w-]+)/([\w-]{8})/([\w-]+).svg$', views.badge,
         name="hc-badge"),
+
+    url(r'^badge/([\w-]+)/([\w-]{8}).svg$', views.badge,
+        {"tag": "*"}, name="hc-badge-all"),
+
     url(r'^badge/([\w-]+)/([\w-]{8})/([\w-]+).json$', views.badge,
-        {"format": "json"}, name="hc-badge-json", ),
+        {"format": "json"}, name="hc-badge-json"),
+
+    url(r'^badge/([\w-]+)/([\w-]{8}).json$', views.badge,
+        {"format": "json", "tag": "*"}, name="hc-badge-json-all"),
 
     url(r'^api/v1/status/$', views.status),
 ]

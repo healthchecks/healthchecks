@@ -289,7 +289,11 @@ def badges(request):
 
     ctx = {
         "page": "profile",
-        "urls": urls
+        "urls": urls,
+        "master": {
+            "svg": get_badge_url(username, "*"),
+            "json": get_badge_url(username, "*", format="json")
+        }
     }
 
     return render(request, "accounts/badges.html", ctx)

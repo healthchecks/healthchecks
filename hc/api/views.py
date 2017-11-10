@@ -1,5 +1,6 @@
 from datetime import timedelta as td
 
+from django.conf import settings
 from django.db import connection
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseNotFound, JsonResponse)
@@ -168,9 +169,15 @@ def badge(request, username, signature, tag, format="svg"):
         return HttpResponseNotFound()
 
     status = "up"
-    q = Check.objects.filter(user__username=username, tags__contains=tag)
+    q = Check.objects.filter(user__username=username)
+    if tag != "*":
+        q = q.filter(tags__contains=tag)
+        label = tag
+    else:
+        label = settings.MASTER_BADGE_LABEL
+
     for check in q:
-        if tag not in check.tags_list():
+        if tag != "*" and tag not in check.tags_list():
             continue
 
         if status == "up" and check.in_grace_period():
@@ -183,7 +190,7 @@ def badge(request, username, signature, tag, format="svg"):
     if format == "json":
         return JsonResponse({"status": status})
 
-    svg = get_badge_svg(tag, status)
+    svg = get_badge_svg(label, status)
     return HttpResponse(svg, content_type="image/svg+xml")
 
 
