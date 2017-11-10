@@ -57,34 +57,34 @@
     <form method="post" class="form-horizontal">
         {% csrf_token %}
         <input type="hidden" name="kind" value="webhook" />
-        <div class="form-group {{ form.value_down.css_classes }}">
+        <div class="form-group {{ form.url_down.css_classes }}">
             <label class="col-sm-2 control-label">URL for "down" events</label>
             <div class="col-sm-10">
                 <input
                     type="text"
                     class="form-control"
-                    name="value_down"
+                    name="url_down"
                     placeholder="http://..."
-                    value="{{ form.value_down.value|default:"" }}">
-                {% if form.value_down.errors %}
+                    value="{{ form.url_down.value|default:"" }}">
+                {% if form.url_down.errors %}
                 <div class="help-block">
-                    {{ form.value_down.errors|join:"" }}
+                    {{ form.url_down.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>
         </div>
-        <div class="form-group {{ form.value_up.css_classes }}">
+        <div class="form-group {{ form.url_up.css_classes }}">
             <label class="col-sm-2 control-label">URL for "up" events</label>
             <div class="col-sm-10">
                 <input
                     type="text"
                     class="form-control"
-                    name="value_up"
+                    name="url_up"
                     placeholder="http://..."
-                    value="{{ form.value_up.value|default:"" }}">
-                {% if form.value_up.errors %}
+                    value="{{ form.url_up.value|default:"" }}">
+                {% if form.url_up.errors %}
                 <div class="help-block">
-                    {{ form.value_up.errors|join:"" }}
+                    {{ form.url_up.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>
@@ -105,6 +105,42 @@
                 {% endif %}
             </div>
         </div>
+        <div class="form-group {{ form.headers.css_classes }}">
+            <label class="col-sm-2 control-label">Headers</label>
+            <div id="webhook_headers" class="col-xs-12 col-sm-10">
+                {% if form.headers %}
+                {% for k,v in form.headers.items %}
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6" style="padding-right: 0px;">
+                        <input type="text" class="form-control" name="header_key[]" placeholder="Key" value="{{ k|default:"" }}">
+                    </div>
+                    <div class="col-xs-6 col-sm-6" style="padding-left: 0px;">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="header_value[]" placeholder="Value" value="{{ v|default:"" }}">
+                            <span class="input-group-btn">
+                                <button class="webhook_header_btn btn" type="button" class="btn"></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6" style="padding-right: 0px;">
+                        <input type="text" class="form-control" name="header_key[]" placeholder="Key">
+                    </div>
+                    <div class="col-xs-6 col-sm-6" style="padding-left: 0px;">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="header_value[]" placeholder="Value">
+                            <span class="input-group-btn">
+                                <button class="webhook_header_btn btn btn-info" type="button" class="btn">+</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-primary">Save Integration</button>
@@ -113,4 +149,12 @@
     </form>
 </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/webhook.js' %}"></script>
+{% endcompress %}
 {% endblock %}

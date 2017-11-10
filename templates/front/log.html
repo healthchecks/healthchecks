@@ -96,7 +96,7 @@
                 {% elif event.channel.kind == "po" %}
                     Sent a Pushover notification
                 {% elif event.channel.kind == "webhook" %}
-                    Called webhook {{ event.channel.value_down }}
+                    Called webhook {{ event.channel.url_down }}
                 {% else %}
                     Sent alert to {{ event.channel.kind|capfirst }}
                 {% endif %}

@@ -304,22 +304,44 @@ class Channel(models.Model):
         return user_key, prio, PO_PRIORITIES[prio]
 
     @property
-    def value_down(self):
+    def url_down(self):
         assert self.kind == "webhook"
-        parts = self.value.split("\n")
-        return parts[0]
+        if not self.value.startswith("{"):
+            parts = self.value.split("\n")
+            return parts[0]
+
+        doc = json.loads(self.value)
+        return doc["url_down"]
+        
 
     @property
-    def value_up(self):
+    def url_up(self):
         assert self.kind == "webhook"
-        parts = self.value.split("\n")
-        return parts[1] if len(parts) > 1 else ""
+        if not self.value.startswith("{"):
+            parts = self.value.split("\n")
+            return parts[1] if len(parts) > 1 else ""
+
+        doc = json.loads(self.value)
+        return doc["url_up"]
 
     @property
     def post_data(self):
         assert self.kind == "webhook"
-        parts = self.value.split("\n")
-        return parts[2] if len(parts) > 2 else ""
+        if not self.value.startswith("{"):
+            parts = self.value.split("\n")
+            return parts[2] if len(parts) > 2 else ""
+
+        doc = json.loads(self.value)
+        return doc["post_data"]
+
+    @property
+    def headers(self):
+        assert self.kind == "webhook"
+        if not self.value.startswith("{"):
+            return ""
+
+        doc = json.loads(self.value)
+        return doc["headers"]
 
     @property
     def slack_team(self):

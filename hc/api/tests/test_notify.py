@@ -145,6 +145,46 @@ class NotifyTestCase(BaseTestCase):
         # unicode should be encoded into utf-8
         self.assertTrue(isinstance(kwargs["data"], binary_type))
 
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_json_value(self, mock_request):
+        self._setup_data("webhook", '{"url_down": "http://foo.com", '
+            '"url_up": "", "post_data": "", "headers": ""}')
+        self.channel.notify(self.check)
+
+        headers = {
+            "User-Agent": "healthchecks.io"
+        }
+        mock_request.assert_called_with(
+            "get", "http://foo.com", headers=headers,
+            timeout=5)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_json_up_event(self, mock_request):
+        self._setup_data("webhook", '{"url_down": "", '
+            '"url_up": "http://bar", "post_data": "", "headers": ""}', status="up")
+        self.channel.notify(self.check)
+
+        headers = {
+            "User-Agent": "healthchecks.io"
+        }
+        mock_request.assert_called_with(
+            "get", "http://bar", headers=headers,
+            timeout=5)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_headers(self, mock_request):
+        self._setup_data("webhook", '{"url_down": "http://foo.com", '
+            '"url_up": "", "post_data": "data", '
+            '"headers": {"Content-Type": "application/json"}}')
+        self.channel.notify(self.check)
+
+        headers = {
+            "User-Agent": "healthchecks.io", 
+            "Content-Type": "application/json"
+        }
+        mock_request.assert_called_with(
+            "post", "http://foo.com", data=b"data", headers=headers, timeout=5)
+
     def test_email(self):
         self._setup_data("email", "alice@example.org")
         self.channel.notify(self.check)

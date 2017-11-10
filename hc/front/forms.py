@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta as td
 
 from django import forms
@@ -57,17 +58,30 @@ class AddUrlForm(forms.Form):
 class AddWebhookForm(forms.Form):
     error_css_class = "has-error"
 
-    value_down = forms.URLField(max_length=1000, required=False,
+    url_down = forms.URLField(max_length=1000, required=False,
                                 validators=[WebhookValidator()])
 
-    value_up = forms.URLField(max_length=1000, required=False,
+    url_up = forms.URLField(max_length=1000, required=False,
                               validators=[WebhookValidator()])
 
     post_data = forms.CharField(max_length=1000, required=False)
 
+    def __init__(self, *args, **kwargs):
+        self.headers = {}
+        if all(k in kwargs for k in ("header_keys", "header_values")):
+            header_keys = kwargs.pop("header_keys")
+            header_values = kwargs.pop("header_values")
+
+            for i, (key, val) in enumerate(zip(header_keys, header_values)):
+                if key:
+                    self.headers[key] = val
+
+        super(AddWebhookForm, self).__init__(*args, **kwargs)
+
     def get_value(self):
-        d = self.cleaned_data
-        return "\n".join((d["value_down"], d["value_up"], d["post_data"]))
+        val = dict(self.cleaned_data)
+        val["headers"] = self.headers
+        return json.dumps(val, sort_keys=True)
 
 
 phone_validator = RegexValidator(regex='^\+\d{5,15}$',
