@@ -80,11 +80,11 @@ class HttpTransport(Transport):
     def _request(cls, method, url, **kwargs):
         try:
             options = dict(kwargs)
+            options["timeout"] = 5
             if "headers" not in options:
                 options["headers"] = {}
-
-            options["timeout"] = 5
-            options["headers"]["User-Agent"] = "healthchecks.io"
+            if "User-Agent" not in options["headers"]:
+                options["headers"]["User-Agent"] = "healthchecks.io"
 
             r = requests.request(method, url, **options)
             if r.status_code not in (200, 201, 204):
@@ -96,10 +96,10 @@ class HttpTransport(Transport):
             return "Connection failed"
 
     @classmethod
-    def get(cls, url):
+    def get(cls, url, **kwargs):
         # Make 3 attempts--
         for x in range(0, 3):
-            error = cls._request("get", url)
+            error = cls._request("get", url, **kwargs)
             if error is None:
                 break
 
@@ -166,14 +166,12 @@ class Webhook(HttpTransport):
         assert url
 
         url = self.prepare(url, check, urlencode=True)
+        headers = self.channel.headers
         if self.channel.post_data:
             payload = self.prepare(self.channel.post_data, check)
-            headers = {}
-            if self.channel.headers:
-                headers = self.channel.headers
             return self.post(url, data=payload.encode("utf-8"), headers=headers)
         else:
-            return self.get(url)
+            return self.get(url, headers=headers)
 
 
 class Slack(HttpTransport):

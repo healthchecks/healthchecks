@@ -311,8 +311,8 @@ class Channel(models.Model):
             return parts[0]
 
         doc = json.loads(self.value)
-        return doc["url_down"]
-        
+        return doc.get("url_down")
+
 
     @property
     def url_up(self):
@@ -322,7 +322,7 @@ class Channel(models.Model):
             return parts[1] if len(parts) > 1 else ""
 
         doc = json.loads(self.value)
-        return doc["url_up"]
+        return doc.get("url_up")
 
     @property
     def post_data(self):
@@ -332,16 +332,16 @@ class Channel(models.Model):
             return parts[2] if len(parts) > 2 else ""
 
         doc = json.loads(self.value)
-        return doc["post_data"]
+        return doc.get("post_data")
 
     @property
     def headers(self):
         assert self.kind == "webhook"
         if not self.value.startswith("{"):
-            return ""
+            return {}
 
         doc = json.loads(self.value)
-        return doc["headers"]
+        return doc.get("headers", {})
 
     @property
     def slack_team(self):
