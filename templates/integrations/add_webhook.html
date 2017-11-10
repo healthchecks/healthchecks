@@ -106,40 +106,31 @@
             </div>
         </div>
         <div class="form-group {{ form.headers.css_classes }}">
-            <label class="col-sm-2 control-label">Headers</label>
-            <div id="webhook_headers" class="col-xs-12 col-sm-10">
-                {% if form.headers %}
-                {% for k,v in form.headers.items %}
-                <div class="row">
-                    <div class="col-xs-6 col-sm-6" style="padding-right: 0px;">
-                        <input type="text" class="form-control" name="header_key[]" placeholder="Key" value="{{ k|default:"" }}">
-                    </div>
-                    <div class="col-xs-6 col-sm-6" style="padding-left: 0px;">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="header_value[]" placeholder="Value" value="{{ v|default:"" }}">
-                            <span class="input-group-btn">
-                                <button class="webhook_header_btn btn" type="button" class="btn"></button>
-                            </span>
-                        </div>
-                    </div>
+            <label class="col-sm-2 control-label">Request Headers</label>
+            <div id="webhook-headers" class="col-xs-12 col-sm-10">
+                {% for k, v in form.headers.items %}
+                <div class="form-inline webhook-header">
+                    <input
+                        type="text"
+                        class="form-control key"
+                        name="header_key[]"
+                        placeholder="Content-Type"
+                        value="{{ k }}" />
+                    <input
+                        type="text"
+                        class="form-control value"
+                        name="header_value[]"
+                        placeholder="application/json"
+                        value="{{ v }}" />
+                        <button class="btn btn-default" type="button">
+                            <span class="icon-delete"></span>
+                        </button>
                 </div>
                 {% endfor %}
-                {% else %}
-                <div class="row">
-                    <div class="col-xs-6 col-sm-6" style="padding-right: 0px;">
-                        <input type="text" class="form-control" name="header_key[]" placeholder="Key">
-                    </div>
-                    <div class="col-xs-6 col-sm-6" style="padding-left: 0px;">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="header_value[]" placeholder="Value">
-                            <span class="input-group-btn">
-                                <button class="webhook_header_btn btn btn-info" type="button" class="btn">+</button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
             </div>
+            <div class="text-center">
+            </div>
+
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
@@ -148,6 +139,24 @@
         </div>
     </form>
 </div>
+</div>
+
+<div id="header-template" class="hide">
+    <div class="form-inline webhook-header">
+        <input
+            type="text"
+            class="form-control key"
+            name="header_key[]"
+            placeholder="Content-Type" />
+        <input
+            type="text"
+            class="form-control value"
+            name="header_value[]"
+            placeholder="application/json" />
+            <button class="btn btn-default" type="button">
+                <span class="icon-delete"></span>
+            </button>
+    </div>
 </div>
 {% endblock %}
 

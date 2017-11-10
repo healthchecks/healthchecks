@@ -192,3 +192,13 @@ table.channels-table > tbody > tr > th {
 .page-channels .icon-delete {
     font-size: 16px;
 }
+
+/* Add Webhook */
+
+.webhook-header input.form-control {
+    width: 300px;
+}
+
+.webhook-header {
+    margin-bottom: 4px;
+}

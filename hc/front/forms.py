@@ -67,16 +67,16 @@ class AddWebhookForm(forms.Form):
     post_data = forms.CharField(max_length=1000, required=False)
 
     def __init__(self, *args, **kwargs):
-        self.headers = {}
-        if all(k in kwargs for k in ("header_keys", "header_values")):
-            header_keys = kwargs.pop("header_keys")
-            header_values = kwargs.pop("header_values")
-
-            for i, (key, val) in enumerate(zip(header_keys, header_values)):
-                if key:
-                    self.headers[key] = val
-
         super(AddWebhookForm, self).__init__(*args, **kwargs)
+
+        self.headers = {}
+        if "header_key[]" in self.data and "header_value[]" in self.data:
+            keys = self.data.getlist("header_key[]")
+            values = self.data.getlist("header_value[]")
+            for key, value in zip(keys, values):
+                if key:
+                    self.headers[key] = value
+
 
     def get_value(self):
         val = dict(self.cleaned_data)
