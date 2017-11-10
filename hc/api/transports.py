@@ -166,7 +166,10 @@ class Webhook(HttpTransport):
         assert url
 
         url = self.prepare(url, check, urlencode=True)
-        headers = self.channel.headers
+        headers = {}
+        for key, value in self.channel.headers.items():
+            headers[key] = self.prepare(value, check)
+
         if self.channel.post_data:
             payload = self.prepare(self.channel.post_data, check)
             return self.post(url, data=payload.encode("utf-8"), headers=headers)

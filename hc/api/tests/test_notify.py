@@ -215,6 +215,26 @@ class NotifyTestCase(BaseTestCase):
         mock_request.assert_called_with(
             "get", "http://foo.com", headers=headers, timeout=5)
 
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_support_variables_in_headers(self, mock_request):
+        definition = {
+            "url_down": "http://foo.com",
+            "headers": {"X-Message": "$NAME is DOWN"}
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
+        self.check.name = "Foo"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        headers = {
+            "User-Agent": "healthchecks.io",
+            "X-Message": "Foo is DOWN"
+        }
+        mock_request.assert_called_with(
+            "get", "http://foo.com", headers=headers, timeout=5)
+
     def test_email(self):
         self._setup_data("email", "alice@example.org")
         self.channel.notify(self.check)
