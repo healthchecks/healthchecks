@@ -31,8 +31,6 @@ class PdfInvoiceTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/pdf/abc123/")
-        with open("/home/cepe/rez.pdf", "wb") as f:
-            f.write(r.content)
         self.assertTrue(six.b("ABC123") in r.content)
         self.assertTrue(six.b("alice@example.org") in r.content)
 

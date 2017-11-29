@@ -21,7 +21,7 @@ class PdfInvoice(canvas.Canvas):
     def linefeed(self):
         self.head_y -= inch / 8
 
-    def print(self, s, align="left", size=10, bold=False):
+    def text(self, s, align="left", size=10, bold=False):
         self.head_y -= inch / 24
         self.linefeed()
         self.setFont("Helvetica-Bold" if bold else "Helvetica", size)
@@ -39,7 +39,7 @@ class PdfInvoice(canvas.Canvas):
         self.setLineWidth(inch / 72 / 8)
         self.line(inch * 0.5, self.head_y, W - inch * 0.5, self.head_y)
 
-    def print_row(self, items, align="left", bold=False, size=10):
+    def row(self, items, align="left", bold=False, size=10):
         self.head_y -= inch / 8
         self.linefeed()
 
@@ -57,21 +57,21 @@ class PdfInvoice(canvas.Canvas):
         invoice_id = "MS-HC-%s" % tx.id.upper()
         self.setTitle(invoice_id)
 
-        self.print("SIA Monkey See Monkey Do", size=16)
+        self.text("SIA Monkey See Monkey Do", size=16)
         self.linefeed()
-        self.print("Gaujas iela 4-2")
-        self.print("Valmiera, LV-4201, Latvia")
-        self.print("VAT: LV44103100701")
+        self.text("Gaujas iela 4-2")
+        self.text("Valmiera, LV-4201, Latvia")
+        self.text("VAT: LV44103100701")
         self.linefeed()
 
         created = f(tx.created_at)
-        self.print("Date Issued: %s" % created, align="right")
-        self.print("Invoice Id: %s" % invoice_id, align="right")
+        self.text("Date Issued: %s" % created, align="right")
+        self.text("Invoice Id: %s" % invoice_id, align="right")
         self.linefeed()
 
         self.hr()
-        self.print_row(["Description", "Start", "End", tx.currency_iso_code],
-                       bold=True)
+        self.row(["Description", "Start", "End", tx.currency_iso_code],
+                 bold=True)
         self.hr()
         start = f(tx.subscription_details.billing_period_start_date)
         end = f(tx.subscription_details.billing_period_end_date)
@@ -82,19 +82,19 @@ class PdfInvoice(canvas.Canvas):
         else:
             amount = "%s %s" % (tx.currency_iso_code, tx.amount)
 
-        self.print_row(["healthchecks.io paid plan", start, end, amount])
+        self.row(["healthchecks.io paid plan", start, end, amount])
 
         self.hr()
-        self.print_row(["", "", "", "Total: %s" % amount], bold=True)
+        self.row(["", "", "", "Total: %s" % amount], bold=True)
         self.linefeed()
 
-        self.print("Bill to:", bold=True)
+        self.text("Bill to:", bold=True)
         for s in bill_to.split("\n"):
-            self.print(s.strip())
+            self.text(s.strip())
 
         self.linefeed()
-        self.print("If you have a credit card on file it will be "
-                   "automatically charged within 24 hours.", align="center")
+        self.text("If you have a credit card on file it will be "
+                  "automatically charged within 24 hours.", align="center")
 
         self.showPage()
         self.save()
