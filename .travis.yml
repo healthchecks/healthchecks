@@ -4,7 +4,7 @@ python:
   - "3.5"
 install:
     - pip install -r requirements.txt
-    - pip install braintree coveralls mock mysqlclient
+    - pip install braintree coveralls mock mysqlclient reportlab
 env:
   - DB=sqlite
   - DB=mysql

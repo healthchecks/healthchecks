@@ -2,11 +2,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
-                         JsonResponse)
+                         JsonResponse, HttpResponse)
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
 from hc.payments.forms import BillToForm
+from hc.payments.invoices import PdfInvoice
 from hc.payments.models import Subscription
 
 if settings.USE_PAYMENTS:
@@ -216,3 +217,19 @@ def invoice(request, transaction_id):
 
     ctx = {"tx": transaction}
     return render(request, "payments/invoice.html", ctx)
+
+
+@login_required
+def pdf_invoice(request, transaction_id):
+    sub = Subscription.objects.get(user=request.user)
+    transaction = braintree.Transaction.find(transaction_id)
+    if transaction.customer_details.id != sub.customer_id:
+        return HttpResponseForbidden()
+
+    response = HttpResponse(content_type='application/pdf')
+    filename = "MS-HC-%s.pdf" % transaction.id.upper()
+    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+    bill_to = request.user.profile.bill_to or request.user.email
+    PdfInvoice(response).render(transaction, bill_to)
+    return response

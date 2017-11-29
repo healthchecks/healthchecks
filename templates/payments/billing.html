@@ -39,7 +39,7 @@
                     </td>
                     <td><code>{{ tx.status }}</code></td>
                     <td>
-                        <a href="{% url 'hc-invoice' tx.id %}">View Invoice</a>
+                        <a href="{% url 'hc-invoice-pdf' tx.id %}">PDF Invoice</a>
                     </td>
                 </tr>
             {% empty %}

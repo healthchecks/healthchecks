@@ -15,6 +15,10 @@ urlpatterns = [
         views.invoice,
         name="hc-invoice"),
 
+    url(r'^invoice/pdf/([\w-]+)/$',
+        views.pdf_invoice,
+        name="hc-invoice-pdf"),
+
     url(r'^pricing/create_plan/$',
         views.create_plan,
         name="hc-create-plan"),
