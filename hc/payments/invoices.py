@@ -14,8 +14,7 @@ def f(dt):
 
 class PdfInvoice(canvas.Canvas):
     def __init__(self, fileobj):
-        super(PdfInvoice, self).__init__(fileobj, pagesize=A4,
-                                         pageCompression=0)
+        canvas.Canvas.__init__(self, fileobj, pagesize=A4, pageCompression=0)
         self.head_y = H - inch * 0.5
 
     def linefeed(self):
