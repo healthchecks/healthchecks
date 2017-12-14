@@ -239,7 +239,7 @@ class PagerTree(HttpTransport):
         payload = {
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
-            "title":  tmpl("pagertree_title.html", check=check)
+            "title":  tmpl("pagertree_title.html", check=check),
             "description": tmpl("pagertree_description.html", check=check),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
