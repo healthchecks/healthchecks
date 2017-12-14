@@ -230,6 +230,24 @@ class PagerDuty(HttpTransport):
 
         return self.post(self.URL, json=payload)
 
+class PagerTree(HttpTransport):
+    def notify(self, check):
+        url = self.channel.value
+        headers = {
+            "Conent-Type": "application/json"
+        }
+        payload = {
+            "incident_key": str(check.code),
+            "event_type": "trigger" if check.status == "down" else "resolve",
+            "title":  tmpl("pagertree_title.html", check=check)
+            "description": tmpl("pagertree_description.html", check=check),
+            "client": settings.SITE_NAME,
+            "client_url": settings.SITE_ROOT,
+            "tags": ",".join(check.tags_list())
+        }
+
+        return self.post(url, json=payload, headers=headers)
+
 
 class Pushbullet(HttpTransport):
     def notify(self, check):
