@@ -2,13 +2,13 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
-class AddVictorOpsTestCase(BaseTestCase):
+class AddPagerTreeTestCase(BaseTestCase):
     url = "/integrations/add_pagertree/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "to create a PagerTree incident when a check goes down, and resolve it when a check goes back up.")
+        self.assertContains(r, "PagerTree")
 
     def test_it_works(self):
         form = {"value": "http://example.org"}
