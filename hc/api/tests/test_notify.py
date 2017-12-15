@@ -284,7 +284,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(payload["service_key"], "456")
 
     @patch("hc.api.transports.requests.request")
-    def test_pd(self, mock_post):
+    def test_pagertree(self, mock_post):
         self._setup_data("pagertree", "123")
         mock_post.return_value.status_code = 200
 
