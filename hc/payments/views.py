@@ -97,7 +97,8 @@ def create_plan(request):
     if "payment_method_nonce" in request.POST:
         result = braintree.PaymentMethod.create({
             "customer_id": sub.customer_id,
-            "payment_method_nonce": request.POST["payment_method_nonce"]
+            "payment_method_nonce": request.POST["payment_method_nonce"],
+            "options": {"make_default": True}
         })
 
         if not result.is_success:
@@ -153,7 +154,8 @@ def update_payment_method(request):
 
     result = braintree.PaymentMethod.create({
         "customer_id": sub.customer_id,
-        "payment_method_nonce": request.POST["payment_method_nonce"]
+        "payment_method_nonce": request.POST["payment_method_nonce"],
+        "options": {"make_default": True}
     })
 
     if not result.is_success:
