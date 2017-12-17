@@ -512,6 +512,23 @@ def add_pd(request, state=None):
     ctx = {"page": "channels", "connect_url": connect_url}
     return render(request, "integrations/add_pd.html", ctx)
 
+@login_required
+def add_pagertree(request):
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(user=request.team.user, kind="pagertree")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "form": form}
+    return render(request, "integrations/add_pagertree.html", ctx)
+
 
 def add_slack(request):
     if not settings.SLACK_CLIENT_ID and not request.user.is_authenticated:

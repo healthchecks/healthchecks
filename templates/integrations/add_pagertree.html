@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load compress humanize staticfiles hc_extras %}
+
+{% block title %}Add PagerTree - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+      <h1>PagerTree</h1>
+
+      <p>If your team uses <a href="https://pagertree.com">PagerTree</a>,
+      you can set up {% site_name %} to create a PagerTree incident when
+      a check goes down, and resolve it when a check goes back up.</p>
+
+      <h2>Setup Guide</h2>
+
+      <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            <p>
+                Log into your PagerTree account, select the team you wish to add this integration to. Click the <strong>Integrations</strong> tab. Then click the <strong>+ Integration</strong> button.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Click create integration button"
+                src="{% static 'img/integrations/setup_pagertree_1.png' %}">
+        </div>
+      </div>
+
+      <div class="row ai-step">
+          <div class="col-sm-6">
+              <span class="step-no">2</span>
+              <p>
+                  In the Create Integration Form, fill out the details with apprpriate values, but most importantly make sure the <strong>Integration Type</strong> is set to <strong>Healthchecks.io</strong>. Then click the <strong>Create</strong> button.
+              </p>
+          </div>
+          <div class="col-sm-6">
+              <img
+                  class="ai-guide-screenshot"
+                  alt="Create Healthchecks.io integration with details"
+                  src="{% static 'img/integrations/setup_pagertree_2.png' %}">
+          </div>
+      </div>
+
+      <div class="row ai-step">
+          <div class="col-sm-6">
+              <span class="step-no">3</span>
+              <p>
+                Copy the <strong>Webhook URL</strong> and paste it below. Save the integration, and you are done!
+              </p>
+          </div>
+          <div class="col-sm-6">
+              <img
+                  class="ai-guide-screenshot"
+                  alt="Copy the Webhook URL"
+                  src="{% static 'img/integrations/setup_pagertree_3.png' %}">
+          </div>
+      </div>
+
+      <h2>Integration Settings</h2>
+
+      <form method="post" class="form-horizontal" action="{% url 'hc-add-pagertree' %}">
+          {% csrf_token %}
+          <div class="form-group {{ form.value.css_classes }}">
+              <label for="post-url" class="col-sm-2 control-label">URL</label>
+              <div class="col-sm-10">
+                  <input
+                      id="post-url"
+                      type="text"
+                      class="form-control"
+                      name="value"
+                      placeholder="https://"
+                      value="{{ form.value.value|default:"" }}">
+
+                  {% if form.value.errors %}
+                  <div class="help-block">
+                      {{ form.value.errors|join:"" }}
+                  </div>
+                  {% endif %}
+              </div>
+          </div>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary">Save Integration</button>
+              </div>
+          </div>
+      </form>
+  </div>
+</div>
+{% endblock %}

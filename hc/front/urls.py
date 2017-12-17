@@ -17,6 +17,7 @@ channel_urls = [
     url(r'^add_webhook/$', views.add_webhook, name="hc-add-webhook"),
     url(r'^add_pd/$', views.add_pd, name="hc-add-pd"),
     url(r'^add_pd/([\w]{12})/$', views.add_pd, name="hc-add-pd-state"),
+    url(r'^add_pagertree/$', views.add_pagertree, name="hc-add-pagertree"),
     url(r'^add_slack/$', views.add_slack, name="hc-add-slack"),
     url(r'^add_slack_btn/$', views.add_slack_btn, name="hc-add-slack-btn"),
     url(r'^add_hipchat/$', views.add_hipchat, name="hc-add-hipchat"),

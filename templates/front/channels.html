@@ -50,6 +50,9 @@
                     {% endif %}
                     <span class="preposition">service key</span>
                     {{ ch.pd_service_key }}
+                {% elif ch.kind == "pagertree" %}
+                    <span class="preposition">URL</span>
+                    {{ ch.value }}
                 {% elif ch.kind == "opsgenie" %}
                     <span class="preposition">API key</span>
                     {{ ch.value }}
@@ -227,6 +230,15 @@
             <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+        <li>
+            <img src="{% static 'img/integrations/pagertree.png' %}"
+                class="icon" alt="PagerTree icon" />
+
+            <h2>PagerTree</h2>
+            <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications</p>
+
+            <a href="{% url 'hc-add-pagertree' %}" class="btn btn-primary">Add Integration</a>
+        </li>
         <li>
             <img src="{% static 'img/integrations/hipchat.png' %}"
                 class="icon" alt="HipChat icon" />
