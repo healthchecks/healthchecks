@@ -1,20 +1,22 @@
 # coding: utf-8
 
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import inch
-from reportlab.pdfgen import canvas
-
-
-W, H = A4
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import inch
+    from reportlab.pdfgen.canvas import Canvas
+    W, H = A4
+except ImportError:
+    # Don't crash if reportlab is not installed.
+    Canvas = object
 
 
 def f(dt):
     return dt.strftime("%b. %-d, %Y")
 
 
-class PdfInvoice(canvas.Canvas):
+class PdfInvoice(Canvas):
     def __init__(self, fileobj):
-        canvas.Canvas.__init__(self, fileobj, pagesize=A4, pageCompression=0)
+        Canvas.__init__(self, fileobj, pagesize=A4, pageCompression=0)
         self.head_y = H - inch * 0.5
 
     def linefeed(self):
@@ -52,7 +54,6 @@ class PdfInvoice(canvas.Canvas):
         self.head_y -= inch / 8
 
     def render(self, tx, bill_to):
-        width, height = A4
         invoice_id = "MS-HC-%s" % tx.id.upper()
         self.setTitle(invoice_id)
 

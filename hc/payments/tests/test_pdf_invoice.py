@@ -1,9 +1,15 @@
 from mock import Mock, patch
+from unittest import skipIf
 
 from django.utils.timezone import now
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 import six
+
+try:
+    import reportlab
+except ImportError:
+    reportlab = None
 
 
 class PdfInvoiceTestCase(BaseTestCase):
@@ -24,9 +30,9 @@ class PdfInvoiceTestCase(BaseTestCase):
         self.tx.subscription_details.billing_period_start_date = now()
         self.tx.subscription_details.billing_period_end_date = now()
 
+    @skipIf(reportlab is None, "reportlab not installed")
     @patch("hc.payments.views.braintree")
     def test_it_works(self, mock_braintree):
-
         mock_braintree.Transaction.find.return_value = self.tx
 
         self.client.login(username="alice@example.org", password="password")
@@ -47,6 +53,7 @@ class PdfInvoiceTestCase(BaseTestCase):
         r = self.client.get("/invoice/pdf/abc123/")
         self.assertEqual(r.status_code, 403)
 
+    @skipIf(reportlab is None, "reportlab not installed")
     @patch("hc.payments.views.braintree")
     def test_it_shows_company_data(self, mock_braintree):
         self.profile.bill_to = "Alice and Partners"
