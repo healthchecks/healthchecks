@@ -370,7 +370,9 @@ def unsubscribe_reports(request, username):
     user = User.objects.get(username=username)
     profile = Profile.objects.for_user(user)
     profile.reports_allowed = False
+    profile.next_report_date = None
     profile.nag_period = td()
+    profile.next_nag_date = None
     profile.save()
 
     return render(request, "accounts/unsubscribed.html")
