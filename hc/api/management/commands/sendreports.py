@@ -4,7 +4,7 @@ import time
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils import timezone
-from hc.accounts.models import Profile
+from hc.accounts.models import NO_NAG, Profile
 from hc.api.models import Check
 
 
@@ -63,6 +63,7 @@ class Command(BaseCommand):
     def handle_one_nag(self):
         now = timezone.now()
         q = Profile.objects.filter(next_nag_date__lt=now)
+        q = q.exclude(nag_period=NO_NAG)
         profile = q.first()
 
         if profile is None:

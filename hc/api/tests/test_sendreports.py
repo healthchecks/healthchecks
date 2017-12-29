@@ -70,6 +70,15 @@ class SendAlertsTestCase(BaseTestCase):
         self.profile.next_nag_date = now() + td(days=1)
         self.profile.save()
 
+        # If next_nag_date is in future, a nag should not get sent.
+        found = Command().handle_one_nag()
+        self.assertFalse(found)
+
+    def test_it_obeys_nag_period(self):
+        self.profile.nag_period = td()
+        self.profile.save()
+
+        # If nag_period is 0 ("disabled"), a nag should not get sent.
         found = Command().handle_one_nag()
         self.assertFalse(found)
 
