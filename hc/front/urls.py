@@ -30,6 +30,7 @@ channel_urls = [
     url(r'^telegram/bot/$', views.telegram_bot, name="hc-telegram-webhook"),
     url(r'^add_telegram/$', views.add_telegram, name="hc-add-telegram"),
     url(r'^add_sms/$', views.add_sms, name="hc-add-sms"),
+    url(r'^add_zendesk/$', views.add_zendesk, name="hc-add-zendesk"),
     url(r'^([\w-]+)/checks/$', views.channel_checks, name="hc-channel-checks"),
     url(r'^([\w-]+)/remove/$', views.remove_channel, name="hc-remove-channel"),
     url(r'^([\w-]+)/verify/([\w-]+)/$', views.verify_email,

@@ -39,7 +39,8 @@ CHANNEL_KINDS = (("email", "Email"),
                  ("victorops", "VictorOps"),
                  ("discord", "Discord"),
                  ("telegram", "Telegram"),
-                 ("sms", "SMS"))
+                 ("sms", "SMS"),
+                 ("zendesk", "Zendesk"))
 
 PO_PRIORITIES = {
     -2: "lowest",
@@ -277,6 +278,8 @@ class Channel(models.Model):
             return transports.Telegram(self)
         elif self.kind == "sms":
             return transports.Sms(self)
+        elif self.kind == "zendesk":
+            return transports.Zendesk(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -315,7 +318,6 @@ class Channel(models.Model):
 
         doc = json.loads(self.value)
         return doc.get("url_down")
-
 
     @property
     def url_up(self):
@@ -449,6 +451,18 @@ class Channel(models.Model):
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["account"]
+
+    @property
+    def zendesk_token(self):
+        assert self.kind == "zendesk"
+        doc = json.loads(self.value)
+        return doc["access_token"]
+
+    @property
+    def zendesk_subdomain(self):
+        assert self.kind == "zendesk"
+        doc = json.loads(self.value)
+        return doc["subdomain"]
 
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()

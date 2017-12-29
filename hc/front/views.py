@@ -352,6 +352,7 @@ def channels(request):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
+        "enable_zendesk": settings.ZENDESK_CLIENT_ID is not None,
         "use_payments": settings.USE_PAYMENTS
     }
 
@@ -893,6 +894,64 @@ def add_sms(request):
         "profile": request.team
     }
     return render(request, "integrations/add_sms.html", ctx)
+
+
+@login_required
+def add_zendesk(request):
+    if settings.ZENDESK_CLIENT_ID is None:
+        raise Http404("zendesk integration is not available")
+
+    if request.method == "POST":
+        domain = request.POST.get("subdomain")
+        request.session["subdomain"] = domain
+        redirect_uri = settings.SITE_ROOT + reverse("hc-add-zendesk")
+        auth_url = "https://%s.zendesk.com/oauth/authorizations/new?" % domain
+        auth_url += urlencode({
+            "client_id": settings.ZENDESK_CLIENT_ID,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "scope": "requests:read requests:write",
+            "state": _prepare_state(request, "zendesk")
+        })
+
+        return redirect(auth_url)
+
+    if "code" in request.GET:
+        code = _get_validated_code(request, "zendesk")
+        if code is None:
+            return HttpResponseBadRequest()
+
+        domain = request.session.pop("subdomain")
+        url = "https://%s.zendesk.com/oauth/tokens" % domain
+
+        redirect_uri = settings.SITE_ROOT + reverse("hc-add-zendesk")
+        result = requests.post(url, {
+            "client_id": settings.ZENDESK_CLIENT_ID,
+            "client_secret": settings.ZENDESK_CLIENT_SECRET,
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+            "scope": "read"
+        })
+
+        doc = result.json()
+        if "access_token" in doc:
+            doc["subdomain"] = domain
+
+            channel = Channel(kind="zendesk")
+            channel.user = request.team.user
+            channel.value = json.dumps(doc)
+            channel.save()
+            channel.assign_all_checks()
+            messages.success(request,
+                             "The Zendesk integration has been added!")
+        else:
+            messages.warning(request, "Something went wrong")
+
+        return redirect("hc-channels")
+
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_zendesk.html", ctx)
 
 
 def privacy(request):

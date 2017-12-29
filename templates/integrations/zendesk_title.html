@@ -1,0 +1,5 @@
+{% if check.status == "down" %}
+    {{ check.name_then_code }} is down
+{% else %}
+    {{ check.name_then_code }} is now UP
+{% endif %}

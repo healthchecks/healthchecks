@@ -165,6 +165,10 @@ TWILIO_FROM = None
 # PagerDuty
 PD_VENDOR_KEY = None
 
+# Zendesk
+ZENDESK_CLIENT_ID = None
+ZENDESK_CLIENT_SECRET = None
+
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load compress humanize staticfiles hc_extras %}
+
+{% block title %}Add Zendesk - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Zendesk Support</h1>
+
+    <div class="jumbotron">
+        <p>
+            If your team uses <a href="http://zendesk.com/">Zendesk</a>,
+            you can set up {% site_name %} to create Zendesk support tickets
+            when checks go <strong>down</strong>, and comment on them when
+            checks go back <strong>up</strong>.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <div class="input-group input-group-lg zendesk-subdomain">
+                        <input
+                            name="subdomain"
+                            placeholder="Subdomain"
+                            type="text"
+                            class="form-control">
+                        <span class="input-group-addon">.zendesk.com</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg btn-default btn-block">
+                        <img class="ai-icon" src="{% static 'img/integrations/zendesk.png' %}" alt="Zendesk" />
+                        Connect Zendesk Support
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}
