@@ -249,14 +249,14 @@ description, user picture, and add a "/start" command.
 * After creating the bot you will have the bot's name and token. Add them
 to your `hc/local_settings.py` file as `TELEGRAM_BOT_NAME` and
 `TELEGRAM_TOKEN` fields.
-* Now the tricky part: when a Telegram user talks to your bot,
-Telegram will use a webhook to forward received messages to your healthchecks
-instance. For this to work, your healthchecks instance needs to be publicly
-accessible over HTTPS. Using the
-[setWebhook](https://core.telegram.org/bots/api#setwebhook) API call
-set the bot's webhook to `https://yourdomain.com/integrations/telegram/bot/`.
+* Run `settelegramwebhook` management command. This command tells Telegram
+where to forward channel messages by invoking Telegram's
+[setWebhook](https://core.telegram.org/bots/api#setwebhook) API call:
 
+    ```
+    $ ./manage.py settelegramwebhook
+    Done, Telegram's webhook set to: https://my-monitoring-project.com/integrations/telegram/bot/
+    ```
 
-
-
-
+For this to work, your `SITE_ROOT` needs to be correct and use "https://"
+scheme.
