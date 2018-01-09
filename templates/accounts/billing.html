@@ -35,7 +35,7 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <div class="panel panel-default">
+                <div class="panel panel-{{ set_plan_status }}">
                     <div class="panel-body settings-block">
                         <h2>Billing Plan</h2>
 
@@ -96,9 +96,14 @@
                             Change Billing Plan
                         </button>
                     </div>
+                    {% if set_plan_status == "success" %}
+                    <div class="panel-footer">
+                        Your billing plan has been updated!
+                    </div>
+                    {% endif %}
                 </div>
 
-                <div class="panel panel-default">
+                <div class="panel panel-{{ payment_method_status }}">
                     <div class="panel-body settings-block">
                         <h2>Payment Method</h2>
                         {% if sub.payment_method_token %}
@@ -113,10 +118,15 @@
                             class="btn btn-default pull-right">
                             Change Payment Method</button>
                     </div>
+                    {% if payment_method_status == "success" %}
+                    <div class="panel-footer">
+                        Your payment method has been updated!
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="panel panel-default">
+                <div class="panel panel-{{ address_status }}">
                     <div class="panel-body settings-block">
                         <h2>Billing Address</h2>
 
@@ -137,13 +147,44 @@
                             Change Billing Address
                         </button>
                     </div>
-                    {% if status == "info" %}
+                    {% if address_status == "success" %}
                     <div class="panel-footer">
                         Your billing address has been updated!
                     </div>
                     {% endif %}
                 </div>
             </div>
+        </div>
+
+        <div class="panel panel-{{ send_invoices_status }}">
+            <div class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Invoices to Email</h2>
+
+                    <label class="checkbox-container">
+                        <input
+                            name="send_invoices"
+                            type="checkbox"
+                            {% if sub.send_invoices %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                        Send the invoice to {{ request.user.email }}
+                       each time my payment method is successfully charged.
+                    </label>
+
+                    <button
+                        type="submit"
+                        name="save_send_invoices"
+                        class="btn btn-default pull-right">
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+            {% if send_invoices_status == "success" %}
+            <div class="panel-footer">
+                Your preferences have been updated!
+            </div>
+            {% endif %}
         </div>
 
         <div class="panel panel-default">

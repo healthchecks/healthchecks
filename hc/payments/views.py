@@ -4,9 +4,11 @@ from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
                          JsonResponse, HttpResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
+import six
 from hc.api.models import Check
+from hc.lib import emails
 from hc.payments.invoices import PdfInvoice
 from hc.payments.models import Subscription
 
@@ -37,14 +39,36 @@ def billing(request):
     # subscription object is not created just by viewing a page.
     sub = Subscription.objects.filter(user_id=request.user.id).first()
 
+    send_invoices_status = "default"
+    if request.method == "POST":
+        if "save_send_invoices" in request.POST:
+            sub = Subscription.objects.for_user(request.user)
+            sub.send_invoices = "send_invoices" in request.POST
+            sub.save()
+            send_invoices_status = "success"
+
     ctx = {
         "page": "billing",
         "profile": request.profile,
         "sub": sub,
         "num_checks": Check.objects.filter(user=request.user).count(),
         "team_size": request.profile.member_set.count() + 1,
-        "team_max": request.profile.team_limit + 1
+        "team_max": request.profile.team_limit + 1,
+        "send_invoices_status": send_invoices_status,
+        "set_plan_status": "default",
+        "address_status": "default",
+        "payment_method_status": "default"
     }
+
+    if "set_plan_status" in request.session:
+        ctx["set_plan_status"] = request.session.pop("set_plan_status")
+
+    if "address_status" in request.session:
+        ctx["address_status"] = request.session.pop("address_status")
+
+    if "payment_method_status" in request.session:
+        ctx["payment_method_status"] = \
+            request.session.pop("payment_method_status")
 
     return render(request, "accounts/billing.html", ctx)
 
@@ -105,7 +129,7 @@ def set_plan(request):
         profile.sms_sent = 0
         profile.save()
 
-    request.session["first_charge"] = True
+    request.session["set_plan_status"] = "success"
     return redirect("hc-billing")
 
 
@@ -117,6 +141,7 @@ def address(request):
         if error:
             return log_and_bail(request, error)
 
+        request.session["address_status"] = "success"
         return redirect("hc-billing")
 
     ctx = {"a": sub.address}
@@ -136,6 +161,7 @@ def payment_method(request):
         if error:
             return log_and_bail(request, error)
 
+        request.session["payment_method_status"] = "success"
         return redirect("hc-billing")
 
     ctx = {
@@ -167,15 +193,29 @@ def pdf_invoice(request, transaction_id):
     response = HttpResponse(content_type='application/pdf')
     filename = "MS-HC-%s.pdf" % transaction.id.upper()
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-
-    bill_to = []
-    if sub.address_id:
-        ctx = {"a": sub.address}
-        bill_to = render_to_string("payments/address_plain.html", ctx)
-    elif request.user.profile.bill_to:
-        bill_to = request.user.profile.bill_to
-    else:
-        bill_to = request.user.email
-
-    PdfInvoice(response).render(transaction, bill_to)
+    PdfInvoice(response).render(transaction, sub.flattened_address())
     return response
+
+
+@csrf_exempt
+@require_POST
+def charge_webhook(request):
+    sig = str(request.POST["bt_signature"])
+    payload = str(request.POST["bt_payload"])
+
+    import braintree
+    doc = braintree.WebhookNotification.parse(sig, payload)
+    if doc.kind != "subscription_charged_successfully":
+        return HttpResponseBadRequest()
+
+    sub = Subscription.objects.get(subscription_id=doc.subscription.id)
+    if sub.send_invoices:
+        transaction = doc.subscription.transactions[0]
+        filename = "MS-HC-%s.pdf" % transaction.id.upper()
+
+        sink = six.BytesIO()
+        PdfInvoice(sink).render(transaction, sub.flattened_address())
+        ctx = {"tx": transaction}
+        emails.invoice(sub.user.email, ctx, filename, sink.getvalue())
+
+    return HttpResponse()

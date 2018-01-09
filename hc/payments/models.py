@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.template.loader import render_to_string
 
 if settings.USE_PAYMENTS:
     import braintree
@@ -29,6 +30,7 @@ class Subscription(models.Model):
     subscription_id = models.CharField(max_length=10, blank=True)
     plan_id = models.CharField(max_length=10, blank=True)
     address_id = models.CharField(max_length=2, blank=True)
+    send_invoices = models.BooleanField(default=True)
 
     objects = SubscriptionManager()
 
@@ -175,6 +177,13 @@ class Subscription(models.Model):
                 self._address = None
 
         return self._address
+
+    def flattened_address(self):
+        if self.address_id:
+            ctx = {"a": self.address}
+            return render_to_string("payments/address_plain.html", ctx)
+        else:
+            return self.user.email
 
     @property
     def transactions(self):

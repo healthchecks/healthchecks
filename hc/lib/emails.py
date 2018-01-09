@@ -58,3 +58,15 @@ def verify_email(to, ctx):
 
 def report(to, ctx):
     send("report", to, ctx)
+
+
+def invoice(to, ctx, filename, pdf_data):
+    ctx["SITE_ROOT"] = settings.SITE_ROOT
+    subject = render('emails/invoice-subject.html', ctx).strip()
+    text = render('emails/invoice-body-text.html', ctx)
+    html = render('emails/invoice-body-html.html', ctx)
+
+    msg = EmailMultiAlternatives(subject, text, to=(to, ))
+    msg.attach_alternative(html, "text/html")
+    msg.attach(filename, pdf_data, "application/pdf")
+    msg.send()

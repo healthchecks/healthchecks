@@ -55,11 +55,12 @@ class PdfInvoiceTestCase(BaseTestCase):
 
     @skipIf(reportlab is None, "reportlab not installed")
     @patch("hc.payments.models.braintree")
-    def test_it_shows_company_data(self, mock_braintree):
-        self.profile.bill_to = "Alice and Partners"
-        self.profile.save()
+    def test_it_shows_company_data(self, mock):
+        self.sub.address_id = "aa"
+        self.sub.save()
 
-        mock_braintree.Transaction.find.return_value = self.tx
+        mock.Transaction.find.return_value = self.tx
+        mock.Address.find.return_value = {"company": "Alice and Partners"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/pdf/abc123/")

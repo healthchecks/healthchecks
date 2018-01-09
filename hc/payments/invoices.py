@@ -93,8 +93,6 @@ class PdfInvoice(Canvas):
             self.text(s.strip())
 
         self.linefeed()
-        self.text("If you have a credit card on file it will be "
-                  "automatically charged within 24 hours.", align="center")
 
         self.showPage()
         self.save()

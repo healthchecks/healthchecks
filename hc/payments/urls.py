@@ -35,4 +35,5 @@ urlpatterns = [
         views.get_client_token,
         name="hc-get-client-token"),
 
+    url(r'^pricing/charge/$', views.charge_webhook),
 ]
