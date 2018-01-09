@@ -1,31 +1,20 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
                          JsonResponse, HttpResponse)
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 
-from hc.payments.forms import BillToForm
+from hc.api.models import Check
 from hc.payments.invoices import PdfInvoice
 from hc.payments.models import Subscription
-
-if settings.USE_PAYMENTS:
-    import braintree
-else:
-    # hc.payments tests mock this object, so tests should
-    # still be able to run:
-    braintree = None
 
 
 @login_required
 def get_client_token(request):
     sub = Subscription.objects.for_user(request.user)
-    client_token = braintree.ClientToken.generate({
-        "customer_id": sub.customer_id
-    })
-
-    return JsonResponse({"client_token": client_token})
+    return JsonResponse({"client_token": sub.get_client_token()})
 
 
 def pricing(request):
@@ -33,24 +22,31 @@ def pricing(request):
         ctx = {"page": "pricing"}
         return render(request, "payments/pricing_not_owner.html", ctx)
 
-    sub = None
-    if request.user.is_authenticated:
-        # Don't use Subscription.objects.for_user method here, so a
-        # subscription object is not created just by viewing a page.
-        sub = Subscription.objects.filter(user_id=request.user.id).first()
+    ctx = {"page": "pricing"}
+    return render(request, "payments/pricing.html", ctx)
 
-    period = "monthly"
-    if sub and sub.plan_id.startswith("Y"):
-        period = "annual"
+
+@login_required
+def billing(request):
+    if request.team != request.profile:
+        request.team = request.profile
+        request.profile.current_team = request.profile
+        request.profile.save()
+
+    # Don't use Subscription.objects.for_user method here, so a
+    # subscription object is not created just by viewing a page.
+    sub = Subscription.objects.filter(user_id=request.user.id).first()
 
     ctx = {
-        "page": "pricing",
+        "page": "billing",
+        "profile": request.profile,
         "sub": sub,
-        "period": period,
-        "first_charge": request.session.pop("first_charge", False)
+        "num_checks": Check.objects.filter(user=request.user).count(),
+        "team_size": request.profile.member_set.count() + 1,
+        "team_max": request.profile.team_limit + 1
     }
 
-    return render(request, "payments/pricing.html", ctx)
+    return render(request, "accounts/billing.html", ctx)
 
 
 def log_and_bail(request, result):
@@ -63,62 +59,34 @@ def log_and_bail(request, result):
     if not logged_deep_error:
         messages.error(request, result.message)
 
-    return redirect("hc-pricing")
+    return redirect("hc-billing")
 
 
 @login_required
 @require_POST
-def create_plan(request):
+def set_plan(request):
     plan_id = request.POST["plan_id"]
-    if plan_id not in ("P5", "P50", "Y48", "Y480"):
+    if plan_id not in ("", "P5", "P50", "Y48", "Y480"):
         return HttpResponseBadRequest()
 
     sub = Subscription.objects.for_user(request.user)
+    if sub.plan_id == plan_id:
+        return redirect("hc-billing")
 
     # Cancel the previous plan
-    if sub.subscription_id:
-        braintree.Subscription.cancel(sub.subscription_id)
-        sub.subscription_id = ""
-        sub.plan_id = ""
-        sub.save()
+    sub.cancel()
+    if plan_id == "":
+        profile = request.user.profile
+        profile.ping_log_limit = 100
+        profile.check_limit = 20
+        profile.team_limit = 2
+        profile.sms_limit = 0
+        profile.save()
+        return redirect("hc-billing")
 
-    # Create Braintree customer record
-    if not sub.customer_id:
-        result = braintree.Customer.create({
-            "email": request.user.email
-        })
-        if not result.is_success:
-            return log_and_bail(request, result)
-
-        sub.customer_id = result.customer.id
-        sub.save()
-
-    # Create Braintree payment method
-    if "payment_method_nonce" in request.POST:
-        result = braintree.PaymentMethod.create({
-            "customer_id": sub.customer_id,
-            "payment_method_nonce": request.POST["payment_method_nonce"],
-            "options": {"make_default": True}
-        })
-
-        if not result.is_success:
-            return log_and_bail(request, result)
-
-        sub.payment_method_token = result.payment_method.token
-        sub.save()
-
-    # Create Braintree subscription
-    result = braintree.Subscription.create({
-        "payment_method_token": sub.payment_method_token,
-        "plan_id": plan_id,
-    })
-
+    result = sub.setup(plan_id)
     if not result.is_success:
         return log_and_bail(request, result)
-
-    sub.subscription_id = result.subscription.id
-    sub.plan_id = plan_id
-    sub.save()
 
     # Update user's profile
     profile = request.user.profile
@@ -138,100 +106,76 @@ def create_plan(request):
         profile.save()
 
     request.session["first_charge"] = True
-    return redirect("hc-pricing")
+    return redirect("hc-billing")
 
 
 @login_required
-@require_POST
-def update_payment_method(request):
+def address(request):
     sub = Subscription.objects.for_user(request.user)
-
-    if not sub.customer_id or not sub.subscription_id:
-        return HttpResponseBadRequest()
-
-    if "payment_method_nonce" not in request.POST:
-        return HttpResponseBadRequest()
-
-    result = braintree.PaymentMethod.create({
-        "customer_id": sub.customer_id,
-        "payment_method_nonce": request.POST["payment_method_nonce"],
-        "options": {"make_default": True}
-    })
-
-    if not result.is_success:
-        return log_and_bail(request, result)
-
-    payment_method_token = result.payment_method.token
-    result = braintree.Subscription.update(sub.subscription_id, {
-        "payment_method_token": payment_method_token
-    })
-
-    if not result.is_success:
-        return log_and_bail(request, result)
-
-    sub.payment_method_token = payment_method_token
-    sub.save()
-
-    return redirect("hc-pricing")
-
-
-@login_required
-@require_POST
-def cancel_plan(request):
-    sub = Subscription.objects.get(user=request.user)
-    sub.cancel()
-
-    # Revert to default limits--
-    profile = request.user.profile
-    profile.ping_log_limit = 100
-    profile.check_limit = 20
-    profile.team_limit = 2
-    profile.sms_limit = 0
-    profile.save()
-
-    return redirect("hc-pricing")
-
-
-@login_required
-def billing(request):
     if request.method == "POST":
-        form = BillToForm(request.POST)
-        if form.is_valid():
-            request.user.profile.bill_to = form.cleaned_data["bill_to"]
-            request.user.profile.save()
-            return redirect("hc-billing")
+        error = sub.update_address(request.POST)
+        if error:
+            return log_and_bail(request, error)
 
-    sub = Subscription.objects.get(user=request.user)
+        return redirect("hc-billing")
 
-    transactions = braintree.Transaction.search(
-        braintree.TransactionSearch.customer_id == sub.customer_id)
+    ctx = {"a": sub.address}
+    return render(request, "payments/address.html", ctx)
+
+
+@login_required
+def payment_method(request):
+    sub = get_object_or_404(Subscription, user=request.user)
+
+    if request.method == "POST":
+        if "payment_method_nonce" not in request.POST:
+            return HttpResponseBadRequest()
+
+        nonce = request.POST["payment_method_nonce"]
+        error = sub.update_payment_method(nonce)
+        if error:
+            return log_and_bail(request, error)
+
+        return redirect("hc-billing")
+
+    ctx = {
+        "sub": sub,
+        "pm": sub.payment_method
+    }
+    return render(request, "payments/payment_method.html", ctx)
+
+
+@login_required
+def billing_history(request):
+    try:
+        sub = Subscription.objects.get(user=request.user)
+        transactions = sub.transactions
+    except Subscription.DoesNotExist:
+        transactions = []
 
     ctx = {"transactions": transactions}
-    return render(request, "payments/billing.html", ctx)
-
-
-@login_required
-def invoice(request, transaction_id):
-    sub = Subscription.objects.get(user=request.user)
-    transaction = braintree.Transaction.find(transaction_id)
-    if transaction.customer_details.id != sub.customer_id:
-        return HttpResponseForbidden()
-
-    ctx = {"tx": transaction}
-    return render(request, "payments/invoice.html", ctx)
+    return render(request, "payments/billing_history.html", ctx)
 
 
 @login_required
 def pdf_invoice(request, transaction_id):
     sub = Subscription.objects.get(user=request.user)
-    transaction = braintree.Transaction.find(transaction_id)
-    if transaction.customer_details.id != sub.customer_id:
+    transaction = sub.get_transaction(transaction_id)
+    if transaction is None:
         return HttpResponseForbidden()
 
     response = HttpResponse(content_type='application/pdf')
     filename = "MS-HC-%s.pdf" % transaction.id.upper()
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
 
-    bill_to = request.user.profile.bill_to or request.user.email
+    bill_to = []
+    if sub.address_id:
+        ctx = {"a": sub.address}
+        bill_to = render_to_string("payments/address_plain.html", ctx)
+    elif request.user.profile.bill_to:
+        bill_to = request.user.profile.bill_to
+    else:
+        bill_to = request.user.email
+
     PdfInvoice(response).render(transaction, bill_to)
     return response

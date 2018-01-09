@@ -10,6 +10,11 @@ else:
     braintree = None
 
 
+ADDRESS_KEYS = ("first_name", "last_name", "company", "street_address",
+                "extended_address", "locality", "region", "postal_code",
+                "country_code_alpha2")
+
+
 class SubscriptionManager(models.Manager):
 
     def for_user(self, user):
@@ -23,6 +28,7 @@ class Subscription(models.Model):
     payment_method_token = models.CharField(max_length=35, blank=True)
     subscription_id = models.CharField(max_length=10, blank=True)
     plan_id = models.CharField(max_length=10, blank=True)
+    address_id = models.CharField(max_length=2, blank=True)
 
     objects = SubscriptionManager()
 
@@ -46,10 +52,98 @@ class Subscription(models.Model):
 
         raise NotImplementedError("Unexpected plan: %s" % self.plan_id)
 
-    def _get_braintree_payment_method(self):
+    @property
+    def payment_method(self):
+        if not self.payment_method_token:
+            return None
+
         if not hasattr(self, "_pm"):
             self._pm = braintree.PaymentMethod.find(self.payment_method_token)
         return self._pm
+
+    def _get_braintree_subscription(self):
+        if not hasattr(self, "_sub"):
+            self._sub = braintree.Subscription.find(self.subscription_id)
+        return self._sub
+
+    def get_client_token(self):
+        return braintree.ClientToken.generate({
+            "customer_id": self.customer_id
+        })
+
+    def update_payment_method(self, nonce):
+        # Create customer record if it does not exist:
+        if not self.customer_id:
+            result = braintree.Customer.create({
+                "email": self.user.email
+            })
+            if not result.is_success:
+                return result
+
+            self.customer_id = result.customer.id
+            self.save()
+
+        # Create payment method
+        result = braintree.PaymentMethod.create({
+            "customer_id": self.customer_id,
+            "payment_method_nonce": nonce,
+            "options": {"make_default": True}
+        })
+
+        if not result.is_success:
+            return result
+
+        self.payment_method_token = result.payment_method.token
+        self.save()
+
+        # Update an existing subscription to use this payment method
+        if self.subscription_id:
+            result = braintree.Subscription.update(self.subscription_id, {
+                "payment_method_token": self.payment_method_token
+            })
+
+        if not result.is_success:
+            return result
+
+    def update_address(self, post_data):
+        # Create customer record if it does not exist:
+        if not self.customer_id:
+            result = braintree.Customer.create({
+                "email": self.user.email
+            })
+            if not result.is_success:
+                return result
+
+            self.customer_id = result.customer.id
+            self.save()
+
+        payload = {key: str(post_data.get(key)) for key in ADDRESS_KEYS}
+        if self.address_id:
+            result = braintree.Address.update(self.customer_id,
+                                              self.address_id,
+                                              payload)
+        else:
+            payload["customer_id"] = self.customer_id
+            result = braintree.Address.create(payload)
+            if result.is_success:
+                self.address_id = result.address.id
+                self.save()
+
+        if not result.is_success:
+            return result
+
+    def setup(self, plan_id):
+        result = braintree.Subscription.create({
+            "payment_method_token": self.payment_method_token,
+            "plan_id": plan_id
+        })
+
+        if result.is_success:
+            self.subscription_id = result.subscription.id
+            self.plan_id = plan_id
+            self.save()
+
+        return result
 
     def cancel(self):
         if self.subscription_id:
@@ -59,22 +153,42 @@ class Subscription(models.Model):
         self.plan_id = ""
         self.save()
 
-    def pm_is_credit_card(self):
-        return isinstance(self._get_braintree_payment_method(),
-                          braintree.credit_card.CreditCard)
+    def pm_is_card(self):
+        pm = self.payment_method
+        return isinstance(pm, braintree.credit_card.CreditCard)
 
     def pm_is_paypal(self):
-        return isinstance(self._get_braintree_payment_method(),
-                          braintree.paypal_account.PayPalAccount)
+        pm = self.payment_method
+        return isinstance(pm, braintree.paypal_account.PayPalAccount)
 
-    def card_type(self):
-        o = self._get_braintree_payment_method()
-        return o.card_type
+    def next_billing_date(self):
+        o = self._get_braintree_subscription()
+        return o.next_billing_date
 
-    def last_4(self):
-        o = self._get_braintree_payment_method()
-        return o.last_4
+    @property
+    def address(self):
+        if not hasattr(self, "_address"):
+            try:
+                self._address = braintree.Address.find(self.customer_id,
+                                                       self.address_id)
+            except braintree.exceptions.NotFoundError:
+                self._address = None
 
-    def paypal_email(self):
-        o = self._get_braintree_payment_method()
-        return o.email
+        return self._address
+
+    @property
+    def transactions(self):
+        if not hasattr(self, "_tx"):
+            if not self.customer_id:
+                self._tx = []
+            else:
+                self._tx = list(braintree.Transaction.search(braintree.TransactionSearch.customer_id == self.customer_id))
+
+        return self._tx
+
+    def get_transaction(self, transaction_id):
+        tx = braintree.Transaction.find(transaction_id)
+        if tx.customer_details.id != self.customer_id:
+            return None
+
+        return tx

@@ -31,7 +31,7 @@ class PdfInvoiceTestCase(BaseTestCase):
         self.tx.subscription_details.billing_period_end_date = now()
 
     @skipIf(reportlab is None, "reportlab not installed")
-    @patch("hc.payments.views.braintree")
+    @patch("hc.payments.models.braintree")
     def test_it_works(self, mock_braintree):
         mock_braintree.Transaction.find.return_value = self.tx
 
@@ -40,7 +40,7 @@ class PdfInvoiceTestCase(BaseTestCase):
         self.assertTrue(six.b("ABC123") in r.content)
         self.assertTrue(six.b("alice@example.org") in r.content)
 
-    @patch("hc.payments.views.braintree")
+    @patch("hc.payments.models.braintree")
     def test_it_checks_customer_id(self, mock_braintree):
 
         tx = Mock()
@@ -54,7 +54,7 @@ class PdfInvoiceTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     @skipIf(reportlab is None, "reportlab not installed")
-    @patch("hc.payments.views.braintree")
+    @patch("hc.payments.models.braintree")
     def test_it_shows_company_data(self, mock_braintree):
         self.profile.bill_to = "Alice and Partners"
         self.profile.save()

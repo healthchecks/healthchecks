@@ -1,0 +1,428 @@
+{% extends "base.html" %}
+{% load compress staticfiles hc_extras %}
+
+{% block title %}Account Settings - {% site_name %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="settings-title">Settings</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <ul class="nav nav-pills nav-stacked">
+            <li><a href="{% url 'hc-profile' %}">Account</a></li>
+            <li class="active"><a href="{% url 'hc-billing' %}">Billing</a></li>
+            <li><a href="{% url 'hc-notifications' %}">Email Reports</a></li>
+            <li><a href="{% url 'hc-badges' %}">Badges</a></li>
+        </ul>
+    </div>
+
+    <div class="col-sm-9 col-md-9">
+        {% if messages %}
+        <div class="alert alert-danger">
+            <p>
+                <strong>We're sorry!</strong> There was a problem setting
+                up the subscription. Response from payment gateway:</p>
+
+            {% for message in messages %}
+            <p class="error-message">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-body settings-block">
+                        <h2>Billing Plan</h2>
+
+                        <table class="table">
+                            <tr>
+                                <td>Current Plan</td>
+                                <td>
+                                {% if sub is None or sub.plan_id == "" %}
+                                    Free
+                                {% else %}
+                                    {% if sub.plan_id == "P5" or sub.plan_id == "Y48" %}
+                                        Standard
+                                    {% endif %}
+                                    {% if sub.plan_id == "P50" or sub.plan_id == "Y480" %}
+                                        Plus
+                                    {% endif %}
+
+                                    (${{ sub.price }}/{{ sub.period }})
+                                {% endif %}
+                                </td>
+                            </tr>
+                            {% if sub.plan_id %}
+                            <tr>
+                                <td>Next Payment</td>
+                                <td id="next-billing-date">
+                                    <span class="loading">loading…</span>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <td>Checks Used</td>
+                                <td>
+                                    {{ num_checks }} of
+                                    {% if sub.plan_id %}
+                                        unlimited
+                                    {% else %}
+                                        {{ profile.check_limit }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Team Size</td>
+                                <td>
+                                    {{ team_size }} of
+                                    {% if profile.team_limit == 500 %}
+                                        unlimited
+                                    {% else %}
+                                        {{ team_max }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+
+                        <button
+                            data-toggle="modal"
+                            data-target="#change-billing-plan-modal"
+                            class="btn btn-default pull-right">
+                            Change Billing Plan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-body settings-block">
+                        <h2>Payment Method</h2>
+                        {% if sub.payment_method_token %}
+                        <p id="payment-method">
+                            <span class="loading">loading…</span>
+                        </p>
+                        {% else %}
+                            <p id="payment-method-missing" class="billing-empty">Not set</p>
+                        {% endif %}
+                        <button
+                            id="update-payment-method"
+                            class="btn btn-default pull-right">
+                            Change Payment Method</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-body settings-block">
+                        <h2>Billing Address</h2>
+
+                        {% if sub.address_id %}
+                        <div id="billing-address">
+                            <span class="loading">loading…</span>
+                        </div>
+                        {% else %}
+                            <p id="billing-address-missing" class="billing-empty">
+                                Not set
+                            </p>
+                        {% endif %}
+
+                        <button
+                            data-toggle="modal"
+                            data-target="#billing-address-modal"
+                            class="btn btn-default pull-right">
+                            Change Billing Address
+                        </button>
+                    </div>
+                    {% if status == "info" %}
+                    <div class="panel-footer">
+                        Your billing address has been updated!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <h2>Billing History</h2>
+                <div id="billing-history">
+                    <span class="loading">loading…</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="change-billing-plan-modal" class="modal">
+    <div class="modal-dialog">
+        {% if sub.payment_method_token and sub.address_id %}
+        <form method="post" class="form-horizontal" action="{% url 'hc-set-plan' %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="remove-check-title">Change Billing Plan</h4>
+                </div>
+                <div class="modal-body">
+                    <h2>Free <small>20 checks, 3 team members</small></h2>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="plan_id"
+                            value=""
+                            {% if sub.plan_id == "" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Enjoy free service.
+                    </label>
+
+                    <h2>Standard <small>Unlimited checks, 20 team members</small></h2>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="plan_id"
+                            value="P5"
+                            {% if sub.plan_id == "P5" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Monthly, $5/month
+                    </label>
+
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="plan_id"
+                            value="Y48"
+                            {% if sub.plan_id == "Y48" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Yearly, $48/year (20% off monthly)
+                    </label>
+
+                    <h2>Plus <small>Unlimited checks, unlimited team members</small></h2>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="plan_id"
+                            value="P50"
+                            {% if sub.plan_id == "P50" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Monthly, $50/month
+                    </label>
+
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="plan_id"
+                            value="Y480"
+                            {% if sub.plan_id == "Y480" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Yearly, $480/year (20% off monthly)
+                    </label>
+
+                    <div class="alert alert-warning">
+                        <strong>No proration.</strong> We currently do not
+                        support proration when changing billing plans.
+                        Changing the plan starts a new billing cycle
+                        and charges your payment method.
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        Change Billing Plan
+                    </button>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Some details are missing…</h4>
+            </div>
+            <div class="modal-body">
+                {% if not sub.payment_method_token %}
+                <div id="no-payment-method">
+                    <h4>No payment method.</h4>
+                    <p>Please add a payment method before changing the billing
+                        plan.
+                    </p>
+                </div>
+                {% endif %}
+                {% if not sub.address_id %}
+                <div id="no-billing-address">
+                    <h4>No billing address.</h4>
+                    <p>Please add a billing address before changing
+                        the billing plan.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div id="payment-method-modal" class="modal pm-modal">
+    <div class="modal-dialog">
+        <form id="payment-form" method="post" action="{% url 'hc-payment-method' %}">
+            {% csrf_token %}
+            <input id="pmm-nonce" type="hidden" name="payment_method_nonce" />
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Payment Method</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="dropin"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button id="payment-form-submit" type="button" class="btn btn-primary" disabled>
+                        Confirm Payment Method
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="billing-address-modal" class="modal">
+    <div class="modal-dialog">
+        <form action="{% url 'hc-billing-address' %}" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Billing Address</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input
+                                    id="first_name"
+                                    name="first_name"
+                                    type="text"
+                                    placeholder="First Name"
+                                    class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input
+                                    id="last_name"
+                                    name="last_name"
+                                    type="text"
+                                    placeholder="Last Name"
+                                    class="input-name form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="form-group">
+                                <input
+                                    id="company"
+                                    name="company"
+                                    placeholder="Company (optional)"
+                                    type="text"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <input
+                                    id="extended_address"
+                                    name="extended_address"
+                                    placeholder="VAT ID (optional)"
+                                    type="text"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <input
+                                    id="street_address"
+                                    name="street_address"
+                                    placeholder="Street Address"
+                                    type="text"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input
+                                    id="locality"
+                                    name="locality"
+                                    placeholder="City"
+                                    type="text"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input
+                                    id="region"
+                                    name="region"
+                                    placeholder="State / Region"
+                                    type="text"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input
+                                    id="postal_code"
+                                    name="postal_code"
+                                    placeholder="Postal Code"
+                                    type="text"
+                                    class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <select id="country_code_alpha2" class="form-control" name="country_code_alpha2">
+                                    {% include "payments/countries.html" %}
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://js.braintreegateway.com/web/dropin/1.8.0/js/dropin.min.js"></script>
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/billing.js' %}"></script>
+{% endcompress %}
+{% endblock %}

@@ -1,0 +1,41 @@
+{% if a.first_name or a.last_name %}
+    <p>{{ a.first_name|default:"" }} {{ a.last_name|default:"" }}</p>
+{% endif %}
+
+{% if a.company %}
+    <p>{{ a.company }}</p>
+{% endif %}
+
+{% if a.extended_address %}
+    <p>VAT: {{ a.extended_address }}</p>
+{% endif %}
+
+{% if a.street_address %}
+    <p>{{ a.street_address }}</p>
+{% endif %}
+
+{% if a.locality %}
+    <p>{{ a.locality }}</p>
+{% endif %}
+
+{% if a.region %}
+<p>{{ a.region }}</p>
+{% endif %}
+
+{% if a.country_name %}
+<p>{{ a.country_name }}</p>
+{% endif %}
+
+{% if a.postal_code %}
+<p>{{ a.postal_code }}</p>
+{% endif %}
+
+<input type="hidden" name="first_name" value="{{ a.first_name|default:"" }}">
+<input type="hidden" name="last_name" value="{{ a.last_name|default:"" }}">
+<input type="hidden" name="company" value="{{ a.company|default:"" }}">
+<input type="hidden" name="street_address" value="{{ a.street_address|default:"" }}">
+<input type="hidden" name="extended_address" value="{{ a.extended_address|default:"" }}">
+<input type="hidden" name="locality" value="{{ a.locality|default:"" }}">
+<input type="hidden" name="region" value="{{ a.region|default:"" }}">
+<input type="hidden" name="country_code_alpha2" value="{{ a.country_code_alpha2|default:"US" }}">
+<input type="hidden" name="postal_code" value="{{ a.postal_code|default:"" }}">

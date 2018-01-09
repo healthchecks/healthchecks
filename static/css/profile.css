@@ -16,3 +16,24 @@
     padding: 8px 15px;
 }
 
+span.loading {
+    color: #888;
+    font-style: italic;
+}
+
+#billing-address-modal label {
+    font-weight: normal;
+}
+
+#billing-address-modal .modal-body {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.masked_number {
+    padding-left: 8px;
+}
+
+.billing-empty {
+    color: #888;
+}

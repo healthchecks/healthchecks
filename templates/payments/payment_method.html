@@ -1,0 +1,14 @@
+{% if sub.pm_is_card %}
+    <img src="{{ pm.image_url }}" height="30" /> <span class="masked_number">{{ pm.masked_number }}</span>
+    {% if pm.expired %}
+        <span class="text-danger">(expired)</span>
+    {% endif %}
+{% endif %}
+
+{% if sub.pm_is_paypal %}
+    <img src="{{ pm.image_url }}" height="30" /> {{ pm.email }}
+{% endif %}
+
+{% if sub.subscription_id %}
+<input type="hidden" id="nbd" value="{{ sub.next_billing_date }}" />
+{% endif %}
