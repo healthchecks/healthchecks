@@ -15,13 +15,13 @@
                     <p>
                         Your account is currently on the
                         {% if sub.plan_id == "P5" %}
-                            <strong>Monthly Standard</strong>
+                            <strong>Standard (monthly)</strong>
                         {% elif sub.plan_id == "P50" %}
-                            <strong>Monthly Plus</strong>
+                            <strong>Plus (monthly)</strong>
                         {% elif sub.plan_id == "Y48" %}
-                            <strong>Yearly Standard</strong>
+                            <strong>Standard (annual)</strong>
                         {% elif sub.plan_id == "Y480" %}
-                            <strong>Yearly Plus</strong>
+                            <strong>Plus (annual)</strong>
                         {% else %}
                             <strong>Free</strong>
                         {% endif  %}

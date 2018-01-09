@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
                          JsonResponse, HttpResponse)
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import six
@@ -24,7 +23,11 @@ def pricing(request):
         ctx = {"page": "pricing"}
         return render(request, "payments/pricing_not_owner.html", ctx)
 
-    ctx = {"page": "pricing"}
+    # Don't use Subscription.objects.for_user method here, so a
+    # subscription object is not created just by viewing a page.
+    sub = Subscription.objects.filter(user_id=request.user.id).first()
+
+    ctx = {"page": "pricing", "sub": sub}
     return render(request, "payments/pricing.html", ctx)
 
 
