@@ -1,12 +1,18 @@
 from django.contrib import admin
-from .models import Subscription
+from django.core.urlresolvers import reverse
+from hc.accounts.models import Profile
+from hc.payments.models import Subscription
 
 
 @admin.register(Subscription)
 class SubsAdmin(admin.ModelAdmin):
 
-    list_display = ("id", "email", "customer_id",
-                    "payment_method_token", "subscription_id", "plan_id")
+    readonly_fields = ("email", )
+    search_fields = ("customer_id", "payment_method_token", "subscription_id",
+                     "user__email")
+    list_display = ("id", "email", "customer_id", "address_id",
+                    "payment_method_token", "subscription_id", "plan_id",
+                    "profile")
 
     list_filter = ("plan_id", )
     actions = ("cancel", )
@@ -14,8 +20,24 @@ class SubsAdmin(admin.ModelAdmin):
     def email(self, obj):
         return obj.user.email if obj.user else None
 
+    def profile(self, obj):
+        if obj.user.profile:
+            url = reverse("admin:accounts_profile_change",
+                          args=[obj.user.profile.id])
+            return "<a href='%s'>View Profile</a>" % url
+
+        return ""
+
+    profile.allow_tags = True
+
     def cancel(self, request, qs):
         for sub in qs.all():
             sub.cancel()
+
+        profile = Profile.objects.for_user(sub.user)
+        profile.check_limit = 20
+        profile.team_limit = 2
+        profile.sms_limit = 0
+        profile.save()
 
         self.message_user(request, "%d subscriptions cancelled" % qs.count())
