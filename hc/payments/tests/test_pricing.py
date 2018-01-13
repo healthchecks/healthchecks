@@ -27,7 +27,7 @@ class PricingTestCase(BaseTestCase):
         for email in ("alice@example.org", "bob@example.org"):
             self.client.login(username=email, password="password")
 
-            r = self.client.get("/about/")
+            r = self.client.get("/docs/")
             self.assertContains(r, "Pricing")
 
     def test_it_offers_to_switch(self):

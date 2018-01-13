@@ -208,7 +208,7 @@ class OpsGenie(HttpTransport):
         payload = {
             "apiKey": self.channel.value,
             "alias": str(check.code),
-            "source": "healthchecks.io"
+            "source": settings.SITE_NAME
         }
 
         if check.status == "down":
@@ -269,7 +269,7 @@ class Pushbullet(HttpTransport):
         }
         payload = {
             "type": "note",
-            "title": "healthchecks.io",
+            "title": settings.SITE_NAME,
             "body": text
         }
 
@@ -314,7 +314,7 @@ class VictorOps(HttpTransport):
             "message_type": mtype,
             "entity_display_name": check.name_then_code(),
             "state_message": description,
-            "monitoring_tool": "healthchecks.io",
+            "monitoring_tool": settings.SITE_NAME,
         }
 
         return self.post(self.channel.value, json=payload)

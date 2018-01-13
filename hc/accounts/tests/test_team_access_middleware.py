@@ -11,7 +11,7 @@ class TeamAccessMiddlewareTestCase(TestCase):
         user.save()
 
         self.client.login(username="ned@example.org", password="password")
-        r = self.client.get("/about/")
+        r = self.client.get("/docs/")
         self.assertEqual(r.status_code, 200)
 
         self.assertEqual(Profile.objects.count(), 1)

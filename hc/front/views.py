@@ -137,10 +137,6 @@ def docs_cron(request):
     return render(request, "front/docs_cron.html", ctx)
 
 
-def about(request):
-    return render(request, "front/about.html", {"page": "about"})
-
-
 @require_POST
 @login_required
 def add_check(request):
@@ -952,11 +948,3 @@ def add_zendesk(request):
 
     ctx = {"page": "channels"}
     return render(request, "integrations/add_zendesk.html", ctx)
-
-
-def privacy(request):
-    return render(request, "front/privacy.html", {})
-
-
-def terms(request):
-    return render(request, "front/terms.html", {})

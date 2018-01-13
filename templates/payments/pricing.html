@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles compress hc_extras %}
 
-{% block title %}Pricing - It's Free! - healthchecks.io{% endblock %}
+{% block title %}Pricing - It's Free! - {% site_name %}{% endblock %}
 
 {% block content %}
 
@@ -167,7 +167,7 @@
                     <a href="https://braintreepayments.com">Braintree</a>,
                     a division of PayPal. Your credit card or PayPal
                     credentials are never directly handled by or
-                    stored on healthchecks.io servers.
+                    stored on {% site_name %} servers.
                 </p>
                 <p>
                     Braintree is a validated Level 1 PCI DSS Compliant
@@ -199,7 +199,7 @@
 
                 <h2>What is the "log entries per check" number?</h2>
                 <p>
-                    For each of your checks, healthchecks.io keeps a
+                    For each of your checks, {% site_name %} keeps a
                     historic log of the received pings. The log can be useful
                     for auditing past activity of your cron jobs.
                 </p>

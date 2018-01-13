@@ -83,7 +83,7 @@ emails and notifications. Example:
 
     SITE_ROOT = "https://my-monitoring-project.com"
 
-`SITE_NAME` has the default value of "healthchecks.io" and is used throughout
+`SITE_NAME` has the default value of "Mychecks" and is used throughout
 the templates. Replace it with your own name to personalize your installation.
 Example:
 

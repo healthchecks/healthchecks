@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress staticfiles %}
+{% load compress hc_extras staticfiles %}
 
 {% block content %}
 <div class="row">
@@ -12,7 +12,7 @@
                 <p>Please use the form below to request a fresh login link:</p>
             </div>
             {% else %}
-            <h1>Healthchecks</h1>
+            <h1>{% site_name %}</h1>
             <div class="dialog-body">
                 <p>
                 {% if show_password %}

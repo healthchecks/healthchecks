@@ -59,7 +59,7 @@
             </button>
             <a class="navbar-brand"
                 href="{% url 'hc-index' %}"
-                title="healthchecks.io - Monitor Cron Jobs">
+                title="{% site_name %} - Monitor Cron Jobs">
                 {% if request.user.is_authenticated %}
                 <img
                     id="logo"
@@ -67,7 +67,7 @@
                     width="59"
                     src="{% static 'img/logo.png'%}"
                     srcset="{% static 'img/logo.png'%} 1x, {% static 'img/logo@2x.png'%} 2x"
-                    alt="healthchecks.io">
+                    alt="{% site_name %}">
                 {% else %}
                 <img
                     id="logo"
@@ -75,7 +75,7 @@
                     width="200"
                     src="{% static 'img/logo-full.png'%}"
                     srcset="{% static 'img/logo-full.png'%} 1x, {% static 'img/logo-full@2x.png'%} 2x"
-                    alt="healthchecks.io">
+                    alt="{% site_name %}">
                 {% endif %}
             </a>
 
@@ -104,9 +104,6 @@
                     <a href="{% url 'hc-docs' %}">Docs</a>
                 </li>
 
-                <li {% if page == 'about' %} class="active" {% endif %}>
-                    <a href="{% url 'hc-about' %}">About</a>
-                </li>
             </ul>
 
 
@@ -161,13 +158,7 @@
     <footer class="footer">
         <div class="container">
             <ul>
-                <li class="hidden-xs">&copy; 2015-2018 Monkey See Monkey Do SIA</li>
-                <li><a href="{% url 'hc-terms' %}">Terms</a></li>
-                <li><a href="{% url 'hc-privacy' %}">Privacy</a></li>
-                {% if show_pricing %}
-                <li><a href="{% url 'hc-pricing' %}">Pricing</a></li>
-                {% endif %}
-                <li><a href="{% url 'hc-about' %}">Contact</a></li>
+                <li>Powered by Healthchecks open-source project <a href="https://github.com/healthchecks/healthchecks">(github)</a></li>
             </ul>
         </div>
     </footer>

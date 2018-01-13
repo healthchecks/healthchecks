@@ -62,9 +62,9 @@
             <p>
                 After {% if request.user.is_authenticated %}{% else %}logging in and{% endif %}
                 clicking on "Add to Slack", you should
-                be on a page that says "healthchecks.io would like access to
+                be on a page that says "{% site_name %} would like access to
                 your Slack team". Select the team you want to add the
-                healthchecks.io integration app to.
+                {% site_name %} integration app to.
             </p>
         </div>
         <div class="col-sm-6">
@@ -79,9 +79,9 @@
         <div class="col-sm-6">
             <span class="step-no">3</span>
             <p>
-                You should now be on a page that says "healthchecks.io would
+                You should now be on a page that says "{% site_name %} would
                 like access to <i>TEAM NAME</i>". Select the channel you want to
-                post healthchecks.io notifications to.
+                post {% site_name %} notifications to.
             </p>
         </div>
         <div class="col-sm-6">
