@@ -57,11 +57,6 @@ def isostring(dt):
 
 
 class Check(models.Model):
-
-    class Meta:
-        # sendalerts command will query using these
-        index_together = ["status", "user", "alert_after"]
-
     name = models.CharField(max_length=100, blank=True)
     tags = models.CharField(max_length=500, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)

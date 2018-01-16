@@ -28,7 +28,7 @@ def notify_on_thread(check_id, stdout):
 
 class Command(BaseCommand):
     help = 'Sends UP/DOWN email alerts'
-    owned = Check.objects.filter(user__isnull=False)
+    owned = Check.objects.filter(user__isnull=False).order_by("alert_after")
 
     def add_arguments(self, parser):
         parser.add_argument(
