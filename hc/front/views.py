@@ -823,8 +823,7 @@ def telegram_bot(request):
     except jsonschema.ValidationError:
         return HttpResponseBadRequest()
 
-    text = doc["message"].get("text", "")
-    if "/start" not in text:
+    if "/start" not in doc["message"]["text"]:
         return HttpResponse()
 
     chat = doc["message"]["chat"]

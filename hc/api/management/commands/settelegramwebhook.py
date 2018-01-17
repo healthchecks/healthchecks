@@ -14,9 +14,13 @@ class Command(BaseCommand):
         if settings.TELEGRAM_TOKEN is None:
             return "Abort: settings.TELEGRAM_TOKEN is not set"
 
-        form = {"url": settings.SITE_ROOT + reverse("hc-telegram-webhook")}
+        form = {
+            "url": settings.SITE_ROOT + reverse("hc-telegram-webhook"),
+            "allowed_updates": ["message"]
+        }
+
         url = SETWEBHOOK_TMPL % settings.TELEGRAM_TOKEN
-        r = requests.post(url, data=form)
+        r = requests.post(url, json=form)
 
         if r.status_code != 200:
             return "Fail: status=%d, %s" % (r.status_code, r.content)
