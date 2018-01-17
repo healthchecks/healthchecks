@@ -56,12 +56,15 @@ class AddTelegramTestCase(BaseTestCase):
     def test_bot_handles_bad_message(self, mock_get):
         samples = ["", "{}"]
 
-        # text is missing
+        # text is not string
         samples.append(json.dumps({
-            "message": {"chat": {"id": 123, "type": "group"}}
+            "message": {
+                "chat": {"id": 123, "type": "invalid"},
+                "text": 123
+            }
         }))
 
-        # bad type
+        # bad message type
         samples.append(json.dumps({
             "message": {
                 "chat": {"id": 123, "type": "invalid"},
@@ -74,3 +77,16 @@ class AddTelegramTestCase(BaseTestCase):
                                  content_type="application/json")
 
             self.assertEqual(r.status_code, 400)
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_missing_text(self, mock_get):
+        data = {
+            "message": {
+                "chat": {"id": 123, "title": "My Group", "type": "group"}
+            }
+        }
+        r = self.client.post("/integrations/telegram/bot/", json.dumps(data),
+                             content_type="application/json")
+
+        self.assertEqual(r.status_code, 200)
+        self.assertFalse(mock_get.called)

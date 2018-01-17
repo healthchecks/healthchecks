@@ -16,7 +16,7 @@ telegram_callback = {
                 },
                 "text": {"type": "string"}
             },
-            "required": ["chat", "text"]
+            "required": ["chat"]
         }
     },
     "required": ["message"]
