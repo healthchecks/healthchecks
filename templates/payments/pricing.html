@@ -16,12 +16,14 @@
                         Your account is currently on the
                         {% if sub.plan_id == "P5" %}
                             <strong>Standard (monthly)</strong>
-                        {% elif sub.plan_id == "P50" %}
-                            <strong>Plus (monthly)</strong>
                         {% elif sub.plan_id == "Y48" %}
                             <strong>Standard (annual)</strong>
+                        {% elif sub.plan_id == "T144" %}
+                            <strong>Standard (3 years)</strong>
                         {% elif sub.plan_id == "Y480" %}
                             <strong>Plus (annual)</strong>
+                        {% elif sub.plan_id == "P50" %}
+                            <strong>Plus (monthly)</strong>
                         {% else %}
                             <strong>Free</strong>
                         {% endif  %}

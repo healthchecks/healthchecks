@@ -93,7 +93,7 @@ def log_and_bail(request, result):
 @require_POST
 def set_plan(request):
     plan_id = request.POST["plan_id"]
-    if plan_id not in ("", "P5", "P50", "Y48", "Y480"):
+    if plan_id not in ("", "P5", "P50", "Y48", "Y480", "T144"):
         return HttpResponseBadRequest()
 
     sub = Subscription.objects.for_user(request.user)
@@ -117,7 +117,7 @@ def set_plan(request):
 
     # Update user's profile
     profile = request.user.profile
-    if plan_id in ("P5", "Y48"):
+    if plan_id in ("P5", "Y48", "T144"):
         profile.ping_log_limit = 1000
         profile.check_limit = 500
         profile.team_limit = 9
@@ -188,15 +188,20 @@ def billing_history(request):
 
 @login_required
 def pdf_invoice(request, transaction_id):
-    sub = Subscription.objects.get(user=request.user)
-    transaction = sub.get_transaction(transaction_id)
-    if transaction is None:
+    sub, tx = Subscription.objects.by_transaction(transaction_id)
+
+    # Does this transaction belong to a customer we know about?
+    if sub is None or tx is None:
+        return HttpResponseForbidden()
+
+    # Does the transaction's customer match the currently logged in user?
+    if sub.user != request.user and not request.user.is_superuser:
         return HttpResponseForbidden()
 
     response = HttpResponse(content_type='application/pdf')
-    filename = "MS-HC-%s.pdf" % transaction.id.upper()
+    filename = "MS-HC-%s.pdf" % tx.id.upper()
     response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-    PdfInvoice(response).render(transaction, sub.flattened_address())
+    PdfInvoice(response).render(tx, sub.flattened_address())
     return response
 
 

@@ -22,6 +22,19 @@ class SubscriptionManager(models.Manager):
         sub, created = Subscription.objects.get_or_create(user_id=user.id)
         return sub
 
+    def by_transaction(self, transaction_id):
+        try:
+            tx = braintree.Transaction.find(transaction_id)
+        except braintree.exceptions.NotFoundError:
+            return None, None
+
+        try:
+            sub = self.get(customer_id=tx.customer_details.id)
+        except Subscription.DoesNotExist:
+            return None, None
+
+        return sub, tx
+
 
 class Subscription(models.Model):
     user = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
@@ -43,6 +56,8 @@ class Subscription(models.Model):
             return 48
         elif self.plan_id == "Y480":
             return 480
+        elif self.plan_id == "T144":
+            return 144
 
         return 0
 
@@ -51,6 +66,8 @@ class Subscription(models.Model):
             return "month"
         elif self.plan_id.startswith("Y"):
             return "year"
+        elif self.plan_id.startswith("T"):
+            return "3 years"
 
         raise NotImplementedError("Unexpected plan: %s" % self.plan_id)
 
@@ -194,10 +211,3 @@ class Subscription(models.Model):
                 self._tx = list(braintree.Transaction.search(braintree.TransactionSearch.customer_id == self.customer_id))
 
         return self._tx
-
-    def get_transaction(self, transaction_id):
-        tx = braintree.Transaction.find(transaction_id)
-        if tx.customer_details.id != self.customer_id:
-            return None
-
-        return tx

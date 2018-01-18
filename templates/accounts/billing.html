@@ -46,14 +46,13 @@
                                 {% if sub is None or sub.plan_id == "" %}
                                     Free
                                 {% else %}
-                                    {% if sub.plan_id == "P5" or sub.plan_id == "Y48" %}
+                                    {% if sub.plan_id == "P5" or sub.plan_id == "Y48" or sub.plan_id == "T144" %}
                                         Standard
-                                    {% endif %}
-                                    {% if sub.plan_id == "P50" or sub.plan_id == "Y480" %}
+                                    {% elif sub.plan_id == "P50" or sub.plan_id == "Y480" %}
                                         Plus
                                     {% endif %}
 
-                                    (${{ sub.price }}/{{ sub.period }})
+                                    (${{ sub.price }} per {{ sub.period }})
                                 {% endif %}
                                 </td>
                             </tr>
@@ -240,6 +239,17 @@
                         <span class="radiomark"></span>
                         Annual, $48/year (20% off monthly)
                     </label>
+
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="plan_id"
+                            value="T144"
+                            {% if sub.plan_id == "T144" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        3-year, $144 per 3 years (20% off monthly)
+                    </label>
+
 
                     <h2>Plus <small>Unlimited checks, unlimited team members</small></h2>
                     <label class="radio-container">
