@@ -368,15 +368,30 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_opsgenie(self, mock_post):
         self._setup_data("opsgenie", "123")
-        mock_post.return_value.status_code = 200
+        mock_post.return_value.status_code = 202
 
         self.channel.notify(self.check)
         n = Notification.objects.first()
         self.assertEqual(n.error, "")
 
+        self.assertEqual(mock_post.call_count, 1)
         args, kwargs = mock_post.call_args
         payload = kwargs["json"]
         self.assertIn("DOWN", payload["message"])
+
+    @patch("hc.api.transports.requests.request")
+    def test_opsgenie_up(self, mock_post):
+        self._setup_data("opsgenie", "123", status="up")
+        mock_post.return_value.status_code = 202
+
+        self.channel.notify(self.check)
+        n = Notification.objects.first()
+        self.assertEqual(n.error, "")
+
+        self.assertEqual(mock_post.call_count, 1)
+        args, kwargs = mock_post.call_args
+        method, url = args
+        self.assertTrue(str(self.check.code) in url)
 
     @patch("hc.api.transports.requests.request")
     def test_pushover(self, mock_post):

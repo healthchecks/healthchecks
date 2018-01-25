@@ -1,0 +1,4 @@
+{% load hc_extras humanize %}
+The check "{{ check.name_then_code }}" is DOWN.
+{% if check.kind == "simple" %}Expecting to receive a ping every {{ check.timeout|hc_duration }}.{% endif %}
+Last ping was {{ check.last_ping|naturaltime }}.

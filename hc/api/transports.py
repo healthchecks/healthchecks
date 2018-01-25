@@ -87,7 +87,7 @@ class HttpTransport(Transport):
                 options["headers"]["User-Agent"] = "healthchecks.io"
 
             r = requests.request(method, url, **options)
-            if r.status_code not in (200, 201, 204):
+            if r.status_code not in (200, 201, 202, 204):
                 return "Received status code %d" % r.status_code
         except requests.exceptions.Timeout:
             # Well, we tried
@@ -205,22 +205,28 @@ class HipChat(HttpTransport):
 class OpsGenie(HttpTransport):
 
     def notify(self, check):
+        headers = {
+            "Conent-Type": "application/json",
+            "Authorization": "GenieKey %s" % self.channel.value
+        }
+
         payload = {
-            "apiKey": self.channel.value,
             "alias": str(check.code),
             "source": settings.SITE_NAME
         }
 
         if check.status == "down":
-            payload["tags"] = ",".join(check.tags_list())
+            payload["tags"] = check.tags_list()
             payload["message"] = tmpl("opsgenie_message.html", check=check)
             payload["note"] = tmpl("opsgenie_note.html", check=check)
+            payload["description"] = \
+                tmpl("opsgenie_description.html", check=check)
 
-        url = "https://api.opsgenie.com/v1/json/alert"
+        url = "https://api.opsgenie.com/v2/alerts"
         if check.status == "up":
-            url += "/close"
+            url += "/%s/close?identifierType=alias" % check.code
 
-        return self.post(url, json=payload)
+        return self.post(url, json=payload, headers=headers)
 
 
 class PagerDuty(HttpTransport):
@@ -240,6 +246,7 @@ class PagerDuty(HttpTransport):
 
         return self.post(self.URL, json=payload)
 
+
 class PagerTree(HttpTransport):
     def notify(self, check):
         url = self.channel.value
@@ -249,7 +256,7 @@ class PagerTree(HttpTransport):
         payload = {
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
-            "title":  tmpl("pagertree_title.html", check=check),
+            "title": tmpl("pagertree_title.html", check=check),
             "description": tmpl("pagertree_description.html", check=check),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
