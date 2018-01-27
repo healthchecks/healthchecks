@@ -207,6 +207,7 @@ class Check(models.Model):
 
 
 class Ping(models.Model):
+    id = models.BigAutoField(primary_key=True)
     n = models.IntegerField(null=True)
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
