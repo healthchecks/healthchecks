@@ -105,32 +105,36 @@
                 {% endif %}
             </div>
         </div>
-        <div class="form-group {{ form.headers.css_classes }}">
+        <div class="form-group">
             <label class="col-sm-2 control-label">Request Headers</label>
-            <div id="webhook-headers" class="col-xs-12 col-sm-10">
-                {% for k, v in form.headers.items %}
-                <div class="form-inline webhook-header">
-                    <input
-                        type="text"
-                        class="form-control key"
-                        name="header_key[]"
-                        placeholder="Content-Type"
-                        value="{{ k }}" />
-                    <input
-                        type="text"
-                        class="form-control value"
-                        name="header_value[]"
-                        placeholder="application/json"
-                        value="{{ v }}" />
-                        <button class="btn btn-default" type="button">
-                            <span class="icon-delete"></span>
-                        </button>
+            <div class="col-xs-12 col-sm-10">
+                <div id="webhook-headers">
+                    {% for k, v in form.headers.items %}
+                    <div class="form-inline webhook-header">
+                        <input
+                            type="text"
+                            class="form-control key {% if k in form.invalid_header_names %}error{% endif %}"
+                            name="header_key[]"
+                            placeholder="Content-Type"
+                            value="{{ k }}" />
+                        <input
+                            type="text"
+                            class="form-control value"
+                            name="header_value[]"
+                            placeholder="application/json"
+                            value="{{ v }}" />
+                            <button class="btn btn-default" type="button">
+                                <span class="icon-delete"></span>
+                            </button>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                {% if form.invalid_header_names %}
+                <div class="text-danger">
+                    Please use valid HTTP header names.
+                </div>
+                {% endif %}
             </div>
-            <div class="text-center">
-            </div>
-
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

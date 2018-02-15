@@ -72,12 +72,27 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertEqual(c.value, '{"headers": {}, "post_data": "hello", "url_down": "http://foo.com", "url_up": ""}')
 
     def test_it_adds_headers(self):
-        form = {"url_down": "http://foo.com", "header_key[]": ["test", "test2"], "header_value[]": ["123", "abc"]}
+        form = {
+            "url_down": "http://foo.com",
+            "header_key[]": ["test", "test2"],
+            "header_value[]": ["123", "abc"]
+        }
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"headers": {"test": "123", "test2": "abc"}, "post_data": "", "url_down": "http://foo.com", "url_up": ""}')
+        self.assertEqual(c.headers, {"test": "123", "test2": "abc"})
 
+    def test_it_rejects_bad_header_names(self):
+        self.client.login(username="alice@example.org", password="password")
+        form = {
+            "url_down": "http://example.org",
+            "header_key[]": ["ill:egal"],
+            "header_value[]": ["123"]
+        }
+
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "Please use valid HTTP header names.")
+        self.assertEqual(Channel.objects.count(), 0)

@@ -1,5 +1,6 @@
-import json
 from datetime import timedelta as td
+import json
+import re
 
 from django import forms
 from django.core.validators import RegexValidator
@@ -55,28 +56,42 @@ class AddUrlForm(forms.Form):
     value = forms.URLField(max_length=1000, validators=[WebhookValidator()])
 
 
+_valid_header_name = re.compile(r'\A[^:\s][^:\r\n]*\Z').match
+
+
 class AddWebhookForm(forms.Form):
     error_css_class = "has-error"
 
     url_down = forms.URLField(max_length=1000, required=False,
-                                validators=[WebhookValidator()])
+                              validators=[WebhookValidator()])
 
     url_up = forms.URLField(max_length=1000, required=False,
-                              validators=[WebhookValidator()])
+                            validators=[WebhookValidator()])
 
     post_data = forms.CharField(max_length=1000, required=False)
 
     def __init__(self, *args, **kwargs):
         super(AddWebhookForm, self).__init__(*args, **kwargs)
 
+        self.invalid_header_names = set()
         self.headers = {}
         if "header_key[]" in self.data and "header_value[]" in self.data:
             keys = self.data.getlist("header_key[]")
             values = self.data.getlist("header_value[]")
             for key, value in zip(keys, values):
-                if key:
-                    self.headers[key] = value
+                if not key:
+                    continue
 
+                if not _valid_header_name(key):
+                    self.invalid_header_names.add(key)
+
+                self.headers[key] = value
+
+    def clean(self):
+        if self.invalid_header_names:
+            raise forms.ValidationError("Invalid header names")
+
+        return self.cleaned_data
 
     def get_value(self):
         val = dict(self.cleaned_data)
