@@ -81,13 +81,17 @@ Some useful settings keys to override are:
 `SITE_ROOT` is used to build fully qualified URLs for pings, and for use in
 emails and notifications. Example:
 
-    SITE_ROOT = "https://my-monitoring-project.com"
+```python
+SITE_ROOT = "https://my-monitoring-project.com"
+```
 
 `SITE_NAME` has the default value of "Mychecks" and is used throughout
 the templates. Replace it with your own name to personalize your installation.
 Example:
 
-    SITE_NAME = "My Monitoring Project"
+```python
+SITE_NAME = "My Monitoring Project"
+```
 
 `REGISTRATION_OPEN` controls whether site visitors can create new accounts.
 Set it to `False` if you are setting up a private healthchecks instance, but
@@ -105,43 +109,48 @@ in `hc/local_settings.py`. The default database engine is SQLite. To use
 PostgreSQL, create `hc/local_settings.py` if it does not exist, and put the
 following in it, changing it as neccessary:
 
-    DATABASES = {
-        'default': {
-            'ENGINE':   'django.db.backends.postgresql',
-            'NAME':     'your-database-name-here',
-            'USER':     'your-database-user-here',
-            'PASSWORD': 'your-database-password-here',
-            'TEST': {'CHARSET': 'UTF8'}
-        }
+```python
+DATABASES = {
+    'default': {
+        'ENGINE':   'django.db.backends.postgresql',
+        'NAME':     'your-database-name-here',
+        'USER':     'your-database-user-here',
+        'PASSWORD': 'your-database-password-here',
+        'TEST': {'CHARSET': 'UTF8'}
     }
+}
+```
 
 For MySQL:
 
-    DATABASES = {
-        'default': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'your-database-name-here',
-            'USER':     'your-database-user-here',
-            'PASSWORD': 'your-database-password-here',
-            'TEST': {'CHARSET': 'UTF8'}
-        }
+```python
+DATABASES = {
+    'default': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'your-database-name-here',
+        'USER':     'your-database-user-here',
+        'PASSWORD': 'your-database-password-here',
+        'TEST': {'CHARSET': 'UTF8'}
     }
+}
+```
 
 You can also use `hc/local_settings.py` to read database
 configuration from environment variables like so:
 
-    import os
+```python
+import os
 
-    DATABASES = {
-        'default': {
-            'ENGINE':   os.environ['DB_ENGINE'],
-            'NAME':     os.environ['DB_NAME'],
-            'USER':     os.environ['DB_USER'],
-            'PASSWORD': os.environ['DB_PASSWORD'],
-            'TEST': {'CHARSET': 'UTF8'}
-        }
+DATABASES = {
+    'default': {
+        'ENGINE':   os.environ['DB_ENGINE'],
+        'NAME':     os.environ['DB_NAME'],
+        'USER':     os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'TEST': {'CHARSET': 'UTF8'}
     }
-
+}
+```
 
 ## Sending Emails
 
@@ -149,11 +158,13 @@ healthchecks must be able to send email messages, so it can send out login
 links and alerts to users. Put your SMTP server configuration in
 `hc/local_settings.py` like so:
 
-    EMAIL_HOST = "your-smtp-server-here.com"
-    EMAIL_PORT = 587
-    EMAIL_HOST_USER = "username"
-    EMAIL_HOST_PASSWORD = "password"
-    EMAIL_USE_TLS = True
+```python
+EMAIL_HOST = "your-smtp-server-here.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "username"
+EMAIL_HOST_PASSWORD = "password"
+EMAIL_USE_TLS = True
+```
 
 For more information, have a look at Django documentation,
 [Sending Email](https://docs.djangoproject.com/en/1.10/topics/email/) section.
@@ -180,9 +191,9 @@ There are separate Django management commands for each task:
 * Remove old records from `api_ping` table. For each check, keep 100 most
   recent pings:
 
-    ````
+    ```
     $ ./manage.py prunepings
-    ````
+    ```
 
 * Remove checks older than 2 hours that are not assigned to users. Such
   checks are by-products of random visitors and robots loading the welcome
@@ -195,9 +206,9 @@ There are separate Django management commands for each task:
 * Remove old records of sent notifications. For each check, remove
   notifications that are older than the oldest stored ping for same check.
 
-    ````
+    ```
     $ ./manage.py prunenotifications
-    ````
+    ```
 
 * Remove user accounts that match either of these conditions:
  * Account was created more than 6 months ago, and user has never logged in.
