@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.db.models import Count
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
-                         HttpResponseForbidden)
+                         HttpResponseForbidden, JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -34,6 +34,24 @@ import requests
 VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 
 
+def _tags_statuses(checks):
+    tags, down, grace = {}, {}, {}
+    for check in checks:
+        if check.get_status() == "down":
+            for tag in check.tags_list():
+                down[tag] = "down"
+        elif check.in_grace_period():
+            for tag in check.tags_list():
+                grace[tag] = "grace"
+        else:
+            for tag in check.tags_list():
+                tags[tag] = "up"
+
+    tags.update(grace)
+    tags.update(down)
+    return tags
+
+
 @login_required
 def my_checks(request):
     if request.GET.get("sort") in VALID_SORT_VALUES:
@@ -42,33 +60,39 @@ def my_checks(request):
 
     checks = list(Check.objects.filter(user=request.team.user))
 
-    tags, down_tags, grace_tags = set(), set(), set()
-    for check in checks:
-        status = check.get_status()
-        for tag in check.tags_list():
-            tags.add(tag)
-
-            if status == "down":
-                down_tags.add(tag)
-            elif check.in_grace_period():
-                grace_tags.add(tag)
-
-    can_add_more = len(checks) < request.team.check_limit
+    pairs = list(_tags_statuses(checks).items())
+    pairs.sort(key=lambda pair: pair[0].lower())
 
     ctx = {
         "page": "checks",
         "checks": checks,
         "now": timezone.now(),
-        "tags": sorted(tags, key=lambda s: s.lower()),
-        "down_tags": down_tags,
-        "grace_tags": grace_tags,
+        "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": all_timezones,
-        "can_add_more": can_add_more,
+        "can_add_more": len(checks) < request.team.check_limit,
         "sort": request.profile.sort
     }
 
     return render(request, "front/my_checks.html", ctx)
+
+
+@login_required
+def status(request):
+    checks = list(Check.objects.filter(user=request.team.user))
+
+    details = []
+    for check in checks:
+        status = "grace" if check.in_grace_period() else check.get_status()
+
+        ctx = {"check": check}
+        details.append({
+            "code": str(check.code),
+            "status": status,
+            "last_ping": render_to_string("front/last_ping_cell.html", ctx)
+        })
+
+    return JsonResponse({"details": details, "tags": _tags_statuses(checks)})
 
 
 def _welcome_check(request):

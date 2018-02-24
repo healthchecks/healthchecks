@@ -1,3 +1,22 @@
+#my-checks-tags button.up {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+#my-checks-tags button.grace {
+    color: #fff;
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+
+
+#my-checks-tags button.down {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
 @media (min-width: 992px) {
     #update-timeout-modal .modal-dialog, #last-ping-modal .modal-dialog {
         width: 800px;

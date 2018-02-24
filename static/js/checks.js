@@ -175,7 +175,7 @@ $(function () {
         return false;
     });
 
-    $(".last-ping").click(function() {
+    $(".last-ping-cell").on("click", ".last-ping", function() {
         $("#last-ping-body").text("Updating...");
         $('#last-ping-modal').modal("show");
 
@@ -235,7 +235,15 @@ $(function () {
         return false;
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({
+        title: function() {
+            var cssClasses = this.getAttribute("class");
+            if (cssClasses.indexOf("icon-new") > -1)
+                return "New. Has never received a ping.";
+            if (cssClasses.indexOf("icon-paused") > -1)
+                return "Monitoring paused. Ping to resume.";
+        }
+    });
 
     $(".usage-examples").click(function(e) {
         var a = e.target;
@@ -249,6 +257,24 @@ $(function () {
         return false;
     });
 
+    // Auto-refresh
+    function refresh() {
+        $.getJSON("/checks/status/", function(data) {
+            for(var i=0, el; el=data.details[i]; i++) {
+                $("#check-desktop-" + el.code + " .indicator-cell span").attr("class", "status icon-" + el.status);
+                $("#check-desktop-" + el.code + " .last-ping-cell").html(el.last_ping);
+            }
+
+            $("#my-checks-tags button").each(function(a) {
+                var status = data.tags[this.innerText];
+                if (status) {
+                    this.setAttribute("class", "btn btn-xs " + status);
+                }
+            });
+        });
+    }
+
+    // Copy to clipboard
     var clipboard = new Clipboard('button.copy-link');
     $("button.copy-link").mouseout(function(e) {
         setTimeout(function() {

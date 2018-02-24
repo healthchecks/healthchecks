@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^checks/$', views.my_checks, name="hc-checks"),
     url(r'^checks/add/$', views.add_check, name="hc-add-check"),
     url(r'^checks/cron_preview/$', views.cron_preview),
+    url(r'^checks/status/$', views.status),
     url(r'^checks/([\w-]+)/', include(check_urls)),
     url(r'^integrations/', include(channel_urls)),
 

@@ -17,14 +17,8 @@
     </div>
     {% if tags %}
     <div id="my-checks-tags" class="col-sm-12">
-        {% for tag in tags %}
-            {% if tag in down_tags %}
-                <button class="btn btn-danger btn-xs" data-toggle="button">{{ tag }}</button>
-            {% elif tag in grace_tags %}
-                <button class="btn btn-warning btn-xs" data-toggle="button">{{ tag }}</button>
-            {% else %}
-                <button class="btn btn-default btn-xs" data-toggle="button">{{ tag }}</button>
-            {% endif %}
+        {% for tag, status in tags %}
+            <button class="btn btn-xs {{ status }}" data-toggle="button">{{ tag }}</button>
         {% endfor %}
     </div>
     {% endif %}
