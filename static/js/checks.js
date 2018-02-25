@@ -261,8 +261,10 @@ $(function () {
     function refresh() {
         $.getJSON("/checks/status/", function(data) {
             for(var i=0, el; el=data.details[i]; i++) {
-                $("#check-desktop-" + el.code + " .indicator-cell span").attr("class", "status icon-" + el.status);
-                $("#check-desktop-" + el.code + " .last-ping-cell").html(el.last_ping);
+                var elId = "#check-desktop-" + el.code;
+                $(elId + " .indicator-cell span").attr("class", "status icon-" + el.status);
+                $(elId + " .last-ping-cell").html(el.last_ping);
+                $(elId + " .li-pause-check").toggleClass("disabled", el.status == "paused");
             }
 
             $("#my-checks-tags button").each(function(a) {
@@ -273,6 +275,48 @@ $(function () {
             });
         });
     }
+
+    // unconditionally refresh every minute
+    setInterval(refresh, 60000);
+
+    // scheduleRefresh() keeps calling refresh() and decreasing quota
+    // every 3 seconds, until quota runs out.
+    var quota = 0;
+    var scheduledId = null;
+    function scheduleRefresh() {
+        if (quota > 0) {
+            quota -= 1;
+            clearTimeout(scheduledId);
+            scheduledId = setTimeout(scheduleRefresh, 3000);
+            refresh();
+        }
+    }
+
+    document.addEventListener("visibilitychange", function() {
+        if (document.visibilityState == "visible") {
+            // tab becomes visible: reset quota
+            if (quota == 0) {
+                quota = 20;
+                scheduleRefresh();
+            } else {
+                quota = 20;
+            }
+        } else {
+            // lost visibility, clear quota
+            quota = 0;
+        }
+    });
+
+    // user moves mouse: reset quota
+    document.addEventListener("mousemove", function() {
+        if (quota == 0) {
+            quota = 20;
+            scheduleRefresh();
+        } else {
+            quota = 20;
+
+        }
+    });
 
     // Copy to clipboard
     var clipboard = new Clipboard('button.copy-link');
