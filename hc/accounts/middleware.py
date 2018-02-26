@@ -11,7 +11,7 @@ class TeamAccessMiddleware(object):
 
         teams_q = Profile.objects.filter(member__user_id=request.user.id)
         teams_q = teams_q.select_related("user")
-        request.teams = list(teams_q)
+        request.get_teams = lambda: list(teams_q)
 
         request.profile = Profile.objects.for_user(request.user)
         request.team = request.profile.team()

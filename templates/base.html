@@ -122,7 +122,8 @@
                         {{ request.team }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        {% if request.teams %}
+                    {% with teams=request.get_teams %}
+                        {% if teams %}
                         <li class="dropdown-header">{{ request.user.profile }}</li>
                         <li>
                             <a href="{% url 'hc-switch-team' request.user.username %}" class="active">Checks</a>
@@ -132,7 +133,7 @@
                         <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
                         <li role="separator" class="divider"></li>
 
-                        {% for team in request.teams %}
+                        {% for team in teams %}
                         <li class="dropdown-header">{{ team }}</li>
                         <li>
                             <a href="{% url 'hc-switch-team' team.user.username %}">Checks</a>
@@ -141,6 +142,7 @@
                         {% endfor %}
 
                         <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
+                    {% endwith %}
                     </ul>
                 </li>
             </ul>

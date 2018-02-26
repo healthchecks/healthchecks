@@ -79,7 +79,7 @@ def my_checks(request):
 
 @login_required
 def status(request):
-    checks = list(Check.objects.filter(user=request.team.user))
+    checks = list(Check.objects.filter(user_id=request.team.user_id))
 
     details = []
     for check in checks:
