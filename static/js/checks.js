@@ -258,21 +258,36 @@ $(function () {
     });
 
     // Auto-refresh
+    var lastStatus = {};
+    var lastPing = {};
     function refresh() {
-        $.getJSON("/checks/status/", function(data) {
-            for(var i=0, el; el=data.details[i]; i++) {
-                var elId = "#check-desktop-" + el.code;
-                $(elId + " .indicator-cell span").attr("class", "status icon-" + el.status);
-                $(elId + " .last-ping-cell").html(el.last_ping);
-                $(elId + " .li-pause-check").toggleClass("disabled", el.status == "paused");
-            }
+        $.ajax({
+            url: "/checks/status/",
+            dataType: "json",
+            timeout: 2000,
+            success: function(data) {
+                for(var i=0, el; el=data.details[i]; i++) {
+                    if (lastStatus[el.code] != el.status) {
+                        lastStatus[el.code] = el.status;
+                        $("#si-" + el.code).attr("class", "status icon-" + el.status);
+                        $("#sl-" + el.code).attr("class", "label label-" + el.status).text(el.status);
+                        $("#pause-li-" + el.code).toggleClass("disabled", el.status == "paused");
+                    }
 
-            $("#my-checks-tags button").each(function(a) {
-                var status = data.tags[this.innerText];
-                if (status) {
-                    this.setAttribute("class", "btn btn-xs " + status);
+                    if (lastPing[el.code] != el.last_ping) {
+                        lastPing[el.code] = el.last_ping;
+                        $("#lpd-" + el.code).html(el.last_ping);
+                        $("#lpm-" + el.code).html(el.last_ping);
+                    }
                 }
-            });
+
+                $("#my-checks-tags button").each(function(a) {
+                    var status = data.tags[this.innerText];
+                    if (status) {
+                        this.setAttribute("class", "btn btn-xs " + status);
+                    }
+                });
+            }
         });
     }
 

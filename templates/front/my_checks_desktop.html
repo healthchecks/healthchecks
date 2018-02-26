@@ -28,12 +28,12 @@
         <th></th>
     </tr>
     {% for check in checks|sortchecks:sort %}
-    <tr id="check-desktop-{{ check.code }}" class="checks-row">
+    <tr class="checks-row">
         <td class="indicator-cell">
             {% if check.in_grace_period %}
-                <span class="status icon-grace" data-toggle="tooltip"></span>
+                <span id="si-{{ check.code }}" class="status icon-grace" data-toggle="tooltip"></span>
             {% else %}
-                <span class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
+                <span id="si-{{ check.code }}" class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
             {% endif %}
         </td>
         <td class="name-cell">
@@ -77,7 +77,7 @@
                 </span>
             </span>
         </td>
-        <td class="last-ping-cell">
+        <td id="lpd-{{ check.code}}">
             {% include "front/last_ping_cell.html" with check=check %}
         </td>
         <td>
@@ -86,7 +86,7 @@
                 <span class="icon-settings" aria-hidden="true"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li class="li-pause-check" {% if check.status == "new" or check.status == "paused" %}class="disabled"{% endif %}>
+                    <li id="pause-li-{{ check.code }}" {% if check.status == "new" or check.status == "paused" %}class="disabled"{% endif %}>
                         <a class="pause-check"
                            href="#"
                            data-url="{% url 'hc-pause' check.code %}">

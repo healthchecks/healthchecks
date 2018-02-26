@@ -23,16 +23,10 @@
             <tr>
                 <th>Status</th>
                 <td>
-                    {% if check.get_status == "new" %}
-                        <span class="label label-default">NEW</span>
-                    {% elif check.get_status == "paused" %}
-                        <span class="label label-default">PAUSED</span>
-                    {% elif check.in_grace_period %}
-                        <span class="label label-warning">LATE</span>
-                    {% elif check.get_status == "up" %}
-                        <span class="label label-success">UP</span>
-                    {% elif check.get_status == "down" %}
-                        <span class="label label-danger">DOWN</span>
+                    {% if check.in_grace_period %}
+                        <span id="sl-{{ check.code }}" class="label label-grace">grace</span>
+                    {% else %}
+                        <span id="sl-{{ check.code }}" class="label label-{{ check.get_status }}">{{ check.get_status }}</span>
                     {% endif %}
                 </td>
             </tr>
@@ -63,12 +57,8 @@
             </tr>
             <tr>
                 <th>Last Ping</th>
-                <td>
-                    {% if check.last_ping %}
-                        {{ check.last_ping|naturaltime }}
-                    {% else %}
-                        Never
-                    {% endif %}
+                <td id="lpm-{{ check.code}}">
+                    {% include "front/last_ping_cell.html" with check=check %}
                 </td>
             </tr>
         </table>

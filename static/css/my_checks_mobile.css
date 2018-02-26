@@ -37,3 +37,23 @@
 #checks-list th {
     width: 100px;
 }
+
+#checks-list .label {
+    text-transform: uppercase;
+}
+
+.label-new, .label-paused {
+    background-color: #777777;
+}
+
+.label-up {
+    background-color: #22bc66;
+}
+
+.label-grace {
+    background-color: #f0ad4e;
+}
+
+.label-down {
+    background-color: #d9534f;
+}
