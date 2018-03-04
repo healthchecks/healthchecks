@@ -12,7 +12,7 @@ class SetPlanTestCase(BaseTestCase):
         mock.Subscription.create.return_value.is_success = True
         mock.Subscription.create.return_value.subscription.id = "t-sub-id"
 
-    def run_set_plan(self, plan_id="P5"):
+    def run_set_plan(self, plan_id="P20"):
         form = {"plan_id": plan_id}
         self.client.login(username="alice@example.org", password="password")
         return self.client.post("/pricing/set_plan/", form, follow=True)
@@ -31,12 +31,13 @@ class SetPlanTestCase(BaseTestCase):
         # Subscription should be filled out:
         sub = Subscription.objects.get(user=self.alice)
         self.assertEqual(sub.subscription_id, "t-sub-id")
-        self.assertEqual(sub.plan_id, "P5")
+        self.assertEqual(sub.plan_id, "P20")
+        self.assertEqual(sub.plan_name, "Standard ($20 / month)")
 
         # User's profile should have a higher limits
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.ping_log_limit, 1000)
-        self.assertEqual(self.profile.check_limit, 500)
+        self.assertEqual(self.profile.check_limit, 50)
         self.assertEqual(self.profile.team_limit, 9)
         self.assertEqual(self.profile.sms_limit, 50)
         self.assertEqual(self.profile.sms_sent, 0)
@@ -52,20 +53,49 @@ class SetPlanTestCase(BaseTestCase):
         self.profile.sms_sent = 1
         self.profile.save()
 
-        r = self.run_set_plan("Y48")
+        r = self.run_set_plan("Y192")
         self.assertRedirects(r, "/accounts/profile/billing/")
 
         # Subscription should be filled out:
         sub = Subscription.objects.get(user=self.alice)
         self.assertEqual(sub.subscription_id, "t-sub-id")
-        self.assertEqual(sub.plan_id, "Y48")
+        self.assertEqual(sub.plan_id, "Y192")
+        self.assertEqual(sub.plan_name, "Standard ($192 / year)")
+
+        # User's profile should have a higher limits
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.ping_log_limit, 1000)
+        self.assertEqual(self.profile.check_limit, 50)
+        self.assertEqual(self.profile.team_limit, 9)
+        self.assertEqual(self.profile.sms_limit, 50)
+        self.assertEqual(self.profile.sms_sent, 0)
+
+        # braintree.Subscription.cancel should have not been called
+        assert not mock.Subscription.cancel.called
+
+    @patch("hc.payments.models.braintree")
+    def test_plus_works(self, mock):
+        self._setup_mock(mock)
+
+        self.profile.sms_limit = 0
+        self.profile.sms_sent = 1
+        self.profile.save()
+
+        r = self.run_set_plan("P80")
+        self.assertRedirects(r, "/accounts/profile/billing/")
+
+        # Subscription should be filled out:
+        sub = Subscription.objects.get(user=self.alice)
+        self.assertEqual(sub.subscription_id, "t-sub-id")
+        self.assertEqual(sub.plan_id, "P80")
+        self.assertEqual(sub.plan_name, "Plus ($80 / month)")
 
         # User's profile should have a higher limits
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.ping_log_limit, 1000)
         self.assertEqual(self.profile.check_limit, 500)
-        self.assertEqual(self.profile.team_limit, 9)
-        self.assertEqual(self.profile.sms_limit, 50)
+        self.assertEqual(self.profile.team_limit, 500)
+        self.assertEqual(self.profile.sms_limit, 500)
         self.assertEqual(self.profile.sms_sent, 0)
 
         # braintree.Subscription.cancel should have not been called
@@ -77,7 +107,7 @@ class SetPlanTestCase(BaseTestCase):
 
         self.sub = Subscription(user=self.alice)
         self.sub.subscription_id = "test-id"
-        self.sub.plan_id = "P5"
+        self.sub.plan_id = "P20"
         self.sub.save()
 
         self.profile.sms_limit = 1

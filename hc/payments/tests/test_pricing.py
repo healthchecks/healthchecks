@@ -8,7 +8,7 @@ class PricingTestCase(BaseTestCase):
 
     def test_anonymous(self):
         r = self.client.get("/pricing/")
-        self.assertContains(r, "Unlimited Checks", status_code=200)
+        self.assertContains(r, "Unlimited Team Members", status_code=200)
 
         # A subscription object should have NOT been created
         assert Subscription.objects.count() == 0
@@ -17,7 +17,7 @@ class PricingTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/pricing/")
-        self.assertContains(r, "Unlimited Checks", status_code=200)
+        self.assertContains(r, "Unlimited Team Members", status_code=200)
 
         # A subscription object still should have NOT been created
         assert Subscription.objects.count() == 0
@@ -39,10 +39,11 @@ class PricingTestCase(BaseTestCase):
     def test_it_shows_active_plan(self):
         self.sub = Subscription(user=self.alice)
         self.sub.subscription_id = "test-id"
-        self.sub.plan_id = "P5"
+        self.sub.plan_id = "P20"
+        self.sub.plan_name = "Standard ($20 / month)"
         self.sub.save()
 
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/pricing/")
-        self.assertContains(r, "Standard (monthly)", status_code=200)
+        self.assertContains(r, "Standard ($20 / month)", status_code=200)

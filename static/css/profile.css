@@ -37,3 +37,12 @@ span.loading {
 .billing-empty {
     color: #888;
 }
+
+.at-limit span {
+    display: inline-block;
+    background-color: #FFD54F;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 2px;
+    padding: 2px 6px;
+}

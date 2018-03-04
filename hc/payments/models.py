@@ -42,34 +42,11 @@ class Subscription(models.Model):
     payment_method_token = models.CharField(max_length=35, blank=True)
     subscription_id = models.CharField(max_length=10, blank=True)
     plan_id = models.CharField(max_length=10, blank=True)
+    plan_name = models.CharField(max_length=50, blank=True)
     address_id = models.CharField(max_length=2, blank=True)
     send_invoices = models.BooleanField(default=True)
 
     objects = SubscriptionManager()
-
-    def price(self):
-        if self.plan_id == "P5":
-            return 5
-        elif self.plan_id == "P50":
-            return 50
-        elif self.plan_id == "Y48":
-            return 48
-        elif self.plan_id == "Y480":
-            return 480
-        elif self.plan_id == "T144":
-            return 144
-
-        return 0
-
-    def period(self):
-        if self.plan_id.startswith("P"):
-            return "month"
-        elif self.plan_id.startswith("Y"):
-            return "year"
-        elif self.plan_id.startswith("T"):
-            return "3 years"
-
-        raise NotImplementedError("Unexpected plan: %s" % self.plan_id)
 
     @property
     def payment_method(self):
@@ -160,6 +137,15 @@ class Subscription(models.Model):
         if result.is_success:
             self.subscription_id = result.subscription.id
             self.plan_id = plan_id
+            if plan_id == "P20":
+                self.plan_name = "Standard ($20 / month)"
+            elif plan_id == "Y192":
+                self.plan_name = "Standard ($192 / year)"
+            elif plan_id == "P80":
+                self.plan_name = "Plus ($80 / month)"
+            elif plan_id == "Y768":
+                self.plan_name = "Plus ($768 / year)"
+
             self.save()
 
         return result

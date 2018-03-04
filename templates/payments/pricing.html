@@ -13,29 +13,21 @@
             <div class="col-md-12">
                 <div id="subscription-status" class="jumbotron">
                     <p>
-                        Your account is currently on the
-                        {% if sub.plan_id == "P5" %}
-                            <strong>Standard (monthly)</strong>
-                        {% elif sub.plan_id == "Y48" %}
-                            <strong>Standard (annual)</strong>
-                        {% elif sub.plan_id == "T144" %}
-                            <strong>Standard (3 years)</strong>
-                        {% elif sub.plan_id == "Y480" %}
-                            <strong>Plus (annual)</strong>
-                        {% elif sub.plan_id == "P50" %}
-                            <strong>Plus (monthly)</strong>
-                        {% else %}
-                            <strong>Free</strong>
-                        {% endif  %}
-                        plan.
-
                         {% if sub.plan_id %}
-                        You are paying
-                        <strong>${{ sub.price }}</strong> / {{ sub.period }}.
-                        {% endif %}
+                            Your account is currently on the
+                            <strong>{{ sub.plan_name }}</strong>
+                            plan. Thank you for supporting {% site_name %}!
+                        {% else %}
+                            Your account is currently on the
+                            <strong>Free</strong> plan.
+                        {% endif  %}
                     </p>
                     <p>
+                        {% if sub.plan_id %}
                         <a class="btn btn-default" href="{% url 'hc-billing' %}">Billing Details</a>
+                        {% else %}
+                        <a class="btn btn-default" href="{% url 'hc-billing' %}">Billing Details and Plan Upgrades</a>
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -100,12 +92,12 @@
                 <div class="panel-body text-center">
                     <h1>Standard</h1>
                     <h2>
-                        <span id="s-price">$5</span><span class="mo">/mo</span>
+                        <span id="s-price">$20</span><span class="mo">/mo</span>
                     </h2>
                 </div>
 
                 <ul class="list-group text-center">
-                    <li class="list-group-item">Unlimited Checks</li>
+                    <li class="list-group-item">50 Checks</li>
                     <li class="list-group-item">10 Team Members</li>
                     <li class="list-group-item">1000 log entries per check</li>
                     <li class="list-group-item">50 SMS alerts per month</li>
@@ -128,12 +120,12 @@
                 <div class="panel-body text-center">
                     <h1>Plus</h1>
                     <h2>
-                        <span id="p-price">$50</span><span class="mo">/mo</span>
+                        <span id="p-price">$80</span><span class="mo">/mo</span>
                     </h2>
                 </div>
 
                 <ul class="list-group text-center">
-                    <li class="list-group-item">Unlimited Checks</li>
+                    <li class="list-group-item">500 Checks</li>
                     <li class="list-group-item">Unlimited Team Members</li>
                     <li class="list-group-item">1000 log entries per check</li>
                     <li class="list-group-item">500 SMS alerts per month</li>

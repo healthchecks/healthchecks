@@ -93,7 +93,7 @@ def log_and_bail(request, result):
 @require_POST
 def set_plan(request):
     plan_id = request.POST["plan_id"]
-    if plan_id not in ("", "P5", "P50", "Y48", "Y480", "T144"):
+    if plan_id not in ("", "P20", "P80", "Y192", "Y768"):
         return HttpResponseBadRequest()
 
     sub = Subscription.objects.for_user(request.user)
@@ -117,14 +117,14 @@ def set_plan(request):
 
     # Update user's profile
     profile = request.user.profile
-    if plan_id in ("P5", "Y48", "T144"):
+    if plan_id in ("P20", "Y192"):
         profile.ping_log_limit = 1000
-        profile.check_limit = 500
+        profile.check_limit = 50
         profile.team_limit = 9
         profile.sms_limit = 50
         profile.sms_sent = 0
         profile.save()
-    elif plan_id in ("P50", "Y480"):
+    elif plan_id in ("P80", "Y768"):
         profile.ping_log_limit = 1000
         profile.check_limit = 500
         profile.team_limit = 500
