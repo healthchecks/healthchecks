@@ -105,4 +105,5 @@ phone_validator = RegexValidator(regex='^\+\d{5,15}$',
 
 class AddSmsForm(forms.Form):
     error_css_class = "has-error"
+    label = forms.CharField(max_length=100, required=False)
     value = forms.CharField(max_length=16, validators=[phone_validator])

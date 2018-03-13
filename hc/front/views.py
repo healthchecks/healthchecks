@@ -896,7 +896,10 @@ def add_sms(request):
         form = AddSmsForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="sms")
-            channel.value = form.cleaned_data["value"]
+            channel.value = json.dumps({
+                "label": form.cleaned_data["label"],
+                "value": form.cleaned_data["value"]
+            })
             channel.save()
 
             channel.assign_all_checks()

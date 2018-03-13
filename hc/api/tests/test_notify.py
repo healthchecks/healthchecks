@@ -478,6 +478,21 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(self.profile.sms_sent, 1)
 
     @patch("hc.api.transports.requests.request")
+    def test_sms_handles_json_value(self, mock_post):
+        value = {"label": "foo", "value": "+1234567890"}
+        self._setup_data("sms", json.dumps(value))
+        self.check.last_ping = now() - td(hours=2)
+
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertEqual(payload["To"], "+1234567890")
+
+    @patch("hc.api.transports.requests.request")
     def test_sms_limit(self, mock_post):
         # At limit already:
         self.profile.last_sms_date = now()

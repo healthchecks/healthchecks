@@ -102,6 +102,12 @@
                     {{ ch.hipchat_webhook_url }}
                 {% elif ch.kind == "zendesk" %}
                     {{ ch.zendesk_subdomain }}.zendesk.com
+                {% elif ch.kind == "sms" %}
+                    {% if ch.sms_label %}
+                        {{ ch.sms_label }} ({{ ch.sms_number }})
+                    {% else %}
+                        {{ ch.sms_number }}
+                    {% endif %}
                 {% else %}
                     {{ ch.value }}
                 {% endif %}

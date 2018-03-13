@@ -161,6 +161,7 @@ class ChannelsAdmin(admin.ModelAdmin):
     list_display = ("id", "code", "email", "formatted_kind", "value",
                     "num_notifications")
     list_filter = ("kind", )
+    raw_id_fields = ("user", "checks", )
 
     def email(self, obj):
         return obj.user.email if obj.user else None

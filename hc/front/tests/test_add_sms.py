@@ -22,7 +22,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertContains(r, "upgrade to a")
 
     def test_it_creates_channel(self):
-        form = {"value": "+1234567890"}
+        form = {"label": "My Phone", "value": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -30,7 +30,8 @@ class AddSmsTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "sms")
-        self.assertEqual(c.value, "+1234567890")
+        self.assertEqual(c.sms_number, "+1234567890")
+        self.assertEqual(c.sms_label, "My Phone")
 
     def test_it_rejects_bad_number(self):
         form = {"value": "not a phone number address"}
@@ -46,7 +47,7 @@ class AddSmsTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "+1234567890")
+        self.assertEqual(c.sms_number, "+1234567890")
 
     @override_settings(TWILIO_AUTH=None)
     def test_it_requires_credentials(self):

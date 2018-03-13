@@ -9,14 +9,17 @@
 <div class="col-sm-12">
     <h1>SMS</h1>
 
-    <p>Get a SMS message to your specified number when check goes down.</p>
+    <p>
+        Get a SMS message to the specified phone number when a
+        check goes down.
+    </p>
 
     {% if show_pricing and profile.sms_limit == 0 %}
     <p class="alert alert-success">
         <strong>Paid plan required.</strong>
         SMS messaging is not available on the free plan–sending the messages
-        costs too much! Please upgrade to a
-        <a href="{% url 'hc-pricing' %}">paid plan</a> to enable SMS messaging.
+        cost too much! Please upgrade to a
+        <a href="{% url 'hc-billing' %}">paid plan</a> to enable SMS messaging.
     </p>
     {% endif %}
 
@@ -24,6 +27,29 @@
 
     <form method="post" class="form-horizontal" action="{% url 'hc-add-sms' %}">
         {% csrf_token %}
+        <div class="form-group {{ form.label.css_classes }}">
+            <label for="id_label" class="col-sm-2 control-label">Label</label>
+            <div class="col-sm-6">
+                <input
+                    id="id_label"
+                    type="text"
+                    class="form-control"
+                    name="label"
+                    placeholder="Alice's Phone"
+                    value="{{ form.label.value|default:"" }}">
+
+                {% if form.label.errors %}
+                <div class="help-block">
+                    {{ form.label.errors|join:"" }}
+                </div>
+                {% else %}
+                <span class="help-block">
+                    Optional. If you add multiple phone numbers,
+                    the labels will help you tell them apart.
+                </span>
+                {% endif %}
+            </div>
+        </div>
         <div class="form-group {{ form.value.css_classes }}">
             <label for="id_number" class="col-sm-2 control-label">Phone Number</label>
             <div class="col-sm-3">
@@ -39,6 +65,11 @@
                 <div class="help-block">
                     {{ form.value.errors|join:"" }}
                 </div>
+                {% else %}
+                <span class="help-block">
+                    Make sure the phone number starts with "+" and  has the
+                    country code.
+                </span>
                 {% endif %}
             </div>
         </div>

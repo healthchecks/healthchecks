@@ -463,6 +463,21 @@ class Channel(models.Model):
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()
 
+    @property
+    def sms_number(self):
+        assert self.kind == "sms"
+        if self.value.startswith("{"):
+            doc = json.loads(self.value)
+            return doc["value"]
+        return self.value
+
+    @property
+    def sms_label(self):
+        assert self.kind == "sms"
+        if self.value.startswith("{"):
+            doc = json.loads(self.value)
+            return doc["label"]
+
 
 class Notification(models.Model):
     class Meta:

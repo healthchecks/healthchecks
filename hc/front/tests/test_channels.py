@@ -74,3 +74,14 @@ class ChannelsTestCase(BaseTestCase):
         r = self.client.get("/integrations/")
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "(unconfirmed)")
+
+    def test_it_shows_sms_label(self):
+        ch = Channel(kind="sms", user=self.alice)
+        ch.value = json.dumps({"value": "+123", "label": "My Phone"})
+        ch.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/")
+
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "My Phone (+123)")

@@ -369,7 +369,7 @@ class Sms(HttpTransport):
 
         data = {
             'From': settings.TWILIO_FROM,
-            'To': self.channel.value,
+            'To': self.channel.sms_number,
             'Body': text,
         }
 
