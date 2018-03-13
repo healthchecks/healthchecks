@@ -738,19 +738,21 @@ def add_discord(request):
     return render(request, "integrations/add_discord.html", ctx)
 
 
-@login_required
 def add_pushover(request):
     if settings.PUSHOVER_API_TOKEN is None or settings.PUSHOVER_SUBSCRIPTION_URL is None:
         raise Http404("pushover integration is not available")
 
+    if not request.user.is_authenticated:
+        ctx = {"page": "channels"}
+        return render(request, "integrations/add_pushover.html", ctx)
+
     if request.method == "POST":
         # Initiate the subscription
-        nonce = get_random_string()
-        request.session["po_nonce"] = nonce
+        state = _prepare_state(request, "pushover")
 
         failure_url = settings.SITE_ROOT + reverse("hc-channels")
         success_url = settings.SITE_ROOT + reverse("hc-add-pushover") + "?" + urlencode({
-            "nonce": nonce,
+            "state": state,
             "prio": request.POST.get("po_priority", "0"),
         })
         subscription_url = settings.PUSHOVER_SUBSCRIPTION_URL + "?" + urlencode({
@@ -762,34 +764,28 @@ def add_pushover(request):
 
     # Handle successful subscriptions
     if "pushover_user_key" in request.GET:
-        if "nonce" not in request.GET or "prio" not in request.GET:
+        key = _get_validated_code(request, "pushover", "pushover_user_key")
+        if key is None:
             return HttpResponseBadRequest()
-
-        # Validate nonce
-        if request.GET["nonce"] != request.session.get("po_nonce"):
-            return HttpResponseForbidden()
 
         # Validate priority
-        if request.GET["prio"] not in ("-2", "-1", "0", "1", "2"):
+        prio = request.GET.get("prio")
+        if prio not in ("-2", "-1", "0", "1", "2"):
             return HttpResponseBadRequest()
-
-        # All looks well--
-        del request.session["po_nonce"]
 
         if request.GET.get("pushover_unsubscribed") == "1":
             # Unsubscription: delete all Pushover channels for this user
             Channel.objects.filter(user=request.user, kind="po").delete()
             return redirect("hc-channels")
-        else:
-            # Subscription
-            user_key = request.GET["pushover_user_key"]
-            priority = int(request.GET["prio"])
 
-            channel = Channel(user=request.team.user, kind="po")
-            channel.value = "%s|%d" % (user_key, priority)
-            channel.save()
-            channel.assign_all_checks()
-            return redirect("hc-channels")
+        # Subscription
+        channel = Channel(user=request.team.user, kind="po")
+        channel.value = "%s|%s" % (key, prio)
+        channel.save()
+        channel.assign_all_checks()
+
+        messages.success(request, "The Pushover integration has been added!")
+        return redirect("hc-channels")
 
     # Show Integration Settings form
     ctx = {

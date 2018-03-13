@@ -7,13 +7,99 @@
 {% block content %}
 <div class="row">
 <div class="col-sm-12">
-    <h1>Pushover</h1>
+    <div class="jumbotron">
+        {% if request.user.is_authenticated %}
+        <p>
+            <a href="https://www.pushover.net/">Pushover</a> delivers
+            real-time notifications on your Android, iPhone, iPad, and Desktop,
+            Android Wear and Apple Watch. You can set up {% site_name %} to
+            receive Pushover notifications in a few simple steps.
+        </p>
+        {% else %}
+        <p>
+        {% site_name %} is a <strong>free</strong> and
+        <a href="https://github.com/healthchecks/healthchecks">open source</a>
+        service for monitoring your cron jobs, background processes and
+        scheduled tasks. Before adding Pushover integration, please log into
+        {% site_name %}:</p>
 
-    <p><a href="https://www.pushover.net/">Pushover</a> is a service to receive
-    instant push notifications on your phone or tablet from a variety of
-    sources. If you bought the app on your mobile device, you can integrate it
-    with your {% site_name %} account in a few simple steps.</p>
+        <div class="text-center">
+        <form class="form-inline" action="{% url 'hc-login' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="input-group input-group-lg">
+                    <div class="input-group-addon">@</div>
+                    <input
+                        type="email"
+                        class="form-control"
+                        name="email"
+                        autocomplete="email"
+                        placeholder="Email">
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-lg btn-primary pull-right">
+                    Log In
+                </button>
+            </div>
+        </form>
+        </div>
+        {% endif %}
+    </div>
 
+    {% if not request.user.is_authenticated %}
+    <h2>Setup Guide</h2>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            <p>
+                After logging in, go to "Integrations &rarr; Add Pushover".
+                Pushover supports different notification priorities from
+                silent to "Emergency". Select your preferred priority
+                and click "Subscribe with Pushover".
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pushover_1.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            <p>
+                You will be redirected to
+                <a href="https://pushover.net">pushover.net</a> and
+                asked to confirm a subscription. Review the subscription
+                details and click "Subscribe Me".
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pushover_2.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>
+                That is all! You will now be redirected back to
+                "Integrations" page on {% site_name %} and see
+                the new integration!
+            </p>
+        </div>
+        <div class="col-sm-6">
+        </div>
+    </div>
+
+    {% else %}
     <h2>Integration Settings</h2>
 
     <form method="post" id="add-pushover" class="form-horizontal" action="{% url 'hc-add-pushover' %}">
@@ -82,6 +168,7 @@
             </div>
         </div>
     </form>
+    {% endif %}
 </div>
 </div>
 {% endblock %}
