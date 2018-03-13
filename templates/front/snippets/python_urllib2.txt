@@ -1,3 +1,7 @@
-# using urllib2:
-import urllib2
-urllib2.urlopen("PING_URL")
+# urllib with python 3.x:
+import urllib.request
+urllib.request.urlopen("PING_URL")
+
+# urllib with python 2.x:
+import urllib
+urllib.urlopen("PING_URL")

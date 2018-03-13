@@ -115,8 +115,23 @@ thing: they fire off a HTTP GET method.</p>
 
 <a name="python"></a>
 <h3>Python</h3>
-{% include "front/snippets/python_urllib2.html" %}
+
+<p>
+    If you are already using the
+    <a href="http://docs.python-requests.org/en/master/">requests</a> library,
+    it's convenient to also use it here:
+</p>
 {% include "front/snippets/python_requests.html" %}
+
+<p>
+    Otherwise, you can use the <code>urllib</code> standard module.
+</p>
+
+{% include "front/snippets/python_urllib2.html" %}
+
+<a name="ruby"></a>
+<h3>Ruby</h3>
+{% include "front/snippets/ruby.html" %}
 
 <a name="node"></a>
 <h3>Node</h3>

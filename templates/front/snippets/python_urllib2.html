@@ -1,4 +1,8 @@
-<div class="highlight"><pre><span></span><span class="c1"># using urllib2:</span>
-<span class="kn">import</span> <span class="nn">urllib2</span>
-<span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;{{ ping_url }}&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><span class="c1"># urllib with python 3.x:</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;{{ ping_url }}&quot;</span><span class="p">)</span>
+
+<span class="c1"># urllib with python 2.x:</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;{{ ping_url }}&quot;</span><span class="p">)</span>
 </pre></div>

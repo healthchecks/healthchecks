@@ -31,12 +31,13 @@ class Command(BaseCommand):
         _process("bash_wget", lexers.BashLexer())
         _process("browser", lexers.JavascriptLexer())
         _process("crontab", lexers.BashLexer())
+        _process("node", lexers.JavascriptLexer())
         _process("python_urllib2", lexers.PythonLexer())
         _process("python_requests", lexers.PythonLexer())
         _process("php", lexers.PhpLexer())
         _process("powershell", lexers.shell.PowerShellLexer())
         _process("powershell_inline", lexers.shell.BashLexer())
-        _process("node", lexers.JavascriptLexer())
+        _process("ruby", lexers.RubyLexer())
 
         # API examples
         _process("list_checks_request", lexers.BashLexer())

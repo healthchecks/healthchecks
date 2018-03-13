@@ -1,0 +1,4 @@
+require 'net/http'
+require 'uri'
+
+Net::HTTP.get(URI.parse('PING_URL'))
