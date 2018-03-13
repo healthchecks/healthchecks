@@ -211,7 +211,9 @@ $(function () {
         }
 
         function applyFilters(index, element) {
-            var tags = $(".my-checks-name", element).data("tags").split(" ");
+            // use attr(), as data() tries converting strings to JS types:
+            // (e.g., "123" -> 123)
+            var tags = $(".my-checks-name", element).attr("data-tags").split(" ");
             for (var i=0, tag; tag=checked[i]; i++) {
                 if (tags.indexOf(tag) == -1) {
                     $(element).hide();
