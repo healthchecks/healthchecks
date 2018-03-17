@@ -42,12 +42,25 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertTrue("schedule" not in doc)
         self.assertTrue("tz" not in doc)
 
-        self.assertEqual(Check.objects.count(), 1)
         check = Check.objects.get()
         self.assertEqual(check.name, "Foo")
         self.assertEqual(check.tags, "bar,baz")
         self.assertEqual(check.timeout.total_seconds(), 3600)
         self.assertEqual(check.grace.total_seconds(), 60)
+
+    def test_30_days_works(self):
+        r = self.post({
+            "api_key": "abc",
+            "name": "Foo",
+            "timeout": 2592000,
+            "grace": 2592000
+        })
+
+        self.assertEqual(r.status_code, 201)
+
+        check = Check.objects.get()
+        self.assertEqual(check.timeout.total_seconds(), 2592000)
+        self.assertEqual(check.grace.total_seconds(), 2592000)
 
     def test_it_accepts_api_key_in_header(self):
         payload = json.dumps({"name": "Foo"})
@@ -103,7 +116,7 @@ class CreateCheckTestCase(BaseTestCase):
                   expected_fragment="timeout is too small")
 
     def test_it_rejects_large_timeout(self):
-        self.post({"api_key": "abc", "timeout": 604801},
+        self.post({"api_key": "abc", "timeout": 2592001},
                   expected_fragment="timeout is too large")
 
     def test_it_rejects_non_number_timeout(self):
