@@ -214,7 +214,7 @@ class Ping(models.Model):
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
     method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
-    body = models.CharField(max_length=10000, blank=True)
+    body = models.CharField(max_length=10000, blank=True, null=True)
 
 
 class Channel(models.Model):
