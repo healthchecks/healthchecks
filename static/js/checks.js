@@ -176,8 +176,8 @@ $(function () {
     });
 
     $(".last-ping-cell").on("click", ".last-ping", function() {
-        $("#last-ping-body").text("Updating...");
-        $('#last-ping-modal').modal("show");
+        $("#ping-details-body").text("Updating...");
+        $('#ping-details-modal').modal("show");
 
         var token = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({
@@ -185,7 +185,7 @@ $(function () {
             type: "post",
             headers: {"X-CSRFToken": token},
             success: function(data) {
-                $("#last-ping-body" ).html(data);
+                $("#ping-details-body" ).html(data);
             }
         });
 

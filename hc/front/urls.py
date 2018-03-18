@@ -8,7 +8,8 @@ check_urls = [
     url(r'^pause/$', views.pause, name="hc-pause"),
     url(r'^remove/$', views.remove_check, name="hc-remove-check"),
     url(r'^log/$', views.log, name="hc-log"),
-    url(r'^last_ping/$', views.last_ping, name="hc-last-ping"),
+    url(r'^last_ping/$', views.ping_details, name="hc-last-ping"),
+    url(r'^pings/([\d]+)/$', views.ping_details, name="hc-ping-details"),
 ]
 
 channel_urls = [

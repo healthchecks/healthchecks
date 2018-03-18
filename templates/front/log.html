@@ -40,6 +40,7 @@
             <th class="ip">IP</th>
             <th class="protocol">Protocol</th>
             <th class="ua">User Agent</th>
+            <th></th>
         </tr>
         {% for event in events %}
         {% if event.n %}
@@ -65,6 +66,12 @@
 
             <td class="ua">
                 {{ event.ua }}
+            </td>
+
+            <td>
+                {% if event.body %}
+                <a href="#" class="details-btn" data-url="{% url 'hc-ping-details' check.code event.n %}">show body</a>
+                {% endif %}
             </td>
         </tr>
         {% endif %}
@@ -112,7 +119,7 @@
         {% endfor %}
     </table>
 
-    {% if show_limit_notice and limit < 10000 %}
+    {% if show_limit_notice and limit < 1000 %}
     <p class="alert alert-info">
         <strong>Showing last {{ limit }} pings.</strong>
         Want to see more?
@@ -128,6 +135,21 @@
     {% endif %}
     </div>
 </div>
+
+<div id="ping-details-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="ping-details-body">Loading</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Got It!</button>
+            </div>
+        </div>
+    </div>
+    <form>
+        {% csrf_token %}
+    </form>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

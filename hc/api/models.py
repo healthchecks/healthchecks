@@ -71,6 +71,7 @@ class Check(models.Model):
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     last_ping_body = models.CharField(max_length=10000, blank=True)
+    has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
 
@@ -182,13 +183,10 @@ class Check(models.Model):
 
         return result
 
-    def has_confirmation_link(self):
-        return "confirm" in self.last_ping_body.lower()
-
     def ping(self, remote_addr, scheme, method, ua, body):
         self.n_pings = models.F("n_pings") + 1
         self.last_ping = timezone.now()
-        self.last_ping_body = body[:10000]
+        self.has_confirmation_link = "confirm" in str(body).lower()
         self.alert_after = self.get_alert_after()
         if self.status in ("new", "paused"):
             self.status = "up"
@@ -203,6 +201,7 @@ class Check(models.Model):
         ping.method = method
         # If User-Agent is longer than 200 characters, truncate it:
         ping.ua = ua[:200]
+        ping.body = body[:10000]
         ping.save()
 
 
@@ -215,6 +214,7 @@ class Ping(models.Model):
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
     method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
+    body = models.CharField(max_length=10000, blank=True)
 
 
 class Channel(models.Model):

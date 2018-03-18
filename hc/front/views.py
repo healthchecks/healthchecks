@@ -249,7 +249,7 @@ def cron_preview(request):
 
 
 @require_POST
-def last_ping(request, code):
+def ping_details(request, code, n=None):
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
 
@@ -257,14 +257,18 @@ def last_ping(request, code):
     if check.user_id != request.team.user.id:
         return HttpResponseForbidden()
 
-    ping = Ping.objects.filter(owner=check).latest("created")
+    q = Ping.objects.filter(owner=check)
+    if n:
+        q = q.filter(n=n)
+
+    ping = q.latest("created")
 
     ctx = {
         "check": check,
         "ping": ping
     }
 
-    return render(request, "front/last_ping.html", ctx)
+    return render(request, "front/ping_details.html", ctx)
 
 
 @require_POST

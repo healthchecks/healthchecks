@@ -36,11 +36,9 @@ class PingTestCase(TestCase):
                              content_type="text/plain")
         self.assertEqual(r.status_code, 200)
 
-        self.check.refresh_from_db()
-        self.assertEqual(self.check.last_ping_body, "hello world")
-
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.method, "POST")
+        self.assertEqual(ping.body, "hello world")
 
     def test_head_works(self):
         csrf_client = Client(enforce_csrf_checks=True)
@@ -107,3 +105,12 @@ class PingTestCase(TestCase):
     def test_it_never_caches(self):
         r = self.client.get("/ping/%s/" % self.check.code)
         assert "no-cache" in r.get("Cache-Control")
+
+    def test_it_updates_confirmation_flag(self):
+        payload = "Please Confirm ..."
+        r = self.client.post("/ping/%s/" % self.check.code, data=payload,
+                             content_type="text/plain")
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertTrue(self.check.has_confirmation_link)

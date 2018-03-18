@@ -26,8 +26,8 @@
         </div>
         {% endif %}
     </div>
-    {% if check.last_ping_body %}
+    {% if ping.body %}
         <h4>Request Body</h4>
-        <pre>{{ check.last_ping_body }}</pre>
+        <pre>{{ ping.body }}</pre>
     {% endif %}
 </div>
