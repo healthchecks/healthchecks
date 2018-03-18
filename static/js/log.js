@@ -1,5 +1,5 @@
 $(function () {
-    $(".details-btn").on("click", function() {
+    $("#log tr.ok").on("click", function() {
         $("#ping-details-body").text("Updating...");
         $('#ping-details-modal').modal("show");
 
@@ -17,12 +17,12 @@ $(function () {
     });
 
     function switchDateFormat(format) {
-        $("#log td.datetime").each(function(index, cell) {
-            var dt = moment(cell.getAttribute("data-raw"));
+        $("#log tr").each(function(index, row) {
+            var dt = moment(row.getAttribute("data-dt"));
             format == "local" ? dt.local() : dt.utc();
 
-            $(".date", cell).text(dt.format("MMM D"));
-            $(".time", cell).text(dt.format("HH:mm"));
+            $(".date", row).text(dt.format("MMM D"));
+            $(".time", row).text(dt.format("HH:mm"));
         })
     }
 

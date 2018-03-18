@@ -58,3 +58,8 @@ def sortchecks(checks, key):
         checks.sort(key=last_ping_key, reverse=key.startswith("-"))
 
     return checks
+
+
+@register.filter
+def trunc(s):
+    return s[:150]

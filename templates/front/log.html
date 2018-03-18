@@ -31,62 +31,50 @@
     {% if events %}
     <div class="table-responsive">
     <table class="table" id="log">
-        <tr>
-            <th></th>
-            <th class="datetime">
-                <span class="date">Date</span>
-                <span class="time">Time</span>
-            </th>
-            <th class="ip">IP</th>
-            <th class="protocol">Protocol</th>
-            <th class="ua">User Agent</th>
-            <th></th>
-        </tr>
         {% for event in events %}
         {% if event.n %}
-        <tr class="ok {% if record.early %} early {% endif %}">
+        <tr class="ok" data-dt="{{ event.created.isoformat }}" data-url="{% url 'hc-ping-details' check.code event.n  %}">
             <td class="n-cell">
                 <span class="hash">#</span>{{ event.n }}
             </td>
-            <td class="datetime" data-raw="{{ event.created.isoformat }}">
+            <td class="date"></td>
+            <td class="time"></td>
+            <td class="details">
                 <div>
-                    <span class="date"></span>
-                    <span class="time"></span>
-                    {% if 0 %}
-                        <span class="label label-tag">early</span>
+                {% if event.scheme == "email" %}
+                    {{ event.ua }}
+                    <span>
+                        {% if event.body %}
+                            -  {{ event.body|trunc }}
+                        {% endif %}
+                    </span>
+                {% else %}
+                    {{ event.scheme|upper }}
+                    {{ event.method }}
+                    {% if event.remote_addr %}
+                    from {{ event.remote_addr }}
                     {% endif %}
-                </div>
-            </td>
-            <td class="ip">
-                {{ event.remote_addr|default:"" }}
-            </td>
-            <td class="protocol">
-                {{ event.scheme }}
-            </td>
-
-            <td class="ua">
-                {{ event.ua }}
-            </td>
-
-            <td class="actions">
-                {% if event.body %}
-                <a href="#" class="details-btn" data-url="{% url 'hc-ping-details' check.code event.n %}">show body</a>
+                    <span>
+                        {% if event.ua %}
+                        - {{ event.ua }}
+                        {% endif %}
+                        {% if event.body %}
+                        -  {{ event.body|trunc }}
+                        {% endif %}
+                    </span>
                 {% endif %}
+                </div>
             </td>
         </tr>
         {% endif %}
         {% if event.check_status %}
-        <tr class="missing">
+        <tr class="missing" data-dt="{{ event.created.isoformat }}">
             <td class="n-cell">
                 <span class="icon-missing"></span>
             </td>
-            <td class="datetime" data-raw="{{ event.created.isoformat }}">
-                <div>
-                    <span class="date"></span>
-                    <span class="time"></span>
-                </div>
-            </td>
-            <td colspan="4" class="alert-info">
+            <td class="date"></td>
+            <td class="time"></td>
+            <td class="alert-info">
                 {% if event.channel.kind == "email" %}
                     Sent email alert to {{ event.channel.value }}
                 {% elif event.channel.kind == "slack" %}
