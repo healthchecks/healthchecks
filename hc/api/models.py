@@ -70,7 +70,6 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
-    last_ping_body = models.CharField(max_length=10000, blank=True)
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")

@@ -43,6 +43,10 @@
     font-size: 11px;
 }
 
+#log td.actions {
+    white-space: nowrap;
+}
+
 #log .ok {
     color: #5cb85c;
 }

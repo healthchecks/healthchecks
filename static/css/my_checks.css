@@ -18,7 +18,7 @@
 }
 
 @media (min-width: 992px) {
-    #update-timeout-modal .modal-dialog, #last-ping-modal .modal-dialog {
+    #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog {
         width: 800px;
     }
 }

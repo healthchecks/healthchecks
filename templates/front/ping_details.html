@@ -7,23 +7,49 @@
                 <strong>Time Received</strong>
                 <code>{{ ping.created.isoformat }}</code>
             </p>
-            <p>
-                <strong>Source</strong>
-                {% if ping.scheme == "email" %}
-                {{ ping.ua }}
-                {% else %}
-                {{ ping.scheme|upper }} {{ ping.method }} from {{ ping.remote_addr }}
-                {% endif %}
-            </p>
-
         </div>
-        {% if ping.scheme != "email" %}
+        {% if ping.remote_addr %}
         <div class="col-sm-6">
+            <p>
+                <strong>Client IP</strong>
+                {{ ping.remote_addr }}
+            </p>
+        </div>
+        {% endif %}
+
+        {% if ping.scheme %}
+        <div class="col-sm-6">
+            <p>
+                <strong>Protocol</strong>
+                {{ ping.scheme }}
+            </p>
+        </div>
+        {% endif %}
+
+        {% if ping.method %}
+        <div class="col-sm-6">
+            <p>
+                <strong>Method</strong>
+                {{ ping.method }}
+            </p>
+        </div>
+        {% endif %}
+
+        {% if ping.scheme == "email" %}
+        <div class="col-sm-6">
+            <p>
+                <strong>From</strong>
+                {{ ping.ua }}
+            </p>
+        </div>
+        {% else %}
+        <div class="col-sm-12">
             <p>
                 <strong>User Agent</strong>
                 <span class="ua">{{ ping.ua }}</span>
             </p>
         </div>
+
         {% endif %}
     </div>
     {% if ping.body %}

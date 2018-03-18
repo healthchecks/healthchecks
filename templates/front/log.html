@@ -68,7 +68,7 @@
                 {{ event.ua }}
             </td>
 
-            <td>
+            <td class="actions">
                 {% if event.body %}
                 <a href="#" class="details-btn" data-url="{% url 'hc-ping-details' check.code event.n %}">show body</a>
                 {% endif %}
@@ -86,7 +86,7 @@
                     <span class="time"></span>
                 </div>
             </td>
-            <td colspan="3" class="alert-info">
+            <td colspan="4" class="alert-info">
                 {% if event.channel.kind == "email" %}
                     Sent email alert to {{ event.channel.value }}
                 {% elif event.channel.kind == "slack" %}

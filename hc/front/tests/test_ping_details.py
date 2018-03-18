@@ -21,10 +21,9 @@ class LastPingTestCase(BaseTestCase):
 
     def test_it_accepts_n(self):
         check = Check(user=self.alice)
-        check.last_ping_body = "this is body"
         check.save()
 
-        # remote_addr, scheme, method, ua, body):
+        # remote_addr, scheme, method, ua, body:
         check.ping("1.2.3.4", "http", "post", "tester", "foo-123")
         check.ping("1.2.3.4", "http", "post", "tester", "bar-456")
 
