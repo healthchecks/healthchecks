@@ -159,7 +159,7 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
         <td>
             <p>number, optional, default value: {{ default_timeout }}.</p>
             <p>A number of seconds, the expected period of this check.</p>
-            <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+            <p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
             <p>Example for 5 minute timeout:</p>
             <pre>{"kind": "simple", "timeout": 300}</pre>
         </td>
@@ -292,7 +292,7 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
         <td>
             <p>number, optional.</p>
             <p>A number of seconds, the expected period of this check.</p>
-            <p>Minimum: 60 (one minute), maximum: 604800 (one week).</p>
+            <p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
             <p>Example for 5 minute timeout:</p>
             <pre>{"kind": "simple", "timeout": 300}</pre>
         </td>
