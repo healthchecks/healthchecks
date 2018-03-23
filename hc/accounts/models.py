@@ -144,7 +144,11 @@ class Profile(models.Model):
 
         # Sort checks by owner. Need this because will group by owner in
         # template.
+        checks = checks.select_related("user", "user__profile")
         checks = checks.order_by("user_id")
+        # list() executes the query, to avoid DB access while
+        # rendering the template
+        checks = list(checks)
 
         ctx = {
             "checks": checks,

@@ -60,9 +60,11 @@ class Email(Transport):
             # Default sort order is by check's creation time
             sort = "created"
 
+        # list() executes the query, to avoid DB access while
+        # rendering a template
         ctx = {
             "check": check,
-            "checks": self.checks(),
+            "checks": list(self.checks()),
             "sort": sort,
             "now": timezone.now(),
             "unsub_link": self.channel.get_unsub_link()
@@ -288,9 +290,12 @@ class Pushover(HttpTransport):
 
     def notify(self, check):
         others = self.checks().filter(status="down").exclude(code=check.code)
+
+        # list() executes the query, to avoid DB access while
+        # rendering a template
         ctx = {
             "check": check,
-            "down_checks": others,
+            "down_checks": list(others),
         }
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)
