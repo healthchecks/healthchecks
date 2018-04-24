@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 import six
 from hc.api.models import Check
 from hc.lib import emails
+from hc.payments.forms import InvoiceEmailingForm
 from hc.payments.invoices import PdfInvoice
 from hc.payments.models import Subscription
 
@@ -41,13 +42,15 @@ def billing(request):
     # Don't use Subscription.objects.for_user method here, so a
     # subscription object is not created just by viewing a page.
     sub = Subscription.objects.filter(user_id=request.user.id).first()
+    if sub is None:
+        sub = Subscription(user=request.user)
 
     send_invoices_status = "default"
     if request.method == "POST":
-        if "save_send_invoices" in request.POST:
+        form = InvoiceEmailingForm(request.POST)
+        if form.is_valid():
             sub = Subscription.objects.for_user(request.user)
-            sub.send_invoices = "send_invoices" in request.POST
-            sub.save()
+            form.update_subscription(sub)
             send_invoices_status = "success"
 
     ctx = {
@@ -208,22 +211,15 @@ def pdf_invoice(request, transaction_id):
 @csrf_exempt
 @require_POST
 def charge_webhook(request):
-    sig = str(request.POST["bt_signature"])
-    payload = str(request.POST["bt_payload"])
-
-    import braintree
-    doc = braintree.WebhookNotification.parse(sig, payload)
-    if doc.kind != "subscription_charged_successfully":
-        return HttpResponseBadRequest()
-
-    sub = Subscription.objects.get(subscription_id=doc.subscription.id)
+    sub, tx = Subscription.objects.by_braintree_webhook(request)
     if sub.send_invoices:
-        transaction = doc.subscription.transactions[0]
-        filename = "MS-HC-%s.pdf" % transaction.id.upper()
+        filename = "MS-HC-%s.pdf" % tx.id.upper()
 
         sink = six.BytesIO()
-        PdfInvoice(sink).render(transaction, sub.flattened_address())
-        ctx = {"tx": transaction}
-        emails.invoice(sub.user.email, ctx, filename, sink.getvalue())
+        PdfInvoice(sink).render(tx, sub.flattened_address())
+        ctx = {"tx": tx}
+
+        recipient = sub.invoice_email or sub.user.email
+        emails.invoice(recipient, ctx, filename, sink.getvalue())
 
     return HttpResponse()

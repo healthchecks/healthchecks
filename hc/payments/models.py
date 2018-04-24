@@ -35,6 +35,16 @@ class SubscriptionManager(models.Manager):
 
         return sub, tx
 
+    def by_braintree_webhook(self, request):
+        sig = str(request.POST["bt_signature"])
+        payload = str(request.POST["bt_payload"])
+
+        doc = braintree.WebhookNotification.parse(sig, payload)
+        assert doc.kind == "subscription_charged_successfully"
+
+        sub = self.get(subscription_id=doc.subscription.id)
+        return sub, doc.subscription.transactions[0]
+
 
 class Subscription(models.Model):
     user = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
@@ -45,6 +55,7 @@ class Subscription(models.Model):
     plan_name = models.CharField(max_length=50, blank=True)
     address_id = models.CharField(max_length=2, blank=True)
     send_invoices = models.BooleanField(default=True)
+    invoice_email = models.EmailField(blank=True)
 
     objects = SubscriptionManager()
 
