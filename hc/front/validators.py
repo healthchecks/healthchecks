@@ -1,6 +1,6 @@
 from croniter import croniter
 from django.core.exceptions import ValidationError
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 from pytz import all_timezones
 
 

@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta as td
 import json
+from urllib.parse import urlencode
 
 from croniter import croniter
 from django.conf import settings
@@ -14,7 +15,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.utils.six.moves.urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.api.decorators import uuid_or_400

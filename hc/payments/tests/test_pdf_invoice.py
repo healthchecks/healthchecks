@@ -4,7 +4,6 @@ from unittest import skipIf
 from django.utils.timezone import now
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
-import six
 
 try:
     import reportlab
@@ -37,8 +36,8 @@ class PdfInvoiceTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/pdf/abc123/")
-        self.assertTrue(six.b("ABC123") in r.content)
-        self.assertTrue(six.b("alice@example.org") in r.content)
+        self.assertTrue(b"ABC123" in r.content)
+        self.assertTrue(b"alice@example.org" in r.content)
 
     @patch("hc.payments.models.braintree")
     def test_it_checks_customer_id(self, mock_braintree):
@@ -64,4 +63,4 @@ class PdfInvoiceTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/invoice/pdf/abc123/")
-        self.assertTrue(six.b("Alice and Partners") in r.content)
+        self.assertTrue(b"Alice and Partners" in r.content)

@@ -9,7 +9,6 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 from mock import patch
 from requests.exceptions import ConnectionError, Timeout
-from six import binary_type
 
 
 class NotifyTestCase(BaseTestCase):
@@ -143,7 +142,7 @@ class NotifyTestCase(BaseTestCase):
         args, kwargs = mock_request.call_args
 
         # unicode should be encoded into utf-8
-        self.assertTrue(isinstance(kwargs["data"], binary_type))
+        self.assertIsInstance(kwargs["data"], bytes)
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_json_value(self, mock_request):

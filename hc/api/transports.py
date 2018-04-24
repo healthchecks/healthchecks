@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 import json
 import requests
-from six.moves.urllib.parse import quote
+from urllib.parse import quote
 
 from hc.accounts.models import Profile
 from hc.lib import emails

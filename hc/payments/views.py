@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
@@ -5,7 +7,6 @@ from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-import six
 from hc.api.models import Check
 from hc.lib import emails
 from hc.payments.forms import InvoiceEmailingForm
@@ -215,7 +216,7 @@ def charge_webhook(request):
     if sub.send_invoices:
         filename = "MS-HC-%s.pdf" % tx.id.upper()
 
-        sink = six.BytesIO()
+        sink = BytesIO()
         PdfInvoice(sink).render(tx, sub.flattened_address())
         ctx = {"tx": tx}
 
