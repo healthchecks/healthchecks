@@ -17,7 +17,6 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from hc.api.decorators import uuid_or_400
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
                            Ping, Notification)
 from hc.api.transports import Telegram
@@ -178,7 +177,6 @@ def add_check(request):
 
 @require_POST
 @login_required
-@uuid_or_400
 def update_name(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user_id != request.team.user.id:
@@ -195,7 +193,6 @@ def update_name(request, code):
 
 @require_POST
 @login_required
-@uuid_or_400
 def update_timeout(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user != request.team.user:
@@ -273,7 +270,6 @@ def ping_details(request, code, n=None):
 
 @require_POST
 @login_required
-@uuid_or_400
 def pause(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user_id != request.team.user.id:
@@ -287,7 +283,6 @@ def pause(request, code):
 
 @require_POST
 @login_required
-@uuid_or_400
 def remove_check(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user != request.team.user:
@@ -299,7 +294,6 @@ def remove_check(request, code):
 
 
 @login_required
-@uuid_or_400
 def log(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user != request.team.user:
@@ -384,7 +378,6 @@ def channels(request):
 
 
 @login_required
-@uuid_or_400
 def channel_checks(request, code):
     channel = get_object_or_404(Channel, code=code)
     if channel.user_id != request.team.user.id:
@@ -402,7 +395,6 @@ def channel_checks(request, code):
     return render(request, "front/channel_checks.html", ctx)
 
 
-@uuid_or_400
 def verify_email(request, code, token):
     channel = get_object_or_404(Channel, code=code)
     if channel.make_token() == token:
@@ -413,7 +405,6 @@ def verify_email(request, code, token):
     return render(request, "bad_link.html")
 
 
-@uuid_or_400
 def unsubscribe_email(request, code, token):
     channel = get_object_or_404(Channel, code=code)
     if channel.make_token() != token:
@@ -428,7 +419,6 @@ def unsubscribe_email(request, code, token):
 
 @require_POST
 @login_required
-@uuid_or_400
 def remove_channel(request, code):
     # user may refresh the page during POST and cause two deletion attempts
     channel = Channel.objects.filter(code=code).first()
@@ -503,7 +493,7 @@ def add_pd(request, state=None):
     if settings.PD_VENDOR_KEY is None:
         raise Http404("pagerduty integration is not available")
 
-    if state and request.user.is_authenticated():
+    if state and request.user.is_authenticated:
         if "pd" not in request.session:
             return HttpResponseBadRequest()
 
@@ -536,6 +526,7 @@ def add_pd(request, state=None):
 
     ctx = {"page": "channels", "connect_url": connect_url}
     return render(request, "integrations/add_pd.html", ctx)
+
 
 @login_required
 def add_pagertree(request):
@@ -840,7 +831,7 @@ def add_victorops(request):
 @require_POST
 def telegram_bot(request):
     try:
-        doc = json.loads(request.body.decode("utf-8"))
+        doc = json.loads(request.body.decode())
         jsonschema.validate(doc, telegram_callback)
     except ValueError:
         return HttpResponseBadRequest()

@@ -1,23 +1,9 @@
 import json
-import re
 from functools import wraps
 
 from django.contrib.auth.models import User
-from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
-                         JsonResponse)
+from django.http import HttpResponseForbidden, JsonResponse
 from hc.lib.jsonschema import ValidationError, validate
-
-RE_UUID = re.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
-
-
-def uuid_or_400(f):
-    @wraps(f)
-    def wrapper(request, *args, **kwds):
-        if not RE_UUID.match(args[0]):
-            return HttpResponseBadRequest()
-
-        return f(request, *args, **kwds)
-    return wrapper
 
 
 def make_error(msg):
@@ -30,7 +16,7 @@ def check_api_key(f):
         request.json = {}
         if request.body:
             try:
-                request.json = json.loads(request.body.decode("utf-8"))
+                request.json = json.loads(request.body.decode())
             except ValueError:
                 return make_error("could not parse request body")
 

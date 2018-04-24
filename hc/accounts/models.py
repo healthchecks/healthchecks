@@ -81,7 +81,7 @@ class Profile(models.Model):
         return self
 
     def prepare_token(self, salt):
-        token = urlsafe_b64encode(os.urandom(24)).decode("utf-8")
+        token = urlsafe_b64encode(os.urandom(24)).decode()
         self.token = make_password(token, salt)
         self.save()
         return token

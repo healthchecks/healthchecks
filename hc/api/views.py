@@ -11,13 +11,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from hc.api import schemas
-from hc.api.decorators import check_api_key, uuid_or_400, validate_json
+from hc.api.decorators import check_api_key, validate_json
 from hc.api.models import Check, Notification
 from hc.lib.badges import check_signature, get_badge_svg
 
 
 @csrf_exempt
-@uuid_or_400
 @never_cache
 def ping(request, code):
     check = get_object_or_404(Check, code=code)
@@ -28,8 +27,9 @@ def ping(request, code):
     scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")
+    body = request.body.decode()
 
-    check.ping(remote_addr, scheme, method, ua, request.body)
+    check.ping(remote_addr, scheme, method, ua, body)
 
     response = HttpResponse("OK")
     response["Access-Control-Allow-Origin"] = "*"
@@ -127,7 +127,6 @@ def checks(request):
 
 
 @csrf_exempt
-@uuid_or_400
 @check_api_key
 @validate_json(schemas.check)
 def update(request, code):
@@ -150,7 +149,6 @@ def update(request, code):
 
 @csrf_exempt
 @require_POST
-@uuid_or_400
 @check_api_key
 def pause(request, code):
     check = get_object_or_404(Check, code=code)
@@ -194,7 +192,6 @@ def badge(request, username, signature, tag, format="svg"):
 
 
 @csrf_exempt
-@uuid_or_400
 def bounce(request, code):
     notification = get_object_or_404(Notification, code=code)
 
@@ -203,7 +200,7 @@ def bounce(request, code):
     if td.total_seconds() > 600:
         return HttpResponseForbidden()
 
-    notification.error = request.body[:200]
+    notification.error = request.body.decode()[:200]
     notification.save()
 
     notification.channel.email_verified = False

@@ -363,7 +363,7 @@ def unsubscribe_reports(request, username):
         # This is here for backwards compatibility and will be removed
         # at some point.
         try:
-            signing.Signer().unsign(request.GET.get("token"))
+            signing.Signer().unsign(request.GET.get("token", ""))
         except signing.BadSignature:
             return render(request, "bad_link.html")
 

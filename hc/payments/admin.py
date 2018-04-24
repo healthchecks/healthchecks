@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from hc.accounts.models import Profile
 from hc.payments.models import Subscription
 

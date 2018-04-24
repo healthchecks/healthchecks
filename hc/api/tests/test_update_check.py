@@ -69,7 +69,7 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_handles_invalid_uuid(self):
         r = self.post("not-an-uuid", {"api_key": "abc"})
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_check(self):
         made_up_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"

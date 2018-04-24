@@ -45,7 +45,7 @@ def get_badge_svg(tag, status):
 
 def check_signature(username, tag, sig):
     ours = base64_hmac(str(username), tag, settings.SECRET_KEY)
-    ours = ours[:8].decode("utf-8")
+    ours = ours[:8]
     return ours == sig
 
 

@@ -128,7 +128,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url, data=payload)
-        assert r.status_code == 400
+        self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_uuid(self):
         # Valid UUID but there is no check for it:

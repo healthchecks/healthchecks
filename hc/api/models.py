@@ -231,7 +231,7 @@ class Channel(models.Model):
 
     def make_token(self):
         seed = "%s%s" % (self.code, settings.SECRET_KEY)
-        seed = seed.encode("utf8")
+        seed = seed.encode()
         return hashlib.sha1(seed).hexdigest()
 
     def send_verify_link(self):

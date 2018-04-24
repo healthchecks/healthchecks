@@ -102,7 +102,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(args[1], "http://example.com")
 
         # spaces should not have been urlencoded:
-        payload = kwargs["data"].decode("utf-8")
+        payload = kwargs["data"].decode()
         self.assertTrue(payload.startswith("The Time Is 2"))
 
     @patch("hc.api.transports.requests.request")

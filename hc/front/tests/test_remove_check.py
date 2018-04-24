@@ -32,7 +32,7 @@ class RemoveCheckTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
-        assert r.status_code == 400
+        self.assertEqual(r.status_code, 404)
 
     def test_it_checks_owner(self):
         url = "/checks/%s/remove/" % self.check.code

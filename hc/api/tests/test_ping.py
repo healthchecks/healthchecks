@@ -48,12 +48,12 @@ class PingTestCase(TestCase):
 
     def test_it_handles_bad_uuid(self):
         r = self.client.get("/ping/not-uuid/")
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_rejects_alternative_uuid_formats(self):
         # This uuid is missing separators. uuid.UUID() would accept it.
         r = self.client.get("/ping/07c2f54898504b27af5d6c9dc157ec02/")
-        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_check(self):
         r = self.client.get("/ping/07c2f548-9850-4b27-af5d-6c9dc157ec02/")
