@@ -37,6 +37,7 @@ class ProfileTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         api_key = self.profile.api_key
         self.assertTrue(len(api_key) > 10)
+        self.assertFalse("b'" in api_key)
 
     def test_it_revokes_api_key(self):
         self.client.login(username="alice@example.org", password="password")
