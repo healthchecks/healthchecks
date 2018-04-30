@@ -118,7 +118,7 @@ class Profile(models.Model):
         emails.change_email(self.user.email, ctx)
 
     def set_api_key(self):
-        self.api_key = urlsafe_b64encode(os.urandom(24))
+        self.api_key = urlsafe_b64encode(os.urandom(24)).decode()
         self.save()
 
     def checks_from_all_teams(self):
