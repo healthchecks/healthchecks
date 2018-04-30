@@ -18,6 +18,9 @@ class Command(BaseCommand):
     help = 'Send due monthly reports and nags'
     tmpl = "Sent monthly report to %s"
 
+    def pause(self):
+        time.sleep(1)
+
     def add_arguments(self, parser):
         parser.add_argument(
             '--loop',
@@ -56,7 +59,7 @@ class Command(BaseCommand):
         if profile.send_report():
             self.stdout.write(self.tmpl % profile.user.email)
             # Pause before next report to avoid hitting sending quota
-            time.sleep(1)
+            self.pause()
 
         return True
 
@@ -80,7 +83,7 @@ class Command(BaseCommand):
         if profile.send_report(nag=True):
             self.stdout.write("Sent nag to %s" % profile.user.email)
             # Pause before next report to avoid hitting sending quota
-            time.sleep(1)
+            self.pause()
         else:
             profile.next_nag_date = None
             profile.save()

@@ -5,6 +5,7 @@ from django.utils.timezone import now
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
+from mock import Mock, patch
 
 
 class SendAlertsTestCase(BaseTestCase):
@@ -28,7 +29,11 @@ class SendAlertsTestCase(BaseTestCase):
         self.check.save()
 
     def test_it_sends_report(self):
-        found = Command().handle_one_monthly_report()
+        cmd = Command()
+        cmd.stdout = Mock()  # silence output to stdout 
+        cmd.pause = Mock()  # don't pause for 1s
+
+        found = cmd.handle_one_monthly_report()
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
@@ -59,7 +64,11 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_sends_nag(self):
-        found = Command().handle_one_nag()
+        cmd = Command()
+        cmd.stdout = Mock()  # silence output to stdout
+        cmd.pause = Mock()  # don't pause for 1s
+
+        found = cmd.handle_one_nag()
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
