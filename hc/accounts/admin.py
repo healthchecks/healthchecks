@@ -118,14 +118,10 @@ class HcUserAdmin(UserAdmin):
 
         return result
 
-    engagement.allow_tags = True
-
     @mark_safe
     def checks(self, user):
         url = reverse("hc-switch-team", args=[user.username])
         return "<a href='%s'>Checks</a>" % url
-
-    checks.allow_tags = True
 
     def send_report(self, request, qs):
         for user in qs:
