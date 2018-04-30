@@ -96,6 +96,7 @@ class HcUserAdmin(UserAdmin):
 
     ordering = ["-id"]
 
+    @mark_safe
     def engagement(self, user):
         result = ""
         num_checks = Check.objects.filter(user=user).count()
@@ -117,13 +118,10 @@ class HcUserAdmin(UserAdmin):
 
         return result
 
-    engagement.allow_tags = True
-
+    @mark_safe
     def checks(self, user):
         url = reverse("hc-switch-team", args=[user.username])
         return "<a href='%s'>Checks</a>" % url
-
-    checks.allow_tags = True
 
     def send_report(self, request, qs):
         for user in qs:
