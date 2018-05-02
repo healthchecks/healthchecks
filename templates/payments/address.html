@@ -1,9 +1,7 @@
-{% if a.first_name or a.last_name %}
-    <p>{{ a.first_name|default:"" }} {{ a.last_name|default:"" }}</p>
-{% endif %}
-
 {% if a.company %}
     <p>{{ a.company }}</p>
+{% else %}
+	<p>{{ email }}</p>
 {% endif %}
 
 {% if a.extended_address %}
@@ -30,8 +28,6 @@
 <p>{{ a.postal_code }}</p>
 {% endif %}
 
-<input type="hidden" name="first_name" value="{{ a.first_name|default:"" }}">
-<input type="hidden" name="last_name" value="{{ a.last_name|default:"" }}">
 <input type="hidden" name="company" value="{{ a.company|default:"" }}">
 <input type="hidden" name="street_address" value="{{ a.street_address|default:"" }}">
 <input type="hidden" name="extended_address" value="{{ a.extended_address|default:"" }}">

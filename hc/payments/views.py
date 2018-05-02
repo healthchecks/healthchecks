@@ -151,7 +151,7 @@ def address(request):
         request.session["address_status"] = "success"
         return redirect("hc-billing")
 
-    ctx = {"a": sub.address}
+    ctx = {"a": sub.address, "email": request.user.email}
     return render(request, "payments/address.html", ctx)
 
 

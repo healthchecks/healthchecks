@@ -118,7 +118,7 @@
             <div class="col-sm-6">
                 <div class="panel panel-{{ address_status }}">
                     <div class="panel-body settings-block">
-                        <h2>Billing Address</h2>
+                        <h2>Billing Details</h2>
 
                         {% if sub.address_id %}
                         <div id="billing-address">
@@ -134,12 +134,12 @@
                             data-toggle="modal"
                             data-target="#billing-address-modal"
                             class="btn btn-default pull-right">
-                            Change Billing Address
+                            Change Billing Details
                         </button>
                     </div>
                     {% if address_status == "success" %}
                     <div class="panel-footer">
-                        Your billing address has been updated!
+                        Your billing details have been updated!
                     </div>
                     {% endif %}
                 </div>
@@ -283,9 +283,16 @@
                 {% endif %}
                 {% if not sub.address_id %}
                 <div id="no-billing-address">
-                    <h4>No billing address.</h4>
-                    <p>Please add a billing address before changing
-                        the billing plan.
+                    <h4>Country not specified.</h4>
+                    <p>For tax accounting purposes, please specify 
+                        your <strong>Country</strong> in the "Billing Details" 
+                        section. 
+                    </p>
+                    <p>
+                        Optionally, add your 
+                        <strong>company name</strong>, <strong>address</strong>
+                        and <strong>VAT ID</strong>
+                        to have them displayed on invoices.
                     </p>
                 </div>
                 {% endif %}
@@ -332,39 +339,18 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4>Billing Address</h4>
+                    <h4>Billing Details</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <input
-                                    id="first_name"
-                                    name="first_name"
-                                    type="text"
-                                    placeholder="First Name"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <input
-                                    id="last_name"
-                                    name="last_name"
-                                    type="text"
-                                    placeholder="Last Name"
-                                    class="input-name form-control" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
                         <div class="col-sm-8">
                             <div class="form-group">
+                                <label for="company">
+                                    Company
+                                </label>
                                 <input
                                     id="company"
                                     name="company"
-                                    placeholder="Company (optional)"
                                     type="text"
                                     class="form-control" />
                             </div>
@@ -372,10 +358,12 @@
 
                         <div class="col-sm-4">
                             <div class="form-group">
+                                <label for="extended_address">
+                                    VAT ID
+                                </label>
                                 <input
                                     id="extended_address"
                                     name="extended_address"
-                                    placeholder="VAT ID (optional)"
                                     type="text"
                                     class="form-control" />
                             </div>
@@ -383,21 +371,23 @@
 
                         <div class="col-sm-12">
                             <div class="form-group">
+                                <label for="company">Street Address</label>
                                 <input
                                     id="street_address"
                                     name="street_address"
-                                    placeholder="Street Address"
                                     type="text"
                                     class="form-control" />
                             </div>
                         </div>
 
                         <div class="col-sm-6">
+                            <label for="locality">
+                                City
+                            </label>
                             <div class="form-group">
                                 <input
                                     id="locality"
                                     name="locality"
-                                    placeholder="City"
                                     type="text"
                                     class="form-control" />
                             </div>
@@ -405,10 +395,12 @@
 
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="region">
+                                    State / Region
+                                </label>
                                 <input
                                     id="region"
                                     name="region"
-                                    placeholder="State / Region"
                                     type="text"
                                     class="form-control" />
                             </div>
@@ -416,10 +408,12 @@
 
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="postal_Code">
+                                    Postal Code
+                                </label>
                                 <input
                                     id="postal_code"
                                     name="postal_code"
-                                    placeholder="Postal Code"
                                     type="text"
                                     class="form-control" />
                             </div>
@@ -427,6 +421,9 @@
 
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label for="country_code_alpha2">
+                                    Country
+                                </label>
                                 <select id="country_code_alpha2" class="form-control" name="country_code_alpha2">
                                     {% include "payments/countries.html" %}
                                 </select>

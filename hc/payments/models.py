@@ -11,7 +11,7 @@ else:
     braintree = None
 
 
-ADDRESS_KEYS = ("first_name", "last_name", "company", "street_address",
+ADDRESS_KEYS = ("company", "street_address",
                 "extended_address", "locality", "region", "postal_code",
                 "country_code_alpha2")
 
@@ -194,7 +194,7 @@ class Subscription(models.Model):
 
     def flattened_address(self):
         if self.address_id:
-            ctx = {"a": self.address}
+            ctx = {"a": self.address, "email": self.user.email}
             return render_to_string("payments/address_plain.html", ctx)
         else:
             return self.user.email

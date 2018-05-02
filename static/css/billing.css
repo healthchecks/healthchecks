@@ -6,3 +6,7 @@
 #invoice-emailing-status {
     margin-right: 150px;
 }
+
+#billing-address-modal label {
+	font-size: 13px;
+}
