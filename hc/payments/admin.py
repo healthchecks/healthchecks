@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from hc.accounts.models import Profile
 from hc.payments.models import Subscription
 
@@ -20,6 +21,7 @@ class SubsAdmin(admin.ModelAdmin):
     def email(self, obj):
         return obj.user.email if obj.user else None
 
+    @mark_safe
     def profile(self, obj):
         if obj.user.profile:
             url = reverse("admin:accounts_profile_change",

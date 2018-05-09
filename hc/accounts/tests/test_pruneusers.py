@@ -22,13 +22,6 @@ class PruneUsersTestCase(BaseTestCase):
         self.assertEqual(User.objects.filter(username="charlie").count(), 0)
         self.assertEqual(Check.objects.count(), 0)
 
-    def test_it_removes_old_users_with_zero_checks(self):
-        self.charlie.date_joined = self.year_ago
-        self.charlie.last_login = self.year_ago
-        self.charlie.save()
-
-        Command().handle()
-        self.assertEqual(User.objects.filter(username="charlie").count(), 0)
 
     def test_it_leaves_team_members_alone(self):
         self.bob.date_joined = self.year_ago
