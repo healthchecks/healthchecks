@@ -123,14 +123,14 @@ def set_plan(request):
     profile = request.user.profile
     if plan_id in ("P20", "Y192"):
         profile.ping_log_limit = 1000
-        profile.check_limit = 50
+        profile.check_limit = 100
         profile.team_limit = 9
         profile.sms_limit = 50
         profile.sms_sent = 0
         profile.save()
     elif plan_id in ("P80", "Y768"):
         profile.ping_log_limit = 1000
-        profile.check_limit = 500
+        profile.check_limit = 1000
         profile.team_limit = 500
         profile.sms_limit = 500
         profile.sms_sent = 0

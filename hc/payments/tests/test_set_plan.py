@@ -37,7 +37,7 @@ class SetPlanTestCase(BaseTestCase):
         # User's profile should have a higher limits
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.ping_log_limit, 1000)
-        self.assertEqual(self.profile.check_limit, 50)
+        self.assertEqual(self.profile.check_limit, 100)
         self.assertEqual(self.profile.team_limit, 9)
         self.assertEqual(self.profile.sms_limit, 50)
         self.assertEqual(self.profile.sms_sent, 0)
@@ -65,7 +65,7 @@ class SetPlanTestCase(BaseTestCase):
         # User's profile should have a higher limits
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.ping_log_limit, 1000)
-        self.assertEqual(self.profile.check_limit, 50)
+        self.assertEqual(self.profile.check_limit, 100)
         self.assertEqual(self.profile.team_limit, 9)
         self.assertEqual(self.profile.sms_limit, 50)
         self.assertEqual(self.profile.sms_sent, 0)
@@ -93,7 +93,7 @@ class SetPlanTestCase(BaseTestCase):
         # User's profile should have a higher limits
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.ping_log_limit, 1000)
-        self.assertEqual(self.profile.check_limit, 500)
+        self.assertEqual(self.profile.check_limit, 1000)
         self.assertEqual(self.profile.team_limit, 500)
         self.assertEqual(self.profile.sms_limit, 500)
         self.assertEqual(self.profile.sms_sent, 0)
