@@ -39,11 +39,18 @@
             </td>
             <td class="date"></td>
             <td class="time"></td>
+            <td class="text-right">
+                {% if event.fail %}
+                <span class="label label-danger">Failure</span>
+                {% else %}
+                <span class="label label-success">OK</span>
+                {% endif %}
+            </td>
             <td class="details">
                 <div>
                 {% if event.scheme == "email" %}
                     {{ event.ua }}
-                    <span>
+                    <span class="ua-body">
                         {% if event.body %}
                             -  {{ event.body|trunc }}
                         {% endif %}
@@ -54,7 +61,7 @@
                     {% if event.remote_addr %}
                     from {{ event.remote_addr }}
                     {% endif %}
-                    <span>
+                    <span class="ua-body">
                         {% if event.ua %}
                         - {{ event.ua }}
                         {% endif %}
@@ -74,7 +81,7 @@
             </td>
             <td class="date"></td>
             <td class="time"></td>
-            <td class="alert-info">
+            <td class="alert-info" colspan="2">
                 {% if event.channel.kind == "email" %}
                     Sent email alert to {{ event.channel.value }}
                 {% elif event.channel.kind == "slack" %}

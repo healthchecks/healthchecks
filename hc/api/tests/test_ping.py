@@ -1,4 +1,5 @@
 from django.test import Client, TestCase
+from django.utils.timezone import now
 
 from hc.api.models import Check, Ping
 
@@ -114,3 +115,24 @@ class PingTestCase(TestCase):
 
         self.check.refresh_from_db()
         self.assertTrue(self.check.has_confirmation_link)
+
+    def test_ping_resets_fail_flag(self):
+        self.check.last_ping_was_fail = True
+        self.check.save()
+
+        r = self.client.get("/ping/%s/" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertFalse(self.check.last_ping_was_fail)
+
+    def test_fail_endpoint_works(self):
+        r = self.client.get("/ping/%s/fail" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertTrue(self.check.last_ping_was_fail)
+        self.assertTrue(self.check.alert_after <= now())
+
+        ping = Ping.objects.latest("id")
+        self.assertTrue(ping.fail)

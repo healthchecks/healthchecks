@@ -27,6 +27,8 @@ DEFAULT_GRACE = td(hours=1)
 CHECK_KINDS = (("simple", "Simple"),
                ("cron", "Cron"))
 
+PING_KINDS = (("", "OK"), ("fail", "Fail"))
+
 CHANNEL_KINDS = (("email", "Email"),
                  ("webhook", "Webhook"),
                  ("hipchat", "HipChat"),
@@ -70,6 +72,7 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
+    last_ping_was_fail = models.NullBooleanField(default=False)
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
@@ -121,6 +124,9 @@ class Check(models.Model):
         if self.status in ("new", "paused"):
             return self.status
 
+        if self.last_ping_was_fail:
+            return "down"
+
         if now is None:
             now = timezone.now()
 
@@ -128,6 +134,11 @@ class Check(models.Model):
 
     def get_alert_after(self):
         """ Return the datetime when check potentially goes down. """
+
+        # For "fail" pings, sendalerts should the check right
+        # after receiving the ping, without waiting for the grace time:
+        if self.last_ping_was_fail:
+            return self.last_ping
 
         return self.get_grace_start() + self.grace
 
@@ -182,9 +193,10 @@ class Check(models.Model):
 
         return result
 
-    def ping(self, remote_addr, scheme, method, ua, body):
+    def ping(self, remote_addr, scheme, method, ua, body, is_fail=False):
         self.n_pings = models.F("n_pings") + 1
         self.last_ping = timezone.now()
+        self.last_ping_was_fail = is_fail
         self.has_confirmation_link = "confirm" in str(body).lower()
         self.alert_after = self.get_alert_after()
         if self.status in ("new", "paused"):
@@ -195,6 +207,7 @@ class Check(models.Model):
 
         ping = Ping(owner=self)
         ping.n = self.n_pings
+        ping.fail = is_fail
         ping.remote_addr = remote_addr
         ping.scheme = scheme
         ping.method = method
@@ -209,6 +222,7 @@ class Ping(models.Model):
     n = models.IntegerField(null=True)
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    fail = models.NullBooleanField(default=False)
     scheme = models.CharField(max_length=10, default="http")
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
     method = models.CharField(max_length=10, blank=True)

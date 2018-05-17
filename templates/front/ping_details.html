@@ -1,5 +1,9 @@
 <div class="modal-body">
-    <h3>Ping #{{ ping.n }}</h3>
+    <h3>Ping #{{ ping.n }}
+        {% if ping.fail %}
+        <span class="text-danger">(received via the <code>/fail</code> endpoint)</span>
+        {% endif %}
+    </h3>
 
     <div class="row">
         <div class="col-sm-6">
@@ -49,9 +53,9 @@
                 <span class="ua">{{ ping.ua }}</span>
             </p>
         </div>
-
         {% endif %}
     </div>
+
     {% if ping.body %}
         <h4>Request Body</h4>
         <pre>{{ ping.body }}</pre>

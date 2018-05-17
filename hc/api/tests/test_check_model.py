@@ -87,3 +87,13 @@ class CheckModelTestCase(TestCase):
 
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
+
+    def test_status_checks_the_fail_flag(self):
+        check = Check()
+        check.status = "up"
+        check.last_ping = timezone.now() - timedelta(minutes=5)
+        check.last_ping_was_fail = True
+
+        # The computed status should be "down" because last_ping_was_fail
+        # is set.
+        self.assertEqual(check.get_status(), "down")

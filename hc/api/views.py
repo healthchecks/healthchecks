@@ -18,7 +18,7 @@ from hc.lib.badges import check_signature, get_badge_svg
 
 @csrf_exempt
 @never_cache
-def ping(request, code):
+def ping(request, code, is_fail=False):
     check = get_object_or_404(Check, code=code)
 
     headers = request.META
@@ -29,7 +29,7 @@ def ping(request, code):
     ua = headers.get("HTTP_USER_AGENT", "")
     body = request.body.decode()
 
-    check.ping(remote_addr, scheme, method, ua, body)
+    check.ping(remote_addr, scheme, method, ua, body, is_fail)
 
     response = HttpResponse("OK")
     response["Access-Control-Allow-Origin"] = "*"
