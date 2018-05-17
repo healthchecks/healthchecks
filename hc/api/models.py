@@ -27,8 +27,6 @@ DEFAULT_GRACE = td(hours=1)
 CHECK_KINDS = (("simple", "Simple"),
                ("cron", "Cron"))
 
-PING_KINDS = (("", "OK"), ("fail", "Fail"))
-
 CHANNEL_KINDS = (("email", "Email"),
                  ("webhook", "Webhook"),
                  ("hipchat", "HipChat"),
