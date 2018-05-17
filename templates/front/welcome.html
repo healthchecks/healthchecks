@@ -1,22 +1,38 @@
 {% extends "base.html" %}
 {% load compress hc_extras humanize staticfiles %}
 
+{% block description %}
+    <meta name="description" content="Monitoring for your nightly backups, weekly reports, cron jobs and background tasks. Receive alerts when your tasks don't run on time.">
+{% endblock %}
+
 {% block containers %}
 <div class="index-bleed">
 <div class="container">
     <div class="row">
     <div class="col-sm-12">
-        <h1 id="pitch">Cron Monitoring. Get Notified When Your Cron Jobs Fail.</h1>
+        <h1 id="pitch">
+            Monitoring for your nightly backups,
+            weekly reports, cron jobs and background tasks.</h1>
     </div>
     </div>
 
     <div class="row">
     <div class="col-sm-6 col-sm-push-6">
-        <p id="pitch-text">Make a HTTP GET request to this address from your cron job, daemon, script or long running task.
-        <strong>When this address is not requested for a set time period, you will get alerted.</strong> Below are snippets that are ready to be copy/pasted into your own scripts.</p>
+        <p id="pitch-text">
+            Make HTTP requests to the Ping URL at regular intervals.
+            <strong>
+                When the URL is not pinged on time,
+                {% site_name %} will send you an alert.
+            </strong>
+
+            You can monitor any service that can make HTTP requests
+            or send emails.
+        </p>
     </div>
     <div class="col-sm-6 col-sm-pull-6">
-        <h2 id="pitch-subtitle">Here's a unique ping address for you:</h2>
+        <h2 id="pitch-subtitle">
+            {% site_name %} creates unique Ping URLs like this one:
+        </h2>
         <div id="pitch-url">
             <input
                 id="pitch-url-input"
@@ -27,7 +43,6 @@
         </div>
     </div>
     </div>
-
 
     <div class="row">
         <div class="col-sm-12">
@@ -90,7 +105,7 @@
                 </div>
                 <div class="tab-pane tab-pane-email" id="email">
                     <p>
-                        As an alternative to HTTP/HTTPS requests,
+                        As an alternative to HTTP and HTTPS requests,
                         you can "ping" this check by sending an
                         email message to
                         <a href="mailto:{{ check.email }}">{{ check.email }}</a>
@@ -125,7 +140,7 @@
 
                 <div class="clearfix">
                     <button type="submit" class="btn btn-lg btn-primary pull-right">
-                        Get Started
+                        Set up my Ping URLs…
                     </button>
                 </div>
             </form>
@@ -402,7 +417,7 @@
 
                         <div class="clearfix">
                             <button type="submit" class="btn btn-lg btn-primary pull-right">
-                                Get Started
+                                Sign up for free
                             </button>
                         </div>
                     </form>
