@@ -48,14 +48,24 @@ def last_ping_key(check):
     return check.last_ping.isoformat() if check.last_ping else "9999"
 
 
+def not_down_key(check):
+    return check.get_status() != "down"
+
+
 @register.filter
 def sortchecks(checks, key):
+    """Sort the list of checks in-place by given key, then by status=down. """
+
     if key == "created":
         checks.sort(key=lambda check: check.created)
     elif key.endswith("name"):
         checks.sort(key=natural_name_key, reverse=key.startswith("-"))
     elif key.endswith("last_ping"):
         checks.sort(key=last_ping_key, reverse=key.startswith("-"))
+
+    # Move failed checks to the beginning. Sorts in python are stable
+    # so this does not mess up the previous sort.
+    checks.sort(key=not_down_key)
 
     return checks
 

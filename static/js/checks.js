@@ -192,6 +192,7 @@ $(function () {
         return false;
     });
 
+    // Filtering by tags
     $("#my-checks-tags button").click(function() {
         // .active has not been updated yet by bootstrap code,
         // so cannot use it
@@ -238,12 +239,19 @@ $(function () {
     });
 
     $('[data-toggle="tooltip"]').tooltip({
+        html: true,
         title: function() {
             var cssClasses = this.getAttribute("class");
             if (cssClasses.indexOf("icon-new") > -1)
                 return "New. Has never received a ping.";
             if (cssClasses.indexOf("icon-paused") > -1)
                 return "Monitoring paused. Ping to resume.";
+
+            if (cssClasses.indexOf("sort-name") > -1)
+                return "Sort by name<br />(but failed always first)";
+
+            if (cssClasses.indexOf("sort-last-ping") > -1)
+                return "Sort by last ping<br />(but failed always first)";
         }
     });
 

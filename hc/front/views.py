@@ -24,6 +24,7 @@ from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
                             AddOpsGenieForm, CronForm, AddSmsForm)
 from hc.front.schemas import telegram_callback
+from hc.front.templatetags.hc_extras import sortchecks
 from hc.lib import jsonschema
 from pytz import all_timezones
 from pytz.exceptions import UnknownTimeZoneError
@@ -58,6 +59,7 @@ def my_checks(request):
         request.profile.save()
 
     checks = list(Check.objects.filter(user=request.team.user))
+    sortchecks(checks, request.profile.sort)
 
     pairs = list(_tags_statuses(checks).items())
     pairs.sort(key=lambda pair: pair[0].lower())
