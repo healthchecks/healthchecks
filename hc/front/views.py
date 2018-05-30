@@ -838,7 +838,9 @@ def telegram_bot(request):
     except ValueError:
         return HttpResponseBadRequest()
     except jsonschema.ValidationError:
-        return HttpResponseBadRequest()
+        # We don't recognize the message format, but don't want Telegram
+        # retrying this over and over again, so respond with 200 OK
+        return HttpResponse()
 
     if "/start" not in doc["message"]["text"]:
         return HttpResponse()

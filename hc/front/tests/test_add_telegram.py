@@ -61,7 +61,7 @@ class AddTelegramTestCase(BaseTestCase):
             "message": {"chat": {"id": 123, "type": "group"}}
         }))
 
-        # bad message type
+        # bad chat type
         samples.append(json.dumps({
             "message": {
                 "chat": {"id": 123, "type": "invalid"},
@@ -73,4 +73,10 @@ class AddTelegramTestCase(BaseTestCase):
             r = self.client.post("/integrations/telegram/bot/", sample,
                                  content_type="application/json")
 
-            self.assertEqual(r.status_code, 400)
+            if sample == "":
+                # Bad JSON payload
+                self.assertEqual(r.status_code, 400)
+            else:
+                # JSON decodes but message structure not recognized
+                self.assertEqual(r.status_code, 200)
+
