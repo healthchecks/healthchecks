@@ -71,7 +71,7 @@ def my_checks(request):
         "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": all_timezones,
-        "can_add_more": len(checks) < request.team.check_limit,
+        "num_available": request.team.check_limit - len(checks),
         "sort": request.profile.sort
     }
 

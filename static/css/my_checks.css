@@ -163,3 +163,9 @@
     border-top: 1px solid #ddd;
 }
 
+.add-check-note {
+    color: #888;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12px;
+}

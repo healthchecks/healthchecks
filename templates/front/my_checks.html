@@ -36,11 +36,16 @@
 </div>
 <div class="row">
     <div class="col-sm-12">
-        {% if can_add_more %}
-        <form method="post" action="{% url 'hc-add-check' %}" class="text-center">
-            {% csrf_token %}
-            <input type="submit" class="btn btn-primary btn-lg" value="Add Check">
-        </form>
+        {% if num_available > 0 %}
+            <form method="post" action="{% url 'hc-add-check' %}" class="text-center">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-primary btn-lg" value="Add Check">
+            </form>
+            {% if num_available <= 10 %}
+            <div class="add-check-note">
+                ({{ checks|length }} in use, {{ num_available }} available)
+            </div>
+            {% endif %}
         {% else %}
             <div class="alert alert-info">
                 <strong>Check limit reached.</strong>
