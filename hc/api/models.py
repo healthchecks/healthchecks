@@ -146,6 +146,9 @@ class Check(models.Model):
         if self.status in ("new", "paused"):
             return False
 
+        if self.last_ping_was_fail:
+            return False
+
         grace_start = self.get_grace_start()
         grace_end = grace_start + self.grace
         return grace_start < timezone.now() < grace_end

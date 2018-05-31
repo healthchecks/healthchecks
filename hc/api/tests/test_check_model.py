@@ -20,6 +20,16 @@ class CheckModelTestCase(TestCase):
         check = Check()
         self.assertFalse(check.in_grace_period())
 
+    def test_in_grace_period_handles_fail_ping(self):
+        check = Check()
+        check.status = "up"
+        check.last_ping = timezone.now() - timedelta(days=1, minutes=30)
+        check.last_ping_was_fail = True
+
+        # If last ping was signalling a failure, we're not in grace period,
+        # we're down
+        self.assertFalse(check.in_grace_period())
+
     def test_status_works_with_grace_period(self):
         check = Check()
         check.status = "up"
