@@ -15,11 +15,18 @@
 <h2>Summary</h2>
 <p>
 Each check in <a href="{% url 'hc-index' %}">My Checks</a>
-page has an unique "ping" URL. Whenever you access this URL,
-the "Last Ping" value of corresponding check is updated.
+page has a unique "ping" URL. Whenever you make a HTTP request to this URL,
+{% site_name %} records the request and updates the "Last Ping" value of
+the corresponding check.
 </p>
-<p>When a certain amount of time passes since last received ping, the
-check is considered "late", and {% site_name %} sends an email alert.
+
+<p>When a certain, configurable amount of time passes since last received ping,
+the check is considered "late". {% site_name %} then
+waits for additional time (configured with the "Grace Time" parameter) and,
+if still no ping, sends you an alert.</p>
+
+<p>As long as the monitored service sends pings on time, you receive no
+alerts. As soon as it fails to check in on time, you get notified.
 It is a simple idea.</p>
 
 <h2>Executing a Ping</h2>
@@ -28,18 +35,32 @@ It is a simple idea.</p>
     your ping URL.
 </p>
 <ul>
-    <li>HTTP and HTTPS protocols both are fine</li>
+    <li>HTTP and HTTPS protocols both work.
+        Prefer HTTPS, but on old systems you may need to fall back to HTTP.</li>
     <li>Request method can be GET, POST or HEAD</li>
     <li>Both IPv4 and IPv6 work</li>
-    <li>It does not matter what request headers you send, or what you put in request body.</li>
+    <li>
+        For HTTP POST requests, you can include additional diagnostic information
+        for your own reference in the request body. If the request body looks
+        like a UTF-8 string, {% site_name %} will log the first 10 kilobytes
+        of the request body, so you can inspect it later.
+    </li>
 </ul>
 
 <p>The response will have status code "200 OK" and response body will be a
 short and simple string "OK".</p>
 
+<h2>Signalling a Failure</h2>
 <p>
-    Here are examples of executing pings from different environments.
+    Append <code>/fail</code> to a ping URL and use it to actively signal a
+    failure. Requesting the <code>/fail</code> URL will immediately mark the
+    check as "down". You can use this feature to minimize the delay from
+    your monitored service failing to you getting a notification.
 </p>
+<p>Below is a skeleton code example in Python which signals a failure when the
+work function returns an unexpected value or throws an exception:</p>
+
+{% include "front/snippets/python_requests_fail.html" %}
 
 <a name="crontab"></a>
 <h3>Crontab</h3>

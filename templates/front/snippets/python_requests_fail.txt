@@ -1,0 +1,16 @@
+import requests
+URL = "PING_URL"
+
+def do_work():
+    # Do actual work here.
+    # Return a truthy value on success.
+    # Return a falsy value or throw an exception on failure.
+    return True
+
+success = False
+try:
+    success = do_work()
+finally:
+    # On success, requests PING_URL
+    # On failure, requests PING_URL/fail
+    requests.get(URL if success else URL + "/fail")
