@@ -2,7 +2,7 @@ import requests
 URL = "PING_URL"
 
 def do_work():
-    # Do actual work here.
+    # Do your number crunching, backup dumping, newsletter sending work here.
     # Return a truthy value on success.
     # Return a falsy value or throw an exception on failure.
     return True

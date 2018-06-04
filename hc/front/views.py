@@ -24,7 +24,7 @@ from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
                             AddOpsGenieForm, CronForm, AddSmsForm)
 from hc.front.schemas import telegram_callback
-from hc.front.templatetags.hc_extras import sortchecks
+from hc.front.templatetags.hc_extras import num_down_title, sortchecks
 from hc.lib import jsonschema
 from pytz import all_timezones
 from pytz.exceptions import UnknownTimeZoneError
@@ -35,9 +35,10 @@ VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 
 
 def _tags_statuses(checks):
-    tags, down, grace = {}, {}, {}
+    tags, down, grace, num_down = {}, {}, {}, 0
     for check in checks:
         if check.get_status() == "down":
+            num_down += 1
             for tag in check.tags_list():
                 down[tag] = "down"
         elif check.in_grace_period():
@@ -49,7 +50,7 @@ def _tags_statuses(checks):
 
     tags.update(grace)
     tags.update(down)
-    return tags
+    return tags, num_down
 
 
 @login_required
@@ -61,12 +62,14 @@ def my_checks(request):
     checks = list(Check.objects.filter(user=request.team.user))
     sortchecks(checks, request.profile.sort)
 
-    pairs = list(_tags_statuses(checks).items())
+    tags_statuses, num_down = _tags_statuses(checks)
+    pairs = list(tags_statuses.items())
     pairs.sort(key=lambda pair: pair[0].lower())
 
     ctx = {
         "page": "checks",
         "checks": checks,
+        "num_down": num_down,
         "now": timezone.now(),
         "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
@@ -93,7 +96,12 @@ def status(request):
             "last_ping": render_to_string("front/last_ping_cell.html", ctx)
         })
 
-    return JsonResponse({"details": details, "tags": _tags_statuses(checks)})
+    tags_statuses, num_down = _tags_statuses(checks)
+    return JsonResponse({
+        "details": details,
+        "tags": tags_statuses,
+        "title": num_down_title(num_down)
+    })
 
 
 def _welcome_check(request):

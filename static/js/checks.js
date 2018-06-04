@@ -297,6 +297,11 @@ $(function () {
                         this.setAttribute("class", "btn btn-xs " + status);
                     }
                 });
+
+                if (document.title != data.title) {
+                    document.title = data.title;
+                }
+
             }
         });
     }

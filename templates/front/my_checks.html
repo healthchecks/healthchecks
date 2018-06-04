@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% load compress staticfiles hc_extras %}
 
-{% block title %}My Checks - {% site_name %}{% endblock %}
-
+{% block title %}{{ num_down|num_down_title }}{% endblock %}
 
 {% block content %}
 <div class="row">
