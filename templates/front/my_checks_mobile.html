@@ -1,6 +1,6 @@
 {% load hc_extras humanize %}
 
-<ul id="checks-list" class="visible-xs">
+<ul id="checks-list" class="visible-xs visible-sm">
     {% for check in checks %}
     <li>
         <h2>
@@ -8,7 +8,9 @@
                 {{ check.name|default:"unnamed" }}
             </span>
 
-            <code>{{ check.code }}</code>
+            <code>
+                <span class="base hidden-xs">{{ ping_endpoint }}</span>{{ check.code }}
+            </code>
         </h2>
 
         <a
@@ -42,7 +44,7 @@
                 </td>
             </tr>
             {% endif %}
-            {% if check.kind == "simple " %}
+            {% if check.kind == "simple" %}
             <tr>
                 <th>Period</th>
                 <td>{{ check.timeout|hc_duration }}</td>

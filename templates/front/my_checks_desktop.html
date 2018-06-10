@@ -1,5 +1,5 @@
-{% load hc_extras %}
-<table id="checks-table" class="table hidden-xs">
+{% load hc_extras staticfiles %}
+<table id="checks-table" class="table hidden-xs hidden-sm">
     <tr>
         <th></th>
         <th class="th-name">
@@ -18,6 +18,7 @@
             {% endif %}
         </th>
         <th>Ping URL</th>
+        <th class="th-integrations">Integrations</th>
         <th class="th-period">
             Period <br />
             <span class="checks-subline">Grace</span>
@@ -69,8 +70,26 @@
                 copy
             </button>
         </td>
+        <td class="integrations-cell">
+            {% if channels|length < 8 %}
+                <div class="integrations">
+                {% spaceless %}
+                {% for channel in channels %}
+                    <img
+                        data-toggle="tooltip"
+                        data-url="{% url 'hc-switch-channel' check.code channel.code %}"
+                        title="{{ channel }}"
+                        src="{{ channel.icon_url }}"
+                        {% if channel in check.channel_set.all %}{% else %}class="off"{% endif %} />
+                {% endfor %}
+                {% endspaceless %}
+                </div>
+            {% else %}
+                {{ check.channel_set.all|length }} of {{ channels|length }}
+            {% endif %}
+        </td>
         <td class="timeout-cell">
-            <span
+            <div
                 data-url="{% url 'hc-update-timeout' check.code %}"
                 data-kind="{{ check.kind }}"
                 data-timeout="{{ check.timeout.total_seconds }}"
@@ -87,7 +106,7 @@
                 <span class="checks-subline">
                 {{ check.grace|hc_duration }}
                 </span>
-            </span>
+            </div>
         </td>
         <td id="lpd-{{ check.code}}" class="last-ping-cell">
             {% include "front/last_ping_cell.html" with check=check %}

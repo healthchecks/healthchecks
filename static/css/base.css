@@ -48,9 +48,13 @@ body {
     }
 }
 
-
 .navbar-text {
     font-size: small;
+}
+
+.page-checks .container-fluid {
+    /* Fluid below 1320px, but max width capped to 1320px ... */
+    max-width: 1320px;
 }
 
 .status {

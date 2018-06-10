@@ -59,16 +59,20 @@ def my_checks(request):
         request.profile.sort = request.GET["sort"]
         request.profile.save()
 
-    checks = list(Check.objects.filter(user=request.team.user))
+    checks = list(Check.objects.filter(user=request.team.user).prefetch_related("channel_set"))
     sortchecks(checks, request.profile.sort)
 
     tags_statuses, num_down = _tags_statuses(checks)
     pairs = list(tags_statuses.items())
     pairs.sort(key=lambda pair: pair[0].lower())
 
+    channels = Channel.objects.filter(user=request.team.user)
+    channels = list(channels.order_by("created"))
+
     ctx = {
         "page": "checks",
         "checks": checks,
+        "channels": channels,
         "num_down": num_down,
         "now": timezone.now(),
         "tags": pairs,
@@ -102,6 +106,25 @@ def status(request):
         "tags": tags_statuses,
         "title": num_down_title(num_down)
     })
+
+
+@login_required
+@require_POST
+def switch_channel(request, code, channel_code):
+    check = get_object_or_404(Check, code=code)
+    if check.user_id != request.team.user.id:
+        return HttpResponseForbidden()
+
+    channel = get_object_or_404(Channel, code=channel_code)
+    if channel.user_id != request.team.user.id:
+        return HttpResponseForbidden()
+
+    if request.POST.get("state") == "on":
+        channel.checks.add(check)
+    else:
+        channel.checks.remove(check)
+
+    return HttpResponse()
 
 
 def _welcome_check(request):

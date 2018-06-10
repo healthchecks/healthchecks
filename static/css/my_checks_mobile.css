@@ -57,3 +57,7 @@
 .label-down {
     background-color: #d9534f;
 }
+
+#checks-list .base {
+    color: #888;
+}

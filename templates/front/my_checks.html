@@ -5,15 +5,6 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-12">
-        <h1>
-        {% if request.team == request.user.profile %}
-            My Checks
-        {% else %}
-            {{ request.team.team_name }}
-        {% endif %}
-        </h1>
-    </div>
     {% if tags %}
     <div id="my-checks-tags" class="col-sm-12">
         {% for tag, status in tags %}
@@ -99,7 +90,7 @@
                                     class="form-control" />
 
                                 <span class="help-block">
-                                    Optionally, assign tags for easy filtering.
+                                    Use tags for easy filtering and for status badges.
                                     Separate multiple tags with spaces.
                                 </span>
                             </div>

@@ -175,6 +175,19 @@ $(function () {
         return false;
     });
 
+    $(".integrations img").click(function() {
+        var isOff = $(this).toggleClass("off").hasClass("off");
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            url: this.dataset.url,
+            type: "post",
+            headers: {"X-CSRFToken": token},
+            data: {"state": isOff ? "off" : "on"}
+        });
+
+        return false;
+    });
+
     $(".last-ping-cell").on("click", ".last-ping", function() {
         $("#ping-details-body").text("Updating...");
         $('#ping-details-modal').modal("show");
@@ -191,6 +204,7 @@ $(function () {
 
         return false;
     });
+
 
     // Filtering by tags
     $("#my-checks-tags button").click(function() {

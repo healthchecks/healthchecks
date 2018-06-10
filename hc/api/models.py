@@ -240,6 +240,23 @@ class Channel(models.Model):
     email_verified = models.BooleanField(default=False)
     checks = models.ManyToManyField(Check)
 
+    def __str__(self):
+        if self.kind == "email":
+            return "Email to %s" % self.value
+        elif self.kind == "sms":
+            if self.sms_label:
+                return "SMS to %s" % self.sms_label
+            return "SMS to %s" % self.sms_number
+        elif self.kind == "slack":
+            return "Slack %s" % self.slack.channel
+        elif self.kind == "telegram":
+            return "Telegram %s" % self.telegram_name
+
+        return self.get_kind_display()
+
+    def icon_url(self):
+        return settings.STATIC_URL + "img/integrations/%s.png" % self.kind
+
     def assign_all_checks(self):
         checks = Check.objects.filter(user=self.user)
         self.checks.add(*checks)
