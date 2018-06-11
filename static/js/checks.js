@@ -231,14 +231,14 @@ $(function () {
 
 
     // Filtering by tags
-    $("#my-checks-tags button").click(function() {
+    $("#my-checks-tags div").click(function() {
         // .active has not been updated yet by bootstrap code,
         // so cannot use it
         $(this).toggleClass('checked');
 
         // Make a list of currently checked tags:
         var checked = [];
-        $("#my-checks-tags button.checked").each(function(index, el) {
+        $("#my-checks-tags .checked").each(function(index, el) {
             checked.push(el.textContent);
         });
 
@@ -331,11 +331,13 @@ $(function () {
                     }
                 }
 
-                $("#my-checks-tags button").each(function(a) {
+                $("#my-checks-tags div").each(function(a) {
                     var status = data.tags[this.innerText];
-                    if (status) {
-                        this.setAttribute("class", "btn btn-xs " + status);
-                    }
+                    if (lastStatus[this.innerText] == status)
+                        return;
+
+                    $(this).removeClass("up grace down").addClass(status);
+                    lastStatus[this.innerText] = status;
                 });
 
                 if (document.title != data.title) {

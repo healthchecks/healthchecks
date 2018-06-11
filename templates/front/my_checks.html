@@ -8,7 +8,7 @@
     {% if tags %}
     <div id="my-checks-tags" class="col-sm-12">
         {% for tag, status in tags %}
-            <button class="btn btn-xs {{ status }}" data-toggle="button">{{ tag }}</button>
+            <div class="btn btn-xs {{ status }}">{{ tag }}</div>
         {% endfor %}
     </div>
     {% endif %}

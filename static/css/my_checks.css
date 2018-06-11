@@ -1,20 +1,30 @@
-#my-checks-tags button.up {
+#my-checks-tags div {
+    margin-bottom: 4px;
+}
+
+#my-checks-tags .up {
     color: #333;
     background-color: #fff;
     border-color: #ccc;
 }
 
-#my-checks-tags button.grace {
+#my-checks-tags .grace {
     color: #fff;
     background-color: #f0ad4e;
     border-color: #eea236;
 }
 
-
-#my-checks-tags button.down {
+#my-checks-tags .down {
     color: #fff;
     background-color: #d9534f;
     border-color: #d43f3a;
+}
+
+#my-checks-tags .checked {
+    box-shadow: 0 0 3px #ddd;
+    background: #333;
+    color: #eee;
+    border-color: #000;
 }
 
 @media (min-width: 992px) {
