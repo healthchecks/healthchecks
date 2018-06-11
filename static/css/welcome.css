@@ -69,6 +69,11 @@
     height: 22px;
 }
 
+.welcome-integrations span {
+    display: inline-block;
+    font-size: 22px;
+}
+
 .page-welcome .tab-content {
     border: 1px solid #ddd;
     border-top: 0;

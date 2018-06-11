@@ -275,17 +275,13 @@
 
         <table class="table welcome-integrations">
             <tr>
-                <td>
-                    <img width="22" height="22" alt="Email icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsBAMAAADsqkcyAAAAGFBMVEVQXHNZZ3x6iJeQnKmrtb/P1trm6+79//zYm1FBAAABUElEQVQoz41TPXODMAyVHaBrPq5lpUOTtUysWVpWeleONe31wpqUgP5+JUtOY3q+qxbsh/z09AUoNr0/Aqxfer2CfC4Esq3rW3hcgprpfuGxgKvZ7grv4cYSDw8QWKVwEcJWYHHevCJ+ld4dlPlehL0pO+DIpwXisW2PiM986wj+lsPnCmC1FacdwQ19U6+m0isgJ9hNmqbp2d0gXBzzwavLHHsNTJ3zk03blqY0eGZy+GCOQZLApxEqZnmAhqkOHGyiYo/EQi9T2DN1Qc4UpKYKWyZPgAqSkI6cK2MJNj05WqAnGcEVK4KaYWI0fLmjKN1JTks9edgpz/4LC8nk4TAk+pChQGxUYJhOP2g6QfJDjltJPihVsUCUUgWFZR4p7KwNVtsQNo1FuKaFLRZL5wMhf3fz8XG5uvGJDFtsNCODHBv7yJLEViqygLF1/bPcP/n9sQPNd1oyAAAAAElFTkSuQmCC" />
-                </td>
+                <td><span class="icon-email"></span></td>
                 <td>Good old email messages.</td>
             </tr>
 
             {% if enable_sms %}
             <tr>
-                <td>
-                    <img width="22" height="22" alt="Email icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAYAAAAehFoBAAAFHElEQVRYw+2Ya2xURRSAv5m72+32wbbYgpSUElqUCPgAohJgoSgQpZHERIlK4gNisEL4IyEm/uCHYoIxhoeERKLiO8QEJBhJoVBKmhAoUihQ5WlTlmK3pbuw7733jj/AS7fbUkqV7iacP3cy99yTb86cOefcgfvy/4roafKz/bPyHDbb0MEEc4iwd/H0uuu9An+1f1ZmWNpXKNTbwJgUcegfCD73Gvrm1eU1ugW8/tBzQ7RofDcwNUUjoSrL1Be8WV4TkQBaLL4lhWEB5oak7VMAsf7gvMc002hIg/NmKN0sldIw56dJgtCkTc6TQqjidElpCkZJoZQtfZKwsN8RbLajgPEjKsjPKsah5RDVA1wN/cWxlm3oZhR32XKc9jwADjd/TWeoxfo2KyOfGaXLbnpIUdX0IQAZtmzGj6igILsUp91FzAjhD3s44dlOMNbRK0ufwEWuR6mYuAabdCTMl+Km6cpuAlEvJUOfIjdzOAD+iIdDF7+8pVcwk9JCt7WpVU3gchbx4uPrrEV2lUu+Y7cFln0BTypemABrKv22+mMLZycU0IeGzU7SmVC0IAG2L5v98vDQ7NHW+JcT7+HxHceuOXlwyCNE9WCSfm7mcEa4xtPqP4nLWcTwIeOSbWaVWOMDZ9dxqnUXmsygMKeMQNR7W54+PSzFrTWFYp0AxI0wLZ1HiRuhXrxc3uUperCpJdk0zBhXrp0eOPD1yN/WeM649ynIKetVNxK/BkBZ4UyksDH2ZjhE4v5Em9E2azyjrJJR+VPuOCT6BG649PONDAgU5JTx0qRNzH54JVkZyc2cP+whqgfItLuYVLyQ/KxRmMrAGziXoNfo2YFhxgHIcQyjYuLHzJ/wEflZxQMHPt9eS1XTGmvrBIJxw+fyypQtSd522HO50H4QgCkli26c+s6jCWEF4A2cZWfjKvxhjzVXMvRJXp60mdEPTB0YMMA5bw3fH3mdI83fopvRG3C2XJ4e/VaCnl1zcqZtX0Lsn2nbh11zJtls9TfyY/0Sas9tsEJGkxnMKH134MD/HrQjzd/w68kPrLn8rFGJxV7Yuew7bh2cuBHhYkcdmrT3aNNUOicv72Tb75WYyrCyTPec3++05g97rJgLx31dKqXood4rqv9ci8s5klCsg7gRSdLJcxYTjHVYWSZmBDGVnpA97hp42piljHBNIBBtQzdiCQejawbpKh5fAx5f7x3rxKIXGF9UwfVIGzEjiMs50vJqOO6zwu6ugAFs0kGes7jbdhocbfnprvsYKWy4nEVJ8/XN3w3Mwxc76rDJDLIdBdikg2Csg/bAeRo922kPXgCgI3SRiH6NWA+VD6Az1IypdJRSN/uFBvKzS8h1DMOuOQnH/XSGmjnVuguP7/jtG7ZNNc98oYRYkibt5VqppFBp08ArpaRSXE2jS5R2KZSsSxdgKcxa6VWx34AzqfgD1032v+Ped1iuLq/RTVO8BgRS+BLtrKmJRVZpXl6+p96Q2nSgPsWcHFOKDaGIfGL59D2Xk9ahFGJjzZzJUpqTBTLvZql1A893360uHzYJxNb/GtaU5qlwSNu/cl5VsM/by66ysfbZlUKxtpfXHqWb05Y9s6/5Xnl9IHcSHZpQc5feQ9h+tZfdJGwKsWCpu/r0vY7ru/GwIYR6dbl776Dk7/56WAnU4kp39Y5BKx79pF1VObN6K4Mo/QHeuMy995NBL893mMB/8Lqnr0iJfqIvBQ3zgD27843VYrXJfbkvqSf/AF8f89OScY4/AAAAAElFTkSuQmCC" />
-                </td>
+                <td><span class="icon-sms"></span></td>
                 <td>SMS text messages.</td>
             </tr>
             {% endif %}
@@ -306,9 +302,7 @@
 
             {% if enable_pushover %}
             <tr>
-                <td>
-                    <img width="22" height="22" alt="Pushover icon" src="data:image/gif;base64,R0lGODdhLAAsAMIIABic9Deo9E6x9XXD96rZ+sjn/O/4/v7//CwAAAAALAAsAAAD/ni63FZkiABAEIMU07r/iiFUZGkKHKgyBWW+b1CsoAjfMEo3BO7DhJ1i8CuagjSicVkZrJTLwcbAoRagJOenZxQgDwXIZtE6egxGmeL6+qJNKcbopzW4KgHoFwsQNApFMwdcBFQhJH5rL4IKdzeCXAENc30LbyWShz6Cl18HlwBaYDCClDCilHEHWIxcJ58/Ka6eB5hyMJKAOKJ3qq4AX7qkv4sLLonGJJlDu3wmnCSqwgCtPhc+WlzIjVmWjjHfLxhKjLBN3j/h1pPnikxLnmhqn8TWTA5xBOo310a0BBEmvLPg7IavgSYC1DvVYF+UaTikIXwG6sa2Aw7TKDBFW4pBRYSJPpa4yBEhI4fxJtoig4OHShLlDpQE1uBlhYvm4DBY+E7VAmICwgjNGAgET5vtQBREKkrFUpVNVxwdGJOGjZc6hPwhiquqVjIC0wX9uuNKgLN4zkr5mgAAOw==" />
-                </td>
+                <td><span class="icon-po"></span></td>
                 <td>Instant push notifications with <a href="https://pushover.net/">Pushover</a>.</td>
             </tr>
             {% endif %}
@@ -333,48 +327,36 @@
 
             {% if enable_pd %}
             <tr>
-                <td>
-                    <img width="22" height="22" alt="PagerDuty icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAIAAACR5s1WAAAEcElEQVRYw+1Ya0wcVRQ+9zEDKwtlWRp5tA1gISywtNH+tFqN0gZTU1MVTRtjfSRtolFTIw2VIi19aSPRvyZqfZDUxmj6UtKUaKPGGKOmlAUtYGpg2WV3h2IR2tmZe/wBuzu7MAPZwq4/PJlsZu+9c+53v3Pudx8EEcFg3Zc9Xd986/H0KWNjCVW3aISQPIejuqpyw73ra901cVXRnhRl7MCho/0Df8qyBEtpYU0rKylpeX2Pw5EbB2JgYHB3417GGKTKNE1rP3akrLRkBkRIGXvm+V2pRBDFceLTD202GwWA/QePpB4BAHDOd734CgDw7ss9/f2DS50HZjY+/rfP52flla6h4WFIn13p72fFq0onJ6fSCCIUUriiKAAIaTUuRJoRAABfXFlMEsRiOTIbDCHklphAJI6KgGS/mViu08CvxYQJY+E96++22WwJHWq69tXX5yWJz8uEKYjcshCTtZJNfTwzHD84zHd7PcfXUT6Do6K8XFFCrfv2yrKc4MRdXXWs/R1rMaSIYPYInbq2//zHiTU3lNtuGp6poN3346qaZ38SGpluCQCH21obm/aN+PxDw97oc/XqX53nL+x5bbeuC4uOuOX8RKFT1/ZfLr5azzI1Y5g2tJ8WGlu+1hvsLgAABASAQwdaNm1+JMNABufSuVOfA8BHn3T4fH6LnLDItZlfwgXhhgwQBDUGCCjIzOc4vSDpsiRLkhFEJBuQWHRkxQRGqhBxzmYIkXIEk5Zm7wtmgmDsa2Oz2e8xuPFTFWMeMFkmYj5mMUEwwjDGOiMz/+YYPSbLBBAgBMYHHVmF15msx1JCp4FLty+v9cdwEgQAj6eXMWp0qOt6j6evuqoSLJkgGx/aYlaXVfBPxrKp1Q//bnMmLrPqhNzb4SYMx67kAcCK4mJVVX2jo3SWPgohVq5cEVbV0UAwmXAQohOKE95syR4mhmaIZMKbfX0oR1dphGiRk5Pt8/uA0FlOIHdZTiAQSjIcVBbuHb+pE3LXy3XGcAABJmtgGHNWlv3dt98MBIIN2542ijSl9MyXn3HOdzy3M8nEBEBEQrmgsmYUq7mnM0BmZoZAHYAZQJCIVGCyiYlRnYB5FvxoS2EyRS09WIsVMQx04duORRUrALFAJjDG2aKLlQBTsbJaa4zzSEQEQ1gzgZZihYEeJ5U1613gdGVLa9vFrs64Y2c4vPOFl558/NGRkRGLLRYrvaPCrM7muEFlcemDGsLmoSHf6fzu+x/eOnow0TtjRQWFTc2tZJZ+xA32/rp6U53gQlcZoQsJBD7R8FhYVROFVVVPnTlHKZ3n1uC+B+v/C7vt/88d03FfyLlgyZlw5uUFgsE0M7F2TW16EbgqK+nGugdUVcX0WXNTI113153l5avTRYPdbi8qKiSIGAwpm7dslaRU3xgRQi50nuWcUwDId+Ydf/+9cDicyigAwMmOj6e3PLHL1MnJyYZtT127Np6aKJz+4mT0fEYSxGp42Lu/7XBPb++S8A/gcrneaG4qKio0lv8LIahMKT/4QwUAAAAASUVORK5CYII=" />
-                </td>
+                <td><span class="icon-pd"></span></td>
                 <td>Open and resolve incidents in <a href="https://www.pagerduty.com/">PagerDuty</a>.</td>
             </tr>
             {% endif %}
 
             <tr>
-                <td>
-                    <img width="22" height="22" alt="PagerTree icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAMAAADzapwJAAACW1BMVEVMaXEpr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Uor+Upr+Upr+Upr+Uor+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Uor+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Upr+Uor+Upr+UrsOUor+Upr+Upr+Upr+Upr+Upr+Upr+UssOUpr+Upr+Upr+Upr+Upr+Upr+U4tOcpr+Upr+Uor+UmruV6zO9QveossOVIuulNvOmW1/ElruUoruUuseY0s+Y3tOc7tedBt+hCuOhLu+lVv+pgw+x2y+98ze+Az++Cz++J0vCV1/GY2PKv4fWx4fW65fYqr+UtsOUtseYvseY5tec/tuhHuulKuulKu+lRvepSvupTvupcwetvyO5wye51yu5+zu+H0fCL0/CR1fGU1vGo3vSr3/S+5vYrsOUwsuYzsuYzs+Y1s+Y2tOc6tec7tuc9tuc+tuhCt+hDuOhEuehFuehHuelHuuhMu+lOvOlPvOlPvOpPvepRvupUv+pWv+pZwOtfwutgwuthw+xjxOxkxOxnxextyO1tyO5uyO1vyO1vye1xye5zyu50yu53y+94y+55zO55zO+Bz++D0O+F0O+G0e+H0vCI0vCO1PCO1PGP1PCP1fGS1fGV1vGU1/GX1/Kc2fKd2vKf2/Og2/Oj3POk3fOl3fOm3fSm3vSn3vOn3vSy4vW04/W24/W24/a75fbF6fh3jVHtAAAASXRSTlMAAgMEBQYHCAoLDhkaGy8wMTQ1OjtKWltfaG1tcXqEhYiLjY6Pl5mao6OkqKutubzLzNLT2NnZ3d3q6u/w8vP19/j5+vv8/f3+chuXrQAAAcJJREFUeNpjYAABRj4pXSNTUwN1cR4GBOCRNXb2BANbfTFOmKigHkQwHUTYqfJCRIUMPb2DPT29c6rzvLyCPN00uEGi3HqemTGRXl5ZiUf7vHtmZGQ4KbAChWVdvNrT1nhnrU329fPbkhq+aYGlKAMDn5GnV/ii5LkV1cXHZ5ZUdU2rneelw8Ug5eLpubwuek9t9P7d5YlhEwMLvTzNRRh0Pb28uzfHBSQdO1DpE+YbOD073dNDisEoZOlkL/+K+MVpc7y8fQMLy1NDgzyVGMwaa3YF1MXPmr9qe0tB4ISYlBW++Z66DKae2QmJ61KKPJu2JSWVJaQeXJ1SVa/JYOAZ3OCTsONIaUf8pOKtC31b2/wjPOUY1Dw9vULyp8ZU+vvkLCk7vNHPy8vLUYJBwh4o3r8+d2WeT0RsWk0AKFyM+Rh49IHCRSc2xPn7RCbvDQsGCSszMzCI2QHFc/cdivLpjI0OAomaCADDhEPVFRh8UTsDlkWUFHgDRW0kGUFByKvl5ukVGhfZ21w6BShsLcMOCXBeRSvP0Nhwb7/ZUd4eppJssOhhEdWxcM/09AxxMFbhZ0KKTS5haSVdbXkJPhYIHwDXP44RDT0o3QAAAABJRU5ErkJggg==" />
-                </td>
+                <td><span class="icon-pagertree"></span></td>
                 <td>Open and resolve incidents in <a href="https://pagertree.com/">PagerTree</a>.</td>
             </tr>
 
             <tr>
-                <td>
-                    <img width="22" height="22" alt="HipChat icon" src="data:image/gif;base64,R0lGODdhLAAsAMIIAAQyZSFOez9ljWKEooOetqa2ycvV4P3//CwAAAAALAAsAAAD/ni63P4wykmrNUSIEMQghiUeRiEAaKqiQhGOjzGsNB0ML6ycdU8POkNg1SG4GKXBhpijEFatJqQ0VBUqhdUVllURJl2WbmHgobYx77jxTEXMwHVjhgo8wnF5w/xtpOx6D39sKX2BDWFoB1UAhxBVeQaFjg90gAdhUpSYbgptjZsNkigvbQKhDilbpqh+KH1tl60Hqp6ds6MAL5mia1JhDCl5CgACmhJlsgeWDGZ7rxZtw4sow2GGClUBIFME2oSkDdpNZSodHgNKjMWig+1i4D6T4rUOcA4yZlDTCnTsacKmYCBA0MCxA2aUvYM3RoiKgwvCvII4RUuFXHVwiMgVPYCig3V1uCHB0KTeCG/yaBiiwy9aSiYkbo0xAdKHMR4KgxQoQJDgTgw2PQbyR0NooAwgjR4yyNPIrKetEgAAOw==" />
-                </td>
+                <td><span class="icon-hipchat"></span></td>
                 <td>Notifications in <a href="https://hipchat.com/">HipChat</a> channel.</td>
             </tr>
 
             <tr>
-                <td>
-                    <img width="22" height="22" alt="VictorOps icon" src="data:image/gif;base64,R0lGODdhLAAsAMIIAP6oKP2vPv26V/7Nhf7bpv7nw//w2v7/+ywAAAAALAAsAAAD/ni63FpkDCEkKS7rbYgIYCiCAmFsaGMMY+sOZ6qtnxtQ9g3LTVHnA0KOhOEdfMMAwGAAJEs8YfKm+A0JKemQMlAIrTasBpncMVjPogo8QgfUB0PN7RLEzskCCyD2OgcFZWuCLF0LAwBddHVwi3UKEmeGbC2GcVMgMXBMl5gxWkkymAGTNmB9GaA3lAKdLQJ6P3YzsoCUAQaBNl00IJYNaBUnjiERVwodH6gPFCZeQxJ5C7l30wV3ujk4OQBwRtmmt75GDsQh22HkPeLoLgCw1Slk2uYjJfEqHpgVUxLNGhEq1AsBaEqrXMsWFLh2QFwxA/uMOAxxYuK4LBEPqDLlY20dJkMQR0HxOOrOQBEjGej7yGBeGgZyRr0BJnNWHIsEHcQUyQQnCXxHfAa44GRfwgUbgSTdleIkwaWVolgMYvCXvIlUtxxFsQIaVFJAeegJt6ujOmQTqoY9CzMghbdB1mZIAAA7" />
-                </td>
+                <td><span class="icon-victorops"></span></td>
                 <td>Open and resolve incidents in <a href="https://victorops.com/">VictorOps</a>.</td>
             </tr>
 
             {% if enable_discord %}
             <tr>
-                <td>
-                    <img width="22" height="22" alt="Discord icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsBAMAAADsqkcyAAAAGFBMVEVrhNpyidl/kd2KneGls+fK1PLq7Pr9//2AijvmAAABCElEQVQoz8XTS4+CMBAA4LLivZV1z2uCd0h8nI0Sr2KoPW+26A9QOn/fKQU7Rc67k0yafiHD9MUAdC6CSBUAA/Mdhcxjy78DRVfIP+KNt8inNxZ/xG2bbMA82XPGPg5ZFHBcFRKjkhllLi83wLhKTTlu0YbJCU/hFTvCG89nz/zo+U6+Vp4fnhP8o1YuG88T28Fnm2A846yJBCbHKosXzy3POs4puyJz13jHS5zVyiWUhE23ehxLWqRqW28KWgT7NvtC1tX6Rvu2xUu7o19g6FaJVC7skNS78NDcKXbDP92q8H6vetbBa1j2R2xyRiLuFw/6QKKAc+R4EE02yvj0Rtlkowx6nOEIT3y532UE1V+8AAAAAElFTkSuQmCC" />
-                </td>
+                <td><span class="icon-discord"></span></td>
                 <td>Notifications in <a href="https://discordapp.com/">Discord</a> channel.</td>
             </tr>
             {% endif %}
 
 
             <tr>
-                <td>
-                    <img width="22" height="22" alt="OpsGenie icon" src="data:image/gif;base64,R0lGODdhLAAsAMIIAP+OGP+YLf+qUf+2a//EiP/Tpf/kx/7++SwAAAAALAAsAAAD/ni63GdEhADAFMS4zbkZVCWOVTBoXcoUAikKrQsIhdoZsQwUhV4JKNuiECIFIkCJACQL1IQHgo4XGsSAAx1BmHU5iboARDdQSWWZouDQex26ri2n7Y2OyobiLj/d8GVrOQBlYCJbeiNiDoIkW4JOcBVljCNrKz4AjiUjBIWTmE8KlJUHLUckNRRliCSWD5gWdjguBgZ7rCQokVMsB4BvY7BlB7ittbYyx8WJr7A/Cn2jyWfOM6Vo0tjVIgXI2zoS3xUs4k3LPkzlieoUiOfqRgS4EeLvJRnSQIWwEz4BGBpm+asBIVwYSidWZIsXJFglahZQQLAXJqECPRlGEFwonw5IswoaiijY9c9gOUsiAowUoSFRNwMFCKQT11KSAm81UsKU0G5AtwUFMdViueCKrwr0ShCMOWAAgU4PpAVzxYYloAK7jMRkhbPBFVYcU7LqQvVmCIrsglz6BgPtjg4QB7bAWk1Oh6wu35SotXCYGS80RKF6IC8OFDZFnBAGFzCH4sNRKznT4xHykLAuAlt28MGeCbWb/UToZ+FfBsgJAAA7" />
-                </td>
+                <td><span class="icon-opsgenie"></span></td>
                 <td>Open and resolve incidents in <a href="https://www.opsgenie.com/">OpsGenie</a>.</td>
             </tr>
 
