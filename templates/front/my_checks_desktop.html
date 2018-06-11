@@ -80,12 +80,8 @@
                 <div class="integrations">
                 {% spaceless %}
                 {% for channel in channels %}
-                    <img
-                        data-toggle="tooltip"
-                        data-url="{% url 'hc-switch-channel' check.code channel.code %}"
-                        title="{{ channel }}"
-                        src="{{ channel.icon_url }}"
-                        {% if channel in check.channel_set.all %}{% else %}class="off"{% endif %} />
+                    <img src="{{ channel.icon_url }}"
+                         {% if channel in check.channel_set.all %}{% else %}class="off"{% endif %} />
                 {% endfor %}
                 {% endspaceless %}
                 </div>
@@ -155,3 +151,11 @@
     {% endfor %}
 
 </table>
+
+{% for channel in channels %}
+<div
+    id="ch-{{ forloop.counter0}}"
+    data-code="{{ channel.code }}"
+    data-title="{{ channel }}">
+</div>
+{% endfor %}

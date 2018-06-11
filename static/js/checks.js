@@ -175,11 +175,27 @@ $(function () {
         return false;
     });
 
+    $(".integrations").tooltip({
+        container: "body",
+        selector: "img",
+        title: function() {
+            var idx = $(this).index();
+            return $("#ch-" + idx).data("title");
+        }
+    });
+
     $(".integrations").on("click", "img", function() {
         var isOff = $(this).toggleClass("off").hasClass("off");
         var token = $('input[name=csrfmiddlewaretoken]').val();
+
+        var idx = $(this).index();
+        var checkCode = $(this).closest("tr").data("code");
+        var channelCode = $("#ch-" + idx).data("code");
+
+        var url = "/checks/" + checkCode + "/channels/" + channelCode + "/enabled";
+
         $.ajax({
-            url: this.dataset.url,
+            url: url,
             type: "post",
             headers: {"X-CSRFToken": token},
             data: {"state": isOff ? "off" : "on"}
