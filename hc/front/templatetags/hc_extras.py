@@ -81,3 +81,10 @@ def num_down_title(num_down):
         return "%d down – %s" % (num_down, settings.SITE_NAME)
     else:
         return settings.SITE_NAME
+
+@register.filter
+def break_underscore(s):
+    if len(s) > 30:
+        s = s.replace("_", "_\u200b")
+
+    return s

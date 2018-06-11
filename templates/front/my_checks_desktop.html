@@ -59,7 +59,7 @@
                     data-tags="{{ check.tags }}"
                     data-url="{% url 'hc-update-name' check.code %}"
                     class="my-checks-name {% if not check.name %}unnamed{% endif %}">
-                <div>{{ check.name|default:"unnamed" }}</div>
+                <div>{{ check.name|default:"unnamed"|break_underscore }}</div>
                 {% for tag in check.tags_list %}
                 <span class="label label-tag">{{ tag }}</span>
                 {% endfor %}
