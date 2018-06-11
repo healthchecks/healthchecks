@@ -1,5 +1,5 @@
 {% load hc_extras staticfiles %}
-<table id="checks-table" class="table hidden-xs hidden-sm">
+<table id="checks-table" class="table">
     <tr>
         <th></th>
         <th class="th-name">
@@ -17,9 +17,9 @@
             </a>
             {% endif %}
         </th>
-        <th>Ping URL</th>
-        <th class="th-integrations">Integrations</th>
-        <th class="th-period">
+        <th class="hidden-xs hidden-sm">Ping URL</th>
+        <th class="th-integrations hidden-xs">Integrations</th>
+        <th class="th-period hidden-xs">
             Period <br />
             <span class="checks-subline">Grace</span>
         </th>
@@ -38,7 +38,7 @@
             </a>
             {% endif %}
         </th>
-        <th></th>
+        <th class="hidden-xs"></th>
     </tr>
     {% for check in checks %}
     <tr
@@ -65,7 +65,7 @@
                 {% endfor %}
             </div>
         </td>
-        <td class="url-cell">
+        <td class="url-cell hidden-xs hidden-sm">
             <span class="my-checks-url">
                 <span class="base">{{ ping_endpoint }}</span>{{ check.code }}
             </span>
@@ -75,7 +75,7 @@
                 copy
             </button>
         </td>
-        <td class="integrations-cell">
+        <td class="integrations-cell hidden-xs">
             {% if channels|length < 8 %}
                 <div class="integrations">
                 {% spaceless %}
@@ -88,7 +88,7 @@
                 {{ check.channel_set.all|length }} of {{ channels|length }}
             {% endif %}
         </td>
-        <td class="timeout-cell">
+        <td class="timeout-cell hidden-xs">
             <div
                 data-url="{% url 'hc-update-timeout' check.code %}"
                 data-kind="{{ check.kind }}"
@@ -113,7 +113,7 @@
                 {% include "front/last_ping_cell.html" with check=check %}
             </div>
         </td>
-        <td>
+        <td class="hidden-xs">
             <div class="check-menu dropdown">
                 <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown">
                 <span class="icon-settings" aria-hidden="true"></span>

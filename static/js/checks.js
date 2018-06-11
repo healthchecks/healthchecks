@@ -328,7 +328,6 @@ $(function () {
                     if (lastPing[el.code] != el.last_ping) {
                         lastPing[el.code] = el.last_ping;
                         $("#lpd-" + el.code).html(el.last_ping);
-                        $("#lpm-" + el.code).html(el.last_ping);
                     }
                 }
 
