@@ -41,7 +41,12 @@
         <th></th>
     </tr>
     {% for check in checks %}
-    <tr class="checks-row">
+    <tr
+        class="checks-row"
+        data-code="{{ check.code }}"
+        data-url="{{ check.url }}"
+        data-email="{{ check.email }}">
+
         <td class="indicator-cell">
             {% if check.in_grace_period %}
                 <span id="si-{{ check.code }}" class="status icon-grace" data-toggle="tooltip"></span>
@@ -108,8 +113,10 @@
                 </span>
             </div>
         </td>
-        <td id="lpd-{{ check.code}}" class="last-ping-cell">
-            {% include "front/last_ping_cell.html" with check=check %}
+        <td>
+            <div id="lpd-{{ check.code}}" class="last-ping">
+                {% include "front/last_ping_cell.html" with check=check %}
+            </div>
         </td>
         <td>
             <div class="check-menu dropdown">
@@ -131,13 +138,7 @@
                         </a>
                     </li>
                     <li>
-                        <a
-                            href="#"
-                            class="usage-examples"
-                            data-url="{{ check.url }}"
-                            data-email="{{ check.email }}">
-                            Usage Examples
-                        </a>
+                        <a href="#" class="usage-examples">Usage Examples</a>
                     </li>
                     <li role="separator" class="divider"></li>
                     <li>

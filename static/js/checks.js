@@ -188,13 +188,21 @@ $(function () {
         return false;
     });
 
-    $(".last-ping-cell").on("click", ".last-ping", function() {
+    $(".last-ping").on("click", function() {
+        if (this.innerText == "Never") {
+            showUsage(this);
+            return false;
+        }
+
         $("#ping-details-body").text("Updating...");
         $('#ping-details-modal').modal("show");
 
+        var code = $(this).closest("tr").data("code");
+        var url = "/checks/" + code + "/last_ping/";
+
         var token = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({
-            url: this.dataset.url,
+            url: url,
             type: "post",
             headers: {"X-CSRFToken": token},
             success: function(data) {
@@ -270,15 +278,17 @@ $(function () {
         }
     });
 
-    $(".usage-examples").click(function(e) {
-        var a = e.target;
-        var url = a.getAttribute("data-url");
-        var email = a.getAttribute("data-email");
+    function showUsage(el) {
+        var tr = $(el).closest("tr");
 
-        $(".ex", "#show-usage-modal").text(url);
-        $(".em", "#show-usage-modal").text(email);
+        $(".ex", "#show-usage-modal").text(tr.data("url"));
+        $(".em", "#show-usage-modal").text(tr.data("email"));
 
         $("#show-usage-modal").modal("show");
+    }
+
+    $(".usage-examples").click(function(e) {
+        showUsage(e.target);
         return false;
     });
 

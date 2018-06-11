@@ -35,8 +35,7 @@
 #checks-table .my-checks-name,
 #checks-table .integrations,
 #checks-table .timeout-grace,
-#checks-table .last-ping,
-#checks-table .last-ping-never {
+#checks-table .last-ping {
     border: 1px solid rgba(0, 0, 0, 0);
     padding: 6px;
 }

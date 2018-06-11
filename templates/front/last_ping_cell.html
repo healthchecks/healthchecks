@@ -1,12 +1,10 @@
 {% load humanize %}
 
 {% if check.last_ping %}
-    <div class="last-ping" data-url="{% url 'hc-last-ping' check.code %}">
-        {{ check.last_ping|naturaltime }}
-        {% if check.has_confirmation_link %}
-        <br /><span class="label label-confirmation">confirmation link</span>
-        {% endif %}
-    </div>
+    {{ check.last_ping|naturaltime }}
+    {% if check.has_confirmation_link %}
+    <br /><span class="label label-confirmation">confirmation link</span>
+    {% endif %}
 {% else %}
-    <div class="last-ping-never">Never</div>
+    Never
 {% endif %}
