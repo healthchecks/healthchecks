@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?123');
-  src:  url('../fonts/icomoon.eot?123#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?123') format('truetype'),
-    url('../fonts/icomoon.woff?123') format('woff'),
-    url('../fonts/icomoon.svg?123#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?7cu72n');
+  src:  url('../fonts/icomoon.eot?7cu72n#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?7cu72n') format('truetype'),
+    url('../fonts/icomoon.woff?7cu72n') format('woff'),
+    url('../fonts/icomoon.svg?7cu72n#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -85,7 +85,7 @@
 .icon-cancel:before {
   content: "\e5c9";
 }
-.icon-up:before, .icon-ok:before, .icon-new:before {
+.icon-up:before, .icon-new:before, .icon-ok:before {
   content: "\e86c";
 }
 .icon-close:before {
@@ -102,6 +102,9 @@
 }
 .icon-asc:before {
   content: "\e316";
+}
+.icon-mail:before {
+  content: "\e0e1";
 }
 .icon-dots:before {
   content: "\e5d3";
