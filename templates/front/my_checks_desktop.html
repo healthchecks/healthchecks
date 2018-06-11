@@ -80,8 +80,7 @@
                 <div class="integrations">
                 {% spaceless %}
                 {% for channel in channels %}
-                    <img src="{{ channel.icon_url }}"
-                         {% if channel in check.channel_set.all %}{% else %}class="off"{% endif %} />
+                    <span class="icon-{{ channel.kind }}{% if channel in check.channel_set.all %}{% else %} off{% endif %}"></span>
                 {% endfor %}
                 {% endspaceless %}
                 </div>

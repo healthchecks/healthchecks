@@ -177,14 +177,14 @@ $(function () {
 
     $(".integrations").tooltip({
         container: "body",
-        selector: "img",
+        selector: "span",
         title: function() {
             var idx = $(this).index();
             return $("#ch-" + idx).data("title");
         }
     });
 
-    $(".integrations").on("click", "img", function() {
+    $(".integrations").on("click", "span", function() {
         var isOff = $(this).toggleClass("off").hasClass("off");
         var token = $('input[name=csrfmiddlewaretoken]').val();
 

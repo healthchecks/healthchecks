@@ -55,9 +55,15 @@
     padding-left: 15px;
 }
 
-#checks-table .integrations img {
+#checks-table .integrations span {
     padding: 10px 2px;
+    display: inline-block;
+    font-size: 20px;
     width: 24px;
+}
+
+#checks-table .integrations span.off:before {
+    color: #DDD;
 }
 
 .timeout-grace .cron-expression {
@@ -132,9 +138,4 @@ tr:hover .copy-link {
     position: relative;
     line-height: 36px;
     color: #333;
-}
-
-.integrations-cell .off {
-    filter: grayscale(100%);
-    opacity: 0.3;
 }

@@ -254,9 +254,6 @@ class Channel(models.Model):
 
         return self.get_kind_display()
 
-    def icon_url(self):
-        return settings.STATIC_URL + "img/integrations/%s.png" % self.kind
-
     def assign_all_checks(self):
         checks = Check.objects.filter(user=self.user)
         self.checks.add(*checks)
