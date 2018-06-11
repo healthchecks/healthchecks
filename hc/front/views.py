@@ -11,7 +11,7 @@ from django.db.models import Count
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
                          HttpResponseForbidden, JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import render_to_string
+from django.template.loader import get_template, render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -90,6 +90,7 @@ def status(request):
     checks = list(Check.objects.filter(user_id=request.team.user_id))
 
     details = []
+    tmpl = get_template("front/last_ping_cell.html")
     for check in checks:
         status = "grace" if check.in_grace_period() else check.get_status()
 
@@ -97,7 +98,7 @@ def status(request):
         details.append({
             "code": str(check.code),
             "status": status,
-            "last_ping": render_to_string("front/last_ping_cell.html", ctx)
+            "last_ping": tmpl.render(ctx)
         })
 
     tags_statuses, num_down = _tags_statuses(checks)
