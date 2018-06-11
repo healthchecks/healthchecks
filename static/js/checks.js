@@ -175,7 +175,7 @@ $(function () {
         return false;
     });
 
-    $(".integrations img").click(function() {
+    $(".integrations").on("click", "img", function() {
         var isOff = $(this).toggleClass("off").hasClass("off");
         var token = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({
@@ -254,6 +254,7 @@ $(function () {
 
     $('[data-toggle="tooltip"]').tooltip({
         html: true,
+        container: "body",
         title: function() {
             var cssClasses = this.getAttribute("class");
             if (cssClasses.indexOf("icon-new") > -1)
@@ -315,7 +316,6 @@ $(function () {
                 if (document.title != data.title) {
                     document.title = data.title;
                 }
-
             }
         });
     }

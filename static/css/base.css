@@ -59,6 +59,8 @@ body {
 
 .status {
     font-size: 24px;
+    display: inline-block;
+    width: 24px;
 }
 
 .status.icon-up { color: #5cb85c; }
