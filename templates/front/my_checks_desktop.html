@@ -72,7 +72,7 @@
             </button>
         </td>
         <td class="integrations-cell hidden-xs">
-            {% if channels|length < 8 %}
+            {% if channels|length <= 10 %}
                 <div class="integrations">
                 {% spaceless %}
                 {% for channel in channels %}
