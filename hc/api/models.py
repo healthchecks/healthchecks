@@ -248,7 +248,7 @@ class Channel(models.Model):
                 return "SMS to %s" % self.sms_label
             return "SMS to %s" % self.sms_number
         elif self.kind == "slack":
-            return "Slack %s" % self.slack.channel
+            return "Slack %s" % self.slack_channel
         elif self.kind == "telegram":
             return "Telegram %s" % self.telegram_name
 
