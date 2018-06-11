@@ -16,37 +16,26 @@ class CheckModelTestCase(TestCase):
         check.tags = " "
         self.assertEqual(check.tags_list(), [])
 
-    def test_in_grace_period_handles_new_check(self):
+    def test_get_status_handles_new_check(self):
         check = Check()
-        self.assertFalse(check.in_grace_period())
-
-    def test_in_grace_period_handles_fail_ping(self):
-        check = Check()
-        check.status = "up"
-        check.last_ping = timezone.now() - timedelta(days=1, minutes=30)
-        check.last_ping_was_fail = True
-
-        # If last ping was signalling a failure, we're not in grace period,
-        # we're down
-        self.assertFalse(check.in_grace_period())
+        self.assertEqual(check.get_status(), "new")
 
     def test_status_works_with_grace_period(self):
         check = Check()
         check.status = "up"
         check.last_ping = timezone.now() - timedelta(days=1, minutes=30)
 
-        self.assertTrue(check.in_grace_period())
-        self.assertEqual(check.get_status(), "up")
+        self.assertEqual(check.get_status(), "grace")
 
-    def test_paused_check_is_not_in_grace_period(self):
+    def test_get_stauts_handles_paused_check(self):
         check = Check()
 
         check.status = "up"
         check.last_ping = timezone.now() - timedelta(days=1, minutes=30)
-        self.assertTrue(check.in_grace_period())
+        self.assertEqual(check.get_status(), "grace")
 
         check.status = "paused"
-        self.assertFalse(check.in_grace_period())
+        self.assertEqual(check.get_status(), "paused")
 
     def test_status_works_with_cron_syntax(self):
         dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
@@ -58,12 +47,16 @@ class CheckModelTestCase(TestCase):
         check.status = "up"
         check.last_ping = dt
 
-        # 00:30am
-        now = dt + timedelta(days=1, minutes=30)
+        # 23:59pm
+        now = dt + timedelta(hours=23, minutes=59)
         self.assertEqual(check.get_status(now), "up")
 
+        # 00:00am
+        now = dt + timedelta(days=1)
+        self.assertEqual(check.get_status(now), "grace")
+
         # 1:30am
-        now = dt + timedelta(days=1, minutes=90)
+        now = dt + timedelta(days=1, minutes=60)
         self.assertEqual(check.get_status(now), "down")
 
     def test_status_works_with_timezone(self):
@@ -78,11 +71,15 @@ class CheckModelTestCase(TestCase):
         check.tz = "Australia/Brisbane"  # UTC+10
 
         # 10:30am
-        now = dt + timedelta(days=1, minutes=30)
+        now = dt + timedelta(hours=23, minutes=59)
         self.assertEqual(check.get_status(now), "up")
 
+        # 10:30am
+        now = dt + timedelta(days=1)
+        self.assertEqual(check.get_status(now), "grace")
+
         # 11:30am
-        now = dt + timedelta(days=1, minutes=90)
+        now = dt + timedelta(days=1, minutes=60)
         self.assertEqual(check.get_status(now), "down")
 
     def test_next_ping_with_cron_syntax(self):

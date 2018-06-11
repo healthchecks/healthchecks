@@ -66,6 +66,11 @@ class Command(BaseCommand):
 
         q = Check.objects.filter(id=check.id, status=check.status)
         current_status = check.get_status()
+
+        # During the grace period sendalerts considers the check as "up":
+        if current_status == "grace":
+            current_status = "up"
+
         if check.status == current_status:
             # Stored status is already up-to-date. Update alert_after
             # as needed but don't send notifications

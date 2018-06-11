@@ -48,11 +48,7 @@
         data-email="{{ check.email }}">
 
         <td class="indicator-cell">
-            {% if check.in_grace_period %}
-                <span id="si-{{ check.code }}" class="status icon-grace" data-toggle="tooltip"></span>
-            {% else %}
-                <span id="si-{{ check.code }}" class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
-            {% endif %}
+            <span id="si-{{ check.code }}" class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
         </td>
         <td class="name-cell">
             <div data-name="{{ check.name }}"

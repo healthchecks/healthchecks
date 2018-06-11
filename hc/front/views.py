@@ -37,11 +37,13 @@ VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 def _tags_statuses(checks):
     tags, down, grace, num_down = {}, {}, {}, 0
     for check in checks:
-        if check.get_status() == "down":
+        status = check.get_status()
+
+        if status == "down":
             num_down += 1
             for tag in check.tags_list():
                 down[tag] = "down"
-        elif check.in_grace_period():
+        elif status == "grace":
             for tag in check.tags_list():
                 grace[tag] = "grace"
         else:
@@ -92,12 +94,10 @@ def status(request):
     details = []
     tmpl = get_template("front/last_ping_cell.html")
     for check in checks:
-        status = "grace" if check.in_grace_period() else check.get_status()
-
         ctx = {"check": check}
         details.append({
             "code": str(check.code),
-            "status": status,
+            "status": check.get_status(),
             "last_ping": tmpl.render(ctx)
         })
 

@@ -128,7 +128,15 @@ class Check(models.Model):
         if now is None:
             now = timezone.now()
 
-        return "up" if self.get_grace_start() + self.grace > now else "down"
+        grace_start = self.get_grace_start()
+        grace_end = grace_start + self.grace
+        if now >= grace_end:
+            return "down"
+
+        if now >= grace_start:
+            return "grace"
+
+        return "up"
 
     def get_alert_after(self):
         """ Return the datetime when check potentially goes down. """
@@ -139,19 +147,6 @@ class Check(models.Model):
             return self.last_ping
 
         return self.get_grace_start() + self.grace
-
-    def in_grace_period(self):
-        """ Return True if check is currently in grace period. """
-
-        if self.status in ("new", "paused"):
-            return False
-
-        if self.last_ping_was_fail:
-            return False
-
-        grace_start = self.get_grace_start()
-        grace_end = grace_start + self.grace
-        return grace_start < timezone.now() < grace_end
 
     def assign_all_channels(self):
         if self.user:

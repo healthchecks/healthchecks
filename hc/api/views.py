@@ -177,10 +177,11 @@ def badge(request, username, signature, tag, format="svg"):
         if tag != "*" and tag not in check.tags_list():
             continue
 
-        if status == "up" and check.in_grace_period():
+        check_status = check.get_status()
+        if status == "up" and check_status == "grace":
             status = "late"
 
-        if check.get_status() == "down":
+        if check_status == "down":
             status = "down"
             break
 

@@ -17,7 +17,7 @@
                     <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;">NEW</td>
                 {% elif check.get_status == "paused" %}
                     <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">PAUSED</td>
-                {% elif check.in_grace_period %}
+                {% elif check.get_status == "grace" %}
                     <td style="background: #f0ad4e; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">LATE</td>
                 {% elif check.get_status == "up" %}
                     <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">UP</td>
