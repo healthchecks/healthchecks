@@ -11,7 +11,7 @@ class LowercaseEmailField(forms.EmailField):
 
 
 class EmailPasswordForm(forms.Form):
-    email = LowercaseEmailField()
+    identity = LowercaseEmailField()
     password = forms.CharField(required=False)
 
 

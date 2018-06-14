@@ -78,7 +78,7 @@ def login(request, show_password=False):
     if request.method == 'POST':
         form = EmailPasswordForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data["email"]
+            email = form.cleaned_data["identity"]
             password = form.cleaned_data["password"]
             if len(password):
                 user = authenticate(username=email, password=password)

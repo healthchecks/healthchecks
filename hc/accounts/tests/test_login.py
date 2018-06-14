@@ -17,7 +17,7 @@ class LoginTestCase(TestCase):
         session["welcome_code"] = str(check.code)
         session.save()
 
-        form = {"email": "alice@example.org"}
+        form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302
@@ -47,7 +47,7 @@ class LoginTestCase(TestCase):
         session["welcome_code"] = "00000000-0000-0000-0000-000000000000"
         session.save()
 
-        form = {"email": "alice@example.org"}
+        form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302
@@ -62,7 +62,7 @@ class LoginTestCase(TestCase):
 
     @override_settings(REGISTRATION_OPEN=False)
     def test_it_obeys_registration_open(self):
-        form = {"email": "dan@example.org"}
+        form = {"identity": "dan@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 200
@@ -72,7 +72,7 @@ class LoginTestCase(TestCase):
         alice = User(username="alice", email="alice@example.org")
         alice.save()
 
-        form = {"email": "ALICE@EXAMPLE.ORG"}
+        form = {"identity": "ALICE@EXAMPLE.ORG"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302
