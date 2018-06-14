@@ -252,28 +252,35 @@ def notifications(request):
 def badges(request):
     _ensure_own_team(request)
 
-    tags = set()
-    for check in Check.objects.filter(user=request.team.user):
-        tags.update(check.tags_list())
+    teams = [request.profile]
+    for membership in request.user.memberships.all():
+        teams.append(membership.team)
 
-    username = request.user.username
-    urls = []
-    for tag in sorted(tags, key=lambda s: s.lower()):
-        if not re.match("^[\w-]+$", tag):
-            continue
+    badge_sets = []
+    for team in teams:
+        tags = set()
+        for check in Check.objects.filter(user=team.user):
+            tags.update(check.tags_list())
 
-        urls.append({
-            "svg": get_badge_url(username, tag),
-            "json": get_badge_url(username, tag, format="json"),
-        })
+        sorted_tags = sorted(tags, key=lambda s: s.lower())
+        sorted_tags.append("*")  # For the "overall status" badge
+
+        urls = []
+        username = team.user.username
+        for tag in sorted_tags:
+            if not re.match("^[\w-]+$", tag) and tag != "*":
+                continue
+
+            urls.append({
+                "svg": get_badge_url(username, tag),
+                "json": get_badge_url(username, tag, format="json"),
+            })
+
+        badge_sets.append({"team": team, "urls": urls})
 
     ctx = {
         "page": "profile",
-        "urls": urls,
-        "master": {
-            "svg": get_badge_url(username, "*"),
-            "json": get_badge_url(username, "*", format="json")
-        }
+        "badges": badge_sets
     }
 
     return render(request, "accounts/badges.html", ctx)

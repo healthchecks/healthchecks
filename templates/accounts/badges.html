@@ -28,8 +28,10 @@
                 <h2 class="settings-title">Status Badges</h2>
                 <p id="badges-description">
                     {% site_name %} provides status badges for each of the tags
-                    you have used. The badges have public, but hard-to-guess
-                    URLs. If you wish, you can add them to your READMEs,
+                    you have used. Additionally, the "{% site_name %}"
+                    badge shows the overall status of all checks in your
+                    account. The badges have public, but hard-to-guess
+                    URLs. You can use them to your READMEs,
                     dashboards or status pages.
                 </p>
 
@@ -43,7 +45,11 @@
                 </div>
 
                 <table id="badges-svg" class="badges table">
-                    {% for urldict in urls %}
+                {% for badge_set in badges %}
+                    <tr>
+                        <th colspan="2">{{ badge_set.team }}</th>
+                    </tr>
+                    {% for urldict in badge_set.urls %}
                     <tr>
                         <td>
                             <img src="{{ urldict.svg }}" alt="" />
@@ -53,20 +59,15 @@
                         </td>
                     </tr>
                     {% endfor %}
-                    <tr>
-                        <td class="overall-status {% if urls %}have-tags{% endif %}" colspan="2">Overall status:</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img src="{{ master.svg }}" alt="" />
-                        </td>
-                        <td class="svg-url">
-                            <code>{{ master.svg }}</code>
-                        </td>
-                    </tr>
+                {% endfor %}
                 </table>
                 <table id="badges-json" class="badges table">
-                    {% for urldict in urls %}
+                {% for badge_set in badges %}
+                    <tr>
+                        <th colspan="2">{{ badge_set.team }}</th>
+                    </tr>
+
+                    {% for urldict in badge_set.urls %}
                     <tr>
                         <td class="json-response" data-url="{{ urldict.json }}">
                         </td>
@@ -75,15 +76,7 @@
                         </td>
                     </tr>
                     {% endfor %}
-                    <tr>
-                        <td class="overall-status {% if urls %}have-tags{% endif %}"" colspan="2">Overall status:</td>
-                    </tr>
-                    <tr>
-                        <td class="json-response" data-url="{{ master.json }}">
-                        <td class="json-url">
-                            <code>{{ master.json }}</code>
-                        </td>
-                    </tr>
+                {% endfor %}
                 </table>
             </div>
         </div>

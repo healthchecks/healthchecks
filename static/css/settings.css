@@ -11,10 +11,6 @@
     padding-bottom: 24px;
 }
 
-#badges-description, #b-format {
-    margin-bottom: 24px;
-}
-
 .page-profile .icon-ok {
     color: #5cb85c;
 }
@@ -33,7 +29,11 @@
     border-top: 0;
 }
 
-.table td.have-tags {
+.table.badges th {
+    border-top: 0;
+    color: #777777;
+    font-weight: normal;
+    font-size: 12px;
     padding-top: 32px;
 }
 
