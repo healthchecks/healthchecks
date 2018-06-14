@@ -33,35 +33,19 @@ def _make_user(email):
     # Ensure a profile gets created
     Profile.objects.for_user(user)
 
-    channel = Channel()
-    channel.user = user
+    check = Check(user=user)
+    check.name = "My First Check"
+    check.save()
+
+    channel = Channel(user=user)
     channel.kind = "email"
     channel.value = email
     channel.email_verified = True
     channel.save()
 
+    channel.checks.add(check)
+
     return user
-
-
-def _associate_demo_check(request, user):
-    if "welcome_code" not in request.session:
-        return
-
-    try:
-        check = Check.objects.get(code=request.session["welcome_code"])
-    except Check.DoesNotExist:
-        return
-
-    # Only associate demo check if it doesn't have an owner already.
-    if check.user:
-        return
-
-    check.user = user
-    check.save()
-
-    check.assign_all_channels()
-
-    del request.session["welcome_code"]
 
 
 def _ensure_own_team(request):
@@ -94,7 +78,6 @@ def login(request, show_password=False):
                 except User.DoesNotExist:
                     if settings.REGISTRATION_OPEN:
                         user = _make_user(email)
-                        _associate_demo_check(request, user)
                     else:
                         bad_credentials = True
 
@@ -143,9 +126,6 @@ def check_token(request, username, token):
     if request.method == "POST":
         user = authenticate(username=username, token=token)
         if user is not None and user.is_active:
-            # This should get rid of "welcome_code" in session
-            request.session.flush()
-
             user.profile.token = ""
             user.profile.save()
             auth_login(request, user)

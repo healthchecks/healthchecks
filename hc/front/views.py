@@ -128,25 +128,11 @@ def switch_channel(request, code, channel_code):
     return HttpResponse()
 
 
-def _welcome_check(request):
-    check = None
-    if "welcome_code" in request.session:
-        code = request.session["welcome_code"]
-        check = Check.objects.filter(code=code).first()
-
-    if check is None:
-        check = Check()
-        check.save()
-        request.session["welcome_code"] = str(check.code)
-
-    return check
-
-
 def index(request):
     if request.user.is_authenticated:
         return redirect("hc-checks")
 
-    check = _welcome_check(request)
+    check = Check()
 
     ctx = {
         "page": "welcome",
