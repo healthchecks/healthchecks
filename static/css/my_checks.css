@@ -160,6 +160,10 @@
      width: 1100px;
 }
 
+#usage-examples-title {
+    margin-bottom: 25px;
+}
+
 #show-usage-modal .modal-body {
     padding: 0;
 }
