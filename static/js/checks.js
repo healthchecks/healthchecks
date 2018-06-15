@@ -214,17 +214,20 @@ $(function () {
         $('#ping-details-modal').modal("show");
 
         var code = $(this).closest("tr").data("code");
-        var url = "/checks/" + code + "/last_ping/";
 
+        var lastPingUrl = "/checks/" + code + "/last_ping/";
         var token = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({
-            url: url,
+            url: lastPingUrl,
             type: "post",
             headers: {"X-CSRFToken": token},
             success: function(data) {
                 $("#ping-details-body" ).html(data);
             }
         });
+
+        var logUrl = "/checks/" + code + "/log/";
+        $("#ping-details-log").attr("href", logUrl);
 
         return false;
     });
