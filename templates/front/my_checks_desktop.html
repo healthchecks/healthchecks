@@ -42,18 +42,17 @@
     </tr>
     {% for check in checks %}
     <tr
+        id="{{ check.code }}"
         class="checks-row"
-        data-code="{{ check.code }}"
         data-url="{{ check.url }}"
         data-email="{{ check.email }}">
 
         <td class="indicator-cell">
-            <span id="si-{{ check.code }}" class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
+            <span class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
         </td>
-        <td class="name-cell">
+        <td>
             <div data-name="{{ check.name }}"
                     data-tags="{{ check.tags }}"
-                    data-url="{% url 'hc-update-name' check.code %}"
                     class="my-checks-name {% if not check.name %}unnamed{% endif %}">
                 <div>{{ check.name|default:"unnamed"|break_underscore }}</div>
                 {% for tag in check.tags_list %}
@@ -86,7 +85,6 @@
         </td>
         <td class="timeout-cell hidden-xs">
             <div
-                data-url="{% url 'hc-update-timeout' check.code %}"
                 data-kind="{{ check.kind }}"
                 data-timeout="{{ check.timeout.total_seconds }}"
                 data-grace="{{ check.grace.total_seconds }}"
@@ -115,18 +113,12 @@
                 <span class="icon-settings" aria-hidden="true"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li id="pause-li-{{ check.code }}" {% if check.status == "new" or check.status == "paused" %}class="disabled"{% endif %}>
-                        <a class="pause-check"
-                           href="#"
-                           data-url="{% url 'hc-pause' check.code %}">
-                           Pause Monitoring
-                        </a>
+                    <li class="pause-li" {% if check.status == "new" or check.status == "paused" %}class="disabled"{% endif %}>
+                        <a href="#">Pause Monitoring</a>
                     </li>
                     <li role="separator" class="divider"></li>
                     <li>
-                        <a href="{% url 'hc-log' check.code %}">
-                            Log
-                        </a>
+                        <a class="show-log" href="#">Log</a>
                     </li>
                     <li>
                         <a href="#" class="usage-examples">Usage Examples</a>
@@ -134,8 +126,7 @@
                     <li role="separator" class="divider"></li>
                     <li>
                         <a href="#" class="check-menu-remove"
-                            data-name="{{ check.name_then_code }}"
-                            data-url="{% url 'hc-remove-check' check.code %}">
+                            data-name="{{ check.name_then_code }}">
                             Remove
                         </a>
                     </li>

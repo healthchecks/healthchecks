@@ -1,7 +1,10 @@
 $(function () {
 
     $(".my-checks-name").click(function() {
-        $("#update-name-form").attr("action", this.dataset.url);
+        var code = $(this).closest("tr.checks-row").attr("id");
+        var url = "/checks/" + code + "/name/";
+
+        $("#update-name-form").attr("action", url);
         $("#update-name-input").val(this.dataset.name);
         $("#update-tags-input").val(this.dataset.tags);
         $('#update-name-modal').modal("show");
@@ -139,8 +142,11 @@ $(function () {
     }
 
     $(".timeout-grace").click(function() {
-        $("#update-timeout-form").attr("action", this.dataset.url);
-        $("#update-cron-form").attr("action", this.dataset.url);
+        var code = $(this).closest("tr.checks-row").attr("id");
+        var url = "/checks/" + code + "/timeout/";
+
+        $("#update-timeout-form").attr("action", url);
+        $("#update-cron-form").attr("action", url);
 
         // Simple
         periodSlider.noUiSlider.set(this.dataset.timeout);
@@ -168,7 +174,10 @@ $(function () {
     $("#tz").selectize({onChange: updateCronPreview});
 
     $(".check-menu-remove").click(function() {
-        $("#remove-check-form").attr("action", this.dataset.url);
+        var code = $(this).closest("tr.checks-row").attr("id");
+        var url = "/checks/" + code + "/remove/";
+
+        $("#remove-check-form").attr("action", url);
         $(".remove-check-name").text(this.dataset.name);
         $('#remove-check-modal').modal("show");
 
@@ -189,7 +198,7 @@ $(function () {
         var token = $('input[name=csrfmiddlewaretoken]').val();
 
         var idx = $(this).index();
-        var checkCode = $(this).closest("tr").data("code");
+        var checkCode = $(this).closest("tr.checks-row").attr("id");
         var channelCode = $("#ch-" + idx).data("code");
 
         var url = "/checks/" + checkCode + "/channels/" + channelCode + "/enabled";
@@ -213,8 +222,7 @@ $(function () {
         $("#ping-details-body").text("Updating...");
         $('#ping-details-modal').modal("show");
 
-        var code = $(this).closest("tr").data("code");
-
+        var code = $(this).closest("tr.checks-row").attr("id");
         var lastPingUrl = "/checks/" + code + "/last_ping/";
         var token = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({
@@ -273,9 +281,18 @@ $(function () {
 
     });
 
-    $(".pause-check").click(function(e) {
-        var url = e.target.getAttribute("data-url");
+    $(".pause-li a").click(function(e) {
+        var code = $(this).closest("tr.checks-row").attr("id");
+        var url = "/checks/" + code + "/pause/";
+
         $("#pause-form").attr("action", url).submit();
+        return false;
+    });
+
+    $(".show-log").click(function(e) {
+        var code = $(this).closest("tr.checks-row").attr("id");
+        var url = "/checks/" + code + "/log/";
+        window.location = url;
         return false;
     });
 
@@ -323,9 +340,8 @@ $(function () {
                 for(var i=0, el; el=data.details[i]; i++) {
                     if (lastStatus[el.code] != el.status) {
                         lastStatus[el.code] = el.status;
-                        $("#si-" + el.code).attr("class", "status icon-" + el.status);
-                        $("#sl-" + el.code).attr("class", "label label-" + el.status).text(el.status);
-                        $("#pause-li-" + el.code).toggleClass("disabled", el.status == "paused");
+                        $("#" + el.code + " span.status").attr("class", "status icon-" + el.status);
+                        $("#" + el.code + " .pause-li").toggleClass("disabled", el.status == "paused");
                     }
 
                     if (lastPing[el.code] != el.last_ping) {
