@@ -13,7 +13,7 @@ class Listener(SMTPServer):
         self.stdout = stdout
         super(Listener, self).__init__(localaddr, None)
 
-    def process_message(self, peer, mailfrom, rcpttos, data):
+    def process_message(self, peer, mailfrom, rcpttos, data, mail_options=None, rcpt_options=None):
         to_parts = rcpttos[0].split("@")
         code = to_parts[0]
 
