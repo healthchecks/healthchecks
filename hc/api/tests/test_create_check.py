@@ -8,8 +8,7 @@ class CreateCheckTestCase(BaseTestCase):
     URL = "/api/v1/checks/"
 
     def post(self, data, expected_error=None, expected_fragment=None):
-        r = self.client.post(self.URL, json.dumps(data),
-                             content_type="application/json")
+        r = self.client.post(self.URL, data, content_type="application/json")
 
         if expected_error:
             self.assertEqual(r.status_code, 400)

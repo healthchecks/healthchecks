@@ -46,7 +46,7 @@ class AddTelegramTestCase(BaseTestCase):
                 "text": "/start"
             }
         }
-        r = self.client.post("/integrations/telegram/bot/", json.dumps(data),
+        r = self.client.post("/integrations/telegram/bot/", data,
                              content_type="application/json")
 
         self.assertEqual(r.status_code, 200)
@@ -57,17 +57,17 @@ class AddTelegramTestCase(BaseTestCase):
         samples = ["", "{}"]
 
         # text is missing
-        samples.append(json.dumps({
+        samples.append({
             "message": {"chat": {"id": 123, "type": "group"}}
-        }))
+        })
 
         # bad chat type
-        samples.append(json.dumps({
+        samples.append({
             "message": {
                 "chat": {"id": 123, "type": "invalid"},
                 "text": "/start"
             }
-        }))
+        })
 
         for sample in samples:
             r = self.client.post("/integrations/telegram/bot/", sample,

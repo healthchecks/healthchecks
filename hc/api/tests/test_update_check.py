@@ -13,10 +13,7 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def post(self, code, data):
         url = "/api/v1/checks/%s" % code
-        r = self.client.post(url, json.dumps(data),
-                             content_type="application/json")
-
-        return r
+        return self.client.post(url, data, content_type="application/json")
 
     def test_it_works(self):
         r = self.post(self.check.code, {
