@@ -1,5 +1,4 @@
-{% load hc_extras %}
-<!DOCTYPE html>
+<!DOCTYPE html>{% load compress staticfiles hc_extras %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -13,8 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-title" content="{% site_name %}">
     <meta name="application-name" content="{% site_name %}">
-
-    {% load compress staticfiles %}
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-180.png' %}">
 

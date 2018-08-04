@@ -1,4 +1,4 @@
-{% load hc_extras staticfiles %}
+{% load hc_extras static %}
 {
     "name": "{% site_name %}",
     "description": "Get Notified When Your Cron Jobs Fail",

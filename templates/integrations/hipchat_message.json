@@ -1,4 +1,4 @@
-{% load hc_extras humanize staticfiles %}
+{% load hc_extras humanize static %}
 {
     "message": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
     {% if check.status == "up" %}

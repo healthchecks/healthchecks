@@ -1,5 +1,4 @@
-{% load hc_extras %}
-<!DOCTYPE html>
+<!DOCTYPE html>{% load compress static hc_extras %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -7,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
-    {% load compress staticfiles %}
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
 
     {% compress css %}
