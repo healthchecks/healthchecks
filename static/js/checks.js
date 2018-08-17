@@ -13,17 +13,6 @@ $(function () {
         return false;
     });
 
-    $(".check-menu-remove").click(function() {
-        var code = $(this).closest("tr.checks-row").attr("id");
-        var url = "/checks/" + code + "/remove/";
-
-        $("#remove-check-form").attr("action", url);
-        $(".remove-check-name").text(this.dataset.name);
-        $('#remove-check-modal').modal("show");
-
-        return false;
-    });
-
     $(".integrations").tooltip({
         container: "body",
         selector: "span",
@@ -121,14 +110,6 @@ $(function () {
 
     });
 
-    $(".pause-li a").click(function(e) {
-        var code = $(this).closest("tr.checks-row").attr("id");
-        var url = "/checks/" + code + "/pause/";
-
-        $("#pause-form").attr("action", url).submit();
-        return false;
-    });
-
     $(".show-log").click(function(e) {
         var code = $(this).closest("tr.checks-row").attr("id");
         var url = "/checks/" + code + "/log/";
@@ -152,20 +133,6 @@ $(function () {
             if (cssClasses.indexOf("sort-last-ping") > -1)
                 return "Sort by last ping<br />(but failed always first)";
         }
-    });
-
-    function showUsage(el) {
-        var tr = $(el).closest("tr");
-
-        $(".ex", "#show-usage-modal").text(tr.data("url"));
-        $(".em", "#show-usage-modal").text(tr.data("email"));
-
-        $("#show-usage-modal").modal("show");
-    }
-
-    $(".usage-examples").click(function(e) {
-        showUsage(e.target);
-        return false;
     });
 
     // Auto-refresh

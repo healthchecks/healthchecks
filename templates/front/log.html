@@ -18,7 +18,7 @@
     </div>
 
 
-    <div class="col-sm-6">
+    <div class="col-sm-5">
         <div class="details-block">
             <h2>How To Ping</h2>
             <div>
@@ -84,6 +84,7 @@
             <h2>Schedule</h2>
             <table id="log-schedule">
                 <tr>
+                    {% if check.kind == "simple" %}
                     <th>Period</th>
                     <td>
                         <span class="value">{{ check.timeout|hc_duration }}</span>
@@ -91,6 +92,12 @@
                             (Expected time between pings)
                         </div>
                     </td>
+                    {% elif check.kind == "cron" %}
+                    <th>Cron Expression</th>
+                    <td>
+                        <span class="value">{{ check.schedule }}</span>
+                    </td>
+                    {% endif %}
                 </tr>
                 <tr>
                     <th>Grace Time</th>
@@ -152,8 +159,7 @@
     </div>
 
 
-
-    <div class="col-sm-6">
+    <div class="col-sm-7">
     {% if events %}
     <h2>
         Log
@@ -265,7 +271,8 @@
 
     </div>
     {% else %}
-        <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
+        <h2>Log</h2>
+        <div class="alert alert-info">This check has not received any pings yet.</div>
     {% endif %}
     </div>
 </div>

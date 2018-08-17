@@ -108,29 +108,9 @@
             </div>
         </td>
         <td class="hidden-xs">
-            <div class="check-menu dropdown">
-                <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            <button class="btn btn-sm btn-default show-log" type="button">
                 <span class="icon-settings" aria-hidden="true"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <li>
-                        <a class="show-log" href="#">Details and Log</a>
-                    </li>
-                    <li class="pause-li" {% if check.status == "new" or check.status == "paused" %}class="disabled"{% endif %}>
-                        <a href="#">Pause Monitoring</a>
-                    </li>
-                    <li>
-                        <a href="#" class="usage-examples">Usage Examples</a>
-                    </li>
-                    <li role="separator" class="divider"></li>
-                    <li>
-                        <a href="#" class="check-menu-remove"
-                            data-name="{{ check.name_then_code }}">
-                            Remove
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            </button>
         </td>
     </tr>
     {% endfor %}

@@ -79,16 +79,16 @@
     white-space: nowrap;
 }
 
-.check-menu {
+.show-log {
     visibility: hidden;
 }
 
-.check-menu .icon-settings {
+.show-log .icon-settings {
     font-size: 16px;
 }
 
-.dropdown-menu > li > a.check-menu-remove {
-    color: #B71C1C;
+tr:hover .show-log {
+    visibility: visible;
 }
 
 button.copy-link {
@@ -114,9 +114,6 @@ button.copy-link:hover {
 
 
 
-tr:hover .check-menu {
-    visibility: visible;
-}
 
 tr:hover .copy-link {
     opacity: 1

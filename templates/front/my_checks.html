@@ -47,8 +47,6 @@
 
 {% include "front/update_name_modal.html" %}
 {% include "front/update_timeout_modal.html" %}
-{% include "front/remove_check_modal.html" %}
-{% include "front/show_usage_modal.html" %}
 
 <div id="ping-details-modal" class="modal">
     <div class="modal-dialog">
@@ -71,8 +69,6 @@
         </div>
     </div>
 </div>
-
-<form id="pause-form" method="post">{% csrf_token %}</form>
 
 {% endblock %}
 
