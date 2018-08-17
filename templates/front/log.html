@@ -259,13 +259,10 @@
         {% endfor %}
     </table>
 
-    {% if show_limit_notice and limit < 1000 %}
-    <p class="alert alert-info">
-        <strong>Showing last {{ limit }} pings.</strong>
-        Want to see more?
-        <a href="{% url 'hc-pricing' %}">
-            Upgrade your account!
-        </a>
+    {% if can_load_more %}
+    <p class="text-center">
+        Showing {{ num_showing }} most recent pings.
+        <a href="?full_log=1">Load More&hellip;</a>
     </p>
     {% endif %}
 

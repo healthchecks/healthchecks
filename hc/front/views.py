@@ -208,7 +208,7 @@ def update_name(request, code):
         check.tags = form.cleaned_data["tags"]
         check.save()
 
-    if request.META.get("HTTP_REFERER", "").endswith("/log/"):
+    if "/log/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-log", code)
 
     return redirect("hc-checks")
@@ -245,7 +245,7 @@ def update_timeout(request, code):
 
     check.save()
 
-    if request.META.get("HTTP_REFERER", "").endswith("/log/"):
+    if "/log/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-log", code)
 
     return redirect("hc-checks")
@@ -305,7 +305,7 @@ def pause(request, code):
     check.status = "paused"
     check.save()
 
-    if request.META.get("HTTP_REFERER", "").endswith("/log/"):
+    if "/log/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-log", code)
 
     return redirect("hc-checks")
@@ -329,11 +329,15 @@ def log(request, code):
     if check.user != request.team.user:
         return HttpResponseForbidden()
 
-    limit = request.team.ping_log_limit
+    limit = 20
+    team_limit = request.team.ping_log_limit
+    if "full_log" in request.GET:
+        limit = team_limit
+
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit + 1]
     pings = list(pings)
 
-    num_pings = len(pings)
+    can_load_more = len(pings) > limit
     pings = pings[:limit]
 
     alerts = []
@@ -355,9 +359,8 @@ def log(request, code):
         "ping_endpoint": settings.PING_ENDPOINT,
         "channels": channels,
         "events": events,
-        "num_pings": min(num_pings, limit),
-        "limit": limit,
-        "show_limit_notice": num_pings > limit and settings.USE_PAYMENTS
+        "num_showing": len(pings),
+        "can_load_more": can_load_more
     }
 
     return render(request, "front/log.html", ctx)
