@@ -8,6 +8,7 @@ check_urls = [
     path('pause/', views.pause, name="hc-pause"),
     path('remove/', views.remove_check, name="hc-remove-check"),
     path('log/', views.log, name="hc-log"),
+    path('status/', views.status_single),
     path('last_ping/', views.ping_details, name="hc-last-ping"),
     path('channels/<uuid:channel_code>/enabled', views.switch_channel, name="hc-switch-channel"),
     path('pings/<int:n>/', views.ping_details, name="hc-ping-details"),

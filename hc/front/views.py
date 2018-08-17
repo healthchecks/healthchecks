@@ -32,6 +32,8 @@ import requests
 
 
 VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
+STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
+LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 
 
 def _tags_statuses(checks):
@@ -92,13 +94,12 @@ def status(request):
     checks = list(Check.objects.filter(user_id=request.team.user_id))
 
     details = []
-    tmpl = get_template("front/last_ping_cell.html")
     for check in checks:
         ctx = {"check": check}
         details.append({
             "code": str(check.code),
             "status": check.get_status(),
-            "last_ping": tmpl.render(ctx)
+            "last_ping": LAST_PING_TMPL.render(ctx)
         })
 
     tags_statuses, num_down = _tags_statuses(checks)
@@ -364,6 +365,19 @@ def log(request, code):
     }
 
     return render(request, "front/log.html", ctx)
+
+
+@login_required
+def status_single(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.user_id != request.team.user.id:
+        return HttpResponseForbidden()
+
+    status = check.get_status()
+    return JsonResponse({
+        "status": status,
+        "status_text": STATUS_TEXT_TMPL.render({"check": check})
+    })
 
 
 @login_required

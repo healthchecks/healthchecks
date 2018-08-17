@@ -135,10 +135,11 @@ $(function () {
         }
     });
 
-    // Auto-refresh
+    // Schedule refresh to run every 3s when tab is visible and user
+    // is active, every 60s otherwise
     var lastStatus = {};
     var lastPing = {};
-    function refresh() {
+    adaptiveSetInterval(function() {
         $.ajax({
             url: "/checks/status/",
             dataType: "json",
@@ -171,48 +172,6 @@ $(function () {
                 }
             }
         });
-    }
-
-    // unconditionally refresh every minute
-    setInterval(refresh, 60000);
-
-    // scheduleRefresh() keeps calling refresh() and decreasing quota
-    // every 3 seconds, until quota runs out.
-    var quota = 0;
-    var scheduledId = null;
-    function scheduleRefresh() {
-        if (quota > 0) {
-            quota -= 1;
-            clearTimeout(scheduledId);
-            scheduledId = setTimeout(scheduleRefresh, 3000);
-            refresh();
-        }
-    }
-
-    document.addEventListener("visibilitychange", function() {
-        if (document.visibilityState == "visible") {
-            // tab becomes visible: reset quota
-            if (quota == 0) {
-                quota = 20;
-                scheduleRefresh();
-            } else {
-                quota = 20;
-            }
-        } else {
-            // lost visibility, clear quota
-            quota = 0;
-        }
-    });
-
-    // user moves mouse: reset quota
-    document.addEventListener("mousemove", function() {
-        if (quota == 0) {
-            quota = 20;
-            scheduleRefresh();
-        } else {
-            quota = 20;
-
-        }
     });
 
     // Copy to clipboard

@@ -46,26 +46,14 @@
         <div class="details-block">
             <h2>Current Status</h2>
             <table>
-                {% with check.get_status as status %}
                 <tr>
                     <td>
-                        <span class="status icon-{{ status }}"></span>
+                        <span id="log-status-icon" class="status icon-{{ check.get_status }}"></span>
                     </td>
-                    <td>
-                        {% if status == "down" %}
-                            This check is down. Last ping was {{ check.last_ping|naturaltime }}.
-                        {% elif status == "up" %}
-                            This check is up. Last ping was {{ check.last_ping|naturaltime }}.
-                        {% elif status == "grace" %}
-                            This check is late. Last ping was {{ check.last_ping|naturaltime }}.
-                        {% elif status == "paused" %}
-                            This check is paused.
-                        {% elif status == "new" %}
-                            This check has never received a ping.
-                        {% endif %}
+                    <td id="log-status-text">
+                        {% include "front/log_status_text.html" %}
                     </td>
                 </tr>
-                {% endwith %}
             </table>
             <div class="text-right">
                 <form action="{% url 'hc-pause' check.code %}" method="post">
@@ -299,8 +287,10 @@
 <script src="{% static 'js/clipboard.min.js' %}"></script>
 <script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/update-timeout-modal.js' %}"></script>
+<script src="{% static 'js/adaptive-setinterval.js' %}"></script>
 <script src="{% static 'js/log.js' %}"></script>
 {% endcompress %}
 {% endblock %}

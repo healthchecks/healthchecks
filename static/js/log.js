@@ -24,6 +24,24 @@ $(function () {
         }, 300);
     });
 
+    var code = document.getElementById("edit-timeout").dataset.code;
+    var statusUrl = "/checks/" + code + "/status/";
+    var lastStatusText = "";
+    adaptiveSetInterval(function() {
+        $.ajax({
+            url: statusUrl,
+            dataType: "json",
+            timeout: 2000,
+            success: function(data) {
+                if (data.status_text == lastStatusText) {
+                    return;
+                }
+                lastStatusText = data.status_text;
+                $("#log-status-icon").attr("class", "status icon-" + data.status);
+                $("#log-status-text").text(data.status_text);
+            }
+        });
+    });
 
     // Copy to clipboard
     var clipboard = new Clipboard('button.copy-btn');
