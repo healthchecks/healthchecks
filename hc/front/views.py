@@ -336,8 +336,13 @@ def log(request, code):
     events = pings + list(alerts)
     events.sort(key=lambda el: el.created, reverse=True)
 
+    channels = Channel.objects.filter(user=request.team.user)
+    channels = list(channels.order_by("created"))
+
     ctx = {
         "check": check,
+        "ping_endpoint": settings.PING_ENDPOINT,
+        "channels": channels,
         "events": events,
         "num_pings": min(num_pings, limit),
         "limit": limit,

@@ -113,12 +113,11 @@
                 <span class="icon-settings" aria-hidden="true"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a class="show-log" href="#">Details and Log</a>
+                    </li>
                     <li class="pause-li" {% if check.status == "new" or check.status == "paused" %}class="disabled"{% endif %}>
                         <a href="#">Pause Monitoring</a>
-                    </li>
-                    <li role="separator" class="divider"></li>
-                    <li>
-                        <a class="show-log" href="#">Log</a>
                     </li>
                     <li>
                         <a href="#" class="usage-examples">Usage Examples</a>

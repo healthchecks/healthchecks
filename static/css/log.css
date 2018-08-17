@@ -1,3 +1,74 @@
+#details-head h1 {
+    margin-bottom: 4px;
+}
+
+#details-head {
+    margin-bottom: 24px;
+}
+
+#details-head-actions {
+    text-align: right;
+    vertical-align: middle;
+
+}
+
+.details-block .status {
+    font-size: 32px;
+    width: 40px;
+}
+
+.details-block {
+    margin-bottom: 36px;
+    border: 1px #aaa;
+    border-radius: 3px;
+}
+
+.details-block code {
+    display: block;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: #f5f5f5;
+}
+
+
+#details-status td {
+    padding: 8px;
+}
+
+#log-schedule th {
+    padding-top: 4px;
+}
+
+#details-integrations th {
+    width: 40px;
+    text-align: center;
+}
+
+#log-schedule td {
+    padding: 4px 0 4px 8px;
+}
+
+#log-schedule th {
+    vertical-align: top;
+    font-weight: normal;
+    text-align: right;
+}
+
+#log-schedule .value {
+    font-weight: bold;
+}
+
+#log-schedule .subtitle {
+    color: #999;
+}
+
+#details-remove-check {
+    border-color: #d43f3a;
+    color: #d43f3a;
+    background: #FFF;
+}
+
+
 #format-switcher-container:before {
     content: " ";
 }

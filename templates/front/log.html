@@ -7,28 +7,138 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-sm-12">
-        <ol class="breadcrumb">
-            <li><a href="{% url 'hc-checks' %}">Checks</a></li>
-            <li>{{ check.name_then_code }}</li>
-            <li class="active">Log</li>
+    <div id="details-head" class="col-sm-12">
+        <h1>
+            {{ check.name_then_code }}
+            <button class="btn btn-sm btn-default">Edit</button>
+        </h1>
+        {% for tag in check.tags_list %}
+            <span class="label label-tag">{{ tag }}</span>
+        {% endfor %}
+    </div>
 
-            <li id="format-switcher-container" class="pull-right">
-                <div id="format-switcher" class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default btn-xs" data-format="utc">
-                        <input type="radio" name="date-format" checked>
-                        UTC
-                    </label>
 
-                    <label class="btn btn-default btn-xs active" data-format="local">
-                        <input type="radio" name="date-format">
-                        Local Time
-                    </label>
-                </div>
-            </li>
-        </ol>
+    <div class="col-sm-6">
+        <div class="details-block">
+            <h2>Description
+                <small><a href="#">edit</a></small>
+            </h2>
+            <p>This is for monitoring our fancy backup script.</p>
+            <p>The script runs on a $5 VM and sometimes runs out of memory and crashes.
+            If this happens, contact Ed and ask him to restart it.</p>
+        </div>
 
+        <div class="details-block">
+            <h2>How To Ping</h2>
+            <div>
+                <p>Keep this check up by making HTTP requests to this URL:</p>
+                <code>{{ check.url }}</code>
+                <p>Or by sending emails to this address:</p>
+                <code>{{ check.email }}</code>
+            </div>
+            <div class="text-right">
+                <button class="btn btn-sm btn-default">Copy URL</button>
+                <button class="btn btn-sm btn-default">Copy Email</button>
+                <button class="btn btn-sm btn-default">Usage Examples</button>
+            </div>
+        </div>
+
+        <div class="details-block">
+            <h2>Current Status</h2>
+            <table>
+                <tr>
+                    <td>
+                        <span class="status icon-{{ check.get_status }}"></span>
+                    </td>
+                    <td>
+                        This check is down. Last ping was {{ check.last_ping|naturaltime }}.
+                    </td>
+                </tr>
+            </table>
+            <div class="text-right">
+                <button class="btn btn-sm btn-default">Pause</button>
+                <button class="btn btn-sm btn-default">Ping Now!</button>
+            </div>
+        </div>
+
+        <div class="details-block">
+            <h2>Schedule</h2>
+            <table id="log-schedule">
+                <tr>
+                    <th>Period</th>
+                    <td>
+                        <span class="value">{{ check.timeout|hc_duration }}</span>
+                        <div class="subtitle">
+                            (Expected time between pings)
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Grace Time</th>
+                    <td>
+                        <span class="value">{{ check.grace|hc_duration }}</span>
+                        <div class="subtitle">
+                            (When a check is late, how long to wait until an alert is sent)
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-right">
+                <button class="btn btn-sm btn-default">Change Schedule</button>
+            </div>
+        </div>
+
+        <div class="details-block">
+            <h2>Notification Methods</h2>
+            <table id="details-integrations" class="table">
+            {% for channel in channels %}
+                <tr>
+                    <th>
+                        {% if channel in check.channel_set.all %}
+                        <span class="label label-success">ON</span>
+                        {% else %}
+                        <span class="label label-default">OFF</span>
+                        {% endif %}
+                    </th>
+                    <td>
+                        <span class="icon-{{ channel.kind }}"></span>
+                        {{ channel }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+
+        <div class="details-block">
+            <h2>Remove</h2>
+            <p>Permanently remove this check from your account.</p>
+            <div class="text-right">
+                <button id="details-remove-check" class="btn btn-sm btn-default">Remove This Check</button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="col-sm-6">
     {% if events %}
+    <h2>
+        Log
+        <small>Click on individual items for details</small>
+        <div id="format-switcher" class="btn-group pull-right" data-toggle="buttons">
+            <label class="btn btn-default btn-xs" data-format="utc">
+                <input type="radio" name="date-format" checked>
+                UTC
+            </label>
+
+            <label class="btn btn-default btn-xs active" data-format="local">
+                <input type="radio" name="date-format">
+                Local Time
+            </label>
+        </div>
+    </h2>
+
     <div class="table-responsive">
     <table class="table" id="log">
         {% for event in events %}
