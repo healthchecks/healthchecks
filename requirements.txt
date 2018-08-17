@@ -1,6 +1,6 @@
 croniter
 Django==2.1
 django_compressor==2.1
-psycopg2==2.7.3.2
+psycopg2==2.7.5
 pytz==2016.7
 requests==2.9.1
