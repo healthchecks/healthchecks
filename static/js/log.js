@@ -1,4 +1,48 @@
 $(function () {
+    $("#edit-name").click(function() {
+        $('#update-name-modal').modal("show");
+        $("#update-name-input").focus();
+
+        return false;
+    });
+
+    $("#pause").click(function(e) {
+        $("#pause-form").submit();
+        return false;
+    });
+
+    $("#ping-now").click(function(e) {
+        var button = this;
+        $.get(this.dataset.url, function() {
+            button.textContent = "Success!";
+        });
+    });
+
+    $("#ping-now").mouseout(function(e) {
+        setTimeout(function() {
+            e.target.textContent = "Ping Now!";
+        }, 300);
+    });
+
+
+    // Copy to clipboard
+    var clipboard = new Clipboard('button.copy-btn');
+    $("button.copy-btn").mouseout(function(e) {
+        setTimeout(function() {
+            e.target.textContent = e.target.dataset.label;
+        }, 300);
+    });
+
+    clipboard.on('success', function(e) {
+        e.trigger.textContent = "Copied!";
+        e.clearSelection();
+    });
+
+    clipboard.on('error', function(e) {
+        var text = e.trigger.getAttribute("data-clipboard-text");
+        prompt("Press Ctrl+C to select:", text)
+    });
+
     $("#log tr.ok").on("click", function() {
         $("#ping-details-body").text("Updating...");
         $('#ping-details-modal').modal("show");

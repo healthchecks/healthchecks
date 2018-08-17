@@ -10,7 +10,7 @@
     <div id="details-head" class="col-sm-12">
         <h1>
             {{ check.name_then_code }}
-            <button class="btn btn-sm btn-default">Edit</button>
+            <button id="edit-name" class="btn btn-sm btn-default">Edit</button>
         </h1>
         {% for tag in check.tags_list %}
             <span class="label label-tag">{{ tag }}</span>
@@ -20,15 +20,6 @@
 
     <div class="col-sm-6">
         <div class="details-block">
-            <h2>Description
-                <small><a href="#">edit</a></small>
-            </h2>
-            <p>This is for monitoring our fancy backup script.</p>
-            <p>The script runs on a $5 VM and sometimes runs out of memory and crashes.
-            If this happens, contact Ed and ask him to restart it.</p>
-        </div>
-
-        <div class="details-block">
             <h2>How To Ping</h2>
             <div>
                 <p>Keep this check up by making HTTP requests to this URL:</p>
@@ -37,27 +28,55 @@
                 <code>{{ check.email }}</code>
             </div>
             <div class="text-right">
-                <button class="btn btn-sm btn-default">Copy URL</button>
-                <button class="btn btn-sm btn-default">Copy Email</button>
-                <button class="btn btn-sm btn-default">Usage Examples</button>
+                <button
+                    data-label="Copy URL"
+                    data-clipboard-text="{{ check.url }}"
+                    class="btn btn-sm btn-default copy-btn">Copy URL</button>
+                <button
+                    data-label="Copy Email"
+                    data-clipboard-text="{{ check.email }}"
+                    class="btn btn-sm btn-default copy-btn">Copy Email</button>
+                <button
+                    data-toggle="modal"
+                    data-target="#show-usage-modal"
+                    class="btn btn-sm btn-default">Usage Examples</button>
             </div>
         </div>
 
         <div class="details-block">
             <h2>Current Status</h2>
             <table>
+                {% with check.get_status as status %}
                 <tr>
                     <td>
-                        <span class="status icon-{{ check.get_status }}"></span>
+                        <span class="status icon-{{ status }}"></span>
                     </td>
                     <td>
-                        This check is down. Last ping was {{ check.last_ping|naturaltime }}.
+                        {% if status == "down" %}
+                            This check is down. Last ping was {{ check.last_ping|naturaltime }}.
+                        {% elif status == "up" %}
+                            This check is up. Last ping was {{ check.last_ping|naturaltime }}.
+                        {% elif status == "grace" %}
+                            This check is late. Last ping was {{ check.last_ping|naturaltime }}.
+                        {% elif status == "paused" %}
+                            This check is paused.
+                        {% elif status == "new" %}
+                            This check has never received a ping.
+                        {% endif %}
                     </td>
                 </tr>
+                {% endwith %}
             </table>
             <div class="text-right">
-                <button class="btn btn-sm btn-default">Pause</button>
-                <button class="btn btn-sm btn-default">Ping Now!</button>
+                <form action="{% url 'hc-pause' check.code %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-sm btn-default" value="Pause" />
+                </form>
+
+                <button
+                    id="ping-now"
+                    data-url="{{ check.url }}"
+                    class="btn btn-sm btn-default">Ping Now!</button>
             </div>
         </div>
 
@@ -84,7 +103,16 @@
                 </tr>
             </table>
             <div class="text-right">
-                <button class="btn btn-sm btn-default">Change Schedule</button>
+                <button
+                    id="edit-timeout"
+                    class="btn btn-sm btn-default timeout-grace"
+                    data-code="{{ check.code }}"
+                    data-kind="{{ check.kind }}"
+                    data-timeout="{{ check.timeout.total_seconds }}"
+                    data-grace="{{ check.grace.total_seconds }}"
+                    data-schedule="{{ check.schedule }}"
+                    data-tz="{{ check.tz }}">
+                    Change Schedule</button>
             </div>
         </div>
 
@@ -113,7 +141,11 @@
             <h2>Remove</h2>
             <p>Permanently remove this check from your account.</p>
             <div class="text-right">
-                <button id="details-remove-check" class="btn btn-sm btn-default">Remove This Check</button>
+                <button
+                    id="details-remove-check"
+                    data-toggle="modal"
+                    data-target="#remove-check-modal"
+                    class="btn btn-sm btn-default">Remove This Check</button>
             </div>
         </div>
 
@@ -139,7 +171,7 @@
         </div>
     </h2>
 
-    <div class="table-responsive">
+    <div id="log-container">
     <table class="table" id="log">
         {% for event in events %}
         {% if event.n %}
@@ -174,9 +206,6 @@
                     <span class="ua-body">
                         {% if event.ua %}
                         - {{ event.ua }}
-                        {% endif %}
-                        {% if event.body %}
-                        -  {{ event.body|trunc }}
                         {% endif %}
                     </span>
                 {% endif %}
@@ -250,10 +279,12 @@
             </div>
         </div>
     </div>
-    <form>
-        {% csrf_token %}
-    </form>
 </div>
+
+{% include "front/update_name_modal.html" %}
+{% include "front/update_timeout_modal.html" %}
+{% include "front/show_usage_modal.html" %}
+{% include "front/remove_check_modal.html" %}
 
 {% endblock %}
 
@@ -261,7 +292,11 @@
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
+<script src="{% static 'js/nouislider.min.js' %}"></script>
 <script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/update-timeout-modal.js' %}"></script>
 <script src="{% static 'js/log.js' %}"></script>
 {% endcompress %}
 {% endblock %}

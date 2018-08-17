@@ -1,0 +1,29 @@
+<div id="remove-check-modal" class="modal">
+    <div class="modal-dialog">
+        <form
+            id="remove-check-form"
+            {% if check %}action="{% url 'hc-remove-check' check.code %}"{% endif %}
+            method="post">
+
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="remove-check-title">Remove Check <span class="remove-check-name">{{ check.name_then_code }}</span></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to remove check
+                        <strong class="remove-check-name">{{ check.name_then_code }}</strong>.
+                    </p>
+                    <p>Once it's gone there is no "undo" and you cannot get
+                    the old ping URL back.</p>
+                    <p>Are you sure?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

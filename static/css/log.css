@@ -23,6 +23,10 @@
     border-radius: 3px;
 }
 
+.details-block .copy-btn {
+    width: 90px;
+}
+
 .details-block code {
     display: block;
     padding: 8px;
@@ -30,6 +34,9 @@
     background: #f5f5f5;
 }
 
+.details-block form {
+    display: inline;
+}
 
 #details-status td {
     padding: 8px;
@@ -71,6 +78,10 @@
 
 #format-switcher-container:before {
     content: " ";
+}
+
+#log-container {
+    overflow: hidden;
 }
 
 #log {

@@ -208,6 +208,9 @@ def update_name(request, code):
         check.tags = form.cleaned_data["tags"]
         check.save()
 
+    if request.META.get("HTTP_REFERER", "").endswith("/log/"):
+        return redirect("hc-log", code)
+
     return redirect("hc-checks")
 
 
@@ -241,6 +244,10 @@ def update_timeout(request, code):
         check.alert_after = check.get_alert_after()
 
     check.save()
+
+    if request.META.get("HTTP_REFERER", "").endswith("/log/"):
+        return redirect("hc-log", code)
+
     return redirect("hc-checks")
 
 
@@ -298,6 +305,9 @@ def pause(request, code):
     check.status = "paused"
     check.save()
 
+    if request.META.get("HTTP_REFERER", "").endswith("/log/"):
+        return redirect("hc-log", code)
+
     return redirect("hc-checks")
 
 
@@ -340,6 +350,7 @@ def log(request, code):
     channels = list(channels.order_by("created"))
 
     ctx = {
+        "page": "log",
         "check": check,
         "ping_endpoint": settings.PING_ENDPOINT,
         "channels": channels,

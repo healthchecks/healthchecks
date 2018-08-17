@@ -52,7 +52,7 @@ body {
     font-size: small;
 }
 
-.page-checks .container-fluid {
+.page-checks .container-fluid, .page-log .container-fluid {
     /* Fluid below 1320px, but max width capped to 1320px ... */
     max-width: 1320px;
 }
