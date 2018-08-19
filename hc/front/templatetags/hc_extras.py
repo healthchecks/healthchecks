@@ -85,14 +85,24 @@ def num_down_title(num_down):
 
 @register.filter
 def down_title(check):
+    """ Prepare title tag for the Details page.
+
+    If the check is down, return "DOWN - Name - site_name".
+    Otherwise, return "Name - site_name".
+
+    """
+
     s = "%s – %s" % (check.name_then_code(), settings.SITE_NAME)
     if check.get_status() == "down":
         s = "DOWN – " + s
+
     return s
 
 
 @register.filter
 def break_underscore(s):
+    """ Add non-breaking-space characters after underscores. """
+
     if len(s) > 30:
         s = s.replace("_", "_\u200b")
 

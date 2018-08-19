@@ -46,13 +46,13 @@ class LogTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
-        assert r.status_code == 404
+        self.assertEqual(r.status_code, 404)
 
     def test_it_checks_ownership(self):
         url = "/checks/%s/log/" % self.check.code
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.get(url)
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 403)
 
     def test_it_shows_pushover_notifications(self):
         ch = Channel(kind="po", user=self.alice)
