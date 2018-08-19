@@ -30,7 +30,7 @@ $(function () {
     var lastUpdated = "";
     adaptiveSetInterval(function() {
         $.ajax({
-            url: statusUrl,
+            url: statusUrl + (lastUpdated ? "?u=" + lastUpdated : ""),
             dataType: "json",
             timeout: 2000,
             success: function(data) {
@@ -40,7 +40,7 @@ $(function () {
                     $("#log-status-text").text(data.status_text);
                 }
 
-                if (data.updated != lastUpdated) {
+                if (data.events) {
                     lastUpdated = data.updated;
                     $("#events").html(data.events);
                     switchDateFormat(lastFormat);
@@ -67,7 +67,7 @@ $(function () {
         prompt("Press Ctrl+C to select:", text)
     });
 
-    $("#log tr.ok").on("click", function() {
+    $("#events").on("click", "tr.ok", function() {
         $("#ping-details-body").text("Updating...");
         $('#ping-details-modal').modal("show");
 

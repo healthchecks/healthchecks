@@ -386,14 +386,18 @@ def status_single(request, code):
     events = _get_events(check, 20)
     updated = None
     if len(events):
-        updated = events[0].created.isoformat()
+        updated = events[0].created.replace(tzinfo=None).isoformat()
 
-    return JsonResponse({
+    doc = {
         "status": status,
         "status_text": STATUS_TEXT_TMPL.render({"check": check}),
-        "events": EVENTS_TMPL.render({"check": check, "events": events}),
         "updated": updated
-    })
+    }
+
+    if updated != request.GET.get("u"):
+        doc["events"] = EVENTS_TMPL.render({"check": check, "events": events})
+
+    return JsonResponse(doc)
 
 
 @login_required

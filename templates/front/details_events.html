@@ -16,94 +16,92 @@
         </div>
     </h2>
 
-    <div id="log-container">
-        <table class="table" id="log">
-        {% for event in events %}
-        {% if event.n %}
-        <tr class="ok" data-dt="{{ event.created.isoformat }}" data-url="{% url 'hc-ping-details' check.code event.n  %}">
-            <td class="n-cell">
-                <span class="hash">#</span>{{ event.n }}
-            </td>
-            <td class="date"></td>
-            <td class="time"></td>
-            <td class="text-right">
-                {% if event.fail %}
-                <span class="label label-danger">Failure</span>
-                {% else %}
-                <span class="label label-success">OK</span>
-                {% endif %}
-            </td>
-            <td class="details">
-                <div>
-                {% if event.scheme == "email" %}
-                    {{ event.ua }}
-                    <span class="ua-body">
-                        {% if event.body %}
-                            -  {{ event.body|trunc }}
-                        {% endif %}
-                    </span>
-                {% else %}
-                    {{ event.scheme|upper }}
-                    {{ event.method }}
-                    {% if event.remote_addr %}
-                    from {{ event.remote_addr }}
+    <table class="table" id="log">
+    {% for event in events %}
+    {% if event.n %}
+    <tr class="ok" data-dt="{{ event.created.isoformat }}" data-url="{% url 'hc-ping-details' check.code event.n  %}">
+        <td class="n-cell">
+            <span class="hash">#</span>{{ event.n }}
+        </td>
+        <td class="date"></td>
+        <td class="time"></td>
+        <td class="text-right">
+            {% if event.fail %}
+            <span class="label label-danger">Failure</span>
+            {% else %}
+            <span class="label label-success">OK</span>
+            {% endif %}
+        </td>
+        <td class="details">
+            <div>
+            {% if event.scheme == "email" %}
+                {{ event.ua }}
+                <span class="ua-body">
+                    {% if event.body %}
+                        -  {{ event.body|trunc }}
                     {% endif %}
-                    <span class="ua-body">
-                        {% if event.ua %}
-                        - {{ event.ua }}
-                        {% endif %}
-                    </span>
+                </span>
+            {% else %}
+                {{ event.scheme|upper }}
+                {{ event.method }}
+                {% if event.remote_addr %}
+                from {{ event.remote_addr }}
                 {% endif %}
-                </div>
-            </td>
-        </tr>
-        {% endif %}
-        {% if event.check_status %}
-        <tr class="missing" data-dt="{{ event.created.isoformat }}">
-            <td class="n-cell">
-                <span class="icon-missing"></span>
-            </td>
-            <td class="date"></td>
-            <td class="time"></td>
-            <td class="alert-info" colspan="2">
-                {% if event.channel.kind == "email" %}
-                    Sent email alert to {{ event.channel.value }}
-                {% elif event.channel.kind == "slack" %}
-                    Sent Slack alert
-                    {% if event.channel.slack_channel %}
-                        to {{ event.channel.slack_channel }}
+                <span class="ua-body">
+                    {% if event.ua %}
+                    - {{ event.ua }}
                     {% endif %}
-                {% elif event.channel.kind == "pd" %}
-                    Sent alert to PagerDuty
-                {% elif event.channel.kind == "pagertree" %}
-                    Sent alert to PagerTree
-                {% elif event.channel.kind == "opsgenie" %}
-                    Sent alert to OpsGenie
-                {% elif event.channel.kind == "hipchat" %}
-                    Sent alert to HipChat
-                {% elif event.channel.kind == "po" %}
-                    Sent a Pushover notification
-                {% elif event.channel.kind == "webhook" %}
-                    Called webhook {{ event.channel.url_down }}
-                {% else %}
-                    Sent alert to {{ event.channel.kind|capfirst }}
+                </span>
+            {% endif %}
+            </div>
+        </td>
+    </tr>
+    {% endif %}
+    {% if event.check_status %}
+    <tr class="missing" data-dt="{{ event.created.isoformat }}">
+        <td class="n-cell">
+            <span class="icon-missing"></span>
+        </td>
+        <td class="date"></td>
+        <td class="time"></td>
+        <td class="alert-info" colspan="2">
+            {% if event.channel.kind == "email" %}
+                Sent email alert to {{ event.channel.value }}
+            {% elif event.channel.kind == "slack" %}
+                Sent Slack alert
+                {% if event.channel.slack_channel %}
+                    to {{ event.channel.slack_channel }}
                 {% endif %}
-                {% if event.error %}
-                    <br />
-                    <strong>Error: {{ event.error }}</strong>
-                {% endif %}
-            </td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        </table>
+            {% elif event.channel.kind == "pd" %}
+                Sent alert to PagerDuty
+            {% elif event.channel.kind == "pagertree" %}
+                Sent alert to PagerTree
+            {% elif event.channel.kind == "opsgenie" %}
+                Sent alert to OpsGenie
+            {% elif event.channel.kind == "hipchat" %}
+                Sent alert to HipChat
+            {% elif event.channel.kind == "po" %}
+                Sent a Pushover notification
+            {% elif event.channel.kind == "webhook" %}
+                Called webhook {{ event.channel.url_down }}
+            {% else %}
+                Sent alert to {{ event.channel.kind|capfirst }}
+            {% endif %}
+            {% if event.error %}
+                <br />
+                <strong>Error: {{ event.error }}</strong>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </table>
 
-        {% if check.n_pings > 20 %}
-        <p class="text-center">
-            <a href="{% url 'hc-log' check.code %}">Show More&hellip;</a>
-        </p>
-        {% endif %}
-    </div>
+    {% if check.n_pings > 20 %}
+    <p class="text-center">
+        <a href="{% url 'hc-log' check.code %}">Show More&hellip;</a>
+    </p>
+    {% endif %}
 {% else %}
     <h2>Log</h2>
     <div class="alert alert-info">This check has not received any pings yet.</div>
