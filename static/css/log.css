@@ -2,10 +2,6 @@
     content: " ";
 }
 
-#log-container {
-    overflow: hidden;
-}
-
 #log {
     visibility: hidden;
     font-size: 13px;
@@ -29,20 +25,11 @@
 
 #log .details {
     width: 100%;
-}
+    max-width: 0;
 
-#log .details div {
-    width: 700px;
     white-space: nowrap;
     overflow: hidden;
-    overflow-x: hidden;
     text-overflow: ellipsis;
-}
-
-@media (min-width: 1200px) {
-    #log .details div {
-        width: 900px;
-    }
 }
 
 #log .details span.ua-body {
