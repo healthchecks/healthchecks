@@ -210,8 +210,8 @@ def update_name(request, code):
         check.tags = form.cleaned_data["tags"]
         check.save()
 
-    if "/log/" in request.META.get("HTTP_REFERER", ""):
-        return redirect("hc-log", code)
+    if "/details/" in request.META.get("HTTP_REFERER", ""):
+        return redirect("hc-details", code)
 
     return redirect("hc-checks")
 
@@ -247,8 +247,8 @@ def update_timeout(request, code):
 
     check.save()
 
-    if "/log/" in request.META.get("HTTP_REFERER", ""):
-        return redirect("hc-log", code)
+    if "/details/" in request.META.get("HTTP_REFERER", ""):
+        return redirect("hc-details", code)
 
     return redirect("hc-checks")
 
@@ -307,8 +307,8 @@ def pause(request, code):
     check.status = "paused"
     check.save()
 
-    if "/log/" in request.META.get("HTTP_REFERER", ""):
-        return redirect("hc-log", code)
+    if "/details/" in request.META.get("HTTP_REFERER", ""):
+        return redirect("hc-details", code)
 
     return redirect("hc-checks")
 
@@ -384,9 +384,9 @@ def status_single(request, code):
 
     status = check.get_status()
     events = _get_events(check, 20)
-    updated = None
+    updated = "1"
     if len(events):
-        updated = events[0].created.replace(tzinfo=None).isoformat()
+        updated = events[0].created.strftime("%s.%f")
 
     doc = {
         "status": status,
