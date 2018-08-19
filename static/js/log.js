@@ -3,14 +3,8 @@ $(function () {
         $("#ping-details-body").text("Updating...");
         $('#ping-details-modal').modal("show");
 
-        var token = $('input[name=csrfmiddlewaretoken]').val();
-        $.ajax({
-            url: this.dataset.url,
-            type: "post",
-            headers: {"X-CSRFToken": token},
-            success: function(data) {
-                $("#ping-details-body" ).html(data);
-            }
+        $.get(this.dataset.url, function(data) {
+            $("#ping-details-body" ).html(data);
         });
 
         return false;
@@ -25,7 +19,6 @@ $(function () {
             $(".time", row).text(dt.format("HH:mm"));
         })
     }
-
 
     $("#format-switcher").click(function(ev) {
         var format = ev.target.getAttribute("data-format");

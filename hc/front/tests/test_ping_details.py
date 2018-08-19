@@ -11,12 +11,12 @@ class LastPingTestCase(BaseTestCase):
         Ping.objects.create(owner=check, body="this is body")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post("/checks/%s/last_ping/" % check.code)
+        r = self.client.get("/checks/%s/last_ping/" % check.code)
         self.assertContains(r, "this is body", status_code=200)
 
     def test_it_requires_user(self):
         check = Check.objects.create()
-        r = self.client.post("/checks/%s/last_ping/" % check.code)
+        r = self.client.get("/checks/%s/last_ping/" % check.code)
         self.assertEqual(r.status_code, 403)
 
     def test_it_accepts_n(self):
@@ -29,8 +29,8 @@ class LastPingTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        r = self.client.post("/checks/%s/pings/1/" % check.code)
+        r = self.client.get("/checks/%s/pings/1/" % check.code)
         self.assertContains(r, "foo-123", status_code=200)
 
-        r = self.client.post("/checks/%s/pings/2/" % check.code)
+        r = self.client.get("/checks/%s/pings/2/" % check.code)
         self.assertContains(r, "bar-456", status_code=200)

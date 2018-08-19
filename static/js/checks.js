@@ -44,7 +44,6 @@ $(function () {
 
     $(".last-ping").on("click", function() {
         if (this.innerText == "Never") {
-            showUsage(this);
             return false;
         }
 
@@ -53,14 +52,8 @@ $(function () {
 
         var code = $(this).closest("tr.checks-row").attr("id");
         var lastPingUrl = "/checks/" + code + "/last_ping/";
-        var token = $('input[name=csrfmiddlewaretoken]').val();
-        $.ajax({
-            url: lastPingUrl,
-            type: "post",
-            headers: {"X-CSRFToken": token},
-            success: function(data) {
-                $("#ping-details-body" ).html(data);
-            }
+        $.get(lastPingUrl, function(data) {
+            $("#ping-details-body" ).html(data);
         });
 
         var logUrl = "/checks/" + code + "/log/";

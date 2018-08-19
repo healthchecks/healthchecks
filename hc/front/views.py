@@ -275,7 +275,6 @@ def cron_preview(request):
     return render(request, "front/cron_preview.html", ctx)
 
 
-@require_POST
 def ping_details(request, code, n=None):
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
