@@ -1,40 +1,23 @@
-{% extends "base.html" %}
-{% load compress humanize staticfiles hc_extras %}
+{% load hc_extras %}
+{% if events %}
+    <h2>
+        Log
+        <small>Click on individual items for details</small>
+        <div id="format-switcher" class="btn-group pull-right" data-toggle="buttons">
+            <label class="btn btn-default btn-xs" data-format="utc">
+                <input type="radio" name="date-format" checked>
+                UTC
+            </label>
 
-{% block title %}My Checks - {% site_name %}{% endblock %}
+            <label class="btn btn-default btn-xs active" data-format="local">
+                <input type="radio" name="date-format">
+                Local Time
+            </label>
+        </div>
+    </h2>
 
-
-{% block content %}
-
-<div class="row">
-    <div class="col-sm-12">
-        <ol class="breadcrumb">
-            <li><a href="{% url 'hc-checks' %}">Checks</a></li>
-            <li>
-                <a href="{% url 'hc-details' check.code %}">
-                    {{ check.name_then_code }}
-                </a>
-            </li>
-            <li class="active">Log</li>
-
-            <li id="format-switcher-container" class="pull-right">
-                <div id="format-switcher" class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default btn-xs" data-format="utc">
-                        <input type="radio" name="date-format" checked>
-                        UTC
-                    </label>
-
-                    <label class="btn btn-default btn-xs active" data-format="local">
-                        <input type="radio" name="date-format">
-                        Local Time
-                    </label>
-                </div>
-            </li>
-        </ol>
-
-    {% if events %}
-    <div class="table-responsive">
-    <table class="table" id="log">
+    <div id="log-container">
+        <table class="table" id="log">
         {% for event in events %}
         {% if event.n %}
         <tr class="ok" data-dt="{{ event.created.isoformat }}" data-url="{% url 'hc-ping-details' check.code event.n  %}">
@@ -68,9 +51,6 @@
                     <span class="ua-body">
                         {% if event.ua %}
                         - {{ event.ua }}
-                        {% endif %}
-                        {% if event.body %}
-                        -  {{ event.body|trunc }}
                         {% endif %}
                     </span>
                 {% endif %}
@@ -116,46 +96,15 @@
         </tr>
         {% endif %}
         {% endfor %}
-    </table>
+        </table>
 
-    {% if show_limit_notice and limit < 1000 %}
-    <p class="alert alert-info">
-        <strong>Showing last {{ limit }} pings.</strong>
-        Want to see more?
-        <a href="{% url 'hc-pricing' %}">
-            Upgrade your account!
-        </a>
-    </p>
-    {% endif %}
-
+        {% if check.n_pings > 20 %}
+        <p class="text-center">
+            <a href="{% url 'hc-log' check.code %}">Show More&hellip;</a>
+        </p>
+        {% endif %}
     </div>
-    {% else %}
-        <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
-    {% endif %}
-    </div>
-</div>
-
-<div id="ping-details-modal" class="modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div id="ping-details-body">Loading</div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Got It!</button>
-            </div>
-        </div>
-    </div>
-    <form>
-        {% csrf_token %}
-    </form>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-{% compress js %}
-<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/moment.min.js' %}"></script>
-<script src="{% static 'js/log.js' %}"></script>
-{% endcompress %}
-{% endblock %}
+{% else %}
+    <h2>Log</h2>
+    <div class="alert alert-info">This check has not received any pings yet.</div>
+{% endif %}

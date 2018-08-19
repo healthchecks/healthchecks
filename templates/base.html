@@ -45,7 +45,7 @@
 </head>
 <body class="page-{{ page }}">
     <nav class="navbar navbar-default">
-        <div class="container{% if page == "checks" or page == "log" %}-fluid{% endif %}">
+        <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
         <div class="navbar-header">
             <button
                 type="button"
@@ -154,13 +154,13 @@
     </nav>
 
     {% block containers %}
-    <div class="container{% if page == "checks" or page == "log" %}-fluid{% endif %}">
+    <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
         {% block content %}{% endblock %}
     </div>
     {% endblock %}
 
     <footer class="footer">
-        <div class="container{% if page == "checks" or page == "log" %}-fluid{% endif %}">
+        <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
             <ul>
                 <li>
                     Powered by Healthchecks open-source project

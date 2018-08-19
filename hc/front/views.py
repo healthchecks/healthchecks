@@ -34,6 +34,7 @@ import requests
 VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
+EVENTS_TMPL = get_template("front/details_events.html")
 
 
 def _tags_statuses(checks):
@@ -324,22 +325,9 @@ def remove_check(request, code):
     return redirect("hc-checks")
 
 
-@login_required
-def log(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user != request.team.user:
-        return HttpResponseForbidden()
-
-    limit = 20
-    team_limit = request.team.ping_log_limit
-    if "full_log" in request.GET:
-        limit = team_limit
-
-    pings = Ping.objects.filter(owner=check).order_by("-id")[:limit + 1]
+def _get_events(check, limit):
+    pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
     pings = list(pings)
-
-    can_load_more = len(pings) > limit
-    pings = pings[:limit]
 
     alerts = []
     if len(pings):
@@ -350,21 +338,42 @@ def log(request, code):
 
     events = pings + list(alerts)
     events.sort(key=lambda el: el.created, reverse=True)
+    return events
+
+
+@login_required
+def log(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.user != request.team.user:
+        return HttpResponseForbidden()
+
+    limit = request.team.ping_log_limit
+    ctx = {
+        "check": check,
+        "events": _get_events(check, limit),
+        "limit": limit,
+        "show_limit_notice": check.n_pings > limit and settings.USE_PAYMENTS
+    }
+
+    return render(request, "front/log.html", ctx)
+
+
+@login_required
+def details(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.user != request.team.user:
+        return HttpResponseForbidden()
 
     channels = Channel.objects.filter(user=request.team.user)
     channels = list(channels.order_by("created"))
 
     ctx = {
-        "page": "log",
+        "page": "details",
         "check": check,
-        "ping_endpoint": settings.PING_ENDPOINT,
-        "channels": channels,
-        "events": events,
-        "num_showing": len(pings),
-        "can_load_more": can_load_more
+        "channels": channels
     }
 
-    return render(request, "front/log.html", ctx)
+    return render(request, "front/details.html", ctx)
 
 
 @login_required
@@ -374,9 +383,16 @@ def status_single(request, code):
         return HttpResponseForbidden()
 
     status = check.get_status()
+    events = _get_events(check, 20)
+    updated = None
+    if len(events):
+        updated = events[0].created.isoformat()
+
     return JsonResponse({
         "status": status,
-        "status_text": STATUS_TEXT_TMPL.render({"check": check})
+        "status_text": STATUS_TEXT_TMPL.render({"check": check}),
+        "events": EVENTS_TMPL.render({"check": check, "events": events}),
+        "updated": updated
     })
 
 

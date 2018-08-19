@@ -4,6 +4,7 @@ from hc.front import views
 
 check_urls = [
     path('name/', views.update_name, name="hc-update-name"),
+    path('details/', views.details, name="hc-details"),
     path('timeout/', views.update_timeout, name="hc-update-timeout"),
     path('pause/', views.pause, name="hc-pause"),
     path('remove/', views.remove_check, name="hc-remove-check"),

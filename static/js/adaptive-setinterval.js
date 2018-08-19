@@ -1,4 +1,4 @@
-function adaptiveSetInterval(fn) {
+function adaptiveSetInterval(fn, runNow) {
     // unconditionally run every minute
     setInterval(fn, 60000);
 
@@ -39,4 +39,9 @@ function adaptiveSetInterval(fn) {
             quota = 20;
         }
     });
+
+    if (runNow) {
+        quota = 20;
+        scheduleRun();
+    }
 }

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load compress humanize static hc_extras %}
+
+{% block title %}My Checks - {% site_name %}{% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+    <div id="details-head" class="col-sm-12">
+        <h1>
+            {{ check.name_then_code }}
+            <button id="edit-name" class="btn btn-sm btn-default">Edit</button>
+        </h1>
+        {% for tag in check.tags_list %}
+            <span class="label label-tag">{{ tag }}</span>
+        {% endfor %}
+    </div>
+
+
+    <div class="col-sm-5">
+        <div class="details-block">
+            <h2>How To Ping</h2>
+            <div>
+                <p>Keep this check up by making HTTP requests to this URL:</p>
+                <code>{{ check.url }}</code>
+                <p>Or by sending emails to this address:</p>
+                <code>{{ check.email }}</code>
+            </div>
+            <div class="text-right">
+                <button
+                    data-label="Copy URL"
+                    data-clipboard-text="{{ check.url }}"
+                    class="btn btn-sm btn-default copy-btn">Copy URL</button>
+                <button
+                    data-label="Copy Email"
+                    data-clipboard-text="{{ check.email }}"
+                    class="btn btn-sm btn-default copy-btn">Copy Email</button>
+                <button
+                    data-toggle="modal"
+                    data-target="#show-usage-modal"
+                    class="btn btn-sm btn-default">Usage Examples</button>
+            </div>
+        </div>
+
+        <div class="details-block">
+            <h2>Current Status</h2>
+            <table>
+                <tr>
+                    <td>
+                        <span id="log-status-icon" class="status icon-{{ check.get_status }}"></span>
+                    </td>
+                    <td id="log-status-text">
+                        {% include "front/log_status_text.html" %}
+                    </td>
+                </tr>
+            </table>
+            <div class="text-right">
+                <form action="{% url 'hc-pause' check.code %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-sm btn-default" value="Pause" />
+                </form>
+
+                <button
+                    id="ping-now"
+                    data-url="{{ check.url }}"
+                    class="btn btn-sm btn-default">Ping Now!</button>
+            </div>
+        </div>
+
+        <div class="details-block">
+            <h2>Schedule</h2>
+            <table id="log-schedule">
+                <tr>
+                    {% if check.kind == "simple" %}
+                    <th>Period</th>
+                    <td>
+                        <span class="value">{{ check.timeout|hc_duration }}</span>
+                        <div class="subtitle">
+                            (Expected time between pings)
+                        </div>
+                    </td>
+                    {% elif check.kind == "cron" %}
+                    <th>Cron Expression</th>
+                    <td>
+                        <span class="value">{{ check.schedule }}</span>
+                    </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th>Grace Time</th>
+                    <td>
+                        <span class="value">{{ check.grace|hc_duration }}</span>
+                        <div class="subtitle">
+                            (When a check is late, how long to wait until an alert is sent)
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="text-right">
+                <button
+                    id="edit-timeout"
+                    class="btn btn-sm btn-default timeout-grace"
+                    data-code="{{ check.code }}"
+                    data-kind="{{ check.kind }}"
+                    data-timeout="{{ check.timeout.total_seconds }}"
+                    data-grace="{{ check.grace.total_seconds }}"
+                    data-schedule="{{ check.schedule }}"
+                    data-tz="{{ check.tz }}">
+                    Change Schedule</button>
+            </div>
+        </div>
+
+        <div class="details-block">
+            <h2>Notification Methods</h2>
+            <table id="details-integrations" class="table">
+            {% for channel in channels %}
+                <tr>
+                    <th>
+                        {% if channel in check.channel_set.all %}
+                        <span class="label label-success">ON</span>
+                        {% else %}
+                        <span class="label label-default">OFF</span>
+                        {% endif %}
+                    </th>
+                    <td>
+                        <span class="icon-{{ channel.kind }}"></span>
+                        {{ channel }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+
+        <div class="details-block">
+            <h2>Remove</h2>
+            <p>Permanently remove this check from your account.</p>
+            <div class="text-right">
+                <button
+                    id="details-remove-check"
+                    data-toggle="modal"
+                    data-target="#remove-check-modal"
+                    class="btn btn-sm btn-default">Remove This Check</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div id="events" class="col-sm-7">
+    </div>
+</div>
+
+<div id="ping-details-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="ping-details-body">Loading</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Got It!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "front/update_name_modal.html" %}
+{% include "front/update_timeout_modal.html" %}
+{% include "front/show_usage_modal.html" %}
+{% include "front/remove_check_modal.html" %}
+
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
+<script src="{% static 'js/nouislider.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
+<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/update-timeout-modal.js' %}"></script>
+<script src="{% static 'js/adaptive-setinterval.js' %}"></script>
+<script src="{% static 'js/details.js' %}"></script>
+{% endcompress %}
+{% endblock %}

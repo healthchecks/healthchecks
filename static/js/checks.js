@@ -112,7 +112,7 @@ $(function () {
 
     $(".show-log").click(function(e) {
         var code = $(this).closest("tr.checks-row").attr("id");
-        var url = "/checks/" + code + "/log/";
+        var url = "/checks/" + code + "/details/";
         window.location = url;
         return false;
     });
