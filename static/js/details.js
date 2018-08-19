@@ -24,6 +24,19 @@ $(function () {
         }, 300);
     });
 
+    $("#details-integrations tr").click(function() {
+        var isOn = $(this).toggleClass("on").hasClass("on");
+        $(".label", this).text(isOn ? "ON" : "OFF");
+
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            url: this.dataset.url,
+            type: "post",
+            headers: {"X-CSRFToken": token},
+            data: {"state": isOn ? "on" : "off"}
+        });
+    })
+
     var code = document.getElementById("edit-timeout").dataset.code;
     var statusUrl = "/checks/" + code + "/status/";
     var lastStatusText = "";

@@ -192,5 +192,4 @@ $(function () {
         prompt("Press Ctrl+C to select:", text)
     });
 
-
 });
