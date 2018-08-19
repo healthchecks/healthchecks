@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}My Checks - {% site_name %}{% endblock %}
+{% block title %}{{ check|down_title }}{% endblock %}
 
 
 {% block content %}

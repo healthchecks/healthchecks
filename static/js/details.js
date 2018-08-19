@@ -45,6 +45,10 @@ $(function () {
                     $("#log-container").html(data.events);
                     switchDateFormat(lastFormat);
                 }
+
+                if (document.title != data.title) {
+                    document.title = data.title;
+                }
             }
         });
     }, true);

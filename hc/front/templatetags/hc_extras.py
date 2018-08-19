@@ -82,6 +82,15 @@ def num_down_title(num_down):
     else:
         return settings.SITE_NAME
 
+
+@register.filter
+def down_title(check):
+    s = "%s – %s" % (check.name_then_code(), settings.SITE_NAME)
+    if check.get_status() == "down":
+        s = "DOWN – " + s
+    return s
+
+
 @register.filter
 def break_underscore(s):
     if len(s) > 30:

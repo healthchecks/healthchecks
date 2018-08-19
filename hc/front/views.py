@@ -24,7 +24,8 @@ from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
                             AddOpsGenieForm, CronForm, AddSmsForm)
 from hc.front.schemas import telegram_callback
-from hc.front.templatetags.hc_extras import num_down_title, sortchecks
+from hc.front.templatetags.hc_extras import (num_down_title, down_title,
+                                             sortchecks)
 from hc.lib import jsonschema
 from pytz import all_timezones
 from pytz.exceptions import UnknownTimeZoneError
@@ -391,6 +392,7 @@ def status_single(request, code):
     doc = {
         "status": status,
         "status_text": STATUS_TEXT_TMPL.render({"check": check}),
+        "title": down_title(check),
         "updated": updated
     }
 
