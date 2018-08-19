@@ -1,21 +1,5 @@
 {% load hc_extras %}
 {% if events %}
-    <h2>
-        Log
-        <small>Click on individual items for details</small>
-        <div id="format-switcher" class="btn-group pull-right" data-toggle="buttons">
-            <label class="btn btn-default btn-xs" data-format="utc">
-                <input type="radio" name="date-format" checked>
-                UTC
-            </label>
-
-            <label class="btn btn-default btn-xs active" data-format="local">
-                <input type="radio" name="date-format">
-                Local Time
-            </label>
-        </div>
-    </h2>
-
     <table class="table" id="log">
     {% for event in events %}
     {% if event.n %}
@@ -103,6 +87,5 @@
     </p>
     {% endif %}
 {% else %}
-    <h2>Log</h2>
     <div class="alert alert-info">This check has not received any pings yet.</div>
 {% endif %}

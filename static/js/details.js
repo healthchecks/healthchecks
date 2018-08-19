@@ -42,7 +42,7 @@ $(function () {
 
                 if (data.events) {
                     lastUpdated = data.updated;
-                    $("#events").html(data.events);
+                    $("#log-container").html(data.events);
                     switchDateFormat(lastFormat);
                 }
             }
