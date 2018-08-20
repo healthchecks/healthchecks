@@ -2,7 +2,7 @@
 {% if check.status == "down" %}
     {{ check.name_then_code }} is down.
     Last ping was {{ check.last_ping|naturaltime }}.
-    Log: {{ check.log_url }}
+    Details: {{ check.details_url }}
 {% else %}
     {{ check.name_then_code }} received a ping and is now UP
 {% endif %}

@@ -17,6 +17,19 @@ Here is a summary of your checks:
 
 Thanks,<br>
 The {% escaped_site_name %} Team
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "EmailMessage",
+  "potentialAction": {
+    "@type": "ViewAction",
+    "url": "{{ check.details_url }}",
+    "name": "View in {% site_name%}"
+  },
+  "description": "View in {% site_name%}"
+}
+</script>
 {% endblock %}
 
 {% block unsub %}

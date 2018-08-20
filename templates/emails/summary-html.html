@@ -59,11 +59,11 @@
         <td class="mobile-hide" style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
             {% if check.last_ping %}
                 {{ check.last_ping|naturaltime }}
-                <br />
-                <a class="view-log" href="{{ check.log_url }}">Show Log…</a>
             {% else %}
                 Never
             {% endif %}
+            <br />
+            <a class="view-log" href="{{ check.details_url }}">Details…</a>
         </td>
     </tr>
     {% endfor %}
