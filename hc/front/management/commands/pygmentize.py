@@ -31,6 +31,7 @@ class Command(BaseCommand):
         _process("bash_wget", lexers.BashLexer())
         _process("browser", lexers.JavascriptLexer())
         _process("crontab", lexers.BashLexer())
+        _process("cs", lexers.CSharpLexer())
         _process("node", lexers.JavascriptLexer())
         _process("python_urllib2", lexers.PythonLexer())
         _process("python_requests", lexers.PythonLexer())
