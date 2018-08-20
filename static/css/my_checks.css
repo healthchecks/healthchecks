@@ -28,10 +28,14 @@
 }
 
 @media (min-width: 992px) {
-    #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog {
+    #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog  {
         width: 800px;
     }
+    #update-name-modal .modal-dialog  {
+        width: 650px;
+    }
 }
+
 
 #update-timeout-form .modal-body {
     padding-top: 35px;
@@ -182,4 +186,8 @@
     text-align: center;
     margin-top: 10px;
     font-size: 12px;
+}
+
+#update-name-modal .modal-body {
+    padding: 15px 40px;
 }

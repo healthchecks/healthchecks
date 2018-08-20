@@ -11,6 +11,7 @@ from hc.front.validators import (CronExpressionValidator, TimezoneValidator,
 class NameTagsForm(forms.Form):
     name = forms.CharField(max_length=100, required=False)
     tags = forms.CharField(max_length=500, required=False)
+    desc = forms.CharField(required=False)
 
     def clean_tags(self):
         result = []

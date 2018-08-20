@@ -60,6 +60,7 @@ class Check(models.Model):
     name = models.CharField(max_length=100, blank=True)
     tags = models.CharField(max_length=500, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True)
+    desc = models.TextField(blank=True)
     user = models.ForeignKey(User, models.CASCADE, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=10, default="simple",

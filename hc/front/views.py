@@ -209,6 +209,7 @@ def update_name(request, code):
     if form.is_valid():
         check.name = form.cleaned_data["name"]
         check.tags = form.cleaned_data["tags"]
+        check.desc = form.cleaned_data["desc"]
         check.save()
 
     if "/details/" in request.META.get("HTTP_REFERER", ""):

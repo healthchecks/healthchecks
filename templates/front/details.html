@@ -19,6 +19,15 @@
 
 
     <div class="col-sm-5">
+
+        {% if check.desc %}
+        <div class="details-block">
+            <h2>Description</h2>
+            {{ check.desc|linebreaks|urlize }}
+        </div>
+        {% endif %}
+
+
         <div class="details-block">
             <h2>How To Ping</h2>
             <div>

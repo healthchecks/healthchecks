@@ -52,8 +52,9 @@
         </td>
         <td>
             <div data-name="{{ check.name }}"
-                    data-tags="{{ check.tags }}"
-                    class="my-checks-name {% if not check.name %}unnamed{% endif %}">
+                 data-tags="{{ check.tags }}"
+                 data-desc="{{ check.desc }}"
+                 class="my-checks-name {% if not check.name %}unnamed{% endif %}">
                 <div>{{ check.name|default:"unnamed"|break_underscore }}</div>
                 {% for tag in check.tags_list %}
                 <span class="label label-tag">{{ tag }}</span>

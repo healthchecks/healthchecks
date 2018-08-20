@@ -7,6 +7,7 @@ $(function () {
         $("#update-name-form").attr("action", url);
         $("#update-name-input").val(this.dataset.name);
         $("#update-tags-input").val(this.dataset.tags);
+        $("#update-desc-input").val(this.dataset.desc);
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
 
