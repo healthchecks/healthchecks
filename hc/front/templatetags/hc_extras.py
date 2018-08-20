@@ -71,11 +71,6 @@ def sortchecks(checks, key):
 
 
 @register.filter
-def trunc(s):
-    return s[:150]
-
-
-@register.filter
 def num_down_title(num_down):
     if num_down:
         return "%d down – %s" % (num_down, settings.SITE_NAME)

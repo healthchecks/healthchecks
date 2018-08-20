@@ -19,11 +19,6 @@
         <td class="details">
             {% if event.scheme == "email" %}
                 {{ event.ua }}
-                <span class="ua-body">
-                    {% if event.body %}
-                        -  {{ event.body|trunc }}
-                    {% endif %}
-                </span>
             {% else %}
                 {{ event.scheme|upper }}
                 {{ event.method }}
@@ -32,7 +27,7 @@
                 {% endif %}
                 <span class="ua-body">
                     {% if event.ua %}
-                    - {{ event.ua }}
+                    - {{ event.ua|truncatechars:80 }}
                     {% endif %}
                 </span>
             {% endif %}

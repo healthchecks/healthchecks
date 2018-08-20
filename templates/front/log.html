@@ -55,7 +55,7 @@
                     {{ event.ua }}
                     <span class="ua-body">
                         {% if event.body %}
-                            -  {{ event.body|trunc }}
+                            -  {{ event.body|truncatechars:150 }}
                         {% endif %}
                     </span>
                 {% else %}
@@ -69,7 +69,7 @@
                         - {{ event.ua }}
                         {% endif %}
                         {% if event.body %}
-                        -  {{ event.body|trunc }}
+                        -  {{ event.body|truncatechars:150 }}
                         {% endif %}
                     </span>
                 {% endif %}
