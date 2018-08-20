@@ -13,6 +13,11 @@
         "mrkdwn_in": ["fields"],
         "text": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
         "fields": [
+            {% if check.desc %}
+                {"title": "Description",
+                 "value": "{{ check.desc|escapejs }}"
+                },
+            {% endif %}
             {% if check.kind == "simple" %}
                 {"title": "Period",
                  "value": "{{ check.timeout|hc_duration }}",
