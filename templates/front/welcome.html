@@ -178,9 +178,15 @@
             periodically running task you want to monitor.
         </p>
         <p>
-            Give names to your checks to easily recognize them
-            later. Adjust Period and Grace time to match the periodicity
-            and duration of your tasks.
+            Give names and assign tags to your checks to easily recognize
+            them later.
+        </p>
+        <p>
+            Tap on the integration icons to toggle them on and off.
+        </p>
+        <p>
+            Adjust Period and Grace time to match the
+            periodicity and duration of your tasks.
         </p>
     </div>
     </div>
@@ -262,6 +268,27 @@
             <strong>Grace Time</strong> specifies how "late" a ping can
             be before you will be alerted. Set it to be a little above
             the expected duration of your cron job.
+        </p>
+    </div>
+    </div>
+
+    <div class="row tour-section">
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/check_details.png' %}"
+            srcset="{% static 'img/check_details.png'%} 1x, {% static 'img/check_details@2x.png'%} 2x"
+            alt="Details Page" />
+    </div>
+    <div class="col-sm-4">
+        <p>
+            You can add a longer, free-form description to each
+            check. Leave notes and pointers for your future self and
+            for your team.
+        </p>
+        <p>
+            You can also see the log of received pings and
+            sent "Down" notifications.
         </p>
     </div>
     </div>
@@ -371,6 +398,28 @@
         </table>
     </div>
     </div>
+
+    <div class="row tour-section">
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/badges.png' %}"
+            srcset="{% static 'img/badges.png'%} 1x, {% static 'img/badges@2x.png'%} 2x"
+            alt="Details Page" />
+    </div>
+    <div class="col-sm-4">
+        <p>
+            {% site_name %} provides status badges for each of the tags
+            you have used. Additionally, the "{% site_name %}" badge
+            shows the overall status of all checks in your account.
+        </p>
+        <p>
+            The badges have public, but hard-to-guess URLs.
+            You can use them in your READMEs, dashboards or status pages.
+        </p>
+    </div>
+    </div>
+
 
     <div class="row">
 
