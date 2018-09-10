@@ -283,119 +283,13 @@
     <div class="col-sm-4">
         <p>
             You can add a longer, free-form description to each
-            check. Leave notes and pointers for your future self and
+            check. Leave notes and pointers for yourself and
             for your team.
         </p>
         <p>
             You can also see the log of received pings and
             sent "Down" notifications.
         </p>
-    </div>
-    </div>
-
-    <div class="row tour-section">
-    <div class="col-sm-8">
-        <img
-            class="img-responsive"
-            src="{% static 'img/channels.png' %}"
-            srcset="{% static 'img/channels.png'%} 1x, {% static 'img/channels@2x.png'%} 2x"
-            alt="Channels page" />
-    </div>
-    <div class="col-sm-4">
-        <p>
-            You can set up additional ways to get notified:
-        </p>
-
-        <table class="table welcome-integrations">
-            <tr>
-                <td><span class="icon-email"></span></td>
-                <td>Good old email messages.</td>
-            </tr>
-
-            {% if enable_sms %}
-            <tr>
-                <td><span class="icon-sms"></span></td>
-                <td>SMS text messages.</td>
-            </tr>
-            {% endif %}
-
-            <tr>
-                <td>
-                    <img width="22" height="22" alt="Webhook icon" src="data:image/gif;base64,R0lGODdhLAAsAOMQAEBCQEpMS8s8aF5gXmxubtRkhoWIhp2gnuGRqLi6uOm3yfHJ1tja2PHZ4+/s6/3//CwAAAAALAAsAAAE/vDJSau9OOvNu/+gtyBFWSBLGDqF4L5u0aidAt8vQmv23eK6ncUBKygoi5/LIawgXgXM0xVsPogxCcMQCBgYEuXM2hMcHQGAGhAAl6tC8cOwXg+uUOtDKRnU10x5VkpMfn8AgVlWUwIzdH93e4pNbw8MaXUHSGNWMDMMBJhsehdljRMMawakFkoCCGMEa2CsE1gvKVeqtRQNghIHs1YJtBOEFA6GAwwHBs4HxRsJaZoTlRXBh3bRF48ABBR8F4baaqsY5AADTA+MnBWpa12i5t2ZtL5UGnQEDAwODrZkqoBmTQJbcjIwu5CNDTtgBiUw0sfBgYEBAwgcfNCwmgRMtuAk3fCQDkA1WaMkOFijaQEOMxwzEnBG0xnKP0wasosH4KCpPAnKCe35IKiajTx9voxidOihg003rlSjKd+NFI8CHNjKtdmhNhyFfVQTaeIrXWpCWih5cg2FjhKSlDgyhyUGi2wGbGzq8YqovhMaBrjgj7C8hxDXaGTiIMFNANwspfmCiotdC96GnqPAU02AAfTUZWhYDrDKzNo2332sGLGFaeU2cmD2LIFrhTadyebFu7dvGhEAADs=" />
-                </td>
-                <td>HTTP webhooks.</td>
-            </tr>
-
-            <tr>
-                <td>
-                    <img width="22" height="22" alt="Slack icon" src="data:image/jpeg;base64,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" />
-                </td>
-                <td>Notifications in <a href="https://slack.com/">Slack</a> channel.</td>
-            </tr>
-
-            {% if enable_pushover %}
-            <tr>
-                <td><span class="icon-po"></span></td>
-                <td>Instant push notifications with <a href="https://pushover.net/">Pushover</a>.</td>
-            </tr>
-            {% endif %}
-
-            {% if enable_pushbullet %}
-            <tr>
-                <td>
-                    <img width="22" height="22" alt="Pushbullet icon" src="data:image/png;base64,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" />
-                </td>
-                <td>Instant push notifications with <a href="https://www.pushbullet.com/">Pushbullet</a>.</td>
-            </tr>
-            {% endif %}
-
-            {% if enable_telegram %}
-            <tr>
-                <td>
-                    <img width="22" height="22" alt="Telegram icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAMAAAApWqozAAAAwFBMVEUApN8ArOEAreIWp90AruMAr+QAsOYdqd8kq+Ilr98oseEVuOcrsuIvtOQauugeu+oytuY3uek3vOZHuuU6vudBw+1PwOtivOJXwOVTx+tgxetlyvBtyepxze100fF31PSC0u2A1fCL1vKzz+eH3Pev0+mW2/Ks2e291eeb3vWq4PPE3O6l5fav5fi35PnQ5PDB6vnS5vPI7fbZ6fDh6fLR7vjd7fTV8v3n8Pjb9Pjn+P7y+Prt+vv2+/75/v/+//ywoHJtAAACaElEQVQ4y4WV4XaiMBCFwyFHBZMsItgFwRW1VrRUEBE1Bt//rTYKmKhY7w8I3I+BkMwMON+pYPl3MHRs23GC75wV9y6QL1g+swkxTdOy+IEQe5azFzCLR38I54Q4P4pZE5wH1iXog4gV5M9w5DSgV9yJHuGZRV7Kmt3DAflVgQxPyBvNBBxZ72ArquHcJm9l5yXMxsZ7mPxjVzh+TXQNx64jxReY+d1m0kC9cXxcVnDXpxzOcCOKsb088lcvaxtnZ1BMkNEkP7tuOXazUVAAZuEnkFjzU7VoR6+2sclA3rrjMDYsPy534Z5/xUHEamUgRFgIof5wfijTgO4oP2WSGQIfSagziWn5erpLL6Mi0oTtA6eCkYb96FDlUbFPUlbOTxewA6wKNsPDLSdomqTlY9SVvtIEBroKi+TkYZNd/TNMJGTUMFoWRTWxdH1jzwdFgjEw9XIEyXjDV4zt1+tkf8u6JRSsboKBXo+h1p9kyTqR2PNYk2AbDDX9Jk1x+dSoVHMGsjsEIdQkoTRZS4EL2YNzkHXkG62vdLXYilqiSF4nA8yALUnedjWdrm/zU4QDDQaKkfy0hreL6eJjUG06T/pGZVTwzQ9l6V+r6V8IUXz9633JUTY8U06uIt3S3M+P63nOF7+QHMU9XRL2R7sLXUfzcr4kQq2oLAWeHBrWF0rfM8TdtkfLIpP1lEa1O2Lcy+ryFWrKG8FQFMbRO9iXS673O+vdF/ORpr4iVeg/tonQUNV2g1TVCJ8bUDbsqA3qDDdNrY3+uM+sG9EXTZPGfgsIEEA/pi877KUdbyZuX2+39b472Ty24/+iGdn8sw214gAAAABJRU5ErkJggg==" />
-                </td>
-                <td>Notifications to a <a href="https://telegram.org/">Telegram</a> group or user.</td>
-            </tr>
-            {% endif %}
-
-            {% if enable_pd %}
-            <tr>
-                <td><span class="icon-pd"></span></td>
-                <td>Open and resolve incidents in <a href="https://www.pagerduty.com/">PagerDuty</a>.</td>
-            </tr>
-            {% endif %}
-
-            <tr>
-                <td><span class="icon-pagertree"></span></td>
-                <td>Open and resolve incidents in <a href="https://pagertree.com/">PagerTree</a>.</td>
-            </tr>
-
-            <tr>
-                <td><span class="icon-hipchat"></span></td>
-                <td>Notifications in <a href="https://hipchat.com/">HipChat</a> channel.</td>
-            </tr>
-
-            <tr>
-                <td><span class="icon-victorops"></span></td>
-                <td>Open and resolve incidents in <a href="https://victorops.com/">VictorOps</a>.</td>
-            </tr>
-
-            {% if enable_discord %}
-            <tr>
-                <td><span class="icon-discord"></span></td>
-                <td>Notifications in <a href="https://discordapp.com/">Discord</a> channel.</td>
-            </tr>
-            {% endif %}
-
-
-            <tr>
-                <td><span class="icon-opsgenie"></span></td>
-                <td>Open and resolve incidents in <a href="https://www.opsgenie.com/">OpsGenie</a>.</td>
-            </tr>
-
-
-
-        </table>
     </div>
     </div>
 
@@ -418,6 +312,69 @@
             You can use them in your READMEs, dashboards or status pages.
         </p>
     </div>
+    </div>
+
+    <div id="welcome-integrations" class="row tour-section">
+        <div class="col-sm-12">
+            <h1>Integrations<br>
+                <small>Set up additional ways to get notified:</small>
+        </div>
+        <div class="col-sm-12">
+            <div class="integration">
+                <img src="{% static 'img/integrations/email.png' %}" class="icon" alt="Email icon" />
+                <h3>Email<br><small>&nbsp;</small>
+                </h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/sms.png' %}" class="icon" alt="SMS icon" />
+                <h3>SMS<br><small>&nbsp;</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/webhook.png' %}" class="icon" alt="Webhook icon" />
+                <h3>Webhooks<br><small>&nbsp;</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/slack.png' %}" class="icon" alt="Slack icon" />
+                <h3>Slack<br><small>Chat</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/telegram.png' %}" class="icon" alt="Telegram icon" />
+                <h3>Telegram<br><small>Chat</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/po.png' %}" class="icon" alt="Pushover icon" />
+                <h3>Pushover<br><small>Push Notifications</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/pushbullet.png' %}" class="icon" alt="Pushbullet icon" />
+                <h3>Pushbullet<br><small>Push Notifications</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="PagerDuty icon" />
+                <h3>PagerDuty<br><small>Incident Management</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/hipchat.png' %}" class="icon" alt="HipChat icon" />
+                <h3>HipChat<br><small>Chat</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/victorops.png' %}" class="icon" alt="VictorOps icon" />
+                <h3>VictorOps<br><small>Incident Management</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/discord.png' %}" class="icon" alt="Discord icon" />
+                <h3>Discord<br><small>Chat</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/opsgenie.png' %}" class="icon" alt="OpsGenie icon" />
+                <h3>OpsGenie<br><small>Incident Management</small></h3>
+            </div>
+            <div class="integration">
+                <img src="{% static 'img/integrations/pagertree.png' %}" class="icon" alt="PagerTree icon" />
+                <h3>PagerTree<br><small>Incident Management</small></h3>
+            </div>
+        </div>
+
     </div>
 
 

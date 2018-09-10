@@ -61,17 +61,36 @@
 
 
 .tour-section {
-    margin-bottom: 50px;
+    margin-bottom: 80px;
 }
 
-.welcome-integrations img {
-    width: 22px;
-    height: 22px;
+#welcome-integrations h1 {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.welcome-integrations span {
+#welcome-integrations .integration {
     display: inline-block;
-    font-size: 22px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 20px 0;
+    margin: 0 20px 20px 0;
+    text-align: center;
+    width: 175px;
+}
+
+#welcome-integrations img {
+    width: 48px;
+    height: 48px;
+}
+
+#welcome-integrations h3 {
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+#welcome-integrations h3 small {
+    font-size: 12px;
 }
 
 .page-welcome .tab-content {
