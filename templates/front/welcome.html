@@ -318,6 +318,7 @@
         <div class="col-sm-12">
             <h1>Integrations<br>
                 <small>Set up additional ways to get notified:</small>
+            </h1>
         </div>
         <div class="col-sm-12">
             <div class="integration">
@@ -325,10 +326,12 @@
                 <h3>Email<br><small>&nbsp;</small>
                 </h3>
             </div>
+            {% if enable_sms %}
             <div class="integration">
                 <img src="{% static 'img/integrations/sms.png' %}" class="icon" alt="SMS icon" />
                 <h3>SMS<br><small>&nbsp;</small></h3>
             </div>
+            {% endif %}
             <div class="integration">
                 <img src="{% static 'img/integrations/webhook.png' %}" class="icon" alt="Webhook icon" />
                 <h3>Webhooks<br><small>&nbsp;</small></h3>
@@ -337,22 +340,30 @@
                 <img src="{% static 'img/integrations/slack.png' %}" class="icon" alt="Slack icon" />
                 <h3>Slack<br><small>Chat</small></h3>
             </div>
+            {% if enable_telegram %}
             <div class="integration">
                 <img src="{% static 'img/integrations/telegram.png' %}" class="icon" alt="Telegram icon" />
                 <h3>Telegram<br><small>Chat</small></h3>
             </div>
+            {% endif %}
+            {% if enable_pushover %}
             <div class="integration">
                 <img src="{% static 'img/integrations/po.png' %}" class="icon" alt="Pushover icon" />
                 <h3>Pushover<br><small>Push Notifications</small></h3>
             </div>
+            {% endif %}
+            {% if enable_pushbullet %}
             <div class="integration">
                 <img src="{% static 'img/integrations/pushbullet.png' %}" class="icon" alt="Pushbullet icon" />
                 <h3>Pushbullet<br><small>Push Notifications</small></h3>
             </div>
+            {% endif %}
+            {% if enable_pd %}
             <div class="integration">
                 <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="PagerDuty icon" />
                 <h3>PagerDuty<br><small>Incident Management</small></h3>
             </div>
+            {% endif %}
             <div class="integration">
                 <img src="{% static 'img/integrations/hipchat.png' %}" class="icon" alt="HipChat icon" />
                 <h3>HipChat<br><small>Chat</small></h3>
@@ -361,10 +372,12 @@
                 <img src="{% static 'img/integrations/victorops.png' %}" class="icon" alt="VictorOps icon" />
                 <h3>VictorOps<br><small>Incident Management</small></h3>
             </div>
+            {% if enable_discord %}
             <div class="integration">
                 <img src="{% static 'img/integrations/discord.png' %}" class="icon" alt="Discord icon" />
                 <h3>Discord<br><small>Chat</small></h3>
             </div>
+            {% endif %}
             <div class="integration">
                 <img src="{% static 'img/integrations/opsgenie.png' %}" class="icon" alt="OpsGenie icon" />
                 <h3>OpsGenie<br><small>Incident Management</small></h3>
@@ -374,9 +387,49 @@
                 <h3>PagerTree<br><small>Incident Management</small></h3>
             </div>
         </div>
-
     </div>
 
+    <div class="row tour-section">
+        <div class="col-sm-12">
+            <h1 class="text-center">What Can I Monitor With {% site_name %}?</h1>
+        </div>
+        <div class="col-sm-6 use-cases">
+            <h2>Cron Jobs</h2>
+            <p>{% site_name %} monitoring is a great fit for cron jobs and cron-like systems
+            (systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi cron-like
+            interface, Heroku Scheduler, ...). A failed cron job often has no immediate visible
+            consequences, and can go unnoticed for a long time.</p>
+
+            <p>Specific examples:</p>
+            <ul>
+                <li>Filesystem backups</li>
+                <li>Database backups</li>
+                <li>Daily, weekly, monthly report emails</li>
+                <li>SSL renewals</li>
+                <li>Business data import and sync</li>
+                <li>Antivirus scans</li>
+                <li>Dynamic DNS updates</li>
+            </ul>
+        </div>
+        <div class="col-sm-6 use-cases">
+            <h2>Processes, Services, Servers</h2>
+
+            <p>{% site_name %} monitoring can be used for lightweight server monitoring:
+            ensuring a particular system service, or the server as a whole is alive and healthy.
+            Write a shell script that checks for a specific condition, and pings {% site_name %}
+            if successful. Run the shell script regularly.</p>
+
+            <p>Specific examples:</p>
+            <ul>
+                <li>Check a specific docker container is running</li>
+                <li>Check a specific application process is running</li>
+                <li>Check database replication lag</li>
+                <li>Check system resources: free disk, free RAM, ...</li>
+                <li>Send simple, unconditional "I'm alive" messages from your server (or your NAS,
+                    router, Raspberry Pi, ...)</li>
+            </ul>
+        </div>
+    </div>
 
     <div class="row">
 

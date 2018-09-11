@@ -93,6 +93,10 @@
     font-size: 12px;
 }
 
+.use-cases li {
+    line-height: 200%;
+}
+
 .page-welcome .tab-content {
     border: 1px solid #ddd;
     border-top: 0;
