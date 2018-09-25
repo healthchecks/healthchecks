@@ -40,10 +40,10 @@ class PricingTestCase(BaseTestCase):
         self.sub = Subscription(user=self.alice)
         self.sub.subscription_id = "test-id"
         self.sub.plan_id = "P20"
-        self.sub.plan_name = "Standard ($20 / month)"
+        self.sub.plan_name = "Business ($20 / month)"
         self.sub.save()
 
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/pricing/")
-        self.assertContains(r, "Standard ($20 / month)", status_code=200)
+        self.assertContains(r, "Business ($20 / month)", status_code=200)

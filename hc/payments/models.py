@@ -149,13 +149,13 @@ class Subscription(models.Model):
             self.subscription_id = result.subscription.id
             self.plan_id = plan_id
             if plan_id == "P20":
-                self.plan_name = "Standard ($20 / month)"
+                self.plan_name = "Business ($20 / month)"
             elif plan_id == "Y192":
-                self.plan_name = "Standard ($192 / year)"
+                self.plan_name = "Business ($192 / year)"
             elif plan_id == "P80":
-                self.plan_name = "Plus ($80 / month)"
+                self.plan_name = "Business Plus ($80 / month)"
             elif plan_id == "Y768":
-                self.plan_name = "Plus ($768 / year)"
+                self.plan_name = "Business Plus ($768 / year)"
 
             self.save()
 

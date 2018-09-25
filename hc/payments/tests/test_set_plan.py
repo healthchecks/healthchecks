@@ -32,7 +32,7 @@ class SetPlanTestCase(BaseTestCase):
         sub = Subscription.objects.get(user=self.alice)
         self.assertEqual(sub.subscription_id, "t-sub-id")
         self.assertEqual(sub.plan_id, "P20")
-        self.assertEqual(sub.plan_name, "Standard ($20 / month)")
+        self.assertEqual(sub.plan_name, "Business ($20 / month)")
 
         # User's profile should have a higher limits
         self.profile.refresh_from_db()
@@ -60,7 +60,7 @@ class SetPlanTestCase(BaseTestCase):
         sub = Subscription.objects.get(user=self.alice)
         self.assertEqual(sub.subscription_id, "t-sub-id")
         self.assertEqual(sub.plan_id, "Y192")
-        self.assertEqual(sub.plan_name, "Standard ($192 / year)")
+        self.assertEqual(sub.plan_name, "Business ($192 / year)")
 
         # User's profile should have a higher limits
         self.profile.refresh_from_db()
@@ -88,7 +88,7 @@ class SetPlanTestCase(BaseTestCase):
         sub = Subscription.objects.get(user=self.alice)
         self.assertEqual(sub.subscription_id, "t-sub-id")
         self.assertEqual(sub.plan_id, "P80")
-        self.assertEqual(sub.plan_name, "Plus ($80 / month)")
+        self.assertEqual(sub.plan_name, "Business Plus ($80 / month)")
 
         # User's profile should have a higher limits
         self.profile.refresh_from_db()

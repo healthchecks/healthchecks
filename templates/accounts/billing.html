@@ -188,68 +188,93 @@
 <div id="change-billing-plan-modal" class="modal">
     <div class="modal-dialog">
         {% if sub.payment_method_token and sub.address_id %}
-        <form method="post" class="form-horizontal" action="{% url 'hc-set-plan' %}">
+        <form method="post" class="form-horizontal" autocomplete="off" action="{% url 'hc-set-plan' %}">
             {% csrf_token %}
+            <input type="hidden" id="old-plan-id" value="{{ sub.plan_id }}">
+            <input type="hidden" id="plan-id" name="plan_id" value="{{ sub.plan_id }}">
+
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="remove-check-title">Change Billing Plan</h4>
                 </div>
                 <div class="modal-body">
-                    <h2>Free <small>20 checks, 3 team members</small></h2>
-                    <label class="radio-container">
-                        <input
-                            type="radio"
-                            name="plan_id"
-                            value=""
-                            {% if sub.plan_id == "" %} checked {% endif %}>
-                        <span class="radiomark"></span>
-                        Enjoy free service.
-                    </label>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div id="plan-hobbyist" class="panel plan {% if sub.plan_id == "" %}selected{% endif %}">
+                                <div class="marker">Selected Plan</div>
 
-                    <h2>Standard <small>100 checks, 10 team members</small></h2>
-                    <label class="radio-container">
-                        <input
-                            type="radio"
-                            name="plan_id"
-                            value="P20"
-                            {% if sub.plan_id == "P20" %} checked {% endif %}>
-                        <span class="radiomark"></span>
-                        Monthly, $20 / month
-                    </label>
+                                <h2>Hobbyist</h2>
+                                <ul>
+                                    <li>Checks: 20</li>
+                                    <li>Team members: 3</li>
+                                    <li>Log entries: 100</li>
+                                </ul>
+                                <h3>Free</h3>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div id="plan-business" class="panel plan {% if sub.plan_id == "P20" or sub.plan_id == "Y192" %}selected{% endif %}">
+                                <div class="marker">Selected Plan</div>
 
-                    <label class="radio-container">
-                        <input
-                            type="radio"
-                            name="plan_id"
-                            value="Y192"
-                            {% if sub.plan_id == "Y192" %} checked {% endif %}>
-                        <span class="radiomark"></span>
-                        Annual, $192 / year (20% off monthly)
-                    </label>
+                                <h2>Business</h2>
+                                <ul>
+                                    <li>Checks: 100</li>
+                                    <li>Team members: 10</li>
+                                    <li>Log entries: 1000</li>
+                                </ul>
+                                <h3>
+                                    <span id="business-price"></span>
+                                    <small>/ month</small>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div id="plan-business-plus" class="panel plan {% if sub.plan_id == "P80" or sub.plan_id == "Y768" %}selected{% endif %}">
+                                <div class="marker">Selected Plan</div>
 
-                    <h2>Plus <small>1000 checks, unlimited team members</small></h2>
-                    <label class="radio-container">
-                        <input
-                            type="radio"
-                            name="plan_id"
-                            value="P80"
-                            {% if sub.plan_id == "P80" %} checked {% endif %}>
-                        <span class="radiomark"></span>
-                        Monthly, $80/month
-                    </label>
+                                <h2>Business Plus</h2>
+                                <ul>
+                                    <li>Checks: 1000</li>
+                                    <li>Team members: Unlimited</li>
+                                    <li>Log entries: 1000</li>
+                                </ul>
+                                <h3>
+                                    <span id="business-plus-price"></span>
+                                    <small>/ month</small>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
 
-                    <label class="radio-container">
-                        <input
-                            type="radio"
-                            name="plan_id"
-                            value="Y768"
-                            {% if sub.plan_id == "Y768" %} checked {% endif %}>
-                        <span class="radiomark"></span>
-                        Annual, $768/year (20% off monthly)
-                    </label>
+                    <div class="row">
+                        <div id="billing-periods" class="col-sm-6">
+                            <p>Billing Period</p>
 
-                    <div class="alert alert-warning">
+                            <label class="radio-container">
+                                <input
+                                    id="billing-monthly"
+                                    type="radio"
+                                    name="billing_period"
+                                    value="monthly"
+                                    {% if sub.plan_id == "Y192" or sub.plan_id == "Y768" %}{% else %}checked{% endif %}>
+                                <span class="radiomark"></span>
+                                Monthly
+                            </label>
+                            <label class="radio-container">
+                                <input
+                                    id="billing-annual"
+                                    type="radio"
+                                    name="billing_period"
+                                    value="annual"
+                                    {% if sub.plan_id == "Y192" or sub.plan_id == "Y768" %} checked {% endif %}>
+                                <span class="radiomark"></span>
+                                Annual, 20% off
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-warning">
                         <strong>No proration.</strong> We currently do not
                         support proration when changing billing plans.
                         Changing the plan starts a new billing cycle
@@ -260,7 +285,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button id="change-plan-btn" type="submit" class="btn btn-primary" disabled="disabled">
                         Change Billing Plan
                     </button>
                 </div>

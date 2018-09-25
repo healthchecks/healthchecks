@@ -43,4 +43,74 @@ $(function () {
         $("#next-billing-date").text($("#nbd").val());
     });
 
+    $("#billing-periods input").click(updateChangePlanForm);
+
+    $("#plan-hobbyist").click(function() {
+        $(".plan").removeClass("selected");
+        $("#plan-hobbyist").addClass("selected");
+        updateChangePlanForm();
+    });
+
+    $("#plan-business").click(function() {
+        $(".plan").removeClass("selected");
+        $("#plan-business").addClass("selected");
+        updateChangePlanForm();
+    });
+
+    $("#plan-business-plus").click(function() {
+        $(".plan").removeClass("selected");
+        $("#plan-business-plus").addClass("selected");
+        updateChangePlanForm();
+    });
+
+    function updateChangePlanForm() {
+        var planId = $("#old-plan-id").val();
+
+        // "Monthly" is selected: dispplay monthly prices
+        if ($("#billing-monthly").is(":checked")) {
+            var period = "monthly";
+            $("#business-price").text("$20");
+            $("#business-plus-price").text("$80");
+        }
+
+        // "Annual" is selected: dispplay annual prices
+        if ($("#billing-annual").is(":checked")) {
+            var period = "annual";
+            $("#business-price").text("$16");
+            $("#business-plus-price").text("$64");
+        }
+
+        // "Hobbyist" is selected, set planId
+        if ($("#plan-hobbyist").hasClass("selected")) {
+            planId = "";
+        }
+
+        // "Business" is selected, set planId
+        if ($("#plan-business").hasClass("selected")) {
+            planId = period == "monthly" ? "P20" : "Y192";
+        }
+
+        // "Business Plus" is selected, set planId
+        if ($("#plan-business-plus").hasClass("selected")) {
+            planId = period == "monthly" ? "P80" : "Y768";
+        }
+
+        $("#plan-id").val(planId);
+
+        if (planId == $("#old-plan-id").val()) {
+            $("#change-plan-btn")
+                .attr("disabled", "disabled")
+                .text("Change Billing Plan");
+
+        } else {
+            var caption = "Change Billing Plan";
+            if (planId) {
+                caption += " And Pay $" + planId.substr(1) + " Now";
+            }
+
+            $("#change-plan-btn").removeAttr("disabled").text(caption);
+        }
+    }
+    updateChangePlanForm();
+
 });

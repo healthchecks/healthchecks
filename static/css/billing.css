@@ -10,3 +10,76 @@
 #billing-address-modal label {
 	font-size: 13px;
 }
+
+@media (min-width: 992px) {
+    #change-billing-plan-modal .modal-dialog {
+        width: 850px;
+    }
+}
+
+#change-billing-plan-modal .modal-header {
+    border-bottom: 0;
+    padding: 30px 30px 0 30px;
+}
+
+#change-billing-plan-modal .modal-body {
+    padding: 15px 30px;
+}
+
+#change-billing-plan-modal .plan {
+    border-color: #ddd;
+    padding: 24px;
+    position: relative;
+    cursor: pointer;
+}
+
+#change-billing-plan-modal .plan.selected {
+    border-color: #0091EA;
+}
+
+.plan .marker {
+    display: none;
+}
+
+.plan.selected .marker {
+    display: block;
+    position: absolute;
+    top: 0;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    color: #fff;
+    background: #0091EA;
+    text-transform: uppercase;
+}
+
+#change-billing-plan-modal .plan h2 {
+    margin: 8px 0 16px 0;
+}
+
+#change-billing-plan-modal .plan h3 {
+    margin-bottom: 8px;
+}
+
+#change-billing-plan-modal .plan h3 small {
+    font-size: 18px;
+    color: #333;
+}
+
+#change-billing-plan-modal .plan ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#change-billing-plan-modal .plan li {
+    margin: 0;
+    padding: 0;
+}
+
+#change-billing-plan-modal .text-warning {
+    margin-top: 20px;
+}
+
+
