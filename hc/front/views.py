@@ -371,7 +371,8 @@ def details(request, code):
     ctx = {
         "page": "details",
         "check": check,
-        "channels": channels
+        "channels": channels,
+        "timezones": all_timezones
     }
 
     return render(request, "front/details.html", ctx)

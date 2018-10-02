@@ -23,6 +23,8 @@ class DetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "How To Ping", status_code=200)
+        # The page should contain timezone strings
+        self.assertContains(r, "Europe/Riga")
 
     def test_it_checks_ownership(self):
         self.client.login(username="charlie@example.org", password="password")
