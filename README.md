@@ -169,6 +169,26 @@ EMAIL_USE_TLS = True
 For more information, have a look at Django documentation,
 [Sending Email](https://docs.djangoproject.com/en/1.10/topics/email/) section.
 
+## Receiving Emails
+
+healthchecks comes with a `smtpd` management command, which starts up a
+SMTP listener service. With the command running, you can ping your
+checks by sending email messages
+to `your-uuid-here@my-monitoring-project.com` email addresses.
+
+Start the SMTP listener on port 2525:
+
+    $ ./manage.py smtpd --port 2525
+
+Send a test email:
+
+    $ curl --url 'smtp://127.0.0.1:2525' \
+        --mail-from 'foo@example.org' \
+        --mail-rcpt '11111111-1111-1111-1111-111111111111@my-monitoring-project.com' \
+        -F '='
+
+
+
 ## Sending Status Notifications
 
 healtchecks comes with a `sendalerts` management command, which continuously
