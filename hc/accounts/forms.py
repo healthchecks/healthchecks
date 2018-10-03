@@ -39,7 +39,7 @@ class ChangeEmailForm(forms.Form):
     def clean_email(self):
         v = self.cleaned_data["email"]
         if User.objects.filter(email=v).exists():
-            raise forms.ValidationError("%s is not available" % v)
+            raise forms.ValidationError("%s is already registered" % v)
 
         return v
 

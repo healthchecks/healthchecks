@@ -35,7 +35,7 @@ class ChangeEmailTestCase(BaseTestCase):
 
         payload = {"email": "bob@example.org"}
         r = self.client.post("/accounts/change_email/foo/", payload)
-        self.assertContains(r, "bob@example.org is not available")
+        self.assertContains(r, "bob@example.org is already registered")
 
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.email, "alice@example.org")
