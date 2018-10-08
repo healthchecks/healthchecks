@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Content updates in the "Welcome" page.
+- Added "Docs > Third-Party Resources" page.
 
 ### Bug Fixes
 - Timezones were missing in the "Change Schedule" dialog, fixed
