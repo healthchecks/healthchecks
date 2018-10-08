@@ -183,6 +183,11 @@ def docs_cron(request):
     return render(request, "front/docs_cron.html", ctx)
 
 
+def docs_resources(request):
+    ctx = {"page": "docs", "section": "resources"}
+    return render(request, "front/docs_resources.html", ctx)
+
+
 @require_POST
 @login_required
 def add_check(request):

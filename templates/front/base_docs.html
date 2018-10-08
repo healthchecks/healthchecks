@@ -24,7 +24,10 @@
             <a href="{% url 'hc-docs-cron' %}">Cron Syntax</a>
         </li>
         <li {% if section == "api" %} class="active" {% endif %}>
-            <a href="{% url 'hc-docs-api' %}">REST API</a>
+            <a href="{% url 'hc-docs-api' %}">API Reference</a>
+        </li>
+        <li {% if section == "resources" %} class="active" {% endif %}>
+            <a href="{% url 'hc-docs-resources' %}">Third-Party Resources</a>
         </li>
     </ul>
 
