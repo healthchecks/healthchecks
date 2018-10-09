@@ -10,7 +10,7 @@ from django.conf import settings
 class LoginTestCase(TestCase):
 
     def test_it_sends_link(self):
-        form = {"identity": "alice@example.org"}
+        form = {"email": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302
@@ -32,10 +32,9 @@ class LoginTestCase(TestCase):
         self.client.get("/accounts/login/")
         assert "bad_link" not in self.client.session
 
-
     @override_settings(REGISTRATION_OPEN=False)
     def test_it_obeys_registration_open(self):
-        form = {"identity": "dan@example.org"}
+        form = {"email": "dan@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 200
@@ -45,7 +44,7 @@ class LoginTestCase(TestCase):
         alice = User(username="alice", email="alice@example.org")
         alice.save()
 
-        form = {"identity": "ALICE@EXAMPLE.ORG"}
+        form = {"email": "ALICE@EXAMPLE.ORG"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302

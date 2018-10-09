@@ -1,0 +1,74 @@
+.page-login h1 {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.page-login .alert {
+    margin-bottom: 40px;
+}
+
+.page-login form p {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.page-login form input {
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    #magic-link-form {
+        margin-right: 50px;
+    }
+
+    #login-form {
+        margin-left: 50px;
+    }
+}
+
+#link-instruction {
+    color: #999;
+    font-style: italic;
+    padding: 12px 16px;
+}
+
+#login-sep {
+    background:#ddd;
+    position: absolute;
+    top: 10%;
+    right: -1px;
+    height: 80%;
+    width: 1px;
+}
+
+#login-sep div {
+    position: absolute;
+    top: 40%;
+    width: 40px;
+    left: -20px;
+    text-align: center;
+    background: #fff;
+    font-style: italic;
+    color: #666;
+    font-size: 12px;
+    padding: 8px 0;
+}
+
+#xs-login-sep {
+    text-align: center;
+    margin: 40px;
+    font-style: italic;
+    color: #666;
+    font-size: 12px;
+    height: 1px;
+    background: #ddd;
+}
+
+#xs-login-sep div {
+    position: relative;
+    margin: 0 auto;
+    width: 30px;
+    top: -9px;
+    background: #fff;
+}
+

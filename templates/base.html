@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="{% static 'css/checkbox.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/radio.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/billing.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
     {% endcompress %}
 </head>
 <body class="page-{{ page }}">
@@ -109,14 +110,6 @@
 
             </ul>
 
-
-            {% if request.user.is_authenticated %}
-            {% else %}
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="{% url 'hc-login' %}">Log In</a></li>
-            </ul>
-            {% endif %}
-
             {% if request.user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -147,6 +140,10 @@
                     {% endwith %}
                     </ul>
                 </li>
+            </ul>
+            {% elif page != "login" %}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'hc-login' %}">Log In</a></li>
             </ul>
             {% endif %}
         </div>

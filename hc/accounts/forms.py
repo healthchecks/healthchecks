@@ -1,5 +1,7 @@
 from datetime import timedelta as td
 from django import forms
+from django.conf import settings
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
 
@@ -10,9 +12,37 @@ class LowercaseEmailField(forms.EmailField):
         return value.lower()
 
 
+class EmailForm(forms.Form):
+    email = LowercaseEmailField()
+
+    def clean_email(self):
+        v = self.cleaned_data["email"]
+
+        # If registration is not open then validate if an user
+        # account with this address exists-
+        if not settings.REGISTRATION_OPEN:
+            if not User.objects.filter(email=v).exists():
+                raise forms.ValidationError("Incorrect email address.")
+
+        return v
+
+
 class EmailPasswordForm(forms.Form):
-    identity = LowercaseEmailField()
-    password = forms.CharField(required=False)
+    email = LowercaseEmailField()
+    password = forms.CharField()
+
+    def clean(self):
+        username = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if username and password:
+            self.user = authenticate(username=username, password=password)
+            if self.user is None:
+                raise forms.ValidationError("Incorrect email or password")
+            if not self.user.is_active:
+                raise forms.ValidationError("Account is inactive")
+
+        return self.cleaned_data
 
 
 class ReportSettingsForm(forms.Form):

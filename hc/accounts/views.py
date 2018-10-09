@@ -17,7 +17,7 @@ from django.views.decorators.http import require_POST
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
                                ReportSettingsForm, SetPasswordForm,
-                               TeamNameForm)
+                               TeamNameForm, EmailForm)
 from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
@@ -57,44 +57,38 @@ def _ensure_own_team(request):
         request.profile.save()
 
 
-def login(request, show_password=False):
-    bad_credentials = False
+def login(request):
+    form = EmailPasswordForm()
+    magic_form = EmailForm()
+
     if request.method == 'POST':
-        form = EmailPasswordForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data["identity"]
-            password = form.cleaned_data["password"]
-            if len(password):
-                user = authenticate(username=email, password=password)
-                if user is not None and user.is_active:
-                    auth_login(request, user)
-                    return redirect("hc-checks")
-                bad_credentials = True
-                show_password = True
-            else:
+        if request.POST.get("action") == "login":
+            form = EmailPasswordForm(request.POST)
+            if form.is_valid():
+                auth_login(request, form.user)
+                return redirect("hc-checks")
+
+        else:
+            magic_form = EmailForm(request.POST)
+            if magic_form.is_valid():
+                email = magic_form.cleaned_data["email"]
                 user = None
                 try:
                     user = User.objects.get(email=email)
                 except User.DoesNotExist:
                     if settings.REGISTRATION_OPEN:
                         user = _make_user(email)
-                    else:
-                        bad_credentials = True
-
                 if user:
                     profile = Profile.objects.for_user(user)
                     profile.send_instant_login_link()
                     return redirect("hc-login-link-sent")
 
-    else:
-        form = EmailPasswordForm()
-
     bad_link = request.session.pop("bad_link", None)
     ctx = {
+        "page": "login",
         "form": form,
-        "bad_credentials": bad_credentials,
-        "bad_link": bad_link,
-        "show_password": show_password
+        "magic_form": magic_form,
+        "bad_link": bad_link
     }
     return render(request, "accounts/login.html", ctx)
 
