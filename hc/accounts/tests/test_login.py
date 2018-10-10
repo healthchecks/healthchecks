@@ -10,7 +10,7 @@ from django.conf import settings
 class LoginTestCase(TestCase):
 
     def test_it_sends_link(self):
-        form = {"email": "alice@example.org"}
+        form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302
@@ -34,17 +34,17 @@ class LoginTestCase(TestCase):
 
     @override_settings(REGISTRATION_OPEN=False)
     def test_it_obeys_registration_open(self):
-        form = {"email": "dan@example.org"}
+        form = {"identity": "dan@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 200
         self.assertContains(r, "Incorrect email")
 
-    def test_it_ignores_ces(self):
+    def test_it_ignores_case(self):
         alice = User(username="alice", email="alice@example.org")
         alice.save()
 
-        form = {"email": "ALICE@EXAMPLE.ORG"}
+        form = {"identity": "ALICE@EXAMPLE.ORG"}
 
         r = self.client.post("/accounts/login/", form)
         assert r.status_code == 302

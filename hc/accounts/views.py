@@ -71,7 +71,7 @@ def login(request):
         else:
             magic_form = EmailForm(request.POST)
             if magic_form.is_valid():
-                email = magic_form.cleaned_data["email"]
+                email = magic_form.cleaned_data["identity"]
                 user = None
                 try:
                     user = User.objects.get(email=email)

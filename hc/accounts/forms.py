@@ -13,10 +13,12 @@ class LowercaseEmailField(forms.EmailField):
 
 
 class EmailForm(forms.Form):
-    email = LowercaseEmailField()
+    # Call it "identity" instead of "email"
+    # to avoid some of the dumber bots
+    identity = LowercaseEmailField()
 
-    def clean_email(self):
-        v = self.cleaned_data["email"]
+    def clean_identity(self):
+        v = self.cleaned_data["identity"]
 
         # If registration is not open then validate if an user
         # account with this address exists-

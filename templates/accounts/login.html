@@ -18,16 +18,16 @@
                 <form id="magic-link-form" method="post">
                     {% csrf_token %}
 
-                    {% if magic_form.email.errors %}
+                    {% if magic_form.errors %}
                     <p class="text-danger">Incorrect email address.</p>
                     {% else %}
                     <p>Enter your <strong>email address</strong>.</p>
                     {% endif %}
 
                     <input
-                        type="text"
+                        type="email"
                         class="form-control input-lg"
-                        name="email"
+                        name="identity"
                         value="{{ magic_form.email.value|default:"" }}"
                         placeholder="you@example.org">
 
@@ -53,7 +53,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="action" value="login" />
 
-                    {% if form.non_field_errors %}
+                    {% if form.errors %}
                     <p class="text-danger">Incorrect email or password.</p>
                     {% else %}
                     <p>
@@ -62,7 +62,7 @@
                     {% endif %}
 
                     <input
-                        type="text"
+                        type="email"
                         class="form-control input-lg"
                         name="email"
                         value="{{ form.email.value|default:"" }}"
