@@ -1,0 +1,7 @@
+{% for error in form.identity.errors %}
+<p class="text-danger">{{ error }}</p>
+{% endfor %}
+
+{% if created %}
+<p class="text-success">Account created, please check your email!</p>
+{% endif %}

@@ -17,7 +17,8 @@ from django.views.decorators.http import require_POST
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
                                ReportSettingsForm, SetPasswordForm,
-                               TeamNameForm, EmailForm)
+                               TeamNameForm, AvailableEmailForm,
+                               ExistingEmailForm)
 from hc.accounts.models import Profile, Member
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
@@ -59,7 +60,7 @@ def _ensure_own_team(request):
 
 def login(request):
     form = EmailPasswordForm()
-    magic_form = EmailForm()
+    magic_form = ExistingEmailForm()
 
     if request.method == 'POST':
         if request.POST.get("action") == "login":
@@ -69,19 +70,11 @@ def login(request):
                 return redirect("hc-checks")
 
         else:
-            magic_form = EmailForm(request.POST)
+            magic_form = ExistingEmailForm(request.POST)
             if magic_form.is_valid():
-                email = magic_form.cleaned_data["identity"]
-                user = None
-                try:
-                    user = User.objects.get(email=email)
-                except User.DoesNotExist:
-                    if settings.REGISTRATION_OPEN:
-                        user = _make_user(email)
-                if user:
-                    profile = Profile.objects.for_user(user)
-                    profile.send_instant_login_link()
-                    return redirect("hc-login-link-sent")
+                profile = Profile.objects.for_user(magic_form.user)
+                profile.send_instant_login_link()
+                return redirect("hc-login-link-sent")
 
     bad_link = request.session.pop("bad_link", None)
     ctx = {
@@ -96,6 +89,25 @@ def login(request):
 def logout(request):
     auth_logout(request)
     return redirect("hc-index")
+
+
+@require_POST
+def signup(request):
+    if not settings.REGISTRATION_OPEN:
+        return HttpResponseForbidden()
+
+    ctx = {}
+    form = AvailableEmailForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data["identity"]
+        user = _make_user(email)
+        profile = Profile.objects.for_user(user)
+        profile.send_instant_login_link()
+        ctx["created"] = True
+    else:
+        ctx = {"form": form}
+
+    return render(request, "accounts/signup_result.html", ctx)
 
 
 def login_link_sent(request):

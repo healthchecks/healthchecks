@@ -87,7 +87,7 @@
                 </ul>
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a class="btn btn-lg btn-success" href="{% url 'hc-login' %}">Get Started</a>
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-success">Get Started</a>
                 </div>
                 {% endif %}
             </div>
@@ -113,7 +113,7 @@
                 </ul>
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
                         Get Started
                     </a>
                 </div>
@@ -141,7 +141,7 @@
                 </ul>
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a class="btn btn-lg btn-primary" href="{% url 'hc-login' %}">
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
                         Get Started
                     </a>
                 </div>
@@ -227,6 +227,10 @@
         </div>
     </div>
 </section>
+
+{% if not request.user.is_authenticated %}
+{% include "front/signup_modal.html" %}
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -234,5 +238,6 @@
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/pricing.js' %}"></script>
+<script src="{% static 'js/signup.js' %}"></script>
 {% endcompress %}
 {% endblock %}

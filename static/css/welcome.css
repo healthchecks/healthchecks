@@ -9,7 +9,7 @@
 
 .get-started-bleed {
     background: #e5ece5;
-    padding-bottom: 3em;
+    padding: 3em 0;
 }
 
 .footer-jumbo-bleed {
@@ -51,8 +51,10 @@
     margin-bottom: 0;
 }
 
-#get-started {
-    margin-top: 4em;
+#get-started h1 {
+    font-size: 20px;
+    line-height: 1.5;
+    margin: 0 0 20px 0;
 }
 
 .tour-title {
@@ -76,7 +78,7 @@
     padding: 20px 0;
     margin: 0 20px 20px 0;
     text-align: center;
-    width: 175px;
+    width: 150px;
 }
 
 #welcome-integrations img {
@@ -119,4 +121,34 @@
 
 .tab-pane.tab-pane-email {
   border: none;
+}
+
+#signup-modal .modal-header {
+    border-bottom: 0;
+}
+
+#signup-modal .modal-body {
+    padding: 0 50px 50px 50px;
+}
+
+#signup-modal h1 {
+    text-align: center;
+    margin: 0 0 50px 0;
+}
+
+#signup-modal #link-instruction {
+    text-align: center;
+}
+
+#signup-result {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 18px;
+    display: none;
+}
+
+#footer-cta p {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }

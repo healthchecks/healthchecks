@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Content updates in the "Welcome" page.
 - Added "Docs > Third-Party Resources" page.
 - Improved  layout and styling in "Login" page.
+- Separate "sign Up" and "Log In" forms.
 
 ### Bug Fixes
 - Timezones were missing in the "Change Schedule" dialog, fixed.

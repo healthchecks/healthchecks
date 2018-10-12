@@ -127,30 +127,12 @@
 <div class="get-started-bleed">
 <div class="container">
     <div class="row">
-        <div id="get-started" class="col-sm-6 col-sm-offset-3">
-            <h2>E-mail Address to Receive Alerts:</h2>
-            <form action="{% url 'hc-login' %}" method="post">
-                {% csrf_token %}
-
-                <div class="form-group">
-                    <div class="input-group input-group-lg">
-                        <div class="input-group-addon">@</div>
-                        <input
-                            type="email"
-                            class="form-control"
-                            name="identity"
-                            autocomplete="off"
-                            placeholder="Email">
-                    </div>
-                </div>
-
-                <div class="clearfix">
-                    <button type="submit" class="btn btn-lg btn-primary pull-right">
-                        Set up my Ping URLs…
-                    </button>
-                </div>
-            </form>
-
+        <div id="get-started" class="col-sm-8 col-sm-offset-2 text-center">
+            <h1>{% site_name %} monitors the heartbeat messages sent by your cron jobs, services and APIs.
+            Get immediate alerts you when they don't arrive on schedule. </h1>
+            <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
+                Sign Up – It's Free
+            </a>
         </div>
     </div>
 </div>
@@ -435,50 +417,25 @@
 
     {% if registration_open %}
     <div class="footer-jumbo-bleed">
-    <div class="col-sm-12">
-        <div class="jumbotron">
-            <div class="row">
-                <div class="col-sm-7">
-                    <p>{% site_name %} is a <strong>free</strong> and
-                    <a href="https://github.com/healthchecks/healthchecks">open source</a> service.
-                    Setting up monitoring for your cron jobs only takes minutes.
-                    Start sleeping better at nights!</p>
-
-                </div>
-                <div class="col-sm-1"></div>
-                <div class="col-sm-4">
-                    <form action="{% url 'hc-login' %}" method="post">
-                        {% csrf_token %}
-
-                        <div class="form-group">
-                            <div class="input-group input-group-lg">
-                                <div class="input-group-addon">@</div>
-                                <input
-                                    type="email"
-                                    class="form-control"
-                                    name="identity"
-                                    autocomplete="off"
-                                    placeholder="Email">
-                            </div>
-                        </div>
-
-                        <div class="clearfix">
-                            <button type="submit" class="btn btn-lg btn-primary pull-right">
-                                Sign up for free
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
+    <div class="col-sm-10 col-sm-offset-1">
+        <div id="footer-cta" class="jumbotron text-center">
+            <p>{% site_name %} is a <strong>free</strong> and
+            <a href="https://github.com/healthchecks/healthchecks">open source</a> service.
+            Setting up monitoring for your cron jobs only takes minutes.
+            Start sleeping better at nights!</p>
+            <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
+                Sign Up
+            </a>
         </div>
     </div>
     </div>
     {% endif %}
 
     </div>
-
 </div>
+
+{% include "front/signup_modal.html" %}
+
 {% endblock %}
 
 {% block scripts %}
@@ -487,5 +444,6 @@
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
 <script src="{% static 'js/snippet-copy.js' %}"></script>
+<script src="{% static 'js/signup.js' %}"></script>
 {% endcompress %}
 {% endblock %}

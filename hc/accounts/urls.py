@@ -4,6 +4,7 @@ from hc.accounts import views
 urlpatterns = [
     path('login/', views.login, name="hc-login"),
     path('logout/', views.logout, name="hc-logout"),
+    path('signup/', views.signup, name="hc-signup"),
     path('login_link_sent/',
          views.login_link_sent, name="hc-login-link-sent"),
 

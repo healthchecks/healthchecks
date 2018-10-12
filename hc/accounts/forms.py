@@ -1,6 +1,6 @@
 from datetime import timedelta as td
 from django import forms
-from django.conf import settings
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
@@ -12,19 +12,30 @@ class LowercaseEmailField(forms.EmailField):
         return value.lower()
 
 
-class EmailForm(forms.Form):
+class AvailableEmailForm(forms.Form):
+    # Call it "identity" instead of "email"
+    # to avoid some of the dumber bots
+    identity = LowercaseEmailField(error_messages={'required': 'Please enter your email address.'})
+
+    def clean_identity(self):
+        v = self.cleaned_data["identity"]
+        if User.objects.filter(email=v).exists():
+            raise forms.ValidationError("An account with this email address already exists.")
+
+        return v
+
+
+class ExistingEmailForm(forms.Form):
     # Call it "identity" instead of "email"
     # to avoid some of the dumber bots
     identity = LowercaseEmailField()
 
     def clean_identity(self):
         v = self.cleaned_data["identity"]
-
-        # If registration is not open then validate if an user
-        # account with this address exists-
-        if not settings.REGISTRATION_OPEN:
-            if not User.objects.filter(email=v).exists():
-                raise forms.ValidationError("Incorrect email address.")
+        try:
+            self.user = User.objects.get(email=v)
+        except User.DoesNotExist:
+            raise forms.ValidationError("Incorrect email address.")
 
         return v
 
