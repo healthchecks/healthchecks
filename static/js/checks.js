@@ -66,20 +66,28 @@ $(function () {
 
     // Filtering by tags
     $("#my-checks-tags div").click(function() {
-        // .active has not been updated yet by bootstrap code,
-        // so cannot use it
         $(this).toggleClass('checked');
 
         // Make a list of currently checked tags:
         var checked = [];
+        var qs = [];
         $("#my-checks-tags .checked").each(function(index, el) {
             checked.push(el.textContent);
+            qs.push({"name": "tag", "value": el.textContent});
         });
+
+        // Update hash
+        if (window.history && window.history.replaceState) {
+            var url = "/checks/";
+            if (qs.length) {
+                url += "?" + $.param(qs);
+            }
+            window.history.replaceState({}, "", url);
+        }
 
         // No checked tags: show all
         if (checked.length == 0) {
             $("#checks-table tr.checks-row").show();
-            $("#checks-list > li").show();
             return;
         }
 
@@ -97,11 +105,8 @@ $(function () {
             $(element).show();
         }
 
-        // Desktop: for each row, see if it needs to be shown or hidden
+        // For each row, see if it needs to be shown or hidden
         $("#checks-table tr.checks-row").each(applyFilters);
-        // Mobile: for each list item, see if it needs to be shown or hidden
-        $("#checks-list > li").each(applyFilters);
-
     });
 
     $(".show-log").click(function(e) {

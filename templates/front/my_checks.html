@@ -8,7 +8,7 @@
     {% if tags %}
     <div id="my-checks-tags" class="col-sm-12">
         {% for tag, status in tags %}
-            <div class="btn btn-xs {{ status }}">{{ tag }}</div>
+            <div class="btn btn-xs {{ status }} {% if tag in selected_tags %}checked{% endif%}">{{ tag }}</div>
         {% endfor %}
     </div>
     {% endif %}

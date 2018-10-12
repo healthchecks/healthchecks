@@ -45,7 +45,8 @@
         id="{{ check.code }}"
         class="checks-row"
         data-url="{{ check.url }}"
-        data-email="{{ check.email }}">
+        data-email="{{ check.email }}"
+        {% if check in hidden_checks %}style="display: none"{% endif %}>
 
         <td class="indicator-cell">
             <span class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>

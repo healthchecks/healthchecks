@@ -75,6 +75,13 @@ def my_checks(request):
     channels = Channel.objects.filter(user=request.team.user)
     channels = list(channels.order_by("created"))
 
+    hidden_checks = set()
+    selected_tags = set(request.GET.getlist("tag", []))
+    if selected_tags:
+        for check in checks:
+            if not selected_tags.issubset(check.tags_list()):
+                hidden_checks.add(check)
+
     ctx = {
         "page": "checks",
         "checks": checks,
@@ -85,7 +92,9 @@ def my_checks(request):
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": all_timezones,
         "num_available": request.team.check_limit - len(checks),
-        "sort": request.profile.sort
+        "sort": request.profile.sort,
+        "selected_tags": selected_tags,
+        "hidden_checks": hidden_checks
     }
 
     return render(request, "front/my_checks.html", ctx)

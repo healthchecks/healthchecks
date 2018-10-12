@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Added "Docs > Third-Party Resources" page.
 - Improved  layout and styling in "Login" page.
 - Separate "sign Up" and "Log In" forms.
+- "My Checks" page: support filtering checks by query string parameters.
 
 ### Bug Fixes
 - Timezones were missing in the "Change Schedule" dialog, fixed.
