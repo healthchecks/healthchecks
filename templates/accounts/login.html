@@ -30,7 +30,7 @@
                         name="identity"
                         value="{{ magic_form.email.value|default:"" }}"
                         placeholder="you@example.org"
-                        autocomplete="off">
+                        autocomplete="email">
 
                     <p id="link-instruction">
                         We will email you a magic sign in link.
@@ -67,7 +67,8 @@
                         class="form-control input-lg"
                         name="email"
                         value="{{ form.email.value|default:"" }}"
-                        placeholder="you@example.org">
+                        placeholder="you@example.org"
+                        autocomplete="email">
 
                     <input
                         type="password"
