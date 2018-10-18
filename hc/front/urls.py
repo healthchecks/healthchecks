@@ -35,6 +35,8 @@ channel_urls = [
     path('add_telegram/', views.add_telegram, name="hc-add-telegram"),
     path('add_sms/', views.add_sms, name="hc-add-sms"),
     path('add_zendesk/', views.add_zendesk, name="hc-add-zendesk"),
+    path('add_trello/', views.add_trello, name="hc-add-trello"),
+    path('add_trello/settings/', views.trello_settings, name="hc-trello-settings"),
     path('<uuid:code>/checks/', views.channel_checks, name="hc-channel-checks"),
     path('<uuid:code>/remove/', views.remove_channel, name="hc-remove-channel"),
     path('<uuid:code>/verify/<slug:token>/', views.verify_email,

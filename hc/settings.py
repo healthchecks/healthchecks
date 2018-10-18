@@ -169,6 +169,9 @@ PD_VENDOR_KEY = None
 ZENDESK_CLIENT_ID = None
 ZENDESK_CLIENT_SECRET = None
 
+# Trello
+TRELLO_APP_KEY = None
+
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:

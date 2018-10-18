@@ -108,6 +108,11 @@
                     {% else %}
                         {{ ch.sms_number }}
                     {% endif %}
+                {% elif ch.kind == "trello" %}
+                    <span class="preposition">board</span>
+                    {{ ch.trello_board_list|first }},
+                    <span class="preposition">list</span>
+                    {{ ch.trello_board_list|last }}
                 {% else %}
                     {{ ch.value }}
                 {% endif %}
@@ -288,12 +293,23 @@
         {% if enable_zendesk %}
         <li>
             <img src="{% static 'img/integrations/zendesk.png' %}"
-                 class="icon" alt="Discord icon" />
+                 class="icon" alt="Zendesk icon" />
 
             <h2>Zendesk Support</h2>
             <p>Create a Zendesk support ticket when a check goes down.</p>
 
             <a href="{% url 'hc-add-zendesk' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+        {% if enable_trello %}
+        <li>
+            <img src="{% static 'img/integrations/trello.png' %}"
+                 class="icon" alt="Trello icon" />
+
+            <h2>Trello</h2>
+            <p>Create a Trello card when a check goes down.</p>
+
+            <a href="{% url 'hc-add-trello' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
         <li class="link-to-github">

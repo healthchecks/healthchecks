@@ -424,3 +424,20 @@ class Zendesk(HttpTransport):
             return self.notify_down(check)
         if check.status == "up":
             return self.notify_up(check)
+
+
+class Trello(HttpTransport):
+    URL = 'https://api.trello.com/1/cards'
+
+    def is_noop(self, check):
+        return check.status != "down"
+
+    def notify(self, check):
+        params = {
+            "idList": self.channel.trello_list_id,
+            "name": tmpl("trello_title.html", check=check),
+            "key": settings.TRELLO_APP_KEY,
+            "token": self.channel.trello_token
+        }
+
+        return self.post(self.URL, params=params)

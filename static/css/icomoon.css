@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?7cu72n');
-  src:  url('../fonts/icomoon.eot?7cu72n#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?7cu72n') format('truetype'),
-    url('../fonts/icomoon.woff?7cu72n') format('woff'),
-    url('../fonts/icomoon.svg?7cu72n#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?b4dy0b');
+  src:  url('../fonts/icomoon.eot?b4dy0b#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?b4dy0b') format('truetype'),
+    url('../fonts/icomoon.woff?b4dy0b') format('woff'),
+    url('../fonts/icomoon.svg?b4dy0b#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -75,6 +75,10 @@
 .icon-telegram:before {
   content: "\e906";
   color: #2ca5e0;
+}
+.icon-trello:before {
+  content: "\e911";
+  color: #0079bf;
 }
 .icon-zendesk:before {
   content: "\e907";

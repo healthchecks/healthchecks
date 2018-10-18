@@ -40,7 +40,8 @@ CHANNEL_KINDS = (("email", "Email"),
                  ("discord", "Discord"),
                  ("telegram", "Telegram"),
                  ("sms", "SMS"),
-                 ("zendesk", "Zendesk"))
+                 ("zendesk", "Zendesk"),
+                 ("trello", "Trello"))
 
 PO_PRIORITIES = {
     -2: "lowest",
@@ -300,6 +301,8 @@ class Channel(models.Model):
             return transports.Sms(self)
         elif self.kind == "zendesk":
             return transports.Zendesk(self)
+        elif self.kind == "trello":
+            return transports.Trello(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -501,6 +504,27 @@ class Channel(models.Model):
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["label"]
+
+    @property
+    def trello_token(self):
+        assert self.kind == "trello"
+        if self.value.startswith("{"):
+            doc = json.loads(self.value)
+            return doc["token"]
+
+    @property
+    def trello_board_list(self):
+        assert self.kind == "trello"
+        if self.value.startswith("{"):
+            doc = json.loads(self.value)
+            return doc["board_name"], doc["list_name"]
+
+    @property
+    def trello_list_id(self):
+        assert self.kind == "trello"
+        if self.value.startswith("{"):
+            doc = json.loads(self.value)
+            return doc["list_id"]
 
 
 class Notification(models.Model):

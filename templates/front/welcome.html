@@ -368,6 +368,12 @@
                 <img src="{% static 'img/integrations/pagertree.png' %}" class="icon" alt="PagerTree icon" />
                 <h3>PagerTree<br><small>Incident Management</small></h3>
             </div>
+            {% if enable_trello %}
+            <div class="integration">
+                <img src="{% static 'img/integrations/trello.png' %}" class="icon" alt="Trello icon" />
+                <h3>Trello<br><small>Project Management</small></h3>
+            </div>
+            {% endif %}
         </div>
     </div>
 

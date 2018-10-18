@@ -156,6 +156,7 @@ def index(request):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
+        "enable_trello": settings.TRELLO_APP_KEY is not None,
         "registration_open": settings.REGISTRATION_OPEN
     }
 
@@ -461,6 +462,7 @@ def channels(request):
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_zendesk": settings.ZENDESK_CLIENT_ID is not None,
+        "enable_trello": settings.TRELLO_APP_KEY is not None,
         "use_payments": settings.USE_PAYMENTS
     }
 
@@ -1058,3 +1060,54 @@ def add_zendesk(request):
 
     ctx = {"page": "channels"}
     return render(request, "integrations/add_zendesk.html", ctx)
+
+
+@login_required
+def add_trello(request):
+    if settings.TRELLO_APP_KEY is None:
+        raise Http404("trello integration is not available")
+
+    if request.method == "POST":
+        channel = Channel(user=request.team.user, kind="trello")
+        channel.value = request.POST["settings"]
+        channel.save()
+
+        channel.assign_all_checks()
+        return redirect("hc-channels")
+
+    authorize_url = "https://trello.com/1/authorize?" + urlencode({
+        "expiration": "never",
+        "name": settings.SITE_NAME,
+        "scope": "read,write",
+        "response_type": "token",
+        "key": settings.TRELLO_APP_KEY,
+        "return_url": settings.SITE_ROOT + reverse("hc-add-trello")
+    })
+
+    ctx = {
+        "page": "channels",
+        "authorize_url": authorize_url
+    }
+
+    return render(request, "integrations/add_trello.html", ctx)
+
+
+@login_required
+@require_POST
+def trello_settings(request):
+    token = request.POST.get("token")
+
+    url = "https://api.trello.com/1/members/me/boards?" + urlencode({
+        "key": settings.TRELLO_APP_KEY,
+        "token": token,
+        "fields": "id,name",
+        "lists": "open",
+        "list_fields": "id,name"
+    })
+
+    r = requests.get(url)
+    ctx = {
+        "token": token,
+        "data": r.json()
+    }
+    return render(request, "integrations/trello_settings.html", ctx)

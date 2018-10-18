@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Improved  layout and styling in "Login" page.
 - Separate "sign Up" and "Log In" forms.
 - "My Checks" page: support filtering checks by query string parameters.
+- Added Trello integration
 
 ### Bug Fixes
 - Timezones were missing in the "Change Schedule" dialog, fixed.

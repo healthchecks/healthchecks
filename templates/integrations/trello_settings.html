@@ -1,0 +1,37 @@
+<p class="text-success">Authentication successful!</p>
+<p>Please select the Trello list to post notifications to:</p>
+
+<form method="post" class="form-horizontal">
+    {% csrf_token %}
+    <input type="hidden" id="settings" name="settings" data-token="{{ token }}"/>
+
+    <div class="form-group {{ form.value.css_classes }}">
+        <label for="list-selector" class="col-sm-3 control-label">Post Notifications to</label>
+        <div class="col-sm-3">
+            <select id="list-selector" name="board_list_id" class="form-control">
+            {% for board in data %}
+                <optgroup label="{{ board.name }}">
+                    {% for list in board.lists %}
+                        <option
+                            data-list-id="{{ list.id }}"
+                            data-board-name="{{ board.name }}"
+                            data-list-name="{{ list.name}}"
+                            value="{{ board.id }},{{ list.id}}">{{ list.name }}</option>
+                    {% endfor %}
+                </optgroup>
+            {% endfor %}
+            </select>
+
+            {% if form.board_list_id.errors %}
+            <div class="help-block">
+                {{ form.board_list_id.errors|join:"" }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn btn-primary">Save Integration</button>
+        </div>
+    </div>
+</form>
