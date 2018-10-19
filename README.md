@@ -29,6 +29,11 @@ The building blocks are:
 These are instructions for setting up healthchecks Django app
 in development environment.
 
+* install dependencies (Debian/Ubuntu)
+
+        $ sudo apt-get update
+        $ sudo apt-get install -y gcc python3-dev
+
 * prepare directory for project code and virtualenv:
 
         $ mkdir -p ~/webapps
