@@ -24,6 +24,18 @@ The building blocks are:
 * Django 2
 * PostgreSQL or MySQL
 
+## Docker
+
+* build your local image
+
+        $ docker build . -t healthchecks:latest \
+                          --build-arg my_mail_host=mailhost.example.com \
+                          --build-arg my_admin_user=admin \
+                          --build-arg my_admin_email=admin@example.com
+* run your local image
+
+        $ docker run --rm -p 8000:8000 healthchecks:latest
+
 ## Setting Up for Development
 
 These are instructions for setting up healthchecks Django app
