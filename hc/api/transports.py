@@ -435,7 +435,8 @@ class Trello(HttpTransport):
     def notify(self, check):
         params = {
             "idList": self.channel.trello_list_id,
-            "name": tmpl("trello_title.html", check=check),
+            "name": tmpl("trello_name.html", check=check),
+            "desc": tmpl("trello_desc.html", check=check),
             "key": settings.TRELLO_APP_KEY,
             "token": self.channel.trello_token
         }

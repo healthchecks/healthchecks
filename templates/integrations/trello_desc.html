@@ -1,0 +1,14 @@
+{% load hc_extras humanize %}
+{{ check.desc|safe }}
+
+{% if check.kind == "simple" %}
+**Period:** {{ check.timeout|hc_duration }}
+{% endif %}
+
+{% if check.kind == "cron" %}
+**Schedule:** {{ check.schedule|escapejs }}
+{% endif %}
+
+**Last Ping:** {{ check.last_ping|naturaltime }}
+
+[Full Details @ {% site_name %}]({{ check.details_url }})
