@@ -1,13 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.2.0 - 2018-10-20
 
 ### Improvements
 - Content updates in the "Welcome" page.
 - Added "Docs > Third-Party Resources" page.
 - Improved  layout and styling in "Login" page.
-- Separate "sign Up" and "Log In" forms.
+- Separate "Sign Up" and "Log In" forms.
 - "My Checks" page: support filtering checks by query string parameters.
 - Added Trello integration
 
