@@ -51,7 +51,10 @@
 <h2>Authentication</h2>
 <p>Your requests to {% site_name %} REST API must authenticate using an
 API key. By default, an user account on {% site_name %} doesn't have
-an API key. You can create one in the <a href="{% url 'hc-profile' %}">Settings</a> page.
+an API key. You can create one in the
+{% if request.user.is_authenticated %}
+<a href="{% url 'hc-profile' %}">Account Settings</a>
+{% else %}<b>Account Settings</b>{% endif %} page.
 </p>
 
 <p>The client can authenticate itself by sending an appropriate HTTP
