@@ -38,6 +38,10 @@ The building blocks are:
 
         $ docker run --rm -p 8000:8000 healthchecks:latest
 
+* change admin password
+
+        $ docker exec -ti $(docker ps | grep healthchecks | awk '{print $1}') ./manage.py changepassword admin
+
 ## Setting Up for Development
 
 These are instructions for setting up healthchecks Django app
