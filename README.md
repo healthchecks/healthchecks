@@ -30,6 +30,8 @@ The building blocks are:
 
         $ docker build . -t healthchecks:latest \
                           --build-arg my_mail_host=mailhost.example.com \
+                          --build-arg my_site_name=example \
+                          --build-arg my_site_root=example.com \
                           --build-arg my_admin_user=admin \
                           --build-arg my_admin_email=admin@example.com
 * run your local image
