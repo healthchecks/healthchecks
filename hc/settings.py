@@ -122,8 +122,6 @@ USE_TZ = True
 
 SITE_ROOT = "http://localhost:8000"
 SITE_NAME = MASTER_BADGE_LABEL = "Mychecks"
-PING_ENDPOINT = SITE_ROOT + "/ping/"
-PING_EMAIL_DOMAIN = HOST
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static-collected')
@@ -176,3 +174,7 @@ if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:
     warnings.warn("local_settings.py not found, using defaults")
+
+# depending on SITE_ROOT or HOST, eventually overwritten by local_settings
+PING_ENDPOINT = SITE_ROOT + "/ping/"
+PING_EMAIL_DOMAIN = HOST
