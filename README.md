@@ -76,10 +76,54 @@ visit `http://localhost:8080/admin`
 
 ## Configuration
 
-Site configuration is kept in `hc/settings.py`. Additional configuration
-is loaded from `hc/local_settings.py` file, if it exists. You
-can create this file (should be right next to `settings.py` in the filesystem)
-and override settings as needed.
+Site configuration is loaded from environment variables. This is
+done in `hc/settings.py`. Additional configuration is loaded
+from `hc/local_settings.py` file, if it exists. You can create this file
+(should be right next to `settings.py` in the filesystem) and override
+settings, or add extra settings as needed.
+
+Configurations settings loaded from environment variables:
+
+| Environment variable | Default value | Notes
+| -------------------- | ------------- | ----- |
+| [SECRET_KEY](https://docs.djangoproject.com/en/2.1/ref/settings/#secret-key) | `"---"`
+| [DEBUG](https://docs.djangoproject.com/en/2.1/ref/settings/#debug) | `True` | Set to `False` for production
+| [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.1/ref/settings/#allowed-hosts) | `*` | Separate multiple hosts with commas
+| [DEFAULT_FROM_EMAIL](https://docs.djangoproject.com/en/2.1/ref/settings/#default-from-email) | `"healthchecks@example.org"`
+| USE_PAYMENTS | `False`
+| REGISTRATION_OPEN | `True`
+| DB | `"sqlite"` | Set to `"postgres"` or `"mysql"`
+| [DB_HOST](https://docs.djangoproject.com/en/2.1/ref/settings/#host) | `""` *(empty string)*
+| [DB_PORT](https://docs.djangoproject.com/en/2.1/ref/settings/#port) | `""` *(empty string)*
+| [DB_NAME](https://docs.djangoproject.com/en/2.1/ref/settings/#name) | `"hc"`
+| [DB_USER](https://docs.djangoproject.com/en/2.1/ref/settings/#user) | `"postgres"` or `"root"`
+| [DB_PASSWORD](https://docs.djangoproject.com/en/2.1/ref/settings/#password) | `""` *(empty string)*
+| [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.1/ref/settings/#conn-max-age) | `0`
+| DB_SSLMODE | `"prefer"` | PostgreSQL-specific, [details](https://blog.github.com/2018-10-21-october21-incident-report/)
+| DB_TARGET_SESSION_ATTRS | `"read-write"` | PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/static/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS)
+| SITE_ROOT | `"http://localhost:8000"`
+| SITE_NAME | `"Mychecks"`
+| MASTER_BADGE_LABEL | `"Mychecks"`
+| PING_ENDPOINT | `"http://localhost:8000/ping/"`
+| PING_EMAIL_DOMAIN | `"localhost"`
+| DISCORD_CLIENT_ID | `None`
+| DISCORD_CLIENT_SECRET | `None`
+| SLACK_CLIENT_ID | `None`
+| SLACK_CLIENT_SECRET | `None`
+| PUSHOVER_API_TOKEN | `None`
+| PUSHOVER_SUBSCRIPTION_URL | `None`
+| PUSHOVER_EMERGENCY_RETRY_DELAY | `300`
+| PUSHOVER_EMERGENCY_EXPIRATION | `86400`
+| PUSHBULLET_CLIENT_ID | `None`
+| PUSHBULLET_CLIENT_SECRET | `None`
+| TELEGRAM_BOT_NAME | `"ExampleBot"`
+| TELEGRAM_TOKEN | `None`
+| TWILIO_ACCOUNT | `None`
+| TWILIO_AUTH | `None`
+| TWILIO_FROM | `None`
+| PD_VENDOR_KEY | `None`
+| TRELLO_APP_KEY | `None`
+
 
 Some useful settings keys to override are:
 
@@ -109,10 +153,9 @@ to your team account.
 
 ## Database Configuration
 
-Database configuration is stored in `hc/settings.py` and can be overriden
-in `hc/local_settings.py`. The default database engine is SQLite. To use
-PostgreSQL, create `hc/local_settings.py` if it does not exist, and put the
-following in it, changing it as neccessary:
+Database configuration is loaded from environment variables. If you
+need to use a non-standard configuration, you can override the
+database configuration in `hc/local_settings.py` like so:
 
 ```python
 DATABASES = {
@@ -121,38 +164,10 @@ DATABASES = {
         'NAME':     'your-database-name-here',
         'USER':     'your-database-user-here',
         'PASSWORD': 'your-database-password-here',
-        'TEST': {'CHARSET': 'UTF8'}
-    }
-}
-```
-
-For MySQL:
-
-```python
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'your-database-name-here',
-        'USER':     'your-database-user-here',
-        'PASSWORD': 'your-database-password-here',
-        'TEST': {'CHARSET': 'UTF8'}
-    }
-}
-```
-
-You can also use `hc/local_settings.py` to read database
-configuration from environment variables like so:
-
-```python
-import os
-
-DATABASES = {
-    'default': {
-        'ENGINE':   os.environ['DB_ENGINE'],
-        'NAME':     os.environ['DB_NAME'],
-        'USER':     os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
-        'TEST': {'CHARSET': 'UTF8'}
+        'TEST': {'CHARSET': 'UTF8'},
+        'OPTIONS': {
+            ... your custom options here ...
+        }
     }
 }
 ```
@@ -262,9 +277,9 @@ To enable Discord integration, you will need to:
   `SITE_ROOT/integrations/add_discord/`. For example, if you are running a
   development server on `localhost:8000` then the redirect URI would be
   `http://localhost:8000/integrations/add_discord/`
-* Look up your Discord app's Client ID and Client Secret. Add them
-  to your `hc/local_settings.py` file as `DISCORD_CLIENT_ID` and
-  `DISCORD_CLIENT_SECRET` fields.
+* Look up your Discord app's Client ID and Client Secret. Put them
+  in `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET` environment
+  variables.
 
 
 ### Pushover
@@ -274,17 +289,17 @@ To enable Pushover integration, you will need to:
 * register a new application on https://pushover.net/apps/build
 * enable subscriptions in your application and make sure to enable the URL
   subscription type
-* add the application token and subscription URL to `hc/local_settings.py`, as
-  `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL`
+* put the application token and the subscription URL in
+  `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL` environment
+  variables
 
 ### Telegram
 
 * Create a Telegram bot by talking to the
 [BotFather](https://core.telegram.org/bots#6-botfather). Set the bot's name,
 description, user picture, and add a "/start" command.
-* After creating the bot you will have the bot's name and token. Add them
-to your `hc/local_settings.py` file as `TELEGRAM_BOT_NAME` and
-`TELEGRAM_TOKEN` fields.
+* After creating the bot you will have the bot's name and token. Put them
+in `TELEGRAM_BOT_NAME` and `TELEGRAM_TOKEN` environment variables.
 * Run `settelegramwebhook` management command. This command tells Telegram
 where to forward channel messages by invoking Telegram's
 [setWebhook](https://core.telegram.org/bots/api#setwebhook) API call:

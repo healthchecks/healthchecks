@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Improvements
+- Load settings from environment variables
+
+
 ## 1.2.0 - 2018-10-20
 
 ### Improvements
