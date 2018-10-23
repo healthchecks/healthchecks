@@ -281,7 +281,7 @@ def cron_preview(request):
             it = croniter(schedule, now_naive)
             for i in range(0, 6):
                 naive = it.get_next(datetime)
-                aware = timezone.make_aware(naive)
+                aware = timezone.make_aware(naive, is_dst=True)
                 ctx["dates"].append((naive, aware))
     except UnknownTimeZoneError:
         ctx["bad_tz"] = True

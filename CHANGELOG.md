@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Load settings from environment variables
 - Add "List-Unsubscribe" header to alert and report emails
 
+### Bug Fixes
+- During DST transition, handle ambiguous dates as pre-transition
+
 
 ## 1.2.0 - 2018-10-20
 

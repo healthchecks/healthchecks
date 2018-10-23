@@ -116,7 +116,7 @@ class Check(models.Model):
             last_naive = timezone.make_naive(self.last_ping)
             it = croniter(self.schedule, last_naive)
             next_naive = it.get_next(datetime)
-            return timezone.make_aware(next_naive, is_dst=False)
+            return timezone.make_aware(next_naive, is_dst=True)
 
     def get_status(self, now=None):
         """ Return "up" if the check is up or in grace, otherwise "down". """
