@@ -30,7 +30,7 @@ class SendAlertsTestCase(BaseTestCase):
 
     def test_it_sends_report(self):
         cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout 
+        cmd.stdout = Mock()  # silence output to stdout
         cmd.pause = Mock()  # don't pause for 1s
 
         found = cmd.handle_one_monthly_report()
@@ -39,6 +39,9 @@ class SendAlertsTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertTrue(self.profile.next_report_date > now())
         self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertTrue("List-Unsubscribe" in email.extra_headers)
 
     def test_it_obeys_next_report_date(self):
         self.profile.next_report_date = now() + td(days=1)

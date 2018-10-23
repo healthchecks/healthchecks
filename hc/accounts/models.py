@@ -150,18 +150,21 @@ class Profile(models.Model):
         # rendering the template
         checks = list(checks)
 
+        unsub_url = self.reports_unsub_url()
+
+        headers = {"List-Unsubscribe": unsub_url}
         ctx = {
             "checks": checks,
             "sort": self.sort,
             "now": timezone.now(),
-            "unsub_link": self.reports_unsub_url(),
+            "unsub_link": unsub_url,
             "notifications_url": self.notifications_url(),
             "nag": nag,
             "nag_period": self.nag_period.total_seconds(),
             "num_down": num_down
         }
 
-        emails.report(self.user.email, ctx)
+        emails.report(self.user.email, ctx, headers)
         return True
 
     def can_invite(self):

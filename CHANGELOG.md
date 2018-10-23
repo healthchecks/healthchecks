@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Load settings from environment variables
+- Add "List-Unsubscribe" header to alert and report emails
 
 
 ## 1.2.0 - 2018-10-20

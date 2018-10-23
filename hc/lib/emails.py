@@ -56,8 +56,8 @@ def verify_email(to, ctx):
     send("verify-email", to, ctx)
 
 
-def report(to, ctx):
-    send("report", to, ctx)
+def report(to, ctx, headers={}):
+    send("report", to, ctx, headers)
 
 
 def invoice(to, ctx, filename, pdf_data):

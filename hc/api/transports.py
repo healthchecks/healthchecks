@@ -50,7 +50,12 @@ class Email(Transport):
         if not self.channel.email_verified:
             return "Email not verified"
 
-        headers = {"X-Bounce-Url": bounce_url}
+        unsub_link = self.channel.get_unsub_link()
+
+        headers = {
+            "X-Bounce-Url": bounce_url,
+            "List-Unsubscribe": unsub_link
+        }
 
         try:
             # Look up the sorting preference for this email address
@@ -67,7 +72,7 @@ class Email(Transport):
             "checks": list(self.checks()),
             "sort": sort,
             "now": timezone.now(),
-            "unsub_link": self.channel.get_unsub_link()
+            "unsub_link": unsub_link
         }
 
         emails.alert(self.channel.value, ctx, headers)

@@ -246,6 +246,7 @@ class NotifyTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertTrue("X-Bounce-Url" in email.extra_headers)
+        self.assertTrue("List-Unsubscribe" in email.extra_headers)
 
     def test_it_skips_unverified_email(self):
         self._setup_data("email", "alice@example.org", email_verified=False)
