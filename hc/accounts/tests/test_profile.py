@@ -64,6 +64,25 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(message.subject, 'Monthly Report')
         self.assertIn("Test Check", message.body)
 
+    def test_it_skips_report_if_no_pings(self):
+        check = Check(name="Test Check", user=self.alice)
+        check.save()
+
+        sent = self.profile.send_report()
+        self.assertFalse(sent)
+
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_it_skips_report_if_no_recent_pings(self):
+        check = Check(name="Test Check", user=self.alice)
+        check.last_ping = now() - td(days=365)
+        check.save()
+
+        sent = self.profile.send_report()
+        self.assertFalse(sent)
+
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_it_sends_nag(self):
         check = Check(name="Test Check", user=self.alice)
         check.status = "down"

@@ -133,8 +133,12 @@ class Profile(models.Model):
     def send_report(self, nag=False):
         checks = self.checks_from_all_teams()
 
-        # Is there at least one check that has received a ping?
-        if not checks.filter(last_ping__isnull=False).exists():
+        # Has there been a ping in last 6 months?
+        result = checks.aggregate(models.Max("last_ping"))
+        last_ping = result["last_ping__max"]
+
+        six_months_ago = timezone.now() - timedelta(days=180)
+        if last_ping is None or last_ping < six_months_ago:
             return False
 
         # Is there at least one check that is down?
