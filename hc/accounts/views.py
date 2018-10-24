@@ -13,6 +13,7 @@ from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
@@ -344,6 +345,7 @@ def change_email_done(request):
     return render(request, "accounts/change_email_done.html")
 
 
+@csrf_exempt
 def unsubscribe_reports(request, username):
     signer = signing.TimestampSigner(salt="reports")
     try:
