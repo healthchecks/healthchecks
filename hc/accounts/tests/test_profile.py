@@ -30,7 +30,7 @@ class ProfileTestCase(BaseTestCase):
     def test_it_creates_api_key(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"create_api_key": "1"}
+        form = {"create_api_keys": "1"}
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 200)
 
@@ -40,14 +40,18 @@ class ProfileTestCase(BaseTestCase):
         self.assertFalse("b'" in api_key)
 
     def test_it_revokes_api_key(self):
+        self.profile.api_key_readonly = "R" * 32
+        self.profile.save()
+
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"revoke_api_key": "1"}
+        form = {"revoke_api_keys": "1"}
         r = self.client.post("/accounts/profile/", form)
         assert r.status_code == 200
 
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.api_key, "")
+        self.assertEqual(self.profile.api_key_readonly, "")
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)

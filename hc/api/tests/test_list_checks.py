@@ -123,3 +123,10 @@ class ListChecksTestCase(BaseTestCase):
         doc = r.json()
         self.assertTrue("checks" in doc)
         self.assertEqual(len(doc["checks"]), 0)
+
+    def test_readonly_key_works(self):
+        self.profile.api_key_readonly = "R" * 32
+        self.profile.save()
+
+        r = self.client.get("/api/v1/checks/", HTTP_X_API_KEY="R" * 32)
+        self.assertEqual(r.status_code, 200)

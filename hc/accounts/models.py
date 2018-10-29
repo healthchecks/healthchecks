@@ -50,7 +50,9 @@ class Profile(models.Model):
     ping_log_limit = models.IntegerField(default=100)
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
+    api_key_id = models.CharField(max_length=128, blank=True)
     api_key = models.CharField(max_length=128, blank=True)
+    api_key_readonly = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", models.SET_NULL, null=True)
     bill_to = models.TextField(blank=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
@@ -117,8 +119,10 @@ class Profile(models.Model):
         }
         emails.change_email(self.user.email, ctx)
 
-    def set_api_key(self):
+    def set_api_keys(self, key_id=""):
+        self.api_key_id = key_id
         self.api_key = urlsafe_b64encode(os.urandom(24)).decode()
+        self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
         self.save()
 
     def checks_from_all_teams(self):

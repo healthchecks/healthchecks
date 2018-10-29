@@ -61,8 +61,17 @@
             <div class="panel-body settings-block">
                 <h2>API Access</h2>
                 {% if profile.api_key %}
-                    {% if show_api_key %}
-                        API key: <code>{{ profile.api_key }}</code>
+                    {% if show_api_keys %}
+                        <p>
+                            API key: <br />
+                            <code>{{ profile.api_key }}</code>
+                        </p>
+                        {% if profile.api_key_readonly %}
+                        <p>
+                            API key (read-only): <br />
+                            <code>{{ profile.api_key_readonly }}</code>
+                        </p>
+                        {% endif %}
                         <button
                             data-toggle="modal"
                             data-target="#revoke-api-key-modal"
@@ -76,8 +85,8 @@
 
                             <button
                                 type="submit"
-                                name="show_api_key"
-                                class="btn btn-default pull-right">Show API key</button>
+                                name="show_api_keys"
+                                class="btn btn-default pull-right">Show API keys</button>
                         </form>
                     {% endif %}
                 {% else %}
@@ -87,21 +96,21 @@
                         {% csrf_token %}
                         <button
                             type="submit"
-                            name="create_api_key"
-                            class="btn btn-default pull-right">Create API key</button>
+                            name="create_api_keys"
+                            class="btn btn-default pull-right">Create API keys</button>
                     </form>
                 {% endif %}
             </div>
 
-            {% if api_key_created %}
+            {% if api_keys_created %}
             <div class="panel-footer">
-                API key created
+                API keys created
             </div>
             {% endif %}
 
-           {% if api_key_revoked %}
+           {% if api_keys_revoked %}
             <div class="panel-footer">
-                API key revoked
+                API keys revoked
             </div>
             {% endif %}
         </div>
@@ -208,13 +217,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="remove-check-title">Revoke API Key?</h4>
+                    <h4 class="remove-check-title">Revoke API Keys?</h4>
                 </div>
                 <div class="modal-body">
-                    <p>You are about to revoke the current API key.</p>
-                    <p>Afterwards, you can create a new API key, but there will
+                    <p>You are about to revoke your current API keys.</p>
+                    <p>Afterwards, you can create new API keys, but there will
                         be <strong>no way of getting the current API
-                        key back</strong>.
+                        keys back</strong>.
                     </p>
                     <p>Are you sure?</p>
                 </div>
@@ -222,8 +231,8 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button
                         type="submit"
-                        name="revoke_api_key"
-                        class="btn btn-danger">Revoke API Key</button>
+                        name="revoke_api_keys"
+                        class="btn btn-danger">Revoke API Keys</button>
                 </div>
             </div>
         </form>

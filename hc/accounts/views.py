@@ -153,7 +153,7 @@ def profile(request):
     ctx = {
         "page": "profile",
         "profile": profile,
-        "show_api_key": False,
+        "show_api_keys": False,
         "api_status": "default",
         "team_status": "default"
     }
@@ -165,18 +165,20 @@ def profile(request):
         elif "set_password" in request.POST:
             profile.send_set_password_link()
             return redirect("hc-link-sent")
-        elif "create_api_key" in request.POST:
-            profile.set_api_key()
-            ctx["show_api_key"] = True
-            ctx["api_key_created"] = True
+        elif "create_api_keys" in request.POST:
+            profile.set_api_keys()
+            ctx["show_api_keys"] = True
+            ctx["api_keys_created"] = True
             ctx["api_status"] = "success"
-        elif "revoke_api_key" in request.POST:
+        elif "revoke_api_keys" in request.POST:
+            profile.api_key_id = ""
             profile.api_key = ""
+            profile.api_key_readonly = ""
             profile.save()
-            ctx["api_key_revoked"] = True
+            ctx["api_keys_revoked"] = True
             ctx["api_status"] = "info"
-        elif "show_api_key" in request.POST:
-            ctx["show_api_key"] = True
+        elif "show_api_keys" in request.POST:
+            ctx["show_api_keys"] = True
         elif "invite_team_member" in request.POST:
             if not profile.can_invite():
                 return HttpResponseForbidden()

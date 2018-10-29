@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from hc.api import schemas
-from hc.api.decorators import check_api_key, validate_json
+from hc.api.decorators import authorize, authorize_read, validate_json
 from hc.api.models import Check, Notification
 from hc.lib.badges import check_signature, get_badge_svg
 
@@ -87,48 +87,56 @@ def _update(check, spec):
     return check
 
 
-@csrf_exempt
+@validate_json()
+@authorize_read
+def get_checks(request):
+    q = Check.objects.filter(user=request.user)
+
+    tags = set(request.GET.getlist("tag"))
+    for tag in tags:
+        # approximate filtering by tags
+        q = q.filter(tags__contains=tag)
+
+    checks = []
+    for check in q:
+        # precise, final filtering
+        if not tags or check.matches_tag_set(tags):
+            checks.append(check.to_dict())
+
+    return JsonResponse({"checks": checks})
+
+
 @validate_json(schemas.check)
-@check_api_key
+@authorize
+def create_check(request):
+    created = False
+    check = _lookup(request.user, request.json)
+    if check is None:
+        num_checks = Check.objects.filter(user=request.user).count()
+        if num_checks >= request.user.profile.check_limit:
+            return HttpResponseForbidden()
+
+        check = Check(user=request.user)
+        created = True
+
+    _update(check, request.json)
+    return JsonResponse(check.to_dict(), status=201 if created else 200)
+
+
+@csrf_exempt
 def checks(request):
     if request.method == "GET":
-        q = Check.objects.filter(user=request.user)
-
-        tags = set(request.GET.getlist("tag"))
-        for tag in tags:
-            # approximate filtering by tags
-            q = q.filter(tags__contains=tag)
-
-        checks = []
-        for check in q:
-            # precise, final filtering
-            if not tags or check.matches_tag_set(tags):
-                checks.append(check.to_dict())
-
-        return JsonResponse({"checks": checks})
+        return get_checks(request)
 
     elif request.method == "POST":
-        created = False
-        check = _lookup(request.user, request.json)
-        if check is None:
-            num_checks = Check.objects.filter(user=request.user).count()
-            if num_checks >= request.user.profile.check_limit:
-                return HttpResponseForbidden()
+        return create_check(request)
 
-            check = Check(user=request.user)
-            created = True
-
-        _update(check, request.json)
-
-        return JsonResponse(check.to_dict(), status=201 if created else 200)
-
-    # If request is neither GET nor POST, return "405 Method not allowed"
     return HttpResponse(status=405)
 
 
 @csrf_exempt
 @validate_json(schemas.check)
-@check_api_key
+@authorize
 def update(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user != request.user:
@@ -150,7 +158,7 @@ def update(request, code):
 @csrf_exempt
 @require_POST
 @validate_json()
-@check_api_key
+@authorize
 def pause(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user != request.user:
