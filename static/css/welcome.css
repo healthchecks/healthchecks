@@ -72,13 +72,11 @@
 }
 
 #welcome-integrations .integration {
-    display: inline-block;
     border: 1px solid #ddd;
     border-radius: 3px;
     padding: 20px 0;
-    margin: 0 20px 20px 0;
     text-align: center;
-    width: 150px;
+    margin-bottom: 30px;
 }
 
 #welcome-integrations img {

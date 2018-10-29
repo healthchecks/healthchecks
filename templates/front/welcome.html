@@ -302,79 +302,118 @@
                 <small>Set up additional ways to get notified:</small>
             </h1>
         </div>
-        <div class="col-sm-12">
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/email.png' %}" class="icon" alt="Email icon" />
                 <h3>Email<br><small>&nbsp;</small>
                 </h3>
             </div>
-            {% if enable_sms %}
+        </div>
+
+        {% if enable_sms %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/sms.png' %}" class="icon" alt="SMS icon" />
                 <h3>SMS<br><small>&nbsp;</small></h3>
             </div>
-            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/webhook.png' %}" class="icon" alt="Webhook icon" />
                 <h3>Webhooks<br><small>&nbsp;</small></h3>
             </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/slack.png' %}" class="icon" alt="Slack icon" />
                 <h3>Slack<br><small>Chat</small></h3>
             </div>
-            {% if enable_telegram %}
+        </div>
+
+        {% if enable_telegram %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/telegram.png' %}" class="icon" alt="Telegram icon" />
                 <h3>Telegram<br><small>Chat</small></h3>
             </div>
-            {% endif %}
-            {% if enable_pushover %}
+        </div>
+        {% endif %}
+
+        {% if enable_pushover %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/po.png' %}" class="icon" alt="Pushover icon" />
                 <h3>Pushover<br><small>Push Notifications</small></h3>
             </div>
-            {% endif %}
-            {% if enable_pushbullet %}
+        </div>
+        {% endif %}
+
+        {% if enable_pushbullet %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/pushbullet.png' %}" class="icon" alt="Pushbullet icon" />
                 <h3>Pushbullet<br><small>Push Notifications</small></h3>
             </div>
-            {% endif %}
-            {% if enable_pd %}
+        </div>
+        {% endif %}
+
+        {% if enable_pd %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="PagerDuty icon" />
                 <h3>PagerDuty<br><small>Incident Management</small></h3>
             </div>
-            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/hipchat.png' %}" class="icon" alt="HipChat icon" />
                 <h3>HipChat<br><small>Chat</small></h3>
             </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/victorops.png' %}" class="icon" alt="VictorOps icon" />
                 <h3>VictorOps<br><small>Incident Management</small></h3>
             </div>
-            {% if enable_discord %}
+        </div>
+
+        {% if enable_discord %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/discord.png' %}" class="icon" alt="Discord icon" />
                 <h3>Discord<br><small>Chat</small></h3>
             </div>
-            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/opsgenie.png' %}" class="icon" alt="OpsGenie icon" />
                 <h3>OpsGenie<br><small>Incident Management</small></h3>
             </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/pagertree.png' %}" class="icon" alt="PagerTree icon" />
                 <h3>PagerTree<br><small>Incident Management</small></h3>
             </div>
-            {% if enable_trello %}
+        </div>
+
+        {% if enable_trello %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/trello.png' %}" class="icon" alt="Trello icon" />
                 <h3>Trello<br><small>Project Management</small></h3>
             </div>
-            {% endif %}
         </div>
+        {% endif %}
     </div>
 
     <div class="row tour-section">
