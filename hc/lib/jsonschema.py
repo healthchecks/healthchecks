@@ -16,6 +16,8 @@ def validate(obj, schema, obj_name="value"):
     if schema.get("type") == "string":
         if not isinstance(obj, str):
             raise ValidationError("%s is not a string" % obj_name)
+        if "minLength" in schema and len(obj) < schema["minLength"]:
+            raise ValidationError("%s is too short" % obj_name)
         if "maxLength" in schema and len(obj) > schema["maxLength"]:
             raise ValidationError("%s is too long" % obj_name)
         if schema.get("format") == "cron":

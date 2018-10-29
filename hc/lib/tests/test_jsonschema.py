@@ -12,6 +12,10 @@ class JsonSchemaTestCase(TestCase):
         with self.assertRaises(ValidationError):
             validate(123, {"type": "string"})
 
+    def test_it_checks_string_min_length(self):
+        with self.assertRaises(ValidationError):
+            validate("abcd", {"type": "string", "minLength": 5})
+
     def test_it_checks_string_length(self):
         with self.assertRaises(ValidationError):
             validate("abcd", {"type": "string", "maxLength": 3})
