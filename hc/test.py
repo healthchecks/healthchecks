@@ -14,7 +14,7 @@ class BaseTestCase(TestCase):
         self.alice.set_password("password")
         self.alice.save()
 
-        self.profile = Profile(user=self.alice, api_key="abc")
+        self.profile = Profile(user=self.alice, api_key="X" * 32)
         self.profile.sms_limit = 50
         self.profile.save()
 

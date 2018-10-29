@@ -10,7 +10,7 @@ class PauseTestCase(BaseTestCase):
 
         url = "/api/v1/checks/%s/pause" % check.code
         r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="abc")
+                             HTTP_X_API_KEY="X" * 32)
 
         self.assertEqual(r.status_code, 200)
 
@@ -20,7 +20,7 @@ class PauseTestCase(BaseTestCase):
     def test_it_only_allows_post(self):
         url = "/api/v1/checks/1659718b-21ad-4ed1-8740-43afc6c41524/pause"
 
-        r = self.client.get(url, HTTP_X_API_KEY="abc")
+        r = self.client.get(url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 405)
 
     def test_it_validates_ownership(self):
@@ -29,20 +29,20 @@ class PauseTestCase(BaseTestCase):
 
         url = "/api/v1/checks/%s/pause" % check.code
         r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="abc")
+                             HTTP_X_API_KEY="X" * 32)
 
         self.assertEqual(r.status_code, 403)
 
     def test_it_validates_uuid(self):
         url = "/api/v1/checks/not-uuid/pause"
         r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="abc")
+                             HTTP_X_API_KEY="X" * 32)
 
         self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_check(self):
         url = "/api/v1/checks/07c2f548-9850-4b27-af5d-6c9dc157ec02/pause"
         r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="abc")
+                             HTTP_X_API_KEY="X" * 32)
 
         self.assertEqual(r.status_code, 404)

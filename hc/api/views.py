@@ -88,8 +88,8 @@ def _update(check, spec):
 
 
 @csrf_exempt
-@check_api_key
 @validate_json(schemas.check)
+@check_api_key
 def checks(request):
     if request.method == "GET":
         q = Check.objects.filter(user=request.user)
@@ -127,8 +127,8 @@ def checks(request):
 
 
 @csrf_exempt
-@check_api_key
 @validate_json(schemas.check)
+@check_api_key
 def update(request, code):
     check = get_object_or_404(Check, code=code)
     if check.user != request.user:
@@ -149,6 +149,7 @@ def update(request, code):
 
 @csrf_exempt
 @require_POST
+@validate_json()
 @check_api_key
 def pause(request, code):
     check = get_object_or_404(Check, code=code)

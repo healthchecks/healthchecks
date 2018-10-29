@@ -32,7 +32,7 @@ class ListChecksTestCase(BaseTestCase):
         self.a2.save()
 
     def get(self):
-        return self.client.get("/api/v1/checks/", HTTP_X_API_KEY="abc")
+        return self.client.get("/api/v1/checks/", HTTP_X_API_KEY="X" * 32)
 
     def test_it_works(self):
         r = self.get()
@@ -75,7 +75,7 @@ class ListChecksTestCase(BaseTestCase):
             self.assertNotEqual(check["name"], "Bob 1")
 
     def test_it_accepts_api_key_from_request_body(self):
-        payload = json.dumps({"api_key": "abc"})
+        payload = json.dumps({"api_key": "X" * 32})
         r = self.client.generic("GET", "/api/v1/checks/", payload,
                                 content_type="application/json")
 
@@ -83,7 +83,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertContains(r, "Alice")
 
     def test_it_works_with_tags_param(self):
-        r = self.client.get("/api/v1/checks/?tag=a2-tag", HTTP_X_API_KEY="abc")
+        r = self.client.get("/api/v1/checks/?tag=a2-tag", HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()
@@ -96,7 +96,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(check["tags"], "a2-tag")
 
     def test_it_filters_with_multiple_tags_param(self):
-        r = self.client.get("/api/v1/checks/?tag=a1-tag&tag=a1-additional-tag", HTTP_X_API_KEY="abc")
+        r = self.client.get("/api/v1/checks/?tag=a1-tag&tag=a1-additional-tag", HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()
@@ -109,7 +109,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(check["tags"], "a1-tag a1-additional-tag")
 
     def test_it_does_not_match_tag_partially(self):
-        r = self.client.get("/api/v1/checks/?tag=tag", HTTP_X_API_KEY="abc")
+        r = self.client.get("/api/v1/checks/?tag=tag", HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()
@@ -117,7 +117,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(len(doc["checks"]), 0)
 
     def test_non_existing_tags_filter_returns_empty_result(self):
-        r = self.client.get("/api/v1/checks/?tag=non_existing_tag_with_no_checks", HTTP_X_API_KEY="abc")
+        r = self.client.get("/api/v1/checks/?tag=non_existing_tag_with_no_checks", HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()

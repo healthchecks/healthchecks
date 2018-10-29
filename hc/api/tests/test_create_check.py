@@ -22,7 +22,7 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_works(self):
         r = self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "name": "Foo",
             "tags": "bar,baz",
             "timeout": 3600,
@@ -49,7 +49,7 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_30_days_works(self):
         r = self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "name": "Foo",
             "timeout": 2592000,
             "grace": 2592000
@@ -65,7 +65,7 @@ class CreateCheckTestCase(BaseTestCase):
         payload = json.dumps({"name": "Foo"})
         r = self.client.post(self.URL, payload,
                              content_type="application/json",
-                             HTTP_X_API_KEY="abc")
+                             HTTP_X_API_KEY="X" * 32)
 
         self.assertEqual(r.status_code, 201)
 
@@ -73,7 +73,7 @@ class CreateCheckTestCase(BaseTestCase):
         channel = Channel(user=self.alice)
         channel.save()
 
-        r = self.post({"api_key": "abc", "channels": "*"})
+        r = self.post({"api_key": "X" * 32, "channels": "*"})
 
         self.assertEqual(r.status_code, 201)
         check = Check.objects.get()
@@ -84,7 +84,7 @@ class CreateCheckTestCase(BaseTestCase):
         existing.save()
 
         r = self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "name": "Foo",
             "unique": ["name"]
         })
@@ -97,8 +97,8 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_handles_missing_request_body(self):
         r = self.client.post(self.URL, content_type="application/json")
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["error"], "wrong api_key")
+        self.assertEqual(r.status_code, 401)
+        self.assertEqual(r.json()["error"], "missing api key")
 
     def test_it_handles_invalid_json(self):
         r = self.client.post(self.URL, "this is not json",
@@ -107,27 +107,27 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.json()["error"], "could not parse request body")
 
     def test_it_rejects_wrong_api_key(self):
-        r = self.post({"api_key": "wrong"})
-        self.assertEqual(r.status_code, 403)
+        r = self.post({"api_key": "Y" * 32})
+        self.assertEqual(r.status_code, 401)
 
     def test_it_rejects_small_timeout(self):
-        self.post({"api_key": "abc", "timeout": 0},
+        self.post({"api_key": "X" * 32, "timeout": 0},
                   expected_fragment="timeout is too small")
 
     def test_it_rejects_large_timeout(self):
-        self.post({"api_key": "abc", "timeout": 2592001},
+        self.post({"api_key": "X" * 32, "timeout": 2592001},
                   expected_fragment="timeout is too large")
 
     def test_it_rejects_non_number_timeout(self):
-        self.post({"api_key": "abc", "timeout": "oops"},
+        self.post({"api_key": "X" * 32, "timeout": "oops"},
                   expected_fragment="timeout is not a number")
 
     def test_it_rejects_non_string_name(self):
-        self.post({"api_key": "abc", "name": False},
+        self.post({"api_key": "X" * 32, "name": False},
                   expected_fragment="name is not a string")
 
     def test_it_rejects_long_name(self):
-        self.post({"api_key": "abc", "name": "01234567890" * 20},
+        self.post({"api_key": "X" * 32, "name": "01234567890" * 20},
                   expected_fragment="name is too long")
 
     def test_unique_accepts_only_whitelisted_values(self):
@@ -135,21 +135,21 @@ class CreateCheckTestCase(BaseTestCase):
         existing.save()
 
         self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "name": "Foo",
             "unique": ["status"]
         }, expected_fragment="unexpected value")
 
     def test_it_rejects_bad_unique_values(self):
         self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "name": "Foo",
             "unique": "not a list"
         }, expected_fragment="not an array")
 
     def test_it_supports_cron_syntax(self):
         r = self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "schedule": "5 * * * *",
             "tz": "Europe/Riga",
             "grace": 60
@@ -166,7 +166,7 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_validates_cron_expression(self):
         r = self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "schedule": "not-a-cron-expression",
             "tz": "Europe/Riga",
             "grace": 60
@@ -176,7 +176,7 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_validates_timezone(self):
         r = self.post({
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "schedule": "* * * * *",
             "tz": "not-a-timezone",
             "grace": 60
@@ -185,7 +185,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_it_sets_default_timeout(self):
-        r = self.post({"api_key": "abc"})
+        r = self.post({"api_key": "X" * 32})
 
         self.assertEqual(r.status_code, 201)
 
@@ -196,5 +196,5 @@ class CreateCheckTestCase(BaseTestCase):
         self.profile.check_limit = 0
         self.profile.save()
 
-        r = self.post({"api_key": "abc"})
+        r = self.post({"api_key": "X" * 32})
         self.assertEqual(r.status_code, 403)

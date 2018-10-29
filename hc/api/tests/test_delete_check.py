@@ -11,7 +11,7 @@ class DeleteCheckTestCase(BaseTestCase):
 
     def test_it_works(self):
         r = self.client.delete("/api/v1/checks/%s" % self.check.code,
-                               HTTP_X_API_KEY="abc")
+                               HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 200)
 
         # It should be gone--
@@ -19,5 +19,5 @@ class DeleteCheckTestCase(BaseTestCase):
 
     def test_it_handles_missing_check(self):
         url = "/api/v1/checks/07c2f548-9850-4b27-af5d-6c9dc157ec02"
-        r = self.client.delete(url, HTTP_X_API_KEY="abc")
+        r = self.client.delete(url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 404)

@@ -1,5 +1,3 @@
-import json
-
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -17,7 +15,7 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_works(self):
         r = self.post(self.check.code, {
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "name": "Foo",
             "tags": "bar,baz",
             "timeout": 3600,
@@ -51,7 +49,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.assign_all_channels()
 
         r = self.post(self.check.code, {
-            "api_key": "abc",
+            "api_key": "X" * 32,
             "channels": ""
         })
 
@@ -61,23 +59,23 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_requires_post(self):
         url = "/api/v1/checks/%s" % self.check.code
-        r = self.client.get(url, HTTP_X_API_KEY="abc")
+        r = self.client.get(url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 405)
 
     def test_it_handles_invalid_uuid(self):
-        r = self.post("not-an-uuid", {"api_key": "abc"})
+        r = self.post("not-an-uuid", {"api_key": "X" * 32})
         self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_check(self):
         made_up_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"
-        r = self.post(made_up_code, {"api_key": "abc"})
+        r = self.post(made_up_code, {"api_key": "X" * 32})
         self.assertEqual(r.status_code, 404)
 
     def test_it_validates_ownership(self):
         check = Check(user=self.bob, status="up")
         check.save()
 
-        r = self.post(check.code, {"api_key": "abc"})
+        r = self.post(check.code, {"api_key": "X" * 32})
         self.assertEqual(r.status_code, 403)
 
     def test_it_updates_cron_to_simple(self):
@@ -85,7 +83,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.schedule = "5 * * * *"
         self.check.save()
 
-        r = self.post(self.check.code, {"api_key": "abc", "timeout": 3600})
+        r = self.post(self.check.code, {"api_key": "X" * 32, "timeout": 3600})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
