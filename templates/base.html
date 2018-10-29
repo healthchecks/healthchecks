@@ -146,6 +146,12 @@
                 <li><a href="{% url 'hc-login' %}">Sign In</a></li>
             </ul>
             {% endif %}
+
+            {% if show_search %}
+            <form class="navbar-form navbar-right">
+                <input id="search" type="text" placeholder="Search checks&hellip;" class="form-control" value="{{ search }}">
+            </form>
+            {% endif %}
         </div>
 
         </div>

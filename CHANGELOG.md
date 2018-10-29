@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Load settings from environment variables
 - Add "List-Unsubscribe" header to alert and report emails
 - Don't send monthly reports to inactive accounts (no pings in 6 months)
+- Add search box in the "My Checks" page
 
 ### Bug Fixes
 - During DST transition, handle ambiguous dates as pre-transition

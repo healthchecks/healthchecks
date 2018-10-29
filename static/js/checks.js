@@ -63,11 +63,7 @@ $(function () {
         return false;
     });
 
-
-    // Filtering by tags
-    $("#my-checks-tags div").click(function() {
-        $(this).toggleClass('checked');
-
+    function applyFilters() {
         // Make a list of currently checked tags:
         var checked = [];
         var qs = [];
@@ -75,6 +71,11 @@ $(function () {
             checked.push(el.textContent);
             qs.push({"name": "tag", "value": el.textContent});
         });
+
+        var search = $("#search").val().toLowerCase();
+        if (search) {
+            qs.push({"name": "search", "value": search});
+        }
 
         // Update hash
         if (window.history && window.history.replaceState) {
@@ -85,20 +86,31 @@ $(function () {
             window.history.replaceState({}, "", url);
         }
 
-        // No checked tags: show all
-        if (checked.length == 0) {
+        // No checked tags and no search string: show all
+        if (checked.length == 0 && !search) {
             $("#checks-table tr.checks-row").show();
             return;
         }
 
-        function applyFilters(index, element) {
-            // use attr(), as data() tries converting strings to JS types:
-            // (e.g., "123" -> 123)
-            var tags = $(".my-checks-name", element).attr("data-tags").split(" ");
-            for (var i=0, tag; tag=checked[i]; i++) {
-                if (tags.indexOf(tag) == -1) {
+        function applySingle(index, element) {
+            if (search) {
+                var code = element.getAttribute("id");
+                var name = $(".my-checks-name", element).attr("data-name").toLowerCase();
+                if (name.indexOf(search) == -1 && code.indexOf(search) == -1) {
                     $(element).hide();
                     return;
+                }
+            }
+
+            if (checked.length) {
+                // use attr(), as data() tries converting strings to JS types:
+                // (e.g., "123" -> 123)
+                var tags = $(".my-checks-name", element).attr("data-tags").split(" ");
+                for (var i=0, tag; tag=checked[i]; i++) {
+                    if (tags.indexOf(tag) == -1) {
+                        $(element).hide();
+                        return;
+                    }
                 }
             }
 
@@ -106,8 +118,17 @@ $(function () {
         }
 
         // For each row, see if it needs to be shown or hidden
-        $("#checks-table tr.checks-row").each(applyFilters);
+        $("#checks-table tr.checks-row").each(applySingle);
+    }
+
+    // User clicks on tags: apply filters
+    $("#my-checks-tags div").click(function() {
+        $(this).toggleClass('checked');
+        applyFilters();
     });
+
+    // User changes the search string: apply filters
+    $("#search").keyup(applyFilters);
 
     $(".show-log").click(function(e) {
         var code = $(this).closest("tr.checks-row").attr("id");

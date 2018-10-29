@@ -27,6 +27,11 @@
     border-color: #000;
 }
 
+#search {
+    padding-left: 15px;
+    border-radius: 16px;
+}
+
 @media (min-width: 992px) {
     #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog  {
         width: 800px;

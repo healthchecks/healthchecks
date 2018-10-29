@@ -76,10 +76,19 @@ def my_checks(request):
     channels = list(channels.order_by("created"))
 
     hidden_checks = set()
+    # Hide checks that don't match selected tags:
     selected_tags = set(request.GET.getlist("tag", []))
     if selected_tags:
         for check in checks:
             if not selected_tags.issubset(check.tags_list()):
+                hidden_checks.add(check)
+
+    # Hide checks that don't match the search string:
+    search = request.GET.get("search", "")
+    if search:
+        for check in checks:
+            search_key = "%s\n%s" % (check.name.lower(), check.code)
+            if search not in search_key:
                 hidden_checks.add(check)
 
     ctx = {
@@ -94,6 +103,8 @@ def my_checks(request):
         "num_available": request.team.check_limit - len(checks),
         "sort": request.profile.sort,
         "selected_tags": selected_tags,
+        "show_search": True,
+        "search": search,
         "hidden_checks": hidden_checks
     }
 
