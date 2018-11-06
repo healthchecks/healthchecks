@@ -28,8 +28,7 @@ class ProfileFieldset(Fieldset):
 class TeamFieldset(Fieldset):
     name = "Team"
     fields = ("team_name", "team_limit", "check_limit",
-              "ping_log_limit", "sms_limit", "sms_sent", "last_sms_date",
-              "bill_to")
+              "ping_log_limit", "sms_limit", "sms_sent", "last_sms_date")
 
 
 @admin.register(Profile)

@@ -54,7 +54,6 @@ class Profile(models.Model):
     api_key = models.CharField(max_length=128, blank=True)
     api_key_readonly = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", models.SET_NULL, null=True)
-    bill_to = models.TextField(blank=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
     sms_limit = models.IntegerField(default=0)
     sms_sent = models.IntegerField(default=0)

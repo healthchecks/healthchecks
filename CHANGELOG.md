@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Don't send monthly reports to inactive accounts (no pings in 6 months)
 - Add search box in the "My Checks" page
 - Add read-only API key support
+- Remove Profile.bill_to field (obsolete)
 
 ### Bug Fixes
 - During DST transition, handle ambiguous dates as pre-transition
