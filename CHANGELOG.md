@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add search box in the "My Checks" page
 - Add read-only API key support
 - Remove Profile.bill_to field (obsolete)
+- Show a warning when running with DEBUG=True
 
 ### Bug Fixes
 - During DST transition, handle ambiguous dates as pre-transition

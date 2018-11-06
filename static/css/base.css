@@ -93,3 +93,10 @@ pre {
 .jumbotron p {
     font-weight: 300;
 }
+
+#debug-warning {
+    background: #eeeeee;
+    text-align: center;
+    font-size: small;
+    padding: 2px 0;
+}

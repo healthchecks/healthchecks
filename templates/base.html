@@ -46,6 +46,7 @@
     {% endcompress %}
 </head>
 <body class="page-{{ page }}">
+    {% debug_warning %}
     <nav class="navbar navbar-default">
         <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
         <div class="navbar-header">
