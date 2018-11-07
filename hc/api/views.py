@@ -1,6 +1,8 @@
 from datetime import timedelta as td
+from uuid import UUID
 
 from django.conf import settings
+from django.core.exceptions import SuspiciousOperation
 from django.db import connection
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseNotFound, JsonResponse)
@@ -12,7 +14,7 @@ from django.views.decorators.http import require_POST
 
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, validate_json
-from hc.api.models import Check, Notification
+from hc.api.models import Check, Notification, Channel
 from hc.lib.badges import check_signature, get_badge_svg
 
 
@@ -81,8 +83,17 @@ def _update(check, spec):
     if "channels" in spec:
         if spec["channels"] == "*":
             check.assign_all_channels()
-        elif spec["channels"] == "":
+        else:
             check.channel_set.clear()
+            if spec["channels"] is not None and spec["channels"] != "":
+                channels = []
+                for raw_channel in spec["channels"].split(","):
+                    try:
+                        channel = Channel.objects.get(code=UUID(raw_channel))
+                        channels.append(channel)
+                    except Channel.objects.model.DoesNotExist:
+                        raise SuspiciousOperation("One of the specified channels is missing")
+                check.channel_set.add(*channels)
 
     return check
 

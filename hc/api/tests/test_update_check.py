@@ -1,3 +1,5 @@
+import uuid
+
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -88,3 +90,46 @@ class UpdateCheckTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
+
+    def test_it_updates_specific_channels(self):
+        channel1 = Channel(user=self.alice)
+        channel1.save()
+        channel2 = Channel(user=self.alice)
+        channel2.save()
+
+        r = self.post(self.check.code, {
+            "api_key": "X" * 32,
+            "channels": str(channel1.code)
+        })
+        self.assertEqual(r.status_code, 200)
+        check = Check.objects.get()
+        self.assertEqual(check.channel_set.count(), 1)
+        self.assertEqual(check.channel_set.first().code, channel1.code)
+
+        # Change to the other channel
+        r = self.post(self.check.code, {
+            "api_key": "X" * 32,
+            "channels": str(channel2.code)
+        })
+        self.assertEqual(r.status_code, 200)
+        check = Check.objects.get()
+        self.assertEqual(check.channel_set.count(), 1)
+        self.assertEqual(check.channel_set.first().code, channel2.code)
+
+        # Now set both channels
+        r = self.post(self.check.code, {
+            "api_key": "X" * 32,
+            "channels": str(channel2.code) + "," + str(channel1.code)
+        })
+        self.assertEqual(r.status_code, 200)
+        check = Check.objects.get()
+        self.assertEqual(check.channel_set.count(), 2)
+
+        # Try to use channel that does not exist
+        r = self.post(self.check.code, {
+            "api_key": "X" * 32,
+            "channels": str(uuid.uuid4())
+        })
+        self.assertEqual(r.status_code, 400)
+        check = Check.objects.get()
+        self.assertEqual(check.channel_set.count(), 0)
