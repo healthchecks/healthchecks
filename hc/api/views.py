@@ -1,5 +1,4 @@
 from datetime import timedelta as td
-from uuid import UUID
 
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
@@ -83,17 +82,17 @@ def _update(check, spec):
     if "channels" in spec:
         if spec["channels"] == "*":
             check.assign_all_channels()
-        else:
+        elif spec["channels"] == "":
             check.channel_set.clear()
-            if spec["channels"] is not None and spec["channels"] != "":
-                channels = []
-                for raw_channel in spec["channels"].split(","):
-                    try:
-                        channel = Channel.objects.get(code=UUID(raw_channel))
-                        channels.append(channel)
-                    except Channel.objects.model.DoesNotExist:
-                        raise SuspiciousOperation("One of the specified channels is missing")
-                check.channel_set.add(*channels)
+        else:
+            channels = []
+            for chunk in spec["channels"].split(","):
+                try:
+                    channel = Channel.objects.get(code=chunk)
+                    channels.append(channel)
+                except Channel.DoesNotExist:
+                    raise SuspiciousOperation("Invalid channel identifier")
+            check.channel_set.set(channels)
 
     return check
 

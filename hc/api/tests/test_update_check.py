@@ -151,3 +151,11 @@ class UpdateCheckTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)
+
+    def test_it_rejects_non_string_channels_key(self):
+        r = self.post(self.check.code, {
+            "api_key": "X" * 32,
+            "channels": None
+        })
+
+        self.assertEqual(r.status_code, 400)
