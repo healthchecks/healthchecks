@@ -1,4 +1,5 @@
 {
+  "channels": "",
   "grace": 60,
   "last_ping": null,
   "n_pings": 0,

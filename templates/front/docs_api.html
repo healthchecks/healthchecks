@@ -203,11 +203,14 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
     <tr>
         <th>channels</th>
         <td>
-            <p>string, optional, default value: ""</p>
+            <p>string, optional</p>
             <p>By default, if a check is created through API, no notification
             channels are assigned to it. So, when the check goes up or down,
-            no notifications would be sent. Set this field to a special value "*"
+            no notifications will get sent.</p>
+            <p>Set this field to a special value "*"
             to automatically assign all existing notification channels.</p>
+            <p>To assign specific notification channels, use a comma-separated
+               list of channel identifiers.</p>
         </td>
     </tr>
     <tr>
@@ -343,6 +346,11 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
             <p>Set this field to a special value "" (empty string)
             to automatically <em>unassign</em> all notification channels.
             </p>
+            <p>Set this field to a comma-separated list of channel identifiers
+            to assign specific notification channels.
+            </p>
+            <p>Example:</p>
+            <pre>{"channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre>
         </td>
     </tr>
 </table>
