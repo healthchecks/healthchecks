@@ -164,6 +164,7 @@ class Check(models.Model):
     def to_dict(self):
         update_rel_url = reverse("hc-api-update", args=[self.code])
         pause_rel_url = reverse("hc-api-pause", args=[self.code])
+        channel_codes = [str(ch.code) for ch in self.channel_set.all()]
 
         result = {
             "name": self.name,
@@ -173,7 +174,8 @@ class Check(models.Model):
             "tags": self.tags,
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
-            "status": self.get_status()
+            "status": self.get_status(),
+            "channels": ",".join(sorted(channel_codes))
         }
 
         if self.kind == "simple":

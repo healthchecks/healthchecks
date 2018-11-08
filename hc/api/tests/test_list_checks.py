@@ -3,7 +3,7 @@ from datetime import timedelta as td
 from django.utils.timezone import now
 from django.conf import settings
 
-from hc.api.models import Check
+from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
@@ -31,6 +31,9 @@ class ListChecksTestCase(BaseTestCase):
         self.a2.tags = "a2-tag"
         self.a2.save()
 
+        self.c1 = Channel.objects.create(user=self.alice)
+        self.a1.channel_set.add(self.c1)
+
     def get(self):
         return self.client.get("/api/v1/checks/", HTTP_X_API_KEY="X" * 32)
 
@@ -39,30 +42,36 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()
-        self.assertTrue("checks" in doc)
+        self.assertEqual(len(doc["checks"]), 2)
 
-        checks = {check["name"]: check for check in doc["checks"]}
-        self.assertEqual(len(checks), 2)
+        a1 = None
+        a2 = None
+        for check in doc["checks"]:
+            if check["name"] == "Alice 1":
+                a1 = check
+            if check["name"] == "Alice 2":
+                a2 = check
 
-        self.assertEqual(checks["Alice 1"]["timeout"], 3600)
-        self.assertEqual(checks["Alice 1"]["grace"], 900)
-        self.assertEqual(checks["Alice 1"]["ping_url"], self.a1.url())
-        self.assertEqual(checks["Alice 1"]["last_ping"], self.now.isoformat())
-        self.assertEqual(checks["Alice 1"]["n_pings"], 1)
-        self.assertEqual(checks["Alice 1"]["status"], "new")
+        self.assertEqual(a1["timeout"], 3600)
+        self.assertEqual(a1["grace"], 900)
+        self.assertEqual(a1["ping_url"], self.a1.url())
+        self.assertEqual(a1["last_ping"], self.now.isoformat())
+        self.assertEqual(a1["n_pings"], 1)
+        self.assertEqual(a1["status"], "new")
+        self.assertEqual(a1["channels"], str(self.c1.code))
 
         update_url = settings.SITE_ROOT + "/api/v1/checks/%s" % self.a1.code
         pause_url = update_url + "/pause"
-        self.assertEqual(checks["Alice 1"]["update_url"], update_url)
-        self.assertEqual(checks["Alice 1"]["pause_url"], pause_url)
+        self.assertEqual(a1["update_url"], update_url)
+        self.assertEqual(a1["pause_url"], pause_url)
 
         next_ping = self.now + td(seconds=3600)
-        self.assertEqual(checks["Alice 1"]["next_ping"], next_ping.isoformat())
+        self.assertEqual(a1["next_ping"], next_ping.isoformat())
 
-        self.assertEqual(checks["Alice 2"]["timeout"], 86400)
-        self.assertEqual(checks["Alice 2"]["grace"], 3600)
-        self.assertEqual(checks["Alice 2"]["ping_url"], self.a2.url())
-        self.assertEqual(checks["Alice 2"]["status"], "up")
+        self.assertEqual(a2["timeout"], 86400)
+        self.assertEqual(a2["grace"], 3600)
+        self.assertEqual(a2["ping_url"], self.a2.url())
+        self.assertEqual(a2["status"], "up")
 
     def test_it_shows_only_users_checks(self):
         bobs_check = Check(user=self.bob, name="Bob 1")

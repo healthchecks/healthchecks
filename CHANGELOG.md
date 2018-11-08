@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 - Add read-only API key support
 - Remove Profile.bill_to field (obsolete)
 - Show a warning when running with DEBUG=True
+- Add "channels" attribute to the Check API resource
+- Can specify channel codes when updating a check via API
 
 ### Bug Fixes
 - During DST transition, handle ambiguous dates as pre-transition
