@@ -45,9 +45,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.grace.total_seconds(), 60)
 
     def test_it_unassigns_channels(self):
-        channel = Channel(user=self.alice)
-        channel.save()
-
+        Channel.objects.create(user=self.alice)
         self.check.assign_all_channels()
 
         r = self.post(self.check.code, {
@@ -91,45 +89,65 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
 
-    def test_it_updates_specific_channels(self):
-        channel1 = Channel(user=self.alice)
-        channel1.save()
-        channel2 = Channel(user=self.alice)
-        channel2.save()
+    def test_it_sets_single_channel(self):
+        channel = Channel.objects.create(user=self.alice)
+        # Create another channel so we can test that only the first one
+        # gets assigned:
+        Channel.objects.create(user=self.alice)
 
         r = self.post(self.check.code, {
             "api_key": "X" * 32,
-            "channels": str(channel1.code)
+            "channels": str(channel.code)
         })
+
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.channel_set.count(), 1)
+        self.assertEqual(self.check.channel_set.first().code, channel.code)
+
+    def test_it_handles_comma_separated_channel_codes(self):
+        c1 = Channel.objects.create(user=self.alice)
+        c2 = Channel.objects.create(user=self.alice)
+        r = self.post(self.check.code, {
+            "api_key": "X" * 32,
+            "channels": "%s,%s" % (c1.code, c2.code)
+        })
+
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.channel_set.count(), 2)
+
+    def test_it_handles_asterix(self):
+        Channel.objects.create(user=self.alice)
+        Channel.objects.create(user=self.alice)
+        r = self.post(self.check.code, {
+            "api_key": "X" * 32,
+            "channels": "*"
+        })
+
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.channel_set.count(), 2)
+
+    def test_it_ignores_channels_if_channels_key_missing(self):
+        Channel.objects.create(user=self.alice)
+        self.check.assign_all_channels()
+
+        r = self.post(self.check.code, {"api_key": "X" * 32})
         self.assertEqual(r.status_code, 200)
         check = Check.objects.get()
         self.assertEqual(check.channel_set.count(), 1)
-        self.assertEqual(check.channel_set.first().code, channel1.code)
 
-        # Change to the other channel
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": str(channel2.code)
-        })
-        self.assertEqual(r.status_code, 200)
-        check = Check.objects.get()
-        self.assertEqual(check.channel_set.count(), 1)
-        self.assertEqual(check.channel_set.first().code, channel2.code)
-
-        # Now set both channels
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": str(channel2.code) + "," + str(channel1.code)
-        })
-        self.assertEqual(r.status_code, 200)
-        check = Check.objects.get()
-        self.assertEqual(check.channel_set.count(), 2)
-
-        # Try to use channel that does not exist
+    def test_it_rejects_bad_channel_code(self):
         r = self.post(self.check.code, {
             "api_key": "X" * 32,
             "channels": str(uuid.uuid4())
         })
+
         self.assertEqual(r.status_code, 400)
-        check = Check.objects.get()
-        self.assertEqual(check.channel_set.count(), 0)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.channel_set.count(), 0)
