@@ -91,6 +91,7 @@ class CheckModelTestCase(TestCase):
         check.schedule = "0 * * * *"
         check.status = "up"
         check.last_ping = dt
+        check.save()
 
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
