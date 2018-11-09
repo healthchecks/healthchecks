@@ -1,0 +1,20 @@
+{% extends "base_bare.html" %}
+
+{% block title %}Unsubscribe{% endblock %}
+
+{% block content %}
+<p>Please press the button below to unsubscribe:</p>
+<br />
+<form id="form" method="post">
+    {% csrf_token %}
+    <input
+        id="submit-btn"
+        type="submit"
+        class="btn btn-lg btn-primary"
+        value="Unsubscribe">
+</form>
+
+<script>
+    document.getElementById("form").submit();
+</script>
+{% endblock %}
