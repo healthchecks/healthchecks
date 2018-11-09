@@ -516,6 +516,11 @@ def unsubscribe_email(request, code, token):
     if channel.kind != "email":
         return HttpResponseBadRequest()
 
+    # Some email servers open links in emails to check for malicious content.
+    # To work around this, we serve a form that auto-submits with JS.
+    if "ask" in request.GET and request.method != "POST":
+        return render(request, "accounts/unsubscribe_submit.html")
+
     channel.delete()
     return render(request, "front/unsubscribe_success.html")
 

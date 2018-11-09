@@ -1,12 +1,12 @@
-{% extends "base.html" %}
+{% extends "base_bare.html" %}
+{% load hc_extras %}
+
+{% block title %}Unsubscribed{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-sm-6 col-sm-offset-3">
-        <div class="hc-dialog">
-            <h1>You have been unsubscribed</h1>
-        </div>
-    </div>
-</div>
-
+<h1>Unsubscribed</h1>
+<p>
+    Your email address has been unsubscribed from
+    {% site_name %} reports.
+</p>
 {% endblock %}

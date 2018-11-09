@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Show a warning when running with DEBUG=True
 - Add "channels" attribute to the Check API resource
 - Can specify channel codes when updating a check via API
+- Added a workaround for email agents automatically opening "Unsubscribe" links
 
 ### Bug Fixes
 - During DST transition, handle ambiguous dates as pre-transition
