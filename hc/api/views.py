@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+import uuid
 
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
@@ -87,6 +88,11 @@ def _update(check, spec):
         else:
             channels = []
             for chunk in spec["channels"].split(","):
+                try:
+                    chunk = uuid.UUID(chunk)
+                except ValueError:
+                    raise SuspiciousOperation("Invalid channel identifier")
+
                 try:
                     channel = Channel.objects.get(code=chunk)
                     channels.append(channel)
