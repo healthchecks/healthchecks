@@ -8,10 +8,8 @@
 </head>
 <body>
 
-<form id="form-auto" method="post">{% csrf_token %}</form>
-<script>
-    document.getElementById("form-auto").submit();
-</script>
+<form id="form" method="post">{% csrf_token %}</form>
+<script>document.getElementById("form").submit();</script>
 
 <style>
     body {
@@ -45,7 +43,7 @@
     <p>You are about to log into {% site_name %}.</p>
     <p>Please press the button below to continue:</p>
     <br />
-    <form id="form" method="post">
+    <form method="post">
         {% csrf_token %}
         <input
             id="submit-btn"
