@@ -7,7 +7,7 @@ Hello,
 
 {% if inviting_profile %}
     <strong>{{ inviting_profile }}</strong> invites you to their
-    <a href="{% site_root %}">{% escaped_site_name %}</a> account.
+    <a href="{% site_root %}">{% site_name %}</a> account.
     <br /><br />
 
     You will be able to manage their
@@ -17,14 +17,14 @@ Hello,
     <br /><br />
 {% endif %}
 
-To log into <a href="{% site_root %}">{% escaped_site_name %}</a>,
+To log into <a href="{% site_root %}">{% site_name %}</a>,
 please press the button below:
 {% endblock %}
 
 
 {% block content_more %}
 Thanks,<br>
-The {% escaped_site_name %} Team
+The {% site_name %} Team
 <br /><br />
 
 <strong>P.S.</strong> Need help getting started? Check out our

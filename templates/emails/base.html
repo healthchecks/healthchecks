@@ -89,6 +89,51 @@
 
     }
 
+    .new, .paused {
+        background: #AAA;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: bold;
+        font-size: 10px;
+        line-height: 10px;
+        color: white;
+        padding: 6px;
+        margin: 0;
+        border-radius: 3px;
+    }
+
+    .grace {
+        background: #f0ad4e;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: bold;
+        font-size: 10px;
+        line-height: 10px;
+        color: white;
+        padding: 6px;
+        border-radius: 3px;
+    }
+
+    .up {
+        background: #5cb85c;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: bold;
+        font-size: 10px;
+        line-height: 10px;
+        color: white;
+        padding: 6px;
+        border-radius: 3px;
+    }
+
+    .down {
+        background: #d9534f;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: bold;
+        font-size: 10px;
+        line-height: 10px;
+        color: white;
+        padding: 6px;
+        border-radius: 3px;
+    }
+
     /* ANDROID CENTER FIX */
     div[style*="margin: 16px 0;"] { margin: 0 !important; }
 </style>
@@ -191,7 +236,7 @@
             <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" style="max-width: 600px;" class="responsive-table">
                 <tr>
                     <td align="center" style="font-size: 12px; line-height: 18px; font-family: Helvetica, Arial, sans-serif; color:#666666;">
-                        © 2018 {% escaped_site_name %}. All rights reserved.
+                        © 2018 {% site_name %}. All rights reserved.
                         {% block unsub %}{% endblock %}
                     </td>
                 </tr>

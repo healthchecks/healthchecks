@@ -42,7 +42,7 @@ in development environment.
 * prepare virtual environment
   (with virtualenv you get pip, we'll use it soon to install requirements):
 
-        $ virtualenv --python=python3 hc-venv
+        $ python3 -m venv hc-venv
         $ source hc-venv/bin/activate
 
 * check out project code:

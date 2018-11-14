@@ -13,17 +13,13 @@
         <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
             <table cellpadding="0" cellspacing="0">
                 <tr>
-                {% if check.get_status == "new" %}
-                    <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;">NEW</td>
-                {% elif check.get_status == "paused" %}
-                    <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">PAUSED</td>
-                {% elif check.get_status == "grace" %}
-                    <td style="background: #f0ad4e; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">LATE</td>
-                {% elif check.get_status == "up" %}
-                    <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">UP</td>
-                {% elif check.get_status == "down" %}
-                    <td style="background: #d9534f; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">DOWN</td>
-                {% endif %}
+                    <td class="{{ check.get_status }}">
+                        {% if check.get_status == "grace" %}
+                            LATE
+                        {% else %}
+                            {{ check.get_status|upper }}
+                        {% endif %}
+                    </td>
                 </tr>
             </table>
         </td>
@@ -62,6 +58,8 @@
             {% else %}
                 Never
             {% endif %}
+            <br />
+            <a class="view-log" href="{{ check.details_url }}">Details…</a>
         </td>
     </tr>
     {% endfor %}
