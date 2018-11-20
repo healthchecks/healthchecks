@@ -12,7 +12,7 @@
 
 {% block docs_content %}
 
-<h2>Summary</h2>
+<h2>How {% site_name %} Works</h2>
 <p>
 Each check in <a href="{% url 'hc-index' %}">My Checks</a>
 page has a unique "ping" URL. Whenever you make a HTTP request to this URL,
@@ -29,7 +29,8 @@ if still no ping, sends you an alert.</p>
 alerts. As soon as it fails to check in on time, you get notified.
 It is a simple idea.</p>
 
-<h2>Executing a Ping</h2>
+<h2 class="rule">Executing a Ping</h2>
+
 <p>
     At the end of your batch job, add a bit of code to request
     your ping URL.
@@ -50,7 +51,7 @@ It is a simple idea.</p>
 <p>The response will have status code "200 OK" and response body will be a
 short and simple string "OK".</p>
 
-<h2>Signalling a Failure</h2>
+<h2 class="rule">Signalling a Failure</h2>
 <p>
     Append <code>/fail</code> to a ping URL and use it to actively signal a
     failure. Requesting the <code>/fail</code> URL will immediately mark the
@@ -62,8 +63,24 @@ work function returns an unexpected value or throws an exception:</p>
 
 {% include "front/snippets/python_requests_fail.html" %}
 
+<h2 class="rule">Examples</h2>
+
+<p>
+    Jump to example:
+    <a href="#crontab">Crontab</a>,
+    <a href="#bash">Bash</a>,
+    <a href="#python">Python</a>,
+    <a href="#ruby">Ruby</a>,
+    <a href="#node">Node</a>,
+    <a href="#php">PHP</a>,
+    <a href="#cs">C#</a>,
+    <a href="#browser">Browser</a>,
+    <a href="#powershell">PowerShell</a>,
+    <a href="#email">Email</a>.
+</p>
+
 <a name="crontab"></a>
-<h3>Crontab</h3>
+<h3 class="docs-example">Crontab</h3>
 
 <p>
 When using cron, probably the easiest is to append a curl
@@ -128,7 +145,7 @@ task runs. Feel free to adjust the curl options to your liking.
 </table>
 
 <a name="bash"></a>
-<h3>Bash or a shell script</h3>
+<h3 class="docs-example">Bash or a shell script</h3>
 
 <p>Both <code>curl</code> and <code>wget</code> examples accomplish the same
 thing: they fire off a HTTP GET method.</p>
@@ -142,7 +159,7 @@ thing: they fire off a HTTP GET method.</p>
 {% include "front/snippets/bash_wget.html" %}
 
 <a name="python"></a>
-<h3>Python</h3>
+<h3 class="docs-example">Python</h3>
 
 <p>
     If you are already using the
@@ -158,19 +175,19 @@ thing: they fire off a HTTP GET method.</p>
 {% include "front/snippets/python_urllib2.html" %}
 
 <a name="ruby"></a>
-<h3>Ruby</h3>
+<h3 class="docs-example">Ruby</h3>
 {% include "front/snippets/ruby.html" %}
 
 <a name="node"></a>
-<h3>Node</h3>
+<h3 class="docs-example">Node</h3>
 {% include "front/snippets/node.html" %}
 
 <a name="php"></a>
-<h3>PHP</h3>
+<h3 class="docs-example">PHP</h3>
 {% include "front/snippets/php.html" %}
 
 <a name="cs"></a>
-<h3>C#</h3>
+<h3 class="docs-example">C#</h3>
 {% include "front/snippets/cs.html" %}
 
 <a name="browser"></a>
@@ -183,7 +200,7 @@ thing: they fire off a HTTP GET method.</p>
 {% include "front/snippets/browser.html" %}
 
 <a name="powershell"></a>
-<h3>PowerShell</h3>
+<h3 class="docs-example">PowerShell</h3>
 <p>
     You can use <a href="https://msdn.microsoft.com/en-us/powershell/mt173057.aspx">PowerShell</a>
     and Windows Task Scheduler to automate various tasks on a Windows system.
@@ -210,7 +227,7 @@ using the "-command" argument:</p>
 {% include "front/snippets/powershell_inline.html" %}
 
 <a name="email"></a>
-<h3>Email</h3>
+<h3 class="docs-example">Email</h3>
 <p>
     As an alternative to HTTP/HTTPS requests,
     you can "ping" this check by sending an
@@ -234,7 +251,7 @@ using the "-command" argument:</p>
 </p>
 
 
-<h2>When Alerts Are Sent</h2>
+<h2 class="rule">When Alerts Are Sent</h2>
 <p>
     Each check has a configurable <strong>Period</strong> parameter, with the default value of one day.
     For periodic tasks, this is the expected time gap between two runs.

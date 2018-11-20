@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load hc_extras %}
+
 
 {% block content %}
 <div class="row">
@@ -6,25 +8,13 @@
 
     <ul class="docs-nav">
         <li {% if section == "home" %} class="active" {% endif %}>
-            <a href="{% url 'hc-docs' %}">Executing a Ping</a>
-            <ul>
-                <li><a href="{% url 'hc-docs' %}#crontab">Crontab</a></li>
-                <li><a href="{% url 'hc-docs' %}#bash">Bash</a></li>
-                <li><a href="{% url 'hc-docs' %}#python">Python</a></li>
-                <li><a href="{% url 'hc-docs' %}#ruby">Ruby</a></li>
-                <li><a href="{% url 'hc-docs' %}#node">Node</a></li>
-                <li><a href="{% url 'hc-docs' %}#php">PHP</a></li>
-                <li><a href="{% url 'hc-docs' %}#cs">C#</a></li>
-                <li><a href="{% url 'hc-docs' %}#browser">Browser</a></li>
-                <li><a href="{% url 'hc-docs' %}#powershell">PowerShell</a></li>
-                <li><a href="{% url 'hc-docs' %}#email">Email</a></li>
-            </ul>
-        </li>
-        <li {% if section == "cron" %} class="active" {% endif %}>
-            <a href="{% url 'hc-docs-cron' %}">Cron Syntax</a>
+            <a href="{% url 'hc-docs' %}">How {% site_name %} Works</a>
         </li>
         <li {% if section == "api" %} class="active" {% endif %}>
             <a href="{% url 'hc-docs-api' %}">API Reference</a>
+        </li>
+        <li {% if section == "cron" %} class="active" {% endif %}>
+            <a href="{% url 'hc-docs-cron' %}">Cron Syntax</a>
         </li>
         <li {% if section == "resources" %} class="active" {% endif %}>
             <a href="{% url 'hc-docs-resources' %}">Third-Party Resources</a>

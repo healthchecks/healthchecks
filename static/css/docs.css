@@ -26,6 +26,10 @@
     font-family: monospace;
 }
 
+.docs-heading {
+    margin-top: 40px;
+}
+
 h2.rule {
     border-top: 3px solid #eee;
     margin-top: 30px;
@@ -36,6 +40,10 @@ h3.api-section {
     font-size: 14px;
     font-weight: bold;
     margin: 20px 0;
+}
+
+h3.docs-example {
+    margin-top: 40px;
 }
 
 .api-path {
