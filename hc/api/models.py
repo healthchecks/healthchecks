@@ -231,6 +231,7 @@ class Ping(models.Model):
 
 
 class Channel(models.Model):
+    name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
@@ -240,11 +241,11 @@ class Channel(models.Model):
     checks = models.ManyToManyField(Check)
 
     def __str__(self):
+        if self.name:
+            return self.name
         if self.kind == "email":
             return "Email to %s" % self.value
         elif self.kind == "sms":
-            if self.sms_label:
-                return "SMS to %s" % self.sms_label
             return "SMS to %s" % self.sms_number
         elif self.kind == "slack":
             return "Slack %s" % self.slack_channel
@@ -326,6 +327,9 @@ class Channel(models.Model):
         n.save()
 
         return error
+
+    def icon_path(self):
+        return 'img/integrations/%s.png' % self.kind
 
     @property
     def po_value(self):

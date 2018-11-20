@@ -12,58 +12,58 @@
                     <h4 class="update-timeout-title">Name and Tags</h4>
                 </div>
                 <div class="modal-body">
-                        <div class="form-group">
-                            <label for="update-name-input" class="col-sm-2 control-label">
-                                Name
-                            </label>
-                            <div class="col-sm-10">
-                                <input
-                                    id="update-name-input"
-                                    name="name"
-                                    type="text"
-                                    value="{{ check.name }}"
-                                    placeholder="unnamed"
-                                    class="input-name form-control" />
+                    <div class="form-group">
+                        <label for="update-name-input" class="col-sm-2 control-label">
+                            Name
+                        </label>
+                        <div class="col-sm-10">
+                            <input
+                                id="update-name-input"
+                                name="name"
+                                type="text"
+                                value="{{ check.name }}"
+                                placeholder="unnamed"
+                                class="input-name form-control" />
 
-                                <span class="help-block">
-                                    Give this check a human-friendly name,
-                                    so you can easily recognize it later.
-                                </span>
-                            </div>
+                            <span class="help-block">
+                                Give this check a human-friendly name,
+                                so you can easily recognize it later.
+                            </span>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="update-tags-input" class="col-sm-2 control-label">
-                                Tags
-                            </label>
-                            <div class="col-sm-10">
-                                <input
-                                    id="update-tags-input"
-                                    name="tags"
-                                    type="text"
-                                    value="{{ check.tags }}"
-                                    placeholder="production www"
-                                    class="form-control" />
+                    <div class="form-group">
+                        <label for="update-tags-input" class="col-sm-2 control-label">
+                            Tags
+                        </label>
+                        <div class="col-sm-10">
+                            <input
+                                id="update-tags-input"
+                                name="tags"
+                                type="text"
+                                value="{{ check.tags }}"
+                                placeholder="production www"
+                                class="form-control" />
 
-                                <span class="help-block">
-                                    Use tags for easy filtering and for status badges.
-                                    Separate multiple tags with spaces.
-                                </span>
-                            </div>
+                            <span class="help-block">
+                                Use tags for easy filtering and for status badges.
+                                Separate multiple tags with spaces.
+                            </span>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="update-desc-input" class="col-sm-2 control-label">
-                                Description
-                            </label>
-                            <div class="col-sm-10">
-                                <textarea
-                                    id="update-desc-input"
-                                    class="form-control"
-                                    rows="5"
-                                    name="desc">{{ check.desc }}</textarea>
-                            </div>
+                    <div class="form-group">
+                        <label for="update-desc-input" class="col-sm-2 control-label">
+                            Description
+                        </label>
+                        <div class="col-sm-10">
+                            <textarea
+                                id="update-desc-input"
+                                class="form-control"
+                                rows="5"
+                                name="desc">{{ check.desc }}</textarea>
                         </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

@@ -33,9 +33,9 @@ class ChannelsTestCase(BaseTestCase):
 
         self.assertEqual(r.status_code, 200)
         # These are inside a modal:
-        self.assertContains(r, "<code>http://down.example.com</code>")
-        self.assertContains(r, "<code>http://up.example.com</code>")
-        self.assertContains(r, "<code>foobar</code>")
+        self.assertContains(r, "http://down.example.com")
+        self.assertContains(r, "http://up.example.com")
+        self.assertContains(r, "foobar")
 
     def test_it_shows_pushover_details(self):
         ch = Channel(kind="po", user=self.alice)
@@ -46,7 +46,6 @@ class ChannelsTestCase(BaseTestCase):
         r = self.client.get("/integrations/")
 
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "fake-key")
         self.assertContains(r, "(normal priority)")
 
     def test_it_shows_disabled_email(self):
@@ -63,7 +62,7 @@ class ChannelsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/integrations/")
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "(bounced, disabled)")
+        self.assertContains(r, "Disabled")
 
     def test_it_shows_unconfirmed_email(self):
         channel = Channel(user=self.alice, kind="email")
@@ -73,7 +72,7 @@ class ChannelsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/integrations/")
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "(unconfirmed)")
+        self.assertContains(r, "Unconfirmed")
 
     def test_it_shows_sms_label(self):
         ch = Channel(kind="sms", user=self.alice)
@@ -84,4 +83,4 @@ class ChannelsTestCase(BaseTestCase):
         r = self.client.get("/integrations/")
 
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "My Phone (+123)")
+        self.assertContains(r, "SMS to +123")

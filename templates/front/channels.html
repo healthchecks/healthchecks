@@ -18,114 +18,94 @@
     <table class="table channels-table">
         {% if channels %}
         <tr>
-            <th>Type</th>
-            <th>Value</th>
-            <th>Assigned Checks</th>
+            <th></th>
+            <th class="th-name">Name, Details</th>
+            <th class="th-checks">Assigned Checks</th>
+            <th>Status</th>
             <th>Last Notification</th>
             <th></th>
         </tr>
         {% for ch in channels %}
+        {% with n=ch.latest_notification %}
         <tr class="channel-row">
-            <td>{{ ch.get_kind_display }}</td>
-            <td class="value-cell">
-                {% if ch.kind == "email" %}
-                    <span class="preposition">to</span>
-                    {{ ch.value }}
-                    {% if not ch.email_verified %}
-                        {% if ch.latest_notification and ch.latest_notification.error %}
-                            <span class="channel-disabled">
-                            (bounced, disabled)
-                            </span>
-                        {% else %}
-                            <span class="channel-unconfirmed">
-                            (unconfirmed)
-                            </span>
-                        {% endif %}
-                        </span>
-                    {% endif %}
-                {% elif ch.kind == "pd" %}
-                    {% if ch.pd_account %}
-                        <span class="preposition">account</span>
-                        {{ ch.pd_account}},
-                    {% endif %}
-                    <span class="preposition">service key</span>
-                    {{ ch.pd_service_key }}
-                {% elif ch.kind == "pagertree" %}
-                    <span class="preposition">URL</span>
-                    {{ ch.value }}
-                {% elif ch.kind == "opsgenie" %}
-                    <span class="preposition">API key</span>
-                    {{ ch.value }}
-                {% elif ch.kind == "victorops" %}
-                    <span class="preposition">Post URL</span>
-                    {{ ch.value }}
-                {% elif ch.kind == "po" %}
-                    <span class="preposition">user key</span>
-                    {{ ch.po_value|first }}
-                    ({{ ch.po_value|last }} priority)
-                {% elif ch.kind == "slack" %}
-                    {% if ch.slack_team %}
-                        <span class="preposition">team</span>
-                        {{ ch.slack_team }},
-                        <span class="preposition">channel</span>
-                        {{ ch.slack_channel }}
-                    {% else %}
-                        {{ ch.value }}
-                    {% endif %}
-                {% elif ch.kind == "webhook" %}
-                    {% if ch.url_down %}
-                        <span class="preposition">down</span> {{ ch.url_down }}
-                    {% endif %}
-                    {% if ch.url_up and not ch.url_down %}
-                        <span class="preposition">up</span> {{ ch.url_up }}
-                    {% endif %}
-                    {% if ch.url_up or ch.post_data or ch.headers %}
-                        <a href="#"
-                           data-toggle="modal"
-                           data-target="#channel-details-{{ ch.code }}">(details)</a>
-                    {% endif %}
-
-
-                {% elif ch.kind == "pushbullet" %}
-                    <span class="preposition">API key</span>
-                    {{ ch.value }}
-                {% elif ch.kind == "discord" %}
-                    {{ ch.discord_webhook_id }}
-                {% elif ch.kind == "telegram" %}
-                    {% if ch.telegram_type == "group" %}
-                    <span class="preposition">chat</span>
-                    {% elif ch.telegram_type == "private" %}
-                    <span class="preposition">user</span>
-                    {% endif %}
-                    {{ ch.telegram_name }}
-                {% elif ch.kind == "hipchat" %}
-                    {{ ch.hipchat_webhook_url }}
-                {% elif ch.kind == "zendesk" %}
-                    {{ ch.zendesk_subdomain }}.zendesk.com
-                {% elif ch.kind == "sms" %}
-                    {% if ch.sms_label %}
-                        {{ ch.sms_label }} ({{ ch.sms_number }})
-                    {% else %}
-                        {{ ch.sms_number }}
-                    {% endif %}
-                {% elif ch.kind == "trello" %}
-                    <span class="preposition">board</span>
-                    {{ ch.trello_board_list|first }},
-                    <span class="preposition">list</span>
-                    {{ ch.trello_board_list|last }}
-                {% else %}
-                    {{ ch.value }}
-                {% endif %}
-            </td>
-            <td class="channels-num-checks">
-                <a
-                    class="edit-checks"
-                    href="{% url 'hc-channel-checks' ch.code %}">
-                    {{ ch.n_checks }} of {{ num_checks }}
-                </a>
+            <td class="icon-cell">
+                <img src="{% static ch.icon_path %}"
+                class="icon"
+                alt="Slack icon"
+                data-toggle="tooltip"
+                title="Slack" />
             </td>
             <td>
-            {% with n=ch.latest_notification %}
+                <div class="edit-name" data-toggle="modal" data-target="#name-{{ ch.code }}">
+                     {% if ch.name %}
+                     {{ ch.name }}
+                     {% else %}
+                     <div class="unnamed">unnamed</div>
+                     {% endif %}
+                     <div class="channel-details-mini">
+                        {% if ch.kind == "email" %}
+                            Email to <span>{{ ch.value }}</span>
+                        {% elif ch.kind == "pd" %}
+                            PagerDuty account <span>{{ ch.pd_account }}</span>
+                        {% elif ch.kind == "pagertree" %}
+                            PagerTree
+                        {% elif ch.kind == "opsgenie" %}
+                            OpsGenie
+                        {% elif ch.kind == "victorops" %}
+                            VictorOps
+                        {% elif ch.kind == "po" %}
+                            Pushover ({{ ch.po_value|last }} priority)
+                        {% elif ch.kind == "slack" %}
+                            Slack
+                            {% if ch.slack_team %}
+                                team <span>{{ ch.slack_team }}</span>,
+                                channel <span>{{ ch.slack_channel }}</span>
+                            {% endif %}
+                        {% elif ch.kind == "webhook" %}
+                            Webhook
+                        {% elif ch.kind == "pushbullet" %}
+                            Pushbullet
+                        {% elif ch.kind == "discord" %}
+                            Discord
+                        {% elif ch.kind == "telegram" %}
+                            Telegram
+                            {% if ch.telegram_type == "group" %}
+                                chat <span>{{ ch.telegram_name }}</span>
+                            {% elif ch.telegram_type == "private" %}
+                                user <span>{{ ch.telegram_name }}</span>
+                            {% endif %}
+                        {% elif ch.kind == "hipchat" %}
+                            HipChat
+                        {% elif ch.kind == "sms" %}
+                            SMS to <span>{{ ch.sms_number }}</span>
+                        {% elif ch.kind == "trello" %}
+                            Trello
+                            board <span>{{ ch.trello_board_list|first }}</span>,
+                            list <span>{{ ch.trello_board_list|last }}</span>
+                        {% else %}
+                            {{ ch.kind }}
+                        {% endif %}
+                     </div>
+                </div>
+            </td>
+            <td>
+                <div class="edit-checks"
+                     data-url="{% url 'hc-channel-checks' ch.code %}">
+                     {{ ch.n_checks }} checks
+                </div>
+            </td>
+            <td>
+                {% if ch.kind == "email" and not ch.email_verified %}
+                    {% if n and n.error %}
+                        <span class="label label-danger">Disabled</span>
+                    {% else %}
+                        <span class="label label-default">Unconfirmed</span>
+                    {% endif %}
+                {% else %}
+                    Ready to deliver
+                {% endif %}
+            </td>
+            <td>
                 {% if n %}
                     {% if n.error %}
                     <span class="text-danger" data-toggle="tooltip" title="{{ n.error }}">
@@ -140,7 +120,6 @@
                 {% if ch.kind == "sms" %}
                     <p>Used {{ profile.sms_sent_this_month }} of {{ profile.sms_limit }} sends this month.</p>
                 {% endif %}
-            {% endwith %}
             </td>
             <td>
                 <button
@@ -155,6 +134,7 @@
 
             </td>
         </tr>
+        {% endwith %}
         {% endfor %}
         {% endif %}
     </table>
@@ -364,69 +344,72 @@
 </div>
 
 {% for ch in channels %}
-{% if ch.kind == "webhook" %}
-<div id="channel-details-{{ ch.code }}" class="modal channel-details">
+<div id="name-{{ ch.code }}" class="modal channel-modal">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4>Integration Details</h4>
+        <form
+            action="{% url 'hc-channel-name' ch.code %}"
+            class="form-horizontal"
+            method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="update-timeout-title">Integration Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="update-name-input" class="col-sm-2 control-label">
+                            Name
+                        </label>
+                        <div class="col-sm-10">
+                            <input
+                                name="name"
+                                type="text"
+                                value="{{ ch.name }}"
+                                placeholder="{{ ch }}"
+                                class="input-name form-control" />
+
+                            <span class="help-block">
+                                Give this integration a human-friendly name,
+                                so you can easily recognize it later.
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if ch.kind == "webhook" %}
+
+                    {% if ch.url_down %}
+                        <p><strong>URL for "down" events</strong></p>
+                        <pre>{{ ch.url_down }}</pre>
+                    {% endif %}
+
+                    {% if ch.url_up %}
+                        <p><strong>URL for "up" events</strong></p>
+                        <pre>{{ ch.url_up }}</pre>
+                    {% endif %}
+
+                    {% if ch.post_data %}
+                        <p><strong>POST data</strong></p>
+                        <pre>{{ ch.post_data }}</pre>
+                    {% endif %}
+
+
+                    {% for k, v in ch.headers.items %}
+                    <p><strong>Header <code>{{ k }}</code></strong></p>
+                    <pre>{{ v }}</pre>
+                    {% endfor %}
+                    {% endif %}
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
             </div>
-            <div class="modal-body">
-            <table>
-                <tr>
-                    <th>Request Method</th>
-                    <td>
-                        {% if ch.post_data %}
-                        POST
-                        {% else %}
-                        GET
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>URL for "down" events</th>
-                    <td>
-                        {% if ch.url_down %}
-                        <code>{{ ch.url_down }}</code>
-                        {% else %}
-                        <span class="missing">(not set)</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% if ch.url_up %}
-                <tr>
-                    <th>URL for "up" events</th>
-                    <td>
-                        {% if ch.url_up %}
-                        <code>{{ ch.url_up }}</code>
-                        {% else %}
-                        <span class="missing">(not set)</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endif %}
-                {% if ch.post_data %}
-                <tr>
-                    <th>POST data</th>
-                    <td><code>{{ ch.post_data }}</code></td>
-                </tr>
-                {% endif %}
-                {% for k, v in ch.headers.items %}
-                <tr>
-                    <th>Header <code>{{ k }}</code></th>
-                    <td><code>{{ v }}</code></td>
-                </tr>
-                {% endfor %}
-            </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
-{% endif %}
 {% endfor %}
 
 {% endblock %}

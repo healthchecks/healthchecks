@@ -31,7 +31,7 @@ class AddSmsTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.kind, "sms")
         self.assertEqual(c.sms_number, "+1234567890")
-        self.assertEqual(c.sms_label, "My Phone")
+        self.assertEqual(c.name, "My Phone")
 
     def test_it_rejects_bad_number(self):
         form = {"value": "not a phone number address"}

@@ -22,7 +22,8 @@ from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
 from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
-                            AddOpsGenieForm, CronForm, AddSmsForm)
+                            AddOpsGenieForm, CronForm, AddSmsForm,
+                            ChannelNameForm)
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import (num_down_title, down_title,
                                              sortchecks)
@@ -496,6 +497,21 @@ def channel_checks(request, code):
     }
 
     return render(request, "front/channel_checks.html", ctx)
+
+
+@require_POST
+@login_required
+def update_channel_name(request, code):
+    channel = get_object_or_404(Channel, code=code)
+    if channel.user_id != request.team.user.id:
+        return HttpResponseForbidden()
+
+    form = ChannelNameForm(request.POST)
+    if form.is_valid():
+        channel.name = form.cleaned_data["name"]
+        channel.save()
+
+    return redirect("hc-channels")
 
 
 def verify_email(request, code, token):
@@ -1001,8 +1017,8 @@ def add_sms(request):
         form = AddSmsForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="sms")
+            channel.name = form.cleaned_data["label"]
             channel.value = json.dumps({
-                "label": form.cleaned_data["label"],
                 "value": form.cleaned_data["value"]
             })
             channel.save()
