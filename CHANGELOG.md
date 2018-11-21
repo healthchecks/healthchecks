@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.3.0 - 2018-11-21
 
 ### Improvements
 - Load settings from environment variables
@@ -13,8 +13,9 @@ All notable changes to this project will be documented in this file.
 - Show a warning when running with DEBUG=True
 - Add "channels" attribute to the Check API resource
 - Can specify channel codes when updating a check via API
-- Added a workaround for email agents automatically opening "Unsubscribe" links
+- Add a workaround for email agents automatically opening "Unsubscribe" links
 - Add Channel.name field, users can now name integrations
+- Add "Get a List of Existing Integrations" API call
 
 ### Bug Fixes
 - During DST transition, handle ambiguous dates as pre-transition

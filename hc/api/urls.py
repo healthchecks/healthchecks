@@ -14,6 +14,9 @@ urlpatterns = [
     path('api/v1/notifications/<uuid:code>/bounce', views.bounce,
          name="hc-api-bounce"),
 
+    path('api/v1/channels/', views.channels),
+
+
     path('badge/<slug:username>/<slug:signature>/<slug:tag>.svg', views.badge,
          name="hc-badge"),
 

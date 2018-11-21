@@ -17,7 +17,7 @@
 <h2>API Endpoints</h2>
 <table class="table table-bordered">
     <tr>
-        <td><a href="#list-checks">Get list of existing checks</a></td>
+        <td><a href="#list-checks">Get a list of existing checks</a></td>
         <td>
             <code>GET {{ SITE_ROOT }}/api/v1/checks/</code>
         </td>
@@ -44,6 +44,12 @@
         <td><a href="#delete-check">Delete check</a></td>
         <td>
             <code>DELETE {{ SITE_ROOT }}/api/v1/checks/&lt;code&gt;</code>
+        </td>
+    </tr>
+    <tr>
+        <td><a href="#list-channels">Get a list of existing integrations</a></td>
+        <td>
+            <code>GET {{ SITE_ROOT }}/api/v1/channels/</code>
         </td>
     </tr>
 </table>
@@ -90,7 +96,7 @@ The response may contain a JSON document with additional data.
 <!-- ********************************************************************** /-->
 
 <a class="section" name="list-checks">
-    <h2 class="rule">Get List of Existing Checks</h2>
+    <h2 class="rule">Get a List of Existing Checks</h2>
 </a>
 
 <div class="api-path">GET {{ SITE_ROOT }}/api/v1/checks/</div>
@@ -205,12 +211,18 @@ To create a "cron" check, specify the "schedule" and "tz" parameters.
         <td>
             <p>string, optional</p>
             <p>By default, if a check is created through API, no notification
-            channels are assigned to it. So, when the check goes up or down,
-            no notifications will get sent.</p>
+            channels (integrations) are assigned to it.
+            So, when the check goes up or down, no notifications will get
+            sent.</p>
+
             <p>Set this field to a special value "*"
-            to automatically assign all existing notification channels.</p>
-            <p>To assign specific notification channels, use a comma-separated
-               list of channel identifiers.</p>
+            to automatically assign all existing integrations.</p>
+
+            <p>To assign specific integrations, use a comma-separated
+               list of integration identifiers. Use the
+               <a href="#list-channels">Get a List of Existing Integrations</a>
+               call to look up integration identifiers.
+           </p>
         </td>
     </tr>
     <tr>
@@ -425,6 +437,23 @@ is sometimes required by some network proxies and web servers.
 
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/create_check_response.html" %}
+
+<!-- ********************************************************************** /-->
+
+<a class="section" name="list-channels">
+    <h2 class="rule">Get a List of Existing Integrations</h2>
+</a>
+
+<div class="api-path">GET {{ SITE_ROOT }}/api/v1/channels/</div>
+
+<p>Returns a list of integrations belonging to the user.</p>
+
+<h3 class="api-section">Example Request</h3>
+{% include "front/snippets/list_channels_request.html" %}
+
+<h3 class="api-section">Example Response</h3>
+{% include "front/snippets/list_channels_response.html" %}
+
 
 {% endblock %}
 

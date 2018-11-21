@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, validate_json
@@ -148,6 +148,15 @@ def checks(request):
         return create_check(request)
 
     return HttpResponse(status=405)
+
+
+@require_GET
+@validate_json()
+@authorize_read
+def channels(request):
+    q = Channel.objects.filter(user=request.user)
+    channels = [ch.to_dict() for ch in q]
+    return JsonResponse({"channels": channels})
 
 
 @csrf_exempt

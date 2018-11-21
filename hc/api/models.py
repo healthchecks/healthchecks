@@ -254,6 +254,13 @@ class Channel(models.Model):
 
         return self.get_kind_display()
 
+    def to_dict(self):
+        return {
+            "id": str(self.code),
+            "name": self.name,
+            "kind": self.kind
+        }
+
     def assign_all_checks(self):
         checks = Check.objects.filter(user=self.user)
         self.checks.add(*checks)

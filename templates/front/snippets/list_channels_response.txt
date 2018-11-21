@@ -1,0 +1,14 @@
+{
+  "channels": [
+    {
+      "id": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941",
+      "name": "My Work Email",
+      "kind": "email"
+    },
+    {
+      "id": "746a083e-f542-4554-be1a-707ce16d3acc",
+      "name": "My Phone",
+      "kind": "sms"
+    }
+  ]
+}
