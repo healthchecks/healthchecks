@@ -35,3 +35,11 @@ class CheckTokenTestCase(BaseTestCase):
         r = self.client.post(url, follow=True)
         self.assertRedirects(r, "/accounts/login/")
         self.assertContains(r, "incorrect or expired")
+
+    def test_it_handles_next_parameter(self):
+        r = self.client.post("/accounts/check_token/alice/secret-token/?next=/integrations/add_slack/")
+        self.assertRedirects(r, "/integrations/add_slack/")
+
+    def test_it_ignores_bad_next_parameter(self):
+        r = self.client.post("/accounts/check_token/alice/secret-token/?next=/evil/")
+        self.assertRedirects(r, "/checks/")

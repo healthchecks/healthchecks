@@ -9,19 +9,21 @@ from mock import patch
 class AddSlackBtnTestCase(BaseTestCase):
 
     @override_settings(SLACK_CLIENT_ID="foo")
-    def test_instructions_work(self):
+    def test_it_prepares_login_link(self):
         r = self.client.get("/integrations/add_slack/")
         self.assertContains(r, "Before adding Slack integration",
                             status_code=200)
 
-        # There should now be a key in session
-        self.assertTrue("slack" in self.client.session)
+        self.assertContains(r, "?next=/integrations/add_slack/")
 
     @override_settings(SLACK_CLIENT_ID="foo")
     def test_slack_button(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/integrations/add_slack/")
         self.assertContains(r, "slack.com/oauth/authorize", status_code=200)
+
+        # There should now be a key in session
+        self.assertTrue("slack" in self.client.session)
 
     @patch("hc.front.views.requests.post")
     def test_it_handles_oauth_response(self, mock_post):

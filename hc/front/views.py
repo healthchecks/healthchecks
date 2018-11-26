@@ -692,7 +692,7 @@ def add_slack(request):
         "slack_client_id": settings.SLACK_CLIENT_ID
     }
 
-    if settings.SLACK_CLIENT_ID:
+    if settings.SLACK_CLIENT_ID and request.user.is_authenticated:
         ctx["state"] = _prepare_state(request, "slack")
 
     return render(request, "integrations/add_slack.html", ctx)

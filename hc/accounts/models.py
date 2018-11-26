@@ -90,11 +90,14 @@ class Profile(models.Model):
     def check_token(self, token, salt):
         return salt in self.token and check_password(token, self.token)
 
-    def send_instant_login_link(self, inviting_profile=None):
+    def send_instant_login_link(self, inviting_profile=None, redirect_url=None):
         token = self.prepare_token("login")
         path = reverse("hc-check-token", args=[self.user.username, token])
+        if redirect_url:
+            path += "?next=%s" % redirect_url
+
         ctx = {
-            "button_text": "Log In",
+            "button_text": "Sign In",
             "button_url": settings.SITE_ROOT + path,
             "inviting_profile": inviting_profile
         }

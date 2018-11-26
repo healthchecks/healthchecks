@@ -14,7 +14,7 @@ class LoginTestCase(TestCase):
         form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
-        assert r.status_code == 302
+        self.assertRedirects(r, "/accounts/login_link_sent/")
 
         # Alice should be the only existing user
         self.assertEqual(User.objects.count(), 1)
@@ -23,6 +23,20 @@ class LoginTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         subject = "Log in to %s" % settings.SITE_NAME
         self.assertEqual(mail.outbox[0].subject, subject)
+
+    def test_it_sends_link_with_next(self):
+        alice = User(username="alice", email="alice@example.org")
+        alice.save()
+
+        form = {"identity": "alice@example.org"}
+
+        r = self.client.post("/accounts/login/?next=/integrations/add_slack/", form)
+        self.assertRedirects(r, "/accounts/login_link_sent/")
+
+        # The check_token link should have a ?next= query parameter:
+        self.assertEqual(len(mail.outbox), 1)
+        body = mail.outbox[0].body
+        self.assertTrue("/?next=/integrations/add_slack/" in body)
 
     def test_it_pops_bad_link_from_session(self):
         self.client.session["bad_link"] = True
@@ -36,7 +50,7 @@ class LoginTestCase(TestCase):
         form = {"identity": "ALICE@EXAMPLE.ORG"}
 
         r = self.client.post("/accounts/login/", form)
-        assert r.status_code == 302
+        self.assertRedirects(r, "/accounts/login_link_sent/")
 
         # There should be exactly one user:
         self.assertEqual(User.objects.count(), 1)
@@ -56,7 +70,35 @@ class LoginTestCase(TestCase):
         }
 
         r = self.client.post("/accounts/login/", form)
-        self.assertEqual(r.status_code, 302)
+        self.assertRedirects(r, "/checks/")
+
+    def test_it_handles_password_login_with_redirect(self):
+        alice = User(username="alice", email="alice@example.org")
+        alice.set_password("password")
+        alice.save()
+
+        form = {
+            "action": "login",
+            "email": "alice@example.org",
+            "password": "password"
+        }
+
+        r = self.client.post("/accounts/login/?next=/integrations/add_slack/", form)
+        self.assertRedirects(r, "/integrations/add_slack/")
+
+    def test_it_handles_bad_next_parameter(self):
+        alice = User(username="alice", email="alice@example.org")
+        alice.set_password("password")
+        alice.save()
+
+        form = {
+            "action": "login",
+            "email": "alice@example.org",
+            "password": "password"
+        }
+
+        r = self.client.post("/accounts/login/?next=/evil/", form)
+        self.assertRedirects(r, "/checks/")
 
     def test_it_handles_wrong_password(self):
         alice = User(username="alice", email="alice@example.org")

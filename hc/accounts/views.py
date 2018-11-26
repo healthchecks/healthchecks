@@ -25,6 +25,9 @@ from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
 from hc.payments.models import Subscription
 
+NEXT_WHITELIST = ("/checks/",
+                  "/integrations/add_slack/")
+
 
 def _make_user(email):
     username = str(uuid.uuid4())[:30]
@@ -59,6 +62,16 @@ def _ensure_own_team(request):
         request.profile.save()
 
 
+def _redirect_after_login(request):
+    """ Redirect to the URL indicated in ?next= query parameter. """
+
+    redirect_url = request.GET.get("next")
+    if redirect_url in NEXT_WHITELIST:
+        return redirect(redirect_url)
+
+    return redirect("hc-checks")
+
+
 def login(request):
     form = EmailPasswordForm()
     magic_form = ExistingEmailForm()
@@ -68,13 +81,19 @@ def login(request):
             form = EmailPasswordForm(request.POST)
             if form.is_valid():
                 auth_login(request, form.user)
-                return redirect("hc-checks")
+                return _redirect_after_login(request)
 
         else:
             magic_form = ExistingEmailForm(request.POST)
             if magic_form.is_valid():
                 profile = Profile.objects.for_user(magic_form.user)
-                profile.send_instant_login_link()
+
+                redirect_url = request.GET.get("next")
+                if redirect_url in NEXT_WHITELIST:
+                    profile.send_instant_login_link(redirect_url=redirect_url)
+                else:
+                    profile.send_instant_login_link()
+
                 return redirect("hc-login-link-sent")
 
     bad_link = request.session.pop("bad_link", None)
@@ -122,7 +141,7 @@ def link_sent(request):
 def check_token(request, username, token):
     if request.user.is_authenticated and request.user.username == username:
         # User is already logged in
-        return redirect("hc-checks")
+        return _redirect_after_login(request)
 
     # Some email servers open links in emails to check for malicious content.
     # To work around this, we sign user in if the method is POST.
@@ -137,7 +156,7 @@ def check_token(request, username, token):
             user.profile.save()
             auth_login(request, user)
 
-            return redirect("hc-checks")
+            return _redirect_after_login(request)
 
         request.session["bad_link"] = True
         return redirect("hc-login")
