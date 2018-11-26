@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Bug Fixes
+- Fix after-login redirects for users landing in the "Add Slack" page
+
+
 ## 1.3.0 - 2018-11-21
 
 ### Improvements
