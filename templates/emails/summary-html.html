@@ -6,29 +6,33 @@
         <td colspan="2" style="font-weight: bold; padding: 32px 8px 8px 8px; color: #333;">
             {{ group.grouper.profile|mangle_link }}
         </td>
-        <td class="mobile-hide" style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Last Ping</td>
+        <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">Last Ping</td>
     </tr>
     {% for check in group.list|sortchecks:sort %}
     <tr>
         <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
             <table cellpadding="0" cellspacing="0">
                 <tr>
-                    <td class="{{ check.get_status }}">
-                        {% if check.get_status == "grace" %}
-                            LATE
-                        {% else %}
-                            {{ check.get_status|upper }}
-                        {% endif %}
-                    </td>
+                    {% if check.get_status == "new" %}
+                        <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;">NEW</td>
+                    {% elif check.get_status == "paused" %}
+                        <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">PAUSED</td>
+                    {% elif check.get_status == "grace" %}
+                        <td style="background: #f0ad4e; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">LATE</td>
+                    {% elif check.get_status == "up" %}
+                        <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">UP</td>
+                    {% elif check.get_status == "down" %}
+                        <td style="background: #d9534f; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">DOWN</td>
+                    {% endif %}
                 </tr>
             </table>
         </td>
         <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
             {% if check.name %}
                 {% if check.name|length > 20 %}
-                    <small>{{ check.name }}</small>
+                    <small>{{ check.name|mangle_link }}</small>
                 {% else %}
-                    {{ check.name }}
+                    {{ check.name|mangle_link }}
                 {% endif %}
             {% else %}
                 <span style="color: #74787E; font-style: italic;">unnamed</span>
@@ -42,7 +46,7 @@
                         <table cellpadding="0" cellspacing="0">
                             <tr>
                             <td style="background: #eee; font-family: Helvetica, Arial, sans-serif; font-size: 10px; line-height: 10px; color: #555; padding: 4px; margin: 0; border-radius: 2px;">
-                                {{ tag }}
+                                {{ tag|mangle_link }}
                             </td>
                             </tr>
                         </table>
@@ -52,14 +56,14 @@
                 </table>
             {% endif %}
         </td>
-        <td class="mobile-hide" style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+        <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
             {% if check.last_ping %}
                 {{ check.last_ping|naturaltime }}
             {% else %}
                 Never
             {% endif %}
             <br />
-            <a class="view-log" href="{{ check.details_url }}">Details…</a>
+            <a href="{{ check.details_url }}" target="_blank">Details…</a>
         </td>
     </tr>
     {% endfor %}

@@ -6,7 +6,7 @@ Hello,<br />
 
 This is a notification sent by <a href="{% site_root %}">{% site_name %}</a>.
 <br />
-The check <strong>{{ check.name_then_code }}</strong>
+The check <strong>{{ check.name_then_code|mangle_link }}</strong>
 has gone <strong>{{ check.status|upper }}</strong>.
 <br /><br />
 
