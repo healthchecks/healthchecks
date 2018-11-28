@@ -18,7 +18,7 @@ $(function () {
         currentPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(this.dataset.schedule);
-        document.getElementById("tz").selectize.setValue(this.dataset.tz);
+        $("#tz").selectpicker("val", this.dataset.tz);
         var minutes = parseInt(this.dataset.grace / 60);
         $("#update-timeout-grace-cron").val(minutes);
         updateCronPreview();
@@ -42,7 +42,7 @@ $(function () {
         currentPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(schedule);
-        document.getElementById("tz").selectize.setValue(tz);
+        $("#tz").selectpicker("val", tz);
         var minutes = parseInt(grace / 60);
         $("#update-timeout-grace-cron").val(minutes);
         updateCronPreview();
@@ -187,6 +187,5 @@ $(function () {
     $(".kind-cron").click(showCron);
 
     $("#schedule").on("keyup", updateCronPreview);
-    $("#tz").selectize({onChange: updateCronPreview});
 
 });
