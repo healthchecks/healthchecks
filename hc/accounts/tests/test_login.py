@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from hc.accounts.models import Profile
+from hc.api.models import Check
 from django.conf import settings
 
 
@@ -77,14 +78,22 @@ class LoginTestCase(TestCase):
         alice.set_password("password")
         alice.save()
 
+        check = Check.objects.create(user=alice)
+
         form = {
             "action": "login",
             "email": "alice@example.org",
             "password": "password"
         }
 
-        r = self.client.post("/accounts/login/?next=/integrations/add_slack/", form)
-        self.assertRedirects(r, "/integrations/add_slack/")
+        samples = [
+            "/integrations/add_slack/",
+            "/checks/%s/details/" % check.code
+        ]
+
+        for s in samples:
+            r = self.client.post("/accounts/login/?next=%s" % s, form)
+            self.assertRedirects(r, s)
 
     def test_it_handles_bad_next_parameter(self):
         alice = User(username="alice", email="alice@example.org")

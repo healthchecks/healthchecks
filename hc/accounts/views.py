@@ -13,6 +13,7 @@ from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.utils.timezone import now
+from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
@@ -25,9 +26,21 @@ from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
 from hc.payments.models import Subscription
 
-NEXT_WHITELIST = ("/checks/",
-                  "/integrations/add_slack/",
-                  "/integrations/add_pushover/")
+NEXT_WHITELIST = ("hc-checks",
+                  "hc-details",
+                  "hc-log",
+                  "hc-channels",
+                  "hc-add-slack",
+                  "hc-add-pushover")
+
+
+def _is_whitelisted(path):
+    try:
+        match = resolve(path)
+    except Resolver404:
+        return False
+
+    return match.url_name in NEXT_WHITELIST
 
 
 def _make_user(email):
@@ -67,7 +80,7 @@ def _redirect_after_login(request):
     """ Redirect to the URL indicated in ?next= query parameter. """
 
     redirect_url = request.GET.get("next")
-    if redirect_url in NEXT_WHITELIST:
+    if _is_whitelisted(redirect_url):
         return redirect(redirect_url)
 
     return redirect("hc-checks")
@@ -90,7 +103,7 @@ def login(request):
                 profile = Profile.objects.for_user(magic_form.user)
 
                 redirect_url = request.GET.get("next")
-                if redirect_url in NEXT_WHITELIST:
+                if _is_whitelisted(redirect_url):
                     profile.send_instant_login_link(redirect_url=redirect_url)
                 else:
                     profile.send_instant_login_link()

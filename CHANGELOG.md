@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 
 
 ### Bug Fixes
-- Fix after-login redirects for users landing in the "Add Slack" page
+- Fix after-login redirects (the "?next=" query parameter)
 
 
 ## 1.3.0 - 2018-11-21
