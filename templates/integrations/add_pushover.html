@@ -24,25 +24,8 @@
         {% site_name %}:</p>
 
         <div class="text-center">
-        <form class="form-inline" action="{% url 'hc-login' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <div class="input-group input-group-lg">
-                    <div class="input-group-addon">@</div>
-                    <input
-                        type="email"
-                        class="form-control"
-                        name="email"
-                        autocomplete="email"
-                        placeholder="Email">
-                </div>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-lg btn-primary pull-right">
-                    Log In
-                </button>
-            </div>
-        </form>
+            <a href="{% url 'hc-login' %}?next={% url 'hc-add-pushover' %}"
+               class="btn btn-primary btn-lg">Sign In</a>
         </div>
         {% endif %}
     </div>

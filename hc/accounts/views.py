@@ -26,7 +26,8 @@ from hc.lib.badges import get_badge_url
 from hc.payments.models import Subscription
 
 NEXT_WHITELIST = ("/checks/",
-                  "/integrations/add_slack/")
+                  "/integrations/add_slack/",
+                  "/integrations/add_pushover/")
 
 
 def _make_user(email):
