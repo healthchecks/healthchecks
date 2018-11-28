@@ -339,11 +339,11 @@ class Channel(models.Model):
         return 'img/integrations/%s.png' % self.kind
 
     @property
-    def po_value(self):
+    def po_priority(self):
         assert self.kind == "po"
-        user_key, prio = self.value.split("|")
-        prio = int(prio)
-        return user_key, prio, PO_PRIORITIES[prio]
+        parts = self.value.split("|")
+        prio = int(parts[1])
+        return PO_PRIORITIES[prio]
 
     @property
     def url_down(self):

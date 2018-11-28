@@ -54,7 +54,7 @@
                         {% elif ch.kind == "victorops" %}
                             VictorOps
                         {% elif ch.kind == "po" %}
-                            Pushover ({{ ch.po_value|last }} priority)
+                            Pushover ({{ ch.po_priority }} priority)
                         {% elif ch.kind == "slack" %}
                             Slack
                             {% if ch.slack_team %}

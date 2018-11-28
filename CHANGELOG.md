@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Improvements
+- Set Pushover alert priorities for "down" and "up" events separately
+
+
 ### Bug Fixes
 - Fix after-login redirects for users landing in the "Add Slack" page
 

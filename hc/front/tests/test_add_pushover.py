@@ -39,13 +39,13 @@ class AddPushoverTestCase(BaseTestCase):
         session["pushover"] = "foo"
         session.save()
 
-        params = "pushover_user_key=a&state=foo&prio=0"
+        params = "pushover_user_key=a&state=foo&prio=0&prio_up=-1"
         r = self.client.get("/integrations/add_pushover/?%s" % params)
         self.assertEqual(r.status_code, 302)
 
         channels = list(Channel.objects.all())
         assert len(channels) == 1
-        assert channels[0].value == "a|0"
+        assert channels[0].value == "a|0|-1"
 
     def test_it_validates_priority(self):
         self.client.login(username="alice@example.org", password="password")
@@ -55,6 +55,17 @@ class AddPushoverTestCase(BaseTestCase):
         session.save()
 
         params = "pushover_user_key=a&state=foo&prio=abc"
+        r = self.client.get("/integrations/add_pushover/?%s" % params)
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_validates_priority_up(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        session = self.client.session
+        session["pushover"] = "foo"
+        session.save()
+
+        params = "pushover_user_key=a&state=foo&prio_up=abc"
         r = self.client.get("/integrations/add_pushover/?%s" % params)
         self.assertEqual(r.status_code, 400)
 

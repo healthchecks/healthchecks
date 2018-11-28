@@ -304,7 +304,13 @@ class Pushover(HttpTransport):
         }
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)
-        user_key, prio = self.channel.value.split("|")
+
+        pieces = self.channel.value.split("|")
+        user_key, prio = pieces[0], pieces[1]
+        # The third element, if present, is the priority for "up" events
+        if len(pieces) == 3 and check.status == "up":
+            prio = pieces[2]
+
         payload = {
             "token": settings.PUSHOVER_API_TOKEN,
             "user": user_key,

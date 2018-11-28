@@ -873,6 +873,7 @@ def add_pushover(request):
         success_url = settings.SITE_ROOT + reverse("hc-add-pushover") + "?" + urlencode({
             "state": state,
             "prio": request.POST.get("po_priority", "0"),
+            "prio_up": request.POST.get("po_priority_up", "0")
         })
         subscription_url = settings.PUSHOVER_SUBSCRIPTION_URL + "?" + urlencode({
             "success": success_url,
@@ -892,6 +893,10 @@ def add_pushover(request):
         if prio not in ("-2", "-1", "0", "1", "2"):
             return HttpResponseBadRequest()
 
+        prio_up = request.GET.get("prio_up")
+        if prio_up not in ("-2", "-1", "0", "1", "2"):
+            return HttpResponseBadRequest()
+
         if request.GET.get("pushover_unsubscribed") == "1":
             # Unsubscription: delete all Pushover channels for this user
             Channel.objects.filter(user=request.user, kind="po").delete()
@@ -899,7 +904,7 @@ def add_pushover(request):
 
         # Subscription
         channel = Channel(user=request.team.user, kind="po")
-        channel.value = "%s|%s" % (key, prio)
+        channel.value = "%s|%s|%s" % (key, prio, prio_up)
         channel.save()
         channel.assign_all_checks()
 
