@@ -12,7 +12,8 @@ class MyChecksTestCase(BaseTestCase):
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/checks/status/")
+        r = self.client.get("/teams/alice/checks/status/")
+        self.assertEqual(r.status_code, 200)
         doc = r.json()
 
         self.assertEqual(doc["tags"]["foo"], "up")
@@ -21,3 +22,19 @@ class MyChecksTestCase(BaseTestCase):
         self.assertEqual(detail["code"], str(self.check.code))
         self.assertEqual(detail["status"], "new")
         self.assertIn("Never", detail["last_ping"])
+
+    def test_it_allows_cross_team_access(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get("/teams/alice/checks/status/")
+        self.assertEqual(r.status_code, 200)
+
+    def test_it_checks_ownership(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        self.client.login(username="charlie@example.org", password="password")
+        r = self.client.get("/teams/alice/checks/status/")
+        self.assertEqual(r.status_code, 404)

@@ -77,6 +77,19 @@ def _get_check_for_user(request, code):
         raise Http404("not found")
 
 
+def _has_access(request, username):
+    """ Return true if current user has access to the specified account. """
+
+    if request.user.username == username:
+        return True
+
+    if request.user.is_superuser:
+        return True
+
+    mq = request.user.memberships
+    return mq.filter(team__user__username=username).exists()
+
+
 @login_required
 def my_checks(request):
     if request.GET.get("sort") in VALID_SORT_VALUES:
@@ -130,8 +143,11 @@ def my_checks(request):
 
 
 @login_required
-def status(request):
-    checks = list(Check.objects.filter(user_id=request.team.user_id))
+def status(request, username):
+    if not _has_access(request, username):
+        raise Http404("not found")
+
+    checks = list(Check.objects.filter(user__username=username))
 
     details = []
     for check in checks:

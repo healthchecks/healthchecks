@@ -51,7 +51,7 @@ urlpatterns = [
     path('checks/', views.my_checks, name="hc-checks"),
     path('checks/add/', views.add_check, name="hc-add-check"),
     path('checks/cron_preview/', views.cron_preview),
-    path('checks/status/', views.status),
+    path('teams/<str:username>/checks/status/', views.status, name="hc-status"),
     path('checks/<uuid:code>/', include(check_urls)),
     path('integrations/', include(channel_urls)),
 

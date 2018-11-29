@@ -159,9 +159,10 @@ $(function () {
     // is active, every 60s otherwise
     var lastStatus = {};
     var lastPing = {};
-    adaptiveSetInterval(function() {
+    var statusUrl = $("#checks-table").data("status-url");
+    function refreshStatus() {
         $.ajax({
-            url: "/checks/status/",
+            url: statusUrl,
             dataType: "json",
             timeout: 2000,
             success: function(data) {
@@ -192,7 +193,12 @@ $(function () {
                 }
             }
         });
-    });
+    }
+
+    // Schedule regular status updates:
+    if (statusUrl) {
+        adaptiveSetInterval(refreshStatus);
+    }
 
     // Copy to clipboard
     var clipboard = new Clipboard('button.copy-link');
