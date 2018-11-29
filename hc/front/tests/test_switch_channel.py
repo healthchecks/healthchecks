@@ -32,7 +32,7 @@ class SwitchChannelTestCase(BaseTestCase):
     def test_it_checks_ownership(self):
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, {"state": "on"})
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_checks_channels_ownership(self):
         cc = Check(user=self.charlie)
@@ -43,4 +43,12 @@ class SwitchChannelTestCase(BaseTestCase):
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, {"state": "on"})
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_allows_cross_team_access(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, {"state": "on"})
+        self.assertEqual(r.status_code, 200)

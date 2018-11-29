@@ -17,7 +17,7 @@ class LastPingTestCase(BaseTestCase):
     def test_it_requires_user(self):
         check = Check.objects.create()
         r = self.client.get("/checks/%s/last_ping/" % check.code)
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_accepts_n(self):
         check = Check(user=self.alice)
@@ -34,3 +34,16 @@ class LastPingTestCase(BaseTestCase):
 
         r = self.client.get("/checks/%s/pings/2/" % check.code)
         self.assertContains(r, "bar-456", status_code=200)
+
+    def test_it_allows_cross_team_access(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        check = Check(user=self.alice)
+        check.save()
+
+        Ping.objects.create(owner=check, body="this is body")
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get("/checks/%s/last_ping/" % check.code)
+        self.assertEqual(r.status_code, 200)

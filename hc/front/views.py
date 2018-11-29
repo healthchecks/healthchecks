@@ -60,6 +60,23 @@ def _tags_statuses(checks):
     return tags, num_down
 
 
+def _get_check_for_user(request, code):
+    """ Return specified check if current user has access to it. """
+
+    if not request.user.is_authenticated:
+        raise Http404("not found")
+
+    if request.user.is_superuser:
+        q = Check.objects
+    else:
+        q = request.profile.checks_from_all_teams()
+
+    try:
+        return q.get(code=code)
+    except Check.DoesNotExist:
+        raise Http404("not found")
+
+
 @login_required
 def my_checks(request):
     if request.GET.get("sort") in VALID_SORT_VALUES:
@@ -136,13 +153,11 @@ def status(request):
 @login_required
 @require_POST
 def switch_channel(request, code, channel_code):
-    check = get_object_or_404(Check, code=code)
-    if check.user_id != request.team.user.id:
-        return HttpResponseForbidden()
+    check = _get_check_for_user(request, code)
 
     channel = get_object_or_404(Channel, code=channel_code)
-    if channel.user_id != request.team.user.id:
-        return HttpResponseForbidden()
+    if channel.user_id != check.user_id:
+        return HttpResponseBadRequest()
 
     if request.POST.get("state") == "on":
         channel.checks.add(check)
@@ -228,10 +243,7 @@ def add_check(request):
 @require_POST
 @login_required
 def update_name(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user_id != request.team.user.id:
-        return HttpResponseForbidden()
-
+    check = _get_check_for_user(request, code)
     form = NameTagsForm(request.POST)
     if form.is_valid():
         check.name = form.cleaned_data["name"]
@@ -248,9 +260,7 @@ def update_name(request, code):
 @require_POST
 @login_required
 def update_timeout(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user != request.team.user:
-        return HttpResponseForbidden()
+    check = _get_check_for_user(request, code)
 
     kind = request.POST.get("kind")
     if kind == "simple":
@@ -304,13 +314,7 @@ def cron_preview(request):
 
 
 def ping_details(request, code, n=None):
-    if not request.user.is_authenticated:
-        return HttpResponseForbidden()
-
-    check = get_object_or_404(Check, code=code)
-    if check.user_id != request.team.user.id:
-        return HttpResponseForbidden()
-
+    check = _get_check_for_user(request, code)
     q = Ping.objects.filter(owner=check)
     if n:
         q = q.filter(n=n)
@@ -328,9 +332,7 @@ def ping_details(request, code, n=None):
 @require_POST
 @login_required
 def pause(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user_id != request.team.user.id:
-        return HttpResponseForbidden()
+    check = _get_check_for_user(request, code)
 
     check.status = "paused"
     check.save()
@@ -344,12 +346,8 @@ def pause(request, code):
 @require_POST
 @login_required
 def remove_check(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user != request.team.user:
-        return HttpResponseForbidden()
-
+    check = _get_check_for_user(request, code)
     check.delete()
-
     return redirect("hc-checks")
 
 
@@ -371,11 +369,9 @@ def _get_events(check, limit):
 
 @login_required
 def log(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user != request.team.user:
-        return HttpResponseForbidden()
+    check = _get_check_for_user(request, code)
 
-    limit = request.team.ping_log_limit
+    limit = check.user.profile.ping_log_limit
     ctx = {
         "check": check,
         "events": _get_events(check, limit),
@@ -388,11 +384,9 @@ def log(request, code):
 
 @login_required
 def details(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user != request.team.user:
-        return HttpResponseForbidden()
+    check = _get_check_for_user(request, code)
 
-    channels = Channel.objects.filter(user=request.team.user)
+    channels = Channel.objects.filter(user=check.user)
     channels = list(channels.order_by("created"))
 
     ctx = {
@@ -407,9 +401,7 @@ def details(request, code):
 
 @login_required
 def status_single(request, code):
-    check = get_object_or_404(Check, code=code)
-    if check.user_id != request.team.user.id:
-        return HttpResponseForbidden()
+    check = _get_check_for_user(request, code)
 
     status = check.get_status()
     events = _get_events(check, 20)

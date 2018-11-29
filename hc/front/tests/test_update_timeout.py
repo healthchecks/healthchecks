@@ -145,10 +145,21 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(url, data=payload)
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 404)
 
     def test_it_rejects_get(self):
         url = "/checks/%s/timeout/" % self.check.code
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 405)
+
+    def test_it_allows_cross_team_access(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        url = "/checks/%s/timeout/" % self.check.code
+        payload = {"kind": "simple", "timeout": 3600, "grace": 60}
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(url, data=payload)
+        self.assertRedirects(r, "/checks/")

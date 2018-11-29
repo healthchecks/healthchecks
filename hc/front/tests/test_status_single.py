@@ -46,3 +46,11 @@ class StatusSingleTestCase(BaseTestCase):
         doc = r.json()
 
         self.assertFalse("events" in doc)
+
+    def test_it_allows_cross_team_access(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get("/checks/%s/status/" % self.check.code)
+        self.assertEqual(r.status_code, 200)

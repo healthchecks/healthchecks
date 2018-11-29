@@ -52,7 +52,7 @@ class LogTestCase(BaseTestCase):
         url = "/checks/%s/log/" % self.check.code
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.get(url)
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_shows_pushover_notifications(self):
         ch = Channel(kind="po", user=self.alice)
@@ -77,3 +77,12 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertContains(r, "Called webhook foo/$NAME", status_code=200)
+
+    def test_it_allows_cross_team_access(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        url = "/checks/%s/log/" % self.check.code
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 200)

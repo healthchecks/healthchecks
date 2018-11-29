@@ -24,3 +24,13 @@ class PauseTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 405)
+
+    def test_it_allows_cross_team_access(self):
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        url = "/checks/%s/pause/" % self.check.code
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(url)
+        self.assertRedirects(r, "/checks/")

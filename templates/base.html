@@ -115,7 +115,12 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                        {{ request.team }} <span class="caret"></span>
+                        {% if check %}
+                            {{ check.user.profile }}
+                        {% else %}
+                            {{ request.team }}
+                        {% endif %}
+                        <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                     {% with teams=request.get_teams %}

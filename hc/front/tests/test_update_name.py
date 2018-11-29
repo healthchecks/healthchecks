@@ -12,10 +12,8 @@ class UpdateNameTestCase(BaseTestCase):
         self.url = "/checks/%s/name/" % self.check.code
 
     def test_it_works(self):
-        payload = {"name": "Alice Was Here"}
-
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, data=payload)
+        r = self.client.post(self.url, data={"name": "Alice Was Here"})
         self.assertRedirects(r, "/checks/")
 
         self.check.refresh_from_db()
@@ -32,12 +30,22 @@ class UpdateNameTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.name, "Bob Was Here")
 
+    def test_it_allows_cross_team_access(self):
+        # Bob's current team is not set
+        self.bobs_profile.current_team = None
+        self.bobs_profile.save()
+
+        # But this should still work:
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, data={"name": "Bob Was Here"})
+        self.assertRedirects(r, "/checks/")
+
     def test_it_checks_ownership(self):
         payload = {"name": "Charlie Sent This"}
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, data=payload)
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/name/"
