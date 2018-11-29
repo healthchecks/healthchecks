@@ -1,0 +1,7 @@
+# Passing diagnostic information in the POST body:
+import requests
+requests.post("PING_URL", data="temperature=-7")
+
+# Passing diagnostic information in the User-Agent header:
+import requests
+requests.get("PING_URL", headers={"User-Agent": "temperature=-7"})

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Set Pushover alert priorities for "down" and "up" events separately
-
+- Additional python usage examples
 
 ### Bug Fixes
 - Fix after-login redirects (the "?next=" query parameter)

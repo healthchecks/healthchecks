@@ -174,6 +174,14 @@ thing: they fire off a HTTP GET method.</p>
 
 {% include "front/snippets/python_urllib2.html" %}
 
+<p>
+    You can include additional diagnostic information in the
+    in the request body (for POST requests), or in the  "User-Agent"
+    request header:
+</p>
+
+{% include "front/snippets/python_requests_payload.html" %}
+
 <a name="ruby"></a>
 <h3 class="docs-example">Ruby</h3>
 {% include "front/snippets/ruby.html" %}
