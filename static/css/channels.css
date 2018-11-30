@@ -247,12 +247,3 @@ table.channels-table > tbody > tr > th {
 .webhook-header {
     margin-bottom: 4px;
 }
-
-/* Add Zendesk */
-.zendesk-subdomain {
-    margin-bottom: 8px;
-}
-
-.zendesk-subdomain input {
-    border-right: 0;
-}

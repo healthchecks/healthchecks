@@ -309,8 +309,6 @@ class Channel(models.Model):
             return transports.Telegram(self)
         elif self.kind == "sms":
             return transports.Sms(self)
-        elif self.kind == "zendesk":
-            return transports.Zendesk(self)
         elif self.kind == "trello":
             return transports.Trello(self)
         else:
@@ -487,18 +485,6 @@ class Channel(models.Model):
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["account"]
-
-    @property
-    def zendesk_token(self):
-        assert self.kind == "zendesk"
-        doc = json.loads(self.value)
-        return doc["access_token"]
-
-    @property
-    def zendesk_subdomain(self):
-        assert self.kind == "zendesk"
-        doc = json.loads(self.value)
-        return doc["subdomain"]
 
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()

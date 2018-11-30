@@ -184,10 +184,6 @@ TWILIO_FROM = os.getenv("TWILIO_FROM")
 # PagerDuty
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 
-# Zendesk
-ZENDESK_CLIENT_ID = os.getenv("ZENDESK_CLIENT_ID")
-ZENDESK_CLIENT_SECRET = os.getenv("ZENDESK_CLIENT_ID")
-
 # Trello
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 

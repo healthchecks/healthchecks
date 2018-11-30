@@ -392,51 +392,6 @@ class Sms(HttpTransport):
         return self.post(url, data=data, auth=auth)
 
 
-class Zendesk(HttpTransport):
-    TMPL = "https://%s.zendesk.com/api/v2/requests.json"
-
-    def get_payload(self, check):
-        return {
-            "request": {
-                "subject": tmpl("zendesk_title.html", check=check),
-                "type": "incident",
-                "comment": {
-                    "body": tmpl("zendesk_description.html", check=check)
-                }
-            }
-        }
-
-    def notify_down(self, check):
-        headers = {"Authorization": "Bearer %s" % self.channel.zendesk_token}
-        url = self.TMPL % self.channel.zendesk_subdomain
-        return self.post(url, headers=headers, json=self.get_payload(check))
-
-    def notify_up(self, check):
-        # Get the list of requests made by us, in newest-to-oldest order
-        url = self.TMPL % self.channel.zendesk_subdomain
-        url += "?sort_by=created_at&sort_order=desc"
-        headers = {"Authorization": "Bearer %s" % self.channel.zendesk_token}
-        r = requests.get(url, headers=headers, timeout=10)
-        if r.status_code != 200:
-            return "Received status code %d" % r.status_code
-
-        # Update the first request that has check.code in its description
-        doc = r.json()
-        if "requests" in doc:
-            for obj in doc["requests"]:
-                if str(check.code) in obj["description"]:
-                    payload = self.get_payload(check)
-                    return self.put(obj["url"], headers=headers, json=payload)
-
-        return "Could not find a ticket to update"
-
-    def notify(self, check):
-        if check.status == "down":
-            return self.notify_down(check)
-        if check.status == "up":
-            return self.notify_up(check)
-
-
 class Trello(HttpTransport):
     URL = 'https://api.trello.com/1/cards'
 
