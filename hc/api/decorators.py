@@ -3,7 +3,7 @@ from functools import wraps
 
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from hc.lib.jsonschema import ValidationError, validate
 
 
@@ -80,5 +80,30 @@ def validate_json(schema=None):
                     return error("json validation error: %s" % e)
 
             return f(request, *args, **kwds)
+        return wrapper
+    return decorator
+
+
+def cors(*methods):
+    methods = set(methods)
+    methods.add("OPTIONS")
+    methods_str = ", ".join(methods)
+
+    def decorator(f):
+        @wraps(f)
+        def wrapper(request, *args, **kwds):
+            if request.method == "OPTIONS":
+                # Handle OPTIONS here
+                response = HttpResponse(status=204)
+            elif request.method in methods:
+                response = f(request, *args, **kwds)
+            else:
+                response = HttpResponse(status=405)
+
+            response["Access-Control-Allow-Origin"] = "*"
+            response["Access-Control-Allow-Headers"] = "X-Api-Key"
+            response["Access-Control-Allow-Methods"] = methods_str
+            return response
+
         return wrapper
     return decorator

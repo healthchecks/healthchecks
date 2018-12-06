@@ -13,9 +13,18 @@ class PauseTestCase(BaseTestCase):
                              HTTP_X_API_KEY="X" * 32)
 
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         check.refresh_from_db()
         self.assertEqual(check.status, "paused")
+
+    def test_it_handles_options(self):
+        check = Check(user=self.alice, status="up")
+        check.save()
+
+        r = self.client.options("/api/v1/checks/%s/pause" % check.code)
+        self.assertEqual(r.status_code, 204)
+        self.assertIn("POST", r["Access-Control-Allow-Methods"])
 
     def test_it_only_allows_post(self):
         url = "/api/v1/checks/1659718b-21ad-4ed1-8740-43afc6c41524/pause"

@@ -10,10 +10,9 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET, require_POST
 
 from hc.api import schemas
-from hc.api.decorators import authorize, authorize_read, validate_json
+from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.models import Check, Notification, Channel
 from hc.lib.badges import check_signature, get_badge_svg
 
@@ -140,17 +139,15 @@ def create_check(request):
 
 
 @csrf_exempt
+@cors("GET", "POST")
 def checks(request):
-    if request.method == "GET":
-        return get_checks(request)
-
-    elif request.method == "POST":
+    if request.method == "POST":
         return create_check(request)
 
-    return HttpResponse(status=405)
+    return get_checks(request)
 
 
-@require_GET
+@cors("GET")
 @validate_json()
 @authorize_read
 def channels(request):
@@ -160,6 +157,7 @@ def channels(request):
 
 
 @csrf_exempt
+@cors("POST", "DELETE")
 @validate_json(schemas.check)
 @authorize
 def update(request, code):
@@ -180,8 +178,8 @@ def update(request, code):
     return HttpResponse(status=405)
 
 
+@cors("POST")
 @csrf_exempt
-@require_POST
 @validate_json()
 @authorize
 def pause(request, code):
@@ -195,6 +193,7 @@ def pause(request, code):
 
 
 @never_cache
+@cors("GET")
 def badge(request, username, signature, tag, format="svg"):
     if not check_signature(username, tag, signature):
         return HttpResponseNotFound()

@@ -25,6 +25,7 @@ class UpdateCheckTestCase(BaseTestCase):
         })
 
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
         assert "ping_url" in doc
@@ -43,6 +44,11 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.tags, "bar,baz")
         self.assertEqual(self.check.timeout.total_seconds(), 3600)
         self.assertEqual(self.check.grace.total_seconds(), 60)
+
+    def test_it_handles_options(self):
+        r = self.client.options("/api/v1/checks/%s" % self.check.code)
+        self.assertEqual(r.status_code, 204)
+        self.assertIn("POST", r["Access-Control-Allow-Methods"])
 
     def test_it_unassigns_channels(self):
         Channel.objects.create(user=self.alice)

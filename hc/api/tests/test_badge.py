@@ -21,4 +21,14 @@ class BadgeTestCase(BaseTestCase):
         url = "/badge/%s/%s/foo.svg" % (self.alice.username, sig)
 
         r = self.client.get(url)
+        self.assertEqual(r["Access-Control-Allow-Origin"], "*")
         self.assertContains(r, "#4c1")
+
+    def test_it_handles_options(self):
+        sig = base64_hmac(str(self.alice.username), "foo", settings.SECRET_KEY)
+        sig = sig[:8]
+        url = "/badge/%s/%s/foo.svg" % (self.alice.username, sig)
+
+        r = self.client.options(url)
+        self.assertEqual(r.status_code, 204)
+        self.assertEqual(r["Access-Control-Allow-Origin"], "*")

@@ -20,6 +20,7 @@ class ListChannelsTestCase(BaseTestCase):
     def test_it_works(self):
         r = self.get()
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
         self.assertEqual(len(doc["channels"]), 1)
@@ -28,6 +29,11 @@ class ListChannelsTestCase(BaseTestCase):
         self.assertEqual(c["id"], str(self.c1.code))
         self.assertEqual(c["kind"], "email")
         self.assertEqual(c["name"], "Email to Alice")
+
+    def test_it_handles_options(self):
+        r = self.client.options("/api/v1/channels/")
+        self.assertEqual(r.status_code, 204)
+        self.assertIn("GET", r["Access-Control-Allow-Methods"])
 
     def test_it_shows_only_users_channels(self):
         Channel.objects.create(user=self.bob, kind="email", name="Bob")

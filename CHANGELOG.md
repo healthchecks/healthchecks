@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Set Pushover alert priorities for "down" and "up" events separately
 - Additional python usage examples
 - Allow simultaneous access to checks from different teams
+- Add CORS support to API endpoints
 
 ### Bug Fixes
 - Fix after-login redirects (the "?next=" query parameter)

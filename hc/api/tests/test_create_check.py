@@ -30,6 +30,7 @@ class CreateCheckTestCase(BaseTestCase):
         })
 
         self.assertEqual(r.status_code, 201)
+        self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
         assert "ping_url" in doc
@@ -46,6 +47,11 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.tags, "bar,baz")
         self.assertEqual(check.timeout.total_seconds(), 3600)
         self.assertEqual(check.grace.total_seconds(), 60)
+
+    def test_it_handles_options(self):
+        r = self.client.options(self.URL)
+        self.assertEqual(r.status_code, 204)
+        self.assertIn("POST", r["Access-Control-Allow-Methods"])
 
     def test_30_days_works(self):
         r = self.post({
