@@ -92,8 +92,12 @@ class Check(models.Model):
     def email(self):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 
-    def send_alert(self):
-        if self.status not in ("up", "down"):
+    def send_alert(self, flip):
+        if flip.new_status == "up" and flip.old_status in ("new", "paused"):
+            # Don't send alerts on new->up and paused->up transitions
+            return []
+
+        if flip.new_status not in ("up", "down"):
             raise NotImplementedError("Unexpected status: %s" % self.status)
 
         errors = []
@@ -199,8 +203,16 @@ class Check(models.Model):
         self.last_ping_was_fail = is_fail
         self.has_confirmation_link = "confirm" in str(body).lower()
         self.alert_after = self.get_alert_after()
-        if self.status in ("new", "paused"):
-            self.status = "up"
+
+        new_status = "down" if is_fail else "up"
+        if self.status != new_status:
+            flip = Flip(owner=self)
+            flip.created = self.last_ping
+            flip.old_status = self.status
+            flip.new_status = new_status
+            flip.save()
+
+            self.status = new_status
 
         self.save()
         self.refresh_from_db()
@@ -539,3 +551,11 @@ class Notification(models.Model):
 
     def bounce_url(self):
         return settings.SITE_ROOT + reverse("hc-api-bounce", args=[self.code])
+
+
+class Flip(models.Model):
+    owner = models.ForeignKey(Check, models.CASCADE)
+    created = models.DateTimeField()
+    processed = models.DateTimeField(null=True, blank=True, db_index=True)
+    old_status = models.CharField(max_length=8, choices=STATUSES)
+    new_status = models.CharField(max_length=8, choices=STATUSES)

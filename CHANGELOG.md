@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Additional python usage examples
 - Allow simultaneous access to checks from different teams
 - Add CORS support to API endpoints
+- Flip model, for tracking status changes of the Check objects
 
 ### Bug Fixes
 - Fix after-login redirects (the "?next=" query parameter)

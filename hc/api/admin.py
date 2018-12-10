@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
 from django.utils.safestring import mark_safe
-from hc.api.models import Channel, Check, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.date import format_duration
 
 
@@ -197,3 +197,8 @@ class NotificationsAdmin(admin.ModelAdmin):
 
     def channel_value(self, obj):
         return obj.channel.value
+
+
+@admin.register(Flip)
+class FlipsAdmin(admin.ModelAdmin):
+    list_display = ("id", "created", "owner", "old_status", "new_status")

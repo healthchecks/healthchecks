@@ -5,7 +5,7 @@ from mock import Mock, patch
 from django.core.management import call_command
 from django.utils.timezone import now
 from hc.api.management.commands.sendalerts import Command, notify
-from hc.api.models import Check
+from hc.api.models import Flip, Check
 from hc.test import BaseTestCase
 
 
@@ -18,49 +18,53 @@ class SendAlertsTestCase(BaseTestCase):
         check.alert_after = check.get_alert_after()
         check.save()
 
-        # Expect no exceptions--
-        Command().handle_one()
+        Command().handle_going_down()
 
-    @patch("hc.api.management.commands.sendalerts.notify_on_thread")
-    def test_it_notifies_when_check_goes_down(self, mock_notify):
+        self.assertEqual(Flip.objects.count(), 0)
+
+    def test_it_creates_a_flip_when_check_goes_down(self):
         check = Check(user=self.alice, status="up")
         check.last_ping = now() - timedelta(days=2)
         check.alert_after = check.get_alert_after()
         check.save()
 
-        result = Command().handle_one()
+        result = Command().handle_going_down()
 
         # If it finds work, it should return True
         self.assertTrue(result)
+
+        # It should create a flip object
+        flip = Flip.objects.get()
+        self.assertEqual(flip.owner_id, check.id)
+        self.assertEqual(flip.new_status, "down")
 
         # It should change stored status to "down"
         check.refresh_from_db()
         self.assertEqual(check.status, "down")
 
-        # It should call `notify_on_thread`
-        self.assertTrue(mock_notify.called)
-
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
-    def test_it_notifies_when_check_goes_up(self, mock_notify):
-        check = Check(user=self.alice, status="down")
+    def test_it_processes_flip(self, mock_notify):
+        check = Check(user=self.alice, status="up")
         check.last_ping = now()
         check.alert_after = check.get_alert_after()
         check.save()
 
-        result = Command().handle_one()
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "down"
+        flip.new_status = "up"
+        flip.save()
+
+        result = Command().process_one_flip()
 
         # If it finds work, it should return True
         self.assertTrue(result)
 
-        # It should change stored status to "up"
-        check.refresh_from_db()
-        self.assertEqual(check.status, "up")
+        # It should set the processed date
+        flip.refresh_from_db()
+        self.assertTrue(flip.processed)
 
         # It should call `notify_on_thread`
         self.assertTrue(mock_notify.called)
-
-        # alert_after now should be set
-        self.assertTrue(check.alert_after)
 
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
     def test_it_updates_alert_after(self, mock_notify):
@@ -69,19 +73,17 @@ class SendAlertsTestCase(BaseTestCase):
         check.alert_after = check.last_ping
         check.save()
 
-        result = Command().handle_one()
+        result = Command().handle_going_down()
 
         # If it finds work, it should return True
         self.assertTrue(result)
 
-        # It should change stored status to "down"
-        check.refresh_from_db()
-
         # alert_after should have been increased
+        check.refresh_from_db()
         self.assertTrue(check.alert_after > check.last_ping)
 
-        # notify_on_thread should *not* have been called
-        self.assertFalse(mock_notify.called)
+        # a flip should have not been created
+        self.assertEqual(Flip.objects.count(), 0)
 
     @patch("hc.api.management.commands.sendalerts.notify")
     def test_it_works_synchronously(self, mock_notify):
@@ -105,7 +107,12 @@ class SendAlertsTestCase(BaseTestCase):
         check.alert_after = check.get_alert_after()
         check.save()
 
-        notify(check.id, Mock())
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        notify(flip.id, Mock())
 
         self.profile.refresh_from_db()
         self.assertIsNotNone(self.profile.next_nag_date)
@@ -119,7 +126,12 @@ class SendAlertsTestCase(BaseTestCase):
         check.alert_after = check.get_alert_after()
         check.save()
 
-        notify(check.id, Mock())
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        notify(flip.id, Mock())
 
         self.bobs_profile.refresh_from_db()
         self.assertIsNotNone(self.bobs_profile.next_nag_date)
@@ -135,7 +147,12 @@ class SendAlertsTestCase(BaseTestCase):
         check.alert_after = check.get_alert_after()
         check.save()
 
-        notify(check.id, Mock())
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        notify(flip.id, Mock())
 
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.next_nag_date, original_nag_date)
