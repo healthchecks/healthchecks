@@ -6,7 +6,7 @@ Hello,
 <br />
 
 {% if inviting_profile %}
-    <strong>{{ inviting_profile }}</strong> invites you to their
+    <strong>{{ inviting_profile.user.email }}</strong> invites you to their
     <a href="{% site_root %}">{% site_name %}</a> account.
     <br /><br />
 

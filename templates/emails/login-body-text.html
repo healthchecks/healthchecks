@@ -1,7 +1,7 @@
 {% load hc_extras %}
 {% block content %}Hello,
 {% if inviting_profile %}
-{{ inviting_profile }} invites you to their {% site_name %} account.
+{{ inviting_profile.user.email }} invites you to their {% site_name %} account.
 
 You will be able to manage their existing monitoring checks and set up new
 ones. If you already have your own account on {% site_name %}, you will
