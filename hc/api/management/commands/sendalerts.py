@@ -82,7 +82,12 @@ class Command(BaseCommand):
 
         now = timezone.now()
 
-        check = Check.objects.filter(alert_after__lt=now, status="up").first()
+        # In PostgreSQL, add this index to run the below query efficiently:
+        # CREATE INDEX api_check_up ON api_check (alert_after) WHERE status = 'up'
+
+        q = Check.objects.filter(alert_after__lt=now, status="up")
+        # Sort by alert_after, to avoid unnecessary sorting by id:
+        check = q.order_by("alert_after").first()
         if check is None:
             return False
 
