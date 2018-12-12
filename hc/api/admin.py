@@ -201,7 +201,9 @@ class NotificationsAdmin(admin.ModelAdmin):
 
 @admin.register(Flip)
 class FlipsAdmin(admin.ModelAdmin):
-    list_display = ("id", "created", "check_name", "old_status", "new_status")
+    list_display = ("id", "created", "processed", "check_name", "old_status",
+                    "new_status")
+    raw_id_fields = ("owner", )
 
     def check_name(self, obj):
         return obj.owner.name if obj.owner.name else obj.owner.code
