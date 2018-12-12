@@ -158,7 +158,7 @@ class ChannelsAdmin(admin.ModelAdmin):
 
     search_fields = ["value", "user__email"]
     list_select_related = ("user", )
-    list_display = ("id", "code", "email", "formatted_kind", "value",
+    list_display = ("id", "name", "email", "formatted_kind", "value",
                     "num_notifications")
     list_filter = ("kind", )
     raw_id_fields = ("user", "checks", )
@@ -201,4 +201,7 @@ class NotificationsAdmin(admin.ModelAdmin):
 
 @admin.register(Flip)
 class FlipsAdmin(admin.ModelAdmin):
-    list_display = ("id", "created", "owner", "old_status", "new_status")
+    list_display = ("id", "created", "check_name", "old_status", "new_status")
+
+    def check_name(self, obj):
+        return obj.owner.name if obj.owner.name else obj.owner.code
