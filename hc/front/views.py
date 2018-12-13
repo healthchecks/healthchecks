@@ -18,7 +18,7 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
-                           Ping, Notification)
+                           Flip, Ping, Notification)
 from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
@@ -299,6 +299,17 @@ def update_timeout(request, code):
 
     if check.last_ping:
         check.alert_after = check.get_alert_after()
+
+        # Changing timeout can change check's status:
+        is_up = check.get_status() in ("up", "grace")
+        if is_up and check.status != "up":
+            flip = Flip(owner=check)
+            flip.created = timezone.now()
+            flip.old_status = check.status
+            flip.new_status = "up"
+            flip.save()
+
+            check.status = "up"
 
     check.save()
 

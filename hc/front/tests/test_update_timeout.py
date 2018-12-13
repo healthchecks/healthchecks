@@ -1,3 +1,5 @@
+from datetime import timedelta as td
+
 from django.utils import timezone
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -26,6 +28,22 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         # alert_after should be updated too
         self.assertEqual(self.check.alert_after, self.check.get_alert_after())
+
+    def test_it_updates_status(self):
+        self.check.last_ping = timezone.now() - td(days=2)
+        self.check.status = "down"
+        self.check.save()
+
+        url = "/checks/%s/timeout/" % self.check.code
+        # 1 week:
+        payload = {"kind": "simple", "timeout": 3600 * 24 * 7, "grace": 60}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url, data=payload)
+        self.assertRedirects(r, "/checks/")
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "up")
 
     def test_it_saves_cron_expression(self):
         url = "/checks/%s/timeout/" % self.check.code
