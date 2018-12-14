@@ -325,20 +325,20 @@ def cron_preview(request):
     tz = request.POST.get("tz")
     ctx = {"tz": tz, "dates": []}
 
-    if len(schedule.split()) != 5:
-        ctx["bad_schedule"] = True
-    elif not croniter.is_valid(schedule):
-        ctx["bad_schedule"] = True
+    try:
+        zone = pytz.timezone(tz)
+        now_local = timezone.localtime(timezone.now(), zone)
 
-    if "bad_schedule" not in ctx:
-        try:
-            zone = pytz.timezone(tz)
-            now_local = timezone.localtime(timezone.now(), zone)
-            it = croniter(schedule, now_local)
-            for i in range(0, 6):
-                ctx["dates"].append(it.get_next(datetime))
-        except UnknownTimeZoneError:
-            ctx["bad_tz"] = True
+        if len(schedule.split()) != 5:
+            raise ValueError()
+
+        it = croniter(schedule, now_local)
+        for i in range(0, 6):
+            ctx["dates"].append(it.get_next(datetime))
+    except UnknownTimeZoneError:
+        ctx["bad_tz"] = True
+    except:
+        ctx["bad_schedule"] = True
 
     return render(request, "front/cron_preview.html", ctx)
 

@@ -67,16 +67,19 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.schedule, "5 * * * *")
 
     def test_it_validates_cron_expression(self):
-        payload = {
-            "kind": "cron",
-            "schedule": "* invalid *",
-            "tz": "UTC",
-            "grace": 60
-        }
-
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, data=payload)
-        self.assertEqual(r.status_code, 400)
+        samples = ["* invalid *", "1,2 3,* * * *"]
+
+        for sample in samples:
+            payload = {
+                "kind": "cron",
+                "schedule": sample,
+                "tz": "UTC",
+                "grace": 60
+            }
+
+            r = self.client.post(self.url, data=payload)
+            self.assertEqual(r.status_code, 400)
 
         # Check should still have its original data:
         self.check.refresh_from_db()

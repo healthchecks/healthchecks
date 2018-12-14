@@ -24,7 +24,9 @@ class CronExpressionValidator(object):
         if len(value.split()) != 5:
             raise ValidationError(message=self.message)
 
-        if not croniter.is_valid(value):
+        try:
+            croniter(value)
+        except:
             raise ValidationError(message=self.message)
 
 
