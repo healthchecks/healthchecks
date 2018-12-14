@@ -1,7 +1,7 @@
 from datetime import timedelta as td
 
 from django.utils import timezone
-from hc.api.models import Check
+from hc.api.models import Flip, Check
 from hc.test import BaseTestCase
 
 
@@ -44,6 +44,11 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "up")
+
+        flip = Flip.objects.get()
+        self.assertEqual(flip.owner_id, self.check.id)
+        self.assertEqual(flip.old_status, "down")
+        self.assertEqual(flip.new_status, "up")
 
     def test_it_saves_cron_expression(self):
         url = "/checks/%s/timeout/" % self.check.code
