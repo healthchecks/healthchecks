@@ -108,6 +108,7 @@ class SetPlanTestCase(BaseTestCase):
         self.sub = Subscription(user=self.alice)
         self.sub.subscription_id = "test-id"
         self.sub.plan_id = "P20"
+        self.sub.plan_name = "Business ($20/mo)"
         self.sub.save()
 
         self.profile.sms_limit = 1
@@ -121,6 +122,7 @@ class SetPlanTestCase(BaseTestCase):
         sub = Subscription.objects.get(user=self.alice)
         self.assertEqual(sub.subscription_id, "")
         self.assertEqual(sub.plan_id, "")
+        self.assertEqual(sub.plan_name, "")
 
         # User's profile should have standard limits
         self.profile.refresh_from_db()

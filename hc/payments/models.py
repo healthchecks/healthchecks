@@ -167,6 +167,7 @@ class Subscription(models.Model):
 
         self.subscription_id = ""
         self.plan_id = ""
+        self.plan_name = ""
         self.save()
 
     def pm_is_card(self):

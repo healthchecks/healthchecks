@@ -42,13 +42,7 @@
                         <table class="table">
                             <tr>
                                 <td>Current Plan</td>
-                                <td>
-                                {% if sub is None or sub.plan_id == "" %}
-                                    Free
-                                {% else %}
-                                    {{ sub.plan_name }}
-                                {% endif %}
-                                </td>
+                                <td>{{ sub.plan_name|default:"Hobbyist" }}</td>
                             </tr>
                             {% if sub.plan_id %}
                             <tr>

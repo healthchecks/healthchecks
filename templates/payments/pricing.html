@@ -27,7 +27,7 @@
                             plan. Thank you for supporting {% site_name %}!
                         {% else %}
                             Your account is currently on the
-                            <strong>Hobbyist</strong> plan.
+                            <strong>{{ sub.plan_name|default:"Hobbyist" }}</strong> plan.
                         {% endif  %}
                     </p>
                     <p>
