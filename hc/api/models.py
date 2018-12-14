@@ -15,6 +15,7 @@ from django.utils import timezone
 from hc.api import transports
 from hc.lib import emails
 import requests
+import pytz
 
 STATUSES = (
     ("up", "Up"),
@@ -115,12 +116,15 @@ class Check(models.Model):
         if self.kind == "simple":
             return self.last_ping + self.timeout
 
-        # The complex case, next ping is expected based on cron schedule
-        with timezone.override(self.tz):
-            last_naive = timezone.make_naive(self.last_ping)
-            it = croniter(self.schedule, last_naive)
-            next_naive = it.get_next(datetime)
-            return timezone.make_aware(next_naive, is_dst=True)
+        # The complex case, next ping is expected based on cron schedule.
+        # Don't convert to naive datetimes (and so avoid ambiguities around
+        # DST transitions).
+        # croniter does handle timezone-aware datetimes.
+
+        zone = pytz.timezone(self.tz)
+        last_local = timezone.localtime(self.last_ping, zone)
+        it = croniter(self.schedule, last_local)
+        return it.next(datetime)
 
     def get_status(self, now=None):
         """ Return "up" if the check is up or in grace, otherwise "down". """

@@ -11,11 +11,13 @@
 {% else %}
 <table id="cron-preview-table" class="table">
     <tr><th id="cron-preview-title" colspan="3">Expected Ping Dates</th></tr>
-    {% for naive, aware in dates %}
+    {% for d in dates %}
     <tr>
-        <td>{{ naive|date:"M j, H:i" }}</td>
-        <td>{{ aware|naturaltime }}</td>
-        <td class="hidden-xs">{{ aware|date:"c" }}</td>
+        {% timezone tz %}
+        <td>{{ d|date:"M j, H:i" }}</td>
+        {% endtimezone %}
+        <td>{{ d|naturaltime }}</td>
+        <td class="hidden-xs">{{ d|date:"c" }}</td>
     </tr>
     {% endfor %}
 </table>

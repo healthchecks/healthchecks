@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix after-login redirects (the "?next=" query parameter)
 - Update Check.status field when user edits timeout & grace settings
+- Use timezone-aware datetimes with croniter, avoid ambiguities around DST
 
 
 ## 1.3.0 - 2018-11-21

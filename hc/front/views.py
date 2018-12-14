@@ -28,7 +28,7 @@ from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import (num_down_title, down_title,
                                              sortchecks)
 from hc.lib import jsonschema
-from pytz import all_timezones
+import pytz
 from pytz.exceptions import UnknownTimeZoneError
 import requests
 
@@ -130,7 +130,7 @@ def my_checks(request):
         "now": timezone.now(),
         "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
-        "timezones": all_timezones,
+        "timezones": pytz.all_timezones,
         "num_available": request.team.check_limit - len(checks),
         "sort": request.profile.sort,
         "selected_tags": selected_tags,
@@ -325,13 +325,11 @@ def cron_preview(request):
     tz = request.POST.get("tz")
     ctx = {"tz": tz, "dates": []}
     try:
-        with timezone.override(tz):
-            now_naive = timezone.make_naive(timezone.now())
-            it = croniter(schedule, now_naive)
-            for i in range(0, 6):
-                naive = it.get_next(datetime)
-                aware = timezone.make_aware(naive, is_dst=True)
-                ctx["dates"].append((naive, aware))
+        zone = pytz.timezone(tz)
+        now_local = timezone.localtime(timezone.now(), zone)
+        it = croniter(schedule, now_local)
+        for i in range(0, 6):
+            ctx["dates"].append(it.get_next(datetime))
     except UnknownTimeZoneError:
         ctx["bad_tz"] = True
     except:
@@ -420,7 +418,7 @@ def details(request, code):
         "page": "details",
         "check": check,
         "channels": channels,
-        "timezones": all_timezones
+        "timezones": pytz.all_timezones
     }
 
     return render(request, "front/details.html", ctx)
