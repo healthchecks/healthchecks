@@ -20,9 +20,11 @@ class CronExpressionValidator(object):
     message = "Not a valid cron expression."
 
     def __call__(self, value):
-        try:
-            croniter(value)
-        except:
+        # Expect 5 components-
+        if len(value.split()) != 5:
+            raise ValidationError(message=self.message)
+
+        if not croniter.is_valid(value):
             raise ValidationError(message=self.message)
 
 

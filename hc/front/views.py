@@ -321,19 +321,24 @@ def update_timeout(request, code):
 
 @require_POST
 def cron_preview(request):
-    schedule = request.POST.get("schedule")
+    schedule = request.POST.get("schedule", "")
     tz = request.POST.get("tz")
     ctx = {"tz": tz, "dates": []}
-    try:
-        zone = pytz.timezone(tz)
-        now_local = timezone.localtime(timezone.now(), zone)
-        it = croniter(schedule, now_local)
-        for i in range(0, 6):
-            ctx["dates"].append(it.get_next(datetime))
-    except UnknownTimeZoneError:
-        ctx["bad_tz"] = True
-    except:
+
+    if len(schedule.split()) != 5:
         ctx["bad_schedule"] = True
+    elif not croniter.is_valid(schedule):
+        ctx["bad_schedule"] = True
+
+    if "bad_schedule" not in ctx:
+        try:
+            zone = pytz.timezone(tz)
+            now_local = timezone.localtime(timezone.now(), zone)
+            it = croniter(schedule, now_local)
+            for i in range(0, 6):
+                ctx["dates"].append(it.get_next(datetime))
+        except UnknownTimeZoneError:
+            ctx["bad_tz"] = True
 
     return render(request, "front/cron_preview.html", ctx)
 

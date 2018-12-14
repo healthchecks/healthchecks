@@ -13,12 +13,13 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.last_ping = timezone.now()
         self.check.save()
 
+        self.url = "/checks/%s/timeout/" % self.check.code
+
     def test_it_works(self):
-        url = "/checks/%s/timeout/" % self.check.code
         payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertRedirects(r, "/checks/")
 
         self.check.refresh_from_db()
@@ -34,12 +35,11 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.status = "down"
         self.check.save()
 
-        url = "/checks/%s/timeout/" % self.check.code
         # 1 week:
         payload = {"kind": "simple", "timeout": 3600 * 24 * 7, "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertRedirects(r, "/checks/")
 
         self.check.refresh_from_db()
@@ -51,7 +51,6 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(flip.new_status, "up")
 
     def test_it_saves_cron_expression(self):
-        url = "/checks/%s/timeout/" % self.check.code
         payload = {
             "kind": "cron",
             "schedule": "5 * * * *",
@@ -60,7 +59,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         }
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertRedirects(r, "/checks/")
 
         self.check.refresh_from_db()
@@ -68,10 +67,6 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.schedule, "5 * * * *")
 
     def test_it_validates_cron_expression(self):
-        self.check.last_ping = None
-        self.check.save()
-
-        url = "/checks/%s/timeout/" % self.check.code
         payload = {
             "kind": "cron",
             "schedule": "* invalid *",
@@ -80,7 +75,23 @@ class UpdateTimeoutTestCase(BaseTestCase):
         }
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
+        self.assertEqual(r.status_code, 400)
+
+        # Check should still have its original data:
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "simple")
+
+    def test_it_rejects_six_field_cron_expression(self):
+        payload = {
+            "kind": "cron",
+            "schedule": "* * * * * *",  # six fields instead of five
+            "tz": "UTC",
+            "grace": 60
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
 
         # Check should still have its original data:
@@ -88,10 +99,6 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.kind, "simple")
 
     def test_it_validates_tz(self):
-        self.check.last_ping = None
-        self.check.save()
-
-        url = "/checks/%s/timeout/" % self.check.code
         payload = {
             "kind": "cron",
             "schedule": "* * * * *",
@@ -100,7 +107,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         }
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
 
         # Check should still have its original data:
@@ -108,7 +115,6 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.kind, "simple")
 
     def test_it_rejects_missing_schedule(self):
-        url = "/checks/%s/timeout/" % self.check.code
         # tz field is omitted so this should fail:
         payload = {
             "kind": "cron",
@@ -117,11 +123,10 @@ class UpdateTimeoutTestCase(BaseTestCase):
         }
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
 
     def test_it_rejects_missing_tz(self):
-        url = "/checks/%s/timeout/" % self.check.code
         # tz field is omitted so this should fail:
         payload = {
             "kind": "cron",
@@ -130,17 +135,16 @@ class UpdateTimeoutTestCase(BaseTestCase):
         }
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
 
     def test_team_access_works(self):
-        url = "/checks/%s/timeout/" % self.check.code
         payload = {"kind": "simple", "timeout": 7200, "grace": 60}
 
         # Logging in as bob, not alice. Bob has team access so this
         # should work.
         self.client.login(username="bob@example.org", password="password")
-        self.client.post(url, data=payload)
+        self.client.post(self.url, data=payload)
 
         check = Check.objects.get(code=self.check.code)
         assert check.timeout.total_seconds() == 7200
@@ -163,26 +167,23 @@ class UpdateTimeoutTestCase(BaseTestCase):
         assert r.status_code == 404
 
     def test_it_checks_ownership(self):
-        url = "/checks/%s/timeout/" % self.check.code
         payload = {"timeout": 3600, "grace": 60}
 
         self.client.login(username="charlie@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 404)
 
     def test_it_rejects_get(self):
-        url = "/checks/%s/timeout/" % self.check.code
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(url)
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 405)
 
     def test_it_allows_cross_team_access(self):
         self.bobs_profile.current_team = None
         self.bobs_profile.save()
 
-        url = "/checks/%s/timeout/" % self.check.code
         payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
         self.client.login(username="bob@example.org", password="password")
-        r = self.client.post(url, data=payload)
+        r = self.client.post(self.url, data=payload)
         self.assertRedirects(r, "/checks/")
