@@ -16,6 +16,7 @@ class SubsAdmin(admin.ModelAdmin):
                     "profile")
 
     list_filter = ("plan_id", )
+    raw_id_fields = ("user", )
     actions = ("cancel", )
 
     def email(self, obj):
