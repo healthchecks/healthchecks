@@ -12,6 +12,8 @@
         <td class="text-right">
             {% if event.fail %}
             <span class="label label-danger">Failure</span>
+            {% elif event.start %}
+            <span class="label label-start">Started</span>
             {% else %}
             <span class="label label-success">OK</span>
             {% endif %}

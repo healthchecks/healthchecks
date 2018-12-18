@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -55,3 +56,17 @@ class PauseTestCase(BaseTestCase):
                              HTTP_X_API_KEY="X" * 32)
 
         self.assertEqual(r.status_code, 404)
+
+    def test_it_clears_last_start(self):
+        check = Check(user=self.alice, status="up", last_start=now())
+        check.save()
+
+        url = "/api/v1/checks/%s/pause" % check.code
+        r = self.client.post(url, "", content_type="application/json",
+                             HTTP_X_API_KEY="X" * 32)
+
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r["Access-Control-Allow-Origin"], "*")
+
+        check.refresh_from_db()
+        self.assertEqual(check.last_start, None)

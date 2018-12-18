@@ -10,5 +10,7 @@
         This check is paused.
     {% elif status == "new" %}
         This check has never received a ping.
+    {% elif status == "started" %}
+        This check is currently running. Started {{ check.last_start|naturaltime }}.
     {% endif %}
 {% endwith %}

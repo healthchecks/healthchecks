@@ -14,6 +14,26 @@ class LastPingTestCase(BaseTestCase):
         r = self.client.get("/checks/%s/last_ping/" % check.code)
         self.assertContains(r, "this is body", status_code=200)
 
+    def test_it_shows_fail(self):
+        check = Check(user=self.alice)
+        check.save()
+
+        Ping.objects.create(owner=check, fail=True)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/%s/last_ping/" % check.code)
+        self.assertContains(r, "/fail", status_code=200)
+
+    def test_it_shows_start(self):
+        check = Check(user=self.alice)
+        check.save()
+
+        Ping.objects.create(owner=check, start=True)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/%s/last_ping/" % check.code)
+        self.assertContains(r, "/start", status_code=200)
+
     def test_it_requires_user(self):
         check = Check.objects.create()
         r = self.client.get("/checks/%s/last_ping/" % check.code)
@@ -24,8 +44,8 @@ class LastPingTestCase(BaseTestCase):
         check.save()
 
         # remote_addr, scheme, method, ua, body:
-        check.ping("1.2.3.4", "http", "post", "tester", "foo-123")
-        check.ping("1.2.3.4", "http", "post", "tester", "bar-456")
+        check.ping("1.2.3.4", "http", "post", "tester", "foo-123", "success")
+        check.ping("1.2.3.4", "http", "post", "tester", "bar-456", "success")
 
         self.client.login(username="alice@example.org", password="password")
 

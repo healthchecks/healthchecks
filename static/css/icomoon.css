@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?b4dy0b');
-  src:  url('../fonts/icomoon.eot?b4dy0b#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?b4dy0b') format('truetype'),
-    url('../fonts/icomoon.woff?b4dy0b') format('woff'),
-    url('../fonts/icomoon.svg?b4dy0b#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?swifyd');
+  src:  url('../fonts/icomoon.eot?swifyd#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?swifyd') format('truetype'),
+    url('../fonts/icomoon.woff?swifyd') format('woff'),
+    url('../fonts/icomoon.svg?swifyd#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,6 +24,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-started:before {
+  content: "\e038";
+}
 .icon-pagertree:before {
   content: "\e90d";
   color: #33ade2;
@@ -80,6 +83,10 @@
   content: "\e911";
   color: #0079bf;
 }
+.icon-whatsapp:before {
+  content: "\e902";
+  color: #25d366;
+}
 .icon-zendesk:before {
   content: "\e907";
 }
@@ -91,9 +98,6 @@
 }
 .icon-up:before, .icon-new:before, .icon-ok:before {
   content: "\e86c";
-}
-.icon-close:before {
-  content: "\e5cd";
 }
 .icon-grace:before {
   content: "\e000";
@@ -107,9 +111,6 @@
 .icon-asc:before {
   content: "\e316";
 }
-.icon-mail:before {
-  content: "\e0e1";
-}
 .icon-dots:before {
   content: "\e5d3";
 }
@@ -120,8 +121,8 @@
   content: "\e7f6";
 }
 .icon-settings:before {
-  content: "\e902";
+  content: "\e912";
 }
 .icon-delete:before {
-  content: "\e900";
+  content: "\e913";
 }

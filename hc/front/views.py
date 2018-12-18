@@ -301,11 +301,10 @@ def update_timeout(request, code):
         check.alert_after = check.get_alert_after()
 
         # Changing timeout can change check's status:
-        is_up = check.get_status() in ("up", "grace")
-        if is_up and check.status != "up":
+        if not check.is_down() and check.status == "down":
             flip = Flip(owner=check)
             flip.created = timezone.now()
-            flip.old_status = check.status
+            flip.old_status = "down"
             flip.new_status = "up"
             flip.save()
 
@@ -365,6 +364,7 @@ def pause(request, code):
     check = _get_check_for_user(request, code)
 
     check.status = "paused"
+    check.last_start = None
     check.save()
 
     if "/details/" in request.META.get("HTTP_REFERER", ""):

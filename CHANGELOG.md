@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Allow simultaneous access to checks from different teams
 - Add CORS support to API endpoints
 - Flip model, for tracking status changes of the Check objects
+- Add "/ping/<code>/start" API endpoint
 
 ### Bug Fixes
 - Fix after-login redirects (the "?next=" query parameter)

@@ -63,10 +63,16 @@ body {
     width: 24px;
 }
 
-.status.icon-up { color: #5cb85c; }
+.status.icon-up, .status.icon-started { color: #5cb85c; }
 .status.icon-new, .status.icon-paused { color: #CCC; }
 .status.icon-grace { color: #f0ad4e; }
 .status.icon-down { color: #d9534f; }
+
+.label-start {
+    background-color: #FFF;
+    color: #117a3f;;
+    border: 1px solid #117a3f;
+}
 
 .hc-dialog {
     background: #FFF;

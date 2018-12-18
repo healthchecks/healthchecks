@@ -25,6 +25,7 @@ STATUSES = (
 )
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
+NEVER = datetime(3000, 1, 1, tzinfo=pytz.UTC)
 CHECK_KINDS = (("simple", "Simple"),
                ("cron", "Cron"))
 
@@ -55,7 +56,9 @@ PO_PRIORITIES = {
 
 def isostring(dt):
     """Convert the datetime to ISO 8601 format with no microseconds. """
-    return dt.replace(microsecond=0).isoformat()
+
+    if dt:
+        return dt.replace(microsecond=0).isoformat()
 
 
 class Check(models.Model):
@@ -73,6 +76,7 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
+    last_start = models.DateTimeField(null=True, blank=True)
     last_ping_was_fail = models.NullBooleanField(default=False)
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
@@ -110,33 +114,57 @@ class Check(models.Model):
         return errors
 
     def get_grace_start(self):
-        """ Return the datetime when grace period starts. """
+        """ Return the datetime when the grace period starts.
 
-        # The common case, grace starts after timeout
-        if self.kind == "simple":
-            return self.last_ping + self.timeout
+        If the check is currently new, paused or down, return None.
 
-        # The complex case, next ping is expected based on cron schedule.
-        # Don't convert to naive datetimes (and so avoid ambiguities around
-        # DST transitions).
-        # croniter does handle timezone-aware datetimes.
+        """
 
-        zone = pytz.timezone(self.tz)
-        last_local = timezone.localtime(self.last_ping, zone)
-        it = croniter(self.schedule, last_local)
-        return it.next(datetime)
+        # NEVER is a constant sentinel value (year 3000).
+        # Using None instead would make the logic clunky.
+        result = NEVER
+
+        if self.kind == "simple" and self.status == "up":
+            result = self.last_ping + self.timeout
+        elif self.kind == "cron" and self.status == "up":
+            # The complex case, next ping is expected based on cron schedule.
+            # Don't convert to naive datetimes (and so avoid ambiguities around
+            # DST transitions). Croniter will handle the timezone-aware datetimes.
+
+            zone = pytz.timezone(self.tz)
+            last_local = timezone.localtime(self.last_ping, zone)
+            it = croniter(self.schedule, last_local)
+            result = it.next(datetime)
+
+        if self.last_start:
+            result = min(result, self.last_start)
+
+        if result != NEVER:
+            return result
+
+    def is_down(self):
+        """ Return True if the check is currently in alert state. """
+
+        alert_after = self.get_alert_after()
+        if alert_after is None:
+            return False
+
+        return timezone.now() >= self.get_alert_after()
 
     def get_status(self, now=None):
-        """ Return "up" if the check is up or in grace, otherwise "down". """
-
-        if self.status in ("new", "paused"):
-            return self.status
-
-        if self.last_ping_was_fail:
-            return "down"
+        """ Return current status for display. """
 
         if now is None:
             now = timezone.now()
+
+        if self.last_start:
+            if now >= self.last_start + self.grace:
+                return "down"
+            else:
+                return "started"
+
+        if self.status in ("new", "paused", "down"):
+            return self.status
 
         grace_start = self.get_grace_start()
         grace_end = grace_start + self.grace
@@ -151,12 +179,9 @@ class Check(models.Model):
     def get_alert_after(self):
         """ Return the datetime when check potentially goes down. """
 
-        # For "fail" pings, sendalerts should the check right
-        # after receiving the ping, without waiting for the grace time:
-        if self.last_ping_was_fail:
-            return self.last_ping
-
-        return self.get_grace_start() + self.grace
+        grace_start = self.get_grace_start()
+        if grace_start is not None:
+            return grace_start + self.grace
 
     def assign_all_channels(self):
         if self.user:
@@ -183,7 +208,9 @@ class Check(models.Model):
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
             "status": self.get_status(),
-            "channels": ",".join(sorted(channel_codes))
+            "channels": ",".join(sorted(channel_codes)),
+            "last_ping": isostring(self.last_ping),
+            "next_ping": isostring(self.get_grace_start())
         }
 
         if self.kind == "simple":
@@ -192,38 +219,40 @@ class Check(models.Model):
             result["schedule"] = self.schedule
             result["tz"] = self.tz
 
-        if self.last_ping:
-            result["last_ping"] = isostring(self.last_ping)
-            result["next_ping"] = isostring(self.get_grace_start())
-        else:
-            result["last_ping"] = None
-            result["next_ping"] = None
-
         return result
 
-    def ping(self, remote_addr, scheme, method, ua, body, is_fail=False):
-        self.n_pings = models.F("n_pings") + 1
-        self.last_ping = timezone.now()
-        self.last_ping_was_fail = is_fail
-        self.has_confirmation_link = "confirm" in str(body).lower()
+    def ping(self, remote_addr, scheme, method, ua, body, action):
+        if action == "start":
+            # If we receive multiple start events in a row,
+            # we remember the first one, not the last one
+            if self.last_start is None:
+                self.last_start = timezone.now()
+            # DOn't update "last_ping" field.
+        else:
+            self.last_start = None
+            self.last_ping = timezone.now()
+            self.last_ping_was_fail = action == "fail"
+
+            new_status = "down" if action == "fail" else "up"
+            if self.status != new_status:
+                flip = Flip(owner=self)
+                flip.created = self.last_ping
+                flip.old_status = self.status
+                flip.new_status = new_status
+                flip.save()
+
+                self.status = new_status
+
         self.alert_after = self.get_alert_after()
-
-        new_status = "down" if is_fail else "up"
-        if self.status != new_status:
-            flip = Flip(owner=self)
-            flip.created = self.last_ping
-            flip.old_status = self.status
-            flip.new_status = new_status
-            flip.save()
-
-            self.status = new_status
-
+        self.n_pings = models.F("n_pings") + 1
+        self.has_confirmation_link = "confirm" in str(body).lower()
         self.save()
         self.refresh_from_db()
 
         ping = Ping(owner=self)
         ping.n = self.n_pings
-        ping.fail = is_fail
+        ping.start = action == "start"
+        ping.fail = action == "fail"
         ping.remote_addr = remote_addr
         ping.scheme = scheme
         ping.method = method
@@ -238,6 +267,7 @@ class Ping(models.Model):
     n = models.IntegerField(null=True)
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    start = models.NullBooleanField(default=False)
     fail = models.NullBooleanField(default=False)
     scheme = models.CharField(max_length=10, default="http")
     remote_addr = models.GenericIPAddressField(blank=True, null=True)

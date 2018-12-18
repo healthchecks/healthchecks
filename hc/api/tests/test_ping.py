@@ -1,7 +1,8 @@
+from datetime import timedelta as td
+
 from django.test import Client, TestCase
 from django.utils.timezone import now
-
-from hc.api.models import Check, Ping
+from hc.api.models import Check, Flip, Ping
 
 
 class PingTestCase(TestCase):
@@ -30,6 +31,16 @@ class PingTestCase(TestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "up")
+
+    def test_it_clears_last_start(self):
+        self.check.last_start = now()
+        self.check.save()
+
+        r = self.client.get("/ping/%s/" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.last_start, None)
 
     def test_post_works(self):
         csrf_client = Client(enforce_csrf_checks=True)
@@ -132,7 +143,51 @@ class PingTestCase(TestCase):
 
         self.check.refresh_from_db()
         self.assertTrue(self.check.last_ping_was_fail)
-        self.assertTrue(self.check.alert_after <= now())
+        self.assertEqual(self.check.status, "down")
+        self.assertEqual(self.check.alert_after, None)
 
-        ping = Ping.objects.latest("id")
+        ping = Ping.objects.get()
         self.assertTrue(ping.fail)
+
+        flip = Flip.objects.get()
+        self.assertEqual(flip.owner, self.check)
+        self.assertEqual(flip.new_status, "down")
+
+    def test_start_endpoint_works(self):
+        last_ping = now() - td(hours=2)
+        self.check.last_ping = last_ping
+        self.check.save()
+
+        r = self.client.get("/ping/%s/start" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertTrue(self.check.last_start)
+        self.assertEqual(self.check.last_ping, last_ping)
+
+        ping = Ping.objects.get()
+        self.assertTrue(ping.start)
+
+    def test_start_does_not_change_status_of_paused_check(self):
+        self.check.status = "paused"
+        self.check.save()
+
+        r = self.client.get("/ping/%s/start" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertTrue(self.check.last_start)
+        self.assertEqual(self.check.status, "paused")
+
+    def test_start_does_not_overwrite_last_start(self):
+        first_start = now() - td(hours=2)
+
+        self.check.last_start = first_start
+        self.check.save()
+
+        r = self.client.get("/ping/%s/start" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        # Should still be the original value
+        self.assertEqual(self.check.last_start, first_start)

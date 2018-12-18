@@ -5,8 +5,8 @@ from hc.api import views
 urlpatterns = [
     path('ping/<uuid:code>/', views.ping, name="hc-ping-slash"),
     path('ping/<uuid:code>', views.ping, name="hc-ping"),
-    path('ping/<uuid:code>/fail', views.ping, {"is_fail": True},
-         name="hc-fail"),
+    path('ping/<uuid:code>/fail', views.ping, {"action": "fail"}, name="hc-fail"),
+    path('ping/<uuid:code>/start', views.ping, {"action": "start"}, name="hc-start"),
 
     path('api/v1/checks/', views.checks),
     path('api/v1/checks/<uuid:code>', views.update, name="hc-api-update"),

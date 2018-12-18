@@ -85,16 +85,16 @@ class Command(BaseCommand):
         # In PostgreSQL, add this index to run the below query efficiently:
         # CREATE INDEX api_check_up ON api_check (alert_after) WHERE status = 'up'
 
-        q = Check.objects.filter(alert_after__lt=now, status="up")
+        q = Check.objects.filter(alert_after__lt=now).exclude(status="down")
         # Sort by alert_after, to avoid unnecessary sorting by id:
         check = q.order_by("alert_after").first()
         if check is None:
             return False
 
-        q = Check.objects.filter(id=check.id, status="up")
+        old_status = check.status
+        q = Check.objects.filter(id=check.id, status=old_status)
 
-        current_status = check.get_status()
-        if current_status != "down":
+        if not check.is_down():
             # It is not down yet. Update alert_after
             q.update(alert_after=check.get_alert_after())
             return True
@@ -107,7 +107,7 @@ class Command(BaseCommand):
 
         flip = Flip(owner=check)
         flip.created = check.get_alert_after()
-        flip.old_status = "up"
+        flip.old_status = old_status
         flip.new_status = "down"
         flip.save()
 

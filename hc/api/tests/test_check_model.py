@@ -27,7 +27,7 @@ class CheckModelTestCase(TestCase):
 
         self.assertEqual(check.get_status(), "grace")
 
-    def test_get_stauts_handles_paused_check(self):
+    def test_get_status_handles_paused_check(self):
         check = Check()
 
         check.status = "up"
@@ -82,6 +82,33 @@ class CheckModelTestCase(TestCase):
         now = dt + timedelta(days=1, minutes=60)
         self.assertEqual(check.get_status(now), "down")
 
+    def test_get_status_handles_past_grace(self):
+        check = Check()
+        check.status = "up"
+        check.last_ping = timezone.now() - timedelta(days=2)
+
+        self.assertEqual(check.get_status(), "down")
+
+    def test_get_status_obeys_down_status(self):
+        check = Check()
+        check.status = "down"
+        check.last_ping = timezone.now() - timedelta(minutes=1)
+
+        self.assertEqual(check.get_status(), "down")
+
+    def test_get_status_handles_started(self):
+        check = Check()
+        check.last_ping = timezone.now() - timedelta(hours=2)
+        check.last_start = timezone.now() - timedelta(minutes=5)
+        for status in ("new", "paused", "up", "down"):
+            check.status = status
+            self.assertEqual(check.get_status(), "started")
+
+    def test_get_status_handles_started_and_mia(self):
+        check = Check()
+        check.last_start = timezone.now() - timedelta(hours=2)
+        self.assertEqual(check.get_status(), "down")
+
     def test_next_ping_with_cron_syntax(self):
         dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
@@ -95,13 +122,3 @@ class CheckModelTestCase(TestCase):
 
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
-
-    def test_status_checks_the_fail_flag(self):
-        check = Check()
-        check.status = "up"
-        check.last_ping = timezone.now() - timedelta(minutes=5)
-        check.last_ping_was_fail = True
-
-        # The computed status should be "down" because last_ping_was_fail
-        # is set.
-        self.assertEqual(check.get_status(), "down")
