@@ -17,7 +17,8 @@ class PingTestCase(TestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "up")
-        self.assertEqual(self.check.alert_after, self.check.get_alert_after())
+        expected_aa = self.check.last_ping + td(days=1, hours=1)
+        self.assertEqual(self.check.alert_after, expected_aa)
 
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.scheme, "http")

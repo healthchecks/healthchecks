@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta as td
 from io import StringIO
 from mock import Mock, patch
 
@@ -14,18 +14,20 @@ class SendAlertsTestCase(BaseTestCase):
     def test_it_handles_grace_period(self):
         check = Check(user=self.alice, status="up")
         # 1 day 30 minutes after ping the check is in grace period:
-        check.last_ping = now() - timedelta(days=1, minutes=30)
-        check.alert_after = check.get_alert_after()
+        check.last_ping = now() - td(days=1, minutes=30)
+        check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
 
         Command().handle_going_down()
 
+        check.refresh_from_db()
+        self.assertEqual(check.status, "up")
         self.assertEqual(Flip.objects.count(), 0)
 
     def test_it_creates_a_flip_when_check_goes_down(self):
         check = Check(user=self.alice, status="up")
-        check.last_ping = now() - timedelta(days=2)
-        check.alert_after = check.get_alert_after()
+        check.last_ping = now() - td(days=2)
+        check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
 
         result = Command().handle_going_down()
@@ -36,17 +38,19 @@ class SendAlertsTestCase(BaseTestCase):
         # It should create a flip object
         flip = Flip.objects.get()
         self.assertEqual(flip.owner_id, check.id)
+        self.assertEqual(flip.created, check.alert_after)
         self.assertEqual(flip.new_status, "down")
 
-        # It should change stored status to "down"
+        # It should change stored status to "down", and clear out alert_after
         check.refresh_from_db()
         self.assertEqual(check.status, "down")
+        self.assertEqual(check.alert_after, None)
 
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
     def test_it_processes_flip(self, mock_notify):
         check = Check(user=self.alice, status="up")
         check.last_ping = now()
-        check.alert_after = check.get_alert_after()
+        check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
 
         flip = Flip(owner=check, created=check.last_ping)
@@ -69,7 +73,7 @@ class SendAlertsTestCase(BaseTestCase):
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
     def test_it_updates_alert_after(self, mock_notify):
         check = Check(user=self.alice, status="up")
-        check.last_ping = now() - timedelta(hours=1)
+        check.last_ping = now() - td(hours=1)
         check.alert_after = check.last_ping
         check.save()
 
@@ -79,8 +83,9 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertTrue(result)
 
         # alert_after should have been increased
+        expected_aa = check.last_ping + td(days=1, hours=1)
         check.refresh_from_db()
-        self.assertTrue(check.alert_after > check.last_ping)
+        self.assertEqual(check.alert_after, expected_aa)
 
         # a flip should have not been created
         self.assertEqual(Flip.objects.count(), 0)
@@ -88,8 +93,8 @@ class SendAlertsTestCase(BaseTestCase):
     @patch("hc.api.management.commands.sendalerts.notify")
     def test_it_works_synchronously(self, mock_notify):
         check = Check(user=self.alice, status="up")
-        check.last_ping = now() - timedelta(days=2)
-        check.alert_after = check.get_alert_after()
+        check.last_ping = now() - td(days=2)
+        check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
 
         call_command("sendalerts", loop=False, use_threads=False,
@@ -99,12 +104,11 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertTrue(mock_notify.called)
 
     def test_it_updates_owners_next_nag_date(self):
-        self.profile.nag_period = timedelta(hours=1)
+        self.profile.nag_period = td(hours=1)
         self.profile.save()
 
         check = Check(user=self.alice, status="down")
-        check.last_ping = now() - timedelta(days=2)
-        check.alert_after = check.get_alert_after()
+        check.last_ping = now() - td(days=2)
         check.save()
 
         flip = Flip(owner=check, created=check.last_ping)
@@ -118,12 +122,11 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertIsNotNone(self.profile.next_nag_date)
 
     def test_it_updates_members_next_nag_date(self):
-        self.bobs_profile.nag_period = timedelta(hours=1)
+        self.bobs_profile.nag_period = td(hours=1)
         self.bobs_profile.save()
 
         check = Check(user=self.alice, status="down")
-        check.last_ping = now() - timedelta(days=2)
-        check.alert_after = check.get_alert_after()
+        check.last_ping = now() - td(days=2)
         check.save()
 
         flip = Flip(owner=check, created=check.last_ping)
@@ -137,14 +140,13 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertIsNotNone(self.bobs_profile.next_nag_date)
 
     def test_it_does_not_touch_already_set_next_nag_dates(self):
-        original_nag_date = now() - timedelta(minutes=30)
-        self.profile.nag_period = timedelta(hours=1)
+        original_nag_date = now() - td(minutes=30)
+        self.profile.nag_period = td(hours=1)
         self.profile.next_nag_date = original_nag_date
         self.profile.save()
 
         check = Check(user=self.alice, status="down")
-        check.last_ping = now() - timedelta(days=2)
-        check.alert_after = check.get_alert_after()
+        check.last_ping = now() - td(days=2)
         check.save()
 
         flip = Flip(owner=check, created=check.last_ping)

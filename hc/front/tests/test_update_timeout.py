@@ -1,7 +1,7 @@
 from datetime import timedelta as td
 
 from django.utils import timezone
-from hc.api.models import Flip, Check
+from hc.api.models import Check
 from hc.test import BaseTestCase
 
 
@@ -9,7 +9,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def setUp(self):
         super(UpdateTimeoutTestCase, self).setUp()
-        self.check = Check(user=self.alice)
+        self.check = Check(user=self.alice, status="up")
         self.check.last_ping = timezone.now()
         self.check.save()
 
@@ -28,7 +28,8 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.grace.total_seconds(), 60)
 
         # alert_after should be updated too
-        self.assertEqual(self.check.alert_after, self.check.get_alert_after())
+        expected_aa = self.check.last_ping + td(seconds=3600 + 60)
+        self.assertEqual(self.check.alert_after, expected_aa)
 
     def test_it_does_not_update_status(self):
         self.check.last_ping = timezone.now() - td(days=2)

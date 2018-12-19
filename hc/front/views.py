@@ -18,7 +18,7 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
-                           Flip, Ping, Notification)
+                           Ping, Notification)
 from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
@@ -297,7 +297,7 @@ def update_timeout(request, code):
         check.tz = form.cleaned_data["tz"]
         check.grace = td(minutes=form.cleaned_data["grace"])
 
-    check.alert_after = check.get_alert_after()
+    check.alert_after = check.going_down_after()
     check.save()
 
     if "/details/" in request.META.get("HTTP_REFERER", ""):

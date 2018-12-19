@@ -96,23 +96,22 @@ class Command(BaseCommand):
 
         if not check.is_down():
             # It is not down yet. Update alert_after
-            q.update(alert_after=check.get_alert_after())
+            q.update(alert_after=check.going_down_after())
             return True
 
         # Atomically update status
-        num_updated = q.update(status="down")
+        flip_time = check.going_down_after()
+        num_updated = q.update(alert_after=None, status="down")
         if num_updated != 1:
             # Nothing got updated: another worker process got there first.
             return True
 
         flip = Flip(owner=check)
-        flip.created = check.get_alert_after()
+        flip.created = flip_time
         flip.old_status = old_status
         flip.new_status = "down"
         flip.save()
 
-        check.status = "down"
-        check.save()
         return True
 
     def handle(self, use_threads=True, loop=True, *args, **options):

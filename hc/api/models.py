@@ -142,8 +142,13 @@ class Check(models.Model):
         if result != NEVER:
             return result
 
-    def get_alert_after(self):
-        """ Return the datetime when check potentially goes down. """
+    def going_down_after(self):
+        """ Return the datetime when the check goes down.
+
+        If the check is new or paused, and not currently running, return None.
+        If the check is already down, also return None.
+
+        """
 
         grace_start = self.get_grace_start()
         if grace_start is not None:
@@ -155,11 +160,11 @@ class Check(models.Model):
         if self.status == "down":
             return True
 
-        alert_after = self.get_alert_after()
-        if alert_after is None:
+        down_after = self.going_down_after()
+        if down_after is None:
             return False
 
-        return timezone.now() >= alert_after
+        return timezone.now() >= down_after
 
     def get_status(self, now=None):
         """ Return current status for display. """
@@ -246,7 +251,7 @@ class Check(models.Model):
 
                 self.status = new_status
 
-        self.alert_after = self.get_alert_after()
+        self.alert_after = self.going_down_after()
         self.n_pings = models.F("n_pings") + 1
         self.has_confirmation_link = "confirm" in str(body).lower()
         self.save()
