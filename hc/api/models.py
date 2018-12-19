@@ -136,20 +136,30 @@ class Check(models.Model):
             it = croniter(self.schedule, last_local)
             result = it.next(datetime)
 
-        if self.last_start:
+        if self.last_start and self.status != "down":
             result = min(result, self.last_start)
 
         if result != NEVER:
             return result
 
+    def get_alert_after(self):
+        """ Return the datetime when check potentially goes down. """
+
+        grace_start = self.get_grace_start()
+        if grace_start is not None:
+            return grace_start + self.grace
+
     def is_down(self):
         """ Return True if the check is currently in alert state. """
+
+        if self.status == "down":
+            return True
 
         alert_after = self.get_alert_after()
         if alert_after is None:
             return False
 
-        return timezone.now() >= self.get_alert_after()
+        return timezone.now() >= alert_after
 
     def get_status(self, now=None):
         """ Return current status for display. """
@@ -175,13 +185,6 @@ class Check(models.Model):
             return "grace"
 
         return "up"
-
-    def get_alert_after(self):
-        """ Return the datetime when check potentially goes down. """
-
-        grace_start = self.get_grace_start()
-        if grace_start is not None:
-            return grace_start + self.grace
 
     def assign_all_channels(self):
         if self.user:

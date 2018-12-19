@@ -30,7 +30,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         # alert_after should be updated too
         self.assertEqual(self.check.alert_after, self.check.get_alert_after())
 
-    def test_it_updates_status(self):
+    def test_it_does_not_update_status(self):
         self.check.last_ping = timezone.now() - td(days=2)
         self.check.status = "down"
         self.check.save()
@@ -39,16 +39,10 @@ class UpdateTimeoutTestCase(BaseTestCase):
         payload = {"kind": "simple", "timeout": 3600 * 24 * 7, "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, data=payload)
-        self.assertRedirects(r, "/checks/")
+        self.client.post(self.url, data=payload)
 
         self.check.refresh_from_db()
-        self.assertEqual(self.check.status, "up")
-
-        flip = Flip.objects.get()
-        self.assertEqual(flip.owner_id, self.check.id)
-        self.assertEqual(flip.old_status, "down")
-        self.assertEqual(flip.new_status, "up")
+        self.assertEqual(self.check.status, "down")
 
     def test_it_saves_cron_expression(self):
         payload = {

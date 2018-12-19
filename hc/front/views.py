@@ -297,19 +297,7 @@ def update_timeout(request, code):
         check.tz = form.cleaned_data["tz"]
         check.grace = td(minutes=form.cleaned_data["grace"])
 
-    if check.last_ping:
-        check.alert_after = check.get_alert_after()
-
-        # Changing timeout can change check's status:
-        if not check.is_down() and check.status == "down":
-            flip = Flip(owner=check)
-            flip.created = timezone.now()
-            flip.old_status = "down"
-            flip.new_status = "up"
-            flip.save()
-
-            check.status = "up"
-
+    check.alert_after = check.get_alert_after()
     check.save()
 
     if "/details/" in request.META.get("HTTP_REFERER", ""):
