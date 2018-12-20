@@ -211,7 +211,7 @@ def badge(request, username, signature, tag, format="svg"):
         if tag != "*" and tag not in check.tags_list():
             continue
 
-        check_status = check.get_status()
+        check_status = check.get_status(with_started=False)
         if status == "up" and check_status == "grace":
             status = "late"
 

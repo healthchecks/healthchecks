@@ -42,7 +42,7 @@ EVENTS_TMPL = get_template("front/details_events.html")
 def _tags_statuses(checks):
     tags, down, grace, num_down = {}, {}, {}, 0
     for check in checks:
-        status = check.get_status()
+        status = check.get_status(with_started=False)
 
         if status == "down":
             num_down += 1

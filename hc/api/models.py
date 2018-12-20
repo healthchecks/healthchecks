@@ -166,13 +166,13 @@ class Check(models.Model):
 
         return timezone.now() >= down_after
 
-    def get_status(self, now=None):
+    def get_status(self, now=None, with_started=True):
         """ Return current status for display. """
 
         if now is None:
             now = timezone.now()
 
-        if self.last_start:
+        if self.last_start and with_started:
             if now >= self.last_start + self.grace:
                 return "down"
             else:

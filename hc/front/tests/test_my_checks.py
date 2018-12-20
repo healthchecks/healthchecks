@@ -65,3 +65,34 @@ class MyChecksTestCase(BaseTestCase):
 
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sort, "created")
+
+    def test_it_shows_started_but_down_badge(self):
+        self.check.last_start = timezone.now()
+        self.check.tags = "foo"
+        self.check.status = "down"
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/")
+        self.assertContains(r, """<div class="btn btn-xs down ">foo</div>""")
+
+    def test_it_shows_grace_badge(self):
+        self.check.last_ping = timezone.now() - td(days=1, minutes=10)
+        self.check.tags = "foo"
+        self.check.status = "up"
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/")
+        self.assertContains(r, """<div class="btn btn-xs grace ">foo</div>""")
+
+    def test_it_shows_grace_started_badge(self):
+        self.check.last_start = timezone.now()
+        self.check.last_ping = timezone.now() - td(days=1, minutes=10)
+        self.check.tags = "foo"
+        self.check.status = "up"
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/")
+        self.assertContains(r, """<div class="btn btn-xs grace ">foo</div>""")
