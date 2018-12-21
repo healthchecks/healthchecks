@@ -189,6 +189,7 @@ def pause(request, code):
 
     check.status = "paused"
     check.last_start = None
+    check.alert_after = None
     check.save()
     return JsonResponse(check.to_dict())
 

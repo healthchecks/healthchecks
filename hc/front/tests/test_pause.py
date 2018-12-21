@@ -1,3 +1,5 @@
+from datetime import timedelta as td
+
 from django.utils.timezone import now
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -33,8 +35,9 @@ class PauseTestCase(BaseTestCase):
         r = self.client.post(self.url)
         self.assertRedirects(r, "/checks/")
 
-    def test_it_clears_last_start(self):
+    def test_it_clears_last_start_alert_after(self):
         self.check.last_start = now()
+        self.check.alert_after = self.check.last_start + td(hours=1)
         self.check.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -42,3 +45,4 @@ class PauseTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.last_start, None)
+        self.assertEqual(self.check.alert_after, None)

@@ -1,3 +1,5 @@
+from datetime import timedelta as td
+
 from django.utils.timezone import now
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -57,8 +59,10 @@ class PauseTestCase(BaseTestCase):
 
         self.assertEqual(r.status_code, 404)
 
-    def test_it_clears_last_start(self):
-        check = Check(user=self.alice, status="up", last_start=now())
+    def test_it_clears_last_start_alert_after(self):
+        check = Check(user=self.alice, status="up")
+        check.last_start = now()
+        check.alert_after = check.last_start + td(hours=1)
         check.save()
 
         url = "/api/v1/checks/%s/pause" % check.code
@@ -70,3 +74,4 @@ class PauseTestCase(BaseTestCase):
 
         check.refresh_from_db()
         self.assertEqual(check.last_start, None)
+        self.assertEqual(check.alert_after, None)

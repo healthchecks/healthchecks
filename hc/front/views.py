@@ -353,6 +353,7 @@ def pause(request, code):
 
     check.status = "paused"
     check.last_start = None
+    check.alert_after = None
     check.save()
 
     if "/details/" in request.META.get("HTTP_REFERER", ""):
