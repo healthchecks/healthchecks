@@ -168,16 +168,3 @@ class PingTestCase(TestCase):
         self.check.refresh_from_db()
         self.assertTrue(self.check.last_start)
         self.assertEqual(self.check.status, "paused")
-
-    def test_start_does_not_overwrite_last_start(self):
-        first_start = now() - td(hours=2)
-
-        self.check.last_start = first_start
-        self.check.save()
-
-        r = self.client.get("/ping/%s/start" % self.check.code)
-        self.assertEqual(r.status_code, 200)
-
-        self.check.refresh_from_db()
-        # Should still be the original value
-        self.assertEqual(self.check.last_start, first_start)

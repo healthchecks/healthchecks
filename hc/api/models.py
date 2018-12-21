@@ -219,10 +219,7 @@ class Check(models.Model):
 
     def ping(self, remote_addr, scheme, method, ua, body, action):
         if action == "start":
-            # If we receive multiple start events in a row,
-            # we remember the first one, not the last one
-            if self.last_start is None:
-                self.last_start = timezone.now()
+            self.last_start = timezone.now()
             # DOn't update "last_ping" field.
         else:
             self.last_start = None
