@@ -227,7 +227,6 @@ class Check(models.Model):
         else:
             self.last_start = None
             self.last_ping = timezone.now()
-            self.last_ping_was_fail = action == "fail"
 
             new_status = "down" if action == "fail" else "up"
             if self.status != new_status:
