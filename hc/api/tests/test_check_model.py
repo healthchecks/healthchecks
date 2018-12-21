@@ -99,15 +99,57 @@ class CheckModelTestCase(TestCase):
     def test_get_status_handles_started(self):
         check = Check()
         check.last_ping = timezone.now() - timedelta(hours=2)
+        # Last start was 5 minutes ago, display status should be "started"
         check.last_start = timezone.now() - timedelta(minutes=5)
         for status in ("new", "paused", "up", "down"):
             check.status = status
             self.assertEqual(check.get_status(), "started")
 
+    def test_get_status_handles_down_then_started_and_expired(self):
+        check = Check(status="down")
+        # Last ping was 2 days ago
+        check.last_ping = timezone.now() - timedelta(days=2)
+        # Last start was 2 hours ago - the check is past its grace time
+        check.last_start = timezone.now() - timedelta(hours=2)
+
+        self.assertEqual(check.get_status(), "down")
+        self.assertEqual(check.get_status(with_started=False), "down")
+
+    def test_get_status_handles_up_then_started(self):
+        check = Check(status="up")
+        # Last ping was 2 hours ago, so is still up
+        check.last_ping = timezone.now() - timedelta(hours=2)
+        # Last start was 5 minutes ago
+        check.last_start = timezone.now() - timedelta(minutes=5)
+
+        self.assertEqual(check.get_status(), "started")
+        # Starting a check starts the grace period:
+        self.assertEqual(check.get_status(with_started=False), "grace")
+
+    def test_get_status_handles_up_then_started_and_expired(self):
+        check = Check(status="up")
+        # Last ping was 3 hours ago, so is still up
+        check.last_ping = timezone.now() - timedelta(hours=3)
+        # Last start was 2 hours ago - the check is past its grace time
+        check.last_start = timezone.now() - timedelta(hours=2)
+
+        self.assertEqual(check.get_status(), "down")
+        self.assertEqual(check.get_status(with_started=False), "down")
+
+    def test_get_status_handles_paused_then_started_and_expired(self):
+        check = Check(status="paused")
+        # Last start was 2 hours ago - the check is past its grace time
+        check.last_start = timezone.now() - timedelta(hours=2)
+
+        self.assertEqual(check.get_status(), "down")
+        self.assertEqual(check.get_status(with_started=False), "down")
+
     def test_get_status_handles_started_and_mia(self):
         check = Check()
         check.last_start = timezone.now() - timedelta(hours=2)
+
         self.assertEqual(check.get_status(), "down")
+        self.assertEqual(check.get_status(with_started=False), "down")
 
     def test_next_ping_with_cron_syntax(self):
         dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)

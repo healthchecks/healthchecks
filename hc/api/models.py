@@ -154,28 +154,16 @@ class Check(models.Model):
         if grace_start is not None:
             return grace_start + self.grace
 
-    def is_down(self):
-        """ Return True if the check is currently in alert state. """
-
-        if self.status == "down":
-            return True
-
-        down_after = self.going_down_after()
-        if down_after is None:
-            return False
-
-        return timezone.now() >= down_after
-
     def get_status(self, now=None, with_started=True):
         """ Return current status for display. """
 
         if now is None:
             now = timezone.now()
 
-        if self.last_start and with_started:
+        if self.last_start:
             if now >= self.last_start + self.grace:
                 return "down"
-            else:
+            elif with_started:
                 return "started"
 
         if self.status in ("new", "paused", "down"):

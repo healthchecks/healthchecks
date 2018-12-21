@@ -94,7 +94,7 @@ class Command(BaseCommand):
         old_status = check.status
         q = Check.objects.filter(id=check.id, status=old_status)
 
-        if not check.is_down():
+        if check.get_status(with_started=False) != "down":
             # It is not down yet. Update alert_after
             q.update(alert_after=check.going_down_after())
             return True
