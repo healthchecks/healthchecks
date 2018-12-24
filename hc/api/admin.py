@@ -1,24 +1,10 @@
 from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
+from django.db.models import Count
 from django.utils.safestring import mark_safe
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.date import format_duration
-
-
-class OwnershipListFilter(admin.SimpleListFilter):
-    title = "Ownership"
-    parameter_name = 'ownership'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('assigned', "Assigned"),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'assigned':
-            return queryset.filter(user__isnull=False)
-        return queryset
 
 
 @admin.register(Check)
@@ -31,9 +17,11 @@ class ChecksAdmin(admin.ModelAdmin):
 
     search_fields = ["name", "user__email", "code"]
     list_display = ("id", "name_tags", "created", "code", "timeout_schedule",
-                    "status", "email", "last_ping", "n_pings")
+                    "status", "email", "last_start", "last_ping", "n_pings")
     list_select_related = ("user", )
-    list_filter = ("status", OwnershipListFilter, "kind", "last_ping")
+    list_filter = ("status", "kind", "last_ping",
+                   "last_start")
+
     actions = ["send_alert"]
 
     def email(self, obj):
@@ -136,14 +124,14 @@ class LargeTablePaginator(Paginator):
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
     search_fields = ("owner__name", "owner__code", "owner__user__email")
+    readonly_fields = ("owner", )
     list_select_related = ("owner", "owner__user")
-    list_display = ("id", "created", "check_name", "email", "scheme", "method",
+    list_display = ("id", "created", "owner", "email", "scheme", "method",
                     "ua")
-    list_filter = ("created", SchemeListFilter, MethodListFilter)
-    paginator = LargeTablePaginator
+    list_filter = ("created", SchemeListFilter, MethodListFilter,
+                   "start", "fail")
 
-    def check_name(self, obj):
-        return obj.owner.name if obj.owner.name else obj.owner.code
+    paginator = LargeTablePaginator
 
     def email(self, obj):
         return obj.owner.user.email if obj.owner.user else None
@@ -163,6 +151,12 @@ class ChannelsAdmin(admin.ModelAdmin):
     list_filter = ("kind", )
     raw_id_fields = ("user", "checks", )
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(Count("notification", distinct=True))
+
+        return qs
+
     def email(self, obj):
         return obj.user.email if obj.user else None
 
@@ -176,7 +170,7 @@ class ChannelsAdmin(admin.ModelAdmin):
     formatted_kind.short_description = "Kind"
 
     def num_notifications(self, obj):
-        return Notification.objects.filter(channel=obj).count()
+        return obj.notification__count
 
     num_notifications.short_description = "# Notifications"
 
@@ -185,12 +179,9 @@ class ChannelsAdmin(admin.ModelAdmin):
 class NotificationsAdmin(admin.ModelAdmin):
     search_fields = ["owner__name", "owner__code", "channel__value"]
     list_select_related = ("owner", "channel")
-    list_display = ("id", "created", "check_status", "check_name",
+    list_display = ("id", "created", "check_status", "owner",
                     "channel_kind", "channel_value")
     list_filter = ("created", "check_status", "channel__kind")
-
-    def check_name(self, obj):
-        return obj.owner.name_then_code()
 
     def channel_kind(self, obj):
         return obj.channel.kind
@@ -201,9 +192,6 @@ class NotificationsAdmin(admin.ModelAdmin):
 
 @admin.register(Flip)
 class FlipsAdmin(admin.ModelAdmin):
-    list_display = ("id", "created", "processed", "check_name", "old_status",
+    list_display = ("id", "created", "processed", "owner", "old_status",
                     "new_status")
     raw_id_fields = ("owner", )
-
-    def check_name(self, obj):
-        return obj.owner.name if obj.owner.name else obj.owner.code

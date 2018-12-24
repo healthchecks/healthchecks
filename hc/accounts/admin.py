@@ -6,7 +6,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from hc.accounts.models import Profile
-from hc.api.models import Channel, Check
 
 
 class Fieldset:
@@ -88,32 +87,38 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class HcUserAdmin(UserAdmin):
     actions = ["send_report"]
-    list_display = ('id', 'email', 'date_joined', 'engagement',
+    list_display = ('id', 'email', 'date_joined', 'last_login', 'engagement',
                     'is_staff', 'checks')
 
+    list_display_links = ("id", "email")
     list_filter = ("last_login", "date_joined", "is_staff", "is_active")
 
     ordering = ["-id"]
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(Count("check", distinct=True))
+        qs = qs.annotate(Count("channel", distinct=True))
+
+        return qs
+
     @mark_safe
     def engagement(self, user):
         result = ""
-        num_checks = Check.objects.filter(user=user).count()
-        num_channels = Channel.objects.filter(user=user).count()
 
-        if num_checks == 0:
+        if user.check__count == 0:
             result += "0 checks, "
-        elif num_checks == 1:
+        elif user.check__count == 1:
             result += "1 check, "
         else:
-            result += "<strong>%d checks</strong>, " % num_checks
+            result += "<strong>%d checks</strong>, " % user.check__count
 
-        if num_channels == 0:
+        if user.channel__count == 0:
             result += "0 channels"
-        elif num_channels == 1:
+        elif user.channel__count == 1:
             result += "1 channel, "
         else:
-            result += "<strong>%d channels</strong>, " % num_channels
+            result += "<strong>%d channels</strong>, " % user.channel__count
 
         return result
 
