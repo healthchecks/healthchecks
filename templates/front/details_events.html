@@ -19,6 +19,13 @@
             {% endif %}
         </td>
         <td class="details">
+            {% if event.delta %}
+            <div class="delta">
+                <span class="icon-timer"></span>
+                {{ event.delta|mins_secs }}
+            </div>
+            {% endif %}
+
             {% if event.scheme == "email" %}
                 {{ event.ua }}
             {% else %}

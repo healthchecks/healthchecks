@@ -27,3 +27,16 @@ def format_duration(td):
             result.append("%d %s" % (v, unit.plural))
 
     return " ".join(result)
+
+
+def format_mins_secs(td):
+    total_seconds = int(td.total_seconds())
+    result = []
+
+    mins, secs = divmod(total_seconds, 60)
+    if mins:
+        result.append("%d min" % mins)
+
+    result.append("%s sec" % secs)
+
+    return " ".join(result)

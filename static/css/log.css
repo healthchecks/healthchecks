@@ -23,6 +23,12 @@
     white-space: nowrap;
 }
 
+#log .delta {
+    white-space: nowrap;
+    float: right;
+    padding-left: 20px;
+}
+
 #log .details {
     width: 100%;
     max-width: 0;

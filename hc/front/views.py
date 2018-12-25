@@ -37,6 +37,7 @@ VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
+ONE_HOUR = td(hours=1)
 
 
 def _tags_statuses(checks):
@@ -373,6 +374,15 @@ def remove_check(request, code):
 def _get_events(check, limit):
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
     pings = list(pings)
+
+    prev = None
+    for ping in pings:
+        if ping.start and prev and not prev.start:
+            delta = prev.created - ping.created
+            if delta < ONE_HOUR:
+                setattr(prev, "delta", delta)
+
+        prev = ping
 
     alerts = []
     if len(pings):

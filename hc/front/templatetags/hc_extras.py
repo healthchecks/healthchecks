@@ -5,7 +5,7 @@ from django.conf import settings
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
-from hc.lib.date import format_duration
+from hc.lib.date import format_duration, format_mins_secs
 
 register = template.Library()
 
@@ -13,6 +13,11 @@ register = template.Library()
 @register.filter
 def hc_duration(td):
     return format_duration(td)
+
+
+@register.filter
+def mins_secs(td):
+    return format_mins_secs(td)
 
 
 @register.simple_tag
