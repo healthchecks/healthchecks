@@ -273,7 +273,7 @@ class Ping(models.Model):
 
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
-    code = models.UUIDField(default=uuid.uuid4, editable=False)
+    code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey(User, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
