@@ -106,6 +106,7 @@ def _update(check, spec):
 @authorize_read
 def get_checks(request):
     q = Check.objects.filter(user=request.user)
+    q = q.prefetch_related("channel_set")
 
     tags = set(request.GET.getlist("tag"))
     for tag in tags:
