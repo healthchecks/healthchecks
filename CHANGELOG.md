@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.4.0 - 2018-12-25
 
 ### Improvements
 - Set Pushover alert priorities for "down" and "up" events separately
