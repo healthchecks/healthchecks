@@ -481,13 +481,10 @@ def channels(request):
     channels = channels.order_by("created")
     channels = channels.annotate(n_checks=Count("checks"))
 
-    num_checks = Check.objects.filter(user=request.team.user).count()
-
     ctx = {
         "page": "channels",
         "profile": request.team,
         "channels": channels,
-        "num_checks": num_checks,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
