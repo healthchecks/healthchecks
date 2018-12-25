@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add CORS support to API endpoints
 - Flip model, for tracking status changes of the Check objects
 - Add `/ping/<code>/start` API endpoint
-- When using `/start` endpoint, show elapsed times in ping log
+- When using the `/start` endpoint, show elapsed times in ping log
 
 ### Bug Fixes
 - Fix after-login redirects (the "?next=" query parameter)
