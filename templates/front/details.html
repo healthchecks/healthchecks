@@ -35,6 +35,14 @@
                 <code>{{ check.url }}</code>
                 <p>Or by sending emails to this address:</p>
                 <code>{{ check.email }}</code>
+
+                <p>You can also explictly
+                    <a href="{% url 'hc-docs' %}#fail-event">
+                        signal a failure</a>
+                    and
+                    <a href="{% url 'hc-docs' %}#start-event">
+                        measure job execution time</a>.
+                </p>
             </div>
             <div class="text-right">
                 <button

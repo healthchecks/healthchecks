@@ -1,0 +1,20 @@
+import requests
+URL = "PING_URL"
+
+
+# "/start" kicks off a timer: if the job takes longer than
+# the configured grace time, the check will be marked as "down"
+try:
+    requests.get(URL + "/start", timeout=5)
+except requests.exceptions.RequestException:
+    # If the network request fails for any reason, we don't want
+    # it to prevent the main job from running
+    pass
+
+
+# TODO: run the job here
+fib = lambda n: n if n < 2 else fib(n - 1) + fib(n - 2)
+print("F(42) = %d" % fib(42))
+
+# Signal success:
+requests.get(URL)

@@ -29,7 +29,7 @@ if still no ping, sends you an alert.</p>
 alerts. As soon as it fails to check in on time, you get notified.
 It is a simple idea.</p>
 
-<h2 class="rule">Executing a Ping</h2>
+<h2 class="rule">Signalling a Success</h2>
 
 <p>
     At the end of your batch job, add a bit of code to request
@@ -51,6 +51,7 @@ It is a simple idea.</p>
 <p>The response will have status code "200 OK" and response body will be a
 short and simple string "OK".</p>
 
+<a name="fail-event"></a>
 <h2 class="rule">Signalling a Failure</h2>
 <p>
     Append <code>/fail</code> to a ping URL and use it to actively signal a
@@ -62,6 +63,25 @@ short and simple string "OK".</p>
 work function returns an unexpected value or throws an exception:</p>
 
 {% include "front/snippets/python_requests_fail.html" %}
+
+<a name="start-event"></a>
+<h2 class="rule">Measuring Job Execution Time</h2>
+<p>
+    Append <code>/start</code> to a ping URL and use it to signal
+    when a job starts. After receiving a start signal, {% site_name %}
+    will show the check as "Started". It will store the "start" events and
+    display the job execution times. The job execution times are calculated as the time
+    gaps between adjacent "start" and "complete" events.
+</p>
+<p>
+    Signalling a start kicks off a separate timer: the job
+    now <strong>must</strong> signal a success within its configured
+    "Grace Time", or it will get marked as "down".
+</p>
+
+<p>Below is a code example in Python:</p>
+
+{% include "front/snippets/python_requests_start.html" %}
 
 <h2 class="rule">Examples</h2>
 
@@ -294,6 +314,15 @@ using the "-command" argument:</p>
     </tr>
     <tr>
         <td>
+            <span class="status icon-started"></span>
+        </td>
+        <td>
+            <strong>Started.</strong>
+            The check has received a "start" signal, and is currently running.
+        </td>
+    </tr>
+    <tr>
+        <td>
             <span class="status icon-up"></span>
         </td>
         <td>
@@ -316,10 +345,13 @@ using the "-command" argument:</p>
             <span class="status icon-down"></span>
         </td>
         <td>
-            <strong>Down.</strong>
-            Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
-            When check goes from "Late" to "Down", {% site_name %}
+            <p><strong>Down.</strong> The check has not received a "success"
+                ping in time, or it has received an explicit "fail" signal.
+            </p>
+            <p>
+            When a check goes into the "Down" state, {% site_name %}
             sends you an alert.
+            </p>
         </td>
     </tr>
 </table>
