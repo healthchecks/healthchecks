@@ -100,22 +100,6 @@ class Check(models.Model):
     def email(self):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 
-    def send_alert(self, flip):
-        if flip.new_status == "up" and flip.old_status in ("new", "paused"):
-            # Don't send alerts on new->up and paused->up transitions
-            return []
-
-        if flip.new_status not in ("up", "down"):
-            raise NotImplementedError("Unexpected status: %s" % self.status)
-
-        errors = []
-        for channel in self.channel_set.all():
-            error = channel.notify(self)
-            if error not in ("", "no-op"):
-                errors.append((channel, error))
-
-        return errors
-
     def get_grace_start(self):
         """ Return the datetime when the grace period starts.
 
@@ -588,3 +572,19 @@ class Flip(models.Model):
     processed = models.DateTimeField(null=True, blank=True, db_index=True)
     old_status = models.CharField(max_length=8, choices=STATUSES)
     new_status = models.CharField(max_length=8, choices=STATUSES)
+
+    def send_alerts(self):
+        if self.new_status == "up" and self.old_status in ("new", "paused"):
+            # Don't send alerts on new->up and paused->up transitions
+            return []
+
+        if self.new_status not in ("up", "down"):
+            raise NotImplementedError("Unexpected status: %s" % self.status)
+
+        errors = []
+        for channel in self.owner.channel_set.all():
+            error = channel.notify(self.owner)
+            if error not in ("", "no-op"):
+                errors.append((channel, error))
+
+        return errors

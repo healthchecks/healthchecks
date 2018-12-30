@@ -24,7 +24,7 @@ def notify(flip_id, stdout):
         check.user.profile.set_next_nag_date()
 
     # Send notifications
-    errors = check.send_alert(flip)
+    errors = flip.send_alerts()
     for ch, error in errors:
         stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
 
