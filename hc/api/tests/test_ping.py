@@ -1,15 +1,16 @@
 from datetime import timedelta as td
 
-from django.test import Client, TestCase
+from django.test import Client
 from django.utils.timezone import now
 from hc.api.models import Check, Flip, Ping
+from hc.test import BaseTestCase
 
 
-class PingTestCase(TestCase):
+class PingTestCase(BaseTestCase):
 
     def setUp(self):
-        super(PingTestCase, self).setUp()
-        self.check = Check.objects.create()
+        super().setUp()
+        self.check = Check.objects.create(user=self.alice)
 
     def test_it_works(self):
         r = self.client.get("/ping/%s/" % self.check.code)

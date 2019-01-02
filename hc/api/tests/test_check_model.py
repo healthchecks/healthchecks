@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 
-from django.test import TestCase
 from django.utils import timezone
 from hc.api.models import Check
+from hc.test import BaseTestCase
 
 
-class CheckModelTestCase(TestCase):
+class CheckModelTestCase(BaseTestCase):
 
     def test_it_strips_tags(self):
         check = Check()
@@ -155,11 +155,12 @@ class CheckModelTestCase(TestCase):
         dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every round hour
-        check = Check()
+        check = Check(user=self.alice)
         check.kind = "cron"
         check.schedule = "0 * * * *"
         check.status = "up"
         check.last_ping = dt
+        # Need to save it for M2M relations to work:
         check.save()
 
         d = check.to_dict()

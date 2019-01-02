@@ -34,11 +34,6 @@ class LastPingTestCase(BaseTestCase):
         r = self.client.get("/checks/%s/last_ping/" % check.code)
         self.assertContains(r, "/start", status_code=200)
 
-    def test_it_requires_user(self):
-        check = Check.objects.create()
-        r = self.client.get("/checks/%s/last_ping/" % check.code)
-        self.assertEqual(r.status_code, 404)
-
     def test_it_accepts_n(self):
         check = Check(user=self.alice)
         check.save()
