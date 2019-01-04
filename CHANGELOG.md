@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Database schema: set Check.user to not null
 - Database schema: add uniqueness constraint to Check.code
+- Database schema: add Ping.kind field
 
 
 ## 1.4.0 - 2018-12-25

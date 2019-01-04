@@ -230,8 +230,14 @@ class Check(models.Model):
 
         ping = Ping(owner=self)
         ping.n = self.n_pings
-        ping.start = action == "start"
-        ping.fail = action == "fail"
+
+        if action == "start":
+            ping.start = True
+            ping.kind = "start"
+        elif action == "fail":
+            ping.fail = True
+            ping.kind = "fail"
+
         ping.remote_addr = remote_addr
         ping.scheme = scheme
         ping.method = method
@@ -246,6 +252,7 @@ class Ping(models.Model):
     n = models.IntegerField(null=True)
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    kind = models.CharField(max_length=6, blank=True, null=True)
     start = models.NullBooleanField(default=False)
     fail = models.NullBooleanField(default=False)
     scheme = models.CharField(max_length=10, default="http")
