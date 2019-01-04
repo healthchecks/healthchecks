@@ -24,6 +24,10 @@ class NameTagsForm(forms.Form):
         return " ".join(result)
 
 
+class EmailSettingsForm(forms.Form):
+    subject = forms.CharField(max_length=100)
+
+
 class TimeoutForm(forms.Form):
     timeout = forms.IntegerField(min_value=60, max_value=2592000)
     grace = forms.IntegerField(min_value=60, max_value=2592000)

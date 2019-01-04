@@ -74,6 +74,7 @@ class Check(models.Model):
     grace = models.DurationField(default=DEFAULT_GRACE)
     schedule = models.CharField(max_length=100, default="* * * * *")
     tz = models.CharField(max_length=36, default="UTC")
+    subject = models.CharField(max_length=100, blank=True)
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     last_start = models.DateTimeField(null=True, blank=True)
@@ -207,7 +208,9 @@ class Check(models.Model):
     def ping(self, remote_addr, scheme, method, ua, body, action):
         if action == "start":
             self.last_start = timezone.now()
-            # DOn't update "last_ping" field.
+            # Don't update "last_ping" field.
+        elif action == "ign":
+            pass
         else:
             self.last_start = None
             self.last_ping = timezone.now()
@@ -230,7 +233,7 @@ class Check(models.Model):
 
         ping = Ping(owner=self)
         ping.n = self.n_pings
-        if action in ("start", "fail"):
+        if action in ("start", "fail", "ign"):
             ping.kind = action
 
         ping.remote_addr = remote_addr

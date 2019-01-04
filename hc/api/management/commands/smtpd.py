@@ -1,4 +1,5 @@
 import asyncore
+import email
 import re
 from smtpd import SMTPServer
 
@@ -17,6 +18,11 @@ class Listener(SMTPServer):
         to_parts = rcpttos[0].split("@")
         code = to_parts[0]
 
+        try:
+            data = data.decode()
+        except UnicodeError:
+            data = "[binary data]"
+
         if not RE_UUID.match(code):
             self.stdout.write("Not an UUID: %s" % code)
             return
@@ -27,8 +33,15 @@ class Listener(SMTPServer):
             self.stdout.write("Check not found: %s" % code)
             return
 
+        action = "success"
+        if check.subject:
+            parsed = email.message_from_string(data)
+            received_subject = parsed.get("subject", "")
+            if check.subject not in received_subject:
+                action = "ign"
+
         ua = "Email from %s" % mailfrom
-        check.ping(peer[0], "email", "", ua, data)
+        check.ping(peer[0], "email", "", ua, data, action)
         self.stdout.write("Processed ping for %s" % code)
 
 

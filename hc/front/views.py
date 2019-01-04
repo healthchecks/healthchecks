@@ -23,7 +23,7 @@ from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
                             AddOpsGenieForm, CronForm, AddSmsForm,
-                            ChannelNameForm)
+                            ChannelNameForm, EmailSettingsForm)
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import (num_down_title, down_title,
                                              sortchecks)
@@ -272,6 +272,18 @@ def update_name(request, code):
         return redirect("hc-details", code)
 
     return redirect("hc-checks")
+
+
+@require_POST
+@login_required
+def email_settings(request, code):
+    check = _get_check_for_user(request, code)
+    form = EmailSettingsForm(request.POST)
+    if form.is_valid():
+        check.subject = form.cleaned_data["subject"]
+        check.save()
+
+    return redirect("hc-details", code)
 
 
 @require_POST

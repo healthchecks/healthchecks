@@ -33,7 +33,14 @@
             <div>
                 <p>Keep this check up by making HTTP requests to this URL:</p>
                 <code>{{ check.url }}</code>
-                <p>Or by sending emails to this address:</p>
+                <p>
+                    {% if check.subject %}
+                    Or by sending emails with "{{ check.subject }}"
+                    in the subject line to this address:
+                    {% else %}
+                    Or by sending emails to this address:
+                    {% endif %}
+                </p>
                 <code>{{ check.email }}</code>
 
                 <p>You can also explictly
@@ -46,17 +53,17 @@
             </div>
             <div class="text-right">
                 <button
-                    data-label="Copy URL"
-                    data-clipboard-text="{{ check.url }}"
-                    class="btn btn-sm btn-default copy-btn">Copy URL</button>
-                <button
-                    data-label="Copy Email"
-                    data-clipboard-text="{{ check.email }}"
-                    class="btn btn-sm btn-default copy-btn">Copy Email</button>
+                    data-toggle="modal"
+                    data-target="#email-settings-modal"
+                    class="btn btn-sm btn-default">Email Settings&hellip;</button>
                 <button
                     data-toggle="modal"
                     data-target="#show-usage-modal"
                     class="btn btn-sm btn-default">Usage Examples</button>
+                <button
+                    data-label="Copy URL"
+                    data-clipboard-text="{{ check.url }}"
+                    class="btn btn-sm btn-default copy-btn">Copy URL</button>
             </div>
         </div>
 
@@ -207,6 +214,7 @@
 {% include "front/update_timeout_modal.html" %}
 {% include "front/show_usage_modal.html" %}
 {% include "front/remove_check_modal.html" %}
+{% include "front/email_settings_modal.html" %}
 
 {% endblock %}
 

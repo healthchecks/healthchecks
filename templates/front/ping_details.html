@@ -4,6 +4,8 @@
         <span class="text-danger">(received via the <code>/fail</code> endpoint)</span>
         {% elif ping.kind == "start" %}
         <span class="text-success">(received via the <code>/start</code> endpoint)</span>
+        {% elif ping.kind == "ign" %}
+        <span class="text-muted">(ignored)</span>
         {% endif %}
     </h3>
 

@@ -74,6 +74,11 @@ body {
     border: 1px solid #117a3f;
 }
 
+.label-ign {
+    background: #e0e0e0;
+    color: #333;
+}
+
 .hc-dialog {
     background: #FFF;
     padding: 2em;
