@@ -248,8 +248,6 @@ class Ping(models.Model):
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=6, blank=True, null=True)
-    start = models.NullBooleanField(default=False)
-    fail = models.NullBooleanField(default=False)
     scheme = models.CharField(max_length=10, default="http")
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
     method = models.CharField(max_length=10, blank=True)
