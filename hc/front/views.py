@@ -377,7 +377,7 @@ def _get_events(check, limit):
 
     prev = None
     for ping in pings:
-        if ping.start and prev and not prev.start:
+        if ping.kind == "start" and prev and prev.kind != "start":
             delta = prev.created - ping.created
             if delta < ONE_HOUR:
                 setattr(prev, "delta", delta)

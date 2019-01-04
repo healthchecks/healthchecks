@@ -1,8 +1,8 @@
 <div class="modal-body">
     <h3>Ping #{{ ping.n }}
-        {% if ping.fail %}
+        {% if ping.kind == "fail" %}
         <span class="text-danger">(received via the <code>/fail</code> endpoint)</span>
-        {% elif ping.start %}
+        {% elif ping.kind == "start" %}
         <span class="text-success">(received via the <code>/start</code> endpoint)</span>
         {% endif %}
     </h3>

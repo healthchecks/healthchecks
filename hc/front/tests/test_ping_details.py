@@ -18,7 +18,7 @@ class LastPingTestCase(BaseTestCase):
         check = Check(user=self.alice)
         check.save()
 
-        Ping.objects.create(owner=check, fail=True)
+        Ping.objects.create(owner=check, kind="fail")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/%s/last_ping/" % check.code)
@@ -28,7 +28,7 @@ class LastPingTestCase(BaseTestCase):
         check = Check(user=self.alice)
         check.save()
 
-        Ping.objects.create(owner=check, start=True)
+        Ping.objects.create(owner=check, kind="start")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/%s/last_ping/" % check.code)

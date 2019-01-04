@@ -44,9 +44,9 @@
             <td class="date"></td>
             <td class="time"></td>
             <td class="text-right">
-                {% if event.fail %}
+                {% if event.kind == "fail" %}
                 <span class="label label-danger">Failure</span>
-                {% elif event.start %}
+                {% elif event.kind == "start" %}
                 <span class="label label-start">Started</span>
                 {% else %}
                 <span class="label label-success">OK</span>
