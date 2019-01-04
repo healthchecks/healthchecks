@@ -83,6 +83,20 @@ class MethodListFilter(admin.SimpleListFilter):
         return queryset
 
 
+class KindListFilter(admin.SimpleListFilter):
+    title = "Kind"
+    parameter_name = 'kind'
+    kinds = ["start", "fail"]
+
+    def lookups(self, request, model_admin):
+        return zip(self.kinds, self.kinds)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            queryset = queryset.filter(kind=self.value())
+        return queryset
+
+
 # Adapted from: https://djangosnippets.org/snippets/2593/
 class LargeTablePaginator(Paginator):
     """ Overrides the count method to get an estimate instead of actual count
@@ -129,7 +143,7 @@ class PingsAdmin(admin.ModelAdmin):
     list_display = ("id", "created", "owner", "email", "scheme", "method",
                     "ua")
     list_filter = ("created", SchemeListFilter, MethodListFilter,
-                   "start", "fail")
+                   KindListFilter)
 
     paginator = LargeTablePaginator
 

@@ -230,13 +230,8 @@ class Check(models.Model):
 
         ping = Ping(owner=self)
         ping.n = self.n_pings
-
-        if action == "start":
-            ping.start = True
-            ping.kind = "start"
-        elif action == "fail":
-            ping.fail = True
-            ping.kind = "fail"
+        if action in ("start", "fail"):
+            ping.kind = action
 
         ping.remote_addr = remote_addr
         ping.scheme = scheme

@@ -139,7 +139,6 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(self.check.alert_after, None)
 
         ping = Ping.objects.get()
-        self.assertTrue(ping.fail)
         self.assertEqual(ping.kind, "fail")
 
         flip = Flip.objects.get()
@@ -159,7 +158,6 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(self.check.last_ping, last_ping)
 
         ping = Ping.objects.get()
-        self.assertTrue(ping.start)
         self.assertEqual(ping.kind, "start")
 
     def test_start_does_not_change_status_of_paused_check(self):
