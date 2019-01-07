@@ -7,3 +7,4 @@ hc/local_settings.py
 static-collected
 
 .python-version
+.idea
