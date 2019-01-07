@@ -55,7 +55,9 @@ in development environment.
 
 * healthchecks is configured to use a SQLite database by default. To use
   PostgreSQL or MySQL database, create and edit `hc/local_settings.py` file.
-  There is a template you can copy and edit as needed:
+  There is a template you can copy and edit as needed(make sure you've already got 
+  PostgreSQL or MySQL prepared--database and user creation, of course including 
+  essential privileges):
 
         $ cd ~/webapps/healthchecks
         $ cp hc/local_settings.py.example hc/local_settings.py
