@@ -9,7 +9,7 @@ class ListChannelsTestCase(BaseTestCase):
     def setUp(self):
         super(ListChannelsTestCase, self).setUp()
 
-        self.c1 = Channel(user=self.alice)
+        self.c1 = Channel(user=self.alice, project=self.project)
         self.c1.kind = "email"
         self.c1.name = "Email to Alice"
         self.c1.save()
@@ -36,7 +36,8 @@ class ListChannelsTestCase(BaseTestCase):
         self.assertIn("GET", r["Access-Control-Allow-Methods"])
 
     def test_it_shows_only_users_channels(self):
-        Channel.objects.create(user=self.bob, kind="email", name="Bob")
+        Channel.objects.create(user=self.bob, kind="email", name="Bob",
+                               project=self.bobs_project)
 
         r = self.get()
         data = r.json()
@@ -53,8 +54,8 @@ class ListChannelsTestCase(BaseTestCase):
         self.assertContains(r, "Email to Alice")
 
     def test_readonly_key_works(self):
-        self.profile.api_key_readonly = "R" * 32
-        self.profile.save()
+        self.project.api_key_readonly = "R" * 32
+        self.project.save()
 
         r = self.client.get("/api/v1/channels/", HTTP_X_API_KEY="R" * 32)
         self.assertEqual(r.status_code, 200)

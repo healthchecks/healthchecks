@@ -87,7 +87,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.channel_set.get(), channel)
 
     def test_it_supports_unique(self):
-        existing = Check(user=self.alice, name="Foo")
+        existing = Check(user=self.alice, name="Foo", project=self.project)
         existing.save()
 
         r = self.post({

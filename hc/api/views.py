@@ -37,10 +37,10 @@ def ping(request, code, action="success"):
     return response
 
 
-def _lookup(user, spec):
+def _lookup(project, spec):
     unique_fields = spec.get("unique", [])
     if unique_fields:
-        existing_checks = Check.objects.filter(user=user)
+        existing_checks = Check.objects.filter(project=project)
         if "name" in unique_fields:
             existing_checks = existing_checks.filter(name=spec.get("name"))
         if "tags" in unique_fields:
@@ -105,7 +105,7 @@ def _update(check, spec):
 @validate_json()
 @authorize_read
 def get_checks(request):
-    q = Check.objects.filter(user=request.user)
+    q = Check.objects.filter(project=request.project)
     q = q.prefetch_related("channel_set")
 
     tags = set(request.GET.getlist("tag"))
@@ -126,13 +126,14 @@ def get_checks(request):
 @authorize
 def create_check(request):
     created = False
-    check = _lookup(request.user, request.json)
+    check = _lookup(request.project, request.json)
     if check is None:
-        num_checks = Check.objects.filter(user=request.user).count()
-        if num_checks >= request.user.profile.check_limit:
+        user = request.project.owner
+        num_checks = Check.objects.filter(project__owner=user).count()
+        if num_checks >= user.profile.check_limit:
             return HttpResponseForbidden()
 
-        check = Check(user=request.user, project=request.project)
+        check = Check(user=request.project.owner, project=request.project)
         created = True
 
     _update(check, request.json)
@@ -152,7 +153,7 @@ def checks(request):
 @validate_json()
 @authorize_read
 def channels(request):
-    q = Channel.objects.filter(user=request.user)
+    q = Channel.objects.filter(project=request.project)
     channels = [ch.to_dict() for ch in q]
     return JsonResponse({"channels": channels})
 
@@ -163,7 +164,7 @@ def channels(request):
 @authorize
 def update(request, code):
     check = get_object_or_404(Check, code=code)
-    if check.user != request.user:
+    if check.project != request.project:
         return HttpResponseForbidden()
 
     if request.method == "POST":
@@ -185,7 +186,7 @@ def update(request, code):
 @authorize
 def pause(request, code):
     check = get_object_or_404(Check, code=code)
-    if check.user != request.user:
+    if check.project != request.project:
         return HttpResponseForbidden()
 
     check.status = "paused"
@@ -202,7 +203,7 @@ def badge(request, username, signature, tag, format="svg"):
         return HttpResponseNotFound()
 
     status = "up"
-    q = Check.objects.filter(user__username=username)
+    q = Check.objects.filter(project__owner__username=username)
     if tag != "*":
         q = q.filter(tags__contains=tag)
         label = tag

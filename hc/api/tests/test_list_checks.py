@@ -14,7 +14,7 @@ class ListChecksTestCase(BaseTestCase):
 
         self.now = now().replace(microsecond=0)
 
-        self.a1 = Check(user=self.alice, name="Alice 1")
+        self.a1 = Check(user=self.alice, name="Alice 1", project=self.project)
         self.a1.timeout = td(seconds=3600)
         self.a1.grace = td(seconds=900)
         self.a1.n_pings = 0
@@ -22,7 +22,7 @@ class ListChecksTestCase(BaseTestCase):
         self.a1.tags = "a1-tag a1-additional-tag"
         self.a1.save()
 
-        self.a2 = Check(user=self.alice, name="Alice 2")
+        self.a2 = Check(user=self.alice, name="Alice 2", project=self.project)
         self.a2.timeout = td(seconds=86400)
         self.a2.grace = td(seconds=3600)
         self.a2.last_ping = self.now
@@ -79,7 +79,8 @@ class ListChecksTestCase(BaseTestCase):
         self.assertIn("GET", r["Access-Control-Allow-Methods"])
 
     def test_it_shows_only_users_checks(self):
-        bobs_check = Check(user=self.bob, name="Bob 1")
+        bobs_check = Check(user=self.bob, name="Bob 1",
+                           project=self.bobs_project)
         bobs_check.save()
 
         r = self.get()
@@ -139,8 +140,8 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(len(doc["checks"]), 0)
 
     def test_readonly_key_works(self):
-        self.profile.api_key_readonly = "R" * 32
-        self.profile.save()
+        self.project.api_key_readonly = "R" * 32
+        self.project.save()
 
         r = self.client.get("/api/v1/checks/", HTTP_X_API_KEY="R" * 32)
         self.assertEqual(r.status_code, 200)

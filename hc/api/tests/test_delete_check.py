@@ -6,7 +6,7 @@ class DeleteCheckTestCase(BaseTestCase):
 
     def setUp(self):
         super(DeleteCheckTestCase, self).setUp()
-        self.check = Check(user=self.alice)
+        self.check = Check(user=self.alice, project=self.project)
         self.check.save()
 
     def test_it_works(self):

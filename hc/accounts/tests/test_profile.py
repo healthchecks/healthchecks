@@ -193,7 +193,7 @@ class ProfileTestCase(BaseTestCase):
         # to user's default team.
         self.bobs_profile.refresh_from_db()
         self.assertEqual(self.bobs_profile.current_team, self.bobs_profile)
-        self.assertEqual(self.bobs_profile.current_project, None)
+        self.assertEqual(self.bobs_profile.current_project, self.bobs_project)
 
     def test_it_sends_change_email_link(self):
         self.client.login(username="alice@example.org", password="password")

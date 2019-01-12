@@ -27,6 +27,9 @@ class BaseTestCase(TestCase):
         self.bob.set_password("password")
         self.bob.save()
 
+        self.bobs_project = Project(owner=self.bob)
+        self.bobs_project.save()
+
         self.bobs_profile = Profile(user=self.bob)
         self.bobs_profile.current_team = self.profile
         self.bobs_profile.current_project = self.project

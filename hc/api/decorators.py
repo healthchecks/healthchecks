@@ -4,6 +4,7 @@ from functools import wraps
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
+from hc.accounts.models import Project
 from hc.lib.jsonschema import ValidationError, validate
 
 
@@ -23,9 +24,8 @@ def authorize(f):
             return error("missing api key", 401)
 
         try:
-            request.user = User.objects.get(profile__api_key=api_key)
-            request.project = request.user.project_set.first()
-        except User.DoesNotExist:
+            request.project = Project.objects.get(api_key=api_key)
+        except Project.DoesNotExist:
             return error("wrong api key", 401)
 
         return f(request, *args, **kwds)
@@ -43,12 +43,11 @@ def authorize_read(f):
         if len(api_key) != 32:
             return error("missing api key", 401)
 
-        write_key_match = Q(profile__api_key=api_key)
-        read_key_match = Q(profile__api_key_readonly=api_key)
+        write_key_match = Q(api_key=api_key)
+        read_key_match = Q(api_key_readonly=api_key)
         try:
-            request.user = User.objects.get(write_key_match | read_key_match)
-            request.project = request.user.project_set.first()
-        except User.DoesNotExist:
+            request.project = Project.objects.get(write_key_match | read_key_match)
+        except Project.DoesNotExist:
             return error("wrong api key", 401)
 
         return f(request, *args, **kwds)
