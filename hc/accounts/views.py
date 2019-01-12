@@ -50,6 +50,7 @@ def _make_user(email):
     user.save()
 
     project = Project(owner=user)
+    project.badge_key = user.username
     project.save()
 
     # Ensure a profile gets created

@@ -26,6 +26,7 @@ class SignupTestCase(TestCase):
         # A project should have been created
         project = Project.objects.get()
         self.assertEqual(project.owner, user)
+        self.assertEqual(project.badge_key, user.username)
 
         # And check should be associated with the new user
         check = Check.objects.get()
