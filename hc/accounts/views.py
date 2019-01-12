@@ -21,7 +21,7 @@ from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                ReportSettingsForm, SetPasswordForm,
                                TeamNameForm, AvailableEmailForm,
                                ExistingEmailForm)
-from hc.accounts.models import Profile, Member
+from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check
 from hc.lib.badges import get_badge_url
 from hc.payments.models import Subscription
@@ -49,14 +49,19 @@ def _make_user(email):
     user.set_unusable_password()
     user.save()
 
-    # Ensure a profile gets created
-    Profile.objects.for_user(user)
+    project = Project(owner=user)
+    project.save()
 
-    check = Check(user=user)
+    # Ensure a profile gets created
+    profile = Profile.objects.for_user(user)
+    profile.current_project = project
+    profile.save()
+
+    check = Check(user=user, project=project)
     check.name = "My First Check"
     check.save()
 
-    channel = Channel(user=user)
+    channel = Channel(user=user, project=project)
     channel.kind = "email"
     channel.value = email
     channel.email_verified = True
@@ -72,7 +77,10 @@ def _ensure_own_team(request):
 
     if request.team != request.profile:
         request.team = request.profile
+        request.project = request.user.project_set.first()
+
         request.profile.current_team = request.profile
+        request.profile.current_project = request.project
         request.profile.save()
 
 
@@ -200,6 +208,12 @@ def profile(request):
             return redirect("hc-link-sent")
         elif "create_api_keys" in request.POST:
             profile.set_api_keys()
+
+            for project in request.user.project_set.all():
+                project.api_key = profile.api_key
+                project.api_key_readonly = profile.api_key_readonly
+                project.save()
+
             ctx["show_api_keys"] = True
             ctx["api_keys_created"] = True
             ctx["api_status"] = "success"
@@ -208,6 +222,12 @@ def profile(request):
             profile.api_key = ""
             profile.api_key_readonly = ""
             profile.save()
+
+            for project in request.user.project_set.all():
+                project.api_key = ""
+                project.api_key_readonly = ""
+                project.save()
+
             ctx["api_keys_revoked"] = True
             ctx["api_status"] = "info"
         elif "show_api_keys" in request.POST:
@@ -236,6 +256,7 @@ def profile(request):
                 email = form.cleaned_data["email"]
                 farewell_user = User.objects.get(email=email)
                 farewell_user.profile.current_team = None
+                farewell_user.profile.current_project = None
                 farewell_user.profile.save()
 
                 Member.objects.filter(team=profile,
@@ -248,6 +269,11 @@ def profile(request):
             if form.is_valid():
                 profile.team_name = form.cleaned_data["team_name"]
                 profile.save()
+
+                for project in request.user.project_set.all():
+                    project.name = form.cleaned_data["team_name"]
+                    project.save()
+
                 ctx["team_name_updated"] = True
                 ctx["team_status"] = "success"
 
@@ -427,6 +453,7 @@ def switch_team(request, target_username):
         return HttpResponseForbidden()
 
     request.profile.current_team = target_team
+    request.profile.current_project = target_team.user.project_set.first()
     request.profile.save()
 
     return redirect("hc-checks")

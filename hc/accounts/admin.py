@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from hc.accounts.models import Profile
+from hc.accounts.models import Profile, Project
 
 
 class Fieldset:
@@ -83,6 +83,15 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def email(self, obj):
         return obj.user.email
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_select_related = ("owner", )
+    list_display = ("id", "name", "email")
+
+    def email(self, obj):
+        return obj.owner.email
 
 
 class HcUserAdmin(UserAdmin):

@@ -1,6 +1,7 @@
 from base64 import urlsafe_b64encode
-import os
 from datetime import timedelta
+import os
+import uuid
 
 from django.conf import settings
 from django.contrib.auth.hashers import check_password, make_password
@@ -54,6 +55,7 @@ class Profile(models.Model):
     api_key = models.CharField(max_length=128, blank=True)
     api_key_readonly = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", models.SET_NULL, null=True)
+    current_project = models.ForeignKey("Project", models.SET_NULL, null=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
     sms_limit = models.IntegerField(default=0)
     sms_sent = models.IntegerField(default=0)
@@ -185,8 +187,9 @@ class Profile(models.Model):
         return self.member_set.count() < self.team_limit
 
     def invite(self, user):
-        member = Member(team=self, user=user)
-        member.save()
+        for project in self.user.project_set.all():
+            member = Member(team=self, user=user, project=project)
+            member.save()
 
         # Switch the invited user over to the new team so they
         # notice the new team on next visit:
@@ -231,6 +234,15 @@ class Profile(models.Model):
         q.update(next_nag_date=timezone.now() + models.F("nag_period"))
 
 
+class Project(models.Model):
+    code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=200, blank=True)
+    owner = models.ForeignKey(User, models.CASCADE)
+    api_key = models.CharField(max_length=128, blank=True)
+    api_key_readonly = models.CharField(max_length=128, blank=True)
+
+
 class Member(models.Model):
     team = models.ForeignKey(Profile, models.CASCADE)
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
+    project = models.ForeignKey(Project, models.CASCADE, null=True)

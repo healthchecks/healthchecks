@@ -22,6 +22,7 @@ class AddSlackTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.kind, "slack")
         self.assertEqual(c.value, "http://example.org")
+        self.assertEqual(c.project, self.project)
 
     @override_settings(SLACK_CLIENT_ID=None)
     def test_it_rejects_bad_url(self):

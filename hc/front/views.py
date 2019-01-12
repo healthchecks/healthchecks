@@ -249,7 +249,7 @@ def add_check(request):
     if num_checks >= request.team.check_limit:
         return HttpResponseBadRequest()
 
-    check = Check(user=request.team.user)
+    check = Check(user=request.team.user, project=request.project)
     check.save()
 
     check.assign_all_channels()
@@ -589,6 +589,7 @@ def add_email(request):
         form = AddEmailForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="email")
+            channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -608,6 +609,7 @@ def add_webhook(request):
         form = AddWebhookForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="webhook")
+            channel.project = request.project
             channel.value = form.get_value()
             channel.save()
 
@@ -658,9 +660,8 @@ def add_pd(request, state=None):
             messages.warning(request, "PagerDuty setup was cancelled")
             return redirect("hc-channels")
 
-        channel = Channel()
+        channel = Channel(kind="pd", project=request.project)
         channel.user = request.team.user
-        channel.kind = "pd"
         channel.value = json.dumps({
             "service_key": request.GET.get("service_key"),
             "account": request.GET.get("account")
@@ -687,6 +688,7 @@ def add_pagertree(request):
         form = AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="pagertree")
+            channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -707,6 +709,7 @@ def add_slack(request):
         form = AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="slack")
+            channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -741,9 +744,8 @@ def add_slack_btn(request):
 
     doc = result.json()
     if doc.get("ok"):
-        channel = Channel()
+        channel = Channel(kind="slack", project=request.project)
         channel.user = request.team.user
-        channel.kind = "slack"
         channel.value = result.text
         channel.save()
         channel.assign_all_checks()
@@ -765,7 +767,7 @@ def add_hipchat(request):
             messages.warning(request, "Something went wrong!")
             return redirect("hc-channels")
 
-        channel = Channel(kind="hipchat")
+        channel = Channel(kind="hipchat", project=request.project)
         channel.user = request.team.user
         channel.value = response.text
         channel.save()
@@ -810,7 +812,7 @@ def add_pushbullet(request):
 
         doc = result.json()
         if "access_token" in doc:
-            channel = Channel(kind="pushbullet")
+            channel = Channel(kind="pushbullet", project=request.project)
             channel.user = request.team.user
             channel.value = doc["access_token"]
             channel.save()
@@ -858,7 +860,7 @@ def add_discord(request):
 
         doc = result.json()
         if "access_token" in doc:
-            channel = Channel(kind="discord")
+            channel = Channel(kind="discord", project=request.project)
             channel.user = request.team.user
             channel.value = result.text
             channel.save()
@@ -933,6 +935,7 @@ def add_pushover(request):
 
         # Subscription
         channel = Channel(user=request.team.user, kind="po")
+        channel.project = request.project
         channel.value = "%s|%s|%s" % (key, prio, prio_up)
         channel.save()
         channel.assign_all_checks()
@@ -955,6 +958,7 @@ def add_opsgenie(request):
         form = AddOpsGenieForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="opsgenie")
+            channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -973,6 +977,7 @@ def add_victorops(request):
         form = AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="victorops")
+            channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -1021,6 +1026,7 @@ def add_telegram(request):
 
     if request.method == "POST":
         channel = Channel(user=request.team.user, kind="telegram")
+        channel.project = request.project
         channel.value = json.dumps({
             "id": chat_id,
             "type": chat_type,
@@ -1051,6 +1057,7 @@ def add_sms(request):
         form = AddSmsForm(request.POST)
         if form.is_valid():
             channel = Channel(user=request.team.user, kind="sms")
+            channel.project = request.project
             channel.name = form.cleaned_data["label"]
             channel.value = json.dumps({
                 "value": form.cleaned_data["value"]

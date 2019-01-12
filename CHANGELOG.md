@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 - Database schema: add Ping.kind field
 - Database schema: remove Ping.start and Ping.fail fields
 - Add "Email Settings..." dialog and "Subject Must Contain" setting
+- Database schema: add the Project model
+
 
 
 ## 1.4.0 - 2018-12-25

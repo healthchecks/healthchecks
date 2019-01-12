@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from hc.accounts.models import Member, Profile
+from hc.accounts.models import Member, Profile, Project
 
 
 class BaseTestCase(TestCase):
@@ -14,8 +14,12 @@ class BaseTestCase(TestCase):
         self.alice.set_password("password")
         self.alice.save()
 
+        self.project = Project(owner=self.alice, api_key="X" * 32)
+        self.project.save()
+
         self.profile = Profile(user=self.alice, api_key="X" * 32)
         self.profile.sms_limit = 50
+        self.profile.current_project = self.project
         self.profile.save()
 
         # Bob is on Alice's team and should have access to her stuff
@@ -25,9 +29,11 @@ class BaseTestCase(TestCase):
 
         self.bobs_profile = Profile(user=self.bob)
         self.bobs_profile.current_team = self.profile
+        self.bobs_profile.current_project = self.project
         self.bobs_profile.save()
 
-        Member.objects.create(team=self.profile, user=self.bob)
+        Member.objects.create(team=self.profile, user=self.bob,
+                              project=self.project)
 
         # Charlie should have no access to Alice's stuff
         self.charlie = User(username="charlie", email="charlie@example.org")

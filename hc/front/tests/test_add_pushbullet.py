@@ -45,6 +45,7 @@ class AddPushbulletTestCase(BaseTestCase):
 
         ch = Channel.objects.get()
         self.assertEqual(ch.value, "test-token")
+        self.assertEqual(ch.project, self.project)
 
         # Session should now be clean
         self.assertFalse("pushbullet" in self.client.session)

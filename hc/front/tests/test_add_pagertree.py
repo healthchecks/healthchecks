@@ -20,6 +20,7 @@ class AddPagerTreeTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.kind, "pagertree")
         self.assertEqual(c.value, "http://example.org")
+        self.assertEqual(c.project, self.project)
 
     def test_it_rejects_bad_url(self):
         form = {"value": "not an URL"}

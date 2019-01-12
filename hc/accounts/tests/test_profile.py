@@ -39,6 +39,9 @@ class ProfileTestCase(BaseTestCase):
         self.assertTrue(len(api_key) > 10)
         self.assertFalse("b'" in api_key)
 
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.api_key, api_key)
+
     def test_it_revokes_api_key(self):
         self.profile.api_key_readonly = "R" * 32
         self.profile.save()
@@ -52,6 +55,9 @@ class ProfileTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.api_key, "")
         self.assertEqual(self.profile.api_key_readonly, "")
+
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.api_key, "")
 
     def test_it_sends_report(self):
         check = Check(name="Test Check", user=self.alice)
@@ -126,12 +132,16 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 200)
 
-        member_emails = set()
-        for member in self.profile.member_set.all():
-            member_emails.add(member.user.email)
+        members = self.profile.member_set.all()
+        self.assertEqual(members.count(), 2)
 
-        self.assertEqual(len(member_emails), 2)
-        self.assertTrue("frank@example.org" in member_emails)
+        frank_found = False
+        for member in members.all():
+            self.assertEqual(member.project, self.project)
+            if member.user.email == "frank@example.org":
+                frank_found = True
+
+        self.assertTrue(frank_found)
 
         # And an email should have been sent
         subj = ('You have been invited to join'
@@ -159,6 +169,7 @@ class ProfileTestCase(BaseTestCase):
 
         self.bobs_profile.refresh_from_db()
         self.assertEqual(self.bobs_profile.current_team, None)
+        self.assertEqual(self.bobs_profile.current_project, None)
 
     def test_it_sets_team_name(self):
         self.client.login(username="alice@example.org", password="password")
@@ -170,6 +181,9 @@ class ProfileTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.team_name, "Alpha Team")
 
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.name, "Alpha Team")
+
     def test_it_switches_to_own_team(self):
         self.client.login(username="bob@example.org", password="password")
 
@@ -179,6 +193,7 @@ class ProfileTestCase(BaseTestCase):
         # to user's default team.
         self.bobs_profile.refresh_from_db()
         self.assertEqual(self.bobs_profile.current_team, self.bobs_profile)
+        self.assertEqual(self.bobs_profile.current_project, None)
 
     def test_it_sends_change_email_link(self):
         self.client.login(username="alice@example.org", password="password")

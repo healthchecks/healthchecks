@@ -47,6 +47,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.tags, "bar,baz")
         self.assertEqual(check.timeout.total_seconds(), 3600)
         self.assertEqual(check.grace.total_seconds(), 60)
+        self.assertEqual(check.project, self.project)
 
     def test_it_handles_options(self):
         r = self.client.options(self.URL)

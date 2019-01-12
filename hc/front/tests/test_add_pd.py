@@ -25,6 +25,7 @@ class AddPdTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.kind, "pd")
         self.assertEqual(c.pd_service_key, "123")
+        self.assertEqual(c.project, self.project)
 
     def test_it_validates_code(self):
         session = self.client.session

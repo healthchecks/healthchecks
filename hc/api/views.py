@@ -132,7 +132,7 @@ def create_check(request):
         if num_checks >= request.user.profile.check_limit:
             return HttpResponseForbidden()
 
-        check = Check(user=request.user)
+        check = Check(user=request.user, project=request.project)
         created = True
 
     _update(check, request.json)

@@ -20,6 +20,7 @@ class AddOpsGenieTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.kind, "opsgenie")
         self.assertEqual(c.value, "123456")
+        self.assertEqual(c.project, self.project)
 
     def test_it_trims_whitespace(self):
         form = {"value": "   123456   "}

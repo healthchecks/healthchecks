@@ -16,4 +16,8 @@ class TeamAccessMiddleware(object):
         request.profile = Profile.objects.for_user(request.user)
         request.team = request.profile.team()
 
+        request.project = request.profile.current_project
+        if request.project is None:
+            request.project = request.team.user.project_set.first()
+
         return self.get_response(request)

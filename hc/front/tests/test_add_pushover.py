@@ -43,9 +43,9 @@ class AddPushoverTestCase(BaseTestCase):
         r = self.client.get("/integrations/add_pushover/?%s" % params)
         self.assertEqual(r.status_code, 302)
 
-        channels = list(Channel.objects.all())
-        assert len(channels) == 1
-        assert channels[0].value == "a|0|-1"
+        channel = Channel.objects.get()
+        self.assertEqual(channel.value, "a|0|-1")
+        self.assertEqual(channel.project, self.project)
 
     def test_it_validates_priority(self):
         self.client.login(username="alice@example.org", password="password")

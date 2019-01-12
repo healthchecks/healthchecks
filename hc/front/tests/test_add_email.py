@@ -21,6 +21,7 @@ class AddPdTestCase(BaseTestCase):
         self.assertEqual(c.kind, "email")
         self.assertEqual(c.value, "alice@example.org")
         self.assertFalse(c.email_verified)
+        self.assertEqual(c.project, self.project)
 
     def test_team_access_works(self):
         form = {"value": "bob@example.org"}

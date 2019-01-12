@@ -32,6 +32,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.kind, "sms")
         self.assertEqual(c.sms_number, "+1234567890")
         self.assertEqual(c.name, "My Phone")
+        self.assertEqual(c.project, self.project)
 
     def test_it_rejects_bad_number(self):
         form = {"value": "not a phone number address"}

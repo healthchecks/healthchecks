@@ -51,6 +51,7 @@ class AddDiscordTestCase(BaseTestCase):
 
         ch = Channel.objects.get()
         self.assertEqual(ch.discord_webhook_url, "foo")
+        self.assertEqual(ch.project, self.project)
 
         # Session should now be clean
         self.assertFalse("discord" in self.client.session)

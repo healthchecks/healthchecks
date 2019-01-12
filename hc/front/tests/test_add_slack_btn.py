@@ -54,6 +54,7 @@ class AddSlackBtnTestCase(BaseTestCase):
         self.assertEqual(ch.slack_team, "foo")
         self.assertEqual(ch.slack_channel, "bar")
         self.assertEqual(ch.slack_webhook_url, "http://example.org")
+        self.assertEqual(ch.project, self.project)
 
         # Session should now be clean
         self.assertFalse("slack" in self.client.session)

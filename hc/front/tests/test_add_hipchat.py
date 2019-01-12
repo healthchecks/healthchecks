@@ -34,3 +34,4 @@ class AddHipChatTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.kind, "hipchat")
         self.assertEqual(c.value, "{}")
+        self.assertEqual(c.project, self.project)

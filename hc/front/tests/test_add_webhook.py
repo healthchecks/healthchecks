@@ -19,6 +19,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.value, '{"headers": {}, "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}')
+        self.assertEqual(c.project, self.project)
 
     def test_it_adds_webhook_using_team_access(self):
         form = {"url_down": "http://foo.com", "url_up": "https://bar.com"}

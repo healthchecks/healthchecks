@@ -9,7 +9,19 @@ class AddCheckTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
         self.assertRedirects(r, "/checks/")
-        assert Check.objects.count() == 1
+        check = Check.objects.get()
+        self.assertEqual(check.project, self.project)
+
+    def test_it_handles_unset_current_project(self):
+        self.profile.current_project = None
+        self.profile.save()
+
+        url = "/checks/add/"
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(url)
+        self.assertRedirects(r, "/checks/")
+        check = Check.objects.get()
+        self.assertEqual(check.project, self.project)
 
     def test_team_access_works(self):
         url = "/checks/add/"

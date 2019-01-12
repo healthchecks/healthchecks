@@ -27,6 +27,7 @@ class CloseAccountTestCase(BaseTestCase):
         # Bob's current team should now be None
         self.bobs_profile.refresh_from_db()
         self.assertIsNone(self.bobs_profile.current_team)
+        self.assertIsNone(self.bobs_profile.current_project)
 
         # Check should be gone
         self.assertFalse(Check.objects.exists())

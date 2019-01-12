@@ -5,6 +5,9 @@ from hc.api.models import Check
 class SwitchTeamTestCase(BaseTestCase):
 
     def test_it_switches(self):
+        self.bobs_profile.current_project = None
+        self.bobs_profile.save()
+
         c = Check(user=self.alice, name="This belongs to Alice")
         c.save()
 
@@ -14,6 +17,9 @@ class SwitchTeamTestCase(BaseTestCase):
         r = self.client.get(url, follow=True)
 
         self.assertContains(r, "This belongs to Alice")
+
+        self.bobs_profile.refresh_from_db()
+        self.assertEqual(self.bobs_profile.current_project, self.project)
 
     def test_it_checks_team_membership(self):
         self.client.login(username="charlie@example.org", password="password")

@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
 import requests
@@ -67,6 +68,7 @@ class Check(models.Model):
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     desc = models.TextField(blank=True)
     user = models.ForeignKey(User, models.CASCADE)
+    project = models.ForeignKey(Project, models.CASCADE, null=True)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=10, default="simple",
                             choices=CHECK_KINDS)
@@ -262,6 +264,7 @@ class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     user = models.ForeignKey(User, models.CASCADE)
+    project = models.ForeignKey(Project, models.CASCADE, null=True,)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
     value = models.TextField(blank=True)

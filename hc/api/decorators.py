@@ -24,6 +24,7 @@ def authorize(f):
 
         try:
             request.user = User.objects.get(profile__api_key=api_key)
+            request.project = request.user.project_set.first()
         except User.DoesNotExist:
             return error("wrong api key", 401)
 
@@ -46,6 +47,7 @@ def authorize_read(f):
         read_key_match = Q(profile__api_key_readonly=api_key)
         try:
             request.user = User.objects.get(write_key_match | read_key_match)
+            request.project = request.user.project_set.first()
         except User.DoesNotExist:
             return error("wrong api key", 401)
 

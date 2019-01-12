@@ -1,5 +1,3 @@
-import json
-
 from django.core import signing
 from hc.api.models import Channel
 from hc.test import BaseTestCase
@@ -33,6 +31,7 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(c.telegram_id, 123)
         self.assertEqual(c.telegram_type, "group")
         self.assertEqual(c.telegram_name, "My Group")
+        self.assertEqual(c.project, self.project)
 
     @patch("hc.api.transports.requests.request")
     def test_it_sends_invite(self, mock_get):
