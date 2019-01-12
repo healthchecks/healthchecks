@@ -17,16 +17,16 @@ urlpatterns = [
     path('api/v1/channels/', views.channels),
 
 
-    path('badge/<slug:username>/<slug:signature>/<slug:tag>.svg', views.badge,
+    path('badge/<slug:badge_key>/<slug:signature>/<slug:tag>.svg', views.badge,
          name="hc-badge"),
 
-    path('badge/<slug:username>/<slug:signature>.svg', views.badge,
+    path('badge/<slug:badge_key>/<slug:signature>.svg', views.badge,
          {"tag": "*"}, name="hc-badge-all"),
 
-    path('badge/<slug:username>/<slug:signature>/<slug:tag>.json', views.badge,
+    path('badge/<slug:badge_key>/<slug:signature>/<slug:tag>.json', views.badge,
          {"format": "json"}, name="hc-badge-json"),
 
-    path('badge/<slug:username>/<slug:signature>.json', views.badge,
+    path('badge/<slug:badge_key>/<slug:signature>.json', views.badge,
          {"format": "json", "tag": "*"}, name="hc-badge-json-all"),
 
     path('api/v1/status/', views.status),

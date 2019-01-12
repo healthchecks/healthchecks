@@ -15,13 +15,13 @@ class BadgeTestCase(BaseTestCase):
         self.check = Check.objects.create(user=self.alice, project=self.project,
                                           tags="foo bar")
 
-        sig = base64_hmac(str(self.alice.username), "foo", settings.SECRET_KEY)
+        sig = base64_hmac(str(self.project.badge_key), "foo", settings.SECRET_KEY)
         sig = sig[:8]
-        self.svg_url = "/badge/%s/%s/foo.svg" % (self.alice.username, sig)
-        self.json_url = "/badge/%s/%s/foo.json" % (self.alice.username, sig)
+        self.svg_url = "/badge/%s/%s/foo.svg" % (self.project.badge_key, sig)
+        self.json_url = "/badge/%s/%s/foo.json" % (self.project.badge_key, sig)
 
     def test_it_rejects_bad_signature(self):
-        r = self.client.get("/badge/%s/12345678/foo.svg" % self.alice.username)
+        r = self.client.get("/badge/%s/12345678/foo.svg" % self.project.badge_key)
         assert r.status_code == 404
 
     def test_it_returns_svg(self):
@@ -30,11 +30,7 @@ class BadgeTestCase(BaseTestCase):
         self.assertContains(r, "#4c1")
 
     def test_it_handles_options(self):
-        sig = base64_hmac(str(self.alice.username), "foo", settings.SECRET_KEY)
-        sig = sig[:8]
-        url = "/badge/%s/%s/foo.svg" % (self.alice.username, sig)
-
-        r = self.client.options(url)
+        r = self.client.options(self.svg_url)
         self.assertEqual(r.status_code, 204)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 

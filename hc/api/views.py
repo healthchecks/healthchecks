@@ -198,12 +198,12 @@ def pause(request, code):
 
 @never_cache
 @cors("GET")
-def badge(request, username, signature, tag, format="svg"):
-    if not check_signature(username, tag, signature):
+def badge(request, badge_key, signature, tag, format="svg"):
+    if not check_signature(badge_key, tag, signature):
         return HttpResponseNotFound()
 
     status = "up"
-    q = Check.objects.filter(project__owner__username=username)
+    q = Check.objects.filter(project__badge_key=badge_key)
     if tag != "*":
         q = q.filter(tags__contains=tag)
         label = tag
