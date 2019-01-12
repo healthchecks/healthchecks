@@ -240,7 +240,7 @@ class Project(models.Model):
     owner = models.ForeignKey(User, models.CASCADE)
     api_key = models.CharField(max_length=128, blank=True)
     api_key_readonly = models.CharField(max_length=128, blank=True)
-    badge_key = models.CharField(max_length=150, blank=True, null=True)
+    badge_key = models.CharField(max_length=150, unique=True)
 
 
 class Member(models.Model):
