@@ -1,24 +1,16 @@
-from django.contrib.auth.models import User
-from django.core import mail
-from django.test import TestCase
-from hc.accounts.models import Profile, Project
-from hc.api.models import Check
 from django.conf import settings
+from django.core import mail
+from hc.api.models import Check
+from hc.test import BaseTestCase
 
 
-class LoginTestCase(TestCase):
+class LoginTestCase(BaseTestCase):
 
     def test_it_sends_link(self):
-        alice = User(username="alice", email="alice@example.org")
-        alice.save()
-
         form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         self.assertRedirects(r, "/accounts/login_link_sent/")
-
-        # Alice should be the only existing user
-        self.assertEqual(User.objects.count(), 1)
 
         # And email should have been sent
         self.assertEqual(len(mail.outbox), 1)
@@ -26,9 +18,6 @@ class LoginTestCase(TestCase):
         self.assertEqual(mail.outbox[0].subject, subject)
 
     def test_it_sends_link_with_next(self):
-        alice = User(username="alice", email="alice@example.org")
-        alice.save()
-
         form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/?next=/integrations/add_slack/", form)
@@ -45,25 +34,15 @@ class LoginTestCase(TestCase):
         assert "bad_link" not in self.client.session
 
     def test_it_ignores_case(self):
-        alice = User(username="alice", email="alice@example.org")
-        alice.save()
-
         form = {"identity": "ALICE@EXAMPLE.ORG"}
 
         r = self.client.post("/accounts/login/", form)
         self.assertRedirects(r, "/accounts/login_link_sent/")
 
-        # There should be exactly one user:
-        self.assertEqual(User.objects.count(), 1)
-
-        profile = Profile.objects.for_user(alice)
-        self.assertIn("login", profile.token)
+        self.profile.refresh_from_db()
+        self.assertIn("login", self.profile.token)
 
     def test_it_handles_password(self):
-        alice = User(username="alice", email="alice@example.org")
-        alice.set_password("password")
-        alice.save()
-
         form = {
             "action": "login",
             "email": "alice@example.org",
@@ -74,12 +53,7 @@ class LoginTestCase(TestCase):
         self.assertRedirects(r, "/checks/")
 
     def test_it_handles_password_login_with_redirect(self):
-        alice = User(username="alice", email="alice@example.org")
-        alice.set_password("password")
-        alice.save()
-
-        project = Project.objects.create(owner=alice)
-        check = Check.objects.create(user=alice, project=project)
+        check = Check.objects.create(user=self.alice, project=self.project)
 
         form = {
             "action": "login",
@@ -97,10 +71,6 @@ class LoginTestCase(TestCase):
             self.assertRedirects(r, s)
 
     def test_it_handles_bad_next_parameter(self):
-        alice = User(username="alice", email="alice@example.org")
-        alice.set_password("password")
-        alice.save()
-
         form = {
             "action": "login",
             "email": "alice@example.org",
@@ -111,10 +81,6 @@ class LoginTestCase(TestCase):
         self.assertRedirects(r, "/checks/")
 
     def test_it_handles_wrong_password(self):
-        alice = User(username="alice", email="alice@example.org")
-        alice.set_password("password")
-        alice.save()
-
         form = {
             "action": "login",
             "email": "alice@example.org",
