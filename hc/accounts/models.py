@@ -246,4 +246,4 @@ class Project(models.Model):
 class Member(models.Model):
     team = models.ForeignKey(Profile, models.CASCADE)
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
-    project = models.ForeignKey(Project, models.CASCADE, null=True)
+    project = models.ForeignKey(Project, models.CASCADE)
