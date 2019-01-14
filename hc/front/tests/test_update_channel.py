@@ -1,3 +1,4 @@
+from hc.accounts.models import Project
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -6,10 +7,11 @@ class UpdateChannelTestCase(BaseTestCase):
 
     def setUp(self):
         super(UpdateChannelTestCase, self).setUp()
-        self.check = Check(user=self.alice)
+        self.check = Check(user=self.alice, project=self.project)
         self.check.save()
 
         self.channel = Channel(user=self.alice, kind="email")
+        self.channel.project = self.project
         self.channel.email = "alice@example.org"
         self.channel.save()
 
@@ -50,7 +52,9 @@ class UpdateChannelTestCase(BaseTestCase):
         assert r.status_code == 403
 
     def test_it_checks_check_user(self):
+        charlies_project = Project.objects.create(owner=self.charlie)
         charlies_channel = Channel(user=self.charlie, kind="email")
+        charlies_channel.project = charlies_project
         charlies_channel.email = "charlie@example.org"
         charlies_channel.save()
 

@@ -11,10 +11,13 @@ class ChannelModelTestCase(BaseTestCase):
     def test_it_refreshes_hipchat_access_token(self, mock_post):
         mock_post.return_value.json.return_value = {"expires_in": 100}
 
-        channel = Channel(kind="hipchat", user=self.alice, value=json.dumps({
+        value = json.dumps({
             "oauthId": "foo",
             "oauthSecret": "bar"
-        }))
+        })
+
+        channel = Channel(kind="hipchat", user=self.alice,
+                          project=self.project, value=value)
 
         channel.refresh_hipchat_access_token()
 

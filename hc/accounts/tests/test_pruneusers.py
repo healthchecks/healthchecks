@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.contrib.auth.models import User
 from django.utils import timezone
 from hc.accounts.management.commands.pruneusers import Command
+from hc.accounts.models import Project
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -15,7 +16,8 @@ class PruneUsersTestCase(BaseTestCase):
         self.charlie.save()
 
         # Charlie has one demo check
-        Check(user=self.charlie).save()
+        project =Project.objects.create(owner=self.charlie)
+        Check(user=self.charlie, project=project).save()
 
         Command().handle()
 

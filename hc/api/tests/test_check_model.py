@@ -155,7 +155,7 @@ class CheckModelTestCase(BaseTestCase):
         dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every round hour
-        check = Check(user=self.alice)
+        check = Check(user=self.alice, project=self.project)
         check.kind = "cron"
         check.schedule = "0 * * * *"
         check.status = "up"

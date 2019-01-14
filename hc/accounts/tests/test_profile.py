@@ -60,7 +60,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(self.project.api_key, "")
 
     def test_it_sends_report(self):
-        check = Check(name="Test Check", user=self.alice)
+        check = Check(name="Test Check", user=self.alice, project=self.project)
         check.last_ping = now()
         check.save()
 
@@ -75,7 +75,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertIn("Test Check", message.body)
 
     def test_it_skips_report_if_no_pings(self):
-        check = Check(name="Test Check", user=self.alice)
+        check = Check(name="Test Check", user=self.alice, project=self.project)
         check.save()
 
         sent = self.profile.send_report()
@@ -84,7 +84,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_skips_report_if_no_recent_pings(self):
-        check = Check(name="Test Check", user=self.alice)
+        check = Check(name="Test Check", user=self.alice, project=self.project)
         check.last_ping = now() - td(days=365)
         check.save()
 
@@ -94,7 +94,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_sends_nag(self):
-        check = Check(name="Test Check", user=self.alice)
+        check = Check(name="Test Check", user=self.alice, project=self.project)
         check.status = "down"
         check.last_ping = now()
         check.save()
@@ -113,7 +113,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertIn("Test Check", message.body)
 
     def test_it_skips_nag_if_none_down(self):
-        check = Check(name="Test Check", user=self.alice)
+        check = Check(name="Test Check", user=self.alice, project=self.project)
         check.last_ping = now()
         check.save()
 

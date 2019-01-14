@@ -30,7 +30,7 @@ class ListChecksTestCase(BaseTestCase):
         self.a2.tags = "a2-tag"
         self.a2.save()
 
-        self.c1 = Channel.objects.create(user=self.alice)
+        self.c1 = Channel.objects.create(user=self.alice, project=self.project)
         self.a1.channel_set.add(self.c1)
 
     def get(self):

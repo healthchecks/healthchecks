@@ -9,10 +9,11 @@ class BounceTestCase(BaseTestCase):
     def setUp(self):
         super(BounceTestCase, self).setUp()
 
-        self.check = Check(user=self.alice, status="up")
+        self.check = Check(user=self.alice, status="up", project=self.project)
         self.check.save()
 
-        self.channel = Channel(user=self.alice, kind="email")
+        self.channel = Channel(user=self.alice, kind="email",
+                               project=self.project)
         self.channel.value = "alice@example.org"
         self.channel.email_verified = True
         self.channel.save()

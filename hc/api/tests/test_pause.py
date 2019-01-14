@@ -36,7 +36,7 @@ class PauseTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 405)
 
     def test_it_validates_ownership(self):
-        check = Check(user=self.bob, status="up")
+        check = Check(user=self.bob, status="up", project=self.bobs_project)
         check.save()
 
         url = "/api/v1/checks/%s/pause" % check.code

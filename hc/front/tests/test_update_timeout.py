@@ -9,7 +9,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def setUp(self):
         super(UpdateTimeoutTestCase, self).setUp()
-        self.check = Check(user=self.alice, status="up")
+        self.check = Check(user=self.alice, status="up", project=self.project)
         self.check.last_ping = timezone.now()
         self.check.save()
 

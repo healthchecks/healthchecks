@@ -6,7 +6,7 @@ class LogTestCase(BaseTestCase):
 
     def setUp(self):
         super(LogTestCase, self).setUp()
-        self.check = Check(user=self.alice)
+        self.check = Check(user=self.alice, project=self.project)
         self.check.save()
 
         ping = Ping(owner=self.check)
@@ -55,7 +55,7 @@ class LogTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_shows_pushover_notifications(self):
-        ch = Channel(kind="po", user=self.alice)
+        ch = Channel(kind="po", user=self.alice, project=self.project)
         ch.save()
 
         Notification(owner=self.check, channel=ch, check_status="down").save()
@@ -68,6 +68,7 @@ class LogTestCase(BaseTestCase):
 
     def test_it_shows_webhook_notifications(self):
         ch = Channel(kind="webhook", user=self.alice, value="foo/$NAME")
+        ch.project = self.project
         ch.save()
 
         Notification(owner=self.check, channel=ch, check_status="down").save()

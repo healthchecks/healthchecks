@@ -1,3 +1,4 @@
+from hc.accounts.models import Project
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -6,10 +7,11 @@ class SwitchChannelTestCase(BaseTestCase):
 
     def setUp(self):
         super(SwitchChannelTestCase, self).setUp()
-        self.check = Check(user=self.alice)
+        self.check = Check(user=self.alice, project=self.project)
         self.check.save()
 
         self.channel = Channel(user=self.alice, kind="email")
+        self.channel.project = self.project
         self.channel.value = "alice@example.org"
         self.channel.save()
 
@@ -35,7 +37,8 @@ class SwitchChannelTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_checks_channels_ownership(self):
-        cc = Check(user=self.charlie)
+        charlies_project = Project.objects.create(owner=self.charlie)
+        cc = Check(user=self.charlie, project=charlies_project)
         cc.save()
 
         # Charlie will try to assign Alice's channel to his check:

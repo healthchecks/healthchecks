@@ -6,7 +6,7 @@ class DetailsTestCase(BaseTestCase):
 
     def setUp(self):
         super(DetailsTestCase, self).setUp()
-        self.check = Check(user=self.alice)
+        self.check = Check(user=self.alice, project=self.project)
         self.check.save()
 
         ping = Ping(owner=self.check)

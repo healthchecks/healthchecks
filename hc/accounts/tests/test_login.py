@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
-from hc.accounts.models import Profile
+from hc.accounts.models import Profile, Project
 from hc.api.models import Check
 from django.conf import settings
 
@@ -78,7 +78,8 @@ class LoginTestCase(TestCase):
         alice.set_password("password")
         alice.save()
 
-        check = Check.objects.create(user=alice)
+        project = Project.objects.create(owner=alice)
+        check = Check.objects.create(user=alice, project=project)
 
         form = {
             "action": "login",

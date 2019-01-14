@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 class LastPingTestCase(BaseTestCase):
 
     def test_it_works(self):
-        check = Check(user=self.alice)
+        check = Check(user=self.alice, project=self.project)
         check.save()
 
         Ping.objects.create(owner=check, body="this is body")
@@ -15,7 +15,7 @@ class LastPingTestCase(BaseTestCase):
         self.assertContains(r, "this is body", status_code=200)
 
     def test_it_shows_fail(self):
-        check = Check(user=self.alice)
+        check = Check(user=self.alice, project=self.project)
         check.save()
 
         Ping.objects.create(owner=check, kind="fail")
@@ -25,7 +25,7 @@ class LastPingTestCase(BaseTestCase):
         self.assertContains(r, "/fail", status_code=200)
 
     def test_it_shows_start(self):
-        check = Check(user=self.alice)
+        check = Check(user=self.alice, project=self.project)
         check.save()
 
         Ping.objects.create(owner=check, kind="start")
@@ -35,7 +35,7 @@ class LastPingTestCase(BaseTestCase):
         self.assertContains(r, "/start", status_code=200)
 
     def test_it_accepts_n(self):
-        check = Check(user=self.alice)
+        check = Check(user=self.alice, project=self.project)
         check.save()
 
         # remote_addr, scheme, method, ua, body:
@@ -54,7 +54,7 @@ class LastPingTestCase(BaseTestCase):
         self.bobs_profile.current_team = None
         self.bobs_profile.save()
 
-        check = Check(user=self.alice)
+        check = Check(user=self.alice, project=self.project)
         check.save()
 
         Ping.objects.create(owner=check, body="this is body")

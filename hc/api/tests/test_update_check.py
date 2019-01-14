@@ -51,7 +51,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertIn("POST", r["Access-Control-Allow-Methods"])
 
     def test_it_unassigns_channels(self):
-        Channel.objects.create(user=self.alice)
+        Channel.objects.create(user=self.alice, project=self.project)
         self.check.assign_all_channels()
 
         r = self.post(self.check.code, {
@@ -78,7 +78,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_validates_ownership(self):
-        check = Check(user=self.bob, status="up")
+        check = Check(user=self.bob, status="up", project=self.bobs_project)
         check.save()
 
         r = self.post(check.code, {"api_key": "X" * 32})
@@ -96,10 +96,10 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.kind, "simple")
 
     def test_it_sets_single_channel(self):
-        channel = Channel.objects.create(user=self.alice)
+        channel = Channel.objects.create(user=self.alice, project=self.project)
         # Create another channel so we can test that only the first one
         # gets assigned:
-        Channel.objects.create(user=self.alice)
+        Channel.objects.create(user=self.alice, project=self.project)
 
         r = self.post(self.check.code, {
             "api_key": "X" * 32,
@@ -113,8 +113,8 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.first().code, channel.code)
 
     def test_it_handles_comma_separated_channel_codes(self):
-        c1 = Channel.objects.create(user=self.alice)
-        c2 = Channel.objects.create(user=self.alice)
+        c1 = Channel.objects.create(user=self.alice, project=self.project)
+        c2 = Channel.objects.create(user=self.alice, project=self.project)
         r = self.post(self.check.code, {
             "api_key": "X" * 32,
             "channels": "%s,%s" % (c1.code, c2.code)
@@ -126,8 +126,8 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 2)
 
     def test_it_handles_asterix(self):
-        Channel.objects.create(user=self.alice)
-        Channel.objects.create(user=self.alice)
+        Channel.objects.create(user=self.alice, project=self.project)
+        Channel.objects.create(user=self.alice, project=self.project)
         r = self.post(self.check.code, {
             "api_key": "X" * 32,
             "channels": "*"
@@ -139,7 +139,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 2)
 
     def test_it_ignores_channels_if_channels_key_missing(self):
-        Channel.objects.create(user=self.alice)
+        Channel.objects.create(user=self.alice, project=self.project)
         self.check.assign_all_channels()
 
         r = self.post(self.check.code, {"api_key": "X" * 32})

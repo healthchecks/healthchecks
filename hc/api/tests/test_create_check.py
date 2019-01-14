@@ -77,7 +77,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 201)
 
     def test_it_assigns_channels(self):
-        channel = Channel(user=self.alice)
+        channel = Channel(user=self.alice, project=self.project)
         channel.save()
 
         r = self.post({"api_key": "X" * 32, "channels": "*"})
@@ -138,7 +138,7 @@ class CreateCheckTestCase(BaseTestCase):
                   expected_fragment="name is too long")
 
     def test_unique_accepts_only_whitelisted_values(self):
-        existing = Check(user=self.alice, name="Foo")
+        existing = Check(user=self.alice, name="Foo", project=self.project)
         existing.save()
 
         self.post({

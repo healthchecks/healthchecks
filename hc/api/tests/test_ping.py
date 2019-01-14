@@ -10,7 +10,8 @@ class PingTestCase(BaseTestCase):
 
     def setUp(self):
         super().setUp()
-        self.check = Check.objects.create(user=self.alice)
+        self.check = Check.objects.create(user=self.alice,
+                                          project=self.project)
 
     def test_it_works(self):
         r = self.client.get("/ping/%s/" % self.check.code)

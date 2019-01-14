@@ -6,7 +6,7 @@ class UpdateNameTestCase(BaseTestCase):
 
     def setUp(self):
         super(UpdateNameTestCase, self).setUp()
-        self.check = Check(user=self.alice)
+        self.check = Check(user=self.alice, project=self.project)
         self.check.save()
 
         self.url = "/checks/%s/name/" % self.check.code

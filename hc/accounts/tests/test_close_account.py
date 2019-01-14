@@ -9,7 +9,8 @@ class CloseAccountTestCase(BaseTestCase):
 
     @patch("hc.payments.models.Subscription.cancel")
     def test_it_works(self, mock_cancel):
-        Check.objects.create(user=self.alice, tags="foo a-B_1  baz@")
+        Check.objects.create(user=self.alice, tags="foo a-B_1  baz@",
+                             project=self.project)
         Subscription.objects.create(user=self.alice, subscription_id="123")
 
         self.client.login(username="alice@example.org", password="password")

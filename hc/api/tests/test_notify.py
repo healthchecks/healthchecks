@@ -14,13 +14,13 @@ from requests.exceptions import ConnectionError, Timeout
 class NotifyTestCase(BaseTestCase):
 
     def _setup_data(self, kind, value, status="down", email_verified=True):
-        self.check = Check()
+        self.check = Check(project=self.project)
         self.check.status = status
         self.check.user = self.alice
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
-        self.channel = Channel(user=self.alice)
+        self.channel = Channel(user=self.alice, project=self.project)
         self.channel.kind = kind
         self.channel.value = value
         self.channel.email_verified = email_verified

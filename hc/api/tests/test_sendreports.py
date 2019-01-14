@@ -5,7 +5,7 @@ from django.utils.timezone import now
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
-from mock import Mock, patch
+from mock import Mock
 
 
 class SendAlertsTestCase(BaseTestCase):
@@ -25,6 +25,7 @@ class SendAlertsTestCase(BaseTestCase):
 
         # And it needs at least one check that has been pinged.
         self.check = Check(user=self.alice, last_ping=now())
+        self.check.project = self.project
         self.check.status = "down"
         self.check.save()
 
