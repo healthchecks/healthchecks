@@ -129,17 +129,19 @@ class Profile(models.Model):
         self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
         self.save()
 
-    def checks_from_all_teams(self):
-        """ Return a queryset of checks from all teams we have access for. """
+    def checks_from_all_projects(self):
+        """ Return a queryset of checks from projects we have access to. """
 
-        team_ids = set(self.user.memberships.values_list("team_id", flat=True))
-        team_ids.add(self.id)
+        is_owner = models.Q(owner=self.user)
+        is_member = models.Q(member__user=self.user)
+        q = Project.objects.filter(is_owner | is_member)
+        project_ids = list(q.values_list("id", flat=True))
 
         from hc.api.models import Check
-        return Check.objects.filter(user__profile__id__in=team_ids)
+        return Check.objects.filter(project_id__in=project_ids)
 
     def send_report(self, nag=False):
-        checks = self.checks_from_all_teams()
+        checks = self.checks_from_all_projects()
 
         # Has there been a ping in last 6 months?
         result = checks.aggregate(models.Max("last_ping"))
@@ -221,18 +223,6 @@ class Profile(models.Model):
         self.save()
         return True
 
-    def set_next_nag_date(self):
-        """ Set next_nag_date for all members of this team. """
-
-        is_owner = models.Q(id=self.id)
-        is_member = models.Q(user__memberships__team=self)
-        q = Profile.objects.filter(is_owner | is_member)
-        q = q.exclude(nag_period=NO_NAG)
-        # Exclude profiles with next_nag_date already set
-        q = q.filter(next_nag_date__isnull=True)
-
-        q.update(next_nag_date=timezone.now() + models.F("nag_period"))
-
     def get_own_project(self):
         project = self.user.project_set.first()
         if project is None:
@@ -260,6 +250,18 @@ class Project(models.Model):
         from hc.api.models import Check
         num_used = Check.objects.filter(project__owner=self.owner).count()
         return self.owner_profile.check_limit - num_used
+
+    def set_next_nag_date(self):
+        """ Set next_nag_date on profiles of all members of this project. """
+
+        is_owner = models.Q(user=self.owner)
+        is_member = models.Q(user__memberships__project=self)
+        q = Profile.objects.filter(is_owner | is_member)
+        q = q.exclude(nag_period=NO_NAG)
+        # Exclude profiles with next_nag_date already set
+        q = q.filter(next_nag_date__isnull=True)
+
+        q.update(next_nag_date=timezone.now() + models.F("nag_period"))
 
 
 class Member(models.Model):

@@ -259,7 +259,7 @@ def profile(request):
                 farewell_user.profile.current_project = None
                 farewell_user.profile.save()
 
-                Member.objects.filter(team=profile,
+                Member.objects.filter(project=request.project,
                                       user=farewell_user).delete()
 
                 ctx["team_member_removed"] = email
@@ -433,6 +433,7 @@ def unsubscribe_reports(request, username):
 def switch_team(request, target_username):
     try:
         target_team = Profile.objects.get(user__username=target_username)
+        target_project = target_team.get_own_project()
     except Profile.DoesNotExist:
         return HttpResponseForbidden()
 
@@ -446,13 +447,14 @@ def switch_team(request, target_username):
 
     # Users can switch to teams they are members of.
     if not access_ok:
-        access_ok = request.user.memberships.filter(team=target_team).exists()
+        q = request.user.memberships.filter(project=target_project)
+        access_ok = q.exists()
 
     if not access_ok:
         return HttpResponseForbidden()
 
     request.profile.current_team = target_team
-    request.profile.current_project = target_team.get_own_project()
+    request.profile.current_project = target_project
     request.profile.save()
 
     return redirect("hc-checks")

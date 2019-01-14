@@ -70,7 +70,7 @@ def _get_check_for_user(request, code):
     if request.user.is_superuser:
         q = Check.objects
     else:
-        q = request.profile.checks_from_all_teams()
+        q = request.profile.checks_from_all_projects()
 
     try:
         return q.get(code=code)
@@ -87,8 +87,8 @@ def _has_access(request, username):
     if request.user.is_superuser:
         return True
 
-    mq = request.user.memberships
-    return mq.filter(team__user__username=username).exists()
+    q = request.user.memberships
+    return q.filter(project__owner__username=username).exists()
 
 
 @login_required

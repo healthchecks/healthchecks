@@ -21,7 +21,7 @@ def notify(flip_id, stdout):
 
     # Set dates for followup nags
     if flip.new_status == "down":
-        check.project.owner_profile.set_next_nag_date()
+        check.project.set_next_nag_date()
 
     # Send notifications
     errors = flip.send_alerts()

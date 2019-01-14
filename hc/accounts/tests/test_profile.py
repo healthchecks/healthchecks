@@ -132,7 +132,7 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 200)
 
-        members = self.profile.member_set.all()
+        members = self.project.member_set.all()
         self.assertEqual(members.count(), 2)
 
         frank_found = False
