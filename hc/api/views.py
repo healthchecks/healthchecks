@@ -128,9 +128,7 @@ def create_check(request):
     created = False
     check = _lookup(request.project, request.json)
     if check is None:
-        user = request.project.owner
-        num_checks = Check.objects.filter(project__owner=user).count()
-        if num_checks >= user.profile.check_limit:
+        if request.project.num_checks_available() <= 0:
             return HttpResponseForbidden()
 
         check = Check(user=request.project.owner, project=request.project)

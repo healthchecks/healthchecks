@@ -242,6 +242,13 @@ class Project(models.Model):
     api_key_readonly = models.CharField(max_length=128, blank=True)
     badge_key = models.CharField(max_length=150, unique=True)
 
+    def num_checks_available(self):
+        owner_profile = Profile.objects.for_user(self.owner)
+
+        from hc.api.models import Check
+        num_used = Check.objects.filter(project__owner=self.owner).count()
+        return owner_profile.check_limit - num_used
+
 
 class Member(models.Model):
     team = models.ForeignKey(Profile, models.CASCADE)

@@ -132,7 +132,7 @@ def my_checks(request):
         "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": pytz.all_timezones,
-        "num_available": request.team.check_limit - len(checks),
+        "num_available": request.project.num_checks_available(),
         "sort": request.profile.sort,
         "selected_tags": selected_tags,
         "show_search": True,
@@ -245,8 +245,7 @@ def docs_resources(request):
 @require_POST
 @login_required
 def add_check(request):
-    num_checks = Check.objects.filter(user=request.team.user).count()
-    if num_checks >= request.team.check_limit:
+    if request.project.num_checks_available() <= 0:
         return HttpResponseBadRequest()
 
     check = Check(user=request.team.user, project=request.project)

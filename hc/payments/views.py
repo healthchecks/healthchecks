@@ -58,7 +58,7 @@ def billing(request):
         "page": "billing",
         "profile": request.profile,
         "sub": sub,
-        "num_checks": Check.objects.filter(user=request.user).count(),
+        "num_checks": Check.objects.filter(project__owner=request.user).count(),
         "team_size": request.profile.member_set.count() + 1,
         "team_max": request.profile.team_limit + 1,
         "send_invoices_status": send_invoices_status,
