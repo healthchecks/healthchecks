@@ -1,4 +1,4 @@
-from hc.accounts.models import Profile
+from hc.accounts.models import Profile, Project
 
 
 class TeamAccessMiddleware(object):
@@ -9,15 +9,16 @@ class TeamAccessMiddleware(object):
         if not request.user.is_authenticated:
             return self.get_response(request)
 
-        teams_q = Profile.objects.filter(member__user_id=request.user.id)
-        teams_q = teams_q.select_related("user")
-        request.get_teams = lambda: list(teams_q)
+        projects_q = Project.objects.filter(member__user_id=request.user.id)
+        projects_q = projects_q.select_related("owner")
+        request.get_projects = lambda: list(projects_q)
 
-        request.profile = Profile.objects.for_user(request.user)
-        request.team = request.profile.team()
+        profile = Profile.objects.for_user(request.user)
+        if profile.current_project is None:
+            profile.current_project = profile.get_own_project()
+            profile.save()
 
-        request.project = request.profile.current_project
-        if request.project is None:
-            request.project = request.team.user.project_set.first()
+        request.profile = profile
+        request.project = profile.current_project
 
         return self.get_response(request)

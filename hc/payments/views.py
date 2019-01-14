@@ -21,7 +21,7 @@ def get_client_token(request):
 
 
 def pricing(request):
-    if request.user.is_authenticated and request.profile != request.team:
+    if request.user.is_authenticated and request.user != request.project.owner:
         ctx = {"page": "pricing"}
         return render(request, "payments/pricing_not_owner.html", ctx)
 
@@ -35,9 +35,11 @@ def pricing(request):
 
 @login_required
 def billing(request):
-    if request.team != request.profile:
-        request.team = request.profile
+    if request.project.owner != request.user:
+        request.project = request.profile.get_own_project()
+
         request.profile.current_team = request.profile
+        request.profile.current_project = request.project
         request.profile.save()
 
     # Don't use Subscription.objects.for_user method here, so a

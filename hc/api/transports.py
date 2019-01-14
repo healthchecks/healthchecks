@@ -42,7 +42,7 @@ class Transport(object):
         return False
 
     def checks(self):
-        return self.channel.user.check_set.order_by("created")
+        return self.channel.project.check_set.order_by("created")
 
 
 class Email(Transport):

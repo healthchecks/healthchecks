@@ -233,6 +233,13 @@ class Profile(models.Model):
 
         q.update(next_nag_date=timezone.now() + models.F("nag_period"))
 
+    def get_own_project(self):
+        project = self.user.project_set.first()
+        if project is None:
+            project = Project.objects.create(owner=self.user)
+
+        return project
+
 
 class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -242,12 +249,17 @@ class Project(models.Model):
     api_key_readonly = models.CharField(max_length=128, blank=True)
     badge_key = models.CharField(max_length=150, unique=True)
 
-    def num_checks_available(self):
-        owner_profile = Profile.objects.for_user(self.owner)
+    def __str__(self):
+        return self.name or self.owner.email
 
+    @property
+    def owner_profile(self):
+        return Profile.objects.for_user(self.owner)
+
+    def num_checks_available(self):
         from hc.api.models import Check
         num_used = Check.objects.filter(project__owner=self.owner).count()
-        return owner_profile.check_limit - num_used
+        return self.owner_profile.check_limit - num_used
 
 
 class Member(models.Model):

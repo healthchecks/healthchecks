@@ -76,9 +76,8 @@ def _make_user(email):
 def _ensure_own_team(request):
     """ Make sure user is switched to their own team. """
 
-    if request.team != request.profile:
-        request.team = request.profile
-        request.project = request.user.project_set.first()
+    if request.project.owner != request.user:
+        request.project = request.profile.get_own_project()
 
         request.profile.current_team = request.profile
         request.profile.current_project = request.project
@@ -271,9 +270,8 @@ def profile(request):
                 profile.team_name = form.cleaned_data["team_name"]
                 profile.save()
 
-                for project in request.user.project_set.all():
-                    project.name = form.cleaned_data["team_name"]
-                    project.save()
+                request.project.name = form.cleaned_data["team_name"]
+                request.project.save()
 
                 ctx["team_name_updated"] = True
                 ctx["team_status"] = "success"
@@ -454,7 +452,7 @@ def switch_team(request, target_username):
         return HttpResponseForbidden()
 
     request.profile.current_team = target_team
-    request.profile.current_project = target_team.user.project_set.first()
+    request.profile.current_project = target_team.get_own_project()
     request.profile.save()
 
     return redirect("hc-checks")

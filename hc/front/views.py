@@ -97,14 +97,14 @@ def my_checks(request):
         request.profile.sort = request.GET["sort"]
         request.profile.save()
 
-    checks = list(Check.objects.filter(user=request.team.user).prefetch_related("channel_set"))
+    checks = list(Check.objects.filter(project=request.project).prefetch_related("channel_set"))
     sortchecks(checks, request.profile.sort)
 
     tags_statuses, num_down = _tags_statuses(checks)
     pairs = list(tags_statuses.items())
     pairs.sort(key=lambda pair: pair[0].lower())
 
-    channels = Channel.objects.filter(user=request.team.user)
+    channels = Channel.objects.filter(project=request.project)
     channels = list(channels.order_by("created"))
 
     hidden_checks = set()
@@ -173,7 +173,7 @@ def switch_channel(request, code, channel_code):
     check = _get_check_for_user(request, code)
 
     channel = get_object_or_404(Channel, code=channel_code)
-    if channel.user_id != check.user_id:
+    if channel.project_id != check.project_id:
         return HttpResponseBadRequest()
 
     if request.POST.get("state") == "on":
@@ -248,7 +248,7 @@ def add_check(request):
     if request.project.num_checks_available() <= 0:
         return HttpResponseBadRequest()
 
-    check = Check(user=request.team.user, project=request.project)
+    check = Check(user=request.project.owner, project=request.project)
     check.save()
 
     check.assign_all_channels()
@@ -411,7 +411,7 @@ def _get_events(check, limit):
 def log(request, code):
     check = _get_check_for_user(request, code)
 
-    limit = check.user.profile.ping_log_limit
+    limit = request.project.owner_profile.ping_log_limit
     ctx = {
         "check": check,
         "events": _get_events(check, limit),
@@ -426,7 +426,7 @@ def log(request, code):
 def details(request, code):
     check = _get_check_for_user(request, code)
 
-    channels = Channel.objects.filter(user=check.user)
+    channels = Channel.objects.filter(project=check.project)
     channels = list(channels.order_by("created"))
 
     ctx = {
@@ -470,7 +470,7 @@ def channels(request):
             channel = Channel.objects.get(code=code)
         except Channel.DoesNotExist:
             return HttpResponseBadRequest()
-        if channel.user_id != request.team.user.id:
+        if channel.project_id != request.project.id:
             return HttpResponseForbidden()
 
         new_checks = []
@@ -481,20 +481,20 @@ def channels(request):
                     check = Check.objects.get(code=code)
                 except Check.DoesNotExist:
                     return HttpResponseBadRequest()
-                if check.user_id != request.team.user.id:
+                if check.project_id != request.project.id:
                     return HttpResponseForbidden()
                 new_checks.append(check)
 
         channel.checks.set(new_checks)
         return redirect("hc-channels")
 
-    channels = Channel.objects.filter(user=request.team.user)
+    channels = Channel.objects.filter(project=request.project)
     channels = channels.order_by("created")
     channels = channels.annotate(n_checks=Count("checks"))
 
     ctx = {
         "page": "channels",
-        "profile": request.team,
+        "profile": request.project.owner_profile,
         "channels": channels,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -512,11 +512,11 @@ def channels(request):
 @login_required
 def channel_checks(request, code):
     channel = get_object_or_404(Channel, code=code)
-    if channel.user_id != request.team.user.id:
+    if channel.project_id != request.project.id:
         return HttpResponseForbidden()
 
     assigned = set(channel.checks.values_list('code', flat=True).distinct())
-    checks = Check.objects.filter(user=request.team.user).order_by("created")
+    checks = Check.objects.filter(project=request.project).order_by("created")
 
     ctx = {
         "checks": checks,
@@ -531,7 +531,7 @@ def channel_checks(request, code):
 @login_required
 def update_channel_name(request, code):
     channel = get_object_or_404(Channel, code=code)
-    if channel.user_id != request.team.user.id:
+    if channel.project_id != request.project.id:
         return HttpResponseForbidden()
 
     form = ChannelNameForm(request.POST)
@@ -575,7 +575,7 @@ def remove_channel(request, code):
     # user may refresh the page during POST and cause two deletion attempts
     channel = Channel.objects.filter(code=code).first()
     if channel:
-        if channel.user != request.team.user:
+        if channel.project_id != request.project.id:
             return HttpResponseForbidden()
         channel.delete()
 
@@ -587,7 +587,7 @@ def add_email(request):
     if request.method == "POST":
         form = AddEmailForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.team.user, kind="email")
+            channel = Channel(user=request.project.owner, kind="email")
             channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
@@ -607,7 +607,7 @@ def add_webhook(request):
     if request.method == "POST":
         form = AddWebhookForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.team.user, kind="webhook")
+            channel = Channel(user=request.project.owner, kind="webhook")
             channel.project = request.project
             channel.value = form.get_value()
             channel.save()
@@ -660,7 +660,7 @@ def add_pd(request, state=None):
             return redirect("hc-channels")
 
         channel = Channel(kind="pd", project=request.project)
-        channel.user = request.team.user
+        channel.user = request.project.owner
         channel.value = json.dumps({
             "service_key": request.GET.get("service_key"),
             "account": request.GET.get("account")
@@ -686,7 +686,7 @@ def add_pagertree(request):
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.team.user, kind="pagertree")
+            channel = Channel(user=request.project.owner, kind="pagertree")
             channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
@@ -707,7 +707,7 @@ def add_slack(request):
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.team.user, kind="slack")
+            channel = Channel(user=request.project.owner, kind="slack")
             channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
@@ -744,7 +744,7 @@ def add_slack_btn(request):
     doc = result.json()
     if doc.get("ok"):
         channel = Channel(kind="slack", project=request.project)
-        channel.user = request.team.user
+        channel.user = request.project.owner
         channel.value = result.text
         channel.save()
         channel.assign_all_checks()
@@ -767,7 +767,7 @@ def add_hipchat(request):
             return redirect("hc-channels")
 
         channel = Channel(kind="hipchat", project=request.project)
-        channel.user = request.team.user
+        channel.user = request.project.owner
         channel.value = response.text
         channel.save()
 
@@ -812,7 +812,7 @@ def add_pushbullet(request):
         doc = result.json()
         if "access_token" in doc:
             channel = Channel(kind="pushbullet", project=request.project)
-            channel.user = request.team.user
+            channel.user = request.project.owner
             channel.value = doc["access_token"]
             channel.save()
             channel.assign_all_checks()
@@ -860,7 +860,7 @@ def add_discord(request):
         doc = result.json()
         if "access_token" in doc:
             channel = Channel(kind="discord", project=request.project)
-            channel.user = request.team.user
+            channel.user = request.project.owner
             channel.value = result.text
             channel.save()
             channel.assign_all_checks()
@@ -933,7 +933,7 @@ def add_pushover(request):
             return redirect("hc-channels")
 
         # Subscription
-        channel = Channel(user=request.team.user, kind="po")
+        channel = Channel(user=request.project.owner, kind="po")
         channel.project = request.project
         channel.value = "%s|%s|%s" % (key, prio, prio_up)
         channel.save()
@@ -956,7 +956,7 @@ def add_opsgenie(request):
     if request.method == "POST":
         form = AddOpsGenieForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.team.user, kind="opsgenie")
+            channel = Channel(user=request.project.owner, kind="opsgenie")
             channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
@@ -975,7 +975,7 @@ def add_victorops(request):
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.team.user, kind="victorops")
+            channel = Channel(user=request.project.owner, kind="victorops")
             channel.project = request.project
             channel.value = form.cleaned_data["value"]
             channel.save()
@@ -1024,7 +1024,7 @@ def add_telegram(request):
         chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
 
     if request.method == "POST":
-        channel = Channel(user=request.team.user, kind="telegram")
+        channel = Channel(user=request.project.owner, kind="telegram")
         channel.project = request.project
         channel.value = json.dumps({
             "id": chat_id,
@@ -1055,7 +1055,7 @@ def add_sms(request):
     if request.method == "POST":
         form = AddSmsForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.team.user, kind="sms")
+            channel = Channel(user=request.project.owner, kind="sms")
             channel.project = request.project
             channel.name = form.cleaned_data["label"]
             channel.value = json.dumps({
@@ -1071,7 +1071,7 @@ def add_sms(request):
     ctx = {
         "page": "channels",
         "form": form,
-        "profile": request.team
+        "profile": request.project.owner_profile
     }
     return render(request, "integrations/add_sms.html", ctx)
 
@@ -1082,7 +1082,7 @@ def add_trello(request):
         raise Http404("trello integration is not available")
 
     if request.method == "POST":
-        channel = Channel(user=request.team.user, kind="trello")
+        channel = Channel(user=request.project.owner, kind="trello")
         channel.value = request.POST["settings"]
         channel.save()
 
