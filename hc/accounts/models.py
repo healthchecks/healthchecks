@@ -156,10 +156,10 @@ class Profile(models.Model):
         if nag and num_down == 0:
             return False
 
-        # Sort checks by owner. Need this because will group by owner in
+        # Sort checks by project. Need this because will group by project in
         # template.
-        checks = checks.select_related("user", "user__profile")
-        checks = checks.order_by("user_id")
+        checks = checks.select_related("project")
+        checks = checks.order_by("project_id")
         # list() executes the query, to avoid DB access while
         # rendering the template
         checks = list(checks)
