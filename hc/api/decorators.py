@@ -1,7 +1,6 @@
 import json
 from functools import wraps
 
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from hc.accounts.models import Project

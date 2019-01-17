@@ -51,9 +51,6 @@ class Profile(models.Model):
     ping_log_limit = models.IntegerField(default=100)
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
-    api_key_id = models.CharField(max_length=128, blank=True)
-    api_key = models.CharField(max_length=128, blank=True)
-    api_key_readonly = models.CharField(max_length=128, blank=True)
     current_team = models.ForeignKey("self", models.SET_NULL, null=True)
     current_project = models.ForeignKey("Project", models.SET_NULL, null=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
@@ -122,12 +119,6 @@ class Profile(models.Model):
             "button_url": settings.SITE_ROOT + path
         }
         emails.change_email(self.user.email, ctx)
-
-    def set_api_keys(self, key_id=""):
-        self.api_key_id = key_id
-        self.api_key = urlsafe_b64encode(os.urandom(24)).decode()
-        self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
-        self.save()
 
     def checks_from_all_projects(self):
         """ Return a queryset of checks from projects we have access to. """
@@ -250,6 +241,11 @@ class Project(models.Model):
         from hc.api.models import Check
         num_used = Check.objects.filter(project__owner=self.owner).count()
         return self.owner_profile.check_limit - num_used
+
+    def set_api_keys(self):
+        self.api_key = urlsafe_b64encode(os.urandom(24)).decode()
+        self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
+        self.save()
 
     def set_next_nag_date(self):
         """ Set next_nag_date on profiles of all members of this project. """

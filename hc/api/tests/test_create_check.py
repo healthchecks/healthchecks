@@ -207,8 +207,8 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_readonly_key_does_not_work(self):
-        self.profile.api_key_readonly = "R" * 32
-        self.profile.save()
+        self.project.api_key_readonly = "R" * 32
+        self.project.save()
 
         r = self.post({"api_key": "R" * 32, "name": "Foo"})
         self.assertEqual(r.status_code, 401)

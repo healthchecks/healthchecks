@@ -209,21 +209,13 @@ def profile(request):
             profile.send_set_password_link()
             return redirect("hc-link-sent")
         elif "create_api_keys" in request.POST:
-            profile.set_api_keys()
-
-            project.api_key = profile.api_key
-            project.api_key_readonly = profile.api_key_readonly
+            project.set_api_keys()
             project.save()
 
             ctx["show_api_keys"] = True
             ctx["api_keys_created"] = True
             ctx["api_status"] = "success"
         elif "revoke_api_keys" in request.POST:
-            profile.api_key_id = ""
-            profile.api_key = ""
-            profile.api_key_readonly = ""
-            profile.save()
-
             project.api_key = ""
             project.api_key_readonly = ""
             project.save()

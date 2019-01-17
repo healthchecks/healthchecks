@@ -18,7 +18,7 @@ class BaseTestCase(TestCase):
         self.project.badge_key = self.alice.username
         self.project.save()
 
-        self.profile = Profile(user=self.alice, api_key="X" * 32)
+        self.profile = Profile(user=self.alice)
         self.profile.sms_limit = 50
         self.profile.current_project = self.project
         self.profile.save()
