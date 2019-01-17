@@ -27,6 +27,19 @@ class ProfileTestCase(BaseTestCase):
         expected_subject = "Set password on %s" % settings.SITE_NAME
         self.assertEqual(mail.outbox[0].subject, expected_subject)
 
+    def test_it_shows_api_keys(self):
+        self.project.api_key_readonly = "R" * 32
+        self.project.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"show_api_keys": "1"}
+        r = self.client.post("/accounts/profile/", form)
+        self.assertEqual(r.status_code, 200)
+
+        self.assertContains(r, "X" * 32)
+        self.assertContains(r, "R" * 32)
+
     def test_it_creates_api_key(self):
         self.client.login(username="alice@example.org", password="password")
 

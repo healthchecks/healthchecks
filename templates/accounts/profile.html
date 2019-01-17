@@ -60,16 +60,16 @@
         <div class="panel panel-{{ api_status }}">
             <div class="panel-body settings-block">
                 <h2>API Access</h2>
-                {% if profile.api_key %}
+                {% if project.api_key %}
                     {% if show_api_keys %}
                         <p>
                             API key: <br />
-                            <code>{{ profile.api_key }}</code>
+                            <code>{{ project.api_key }}</code>
                         </p>
-                        {% if profile.api_key_readonly %}
+                        {% if project.api_key_readonly %}
                         <p>
                             API key (read-only): <br />
-                            <code>{{ profile.api_key_readonly }}</code>
+                            <code>{{ project.api_key_readonly }}</code>
                         </p>
                         {% endif %}
                         <button

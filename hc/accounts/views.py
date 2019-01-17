@@ -190,10 +190,12 @@ def check_token(request, username, token):
 def profile(request):
     _ensure_own_team(request)
     profile = request.profile
+    project = profile.get_own_project()
 
     ctx = {
         "page": "profile",
         "profile": profile,
+        "project": project,
         "show_api_keys": False,
         "api_status": "default",
         "team_status": "default"
@@ -209,10 +211,9 @@ def profile(request):
         elif "create_api_keys" in request.POST:
             profile.set_api_keys()
 
-            for project in request.user.project_set.all():
-                project.api_key = profile.api_key
-                project.api_key_readonly = profile.api_key_readonly
-                project.save()
+            project.api_key = profile.api_key
+            project.api_key_readonly = profile.api_key_readonly
+            project.save()
 
             ctx["show_api_keys"] = True
             ctx["api_keys_created"] = True
@@ -223,10 +224,9 @@ def profile(request):
             profile.api_key_readonly = ""
             profile.save()
 
-            for project in request.user.project_set.all():
-                project.api_key = ""
-                project.api_key_readonly = ""
-                project.save()
+            project.api_key = ""
+            project.api_key_readonly = ""
+            project.save()
 
             ctx["api_keys_revoked"] = True
             ctx["api_status"] = "info"
