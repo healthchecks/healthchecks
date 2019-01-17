@@ -213,6 +213,7 @@ def docs(request):
         "section": "home",
         "ping_endpoint": settings.PING_ENDPOINT,
         "ping_email": "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN,
+        "ping_email_domain": settings.PING_EMAIL_DOMAIN,
         "ping_url": settings.PING_ENDPOINT + "your-uuid-here"
     }
 
