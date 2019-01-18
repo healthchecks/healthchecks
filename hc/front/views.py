@@ -1084,6 +1084,7 @@ def add_trello(request):
 
     if request.method == "POST":
         channel = Channel(user=request.project.owner, kind="trello")
+        channel.project = request.project
         channel.value = request.POST["settings"]
         channel.save()
 
