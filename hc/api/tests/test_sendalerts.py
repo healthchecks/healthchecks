@@ -12,7 +12,7 @@ from hc.test import BaseTestCase
 class SendAlertsTestCase(BaseTestCase):
 
     def test_it_handles_grace_period(self):
-        check = Check(user=self.alice, status="up", project=self.project)
+        check = Check(project=self.project, status="up")
         # 1 day 30 minutes after ping the check is in grace period:
         check.last_ping = now() - td(days=1, minutes=30)
         check.alert_after = check.last_ping + td(days=1, hours=1)
@@ -25,7 +25,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(Flip.objects.count(), 0)
 
     def test_it_creates_a_flip_when_check_goes_down(self):
-        check = Check(user=self.alice, status="up", project=self.project)
+        check = Check(project=self.project, status="up")
         check.last_ping = now() - td(days=2)
         check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
@@ -48,7 +48,7 @@ class SendAlertsTestCase(BaseTestCase):
 
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
     def test_it_processes_flip(self, mock_notify):
-        check = Check(user=self.alice, status="up", project=self.project)
+        check = Check(project=self.project, status="up")
         check.last_ping = now()
         check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
@@ -72,7 +72,7 @@ class SendAlertsTestCase(BaseTestCase):
 
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
     def test_it_updates_alert_after(self, mock_notify):
-        check = Check(user=self.alice, status="up", project=self.project)
+        check = Check(project=self.project, status="up")
         check.last_ping = now() - td(hours=1)
         check.alert_after = check.last_ping
         check.save()
@@ -92,7 +92,7 @@ class SendAlertsTestCase(BaseTestCase):
 
     @patch("hc.api.management.commands.sendalerts.notify")
     def test_it_works_synchronously(self, mock_notify):
-        check = Check(user=self.alice, status="up", project=self.project)
+        check = Check(project=self.project, status="up")
         check.last_ping = now() - td(days=2)
         check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
@@ -107,7 +107,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.profile.nag_period = td(hours=1)
         self.profile.save()
 
-        check = Check(user=self.alice, status="down", project=self.project)
+        check = Check(project=self.project, status="down")
         check.last_ping = now() - td(days=2)
         check.save()
 
@@ -125,7 +125,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.bobs_profile.nag_period = td(hours=1)
         self.bobs_profile.save()
 
-        check = Check(user=self.alice, status="down", project=self.project)
+        check = Check(project=self.project, status="down")
         check.last_ping = now() - td(days=2)
         check.save()
 
@@ -145,7 +145,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.profile.next_nag_date = original_nag_date
         self.profile.save()
 
-        check = Check(user=self.alice, status="down", project=self.project)
+        check = Check(project=self.project, status="down")
         check.last_ping = now() - td(days=2)
         check.save()
 

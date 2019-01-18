@@ -6,9 +6,7 @@ class RemoveCheckTestCase(BaseTestCase):
 
     def setUp(self):
         super(RemoveCheckTestCase, self).setUp()
-        self.check = Check(user=self.alice, project=self.project)
-        self.check.save()
-
+        self.check = Check.objects.create(project=self.project)
         self.remove_url = "/checks/%s/remove/" % self.check.code
 
     def test_it_works(self):

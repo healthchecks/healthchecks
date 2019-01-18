@@ -24,8 +24,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.profile.save()
 
         # And it needs at least one check that has been pinged.
-        self.check = Check(user=self.alice, last_ping=now())
-        self.check.project = self.project
+        self.check = Check(project=self.project, last_ping=now())
         self.check.status = "down"
         self.check.save()
 

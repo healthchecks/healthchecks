@@ -7,11 +7,9 @@ class UpdateChannelTestCase(BaseTestCase):
 
     def setUp(self):
         super(UpdateChannelTestCase, self).setUp()
-        self.check = Check(user=self.alice, project=self.project)
-        self.check.save()
+        self.check = Check.objects.create(project=self.project)
 
-        self.channel = Channel(user=self.alice, kind="email")
-        self.channel.project = self.project
+        self.channel = Channel(project=self.project, kind="email")
         self.channel.email = "alice@example.org"
         self.channel.save()
 
@@ -53,8 +51,7 @@ class UpdateChannelTestCase(BaseTestCase):
 
     def test_it_checks_check_user(self):
         charlies_project = Project.objects.create(owner=self.charlie)
-        charlies_channel = Channel(user=self.charlie, kind="email")
-        charlies_channel.project = charlies_project
+        charlies_channel = Channel(project=charlies_project, kind="email")
         charlies_channel.email = "charlie@example.org"
         charlies_channel.save()
 

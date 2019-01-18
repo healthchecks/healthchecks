@@ -5,9 +5,7 @@ from hc.test import BaseTestCase
 class LastPingTestCase(BaseTestCase):
 
     def test_it_works(self):
-        check = Check(user=self.alice, project=self.project)
-        check.save()
-
+        check = Check.objects.create(project=self.project)
         Ping.objects.create(owner=check, body="this is body")
 
         self.client.login(username="alice@example.org", password="password")
@@ -15,9 +13,7 @@ class LastPingTestCase(BaseTestCase):
         self.assertContains(r, "this is body", status_code=200)
 
     def test_it_shows_fail(self):
-        check = Check(user=self.alice, project=self.project)
-        check.save()
-
+        check = Check.objects.create(project=self.project)
         Ping.objects.create(owner=check, kind="fail")
 
         self.client.login(username="alice@example.org", password="password")
@@ -25,9 +21,7 @@ class LastPingTestCase(BaseTestCase):
         self.assertContains(r, "/fail", status_code=200)
 
     def test_it_shows_start(self):
-        check = Check(user=self.alice, project=self.project)
-        check.save()
-
+        check = Check.objects.create(project=self.project)
         Ping.objects.create(owner=check, kind="start")
 
         self.client.login(username="alice@example.org", password="password")
@@ -35,8 +29,7 @@ class LastPingTestCase(BaseTestCase):
         self.assertContains(r, "/start", status_code=200)
 
     def test_it_accepts_n(self):
-        check = Check(user=self.alice, project=self.project)
-        check.save()
+        check = Check.objects.create(project=self.project)
 
         # remote_addr, scheme, method, ua, body:
         check.ping("1.2.3.4", "http", "post", "tester", "foo-123", "success")
@@ -54,9 +47,7 @@ class LastPingTestCase(BaseTestCase):
         self.bobs_profile.current_team = None
         self.bobs_profile.save()
 
-        check = Check(user=self.alice, project=self.project)
-        check.save()
-
+        check = Check.objects.create(project=self.project)
         Ping.objects.create(owner=check, body="this is body")
 
         self.client.login(username="bob@example.org", password="password")

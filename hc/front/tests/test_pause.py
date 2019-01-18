@@ -9,9 +9,7 @@ class PauseTestCase(BaseTestCase):
 
     def setUp(self):
         super(PauseTestCase, self).setUp()
-        self.check = Check(user=self.alice, status="up", project=self.project)
-        self.check.save()
-
+        self.check = Check.objects.create(project=self.project, status="up")
         self.url = "/checks/%s/pause/" % self.check.code
 
     def test_it_pauses(self):

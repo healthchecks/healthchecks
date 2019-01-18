@@ -14,7 +14,7 @@ class ListChecksTestCase(BaseTestCase):
 
         self.now = now().replace(microsecond=0)
 
-        self.a1 = Check(user=self.alice, name="Alice 1", project=self.project)
+        self.a1 = Check(project=self.project, name="Alice 1")
         self.a1.timeout = td(seconds=3600)
         self.a1.grace = td(seconds=900)
         self.a1.n_pings = 0
@@ -22,7 +22,7 @@ class ListChecksTestCase(BaseTestCase):
         self.a1.tags = "a1-tag a1-additional-tag"
         self.a1.save()
 
-        self.a2 = Check(user=self.alice, name="Alice 2", project=self.project)
+        self.a2 = Check(project=self.project, name="Alice 2")
         self.a2.timeout = td(seconds=86400)
         self.a2.grace = td(seconds=3600)
         self.a2.last_ping = self.now
@@ -30,7 +30,7 @@ class ListChecksTestCase(BaseTestCase):
         self.a2.tags = "a2-tag"
         self.a2.save()
 
-        self.c1 = Channel.objects.create(user=self.alice, project=self.project)
+        self.c1 = Channel.objects.create(project=self.project)
         self.a1.channel_set.add(self.c1)
 
     def get(self):
@@ -79,9 +79,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertIn("GET", r["Access-Control-Allow-Methods"])
 
     def test_it_shows_only_users_checks(self):
-        bobs_check = Check(user=self.bob, name="Bob 1",
-                           project=self.bobs_project)
-        bobs_check.save()
+        Check.objects.create(project=self.bobs_project, name="Bob 1")
 
         r = self.get()
         data = r.json()

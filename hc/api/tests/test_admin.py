@@ -6,8 +6,7 @@ class ApiAdminTestCase(BaseTestCase):
 
     def setUp(self):
         super(ApiAdminTestCase, self).setUp()
-        self.check = Check.objects.create(user=self.alice, tags="foo bar",
-                                          project=self.project)
+        self.check = Check.objects.create(project=self.project, tags="foo bar")
 
         self.alice.is_staff = True
         self.alice.is_superuser = True
@@ -16,8 +15,8 @@ class ApiAdminTestCase(BaseTestCase):
     def test_it_shows_channel_list_with_pushbullet(self):
         self.client.login(username="alice@example.org", password="password")
 
-        Channel.objects.create(user=self.alice, kind="pushbullet",
-                               value="test-token", project=self.project)
+        Channel.objects.create(project=self.project, kind="pushbullet",
+                               value="test-token")
 
         r = self.client.get("/admin/api/channel/")
         self.assertContains(r, "Pushbullet")
@@ -25,8 +24,8 @@ class ApiAdminTestCase(BaseTestCase):
     def test_it_shows_channel_list_with_unverified_email(self):
         self.client.login(username="alice@example.org", password="password")
 
-        Channel.objects.create(user=self.alice, kind="email",
-                               value="foo@example.org", project=self.project)
+        Channel.objects.create(project=self.project, kind="email",
+                               value="foo@example.org")
 
         r = self.client.get("/admin/api/channel/")
         self.assertContains(r, "Email <i>(unconfirmed)</i>")

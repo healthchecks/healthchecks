@@ -6,8 +6,7 @@ class UpdateChannelNameTestCase(BaseTestCase):
 
     def setUp(self):
         super(UpdateChannelNameTestCase, self).setUp()
-        self.channel = Channel(kind="email", user=self.alice)
-        self.channel.project = self.project
+        self.channel = Channel(kind="email", project=self.project)
         self.channel.save()
 
         self.url = "/integrations/%s/name/" % self.channel.code

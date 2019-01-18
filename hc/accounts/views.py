@@ -58,11 +58,11 @@ def _make_user(email):
     profile.current_project = project
     profile.save()
 
-    check = Check(user=user, project=project)
+    check = Check(project=project)
     check.name = "My First Check"
     check.save()
 
-    channel = Channel(user=user, project=project)
+    channel = Channel(project=project)
     channel.kind = "email"
     channel.value = email
     channel.email_verified = True

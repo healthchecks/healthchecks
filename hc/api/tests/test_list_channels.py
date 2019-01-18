@@ -9,7 +9,7 @@ class ListChannelsTestCase(BaseTestCase):
     def setUp(self):
         super(ListChannelsTestCase, self).setUp()
 
-        self.c1 = Channel(user=self.alice, project=self.project)
+        self.c1 = Channel(project=self.project)
         self.c1.kind = "email"
         self.c1.name = "Email to Alice"
         self.c1.save()
@@ -36,8 +36,8 @@ class ListChannelsTestCase(BaseTestCase):
         self.assertIn("GET", r["Access-Control-Allow-Methods"])
 
     def test_it_shows_only_users_channels(self):
-        Channel.objects.create(user=self.bob, kind="email", name="Bob",
-                               project=self.bobs_project)
+        Channel.objects.create(project=self.bobs_project, kind="email",
+                               name="Bob")
 
         r = self.get()
         data = r.json()

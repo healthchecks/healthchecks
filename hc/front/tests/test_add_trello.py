@@ -30,5 +30,4 @@ class AddPagerTreeTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.kind, "trello")
         self.assertEqual(c.trello_token, "fake-token")
-        self.assertEqual(c.user, self.alice)
         self.assertEqual(c.project, self.project)

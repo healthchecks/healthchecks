@@ -16,9 +16,7 @@ class ChannelModelTestCase(BaseTestCase):
             "oauthSecret": "bar"
         })
 
-        channel = Channel(kind="hipchat", user=self.alice,
-                          project=self.project, value=value)
-
+        channel = Channel(kind="hipchat", project=self.project, value=value)
         channel.refresh_hipchat_access_token()
 
         # It should request a token using a correct tokenUrl

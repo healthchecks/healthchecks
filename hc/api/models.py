@@ -8,7 +8,6 @@ from datetime import datetime, timedelta as td
 
 from croniter import croniter
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -67,7 +66,6 @@ class Check(models.Model):
     tags = models.CharField(max_length=500, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     desc = models.TextField(blank=True)
-    user = models.ForeignKey(User, models.CASCADE)
     project = models.ForeignKey(Project, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=10, default="simple",
@@ -262,7 +260,6 @@ class Ping(models.Model):
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    user = models.ForeignKey(User, models.CASCADE)
     project = models.ForeignKey(Project, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)

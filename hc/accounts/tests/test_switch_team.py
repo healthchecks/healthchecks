@@ -8,8 +8,7 @@ class SwitchTeamTestCase(BaseTestCase):
         self.bobs_profile.current_project = None
         self.bobs_profile.save()
 
-        c = Check(user=self.alice, name="This belongs to Alice",
-                  project=self.project)
+        c = Check(project=self.project, name="This belongs to Alice")
         c.save()
 
         self.client.login(username="bob@example.org", password="password")

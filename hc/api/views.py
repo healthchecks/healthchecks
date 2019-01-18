@@ -131,7 +131,7 @@ def create_check(request):
         if request.project.num_checks_available() <= 0:
             return HttpResponseForbidden()
 
-        check = Check(user=request.project.owner, project=request.project)
+        check = Check(project=request.project)
         created = True
 
     _update(check, request.json)

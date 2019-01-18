@@ -6,10 +6,8 @@ class BadgesTestCase(BaseTestCase):
 
     def test_it_shows_badges(self):
         self.client.login(username="alice@example.org", password="password")
-        Check.objects.create(user=self.alice, tags="foo a-B_1  baz@",
-                             project=self.project)
-        Check.objects.create(user=self.bob, tags="bobs-tag",
-                             project=self.bobs_project)
+        Check.objects.create(project=self.project, tags="foo a-B_1  baz@")
+        Check.objects.create(project=self.bobs_project, tags="bobs-tag")
 
         r = self.client.get("/accounts/profile/badges/")
         self.assertContains(r, "foo.svg")

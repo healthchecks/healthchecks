@@ -31,7 +31,7 @@ class AddPdTestCase(BaseTestCase):
 
         ch = Channel.objects.get()
         # Added by bob, but should belong to alice (bob has team access)
-        self.assertEqual(ch.user, self.alice)
+        self.assertEqual(ch.project, self.project)
 
     def test_it_rejects_bad_email(self):
         form = {"value": "not an email address"}

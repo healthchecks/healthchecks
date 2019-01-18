@@ -7,11 +7,9 @@ class SwitchChannelTestCase(BaseTestCase):
 
     def setUp(self):
         super(SwitchChannelTestCase, self).setUp()
-        self.check = Check(user=self.alice, project=self.project)
-        self.check.save()
+        self.check = Check.objects.create(project=self.project)
 
-        self.channel = Channel(user=self.alice, kind="email")
-        self.channel.project = self.project
+        self.channel = Channel(project=self.project, kind="email")
         self.channel.value = "alice@example.org"
         self.channel.save()
 
@@ -38,8 +36,7 @@ class SwitchChannelTestCase(BaseTestCase):
 
     def test_it_checks_channels_ownership(self):
         charlies_project = Project.objects.create(owner=self.charlie)
-        cc = Check(user=self.charlie, project=charlies_project)
-        cc.save()
+        cc = Check.objects.create(project=charlies_project)
 
         # Charlie will try to assign Alice's channel to his check:
         self.url = "/checks/%s/channels/%s/enabled" % (cc.code, self.channel.code)

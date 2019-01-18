@@ -6,8 +6,7 @@ class UnsubscribeEmailTestCase(BaseTestCase):
 
     def setUp(self):
         super(UnsubscribeEmailTestCase, self).setUp()
-        self.channel = Channel(user=self.alice, kind="email")
-        self.channel.project = self.project
+        self.channel = Channel(project=self.project, kind="email")
         self.channel.value = "alice@example.org"
         self.channel.save()
 

@@ -30,7 +30,7 @@ class AddCheckTestCase(BaseTestCase):
 
         check = Check.objects.get()
         # Added by bob, but should belong to alice (bob has team access)
-        self.assertEqual(check.user, self.alice)
+        self.assertEqual(check.project, self.project)
 
     def test_it_rejects_get(self):
         url = "/checks/add/"

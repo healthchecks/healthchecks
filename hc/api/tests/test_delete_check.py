@@ -6,8 +6,7 @@ class DeleteCheckTestCase(BaseTestCase):
 
     def setUp(self):
         super(DeleteCheckTestCase, self).setUp()
-        self.check = Check(user=self.alice, project=self.project)
-        self.check.save()
+        self.check = Check.objects.create(project=self.project)
 
     def test_it_works(self):
         r = self.client.delete("/api/v1/checks/%s" % self.check.code,

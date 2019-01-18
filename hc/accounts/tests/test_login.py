@@ -53,7 +53,7 @@ class LoginTestCase(BaseTestCase):
         self.assertRedirects(r, "/checks/")
 
     def test_it_handles_password_login_with_redirect(self):
-        check = Check.objects.create(user=self.alice, project=self.project)
+        check = Check.objects.create(project=self.project)
 
         form = {
             "action": "login",

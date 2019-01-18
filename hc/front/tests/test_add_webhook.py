@@ -30,7 +30,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.user, self.alice)
+        self.assertEqual(c.project, self.project)
         self.assertEqual(c.value, '{"headers": {}, "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}')
 
     def test_it_rejects_bad_urls(self):

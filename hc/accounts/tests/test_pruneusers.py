@@ -16,14 +16,13 @@ class PruneUsersTestCase(BaseTestCase):
         self.charlie.save()
 
         # Charlie has one demo check
-        project =Project.objects.create(owner=self.charlie)
-        Check(user=self.charlie, project=project).save()
+        charlies_project = Project.objects.create(owner=self.charlie)
+        Check(project=charlies_project).save()
 
         Command().handle()
 
         self.assertEqual(User.objects.filter(username="charlie").count(), 0)
         self.assertEqual(Check.objects.count(), 0)
-
 
     def test_it_leaves_team_members_alone(self):
         self.bob.date_joined = self.year_ago

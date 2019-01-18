@@ -6,11 +6,9 @@ class LogTestCase(BaseTestCase):
 
     def setUp(self):
         super(LogTestCase, self).setUp()
-        self.check = Check(user=self.alice, project=self.project)
-        self.check.save()
+        self.check = Check.objects.create(project=self.project)
 
-        ping = Ping(owner=self.check)
-        ping.save()
+        ping = Ping.objects.create(owner=self.check)
 
         # Older MySQL versions don't store microseconds. This makes sure
         # the ping is older than any notifications we may create later:
@@ -55,8 +53,7 @@ class LogTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_shows_pushover_notifications(self):
-        ch = Channel(kind="po", user=self.alice, project=self.project)
-        ch.save()
+        ch = Channel.objects.create(kind="po", project=self.project)
 
         Notification(owner=self.check, channel=ch, check_status="down").save()
 
@@ -67,8 +64,8 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "Sent a Pushover notification", status_code=200)
 
     def test_it_shows_webhook_notifications(self):
-        ch = Channel(kind="webhook", user=self.alice, value="foo/$NAME")
-        ch.project = self.project
+        ch = Channel(kind="webhook", project=self.project)
+        ch.value = "foo/$NAME"
         ch.save()
 
         Notification(owner=self.check, channel=ch, check_status="down").save()

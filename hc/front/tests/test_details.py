@@ -6,11 +6,9 @@ class DetailsTestCase(BaseTestCase):
 
     def setUp(self):
         super(DetailsTestCase, self).setUp()
-        self.check = Check(user=self.alice, project=self.project)
-        self.check.save()
+        self.check = Check.objects.create(project=self.project)
 
-        ping = Ping(owner=self.check)
-        ping.save()
+        ping = Ping.objects.create(owner=self.check)
 
         # Older MySQL versions don't store microseconds. This makes sure
         # the ping is older than any notifications we may create later:

@@ -249,7 +249,7 @@ def add_check(request):
     if request.project.num_checks_available() <= 0:
         return HttpResponseBadRequest()
 
-    check = Check(user=request.project.owner, project=request.project)
+    check = Check(project=request.project)
     check.save()
 
     check.assign_all_channels()
@@ -588,8 +588,7 @@ def add_email(request):
     if request.method == "POST":
         form = AddEmailForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.project.owner, kind="email")
-            channel.project = request.project
+            channel = Channel(project=request.project, kind="email")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -608,8 +607,7 @@ def add_webhook(request):
     if request.method == "POST":
         form = AddWebhookForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.project.owner, kind="webhook")
-            channel.project = request.project
+            channel = Channel(project=request.project, kind="webhook")
             channel.value = form.get_value()
             channel.save()
 
@@ -687,8 +685,7 @@ def add_pagertree(request):
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.project.owner, kind="pagertree")
-            channel.project = request.project
+            channel = Channel(project=request.project, kind="pagertree")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -708,8 +705,7 @@ def add_slack(request):
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.project.owner, kind="slack")
-            channel.project = request.project
+            channel = Channel(project=request.project, kind="slack")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -929,13 +925,12 @@ def add_pushover(request):
             return HttpResponseBadRequest()
 
         if request.GET.get("pushover_unsubscribed") == "1":
-            # Unsubscription: delete all Pushover channels for this user
-            Channel.objects.filter(user=request.user, kind="po").delete()
+            # Unsubscription: delete all Pushover channels for this project
+            Channel.objects.filter(project=request.project, kind="po").delete()
             return redirect("hc-channels")
 
         # Subscription
-        channel = Channel(user=request.project.owner, kind="po")
-        channel.project = request.project
+        channel = Channel(project=request.project, kind="po")
         channel.value = "%s|%s|%s" % (key, prio, prio_up)
         channel.save()
         channel.assign_all_checks()
@@ -957,8 +952,7 @@ def add_opsgenie(request):
     if request.method == "POST":
         form = AddOpsGenieForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.project.owner, kind="opsgenie")
-            channel.project = request.project
+            channel = Channel(project=request.project, kind="opsgenie")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -976,8 +970,7 @@ def add_victorops(request):
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.project.owner, kind="victorops")
-            channel.project = request.project
+            channel = Channel(project=request.project, kind="victorops")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
@@ -1025,8 +1018,7 @@ def add_telegram(request):
         chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
 
     if request.method == "POST":
-        channel = Channel(user=request.project.owner, kind="telegram")
-        channel.project = request.project
+        channel = Channel(project=request.project, kind="telegram")
         channel.value = json.dumps({
             "id": chat_id,
             "type": chat_type,
@@ -1056,8 +1048,7 @@ def add_sms(request):
     if request.method == "POST":
         form = AddSmsForm(request.POST)
         if form.is_valid():
-            channel = Channel(user=request.project.owner, kind="sms")
-            channel.project = request.project
+            channel = Channel(project=request.project, kind="sms")
             channel.name = form.cleaned_data["label"]
             channel.value = json.dumps({
                 "value": form.cleaned_data["value"]
@@ -1083,8 +1074,7 @@ def add_trello(request):
         raise Http404("trello integration is not available")
 
     if request.method == "POST":
-        channel = Channel(user=request.project.owner, kind="trello")
-        channel.project = request.project
+        channel = Channel(project=request.project, kind="trello")
         channel.value = request.POST["settings"]
         channel.save()
 

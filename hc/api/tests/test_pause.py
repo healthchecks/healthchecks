@@ -8,8 +8,7 @@ from hc.test import BaseTestCase
 class PauseTestCase(BaseTestCase):
 
     def test_it_works(self):
-        check = Check(user=self.alice, status="up", project=self.project)
-        check.save()
+        check = Check.objects.create(project=self.project, status="up")
 
         url = "/api/v1/checks/%s/pause" % check.code
         r = self.client.post(url, "", content_type="application/json",
@@ -22,8 +21,7 @@ class PauseTestCase(BaseTestCase):
         self.assertEqual(check.status, "paused")
 
     def test_it_handles_options(self):
-        check = Check(user=self.alice, status="up", project=self.project)
-        check.save()
+        check = Check.objects.create(project=self.project, status="up")
 
         r = self.client.options("/api/v1/checks/%s/pause" % check.code)
         self.assertEqual(r.status_code, 204)
@@ -36,8 +34,7 @@ class PauseTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 405)
 
     def test_it_validates_ownership(self):
-        check = Check(user=self.bob, status="up", project=self.bobs_project)
-        check.save()
+        check = Check.objects.create(project=self.bobs_project, status="up")
 
         url = "/api/v1/checks/%s/pause" % check.code
         r = self.client.post(url, "", content_type="application/json",
@@ -60,7 +57,7 @@ class PauseTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_clears_last_start_alert_after(self):
-        check = Check(user=self.alice, status="up", project=self.project)
+        check = Check(project=self.project, status="up")
         check.last_start = now()
         check.alert_after = check.last_start + td(hours=1)
         check.save()
