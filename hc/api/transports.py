@@ -374,7 +374,7 @@ class Sms(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
-        profile = Profile.objects.for_user(self.channel.user)
+        profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             return "Monthly SMS limit exceeded"
 

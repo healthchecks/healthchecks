@@ -170,9 +170,8 @@ class Check(models.Model):
         return "up"
 
     def assign_all_channels(self):
-        if self.user:
-            channels = Channel.objects.filter(user=self.user)
-            self.channel_set.add(*channels)
+        channels = Channel.objects.filter(project=self.project)
+        self.channel_set.add(*channels)
 
     def tags_list(self):
         return [t.strip() for t in self.tags.split(" ") if t.strip()]
@@ -293,7 +292,7 @@ class Channel(models.Model):
         }
 
     def assign_all_checks(self):
-        checks = Check.objects.filter(user=self.user)
+        checks = Check.objects.filter(project=self.project)
         self.checks.add(*checks)
 
     def make_token(self):

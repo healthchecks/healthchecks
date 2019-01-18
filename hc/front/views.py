@@ -148,7 +148,7 @@ def status(request, username):
     if not _has_access(request, username):
         raise Http404("not found")
 
-    checks = list(Check.objects.filter(user__username=username))
+    checks = list(Check.objects.filter(project__owner__username=username))
 
     details = []
     for check in checks:
