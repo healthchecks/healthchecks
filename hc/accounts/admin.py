@@ -52,7 +52,7 @@ class ProfileAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
         qs = qs.annotate(Count("member", distinct=True))
-        qs = qs.annotate(Count("user__check", distinct=True))
+        qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
         return qs
 
     @mark_safe
@@ -66,14 +66,13 @@ class ProfileAdmin(admin.ModelAdmin):
 
     @mark_safe
     def checks(self, obj):
-        num_checks = obj.user__check__count
-        pct = 100 * num_checks / max(obj.check_limit, 1)
+        pct = 100 * obj.num_checks / max(obj.check_limit, 1)
         pct = min(100, int(pct))
 
         return """
             <span class="bar"><span style="width: %dpx"></span></span>
             &nbsp; %d of %d
-        """ % (pct, num_checks, obj.check_limit)
+        """ % (pct, obj.num_checks, obj.check_limit)
 
     def invited(self, obj):
         return "%d of %d" % (obj.member__count, obj.team_limit)
@@ -106,8 +105,8 @@ class HcUserAdmin(UserAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.annotate(Count("check", distinct=True))
-        qs = qs.annotate(Count("channel", distinct=True))
+        qs = qs.annotate(num_checks=Count("project__check", distinct=True))
+        qs = qs.annotate(num_channels=Count("project__channel", distinct=True))
 
         return qs
 
@@ -115,19 +114,19 @@ class HcUserAdmin(UserAdmin):
     def engagement(self, user):
         result = ""
 
-        if user.check__count == 0:
+        if user.num_checks == 0:
             result += "0 checks, "
-        elif user.check__count == 1:
+        elif user.num_checks == 1:
             result += "1 check, "
         else:
-            result += "<strong>%d checks</strong>, " % user.check__count
+            result += "<strong>%d checks</strong>, " % user.num_checks
 
-        if user.channel__count == 0:
+        if user.num_channels == 0:
             result += "0 channels"
-        elif user.channel__count == 1:
+        elif user.num_channels == 1:
             result += "1 channel, "
         else:
-            result += "<strong>%d channels</strong>, " % user.channel__count
+            result += "<strong>%d channels</strong>, " % user.num_channels
 
         return result
 

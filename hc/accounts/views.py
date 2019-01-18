@@ -311,21 +311,21 @@ def notifications(request):
 def badges(request):
     _ensure_own_team(request)
 
-    teams = [request.profile]
+    projects = [request.project]
     for membership in request.user.memberships.all():
-        teams.append(membership.team)
+        projects.append(membership.project)
 
     badge_sets = []
-    for team in teams:
+    for project in projects:
         tags = set()
-        for check in Check.objects.filter(user=team.user):
+        for check in Check.objects.filter(project=project):
             tags.update(check.tags_list())
 
         sorted_tags = sorted(tags, key=lambda s: s.lower())
         sorted_tags.append("*")  # For the "overall status" badge
 
         urls = []
-        username = team.user.username
+        username = project.owner.username
         for tag in sorted_tags:
             if not re.match("^[\w-]+$", tag) and tag != "*":
                 continue
@@ -335,7 +335,7 @@ def badges(request):
                 "json": get_badge_url(username, tag, format="json"),
             })
 
-        badge_sets.append({"team": team, "urls": urls})
+        badge_sets.append({"project": project, "urls": urls})
 
     ctx = {
         "page": "profile",

@@ -9,7 +9,7 @@ class BadgesTestCase(BaseTestCase):
         Check.objects.create(user=self.alice, tags="foo a-B_1  baz@",
                              project=self.project)
         Check.objects.create(user=self.bob, tags="bobs-tag",
-                             project=self.project)
+                             project=self.bobs_project)
 
         r = self.client.get("/accounts/profile/badges/")
         self.assertContains(r, "foo.svg")

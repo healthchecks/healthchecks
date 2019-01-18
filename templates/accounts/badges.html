@@ -29,8 +29,8 @@
                 <p id="badges-description">
                     {% site_name %} provides status badges for each of the tags
                     you have used. Additionally, the "{% site_name %}"
-                    badge shows the overall status of all checks in your
-                    account. The badges have public, but hard-to-guess
+                    badge shows the overall status of all checks in a
+                    project. The badges have public, but hard-to-guess
                     URLs. You can use them in your READMEs,
                     dashboards or status pages.
                 </p>
@@ -47,7 +47,7 @@
                 <table id="badges-svg" class="badges table">
                 {% for badge_set in badges %}
                     <tr>
-                        <th colspan="2">{{ badge_set.team }}</th>
+                        <th colspan="2">{{ badge_set.project }}</th>
                     </tr>
                     {% for urldict in badge_set.urls %}
                     <tr>
@@ -64,7 +64,7 @@
                 <table id="badges-json" class="badges table">
                 {% for badge_set in badges %}
                     <tr>
-                        <th colspan="2">{{ badge_set.team }}</th>
+                        <th colspan="2">{{ badge_set.project }}</th>
                     </tr>
 
                     {% for urldict in badge_set.urls %}

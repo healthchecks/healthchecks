@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
-from django.db.models import Count
+from django.db.models import Count, F
 from django.utils.safestring import mark_safe
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.date import format_duration
@@ -15,17 +15,22 @@ class ChecksAdmin(admin.ModelAdmin):
             'all': ('css/admin/checks.css',)
         }
 
-    search_fields = ["name", "user__email", "code"]
-    list_display = ("id", "name_tags", "created", "code", "timeout_schedule",
-                    "status", "email", "last_start", "last_ping", "n_pings")
-    list_select_related = ("user", )
+    search_fields = ["name", "code", "project__owner__email"]
+    raw_id_fields = ("project", )
+    list_display = ("id", "name_tags", "email", "created", "n_pings",
+                    "timeout_schedule", "status", "last_start", "last_ping")
     list_filter = ("status", "kind", "last_ping",
                    "last_start")
 
     actions = ["send_alert"]
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(email=F("project__owner__email"))
+        return qs
+
     def email(self, obj):
-        return obj.user.email if obj.user else None
+        return obj.email
 
     def name_tags(self, obj):
         if not obj.tags:
@@ -137,9 +142,9 @@ class LargeTablePaginator(Paginator):
 
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
-    search_fields = ("owner__name", "owner__code", "owner__user__email")
+    search_fields = ("owner__name", "owner__code")
     readonly_fields = ("owner", )
-    list_select_related = ("owner", "owner__user")
+    list_select_related = ("owner", )
     list_display = ("id", "created", "owner", "email", "scheme", "method",
                     "ua")
     list_filter = ("created", SchemeListFilter, MethodListFilter,
@@ -147,8 +152,13 @@ class PingsAdmin(admin.ModelAdmin):
 
     paginator = LargeTablePaginator
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(email=F("owner__project__owner__email"))
+        return qs
+
     def email(self, obj):
-        return obj.owner.user.email if obj.owner.user else None
+        return obj.email
 
 
 @admin.register(Channel)
@@ -158,21 +168,20 @@ class ChannelsAdmin(admin.ModelAdmin):
             'all': ('css/admin/channels.css',)
         }
 
-    search_fields = ["value", "user__email"]
-    list_select_related = ("user", )
+    search_fields = ["value", "project__owner__email"]
     list_display = ("id", "name", "email", "formatted_kind", "value",
                     "num_notifications")
     list_filter = ("kind", )
-    raw_id_fields = ("user", "checks", )
+    raw_id_fields = ("project", "checks", )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(Count("notification", distinct=True))
-
+        qs = qs.annotate(email=F("project__owner__email"))
         return qs
 
     def email(self, obj):
-        return obj.user.email if obj.user else None
+        return obj.email
 
     @mark_safe
     def formatted_kind(self, obj):
