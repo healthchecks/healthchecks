@@ -180,13 +180,13 @@ class Profile(models.Model):
         return self.member_set.count() < self.team_limit
 
     def invite(self, user):
-        for project in self.user.project_set.all():
-            member = Member(team=self, user=user, project=project)
-            member.save()
+        project = self.get_own_project()
+        Member.objects.create(team=self, user=user, project=project)
 
         # Switch the invited user over to the new team so they
         # notice the new team on next visit:
         user.profile.current_team = self
+        user.profile.current_project = project
         user.profile.save()
 
         user.profile.send_instant_login_link(self)

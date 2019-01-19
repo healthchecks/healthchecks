@@ -142,13 +142,11 @@ class ProfileTestCase(BaseTestCase):
         members = self.project.member_set.all()
         self.assertEqual(members.count(), 2)
 
-        frank_found = False
-        for member in members.all():
-            self.assertEqual(member.project, self.project)
-            if member.user.email == "frank@example.org":
-                frank_found = True
+        member = Member.objects.get(project=self.project,
+                                    user__email="frank@example.org")
 
-        self.assertTrue(frank_found)
+        profile = member.user.profile
+        self.assertEqual(profile.current_project, self.project)
 
         # And an email should have been sent
         subj = ('You have been invited to join'
