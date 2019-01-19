@@ -12,7 +12,7 @@ class TeamAccessMiddleware(object):
 
         is_owner = Q(owner=request.user)
         is_member = Q(member__user_id=request.user.id)
-        projects_q = Project.objects.filter(is_owner | is_member)
+        projects_q = Project.objects.filter(is_owner | is_member).distinct()
         projects_q = projects_q.select_related("owner")
         request.get_projects = lambda: list(projects_q)
 
