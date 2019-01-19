@@ -116,7 +116,7 @@
                 <li class="dropdown">
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
                         {% if check %}
-                            {{ check.project.owner.profile }}
+                            {{ check.project }}
                         {% else %}
                             {{ request.project }}
                         {% endif %}
@@ -124,26 +124,19 @@
                     </a>
                     <ul class="dropdown-menu">
                     {% with projects=request.get_projects %}
-                        {% if projects %}
-                        <li class="dropdown-header">{{ request.user.profile }}</li>
-                        <li>
-                            <a href="{% url 'hc-switch-team' request.user.username %}" class="active">Checks</a>
-                        </li>
-                        {% endif %}
-
-                        <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
-                        <li role="separator" class="divider"></li>
-
                         {% for project in projects %}
                         <li class="dropdown-header">{{ project }}</li>
                         <li>
                             <a href="{% url 'hc-switch-team' project.owner.username %}">Checks</a>
                         </li>
+                        {% if project.owner == request.user %}
+                            <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
+                        {% endif %}
                         <li role="separator" class="divider"></li>
                         {% endfor %}
-
-                        <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
                     {% endwith %}
+
+                    <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
                     </ul>
                 </li>
             </ul>
