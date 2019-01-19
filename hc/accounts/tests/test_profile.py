@@ -173,7 +173,6 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(Member.objects.count(), 0)
 
         self.bobs_profile.refresh_from_db()
-        self.assertEqual(self.bobs_profile.current_team, None)
         self.assertEqual(self.bobs_profile.current_project, None)
 
     def test_it_sets_team_name(self):
@@ -182,9 +181,6 @@ class ProfileTestCase(BaseTestCase):
         form = {"set_team_name": "1", "team_name": "Alpha Team"}
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 200)
-
-        self.profile.refresh_from_db()
-        self.assertEqual(self.profile.team_name, "Alpha Team")
 
         self.project.refresh_from_db()
         self.assertEqual(self.project.name, "Alpha Team")
@@ -197,7 +193,6 @@ class ProfileTestCase(BaseTestCase):
         # After visiting the profile page, team should be switched back
         # to user's default team.
         self.bobs_profile.refresh_from_db()
-        self.assertEqual(self.bobs_profile.current_team, self.bobs_profile)
         self.assertEqual(self.bobs_profile.current_project, self.bobs_project)
 
     def test_it_sends_change_email_link(self):

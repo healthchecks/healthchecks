@@ -26,7 +26,6 @@ class CloseAccountTestCase(BaseTestCase):
 
         # Bob's current team should now be None
         self.bobs_profile.refresh_from_db()
-        self.assertIsNone(self.bobs_profile.current_team)
         self.assertIsNone(self.bobs_profile.current_project)
 
         # Check should be gone
@@ -46,7 +45,6 @@ class CloseAccountTestCase(BaseTestCase):
         # Alice should be still present
         self.alice.refresh_from_db()
         self.profile.refresh_from_db()
-        self.assertEqual(self.profile.current_team, None)
 
         # Bob should be gone
         bobs = User.objects.filter(username="bob")

@@ -46,7 +46,7 @@ class SwitchChannelTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_it_allows_cross_team_access(self):
-        self.bobs_profile.current_team = None
+        self.bobs_profile.current_project = None
         self.bobs_profile.save()
 
         self.client.login(username="bob@example.org", password="password")

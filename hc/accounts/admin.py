@@ -19,15 +19,15 @@ class Fieldset:
 
 class ProfileFieldset(Fieldset):
     name = "User Profile"
-    fields = ("email", "current_team", "reports_allowed",
+    fields = ("email", "current_project", "reports_allowed",
               "next_report_date", "nag_period", "next_nag_date",
               "token", "sort")
 
 
 class TeamFieldset(Fieldset):
     name = "Team"
-    fields = ("team_name", "team_limit", "check_limit",
-              "ping_log_limit", "sms_limit", "sms_sent", "last_sms_date")
+    fields = ("team_limit", "check_limit", "ping_log_limit", "sms_limit",
+              "sms_sent", "last_sms_date")
 
 
 @admin.register(Profile)
@@ -39,7 +39,7 @@ class ProfileAdmin(admin.ModelAdmin):
         }
 
     readonly_fields = ("user", "email")
-    raw_id_fields = ("current_team", )
+    raw_id_fields = ("current_project", )
     list_select_related = ("user", )
     list_display = ("id", "users", "checks", "invited",
                     "reports_allowed", "ping_log_limit", "sms")

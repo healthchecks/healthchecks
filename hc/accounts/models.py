@@ -41,9 +41,7 @@ class ProfileManager(models.Manager):
 
 
 class Profile(models.Model):
-    # Owner:
     user = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
-    team_name = models.CharField(max_length=200, blank=True)
     next_report_date = models.DateTimeField(null=True, blank=True)
     reports_allowed = models.BooleanField(default=True)
     nag_period = models.DurationField(default=NO_NAG, choices=NAG_PERIODS)
@@ -51,7 +49,6 @@ class Profile(models.Model):
     ping_log_limit = models.IntegerField(default=100)
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
-    current_team = models.ForeignKey("self", models.SET_NULL, null=True)
     current_project = models.ForeignKey("Project", models.SET_NULL, null=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
     sms_limit = models.IntegerField(default=0)
@@ -62,7 +59,7 @@ class Profile(models.Model):
     objects = ProfileManager()
 
     def __str__(self):
-        return self.team_name or self.user.email
+        return "Profile for %s" % self.user.email
 
     def notifications_url(self):
         return settings.SITE_ROOT + reverse("hc-notifications")
@@ -72,13 +69,6 @@ class Profile(models.Model):
         signed_username = signer.sign(self.user.username)
         path = reverse("hc-unsubscribe-reports", args=[signed_username])
         return settings.SITE_ROOT + path
-
-    def team(self):
-        # compare ids to avoid SQL queries
-        if self.current_team_id and self.current_team_id != self.id:
-            return self.current_team
-
-        return self
 
     def prepare_token(self, salt):
         token = urlsafe_b64encode(os.urandom(24)).decode()
@@ -185,7 +175,6 @@ class Profile(models.Model):
 
         # Switch the invited user over to the new team so they
         # notice the new team on next visit:
-        user.profile.current_team = self
         user.profile.current_project = project
         user.profile.save()
 

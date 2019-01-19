@@ -38,7 +38,6 @@ def billing(request):
     if request.project.owner != request.user:
         request.project = request.profile.get_own_project()
 
-        request.profile.current_team = request.profile
         request.profile.current_project = request.project
         request.profile.save()
 

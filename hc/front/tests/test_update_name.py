@@ -30,8 +30,8 @@ class UpdateNameTestCase(BaseTestCase):
         self.assertEqual(self.check.name, "Bob Was Here")
 
     def test_it_allows_cross_team_access(self):
-        # Bob's current team is not set
-        self.bobs_profile.current_team = None
+        # Bob's current profile is not set
+        self.bobs_profile.current_project = None
         self.bobs_profile.save()
 
         # But this should still work:

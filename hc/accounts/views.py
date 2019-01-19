@@ -79,7 +79,6 @@ def _ensure_own_team(request):
     if request.project.owner != request.user:
         request.project = request.profile.get_own_project()
 
-        request.profile.current_team = request.profile
         request.profile.current_project = request.project
         request.profile.save()
 
@@ -247,7 +246,6 @@ def profile(request):
 
                 email = form.cleaned_data["email"]
                 farewell_user = User.objects.get(email=email)
-                farewell_user.profile.current_team = None
                 farewell_user.profile.current_project = None
                 farewell_user.profile.save()
 
@@ -259,9 +257,6 @@ def profile(request):
         elif "set_team_name" in request.POST:
             form = TeamNameForm(request.POST)
             if form.is_valid():
-                profile.team_name = form.cleaned_data["team_name"]
-                profile.save()
-
                 request.project.name = form.cleaned_data["team_name"]
                 request.project.save()
 
@@ -445,7 +440,6 @@ def switch_team(request, target_username):
     if not access_ok:
         return HttpResponseForbidden()
 
-    request.profile.current_team = target_team
     request.profile.current_project = target_project
     request.profile.save()
 

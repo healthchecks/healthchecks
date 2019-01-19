@@ -33,7 +33,6 @@ class BaseTestCase(TestCase):
         self.bobs_project.save()
 
         self.bobs_profile = Profile(user=self.bob)
-        self.bobs_profile.current_team = self.profile
         self.bobs_profile.current_project = self.project
         self.bobs_profile.save()
 
