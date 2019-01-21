@@ -116,7 +116,7 @@ class Profile(models.Model):
         is_owner = models.Q(owner=self.user)
         is_member = models.Q(member__user=self.user)
         q = Project.objects.filter(is_owner | is_member)
-        project_ids = list(q.values_list("id", flat=True))
+        project_ids = q.values("id")
 
         from hc.api.models import Check
         return Check.objects.filter(project_id__in=project_ids)
