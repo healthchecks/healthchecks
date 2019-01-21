@@ -167,7 +167,7 @@ class Profile(models.Model):
         return True
 
     def can_invite(self):
-        return self.member_set.count() < self.team_limit
+        return self.member_count() < self.team_limit
 
     def invite(self, user):
         project = self.get_own_project()
@@ -209,6 +209,9 @@ class Profile(models.Model):
             project = Project.objects.create(owner=self.user)
 
         return project
+
+    def member_count(self):
+        return Member.objects.filter(project__owner__profile=self).count()
 
 
 class Project(models.Model):

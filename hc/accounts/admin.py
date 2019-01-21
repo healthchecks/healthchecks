@@ -51,13 +51,13 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
-        qs = qs.annotate(Count("member", distinct=True))
+        qs = qs.annotate(num_members=Count("user__project__member", distinct=True))
         qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
         return qs
 
     @mark_safe
     def users(self, obj):
-        if obj.member__count == 0:
+        if obj.num_members == 0:
             return obj.user.email
         else:
             return render_to_string("admin/profile_list_team.html", {
@@ -75,7 +75,7 @@ class ProfileAdmin(admin.ModelAdmin):
         """ % (pct, obj.num_checks, obj.check_limit)
 
     def invited(self, obj):
-        return "%d of %d" % (obj.member__count, obj.team_limit)
+        return "%d of %d" % (obj.num_members, obj.team_limit)
 
     def sms(self, obj):
         return "%d of %d" % (obj.sms_sent, obj.sms_limit)
