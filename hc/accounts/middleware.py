@@ -1,5 +1,4 @@
-from django.db.models import Q
-from hc.accounts.models import Profile, Project
+from hc.accounts.models import Profile
 
 
 class TeamAccessMiddleware(object):
@@ -9,12 +8,6 @@ class TeamAccessMiddleware(object):
     def __call__(self, request):
         if not request.user.is_authenticated:
             return self.get_response(request)
-
-        is_owner = Q(owner=request.user)
-        is_member = Q(member__user_id=request.user.id)
-        projects_q = Project.objects.filter(is_owner | is_member).distinct()
-        projects_q = projects_q.select_related("owner")
-        request.get_projects = lambda: list(projects_q)
 
         profile = Profile.objects.for_user(request.user)
         if profile.current_project is None:

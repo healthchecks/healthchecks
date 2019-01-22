@@ -110,13 +110,17 @@ class Profile(models.Model):
         }
         emails.change_email(self.user.email, ctx)
 
-    def checks_from_all_projects(self):
-        """ Return a queryset of checks from projects we have access to. """
+    def projects(self):
+        """ Return a queryset of all projects we have access to. """
 
         is_owner = models.Q(owner=self.user)
         is_member = models.Q(member__user=self.user)
-        q = Project.objects.filter(is_owner | is_member)
-        project_ids = q.values("id")
+        return Project.objects.filter(is_owner | is_member)
+
+    def checks_from_all_projects(self):
+        """ Return a queryset of checks from projects we have access to. """
+
+        project_ids = self.projects().values("id")
 
         from hc.api.models import Check
         return Check.objects.filter(project_id__in=project_ids)

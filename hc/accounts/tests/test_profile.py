@@ -4,7 +4,6 @@ from django.core import mail
 from django.conf import settings
 from django.utils.timezone import now
 from hc.test import BaseTestCase
-from hc.accounts.models import Member
 from hc.api.models import Check
 
 
@@ -92,16 +91,6 @@ class ProfileTestCase(BaseTestCase):
         self.assertFalse(sent)
 
         self.assertEqual(len(mail.outbox), 0)
-
-    def test_it_switches_to_own_team(self):
-        self.client.login(username="bob@example.org", password="password")
-
-        self.client.get("/accounts/profile/")
-
-        # After visiting the profile page, team should be switched back
-        # to user's default team.
-        self.bobs_profile.refresh_from_db()
-        self.assertEqual(self.bobs_profile.current_project, self.bobs_project)
 
     def test_it_sends_change_email_link(self):
         self.client.login(username="alice@example.org", password="password")

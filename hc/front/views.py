@@ -85,9 +85,7 @@ def _has_access(request, project_code):
     if request.user.is_superuser:
         return True
 
-    is_owner = Q(owner_id=request.user.id)
-    is_member = Q(member__user_id=request.user.id)
-    projects = Project.objects.filter(is_owner | is_member)
+    projects = request.profile.projects()
     return projects.filter(code=project_code).exists()
 
 

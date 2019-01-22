@@ -123,8 +123,7 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                    {% with projects=request.get_projects %}
-                        {% for project in projects %}
+                        {% for project in request.profile.projects.all %}
                         <li class="dropdown-header">{{ project }}</li>
                         <li>
                             <a href="{% url 'hc-switch-project' project.code %}">Checks</a>
@@ -136,7 +135,6 @@
                         {% endif %}
                         <li role="separator" class="divider"></li>
                         {% endfor %}
-                    {% endwith %}
 
                     <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
                     <li><a href="{% url 'hc-logout' %}">Log Out</a></li>

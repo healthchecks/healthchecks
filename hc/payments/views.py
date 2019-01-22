@@ -35,12 +35,6 @@ def pricing(request):
 
 @login_required
 def billing(request):
-    if request.project.owner != request.user:
-        request.project = request.profile.get_own_project()
-
-        request.profile.current_project = request.project
-        request.profile.save()
-
     # Don't use Subscription.objects.for_user method here, so a
     # subscription object is not created just by viewing a page.
     sub = Subscription.objects.filter(user_id=request.user.id).first()

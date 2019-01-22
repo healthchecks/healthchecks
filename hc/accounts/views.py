@@ -74,16 +74,6 @@ def _make_user(email):
     return user
 
 
-def _ensure_own_team(request):
-    """ Make sure user is switched to their own team. """
-
-    if request.project.owner != request.user:
-        request.project = request.profile.get_own_project()
-
-        request.profile.current_project = request.project
-        request.profile.save()
-
-
 def _redirect_after_login(request):
     """ Redirect to the URL indicated in ?next= query parameter. """
 
@@ -188,14 +178,11 @@ def check_token(request, username, token):
 
 @login_required
 def profile(request):
-    _ensure_own_team(request)
     profile = request.profile
-    project = profile.get_own_project()
 
     ctx = {
         "page": "profile",
         "profile": profile,
-        "project": project
     }
 
     if request.method == "POST":
@@ -212,12 +199,10 @@ def profile(request):
 @login_required
 def project(request, code):
     project = Project.objects.get(code=code, owner_id=request.user.id)
-    profile = project.owner_profile
 
     ctx = {
         "page": "profile",
         "project": project,
-        "profile": profile,
         "show_api_keys": False,
         "project_name_status": "default",
         "api_status": "default",
@@ -292,7 +277,6 @@ def project(request, code):
 
 @login_required
 def notifications(request):
-    _ensure_own_team(request)
     profile = request.profile
 
     ctx = {
@@ -328,14 +312,8 @@ def notifications(request):
 
 @login_required
 def badges(request):
-    _ensure_own_team(request)
-
-    projects = [request.project]
-    for membership in request.user.memberships.all():
-        projects.append(membership.project)
-
     badge_sets = []
-    for project in projects:
+    for project in request.profile.projects():
         tags = set()
         for check in Check.objects.filter(project=project):
             tags.update(check.tags_list())
