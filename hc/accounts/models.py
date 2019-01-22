@@ -213,6 +213,9 @@ class Profile(models.Model):
     def member_count(self):
         return Member.objects.filter(project__owner__profile=self).count()
 
+    def members(self):
+        return Member.objects.filter(project__owner__profile=self).all()
+
 
 class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
