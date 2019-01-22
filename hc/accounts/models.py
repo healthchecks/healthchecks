@@ -171,7 +171,7 @@ class Profile(models.Model):
 
     def invite(self, user):
         project = self.get_own_project()
-        Member.objects.create(team=self, user=user, project=project)
+        Member.objects.create(user=user, project=project)
 
         # Switch the invited user over to the new team so they
         # notice the new team on next visit:
@@ -253,6 +253,5 @@ class Project(models.Model):
 
 
 class Member(models.Model):
-    team = models.ForeignKey(Profile, models.CASCADE)
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
     project = models.ForeignKey(Project, models.CASCADE)
