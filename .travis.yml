@@ -11,6 +11,8 @@ env:
   - DB=sqlite
   - DB=mysql
   - DB=postgres
+services:
+  - mysql
 addons:
   postgresql: "9.6"
 script:
