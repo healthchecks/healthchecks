@@ -31,7 +31,7 @@ urlpatterns = [
     path('change_email/<slug:token>/',
          views.change_email, name="hc-change-email"),
 
-    path('switch_team/<slug:target_username>/',
-         views.switch_team, name="hc-switch-team"),
+    path('switch_project/<uuid:code>/',
+         views.switch_project, name="hc-switch-project"),
 
 ]

@@ -16,6 +16,7 @@ from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
                                ReportSettingsForm, SetPasswordForm,
@@ -440,30 +441,26 @@ def unsubscribe_reports(request, username):
 
 
 @login_required
-def switch_team(request, target_username):
-    try:
-        target_team = Profile.objects.get(user__username=target_username)
-        target_project = target_team.get_own_project()
-    except Profile.DoesNotExist:
-        return HttpResponseForbidden()
+def switch_project(request, code):
+    project = get_object_or_404(Project, code=code)
 
     # The rules:
     # Superuser can switch to any team.
     access_ok = request.user.is_superuser
 
-    # Users can switch to their own teams.
-    if not access_ok and target_team == request.profile:
+    # Users can switch to their own projects.
+    if not access_ok and project.owner_id == request.user.id:
         access_ok = True
 
-    # Users can switch to teams they are members of.
+    # Users can switch to projects they are members of.
     if not access_ok:
-        q = request.user.memberships.filter(project=target_project)
+        q = project.member_set.filter(user=request.user)
         access_ok = q.exists()
 
     if not access_ok:
         return HttpResponseForbidden()
 
-    request.profile.current_project = target_project
+    request.profile.current_project = project
     request.profile.save()
 
     return redirect("hc-checks")

@@ -127,7 +127,7 @@
                         {% for project in projects %}
                         <li class="dropdown-header">{{ project }}</li>
                         <li>
-                            <a href="{% url 'hc-switch-team' project.owner.username %}">Checks</a>
+                            <a href="{% url 'hc-switch-project' project.code %}">Checks</a>
                         </li>
                         {% if project.owner == request.user %}
                         <li>
