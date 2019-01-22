@@ -31,9 +31,7 @@
             <td class="icon-cell">
                 <img src="{% static ch.icon_path %}"
                 class="icon"
-                alt="Slack icon"
-                data-toggle="tooltip"
-                title="Slack" />
+                alt="{{ ch.get_kind_display }} icon" />
             </td>
             <td>
                 <div class="edit-name" data-toggle="modal" data-target="#name-{{ ch.code }}">
