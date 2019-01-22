@@ -1,0 +1,11 @@
+.field-users ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: #999;
+}
+
+.field-users ul li {
+    list-style-type: none;
+}
+

@@ -41,8 +41,8 @@ class ProfileAdmin(admin.ModelAdmin):
     readonly_fields = ("user", "email")
     raw_id_fields = ("current_project", )
     list_select_related = ("user", )
-    list_display = ("id", "users", "checks", "invited",
-                    "reports_allowed", "ping_log_limit", "sms")
+    list_display = ("id", "email", "last_login", "projects", "checks", "invited",
+                    "reports_allowed", "sms")
     search_fields = ["id", "user__email"]
     list_filter = ("team_limit", "reports_allowed",
                    "check_limit", "next_report_date")
@@ -55,14 +55,17 @@ class ProfileAdmin(admin.ModelAdmin):
         qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
         return qs
 
-    @mark_safe
-    def users(self, obj):
-        if obj.num_members == 0:
+    def email(self, obj):
             return obj.user.email
-        else:
-            return render_to_string("admin/profile_list_team.html", {
-                "profile": obj
-            })
+
+    def last_login(self, obj):
+            return obj.user.last_login
+
+    @mark_safe
+    def projects(self, obj):
+        return render_to_string("admin/profile_list_projects.html", {
+            "profile": obj
+        })
 
     @mark_safe
     def checks(self, obj):
@@ -80,23 +83,72 @@ class ProfileAdmin(admin.ModelAdmin):
     def sms(self, obj):
         return "%d of %d" % (obj.sms_sent, obj.sms_limit)
 
-    def email(self, obj):
-        return obj.user.email
-
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_select_related = ("owner", )
-    list_display = ("id", "name", "email")
+    list_display = ("id", "name_", "users", "engagement", "switch")
+
+    class Media:
+        css = {
+            'all': ('css/admin/projects.css',)
+        }
+
+    def get_queryset(self, request):
+        qs = super(ProjectAdmin, self).get_queryset(request)
+        qs = qs.annotate(num_channels=Count("channel", distinct=True))
+        qs = qs.annotate(num_checks=Count("check", distinct=True))
+        qs = qs.annotate(num_members=Count("member", distinct=True))
+        return qs
+
+    def name_(self, obj):
+        if obj.name:
+            return obj.name
+
+        return "Default Project for %s" % obj.owner.email
+
+    @mark_safe
+    def users(self, obj):
+        if obj.num_members == 0:
+            return obj.owner.email
+        else:
+            return render_to_string("admin/project_list_team.html", {
+                "project": obj
+            })
 
     def email(self, obj):
         return obj.owner.email
 
+    @mark_safe
+    def engagement(self, obj):
+        result = ""
+
+        if obj.num_checks == 0:
+            result += "0 checks, "
+        elif obj.num_checks == 1:
+            result += "1 check, "
+        else:
+            result += "<strong>%d checks</strong>, " % obj.num_checks
+
+        if obj.num_channels == 0:
+            result += "0 channels"
+        elif obj.num_channels == 1:
+            result += "1 channel, "
+        else:
+            result += "<strong>%d channels</strong>, " % obj.num_channels
+
+        return result
+
+    @mark_safe
+    def switch(self, obj):
+        url = reverse("hc-switch-project", args=[obj.code])
+        return "<a href='%s'>Show Checks</a>" % url
+
 
 class HcUserAdmin(UserAdmin):
     actions = ["send_report"]
-    list_display = ('id', 'email', 'date_joined', 'last_login', 'engagement',
-                    'is_staff', 'checks')
+    list_display = ('id', 'email', 'engagement', 'date_joined', 'last_login',
+                    'is_staff')
 
     list_display_links = ("id", "email")
     list_filter = ("last_login", "date_joined", "is_staff", "is_active")
@@ -129,11 +181,6 @@ class HcUserAdmin(UserAdmin):
             result += "<strong>%d channels</strong>, " % user.num_channels
 
         return result
-
-    @mark_safe
-    def checks(self, user):
-        url = reverse("hc-switch-team", args=[user.username])
-        return "<a href='%s'>Checks</a>" % url
 
     def send_report(self, request, qs):
         for user in qs:

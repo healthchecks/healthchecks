@@ -1,0 +1,6 @@
+{{ project.owner.email }}
+<ul>
+    {% for member in project.member_set.all %}
+    <li>{{ member.user.email }}</li>
+    {% endfor %}
+</ul>
