@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from hc.accounts.views import login as hc_login
+from hc.accounts import views as accounts_views
 
 urlpatterns = [
-    path('admin/login/', hc_login),
+    path('admin/login/', accounts_views.login),
     path('admin/', admin.site.urls),
     path('accounts/', include('hc.accounts.urls')),
+    path('projects/<uuid:code>/settings/', accounts_views.project, name="hc-project-settings"),
     path('', include('hc.api.urls')),
     path('', include('hc.front.urls')),
     path('', include('hc.payments.urls'))

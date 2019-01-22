@@ -19,7 +19,7 @@ from django.views.decorators.http import require_POST
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
                                ReportSettingsForm, SetPasswordForm,
-                               TeamNameForm, AvailableEmailForm,
+                               ProjectNameForm, AvailableEmailForm,
                                ExistingEmailForm)
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check
@@ -194,10 +194,7 @@ def profile(request):
     ctx = {
         "page": "profile",
         "profile": profile,
-        "project": project,
-        "show_api_keys": False,
-        "api_status": "default",
-        "team_status": "default"
+        "project": project
     }
 
     if request.method == "POST":
@@ -207,7 +204,27 @@ def profile(request):
         elif "set_password" in request.POST:
             profile.send_set_password_link()
             return redirect("hc-link-sent")
-        elif "create_api_keys" in request.POST:
+
+    return render(request, "accounts/profile.html", ctx)
+
+
+@login_required
+def project(request, code):
+    project = Project.objects.get(code=code, owner_id=request.user.id)
+    profile = project.owner_profile
+
+    ctx = {
+        "page": "profile",
+        "project": project,
+        "profile": profile,
+        "show_api_keys": False,
+        "project_name_status": "default",
+        "api_status": "default",
+        "team_status": "default"
+    }
+
+    if request.method == "POST":
+        if "create_api_keys" in request.POST:
             project.set_api_keys()
             project.save()
 
@@ -224,7 +241,7 @@ def profile(request):
         elif "show_api_keys" in request.POST:
             ctx["show_api_keys"] = True
         elif "invite_team_member" in request.POST:
-            if not profile.can_invite():
+            if not project.can_invite():
                 return HttpResponseForbidden()
 
             form = InviteTeamMemberForm(request.POST)
@@ -236,7 +253,7 @@ def profile(request):
                 except User.DoesNotExist:
                     user = _make_user(email)
 
-                profile.invite(user)
+                project.invite(user)
                 ctx["team_member_invited"] = email
                 ctx["team_status"] = "success"
 
@@ -249,21 +266,27 @@ def profile(request):
                 farewell_user.profile.current_project = None
                 farewell_user.profile.save()
 
-                Member.objects.filter(project=request.project,
+                Member.objects.filter(project=project,
                                       user=farewell_user).delete()
 
                 ctx["team_member_removed"] = email
                 ctx["team_status"] = "info"
-        elif "set_team_name" in request.POST:
-            form = TeamNameForm(request.POST)
+        elif "set_project_name" in request.POST:
+            form = ProjectNameForm(request.POST)
             if form.is_valid():
-                request.project.name = form.cleaned_data["team_name"]
-                request.project.save()
+                project.name = form.cleaned_data["name"]
+                project.save()
 
-                ctx["team_name_updated"] = True
-                ctx["team_status"] = "success"
+                if request.project.id == project.id:
+                    request.project = project
 
-    return render(request, "accounts/profile.html", ctx)
+                ctx["project_name_updated"] = True
+                ctx["project_name_status"] = "success"
+
+    # Count members right before rendering the template, in case
+    # we just invited or removed someone
+    ctx["num_members"] = project.member_set.count()
+    return render(request, "accounts/project.html", ctx)
 
 
 @login_required

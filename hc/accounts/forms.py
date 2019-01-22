@@ -95,5 +95,5 @@ class RemoveTeamMemberForm(forms.Form):
     email = LowercaseEmailField()
 
 
-class TeamNameForm(forms.Form):
-    team_name = forms.CharField(max_length=200, required=True)
+class ProjectNameForm(forms.Form):
+    name = forms.CharField(max_length=200, required=True)

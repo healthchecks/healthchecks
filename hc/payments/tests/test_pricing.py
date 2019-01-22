@@ -34,7 +34,7 @@ class PricingTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
 
         r = self.client.get("/pricing/")
-        self.assertContains(r, "To manage this team")
+        self.assertContains(r, "To manage billing for this project")
 
     def test_it_shows_active_plan(self):
         self.sub = Subscription(user=self.alice)

@@ -79,7 +79,7 @@ class Profile(models.Model):
     def check_token(self, token, salt):
         return salt in self.token and check_password(token, self.token)
 
-    def send_instant_login_link(self, inviting_profile=None, redirect_url=None):
+    def send_instant_login_link(self, inviting_project=None, redirect_url=None):
         token = self.prepare_token("login")
         path = reverse("hc-check-token", args=[self.user.username, token])
         if redirect_url:
@@ -88,7 +88,7 @@ class Profile(models.Model):
         ctx = {
             "button_text": "Sign In",
             "button_url": settings.SITE_ROOT + path,
-            "inviting_profile": inviting_profile
+            "inviting_project": inviting_project
         }
         emails.login(self.user.email, ctx)
 
@@ -166,20 +166,6 @@ class Profile(models.Model):
         emails.report(self.user.email, ctx, headers)
         return True
 
-    def can_invite(self):
-        return self.member_count() < self.team_limit
-
-    def invite(self, user):
-        project = self.get_own_project()
-        Member.objects.create(user=user, project=project)
-
-        # Switch the invited user over to the new team so they
-        # notice the new team on next visit:
-        user.profile.current_project = project
-        user.profile.save()
-
-        user.profile.send_instant_login_link(self)
-
     def sms_sent_this_month(self):
         # IF last_sms_date was never set, we have not sent any messages yet.
         if not self.last_sms_date:
@@ -210,12 +196,6 @@ class Profile(models.Model):
 
         return project
 
-    def member_count(self):
-        return Member.objects.filter(project__owner__profile=self).count()
-
-    def members(self):
-        return Member.objects.filter(project__owner__profile=self).all()
-
 
 class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -241,6 +221,19 @@ class Project(models.Model):
         self.api_key = urlsafe_b64encode(os.urandom(24)).decode()
         self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
         self.save()
+
+    def can_invite(self):
+        return self.member_set.count() < self.owner_profile.team_limit
+
+    def invite(self, user):
+        Member.objects.create(user=user, project=self)
+
+        # Switch the invited user over to the new team so they
+        # notice the new team on next visit:
+        user.profile.current_project = self
+        user.profile.save()
+
+        user.profile.send_instant_login_link(self)
 
     def set_next_nag_date(self):
         """ Set next_nag_date on profiles of all members of this project. """

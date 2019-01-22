@@ -125,28 +125,20 @@
                     <ul class="dropdown-menu">
                     {% with projects=request.get_projects %}
                         {% for project in projects %}
-                        {% if project.owner == request.user %}
-                            <li class="dropdown-header">{{ project }}</li>
-                            <li>
-                                <a href="{% url 'hc-switch-team' project.owner.username %}">Checks</a>
-                            </li>
-                                <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
-                            <li role="separator" class="divider"></li>
-                        {% endif %}
-                        {% endfor %}
-
-                        {% for project in projects %}
-                        {% if project.owner == request.user %}
-                        {% else %}
                         <li class="dropdown-header">{{ project }}</li>
                         <li>
                             <a href="{% url 'hc-switch-team' project.owner.username %}">Checks</a>
                         </li>
-                        <li role="separator" class="divider"></li>
+                        {% if project.owner == request.user %}
+                        <li>
+                            <a href="{% url 'hc-project-settings' project.code %}">Project Settings</a>
+                        </li>
                         {% endif %}
+                        <li role="separator" class="divider"></li>
                         {% endfor %}
                     {% endwith %}
 
+                    <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
                     <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
                     </ul>
                 </li>

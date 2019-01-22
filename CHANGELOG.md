@@ -4,13 +4,11 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Improvements
-- Database schema: set Check.user to not null
 - Database schema: add uniqueness constraint to Check.code
-- Database schema: add Ping.kind field
-- Database schema: remove Ping.start and Ping.fail fields
+- Database schema: add Ping.kind field. Remove "start" and "fail" fields.
 - Add "Email Settings..." dialog and "Subject Must Contain" setting
 - Database schema: add the Project model
-
+- Move project-specific settings to a new "Project Settings" page
 
 
 ## 1.4.0 - 2018-12-25

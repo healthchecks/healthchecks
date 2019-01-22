@@ -58,19 +58,6 @@
                                     <span>{{ num_checks }} of {{ profile.check_limit }}</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Team Size</td>
-                                <td {% if team_size >= profile.team_limit %} class="at-limit" {% endif %}>
-                                    <span>
-                                    {{ team_size }} of
-                                    {% if profile.team_limit == 500 %}
-                                        unlimited
-                                    {% else %}
-                                        {{ team_max }}
-                                    {% endif %}
-                                    </span>
-                                </td>
-                            </tr>
                         </table>
 
                         <button
