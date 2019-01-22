@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import signing
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
                          HttpResponseForbidden, JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from hc.accounts.models import Project
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
                            Ping, Notification)
 from hc.api.transports import Telegram
@@ -78,17 +79,16 @@ def _get_check_for_user(request, code):
         raise Http404("not found")
 
 
-def _has_access(request, username):
+def _has_access(request, project_code):
     """ Return true if current user has access to the specified account. """
-
-    if request.user.username == username:
-        return True
 
     if request.user.is_superuser:
         return True
 
-    q = request.user.memberships
-    return q.filter(project__owner__username=username).exists()
+    is_owner = Q(owner_id=request.user.id)
+    is_member = Q(member__user_id=request.user.id)
+    projects = Project.objects.filter(is_owner | is_member)
+    return projects.filter(code=project_code).exists()
 
 
 @login_required
@@ -144,11 +144,11 @@ def my_checks(request):
 
 
 @login_required
-def status(request, username):
-    if not _has_access(request, username):
+def status(request, code):
+    if not _has_access(request, code):
         raise Http404("not found")
 
-    checks = list(Check.objects.filter(project__owner__username=username))
+    checks = list(Check.objects.filter(project__code=code))
 
     details = []
     for check in checks:

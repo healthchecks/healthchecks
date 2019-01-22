@@ -10,9 +10,11 @@ class MyChecksTestCase(BaseTestCase):
         self.check.tags = "foo"
         self.check.save()
 
+        self.url = "/projects/%s/checks/status/" % self.project.code
+
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/teams/alice/checks/status/")
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
         doc = r.json()
 
@@ -28,7 +30,7 @@ class MyChecksTestCase(BaseTestCase):
         self.bobs_profile.save()
 
         self.client.login(username="bob@example.org", password="password")
-        r = self.client.get("/teams/alice/checks/status/")
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
 
     def test_it_checks_ownership(self):
@@ -36,5 +38,5 @@ class MyChecksTestCase(BaseTestCase):
         self.bobs_profile.save()
 
         self.client.login(username="charlie@example.org", password="password")
-        r = self.client.get("/teams/alice/checks/status/")
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
