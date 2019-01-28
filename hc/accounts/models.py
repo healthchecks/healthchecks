@@ -202,7 +202,7 @@ class Profile(models.Model):
 
 
 class Project(models.Model):
-    code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    code = models.UUIDField(default=uuid.uuid4, unique=True)
     name = models.CharField(max_length=200, blank=True)
     owner = models.ForeignKey(User, models.CASCADE)
     api_key = models.CharField(max_length=128, blank=True)

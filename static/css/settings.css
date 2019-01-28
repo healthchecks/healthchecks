@@ -15,13 +15,13 @@
     color: #5cb85c;
 }
 
-#close-account {
+#close-account, #remove-project {
     margin-left: 24px;
     border-color: #d43f3a;
     color: #d43f3a;
 }
 
-#close-account:hover {
+#close-account:hover, #remove-project:hover {
     background-color: #ffebea;
 }
 

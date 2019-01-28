@@ -149,6 +149,21 @@
             {% endif %}
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                    {% csrf_token %}
+                    <h2>Remove Project</h2>
+                    <a href="#"
+                       id="remove-project"
+                       class="btn btn-default pull-right"
+                       data-toggle="modal"
+                       data-target="#remove-project-modal">Remove Project</a>
+                    This will permanently remove project {{ project }}.
+                <form action="{% url 'hc-remove-project' project.code %}" method="post">
+                </form>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -159,7 +174,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="remove-check-title">Revoke API Keys?</h4>
+                    <h4>Revoke API Keys?</h4>
                 </div>
                 <div class="modal-body">
                     <p>You are about to revoke your current API keys.</p>
@@ -188,7 +203,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="remove-check-title">Remove Team Member</h4>
+                    <h4>Remove Team Member</h4>
                 </div>
                 <div class="modal-body">
                     <p>You are about to remove <strong id="rtm-email"></strong> from the project.</p>
@@ -217,7 +232,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="remove-check-title">Invite a Team Member</h4>
+                    <h4>Invite a Team Member</h4>
                 </div>
                 <div class="modal-body">
                     <ul>
@@ -281,6 +296,33 @@
         </form>
     </div>
 </div>
+
+<div id="remove-project-modal" class="modal">
+    <div class="modal-dialog">
+        <form method="post" action="{% url 'hc-remove-project' project.code %}">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Remove "{{ project }}"?</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Danger zone! You are about to permanently remove
+                    project <strong>{{ project }}</strong> and all
+                    of its associated checks and integrations. Are you sure?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        class="btn btn-danger">Remove Project</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}

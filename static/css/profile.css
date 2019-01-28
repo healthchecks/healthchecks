@@ -46,3 +46,23 @@ span.loading {
     border-radius: 2px;
     padding: 2px 6px;
 }
+
+#my-projects th {
+    border-top: 0;
+}
+
+#my-projects td {
+    vertical-align: middle;
+}
+
+#my-projects .num-checks {
+
+}
+
+#my-projects .name {
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

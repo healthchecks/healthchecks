@@ -183,6 +183,7 @@ def profile(request):
     ctx = {
         "page": "profile",
         "profile": profile,
+        "my_projects_status": "default"
     }
 
     if request.method == "POST":
@@ -192,8 +193,42 @@ def profile(request):
         elif "set_password" in request.POST:
             profile.send_set_password_link()
             return redirect("hc-link-sent")
+        elif "leave_project" in request.POST:
+            code = request.POST["code"]
+            try:
+                project = Project.objects.get(code=code,
+                                              member__user=request.user)
+            except Project.DoesNotExist:
+                return HttpResponseBadRequest()
 
+            if profile.current_project == project:
+                profile.current_project = None
+                profile.save()
+
+            Member.objects.filter(project=project, user=request.user).delete()
+
+            ctx["left_project"] = project
+            ctx["my_projects_status"] = "info"
+
+    # Retrieve projects right before rendering the template--
+    # The list of the projects might have *just* changed
+    ctx["projects"] = list(profile.projects())
     return render(request, "accounts/profile.html", ctx)
+
+
+@login_required
+@require_POST
+def add_project(request):
+    form = ProjectNameForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest()
+
+    project = Project(owner=request.user)
+    project.code = project.badge_key = str(uuid.uuid4())
+    project.name = form.cleaned_data["name"]
+    project.save()
+
+    return redirect("hc-switch-project", project.code)
 
 
 @login_required
@@ -201,7 +236,7 @@ def project(request, code):
     project = Project.objects.get(code=code, owner_id=request.user.id)
 
     ctx = {
-        "page": "profile",
+        "page": "project",
         "project": project,
         "show_api_keys": False,
         "project_name_status": "default",
@@ -460,3 +495,11 @@ def close(request):
 
     request.session.flush()
     return redirect("hc-index")
+
+
+@require_POST
+@login_required
+def remove_project(request, code):
+    project = Project.objects.get(code=code, owner=request.user)
+    project.delete()
+    return redirect("hc-profile")

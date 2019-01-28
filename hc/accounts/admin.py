@@ -107,6 +107,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
+    readonly_fields = ("code", "owner")
     list_select_related = ("owner", )
     list_display = ("id", "name_", "users", "engagement", "switch")
 

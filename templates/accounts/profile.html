@@ -60,6 +60,73 @@
             </div>
         </div>
 
+        <div class="panel panel-{{ my_projects_status }}">
+            <div class="panel-body settings-block">
+                    {% csrf_token %}
+                    <h2>My Projects</h2>
+
+                    {% if projects %}
+                    <table id="my-projects" class="table">
+                        <tr>
+                            <th>Project</th>
+                            <th>Checks</th>
+                            <th>My Role</th>
+                            <th></th>
+                        </tr>
+                        {% for project in profile.projects %}
+                        <tr>
+                            <td>
+                                <div class="name">{{ project }}</div>
+                            </td>
+                            <td>
+                                <a class="num-checks" href="{% url 'hc-switch-project' project.code %}">
+                                    {% with project.check_set.count as n %}
+                                    {{ n }} check{{ n|pluralize }}
+                                    {% endwith %}
+                                </a>
+                            </td>
+                            <td>
+                                {% if project.owner == request.user %}
+                                Owner
+                                {% else %}
+                                Member
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if project.owner == request.user %}
+                                <a
+                                    href="{% url 'hc-project-settings' project.code %}"
+                                    class="pull-right">Settings</a>
+                                {% else %}
+                                <a
+                                    href="#"
+                                    data-name="{{ project }}"
+                                    data-code="{{ project.code }}"
+                                    class="pull-right leave-project">Leave</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                        <p>You don't have any projects. Create one!</p>
+                    {% endif %}
+
+                    <a
+                        id="create-project"
+                        href="#"
+                        class="btn btn-default pull-right"
+                        data-toggle="modal"
+                        data-target="#create-project-modal">Create Project</a>
+            </div>
+
+            {% if left_project %}
+            <div class="panel-footer">
+                Left project <strong>{{ left_project }}</strong>.
+            </div>
+            {% endif %}
+        </div>
+
         <div class="panel panel-default">
             <div class="panel-body settings-block">
                     {% csrf_token %}
@@ -71,8 +138,6 @@
                         data-toggle="modal"
                         data-target="#close-account-modal">Close Account</a>
                     This will permanently remove your {% site_name %} account
-                <form action="{% url 'hc-close' %}" method="post">
-                </form>
             </div>
         </div>
     </div>
@@ -80,12 +145,12 @@
 
 <div id="close-account-modal" class="modal">
     <div class="modal-dialog">
-        <form id="close-account-form" method="post" action="{% url 'hc-close' %}">
+        <form method="post" action="{% url 'hc-close' %}">
             {% csrf_token %}
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="remove-check-title">Close Account?</h4>
+                    <h4>Close Account?</h4>
                 </div>
                 <div class="modal-body">
                     <p></p>
@@ -104,4 +169,78 @@
         </form>
     </div>
 </div>
+
+<div id="create-project-modal" class="modal">
+    <div class="modal-dialog">
+        <form method="post" action="{% url 'hc-add-project' %}" class="form-horizontal">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Create Project</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="project-name" class="col-sm-4 control-label">Project Name</label>
+                        <div class="col-sm-7">
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="project-name"
+                                name="name">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        name="set_project_name"
+                        class="btn btn-primary">Create Project</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="leave-project-modal" class="modal">
+    <div class="modal-dialog">
+        <form id="leave-project-form" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Leave This Project?</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        You are about to leave project <strong id="leave-project-name"></strong>.
+                        You will lose access to its checks and integrations.
+                    </p>
+                    <p>Are you sure?</p>
+                    <input
+                        type="hidden"
+                        name="code"
+                        id="leave-project-code" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button
+                        type="submit"
+                        name="leave_project"
+                        class="btn btn-danger">Leave Project</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/profile.js' %}"></script>
+{% endcompress %}
 {% endblock %}
