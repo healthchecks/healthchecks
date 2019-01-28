@@ -13,7 +13,7 @@ class SubsAdmin(admin.ModelAdmin):
                      "user__email")
     list_display = ("id", "email", "customer_id", "address_id",
                     "payment_method_token", "subscription_id", "plan_id",
-                    "profile")
+                    "plan_name", "profile")
 
     list_filter = ("plan_id", )
     raw_id_fields = ("user", )

@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, F
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from hc.accounts.models import Profile, Project
 
@@ -41,11 +42,11 @@ class ProfileAdmin(admin.ModelAdmin):
     readonly_fields = ("user", "email")
     raw_id_fields = ("current_project", )
     list_select_related = ("user", )
-    list_display = ("id", "email", "last_login", "projects", "checks", "invited",
-                    "reports_allowed", "sms")
+    list_display = ("id", "email", "engagement", "date_joined", "last_login",
+                    "projects", "invited", "sms", "reports_allowed")
     search_fields = ["id", "user__email"]
-    list_filter = ("team_limit", "reports_allowed",
-                   "check_limit", "next_report_date")
+    list_filter = ("user__date_joined", "user__last_login",
+                   "team_limit", "reports_allowed", "check_limit")
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
@@ -53,29 +54,49 @@ class ProfileAdmin(admin.ModelAdmin):
         qs = super(ProfileAdmin, self).get_queryset(request)
         qs = qs.annotate(num_members=Count("user__project__member", distinct=True))
         qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
+        qs = qs.annotate(num_channels=Count("user__project__channel", distinct=True))
+        qs = qs.annotate(plan=F("user__subscription__plan_name"))
         return qs
 
+    @mark_safe
+    def engagement(self, obj):
+        result = ""
+
+        if obj.num_checks == 0:
+            result += "0 checks, "
+        elif obj.num_checks == 1:
+            result += "1 check, "
+        else:
+            result += "<strong>%d checks</strong>, " % obj.num_checks
+
+        if obj.num_channels == 0:
+            result += "0 channels"
+        elif obj.num_channels == 1:
+            result += "1 channel, "
+        else:
+            result += "<strong>%d channels</strong>, " % obj.num_channels
+
+        return result
+
+    @mark_safe
     def email(self, obj):
-            return obj.user.email
+            s = escape(obj.user.email)
+            if obj.plan:
+                return "<span title='%s'>%s</span>" % (obj.plan, s)
+
+            return s
 
     def last_login(self, obj):
             return obj.user.last_login
+
+    def date_joined(self, obj):
+            return obj.user.date_joined
 
     @mark_safe
     def projects(self, obj):
         return render_to_string("admin/profile_list_projects.html", {
             "profile": obj
         })
-
-    @mark_safe
-    def checks(self, obj):
-        pct = 100 * obj.num_checks / max(obj.check_limit, 1)
-        pct = min(100, int(pct))
-
-        return """
-            <span class="bar"><span style="width: %dpx"></span></span>
-            &nbsp; %d of %d
-        """ % (pct, obj.num_checks, obj.check_limit)
 
     def invited(self, obj):
         return "%d of %d" % (obj.num_members, obj.team_limit)

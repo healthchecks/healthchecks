@@ -8,22 +8,6 @@
     list-style-type: none;
 }
 
-.field-checks {
-    color: #888;
+.field-email span {
+    border-bottom: 2px solid #FFEB3B;
 }
-
-.bar {
-    display: inline-block;
-    width: 100px;
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    background: #ddd;
-}
-
-.bar span {
-    display: block;
-    height: 10px;
-    background: #79aec8;
-}
-
