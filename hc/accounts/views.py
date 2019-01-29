@@ -283,16 +283,20 @@ def project(request, code):
         elif "remove_team_member" in request.POST:
             form = RemoveTeamMemberForm(request.POST)
             if form.is_valid():
+                q = User.objects
+                q = q.filter(email=form.cleaned_data["email"])
+                q = q.filter(memberships__project=project)
+                farewell_user = q.first()
+                if farewell_user is None:
+                    return HttpResponseBadRequest()
 
-                email = form.cleaned_data["email"]
-                farewell_user = User.objects.get(email=email)
                 farewell_user.profile.current_project = None
                 farewell_user.profile.save()
 
                 Member.objects.filter(project=project,
                                       user=farewell_user).delete()
 
-                ctx["team_member_removed"] = email
+                ctx["team_member_removed"] = form.cleaned_data["email"]
                 ctx["team_status"] = "info"
         elif "set_project_name" in request.POST:
             form = ProjectNameForm(request.POST)

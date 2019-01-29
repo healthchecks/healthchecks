@@ -93,6 +93,17 @@ class ProfileTestCase(BaseTestCase):
         self.bobs_profile.refresh_from_db()
         self.assertEqual(self.bobs_profile.current_project, None)
 
+    def test_it_checks_membership_when_removing_team_member(self):
+        self.client.login(username="charlie@example.org", password="password")
+
+        url = "/projects/%s/settings/" % self.charlies_project.code
+        form = {"remove_team_member": "1", "email": "alice@example.org"}
+        r = self.client.post(url, form)
+        self.assertEqual(r.status_code, 400)
+
+        self.profile.refresh_from_db()
+        self.assertIsNotNone(self.profile.current_project)
+
     def test_it_sets_project_name(self):
         self.client.login(username="alice@example.org", password="password")
 
