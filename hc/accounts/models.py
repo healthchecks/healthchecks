@@ -193,13 +193,6 @@ class Profile(models.Model):
         self.save()
         return True
 
-    def get_own_project(self):
-        project = self.user.project_set.first()
-        if project is None:
-            project = Project.objects.create(owner=self.user)
-
-        return project
-
 
 class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)

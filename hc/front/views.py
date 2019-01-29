@@ -83,7 +83,7 @@ def _get_project_for_user(request, project_code):
     """ Return true if current user has access to the specified account. """
 
     if request.user.is_superuser:
-        q = Project.objects.all
+        q = Project.objects.all()
     else:
         q = request.profile.projects()
 
@@ -434,7 +434,7 @@ def _get_events(check, limit):
 def log(request, code):
     check = _get_check_for_user(request, code)
 
-    limit = request.project.owner_profile.ping_log_limit
+    limit = check.project.owner_profile.ping_log_limit
     ctx = {
         "check": check,
         "events": _get_events(check, limit),
@@ -486,6 +486,7 @@ def status_single(request, code):
 
 
 @login_required
+# @project_required
 def channels(request):
     if request.method == "POST":
         code = request.POST["channel"]

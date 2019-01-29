@@ -43,4 +43,10 @@ class BaseTestCase(TestCase):
         self.charlie.set_password("password")
         self.charlie.save()
 
-        Profile.objects.create(user=self.charlie)
+        self.charlies_project = Project(owner=self.charlie)
+        self.charlies_project.badge_key = self.charlie.username
+        self.charlies_project.save()
+
+        self.charlies_profile = Profile(user=self.charlie)
+        self.charlies_profile.current_project = self.charlies_project
+        self.charlies_profile.save()

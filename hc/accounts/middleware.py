@@ -10,9 +10,6 @@ class TeamAccessMiddleware(object):
             return self.get_response(request)
 
         profile = Profile.objects.for_user(request.user)
-        if profile.current_project is None:
-            profile.current_project = profile.get_own_project()
-            profile.save()
 
         request.profile = profile
         request.project = profile.current_project

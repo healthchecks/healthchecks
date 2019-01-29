@@ -118,8 +118,10 @@
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
                         {% if check %}
                             {{ check.project }}
-                        {% else %}
+                        {% elif request.project %}
                             {{ request.project }}
+                        {% else %}
+                            {{ request.user.email }}
                         {% endif %}
                         <span class="caret"></span>
                     </a>
