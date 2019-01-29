@@ -108,3 +108,22 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
         expected_subject = "Change email address on %s" % settings.SITE_NAME
         self.assertEqual(mail.outbox[0].subject, expected_subject)
+
+    def test_leaving_works(self):
+        self.client.login(username="bob@example.org", password="password")
+
+        form = {"code": str(self.project.code), "leave_project": "1"}
+        r = self.client.post("/accounts/profile/", form)
+        self.assertContains(r, "Left project")
+        self.assertNotContains(r, "Alice's Project")
+
+        self.bobs_profile.refresh_from_db()
+        self.assertIsNone(self.bobs_profile.current_project)
+        self.assertFalse(self.bob.memberships.exists())
+
+    def test_leaving_checks_membership(self):
+        self.client.login(username="charlie@example.org", password="password")
+
+        form = {"code": str(self.project.code), "leave_project": "1"}
+        r = self.client.post("/accounts/profile/", form)
+        self.assertEqual(r.status_code, 400)

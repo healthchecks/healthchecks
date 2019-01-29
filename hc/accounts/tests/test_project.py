@@ -11,6 +11,11 @@ class ProfileTestCase(BaseTestCase):
 
         self.url = "/projects/%s/settings/" % self.project.code
 
+    def test_it_checks_access(self):
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
+
     def test_it_shows_api_keys(self):
         self.project.api_key_readonly = "R" * 32
         self.project.save()
@@ -44,7 +49,7 @@ class ProfileTestCase(BaseTestCase):
 
         form = {"revoke_api_keys": "1"}
         r = self.client.post(self.url, form)
-        assert r.status_code == 200
+        self.assertEqual(r.status_code, 200)
 
         self.project.refresh_from_db()
         self.assertEqual(self.project.api_key, "")
@@ -69,8 +74,8 @@ class ProfileTestCase(BaseTestCase):
         self.assertFalse(member.user.project_set.exists())
 
         # And an email should have been sent
-        subj = ('You have been invited to join'
-                ' alice@example.org on %s' % settings.SITE_NAME)
+        subj = ("You have been invited to join"
+                " Alice&#39;s Project on %s" % settings.SITE_NAME)
         self.assertEqual(mail.outbox[0].subject, subj)
 
     def test_it_checks_team_size(self):

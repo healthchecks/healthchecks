@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
@@ -238,7 +238,7 @@ def add_project(request):
 
 @login_required
 def project(request, code):
-    project = Project.objects.get(code=code, owner_id=request.user.id)
+    project = get_object_or_404(Project, code=code, owner=request.user)
 
     ctx = {
         "page": "project",
@@ -483,6 +483,6 @@ def close(request):
 @require_POST
 @login_required
 def remove_project(request, code):
-    project = Project.objects.get(code=code, owner=request.user)
+    project = get_object_or_404(Project, code=code, owner=request.user)
     project.delete()
-    return redirect("hc-profile")
+    return redirect("hc-index")

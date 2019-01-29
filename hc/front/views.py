@@ -83,7 +83,7 @@ def _get_project_for_user(request, project_code):
     """ Return true if current user has access to the specified account. """
 
     if request.user.is_superuser:
-        q = Project.objects.all()
+        q = Project.objects
     else:
         q = request.profile.projects()
 

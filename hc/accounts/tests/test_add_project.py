@@ -1,0 +1,27 @@
+from hc.accounts.models import Project
+from hc.test import BaseTestCase
+
+
+class RemoveProjectTestCase(BaseTestCase):
+
+    def setUp(self):
+        super(RemoveProjectTestCase, self).setUp()
+
+        self.url = "/projects/%s/remove/" % self.project.code
+
+    def test_it_works(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post("/projects/add/", {"name": "My Second Project"})
+
+        p = Project.objects.get(owner=self.alice, name="My Second Project")
+        self.assertRedirects(r, "/projects/%s/checks/" % p.code)
+        self.assertEqual(str(p.code), p.badge_key)
+
+        # Alice's current project should be the just created one
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.current_project, p)
+
+    def test_it_rejects_get(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/projects/add/")
+        self.assertEqual(r.status_code, 405)

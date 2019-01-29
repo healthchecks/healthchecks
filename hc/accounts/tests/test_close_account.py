@@ -20,10 +20,6 @@ class CloseAccountTestCase(BaseTestCase):
         alices = User.objects.filter(username="alice")
         self.assertFalse(alices.exists())
 
-        # Alice should be gone
-        alices = User.objects.filter(username="alice")
-        self.assertFalse(alices.exists())
-
         # Bob's current team should now be None
         self.bobs_profile.refresh_from_db()
         self.assertIsNone(self.bobs_profile.current_project)
