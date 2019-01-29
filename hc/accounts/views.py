@@ -43,32 +43,34 @@ def _is_whitelisted(path):
     return match.url_name in NEXT_WHITELIST
 
 
-def _make_user(email):
+def _make_user(email, with_project=True):
     username = str(uuid.uuid4())[:30]
     user = User(username=username, email=email)
     user.set_unusable_password()
     user.save()
 
-    project = Project(owner=user)
-    project.badge_key = user.username
-    project.save()
+    project = None
+    if with_project:
+        project = Project(owner=user)
+        project.badge_key = user.username
+        project.save()
+
+        check = Check(project=project)
+        check.name = "My First Check"
+        check.save()
+
+        channel = Channel(project=project)
+        channel.kind = "email"
+        channel.value = email
+        channel.email_verified = True
+        channel.save()
+
+        channel.checks.add(check)
 
     # Ensure a profile gets created
     profile = Profile.objects.for_user(user)
     profile.current_project = project
     profile.save()
-
-    check = Check(project=project)
-    check.name = "My First Check"
-    check.save()
-
-    channel = Channel(project=project)
-    channel.kind = "email"
-    channel.value = email
-    channel.email_verified = True
-    channel.save()
-
-    channel.checks.add(check)
 
     return user
 
@@ -275,7 +277,7 @@ def project(request, code):
                 try:
                     user = User.objects.get(email=email)
                 except User.DoesNotExist:
-                    user = _make_user(email)
+                    user = _make_user(email, with_project=False)
 
                 project.invite(user)
                 ctx["team_member_invited"] = email

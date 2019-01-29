@@ -65,6 +65,8 @@ class ProfileTestCase(BaseTestCase):
 
         profile = member.user.profile
         self.assertEqual(profile.current_project, self.project)
+        # The new user should not have their own project
+        self.assertFalse(member.user.project_set.exists())
 
         # And an email should have been sent
         subj = ('You have been invited to join'
