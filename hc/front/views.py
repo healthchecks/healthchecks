@@ -102,6 +102,7 @@ def my_checks(request, code):
         request.profile.save()
 
     if request.profile.current_project_id != project.id:
+        request.project = project
         request.profile.current_project = project
         request.profile.save()
 

@@ -7,16 +7,22 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="settings-title">My Projects</h1>
-        {% for message in messages %}
-            <p class="alert alert-{{ message.tags }}">{{ message }}</p>
-        {% endfor %}
+        <h1 class="settings-title">
+            My Projects
 
-        <div id="my-projects" class="row">
+            <div class="pull-right">
+                <button
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#add-project-modal">Create New Project</button>
+            </div>
+        </h1>
+
+        <div id="project-selector" class="row">
             {% for project in projects%}
             <a href="{% url 'hc-checks' project.code %}">
                 <div class="col-sm-6 col-md-4">
-                    <div class="panel panel-default project-panel">
+                    <div class="panel panel-default">
                         <div class="panel-body">
                             <h4>{{ project }}</h4>
                             <div>
@@ -28,24 +34,19 @@
                                 {{ n }} integration{{ n|pluralize }}
                                 {% endwith %}
                             </div>
-                            {% if show_plans %}
                             <div class="text-muted">
-                                {% if project.owner.subscription %}
-                                    Plan: {{ project.owner.subscription.plan_name }}
-                                {% else %}
-                                    Plan: Hobbyist
-                                {% endif %}
+                                {{ project.owner.email }}
                             </div>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
             </a>
             {% endfor %}
         </div>
-
     </div>
 </div>
+
+{% include "accounts/add_project_modal.html" %}
 
 {% endblock %}
 

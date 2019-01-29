@@ -1,0 +1,12 @@
+#add-project-modal .modal-header {
+    border-bottom: 0;
+}
+
+#add-project-modal .modal-body {
+    padding: 0 50px 50px 50px;
+}
+
+#add-project-modal h1 {
+    text-align: center;
+    margin: 0 0 50px 0;
+}

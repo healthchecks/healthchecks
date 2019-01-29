@@ -117,7 +117,7 @@
                         href="#"
                         class="btn btn-default pull-right"
                         data-toggle="modal"
-                        data-target="#create-project-modal">Create Project</a>
+                        data-target="#add-project-modal">Create New Project</a>
             </div>
 
             {% if left_project %}
@@ -170,39 +170,6 @@
     </div>
 </div>
 
-<div id="create-project-modal" class="modal">
-    <div class="modal-dialog">
-        <form method="post" action="{% url 'hc-add-project' %}" class="form-horizontal">
-            {% csrf_token %}
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4>Create Project</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="project-name" class="col-sm-4 control-label">Project Name</label>
-                        <div class="col-sm-7">
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="project-name"
-                                name="name">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button
-                        type="submit"
-                        name="set_project_name"
-                        class="btn btn-primary">Create Project</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
 <div id="leave-project-modal" class="modal">
     <div class="modal-dialog">
         <form id="leave-project-form" method="post">
@@ -234,6 +201,8 @@
         </form>
     </div>
 </div>
+
+{% include "accounts/add_project_modal.html" %}
 
 {% endblock %}
 

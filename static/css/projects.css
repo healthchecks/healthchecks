@@ -1,15 +1,13 @@
-#my-projects a {
-    display: block;
+#project-selector a {
     color: #333;
 }
 
-#my-projects a:hover {
+#project-selector a:hover {
     text-decoration: none;
 }
 
 
-#my-projects a:hover .panel {
+#project-selector a:hover .panel {
     border-color: #0091EA;
 }
-
 

@@ -1,0 +1,34 @@
+<div id="add-project-modal" class="modal">
+    <div class="modal-dialog">
+    <form method="post" action="{% url 'hc-add-project' %}" class="form-horizontal">
+        {% csrf_token %}
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h1>Create New Project</h1>
+
+                <p>Name your project</p>
+
+                <input
+                    type="text"
+                    name="name"
+                    class="form-control input-lg"
+                    autocomplete="off">
+
+                <p>&nbsp;</p>
+
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    name="set_project_name"
+                    class="btn btn-lg btn-primary btn-block">
+                    Create Project
+                </button>
+
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
