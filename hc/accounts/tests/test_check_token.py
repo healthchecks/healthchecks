@@ -16,8 +16,7 @@ class CheckTokenTestCase(BaseTestCase):
         self.assertContains(r, "You are about to log in")
 
     def test_it_redirects(self):
-        r = self.client.post("/accounts/check_token/alice/secret-token/",
-                             follow=True)
+        r = self.client.post("/accounts/check_token/alice/secret-token/")
 
         self.assertRedirects(r, self.checks_url)
 
@@ -30,8 +29,7 @@ class CheckTokenTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         # Login again, when already authenticated
-        r = self.client.post("/accounts/check_token/alice/secret-token/",
-                             follow=True)
+        r = self.client.post("/accounts/check_token/alice/secret-token/")
 
         self.assertRedirects(r, self.checks_url)
 
@@ -49,5 +47,5 @@ class CheckTokenTestCase(BaseTestCase):
 
     def test_it_ignores_bad_next_parameter(self):
         url = "/accounts/check_token/alice/secret-token/?next=/evil/"
-        r = self.client.post(url, follow=True)
+        r = self.client.post(url)
         self.assertRedirects(r, self.checks_url)

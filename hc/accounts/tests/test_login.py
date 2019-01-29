@@ -53,7 +53,7 @@ class LoginTestCase(BaseTestCase):
             "password": "password"
         }
 
-        r = self.client.post("/accounts/login/", form, follow=True)
+        r = self.client.post("/accounts/login/", form)
         self.assertRedirects(r, self.checks_url)
 
     def test_it_handles_password_login_with_redirect(self):
@@ -81,7 +81,7 @@ class LoginTestCase(BaseTestCase):
             "password": "password"
         }
 
-        r = self.client.post("/accounts/login/?next=/evil/", form, follow=True)
+        r = self.client.post("/accounts/login/?next=/evil/", form)
         self.assertRedirects(r, self.checks_url)
 
     def test_it_handles_wrong_password(self):

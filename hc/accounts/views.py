@@ -80,6 +80,10 @@ def _redirect_after_login(request):
     if _is_whitelisted(redirect_url):
         return redirect(redirect_url)
 
+    if request.user.project_set.count() == 1:
+        project = request.user.project_set.first()
+        return redirect("hc-checks", project.code)
+
     return redirect("hc-index")
 
 
