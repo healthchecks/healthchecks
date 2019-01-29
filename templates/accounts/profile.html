@@ -79,7 +79,7 @@
                                 <div class="name">{{ project }}</div>
                             </td>
                             <td>
-                                <a class="num-checks" href="{% url 'hc-switch-project' project.code %}">
+                                <a class="num-checks" href="{% url 'hc-checks' project.code %}">
                                     {% with project.check_set.count as n %}
                                     {{ n }} check{{ n|pluralize }}
                                     {% endwith %}

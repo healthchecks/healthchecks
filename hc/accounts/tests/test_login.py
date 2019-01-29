@@ -6,6 +6,10 @@ from hc.test import BaseTestCase
 
 class LoginTestCase(BaseTestCase):
 
+    def setUp(self):
+        super(LoginTestCase, self).setUp()
+        self.checks_url = "/projects/%s/checks/" % self.project.code
+
     def test_it_sends_link(self):
         form = {"identity": "alice@example.org"}
 
@@ -49,8 +53,8 @@ class LoginTestCase(BaseTestCase):
             "password": "password"
         }
 
-        r = self.client.post("/accounts/login/", form)
-        self.assertRedirects(r, "/checks/")
+        r = self.client.post("/accounts/login/", form, follow=True)
+        self.assertRedirects(r, self.checks_url)
 
     def test_it_handles_password_login_with_redirect(self):
         check = Check.objects.create(project=self.project)
@@ -77,8 +81,8 @@ class LoginTestCase(BaseTestCase):
             "password": "password"
         }
 
-        r = self.client.post("/accounts/login/?next=/evil/", form)
-        self.assertRedirects(r, "/checks/")
+        r = self.client.post("/accounts/login/?next=/evil/", form, follow=True)
+        self.assertRedirects(r, self.checks_url)
 
     def test_it_handles_wrong_password(self):
         form = {

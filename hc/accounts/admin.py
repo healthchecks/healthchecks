@@ -163,7 +163,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
     @mark_safe
     def switch(self, obj):
-        url = reverse("hc-switch-project", args=[obj.code])
+        url = reverse("hc-checks", args=[obj.code])
         return "<a href='%s'>Show Checks</a>" % url
 
 

@@ -16,7 +16,6 @@ from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.shortcuts import get_object_or_404
 from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
                                ReportSettingsForm, SetPasswordForm,
@@ -81,7 +80,7 @@ def _redirect_after_login(request):
     if _is_whitelisted(redirect_url):
         return redirect(redirect_url)
 
-    return redirect("hc-checks")
+    return redirect("hc-index")
 
 
 def login(request):
@@ -228,7 +227,7 @@ def add_project(request):
     project.name = form.cleaned_data["name"]
     project.save()
 
-    return redirect("hc-switch-project", project.code)
+    return redirect("hc-checks", project.code)
 
 
 @login_required
@@ -451,32 +450,6 @@ def unsubscribe_reports(request, username):
     profile.save()
 
     return render(request, "accounts/unsubscribed.html")
-
-
-@login_required
-def switch_project(request, code):
-    project = get_object_or_404(Project, code=code)
-
-    # The rules:
-    # Superuser can switch to any team.
-    access_ok = request.user.is_superuser
-
-    # Users can switch to their own projects.
-    if not access_ok and project.owner_id == request.user.id:
-        access_ok = True
-
-    # Users can switch to projects they are members of.
-    if not access_ok:
-        q = project.member_set.filter(user=request.user)
-        access_ok = q.exists()
-
-    if not access_ok:
-        return HttpResponseForbidden()
-
-    request.profile.current_project = project
-    request.profile.save()
-
-    return redirect("hc-checks")
 
 
 @require_POST

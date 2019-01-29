@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load compress static hc_extras %}
+
+{% block title %}Project Settings - {{ project }}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="settings-title">My Projects</h1>
+        {% for message in messages %}
+            <p class="alert alert-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+
+        <div id="my-projects" class="row">
+            {% for project in projects%}
+            <a href="{% url 'hc-checks' project.code %}">
+                <div class="col-sm-6 col-md-4">
+                    <div class="panel panel-default project-panel">
+                        <div class="panel-body">
+                            <h4>{{ project }}</h4>
+                            <div>
+                                {% with project.check_set.count as n %}
+                                {{ n }} check{{ n|pluralize }},
+                                {% endwith %}
+
+                                {% with project.channel_set.count as n %}
+                                {{ n }} integration{{ n|pluralize }}
+                                {% endwith %}
+                            </div>
+                            {% if show_plans %}
+                            <div class="text-muted">
+                                {% if project.owner.subscription %}
+                                    Plan: {{ project.owner.subscription.plan_name }}
+                                {% else %}
+                                    Plan: Hobbyist
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/project.js' %}"></script>
+{% endcompress %}
+{% endblock %}

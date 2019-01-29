@@ -11,11 +11,12 @@ class PauseTestCase(BaseTestCase):
         super(PauseTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project, status="up")
         self.url = "/checks/%s/pause/" % self.check.code
+        self.redirect_url = "/projects/%s/checks/" % self.project.code
 
     def test_it_pauses(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url)
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "paused")
@@ -31,7 +32,7 @@ class PauseTestCase(BaseTestCase):
 
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url)
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
 
     def test_it_clears_last_start_alert_after(self):
         self.check.last_start = now()

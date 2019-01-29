@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from hc.accounts.models import Project
 from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
                            Ping, Notification)
 from hc.api.transports import Telegram
@@ -78,30 +79,41 @@ def _get_check_for_user(request, code):
         raise Http404("not found")
 
 
-def _has_access(request, project_code):
+def _get_project_for_user(request, project_code):
     """ Return true if current user has access to the specified account. """
 
     if request.user.is_superuser:
-        return True
+        q = Project.objects.all
+    else:
+        q = request.profile.projects()
 
-    projects = request.profile.projects()
-    return projects.filter(code=project_code).exists()
+    try:
+        return q.get(code=project_code)
+    except Project.DoesNotExist:
+        raise Http404("not found")
 
 
 @login_required
-def my_checks(request):
+def my_checks(request, code):
+    project = _get_project_for_user(request, code)
+
     if request.GET.get("sort") in VALID_SORT_VALUES:
         request.profile.sort = request.GET["sort"]
         request.profile.save()
 
-    checks = list(Check.objects.filter(project=request.project).prefetch_related("channel_set"))
+    if request.profile.current_project_id != project.id:
+        request.profile.current_project = project
+        request.profile.save()
+
+    q = Check.objects.filter(project=project)
+    checks = list(q.prefetch_related("channel_set"))
     sortchecks(checks, request.profile.sort)
 
     tags_statuses, num_down = _tags_statuses(checks)
     pairs = list(tags_statuses.items())
     pairs.sort(key=lambda pair: pair[0].lower())
 
-    channels = Channel.objects.filter(project=request.project)
+    channels = Channel.objects.filter(project=project)
     channels = list(channels.order_by("created"))
 
     hidden_checks = set()
@@ -129,7 +141,8 @@ def my_checks(request):
         "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": pytz.all_timezones,
-        "num_available": request.project.num_checks_available(),
+        "project": project,
+        "num_available": project.num_checks_available(),
         "sort": request.profile.sort,
         "selected_tags": selected_tags,
         "show_search": True,
@@ -142,8 +155,7 @@ def my_checks(request):
 
 @login_required
 def status(request, code):
-    if not _has_access(request, code):
-        raise Http404("not found")
+    _get_project_for_user(request, code)
 
     checks = list(Check.objects.filter(project__code=code))
 
@@ -183,7 +195,17 @@ def switch_channel(request, code, channel_code):
 
 def index(request):
     if request.user.is_authenticated:
-        return redirect("hc-checks")
+        projects = list(request.profile.projects())
+
+        if len(projects) == 1:
+            return redirect("hc-checks", projects[0].code)
+
+        ctx = {
+            "page": "projects",
+            "show_plans": settings.USE_PAYMENTS,
+            "projects": projects
+        }
+        return render(request, "front/projects.html", ctx)
 
     check = Check()
 
@@ -242,16 +264,17 @@ def docs_resources(request):
 
 @require_POST
 @login_required
-def add_check(request):
-    if request.project.num_checks_available() <= 0:
+def add_check(request, code):
+    project = _get_project_for_user(request, code)
+    if project.num_checks_available() <= 0:
         return HttpResponseBadRequest()
 
-    check = Check(project=request.project)
+    check = Check(project=project)
     check.save()
 
     check.assign_all_channels()
 
-    return redirect("hc-checks")
+    return redirect("hc-checks", code)
 
 
 @require_POST
@@ -268,7 +291,7 @@ def update_name(request, code):
     if "/details/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-details", code)
 
-    return redirect("hc-checks")
+    return redirect("hc-checks", check.project.code)
 
 
 @require_POST
@@ -313,7 +336,7 @@ def update_timeout(request, code):
     if "/details/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-details", code)
 
-    return redirect("hc-checks")
+    return redirect("hc-checks", check.project.code)
 
 
 @require_POST
@@ -369,15 +392,16 @@ def pause(request, code):
     if "/details/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-details", code)
 
-    return redirect("hc-checks")
+    return redirect("hc-checks", check.project.code)
 
 
 @require_POST
 @login_required
 def remove_check(request, code):
     check = _get_check_for_user(request, code)
+    project = check.project
     check.delete()
-    return redirect("hc-checks")
+    return redirect("hc-checks", project.code)
 
 
 def _get_events(check, limit):

@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-sm-12">
         <ol class="breadcrumb">
-            <li><a href="{% url 'hc-checks' %}">Checks</a></li>
+            <li><a href="{% url 'hc-checks' check.project.code %}">Checks</a></li>
             <li>
                 <a href="{% url 'hc-details' check.code %}">
                     {{ check.name_then_code }}

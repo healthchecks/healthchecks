@@ -9,11 +9,12 @@ class UpdateNameTestCase(BaseTestCase):
         self.check = Check.objects.create(project=self.project)
 
         self.url = "/checks/%s/name/" % self.check.code
+        self.redirect_url = "/projects/%s/checks/" % self.project.code
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data={"name": "Alice Was Here"})
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.name, "Alice Was Here")
@@ -37,7 +38,7 @@ class UpdateNameTestCase(BaseTestCase):
         # But this should still work:
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url, data={"name": "Bob Was Here"})
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
 
     def test_it_checks_ownership(self):
         payload = {"name": "Charlie Sent This"}

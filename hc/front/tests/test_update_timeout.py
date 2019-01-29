@@ -14,13 +14,14 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.save()
 
         self.url = "/checks/%s/timeout/" % self.check.code
+        self.redirect_url = "/projects/%s/checks/" % self.project.code
 
     def test_it_works(self):
         payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
@@ -55,7 +56,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "cron")
@@ -184,4 +185,4 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url, data=payload)
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)

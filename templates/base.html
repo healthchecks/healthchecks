@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="{% static 'css/radio.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/billing.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/projects.css' %}" type="text/css">
     {% endcompress %}
 </head>
 <body class="page-{{ page }}">
@@ -87,9 +88,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul id="nav-main-sections" class="nav navbar-nav">
-                {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated and request.project %}
                     <li {% if page == 'checks' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-checks' %}">Checks</a>
+                        <a href="{% url 'hc-checks' request.project.code %}">Checks</a>
                     </li>
 
                     <li {% if page == 'channels' %} class="active" {% endif %}>
@@ -125,7 +126,7 @@
                         {% for project in request.profile.projects.all %}
                         <li class="dropdown-header">{{ project }}</li>
                         <li>
-                            <a href="{% url 'hc-switch-project' project.code %}">Checks</a>
+                            <a href="{% url 'hc-checks' project.code %}">Checks</a>
                         </li>
                         {% if project.owner == request.user %}
                         <li>

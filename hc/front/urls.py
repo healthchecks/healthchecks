@@ -48,8 +48,8 @@ channel_urls = [
 
 urlpatterns = [
     path('', views.index, name="hc-index"),
-    path('checks/', views.my_checks, name="hc-checks"),
-    path('checks/add/', views.add_check, name="hc-add-check"),
+    path('projects/<uuid:code>/checks/', views.my_checks, name="hc-checks"),
+    path('projects/<uuid:code>/checks/add/', views.add_check, name="hc-add-check"),
     path('checks/cron_preview/', views.cron_preview),
     path('projects/<uuid:code>/checks/status/', views.status, name="hc-status"),
     path('checks/<uuid:code>/', include(check_urls)),

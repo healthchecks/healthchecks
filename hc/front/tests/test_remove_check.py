@@ -8,11 +8,12 @@ class RemoveCheckTestCase(BaseTestCase):
         super(RemoveCheckTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project)
         self.remove_url = "/checks/%s/remove/" % self.check.code
+        self.redirect_url = "/projects/%s/checks/" % self.project.code
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.remove_url)
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
 
         self.assertEqual(Check.objects.count(), 0)
 
@@ -53,4 +54,4 @@ class RemoveCheckTestCase(BaseTestCase):
 
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.remove_url)
-        self.assertRedirects(r, "/checks/")
+        self.assertRedirects(r, self.redirect_url)
