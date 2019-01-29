@@ -69,27 +69,23 @@
                     <table id="my-projects" class="table">
                         <tr>
                             <th>Project</th>
-                            <th>Checks</th>
-                            <th>My Role</th>
+                            <th>My role</th>
                             <th></th>
                         </tr>
                         {% for project in profile.projects %}
                         <tr>
                             <td>
-                                <div class="name">{{ project }}</div>
-                            </td>
-                            <td>
-                                <a class="num-checks" href="{% url 'hc-checks' project.code %}">
-                                    {% with project.check_set.count as n %}
-                                    {{ n }} check{{ n|pluralize }}
-                                    {% endwith %}
-                                </a>
+                                <div class="name">
+                                    <a href="{% url 'hc-checks' project.code %}">
+                                        {{ project }}
+                                    </a>
+                                </div>
                             </td>
                             <td>
                                 {% if project.owner == request.user %}
                                 Owner
                                 {% else %}
-                                Member
+                                Collaborator
                                 {% endif %}
                             </td>
                             <td>
@@ -181,7 +177,7 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        You are about to leave project <strong id="leave-project-name"></strong>.
+                        You are about to leave the project <strong id="leave-project-name"></strong>.
                         You will lose access to its checks and integrations.
                     </p>
                     <p>Are you sure?</p>
