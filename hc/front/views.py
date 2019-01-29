@@ -102,7 +102,6 @@ def my_checks(request, code):
         request.profile.save()
 
     if request.profile.current_project_id != project.id:
-        request.project = project
         request.profile.current_project = project
         request.profile.save()
 
@@ -486,7 +485,6 @@ def status_single(request, code):
 
 
 @login_required
-# @project_required
 def channels(request):
     if request.method == "POST":
         code = request.POST["channel"]

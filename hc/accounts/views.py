@@ -204,9 +204,6 @@ def profile(request):
                 profile.current_project = None
                 profile.save()
 
-            if request.project == project:
-                request.project = None
-
             Member.objects.filter(project=project, user=request.user).delete()
 
             ctx["left_project"] = project
