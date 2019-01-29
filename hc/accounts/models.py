@@ -115,7 +115,8 @@ class Profile(models.Model):
 
         is_owner = models.Q(owner=self.user)
         is_member = models.Q(member__user=self.user)
-        return Project.objects.filter(is_owner | is_member).order_by("name")
+        q = Project.objects.filter(is_owner | is_member)
+        return q.distinct().order_by("name")
 
     def checks_from_all_projects(self):
         """ Return a queryset of checks from projects we have access to. """
