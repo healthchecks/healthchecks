@@ -79,16 +79,8 @@
     white-space: nowrap;
 }
 
-.show-log {
-    visibility: hidden;
-}
-
 .show-log .icon-settings {
     font-size: 16px;
-}
-
-tr:hover .show-log {
-    visibility: visible;
 }
 
 button.copy-link {
