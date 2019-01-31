@@ -366,14 +366,13 @@ def badges(request):
         sorted_tags.append("*")  # For the "overall status" badge
 
         urls = []
-        username = project.owner.username
         for tag in sorted_tags:
             if not re.match("^[\w-]+$", tag) and tag != "*":
                 continue
 
             urls.append({
-                "svg": get_badge_url(username, tag),
-                "json": get_badge_url(username, tag, format="json"),
+                "svg": get_badge_url(project.badge_key, tag),
+                "json": get_badge_url(project.badge_key, tag, format="json"),
             })
 
         badge_sets.append({"project": project, "urls": urls})
