@@ -462,6 +462,31 @@ def details(request, code):
 
 
 @login_required
+def transfer(request, code):
+    check = _get_check_for_user(request, code)
+
+    if request.method == "POST":
+        target_project = _get_project_for_user(request, request.POST["project"])
+        if target_project.num_checks_available() <= 0:
+            return HttpResponseBadRequest()
+
+        check.project = target_project
+        check.save()
+
+        check.assign_all_channels()
+
+        request.profile.current_project = target_project
+        request.profile.save()
+
+        messages.success(request, "Check transferred successfully!")
+
+        return redirect("hc-details", code)
+
+    ctx = {"check": check}
+    return render(request, "front/transfer_modal.html", ctx)
+
+
+@login_required
 def status_single(request, code):
     check = _get_check_for_user(request, code)
 

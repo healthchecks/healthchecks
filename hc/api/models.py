@@ -169,7 +169,7 @@ class Check(models.Model):
 
     def assign_all_channels(self):
         channels = Channel.objects.filter(project=self.project)
-        self.channel_set.add(*channels)
+        self.channel_set.set(channels)
 
     def tags_list(self):
         return [t.strip() for t in self.tags.split(" ") if t.strip()]

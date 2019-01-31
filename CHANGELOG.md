@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add "Email Settings..." dialog and "Subject Must Contain" setting
 - Database schema: add the Project model
 - Move project-specific settings to a new "Project Settings" page
+- Add a "Transfer to Another Project..." dialog
 
 
 ## 1.4.0 - 2018-12-25

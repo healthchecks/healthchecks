@@ -12,14 +12,21 @@
             {{ check.name_then_code }}
             <button id="edit-name" class="btn btn-sm btn-default">Edit</button>
         </h1>
+        <span class="label label-tag">{{ check.project }}</span>
         {% for tag in check.tags_list %}
             <span class="label label-tag">{{ tag }}</span>
         {% endfor %}
     </div>
 
+    {% if messages %}
+    <div class="col-sm-12">
+        {% for message in messages %}
+            <p class="alert alert-{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <div class="col-sm-5">
-
         {% if check.desc %}
         <div class="details-block">
             <h2>Description</h2>
@@ -139,7 +146,7 @@
                     data-grace="{{ check.grace.total_seconds }}"
                     data-schedule="{{ check.schedule }}"
                     data-tz="{{ check.tz }}">
-                    Change Schedule</button>
+                    Change Schedule&hellip;</button>
             </div>
         </div>
 
@@ -163,14 +170,21 @@
         </div>
 
         <div class="details-block">
-            <h2>Remove</h2>
-            <p>Permanently remove this check from your account.</p>
+            <h2>Danger Zone</h2>
+            <p>Transfer to a different project, or permanently remove this check.</p>
+
             <div class="text-right">
+                <button
+                    id="transfer-btn"
+                    data-toggle="modal"
+                    data-target="#transfer-modal"
+                    data-url="{% url 'hc-transfer' check.code %}"
+                    class="btn btn-sm btn-default">Transfer to Another Project&hellip;</button>
                 <button
                     id="details-remove-check"
                     data-toggle="modal"
                     data-target="#remove-check-modal"
-                    class="btn btn-sm btn-default">Remove This Check</button>
+                    class="btn btn-sm btn-default">Remove</button>
             </div>
         </div>
 
@@ -208,6 +222,9 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="transfer-modal" class="modal">
 </div>
 
 {% include "front/update_name_modal.html" %}

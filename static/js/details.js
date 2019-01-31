@@ -117,4 +117,25 @@ $(function () {
         var format = ev.target.getAttribute("data-format");
         switchDateFormat(format);
     });
+
+
+    var transferFormLoadStarted = false;
+    $("#transfer-btn").on("mouseenter click", function() {
+        if (transferFormLoadStarted)
+            return;
+
+        transferFormLoadStarted = true;
+        $.get(this.dataset.url, function(data) {
+            $("#transfer-modal" ).html(data);
+            $("#target-project").selectpicker();
+        });
+    });
+
+    // Enable the submit button in transfer form when user selects
+    // the target project:
+    $("#transfer-modal").on("change", "#target-project", function() {
+        $("#transfer-confirm").prop("disabled", !this.value);
+    });
+
+
 });

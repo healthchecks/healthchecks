@@ -1,0 +1,69 @@
+{% load hc_extras %}
+
+<div class="modal-dialog">
+<form
+    action="{% url 'hc-transfer' check.code %}"
+    class="form-horizontal"
+    method="post">
+    {% csrf_token %}
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="update-timeout-title">Transfer to Another Project</h4>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="update-name-input" class="col-sm-4 control-label">
+                    Check
+                </label>
+                <div class="col-sm-7">
+                    <p class="form-control-static">{{ check.name_then_code }}</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="update-name-input" class="col-sm-4 control-label">
+                    Target Project
+                </label>
+                <div class="col-sm-7">
+                    <select
+                        id="target-project"
+                        name="project"
+                        title="Select..."
+                        class="form-control selectpicker">
+                        {% for project in request.profile.projects.all %}
+                            {% if project == check.project %}
+                                <option disabled data-subtext="(current project)">
+                                    {{ project }}
+                                </option>
+                            {% elif project.num_checks_available > 0 %}
+                                <option value="{{ project.code }}">{{ project }}</option>
+                            {% else %}
+                                <option disabled data-subtext="(at check limit)">
+                                    {{ project }}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="text-warning">
+                <strong>Integrations will get reset.</strong>
+                The check will lose its current notification
+                channels, and will be assigned all notification
+                channels of the target project.
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button
+                id="transfer-confirm"
+                disabled
+                type="submit"
+                class="btn btn-primary">Transfer</button>
+        </div>
+    </div>
+</form>
+</div>
