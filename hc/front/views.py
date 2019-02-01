@@ -195,7 +195,7 @@ def switch_channel(request, code, channel_code):
 
 def index(request):
     if request.user.is_authenticated:
-        projects = list(request.profile.annotated_projects())
+        projects = list(request.profile.projects())
 
         if len(projects) == 1:
             return redirect("hc-checks", projects[0].code)

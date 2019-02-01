@@ -23,11 +23,7 @@
             <a href="{% url 'hc-checks' project.code %}">
                 <div class="col-sm-6 col-md-4">
                     <div class="panel project {% if project == request.profile.current_project %}selected{% endif %}">
-                        {% if project.n_down %}
-                            <div class="status icon-down"></div>
-                        {% else %}
-                            <div class="status icon-up"></div>
-                        {% endif %}
+                        <div class="status icon-{{ project.overall_status }}"></div>
 
                         <h4>{{ project }}</h4>
 

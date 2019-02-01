@@ -122,12 +122,16 @@ class Profile(models.Model):
     def annotated_projects(self):
         """ Return all projects, annotated with 'n_down'. """
 
-        is_owner = Q(owner=self.user)
-        is_member = Q(member__user=self.user)
-        q = Project.objects.filter(is_owner | is_member)
+        # Subquery for getting project ids
+        project_ids = self.projects().values("id")
+
+        # Main query with the n_down annotation.
+        # Must use the subquery, otherwise ORM gets confused by
+        # joins and group by's
+        q = Project.objects.filter(id__in=project_ids)
         n_down = Count("check", filter=Q(check__status="down"))
         q = q.annotate(n_down=n_down)
-        return q.distinct().order_by("name")
+        return q.order_by("name")
 
     def checks_from_all_projects(self):
         """ Return a queryset of checks from projects we have access to. """
@@ -255,6 +259,18 @@ class Project(models.Model):
         q = q.filter(next_nag_date__isnull=True)
 
         q.update(next_nag_date=timezone.now() + models.F("nag_period"))
+
+    def overall_status(self):
+        status = "up"
+        for check in self.check_set.all():
+            check_status = check.get_status(with_started=False)
+            if status == "up" and check_status == "grace":
+                status = "grace"
+
+            if check_status == "down":
+                status = "down"
+                break
+        return status
 
 
 class Member(models.Model):
