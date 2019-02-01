@@ -101,6 +101,11 @@ Configurations settings loaded from environment variables:
 | [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.1/ref/settings/#conn-max-age) | `0`
 | DB_SSLMODE | `"prefer"` | PostgreSQL-specific, [details](https://blog.github.com/2018-10-21-october21-incident-report/)
 | DB_TARGET_SESSION_ATTRS | `"read-write"` | PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/static/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS)
+| EMAIL_HOST | `""` *(empty string)*
+| EMAIL_PORT | `"587"`
+| EMAIL_HOST_USER | `""` *(empty string)*
+| EMAIL_HOST_PASSWORD | `""` *(empty string)*
+| EMAIL_USE_TLS | `"True"`
 | SITE_ROOT | `"http://localhost:8000"`
 | SITE_NAME | `"Mychecks"`
 | MASTER_BADGE_LABEL | `"Mychecks"`
@@ -175,7 +180,8 @@ DATABASES = {
 ## Sending Emails
 
 healthchecks must be able to send email messages, so it can send out login
-links and alerts to users. Put your SMTP server configuration in
+links and alerts to users. Environment variables can be used to configure
+SMTP settings, or your may put your SMTP server configuration in
 `hc/local_settings.py` like so:
 
 ```python
