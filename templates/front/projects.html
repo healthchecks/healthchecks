@@ -22,21 +22,23 @@
             {% for project in projects%}
             <a href="{% url 'hc-checks' project.code %}">
                 <div class="col-sm-6 col-md-4">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <h4>{{ project }}</h4>
-                            <div>
-                                {% with project.check_set.count as n %}
-                                {{ n }} check{{ n|pluralize }},
-                                {% endwith %}
+                    <div class="panel project {% if project == request.profile.current_project %}selected{% endif %}">
+                        {% if project == request.profile.current_project %}
+                        <div class="marker">Current Project</div>
+                        {% endif %}
 
-                                {% with project.channel_set.count as n %}
-                                {{ n }} integration{{ n|pluralize }}
-                                {% endwith %}
-                            </div>
-                            <div class="text-muted">
-                                {{ project.owner.email }}
-                            </div>
+                        <h4>{{ project }}</h4>
+                        <div>
+                            {% with project.check_set.count as n %}
+                            {{ n }} check{{ n|pluralize }},
+                            {% endwith %}
+
+                            {% with project.channel_set.count as n %}
+                            {{ n }} integration{{ n|pluralize }}
+                            {% endwith %}
+                        </div>
+                        <div class="text-muted">
+                            {{ project.owner.email }}
                         </div>
                     </div>
                 </div>
