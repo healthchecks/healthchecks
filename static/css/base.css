@@ -111,3 +111,7 @@ pre {
     font-size: small;
     padding: 2px 0;
 }
+
+.badge-down {
+    background-color: #d9534f;
+}

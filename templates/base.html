@@ -116,6 +116,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+
                         {% if check %}
                             {{ check.project }}
                         {% elif request.profile.current_project %}
@@ -123,15 +124,23 @@
                         {% else %}
                             {{ request.user.email }}
                         {% endif %}
+
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        {% for project in request.profile.projects.all %}
+                        {% for project in request.profile.annotated_projects %}
                         <li class="dropdown-header">{{ project }}</li>
                         <li>
-                            <a href="{% url 'hc-checks' project.code %}">Checks</a>
+                            <a href="{% url 'hc-checks' project.code %}">
+                                Checks
+                                {% if project.n_down %}
+                                <span class="badge badge-down pull-right">
+                                    {{ project.n_down }}
+                                </span>
+                                {% endif %}
+                            </a>
                         </li>
-                        {% if project.owner == request.user %}
+                        {% if project.owner_id == request.user.id %}
                         <li>
                             <a href="{% url 'hc-project-settings' project.code %}">Project Settings</a>
                         </li>

@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner
 from django.db import models
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
 from hc.lib import emails
@@ -113,9 +114,19 @@ class Profile(models.Model):
     def projects(self):
         """ Return a queryset of all projects we have access to. """
 
-        is_owner = models.Q(owner=self.user)
-        is_member = models.Q(member__user=self.user)
+        is_owner = Q(owner=self.user)
+        is_member = Q(member__user=self.user)
         q = Project.objects.filter(is_owner | is_member)
+        return q.distinct().order_by("name")
+
+    def annotated_projects(self):
+        """ Return all projects, annotated with 'n_down'. """
+
+        is_owner = Q(owner=self.user)
+        is_member = Q(member__user=self.user)
+        q = Project.objects.filter(is_owner | is_member)
+        n_down = Count("check", filter=Q(check__status="down"))
+        q = q.annotate(n_down=n_down)
         return q.distinct().order_by("name")
 
     def checks_from_all_projects(self):
@@ -236,8 +247,8 @@ class Project(models.Model):
     def set_next_nag_date(self):
         """ Set next_nag_date on profiles of all members of this project. """
 
-        is_owner = models.Q(user=self.owner)
-        is_member = models.Q(user__memberships__project=self)
+        is_owner = Q(user=self.owner)
+        is_member = Q(user__memberships__project=self)
         q = Profile.objects.filter(is_owner | is_member)
         q = q.exclude(nag_period=NO_NAG)
         # Exclude profiles with next_nag_date already set
