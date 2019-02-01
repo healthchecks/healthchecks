@@ -84,8 +84,18 @@
                 </form>
             </div>
         </div>
+
+        <div class="row">
+            <div id="login-signup-cta" class="col-sm-12 text-center">
+                Don't have an account?
+                <a href="#" data-toggle="modal" data-target="#signup-modal">Sign Up</a>
+            </div>
+        </div>
+
     </div>
 </div>
+
+{% include "front/signup_modal.html" %}
 {% endblock %}
 
 {% block scripts %}
@@ -93,5 +103,6 @@
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/login.js' %}"></script>
+<script src="{% static 'js/signup.js' %}"></script>
 {% endcompress %}
 {% endblock %}

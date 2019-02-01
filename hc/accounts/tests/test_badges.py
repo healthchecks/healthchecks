@@ -28,6 +28,5 @@ class BadgesTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/accounts/profile/badges/")
-        print(r.content)
         self.assertContains(r, "badge/alices-badge-key/")
         self.assertContains(r, "badge/alices-badge-key/")
