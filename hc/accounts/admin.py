@@ -46,12 +46,13 @@ class ProfileAdmin(admin.ModelAdmin):
                     "projects", "invited", "sms", "reports_allowed")
     search_fields = ["id", "user__email"]
     list_filter = ("user__date_joined", "user__last_login",
-                   "team_limit", "reports_allowed", "check_limit")
+                   "reports_allowed", "check_limit")
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
+        qs = qs.prefetch_related("user__project_set")
         qs = qs.annotate(num_members=Count("user__project__member", distinct=True))
         qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
         qs = qs.annotate(num_channels=Count("user__project__channel", distinct=True))
