@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.5.0 - 2019-02-04
 
 ### Improvements
 - Database schema: add uniqueness constraint to Check.code
@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Database schema: add the Project model
 - Move project-specific settings to a new "Project Settings" page
 - Add a "Transfer to Another Project..." dialog
+- Add the "My Projects" page
 
 
 ## 1.4.0 - 2018-12-25
