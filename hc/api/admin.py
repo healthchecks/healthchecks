@@ -145,20 +145,12 @@ class PingsAdmin(admin.ModelAdmin):
     search_fields = ("owner__name", "owner__code")
     readonly_fields = ("owner", )
     list_select_related = ("owner", )
-    list_display = ("id", "created", "owner", "email", "scheme", "method",
+    list_display = ("id", "created", "owner", "scheme", "method",
                     "ua")
     list_filter = ("created", SchemeListFilter, MethodListFilter,
                    KindListFilter)
 
     paginator = LargeTablePaginator
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        qs = qs.annotate(email=F("owner__project__owner__email"))
-        return qs
-
-    def email(self, obj):
-        return obj.email
 
 
 @admin.register(Channel)

@@ -41,10 +41,11 @@ class ProfileAdmin(admin.ModelAdmin):
 
     readonly_fields = ("user", "email")
     raw_id_fields = ("current_project", )
+    search_fields = ["id", "user__email"]
+    list_per_page = 50
     list_select_related = ("user", )
     list_display = ("id", "email", "engagement", "date_joined", "last_login",
                     "projects", "invited", "sms", "reports_allowed")
-    search_fields = ["id", "user__email"]
     list_filter = ("user__date_joined", "user__last_login",
                    "reports_allowed", "check_limit")
 
@@ -111,6 +112,7 @@ class ProjectAdmin(admin.ModelAdmin):
     readonly_fields = ("code", "owner")
     list_select_related = ("owner", )
     list_display = ("id", "name_", "users", "engagement", "switch")
+    search_fields = ["id", "name", "owner__email"]
 
     class Media:
         css = {
