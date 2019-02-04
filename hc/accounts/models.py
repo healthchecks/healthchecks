@@ -214,8 +214,8 @@ class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)
     name = models.CharField(max_length=200, blank=True)
     owner = models.ForeignKey(User, models.CASCADE)
-    api_key = models.CharField(max_length=128, blank=True)
-    api_key_readonly = models.CharField(max_length=128, blank=True)
+    api_key = models.CharField(max_length=128, blank=True, db_index=True)
+    api_key_readonly = models.CharField(max_length=128, blank=True, db_index=True)
     badge_key = models.CharField(max_length=150, unique=True)
 
     def __str__(self):
