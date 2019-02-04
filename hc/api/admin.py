@@ -151,6 +151,7 @@ class PingsAdmin(admin.ModelAdmin):
                    KindListFilter)
 
     paginator = LargeTablePaginator
+    show_full_result_count = False
 
 
 @admin.register(Channel)
