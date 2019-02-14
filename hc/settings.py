@@ -123,6 +123,8 @@ if os.getenv("DB") == "mysql":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
+            'HOST': os.getenv("DB_HOST", ""),
+            'PORT': os.getenv("DB_PORT", ""),
             'NAME': os.getenv("DB_NAME", "hc"),
             'USER': os.getenv("DB_USER", "root"),
             'PASSWORD': os.getenv("DB_PASSWORD", ""),
