@@ -20,6 +20,7 @@ class ListChecksTestCase(BaseTestCase):
         self.a1.n_pings = 0
         self.a1.status = "new"
         self.a1.tags = "a1-tag a1-additional-tag"
+        self.a1.desc = "This is description"
         self.a1.save()
 
         self.a2 = Check(project=self.project, name="Alice 2")
@@ -56,6 +57,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(a1["n_pings"], 0)
         self.assertEqual(a1["status"], "new")
         self.assertEqual(a1["channels"], str(self.c1.code))
+        self.assertEqual(a1["desc"], "This is description")
 
         update_url = settings.SITE_ROOT + "/api/v1/checks/%s" % self.a1.code
         pause_url = update_url + "/pause"

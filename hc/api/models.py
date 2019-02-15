@@ -193,7 +193,8 @@ class Check(models.Model):
             "status": self.get_status(),
             "channels": ",".join(sorted(channel_codes)),
             "last_ping": isostring(self.last_ping),
-            "next_ping": isostring(self.get_grace_start())
+            "next_ping": isostring(self.get_grace_start()),
+            "desc": self.desc
         }
 
         if self.kind == "simple":

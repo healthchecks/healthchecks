@@ -1,7 +1,8 @@
 {
   "checks": [
     {
-      "channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"
+      "channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc",
+      "desc": "Longer free-form description goes here",
       "grace": 900,
       "last_ping": "2017-01-04T13:24:39.903464+00:00",
       "n_pings": 1,
@@ -16,6 +17,7 @@
     },
     {
       "channels": "",
+      "desc": "",
       "grace": 3600,
       "last_ping": null,
       "n_pings": 0,
