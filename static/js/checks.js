@@ -79,7 +79,7 @@ $(function () {
 
         // Update hash
         if (window.history && window.history.replaceState) {
-            var url = "/checks/";
+            var url = $("#checks-table").data("list-url");;
             if (qs.length) {
                 url += "?" + $.param(qs);
             }

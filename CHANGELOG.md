@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add the "desc" field (check's description) to API responses
 
+### Bug Fixes
+- Fix refreshing of the checks page filtered by tags (#221)
+
 
 ## 1.5.0 - 2019-02-04
 
