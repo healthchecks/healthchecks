@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix refreshing of the checks page filtered by tags (#221)
+- Escape asterisks in Slack messages (#223)
 
 
 ## 1.5.0 - 2019-02-04

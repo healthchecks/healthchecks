@@ -114,3 +114,10 @@ def break_underscore(s):
         s = s.replace("_", "_\u200b")
 
     return s
+
+
+@register.filter
+def fix_asterisks(s):
+    """ Prepend asterisks with "Combining Grapheme Joiner" characters. """
+
+    return s.replace("*", "\u034f*")
