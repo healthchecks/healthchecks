@@ -1,11 +1,14 @@
 from datetime import timedelta as td
 import json
 import re
+from urllib.parse import quote, urlencode
 
 from django import forms
+from django.conf import settings
 from django.core.validators import RegexValidator
 from hc.front.validators import (CronExpressionValidator, TimezoneValidator,
                                  WebhookValidator)
+import requests
 
 
 class NameTagsForm(forms.Form):
@@ -116,3 +119,24 @@ class AddSmsForm(forms.Form):
 
 class ChannelNameForm(forms.Form):
     name = forms.CharField(max_length=100, required=False)
+
+
+class AddMatrixForm(forms.Form):
+    error_css_class = "has-error"
+    alias = forms.CharField(max_length=40)
+
+    def clean_alias(self):
+        v = self.cleaned_data["alias"]
+
+        # validate it by trying to join
+        url = settings.MATRIX_HOMESERVER
+        url += "/_matrix/client/r0/join/%s?" % quote(v)
+        url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
+        doc = requests.post(url, {}).json()
+        if "error" in doc:
+            raise forms.ValidationError(
+                "Response from Matrix: %s" % doc["error"])
+
+        self.cleaned_data["room_id"] = doc["room_id"]
+
+        return v

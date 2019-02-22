@@ -38,6 +38,7 @@ channel_urls = [
     path('add_sms/', views.add_sms, name="hc-add-sms"),
     path('add_trello/', views.add_trello, name="hc-add-trello"),
     path('add_trello/settings/', views.trello_settings, name="hc-trello-settings"),
+    path('add_matrix/', views.add_matrix, name="hc-add-matrix"),
     path('<uuid:code>/checks/', views.channel_checks, name="hc-channel-checks"),
     path('<uuid:code>/name/', views.update_channel_name, name="hc-channel-name"),
     path('<uuid:code>/remove/', views.remove_channel, name="hc-remove-channel"),

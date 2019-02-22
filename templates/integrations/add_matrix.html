@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Add Matrix - {% site_name %}{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Matrix</h1>
+
+    <p>
+    If your team uses <a href="https://matrix.org/">Matrix</a>,
+    you can set up {% site_name %} to post notifications
+    to an appropriate Matrix room.
+    </p>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group {{ form.room_id.css_classes }}">
+            <label for="alias" class="col-sm-2 control-label">Room Alias or ID</label>
+            <div class="col-sm-6">
+                <input
+                    id="alias"
+                    type="text"
+                    class="form-control"
+                    name="alias"
+                    placeholder="!abc:matrix.org"
+                    value="{{ form.alias.value|default:"" }}">
+
+                {% if form.alias.errors %}
+                <div class="help-block">
+                    {{ form.alias.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

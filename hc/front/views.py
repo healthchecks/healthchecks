@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta as td
 import json
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 
 from croniter import croniter
 from django.conf import settings
@@ -24,7 +24,7 @@ from hc.api.transports import Telegram
 from hc.front.forms import (AddWebhookForm, NameTagsForm,
                             TimeoutForm, AddUrlForm, AddEmailForm,
                             AddOpsGenieForm, CronForm, AddSmsForm,
-                            ChannelNameForm, EmailSettingsForm)
+                            ChannelNameForm, EmailSettingsForm, AddMatrixForm)
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import (num_down_title, down_title,
                                              sortchecks)
@@ -550,6 +550,7 @@ def channels(request):
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "use_payments": settings.USE_PAYMENTS
     }
 
@@ -1142,6 +1143,37 @@ def add_trello(request):
     }
 
     return render(request, "integrations/add_trello.html", ctx)
+
+
+@login_required
+def add_matrix(request):
+    if settings.MATRIX_ACCESS_TOKEN is None:
+        raise Http404("matrix integration is not available")
+
+    if request.method == "POST":
+        form = AddMatrixForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="matrix")
+            channel.value = form.cleaned_data["room_id"]
+
+            # If user supplied room alias instead of ID, use it as channel name
+            alias = form.cleaned_data["alias"]
+            if not alias.startswith("!"):
+                channel.name = alias
+
+            channel.save()
+
+            channel.assign_all_checks()
+            messages.success(request, "The Matrix integration has been added!")
+            return redirect("hc-channels")
+    else:
+        form = AddMatrixForm()
+
+    ctx = {
+        "page": "channels",
+        "form": form
+    }
+    return render(request, "integrations/add_matrix.html", ctx)
 
 
 @login_required

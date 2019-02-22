@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 import json
 import requests
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
 from hc.lib import emails
@@ -341,6 +341,28 @@ class VictorOps(HttpTransport):
         }
 
         return self.post(self.channel.value, json=payload)
+
+
+class Matrix(HttpTransport):
+    def get_url(self):
+        s = quote(self.channel.value)
+
+        url = settings.MATRIX_HOMESERVER
+        url += "/_matrix/client/r0/rooms/%s/send/m.room.message?" % s
+        url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
+        return url
+
+    def notify(self, check):
+        plain = tmpl("matrix_description.html", check=check)
+        formatted = tmpl("matrix_description_formatted.html", check=check)
+        payload = {
+            "msgtype": "m.text",
+            "body": plain,
+            "format": "org.matrix.custom.html",
+            "formatted_body": formatted
+        }
+
+        return self.post(self.get_url(), json=payload)
 
 
 class Discord(HttpTransport):

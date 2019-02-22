@@ -43,7 +43,8 @@ CHANNEL_KINDS = (("email", "Email"),
                  ("telegram", "Telegram"),
                  ("sms", "SMS"),
                  ("zendesk", "Zendesk"),
-                 ("trello", "Trello"))
+                 ("trello", "Trello"),
+                 ("matrix", "Matrix"))
 
 PO_PRIORITIES = {
     -2: "lowest",
@@ -339,6 +340,8 @@ class Channel(models.Model):
             return transports.Sms(self)
         elif self.kind == "trello":
             return transports.Trello(self)
+        elif self.kind == "matrix":
+            return transports.Matrix(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 

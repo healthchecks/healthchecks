@@ -196,6 +196,10 @@ PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 # Trello
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 
+# Matrix
+MATRIX_HOMESERVER = os.getenv("MATRIX_HOMESERVER")
+MATRIX_ACCESS_TOKEN = os.getenv("MATRIX_ACCESS_TOKEN")
+
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
 else:
