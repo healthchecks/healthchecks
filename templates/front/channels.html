@@ -27,7 +27,7 @@
         </tr>
         {% for ch in channels %}
         {% with n=ch.latest_notification %}
-        <tr class="channel-row">
+        <tr class="channel-row kind-{{ ch.kind }}">
             <td class="icon-cell">
                 <img src="{% static ch.icon_path %}"
                 class="icon"
@@ -101,6 +101,8 @@
                     {% else %}
                         <span class="label label-default">Unconfirmed</span>
                     {% endif %}
+                {% elif ch.kind == "hipchat" %}
+                    Retired
                 {% else %}
                     Ready to deliver
                 {% endif %}
@@ -231,15 +233,6 @@
             <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications</p>
 
             <a href="{% url 'hc-add-pagertree' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        <li>
-            <img src="{% static 'img/integrations/hipchat.png' %}"
-                class="icon" alt="HipChat icon" />
-
-            <h2>HipChat</h2>
-            <p>Group and private chat, file sharing, and integrations.</p>
-
-            <a href="{% url 'hc-add-hipchat' %}" class="btn btn-primary">Add Integration</a>
         </li>
         <li>
             <img src="{% static 'img/integrations/victorops.png' %}"

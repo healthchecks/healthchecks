@@ -354,15 +354,10 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_hipchat(self, mock_post):
         self._setup_data("hipchat", "123")
-        mock_post.return_value.status_code = 204
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
-        self.assertEqual(n.error, "")
-
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
-        self.assertIn("DOWN", payload["message"])
+        self.assertFalse(mock_post.called)
+        self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.requests.request")
     def test_opsgenie(self, mock_post):

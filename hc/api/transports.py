@@ -202,11 +202,8 @@ class Slack(HttpTransport):
 
 
 class HipChat(HttpTransport):
-    def notify(self, check):
-        text = tmpl("hipchat_message.json", check=check)
-        payload = json.loads(text)
-        self.channel.refresh_hipchat_access_token()
-        return self.post(self.channel.hipchat_webhook_url, json=payload)
+    def is_noop(self, check):
+        return True
 
 
 class OpsGenie(HttpTransport):

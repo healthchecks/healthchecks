@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta as td
 import json
-from urllib.parse import urlencode, quote
+from urllib.parse import urlencode
 
 from croniter import croniter
 from django.conf import settings
@@ -798,42 +798,6 @@ def add_slack_btn(request):
         messages.warning(request, "Error message from slack: %s" % s)
 
     return redirect("hc-channels")
-
-
-@login_required
-def add_hipchat(request):
-    if "installable_url" in request.GET:
-        url = request.GET["installable_url"]
-        assert url.startswith("https://api.hipchat.com")
-        response = requests.get(url)
-        if "oauthId" not in response.json():
-            messages.warning(request, "Something went wrong!")
-            return redirect("hc-channels")
-
-        channel = Channel(kind="hipchat", project=request.project)
-        channel.user = request.project.owner
-        channel.value = response.text
-        channel.save()
-
-        channel.refresh_hipchat_access_token()
-        channel.assign_all_checks()
-        messages.success(request, "The HipChat integration has been added!")
-        return redirect("hc-channels")
-
-    install_url = "https://www.hipchat.com/addons/install?" + urlencode({
-        "url": settings.SITE_ROOT + reverse("hc-hipchat-capabilities")
-    })
-
-    ctx = {
-        "page": "channels",
-        "install_url": install_url
-    }
-    return render(request, "integrations/add_hipchat.html", ctx)
-
-
-def hipchat_capabilities(request):
-    return render(request, "integrations/hipchat_capabilities.json", {},
-                  content_type="application/json")
 
 
 @login_required
