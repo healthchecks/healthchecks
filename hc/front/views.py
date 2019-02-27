@@ -494,7 +494,7 @@ def status_single(request, code):
     events = _get_events(check, 20)
     updated = "1"
     if len(events):
-        updated = events[0].created.strftime("%s.%f")
+        updated = str(events[0].created.timestamp())
 
     doc = {
         "status": status,

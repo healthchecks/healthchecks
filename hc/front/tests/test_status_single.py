@@ -29,7 +29,7 @@ class StatusSingleTestCase(BaseTestCase):
         doc = r.json()
 
         self.assertEqual(doc["status"], "up")
-        self.assertEqual(doc["updated"], p.created.strftime("%s.%f"))
+        self.assertEqual(doc["updated"], str(p.created.timestamp()))
         self.assertTrue("test-user-agent" in doc["events"])
 
     def test_it_omits_events(self):

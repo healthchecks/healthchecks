@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix refreshing of the checks page filtered by tags (#221)
 - Escape asterisks in Slack messages (#223)
+- Fix a "invalid time format" in front.views.status_single on Windows hosts
 
 
 ## 1.5.0 - 2019-02-04
