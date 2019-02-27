@@ -4,6 +4,7 @@ import re
 from smtpd import SMTPServer
 
 from django.core.management.base import BaseCommand
+from django.db import connections
 from hc.api.models import Check
 
 RE_UUID = re.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
@@ -15,6 +16,9 @@ class Listener(SMTPServer):
         super(Listener, self).__init__(localaddr, None)
 
     def process_message(self, peer, mailfrom, rcpttos, data, mail_options=None, rcpt_options=None):
+        # get a new db connection in case the old one has timed out:
+        connections.close_all()
+
         to_parts = rcpttos[0].split("@")
         code = to_parts[0]
 
