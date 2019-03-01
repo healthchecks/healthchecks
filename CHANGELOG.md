@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add the "desc" field (check's description) to API responses
 - Add maxlength attribute to HTML input=text elements
+- Improved logic for displaying job execution times in log (#219)
 
 ### Bug Fixes
 - Fix refreshing of the checks page filtered by tags (#221)

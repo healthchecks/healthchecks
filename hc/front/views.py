@@ -39,6 +39,7 @@ STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
 ONE_HOUR = td(hours=1)
+TWELVE_HOURS = td(hours=12)
 
 
 def _tags_statuses(checks):
@@ -405,6 +406,10 @@ def remove_check(request, code):
 
 
 def _get_events(check, limit):
+    # max time between start and ping where we will consider
+    # the both events related.
+    max_delta = min(ONE_HOUR + check.grace, TWELVE_HOURS)
+
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
     pings = list(pings)
 
@@ -412,7 +417,7 @@ def _get_events(check, limit):
     for ping in pings:
         if ping.kind == "start" and prev and prev.kind != "start":
             delta = prev.created - ping.created
-            if delta < ONE_HOUR:
+            if delta < max_delta:
                 setattr(prev, "delta", delta)
 
         prev = ping

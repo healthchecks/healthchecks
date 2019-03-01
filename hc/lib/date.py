@@ -29,12 +29,17 @@ def format_duration(td):
     return " ".join(result)
 
 
-def format_mins_secs(td):
+def format_hms(td):
     total_seconds = int(td.total_seconds())
     result = []
 
     mins, secs = divmod(total_seconds, 60)
-    if mins:
+    h, mins = divmod(mins, 60)
+
+    if h:
+        result.append("%d h" % h)
+
+    if h or mins:
         result.append("%d min" % mins)
 
     result.append("%s sec" % secs)

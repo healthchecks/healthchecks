@@ -58,7 +58,7 @@
                 {% if event.delta %}
                 <div class="delta">
                     <span class="icon-timer"></span>
-                    {{ event.delta|mins_secs }}
+                    {{ event.delta|hms }}
                 </div>
                 {% endif %}
 
