@@ -14,6 +14,67 @@
     to an appropriate Matrix room.
     </p>
 
+    <h2>Setup Guide</h2>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            <div>
+                <p>
+                Invite <strong>{{ matrix_user_id }}</strong>
+                into your Matrix room.
+                </p>
+                <p>
+                    <strong>Note:</strong> after joining the room,
+                    {{ matrix_user_id }} will be
+                    able to read its messages.
+                    Do not invite to rooms with sensitive content.
+                    Consider creating a dedicated room for notifications.
+                </p>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_matrix_1.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            <p>
+                Look up the room's <strong>alias</strong> or
+                <strong>ID</strong>, and paste it in the form
+                below and save the integration.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_matrix_2.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>
+                {{ matrix_user_id }} will shortly join your room.
+                After that, you are all set! From now on
+                {% site_name %} will post notifications
+                to your room when checks go down or up.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_matrix_3.png' %}">
+        </div>
+    </div>
+
     <h2>Integration Settings</h2>
 
     <form method="post" class="form-horizontal">

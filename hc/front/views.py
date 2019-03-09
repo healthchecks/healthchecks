@@ -1140,7 +1140,8 @@ def add_matrix(request):
 
     ctx = {
         "page": "channels",
-        "form": form
+        "form": form,
+        "matrix_user_id": settings.MATRIX_USER_ID
     }
     return render(request, "integrations/add_matrix.html", ctx)
 
