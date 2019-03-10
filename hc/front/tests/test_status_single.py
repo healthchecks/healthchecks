@@ -38,7 +38,7 @@ class StatusSingleTestCase(BaseTestCase):
         self.check.last_ping = p.created
         self.check.save()
 
-        timestamp = p.created.strftime("%s.%f")
+        timestamp = str(p.created.timestamp())
         url = "/checks/%s/status/?u=%s" % (self.check.code, timestamp)
 
         self.client.login(username="alice@example.org", password="password")
