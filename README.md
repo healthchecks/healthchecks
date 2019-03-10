@@ -128,6 +128,9 @@ Configurations settings loaded from environment variables:
 | TWILIO_FROM | `None`
 | PD_VENDOR_KEY | `None`
 | TRELLO_APP_KEY | `None`
+| MATRIX_HOMESERVER | `None`
+| MATRIX_USER_ID | `None`
+| MATRIX_ACCESS_TOKEN | `None`
 
 
 Some useful settings keys to override are:
