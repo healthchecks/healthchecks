@@ -56,6 +56,7 @@ class Profile(models.Model):
     sms_sent = models.IntegerField(default=0)
     team_limit = models.IntegerField(default=2)
     sort = models.CharField(max_length=20, default="created")
+    deletion_notice_date = models.DateTimeField(null=True, blank=True)
 
     objects = ProfileManager()
 

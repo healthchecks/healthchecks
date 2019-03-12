@@ -2,8 +2,9 @@ from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from django.db.models import Count
-from django.utils import timezone
+from django.db.models import Count, F
+from django.utils.timezone import now
+from hc.accounts.models import Profile
 
 
 class Command(BaseCommand):
@@ -18,12 +19,25 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        cutoff = timezone.now() - timedelta(days=30)
+        month_ago = now() - timedelta(days=30)
 
         # Old accounts, never logged in, no team memberships
         q = User.objects.order_by("id")
         q = q.annotate(n_teams=Count("memberships"))
-        q = q.filter(date_joined__lt=cutoff, last_login=None, n_teams=0)
+        q = q.filter(date_joined__lt=month_ago, last_login=None, n_teams=0)
 
         n, summary = q.delete()
-        return "Done! Pruned %d user accounts." % summary.get("auth.User", 0)
+        count = summary.get("auth.User", 0)
+        self.stdout.write("Pruned %d never-logged-in user accounts." % count)
+
+        # Profiles scheduled for deletion
+        q = Profile.objects.order_by("id")
+        q = q.filter(deletion_notice_date__lt=month_ago)
+        # Exclude users who have logged in after receiving deletion notice
+        q = q.exclude(user__last_login__gt=F("deletion_notice_date"))
+
+        for profile in q:
+            self.stdout.write("Deleting inactive %s" % profile.user.email)
+            profile.user.delete()
+
+        return "Done!"

@@ -70,3 +70,7 @@ def invoice(to, ctx, filename, pdf_data):
     msg.attach_alternative(html, "text/html")
     msg.attach(filename, pdf_data, "application/pdf")
     msg.send()
+
+
+def deletion_notice(to, ctx, headers={}):
+    send("deletion-notice", to, ctx, headers)

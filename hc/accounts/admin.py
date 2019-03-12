@@ -22,6 +22,7 @@ class ProfileFieldset(Fieldset):
     name = "User Profile"
     fields = ("email", "current_project", "reports_allowed",
               "next_report_date", "nag_period", "next_nag_date",
+              "deletion_notice_date",
               "token", "sort")
 
 
