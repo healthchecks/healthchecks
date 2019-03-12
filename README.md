@@ -95,7 +95,7 @@ Configurations settings loaded from environment variables:
 | DB | `"sqlite"` | Set to `"postgres"` or `"mysql"`
 | [DB_HOST](https://docs.djangoproject.com/en/2.1/ref/settings/#host) | `""` *(empty string)*
 | [DB_PORT](https://docs.djangoproject.com/en/2.1/ref/settings/#port) | `""` *(empty string)*
-| [DB_NAME](https://docs.djangoproject.com/en/2.1/ref/settings/#name) | `"hc"`
+| [DB_NAME](https://docs.djangoproject.com/en/2.1/ref/settings/#name) | `"hc"` (PostgreSQL, MySQL) or `"/path/to/project/hc.sqlite"` (SQLite) | For SQLite, specify the full path to the database file.
 | [DB_USER](https://docs.djangoproject.com/en/2.1/ref/settings/#user) | `"postgres"` or `"root"`
 | [DB_PASSWORD](https://docs.djangoproject.com/en/2.1/ref/settings/#password) | `""` *(empty string)*
 | [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.1/ref/settings/#conn-max-age) | `0`
