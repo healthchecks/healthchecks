@@ -31,9 +31,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", "---")
 DEBUG = envbool("DEBUG", "True")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "healthchecks@example.org")
-USE_PAYMENTS = envbool("DEBUG", "False")
-REGISTRATION_OPEN = envbool("DEBUG", "True")
-
+USE_PAYMENTS = envbool("USE_PAYMENTS", "False")
+REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "True")
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -95,7 +94,7 @@ TEST_RUNNER = 'hc.api.tests.CustomRunner'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '{0}/hc.sqlite'.format(BASE_DIR),
+        'NAME': os.getenv("DB_NAME", BASE_DIR + "/hc.sqlite"),
     }
 }
 
