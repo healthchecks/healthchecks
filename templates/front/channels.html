@@ -243,6 +243,15 @@
 
             <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
         </li>
+        <li>
+            <img src="{% static 'img/integrations/pagerteam.png' %}"
+                class="icon" alt="PagerTeam icon" />
+
+            <h2>Pager Team</h2>
+            <p>On-call rotations without limits</p>
+
+            <a href="{% url 'hc-add-pagerteam' %}" class="btn btn-primary">Add Integration</a>
+        </li>
         {% if enable_discord %}
         <li>
             <img src="{% static 'img/integrations/discord.png' %}"

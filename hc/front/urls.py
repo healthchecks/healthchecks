@@ -40,6 +40,7 @@ channel_urls = [
     path('<uuid:code>/checks/', views.channel_checks, name="hc-channel-checks"),
     path('<uuid:code>/name/', views.update_channel_name, name="hc-channel-name"),
     path('<uuid:code>/remove/', views.remove_channel, name="hc-remove-channel"),
+    path('add_pagerteam/', views.add_pagertree, name="hc-add-pagerteam"),
     path('<uuid:code>/verify/<slug:token>/', views.verify_email,
          name="hc-verify-email"),
     path('<uuid:code>/unsub/<slug:token>/', views.unsubscribe_email,
