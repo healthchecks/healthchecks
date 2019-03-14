@@ -47,6 +47,8 @@
                             PagerDuty account <span>{{ ch.pd_account }}</span>
                         {% elif ch.kind == "pagertree" %}
                             PagerTree
+                        {% elif ch.kind == "pagerteam" %}
+                            PagerTeam
                         {% elif ch.kind == "opsgenie" %}
                             OpsGenie
                         {% elif ch.kind == "victorops" %}
