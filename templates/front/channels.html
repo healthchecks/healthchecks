@@ -47,6 +47,8 @@
                             PagerDuty account <span>{{ ch.pd_account }}</span>
                         {% elif ch.kind == "pagertree" %}
                             PagerTree
+                        {% elif ch.kind == "pagerteam" %}
+                            Pager Team
                         {% elif ch.kind == "opsgenie" %}
                             OpsGenie
                         {% elif ch.kind == "victorops" %}
@@ -242,6 +244,15 @@
             <p>On-call scheduling, alerting, and incident tracking.</p>
 
             <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/pagerteam.png' %}"
+                class="icon" alt="PagerTeam icon" />
+
+            <h2>Pager Team</h2>
+            <p>On-call scheduling, alerting, and incident tracking.</p>
+
+            <a href="{% url 'hc-add-pagerteam' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% if enable_discord %}
         <li>

@@ -749,6 +749,23 @@ def add_pagertree(request):
     ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_pagertree.html", ctx)
 
+@login_required
+def add_pagerteam(request):
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="pagerteam")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "form": form}
+    return render(request, "integrations/add_pagerteam.html", ctx)
+
 
 def add_slack(request):
     if not settings.SLACK_CLIENT_ID and not request.user.is_authenticated:

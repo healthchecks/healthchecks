@@ -295,6 +295,18 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(payload["event_type"], "trigger")
 
     @patch("hc.api.transports.requests.request")
+    def test_pagerteam(self, mock_post):
+        self._setup_data("pagerteam", "123")
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(payload["event_type"], "trigger")
+
+    @patch("hc.api.transports.requests.request")
     def test_slack(self, mock_post):
         self._setup_data("slack", "123")
         mock_post.return_value.status_code = 200

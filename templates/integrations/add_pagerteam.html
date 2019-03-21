@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Add Pager Team - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+      <h1>Pager Team</h1>
+
+      <p>You can integrate <a href="https://pagerteam.com">Pager Team</a>
+      with {% site_name %} to alert your on-call rotation whenever a check goes down.</p>
+
+      <h2>Setup Guide</h2>
+
+      <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            <p>
+                Log into your Pager Team account, select the rotation you wish to add this integration to. Click the <strong>Copy Webhook</strong> button.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Click create integration button"
+                src="{% static 'img/integrations/setup_pagerteam_1.png' %}">
+        </div>
+      </div>
+
+      <div class="row ai-step">
+          <div class="col-sm-6">
+              <span class="step-no">2</span>
+              <p>
+                Paste the <strong>Webhook URL</strong> below. Save the integration, and you are done!
+              </p>
+          </div>
+      </div>
+
+      <h2>Integration Settings</h2>
+
+      <form method="post" class="form-horizontal" action="{% url 'hc-add-pagerteam' %}">
+          {% csrf_token %}
+          <div class="form-group {{ form.value.css_classes }}">
+              <label for="post-url" class="col-sm-2 control-label">URL</label>
+              <div class="col-sm-10">
+                  <input
+                      id="post-url"
+                      type="text"
+                      class="form-control"
+                      name="value"
+                      placeholder="https://"
+                      value="{{ form.value.value|default:"" }}">
+
+                  {% if form.value.errors %}
+                  <div class="help-block">
+                      {{ form.value.errors|join:"" }}
+                  </div>
+                  {% endif %}
+              </div>
+          </div>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary">Save Integration</button>
+              </div>
+          </div>
+      </form>
+  </div>
+</div>
+{% endblock %}

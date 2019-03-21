@@ -64,6 +64,8 @@
                 Sent alert to PagerDuty
             {% elif event.channel.kind == "pagertree" %}
                 Sent alert to PagerTree
+            {% elif event.channel.kind == "pagerteam" %}
+                Sent alert to Pager Team
             {% elif event.channel.kind == "opsgenie" %}
                 Sent alert to OpsGenie
             {% elif event.channel.kind == "hipchat" %}

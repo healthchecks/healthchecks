@@ -33,6 +33,7 @@ CHANNEL_KINDS = (("email", "Email"),
                  ("slack", "Slack"),
                  ("pd", "PagerDuty"),
                  ("pagertree", "PagerTree"),
+                 ("pagerteam", "Pager Team"),
                  ("po", "Pushover"),
                  ("pushbullet", "Pushbullet"),
                  ("opsgenie", "OpsGenie"),
@@ -322,6 +323,8 @@ class Channel(models.Model):
             return transports.PagerDuty(self)
         elif self.kind == "pagertree":
             return transports.PagerTree(self)
+        elif self.kind == "pagerteam":
+            return transports.PagerTeam(self)
         elif self.kind == "victorops":
             return transports.VictorOps(self)
         elif self.kind == "pushbullet":
