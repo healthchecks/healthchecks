@@ -221,6 +221,7 @@ def index(request):
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "registration_open": settings.REGISTRATION_OPEN
     }
 
