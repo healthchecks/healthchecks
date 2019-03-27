@@ -1,4 +1,4 @@
-croniter==0.3.26
+croniter==0.3.29
 Django==2.1.7
 django_compressor==2.2
 psycopg2==2.7.5
