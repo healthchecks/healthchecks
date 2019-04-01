@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add maxlength attribute to HTML input=text elements
 - Improved logic for displaying job execution times in log (#219)
 - Add Matrix integration
+- Add Pager Team integration
 - Add a management command for sending inactive account notifications
 
 ### Bug Fixes
