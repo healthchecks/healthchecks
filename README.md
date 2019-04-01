@@ -106,6 +106,7 @@ Configurations settings loaded from environment variables:
 | EMAIL_HOST_USER | `""` *(empty string)*
 | EMAIL_HOST_PASSWORD | `""` *(empty string)*
 | EMAIL_USE_TLS | `"True"`
+| EMAIL_USE_VERIFICATION | `"True"`
 | SITE_ROOT | `"http://localhost:8000"`
 | SITE_NAME | `"Mychecks"`
 | MASTER_BADGE_LABEL | `"Mychecks"`
@@ -157,6 +158,11 @@ can send pings).
 
 If you close new user registration, you can still selectively invite users
 to your team account.
+
+`EMAIL_USE_VERIFICATION` enables/disables the sending of a verification
+link when an email address is added to the list of notification methods.
+Set it to `False` if you are setting up a private healthchecks instance where
+you trust your users and want to avoid the extra verification step.
 
 
 ## Database Configuration

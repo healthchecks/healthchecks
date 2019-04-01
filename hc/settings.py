@@ -166,6 +166,7 @@ EMAIL_PORT = envint("EMAIL_PORT", "587")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = envbool("EMAIL_USE_TLS", "True")
+EMAIL_USE_VERIFICATION = envbool("EMAIL_USE_VERIFICATION", "True")
 
 # Slack integration
 SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID")

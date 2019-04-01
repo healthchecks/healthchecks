@@ -646,7 +646,15 @@ def add_email(request):
             channel.save()
 
             channel.assign_all_checks()
-            channel.send_verify_link()
+
+            if settings.EMAIL_USE_VERIFICATION:
+                channel.send_verify_link()
+            else:
+                # In self-hosted setting, administator has the option to
+                # disable the email verification step.
+                channel.email_verified = True
+                channel.save()
+
             return redirect("hc-channels")
     else:
         form = AddEmailForm()
