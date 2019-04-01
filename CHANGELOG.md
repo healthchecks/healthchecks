@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.6.0 - 2019-04-01
 
 ### Improvements
 - Add the "desc" field (check's description) to API responses
