@@ -696,7 +696,11 @@ def add_email(request):
     else:
         form = AddEmailForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form
+    }
     return render(request, "integrations/add_email.html", ctx)
 
 
@@ -716,6 +720,7 @@ def add_webhook(request):
 
     ctx = {
         "page": "channels",
+        "project": request.project,
         "form": form,
         "now": timezone.now().replace(microsecond=0).isoformat()
     }
@@ -774,7 +779,11 @@ def add_pd(request, state=None):
         "callback": callback
     })
 
-    ctx = {"page": "channels", "connect_url": connect_url}
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "connect_url": connect_url
+    }
     return render(request, "integrations/add_pd.html", ctx)
 
 
@@ -792,8 +801,13 @@ def add_pagertree(request):
     else:
         form = AddUrlForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form
+    }
     return render(request, "integrations/add_pagertree.html", ctx)
+
 
 @login_required
 def add_pagerteam(request):
@@ -809,7 +823,11 @@ def add_pagerteam(request):
     else:
         form = AddUrlForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form
+    }
     return render(request, "integrations/add_pagerteam.html", ctx)
 
 
@@ -834,6 +852,9 @@ def add_slack(request):
         "form": form,
         "slack_client_id": settings.SLACK_CLIENT_ID
     }
+
+    if request.user.is_authenticated:
+        ctx["project"] = request.project
 
     if settings.SLACK_CLIENT_ID and request.user.is_authenticated:
         ctx["state"] = _prepare_state(request, "slack")
@@ -909,6 +930,7 @@ def add_pushbullet(request):
 
     ctx = {
         "page": "channels",
+        "project": request.project,
         "authorize_url": authorize_url
     }
     return render(request, "integrations/add_pushbullet.html", ctx)
@@ -957,6 +979,7 @@ def add_discord(request):
 
     ctx = {
         "page": "channels",
+        "project": request.project,
         "authorize_url": auth_url
     }
 
@@ -1020,6 +1043,7 @@ def add_pushover(request):
     # Show Integration Settings form
     ctx = {
         "page": "channels",
+        "project": request.project,
         "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
         "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
     }
@@ -1040,7 +1064,11 @@ def add_opsgenie(request):
     else:
         form = AddUrlForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form
+    }
     return render(request, "integrations/add_opsgenie.html", ctx)
 
 
@@ -1058,7 +1086,11 @@ def add_victorops(request):
     else:
         form = AddUrlForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form
+    }
     return render(request, "integrations/add_victorops.html", ctx)
 
 
@@ -1110,6 +1142,8 @@ def add_telegram(request):
         return redirect("hc-channels")
 
     ctx = {
+        "page": "channels",
+        "project": request.project,
         "chat_id": chat_id,
         "chat_type": chat_type,
         "chat_name": chat_name,
@@ -1141,6 +1175,7 @@ def add_sms(request):
 
     ctx = {
         "page": "channels",
+        "project": request.project,
         "form": form,
         "profile": request.project.owner_profile
     }
@@ -1171,6 +1206,7 @@ def add_trello(request):
 
     ctx = {
         "page": "channels",
+        "project": request.project,
         "authorize_url": authorize_url
     }
 
@@ -1203,6 +1239,7 @@ def add_matrix(request):
 
     ctx = {
         "page": "channels",
+        "project": request.project,
         "form": form,
         "matrix_user_id": settings.MATRIX_USER_ID
     }

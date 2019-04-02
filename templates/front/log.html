@@ -1,4 +1,4 @@
-{% extends "base_project.html" %}
+{% extends "base.html" %}
 {% load compress humanize staticfiles hc_extras %}
 
 {% block title %}My Checks - {% site_name %}{% endblock %}
@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-sm-12">
         <ol class="breadcrumb">
-            <li><a href="{% url 'hc-checks' check.project.code %}">Checks</a></li>
+            <li><a href="{% url 'hc-checks' check.project.code %}">{{ check.project }}</a></li>
             <li>
                 <a href="{% url 'hc-details' check.code %}">
                     {{ check.name_then_code }}
