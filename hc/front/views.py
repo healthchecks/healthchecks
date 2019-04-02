@@ -205,7 +205,6 @@ def index(request):
 
         ctx = {
             "page": "projects",
-            "show_plans": settings.USE_PAYMENTS,
             "projects": projects
         }
         return render(request, "front/projects.html", ctx)
