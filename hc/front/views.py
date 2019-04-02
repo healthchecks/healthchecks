@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta as td
 import json
+import re
 from urllib.parse import urlencode
 
 from croniter import croniter
@@ -29,6 +30,7 @@ from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import (num_down_title, down_title,
                                              sortchecks)
 from hc.lib import jsonschema
+from hc.lib.badges import get_badge_url
 import pytz
 from pytz.exceptions import UnknownTimeZoneError
 import requests
@@ -441,6 +443,7 @@ def log(request, code):
 
     limit = check.project.owner_profile.ping_log_limit
     ctx = {
+        "project": check.project,
         "check": check,
         "events": _get_events(check, limit),
         "limit": limit,
@@ -459,6 +462,7 @@ def details(request, code):
 
     ctx = {
         "page": "details",
+        "project": check.project,
         "check": check,
         "channels": channels,
         "timezones": pytz.all_timezones
@@ -516,6 +520,38 @@ def status_single(request, code):
 
 
 @login_required
+def badges(request, code):
+    project = _get_project_for_user(request, code)
+
+    tags = set()
+    for check in Check.objects.filter(project=project):
+        tags.update(check.tags_list())
+
+    sorted_tags = sorted(tags, key=lambda s: s.lower())
+    sorted_tags.append("*")  # For the "overall status" badge
+
+    urls = []
+    for tag in sorted_tags:
+        if not re.match("^[\w-]+$", tag) and tag != "*":
+            continue
+
+        urls.append({
+            "tag": tag,
+            "svg": get_badge_url(project.badge_key, tag),
+            "json": get_badge_url(project.badge_key, tag, format="json"),
+        })
+
+    ctx = {
+        "have_tags": len(urls) > 1,
+        "page": "badges",
+        "project": project,
+        "badges": urls
+    }
+
+    return render(request, "front/badges.html", ctx)
+
+
+@login_required
 def channels(request):
     if request.method == "POST":
         code = request.POST["channel"]
@@ -547,6 +583,7 @@ def channels(request):
 
     ctx = {
         "page": "channels",
+        "project": request.project,
         "profile": request.project.owner_profile,
         "channels": channels,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,

@@ -16,7 +16,6 @@ urlpatterns = [
 
     path('profile/', views.profile, name="hc-profile"),
     path('profile/notifications/', views.notifications, name="hc-notifications"),
-    path('profile/badges/', views.badges, name="hc-badges"),
     path('close/', views.close, name="hc-close"),
 
     path('unsubscribe_reports/<str:username>/',

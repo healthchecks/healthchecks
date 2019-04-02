@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add the EMAIL_USE_VERIFICATION configuration setting (#232)
+- Show "Badges" and "Settings" in top navigation (#234)
 
 
 ## 1.6.0 - 2019-04-01

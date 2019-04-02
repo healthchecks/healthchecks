@@ -9,7 +9,7 @@ class BadgesTestCase(BaseTestCase):
         Check.objects.create(project=self.bobs_project, tags="bobs-tag")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/accounts/profile/badges/")
+        r = self.client.get("/projects/%s/badges/" % self.project.code)
         self.assertContains(r, "foo.svg")
         self.assertContains(r, "a-B_1.svg")
 
@@ -27,6 +27,6 @@ class BadgesTestCase(BaseTestCase):
         self.project.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/accounts/profile/badges/")
+        r = self.client.get("/projects/%s/badges/" % self.project.code)
         self.assertContains(r, "badge/alices-badge-key/")
         self.assertContains(r, "badge/alices-badge-key/")

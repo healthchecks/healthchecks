@@ -64,30 +64,35 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand"
-                href="{% url 'hc-index' %}"
-                title="{% site_name %} - Monitor Cron Jobs">
-                {% if request.user.is_authenticated %}
-                <img
-                    id="logo"
-                    height="50"
-                    width="59"
-                    src="{% static 'img/logo.png'%}"
-                    srcset="{% static 'img/logo.png'%} 1x, {% static 'img/logo@2x.png'%} 2x"
-                    alt="{% site_name %}">
-                {% else %}
-                <img
-                    id="logo"
-                    height="50"
-                    width="200"
-                    src="{% static 'img/logo-full.png'%}"
-                    srcset="{% static 'img/logo-full.png'%} 1x, {% static 'img/logo-full@2x.png'%} 2x"
-                    alt="{% site_name %}">
-                {% endif %}
+
+            <a class="navbar-brand"  href="/">
+                {{ project }}
+                <span class="caret"></span>
             </a>
 
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+            <ul id="nav-main-sections" class="nav navbar-nav">
+                {% if project %}
+                    <li {% if page == 'checks' %} class="active" {% endif %}>
+                        <a href="{% url 'hc-checks' project.code %}">Checks</a>
+                    </li>
+
+                    <li {% if page == 'channels' %} class="active" {% endif %}>
+                        <a href="{% url 'hc-channels' %}">Integrations</a>
+                    </li>
+
+                    <li {% if page == 'badges' %} class="active" {% endif %}>
+                        <a href="{% url 'hc-badges' project.code %}">Badges</a>
+                    </li>
+
+                    <li {% if page == 'project' %} class="active" {% endif %}>
+                        <a href="{% url 'hc-project-settings' project.code %}">Settings</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            {% if request.user.is_authenticated %}
             <ul id="global-links" class="nav navbar-nav navbar-right">
                 {% if show_pricing %}
                 <li {% if page == 'pricing' %} class="active" {% endif %}>
@@ -99,7 +104,6 @@
                     <a href="{% url 'hc-docs' %}">Docs</a>
                 </li>
 
-                {% if request.user.is_authenticated %}
                 <li class="dropdown">
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
                         Account
@@ -108,9 +112,9 @@
                     <ul class="dropdown-menu">
                         <li class="dropdown-header">Projects</li>
                         {% for project in request.profile.annotated_projects %}
-                        <li>
+                        <li class="project-item">
                             <a href="{% url 'hc-checks' project.code %}">
-                                {{ project }}
+                                <span class="name">{{ project }}</span>
                                 {% if project.n_down %}
                                 <span class="badge badge-down pull-right">
                                     {{ project.n_down }}
@@ -125,15 +129,11 @@
                     <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
                     </ul>
                 </li>
-                {% elif page != "login" %}
-                <li><a href="{% url 'hc-login' %}">Sign In</a></li>
-                {% endif %}
             </ul>
-
-            {% if show_search %}
-            <form class="navbar-form navbar-right hidden-xs hidden-sm">
-                <input id="search" type="text" placeholder="Search checks&hellip;" class="form-control" value="{{ search }}">
-            </form>
+            {% elif page != "login" %}
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'hc-login' %}">Sign In</a></li>
+            </ul>
             {% endif %}
         </div>
 

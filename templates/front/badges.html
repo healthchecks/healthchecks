@@ -1,0 +1,86 @@
+{% extends "base_project.html" %}
+{% load compress static hc_extras %}
+
+{% block title %}Account Settings - {% site_name %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-10">
+        <h1>Status Badges</h1>
+
+        <p id="badges-description">
+            {% site_name %} provides status badges for each of the tags
+            you have used. Additionally, the "{% site_name %}"
+            badge shows the overall status of all checks in a
+            project. The badges have public, but hard-to-guess
+            URLs. You can use them in your READMEs,
+            dashboards or status pages.
+        </p>
+
+        <div id="b-format" class="btn-group" data-toggle="buttons">
+            <label id="show-svg" class="btn btn-default active">
+                <input type="radio" autocomplete="off" checked> SVG
+            </label>
+            <label id="show-json" class="btn btn-default">
+                <input type="radio" autocomplete="off"> JSON
+            </label>
+        </div>
+
+        <table id="badges-svg" class="badges table">
+            {% if have_tags %}
+            <tr>
+                <th colspan="2">Tags</th>
+            </tr>
+            {% endif %}
+
+            {% for urldict in badges %}
+                {% if urldict.tag == "*" %}
+                <tr>
+                    <th colspan="2">Overall Status</th>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <td>
+                        <img src="{{ urldict.svg }}" alt="" />
+                    </td>
+                    <td class="svg-url">
+                        <code>{{ urldict.svg }}</code>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <table id="badges-json" class="badges table">
+            {% if have_tags %}
+            <tr>
+                <th colspan="2">Tags</th>
+            </tr>
+            {% endif %}
+
+            {% for urldict in badges %}
+                {% if urldict.tag == "*" %}
+                <tr>
+                    <th colspan="2">Overall Status</th>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <td class="json-response" data-url="{{ urldict.json }}">
+                    </td>
+                    <td class="json-url">
+                        <code>{{ urldict.json }}</code>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/badges.js' %}"></script>
+{% endcompress %}
+{% endblock %}

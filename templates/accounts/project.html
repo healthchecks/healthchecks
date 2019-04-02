@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_project.html" %}
 {% load compress static hc_extras %}
 
 {% block title %}Project Settings - {{ project }}{% endblock %}
@@ -7,7 +7,6 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-9 col-md-6">
-        <h1 class="settings-title">Project Settings</h1>
         {% for message in messages %}
             <p class="alert alert-{{ message.tags }}">{{ message }}</p>
         {% endfor %}
@@ -103,10 +102,12 @@
                             <td>{{ member.user.email }} </td>
                             <td>Member</td>
                             <td>
+                                {% if is_owner %}
                                 <a
                                     href="#"
                                     data-email="{{ member.user.email }}"
                                     class="pull-right member-remove">Remove</a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -121,7 +122,8 @@
 
                 <br />
 
-                {% if project.can_invite %}
+                {% if is_owner %}
+                {% if project.can_invite%}
                 <a
                     href="#"
                     class="btn btn-primary pull-right"
@@ -133,6 +135,7 @@
                     To invite more members, please
                     <a href="{% url 'hc-pricing' %}">upgrade your account!</a>
                 </div>
+                {% endif %}
                 {% endif %}
             </div>
 
@@ -149,6 +152,7 @@
             {% endif %}
         </div>
 
+        {% if is_owner %}
         <div class="panel panel-default">
             <div class="panel-body settings-block">
                     {% csrf_token %}
@@ -163,6 +167,7 @@
                 </form>
             </div>
         </div>
+        {% endif %}
 
     </div>
 </div>

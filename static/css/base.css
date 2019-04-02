@@ -41,11 +41,20 @@ body {
     font-size: small;
 }
 
+#global-links > li > a {
+    font-size: small;
+}
+
 @media (min-width: 768px) {
     .navbar-default .navbar-nav > li.active > a, .navbar-default .navbar-nav > li > a:hover {
         border-bottom: 5px solid #eee;
         padding-bottom: 25px;
     }
+}
+
+.navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
+    color: #333;
+    font-weight: bold;
 }
 
 .navbar-text {
@@ -114,4 +123,17 @@ pre {
 
 .badge-down {
     background-color: #d9534f;
+}
+
+.dropdown-menu > li.project-item a {
+    min-width: 200px;
+    padding: 6px 20px 3px 20px;
+}
+
+.project-item .name {
+    display: inline-block;
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

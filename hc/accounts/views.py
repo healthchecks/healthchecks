@@ -1,6 +1,5 @@
 from datetime import timedelta as td
 import uuid
-import re
 
 from django.conf import settings
 from django.contrib import messages
@@ -10,7 +9,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import (HttpResponseForbidden, HttpResponseBadRequest,
+                         HttpResponseNotFound)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.urls import resolve, Resolver404
@@ -23,7 +23,6 @@ from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                ExistingEmailForm)
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check
-from hc.lib.badges import get_badge_url
 from hc.payments.models import Subscription
 
 NEXT_WHITELIST = ("hc-checks",
@@ -238,12 +237,22 @@ def add_project(request):
 
 @login_required
 def project(request, code):
-    project = get_object_or_404(Project, code=code, owner=request.user)
+    if request.user.is_superuser:
+        q = Project.objects
+    else:
+        q = request.profile.projects()
 
+    try:
+        project = q.get(code=code)
+    except Project.DoesNotExist:
+        return HttpResponseNotFound()
+
+    is_owner = project.owner_id == request.user.id
     ctx = {
         "page": "project",
         "project": project,
-        "show_api_keys": False,
+        "is_owner": is_owner,
+        "show_api_keys": "show_api_keys" in request.GET,
         "project_name_status": "default",
         "api_status": "default",
         "team_status": "default"
@@ -267,7 +276,7 @@ def project(request, code):
         elif "show_api_keys" in request.POST:
             ctx["show_api_keys"] = True
         elif "invite_team_member" in request.POST:
-            if not project.can_invite():
+            if not is_owner or not project.can_invite():
                 return HttpResponseForbidden()
 
             form = InviteTeamMemberForm(request.POST)
@@ -284,6 +293,9 @@ def project(request, code):
                 ctx["team_status"] = "success"
 
         elif "remove_team_member" in request.POST:
+            if not is_owner:
+                return HttpResponseForbidden()
+
             form = RemoveTeamMemberForm(request.POST)
             if form.is_valid():
                 q = User.objects
@@ -352,37 +364,6 @@ def notifications(request):
             ctx["status"] = "info"
 
     return render(request, "accounts/notifications.html", ctx)
-
-
-@login_required
-def badges(request):
-    badge_sets = []
-    for project in request.profile.projects():
-        tags = set()
-        for check in Check.objects.filter(project=project):
-            tags.update(check.tags_list())
-
-        sorted_tags = sorted(tags, key=lambda s: s.lower())
-        sorted_tags.append("*")  # For the "overall status" badge
-
-        urls = []
-        for tag in sorted_tags:
-            if not re.match("^[\w-]+$", tag) and tag != "*":
-                continue
-
-            urls.append({
-                "svg": get_badge_url(project.badge_key, tag),
-                "json": get_badge_url(project.badge_key, tag, format="json"),
-            })
-
-        badge_sets.append({"project": project, "urls": urls})
-
-    ctx = {
-        "page": "profile",
-        "badges": badge_sets
-    }
-
-    return render(request, "accounts/badges.html", ctx)
 
 
 @login_required

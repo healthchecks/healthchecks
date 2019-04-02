@@ -1,17 +1,18 @@
-{% extends "base.html" %}
+{% extends "base_project.html" %}
 {% load compress static hc_extras %}
 
 {% block title %}{{ num_down|num_down_title }}{% endblock %}
 
 {% block content %}
 <div class="row">
-    {% if tags %}
-    <div id="my-checks-tags" class="col-sm-12">
+    <div id="my-checks-tags" class="col-sm-9">
         {% for tag, status in tags %}
             <div class="btn btn-xs {{ status }} {% if tag in selected_tags %}checked{% endif%}">{{ tag }}</div>
         {% endfor %}
     </div>
-    {% endif %}
+    <div class="col-sm-3">
+        <input id="search" type="text" placeholder="Filter by check name&hellip;" class="form-control" value="{{ search }}">
+    </div>
 </div>
 
 <div class="row">
