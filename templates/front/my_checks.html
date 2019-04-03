@@ -4,6 +4,7 @@
 {% block title %}{{ num_down|num_down_title }}{% endblock %}
 
 {% block content %}
+{% if checks %}
 <div class="row">
     <div id="my-checks-tags" class="col-sm-9">
         {% for tag, status in tags %}
@@ -19,6 +20,7 @@
             value="{{ search }}" />
     </div>
 </div>
+{% endif %}
 
 <div class="row">
     <div class="col-sm-12">
