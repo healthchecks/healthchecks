@@ -5,7 +5,7 @@ html {
 
 body {
     /* Margin bottom by footer height */
-    margin-bottom: 140px;
+    margin-bottom: 140px !important;
 }
 
 .footer {
