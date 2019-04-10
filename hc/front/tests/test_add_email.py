@@ -12,6 +12,7 @@ class AddEmailTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Get an email message")
+        self.assertContains(r, "Confirmation needed")
 
     def test_it_creates_channel(self):
         form = {"value": "alice@example.org"}
@@ -57,6 +58,12 @@ class AddEmailTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.value, "alice@example.org")
+
+    @override_settings(EMAIL_USE_VERIFICATION=False)
+    def test_it_hides_confirmation_needed_notice(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertNotContains(r, "Confirmation needed")
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
     def test_it_auto_verifies_email(self):

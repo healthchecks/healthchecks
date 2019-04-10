@@ -16,11 +16,13 @@
         Add multiple email addresses, to notify multiple team members.
     </p>
 
+    {% if use_verification %}
     <p>
         <strong>Confirmation needed.</strong>
         After entering an email address, {% site_name %} will send out a confirmation link.
         Only confirmed addresses will receive notifications.
     </p>
+    {% endif %}
 
     <h2>Integration Settings</h2>
 

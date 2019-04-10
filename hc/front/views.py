@@ -698,6 +698,7 @@ def add_email(request):
     ctx = {
         "page": "channels",
         "project": request.project,
+        "use_verification": settings.EMAIL_USE_VERIFICATION,
         "form": form
     }
     return render(request, "integrations/add_email.html", ctx)
