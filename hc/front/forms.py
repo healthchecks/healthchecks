@@ -57,6 +57,8 @@ class AddOpsGenieForm(forms.Form):
 class AddEmailForm(forms.Form):
     error_css_class = "has-error"
     value = forms.EmailField(max_length=100)
+    down = forms.BooleanField(required=False, initial=True)
+    up = forms.BooleanField(required=False, initial=True)
 
 
 class AddUrlForm(forms.Form):

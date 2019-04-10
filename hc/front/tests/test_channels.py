@@ -74,6 +74,34 @@ class ChannelsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Unconfirmed")
 
+    def test_it_shows_down_only_note_for_email(self):
+        channel = Channel(project=self.project, kind="email")
+        channel.value = json.dumps({
+            "value": "alice@example.org",
+            "up": False,
+            "down": True
+        })
+        channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "(down only)")
+
+    def test_it_shows_up_only_note_for_email(self):
+        channel = Channel(project=self.project, kind="email")
+        channel.value = json.dumps({
+            "value": "alice@example.org",
+            "up": True,
+            "down": False
+        })
+        channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/")
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "(up only)")
+
     def test_it_shows_sms_label(self):
         ch = Channel(kind="sms", project=self.project)
         ch.value = json.dumps({"value": "+123", "label": "My Phone"})

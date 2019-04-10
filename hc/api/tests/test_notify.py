@@ -244,8 +244,20 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
+        self.assertEqual(email.to[0], "alice@example.org")
         self.assertTrue("X-Bounce-Url" in email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
+
+    def test_email_transport_handles_json_value(self):
+        payload = {"value": "alice@example.org", "up": True, "down": True}
+        self._setup_data("email", json.dumps(payload))
+        self.channel.notify(self.check)
+
+        # And email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "alice@example.org")
 
     def test_it_skips_unverified_email(self):
         self._setup_data("email", "alice@example.org", email_verified=False)
@@ -253,6 +265,15 @@ class NotifyTestCase(BaseTestCase):
 
         # If an email is not verified, it should be skipped over
         # without logging a notification:
+        self.assertEqual(Notification.objects.count(), 0)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_email_checks_up_down_flags(self):
+        payload = {"value": "alice@example.org", "up": True, "down": False}
+        self._setup_data("email", json.dumps(payload))
+        self.channel.notify(self.check)
+
+        # This channel should not notify on "down" events:
         self.assertEqual(Notification.objects.count(), 0)
         self.assertEqual(len(mail.outbox), 0)
 

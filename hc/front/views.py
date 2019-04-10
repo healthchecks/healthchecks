@@ -678,7 +678,11 @@ def add_email(request):
         form = AddEmailForm(request.POST)
         if form.is_valid():
             channel = Channel(project=request.project, kind="email")
-            channel.value = form.cleaned_data["value"]
+            channel.value = json.dumps({
+                "value": form.cleaned_data["value"],
+                "up": form.cleaned_data["up"],
+                "down": form.cleaned_data["down"]
+            })
             channel.save()
 
             channel.assign_all_checks()

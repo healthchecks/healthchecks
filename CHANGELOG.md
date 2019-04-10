@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Add the EMAIL_USE_VERIFICATION configuration setting (#232)
 - Show "Badges" and "Settings" in top navigation (#234)
 - Upgrade to Django 2.2
+- Can configure the email integration to only report the "down" events (#231)
 
 
 ## 1.6.0 - 2019-04-01

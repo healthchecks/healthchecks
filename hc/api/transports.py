@@ -59,7 +59,7 @@ class Email(Transport):
 
         try:
             # Look up the sorting preference for this email address
-            p = Profile.objects.get(user__email=self.channel.value)
+            p = Profile.objects.get(user__email=self.channel.email_value)
             sort = p.sort
         except Profile.DoesNotExist:
             # Default sort order is by check's creation time
@@ -75,10 +75,16 @@ class Email(Transport):
             "unsub_link": unsub_link
         }
 
-        emails.alert(self.channel.value, ctx, headers)
+        emails.alert(self.channel.email_value, ctx, headers)
 
     def is_noop(self, check):
-        return not self.channel.email_verified
+        if not self.channel.email_verified:
+            return True
+
+        if check.status == "down":
+            return not self.channel.email_notify_down
+        else:
+            return not self.channel.email_notify_up
 
 
 class HttpTransport(Transport):

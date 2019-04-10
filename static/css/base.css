@@ -77,13 +77,13 @@ body {
 .status.icon-grace { color: #f0ad4e; }
 .status.icon-down { color: #d9534f; }
 
-.label-start {
+.label.label-start {
     background-color: #FFF;
     color: #117a3f;;
     border: 1px solid #117a3f;
 }
 
-.label-ign {
+.label.label-ign {
     background: #e0e0e0;
     color: #333;
 }

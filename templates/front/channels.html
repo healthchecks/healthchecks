@@ -42,7 +42,13 @@
                      {% endif %}
                      <div class="channel-details-mini">
                         {% if ch.kind == "email" %}
-                            Email to <span>{{ ch.value }}</span>
+                            Email to <span>{{ ch.email_value }}</span>
+                            {% if ch.email_notify_down and not ch.email_notify_up %}
+                                (down only)
+                            {% endif %}
+                            {% if ch.email_notify_up and not ch.email_notify_down %}
+                                (up only)
+                            {% endif %}
                         {% elif ch.kind == "pd" %}
                             PagerDuty account <span>{{ ch.pd_account }}</span>
                         {% elif ch.kind == "pagertree" %}

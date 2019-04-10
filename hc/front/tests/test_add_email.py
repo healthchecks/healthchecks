@@ -1,3 +1,5 @@
+import json
+
 from django.core import mail
 from django.test.utils import override_settings
 
@@ -12,7 +14,7 @@ class AddEmailTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Get an email message")
-        self.assertContains(r, "Confirmation needed")
+        self.assertContains(r, "Requires confirmation")
 
     def test_it_creates_channel(self):
         form = {"value": "alice@example.org"}
@@ -22,8 +24,9 @@ class AddEmailTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
+        doc = json.loads(c.value)
         self.assertEqual(c.kind, "email")
-        self.assertEqual(c.value, "alice@example.org")
+        self.assertEqual(doc["value"], "alice@example.org")
         self.assertFalse(c.email_verified)
         self.assertEqual(c.project, self.project)
 
@@ -32,6 +35,8 @@ class AddEmailTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertTrue(email.subject.startswith("Verify email address on"))
+        # Make sure we're sending to an email address, not a JSON string:
+        self.assertEqual(email.to[0], "alice@example.org")
 
     def test_team_access_works(self):
         form = {"value": "bob@example.org"}
@@ -57,13 +62,14 @@ class AddEmailTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "alice@example.org")
+        doc = json.loads(c.value)
+        self.assertEqual(doc["value"], "alice@example.org")
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
     def test_it_hides_confirmation_needed_notice(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertNotContains(r, "Confirmation needed")
+        self.assertNotContains(r, "Requires confirmation")
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
     def test_it_auto_verifies_email(self):
@@ -74,8 +80,9 @@ class AddEmailTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
+        doc = json.loads(c.value)
         self.assertEqual(c.kind, "email")
-        self.assertEqual(c.value, "alice@example.org")
+        self.assertEqual(doc["value"], "alice@example.org")
         self.assertTrue(c.email_verified)
 
         # Email should *not* have been sent

@@ -13,6 +13,11 @@
   font-weight: normal;
 }
 
+.form-horizontal .radio-container, .form-horizontal .checkbox-container {
+  margin-top: 7px;
+  margin-left: 0;
+}
+
 /* Hide the browser's default radio button */
 .radio-container input {
   position: absolute;

@@ -272,7 +272,7 @@ class Channel(models.Model):
         if self.name:
             return self.name
         if self.kind == "email":
-            return "Email to %s" % self.value
+            return "Email to %s" % self.email_value
         elif self.kind == "sms":
             return "SMS to %s" % self.sms_number
         elif self.kind == "slack":
@@ -302,7 +302,7 @@ class Channel(models.Model):
         args = [self.code, self.make_token()]
         verify_link = reverse("hc-verify-email", args=args)
         verify_link = settings.SITE_ROOT + verify_link
-        emails.verify_email(self.value, {"verify_link": verify_link})
+        emails.verify_email(self.email_value, {"verify_link": verify_link})
 
     def get_unsub_link(self):
         args = [self.code, self.make_token()]
@@ -525,6 +525,33 @@ class Channel(models.Model):
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["list_id"]
+
+    @property
+    def email_value(self):
+        assert self.kind == "email"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        return doc.get("value")
+
+    @property
+    def email_notify_up(self):
+        assert self.kind == "email"
+        if not self.value.startswith("{"):
+            return True
+
+        doc = json.loads(self.value)
+        return doc.get("up")
+
+    @property
+    def email_notify_down(self):
+        assert self.kind == "email"
+        if not self.value.startswith("{"):
+            return True
+
+        doc = json.loads(self.value)
+        return doc.get("down")
 
 
 class Notification(models.Model):
