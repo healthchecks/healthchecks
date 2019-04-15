@@ -250,14 +250,6 @@ There are separate Django management commands for each task:
     $ ./manage.py prunepings
     ```
 
-* Remove checks older than 2 hours that are not assigned to users. Such
-  checks are by-products of random visitors and robots loading the welcome
-  page and never setting up an account:
-
-    ```
-    $ ./manage.py prunechecks
-    ```
-
 * Remove old records of sent notifications. For each check, remove
   notifications that are older than the oldest stored ping for same check.
 
