@@ -13,7 +13,7 @@ RE_UUID = re.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB]
 class Listener(SMTPServer):
     def __init__(self, localaddr, stdout):
         self.stdout = stdout
-        super(Listener, self).__init__(localaddr, None)
+        super(Listener, self).__init__(localaddr, None, decode_data=False)
 
     def process_message(self, peer, mailfrom, rcpttos, data, mail_options=None, rcpt_options=None):
         # get a new db connection in case the old one has timed out:
