@@ -19,7 +19,8 @@
         <div class="col-sm-6">
             <span class="step-no">1</span>
             <p>
-                Log into your PagerTree account, select the team you wish to add this integration to. Click the <strong>Integrations</strong> tab. Then click the <strong>+ Integration</strong> button.
+                Log into your PagerTree account, click the <strong>Integrations</strong> tab.
+                Then click the <strong>Create Integration</strong> button.
             </p>
         </div>
         <div class="col-sm-6">
@@ -49,7 +50,9 @@
           <div class="col-sm-6">
               <span class="step-no">3</span>
               <p>
-                Copy the <strong>Webhook URL</strong> and paste it below. Save the integration, and you are done!
+                Copy the <strong>Endpoint URL</strong> and paste it
+                in the form below.
+                Save the integration, and you are done!
               </p>
           </div>
           <div class="col-sm-6">
@@ -65,7 +68,7 @@
       <form method="post" class="form-horizontal" action="{% url 'hc-add-pagertree' %}">
           {% csrf_token %}
           <div class="form-group {{ form.value.css_classes }}">
-              <label for="post-url" class="col-sm-2 control-label">URL</label>
+              <label for="post-url" class="col-sm-2 control-label">Endpoint</label>
               <div class="col-sm-10">
                   <input
                       id="post-url"
