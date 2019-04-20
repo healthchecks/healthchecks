@@ -99,7 +99,7 @@
             <td>
                 <div class="edit-checks"
                      data-url="{% url 'hc-channel-checks' ch.code %}">
-                     {{ ch.n_checks }} checks
+                     {{ ch.n_checks }} check{{ ch.n_checks|pluralize }}
                 </div>
             </td>
             <td>
