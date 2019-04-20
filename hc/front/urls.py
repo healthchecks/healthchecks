@@ -40,6 +40,7 @@ channel_urls = [
     path('add_matrix/', views.add_matrix, name="hc-add-matrix"),
     path('<uuid:code>/checks/', views.channel_checks, name="hc-channel-checks"),
     path('<uuid:code>/name/', views.update_channel_name, name="hc-channel-name"),
+    path('<uuid:code>/test/', views.send_test_notification, name="hc-channel-test"),
     path('<uuid:code>/remove/', views.remove_channel, name="hc-remove-channel"),
     path('<uuid:code>/verify/<slug:token>/', views.verify_email,
          name="hc-verify-email"),

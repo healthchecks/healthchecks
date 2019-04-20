@@ -131,7 +131,17 @@
                     <p>Used {{ profile.sms_sent_this_month }} of {{ profile.sms_limit }} sends this month.</p>
                 {% endif %}
             </td>
-            <td>
+            <td class="actions">
+                <form action="{% url 'hc-channel-test' ch.code %}" method="post">
+                    {% csrf_token %}
+                    <button
+                        class="btn btn-sm btn-default"
+                        data-toggle="tooltip"
+                        title="Send a test notification using this integration"
+                        type="submit">
+                        Test!
+                    </button>
+                </form>
                 <button
                     data-kind="{{ ch.get_kind_display }}"
                     data-url="{% url 'hc-remove-channel' ch.code %}"

@@ -661,6 +661,30 @@ def unsubscribe_email(request, code, token):
 
 @require_POST
 @login_required
+def send_test_notification(request, code):
+    channel = get_object_or_404(Channel, code=code)
+    if channel.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    dummy = Check(name="TEST", status="down")
+    dummy.last_ping = timezone.now() - td(days=1)
+    dummy.n_pings = 42
+
+    if channel.kind == "email":
+        error = channel.transport.notify(dummy, channel.get_unsub_link())
+    else:
+        error = channel.transport.notify(dummy)
+
+    if error:
+        messages.warning(request, "Could not send a test notification: %s" % error)
+    else:
+        messages.success(request, "Test notification sent!")
+
+    return redirect("hc-channels")
+
+
+@require_POST
+@login_required
 def remove_channel(request, code):
     # user may refresh the page during POST and cause two deletion attempts
     channel = Channel.objects.filter(code=code).first()

@@ -105,11 +105,15 @@ table.channels-table > tbody > tr > th {
     color: #000;
 }
 
-.channel-remove {
+.channel-row .actions form {
+    display: inline;
+}
+
+.channel-row .actions .btn {
     visibility: hidden;
 }
 
-.channel-row:hover .channel-remove {
+.channel-row:hover .actions .btn {
     visibility: visible;
 }
 
