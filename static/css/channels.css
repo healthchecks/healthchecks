@@ -203,6 +203,38 @@ table.channels-table > tbody > tr > th {
     font-weight: 300;
 }
 
+.ai-step .marker-wrap {
+    position: relative;
+    clear: both;
+}
+
+.ai-step .marker {
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    margin-top: -10px;
+    background: #2abb66;
+    position: absolute;
+    border-radius: 10px;
+    opacity: 0;
+    animation: marker-ripple 1.2s ease-out infinite;
+}
+
+@keyframes marker-ripple {
+  0%, 35% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+
 .ai-guide-screenshot {
     max-width: 100%;
     border: 6px solid #EEE;
