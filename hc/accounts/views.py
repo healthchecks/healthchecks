@@ -22,7 +22,7 @@ from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
                                ProjectNameForm, AvailableEmailForm,
                                ExistingEmailForm)
 from hc.accounts.models import Profile, Project, Member
-from hc.api.models import Channel, Check
+from hc.api.models import Channel, Check, TokenBucket
 from hc.payments.models import Subscription
 
 NEXT_WHITELIST = ("hc-checks",
@@ -102,14 +102,18 @@ def login(request):
         else:
             magic_form = ExistingEmailForm(request.POST)
             if magic_form.is_valid():
-                profile = Profile.objects.for_user(magic_form.user)
+                user = magic_form.user
+                if not TokenBucket.authorize_login_email(user.email):
+                    return render(request, "try_later.html")
+                if not TokenBucket.authorize_login_ip(request):
+                    return render(request, "try_later.html")
 
                 redirect_url = request.GET.get("next")
-                if _is_whitelisted(redirect_url):
-                    profile.send_instant_login_link(redirect_url=redirect_url)
-                else:
-                    profile.send_instant_login_link()
+                if not _is_whitelisted(redirect_url):
+                    redirect_url = None
 
+                profile = Profile.objects.for_user(user)
+                profile.send_instant_login_link(redirect_url=redirect_url)
                 return redirect("hc-login-link-sent")
 
     bad_link = request.session.pop("bad_link", None)

@@ -591,3 +591,56 @@ class Flip(models.Model):
                 errors.append((channel, error))
 
         return errors
+
+
+class TokenBucket(models.Model):
+    value = models.CharField(max_length=80, unique=True)
+    tokens = models.FloatField(default=1.0)
+    updated = models.DateTimeField(default=timezone.now)
+
+    @staticmethod
+    def authorize(value, capacity, refill_time_secs):
+        now = timezone.now()
+        obj, created = TokenBucket.objects.get_or_create(value=value)
+
+        if not created:
+            # Top up the bucket:
+            delta_secs = (now - obj.updated).total_seconds()
+            obj.tokens = min(1.0, obj.tokens + delta_secs / refill_time_secs)
+
+        obj.tokens -= 1.0 / capacity
+        if obj.tokens < 0:
+            # Not enough tokens
+            return False
+
+        # Race condition: two concurrent authorize calls can overwrite each
+        # other's changes. It's OK to be a little inexact here for the sake
+        # of simplicity.
+        obj.updated = now
+        obj.save()
+
+        return True
+
+    @staticmethod
+    def authorize_login_email(email):
+        # remove dots and alias:
+        mailbox, domain = email.split("@")
+        mailbox = mailbox.replace(".", "")
+        mailbox = mailbox.split("+")[0]
+        email = mailbox + "@" + domain
+
+        b = (email + settings.SECRET_KEY).encode()
+        value = "em-%s" % hashlib.sha1(b).hexdigest()
+
+        # 20 emails per 3600 seconds (1 hour):
+        return TokenBucket.authorize(value, 20, 3600)
+
+    @staticmethod
+    def authorize_login_ip(request):
+        headers = request.META
+        ip = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
+        ip = ip.split(",")[0]
+        value = "ip-%s" % hashlib.sha1(ip.encode()).hexdigest()
+
+        # 20 login attempts from a single IP per 3600 seconds (1 hour):
+        return TokenBucket.authorize(value, 20, 3600)

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core import mail
-from hc.api.models import Check
+from django.test.utils import override_settings
+from hc.api.models import Check, TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -31,6 +32,36 @@ class LoginTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
         body = mail.outbox[0].body
         self.assertTrue("/?next=/integrations/add_slack/" in body)
+
+    @override_settings(SECRET_KEY="test-secret")
+    def test_it_rate_limits_emails(self):
+        # "d60d..." is sha1("alice@example.orgtest-secret")
+        obj = TokenBucket(value="em-d60db3b2343e713a4de3e92d4eb417e4f05f06ab")
+        obj.tokens = 0
+        obj.save()
+
+        form = {"identity": "alice@example.org"}
+
+        r = self.client.post("/accounts/login/", form)
+        self.assertContains(r, "Too Many Requests")
+
+        # No email should have been sent
+        self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(SECRET_KEY="test-secret")
+    def test_it_rate_limits_ips(self):
+        # 4b84.... is sha1("127.0.0.1test-secret")
+        obj = TokenBucket(value="ip-4b84b15bff6ee5796152495a230e45e3d7e947d9")
+        obj.tokens = 0
+        obj.save()
+
+        form = {"identity": "alice@example.org"}
+
+        r = self.client.post("/accounts/login/", form)
+        self.assertContains(r, "Too Many Requests")
+
+        # No email should have been sent
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_it_pops_bad_link_from_session(self):
         self.client.session["bad_link"] = True
