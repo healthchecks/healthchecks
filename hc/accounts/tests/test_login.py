@@ -50,8 +50,8 @@ class LoginTestCase(BaseTestCase):
 
     @override_settings(SECRET_KEY="test-secret")
     def test_it_rate_limits_ips(self):
-        # 4b84.... is sha1("127.0.0.1test-secret")
-        obj = TokenBucket(value="ip-4b84b15bff6ee5796152495a230e45e3d7e947d9")
+        # 60be.... is sha1("127.0.0.1test-secret")
+        obj = TokenBucket(value="ip-60be45f44bd9ab3805871fb1137594e708c993ff")
         obj.tokens = 0
         obj.save()
 

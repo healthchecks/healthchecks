@@ -629,8 +629,8 @@ class TokenBucket(models.Model):
         mailbox = mailbox.split("+")[0]
         email = mailbox + "@" + domain
 
-        b = (email + settings.SECRET_KEY).encode()
-        value = "em-%s" % hashlib.sha1(b).hexdigest()
+        salted_encoded = (email + settings.SECRET_KEY).encode()
+        value = "em-%s" % hashlib.sha1(salted_encoded).hexdigest()
 
         # 20 emails per 3600 seconds (1 hour):
         return TokenBucket.authorize(value, 20, 3600)
@@ -640,7 +640,8 @@ class TokenBucket(models.Model):
         headers = request.META
         ip = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
         ip = ip.split(",")[0]
-        value = "ip-%s" % hashlib.sha1(ip.encode()).hexdigest()
+        salted_encoded = (ip + settings.SECRET_KEY).encode()
+        value = "ip-%s" % hashlib.sha1(salted_encoded).hexdigest()
 
         # 20 login attempts from a single IP per 3600 seconds (1 hour):
         return TokenBucket.authorize(value, 20, 3600)
