@@ -16,11 +16,11 @@ from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from hc.accounts.forms import (ChangeEmailForm, EmailPasswordForm,
+from hc.accounts.forms import (ChangeEmailForm, PasswordLoginForm,
                                InviteTeamMemberForm, RemoveTeamMemberForm,
                                ReportSettingsForm, SetPasswordForm,
                                ProjectNameForm, AvailableEmailForm,
-                               ExistingEmailForm)
+                               EmailLoginForm)
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.payments.models import Subscription
@@ -89,30 +89,24 @@ def _redirect_after_login(request):
 
 
 def login(request):
-    form = EmailPasswordForm()
-    magic_form = ExistingEmailForm()
+    form = PasswordLoginForm()
+    magic_form = EmailLoginForm()
 
     if request.method == 'POST':
         if request.POST.get("action") == "login":
-            form = EmailPasswordForm(request.POST)
+            form = PasswordLoginForm(request.POST)
             if form.is_valid():
                 auth_login(request, form.user)
                 return _redirect_after_login(request)
 
         else:
-            magic_form = ExistingEmailForm(request.POST)
+            magic_form = EmailLoginForm(request.POST)
             if magic_form.is_valid():
-                user = magic_form.user
-                if not TokenBucket.authorize_login_email(user.email):
-                    return render(request, "try_later.html")
-                if not TokenBucket.authorize_login_ip(request):
-                    return render(request, "try_later.html")
-
                 redirect_url = request.GET.get("next")
                 if not _is_whitelisted(redirect_url):
                     redirect_url = None
 
-                profile = Profile.objects.for_user(user)
+                profile = Profile.objects.for_user(magic_form.user)
                 profile.send_instant_login_link(redirect_url=redirect_url)
                 return redirect("hc-login-link-sent")
 

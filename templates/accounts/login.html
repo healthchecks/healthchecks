@@ -20,8 +20,8 @@
                 <form id="magic-link-form" method="post">
                     {% csrf_token %}
 
-                    {% if magic_form.errors %}
-                    <p class="text-danger">Incorrect email address.</p>
+                    {% if magic_form.identity.errors %}
+                    <p class="text-danger">{{ magic_form.identity.errors|join:"" }}</p>
                     {% else %}
                     <p>Enter your <strong>email address</strong>.</p>
                     {% endif %}
@@ -30,7 +30,7 @@
                         type="email"
                         class="form-control input-lg"
                         name="identity"
-                        value="{{ magic_form.email.value|default:"" }}"
+                        value="{{ magic_form.identity.value|default:"" }}"
                         placeholder="you@example.org"
                         autocomplete="email">
 
@@ -56,8 +56,10 @@
                     {% csrf_token %}
                     <input type="hidden" name="action" value="login" />
 
-                    {% if form.errors %}
-                    <p class="text-danger">Incorrect email or password.</p>
+                    {% if form.non_field_errors %}
+                        <p class="text-danger">{{ form.non_field_errors|join:"" }}</p>
+                    {% elif form.errors %}
+                        <p class="text-danger">Incorrect email or password.</p>
                     {% else %}
                     <p>
                         Enter your <strong>email address</strong> and <strong>password</strong>.

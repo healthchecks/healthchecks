@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to Django 2.2
 - Can configure the email integration to only report the "down" events (#231)
 - Add "Test!" function in the Integrations page (#207)
-- Rate limiting for the "Log In" emails
+- Rate limiting for the log in attempts
 
 ## 1.6.0 - 2019-04-01
 

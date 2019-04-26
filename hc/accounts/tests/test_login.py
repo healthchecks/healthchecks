@@ -43,22 +43,7 @@ class LoginTestCase(BaseTestCase):
         form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
-        self.assertContains(r, "Too Many Requests")
-
-        # No email should have been sent
-        self.assertEqual(len(mail.outbox), 0)
-
-    @override_settings(SECRET_KEY="test-secret")
-    def test_it_rate_limits_ips(self):
-        # 60be.... is sha1("127.0.0.1test-secret")
-        obj = TokenBucket(value="ip-60be45f44bd9ab3805871fb1137594e708c993ff")
-        obj.tokens = 0
-        obj.save()
-
-        form = {"identity": "alice@example.org"}
-
-        r = self.client.post("/accounts/login/", form)
-        self.assertContains(r, "Too Many Requests")
+        self.assertContains(r, "Too many attempts")
 
         # No email should have been sent
         self.assertEqual(len(mail.outbox), 0)
@@ -86,6 +71,22 @@ class LoginTestCase(BaseTestCase):
 
         r = self.client.post("/accounts/login/", form)
         self.assertRedirects(r, self.checks_url)
+
+    @override_settings(SECRET_KEY="test-secret")
+    def test_it_rate_limits_password_attempts(self):
+        # "d60d..." is sha1("alice@example.orgtest-secret")
+        obj = TokenBucket(value="pw-d60db3b2343e713a4de3e92d4eb417e4f05f06ab")
+        obj.tokens = 0
+        obj.save()
+
+        form = {
+            "action": "login",
+            "email": "alice@example.org",
+            "password": "password"
+        }
+
+        r = self.client.post("/accounts/login/", form)
+        self.assertContains(r, "Too many attempts")
 
     def test_it_handles_password_login_with_redirect(self):
         check = Check.objects.create(project=self.project)

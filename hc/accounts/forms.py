@@ -1,8 +1,8 @@
 from datetime import timedelta as td
 from django import forms
-
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from hc.api.models import TokenBucket
 
 
 class LowercaseEmailField(forms.EmailField):
@@ -25,13 +25,16 @@ class AvailableEmailForm(forms.Form):
         return v
 
 
-class ExistingEmailForm(forms.Form):
+class EmailLoginForm(forms.Form):
     # Call it "identity" instead of "email"
     # to avoid some of the dumber bots
     identity = LowercaseEmailField()
 
     def clean_identity(self):
         v = self.cleaned_data["identity"]
+        if not TokenBucket.authorize_login_email(v):
+            raise forms.ValidationError("Too many attempts, please try later.")
+
         try:
             self.user = User.objects.get(email=v)
         except User.DoesNotExist:
@@ -40,7 +43,7 @@ class ExistingEmailForm(forms.Form):
         return v
 
 
-class EmailPasswordForm(forms.Form):
+class PasswordLoginForm(forms.Form):
     email = LowercaseEmailField()
     password = forms.CharField()
 
@@ -49,11 +52,12 @@ class EmailPasswordForm(forms.Form):
         password = self.cleaned_data.get('password')
 
         if username and password:
+            if not TokenBucket.authorize_login_password(username):
+                raise forms.ValidationError("Too many attempts, please try later.")
+
             self.user = authenticate(username=username, password=password)
-            if self.user is None:
-                raise forms.ValidationError("Incorrect email or password")
-            if not self.user.is_active:
-                raise forms.ValidationError("Account is inactive")
+            if self.user is None or not self.user.is_active:
+                raise forms.ValidationError("Incorrect email or password.")
 
         return self.cleaned_data
 

@@ -636,19 +636,16 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 20, 3600)
 
     @staticmethod
-    def authorize_login_ip(request):
-        headers = request.META
-        ip = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
-        ip = ip.split(",")[0]
-        salted_encoded = (ip + settings.SECRET_KEY).encode()
-        value = "ip-%s" % hashlib.sha1(salted_encoded).hexdigest()
-
-        # 20 login attempts from a single IP per hour:
-        return TokenBucket.authorize(value, 20, 3600)
-
-    @staticmethod
     def authorize_invite(user):
         value = "invite-%d" % user.id
 
         # 20 invites per day
+        return TokenBucket.authorize(value, 2, 3600 * 24)
+
+    @staticmethod
+    def authorize_login_password(email):
+        salted_encoded = (email + settings.SECRET_KEY).encode()
+        value = "pw-%s" % hashlib.sha1(salted_encoded).hexdigest()
+
+        # 20 password attempts per day
         return TokenBucket.authorize(value, 20, 3600 * 24)
