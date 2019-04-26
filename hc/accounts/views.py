@@ -285,6 +285,8 @@ def project(request, code):
 
             form = InviteTeamMemberForm(request.POST)
             if form.is_valid():
+                if not TokenBucket.authorize_invite(request.user):
+                    return render(request, "try_later.html")
 
                 email = form.cleaned_data["email"]
                 try:

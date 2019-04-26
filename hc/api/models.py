@@ -632,7 +632,7 @@ class TokenBucket(models.Model):
         salted_encoded = (email + settings.SECRET_KEY).encode()
         value = "em-%s" % hashlib.sha1(salted_encoded).hexdigest()
 
-        # 20 emails per 3600 seconds (1 hour):
+        # 20 login attempts for a single email per hour:
         return TokenBucket.authorize(value, 20, 3600)
 
     @staticmethod
@@ -643,5 +643,12 @@ class TokenBucket(models.Model):
         salted_encoded = (ip + settings.SECRET_KEY).encode()
         value = "ip-%s" % hashlib.sha1(salted_encoded).hexdigest()
 
-        # 20 login attempts from a single IP per 3600 seconds (1 hour):
+        # 20 login attempts from a single IP per hour:
         return TokenBucket.authorize(value, 20, 3600)
+
+    @staticmethod
+    def authorize_invite(user):
+        value = "invite-%d" % user.id
+
+        # 20 invites per day
+        return TokenBucket.authorize(value, 20, 3600 * 24)

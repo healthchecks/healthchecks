@@ -1,8 +1,10 @@
 from django.core import mail
 
 from django.conf import settings
+from django.test.utils import override_settings
 from hc.test import BaseTestCase
 from hc.accounts.models import Member
+from hc.api.models import TokenBucket
 
 
 class ProjectTestCase(BaseTestCase):
@@ -82,6 +84,20 @@ class ProjectTestCase(BaseTestCase):
         subj = ("You have been invited to join"
                 " Alice&#39;s Project on %s" % settings.SITE_NAME)
         self.assertEqual(mail.outbox[0].subject, subj)
+
+    @override_settings(SECRET_KEY="test-secret")
+    def test_it_rate_limits_invites(self):
+        obj = TokenBucket(value="invite-%d" % self.alice.id)
+        obj.tokens = 0
+        obj.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "Too Many Requests")
+
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_it_requires_owner_to_add_team_member(self):
         self.client.login(username="bob@example.org", password="password")
