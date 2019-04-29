@@ -76,7 +76,7 @@ class ReportSettingsForm(forms.Form):
 
 
 class SetPasswordForm(forms.Form):
-    password = forms.CharField()
+    password = forms.CharField(min_length=8)
 
 
 class ChangeEmailForm(forms.Form):
