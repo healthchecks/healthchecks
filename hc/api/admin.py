@@ -50,7 +50,8 @@ class ChecksAdmin(admin.ModelAdmin):
 
     def send_alert(self, request, qs):
         for check in qs:
-            check.send_alert()
+            for channel in check.channel_set.all():
+                channel.notify(check)
 
         self.message_user(request, "%d alert(s) sent" % qs.count())
 
