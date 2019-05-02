@@ -2,15 +2,19 @@
 {% load hc_extras %}
 {% block content %}
 
-Hello,<br />
-
-This is a notification sent by <a href="{% site_root %}">{% site_name %}</a>.
-<br />
-The check <strong>{{ check.name_then_code|mangle_link }}</strong>
+The check <a href="{{ check.details_url }}">{{ check.name_then_code|mangle_link }}</a>
 has gone <strong>{{ check.status|upper }}</strong>.
-<br /><br />
+<br>
 
-Here is a summary of your checks:
+{% if check.status == "down" and check.desc %}
+Additional notes:<br><br>
+<div style="padding: 10px 15px; background: #F2F4F6;">
+    {{ check.desc|linebreaksbr|urlize }}
+</div>
+{% endif %}
+
+<br />
+A summary of your checks:
 <br />
 
 {% include "emails/summary-html.html" %}

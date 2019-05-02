@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 - Add "Test!" function in the Integrations page (#207)
 - Rate limiting for the log in attempts
 - Password strength meter and length check in the "Set Password" form
+- Show the Description section even if the description is missing. (#246)
+- Include the description in email alerts. (#247)
 
 ## 1.6.0 - 2019-04-01
 
