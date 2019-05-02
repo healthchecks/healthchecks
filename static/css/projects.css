@@ -14,6 +14,7 @@
     border-color: #ddd;
     padding: 24px 24px 24px 64px;
     position: relative;
+    min-height: 120px;
 }
 
 #project-selector .project h4 {
@@ -28,4 +29,19 @@
 #project-selector .project .status {
     position: absolute;
     left: 24px;
+}
+
+#project-selector #add-project .project {
+    border: 1px dashed #ddd;
+    padding: 0;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #999;
+    line-height: 120px;
+}
+
+#project-selector #add-project:hover .project {
+    border-color: #0091EA;
+    color: #333;
 }

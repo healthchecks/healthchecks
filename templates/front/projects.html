@@ -9,13 +9,6 @@
     <div class="col-sm-12">
         <h1 class="settings-title">
             My Projects
-
-            <div class="pull-right">
-                <button
-                    class="btn btn-primary"
-                    data-toggle="modal"
-                    data-target="#add-project-modal">Create New Project</button>
-            </div>
         </h1>
 
         <div id="project-selector" class="row">
@@ -43,11 +36,16 @@
                     </div>
                 </div>
             </a>
-            {% empty %}
-            <div class="col-sm-12">
-                <p>You do not have any projects.</p>
-            </div>
             {% endfor %}
+
+            <a id="add-project" href="#" data-toggle="modal" data-target="#add-project-modal">
+                <div class="col-sm-6 col-md-4">
+                    <div class="panel project {% if project == request.profile.current_project %}selected{% endif %}">
+                        Create New Project&hellip;
+                    </div>
+                </div>
+            </a>
+
         </div>
     </div>
 </div>
