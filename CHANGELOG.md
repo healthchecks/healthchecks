@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.7.0 - 2019-05-02
 
 ### Improvements
 - Add the EMAIL_USE_VERIFICATION configuration setting (#232)
