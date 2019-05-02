@@ -10,7 +10,7 @@
     <div id="details-head" class="col-sm-12">
         <h1>
             {{ check.name_then_code }}
-            <button id="edit-name" class="btn btn-sm btn-default">Edit</button>
+            <small><a id="edit-name" href="#">(edit&hellip;)</a></small>
         </h1>
         <span class="label label-tag">{{ check.project }}</span>
         {% for tag in check.tags_list %}
@@ -27,13 +27,19 @@
     {% endif %}
 
     <div class="col-sm-5">
-        {% if check.desc %}
         <div class="details-block">
             <h2>Description</h2>
+            {% if check.desc %}
             {{ check.desc|linebreaks|urlize }}
+            <div class="text-right">
+                <button id="edit-desc" class="btn btn-sm btn-default">
+                    Edit Description&hellip;
+                </button>
+            </div>
+            {% else %}
+            <small><a id="edit-desc" href="#">Add description&hellip;</a></small>
+            {% endif %}
         </div>
-        {% endif %}
-
 
         <div class="details-block">
             <h2>How To Ping</h2>

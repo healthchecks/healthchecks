@@ -6,6 +6,10 @@
     margin-bottom: 24px;
 }
 
+#details-head h1 small {
+    font-size: 12px;
+}
+
 .details-block .status {
     font-size: 32px;
     width: 40px;

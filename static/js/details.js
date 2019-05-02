@@ -6,6 +6,13 @@ $(function () {
         return false;
     });
 
+    $("#edit-desc").click(function() {
+        $('#update-name-modal').modal("show");
+        $("#update-desc-input").focus();
+
+        return false;
+    });
+
     $("#pause").click(function(e) {
         $("#pause-form").submit();
         return false;
