@@ -17,7 +17,7 @@ class AddEmailTestCase(BaseTestCase):
         self.assertContains(r, "Requires confirmation")
 
     def test_it_creates_channel(self):
-        form = {"value": "alice@example.org"}
+        form = {"value": "dan@example.org"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -26,7 +26,7 @@ class AddEmailTestCase(BaseTestCase):
         c = Channel.objects.get()
         doc = json.loads(c.value)
         self.assertEqual(c.kind, "email")
-        self.assertEqual(doc["value"], "alice@example.org")
+        self.assertEqual(doc["value"], "dan@example.org")
         self.assertFalse(c.email_verified)
         self.assertEqual(c.project, self.project)
 
@@ -36,7 +36,7 @@ class AddEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertTrue(email.subject.startswith("Verify email address on"))
         # Make sure we're sending to an email address, not a JSON string:
-        self.assertEqual(email.to[0], "alice@example.org")
+        self.assertEqual(email.to[0], "dan@example.org")
 
     def test_team_access_works(self):
         form = {"value": "bob@example.org"}
@@ -73,6 +73,22 @@ class AddEmailTestCase(BaseTestCase):
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
     def test_it_auto_verifies_email(self):
+        form = {"value": "dan@example.org"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertRedirects(r, "/integrations/")
+
+        c = Channel.objects.get()
+        doc = json.loads(c.value)
+        self.assertEqual(c.kind, "email")
+        self.assertEqual(doc["value"], "dan@example.org")
+        self.assertTrue(c.email_verified)
+
+        # Email should *not* have been sent
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_it_auto_verifies_own_email(self):
         form = {"value": "alice@example.org"}
 
         self.client.login(username="alice@example.org", password="password")
