@@ -32,7 +32,7 @@ in development environment.
 * install dependencies (Debian/Ubuntu)
 
         $ sudo apt-get update
-        $ sudo apt-get install -y gcc python3-dev
+        $ sudo apt-get install -y gcc python3-dev python3-venv python-pip
 
 * prepare directory for project code and virtualenv:
 
