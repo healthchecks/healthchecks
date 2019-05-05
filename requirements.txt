@@ -1,6 +1,6 @@
-croniter==0.3.29
-Django==2.2
+croniter==0.3.30
+Django==2.2.1
 django_compressor==2.2
 psycopg2==2.7.5
 pytz==2019.1
-requests==2.20.1
+requests==2.21.0
