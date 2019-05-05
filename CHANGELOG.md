@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Improvements
+- Add the `prunetokenbucket` management command
+
 ## 1.7.0 - 2019-05-02
 
 ### Improvements

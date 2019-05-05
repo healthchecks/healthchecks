@@ -258,14 +258,22 @@ There are separate Django management commands for each task:
     ```
 
 * Remove user accounts that match either of these conditions:
- * Account was created more than 6 months ago, and user has never logged in.
+  * Account was created more than 6 months ago, and user has never logged in.
    These can happen when user enters invalid email address when signing up.
- * Last login was more than 6 months ago, and the account has no checks.
+  * Last login was more than 6 months ago, and the account has no checks.
    Assume the user doesn't intend to use the account any more and would
    probably *want* it removed.
 
     ```
     $ ./manage.py pruneusers
+    ```
+
+* Remove old records fromt he `api_tokenbucket` table. The TokenBucket
+  model is used for rate-limiting login attempts and similar operations.
+  Any records older than one day can be safely removed.
+
+    ```
+    $ ./manage.py prunetokenbucket
     ```
 
 When you first try these commands on your data, it is a good idea to
