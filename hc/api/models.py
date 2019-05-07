@@ -640,7 +640,7 @@ class TokenBucket(models.Model):
         value = "invite-%d" % user.id
 
         # 20 invites per day
-        return TokenBucket.authorize(value, 2, 3600 * 24)
+        return TokenBucket.authorize(value, 20, 3600 * 24)
 
     @staticmethod
     def authorize_login_password(email):
