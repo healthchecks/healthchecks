@@ -1,12 +1,11 @@
 {% load hc_extras %}
 The check "{{ check.name_then_code }}" has gone {{ check.status }}.
-
+{% if check.status == "down" and check.desc %}
 Additional notes:
 {{ check.desc }}
-
+{% endif %}
 More information:
 {{ check.details_url }}
-
 
 --
 Regards,
