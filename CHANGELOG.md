@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add the `prunetokenbucket` management command
 
+### Bug Fixes
+- Fix badges for tags containing special characters (#240, #237)
+
+
 ## 1.7.0 - 2019-05-02
 
 ### Improvements

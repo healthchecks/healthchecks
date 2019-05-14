@@ -1,6 +1,20 @@
-from django.urls import path
+from urllib.parse import quote, unquote
 
+from django.urls import path, register_converter
 from hc.api import views
+
+
+class QuoteConverter:
+    regex = '[\w%~_.-]+'
+
+    def to_python(self, value):
+        return unquote(value)
+
+    def to_url(self, value):
+        return quote(value, safe="")
+
+
+register_converter(QuoteConverter, 'quoted')
 
 urlpatterns = [
     path('ping/<uuid:code>/', views.ping, name="hc-ping-slash"),
@@ -17,13 +31,13 @@ urlpatterns = [
     path('api/v1/channels/', views.channels),
 
 
-    path('badge/<slug:badge_key>/<slug:signature>/<slug:tag>.svg', views.badge,
+    path('badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.svg', views.badge,
          name="hc-badge"),
 
     path('badge/<slug:badge_key>/<slug:signature>.svg', views.badge,
          {"tag": "*"}, name="hc-badge-all"),
 
-    path('badge/<slug:badge_key>/<slug:signature>/<slug:tag>.json', views.badge,
+    path('badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.json', views.badge,
          {"format": "json"}, name="hc-badge-json"),
 
     path('badge/<slug:badge_key>/<slug:signature>.json', views.badge,

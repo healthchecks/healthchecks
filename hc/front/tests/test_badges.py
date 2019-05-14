@@ -4,12 +4,17 @@ from hc.api.models import Check
 
 class BadgesTestCase(BaseTestCase):
 
+    def setUp(self):
+        super(BadgesTestCase, self).setUp()
+
+        self.url = "/projects/%s/badges/" % self.project.code
+
     def test_it_shows_badges(self):
         Check.objects.create(project=self.project, tags="foo a-B_1  baz@")
         Check.objects.create(project=self.bobs_project, tags="bobs-tag")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/projects/%s/badges/" % self.project.code)
+        r = self.client.get(self.url)
         self.assertContains(r, "foo.svg")
         self.assertContains(r, "a-B_1.svg")
 
@@ -27,6 +32,13 @@ class BadgesTestCase(BaseTestCase):
         self.project.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/projects/%s/badges/" % self.project.code)
+        r = self.client.get(self.url)
         self.assertContains(r, "badge/alices-badge-key/")
         self.assertContains(r, "badge/alices-badge-key/")
+
+    def test_it_handles_special_characers_in_tags(self):
+        Check.objects.create(project=self.project, tags="db@dc1")
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "db%2540dc1.svg")

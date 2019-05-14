@@ -528,9 +528,6 @@ def badges(request, code):
 
     urls = []
     for tag in sorted_tags:
-        if not re.match("^[\w-]+$", tag) and tag != "*":
-            continue
-
         urls.append({
             "tag": tag,
             "svg": get_badge_url(project.badge_key, tag),

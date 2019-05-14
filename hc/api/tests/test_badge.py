@@ -60,3 +60,14 @@ class BadgeTestCase(BaseTestCase):
 
         r = self.client.get(self.json_url)
         self.assertContains(r, "late")
+
+    def test_it_handles_special_characters(self):
+        self.check.tags = "db@dc1"
+        self.check.save()
+
+        sig = base64_hmac(str(self.project.badge_key), "db@dc1", settings.SECRET_KEY)
+        sig = sig[:8]
+        url = "/badge/%s/%s/db%%2540dc1.svg" % (self.project.badge_key, sig)
+
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 200)
