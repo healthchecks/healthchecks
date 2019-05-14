@@ -1,9 +1,12 @@
 {% load hc_extras %}
 The check "{{ check.name_then_code }}" has gone {{ check.status }}.
 
-A summary of all your checks:
+Additional notes:
+{{ check.desc }}
 
-{% include 'emails/summary-text.html' %}
+More information:
+{{ check.details_url }}
+
 
 --
 Regards,
