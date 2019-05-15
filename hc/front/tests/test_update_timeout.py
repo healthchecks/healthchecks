@@ -6,7 +6,6 @@ from hc.test import BaseTestCase
 
 
 class UpdateTimeoutTestCase(BaseTestCase):
-
     def setUp(self):
         super(UpdateTimeoutTestCase, self).setUp()
         self.check = Check(project=self.project, status="up")
@@ -47,12 +46,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.status, "down")
 
     def test_it_saves_cron_expression(self):
-        payload = {
-            "kind": "cron",
-            "schedule": "5 * * * *",
-            "tz": "UTC",
-            "grace": 60
-        }
+        payload = {"kind": "cron", "schedule": "5 * * * *", "tz": "UTC", "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
@@ -67,12 +61,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         samples = ["* invalid *", "1,2 3,* * * *"]
 
         for sample in samples:
-            payload = {
-                "kind": "cron",
-                "schedule": sample,
-                "tz": "UTC",
-                "grace": 60
-            }
+            payload = {"kind": "cron", "schedule": sample, "tz": "UTC", "grace": 60}
 
             r = self.client.post(self.url, data=payload)
             self.assertEqual(r.status_code, 400)
@@ -86,7 +75,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
             "kind": "cron",
             "schedule": "* * * * * *",  # six fields instead of five
             "tz": "UTC",
-            "grace": 60
+            "grace": 60,
         }
 
         self.client.login(username="alice@example.org", password="password")
@@ -102,7 +91,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
             "kind": "cron",
             "schedule": "* * * * *",
             "tz": "not-a-tz",
-            "grace": 60
+            "grace": 60,
         }
 
         self.client.login(username="alice@example.org", password="password")
@@ -115,11 +104,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def test_it_rejects_missing_schedule(self):
         # tz field is omitted so this should fail:
-        payload = {
-            "kind": "cron",
-            "grace": 60,
-            "tz": "UTC"
-        }
+        payload = {"kind": "cron", "grace": 60, "tz": "UTC"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
@@ -127,11 +112,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def test_it_rejects_missing_tz(self):
         # tz field is omitted so this should fail:
-        payload = {
-            "kind": "cron",
-            "schedule": "* * * * *",
-            "grace": 60
-        }
+        payload = {"kind": "cron", "schedule": "* * * * *", "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)

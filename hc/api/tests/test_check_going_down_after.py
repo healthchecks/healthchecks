@@ -6,7 +6,6 @@ from hc.api.models import Check
 
 
 class CheckModelTestCase(TestCase):
-
     def test_it_handles_new_check(self):
         check = Check()
         self.assertEqual(check.going_down_after(), None)

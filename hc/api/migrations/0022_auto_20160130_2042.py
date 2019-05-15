@@ -7,18 +7,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0021_ping_n'),
-    ]
+    dependencies = [("api", "0021_ping_n")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='notification',
-            name='status',
-        ),
+        migrations.RemoveField(model_name="notification", name="status"),
         migrations.AddField(
-            model_name='notification',
-            name='error',
+            model_name="notification",
+            name="error",
             field=models.CharField(blank=True, max_length=200),
         ),
     ]

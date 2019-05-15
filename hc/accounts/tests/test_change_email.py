@@ -4,7 +4,6 @@ from hc.test import BaseTestCase
 
 
 class ChangeEmailTestCase(BaseTestCase):
-
     def test_it_shows_form(self):
         self.profile.token = make_password("foo", "change-email")
         self.profile.save()

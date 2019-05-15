@@ -3,11 +3,9 @@ from hc.accounts.models import Profile
 
 
 class BasicBackend(object):
-
     def get_user(self, user_id):
         try:
-            q = User.objects.select_related("profile",
-                                            "profile__current_project")
+            q = User.objects.select_related("profile", "profile__current_project")
 
             return q.get(pk=user_id)
         except User.DoesNotExist:
@@ -16,7 +14,6 @@ class BasicBackend(object):
 
 # Authenticate against the token in user's profile.
 class ProfileBackend(BasicBackend):
-
     def authenticate(self, request=None, username=None, token=None):
         try:
             profiles = Profile.objects.select_related("user")
@@ -31,7 +28,6 @@ class ProfileBackend(BasicBackend):
 
 
 class EmailBackend(BasicBackend):
-
     def authenticate(self, request=None, username=None, password=None):
         try:
             user = User.objects.get(email=username)

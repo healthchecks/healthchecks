@@ -4,7 +4,6 @@ from hc.front.templatetags.hc_extras import hc_duration
 
 
 class HcExtrasTestCase(TestCase):
-
     def test_hc_duration_works(self):
         samples = [
             (60, "1 minute"),
@@ -15,7 +14,7 @@ class HcExtrasTestCase(TestCase):
             (604800, "1 week"),
             (2419200, "4 weeks"),
             (2592000, "30 days"),
-            (3801600, "44 days")
+            (3801600, "44 days"),
         ]
 
         for seconds, expected_result in samples:

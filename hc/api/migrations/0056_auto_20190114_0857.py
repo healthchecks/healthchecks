@@ -6,19 +6,21 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0055_auto_20190112_1427'),
-    ]
+    dependencies = [("api", "0055_auto_20190112_1427")]
 
     operations = [
         migrations.AlterField(
-            model_name='channel',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.Project'),
+            model_name="channel",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="accounts.Project"
+            ),
         ),
         migrations.AlterField(
-            model_name='check',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.Project'),
+            model_name="check",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="accounts.Project"
+            ),
         ),
     ]

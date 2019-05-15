@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class ListChannelsTestCase(BaseTestCase):
-
     def setUp(self):
         super(ListChannelsTestCase, self).setUp()
 
@@ -36,8 +35,7 @@ class ListChannelsTestCase(BaseTestCase):
         self.assertIn("GET", r["Access-Control-Allow-Methods"])
 
     def test_it_shows_only_users_channels(self):
-        Channel.objects.create(project=self.bobs_project, kind="email",
-                               name="Bob")
+        Channel.objects.create(project=self.bobs_project, kind="email", name="Bob")
 
         r = self.get()
         data = r.json()
@@ -47,8 +45,9 @@ class ListChannelsTestCase(BaseTestCase):
 
     def test_it_accepts_api_key_from_request_body(self):
         payload = json.dumps({"api_key": "X" * 32})
-        r = self.client.generic("GET", "/api/v1/channels/", payload,
-                                content_type="application/json")
+        r = self.client.generic(
+            "GET", "/api/v1/channels/", payload, content_type="application/json"
+        )
 
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Email to Alice")

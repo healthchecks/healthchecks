@@ -11,7 +11,6 @@ ALICE_HASH = "d60db3b2343e713a4de3e92d4eb417e4f05f06ab"
 
 @override_settings(SECRET_KEY="test-secret")
 class TokenBucketTestCase(BaseTestCase):
-
     def test_it_works(self):
         r = TokenBucket.authorize_login_email("alice@example.org")
         self.assertTrue(r)

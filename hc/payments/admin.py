@@ -8,16 +8,28 @@ from hc.payments.models import Subscription
 @admin.register(Subscription)
 class SubsAdmin(admin.ModelAdmin):
 
-    readonly_fields = ("email", )
-    search_fields = ("customer_id", "payment_method_token", "subscription_id",
-                     "user__email")
-    list_display = ("id", "email", "customer_id", "address_id",
-                    "payment_method_token", "subscription_id", "plan_id",
-                    "plan_name", "profile")
+    readonly_fields = ("email",)
+    search_fields = (
+        "customer_id",
+        "payment_method_token",
+        "subscription_id",
+        "user__email",
+    )
+    list_display = (
+        "id",
+        "email",
+        "customer_id",
+        "address_id",
+        "payment_method_token",
+        "subscription_id",
+        "plan_id",
+        "plan_name",
+        "profile",
+    )
 
-    list_filter = ("plan_id", )
-    raw_id_fields = ("user", )
-    actions = ("cancel", )
+    list_filter = ("plan_id",)
+    raw_id_fields = ("user",)
+    actions = ("cancel",)
 
     def email(self, obj):
         return obj.user.email if obj.user else None
@@ -25,8 +37,7 @@ class SubsAdmin(admin.ModelAdmin):
     @mark_safe
     def profile(self, obj):
         if obj.user.profile:
-            url = reverse("admin:accounts_profile_change",
-                          args=[obj.user.profile.id])
+            url = reverse("admin:accounts_profile_change", args=[obj.user.profile.id])
             return "<a href='%s'>View Profile</a>" % url
 
         return ""

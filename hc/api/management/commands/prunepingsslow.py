@@ -29,7 +29,8 @@ class Command(BaseCommand):
             q = q.filter(n__gt=0)
             n_pruned, _ = q.delete()
 
-            self.stdout.write("Pruned %d pings for check %s (%s)" %
-                              (n_pruned, check.id, check.name))
+            self.stdout.write(
+                "Pruned %d pings for check %s (%s)" % (n_pruned, check.id, check.name)
+            )
 
         return "Done!"

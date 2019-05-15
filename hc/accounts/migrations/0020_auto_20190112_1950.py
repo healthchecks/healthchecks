@@ -12,10 +12,6 @@ def set_badge_key(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0019_project_badge_key'),
-    ]
+    dependencies = [("accounts", "0019_project_badge_key")]
 
-    operations = [
-        migrations.RunPython(set_badge_key, migrations.RunPython.noop),
-    ]
+    operations = [migrations.RunPython(set_badge_key, migrations.RunPython.noop)]

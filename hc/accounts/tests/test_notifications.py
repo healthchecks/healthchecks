@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class NotificationsTestCase(BaseTestCase):
-
     def test_it_saves_reports_allowed_true(self):
         self.profile.reports_allowed = False
         self.profile.save()

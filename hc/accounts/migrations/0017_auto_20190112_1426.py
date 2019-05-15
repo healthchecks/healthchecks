@@ -10,29 +10,54 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('accounts', '0016_remove_profile_bill_to'),
+        ("accounts", "0016_remove_profile_bill_to"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Project',
+            name="Project",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('name', models.CharField(blank=True, max_length=200)),
-                ('api_key', models.CharField(blank=True, max_length=128)),
-                ('api_key_readonly', models.CharField(blank=True, max_length=128)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "code",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("name", models.CharField(blank=True, max_length=200)),
+                ("api_key", models.CharField(blank=True, max_length=128)),
+                ("api_key_readonly", models.CharField(blank=True, max_length=128)),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='member',
-            name='project',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='accounts.Project'),
+            model_name="member",
+            name="project",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="accounts.Project",
+            ),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='current_project',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='accounts.Project'),
+            model_name="profile",
+            name="current_project",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="accounts.Project",
+            ),
         ),
     ]

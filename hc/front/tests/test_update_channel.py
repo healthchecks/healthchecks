@@ -4,7 +4,6 @@ from hc.test import BaseTestCase
 
 
 class UpdateChannelTestCase(BaseTestCase):
-
     def setUp(self):
         super(UpdateChannelTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project)
@@ -14,10 +13,7 @@ class UpdateChannelTestCase(BaseTestCase):
         self.channel.save()
 
     def test_it_works(self):
-        payload = {
-            "channel": self.channel.code,
-            "check-%s" % self.check.code: True
-        }
+        payload = {"channel": self.channel.code, "check-%s" % self.check.code: True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post("/integrations/", data=payload)
@@ -29,10 +25,7 @@ class UpdateChannelTestCase(BaseTestCase):
         assert checks[0].code == self.check.code
 
     def test_team_access_works(self):
-        payload = {
-            "channel": self.channel.code,
-            "check-%s" % self.check.code: True
-        }
+        payload = {"channel": self.channel.code, "check-%s" % self.check.code: True}
 
         # Logging in as bob, not alice. Bob has team access so this
         # should work.
@@ -55,10 +48,7 @@ class UpdateChannelTestCase(BaseTestCase):
         charlies_channel.email = "charlie@example.org"
         charlies_channel.save()
 
-        payload = {
-            "channel": charlies_channel.code,
-            "check-%s" % self.check.code: True
-        }
+        payload = {"channel": charlies_channel.code, "check-%s" % self.check.code: True}
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post("/integrations/", data=payload)
 
@@ -77,7 +67,7 @@ class UpdateChannelTestCase(BaseTestCase):
         # check- key has a correct UUID but there's no check object for it
         payload = {
             "channel": self.channel.code,
-            "check-6837d6ec-fc08-4da5-a67f-08a9ed1ccf62": True
+            "check-6837d6ec-fc08-4da5-a67f-08a9ed1ccf62": True,
         }
 
         self.client.login(username="alice@example.org", password="password")

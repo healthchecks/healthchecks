@@ -4,8 +4,12 @@ import uuid
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.db import connection
-from django.http import (HttpResponse, HttpResponseForbidden,
-                         HttpResponseNotFound, JsonResponse)
+from django.http import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseNotFound,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
@@ -228,12 +232,9 @@ def badge(request, badge_key, signature, tag, format="svg"):
                 status = "late"
 
     if format == "json":
-        return JsonResponse({
-            "status": status,
-            "total": total,
-            "grace": grace,
-            "down": down
-        })
+        return JsonResponse(
+            {"status": status, "total": total, "grace": grace, "down": down}
+        )
 
     svg = get_badge_svg(label, status)
     return HttpResponse(svg, content_type="image/svg+xml")

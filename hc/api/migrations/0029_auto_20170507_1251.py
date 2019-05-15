@@ -8,14 +8,12 @@ import uuid
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0028_auto_20170305_1907'),
-    ]
+    dependencies = [("api", "0028_auto_20170305_1907")]
 
     operations = [
         migrations.AlterField(
-            model_name='notification',
-            name='code',
+            model_name="notification",
+            name="code",
             field=models.UUIDField(default=uuid.uuid4, editable=False, null=True),
-        ),
+        )
     ]

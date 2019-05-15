@@ -5,19 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0045_flip'),
-    ]
+    dependencies = [("api", "0045_flip")]
 
     operations = [
         migrations.AddField(
-            model_name='check',
-            name='last_start',
+            model_name="check",
+            name="last_start",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='ping',
-            name='start',
+            model_name="ping",
+            name="start",
             field=models.NullBooleanField(default=False),
         ),
     ]

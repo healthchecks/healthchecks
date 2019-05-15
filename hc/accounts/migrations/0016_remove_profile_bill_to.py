@@ -5,13 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0015_auto_20181029_1858'),
-    ]
+    dependencies = [("accounts", "0015_auto_20181029_1858")]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='profile',
-            name='bill_to',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name="profile", name="bill_to")]

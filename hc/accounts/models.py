@@ -15,9 +15,11 @@ from hc.lib import emails
 
 
 NO_NAG = timedelta()
-NAG_PERIODS = ((NO_NAG, "Disabled"),
-               (timedelta(hours=1), "Hourly"),
-               (timedelta(days=1), "Daily"))
+NAG_PERIODS = (
+    (NO_NAG, "Disabled"),
+    (timedelta(hours=1), "Hourly"),
+    (timedelta(days=1), "Daily"),
+)
 
 
 def month(dt):
@@ -90,26 +92,20 @@ class Profile(models.Model):
         ctx = {
             "button_text": "Sign In",
             "button_url": settings.SITE_ROOT + path,
-            "inviting_project": inviting_project
+            "inviting_project": inviting_project,
         }
         emails.login(self.user.email, ctx)
 
     def send_set_password_link(self):
         token = self.prepare_token("set-password")
         path = reverse("hc-set-password", args=[token])
-        ctx = {
-            "button_text": "Set Password",
-            "button_url": settings.SITE_ROOT + path
-        }
+        ctx = {"button_text": "Set Password", "button_url": settings.SITE_ROOT + path}
         emails.set_password(self.user.email, ctx)
 
     def send_change_email_link(self):
         token = self.prepare_token("change-email")
         path = reverse("hc-change-email", args=[token])
-        ctx = {
-            "button_text": "Change Email",
-            "button_url": settings.SITE_ROOT + path
-        }
+        ctx = {"button_text": "Change Email", "button_url": settings.SITE_ROOT + path}
         emails.change_email(self.user.email, ctx)
 
     def projects(self):
@@ -140,6 +136,7 @@ class Profile(models.Model):
         project_ids = self.projects().values("id")
 
         from hc.api.models import Check
+
         return Check.objects.filter(project_id__in=project_ids)
 
     def send_report(self, nag=False):
@@ -168,10 +165,7 @@ class Profile(models.Model):
 
         unsub_url = self.reports_unsub_url()
 
-        headers = {
-            "List-Unsubscribe": unsub_url,
-            "X-Bounce-Url": unsub_url
-        }
+        headers = {"List-Unsubscribe": unsub_url, "X-Bounce-Url": unsub_url}
 
         ctx = {
             "checks": checks,
@@ -181,7 +175,7 @@ class Profile(models.Model):
             "notifications_url": self.notifications_url(),
             "nag": nag,
             "nag_period": self.nag_period.total_seconds(),
-            "num_down": num_down
+            "num_down": num_down,
         }
 
         emails.report(self.user.email, ctx, headers)
@@ -228,6 +222,7 @@ class Project(models.Model):
 
     def num_checks_available(self):
         from hc.api.models import Check
+
         num_used = Check.objects.filter(project__owner=self.owner).count()
         return self.owner_profile.check_limit - num_used
 

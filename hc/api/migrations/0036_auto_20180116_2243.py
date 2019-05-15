@@ -7,13 +7,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0035_auto_20171229_2008'),
-    ]
+    dependencies = [("api", "0035_auto_20171229_2008")]
 
-    operations = [
-        migrations.AlterIndexTogether(
-            name='check',
-            index_together=set([]),
-        ),
-    ]
+    operations = [migrations.AlterIndexTogether(name="check", index_together=set([]))]

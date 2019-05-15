@@ -8,19 +8,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0011_profile_sort'),
-    ]
+    dependencies = [("accounts", "0011_profile_sort")]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='nag_period',
-            field=models.DurationField(choices=[(datetime.timedelta(0), 'Disabled'), (datetime.timedelta(0, 3600), 'Hourly'), (datetime.timedelta(1), 'Daily')], default=datetime.timedelta(0)),
+            model_name="profile",
+            name="nag_period",
+            field=models.DurationField(
+                choices=[
+                    (datetime.timedelta(0), "Disabled"),
+                    (datetime.timedelta(0, 3600), "Hourly"),
+                    (datetime.timedelta(1), "Daily"),
+                ],
+                default=datetime.timedelta(0),
+            ),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='next_nag_date',
+            model_name="profile",
+            name="next_nag_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

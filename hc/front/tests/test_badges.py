@@ -3,7 +3,6 @@ from hc.api.models import Check
 
 
 class BadgesTestCase(BaseTestCase):
-
     def setUp(self):
         super(BadgesTestCase, self).setUp()
 

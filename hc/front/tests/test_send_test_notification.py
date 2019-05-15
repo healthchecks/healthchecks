@@ -4,7 +4,6 @@ from hc.test import BaseTestCase
 
 
 class SendTestNotificationTestCase(BaseTestCase):
-
     def setUp(self):
         super(SendTestNotificationTestCase, self).setUp()
         self.channel = Channel(kind="email", project=self.project)

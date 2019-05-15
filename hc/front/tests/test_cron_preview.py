@@ -6,21 +6,13 @@ import pytz
 
 
 class CronPreviewTestCase(BaseTestCase):
-
     def test_it_works(self):
-        payload = {
-            "schedule": "* * * * *",
-            "tz": "UTC"
-        }
+        payload = {"schedule": "* * * * *", "tz": "UTC"}
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertContains(r, "cron-preview-title", status_code=200)
 
     def test_it_rejects_invalid_cron_expression(self):
-        samples = ["",
-                   "*",
-                   "100 100 100 100 100",
-                   "* * * * * *",
-                   "1,2 3,* * * *"]
+        samples = ["", "*", "100 100 100 100 100", "* * * * * *", "1,2 3,* * * *"]
 
         for schedule in samples:
             payload = {"schedule": schedule, "tz": "UTC"}
@@ -52,9 +44,6 @@ class CronPreviewTestCase(BaseTestCase):
 
         # This schedule will hit the ambiguous date. Cron preview must
         # be able to handle this:
-        payload = {
-            "schedule": "0 3 * * *",
-            "tz": "Europe/Riga"
-        }
+        payload = {"schedule": "0 3 * * *", "tz": "Europe/Riga"}
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertNotContains(r, "Invalid cron expression", status_code=200)

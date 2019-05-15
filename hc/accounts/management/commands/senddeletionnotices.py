@@ -51,10 +51,7 @@ class Command(BaseCommand):
             profile.deletion_notice_date = now()
             profile.save()
 
-            ctx = {
-                "email": profile.user.email,
-                "support_email": settings.SUPPORT_EMAIL
-            }
+            ctx = {"email": profile.user.email, "support_email": settings.SUPPORT_EMAIL}
             emails.deletion_notice(profile.user.email, ctx)
             # Throttle so we don't send too many emails at once:
             time.sleep(1)

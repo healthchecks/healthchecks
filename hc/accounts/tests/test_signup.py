@@ -8,7 +8,6 @@ from django.conf import settings
 
 
 class SignupTestCase(TestCase):
-
     def test_it_sends_link(self):
         form = {"identity": "alice@example.org"}
 

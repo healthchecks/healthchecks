@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class GetClientTokenTestCase(BaseTestCase):
-
     @patch("hc.payments.models.braintree")
     def test_it_works(self, mock_braintree):
         mock_braintree.ClientToken.generate.return_value = "test-token"

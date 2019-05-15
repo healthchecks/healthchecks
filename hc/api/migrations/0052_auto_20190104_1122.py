@@ -5,17 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0051_auto_20190104_0908'),
-    ]
+    dependencies = [("api", "0051_auto_20190104_0908")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='ping',
-            name='fail',
-        ),
-        migrations.RemoveField(
-            model_name='ping',
-            name='start',
-        ),
+        migrations.RemoveField(model_name="ping", name="fail"),
+        migrations.RemoveField(model_name="ping", name="start"),
     ]

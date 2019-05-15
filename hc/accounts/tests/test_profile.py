@@ -8,7 +8,6 @@ from hc.api.models import Check
 
 
 class ProfileTestCase(BaseTestCase):
-
     def test_it_sends_set_password_link(self):
         self.client.login(username="alice@example.org", password="password")
 
@@ -38,7 +37,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
 
-        self.assertEqual(message.subject, 'Monthly Report')
+        self.assertEqual(message.subject, "Monthly Report")
         self.assertIn("Test Check", message.body)
 
     def test_it_skips_report_if_no_pings(self):
@@ -76,7 +75,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
 
-        self.assertEqual(message.subject, 'Reminder: 1 check still down')
+        self.assertEqual(message.subject, "Reminder: 1 check still down")
         self.assertIn("Test Check", message.body)
 
     def test_it_skips_nag_if_none_down(self):

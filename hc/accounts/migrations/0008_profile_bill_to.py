@@ -7,14 +7,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0007_profile_check_limit'),
-    ]
+    dependencies = [("accounts", "0007_profile_check_limit")]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='bill_to',
-            field=models.TextField(blank=True),
-        ),
+            model_name="profile", name="bill_to", field=models.TextField(blank=True)
+        )
     ]

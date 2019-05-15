@@ -3,7 +3,9 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
-@override_settings(PUSHOVER_API_TOKEN="token", PUSHOVER_SUBSCRIPTION_URL="http://example.org")
+@override_settings(
+    PUSHOVER_API_TOKEN="token", PUSHOVER_SUBSCRIPTION_URL="http://example.org"
+)
 class AddPushoverTestCase(BaseTestCase):
     @override_settings(PUSHOVER_API_TOKEN=None)
     def test_it_requires_api_token(self):

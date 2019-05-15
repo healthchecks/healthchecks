@@ -5,17 +5,15 @@ from hc.test import BaseTestCase
 
 
 class ChannelsTestCase(BaseTestCase):
-
     def test_it_formats_complex_slack_value(self):
         ch = Channel(kind="slack", project=self.project)
-        ch.value = json.dumps({
-            "ok": True,
-            "team_name": "foo-team",
-            "incoming_webhook": {
-                "url": "http://example.org",
-                "channel": "#bar"
+        ch.value = json.dumps(
+            {
+                "ok": True,
+                "team_name": "foo-team",
+                "incoming_webhook": {"url": "http://example.org", "channel": "#bar"},
             }
-        })
+        )
         ch.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -76,11 +74,9 @@ class ChannelsTestCase(BaseTestCase):
 
     def test_it_shows_down_only_note_for_email(self):
         channel = Channel(project=self.project, kind="email")
-        channel.value = json.dumps({
-            "value": "alice@example.org",
-            "up": False,
-            "down": True
-        })
+        channel.value = json.dumps(
+            {"value": "alice@example.org", "up": False, "down": True}
+        )
         channel.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -90,11 +86,9 @@ class ChannelsTestCase(BaseTestCase):
 
     def test_it_shows_up_only_note_for_email(self):
         channel = Channel(project=self.project, kind="email")
-        channel.value = json.dumps({
-            "value": "alice@example.org",
-            "up": True,
-            "down": False
-        })
+        channel.value = json.dumps(
+            {"value": "alice@example.org", "up": True, "down": False}
+        )
         channel.save()
 
         self.client.login(username="alice@example.org", password="password")

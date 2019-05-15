@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand
 def _process(name, lexer):
     from pygments import highlight
     from pygments.formatters import HtmlFormatter
+
     source = open("templates/front/snippets/%s.txt" % name).read()
     processed = highlight(source, lexer, HtmlFormatter())
     processed = processed.replace("PING_URL", "{{ ping_url }}")
@@ -14,7 +15,7 @@ def _process(name, lexer):
 
 
 class Command(BaseCommand):
-    help = 'Compiles snippets with Pygments'
+    help = "Compiles snippets with Pygments"
 
     def handle(self, *args, **options):
 

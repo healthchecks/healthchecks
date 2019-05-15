@@ -8,7 +8,6 @@ from hc.test import BaseTestCase
 
 
 class ListChecksTestCase(BaseTestCase):
-
     def setUp(self):
         super(ListChecksTestCase, self).setUp()
 
@@ -91,8 +90,9 @@ class ListChecksTestCase(BaseTestCase):
 
     def test_it_accepts_api_key_from_request_body(self):
         payload = json.dumps({"api_key": "X" * 32})
-        r = self.client.generic("GET", "/api/v1/checks/", payload,
-                                content_type="application/json")
+        r = self.client.generic(
+            "GET", "/api/v1/checks/", payload, content_type="application/json"
+        )
 
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Alice")
@@ -111,7 +111,9 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(check["tags"], "a2-tag")
 
     def test_it_filters_with_multiple_tags_param(self):
-        r = self.client.get("/api/v1/checks/?tag=a1-tag&tag=a1-additional-tag", HTTP_X_API_KEY="X" * 32)
+        r = self.client.get(
+            "/api/v1/checks/?tag=a1-tag&tag=a1-additional-tag", HTTP_X_API_KEY="X" * 32
+        )
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()
@@ -132,7 +134,10 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(len(doc["checks"]), 0)
 
     def test_non_existing_tags_filter_returns_empty_result(self):
-        r = self.client.get("/api/v1/checks/?tag=non_existing_tag_with_no_checks", HTTP_X_API_KEY="X" * 32)
+        r = self.client.get(
+            "/api/v1/checks/?tag=non_existing_tag_with_no_checks",
+            HTTP_X_API_KEY="X" * 32,
+        )
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()

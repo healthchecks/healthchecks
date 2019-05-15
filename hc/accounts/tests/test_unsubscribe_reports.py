@@ -6,7 +6,6 @@ from hc.test import BaseTestCase
 
 
 class UnsubscribeReportsTestCase(BaseTestCase):
-
     def test_it_unsubscribes(self):
         self.profile.next_report_date = now()
         self.profile.nag_period = td(hours=1)

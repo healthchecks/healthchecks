@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0003_profile_token'),
-    ]
+    dependencies = [("accounts", "0003_profile_token")]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='api_key',
+            model_name="profile",
+            name="api_key",
             field=models.CharField(blank=True, max_length=128),
-        ),
+        )
     ]

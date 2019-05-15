@@ -5,21 +5,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0022_auto_20190114_0857'),
-    ]
+    dependencies = [("accounts", "0022_auto_20190114_0857")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='profile',
-            name='api_key',
-        ),
-        migrations.RemoveField(
-            model_name='profile',
-            name='api_key_id',
-        ),
-        migrations.RemoveField(
-            model_name='profile',
-            name='api_key_readonly',
-        ),
+        migrations.RemoveField(model_name="profile", name="api_key"),
+        migrations.RemoveField(model_name="profile", name="api_key_id"),
+        migrations.RemoveField(model_name="profile", name="api_key_readonly"),
     ]

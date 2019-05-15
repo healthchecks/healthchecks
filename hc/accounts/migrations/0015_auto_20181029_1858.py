@@ -5,19 +5,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0014_auto_20171227_1530'),
-    ]
+    dependencies = [("accounts", "0014_auto_20171227_1530")]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='api_key_id',
+            model_name="profile",
+            name="api_key_id",
             field=models.CharField(blank=True, max_length=128),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='api_key_readonly',
+            model_name="profile",
+            name="api_key_readonly",
             field=models.CharField(blank=True, max_length=128),
         ),
     ]

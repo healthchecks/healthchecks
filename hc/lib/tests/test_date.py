@@ -5,7 +5,6 @@ from hc.lib.date import format_hms
 
 
 class DateFormattingTestCase(TestCase):
-
     def test_mins_secs_work(self):
         s = format_hms(td(seconds=0))
         self.assertEqual(s, "0 sec")

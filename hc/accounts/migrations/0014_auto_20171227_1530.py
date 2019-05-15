@@ -9,14 +9,16 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0013_remove_profile_team_access_allowed'),
-    ]
+    dependencies = [("accounts", "0013_remove_profile_team_access_allowed")]
 
     operations = [
         migrations.AlterField(
-            model_name='member',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='memberships', to=settings.AUTH_USER_MODEL),
-        ),
+            model_name="member",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="memberships",
+                to=settings.AUTH_USER_MODEL,
+            ),
+        )
     ]

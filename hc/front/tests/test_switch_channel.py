@@ -4,7 +4,6 @@ from hc.test import BaseTestCase
 
 
 class SwitchChannelTestCase(BaseTestCase):
-
     def setUp(self):
         super(SwitchChannelTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project)
@@ -13,7 +12,10 @@ class SwitchChannelTestCase(BaseTestCase):
         self.channel.value = "alice@example.org"
         self.channel.save()
 
-        self.url = "/checks/%s/channels/%s/enabled" % (self.check.code, self.channel.code)
+        self.url = "/checks/%s/channels/%s/enabled" % (
+            self.check.code,
+            self.channel.code,
+        )
 
     def test_it_enables(self):
         self.client.login(username="alice@example.org", password="password")

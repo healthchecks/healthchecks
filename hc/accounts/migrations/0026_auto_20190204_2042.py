@@ -6,24 +6,22 @@ import uuid
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0025_remove_member_team'),
-    ]
+    dependencies = [("accounts", "0025_remove_member_team")]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='api_key',
+            model_name="project",
+            name="api_key",
             field=models.CharField(blank=True, db_index=True, max_length=128),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='api_key_readonly',
+            model_name="project",
+            name="api_key_readonly",
             field=models.CharField(blank=True, db_index=True, max_length=128),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='code',
+            model_name="project",
+            name="code",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
     ]

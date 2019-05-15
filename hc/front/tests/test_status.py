@@ -3,7 +3,6 @@ from hc.test import BaseTestCase
 
 
 class MyChecksTestCase(BaseTestCase):
-
     def setUp(self):
         super(MyChecksTestCase, self).setUp()
         self.check = Check(project=self.project, name="Alice Was Here")

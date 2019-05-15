@@ -13,7 +13,6 @@ except ImportError:
 
 
 class ChargeWebhookTestCase(BaseTestCase):
-
     def setUp(self):
         super(ChargeWebhookTestCase, self).setUp()
         self.sub = Subscription(user=self.alice)

@@ -7,13 +7,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0038_auto_20180318_1306'),
-    ]
+    dependencies = [("api", "0038_auto_20180318_1306")]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='check',
-            name='last_ping_body',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name="check", name="last_ping_body")]

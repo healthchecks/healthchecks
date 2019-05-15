@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0009_auto_20170714_1734'),
-    ]
+    dependencies = [("accounts", "0009_auto_20170714_1734")]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='team_limit',
+            model_name="profile",
+            name="team_limit",
             field=models.IntegerField(default=2),
-        ),
+        )
     ]

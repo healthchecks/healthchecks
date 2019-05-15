@@ -9,18 +9,23 @@ from hc.lib.date import format_duration
 
 @admin.register(Check)
 class ChecksAdmin(admin.ModelAdmin):
-
     class Media:
-        css = {
-            'all': ('css/admin/checks.css',)
-        }
+        css = {"all": ("css/admin/checks.css",)}
 
     search_fields = ["name", "code", "project__owner__email"]
-    raw_id_fields = ("project", )
-    list_display = ("id", "name_tags", "email", "created", "n_pings",
-                    "timeout_schedule", "status", "last_start", "last_ping")
-    list_filter = ("status", "kind", "last_ping",
-                   "last_start")
+    raw_id_fields = ("project",)
+    list_display = (
+        "id",
+        "name_tags",
+        "email",
+        "created",
+        "n_pings",
+        "timeout_schedule",
+        "status",
+        "last_start",
+        "last_ping",
+    )
+    list_filter = ("status", "kind", "last_ping", "last_start")
 
     actions = ["send_alert"]
 
@@ -60,14 +65,10 @@ class ChecksAdmin(admin.ModelAdmin):
 
 class SchemeListFilter(admin.SimpleListFilter):
     title = "Scheme"
-    parameter_name = 'scheme'
+    parameter_name = "scheme"
 
     def lookups(self, request, model_admin):
-        return (
-            ('http', "HTTP"),
-            ('https', "HTTPS"),
-            ('email', "Email"),
-        )
+        return (("http", "HTTP"), ("https", "HTTPS"), ("email", "Email"))
 
     def queryset(self, request, queryset):
         if self.value():
@@ -77,7 +78,7 @@ class SchemeListFilter(admin.SimpleListFilter):
 
 class MethodListFilter(admin.SimpleListFilter):
     title = "Method"
-    parameter_name = 'method'
+    parameter_name = "method"
     methods = ["HEAD", "GET", "POST", "PUT", "DELETE"]
 
     def lookups(self, request, model_admin):
@@ -91,7 +92,7 @@ class MethodListFilter(admin.SimpleListFilter):
 
 class KindListFilter(admin.SimpleListFilter):
     title = "Kind"
-    parameter_name = 'kind'
+    parameter_name = "kind"
     kinds = ["start", "fail"]
 
     def lookups(self, request, model_admin):
@@ -112,8 +113,10 @@ class LargeTablePaginator(Paginator):
     def _get_estimate(self):
         try:
             cursor = connection.cursor()
-            cursor.execute("SELECT reltuples FROM pg_class WHERE relname = %s",
-                           [self.object_list.query.model._meta.db_table])
+            cursor.execute(
+                "SELECT reltuples FROM pg_class WHERE relname = %s",
+                [self.object_list.query.model._meta.db_table],
+            )
             return int(cursor.fetchone()[0])
         except:
             return 0
@@ -138,18 +141,17 @@ class LargeTablePaginator(Paginator):
                 # (i.e. is of type list).
                 self._count = len(self.object_list)
         return self._count
+
     count = property(_get_count)
 
 
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
     search_fields = ("owner__name", "owner__code")
-    readonly_fields = ("owner", )
-    list_select_related = ("owner", )
-    list_display = ("id", "created", "owner", "scheme", "method",
-                    "ua")
-    list_filter = ("created", SchemeListFilter, MethodListFilter,
-                   KindListFilter)
+    readonly_fields = ("owner",)
+    list_select_related = ("owner",)
+    list_display = ("id", "created", "owner", "scheme", "method", "ua")
+    list_filter = ("created", SchemeListFilter, MethodListFilter, KindListFilter)
 
     paginator = LargeTablePaginator
     show_full_result_count = False
@@ -158,15 +160,19 @@ class PingsAdmin(admin.ModelAdmin):
 @admin.register(Channel)
 class ChannelsAdmin(admin.ModelAdmin):
     class Media:
-        css = {
-            'all': ('css/admin/channels.css',)
-        }
+        css = {"all": ("css/admin/channels.css",)}
 
     search_fields = ["value", "project__owner__email"]
-    list_display = ("id", "name", "email", "formatted_kind", "value",
-                    "num_notifications")
-    list_filter = ("kind", )
-    raw_id_fields = ("project", "checks", )
+    list_display = (
+        "id",
+        "name",
+        "email",
+        "formatted_kind",
+        "value",
+        "num_notifications",
+    )
+    list_filter = ("kind",)
+    raw_id_fields = ("project", "checks")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -196,8 +202,14 @@ class ChannelsAdmin(admin.ModelAdmin):
 class NotificationsAdmin(admin.ModelAdmin):
     search_fields = ["owner__name", "owner__code", "channel__value"]
     list_select_related = ("owner", "channel")
-    list_display = ("id", "created", "check_status", "owner",
-                    "channel_kind", "channel_value")
+    list_display = (
+        "id",
+        "created",
+        "check_status",
+        "owner",
+        "channel_kind",
+        "channel_value",
+    )
     list_filter = ("created", "check_status", "channel__kind")
 
     def channel_kind(self, obj):
@@ -209,6 +221,5 @@ class NotificationsAdmin(admin.ModelAdmin):
 
 @admin.register(Flip)
 class FlipsAdmin(admin.ModelAdmin):
-    list_display = ("id", "created", "processed", "owner", "old_status",
-                    "new_status")
-    raw_id_fields = ("owner", )
+    list_display = ("id", "created", "processed", "owner", "old_status", "new_status")
+    raw_id_fields = ("owner",)

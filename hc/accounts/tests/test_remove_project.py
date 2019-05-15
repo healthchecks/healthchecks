@@ -3,7 +3,6 @@ from hc.test import BaseTestCase
 
 
 class RemoveProjectTestCase(BaseTestCase):
-
     def setUp(self):
         super(RemoveProjectTestCase, self).setUp()
 

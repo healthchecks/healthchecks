@@ -2,7 +2,6 @@ from hc.test import BaseTestCase
 
 
 class SetPasswordTestCase(BaseTestCase):
-
     def test_it_shows_form(self):
         token = self.profile.prepare_token("set-password")
 

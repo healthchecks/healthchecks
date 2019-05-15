@@ -10,10 +10,6 @@ def remove_anon_checks(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0047_auto_20181225_2315'),
-    ]
+    dependencies = [("api", "0047_auto_20181225_2315")]
 
-    operations = [
-        migrations.RunPython(remove_anon_checks, migrations.RunPython.noop),
-    ]
+    operations = [migrations.RunPython(remove_anon_checks, migrations.RunPython.noop)]

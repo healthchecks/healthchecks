@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class LogTestCase(BaseTestCase):
-
     def setUp(self):
         super(LogTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project)
@@ -55,19 +54,14 @@ class LogTestCase(BaseTestCase):
 
     def test_it_shows_email_notification(self):
         ch = Channel(kind="email", project=self.project)
-        ch.value = json.dumps({
-            "value": "alice@example.org",
-            "up": True,
-            "down": True
-        })
+        ch.value = json.dumps({"value": "alice@example.org", "up": True, "down": True})
         ch.save()
 
         Notification(owner=self.check, channel=ch, check_status="down").save()
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "Sent email alert to alice@example.org",
-                            status_code=200)
+        self.assertContains(r, "Sent email alert to alice@example.org", status_code=200)
 
     def test_it_shows_pushover_notification(self):
         ch = Channel.objects.create(kind="po", project=self.project)

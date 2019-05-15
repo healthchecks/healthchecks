@@ -2,8 +2,12 @@ from io import BytesIO
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import (HttpResponseBadRequest, HttpResponseForbidden,
-                         JsonResponse, HttpResponse)
+from django.http import (
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    JsonResponse,
+    HttpResponse,
+)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -57,7 +61,7 @@ def billing(request):
         "send_invoices_status": send_invoices_status,
         "set_plan_status": "default",
         "address_status": "default",
-        "payment_method_status": "default"
+        "payment_method_status": "default",
     }
 
     if "set_plan_status" in request.session:
@@ -67,8 +71,7 @@ def billing(request):
         ctx["address_status"] = request.session.pop("address_status")
 
     if "payment_method_status" in request.session:
-        ctx["payment_method_status"] = \
-            request.session.pop("payment_method_status")
+        ctx["payment_method_status"] = request.session.pop("payment_method_status")
 
     return render(request, "accounts/billing.html", ctx)
 
@@ -164,10 +167,7 @@ def payment_method(request):
         request.session["payment_method_status"] = "success"
         return redirect("hc-billing")
 
-    ctx = {
-        "sub": sub,
-        "pm": sub.payment_method
-    }
+    ctx = {"sub": sub, "pm": sub.payment_method}
     return render(request, "payments/payment_method.html", ctx)
 
 
@@ -195,9 +195,9 @@ def pdf_invoice(request, transaction_id):
     if sub.user != request.user and not request.user.is_superuser:
         return HttpResponseForbidden()
 
-    response = HttpResponse(content_type='application/pdf')
+    response = HttpResponse(content_type="application/pdf")
     filename = "MS-HC-%s.pdf" % tx.id.upper()
-    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    response["Content-Disposition"] = 'attachment; filename="%s"' % filename
     PdfInvoice(response).render(tx, sub.flattened_address())
     return response
 

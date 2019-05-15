@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class BounceTestCase(BaseTestCase):
-
     def setUp(self):
         super(BounceTestCase, self).setUp()
 

@@ -7,13 +7,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0012_auto_20171014_1002'),
-    ]
+    dependencies = [("accounts", "0012_auto_20171014_1002")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='profile',
-            name='team_access_allowed',
-        ),
+        migrations.RemoveField(model_name="profile", name="team_access_allowed")
     ]

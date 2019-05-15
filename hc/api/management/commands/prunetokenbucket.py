@@ -6,7 +6,7 @@ from hc.api.models import TokenBucket
 
 
 class Command(BaseCommand):
-    help = 'Prune pings based on limits in user profiles'
+    help = "Prune pings based on limits in user profiles"
 
     def handle(self, *args, **options):
 

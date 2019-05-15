@@ -5,17 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0056_auto_20190114_0857'),
-    ]
+    dependencies = [("api", "0056_auto_20190114_0857")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='channel',
-            name='user',
-        ),
-        migrations.RemoveField(
-            model_name='check',
-            name='user',
-        ),
+        migrations.RemoveField(model_name="channel", name="user"),
+        migrations.RemoveField(model_name="check", name="user"),
     ]

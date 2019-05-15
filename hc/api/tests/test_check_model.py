@@ -6,7 +6,6 @@ from hc.test import BaseTestCase
 
 
 class CheckModelTestCase(BaseTestCase):
-
     def test_it_strips_tags(self):
         check = Check()
 

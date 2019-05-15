@@ -37,16 +37,13 @@ class AddTelegramTestCase(BaseTestCase):
     def test_it_sends_invite(self, mock_get):
         data = {
             "message": {
-                "chat": {
-                    "id": 123,
-                    "title": "My Group",
-                    "type": "group"
-                },
-                "text": "/start"
+                "chat": {"id": 123, "title": "My Group", "type": "group"},
+                "text": "/start",
             }
         }
-        r = self.client.post("/integrations/telegram/bot/", data,
-                             content_type="application/json")
+        r = self.client.post(
+            "/integrations/telegram/bot/", data, content_type="application/json"
+        )
 
         self.assertEqual(r.status_code, 200)
         self.assertTrue(mock_get.called)
@@ -56,21 +53,17 @@ class AddTelegramTestCase(BaseTestCase):
         samples = ["", "{}"]
 
         # text is missing
-        samples.append({
-            "message": {"chat": {"id": 123, "type": "group"}}
-        })
+        samples.append({"message": {"chat": {"id": 123, "type": "group"}}})
 
         # bad chat type
-        samples.append({
-            "message": {
-                "chat": {"id": 123, "type": "invalid"},
-                "text": "/start"
-            }
-        })
+        samples.append(
+            {"message": {"chat": {"id": 123, "type": "invalid"}, "text": "/start"}}
+        )
 
         for sample in samples:
-            r = self.client.post("/integrations/telegram/bot/", sample,
-                                 content_type="application/json")
+            r = self.client.post(
+                "/integrations/telegram/bot/", sample, content_type="application/json"
+            )
 
             if sample == "":
                 # Bad JSON payload
@@ -78,4 +71,3 @@ class AddTelegramTestCase(BaseTestCase):
             else:
                 # JSON decodes but message structure not recognized
                 self.assertEqual(r.status_code, 200)
-

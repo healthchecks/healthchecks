@@ -4,7 +4,6 @@ from hc.api.models import Check
 
 
 class ProjectModelTestCase(BaseTestCase):
-
     def test_num_checks_available_handles_multiple_projects(self):
         # One check in Alice's primary project:
         Check.objects.create(project=self.project)

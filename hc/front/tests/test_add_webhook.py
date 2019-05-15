@@ -18,7 +18,10 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"headers": {}, "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}')
+        self.assertEqual(
+            c.value,
+            '{"headers": {}, "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}',
+        )
         self.assertEqual(c.project, self.project)
 
     def test_it_adds_webhook_using_team_access(self):
@@ -31,7 +34,10 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.project, self.project)
-        self.assertEqual(c.value, '{"headers": {}, "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}')
+        self.assertEqual(
+            c.value,
+            '{"headers": {}, "post_data": "", "url_down": "http://foo.com", "url_up": "https://bar.com"}',
+        )
 
     def test_it_rejects_bad_urls(self):
         urls = [
@@ -41,7 +47,7 @@ class AddWebhookTestCase(BaseTestCase):
             "ftp://example.org",
             # no loopback
             "http://localhost:1234/endpoint",
-            "http://127.0.0.1/endpoint"
+            "http://127.0.0.1/endpoint",
         ]
 
         self.client.login(username="alice@example.org", password="password")
@@ -60,7 +66,10 @@ class AddWebhookTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"headers": {}, "post_data": "", "url_down": "", "url_up": "http://foo.com"}')
+        self.assertEqual(
+            c.value,
+            '{"headers": {}, "post_data": "", "url_down": "", "url_up": "http://foo.com"}',
+        )
 
     def test_it_adds_post_data(self):
         form = {"url_down": "http://foo.com", "post_data": "hello"}
@@ -70,13 +79,16 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, "/integrations/")
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, '{"headers": {}, "post_data": "hello", "url_down": "http://foo.com", "url_up": ""}')
+        self.assertEqual(
+            c.value,
+            '{"headers": {}, "post_data": "hello", "url_down": "http://foo.com", "url_up": ""}',
+        )
 
     def test_it_adds_headers(self):
         form = {
             "url_down": "http://foo.com",
             "header_key[]": ["test", "test2"],
-            "header_value[]": ["123", "abc"]
+            "header_value[]": ["123", "abc"],
         }
 
         self.client.login(username="alice@example.org", password="password")
@@ -91,7 +103,7 @@ class AddWebhookTestCase(BaseTestCase):
         form = {
             "url_down": "http://example.org",
             "header_key[]": ["ill:egal"],
-            "header_value[]": ["123"]
+            "header_value[]": ["123"],
         }
 
         r = self.client.post(self.url, form)

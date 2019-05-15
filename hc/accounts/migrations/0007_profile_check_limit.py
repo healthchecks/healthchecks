@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0006_profile_current_team'),
-    ]
+    dependencies = [("accounts", "0006_profile_current_team")]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='check_limit',
+            model_name="profile",
+            name="check_limit",
             field=models.IntegerField(default=20),
-        ),
+        )
     ]

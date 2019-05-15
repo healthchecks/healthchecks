@@ -35,23 +35,23 @@ def notify_on_thread(flip_id, stdout):
 
 
 class Command(BaseCommand):
-    help = 'Sends UP/DOWN email alerts'
+    help = "Sends UP/DOWN email alerts"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--no-loop',
-            action='store_false',
-            dest='loop',
+            "--no-loop",
+            action="store_false",
+            dest="loop",
             default=True,
-            help='Do not keep running indefinitely in a 2 second wait loop',
+            help="Do not keep running indefinitely in a 2 second wait loop",
         )
 
         parser.add_argument(
-            '--no-threads',
-            action='store_false',
-            dest='use_threads',
+            "--no-threads",
+            action="store_false",
+            dest="use_threads",
             default=False,
-            help='Send alerts synchronously, without using threads',
+            help="Send alerts synchronously, without using threads",
         )
 
     def process_one_flip(self, use_threads=True):

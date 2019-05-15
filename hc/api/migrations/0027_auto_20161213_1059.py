@@ -7,29 +7,44 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0026_auto_20160415_1824'),
-    ]
+    dependencies = [("api", "0026_auto_20160415_1824")]
 
     operations = [
         migrations.AddField(
-            model_name='check',
-            name='kind',
-            field=models.CharField(choices=[('simple', 'Simple'), ('cron', 'Cron')], default='simple', max_length=10),
+            model_name="check",
+            name="kind",
+            field=models.CharField(
+                choices=[("simple", "Simple"), ("cron", "Cron")],
+                default="simple",
+                max_length=10,
+            ),
         ),
         migrations.AddField(
-            model_name='check',
-            name='schedule',
-            field=models.CharField(default='* * * * *', max_length=100),
+            model_name="check",
+            name="schedule",
+            field=models.CharField(default="* * * * *", max_length=100),
         ),
         migrations.AddField(
-            model_name='check',
-            name='tz',
-            field=models.CharField(default='UTC', max_length=36),
+            model_name="check",
+            name="tz",
+            field=models.CharField(default="UTC", max_length=36),
         ),
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('email', 'Email'), ('webhook', 'Webhook'), ('hipchat', 'HipChat'), ('slack', 'Slack'), ('pd', 'PagerDuty'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('opsgenie', 'OpsGenie'), ('victorops', 'VictorOps')], max_length=20),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "Email"),
+                    ("webhook", "Webhook"),
+                    ("hipchat", "HipChat"),
+                    ("slack", "Slack"),
+                    ("pd", "PagerDuty"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("opsgenie", "OpsGenie"),
+                    ("victorops", "VictorOps"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

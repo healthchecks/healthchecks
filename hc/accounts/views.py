@@ -9,28 +9,39 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
-from django.http import (HttpResponseForbidden, HttpResponseBadRequest,
-                         HttpResponseNotFound)
+from django.http import (
+    HttpResponseForbidden,
+    HttpResponseBadRequest,
+    HttpResponseNotFound,
+)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from hc.accounts.forms import (ChangeEmailForm, PasswordLoginForm,
-                               InviteTeamMemberForm, RemoveTeamMemberForm,
-                               ReportSettingsForm, SetPasswordForm,
-                               ProjectNameForm, AvailableEmailForm,
-                               EmailLoginForm)
+from hc.accounts.forms import (
+    ChangeEmailForm,
+    PasswordLoginForm,
+    InviteTeamMemberForm,
+    RemoveTeamMemberForm,
+    ReportSettingsForm,
+    SetPasswordForm,
+    ProjectNameForm,
+    AvailableEmailForm,
+    EmailLoginForm,
+)
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.payments.models import Subscription
 
-NEXT_WHITELIST = ("hc-checks",
-                  "hc-details",
-                  "hc-log",
-                  "hc-channels",
-                  "hc-add-slack",
-                  "hc-add-pushover")
+NEXT_WHITELIST = (
+    "hc-checks",
+    "hc-details",
+    "hc-log",
+    "hc-channels",
+    "hc-add-slack",
+    "hc-add-pushover",
+)
 
 
 def _is_whitelisted(path):
@@ -92,7 +103,7 @@ def login(request):
     form = PasswordLoginForm()
     magic_form = EmailLoginForm()
 
-    if request.method == 'POST':
+    if request.method == "POST":
         if request.POST.get("action") == "login":
             form = PasswordLoginForm(request.POST)
             if form.is_valid():
@@ -115,7 +126,7 @@ def login(request):
         "page": "login",
         "form": form,
         "magic_form": magic_form,
-        "bad_link": bad_link
+        "bad_link": bad_link,
     }
     return render(request, "accounts/login.html", ctx)
 
@@ -182,11 +193,7 @@ def check_token(request, username, token):
 def profile(request):
     profile = request.profile
 
-    ctx = {
-        "page": "profile",
-        "profile": profile,
-        "my_projects_status": "default"
-    }
+    ctx = {"page": "profile", "profile": profile, "my_projects_status": "default"}
 
     if request.method == "POST":
         if "change_email" in request.POST:
@@ -198,8 +205,7 @@ def profile(request):
         elif "leave_project" in request.POST:
             code = request.POST["code"]
             try:
-                project = Project.objects.get(code=code,
-                                              member__user=request.user)
+                project = Project.objects.get(code=code, member__user=request.user)
             except Project.DoesNotExist:
                 return HttpResponseBadRequest()
 
@@ -253,7 +259,7 @@ def project(request, code):
         "show_api_keys": "show_api_keys" in request.GET,
         "project_name_status": "default",
         "api_status": "default",
-        "team_status": "default"
+        "team_status": "default",
     }
 
     if request.method == "POST":
@@ -308,8 +314,7 @@ def project(request, code):
                 farewell_user.profile.current_project = None
                 farewell_user.profile.save()
 
-                Member.objects.filter(project=project,
-                                      user=farewell_user).delete()
+                Member.objects.filter(project=project, user=farewell_user).delete()
 
                 ctx["team_member_removed"] = form.cleaned_data["email"]
                 ctx["team_status"] = "info"
@@ -335,11 +340,7 @@ def project(request, code):
 def notifications(request):
     profile = request.profile
 
-    ctx = {
-        "status": "default",
-        "page": "profile",
-        "profile": profile
-    }
+    ctx = {"status": "default", "page": "profile", "profile": profile}
 
     if request.method == "POST":
         form = ReportSettingsForm(request.POST)

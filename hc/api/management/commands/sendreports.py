@@ -9,13 +9,13 @@ from hc.api.models import Check
 
 
 def num_pinged_checks(profile):
-    q = Check.objects.filter(user_id=profile.user.id,)
+    q = Check.objects.filter(user_id=profile.user.id)
     q = q.filter(last_ping__isnull=False)
     return q.count()
 
 
 class Command(BaseCommand):
-    help = 'Send due monthly reports and nags'
+    help = "Send due monthly reports and nags"
     tmpl = "Sent monthly report to %s"
 
     def pause(self):
@@ -23,11 +23,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--loop',
-            action='store_true',
-            dest='loop',
+            "--loop",
+            action="store_true",
+            dest="loop",
             default=False,
-            help='Keep running indefinitely in a 300 second wait loop',
+            help="Keep running indefinitely in a 300 second wait loop",
         )
 
     def handle_one_monthly_report(self):
@@ -48,8 +48,9 @@ class Command(BaseCommand):
 
         # A sort of optimistic lock. Try to update next_report_date,
         # and if does get modified, we're in drivers seat:
-        qq = Profile.objects.filter(id=profile.id,
-                                    next_report_date=profile.next_report_date)
+        qq = Profile.objects.filter(
+            id=profile.id, next_report_date=profile.next_report_date
+        )
 
         num_updated = qq.update(next_report_date=month_after)
         if num_updated != 1:
@@ -72,8 +73,7 @@ class Command(BaseCommand):
         if profile is None:
             return False
 
-        qq = Profile.objects.filter(id=profile.id,
-                                    next_nag_date=profile.next_nag_date)
+        qq = Profile.objects.filter(id=profile.id, next_nag_date=profile.next_nag_date)
 
         num_updated = qq.update(next_nag_date=now + profile.nag_period)
         if num_updated != 1:

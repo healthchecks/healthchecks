@@ -24,8 +24,7 @@ def validate(obj, schema, obj_name="value"):
             try:
                 croniter(obj)
             except:
-                raise ValidationError(
-                    "%s is not a valid cron expression" % obj_name)
+                raise ValidationError("%s is not a valid cron expression" % obj_name)
         if schema.get("format") == "timezone" and obj not in all_timezones:
             raise ValidationError("%s is not a valid timezone" % obj_name)
 

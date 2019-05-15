@@ -3,7 +3,6 @@ from hc.test import BaseTestCase
 
 
 class ApiAdminTestCase(BaseTestCase):
-
     def setUp(self):
         super(ApiAdminTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project, tags="foo bar")
@@ -15,8 +14,9 @@ class ApiAdminTestCase(BaseTestCase):
     def test_it_shows_channel_list_with_pushbullet(self):
         self.client.login(username="alice@example.org", password="password")
 
-        Channel.objects.create(project=self.project, kind="pushbullet",
-                               value="test-token")
+        Channel.objects.create(
+            project=self.project, kind="pushbullet", value="test-token"
+        )
 
         r = self.client.get("/admin/api/channel/")
         self.assertContains(r, "Pushbullet")
@@ -24,8 +24,9 @@ class ApiAdminTestCase(BaseTestCase):
     def test_it_shows_channel_list_with_unverified_email(self):
         self.client.login(username="alice@example.org", password="password")
 
-        Channel.objects.create(project=self.project, kind="email",
-                               value="foo@example.org")
+        Channel.objects.create(
+            project=self.project, kind="email", value="foo@example.org"
+        )
 
         r = self.client.get("/admin/api/channel/")
         self.assertContains(r, "Email <i>(unconfirmed)</i>")

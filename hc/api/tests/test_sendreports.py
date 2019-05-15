@@ -9,7 +9,6 @@ from mock import Mock
 
 
 class SendAlertsTestCase(BaseTestCase):
-
     def setUp(self):
         super(SendAlertsTestCase, self).setUp()
 

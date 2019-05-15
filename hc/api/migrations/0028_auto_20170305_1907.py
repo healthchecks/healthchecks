@@ -8,19 +8,31 @@ import uuid
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0027_auto_20161213_1059'),
-    ]
+    dependencies = [("api", "0027_auto_20161213_1059")]
 
     operations = [
         migrations.AddField(
-            model_name='notification',
-            name='code',
+            model_name="notification",
+            name="code",
             field=models.UUIDField(default=None, editable=False, null=True),
         ),
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('email', 'Email'), ('webhook', 'Webhook'), ('hipchat', 'HipChat'), ('slack', 'Slack'), ('pd', 'PagerDuty'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('opsgenie', 'OpsGenie'), ('victorops', 'VictorOps'), ('discord', 'Discord')], max_length=20),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "Email"),
+                    ("webhook", "Webhook"),
+                    ("hipchat", "HipChat"),
+                    ("slack", "Slack"),
+                    ("pd", "PagerDuty"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("opsgenie", "OpsGenie"),
+                    ("victorops", "VictorOps"),
+                    ("discord", "Discord"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

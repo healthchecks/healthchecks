@@ -14,10 +14,6 @@ def fill_project_id(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0054_auto_20190112_1427'),
-    ]
+    dependencies = [("api", "0054_auto_20190112_1427")]
 
-    operations = [
-        migrations.RunPython(fill_project_id, migrations.RunPython.noop),
-    ]
+    operations = [migrations.RunPython(fill_project_id, migrations.RunPython.noop)]

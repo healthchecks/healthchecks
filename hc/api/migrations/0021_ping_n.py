@@ -7,14 +7,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0020_check_n_pings'),
-    ]
+    dependencies = [("api", "0020_check_n_pings")]
 
     operations = [
         migrations.AddField(
-            model_name='ping',
-            name='n',
-            field=models.IntegerField(null=True),
-        ),
+            model_name="ping", name="n", field=models.IntegerField(null=True)
+        )
     ]

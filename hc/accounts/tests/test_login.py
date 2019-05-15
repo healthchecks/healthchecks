@@ -6,7 +6,6 @@ from hc.test import BaseTestCase
 
 
 class LoginTestCase(BaseTestCase):
-
     def setUp(self):
         super(LoginTestCase, self).setUp()
         self.checks_url = "/projects/%s/checks/" % self.project.code
@@ -63,11 +62,7 @@ class LoginTestCase(BaseTestCase):
         self.assertIn("login", self.profile.token)
 
     def test_it_handles_password(self):
-        form = {
-            "action": "login",
-            "email": "alice@example.org",
-            "password": "password"
-        }
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
 
         r = self.client.post("/accounts/login/", form)
         self.assertRedirects(r, self.checks_url)
@@ -79,11 +74,7 @@ class LoginTestCase(BaseTestCase):
         obj.tokens = 0
         obj.save()
 
-        form = {
-            "action": "login",
-            "email": "alice@example.org",
-            "password": "password"
-        }
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
 
         r = self.client.post("/accounts/login/", form)
         self.assertContains(r, "Too many attempts")
@@ -91,27 +82,16 @@ class LoginTestCase(BaseTestCase):
     def test_it_handles_password_login_with_redirect(self):
         check = Check.objects.create(project=self.project)
 
-        form = {
-            "action": "login",
-            "email": "alice@example.org",
-            "password": "password"
-        }
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
 
-        samples = [
-            "/integrations/add_slack/",
-            "/checks/%s/details/" % check.code
-        ]
+        samples = ["/integrations/add_slack/", "/checks/%s/details/" % check.code]
 
         for s in samples:
             r = self.client.post("/accounts/login/?next=%s" % s, form)
             self.assertRedirects(r, s)
 
     def test_it_handles_bad_next_parameter(self):
-        form = {
-            "action": "login",
-            "email": "alice@example.org",
-            "password": "password"
-        }
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
 
         r = self.client.post("/accounts/login/?next=/evil/", form)
         self.assertRedirects(r, self.checks_url)
@@ -120,7 +100,7 @@ class LoginTestCase(BaseTestCase):
         form = {
             "action": "login",
             "email": "alice@example.org",
-            "password": "wrong password"
+            "password": "wrong password",
         }
 
         r = self.client.post("/accounts/login/", form)

@@ -10,7 +10,7 @@ check = {
         "channels": {"type": "string"},
         "unique": {
             "type": "array",
-            "items": {"enum": ["name", "tags", "timeout", "grace"]}
-        }
-    }
+            "items": {"enum": ["name", "tags", "timeout", "grace"]},
+        },
+    },
 }

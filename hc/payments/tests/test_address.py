@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class AddressTestCase(BaseTestCase):
-
     @patch("hc.payments.models.braintree")
     def test_it_retrieves_address(self, mock):
         mock.Address.find.return_value = {"company": "FooCo"}

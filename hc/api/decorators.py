@@ -28,6 +28,7 @@ def authorize(f):
             return error("wrong api key", 401)
 
         return f(request, *args, **kwds)
+
     return wrapper
 
 
@@ -50,6 +51,7 @@ def authorize_read(f):
             return error("wrong api key", 401)
 
         return f(request, *args, **kwds)
+
     return wrapper
 
 
@@ -80,7 +82,9 @@ def validate_json(schema=None):
                     return error("json validation error: %s" % e)
 
             return f(request, *args, **kwds)
+
         return wrapper
+
     return decorator
 
 
@@ -106,4 +110,5 @@ def cors(*methods):
             return response
 
         return wrapper
+
     return decorator

@@ -6,7 +6,6 @@ from hc.api.models import TokenBucket
 
 
 class LowercaseEmailField(forms.EmailField):
-
     def clean(self, value):
         value = super(LowercaseEmailField, self).clean(value)
         return value.lower()
@@ -15,12 +14,16 @@ class LowercaseEmailField(forms.EmailField):
 class AvailableEmailForm(forms.Form):
     # Call it "identity" instead of "email"
     # to avoid some of the dumber bots
-    identity = LowercaseEmailField(error_messages={'required': 'Please enter your email address.'})
+    identity = LowercaseEmailField(
+        error_messages={"required": "Please enter your email address."}
+    )
 
     def clean_identity(self):
         v = self.cleaned_data["identity"]
         if User.objects.filter(email=v).exists():
-            raise forms.ValidationError("An account with this email address already exists.")
+            raise forms.ValidationError(
+                "An account with this email address already exists."
+            )
 
         return v
 
@@ -48,8 +51,8 @@ class PasswordLoginForm(forms.Form):
     password = forms.CharField()
 
     def clean(self):
-        username = self.cleaned_data.get('email')
-        password = self.cleaned_data.get('password')
+        username = self.cleaned_data.get("email")
+        password = self.cleaned_data.get("password")
 
         if username and password:
             if not TokenBucket.authorize_login_password(username):

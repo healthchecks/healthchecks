@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0029_auto_20170507_1251'),
-    ]
+    dependencies = [("api", "0029_auto_20170507_1251")]
 
     operations = [
         migrations.AddField(
-            model_name='check',
-            name='last_ping_body',
+            model_name="check",
+            name="last_ping_body",
             field=models.CharField(blank=True, max_length=1000),
-        ),
+        )
     ]

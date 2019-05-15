@@ -16,12 +16,16 @@ class AddPagerTreeTestCase(BaseTestCase):
 
     @override_settings(TRELLO_APP_KEY="foo")
     def test_it_works(self):
-        form = {"settings": json.dumps({
-            "token": "fake-token",
-            "board_name": "My Board",
-            "list_name": "My List",
-            "list_id": "fake-list-id"
-        })}
+        form = {
+            "settings": json.dumps(
+                {
+                    "token": "fake-token",
+                    "board_name": "My Board",
+                    "list_name": "My List",
+                    "list_id": "fake-list-id",
+                }
+            )
+        }
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)

@@ -10,7 +10,6 @@ from hc.test import BaseTestCase
 
 
 class SendAlertsTestCase(BaseTestCase):
-
     def test_it_handles_grace_period(self):
         check = Check(project=self.project, status="up")
         # 1 day 30 minutes after ping the check is in grace period:
@@ -97,8 +96,7 @@ class SendAlertsTestCase(BaseTestCase):
         check.alert_after = check.last_ping + td(days=1, hours=1)
         check.save()
 
-        call_command("sendalerts", loop=False, use_threads=False,
-                     stdout=StringIO())
+        call_command("sendalerts", loop=False, use_threads=False, stdout=StringIO())
 
         # It should call `notify` instead of `notify_on_thread`
         self.assertTrue(mock_notify.called)

@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta as td
 import json
-import re
 from urllib.parse import urlencode
 
 from croniter import croniter
@@ -9,8 +8,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.db.models import Count
-from django.http import (Http404, HttpResponse, HttpResponseBadRequest,
-                         HttpResponseForbidden, JsonResponse)
+from django.http import (
+    Http404,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+    JsonResponse,
+)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template, render_to_string
 from django.urls import reverse
@@ -19,16 +23,30 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.accounts.models import Project
-from hc.api.models import (DEFAULT_GRACE, DEFAULT_TIMEOUT, Channel, Check,
-                           Ping, Notification)
+from hc.api.models import (
+    DEFAULT_GRACE,
+    DEFAULT_TIMEOUT,
+    Channel,
+    Check,
+    Ping,
+    Notification,
+)
 from hc.api.transports import Telegram
-from hc.front.forms import (AddWebhookForm, NameTagsForm,
-                            TimeoutForm, AddUrlForm, AddEmailForm,
-                            AddOpsGenieForm, CronForm, AddSmsForm,
-                            ChannelNameForm, EmailSettingsForm, AddMatrixForm)
+from hc.front.forms import (
+    AddWebhookForm,
+    NameTagsForm,
+    TimeoutForm,
+    AddUrlForm,
+    AddEmailForm,
+    AddOpsGenieForm,
+    CronForm,
+    AddSmsForm,
+    ChannelNameForm,
+    EmailSettingsForm,
+    AddMatrixForm,
+)
 from hc.front.schemas import telegram_callback
-from hc.front.templatetags.hc_extras import (num_down_title, down_title,
-                                             sortchecks)
+from hc.front.templatetags.hc_extras import num_down_title, down_title, sortchecks
 from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
 import pytz
@@ -150,7 +168,7 @@ def my_checks(request, code):
         "selected_tags": selected_tags,
         "show_search": True,
         "search": search,
-        "hidden_checks": hidden_checks
+        "hidden_checks": hidden_checks,
     }
 
     return render(request, "front/my_checks.html", ctx)
@@ -165,18 +183,18 @@ def status(request, code):
     details = []
     for check in checks:
         ctx = {"check": check}
-        details.append({
-            "code": str(check.code),
-            "status": check.get_status(),
-            "last_ping": LAST_PING_TMPL.render(ctx)
-        })
+        details.append(
+            {
+                "code": str(check.code),
+                "status": check.get_status(),
+                "last_ping": LAST_PING_TMPL.render(ctx),
+            }
+        )
 
     tags_statuses, num_down = _tags_statuses(checks)
-    return JsonResponse({
-        "details": details,
-        "tags": tags_statuses,
-        "title": num_down_title(num_down)
-    })
+    return JsonResponse(
+        {"details": details, "tags": tags_statuses, "title": num_down_title(num_down)}
+    )
 
 
 @login_required
@@ -200,10 +218,7 @@ def index(request):
     if request.user.is_authenticated:
         projects = list(request.profile.projects())
 
-        ctx = {
-            "page": "projects",
-            "projects": projects
-        }
+        ctx = {"page": "projects", "projects": projects}
         return render(request, "front/projects.html", ctx)
 
     check = Check()
@@ -220,7 +235,7 @@ def index(request):
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
-        "registration_open": settings.REGISTRATION_OPEN
+        "registration_open": settings.REGISTRATION_OPEN,
     }
 
     return render(request, "front/welcome.html", ctx)
@@ -233,7 +248,7 @@ def docs(request):
         "ping_endpoint": settings.PING_ENDPOINT,
         "ping_email": "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN,
         "ping_email_domain": settings.PING_EMAIL_DOMAIN,
-        "ping_url": settings.PING_ENDPOINT + "your-uuid-here"
+        "ping_url": settings.PING_ENDPOINT + "your-uuid-here",
     }
 
     return render(request, "front/docs.html", ctx)
@@ -246,7 +261,7 @@ def docs_api(request):
         "SITE_ROOT": settings.SITE_ROOT,
         "PING_ENDPOINT": settings.PING_ENDPOINT,
         "default_timeout": int(DEFAULT_TIMEOUT.total_seconds()),
-        "default_grace": int(DEFAULT_GRACE.total_seconds())
+        "default_grace": int(DEFAULT_GRACE.total_seconds()),
     }
 
     return render(request, "front/docs_api.html", ctx)
@@ -371,10 +386,7 @@ def ping_details(request, code, n=None):
 
     ping = q.latest("created")
 
-    ctx = {
-        "check": check,
-        "ping": ping
-    }
+    ctx = {"check": check, "ping": ping}
 
     return render(request, "front/ping_details.html", ctx)
 
@@ -424,9 +436,9 @@ def _get_events(check, limit):
     alerts = []
     if len(pings):
         cutoff = pings[-1].created
-        alerts = Notification.objects \
-            .select_related("channel") \
-            .filter(owner=check, check_status="down", created__gt=cutoff)
+        alerts = Notification.objects.select_related("channel").filter(
+            owner=check, check_status="down", created__gt=cutoff
+        )
 
     events = pings + list(alerts)
     events.sort(key=lambda el: el.created, reverse=True)
@@ -443,7 +455,7 @@ def log(request, code):
         "check": check,
         "events": _get_events(check, limit),
         "limit": limit,
-        "show_limit_notice": check.n_pings > limit and settings.USE_PAYMENTS
+        "show_limit_notice": check.n_pings > limit and settings.USE_PAYMENTS,
     }
 
     return render(request, "front/log.html", ctx)
@@ -461,7 +473,7 @@ def details(request, code):
         "project": check.project,
         "check": check,
         "channels": channels,
-        "timezones": pytz.all_timezones
+        "timezones": pytz.all_timezones,
     }
 
     return render(request, "front/details.html", ctx)
@@ -506,7 +518,7 @@ def status_single(request, code):
         "status": status,
         "status_text": STATUS_TEXT_TMPL.render({"check": check}),
         "title": down_title(check),
-        "updated": updated
+        "updated": updated,
     }
 
     if updated != request.GET.get("u"):
@@ -528,17 +540,19 @@ def badges(request, code):
 
     urls = []
     for tag in sorted_tags:
-        urls.append({
-            "tag": tag,
-            "svg": get_badge_url(project.badge_key, tag),
-            "json": get_badge_url(project.badge_key, tag, format="json"),
-        })
+        urls.append(
+            {
+                "tag": tag,
+                "svg": get_badge_url(project.badge_key, tag),
+                "json": get_badge_url(project.badge_key, tag, format="json"),
+            }
+        )
 
     ctx = {
         "have_tags": len(urls) > 1,
         "page": "badges",
         "project": project,
-        "badges": urls
+        "badges": urls,
     }
 
     return render(request, "front/badges.html", ctx)
@@ -587,7 +601,7 @@ def channels(request):
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
-        "use_payments": settings.USE_PAYMENTS
+        "use_payments": settings.USE_PAYMENTS,
     }
 
     return render(request, "front/channels.html", ctx)
@@ -599,14 +613,10 @@ def channel_checks(request, code):
     if channel.project_id != request.project.id:
         return HttpResponseForbidden()
 
-    assigned = set(channel.checks.values_list('code', flat=True).distinct())
+    assigned = set(channel.checks.values_list("code", flat=True).distinct())
     checks = Check.objects.filter(project=request.project).order_by("created")
 
-    ctx = {
-        "checks": checks,
-        "assigned": assigned,
-        "channel": channel
-    }
+    ctx = {"checks": checks, "assigned": assigned, "channel": channel}
 
     return render(request, "front/channel_checks.html", ctx)
 
@@ -696,11 +706,13 @@ def add_email(request):
         form = AddEmailForm(request.POST)
         if form.is_valid():
             channel = Channel(project=request.project, kind="email")
-            channel.value = json.dumps({
-                "value": form.cleaned_data["value"],
-                "up": form.cleaned_data["up"],
-                "down": form.cleaned_data["down"]
-            })
+            channel.value = json.dumps(
+                {
+                    "value": form.cleaned_data["value"],
+                    "up": form.cleaned_data["up"],
+                    "down": form.cleaned_data["down"],
+                }
+            )
             channel.save()
 
             channel.assign_all_checks()
@@ -726,7 +738,7 @@ def add_email(request):
         "page": "channels",
         "project": request.project,
         "use_verification": settings.EMAIL_USE_VERIFICATION,
-        "form": form
+        "form": form,
     }
     return render(request, "integrations/add_email.html", ctx)
 
@@ -749,7 +761,7 @@ def add_webhook(request):
         "page": "channels",
         "project": request.project,
         "form": form,
-        "now": timezone.now().replace(microsecond=0).isoformat()
+        "now": timezone.now().replace(microsecond=0).isoformat(),
     }
     return render(request, "integrations/add_webhook.html", ctx)
 
@@ -790,10 +802,12 @@ def add_pd(request, state=None):
 
         channel = Channel(kind="pd", project=request.project)
         channel.user = request.project.owner
-        channel.value = json.dumps({
-            "service_key": request.GET.get("service_key"),
-            "account": request.GET.get("account")
-        })
+        channel.value = json.dumps(
+            {
+                "service_key": request.GET.get("service_key"),
+                "account": request.GET.get("account"),
+            }
+        )
         channel.save()
         channel.assign_all_checks()
         messages.success(request, "The PagerDuty integration has been added!")
@@ -801,16 +815,11 @@ def add_pd(request, state=None):
 
     state = _prepare_state(request, "pd")
     callback = settings.SITE_ROOT + reverse("hc-add-pd-state", args=[state])
-    connect_url = "https://connect.pagerduty.com/connect?" + urlencode({
-        "vendor": settings.PD_VENDOR_KEY,
-        "callback": callback
-    })
+    connect_url = "https://connect.pagerduty.com/connect?" + urlencode(
+        {"vendor": settings.PD_VENDOR_KEY, "callback": callback}
+    )
 
-    ctx = {
-        "page": "channels",
-        "project": request.project,
-        "connect_url": connect_url
-    }
+    ctx = {"page": "channels", "project": request.project, "connect_url": connect_url}
     return render(request, "integrations/add_pd.html", ctx)
 
 
@@ -828,11 +837,7 @@ def add_pagertree(request):
     else:
         form = AddUrlForm()
 
-    ctx = {
-        "page": "channels",
-        "project": request.project,
-        "form": form
-    }
+    ctx = {"page": "channels", "project": request.project, "form": form}
     return render(request, "integrations/add_pagertree.html", ctx)
 
 
@@ -850,11 +855,7 @@ def add_pagerteam(request):
     else:
         form = AddUrlForm()
 
-    ctx = {
-        "page": "channels",
-        "project": request.project,
-        "form": form
-    }
+    ctx = {"page": "channels", "project": request.project, "form": form}
     return render(request, "integrations/add_pagerteam.html", ctx)
 
 
@@ -877,7 +878,7 @@ def add_slack(request):
     ctx = {
         "page": "channels",
         "form": form,
-        "slack_client_id": settings.SLACK_CLIENT_ID
+        "slack_client_id": settings.SLACK_CLIENT_ID,
     }
 
     if request.user.is_authenticated:
@@ -895,11 +896,14 @@ def add_slack_btn(request):
     if code is None:
         return HttpResponseBadRequest()
 
-    result = requests.post("https://slack.com/api/oauth.access", {
-        "client_id": settings.SLACK_CLIENT_ID,
-        "client_secret": settings.SLACK_CLIENT_SECRET,
-        "code": code
-    })
+    result = requests.post(
+        "https://slack.com/api/oauth.access",
+        {
+            "client_id": settings.SLACK_CLIENT_ID,
+            "client_secret": settings.SLACK_CLIENT_SECRET,
+            "code": code,
+        },
+    )
 
     doc = result.json()
     if doc.get("ok"):
@@ -926,12 +930,15 @@ def add_pushbullet(request):
         if code is None:
             return HttpResponseBadRequest()
 
-        result = requests.post("https://api.pushbullet.com/oauth2/token", {
-            "client_id": settings.PUSHBULLET_CLIENT_ID,
-            "client_secret": settings.PUSHBULLET_CLIENT_SECRET,
-            "code": code,
-            "grant_type": "authorization_code"
-        })
+        result = requests.post(
+            "https://api.pushbullet.com/oauth2/token",
+            {
+                "client_id": settings.PUSHBULLET_CLIENT_ID,
+                "client_secret": settings.PUSHBULLET_CLIENT_SECRET,
+                "code": code,
+                "grant_type": "authorization_code",
+            },
+        )
 
         doc = result.json()
         if "access_token" in doc:
@@ -940,25 +947,26 @@ def add_pushbullet(request):
             channel.value = doc["access_token"]
             channel.save()
             channel.assign_all_checks()
-            messages.success(request,
-                             "The Pushbullet integration has been added!")
+            messages.success(request, "The Pushbullet integration has been added!")
         else:
             messages.warning(request, "Something went wrong")
 
         return redirect("hc-channels")
 
     redirect_uri = settings.SITE_ROOT + reverse("hc-add-pushbullet")
-    authorize_url = "https://www.pushbullet.com/authorize?" + urlencode({
-        "client_id": settings.PUSHBULLET_CLIENT_ID,
-        "redirect_uri": redirect_uri,
-        "response_type": "code",
-        "state": _prepare_state(request, "pushbullet")
-    })
+    authorize_url = "https://www.pushbullet.com/authorize?" + urlencode(
+        {
+            "client_id": settings.PUSHBULLET_CLIENT_ID,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "state": _prepare_state(request, "pushbullet"),
+        }
+    )
 
     ctx = {
         "page": "channels",
         "project": request.project,
-        "authorize_url": authorize_url
+        "authorize_url": authorize_url,
     }
     return render(request, "integrations/add_pushbullet.html", ctx)
 
@@ -974,13 +982,16 @@ def add_discord(request):
         if code is None:
             return HttpResponseBadRequest()
 
-        result = requests.post("https://discordapp.com/api/oauth2/token", {
-            "client_id": settings.DISCORD_CLIENT_ID,
-            "client_secret": settings.DISCORD_CLIENT_SECRET,
-            "code": code,
-            "grant_type": "authorization_code",
-            "redirect_uri": redirect_uri
-        })
+        result = requests.post(
+            "https://discordapp.com/api/oauth2/token",
+            {
+                "client_id": settings.DISCORD_CLIENT_ID,
+                "client_secret": settings.DISCORD_CLIENT_SECRET,
+                "code": code,
+                "grant_type": "authorization_code",
+                "redirect_uri": redirect_uri,
+            },
+        )
 
         doc = result.json()
         if "access_token" in doc:
@@ -989,32 +1000,32 @@ def add_discord(request):
             channel.value = result.text
             channel.save()
             channel.assign_all_checks()
-            messages.success(request,
-                             "The Discord integration has been added!")
+            messages.success(request, "The Discord integration has been added!")
         else:
             messages.warning(request, "Something went wrong")
 
         return redirect("hc-channels")
 
-    auth_url = "https://discordapp.com/api/oauth2/authorize?" + urlencode({
-        "client_id": settings.DISCORD_CLIENT_ID,
-        "scope": "webhook.incoming",
-        "redirect_uri": redirect_uri,
-        "response_type": "code",
-        "state": _prepare_state(request, "discord")
-    })
+    auth_url = "https://discordapp.com/api/oauth2/authorize?" + urlencode(
+        {
+            "client_id": settings.DISCORD_CLIENT_ID,
+            "scope": "webhook.incoming",
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "state": _prepare_state(request, "discord"),
+        }
+    )
 
-    ctx = {
-        "page": "channels",
-        "project": request.project,
-        "authorize_url": auth_url
-    }
+    ctx = {"page": "channels", "project": request.project, "authorize_url": auth_url}
 
     return render(request, "integrations/add_discord.html", ctx)
 
 
 def add_pushover(request):
-    if settings.PUSHOVER_API_TOKEN is None or settings.PUSHOVER_SUBSCRIPTION_URL is None:
+    if (
+        settings.PUSHOVER_API_TOKEN is None
+        or settings.PUSHOVER_SUBSCRIPTION_URL is None
+    ):
         raise Http404("pushover integration is not available")
 
     if not request.user.is_authenticated:
@@ -1026,15 +1037,23 @@ def add_pushover(request):
         state = _prepare_state(request, "pushover")
 
         failure_url = settings.SITE_ROOT + reverse("hc-channels")
-        success_url = settings.SITE_ROOT + reverse("hc-add-pushover") + "?" + urlencode({
-            "state": state,
-            "prio": request.POST.get("po_priority", "0"),
-            "prio_up": request.POST.get("po_priority_up", "0")
-        })
-        subscription_url = settings.PUSHOVER_SUBSCRIPTION_URL + "?" + urlencode({
-            "success": success_url,
-            "failure": failure_url,
-        })
+        success_url = (
+            settings.SITE_ROOT
+            + reverse("hc-add-pushover")
+            + "?"
+            + urlencode(
+                {
+                    "state": state,
+                    "prio": request.POST.get("po_priority", "0"),
+                    "prio_up": request.POST.get("po_priority_up", "0"),
+                }
+            )
+        )
+        subscription_url = (
+            settings.PUSHOVER_SUBSCRIPTION_URL
+            + "?"
+            + urlencode({"success": success_url, "failure": failure_url})
+        )
 
         return redirect(subscription_url)
 
@@ -1091,11 +1110,7 @@ def add_opsgenie(request):
     else:
         form = AddUrlForm()
 
-    ctx = {
-        "page": "channels",
-        "project": request.project,
-        "form": form
-    }
+    ctx = {"page": "channels", "project": request.project, "form": form}
     return render(request, "integrations/add_opsgenie.html", ctx)
 
 
@@ -1113,11 +1128,7 @@ def add_victorops(request):
     else:
         form = AddUrlForm()
 
-    ctx = {
-        "page": "channels",
-        "project": request.project,
-        "form": form
-    }
+    ctx = {"page": "channels", "project": request.project, "form": form}
     return render(request, "integrations/add_victorops.html", ctx)
 
 
@@ -1140,9 +1151,10 @@ def telegram_bot(request):
     chat = doc["message"]["chat"]
     name = max(chat.get("title", ""), chat.get("username", ""))
 
-    invite = render_to_string("integrations/telegram_invite.html", {
-        "qs": signing.dumps((chat["id"], chat["type"], name))
-    })
+    invite = render_to_string(
+        "integrations/telegram_invite.html",
+        {"qs": signing.dumps((chat["id"], chat["type"], name))},
+    )
 
     Telegram.send(chat["id"], invite)
     return HttpResponse()
@@ -1157,11 +1169,9 @@ def add_telegram(request):
 
     if request.method == "POST":
         channel = Channel(project=request.project, kind="telegram")
-        channel.value = json.dumps({
-            "id": chat_id,
-            "type": chat_type,
-            "name": chat_name
-        })
+        channel.value = json.dumps(
+            {"id": chat_id, "type": chat_type, "name": chat_name}
+        )
         channel.save()
 
         channel.assign_all_checks()
@@ -1174,7 +1184,7 @@ def add_telegram(request):
         "chat_id": chat_id,
         "chat_type": chat_type,
         "chat_name": chat_name,
-        "bot_name": settings.TELEGRAM_BOT_NAME
+        "bot_name": settings.TELEGRAM_BOT_NAME,
     }
 
     return render(request, "integrations/add_telegram.html", ctx)
@@ -1190,9 +1200,7 @@ def add_sms(request):
         if form.is_valid():
             channel = Channel(project=request.project, kind="sms")
             channel.name = form.cleaned_data["label"]
-            channel.value = json.dumps({
-                "value": form.cleaned_data["value"]
-            })
+            channel.value = json.dumps({"value": form.cleaned_data["value"]})
             channel.save()
 
             channel.assign_all_checks()
@@ -1204,7 +1212,7 @@ def add_sms(request):
         "page": "channels",
         "project": request.project,
         "form": form,
-        "profile": request.project.owner_profile
+        "profile": request.project.owner_profile,
     }
     return render(request, "integrations/add_sms.html", ctx)
 
@@ -1222,19 +1230,21 @@ def add_trello(request):
         channel.assign_all_checks()
         return redirect("hc-channels")
 
-    authorize_url = "https://trello.com/1/authorize?" + urlencode({
-        "expiration": "never",
-        "name": settings.SITE_NAME,
-        "scope": "read,write",
-        "response_type": "token",
-        "key": settings.TRELLO_APP_KEY,
-        "return_url": settings.SITE_ROOT + reverse("hc-add-trello")
-    })
+    authorize_url = "https://trello.com/1/authorize?" + urlencode(
+        {
+            "expiration": "never",
+            "name": settings.SITE_NAME,
+            "scope": "read,write",
+            "response_type": "token",
+            "key": settings.TRELLO_APP_KEY,
+            "return_url": settings.SITE_ROOT + reverse("hc-add-trello"),
+        }
+    )
 
     ctx = {
         "page": "channels",
         "project": request.project,
-        "authorize_url": authorize_url
+        "authorize_url": authorize_url,
     }
 
     return render(request, "integrations/add_trello.html", ctx)
@@ -1268,7 +1278,7 @@ def add_matrix(request):
         "page": "channels",
         "project": request.project,
         "form": form,
-        "matrix_user_id": settings.MATRIX_USER_ID
+        "matrix_user_id": settings.MATRIX_USER_ID,
     }
     return render(request, "integrations/add_matrix.html", ctx)
 
@@ -1278,17 +1288,16 @@ def add_matrix(request):
 def trello_settings(request):
     token = request.POST.get("token")
 
-    url = "https://api.trello.com/1/members/me/boards?" + urlencode({
-        "key": settings.TRELLO_APP_KEY,
-        "token": token,
-        "fields": "id,name",
-        "lists": "open",
-        "list_fields": "id,name"
-    })
+    url = "https://api.trello.com/1/members/me/boards?" + urlencode(
+        {
+            "key": settings.TRELLO_APP_KEY,
+            "token": token,
+            "fields": "id,name",
+            "lists": "open",
+            "list_fields": "id,name",
+        }
+    )
 
     r = requests.get(url)
-    ctx = {
-        "token": token,
-        "data": r.json()
-    }
+    ctx = {"token": token, "data": r.json()}
     return render(request, "integrations/trello_settings.html", ctx)

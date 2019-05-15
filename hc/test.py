@@ -5,7 +5,6 @@ from hc.accounts.models import Member, Profile, Project
 
 
 class BaseTestCase(TestCase):
-
     def setUp(self):
         super(BaseTestCase, self).setUp()
 

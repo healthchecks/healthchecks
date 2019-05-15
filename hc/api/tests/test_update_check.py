@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class UpdateCheckTestCase(BaseTestCase):
-
     def setUp(self):
         super(UpdateCheckTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project)
@@ -15,13 +14,16 @@ class UpdateCheckTestCase(BaseTestCase):
         return self.client.post(url, data, content_type="application/json")
 
     def test_it_works(self):
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "name": "Foo",
-            "tags": "bar,baz",
-            "timeout": 3600,
-            "grace": 60
-        })
+        r = self.post(
+            self.check.code,
+            {
+                "api_key": "X" * 32,
+                "name": "Foo",
+                "tags": "bar,baz",
+                "timeout": 3600,
+                "grace": 60,
+            },
+        )
 
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -53,10 +55,7 @@ class UpdateCheckTestCase(BaseTestCase):
         Channel.objects.create(project=self.project)
         self.check.assign_all_channels()
 
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": ""
-        })
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": ""})
 
         self.assertEqual(r.status_code, 200)
         check = Check.objects.get()
@@ -99,10 +98,9 @@ class UpdateCheckTestCase(BaseTestCase):
         # gets assigned:
         Channel.objects.create(project=self.project)
 
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": str(channel.code)
-        })
+        r = self.post(
+            self.check.code, {"api_key": "X" * 32, "channels": str(channel.code)}
+        )
 
         self.assertEqual(r.status_code, 200)
 
@@ -113,10 +111,10 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_handles_comma_separated_channel_codes(self):
         c1 = Channel.objects.create(project=self.project)
         c2 = Channel.objects.create(project=self.project)
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": "%s,%s" % (c1.code, c2.code)
-        })
+        r = self.post(
+            self.check.code,
+            {"api_key": "X" * 32, "channels": "%s,%s" % (c1.code, c2.code)},
+        )
 
         self.assertEqual(r.status_code, 200)
 
@@ -126,10 +124,7 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_handles_asterix(self):
         Channel.objects.create(project=self.project)
         Channel.objects.create(project=self.project)
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": "*"
-        })
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "*"})
 
         self.assertEqual(r.status_code, 200)
 
@@ -146,10 +141,9 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(check.channel_set.count(), 1)
 
     def test_it_rejects_bad_channel_code(self):
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": str(uuid.uuid4())
-        })
+        r = self.post(
+            self.check.code, {"api_key": "X" * 32, "channels": str(uuid.uuid4())}
+        )
 
         self.assertEqual(r.status_code, 400)
 
@@ -157,10 +151,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 0)
 
     def test_it_rejects_non_uuid_channel_code(self):
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": "foo"
-        })
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "foo"})
 
         self.assertEqual(r.status_code, 400)
 
@@ -168,9 +159,6 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 0)
 
     def test_it_rejects_non_string_channels_key(self):
-        r = self.post(self.check.code, {
-            "api_key": "X" * 32,
-            "channels": None
-        })
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": None})
 
         self.assertEqual(r.status_code, 400)

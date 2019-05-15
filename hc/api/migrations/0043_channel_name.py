@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0042_auto_20181029_1522'),
-    ]
+    dependencies = [("api", "0042_auto_20181029_1522")]
 
     operations = [
         migrations.AddField(
-            model_name='channel',
-            name='name',
+            model_name="channel",
+            name="name",
             field=models.CharField(blank=True, max_length=100),
-        ),
+        )
     ]

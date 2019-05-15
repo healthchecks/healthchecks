@@ -3,14 +3,14 @@ from hc.test import BaseTestCase
 
 
 class DeleteCheckTestCase(BaseTestCase):
-
     def setUp(self):
         super(DeleteCheckTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project)
 
     def test_it_works(self):
-        r = self.client.delete("/api/v1/checks/%s" % self.check.code,
-                               HTTP_X_API_KEY="X" * 32)
+        r = self.client.delete(
+            "/api/v1/checks/%s" % self.check.code, HTTP_X_API_KEY="X" * 32
+        )
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 

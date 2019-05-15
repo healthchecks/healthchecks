@@ -3,7 +3,6 @@ from hc.test import BaseTestCase
 
 
 class LastPingTestCase(BaseTestCase):
-
     def test_it_works(self):
         check = Check.objects.create(project=self.project)
         Ping.objects.create(owner=check, body="this is body")

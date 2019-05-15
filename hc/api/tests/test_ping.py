@@ -7,7 +7,6 @@ from hc.test import BaseTestCase
 
 
 class PingTestCase(BaseTestCase):
-
     def setUp(self):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
@@ -47,8 +46,9 @@ class PingTestCase(BaseTestCase):
 
     def test_post_works(self):
         csrf_client = Client(enforce_csrf_checks=True)
-        r = csrf_client.post("/ping/%s/" % self.check.code, "hello world",
-                             content_type="text/plain")
+        r = csrf_client.post(
+            "/ping/%s/" % self.check.code, "hello world", content_type="text/plain"
+        )
         self.assertEqual(r.status_code, 200)
 
         ping = Ping.objects.latest("id")
@@ -75,9 +75,11 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_handles_120_char_ua(self):
-        ua = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) "
-              "AppleWebKit/537.36 (KHTML, like Gecko) "
-              "Chrome/44.0.2403.89 Safari/537.36")
+        ua = (
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/44.0.2403.89 Safari/537.36"
+        )
 
         r = self.client.get("/ping/%s/" % self.check.code, HTTP_USER_AGENT=ua)
         self.assertEqual(r.status_code, 200)
@@ -97,22 +99,25 @@ class PingTestCase(BaseTestCase):
 
     def test_it_reads_forwarded_ip(self):
         ip = "1.1.1.1"
-        r = self.client.get("/ping/%s/" % self.check.code,
-                            HTTP_X_FORWARDED_FOR=ip)
+        r = self.client.get("/ping/%s/" % self.check.code, HTTP_X_FORWARDED_FOR=ip)
         ping = Ping.objects.latest("id")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(ping.remote_addr, "1.1.1.1")
 
         ip = "1.1.1.1, 2.2.2.2"
-        r = self.client.get("/ping/%s/" % self.check.code,
-                            HTTP_X_FORWARDED_FOR=ip, REMOTE_ADDR="3.3.3.3")
+        r = self.client.get(
+            "/ping/%s/" % self.check.code,
+            HTTP_X_FORWARDED_FOR=ip,
+            REMOTE_ADDR="3.3.3.3",
+        )
         ping = Ping.objects.latest("id")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(ping.remote_addr, "1.1.1.1")
 
     def test_it_reads_forwarded_protocol(self):
-        r = self.client.get("/ping/%s/" % self.check.code,
-                            HTTP_X_FORWARDED_PROTO="https")
+        r = self.client.get(
+            "/ping/%s/" % self.check.code, HTTP_X_FORWARDED_PROTO="https"
+        )
         ping = Ping.objects.latest("id")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(ping.scheme, "https")
@@ -123,8 +128,9 @@ class PingTestCase(BaseTestCase):
 
     def test_it_updates_confirmation_flag(self):
         payload = "Please Confirm ..."
-        r = self.client.post("/ping/%s/" % self.check.code, data=payload,
-                             content_type="text/plain")
+        r = self.client.post(
+            "/ping/%s/" % self.check.code, data=payload, content_type="text/plain"
+        )
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()

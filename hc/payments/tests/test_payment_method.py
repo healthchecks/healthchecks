@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class UpdatePaymentMethodTestCase(BaseTestCase):
-
     def _setup_mock(self, mock):
         """ Set up Braintree calls that the controller will use. """
 

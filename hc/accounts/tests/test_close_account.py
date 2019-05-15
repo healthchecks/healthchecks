@@ -6,7 +6,6 @@ from mock import patch
 
 
 class CloseAccountTestCase(BaseTestCase):
-
     @patch("hc.payments.models.Subscription.cancel")
     def test_it_works(self, mock_cancel):
         Check.objects.create(project=self.project, tags="foo a-B_1  baz@")

@@ -3,7 +3,6 @@ from hc.test import BaseTestCase
 
 
 class ChannelChecksTestCase(BaseTestCase):
-
     def setUp(self):
         super(ChannelChecksTestCase, self).setUp()
         self.channel = Channel(project=self.project, kind="email")

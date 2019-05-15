@@ -52,10 +52,7 @@ class Email(Transport):
 
         unsub_link = self.channel.get_unsub_link()
 
-        headers = {
-            "X-Bounce-Url": bounce_url,
-            "List-Unsubscribe": unsub_link
-        }
+        headers = {"X-Bounce-Url": bounce_url, "List-Unsubscribe": unsub_link}
 
         try:
             # Look up the sorting preference for this email address
@@ -72,7 +69,7 @@ class Email(Transport):
             "checks": list(self.checks()),
             "sort": sort,
             "now": timezone.now(),
-            "unsub_link": unsub_link
+            "unsub_link": unsub_link,
         }
 
         emails.alert(self.channel.email_value, ctx, headers)
@@ -88,7 +85,6 @@ class Email(Transport):
 
 
 class HttpTransport(Transport):
-
     @classmethod
     def _request(cls, method, url, **kwargs):
         try:
@@ -213,24 +209,19 @@ class HipChat(HttpTransport):
 
 
 class OpsGenie(HttpTransport):
-
     def notify(self, check):
         headers = {
             "Conent-Type": "application/json",
-            "Authorization": "GenieKey %s" % self.channel.value
+            "Authorization": "GenieKey %s" % self.channel.value,
         }
 
-        payload = {
-            "alias": str(check.code),
-            "source": settings.SITE_NAME
-        }
+        payload = {"alias": str(check.code), "source": settings.SITE_NAME}
 
         if check.status == "down":
             payload["tags"] = check.tags_list()
             payload["message"] = tmpl("opsgenie_message.html", check=check)
             payload["note"] = tmpl("opsgenie_note.html", check=check)
-            payload["description"] = \
-                tmpl("opsgenie_description.html", check=check)
+            payload["description"] = tmpl("opsgenie_description.html", check=check)
 
         url = "https://api.opsgenie.com/v2/alerts"
         if check.status == "up":
@@ -251,7 +242,7 @@ class PagerDuty(HttpTransport):
             "event_type": "trigger" if check.status == "down" else "resolve",
             "description": description,
             "client": settings.SITE_NAME,
-            "client_url": settings.SITE_ROOT
+            "client_url": settings.SITE_ROOT,
         }
 
         return self.post(self.URL, json=payload)
@@ -260,9 +251,7 @@ class PagerDuty(HttpTransport):
 class PagerTree(HttpTransport):
     def notify(self, check):
         url = self.channel.value
-        headers = {
-            "Conent-Type": "application/json"
-        }
+        headers = {"Conent-Type": "application/json"}
         payload = {
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
@@ -270,17 +259,16 @@ class PagerTree(HttpTransport):
             "description": tmpl("pagertree_description.html", check=check),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
-            "tags": ",".join(check.tags_list())
+            "tags": ",".join(check.tags_list()),
         }
 
         return self.post(url, json=payload, headers=headers)
 
+
 class PagerTeam(HttpTransport):
     def notify(self, check):
         url = self.channel.value
-        headers = {
-            "Conent-Type": "application/json"
-        }
+        headers = {"Conent-Type": "application/json"}
         payload = {
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
@@ -288,7 +276,7 @@ class PagerTeam(HttpTransport):
             "description": tmpl("pagerteam_description.html", check=check),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
-            "tags": ",".join(check.tags_list())
+            "tags": ",".join(check.tags_list()),
         }
 
         return self.post(url, json=payload, headers=headers)
@@ -300,13 +288,9 @@ class Pushbullet(HttpTransport):
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
             "Access-Token": self.channel.value,
-            "Conent-Type": "application/json"
+            "Conent-Type": "application/json",
         }
-        payload = {
-            "type": "note",
-            "title": settings.SITE_NAME,
-            "body": text
-        }
+        payload = {"type": "note", "title": settings.SITE_NAME, "body": text}
 
         return self.post(url, json=payload, headers=headers)
 
@@ -319,10 +303,7 @@ class Pushover(HttpTransport):
 
         # list() executes the query, to avoid DB access while
         # rendering a template
-        ctx = {
-            "check": check,
-            "down_checks": list(others),
-        }
+        ctx = {"check": check, "down_checks": list(others)}
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)
 
@@ -380,7 +361,7 @@ class Matrix(HttpTransport):
             "msgtype": "m.text",
             "body": plain,
             "format": "org.matrix.custom.html",
-            "formatted_body": formatted
+            "formatted_body": formatted,
         }
 
         return self.post(self.get_url(), json=payload)
@@ -399,11 +380,9 @@ class Telegram(HttpTransport):
 
     @classmethod
     def send(cls, chat_id, text):
-        return cls.post(cls.SM, json={
-            "chat_id": chat_id,
-            "text": text,
-            "parse_mode": "html"
-        })
+        return cls.post(
+            cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"}
+        )
 
     def notify(self, check):
         text = tmpl("telegram_message.html", check=check)
@@ -411,7 +390,7 @@ class Telegram(HttpTransport):
 
 
 class Sms(HttpTransport):
-    URL = 'https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json'
+    URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
 
     def is_noop(self, check):
         return check.status != "down"
@@ -423,20 +402,19 @@ class Sms(HttpTransport):
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        text = tmpl("sms_message.html", check=check,
-                    site_name=settings.SITE_NAME)
+        text = tmpl("sms_message.html", check=check, site_name=settings.SITE_NAME)
 
         data = {
-            'From': settings.TWILIO_FROM,
-            'To': self.channel.sms_number,
-            'Body': text,
+            "From": settings.TWILIO_FROM,
+            "To": self.channel.sms_number,
+            "Body": text,
         }
 
         return self.post(url, data=data, auth=auth)
 
 
 class Trello(HttpTransport):
-    URL = 'https://api.trello.com/1/cards'
+    URL = "https://api.trello.com/1/cards"
 
     def is_noop(self, check):
         return check.status != "down"
@@ -447,7 +425,7 @@ class Trello(HttpTransport):
             "name": tmpl("trello_name.html", check=check),
             "desc": tmpl("trello_desc.html", check=check),
             "key": settings.TRELLO_APP_KEY,
-            "token": self.channel.trello_token
+            "token": self.channel.trello_token,
         }
 
         return self.post(self.URL, params=params)

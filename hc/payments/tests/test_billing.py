@@ -3,7 +3,6 @@ from hc.test import BaseTestCase
 
 
 class BillingCase(BaseTestCase):
-
     def test_it_disables_invoice_emailing(self):
         self.client.login(username="alice@example.org", password="password")
 

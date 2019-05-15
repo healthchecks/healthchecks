@@ -3,7 +3,6 @@ from hc.test import BaseTestCase
 
 
 class UnsubscribeEmailTestCase(BaseTestCase):
-
     def setUp(self):
         super(UnsubscribeEmailTestCase, self).setUp()
         self.channel = Channel(project=self.project, kind="email")
@@ -24,8 +23,7 @@ class UnsubscribeEmailTestCase(BaseTestCase):
         url = "/integrations/%s/unsub/faketoken/" % self.channel.code
 
         r = self.client.get(url)
-        self.assertContains(r, "link you just used is incorrect",
-                            status_code=200)
+        self.assertContains(r, "link you just used is incorrect", status_code=200)
 
     def test_it_checks_channel_kind(self):
         self.channel.kind = "webhook"

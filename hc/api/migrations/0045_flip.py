@@ -6,20 +6,56 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0044_auto_20181120_2004'),
-    ]
+    dependencies = [("api", "0044_auto_20181120_2004")]
 
     operations = [
         migrations.CreateModel(
-            name='Flip',
+            name="Flip",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField()),
-                ('processed', models.DateTimeField(blank=True, db_index=True, null=True)),
-                ('old_status', models.CharField(choices=[('up', 'Up'), ('down', 'Down'), ('new', 'New'), ('paused', 'Paused')], max_length=8)),
-                ('new_status', models.CharField(choices=[('up', 'Up'), ('down', 'Down'), ('new', 'New'), ('paused', 'Paused')], max_length=8)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.Check')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField()),
+                (
+                    "processed",
+                    models.DateTimeField(blank=True, db_index=True, null=True),
+                ),
+                (
+                    "old_status",
+                    models.CharField(
+                        choices=[
+                            ("up", "Up"),
+                            ("down", "Down"),
+                            ("new", "New"),
+                            ("paused", "Paused"),
+                        ],
+                        max_length=8,
+                    ),
+                ),
+                (
+                    "new_status",
+                    models.CharField(
+                        choices=[
+                            ("up", "Up"),
+                            ("down", "Down"),
+                            ("new", "New"),
+                            ("paused", "Paused"),
+                        ],
+                        max_length=8,
+                    ),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.Check"
+                    ),
+                ),
             ],
-        ),
+        )
     ]

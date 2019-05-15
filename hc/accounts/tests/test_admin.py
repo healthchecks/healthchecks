@@ -2,7 +2,6 @@ from hc.test import BaseTestCase
 
 
 class AccountsAdminTestCase(BaseTestCase):
-
     def setUp(self):
         super(AccountsAdminTestCase, self).setUp()
 

@@ -9,7 +9,6 @@ from hc.test import BaseTestCase
 
 
 class BadgeTestCase(BaseTestCase):
-
     def setUp(self):
         super(BadgeTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project, tags="foo bar")

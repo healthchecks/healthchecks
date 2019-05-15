@@ -6,8 +6,11 @@ from urllib.parse import quote, urlencode
 from django import forms
 from django.conf import settings
 from django.core.validators import RegexValidator
-from hc.front.validators import (CronExpressionValidator, TimezoneValidator,
-                                 WebhookValidator)
+from hc.front.validators import (
+    CronExpressionValidator,
+    TimezoneValidator,
+    WebhookValidator,
+)
 import requests
 
 
@@ -43,8 +46,7 @@ class TimeoutForm(forms.Form):
 
 
 class CronForm(forms.Form):
-    schedule = forms.CharField(max_length=100,
-                               validators=[CronExpressionValidator()])
+    schedule = forms.CharField(max_length=100, validators=[CronExpressionValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=1, max_value=43200)
 
@@ -66,17 +68,19 @@ class AddUrlForm(forms.Form):
     value = forms.URLField(max_length=1000, validators=[WebhookValidator()])
 
 
-_valid_header_name = re.compile(r'\A[^:\s][^:\r\n]*\Z').match
+_valid_header_name = re.compile(r"\A[^:\s][^:\r\n]*\Z").match
 
 
 class AddWebhookForm(forms.Form):
     error_css_class = "has-error"
 
-    url_down = forms.URLField(max_length=1000, required=False,
-                              validators=[WebhookValidator()])
+    url_down = forms.URLField(
+        max_length=1000, required=False, validators=[WebhookValidator()]
+    )
 
-    url_up = forms.URLField(max_length=1000, required=False,
-                            validators=[WebhookValidator()])
+    url_up = forms.URLField(
+        max_length=1000, required=False, validators=[WebhookValidator()]
+    )
 
     post_data = forms.CharField(max_length=1000, required=False)
 
@@ -109,8 +113,9 @@ class AddWebhookForm(forms.Form):
         return json.dumps(val, sort_keys=True)
 
 
-phone_validator = RegexValidator(regex='^\+\d{5,15}$',
-                                 message="Invalid phone number format.")
+phone_validator = RegexValidator(
+    regex="^\+\d{5,15}$", message="Invalid phone number format."
+)
 
 
 class AddSmsForm(forms.Form):
@@ -136,8 +141,7 @@ class AddMatrixForm(forms.Form):
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
         doc = requests.post(url, {}).json()
         if "error" in doc:
-            raise forms.ValidationError(
-                "Response from Matrix: %s" % doc["error"])
+            raise forms.ValidationError("Response from Matrix: %s" % doc["error"])
 
         self.cleaned_data["room_id"] = doc["room_id"]
 

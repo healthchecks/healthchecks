@@ -36,66 +36,65 @@ USE_PAYMENTS = envbool("USE_PAYMENTS", "False")
 REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "True")
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.humanize',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'compressor',
-
-    'hc.accounts',
-    'hc.api',
-    'hc.front',
-    'hc.payments'
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.humanize",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "compressor",
+    "hc.accounts",
+    "hc.api",
+    "hc.front",
+    "hc.payments",
 )
 
 MIDDLEWARE = (
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'hc.accounts.middleware.TeamAccessMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "hc.accounts.middleware.TeamAccessMiddleware",
 )
 
 AUTHENTICATION_BACKENDS = (
-    'hc.accounts.backends.EmailBackend',
-    'hc.accounts.backends.ProfileBackend'
+    "hc.accounts.backends.EmailBackend",
+    "hc.accounts.backends.ProfileBackend",
 )
 
-ROOT_URLCONF = 'hc.urls'
+ROOT_URLCONF = "hc.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'hc.payments.context_processors.payments'
-            ],
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "hc.payments.context_processors.payments",
+            ]
         },
-    },
+    }
 ]
 
-WSGI_APPLICATION = 'hc.wsgi.application'
-TEST_RUNNER = 'hc.api.tests.CustomRunner'
+WSGI_APPLICATION = "hc.wsgi.application"
+TEST_RUNNER = "hc.api.tests.CustomRunner"
 
 
 # Default database engine is SQLite. So one can just check out code,
 # install requirements.txt and do manage.py runserver and it works
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.getenv("DB_NAME", BASE_DIR + "/hc.sqlite"),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.getenv("DB_NAME", BASE_DIR + "/hc.sqlite"),
     }
 }
 
@@ -103,36 +102,38 @@ DATABASES = {
 # variable 'DB'. Travis CI does this.
 if os.getenv("DB") == "postgres":
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'HOST': os.getenv("DB_HOST", ""),
-            'PORT': os.getenv("DB_PORT", ""),
-            'NAME': os.getenv("DB_NAME", "hc"),
-            'USER': os.getenv("DB_USER", "postgres"),
-            'PASSWORD': os.getenv("DB_PASSWORD", ""),
-            'CONN_MAX_AGE': envint("DB_CONN_MAX_AGE", "0"),
-            'TEST': {'CHARSET': 'UTF8'},
-            'OPTIONS': {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "HOST": os.getenv("DB_HOST", ""),
+            "PORT": os.getenv("DB_PORT", ""),
+            "NAME": os.getenv("DB_NAME", "hc"),
+            "USER": os.getenv("DB_USER", "postgres"),
+            "PASSWORD": os.getenv("DB_PASSWORD", ""),
+            "CONN_MAX_AGE": envint("DB_CONN_MAX_AGE", "0"),
+            "TEST": {"CHARSET": "UTF8"},
+            "OPTIONS": {
                 "sslmode": os.getenv("DB_SSLMODE", "prefer"),
-                "target_session_attrs": os.getenv("DB_TARGET_SESSION_ATTRS", "read-write")
-            }
+                "target_session_attrs": os.getenv(
+                    "DB_TARGET_SESSION_ATTRS", "read-write"
+                ),
+            },
         }
     }
 
 if os.getenv("DB") == "mysql":
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': os.getenv("DB_HOST", ""),
-            'PORT': os.getenv("DB_PORT", ""),
-            'NAME': os.getenv("DB_NAME", "hc"),
-            'USER': os.getenv("DB_USER", "root"),
-            'PASSWORD': os.getenv("DB_PASSWORD", ""),
-            'TEST': {'CHARSET': 'UTF8'}
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "HOST": os.getenv("DB_HOST", ""),
+            "PORT": os.getenv("DB_PORT", ""),
+            "NAME": os.getenv("DB_NAME", "hc"),
+            "USER": os.getenv("DB_USER", "root"),
+            "PASSWORD": os.getenv("DB_PASSWORD", ""),
+            "TEST": {"CHARSET": "UTF8"},
         }
     }
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -145,13 +146,13 @@ SITE_NAME = os.getenv("SITE_NAME", "Mychecks")
 MASTER_BADGE_LABEL = os.getenv("MASTER_BADGE_LABEL", SITE_NAME)
 PING_ENDPOINT = os.getenv("PING_ENDPOINT", SITE_ROOT + "/ping/")
 PING_EMAIL_DOMAIN = os.getenv("PING_EMAIL_DOMAIN", "localhost")
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static-collected')
+STATIC_ROOT = os.path.join(BASE_DIR, "static-collected")
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
 )
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_HASHING_METHOD = "content"

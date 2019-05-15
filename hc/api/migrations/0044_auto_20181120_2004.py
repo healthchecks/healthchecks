@@ -6,7 +6,7 @@ from django.db import migrations
 
 
 def combine_channel_names(apps, schema_editor):
-    Channel = apps.get_model('api', 'Channel')
+    Channel = apps.get_model("api", "Channel")
     for channel in Channel.objects.filter(kind="sms"):
         if channel.value.startswith("{"):
             doc = json.loads(channel.value)
@@ -16,10 +16,6 @@ def combine_channel_names(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0043_channel_name'),
-    ]
+    dependencies = [("api", "0043_channel_name")]
 
-    operations = [
-        migrations.RunPython(combine_channel_names),
-    ]
+    operations = [migrations.RunPython(combine_channel_names)]

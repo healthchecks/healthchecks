@@ -4,7 +4,6 @@ from hc.lib.jsonschema import ValidationError, validate
 
 
 class JsonSchemaTestCase(TestCase):
-
     def test_it_validates_strings(self):
         validate("foo", {"type": "string"})
 
@@ -36,12 +35,10 @@ class JsonSchemaTestCase(TestCase):
             validate(5, {"type": "number", "maximum": 0})
 
     def test_it_validates_objects(self):
-        validate({"foo": "bar"}, {
-            "type": "object",
-            "properties": {
-                "foo": {"type": "string"}
-            }
-        })
+        validate(
+            {"foo": "bar"},
+            {"type": "object", "properties": {"foo": {"type": "string"}}},
+        )
 
     def test_it_checks_dict_type(self):
         with self.assertRaises(ValidationError):
@@ -49,39 +46,25 @@ class JsonSchemaTestCase(TestCase):
 
     def test_it_validates_objects_properties(self):
         with self.assertRaises(ValidationError):
-            validate({"foo": "bar"}, {
-                "type": "object",
-                "properties": {
-                    "foo": {"type": "number"}
-                }
-            })
+            validate(
+                {"foo": "bar"},
+                {"type": "object", "properties": {"foo": {"type": "number"}}},
+            )
 
     def test_it_handles_required_properties(self):
         with self.assertRaises(ValidationError):
-            validate({"foo": "bar"}, {
-                "type": "object",
-                "required": ["baz"]
-            })
+            validate({"foo": "bar"}, {"type": "object", "required": ["baz"]})
 
     def test_it_validates_arrays(self):
-        validate(["foo", "bar"], {
-            "type": "array",
-            "items": {"type": "string"}
-        })
+        validate(["foo", "bar"], {"type": "array", "items": {"type": "string"}})
 
     def test_it_validates_array_type(self):
         with self.assertRaises(ValidationError):
-            validate("not-an-array", {
-                "type": "array",
-                "items": {"type": "string"}
-            })
+            validate("not-an-array", {"type": "array", "items": {"type": "string"}})
 
     def test_it_validates_array_elements(self):
         with self.assertRaises(ValidationError):
-            validate(["foo", "bar"], {
-                "type": "array",
-                "items": {"type": "number"}
-            })
+            validate(["foo", "bar"], {"type": "array", "items": {"type": "number"}})
 
     def test_it_validates_enum(self):
         validate("foo", {"enum": ["foo", "bar"]})

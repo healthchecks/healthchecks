@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('payments', '0003_subscription_address_id'),
-    ]
+    dependencies = [("payments", "0003_subscription_address_id")]
 
     operations = [
         migrations.AddField(
-            model_name='subscription',
-            name='send_invoices',
+            model_name="subscription",
+            name="send_invoices",
             field=models.BooleanField(default=True),
-        ),
+        )
     ]

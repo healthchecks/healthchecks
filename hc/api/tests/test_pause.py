@@ -6,13 +6,13 @@ from hc.test import BaseTestCase
 
 
 class PauseTestCase(BaseTestCase):
-
     def test_it_works(self):
         check = Check.objects.create(project=self.project, status="up")
 
         url = "/api/v1/checks/%s/pause" % check.code
-        r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="X" * 32)
+        r = self.client.post(
+            url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
+        )
 
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -37,22 +37,25 @@ class PauseTestCase(BaseTestCase):
         check = Check.objects.create(project=self.bobs_project, status="up")
 
         url = "/api/v1/checks/%s/pause" % check.code
-        r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="X" * 32)
+        r = self.client.post(
+            url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
+        )
 
         self.assertEqual(r.status_code, 403)
 
     def test_it_validates_uuid(self):
         url = "/api/v1/checks/not-uuid/pause"
-        r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="X" * 32)
+        r = self.client.post(
+            url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
+        )
 
         self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_check(self):
         url = "/api/v1/checks/07c2f548-9850-4b27-af5d-6c9dc157ec02/pause"
-        r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="X" * 32)
+        r = self.client.post(
+            url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
+        )
 
         self.assertEqual(r.status_code, 404)
 
@@ -63,8 +66,9 @@ class PauseTestCase(BaseTestCase):
         check.save()
 
         url = "/api/v1/checks/%s/pause" % check.code
-        r = self.client.post(url, "", content_type="application/json",
-                             HTTP_X_API_KEY="X" * 32)
+        r = self.client.post(
+            url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
+        )
 
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")

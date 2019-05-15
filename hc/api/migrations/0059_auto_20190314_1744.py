@@ -5,14 +5,33 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0058_auto_20190312_1716'),
-    ]
+    dependencies = [("api", "0058_auto_20190312_1716")]
 
     operations = [
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('email', 'Email'), ('webhook', 'Webhook'), ('hipchat', 'HipChat'), ('slack', 'Slack'), ('pd', 'PagerDuty'), ('pagertree', 'PagerTree'), ('pagerteam', 'Pager Team'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('opsgenie', 'OpsGenie'), ('victorops', 'VictorOps'), ('discord', 'Discord'), ('telegram', 'Telegram'), ('sms', 'SMS'), ('zendesk', 'Zendesk'), ('trello', 'Trello'), ('matrix', 'Matrix')], max_length=20),
-        ),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "Email"),
+                    ("webhook", "Webhook"),
+                    ("hipchat", "HipChat"),
+                    ("slack", "Slack"),
+                    ("pd", "PagerDuty"),
+                    ("pagertree", "PagerTree"),
+                    ("pagerteam", "Pager Team"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("opsgenie", "OpsGenie"),
+                    ("victorops", "VictorOps"),
+                    ("discord", "Discord"),
+                    ("telegram", "Telegram"),
+                    ("sms", "SMS"),
+                    ("zendesk", "Zendesk"),
+                    ("trello", "Trello"),
+                    ("matrix", "Matrix"),
+                ],
+                max_length=20,
+            ),
+        )
     ]

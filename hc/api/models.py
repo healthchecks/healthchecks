@@ -15,43 +15,33 @@ from hc.api import transports
 from hc.lib import emails
 import pytz
 
-STATUSES = (
-    ("up", "Up"),
-    ("down", "Down"),
-    ("new", "New"),
-    ("paused", "Paused")
-)
+STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
 NEVER = datetime(3000, 1, 1, tzinfo=pytz.UTC)
-CHECK_KINDS = (("simple", "Simple"),
-               ("cron", "Cron"))
+CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
 
-CHANNEL_KINDS = (("email", "Email"),
-                 ("webhook", "Webhook"),
-                 ("hipchat", "HipChat"),
-                 ("slack", "Slack"),
-                 ("pd", "PagerDuty"),
-                 ("pagertree", "PagerTree"),
-                 ("pagerteam", "Pager Team"),
-                 ("po", "Pushover"),
-                 ("pushbullet", "Pushbullet"),
-                 ("opsgenie", "OpsGenie"),
-                 ("victorops", "VictorOps"),
-                 ("discord", "Discord"),
-                 ("telegram", "Telegram"),
-                 ("sms", "SMS"),
-                 ("zendesk", "Zendesk"),
-                 ("trello", "Trello"),
-                 ("matrix", "Matrix"))
+CHANNEL_KINDS = (
+    ("email", "Email"),
+    ("webhook", "Webhook"),
+    ("hipchat", "HipChat"),
+    ("slack", "Slack"),
+    ("pd", "PagerDuty"),
+    ("pagertree", "PagerTree"),
+    ("pagerteam", "Pager Team"),
+    ("po", "Pushover"),
+    ("pushbullet", "Pushbullet"),
+    ("opsgenie", "OpsGenie"),
+    ("victorops", "VictorOps"),
+    ("discord", "Discord"),
+    ("telegram", "Telegram"),
+    ("sms", "SMS"),
+    ("zendesk", "Zendesk"),
+    ("trello", "Trello"),
+    ("matrix", "Matrix"),
+)
 
-PO_PRIORITIES = {
-    -2: "lowest",
-    -1: "low",
-    0: "normal",
-    1: "high",
-    2: "emergency"
-}
+PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
 
 
 def isostring(dt):
@@ -68,8 +58,7 @@ class Check(models.Model):
     desc = models.TextField(blank=True)
     project = models.ForeignKey(Project, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
-    kind = models.CharField(max_length=10, default="simple",
-                            choices=CHECK_KINDS)
+    kind = models.CharField(max_length=10, default="simple", choices=CHECK_KINDS)
     timeout = models.DurationField(default=DEFAULT_TIMEOUT)
     grace = models.DurationField(default=DEFAULT_GRACE)
     schedule = models.CharField(max_length=100, default="* * * * *")
@@ -194,7 +183,7 @@ class Check(models.Model):
             "channels": ",".join(sorted(channel_codes)),
             "last_ping": isostring(self.last_ping),
             "next_ping": isostring(self.get_grace_start()),
-            "desc": self.desc
+            "desc": self.desc,
         }
 
         if self.kind == "simple":
@@ -283,11 +272,7 @@ class Channel(models.Model):
         return self.get_kind_display()
 
     def to_dict(self):
-        return {
-            "id": str(self.code),
-            "name": self.name,
-            "kind": self.kind
-        }
+        return {"id": str(self.code), "name": self.name, "kind": self.kind}
 
     def assign_all_checks(self):
         checks = Check.objects.filter(project=self.project)
@@ -366,7 +351,7 @@ class Channel(models.Model):
         return error
 
     def icon_path(self):
-        return 'img/integrations/%s.png' % self.kind
+        return "img/integrations/%s.png" % self.kind
 
     @property
     def po_priority(self):

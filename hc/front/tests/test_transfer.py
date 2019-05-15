@@ -42,11 +42,9 @@ class TrabsferTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_it_reassigns_channels(self):
-        alices_mail = Channel.objects.create(kind="email",
-                                             project=self.project)
+        alices_mail = Channel.objects.create(kind="email", project=self.project)
 
-        bobs_mail = Channel.objects.create(kind="email",
-                                           project=self.bobs_project)
+        bobs_mail = Channel.objects.create(kind="email", project=self.bobs_project)
 
         self.check.channel_set.add(bobs_mail)
 

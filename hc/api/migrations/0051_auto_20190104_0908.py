@@ -4,7 +4,7 @@ from django.db import migrations
 
 
 def fill_ping_kind(apps, schema_editor):
-    Ping = apps.get_model('api', 'Ping')
+    Ping = apps.get_model("api", "Ping")
 
     q = Ping.objects.filter(start=True)
     q.update(kind="start")
@@ -15,10 +15,6 @@ def fill_ping_kind(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0050_ping_kind'),
-    ]
+    dependencies = [("api", "0050_ping_kind")]
 
-    operations = [
-        migrations.RunPython(fill_ping_kind),
-    ]
+    operations = [migrations.RunPython(fill_ping_kind)]

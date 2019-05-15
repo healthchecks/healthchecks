@@ -28,10 +28,6 @@ def create_projects(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0017_auto_20190112_1426'),
-    ]
+    dependencies = [("accounts", "0017_auto_20190112_1426")]
 
-    operations = [
-        migrations.RunPython(create_projects, migrations.RunPython.noop),
-    ]
+    operations = [migrations.RunPython(create_projects, migrations.RunPython.noop)]

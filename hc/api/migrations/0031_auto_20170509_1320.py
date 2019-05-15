@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0030_check_last_ping_body'),
-    ]
+    dependencies = [("api", "0030_check_last_ping_body")]
 
     operations = [
         migrations.AlterField(
-            model_name='check',
-            name='last_ping_body',
+            model_name="check",
+            name="last_ping_body",
             field=models.CharField(blank=True, max_length=10000),
-        ),
+        )
     ]

@@ -7,12 +7,10 @@ from mock import patch
 
 
 class AddSlackBtnTestCase(BaseTestCase):
-
     @override_settings(SLACK_CLIENT_ID="foo")
     def test_it_prepares_login_link(self):
         r = self.client.get("/integrations/add_slack/")
-        self.assertContains(r, "Before adding Slack integration",
-                            status_code=200)
+        self.assertContains(r, "Before adding Slack integration", status_code=200)
 
         self.assertContains(r, "?next=/integrations/add_slack/")
 
@@ -34,10 +32,7 @@ class AddSlackBtnTestCase(BaseTestCase):
         oauth_response = {
             "ok": True,
             "team_name": "foo",
-            "incoming_webhook": {
-                "url": "http://example.org",
-                "channel": "bar"
-            }
+            "incoming_webhook": {"url": "http://example.org", "channel": "bar"},
         }
 
         mock_post.return_value.text = json.dumps(oauth_response)
@@ -76,10 +71,7 @@ class AddSlackBtnTestCase(BaseTestCase):
         session["slack"] = "foo"
         session.save()
 
-        oauth_response = {
-            "ok": False,
-            "error": "something went wrong"
-        }
+        oauth_response = {"ok": False, "error": "something went wrong"}
 
         mock_post.return_value.text = json.dumps(oauth_response)
         mock_post.return_value.json.return_value = oauth_response

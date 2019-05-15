@@ -33,10 +33,7 @@ class AddDiscordTestCase(BaseTestCase):
 
         oauth_response = {
             "access_token": "test-token",
-            "webhook": {
-                "url": "foo",
-                "id": "bar"
-            }
+            "webhook": {"url": "foo", "id": "bar"},
         }
 
         mock_post.return_value.text = json.dumps(oauth_response)

@@ -12,7 +12,6 @@ except ImportError:
 
 
 class PdfInvoiceTestCase(BaseTestCase):
-
     def setUp(self):
         super(PdfInvoiceTestCase, self).setUp()
         self.sub = Subscription(user=self.alice)

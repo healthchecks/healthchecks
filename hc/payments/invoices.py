@@ -4,6 +4,7 @@ try:
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import inch
     from reportlab.pdfgen.canvas import Canvas
+
     W, H = A4
 except ImportError:
     # Don't crash if reportlab is not installed.
@@ -70,8 +71,7 @@ class PdfInvoice(Canvas):
         self.linefeed()
 
         self.hr()
-        self.row(["Description", "Start", "End", tx.currency_iso_code],
-                 bold=True)
+        self.row(["Description", "Start", "End", tx.currency_iso_code], bold=True)
         self.hr()
         start = f(tx.subscription_details.billing_period_start_date)
         end = f(tx.subscription_details.billing_period_end_date)

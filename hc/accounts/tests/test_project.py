@@ -72,8 +72,9 @@ class ProjectTestCase(BaseTestCase):
         members = self.project.member_set.all()
         self.assertEqual(members.count(), 2)
 
-        member = Member.objects.get(project=self.project,
-                                    user__email="frank@example.org")
+        member = Member.objects.get(
+            project=self.project, user__email="frank@example.org"
+        )
 
         profile = member.user.profile
         self.assertEqual(profile.current_project, self.project)
@@ -81,8 +82,10 @@ class ProjectTestCase(BaseTestCase):
         self.assertFalse(member.user.project_set.exists())
 
         # And an email should have been sent
-        subj = ("You have been invited to join"
-                " Alice&#39;s Project on %s" % settings.SITE_NAME)
+        subj = (
+            "You have been invited to join"
+            " Alice&#39;s Project on %s" % settings.SITE_NAME
+        )
         self.assertEqual(mail.outbox[0].subject, subj)
 
     @override_settings(SECRET_KEY="test-secret")

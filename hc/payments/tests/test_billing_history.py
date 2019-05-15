@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class BillingHistoryTestCase(BaseTestCase):
-
     def setUp(self):
         super(BillingHistoryTestCase, self).setUp()
         self.sub = Subscription(user=self.alice)

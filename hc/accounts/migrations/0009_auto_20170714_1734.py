@@ -7,24 +7,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('accounts', '0008_profile_bill_to'),
-    ]
+    dependencies = [("accounts", "0008_profile_bill_to")]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='last_sms_date',
+            model_name="profile",
+            name="last_sms_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='sms_limit',
-            field=models.IntegerField(default=0),
+            model_name="profile", name="sms_limit", field=models.IntegerField(default=0)
         ),
         migrations.AddField(
-            model_name='profile',
-            name='sms_sent',
-            field=models.IntegerField(default=0),
+            model_name="profile", name="sms_sent", field=models.IntegerField(default=0)
         ),
     ]

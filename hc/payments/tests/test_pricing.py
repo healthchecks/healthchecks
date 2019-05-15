@@ -5,7 +5,6 @@ from hc.test import BaseTestCase
 
 
 class PricingTestCase(BaseTestCase):
-
     def test_anonymous(self):
         r = self.client.get("/pricing/")
         self.assertContains(r, "Unlimited Team Members", status_code=200)

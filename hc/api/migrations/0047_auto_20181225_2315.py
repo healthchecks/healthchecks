@@ -6,14 +6,12 @@ import uuid
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('api', '0046_auto_20181218_1245'),
-    ]
+    dependencies = [("api", "0046_auto_20181218_1245")]
 
     operations = [
         migrations.AlterField(
-            model_name='channel',
-            name='code',
+            model_name="channel",
+            name="code",
             field=models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
-        ),
+        )
     ]

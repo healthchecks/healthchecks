@@ -6,7 +6,6 @@ from hc.test import BaseTestCase
 
 
 class PauseTestCase(BaseTestCase):
-
     def setUp(self):
         super(PauseTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project, status="up")
