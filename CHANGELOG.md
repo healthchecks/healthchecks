@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add the `prunetokenbucket` management command
+- Show check counts in JSON "badges" (#251)
 
 ### Bug Fixes
 - Fix badges for tags containing special characters (#240, #237)
