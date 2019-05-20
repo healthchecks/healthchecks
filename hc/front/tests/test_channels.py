@@ -106,3 +106,11 @@ class ChannelsTestCase(BaseTestCase):
 
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "SMS to +123")
+
+    def test_it_requires_current_project(self):
+        self.profile.current_project = None
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/")
+        self.assertRedirects(r, "/")

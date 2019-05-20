@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix badges for tags containing special characters (#240, #237)
+- Fix the "Integrations" page for when the user has no active project
 
 
 ## 1.7.0 - 2019-05-02

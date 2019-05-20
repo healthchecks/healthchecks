@@ -560,6 +560,11 @@ def badges(request, code):
 
 @login_required
 def channels(request):
+
+    if not request.project:
+        # This can happen when the user deletes their only project.
+        return redirect("hc-index")
+
     if request.method == "POST":
         code = request.POST["channel"]
         try:
