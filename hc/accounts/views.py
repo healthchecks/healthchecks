@@ -119,7 +119,12 @@ def login(request):
 
                 profile = Profile.objects.for_user(magic_form.user)
                 profile.send_instant_login_link(redirect_url=redirect_url)
-                return redirect("hc-login-link-sent")
+                response = redirect("hc-login-link-sent")
+
+                # check_token_submit looks for this cookie to decide if
+                # it needs to do the extra POST step.
+                response.set_cookie("auto-login", "1", max_age=300, httponly=True)
+                return response
 
     bad_link = request.session.pop("bad_link", None)
     ctx = {
@@ -169,12 +174,13 @@ def check_token(request, username, token):
         return _redirect_after_login(request)
 
     # Some email servers open links in emails to check for malicious content.
-    # To work around this, we sign user in if the method is POST.
+    # To work around this, we sign user in if the method is POST
+    # *or* if the browser presents a cookie we had set when sending the login link.
     #
     # If the method is GET, we instead serve a HTML form and a piece
     # of Javascript to automatically submit it.
 
-    if request.method == "POST":
+    if request.method == "POST" or "auto-login" in request.COOKIES:
         user = authenticate(username=username, token=token)
         if user is not None and user.is_active:
             user.profile.token = ""

@@ -8,9 +8,6 @@
 </head>
 <body>
 
-<form id="form" method="post">{% csrf_token %}</form>
-<script>document.getElementById("form").submit();</script>
-
 <style>
     body {
         font-family: Arial;
@@ -39,19 +36,17 @@
     }
 </style>
 
-<noscript>
-    <p>You are about to log into {% site_name %}.</p>
-    <p>Please press the button below to continue:</p>
-    <br />
-    <form method="post">
-        {% csrf_token %}
-        <input
-            id="submit-btn"
-            type="submit"
-            class="btn btn-lg btn-primary"
-            value="Continue to {% site_name %}">
-    </form>
-</noscript>
+<p>You are about to log into {% site_name %}.</p>
+<p>Please press the button below to continue:</p>
+<br />
+<form method="post">
+    {% csrf_token %}
+    <input
+        id="submit-btn"
+        type="submit"
+        class="btn btn-lg btn-primary"
+        value="Continue to {% site_name %}">
+</form>
 
 </body>
 </html>
