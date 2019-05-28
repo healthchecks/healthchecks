@@ -6,8 +6,8 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add the `prunetokenbucket` management command
 - Show check counts in JSON "badges" (#251)
-- Webhooks support PUT method (#249)
-- Webhooks can have different request bodies and headers for "up" and "events" (#249)
+- Webhooks support HTTP PUT (#249)
+- Webhooks can use different req. bodies and headers for "up" and "down" events. (#249)
 
 ### Bug Fixes
 - Fix badges for tags containing special characters (#240, #237)
