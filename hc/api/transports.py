@@ -178,22 +178,24 @@ class Webhook(HttpTransport):
         return False
 
     def notify(self, check):
-        url = self.channel.url_down
-        if check.status == "up":
-            url = self.channel.url_up
+        spec = self.channel.webhook_spec(check.status)
+        assert spec["url"]
 
-        assert url
-
-        url = self.prepare(url, check, urlencode=True)
+        url = self.prepare(spec["url"], check, urlencode=True)
         headers = {}
-        for key, value in self.channel.headers.items():
+        for key, value in spec["headers"].items():
             headers[key] = self.prepare(value, check)
 
-        if self.channel.post_data:
-            payload = self.prepare(self.channel.post_data, check)
-            return self.post(url, data=payload.encode(), headers=headers)
-        else:
+        body = spec["body"]
+        if body:
+            body = self.prepare(body, check)
+
+        if spec["method"] == "GET":
             return self.get(url, headers=headers)
+        elif spec["method"] == "POST":
+            return self.post(url, data=body.encode(), headers=headers)
+        elif spec["method"] == "PUT":
+            return self.put(url, data=body.encode(), headers=headers)
 
 
 class Slack(HttpTransport):

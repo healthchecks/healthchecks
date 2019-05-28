@@ -360,44 +360,62 @@ class Channel(models.Model):
         prio = int(parts[1])
         return PO_PRIORITIES[prio]
 
-    @property
-    def url_down(self):
+    def webhook_spec(self, status):
         assert self.kind == "webhook"
+
         if not self.value.startswith("{"):
             parts = self.value.split("\n")
-            return parts[0]
+            url_down = parts[0]
+            url_up = parts[1] if len(parts) > 1 else ""
+            post_data = parts[2] if len(parts) > 2 else ""
+
+            return {
+                "method": "POST" if post_data else "GET",
+                "url": url_down if status == "down" else url_up,
+                "body": post_data,
+                "headers": {},
+            }
 
         doc = json.loads(self.value)
-        return doc.get("url_down")
+        if "post_data" in doc:
+            # Legacy "post_data" in doc -- use the legacy fields
+            return {
+                "method": "POST" if doc["post_data"] else "GET",
+                "url": doc["url_down"] if status == "down" else doc["url_up"],
+                "body": doc["post_data"],
+                "headers": doc["headers"],
+            }
+
+        if status == "down" and "method_down" in doc:
+            return {
+                "method": doc["method_down"],
+                "url": doc["url_down"],
+                "body": doc["body_down"],
+                "headers": doc["headers_down"],
+            }
+        elif status == "up" and "method_up" in doc:
+            return {
+                "method": doc["method_up"],
+                "url": doc["url_up"],
+                "body": doc["body_up"],
+                "headers": doc["headers_up"],
+            }
+
+    @property
+    def down_webhook_spec(self):
+        return self.webhook_spec("down")
+
+    @property
+    def up_webhook_spec(self):
+        return self.webhook_spec("up")
+
+    @property
+    def url_down(self):
+        return self.down_webhook_spec["url"]
 
     @property
     def url_up(self):
-        assert self.kind == "webhook"
-        if not self.value.startswith("{"):
-            parts = self.value.split("\n")
-            return parts[1] if len(parts) > 1 else ""
-
-        doc = json.loads(self.value)
-        return doc.get("url_up")
-
-    @property
-    def post_data(self):
-        assert self.kind == "webhook"
-        if not self.value.startswith("{"):
-            parts = self.value.split("\n")
-            return parts[2] if len(parts) > 2 else ""
-
-        doc = json.loads(self.value)
-        return doc.get("post_data")
-
-    @property
-    def headers(self):
-        assert self.kind == "webhook"
-        if not self.value.startswith("{"):
-            return {}
-
-        doc = json.loads(self.value)
-        return doc.get("headers", {})
+        return self.up_webhook_spec["url"]
 
     @property
     def slack_team(self):

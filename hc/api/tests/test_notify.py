@@ -146,8 +146,8 @@ class NotifyTestCase(BaseTestCase):
         self.assertIsInstance(kwargs["data"], bytes)
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_handle_json_value(self, mock_request):
-        definition = {"url_down": "http://foo.com"}
+    def test_legacy_webhooks_handle_json_value(self, mock_request):
+        definition = {"url_down": "http://foo.com", "post_data": "", "headers": {}}
         self._setup_data("webhook", json.dumps(definition))
         self.channel.notify(self.check)
 
@@ -157,8 +157,8 @@ class NotifyTestCase(BaseTestCase):
         )
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_handle_json_up_event(self, mock_request):
-        definition = {"url_up": "http://bar"}
+    def test_legacy_webhooks_handle_json_up_event(self, mock_request):
+        definition = {"url_up": "http://bar", "post_data": "", "headers": {}}
 
         self._setup_data("webhook", json.dumps(definition), status="up")
         self.channel.notify(self.check)
@@ -167,7 +167,22 @@ class NotifyTestCase(BaseTestCase):
         mock_request.assert_called_with("get", "http://bar", headers=headers, timeout=5)
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_handle_post_headers(self, mock_request):
+    def test_webhooks_handle_json_up_event(self, mock_request):
+        definition = {
+            "method_up": "GET",
+            "url_up": "http://bar",
+            "body_up": "",
+            "headers_up": {}
+        }
+
+        self._setup_data("webhook", json.dumps(definition), status="up")
+        self.channel.notify(self.check)
+
+        headers = {"User-Agent": "healthchecks.io"}
+        mock_request.assert_called_with("get", "http://bar", headers=headers, timeout=5)
+
+    @patch("hc.api.transports.requests.request")
+    def test_legacy_webhooks_handle_post_headers(self, mock_request):
         definition = {
             "url_down": "http://foo.com",
             "post_data": "data",
@@ -183,9 +198,27 @@ class NotifyTestCase(BaseTestCase):
         )
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_handle_get_headers(self, mock_request):
+    def test_webhooks_handle_post_headers(self, mock_request):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://foo.com",
+            "body_down": "data",
+            "headers_down": {"Content-Type": "application/json"},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
+        self.channel.notify(self.check)
+
+        headers = {"User-Agent": "healthchecks.io", "Content-Type": "application/json"}
+        mock_request.assert_called_with(
+            "post", "http://foo.com", data=b"data", headers=headers, timeout=5
+        )
+
+    @patch("hc.api.transports.requests.request")
+    def test_legacy_webhooks_handle_get_headers(self, mock_request):
         definition = {
             "url_down": "http://foo.com",
+            "post_data": "",
             "headers": {"Content-Type": "application/json"},
         }
 
@@ -198,10 +231,45 @@ class NotifyTestCase(BaseTestCase):
         )
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_allow_user_agent_override(self, mock_request):
+    def test_webhooks_handle_get_headers(self, mock_request):
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://foo.com",
+            "body_down": "",
+            "headers_down": {"Content-Type": "application/json"},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
+        self.channel.notify(self.check)
+
+        headers = {"User-Agent": "healthchecks.io", "Content-Type": "application/json"}
+        mock_request.assert_called_with(
+            "get", "http://foo.com", headers=headers, timeout=5
+        )
+
+    @patch("hc.api.transports.requests.request")
+    def test_legacy_webhooks_allow_user_agent_override(self, mock_request):
         definition = {
             "url_down": "http://foo.com",
+            "post_data": "",
             "headers": {"User-Agent": "My-Agent"},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
+        self.channel.notify(self.check)
+
+        headers = {"User-Agent": "My-Agent"}
+        mock_request.assert_called_with(
+            "get", "http://foo.com", headers=headers, timeout=5
+        )
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_allow_user_agent_override(self, mock_request):
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://foo.com",
+            "body_down": "",
+            "headers_down": {"User-Agent": "My-Agent"},
         }
 
         self._setup_data("webhook", json.dumps(definition))
@@ -215,8 +283,10 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_webhooks_support_variables_in_headers(self, mock_request):
         definition = {
+            "method_down": "GET",
             "url_down": "http://foo.com",
-            "headers": {"X-Message": "$NAME is DOWN"},
+            "body_down": "",
+            "headers_down": {"X-Message": "$NAME is DOWN"},
         }
 
         self._setup_data("webhook", json.dumps(definition))

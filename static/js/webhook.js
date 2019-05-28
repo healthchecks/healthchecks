@@ -1,25 +1,15 @@
 $(function() {
-    function haveBlankHeaderForm() {
-        return $("#webhook-headers .webhook-header").filter(function() {
-            var key = $(".key", this).val();
-            var value = $(".value", this).val();
-            return !key && !value;
-        }).length;
-    }
+    $("#method-down").change(function() {
+        var method = this.value;
+        $("#body-down-group").toggle(method != "GET");
+    });
 
-    function ensureBlankHeaderForm() {
-        if (!haveBlankHeaderForm()) {
-            var tmpl = $("#header-template").html();
-            $("#webhook-headers").append(tmpl);
-        }
-    }
+    $("#method-up").change(function() {
+        var method = this.value;
+        $("#body-up-group").toggle(method != "GET");
+    });
 
-    $("#webhook-headers").on("click", "button", function(e) {
-        e.preventDefault();
-        $(this).closest(".webhook-header").remove();
-        ensureBlankHeaderForm();
-    })
-
-    $("#webhook-headers").on("keyup", "input", ensureBlankHeaderForm);
-    ensureBlankHeaderForm();
+    // On page load, check if we need to show "request body" fields
+    $("#method-down").trigger("change");
+    $("#method-up").trigger("change");
 });

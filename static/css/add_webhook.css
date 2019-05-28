@@ -2,3 +2,39 @@
     border-color: #a94442;
 }
 
+#add-webhook-form div.bootstrap-select {
+    width: 100px;
+}
+
+.method-url-group {
+    display: flex;
+}
+
+.method-url-group > div.dropdown button {
+    border-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+}
+
+.method-url-group input {
+    z-index: 1;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+#webhook-variables tr:first-child th, #webhook-variables tr:first-child td {
+    border-top: 0;
+}
+
+#webhook-variables th {
+    white-space: nowrap;
+}
+
+.label-down {
+    color: #d9534f;
+}
+
+.label-up {
+    color: #5cb85c
+}

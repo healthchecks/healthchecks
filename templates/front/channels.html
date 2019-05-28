@@ -398,30 +398,38 @@
                     </div>
 
                     {% if ch.kind == "webhook" %}
+                    {% with ch.down_webhook_spec as spec %}
+                        {% if spec.url %}
+                            <p><strong>Execute on "down" events:</strong></p>
+                            <pre>{{ spec.method }} {{ spec.url }}</pre>
+                            {% if spec.body %}
+                                <p>Request Body</p>
+                                <pre>{{ spec.body }}</pre>
+                            {% endif %}
 
-                    {% if ch.url_down %}
-                        <p><strong>URL for "down" events</strong></p>
-                        <pre>{{ ch.url_down }}</pre>
+                            {% if spec.headers %}
+                                <p>Request Headers</p>
+                                <pre>{{ spec.headers|format_headers }}</pre>
+                            {% endif %}
+                        {% endif %}
+                        {% endwith %}
+
+                        {% with ch.up_webhook_spec as spec %}
+                        {% if spec.url %}
+                            <p><strong>Execute on "up" events:</strong></p>
+                            <pre>{{ spec.method }} {{ spec.url }}</pre>
+                            {% if spec.body %}
+                                <p>Request Body</p>
+                                <pre>{{ spec.body }}</pre>
+                            {% endif %}
+
+                            {% if spec.headers %}
+                                <p>Request Headers</p>
+                                <pre>{{ spec.headers|format_headers }}</pre>
+                            {% endif %}
+                        {% endif %}
+                    {% endwith %}
                     {% endif %}
-
-                    {% if ch.url_up %}
-                        <p><strong>URL for "up" events</strong></p>
-                        <pre>{{ ch.url_up }}</pre>
-                    {% endif %}
-
-                    {% if ch.post_data %}
-                        <p><strong>POST data</strong></p>
-                        <pre>{{ ch.post_data }}</pre>
-                    {% endif %}
-
-
-                    {% for k, v in ch.headers.items %}
-                    <p><strong>Header <code>{{ k }}</code></strong></p>
-                    <pre>{{ v }}</pre>
-                    {% endfor %}
-                    {% endif %}
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

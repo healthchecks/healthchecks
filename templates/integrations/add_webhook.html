@@ -6,168 +6,201 @@
 
 {% block content %}
 <div class="row">
-<div class="col-sm-12">
-    <h1>Webhook</h1>
+    <div class="col-sm-12">
+        <h1>Webhook</h1>
 
-    <p>Runs a HTTP GET or HTTP POST to your specified URL when a check
-    goes up or down. Uses GET by default, and uses POST if you specify
-    any POST data.</p>
+        <p>Executes an HTTP request to your specified URL when a check
+        goes up or down.</p>
 
-    <p>You can use the following variables in webhook URLs:</p>
-    <table class="table webhook-variables">
-        <tr>
-            <th class="variable-column">Variable</th>
-            <td>Will be replaced with…</td>
-        </tr>
-        <tr>
-            <th><code>$CODE</code></th>
-            <td>The UUID code of the check</td>
-        </tr>
-        <tr>
-            <th><code>$NAME</code></th>
-            <td>Name of the check</td>
-        </tr>
-        <tr>
-            <th><code>$NOW</code></th>
-            <td>
-                Current UTC time in ISO8601 format.
-                Example: "{{ now }}"
-            </td>
-        </tr>
-        <tr>
-            <th><code>$STATUS</code></th>
-            <td>Check's current status ("up" or "down")</td>
-        </tr>
-        <tr>
-            <th><code>$TAG1, $TAG2, …</code></th>
-            <td>Value of the first tag, the second tag, …</td>
-        </tr>
-    </table>
+        <p>
+            You can use placeholders <strong>$NAME</strong>, <strong>$STATUS</strong> and others in webhook URLs,
+            request body and header values
+            <a href="#" data-toggle="modal" data-target="#reference-modal">(quick reference)</a>.
+        </p>
 
-    <p>For example, a callback URL using variables might look like so:
-    <pre>http://requestb.in/1hhct291?message=<strong>$NAME</strong>:<strong>$STATUS</strong></pre>
-
-    <p>
-        After encoding and replacing the variables, {% site_name %} would then call:
-    </p>
-    <pre>http://requestb.in/1hhct291?message=<strong>My%20Check</strong>:<strong>down</strong></pre>
-
-    <h2>Integration Settings</h2>
-
-    <form method="post" class="form-horizontal">
+        <form id="add-webhook-form" method="post">
         {% csrf_token %}
-        <input type="hidden" name="kind" value="webhook" />
-        <div class="form-group {{ form.url_down.css_classes }}">
-            <label class="col-sm-2 control-label">URL for "down" events</label>
-            <div class="col-sm-10">
-                <input
-                    type="text"
-                    class="form-control"
-                    name="url_down"
-                    placeholder="http://..."
-                    value="{{ form.url_down.value|default:"" }}">
+
+        <div class="row">
+        <div class="col-sm-6">
+            <h2>Execute when a check goes <strong class="label-down">down</strong></h2>
+            <br />
+
+            <div class="form-group {{ form.url_down.css_classes }}">
+                <label>URL</label>
+                <div class="method-url-group">
+                    <select id="method-down" name="method_down" class="selectpicker">
+                        <option{% if form.method_down.value == "GET" %} selected{% endif %}>GET</option>
+                        <option{% if form.method_down.value == "POST" %} selected{% endif %}>POST</option>
+                        <option{% if form.method_down.value == "PUT" %} selected{% endif %}>PUT</option>
+                    </select>
+                    <input
+                        name="url_down"
+                        value="{{ form.url_down.value|default:"" }}"
+                        type="text"
+                        class="form-control"
+                        placeholder="https://..." />
+                </div>
                 {% if form.url_down.errors %}
                 <div class="help-block">
                     {{ form.url_down.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>
-        </div>
-        <div class="form-group {{ form.url_up.css_classes }}">
-            <label class="col-sm-2 control-label">URL for "up" events</label>
-            <div class="col-sm-10">
-                <input
-                    type="text"
+
+            <div id="body-down-group" class="form-group {{ form.body_down.css_classes }}" style="display: none">
+                <label class="control-label">Request Body</label>
+                <textarea
                     class="form-control"
-                    name="url_up"
-                    placeholder="http://..."
-                    value="{{ form.url_up.value|default:"" }}">
+                    rows="3"
+                    name="body_down"
+                    placeholder='{"status": "$STATUS"}'>{{ form.body_down.value|default:"" }}</textarea>
+                {% if form.body_down.errors %}
+                <div class="help-block">
+                    {{ form.body_down.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group {{ form.headers_down.css_classes }}">
+                <label class="control-label">Request Headers</label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="headers_down"
+                    placeholder="X-Sample-Header: $NAME has gone down">{{ form.headers_down.value|default:"" }}</textarea>
+                <div class="help-block">
+                    {% if form.headers_down.errors %}
+                        {{ form.headers_down.errors|join:"" }}
+                    {% else %}
+                        Optional "Header-Name: value" pairs, one pair per line.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <h2>Execute when a check goes <strong class="label-up">up</strong></h2>
+            <br />
+            <div class="form-group {{ form.url_up.css_classes }}">
+                <label>URL</label>
+                <div class="method-url-group">
+                    <select id="method-up" name="method_up" class="selectpicker">
+                        <option{% if form.method_up.value == "GET" %} selected{% endif %}>GET</option>
+                        <option{% if form.method_up.value == "POST" %} selected{% endif %}>POST</option>
+                        <option{% if form.method_up.value == "PUT" %} selected{% endif %}>PUT</option>
+                    </select>
+                    <input
+                        name="url_up"
+                        value="{{ form.url_up.value|default:"" }}"
+                        type="text"
+                        class="form-control"
+                        placeholder="https://..." />
+                </div>
+
                 {% if form.url_up.errors %}
                 <div class="help-block">
                     {{ form.url_up.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>
-        </div>
-        <div class="form-group {{ form.post_data.css_classes }}">
-            <label class="col-sm-2 control-label">POST data</label>
-            <div class="col-sm-10">
-                <input
-                    type="text"
+            <div id="body-up-group" class="form-group {{ form.body_up.css_classes }}" style="display: none">
+                <label class="control-label">Request Body</label>
+                <textarea
                     class="form-control"
-                    name="post_data"
-                    placeholder='{"status": "$STATUS"}'
-                    value="{{ form.post_data.value|default:"" }}">
+                    rows="3"
+                    name="body_up"
+                    placeholder='{"status": "$STATUS"}'>{{ form.body_up.value|default:"" }}</textarea>
                 {% if form.post_data.errors %}
                 <div class="help-block">
                     {{ form.post_data.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">Request Headers</label>
-            <div class="col-xs-12 col-sm-10">
-                <div id="webhook-headers">
-                    {% for k, v in form.headers.items %}
-                    <div class="form-inline webhook-header">
-                        <input
-                            type="text"
-                            class="form-control key {% if k in form.invalid_header_names %}error{% endif %}"
-                            name="header_key[]"
-                            placeholder="Content-Type"
-                            value="{{ k }}" />
-                        <input
-                            type="text"
-                            class="form-control value"
-                            name="header_value[]"
-                            placeholder="application/json"
-                            value="{{ v }}" />
-                            <button class="btn btn-default" type="button">
-                                <span class="icon-delete"></span>
-                            </button>
-                    </div>
-                    {% endfor %}
+
+            <div class="form-group {{ form.headers_up.css_classes }}">
+                <label class="control-label">Request Headers</label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="headers_up"
+                    placeholder="X-Sample-Header: $NAME is back up">{{ form.headers_up.value|default:"" }}</textarea>
+                <div class="help-block">
+                    {% if form.headers_up.errors %}
+                        {{ form.headers_up.errors|join:"" }}
+                    {% else %}
+                        Optional "Header-Name: value" pairs, one pair per line.
+                    {% endif %}
                 </div>
-                {% if form.invalid_header_names %}
-                <div class="text-danger">
-                    Please use valid HTTP header names.
-                </div>
-                {% endif %}
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+        </div>
+
+        <div class="form-group" class="clearfix">
+            <br>
+            <br>
+            <div class="text-right">
                 <button type="submit" class="btn btn-primary">Save Integration</button>
             </div>
         </div>
-    </form>
-</div>
-</div>
+        </form>
 
-<div id="header-template" class="hide">
-    <div class="form-inline webhook-header">
-        <input
-            type="text"
-            class="form-control key"
-            name="header_key[]"
-            placeholder="Content-Type" />
-        <input
-            type="text"
-            class="form-control value"
-            name="header_value[]"
-            placeholder="application/json" />
-            <button class="btn btn-default" type="button">
-                <span class="icon-delete"></span>
-            </button>
     </div>
 </div>
+
+<div id="reference-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Supported Placeholders</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    You can use the below placeholders in webhook URL, request body
+                    and header values.  {% site_name %} will replace the placeholders
+                    with the correct values.
+                </p>
+
+                <table id="webhook-variables" class="table modal-body">
+                    <tr>
+                        <th><code>$CODE</code></th>
+                        <td>The UUID code of the check</td>
+                    </tr>
+                    <tr>
+                        <th><code>$NAME</code></th>
+                        <td>Name of the check</td>
+                    </tr>
+                    <tr>
+                        <th><code>$NOW</code></th>
+                        <td>
+                            Current UTC time in ISO8601 format.
+                            Example: "{{ now }}"
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><code>$STATUS</code></th>
+                        <td>Check's current status ("up" or "down")</td>
+                    </tr>
+                    <tr>
+                        <th><code>$TAG1, $TAG2, …</code></th>
+                        <td>Value of the first tag, the second tag, …</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Got It!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'js/webhook.js' %}"></script>
 {% endcompress %}
 {% endblock %}
