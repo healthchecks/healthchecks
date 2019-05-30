@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Show check counts in JSON "badges" (#251)
 - Webhooks support HTTP PUT (#249)
 - Webhooks can use different req. bodies and headers for "up" and "down" events. (#249)
+- Show check's code instead of full URL on 992px - 1200px wide screens. (#253)
 
 ### Bug Fixes
 - Fix badges for tags containing special characters (#240, #237)

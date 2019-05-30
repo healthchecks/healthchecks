@@ -21,7 +21,10 @@
             </a>
             {% endif %}
         </th>
-        <th class="hidden-xs hidden-sm">Ping URL</th>
+        <th class="hidden-xs hidden-sm">
+            <span class="visible-lg">Ping URL</span>
+            <span class="visible-md">Code</span>
+        </th>
         <th class="th-integrations hidden-xs">Integrations</th>
         <th class="th-period hidden-xs">
             Period <br />
@@ -68,7 +71,7 @@
         </td>
         <td class="url-cell hidden-xs hidden-sm">
             <span class="my-checks-url">
-                <span class="base">{{ ping_endpoint }}</span>{{ check.code }}
+                <span class="base hidden-md">{{ ping_endpoint }}</span>{{ check.code }}
             </span>
             <button
                 class="copy-link hidden-sm"
