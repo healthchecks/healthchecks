@@ -281,6 +281,33 @@ test them on a copy of your database, not on the live database right away.
 In a production setup, you should also have regular, automated database
 backups set up.
 
+
+## Deployment
+
+### Docker
+
+To run the app, you can:
+
+    $ docker build -t healthchecks:latest .
+
+    $ docker volume create \
+	--driver local \
+	--opt type=tmpfs \
+	--opt device=tmpfs \
+	--opt o=uid=900,gid=900 \
+	healthchecks
+
+    $ docker run -d \
+	--name healthchecks \
+	--mount source=healthchecks,target=/data \
+	-p 8000:8000 \
+	healthchecks:latest
+
+to migrate the db:
+
+    $ docker exec healthchecks ./manage.py migrate
+
+
 ## Integrations
 
 ### Discord
