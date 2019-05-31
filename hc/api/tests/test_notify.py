@@ -522,7 +522,7 @@ class NotifyTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
+        self.assertEqual(Notification.objects.count(), 1)
 
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
@@ -575,3 +575,51 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         self.assertTrue(mock_post.called)
+
+    @patch("hc.api.transports.requests.request")
+    def test_whatsapp(self, mock_post):
+        definition = {"value": "+1234567890", "up": True, "down": True}
+
+        self._setup_data("whatsapp", json.dumps(definition))
+        self.check.last_ping = now() - td(hours=2)
+
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 1)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertEqual(payload["To"], "whatsapp:+1234567890")
+
+        # sent SMS counter should go up
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.sms_sent, 1)
+
+    @patch("hc.api.transports.requests.request")
+    def test_whatsapp_obeys_up_down_flags(self, mock_post):
+        definition = {"value": "+1234567890", "up": True, "down": False}
+
+        self._setup_data("whatsapp", json.dumps(definition))
+        self.check.last_ping = now() - td(hours=2)
+
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 0)
+
+        self.assertFalse(mock_post.called)
+
+    @patch("hc.api.transports.requests.request")
+    def test_whatsapp_limit(self, mock_post):
+        # At limit already:
+        self.profile.last_sms_date = now()
+        self.profile.sms_sent = 50
+        self.profile.save()
+
+        definition = {"value": "+1234567890", "up": True, "down": True}
+        self._setup_data("whatsapp", json.dumps(definition))
+
+        self.channel.notify(self.check)
+        self.assertFalse(mock_post.called)
+
+        n = Notification.objects.get()
+        self.assertTrue("Monthly message limit exceeded" in n.error)

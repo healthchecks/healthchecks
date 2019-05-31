@@ -133,6 +133,8 @@ class AddSmsForm(forms.Form):
     error_css_class = "has-error"
     label = forms.CharField(max_length=100, required=False)
     value = forms.CharField(max_length=16, validators=[phone_validator])
+    down = forms.BooleanField(required=False, initial=True)
+    up = forms.BooleanField(required=False, initial=True)
 
 
 class ChannelNameForm(forms.Form):

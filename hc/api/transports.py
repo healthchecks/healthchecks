@@ -415,6 +415,33 @@ class Sms(HttpTransport):
         return self.post(url, data=data, auth=auth)
 
 
+class WhatsApp(HttpTransport):
+    URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
+
+    def is_noop(self, check):
+        if check.status == "down":
+            return not self.channel.whatsapp_notify_down
+        else:
+            return not self.channel.whatsapp_notify_up
+
+    def notify(self, check):
+        profile = Profile.objects.for_user(self.channel.project.owner)
+        if not profile.authorize_sms():
+            return "Monthly message limit exceeded"
+
+        url = self.URL % settings.TWILIO_ACCOUNT
+        auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
+        text = tmpl("whatsapp_message.html", check=check, site_name=settings.SITE_NAME)
+
+        data = {
+            "From": "whatsapp:%s" % settings.TWILIO_FROM,
+            "To": "whatsapp:%s" % self.channel.sms_number,
+            "Body": text,
+        }
+
+        return self.post(url, data=data, auth=auth)
+
+
 class Trello(HttpTransport):
     URL = "https://api.trello.com/1/cards"
 

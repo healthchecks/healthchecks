@@ -127,6 +127,7 @@ Configurations settings loaded from environment variables:
 | TWILIO_ACCOUNT | `None`
 | TWILIO_AUTH | `None`
 | TWILIO_FROM | `None`
+| TWILIO_USE_WHATSAPP | `"False"`
 | PD_VENDOR_KEY | `None`
 | TRELLO_APP_KEY | `None`
 | MATRIX_HOMESERVER | `None`

@@ -39,6 +39,7 @@ CHANNEL_KINDS = (
     ("zendesk", "Zendesk"),
     ("trello", "Trello"),
     ("matrix", "Matrix"),
+    ("whatsapp", "WhatsApp"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -328,6 +329,8 @@ class Channel(models.Model):
             return transports.Trello(self)
         elif self.kind == "matrix":
             return transports.Matrix(self)
+        elif self.kind == "whatsapp":
+            return transports.WhatsApp(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -495,7 +498,7 @@ class Channel(models.Model):
 
     @property
     def sms_number(self):
-        assert self.kind == "sms"
+        assert self.kind in ("sms", "whatsapp")
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["value"]
@@ -555,6 +558,18 @@ class Channel(models.Model):
 
         doc = json.loads(self.value)
         return doc.get("down")
+
+    @property
+    def whatsapp_notify_up(self):
+        assert self.kind == "whatsapp"
+        doc = json.loads(self.value)
+        return doc["up"]
+
+    @property
+    def whatsapp_notify_down(self):
+        assert self.kind == "whatsapp"
+        doc = json.loads(self.value)
+        return doc["down"]
 
 
 class Notification(models.Model):

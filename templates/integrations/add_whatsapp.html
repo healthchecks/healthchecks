@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Notification Channels - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>WhatsApp</h1>
+
+    <p>
+        Get a WhatsApp message when a check goes up or down.
+    </p>
+
+    {% if show_pricing and profile.sms_limit == 0 %}
+    <p class="alert alert-info">
+        <strong>Paid plan required.</strong>
+        WhatsApp messaging is not available on the free plan–sending the messages
+        cost too much! Please upgrade to a
+        <a href="{% url 'hc-billing' %}">paid plan</a> to enable WhatsApp messaging.
+    </p>
+    {% endif %}
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal" action="{% url 'hc-add-whatsapp' %}">
+        {% csrf_token %}
+        <div class="form-group {{ form.label.css_classes }}">
+            <label for="id_label" class="col-sm-2 control-label">Label</label>
+            <div class="col-sm-6">
+                <input
+                    id="id_label"
+                    type="text"
+                    class="form-control"
+                    name="label"
+                    placeholder="Alice's Phone"
+                    value="{{ form.label.value|default:"" }}">
+
+                {% if form.label.errors %}
+                <div class="help-block">
+                    {{ form.label.errors|join:"" }}
+                </div>
+                {% else %}
+                <span class="help-block">
+                    Optional. If you add multiple phone numbers,
+                    the labels will help you tell them apart.
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group {{ form.value.css_classes }}">
+            <label for="id_number" class="col-sm-2 control-label">Phone Number</label>
+            <div class="col-sm-3">
+                <input
+                    id="id_number"
+                    type="tel"
+                    class="form-control"
+                    name="value"
+                    placeholder="+1234567890"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.value.errors %}
+                <div class="help-block">
+                    {{ form.value.errors|join:"" }}
+                </div>
+                {% else %}
+                <span class="help-block">
+                    Make sure the phone number starts with "+" and  has the
+                    country code.
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="add-email-notify-group" class="form-group">
+            <label class="col-sm-2 control-label">Notify When</label>
+            <div class="col-sm-10">
+                <label class="checkbox-container">
+                    <input
+                        type="checkbox"
+                        name="down"
+                        value="true"
+                        {% if form.down.value %} checked {% endif %}>
+                    <span class="checkmark"></span>
+                    A check goes <strong>down</strong>
+                </label>
+                <label class="checkbox-container">
+                    <input
+                        type="checkbox"
+                        name="up"
+                        value="true"
+                        {% if form.up.value %} checked {% endif %}>
+                    <span class="checkmark"></span>
+                    A check goes <strong>up</strong>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

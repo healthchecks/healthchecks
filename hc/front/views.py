@@ -232,6 +232,7 @@ def index(request):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
@@ -603,6 +604,7 @@ def channels(request):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
@@ -1220,6 +1222,39 @@ def add_sms(request):
         "profile": request.project.owner_profile,
     }
     return render(request, "integrations/add_sms.html", ctx)
+
+
+@login_required
+def add_whatsapp(request):
+    if not settings.TWILIO_USE_WHATSAPP:
+        raise Http404("whatsapp integration is not available")
+
+    if request.method == "POST":
+        form = AddSmsForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="whatsapp")
+            channel.name = form.cleaned_data["label"]
+            channel.value = json.dumps(
+                {
+                    "value": form.cleaned_data["value"],
+                    "up": form.cleaned_data["up"],
+                    "down": form.cleaned_data["down"],
+                }
+            )
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddSmsForm()
+
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form,
+        "profile": request.project.owner_profile,
+    }
+    return render(request, "integrations/add_whatsapp.html", ctx)
 
 
 @login_required

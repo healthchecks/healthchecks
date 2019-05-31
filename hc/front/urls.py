@@ -39,6 +39,7 @@ channel_urls = [
     path("telegram/bot/", views.telegram_bot, name="hc-telegram-webhook"),
     path("add_telegram/", views.add_telegram, name="hc-add-telegram"),
     path("add_sms/", views.add_sms, name="hc-add-sms"),
+    path("add_whatsapp/", views.add_whatsapp, name="hc-add-whatsapp"),
     path("add_trello/", views.add_trello, name="hc-add-trello"),
     path("add_trello/settings/", views.trello_settings, name="hc-trello-settings"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),

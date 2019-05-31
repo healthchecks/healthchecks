@@ -15,8 +15,8 @@
 {% endif %}
 
 <div class="col-sm-12">
+    {% if channels %}
     <table class="table channels-table">
-        {% if channels %}
         <tr>
             <th></th>
             <th class="th-name">Name, Details</th>
@@ -90,6 +90,14 @@
                             list <span>{{ ch.trello_board_list|last }}</span>
                         {% elif ch.kind == "matrix" %}
                             Matrix <span>{{ ch.value }}</span>
+                        {% elif ch.kind == "whatsapp" %}
+                            WhatsApp to <span>{{ ch.sms_number }}</span>
+                            {% if ch.whatsapp_notify_down and not ch.whatsapp_notify_up %}
+                                (down only)
+                            {% endif %}
+                            {% if ch.whatsapp_notify_up and not ch.whatsapp_notify_down %}
+                                (up only)
+                            {% endif %}
                         {% else %}
                             {{ ch.kind }}
                         {% endif %}
@@ -127,7 +135,7 @@
                 {% else %}
                 Never
                 {% endif %}
-                {% if ch.kind == "sms" %}
+                {% if ch.kind == "sms" or ch.kind == "whatsapp" %}
                     <p>Used {{ profile.sms_sent_this_month }} of {{ profile.sms_limit }} sends this month.</p>
                 {% endif %}
             </td>
@@ -156,8 +164,12 @@
         </tr>
         {% endwith %}
         {% endfor %}
-        {% endif %}
     </table>
+    {% else %}
+        <div class="alert alert-info">
+            The project <strong>{{ project }}</strong> has no integrations set up yet.
+        </div>
+    {% endif %}
 
 
     <h1 class="ai-title">Add More</h1>
@@ -310,6 +322,17 @@
             <p>Post notifications to a Matrix room.</p>
 
             <a href="{% url 'hc-add-matrix' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+        {% if enable_whatsapp %}
+        <li>
+            <img src="{% static 'img/integrations/whatsapp.png' %}"
+                class="icon" alt="WhatsApp icon" />
+
+            <h2>WhatsApp {% if use_payments %}<small>(paid plans)</small>{% endif %}</h2>
+            <p>Get a WhatsApp message when a check goes up or down.</p>
+
+            <a href="{% url 'hc-add-whatsapp' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
         <li class="link-to-github">

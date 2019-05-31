@@ -187,10 +187,11 @@ PUSHBULLET_CLIENT_SECRET = os.getenv("PUSHBULLET_CLIENT_SECRET")
 TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "ExampleBot")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
-# SMS (Twilio) integration
+# SMS and WhatsApp (Twilio) integration
 TWILIO_ACCOUNT = os.getenv("TWILIO_ACCOUNT")
 TWILIO_AUTH = os.getenv("TWILIO_AUTH")
 TWILIO_FROM = os.getenv("TWILIO_FROM")
+TWILIO_USE_WHATSAPP = envbool("TWILIO_USE_WHATSAPP", "False")
 
 # PagerDuty
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
