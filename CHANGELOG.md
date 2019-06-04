@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Webhooks can use different req. bodies and headers for "up" and "down" events. (#249)
 - Show check's code instead of full URL on 992px - 1200px wide screens. (#253)
 - Add WhatsApp integration (uses Twilio same as the SMS integration)
+- Webhooks support the $TAGS placeholder
 
 ### Bug Fixes
 - Fix badges for tags containing special characters (#240, #237)

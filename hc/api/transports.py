@@ -13,7 +13,7 @@ def tmpl(template_name, **ctx):
     template_path = "integrations/%s" % template_name
     # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
     # and cost twice the money.
-    return render_to_string(template_path, ctx).strip().replace(u"\xa0", " ")
+    return render_to_string(template_path, ctx).strip().replace("\xa0", " ")
 
 
 class Transport(object):
@@ -160,6 +160,9 @@ class Webhook(HttpTransport):
 
         if "$NAME" in result:
             result = result.replace("$NAME", safe(check.name))
+
+        if "$TAGS" in result:
+            result = result.replace("$TAGS", safe(check.tags))
 
         if "$TAG" in result:
             for i, tag in enumerate(check.tags_list()):

@@ -33,7 +33,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         mock_get.assert_called_with(
             "get",
-            u"http://example",
+            "http://example",
             headers={"User-Agent": "healthchecks.io"},
             timeout=5,
         )
@@ -73,6 +73,19 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 500")
 
     @patch("hc.api.transports.requests.request")
+    def test_webhooks_support_tags(self, mock_get):
+        template = "http://host/$TAGS"
+        self._setup_data("webhook", template)
+        self.check.tags = "foo bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args[0], "get")
+        self.assertEqual(args[1], "http://host/foo%20bar")
+
+    @patch("hc.api.transports.requests.request")
     def test_webhooks_support_variables(self, mock_get):
         template = "http://host/$CODE/$STATUS/$TAG1/$TAG2/?name=$NAME"
         self._setup_data("webhook", template)
@@ -82,7 +95,7 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        url = u"http://host/%s/down/foo/bar/?name=Hello%%20World" % self.check.code
+        url = "http://host/%s/down/foo/bar/?name=Hello%%20World" % self.check.code
 
         args, kwargs = mock_get.call_args
         self.assertEqual(args[0], "get")
@@ -118,7 +131,7 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        url = u"http://host/%24TAG1"
+        url = "http://host/%24TAG1"
         mock_get.assert_called_with(
             "get", url, headers={"User-Agent": "healthchecks.io"}, timeout=5
         )
@@ -135,7 +148,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_unicode_post_body(self, mock_request):
-        template = u"http://example.com\n\n(╯°□°）╯︵ ┻━┻"
+        template = "http://example.com\n\n(╯°□°）╯︵ ┻━┻"
         self._setup_data("webhook", template)
         self.check.save()
 
@@ -527,7 +540,7 @@ class NotifyTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
-        self.assertFalse(u"\xa0" in payload["Body"])
+        self.assertFalse("\xa0" in payload["Body"])
 
         # sent SMS counter should go up
         self.profile.refresh_from_db()
