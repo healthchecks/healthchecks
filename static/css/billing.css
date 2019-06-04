@@ -82,4 +82,7 @@
     margin-top: 20px;
 }
 
+.text-muted code {
+    color: #777;
+}
 

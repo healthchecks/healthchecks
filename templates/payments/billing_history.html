@@ -4,12 +4,13 @@
         <th>Date</th>
         <th>Payment Method</th>
         <th>Amount</th>
+        <th>Type</th>
         <th>Status</th>
         <th></th>
     </tr>
     {% for tx in transactions %}
-        <tr>
-            <td>{{ tx.created_at }}</td>
+        <tr {% if tx.type == "credit" %}class="text-muted"{% endif %}>
+            <td title="{{ tx.created_at }}">{{ tx.created_at|date:"N j, Y" }}</td>
             <td>
                 {% if tx.payment_instrument_type == "paypal_account" %}
                 Paypal from {{ tx.paypal.payer_email }}
@@ -20,17 +21,19 @@
                 {% endif %}
             </td>
             <td>
-                {% if tx.currency_iso_code == "USD" %}
-                    ${{ tx.amount }}
-                {% elif tx.currency_iso_code == "EUR" %}
-                    €{{ tx.amount }}
+                {% if tx.type == "credit" %}
+                -{{ tx.amount }} {{ tx.currency_iso_code }}
                 {% else %}
-                    {{ tx.currency_iso_code }} {{ tx.amount }}
+                {{ tx.amount }} {{ tx.currency_iso_code }}
                 {% endif %}
             </td>
+            <td>{{ tx.type|capfirst }}</td>
             <td><code>{{ tx.status }}</code></td>
             <td>
+                {% if tx.type == "credit" %}
+                {% else %}
                 <a href="{% url 'hc-invoice-pdf' tx.id %}">PDF Invoice</a>
+                {% endif %}
             </td>
         </tr>
     {% endfor%}

@@ -1,5 +1,6 @@
 from mock import Mock, patch
 
+from django.utils.timezone import now
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 
@@ -15,8 +16,8 @@ class BillingHistoryTestCase(BaseTestCase):
     @patch("hc.payments.models.braintree")
     def test_it_works(self, mock_braintree):
 
-        m1 = Mock(id="abc123", amount=123)
-        m2 = Mock(id="def456", amount=456)
+        m1 = Mock(id="abc123", amount=123, created_at=now())
+        m2 = Mock(id="def456", amount=456, created_at=now())
         mock_braintree.Transaction.search.return_value = [m1, m2]
 
         self.client.login(username="alice@example.org", password="password")
