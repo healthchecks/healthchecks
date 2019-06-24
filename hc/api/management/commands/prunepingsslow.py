@@ -21,11 +21,11 @@ class Command(BaseCommand):
             Profile.objects.get_or_create(user_id=user.id)
 
         checks = Check.objects
-        checks = checks.annotate(limit=F("user__profile__ping_log_limit"))
+        checks = checks.annotate(limit=F("project__owner__profile__ping_log_limit"))
 
         for check in checks:
             q = Ping.objects.filter(owner_id=check.id)
-            q = q.filter(n__lt=check.n_pings - check.limit)
+            q = q.filter(n__lte=check.n_pings - check.limit)
             q = q.filter(n__gt=0)
             n_pruned, _ = q.delete()
 

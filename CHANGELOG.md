@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Fix badges for tags containing special characters (#240, #237)
 - Fix the "Integrations" page for when the user has no active project
 - Prevent email clients from opening the one-time login links (#255)
+- Fix `prunepings` and `prunepingsslow`, they got broken when adding Projects (#264)
 
 
 ## 1.7.0 - 2019-05-02
