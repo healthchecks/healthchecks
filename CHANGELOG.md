@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Show check's code instead of full URL on 992px - 1200px wide screens. (#253)
 - Add WhatsApp integration (uses Twilio same as the SMS integration)
 - Webhooks support the $TAGS placeholder
+- Don't include ping URLs in API responses when the read-only key is used
 
 ### Bug Fixes
 - Fix badges for tags containing special characters (#240, #237)

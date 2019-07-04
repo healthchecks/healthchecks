@@ -51,10 +51,3 @@ class ListChannelsTestCase(BaseTestCase):
 
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Email to Alice")
-
-    def test_readonly_key_works(self):
-        self.project.api_key_readonly = "R" * 32
-        self.project.save()
-
-        r = self.client.get("/api/v1/channels/", HTTP_X_API_KEY="R" * 32)
-        self.assertEqual(r.status_code, 200)

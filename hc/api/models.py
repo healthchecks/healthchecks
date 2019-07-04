@@ -167,25 +167,33 @@ class Check(models.Model):
     def matches_tag_set(self, tag_set):
         return tag_set.issubset(self.tags_list())
 
-    def to_dict(self):
-        update_rel_url = reverse("hc-api-update", args=[self.code])
-        pause_rel_url = reverse("hc-api-pause", args=[self.code])
-        channel_codes = [str(ch.code) for ch in self.channel_set.all()]
+    def channels_str(self):
+        """ Return a comma-separated string of assigned channel codes. """
+
+        codes = self.channel_set.order_by("code").values_list("code", flat=True)
+        return ",".join(map(str, codes))
+
+    def to_dict(self, readonly=False):
 
         result = {
             "name": self.name,
-            "ping_url": self.url(),
-            "update_url": settings.SITE_ROOT + update_rel_url,
-            "pause_url": settings.SITE_ROOT + pause_rel_url,
             "tags": self.tags,
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
             "status": self.get_status(),
-            "channels": ",".join(sorted(channel_codes)),
             "last_ping": isostring(self.last_ping),
             "next_ping": isostring(self.get_grace_start()),
-            "desc": self.desc,
         }
+
+        if not readonly:
+            update_rel_url = reverse("hc-api-update", args=[self.code])
+            pause_rel_url = reverse("hc-api-pause", args=[self.code])
+
+            result["ping_url"] = self.url()
+            result["update_url"] = settings.SITE_ROOT + update_rel_url
+            result["pause_url"] = settings.SITE_ROOT + pause_rel_url
+            result["channels"] = self.channels_str()
+            result["desc"] = self.desc
 
         if self.kind == "simple":
             result["timeout"] = int(self.timeout.total_seconds())

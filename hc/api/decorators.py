@@ -27,6 +27,7 @@ def authorize(f):
         except Project.DoesNotExist:
             return error("wrong api key", 401)
 
+        request.readonly = False
         return f(request, *args, **kwds)
 
     return wrapper
@@ -50,6 +51,7 @@ def authorize_read(f):
         except Project.DoesNotExist:
             return error("wrong api key", 401)
 
+        request.readonly = api_key == request.project.api_key_readonly
         return f(request, *args, **kwds)
 
     return wrapper
