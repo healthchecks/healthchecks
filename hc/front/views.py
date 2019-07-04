@@ -166,7 +166,6 @@ def my_checks(request, code):
         "num_available": project.num_checks_available(),
         "sort": request.profile.sort,
         "selected_tags": selected_tags,
-        "show_search": True,
         "search": search,
         "hidden_checks": hidden_checks,
     }
