@@ -178,6 +178,7 @@ class Check(models.Model):
         result = {
             "name": self.name,
             "tags": self.tags,
+            "desc": self.desc,
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
             "status": self.get_status(),
@@ -185,7 +186,10 @@ class Check(models.Model):
             "next_ping": isostring(self.get_grace_start()),
         }
 
-        if not readonly:
+        if readonly:
+            code_half = self.code.hex[:16]
+            result["unique_key"] = hashlib.sha1(code_half.encode()).hexdigest()
+        else:
             update_rel_url = reverse("hc-api-update", args=[self.code])
             pause_rel_url = reverse("hc-api-pause", args=[self.code])
 
@@ -193,7 +197,6 @@ class Check(models.Model):
             result["update_url"] = settings.SITE_ROOT + update_rel_url
             result["pause_url"] = settings.SITE_ROOT + pause_rel_url
             result["channels"] = self.channels_str()
-            result["desc"] = self.desc
 
         if self.kind == "simple":
             result["timeout"] = int(self.timeout.total_seconds())
