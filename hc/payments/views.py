@@ -1,5 +1,6 @@
 from io import BytesIO
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import (
@@ -33,7 +34,11 @@ def pricing(request):
     # subscription object is not created just by viewing a page.
     sub = Subscription.objects.filter(user_id=request.user.id).first()
 
-    ctx = {"page": "pricing", "sub": sub}
+    ctx = {
+        "page": "pricing",
+        "sub": sub,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
+    }
     return render(request, "payments/pricing.html", ctx)
 
 
