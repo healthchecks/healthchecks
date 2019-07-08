@@ -1,0 +1,28 @@
+{
+  "checks": [
+    {
+      "desc": "Longer free-form description goes here",
+      "grace": 900,
+      "last_ping": "2017-01-04T13:24:39.903464+00:00",
+      "n_pings": 1,
+      "name": "Api test 1",
+      "status": "up",
+      "tags": "foo",
+      "timeout": 3600,
+      "unique_key": "2872190d95224bad120f41d3c06aab94b8175bb6"
+    },
+    {
+      "desc": "",
+      "grace": 3600,
+      "last_ping": null,
+      "n_pings": 0,
+      "name": "Api test 2",
+      "next_ping": null,
+      "schedule": "0/10 * * * *",
+      "status": "new",
+      "tags": "bar baz",
+      "tz": "UTC",
+      "unique_key": "9b5fc29129560ff2c5c1803803a7415e4f80cf7e"
+    }
+  ]
+}
