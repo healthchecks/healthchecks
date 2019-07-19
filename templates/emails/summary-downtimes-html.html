@@ -66,13 +66,11 @@
         {% if count %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
                 {{ count }} outage{{ count|pluralize }}
-                <span style="font-size: 12px">
-                    <br />
-                    ({{ seconds|hc_approx_duration }} total)
-                </span>
+                <br />
+                {{ seconds|hc_approx_duration }} total
             </td>
         {% else %}
-            <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif; color: #999;">
+            <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif; color: #9BA2AB;">
                 All good!
             </td>
         {% endif %}
