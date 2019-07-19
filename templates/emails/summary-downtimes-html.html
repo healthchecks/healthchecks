@@ -65,7 +65,7 @@
         {% for boundary, seconds, count in check.outages_by_month %}
         {% if count %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-                {{ count }} outage{{ count|pluralize }}
+                {{ count }} outage{{ count|pluralize }},
                 <br />
                 {{ seconds|hc_approx_duration }} total
             </td>

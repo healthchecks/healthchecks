@@ -247,33 +247,40 @@ class Check(models.Model):
         ping.save()
 
     def outages_by_month(self, months=2):
-        now = timezone.now()
+        """ Calculate the number of outages and downtime minutes per month.
 
+        Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples.
+
+        """
+
+        def monthkey(dt):
+            return dt.year, dt.month
+
+        # Will accumulate totals here.
+        # (year, month) -> [datetime, downtime_in_secs, number_of_outages]
         totals = {}
+        # Will collect flips and month boundaries here
         events = []
+
         for boundary in month_boundaries(months=months):
-            totals[(boundary.year, boundary.month)] = [boundary, 0, 0]
+            totals[monthkey(boundary)] = [boundary, 0, 0]
             events.append((boundary, "---"))
 
-        flips = self.flip_set.filter(created__gt=now - td(days=32 * months))
-        for flip in flips:
+        for flip in self.flip_set.filter(created__gt=boundary):
             events.append((flip.created, flip.old_status))
 
-        events.sort(reverse=True)
-
-        needle, status = now, self.status
-        for dt, old_status in events:
+        # Iterate through flips and month boundaries in reverse order,
+        # and for each "down" event increase the counters in `totals`.
+        dt, status = timezone.now(), self.status
+        for prev_dt, prev_status in sorted(events, reverse=True):
             if status == "down":
-                if (dt.year, dt.month) not in totals:
-                    break
+                delta = dt - prev_dt
+                totals[monthkey(prev_dt)][1] += int(delta.total_seconds())
+                totals[monthkey(prev_dt)][2] += 1
 
-                delta = needle - dt
-                totals[(dt.year, dt.month)][1] += int(delta.total_seconds())
-                totals[(dt.year, dt.month)][2] += 1
-
-            needle = dt
-            if old_status != "---":
-                status = old_status
+            dt = prev_dt
+            if prev_status != "---":
+                status = prev_status
 
         flattened = list(totals.values())
         flattened.sort(reverse=True)

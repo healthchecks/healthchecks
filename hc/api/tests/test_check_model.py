@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
 from django.utils import timezone
-from hc.api.models import Check
+from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
+from mock import patch
 
 
 class CheckModelTestCase(BaseTestCase):
@@ -164,3 +165,65 @@ class CheckModelTestCase(BaseTestCase):
 
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
+
+    def test_outages_by_month_handles_no_flips(self):
+        check = Check.objects.create(project=self.project)
+        r = check.outages_by_month(10)
+        self.assertEqual(len(r), 10)
+        for dt, secs, outages in r:
+            self.assertEqual(secs, 0)
+            self.assertEqual(outages, 0)
+
+    def test_outages_by_month_handles_currently_down_check(self):
+        check = Check.objects.create(project=self.project, status="down")
+
+        r = check.outages_by_month(10)
+        self.assertEqual(len(r), 10)
+        for dt, secs, outages in r:
+            self.assertEqual(outages, 1)
+
+    @patch("hc.api.models.timezone.now")
+    def test_outages_by_month_handles_flip_one_day_ago(self, mock_now):
+        mock_now.return_value = datetime(2019, 7, 19, tzinfo=timezone.utc)
+
+        check = Check.objects.create(project=self.project, status="down")
+        flip = Flip(owner=check)
+        flip.created = datetime(2019, 7, 18, tzinfo=timezone.utc)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        r = check.outages_by_month(10)
+        self.assertEqual(len(r), 10)
+        for dt, secs, outages in r:
+            if dt.month == 7:
+                self.assertEqual(secs, 86400)
+                self.assertEqual(outages, 1)
+            else:
+                self.assertEqual(secs, 0)
+                self.assertEqual(outages, 0)
+
+    @patch("hc.api.models.timezone.now")
+    def test_outages_by_month_handles_flip_two_months_ago(self, mock_now):
+        mock_now.return_value = datetime(2019, 7, 19, tzinfo=timezone.utc)
+
+        check = Check.objects.create(project=self.project, status="down")
+        flip = Flip(owner=check)
+        flip.created = datetime(2019, 5, 19, tzinfo=timezone.utc)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        r = check.outages_by_month(10)
+        self.assertEqual(len(r), 10)
+        for dt, secs, outages in r:
+            if dt.month == 7:
+                self.assertEqual(outages, 1)
+            elif dt.month == 6:
+                self.assertEqual(secs, 30 * 86400)
+                self.assertEqual(outages, 1)
+            elif dt.month == 5:
+                self.assertEqual(outages, 1)
+            else:
+                self.assertEqual(secs, 0)
+                self.assertEqual(outages, 0)
