@@ -13,6 +13,7 @@ from django.utils import timezone
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
+from hc.lib.date import month_boundaries
 import pytz
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
@@ -244,6 +245,39 @@ class Check(models.Model):
         ping.ua = ua[:200]
         ping.body = body[:10000]
         ping.save()
+
+    def outages_by_month(self, months=2):
+        now = timezone.now()
+
+        totals = {}
+        events = []
+        for boundary in month_boundaries(months=months):
+            totals[(boundary.year, boundary.month)] = [boundary, 0, 0]
+            events.append((boundary, "---"))
+
+        flips = self.flip_set.filter(created__gt=now - td(days=32 * months))
+        for flip in flips:
+            events.append((flip.created, flip.old_status))
+
+        events.sort(reverse=True)
+
+        needle, status = now, self.status
+        for dt, old_status in events:
+            if status == "down":
+                if (dt.year, dt.month) not in totals:
+                    break
+
+                delta = needle - dt
+                totals[(dt.year, dt.month)][1] += int(delta.total_seconds())
+                totals[(dt.year, dt.month)][2] += 1
+
+            needle = dt
+            if old_status != "---":
+                status = old_status
+
+        flattened = list(totals.values())
+        flattened.sort(reverse=True)
+        return flattened
 
 
 class Ping(models.Model):

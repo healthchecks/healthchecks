@@ -1,3 +1,7 @@
+from datetime import datetime as dt
+from django.utils import timezone
+
+
 class Unit(object):
     def __init__(self, name, nsecs):
         self.name = name
@@ -5,6 +9,7 @@ class Unit(object):
         self.nsecs = nsecs
 
 
+SECOND = Unit("second", 1)
 MINUTE = Unit("minute", 60)
 HOUR = Unit("hour", MINUTE.nsecs * 60)
 DAY = Unit("day", HOUR.nsecs * 24)
@@ -13,6 +18,7 @@ WEEK = Unit("week", DAY.nsecs * 7)
 
 def format_duration(td):
     remaining_seconds = int(td.total_seconds())
+
     result = []
 
     for unit in (WEEK, DAY, HOUR, MINUTE):
@@ -30,7 +36,11 @@ def format_duration(td):
 
 
 def format_hms(td):
-    total_seconds = int(td.total_seconds())
+    if isinstance(td, int):
+        total_seconds = td
+    else:
+        total_seconds = int(td.total_seconds())
+
     result = []
 
     mins, secs = divmod(total_seconds, 60)
@@ -45,3 +55,31 @@ def format_hms(td):
     result.append("%s sec" % secs)
 
     return " ".join(result)
+
+
+def format_approx_duration(v):
+    for unit in (DAY, HOUR, MINUTE, SECOND):
+        if v >= unit.nsecs:
+            vv = v // unit.nsecs
+            if vv == 1:
+                return "1 %s" % unit.name
+            else:
+                return "%d %s" % (vv, unit.plural)
+
+    return ""
+
+
+def month_boundaries(months=2):
+    result = []
+
+    now = timezone.now()
+    y, m = now.year, now.month
+    for x in range(0, months):
+        result.append(dt(y, m, 1, tzinfo=timezone.utc))
+
+        m -= 1
+        if m == 0:
+            m = 12
+            y = y - 1
+
+    return result

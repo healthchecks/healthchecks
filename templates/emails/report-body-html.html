@@ -20,7 +20,12 @@ Hello,<br />
 {% endif %}
 
 <br />
-{% include "emails/summary-html.html" %}
+
+{% if nag %}
+    {% include "emails/summary-html.html" %}
+{% else %}
+    {% include "emails/summary-downtimes-html.html" %}
+{% endif %}
 
 {% if nag %}
     <strong>Too many notifications?</strong>

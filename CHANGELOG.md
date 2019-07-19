@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Improvements
+- Show the number of outages and total downtime in monthly reports. (#104)
+
+
 ## 1.8.0 - 2019-07-08
 
 ### Improvements

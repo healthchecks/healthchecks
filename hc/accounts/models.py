@@ -12,6 +12,7 @@ from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
 from hc.lib import emails
+from hc.lib.date import month_boundaries
 
 
 NO_NAG = timedelta()
@@ -176,6 +177,7 @@ class Profile(models.Model):
             "nag": nag,
             "nag_period": self.nag_period.total_seconds(),
             "num_down": num_down,
+            "month_boundaries": month_boundaries(),
         }
 
         emails.report(self.user.email, ctx, headers)
