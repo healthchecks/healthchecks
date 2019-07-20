@@ -74,6 +74,17 @@ class Check(models.Model):
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
 
+    class Meta:
+        indexes = [
+            # Index for the alert_after field. Excludes rows with status=down.
+            # Used in the sendalerts management command.
+            models.Index(
+                fields=["alert_after"],
+                name="api_check_aa_not_down",
+                condition=~models.Q(status="down"),
+            )
+        ]
+
     def __str__(self):
         return "%s (%d)" % (self.name or self.code, self.id)
 
@@ -640,9 +651,20 @@ class Notification(models.Model):
 class Flip(models.Model):
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField()
-    processed = models.DateTimeField(null=True, blank=True, db_index=True)
+    processed = models.DateTimeField(null=True, blank=True)
     old_status = models.CharField(max_length=8, choices=STATUSES)
     new_status = models.CharField(max_length=8, choices=STATUSES)
+
+    class Meta:
+        indexes = [
+            # For quickly looking up unprocessed flips.
+            # Used in the sendalerts management command.
+            models.Index(
+                fields=["processed"],
+                name="api_flip_not_processed",
+                condition=models.Q(processed=None),
+            )
+        ]
 
     def send_alerts(self):
         if self.new_status == "up" and self.old_status in ("new", "paused"):
