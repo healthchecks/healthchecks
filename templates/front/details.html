@@ -87,8 +87,14 @@
                     <td>
                         <span id="log-status-icon" class="status icon-{{ check.get_status }}"></span>
                     </td>
-                    <td id="log-status-text">
-                        {% include "front/log_status_text.html" %}
+                    <td >
+                        <p id="log-status-text">{% include "front/log_status_text.html" %}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td id="downtimes">
+                        {% include "front/details_downtimes.html" %}
                     </td>
                 </tr>
             </table>
@@ -195,7 +201,6 @@
         </div>
 
     </div>
-
 
     <div id="events" class="col-sm-7">
         <h2>

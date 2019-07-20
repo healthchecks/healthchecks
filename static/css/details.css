@@ -80,3 +80,18 @@
     color: #d43f3a;
     background: #FFF;
 }
+
+#downtimes table {
+    width: 350px;
+}
+
+#downtimes tr:first-child td, #downtimes tr:first-child th {
+    border-top: 0;
+}
+
+#downtimes th {
+    width: 100px;
+    text-align: right;
+    font-weight: normal;
+    color: #888;
+}

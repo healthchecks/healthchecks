@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Improvements
-- Show the number of outages and total downtime in monthly reports. (#104)
+- Show the number of downtimes and total downtime minutes in monthly reports (#104)
+- Show the number of downtimes and total downtime minutes in "Check Details" page
 
 
 ## 1.8.0 - 2019-07-08
@@ -13,8 +14,8 @@ All notable changes to this project will be documented in this file.
 - Add the `prunetokenbucket` management command
 - Show check counts in JSON "badges" (#251)
 - Webhooks support HTTP PUT (#249)
-- Webhooks can use different req. bodies and headers for "up" and "down" events. (#249)
-- Show check's code instead of full URL on 992px - 1200px wide screens. (#253)
+- Webhooks can use different req. bodies and headers for "up" and "down" events (#249)
+- Show check's code instead of full URL on 992px - 1200px wide screens (#253)
 - Add WhatsApp integration (uses Twilio same as the SMS integration)
 - Webhooks support the $TAGS placeholder
 - Don't include ping URLs in API responses when the read-only key is used
@@ -59,7 +60,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Database schema: add uniqueness constraint to Check.code
-- Database schema: add Ping.kind field. Remove "start" and "fail" fields.
+- Database schema: add Ping.kind field. Remove "start" and "fail" fields
 - Add "Email Settings..." dialog and "Subject Must Contain" setting
 - Database schema: add the Project model
 - Move project-specific settings to a new "Project Settings" page

@@ -62,10 +62,10 @@
                 </table>
             {% endif %}
         </td>
-        {% for boundary, seconds, count in check.outages_by_month %}
+        {% for boundary, seconds, count in check.downtimes %}
         {% if count %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-                {{ count }} outage{{ count|pluralize }},
+                {{ count }} downtime{{ count|pluralize }},
                 <br />
                 {{ seconds|hc_approx_duration }} total
             </td>

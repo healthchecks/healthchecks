@@ -166,24 +166,24 @@ class CheckModelTestCase(BaseTestCase):
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
 
-    def test_outages_by_month_handles_no_flips(self):
+    def test_downtimes_handles_no_flips(self):
         check = Check.objects.create(project=self.project)
-        r = check.outages_by_month(10)
+        r = check.downtimes(10)
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
             self.assertEqual(downtime.total_seconds(), 0)
             self.assertEqual(outages, 0)
 
-    def test_outages_by_month_handles_currently_down_check(self):
+    def test_downtimes_handles_currently_down_check(self):
         check = Check.objects.create(project=self.project, status="down")
 
-        r = check.outages_by_month(10)
+        r = check.downtimes(10)
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
             self.assertEqual(outages, 1)
 
     @patch("hc.api.models.timezone.now")
-    def test_outages_by_month_handles_flip_one_day_ago(self, mock_now):
+    def test_downtimes_handles_flip_one_day_ago(self, mock_now):
         mock_now.return_value = datetime(2019, 7, 19, tzinfo=timezone.utc)
 
         check = Check.objects.create(project=self.project, status="down")
@@ -193,7 +193,7 @@ class CheckModelTestCase(BaseTestCase):
         flip.new_status = "down"
         flip.save()
 
-        r = check.outages_by_month(10)
+        r = check.downtimes(10)
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
             if dt.month == 7:
@@ -204,7 +204,7 @@ class CheckModelTestCase(BaseTestCase):
                 self.assertEqual(outages, 0)
 
     @patch("hc.api.models.timezone.now")
-    def test_outages_by_month_handles_flip_two_months_ago(self, mock_now):
+    def test_downtimes_handles_flip_two_months_ago(self, mock_now):
         mock_now.return_value = datetime(2019, 7, 19, tzinfo=timezone.utc)
 
         check = Check.objects.create(project=self.project, status="down")
@@ -214,7 +214,7 @@ class CheckModelTestCase(BaseTestCase):
         flip.new_status = "down"
         flip.save()
 
-        r = check.outages_by_month(10)
+        r = check.downtimes(10)
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
             if dt.month == 7:

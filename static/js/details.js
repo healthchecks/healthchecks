@@ -66,6 +66,10 @@ $(function () {
                     switchDateFormat(lastFormat);
                 }
 
+                if (data.downtimes) {
+                    $("#downtimes").html(data.downtimes);
+                }
+
                 if (document.title != data.title) {
                     document.title = data.title;
                 }

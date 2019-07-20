@@ -58,6 +58,7 @@ VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
+DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
 ONE_HOUR = td(hours=1)
 TWELVE_HOURS = td(hours=12)
 
@@ -474,6 +475,7 @@ def details(request, code):
         "check": check,
         "channels": channels,
         "timezones": pytz.all_timezones,
+        "downtimes": check.downtimes(months=3),
     }
 
     return render(request, "front/details.html", ctx)
@@ -523,6 +525,7 @@ def status_single(request, code):
 
     if updated != request.GET.get("u"):
         doc["events"] = EVENTS_TMPL.render({"check": check, "events": events})
+        doc["downtimes"] = DOWNTIMES_TMPL.render({"downtimes": check.downtimes(3)})
 
     return JsonResponse(doc)
 
