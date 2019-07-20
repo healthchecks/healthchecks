@@ -256,17 +256,16 @@ class Check(models.Model):
         def monthkey(dt):
             return dt.year, dt.month
 
+        # Datetimes of the first days of months we're interested in. Ascending order.
+        boundaries = month_boundaries(months=months)
+
         # Will accumulate totals here.
-        # (year, month) -> [datetime, downtime_in_secs, number_of_outages]
-        totals = {}
-        # Will collect flips and month boundaries here
-        events = []
+        # (year, month) -> [datetime, total_downtime, number_of_outages]
+        totals = {monthkey(b): [b, td(), 0] for b in boundaries}
 
-        for boundary in month_boundaries(months=months):
-            totals[monthkey(boundary)] = [boundary, 0, 0]
-            events.append((boundary, "---"))
-
-        for flip in self.flip_set.filter(created__gt=boundary):
+        # A list of flips and month boundaries
+        events = [(b, "---") for b in boundaries]
+        for flip in self.flip_set.filter(created__gt=min(boundaries)):
             events.append((flip.created, flip.old_status))
 
         # Iterate through flips and month boundaries in reverse order,
@@ -275,16 +274,14 @@ class Check(models.Model):
         for prev_dt, prev_status in sorted(events, reverse=True):
             if status == "down":
                 delta = dt - prev_dt
-                totals[monthkey(prev_dt)][1] += int(delta.total_seconds())
+                totals[monthkey(prev_dt)][1] += delta
                 totals[monthkey(prev_dt)][2] += 1
 
             dt = prev_dt
             if prev_status != "---":
                 status = prev_status
 
-        flattened = list(totals.values())
-        flattened.sort(reverse=True)
-        return flattened
+        return sorted(totals.values())
 
 
 class Ping(models.Model):

@@ -36,10 +36,7 @@ def format_duration(td):
 
 
 def format_hms(td):
-    if isinstance(td, int):
-        total_seconds = td
-    else:
-        total_seconds = int(td.total_seconds())
+    total_seconds = int(td.total_seconds())
 
     result = []
 
@@ -57,7 +54,8 @@ def format_hms(td):
     return " ".join(result)
 
 
-def format_approx_duration(v):
+def format_approx_duration(td):
+    v = td.total_seconds()
     for unit in (DAY, HOUR, MINUTE, SECOND):
         if v >= unit.nsecs:
             vv = v // unit.nsecs
@@ -75,7 +73,7 @@ def month_boundaries(months=2):
     now = timezone.now()
     y, m = now.year, now.month
     for x in range(0, months):
-        result.append(dt(y, m, 1, tzinfo=timezone.utc))
+        result.insert(0, dt(y, m, 1, tzinfo=timezone.utc))
 
         m -= 1
         if m == 0:

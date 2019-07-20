@@ -170,8 +170,8 @@ class CheckModelTestCase(BaseTestCase):
         check = Check.objects.create(project=self.project)
         r = check.outages_by_month(10)
         self.assertEqual(len(r), 10)
-        for dt, secs, outages in r:
-            self.assertEqual(secs, 0)
+        for dt, downtime, outages in r:
+            self.assertEqual(downtime.total_seconds(), 0)
             self.assertEqual(outages, 0)
 
     def test_outages_by_month_handles_currently_down_check(self):
@@ -179,7 +179,7 @@ class CheckModelTestCase(BaseTestCase):
 
         r = check.outages_by_month(10)
         self.assertEqual(len(r), 10)
-        for dt, secs, outages in r:
+        for dt, downtime, outages in r:
             self.assertEqual(outages, 1)
 
     @patch("hc.api.models.timezone.now")
@@ -195,12 +195,12 @@ class CheckModelTestCase(BaseTestCase):
 
         r = check.outages_by_month(10)
         self.assertEqual(len(r), 10)
-        for dt, secs, outages in r:
+        for dt, downtime, outages in r:
             if dt.month == 7:
-                self.assertEqual(secs, 86400)
+                self.assertEqual(downtime.total_seconds(), 86400)
                 self.assertEqual(outages, 1)
             else:
-                self.assertEqual(secs, 0)
+                self.assertEqual(downtime.total_seconds(), 0)
                 self.assertEqual(outages, 0)
 
     @patch("hc.api.models.timezone.now")
@@ -216,14 +216,14 @@ class CheckModelTestCase(BaseTestCase):
 
         r = check.outages_by_month(10)
         self.assertEqual(len(r), 10)
-        for dt, secs, outages in r:
+        for dt, downtime, outages in r:
             if dt.month == 7:
                 self.assertEqual(outages, 1)
             elif dt.month == 6:
-                self.assertEqual(secs, 30 * 86400)
+                self.assertEqual(downtime.total_seconds(), 30 * 86400)
                 self.assertEqual(outages, 1)
             elif dt.month == 5:
                 self.assertEqual(outages, 1)
             else:
-                self.assertEqual(secs, 0)
+                self.assertEqual(downtime.total_seconds(), 0)
                 self.assertEqual(outages, 0)
