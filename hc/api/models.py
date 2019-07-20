@@ -265,8 +265,9 @@ class Check(models.Model):
 
         # A list of flips and month boundaries
         events = [(b, "---") for b in boundaries]
-        for flip in self.flip_set.filter(created__gt=min(boundaries)):
-            events.append((flip.created, flip.old_status))
+        q = self.flip_set.filter(created__gt=min(boundaries))
+        for pair in q.values_list("created", "old_status"):
+            events.append(pair)
 
         # Iterate through flips and month boundaries in reverse order,
         # and for each "down" event increase the counters in `totals`.
