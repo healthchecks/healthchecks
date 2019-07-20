@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Show the number of downtimes and total downtime minutes in monthly reports (#104)
 - Show the number of downtimes and total downtime minutes in "Check Details" page
+- Add the `pruneflips` management command
 
 
 ## 1.8.0 - 2019-07-08

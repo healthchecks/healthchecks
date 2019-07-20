@@ -269,12 +269,21 @@ There are separate Django management commands for each task:
     $ ./manage.py pruneusers
     ```
 
-* Remove old records fromt he `api_tokenbucket` table. The TokenBucket
+* Remove old records from the `api_tokenbucket` table. The TokenBucket
   model is used for rate-limiting login attempts and similar operations.
   Any records older than one day can be safely removed.
 
     ```
     $ ./manage.py prunetokenbucket
+    ```
+
+* Remove old records from the `api_flip` table. The Flip
+  objects are used to track status changes of checks, and to calculate
+  downtime statistics month by month. Flip objects from more than 3 months
+  ago are not used and can be safely removed.
+
+    ```
+    $ ./manage.py pruneflips
     ```
 
 When you first try these commands on your data, it is a good idea to
