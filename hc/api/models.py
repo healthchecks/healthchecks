@@ -41,6 +41,7 @@ CHANNEL_KINDS = (
     ("trello", "Trello"),
     ("matrix", "Matrix"),
     ("whatsapp", "WhatsApp"),
+    ("apprise", "Apprise"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -392,6 +393,8 @@ class Channel(models.Model):
             return transports.Matrix(self)
         elif self.kind == "whatsapp":
             return transports.WhatsApp(self)
+        elif self.kind == "apprise":
+            return transports.Apprise(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 

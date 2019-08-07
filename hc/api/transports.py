@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 import json
 import requests
+import apprise
 from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
@@ -273,7 +274,7 @@ class PagerTree(HttpTransport):
 class PagerTeam(HttpTransport):
     def notify(self, check):
         url = self.channel.value
-        headers = {"Conent-Type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         payload = {
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
@@ -461,3 +462,17 @@ class Trello(HttpTransport):
         }
 
         return self.post(self.URL, params=params)
+
+class Apprise(HttpTransport):
+    def notify(self, check):
+        a = apprise.Apprise()
+        title = tmpl("apprise_title.html", check=check)
+        body = tmpl("apprise_description.html", check=check)
+
+        a.add(self.channel.value)
+
+        notify_type = apprise.NotifyType.SUCCESS \
+            if check.status == "up" else apprise.NotifyType.FAILURE
+
+        return "Failed" if not \
+            a.notify(body=body, title=title, notify_type=notify_type) else None

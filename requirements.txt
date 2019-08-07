@@ -4,3 +4,4 @@ django_compressor==2.2
 psycopg2==2.7.5
 pytz==2019.1
 requests==2.22.0
+apprise==0.7.9

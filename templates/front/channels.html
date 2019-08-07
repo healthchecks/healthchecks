@@ -69,6 +69,8 @@
                             {% endif %}
                         {% elif ch.kind == "webhook" %}
                             Webhook
+                        {% elif ch.kind == "apprise" %}
+                            Apprise
                         {% elif ch.kind == "pushbullet" %}
                             Pushbullet
                         {% elif ch.kind == "discord" %}
@@ -210,6 +212,15 @@
             <p>Receive a HTTP callback when a check goes down.</p>
 
             <a href="{% url 'hc-add-webhook' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        <li>
+            <img src="{% static 'img/integrations/apprise.png' %}"
+                 class="icon" alt="Pushover icon" />
+
+            <h2>Apprise</h2>
+            <p>Receive instant push notifications using Apprise; see <a href="https://github.com/caronc/apprise#popular-notification-services" >all of the supported services here</a>.</p>
+
+            <a href="{% url 'hc-add-apprise' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% if enable_pushover %}
         <li>
