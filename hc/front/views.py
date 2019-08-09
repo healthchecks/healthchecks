@@ -237,6 +237,7 @@ def index(request):
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_apprise": settings.APPRISE_ENABLED is True,
         "registration_open": settings.REGISTRATION_OPEN,
     }
 
@@ -611,6 +612,7 @@ def channels(request):
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_apprise": settings.APPRISE_ENABLED is True,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -1328,6 +1330,9 @@ def add_matrix(request):
 
 @login_required
 def add_apprise(request):
+    if not settings.APPRISE_ENABLED:
+        raise Http404("apprise integration is not available")
+
     if request.method == "POST":
         form = AddAppriseForm(request.POST)
         if form.is_valid():

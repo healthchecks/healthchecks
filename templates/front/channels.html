@@ -213,6 +213,7 @@
 
             <a href="{% url 'hc-add-webhook' %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% if enable_apprise %}
         <li>
             <img src="{% static 'img/integrations/apprise.png' %}"
                  class="icon" alt="Pushover icon" />
@@ -222,6 +223,7 @@
 
             <a href="{% url 'hc-add-apprise' %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
         {% if enable_pushover %}
         <li>
             <img src="{% static 'img/integrations/po.png' %}"

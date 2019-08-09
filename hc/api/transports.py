@@ -3,11 +3,16 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 import json
 import requests
-import apprise
 from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
 from hc.lib import emails
+
+try:
+    import apprise
+except ImportError:
+    # Enforce
+    settings.APPRISE_ENABLED = False
 
 
 def tmpl(template_name, **ctx):
@@ -465,6 +470,11 @@ class Trello(HttpTransport):
 
 class Apprise(HttpTransport):
     def notify(self, check):
+
+        if not settings.APPRISE_ENABLED:
+            # Not supported and/or enabled
+            return "Apprise is disabled and/or not installed."
+
         a = apprise.Apprise()
         title = tmpl("apprise_title.html", check=check)
         body = tmpl("apprise_description.html", check=check)

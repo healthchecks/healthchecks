@@ -1,8 +1,10 @@
 from hc.api.models import Channel
 from hc.test import BaseTestCase
+from django.test.utils import override_settings
 
 
-class AddSlackTestCase(BaseTestCase):
+@override_settings(APPRISE_ENABLED=True)
+class AddAppriseTestCase(BaseTestCase):
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/integrations/add_apprise/")
@@ -19,3 +21,9 @@ class AddSlackTestCase(BaseTestCase):
         self.assertEqual(c.kind, "apprise")
         self.assertEqual(c.value, "json://example.org")
         self.assertEqual(c.project, self.project)
+
+    @override_settings(APPRISE_ENABLED=False)
+    def test_it_requires_client_id(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_apprise/")
+        self.assertEqual(r.status_code, 404)
