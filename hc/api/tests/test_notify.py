@@ -668,10 +668,6 @@ class NotifyTestCase(BaseTestCase):
     def test_not_implimented(self):
         self._setup_data("webhook", "http://example")
         self.channel.kind = "invalid"
-        try:
+
+        with self.assertRaises(NotImplementedError):
             self.channel.notify(self.check)
-            # Code should not reach here
-            assert False
-        except NotImplementedError:
-            # We expect to be here
-            assert True
