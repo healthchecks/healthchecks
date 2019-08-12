@@ -44,8 +44,7 @@ $(function () {
         });
     })
 
-    var code = document.getElementById("edit-timeout").dataset.code;
-    var statusUrl = "/checks/" + code + "/status/";
+    var statusUrl = document.getElementById("edit-timeout").dataset.statusUrl;
     var lastStatusText = "";
     var lastUpdated = "";
     adaptiveSetInterval(function() {

@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Show the number of downtimes and total downtime minutes in "Check Details" page
 - Add the `pruneflips` management command
 
+## Bug Fixes
+- Fix javascript code to construct correct URLs when running from a subdirectory (#273)
+
 
 ## 1.8.0 - 2019-07-08
 

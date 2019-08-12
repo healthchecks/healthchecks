@@ -1,11 +1,13 @@
 $(function () {
+    var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
+
     $(".timeout-grace").click(function() {
         var code = $(this).closest("tr.checks-row").attr("id");
         if (!code) {
             code = this.dataset.code;
         }
-
-        var url = "/checks/" + code + "/timeout/";
+       
+        var url = base + "/checks/" + code + "/timeout/";
 
         $("#update-timeout-form").attr("action", url);
         $("#update-cron-form").attr("action", url);
@@ -27,32 +29,6 @@ $(function () {
         $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
         return false;
     });
-
-    function init(code, kind, timeout, grace, schedule, tz) {
-        var url = "/checks/" + code + "/timeout/";
-
-        $("#update-timeout-form").attr("action", url);
-        $("#update-cron-form").attr("action", url);
-
-        // Simple
-        periodSlider.noUiSlider.set(timeout);
-        graceSlider.noUiSlider.set(grace);
-
-        // Cron
-        currentPreviewHash = "";
-        $("#cron-preview").html("<p>Updating...</p>");
-        $("#schedule").val(schedule);
-        $("#tz").selectpicker("val", tz);
-        var minutes = parseInt(grace / 60);
-        $("#update-timeout-grace-cron").val(minutes);
-        updateCronPreview();
-
-        kind == "simple" ? showSimple() : showCron();
-        $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
-        return false;
-
-    }
-
 
     var MINUTE = {name: "minute", nsecs: 60};
     var HOUR = {name: "hour", nsecs: MINUTE.nsecs * 60};
@@ -166,7 +142,7 @@ $(function () {
 
         var token = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({
-            url: "/checks/cron_preview/",
+            url: base + "/checks/cron_preview/",
             type: "post",
             headers: {"X-CSRFToken": token},
             data: {schedule: schedule, tz: tz},

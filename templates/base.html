@@ -67,7 +67,7 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand"  href="/">
+            <a id="base-url" class="navbar-brand"  href="{% url 'hc-index' %}">
             {% if request.user.is_authenticated and project %}
                 {{ project }}
                 <span class="caret"></span>

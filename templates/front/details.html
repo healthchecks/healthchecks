@@ -153,6 +153,7 @@
                     id="edit-timeout"
                     class="btn btn-sm btn-default timeout-grace"
                     data-code="{{ check.code }}"
+                    data-status-url="{% url 'hc-status-single' check.code %}"
                     data-kind="{{ check.kind }}"
                     data-timeout="{{ check.timeout.total_seconds }}"
                     data-grace="{{ check.grace.total_seconds }}"
