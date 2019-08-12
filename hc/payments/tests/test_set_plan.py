@@ -150,11 +150,36 @@ class SetPlanTestCase(BaseTestCase):
 
     @patch("hc.payments.models.braintree")
     def test_subscription_creation_failure(self, mock):
-        self._setup_mock(mock)
-
         mock.Subscription.create.return_value.is_success = False
         mock.Subscription.create.return_value.message = "sub failure"
 
         r = self.run_set_plan()
+        self.assertRedirects(r, "/accounts/profile/billing/")
+        self.assertContains(r, "sub failure")
+
+    @patch("hc.payments.models.braintree")
+    def test_failed_plan_change_resets_limits(self, mock):
+        # Initial state: the user has a subscription and a high check limit:
+        sub = Subscription.objects.for_user(self.alice)
+        sub.subscription_id = "old-sub-id"
+        sub.save()
+
+        self.profile.check_limit = 1000
+        self.profile.save()
+
+        # Simulate a subscription creation failure:
+        mock.Subscription.create.return_value.is_success = False
+        mock.Subscription.create.return_value.message = "sub failure"
+
+        r = self.run_set_plan()
+
+        # It should cancel the current plan
+        self.assertTrue(mock.Subscription.cancel.called)
+
+        # It should clear out the limits:
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.check_limit, 20)
+
+        # And it should show the error message from API:
         self.assertRedirects(r, "/accounts/profile/billing/")
         self.assertContains(r, "sub failure")

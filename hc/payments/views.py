@@ -105,15 +105,17 @@ def set_plan(request):
     if sub.plan_id == plan_id:
         return redirect("hc-billing")
 
-    # Cancel the previous plan
+    # Cancel the previous plan and reset limits:
     sub.cancel()
+
+    profile = request.user.profile
+    profile.ping_log_limit = 100
+    profile.check_limit = 20
+    profile.team_limit = 2
+    profile.sms_limit = 0
+    profile.save()
+
     if plan_id == "":
-        profile = request.user.profile
-        profile.ping_log_limit = 100
-        profile.check_limit = 20
-        profile.team_limit = 2
-        profile.sms_limit = 0
-        profile.save()
         return redirect("hc-billing")
 
     result = sub.setup(plan_id)
