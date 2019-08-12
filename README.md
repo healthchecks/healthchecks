@@ -133,6 +133,7 @@ Configurations settings loaded from environment variables:
 | MATRIX_HOMESERVER | `None`
 | MATRIX_USER_ID | `None`
 | MATRIX_ACCESS_TOKEN | `None`
+| APPRISE_ENABLED | `"False"`
 
 
 Some useful settings keys to override are:
@@ -336,3 +337,13 @@ where to forward channel messages by invoking Telegram's
 
 For this to work, your `SITE_ROOT` needs to be correct and use "https://"
 scheme.
+
+### Apprise
+
+To enable Apprise integration, you will need to:
+
+* ensure you have apprise installed in your local environment:
+```bash
+pip install apprise
+```
+* enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.

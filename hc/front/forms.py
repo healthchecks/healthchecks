@@ -159,3 +159,8 @@ class AddMatrixForm(forms.Form):
         self.cleaned_data["room_id"] = doc["room_id"]
 
         return v
+
+
+class AddAppriseForm(forms.Form):
+    error_css_class = "has-error"
+    url = forms.CharField(max_length=512)

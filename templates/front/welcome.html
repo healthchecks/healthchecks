@@ -432,6 +432,14 @@
             </div>
         </div>
         {% endif %}
+        {% if enable_apprise %}
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <div class="integration">
+                <img src="{% static 'img/integrations/apprise.png' %}" class="icon" alt="Apprise icon" />
+                <h3>Apprise<br><small>>Push Notifications</small></h3>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="row tour-section">

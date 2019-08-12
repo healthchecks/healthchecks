@@ -7,8 +7,9 @@ from django.core import mail
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
-from mock import patch
+from mock import patch, Mock
 from requests.exceptions import ConnectionError, Timeout
+from django.test.utils import override_settings
 
 
 class NotifyTestCase(BaseTestCase):
@@ -636,3 +637,41 @@ class NotifyTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertTrue("Monthly message limit exceeded" in n.error)
+
+    @patch("apprise.Apprise")
+    @override_settings(APPRISE_ENABLED=True)
+    def test_apprise_enabled(self, mock_apprise):
+        self._setup_data("apprise", "123")
+
+        mock_aobj = Mock()
+        mock_aobj.add.return_value = True
+        mock_aobj.notify.return_value = True
+        mock_apprise.return_value = mock_aobj
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 1)
+
+        self.check.status = "up"
+        self.assertEqual(Notification.objects.count(), 1)
+
+    @patch("apprise.Apprise")
+    @override_settings(APPRISE_ENABLED=False)
+    def test_apprise_disabled(self, mock_apprise):
+        self._setup_data("apprise", "123")
+
+        mock_aobj = Mock()
+        mock_aobj.add.return_value = True
+        mock_aobj.notify.return_value = True
+        mock_apprise.return_value = mock_aobj
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 1)
+
+    def test_not_implimented(self):
+        self._setup_data("webhook", "http://example")
+        self.channel.kind = "invalid"
+        try:
+            self.channel.notify(self.check)
+            # Code should not reach here
+            assert False
+        except NotImplementedError:
+            # We expect to be here
+            assert True

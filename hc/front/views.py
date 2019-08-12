@@ -44,6 +44,7 @@ from hc.front.forms import (
     ChannelNameForm,
     EmailSettingsForm,
     AddMatrixForm,
+    AddAppriseForm,
 )
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import num_down_title, down_title, sortchecks
@@ -236,6 +237,7 @@ def index(request):
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_apprise": settings.APPRISE_ENABLED is True,
         "registration_open": settings.REGISTRATION_OPEN,
     }
 
@@ -610,6 +612,7 @@ def channels(request):
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_apprise": settings.APPRISE_ENABLED is True,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -1323,6 +1326,32 @@ def add_matrix(request):
         "matrix_user_id": settings.MATRIX_USER_ID,
     }
     return render(request, "integrations/add_matrix.html", ctx)
+
+
+@login_required
+def add_apprise(request):
+    if not settings.APPRISE_ENABLED:
+        raise Http404("apprise integration is not available")
+
+    if request.method == "POST":
+        form = AddAppriseForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="apprise")
+            channel.value = form.cleaned_data["url"]
+            channel.save()
+
+            channel.assign_all_checks()
+            messages.success(request, "The Apprise integration has been added!")
+            return redirect("hc-channels")
+    else:
+        form = AddAppriseForm()
+
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form,
+    }
+    return render(request, "integrations/add_apprise.html", ctx)
 
 
 @login_required
