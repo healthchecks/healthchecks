@@ -20,7 +20,7 @@ from hc.payments.models import Subscription
 
 
 @login_required
-def get_client_token(request):
+def token(request):
     sub = Subscription.objects.for_user(request.user)
     return JsonResponse({"client_token": sub.get_client_token()})
 
@@ -96,13 +96,21 @@ def log_and_bail(request, result):
 
 @login_required
 @require_POST
-def set_plan(request):
+def update(request):
     plan_id = request.POST["plan_id"]
+    nonce = request.POST["nonce"]
+
     if plan_id not in ("", "P20", "P80", "Y192", "Y768"):
         return HttpResponseBadRequest()
 
     sub = Subscription.objects.for_user(request.user)
-    if sub.plan_id == plan_id:
+    # If plan_id has not changed then just update the payment method:
+    if plan_id == sub.plan_id:
+        error = sub.update_payment_method(nonce)
+        if error:
+            return log_and_bail(request, error)
+
+        request.session["payment_method_status"] = "success"
         return redirect("hc-billing")
 
     # Cancel the previous plan and reset limits:
@@ -116,9 +124,10 @@ def set_plan(request):
     profile.save()
 
     if plan_id == "":
+        request.session["set_plan_status"] = "success"
         return redirect("hc-billing")
 
-    result = sub.setup(plan_id)
+    result = sub.setup(plan_id, nonce)
     if not result.is_success:
         return log_and_bail(request, result)
 
@@ -161,19 +170,6 @@ def address(request):
 @login_required
 def payment_method(request):
     sub = get_object_or_404(Subscription, user=request.user)
-
-    if request.method == "POST":
-        if "payment_method_nonce" not in request.POST:
-            return HttpResponseBadRequest()
-
-        nonce = request.POST["payment_method_nonce"]
-        error = sub.update_payment_method(nonce)
-        if error:
-            return log_and_bail(request, error)
-
-        request.session["payment_method_status"] = "success"
-        return redirect("hc-billing")
-
     ctx = {"sub": sub, "pm": sub.payment_method}
     return render(request, "payments/payment_method.html", ctx)
 

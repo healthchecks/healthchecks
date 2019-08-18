@@ -4,17 +4,17 @@ from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 
 
-class SetPlanTestCase(BaseTestCase):
+class UpdateSubscriptionTestCase(BaseTestCase):
     def _setup_mock(self, mock):
         """ Set up Braintree calls that the controller will use. """
 
         mock.Subscription.create.return_value.is_success = True
         mock.Subscription.create.return_value.subscription.id = "t-sub-id"
 
-    def run_set_plan(self, plan_id="P20"):
-        form = {"plan_id": plan_id}
+    def run_update(self, plan_id="P20", nonce="fake-nonce"):
+        form = {"plan_id": plan_id, "nonce": nonce}
         self.client.login(username="alice@example.org", password="password")
-        return self.client.post("/pricing/set_plan/", form, follow=True)
+        return self.client.post("/pricing/update/", form, follow=True)
 
     @patch("hc.payments.models.braintree")
     def test_it_works(self, mock):
@@ -24,8 +24,9 @@ class SetPlanTestCase(BaseTestCase):
         self.profile.sms_sent = 1
         self.profile.save()
 
-        r = self.run_set_plan()
+        r = self.run_update()
         self.assertRedirects(r, "/accounts/profile/billing/")
+        self.assertContains(r, "Your billing plan has been updated!")
 
         # Subscription should be filled out:
         sub = Subscription.objects.get(user=self.alice)
@@ -42,7 +43,10 @@ class SetPlanTestCase(BaseTestCase):
         self.assertEqual(self.profile.sms_sent, 0)
 
         # braintree.Subscription.cancel should have not been called
-        assert not mock.Subscription.cancel.called
+        # because there was no previous subscription
+        self.assertFalse(mock.Subscription.cancel.called)
+
+        self.assertTrue(mock.Subscription.create.called)
 
     @patch("hc.payments.models.braintree")
     def test_yearly_works(self, mock):
@@ -52,7 +56,7 @@ class SetPlanTestCase(BaseTestCase):
         self.profile.sms_sent = 1
         self.profile.save()
 
-        r = self.run_set_plan("Y192")
+        r = self.run_update("Y192")
         self.assertRedirects(r, "/accounts/profile/billing/")
 
         # Subscription should be filled out:
@@ -80,7 +84,7 @@ class SetPlanTestCase(BaseTestCase):
         self.profile.sms_sent = 1
         self.profile.save()
 
-        r = self.run_set_plan("P80")
+        r = self.run_update("P80")
         self.assertRedirects(r, "/accounts/profile/billing/")
 
         # Subscription should be filled out:
@@ -114,8 +118,9 @@ class SetPlanTestCase(BaseTestCase):
         self.profile.sms_sent = 1
         self.profile.save()
 
-        r = self.run_set_plan("")
+        r = self.run_update("")
         self.assertRedirects(r, "/accounts/profile/billing/")
+        self.assertContains(r, "Your billing plan has been updated!")
 
         # Subscription should be cleared
         sub = Subscription.objects.get(user=self.alice)
@@ -130,10 +135,10 @@ class SetPlanTestCase(BaseTestCase):
         self.assertEqual(self.profile.team_limit, 2)
         self.assertEqual(self.profile.sms_limit, 0)
 
-        assert mock.Subscription.cancel.called
+        self.assertTrue(mock.Subscription.cancel.called)
 
     def test_bad_plan_id(self):
-        r = self.run_set_plan(plan_id="this-is-wrong")
+        r = self.run_update(plan_id="this-is-wrong")
         self.assertEqual(r.status_code, 400)
 
     @patch("hc.payments.models.braintree")
@@ -144,16 +149,16 @@ class SetPlanTestCase(BaseTestCase):
         sub.subscription_id = "prev-sub"
         sub.save()
 
-        r = self.run_set_plan()
+        r = self.run_update()
         self.assertRedirects(r, "/accounts/profile/billing/")
-        assert mock.Subscription.cancel.called
+        self.assertTrue(mock.Subscription.cancel.called)
 
     @patch("hc.payments.models.braintree")
     def test_subscription_creation_failure(self, mock):
         mock.Subscription.create.return_value.is_success = False
         mock.Subscription.create.return_value.message = "sub failure"
 
-        r = self.run_set_plan()
+        r = self.run_update()
         self.assertRedirects(r, "/accounts/profile/billing/")
         self.assertContains(r, "sub failure")
 
@@ -171,7 +176,7 @@ class SetPlanTestCase(BaseTestCase):
         mock.Subscription.create.return_value.is_success = False
         mock.Subscription.create.return_value.message = "sub failure"
 
-        r = self.run_set_plan()
+        r = self.run_update()
 
         # It should cancel the current plan
         self.assertTrue(mock.Subscription.cancel.called)
@@ -183,3 +188,18 @@ class SetPlanTestCase(BaseTestCase):
         # And it should show the error message from API:
         self.assertRedirects(r, "/accounts/profile/billing/")
         self.assertContains(r, "sub failure")
+
+    @patch("hc.payments.models.braintree")
+    def test_it_updates_payment_method(self, mock):
+        # Initial state: the user has a subscription and a high check limit:
+        sub = Subscription.objects.for_user(self.alice)
+        sub.plan_id = "P20"
+        sub.subscription_id = "old-sub-id"
+        sub.save()
+
+        r = self.run_update()
+
+        # It should update the existing subscription
+        self.assertTrue(mock.Subscription.update.called)
+        self.assertRedirects(r, "/accounts/profile/billing/")
+        self.assertContains(r, "Your payment method has been updated!")
