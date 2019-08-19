@@ -136,11 +136,15 @@ class Subscription(models.Model):
 
         return result
 
-    def cancel(self):
+    def cancel(self, delete_customer=False):
         if self.subscription_id:
             braintree.Subscription.cancel(self.subscription_id)
+            self.subscription_id = ""
 
-        self.subscription_id = ""
+        if self.customer_id and delete_customer:
+            braintree.Customer.delete(self.customer_id)
+            self.customer_id = ""
+
         self.plan_id = ""
         self.plan_name = ""
         self.save()

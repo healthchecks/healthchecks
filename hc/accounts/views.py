@@ -457,7 +457,7 @@ def close(request):
     # Subscription needs to be canceled before it is deleted:
     sub = Subscription.objects.filter(user=user).first()
     if sub:
-        sub.cancel()
+        sub.cancel(delete_customer=True)
 
     user.delete()
 
