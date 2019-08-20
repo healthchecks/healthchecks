@@ -903,6 +903,25 @@ def add_slack(request):
 
 
 @login_required
+def add_mattermost(request):
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="mattermost")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "form": form, "project": request.project}
+
+    return render(request, "integrations/add_mattermost.html", ctx)
+
+
+@login_required
 def add_slack_btn(request):
     code = _get_validated_code(request, "slack")
     if code is None:
@@ -1346,11 +1365,7 @@ def add_apprise(request):
     else:
         form = AddAppriseForm()
 
-    ctx = {
-        "page": "channels",
-        "project": request.project,
-        "form": form,
-    }
+    ctx = {"page": "channels", "project": request.project, "form": form}
     return render(request, "integrations/add_apprise.html", ctx)
 
 

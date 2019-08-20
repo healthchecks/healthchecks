@@ -100,6 +100,8 @@
                             {% if ch.whatsapp_notify_up and not ch.whatsapp_notify_down %}
                                 (up only)
                             {% endif %}
+                        {% elif ch.kind == "mattermost" %}
+                            Mattermost
                         {% else %}
                             {{ ch.kind }}
                         {% endif %}
@@ -348,6 +350,15 @@
             <a href="{% url 'hc-add-whatsapp' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+        <li>
+            <img src="{% static 'img/integrations/mattermost.png' %}"
+                class="icon" alt="Mattermost icon" />
+
+            <h2>Mattermost</h2>
+            <p>High Trust Messaging for the Enterprise.</p>
+
+            <a href="{% url 'hc-add-mattermost' %}" class="btn btn-primary">Add Integration</a>
+        </li>
         <li class="link-to-github">
             <img src="{% static 'img/integrations/missing.png' %}"
                  class="icon" alt="Suggest New Integration" />

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Show the number of downtimes and total downtime minutes in monthly reports (#104)
 - Show the number of downtimes and total downtime minutes in "Check Details" page
 - Add the `pruneflips` management command
+- Add Mattermost integration (#276)
 
 ## Bug Fixes
 - Fix javascript code to construct correct URLs when running from a subdirectory (#273)

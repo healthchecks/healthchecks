@@ -42,6 +42,7 @@ CHANNEL_KINDS = (
     ("matrix", "Matrix"),
     ("whatsapp", "WhatsApp"),
     ("apprise", "Apprise"),
+    ("mattermost", "Mattermost"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -363,7 +364,7 @@ class Channel(models.Model):
             return transports.Email(self)
         elif self.kind == "webhook":
             return transports.Webhook(self)
-        elif self.kind == "slack":
+        elif self.kind in ("slack", "mattermost"):
             return transports.Slack(self)
         elif self.kind == "hipchat":
             return transports.HipChat(self)
@@ -504,7 +505,7 @@ class Channel(models.Model):
 
     @property
     def slack_webhook_url(self):
-        assert self.kind == "slack"
+        assert self.kind in ("slack", "mattermost")
         if not self.value.startswith("{"):
             return self.value
 

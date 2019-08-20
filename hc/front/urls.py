@@ -30,6 +30,7 @@ channel_urls = [
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),
     path("add_pagerteam/", views.add_pagerteam, name="hc-add-pagerteam"),
     path("add_slack/", views.add_slack, name="hc-add-slack"),
+    path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),
     path("add_slack_btn/", views.add_slack_btn, name="hc-add-slack-btn"),
     path("add_pushbullet/", views.add_pushbullet, name="hc-add-pushbullet"),
     path("add_discord/", views.add_discord, name="hc-add-discord"),

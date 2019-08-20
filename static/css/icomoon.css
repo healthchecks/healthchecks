@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?iewxyq');
-  src:  url('../fonts/icomoon.eot?iewxyq#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?iewxyq') format('truetype'),
-    url('../fonts/icomoon.woff?iewxyq') format('woff'),
-    url('../fonts/icomoon.svg?iewxyq#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?smade2');
+  src:  url('../fonts/icomoon.eot?smade2#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?smade2') format('truetype'),
+    url('../fonts/icomoon.woff?smade2') format('woff'),
+    url('../fonts/icomoon.svg?smade2#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,6 +24,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-mattermost:before {
+  content: "\e907";
+  color: #045acc;
+}
 .icon-pagerteam:before {
   content: "\e914";
   color: #cd2a00;

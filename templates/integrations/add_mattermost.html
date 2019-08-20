@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Add Mattermost - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+
+    <h1>Mattermost</h1>
+
+    <p>If your team uses <a href="https://mattermost.com/">Mattermost</a>, you can set
+    up {% site_name %} to post status updates directly to an appropriate
+    Mattermost channel.</p>
+
+    <h2>Setup Guide</h2>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            Log into your Mattermost account and
+            select <strong>Integrations</strong> in the
+            hamburger menu.
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_mattermost_1.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            <p>
+            In the "Integrations" screen, select <strong>Incoming Webhook</strong>
+            and then <strong>Add Incoming Webhook</strong>.
+            </p>
+            <p>Fill in the form and hit "Save".</p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_mattermost_2.png' %}">
+        </div>        
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>Copy the displayed <strong>URL</strong> and paste it down below.</p>
+            <p>Save the integration, and it's done!</p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_mattermost_3.png' %}">
+        </div>
+    </div>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal" action="{% url 'hc-add-mattermost' %}">
+        {% csrf_token %}
+        <div class="form-group {{ form.value.css_classes }}">
+            <label for="callback-url" class="col-sm-2 control-label">
+                Webhook URL
+            </label>
+            <div class="col-sm-10">
+                <input
+                    id="callback-url"
+                    type="text"
+                    class="form-control"
+                    name="value"
+                    placeholder="https://"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.value.errors %}
+                <div class="help-block">
+                    {{ form.value.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+</div>
+{% endblock %}
