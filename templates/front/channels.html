@@ -195,17 +195,7 @@
 
             <a href="{% url 'hc-add-email' %}" class="btn btn-primary">Add Integration</a>
         </li>
-        {% if enable_sms %}
-        <li>
-            <img src="{% static 'img/integrations/sms.png' %}"
-                class="icon" alt="SMS icon" />
 
-            <h2>SMS {% if use_payments %}<small>(paid plans)</small>{% endif %}</h2>
-            <p>Get a text message to your phone when a check goes down.</p>
-
-            <a href="{% url 'hc-add-sms' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
         <li>
             <img src="{% static 'img/integrations/webhook.png' %}"
                 class="icon" alt="Webhook icon" />
@@ -226,77 +216,7 @@
             <a href="{% url 'hc-add-apprise' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
-        {% if enable_pushover %}
-        <li>
-            <img src="{% static 'img/integrations/po.png' %}"
-                 class="icon" alt="Pushover icon" />
 
-            <h2>Pushover</h2>
-            <p>Receive instant push notifications on your phone or tablet.</p>
-
-            <a href="{% url 'hc-add-pushover' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
-        {% if enable_pushbullet %}
-        <li>
-            <img src="{% static 'img/integrations/pushbullet.png' %}"
-                 class="icon" alt="Pushbullet icon" />
-
-            <h2>Pushbullet</h2>
-            <p>Pushbullet connects your devices, making them feel like one.</p>
-
-            <a href="{% url 'hc-add-pushbullet' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
-        {% if enable_telegram %}
-        <li>
-            <img src="{% static 'img/integrations/telegram.png' %}"
-                 class="icon" alt="Telegram icon" />
-
-            <h2>Telegram</h2>
-            <p>A messaging app with a focus on speed and security.</p>
-
-            <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
-        {% if enable_pd %}
-        <li>
-            <img src="{% static 'img/integrations/pd.png' %}"
-                class="icon" alt="PagerDuty icon" />
-
-            <h2>PagerDuty</h2>
-            <p>On-call scheduling, alerting, and incident tracking.</p>
-
-            <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
-        <li>
-            <img src="{% static 'img/integrations/pagertree.png' %}"
-                class="icon" alt="PagerTree icon" />
-
-            <h2>PagerTree</h2>
-            <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications</p>
-
-            <a href="{% url 'hc-add-pagertree' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        <li>
-            <img src="{% static 'img/integrations/victorops.png' %}"
-                class="icon" alt="VictorOps icon" />
-
-            <h2>VictorOps</h2>
-            <p>On-call scheduling, alerting, and incident tracking.</p>
-
-            <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        <li>
-            <img src="{% static 'img/integrations/pagerteam.png' %}"
-                class="icon" alt="PagerTeam icon" />
-
-            <h2>Pager Team</h2>
-            <p>On-call rotations without limits.</p>
-
-            <a href="{% url 'hc-add-pagerteam' %}" class="btn btn-primary">Add Integration</a>
-        </li>
         {% if enable_discord %}
         <li>
             <img src="{% static 'img/integrations/discord.png' %}"
@@ -308,26 +228,7 @@
             <a href="{% url 'hc-add-discord' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
-        <li>
-            <img src="{% static 'img/integrations/opsgenie.png' %}"
-                class="icon" alt="OpsGenie icon" />
 
-            <h2>OpsGenie</h2>
-            <p> Alerting &amp; Incident Management Solution for Dev &amp; Ops.</p>
-
-            <a href="{% url 'hc-add-opsgenie' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% if enable_trello %}
-        <li>
-            <img src="{% static 'img/integrations/trello.png' %}"
-                 class="icon" alt="Trello icon" />
-
-            <h2>Trello</h2>
-            <p>Create a Trello card when a check goes down.</p>
-
-            <a href="{% url 'hc-add-trello' %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
         {% if enable_matrix %}
         <li>
             <img src="{% static 'img/integrations/matrix.png' %}"
@@ -339,6 +240,129 @@
             <a href="{% url 'hc-add-matrix' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+
+        <li>
+            <img src="{% static 'img/integrations/mattermost.png' %}"
+                class="icon" alt="Mattermost icon" />
+
+            <h2>Mattermost</h2>
+            <p>High Trust Messaging for the Enterprise.</p>
+
+            <a href="{% url 'hc-add-mattermost' %}" class="btn btn-primary">Add Integration</a>
+        </li>        
+
+        <li>
+            <img src="{% static 'img/integrations/opsgenie.png' %}"
+                class="icon" alt="OpsGenie icon" />
+
+            <h2>OpsGenie</h2>
+            <p> Alerting &amp; Incident Management Solution for Dev &amp; Ops.</p>
+
+            <a href="{% url 'hc-add-opsgenie' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
+        {% if enable_pd %}
+        <li>
+            <img src="{% static 'img/integrations/pd.png' %}"
+                class="icon" alt="PagerDuty icon" />
+
+            <h2>PagerDuty</h2>
+            <p>On-call scheduling, alerting, and incident tracking.</p>
+
+            <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
+        <li>
+            <img src="{% static 'img/integrations/pagerteam.png' %}"
+                class="icon" alt="PagerTeam icon" />
+
+            <h2>Pager Team</h2>
+            <p>On-call rotations without limits.</p>
+
+            <a href="{% url 'hc-add-pagerteam' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
+        <li>
+            <img src="{% static 'img/integrations/pagertree.png' %}"
+                class="icon" alt="PagerTree icon" />
+
+            <h2>PagerTree</h2>
+            <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications</p>
+
+            <a href="{% url 'hc-add-pagertree' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
+        {% if enable_pushbullet %}
+        <li>
+            <img src="{% static 'img/integrations/pushbullet.png' %}"
+                 class="icon" alt="Pushbullet icon" />
+
+            <h2>Pushbullet</h2>
+            <p>Pushbullet connects your devices, making them feel like one.</p>
+
+            <a href="{% url 'hc-add-pushbullet' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
+        {% if enable_pushover %}
+        <li>
+            <img src="{% static 'img/integrations/po.png' %}"
+                 class="icon" alt="Pushover icon" />
+
+            <h2>Pushover</h2>
+            <p>Receive instant push notifications on your phone or tablet.</p>
+
+            <a href="{% url 'hc-add-pushover' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
+        {% if enable_sms %}
+        <li>
+            <img src="{% static 'img/integrations/sms.png' %}"
+                class="icon" alt="SMS icon" />
+
+            <h2>SMS {% if use_payments %}<small>(paid plans)</small>{% endif %}</h2>
+            <p>Get a text message to your phone when a check goes down.</p>
+
+            <a href="{% url 'hc-add-sms' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
+        {% if enable_telegram %}
+        <li>
+            <img src="{% static 'img/integrations/telegram.png' %}"
+                 class="icon" alt="Telegram icon" />
+
+            <h2>Telegram</h2>
+            <p>A messaging app with a focus on speed and security.</p>
+
+            <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
+        {% if enable_trello %}
+        <li>
+            <img src="{% static 'img/integrations/trello.png' %}"
+                 class="icon" alt="Trello icon" />
+
+            <h2>Trello</h2>
+            <p>Create a Trello card when a check goes down.</p>
+
+            <a href="{% url 'hc-add-trello' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
+        <li>
+            <img src="{% static 'img/integrations/victorops.png' %}"
+                class="icon" alt="VictorOps icon" />
+
+            <h2>VictorOps</h2>
+            <p>On-call scheduling, alerting, and incident tracking.</p>
+
+            <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
         {% if enable_whatsapp %}
         <li>
             <img src="{% static 'img/integrations/whatsapp.png' %}"
@@ -350,15 +374,7 @@
             <a href="{% url 'hc-add-whatsapp' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
-        <li>
-            <img src="{% static 'img/integrations/mattermost.png' %}"
-                class="icon" alt="Mattermost icon" />
 
-            <h2>Mattermost</h2>
-            <p>High Trust Messaging for the Enterprise.</p>
-
-            <a href="{% url 'hc-add-mattermost' %}" class="btn btn-primary">Add Integration</a>
-        </li>
         <li class="link-to-github">
             <img src="{% static 'img/integrations/missing.png' %}"
                  class="icon" alt="Suggest New Integration" />
