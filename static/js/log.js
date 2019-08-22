@@ -11,12 +11,13 @@ $(function () {
     });
 
     function switchDateFormat(format) {
-        var tz = format == "local" ? spacetime().timezone().name : format;
         $("#log tr").each(function(index, row) {
-            var s = spacetime(row.getAttribute("data-dt")).goto(tz);
-            $(".date", row).text(s.unixFmt("MMM d"));
-            $(".time", row).text(s.unixFmt("h:mm"));                
-        })
+            var dt = moment(row.getAttribute("data-dt"));
+            format == "local" ? dt.local() : dt.tz(format);
+
+            $(".date", row).text(dt.format("MMM D"));
+            $(".time", row).text(dt.format("HH:mm"));                
+        })        
     }
 
     $("#format-switcher").click(function(ev) {
