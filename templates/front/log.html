@@ -19,14 +19,21 @@
 
             <li id="format-switcher-container" class="pull-right">
                 <div id="format-switcher" class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default btn-xs" data-format="utc">
+                    <label class="btn btn-default btn-xs" data-format="UTC">
                         <input type="radio" name="date-format" checked>
                         UTC
                     </label>
 
+                    {% if check.kind == "cron" and check.tz != "UTC" %}
+                    <label class="btn btn-default btn-xs" data-format="{{ check.tz }}">
+                        <input type="radio" name="date-format">
+                        {{ check.tz }}
+                    </label>                
+                    {% endif %}
+
                     <label class="btn btn-default btn-xs active" data-format="local">
                         <input type="radio" name="date-format">
-                        Local Time
+                        Browser's time zone
                     </label>
                 </div>
             </li>
@@ -164,7 +171,7 @@
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/moment.min.js' %}"></script>
+<script src="{% static 'js/spacetime.min.js' %}"></script>
 <script src="{% static 'js/log.js' %}"></script>
 {% endcompress %}
 {% endblock %}

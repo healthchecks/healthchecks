@@ -109,12 +109,11 @@ $(function () {
     var lastFormat = "local";
     function switchDateFormat(format) {
         lastFormat = format;
+        var tz = format == "local" ? spacetime().timezone().name : format;
         $("#log tr").each(function(index, row) {
-            var dt = moment(row.getAttribute("data-dt"));
-            format == "local" ? dt.local() : dt.utc();
-
-            $(".date", row).text(dt.format("MMM D"));
-            $(".time", row).text(dt.format("HH:mm"));
+            var s = spacetime(row.getAttribute("data-dt")).goto(tz);
+            $(".date", row).text(s.unixFmt("MMM d"));
+            $(".time", row).text(s.unixFmt("h:mm"));                
         })
 
         // The table is initially hidden to avoid flickering as we convert dates.

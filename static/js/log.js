@@ -4,19 +4,18 @@ $(function () {
         $('#ping-details-modal').modal("show");
 
         $.get(this.dataset.url, function(data) {
-            $("#ping-details-body" ).html(data);
+            $("#ping-details-body").html(data);
         });
 
         return false;
     });
 
     function switchDateFormat(format) {
+        var tz = format == "local" ? spacetime().timezone().name : format;
         $("#log tr").each(function(index, row) {
-            var dt = moment(row.getAttribute("data-dt"));
-            format == "local" ? dt.local() : dt.utc();
-
-            $(".date", row).text(dt.format("MMM D"));
-            $(".time", row).text(dt.format("HH:mm"));
+            var s = spacetime(row.getAttribute("data-dt")).goto(tz);
+            $(".date", row).text(s.unixFmt("MMM d"));
+            $(".time", row).text(s.unixFmt("h:mm"));                
         })
     }
 

@@ -163,5 +163,6 @@ $(function () {
     $(".kind-cron").click(showCron);
 
     $("#schedule").on("keyup", updateCronPreview);
+    $("#tz").on("change", updateCronPreview);
 
 });
