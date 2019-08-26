@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ## Bug Fixes
 - Fix javascript code to construct correct URLs when running from a subdirectory (#273)
-
+- Don't show the "Sign Up" link in the login page if registration is closed (#280)
 
 ## 1.8.0 - 2019-07-08
 

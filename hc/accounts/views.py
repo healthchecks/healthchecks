@@ -132,6 +132,7 @@ def login(request):
         "form": form,
         "magic_form": magic_form,
         "bad_link": bad_link,
+        "registration_open": settings.REGISTRATION_OPEN,
     }
     return render(request, "accounts/login.html", ctx)
 
