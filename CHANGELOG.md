@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add the `pruneflips` management command
 - Add Mattermost integration (#276)
 - Three choices in timezone switcher (UTC / check's timezone / browser's timezone) (#278)
+- After adding a new check redirect to the "Check Details" page
 
 ## Bug Fixes
 - Fix javascript code to construct correct URLs when running from a subdirectory (#273)

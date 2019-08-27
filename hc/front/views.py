@@ -292,7 +292,8 @@ def add_check(request, code):
 
     check.assign_all_channels()
 
-    return redirect("hc-checks", code)
+    url = reverse("hc-details", args=[check.code])
+    return redirect(url + "?new")
 
 
 @require_POST
@@ -478,6 +479,7 @@ def details(request, code):
         "channels": channels,
         "timezones": pytz.all_timezones,
         "downtimes": check.downtimes(months=3),
+        "is_new": "new" in request.GET,
     }
 
     return render(request, "front/details.html", ctx)

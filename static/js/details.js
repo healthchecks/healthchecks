@@ -6,6 +6,11 @@ $(function () {
         return false;
     });
 
+    $("#new-check-alert a").click(function() {
+        $("#" + this.dataset.target).click();
+        return false;
+    });
+
     $("#edit-desc").click(function() {
         $('#update-name-modal').modal("show");
         $("#update-desc-input").focus();

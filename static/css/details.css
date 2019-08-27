@@ -95,3 +95,11 @@
     font-weight: normal;
     color: #888;
 }
+
+.alert.no-events {
+    border: #ddd;
+    background: #F5F5F5;
+    color: #444;
+    text-align: center;
+    padding: 32px;
+}
