@@ -44,6 +44,10 @@
                 Last Ping</span>
             </a>
             {% endif %}
+            {% if show_last_duration %}
+            <br />
+            <span class="checks-subline">Last Duration</span>
+            {% endif %}
         </th>
         <th class="hidden-xs"></th>
     </tr>
@@ -102,10 +106,10 @@
                 class="timeout-grace">
                 {% if check.kind == "simple" %}
                     {{ check.timeout|hc_duration }}
+                    <br />
                 {% elif check.kind == "cron" %}
-                    <span class="cron-expression">{{ check.schedule }}</span>
+                    <div class="cron-expression">{{ check.schedule }}</div>
                 {% endif %}
-                <br />
                 <span class="checks-subline">
                 {{ check.grace|hc_duration }}
                 </span>

@@ -26,6 +26,7 @@ from hc.accounts.models import Project
 from hc.api.models import (
     DEFAULT_GRACE,
     DEFAULT_TIMEOUT,
+    MAX_DELTA,
     Channel,
     Check,
     Ping,
@@ -60,8 +61,6 @@ STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
 DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
-ONE_HOUR = td(hours=1)
-TWELVE_HOURS = td(hours=12)
 
 
 def _tags_statuses(checks):
@@ -155,6 +154,13 @@ def my_checks(request, code):
             if search not in search_key:
                 hidden_checks.add(check)
 
+    # Do we need to show the "Last Duration" header?
+    show_last_duration = False
+    for check in checks:
+        if check.clamped_last_duration():
+            show_last_duration = True
+            break
+
     ctx = {
         "page": "checks",
         "checks": checks,
@@ -170,6 +176,7 @@ def my_checks(request, code):
         "selected_tags": selected_tags,
         "search": search,
         "hidden_checks": hidden_checks,
+        "show_last_duration": show_last_duration,
     }
 
     return render(request, "front/my_checks.html", ctx)
@@ -421,10 +428,6 @@ def remove_check(request, code):
 
 
 def _get_events(check, limit):
-    # max time between start and ping where we will consider
-    # the both events related.
-    max_delta = min(ONE_HOUR + check.grace, TWELVE_HOURS)
-
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
     pings = list(pings)
 
@@ -432,7 +435,7 @@ def _get_events(check, limit):
     for ping in pings:
         if ping.kind == "start" and prev and prev.kind != "start":
             delta = prev.created - ping.created
-            if delta < max_delta:
+            if delta < MAX_DELTA:
                 setattr(prev, "delta", delta)
 
         prev = ping

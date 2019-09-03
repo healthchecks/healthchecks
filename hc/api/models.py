@@ -21,6 +21,8 @@ DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
 NEVER = datetime(3000, 1, 1, tzinfo=pytz.UTC)
 CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
+# max time between start and ping where we will consider both events related:
+MAX_DELTA = td(hours=24)
 
 CHANNEL_KINDS = (
     ("email", "Email"),
@@ -71,6 +73,7 @@ class Check(models.Model):
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     last_start = models.DateTimeField(null=True, blank=True)
+    last_duration = models.DurationField(null=True, blank=True)
     last_ping_was_fail = models.NullBooleanField(default=False)
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
@@ -104,6 +107,10 @@ class Check(models.Model):
 
     def email(self):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
+
+    def clamped_last_duration(self):
+        if self.last_duration and self.last_duration < MAX_DELTA:
+            return self.last_duration
 
     def get_grace_start(self):
         """ Return the datetime when the grace period starts.
@@ -200,6 +207,9 @@ class Check(models.Model):
             "next_ping": isostring(self.get_grace_start()),
         }
 
+        if self.last_duration:
+            result["last_duration"] = int(self.last_duration.total_seconds())
+
         if readonly:
             code_half = self.code.hex[:16]
             result["unique_key"] = hashlib.sha1(code_half.encode()).hexdigest()
@@ -227,8 +237,12 @@ class Check(models.Model):
         elif action == "ign":
             pass
         else:
-            self.last_start = None
             self.last_ping = timezone.now()
+            if self.last_start:
+                self.last_duration = self.last_ping - self.last_start
+                self.last_start = None
+            else:
+                self.last_duration = None
 
             new_status = "down" if action == "fail" else "up"
             if self.status != new_status:

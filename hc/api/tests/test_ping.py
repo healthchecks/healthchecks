@@ -176,3 +176,13 @@ class PingTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertTrue(self.check.last_start)
         self.assertEqual(self.check.status, "paused")
+
+    def test_it_sets_last_duration(self):
+        self.check.last_start = now() - td(seconds=10)
+        self.check.save()
+
+        r = self.client.get("/ping/%s/" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertTrue(self.check.last_duration.total_seconds() >= 10)

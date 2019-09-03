@@ -67,7 +67,6 @@
 }
 
 .timeout-grace .cron-expression {
-    display: inline-block;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
@@ -127,4 +126,9 @@ tr:hover .copy-link {
     position: relative;
     line-height: 36px;
     color: #333;
+}
+
+.checks-subline-duration {
+    color: #888;
+    white-space: nowrap;
 }
