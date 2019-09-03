@@ -15,34 +15,31 @@ Hello,<br />
     {% else %}
         {{ num_down }} checks are currently <strong>DOWN</strong>.
     {% endif %}
-{% else %}
-    This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.
-{% endif %}
 
-<br />
-
-{% if nag %}
+    <br />
     {% include "emails/summary-html.html" %}
-{% else %}
-    {% include "emails/summary-downtimes-html.html" %}
-{% endif %}
 
-{% if nag %}
     <strong>Too many notifications?</strong>
     Visit the <a href="{{ notifications_url }}">Email Reports</a>
     page on {% site_name %} to set your notification preferences.
+
 {% else %}
-<strong>Just one more thing to check:</strong>
-Do you have more cron jobs,
-not yet on this list, that would benefit from monitoring?
-Get the ball rolling by adding one more!
+    This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.
+
+    <br />
+    {% include "emails/summary-downtimes-html.html" %}
+
+    <strong>Just one more thing to check:</strong>
+    Do you have more cron jobs,
+    not yet on this list, that would benefit from monitoring?
+    Get the ball rolling by adding one more!
 {% endif %}
+
 <br /><br />
 
 Cheers,<br>
 The {% site_name %} Team
 {% endblock %}
-
 
 {% block unsub %}
 <br>

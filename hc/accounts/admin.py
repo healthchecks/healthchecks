@@ -189,7 +189,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class HcUserAdmin(UserAdmin):
-    actions = ["send_report"]
+    actions = ["send_report", "send_nag"]
     list_display = (
         "id",
         "email",
@@ -234,6 +234,12 @@ class HcUserAdmin(UserAdmin):
     def send_report(self, request, qs):
         for user in qs:
             user.profile.send_report()
+
+        self.message_user(request, "%d email(s) sent" % qs.count())
+
+    def send_nag(self, request, qs):
+        for user in qs:
+            user.profile.send_report(nag=True)
 
         self.message_user(request, "%d email(s) sent" % qs.count())
 
