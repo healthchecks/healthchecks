@@ -86,19 +86,19 @@ Configurations settings loaded from environment variables:
 
 | Environment variable | Default value | Notes
 | -------------------- | ------------- | ----- |
-| [SECRET_KEY](https://docs.djangoproject.com/en/2.1/ref/settings/#secret-key) | `"---"`
-| [DEBUG](https://docs.djangoproject.com/en/2.1/ref/settings/#debug) | `True` | Set to `False` for production
-| [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.1/ref/settings/#allowed-hosts) | `*` | Separate multiple hosts with commas
-| [DEFAULT_FROM_EMAIL](https://docs.djangoproject.com/en/2.1/ref/settings/#default-from-email) | `"healthchecks@example.org"`
+| [SECRET_KEY](https://docs.djangoproject.com/en/2.2/ref/settings/#secret-key) | `"---"`
+| [DEBUG](https://docs.djangoproject.com/en/2.2/ref/settings/#debug) | `True` | Set to `False` for production
+| [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts) | `*` | Separate multiple hosts with commas
+| [DEFAULT_FROM_EMAIL](https://docs.djangoproject.com/en/2.2/ref/settings/#default-from-email) | `"healthchecks@example.org"`
 | USE_PAYMENTS | `False`
 | REGISTRATION_OPEN | `True`
 | DB | `"sqlite"` | Set to `"postgres"` or `"mysql"`
-| [DB_HOST](https://docs.djangoproject.com/en/2.1/ref/settings/#host) | `""` *(empty string)*
-| [DB_PORT](https://docs.djangoproject.com/en/2.1/ref/settings/#port) | `""` *(empty string)*
-| [DB_NAME](https://docs.djangoproject.com/en/2.1/ref/settings/#name) | `"hc"` (PostgreSQL, MySQL) or `"/path/to/project/hc.sqlite"` (SQLite) | For SQLite, specify the full path to the database file.
-| [DB_USER](https://docs.djangoproject.com/en/2.1/ref/settings/#user) | `"postgres"` or `"root"`
-| [DB_PASSWORD](https://docs.djangoproject.com/en/2.1/ref/settings/#password) | `""` *(empty string)*
-| [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.1/ref/settings/#conn-max-age) | `0`
+| [DB_HOST](https://docs.djangoproject.com/en/2.2/ref/settings/#host) | `""` *(empty string)*
+| [DB_PORT](https://docs.djangoproject.com/en/2.2/ref/settings/#port) | `""` *(empty string)*
+| [DB_NAME](https://docs.djangoproject.com/en/2.2/ref/settings/#name) | `"hc"` (PostgreSQL, MySQL) or `"/path/to/project/hc.sqlite"` (SQLite) | For SQLite, specify the full path to the database file.
+| [DB_USER](https://docs.djangoproject.com/en/2.2/ref/settings/#user) | `"postgres"` or `"root"`
+| [DB_PASSWORD](https://docs.djangoproject.com/en/2.2/ref/settings/#password) | `""` *(empty string)*
+| [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.2/ref/settings/#conn-max-age) | `0`
 | DB_SSLMODE | `"prefer"` | PostgreSQL-specific, [details](https://blog.github.com/2018-10-21-october21-incident-report/)
 | DB_TARGET_SESSION_ATTRS | `"read-write"` | PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/static/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS)
 | EMAIL_HOST | `""` *(empty string)*
@@ -347,3 +347,38 @@ To enable Apprise integration, you will need to:
 pip install apprise
 ```
 * enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.
+
+## Running in Production
+
+Here is a non-exhaustive list of pointers and things to check before launching a Healthchecks instance
+in production.
+
+* Environment variables, settings.py and local_settings.py.
+  * [DEBUG](https://docs.djangoproject.com/en/2.2/ref/settings/#debug). Make sure it is set to `False`.
+  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts). Make sure it
+    contains the correct domain name you want to use.
+  * Server Errors. When DEBUG=False, Django will not show detailed error pages, and will not print exception
+    tracebacks to standard output. To receive exception tracebacks in email,
+    review and edit the [ADMINS](https://docs.djangoproject.com/en/2.2/ref/settings/#admins) and
+    [SERVER_EMAIL](https://docs.djangoproject.com/en/2.2/ref/settings/#server-email) settings.
+    Another good option for receiving exception tracebacks is to use [Sentry](https://sentry.io/for/django/).
+* Management commands that need to be run during each deployment.
+  * This project uses [Django Compressor](https://django-compressor.readthedocs.io/en/stable/)
+    to combine the CSS and JS files. It is configured for offline compression – run the
+    `manage.py compress` command whenever files in the `/static/` directory change.
+  * This project uses Django's [staticfiles app](https://docs.djangoproject.com/en/2.2/ref/contrib/staticfiles/).
+    Run the `manage.py collectstatic` command whenever files in the `/static/`
+    directory change. This command collects all the static files inside the `static-collected` directory.
+    Configure your web server to serve files from this directory under the `/static/` prefix.
+* Processes that need to be running constantly.
+  * `manage.py runserver` is intended for development only. Do not use it in production,
+    instead consider using [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) or
+    [gunicorn](https://gunicorn.org/).
+  * Make sure the `manage.py sendalerts` command is running and can survive server restarts.
+    On modern linux systems, a good option is to
+    [define a systemd service](https://github.com/healthchecks/healthchecks/issues/273#issuecomment-520560304) for it.
+* General
+  * Make sure the database is secured well and is getting backed up regularly
+  * Make sure the TLS certificates are secured well and are getting refreshed regularly
+  * Have monitoring in place to be sure the Healthchecks instance itself is operational
+    (is accepting pings, is sending out alerts, is not running out of resources).
