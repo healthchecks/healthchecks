@@ -310,26 +310,27 @@ To enable Discord integration, you will need to:
 
 ### Pushover
 
-Pushover integration works by creating an 'application' on Pushover.net which
-is then subscribed to by Healthchecks users. Registration workflow is as follows:
+Pushover integration works by creating an application on Pushover.net which
+is then subscribed to by Healthchecks users. The registration workflow is as follows:
 
-* On Healthchecks, user adds a 'Pushover' integration to a project
-* Healthchecks redirects to a Pushover.net subscription page
-* User approves adding the Healthchecks subscription to their pushover account
+* On Healthchecks, the user adds a "Pushover" integration to a project
+* Healthchecks redirects user's browser to a Pushover.net subscription page
+* User approves adding the Healthchecks subscription to their Pushover account
 * Pushover.net HTTP redirects back to Healthchecks with a subscription token
-* Healthchecks instance uses subscription token for Pushover notifications
+* Healthchecks saves the subscription token and uses it for sending Pushover
+  notifications
 
-To enable Pushover integration, you will need to:
+To enable the Pushover integration, you will need to:
 
-* Register a new 'application' on Pushover via https://pushover.net/apps/build .
-* Within the Pushover 'application' configuration, enable subscriptions. 
-  Make sure to subscription type is set to 'URL'. Also make sure the redirect 
+* Register a new application on Pushover via https://pushover.net/apps/build.
+* Within the Pushover 'application' configuration, enable subscriptions.
+  Make sure the subscription type is set to "URL". Also make sure the redirect
   URL is configured to point back to the root of the Healthchecks instance
-  (eg http://healthchecks.example.com/).
-* Add the Pushover application API Token and the Pushover subscription URL in
+  (e.g., `http://healthchecks.example.com/`).
+* Put the Pushover application API Token and the Pushover subscription URL in
   `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL` environment
-  variables. The pushover subscription URL should appear similar to
-  https://pushover.net/subscribe/yourAppName-randomAlphaNumericData .
+  variables. The Pushover subscription URL should look similar to
+  `https://pushover.net/subscribe/yourAppName-randomAlphaNumericData`.
 
 ### Telegram
 
