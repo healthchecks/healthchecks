@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress humanize staticfiles hc_extras %}
+{% load compress humanize static hc_extras %}
 
 {% block title %}My Checks - {% site_name %}{% endblock %}
 
@@ -28,7 +28,7 @@
                     <label class="btn btn-default btn-xs" data-format="{{ check.tz }}">
                         <input type="radio" name="date-format">
                         {{ check.tz }}
-                    </label>                
+                    </label>
                     {% endif %}
 
                     <label class="btn btn-default btn-xs active" data-format="local">
