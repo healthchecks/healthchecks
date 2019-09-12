@@ -4,8 +4,8 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Improvements
- - Add the "Last Duration" field in the "My Checks" page (#257)
- - Add "last_duration" attribute to the Check API resource (#257)
+- Add the "Last Duration" field in the "My Checks" page (#257)
+- Add "last_duration" attribute to the Check API resource (#257)
 
 
 ## 1.9.0 - 2019-09-03
@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - Three choices in timezone switcher (UTC / check's timezone / browser's timezone) (#278)
 - After adding a new check redirect to the "Check Details" page
 
-## Bug Fixes
+### Bug Fixes
 - Fix javascript code to construct correct URLs when running from a subdirectory (#273)
 - Don't show the "Sign Up" link in the login page if registration is closed (#280)
 
