@@ -61,6 +61,35 @@ body {
     font-size: small;
 }
 
+#nav-sign-up {
+    padding: 21px 0 21px 15px;
+}
+
+#nav-sign-up:hover {
+    border: 0;
+}
+
+#nav-sign-up:focus, #nav-sign-up:active {
+    outline: none;
+}
+
+#nav-sign-up span {
+    display: inline-block;
+    color: #1ea65a;
+    font-weight: bold;
+    border: 1px solid #1ea65a;
+    border-radius: 5px;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+#nav-sign-up:hover span {
+    color: #fff;
+    background: #22bc66;
+    border-color: #22bc66;
+}
+
+
 .page-checks .container-fluid, .page-details .container-fluid {
     /* Fluid below 1320px, but max width capped to 1320px ... */
     max-width: 1320px;

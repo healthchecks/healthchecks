@@ -151,6 +151,16 @@
                 {% elif page != "login" %}
                 <li><a href="{% url 'hc-login' %}">Sign In</a></li>
                 {% endif %}
+
+                {% if registration_open %}
+                {% if page == "welcome" or page == "login" %}
+                <li>
+                    <a id="nav-sign-up" href="#" data-toggle="modal" data-target="#signup-modal">
+                        <span>Sign Up</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% endif %}
             </ul>
         </div>
 
