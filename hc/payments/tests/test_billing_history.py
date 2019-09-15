@@ -23,4 +23,4 @@ class BillingHistoryTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/accounts/profile/billing/history/")
         self.assertContains(r, "123")
-        self.assertContains(r, "def456")
+        self.assertContains(r, "456")

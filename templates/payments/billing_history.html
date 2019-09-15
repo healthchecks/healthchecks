@@ -6,7 +6,6 @@
         <th>Amount</th>
         <th>Type</th>
         <th>Status</th>
-        <th></th>
     </tr>
     {% for tx in transactions %}
         <tr {% if tx.type == "credit" %}class="text-muted"{% endif %}>
@@ -29,12 +28,6 @@
             </td>
             <td>{{ tx.type|capfirst }}</td>
             <td><code>{{ tx.status }}</code></td>
-            <td>
-                {% if tx.type == "credit" %}
-                {% else %}
-                <a href="{% url 'hc-invoice-pdf' tx.id %}">PDF Invoice</a>
-                {% endif %}
-            </td>
         </tr>
     {% endfor%}
 </table>

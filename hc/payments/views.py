@@ -1,21 +1,11 @@
-from io import BytesIO
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import (
-    HttpResponseBadRequest,
-    HttpResponseForbidden,
-    JsonResponse,
-    HttpResponse,
-)
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.api.models import Check
-from hc.lib import emails
 from hc.payments.forms import InvoiceEmailingForm
-from hc.payments.invoices import PdfInvoice
 from hc.payments.models import Subscription
 
 
@@ -184,39 +174,3 @@ def billing_history(request):
 
     ctx = {"transactions": transactions}
     return render(request, "payments/billing_history.html", ctx)
-
-
-@login_required
-def pdf_invoice(request, transaction_id):
-    sub, tx = Subscription.objects.by_transaction(transaction_id)
-
-    # Does this transaction belong to a customer we know about?
-    if sub is None or tx is None:
-        return HttpResponseForbidden()
-
-    # Does the transaction's customer match the currently logged in user?
-    if sub.user != request.user and not request.user.is_superuser:
-        return HttpResponseForbidden()
-
-    response = HttpResponse(content_type="application/pdf")
-    filename = "MS-HC-%s.pdf" % tx.id.upper()
-    response["Content-Disposition"] = 'attachment; filename="%s"' % filename
-    PdfInvoice(response).render(tx, sub.flattened_address())
-    return response
-
-
-@csrf_exempt
-@require_POST
-def charge_webhook(request):
-    sub, tx = Subscription.objects.by_braintree_webhook(request)
-    if sub.send_invoices:
-        filename = "MS-HC-%s.pdf" % tx.id.upper()
-
-        sink = BytesIO()
-        PdfInvoice(sink).render(tx, sub.flattened_address())
-        ctx = {"tx": tx}
-
-        recipient = sub.invoice_email or sub.user.email
-        emails.invoice(recipient, ctx, filename, sink.getvalue())
-
-    return HttpResponse()

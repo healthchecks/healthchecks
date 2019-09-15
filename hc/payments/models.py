@@ -173,13 +173,6 @@ class Subscription(models.Model):
 
         return self._address
 
-    def flattened_address(self):
-        if self.address_id:
-            ctx = {"a": self.address, "email": self.user.email}
-            return render_to_string("payments/address_plain.html", ctx)
-        else:
-            return self.user.email
-
     @property
     def transactions(self):
         if not hasattr(self, "_tx"):
