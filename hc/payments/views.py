@@ -16,9 +16,10 @@ def token(request):
 
 
 def pricing(request):
-    if request.user.is_authenticated and request.user != request.project.owner:
-        ctx = {"page": "pricing"}
-        return render(request, "payments/pricing_not_owner.html", ctx)
+    if request.user.is_authenticated:
+        if request.project and request.project.owner != request.user:
+            ctx = {"page": "pricing"}
+            return render(request, "payments/pricing_not_owner.html", ctx)
 
     # Don't use Subscription.objects.for_user method here, so a
     # subscription object is not created just by viewing a page.
