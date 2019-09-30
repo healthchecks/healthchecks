@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add the "Last Duration" field in the "My Checks" page (#257)
 - Add "last_duration" attribute to the Check API resource (#257)
+- Upgrade to psycopg2 2.8.3
 
 
 ## 1.9.0 - 2019-09-03
