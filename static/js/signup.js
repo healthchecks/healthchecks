@@ -5,6 +5,7 @@ $(function () {
         var email = $("#signup-email").val();
         var token = $('input[name=csrfmiddlewaretoken]').val();
 
+        $("#signup-go").prop("disabled", true);
         $.ajax({
             url: base + "/accounts/signup/",
             type: "post",
@@ -12,6 +13,7 @@ $(function () {
             data: {"identity": email},
             success: function(data) {
                 $("#signup-result").html(data).show();
+                $("#signup-go").prop("disabled", false);
             }
         });
 

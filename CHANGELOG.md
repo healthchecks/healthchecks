@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 - Add "last_duration" attribute to the Check API resource (#257)
 - Upgrade to psycopg2 2.8.3
 
+### Bug Fixes
+- Usernames now are uuid3(const, email). Prevents multiple accts with same email (#290)
+- Prevent double-clicking the submit button in signup form
+
 
 ## 1.9.0 - 2019-09-03
 
