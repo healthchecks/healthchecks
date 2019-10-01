@@ -101,6 +101,7 @@ Configurations settings loaded from environment variables:
 | [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.2/ref/settings/#conn-max-age) | `0`
 | DB_SSLMODE | `"prefer"` | PostgreSQL-specific, [details](https://blog.github.com/2018-10-21-october21-incident-report/)
 | DB_TARGET_SESSION_ATTRS | `"read-write"` | PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/static/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS)
+| DEFAULT_TZ | `"UTC"` | "Sets the servers default timezone for cronjobs."
 | EMAIL_HOST | `""` *(empty string)*
 | EMAIL_PORT | `"587"`
 | EMAIL_HOST_USER | `""` *(empty string)*

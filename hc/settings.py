@@ -133,7 +133,7 @@ if os.getenv("DB") == "mysql":
         }
     }
 
-TIME_ZONE = "UTC"
+TIME_ZONE = os.getenv("DEFAULT_TZ", "UTC")
 
 USE_I18N = False
 
