@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Usernames now are uuid3(const, email). Prevents multiple accts with same email (#290)
 - Prevent double-clicking the submit button in signup form
+- Upgrade to Django 2.2.6 – fixes sqlite migrations (#284)
 
 
 ## 1.9.0 - 2019-09-03
