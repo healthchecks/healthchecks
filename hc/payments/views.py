@@ -91,9 +91,6 @@ def update(request):
     plan_id = request.POST["plan_id"]
     nonce = request.POST["nonce"]
 
-    if plan_id not in ("", "P20", "P80", "Y192", "Y768"):
-        return HttpResponseBadRequest()
-
     sub = Subscription.objects.for_user(request.user)
     # If plan_id has not changed then just update the payment method:
     if plan_id == sub.plan_id:
@@ -103,6 +100,9 @@ def update(request):
 
         request.session["payment_method_status"] = "success"
         return redirect("hc-billing")
+
+    if plan_id not in ("", "P20", "P80", "Y192", "Y768"):
+        return HttpResponseBadRequest()
 
     # Cancel the previous plan and reset limits:
     sub.cancel()
