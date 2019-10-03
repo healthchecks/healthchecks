@@ -1,0 +1,9 @@
+import "fmt"
+import "net/http"
+
+func main() {
+	_, err := http.Get("PING_URL")
+	if err != nil {
+		fmt.Printf("%s", err)
+	}
+}
