@@ -1,45 +1,92 @@
 $(function () {
-    var clientTokenRequested = false;
-    function requestClientToken() {
-        if (!clientTokenRequested) {
-            clientTokenRequested = true;
-            $.getJSON("/pricing/get_client_token/", setupDropin);
+    var preloadedToken = null;
+    function getToken(callback) {
+        if (preloadedToken) {
+            callback(preloadedToken);
+        } else {
+            $.getJSON("/pricing/token/", function(response) {
+                preloadedToken = response.client_token;
+                callback(response.client_token);
+            });
         }
     }
 
-    function setupDropin(data) {
-        braintree.dropin.create({
-            authorization: data.client_token,
-            container: "#dropin",
-            paypal: { flow: 'vault' }
-        }, function(createErr, instance) {
-            $("#payment-form-submit").click(function() {
-                instance.requestPaymentMethod(function (requestPaymentMethodErr, payload) {
-                    $("#pmm-nonce").val(payload.nonce);
-                    $("#payment-form").submit();
+    // Preload client token:
+    if ($("#billing-address").length) {
+        getToken(function(token){});
+    }
+
+    function getAmount(planId) {
+        return planId.substr(1);
+    }
+
+    function showPaymentMethodForm(planId) {
+        $("#plan-id").val(planId);
+        $("#nonce").val("");
+
+        if (planId == "") {
+            // Don't need a payment method when switching to the free plan
+            // -- can submit the form right away:
+            $("#update-subscription-form").submit();
+            return;
+        }
+
+        $("#payment-form-submit").prop("disabled", true);
+        $("#payment-method-modal").modal("show");        
+
+        getToken(function(token) {            
+            braintree.dropin.create({
+                authorization: token,
+                container: "#dropin",
+                threeDSecure: {
+                    amount: getAmount(planId),
+                },
+                paypal: { flow: 'vault' },
+                preselectVaultedPaymentMethod: false
+            }, function(createErr, instance) {
+                $("#payment-form-submit").off().click(function() {
+                    instance.requestPaymentMethod(function (err, payload) {
+                        $("#payment-method-modal").modal("hide");
+                        $("#please-wait-modal").modal("show");
+                        
+                        $("#nonce").val(payload.nonce);
+                        $("#update-subscription-form").submit();
+                    });
                 });
-            }).prop("disabled", false);
+
+                $("#payment-method-modal").off("hidden.bs.modal").on("hidden.bs.modal", function() {
+                    instance.teardown();
+                });
+
+                instance.on("paymentMethodRequestable", function() {
+                    $("#payment-form-submit").prop("disabled", false);
+                });
+
+                instance.on("noPaymentMethodRequestable", function() {
+                    $("#payment-form-submit").prop("disabled", true);
+                });
+
+            });
         });
     }
 
-    $("#update-payment-method").hover(requestClientToken);
-
-    $("#update-payment-method").click(function() {
-        requestClientToken();
-        $("#payment-form").attr("action", this.dataset.action);
-        $("#payment-form-submit").text("Update Payment Method");
-        $("#payment-method-modal").modal("show");
+    $("#change-plan-btn").click(function() {
+        $("#change-billing-plan-modal").modal("hide");
+        showPaymentMethodForm(this.dataset.planId);
     });
 
+    $("#update-payment-method").click(function() {
+        showPaymentMethodForm($("#old-plan-id").val());        
+    });
 
-    $("#billing-history").load( "/accounts/profile/billing/history/" );
-    $("#billing-address").load( "/accounts/profile/billing/address/", function() {
+    $("#billing-history").load("/accounts/profile/billing/history/");
+    $("#billing-address").load("/accounts/profile/billing/address/", function() {
         $("#billing-address input").each(function(idx, obj) {
             $("#" + obj.name).val(obj.value);
         });
     });
 
-    $("#payment-method").load( "/accounts/profile/billing/payment_method/", function() {
+    $("#payment-method").load("/accounts/profile/billing/payment_method/", function() {
         $("#next-billing-date").text($("#nbd").val());
     });
 
@@ -94,9 +141,7 @@ $(function () {
         if ($("#plan-business-plus").hasClass("selected")) {
             planId = period == "monthly" ? "P80" : "Y768";
         }
-
-        $("#plan-id").val(planId);
-
+        
         if (planId == $("#old-plan-id").val()) {
             $("#change-plan-btn")
                 .attr("disabled", "disabled")
@@ -105,10 +150,14 @@ $(function () {
         } else {
             var caption = "Change Billing Plan";
             if (planId) {
-                caption += " And Pay $" + planId.substr(1) + " Now";
+                var amount = planId.substr(1);
+                caption += " And Pay $" + amount + " Now";
             }
 
-            $("#change-plan-btn").removeAttr("disabled").text(caption);
+            $("#change-plan-btn")
+                .removeAttr("disabled")
+                .text(caption)
+                .attr("data-plan-id", planId);
         }
     }
     updateChangePlanForm();

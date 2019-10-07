@@ -12,9 +12,12 @@ class AddCheckTestCase(BaseTestCase):
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url)
-        self.assertRedirects(r, self.redirect_url)
+
         check = Check.objects.get()
         self.assertEqual(check.project, self.project)
+
+        redirect_url = "/checks/%s/details/?new" % check.code
+        self.assertRedirects(r, redirect_url)
 
     def test_it_handles_unset_current_project(self):
         self.profile.current_project = None
@@ -22,9 +25,12 @@ class AddCheckTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url)
-        self.assertRedirects(r, self.redirect_url)
+
         check = Check.objects.get()
         self.assertEqual(check.project, self.project)
+
+        redirect_url = "/checks/%s/details/?new" % check.code
+        self.assertRedirects(r, redirect_url)
 
     def test_team_access_works(self):
         self.client.login(username="bob@example.org", password="password")

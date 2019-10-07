@@ -87,11 +87,12 @@
     {% endfor %}
     </table>
 
-    {% if check.n_pings > 20 %}
     <p class="text-center">
         <a href="{% url 'hc-log' check.code %}">Show More&hellip;</a>
     </p>
-    {% endif %}
 {% else %}
-    <div class="alert alert-info">This check has not received any pings yet.</div>
+    <div class="alert no-events">
+        You will see a live-updating log of received pings here. <br />
+        This check has not received any pings yet.
+    </div>
 {% endif %}

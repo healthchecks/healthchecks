@@ -35,6 +35,15 @@ class PricingTestCase(BaseTestCase):
         r = self.client.get("/pricing/")
         self.assertContains(r, "To manage billing for this project")
 
+    def test_it_handles_null_project(self):
+        self.profile.current_project = None
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/pricing/")
+        self.assertContains(r, "Unlimited Team Members")
+
     def test_it_shows_active_plan(self):
         self.sub = Subscription(user=self.alice)
         self.sub.subscription_id = "test-id"

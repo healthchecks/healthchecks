@@ -105,3 +105,8 @@ class LoginTestCase(BaseTestCase):
 
         r = self.client.post("/accounts/login/", form)
         self.assertContains(r, "Incorrect email or password")
+
+    @override_settings(REGISTRATION_OPEN=False)
+    def test_it_obeys_registration_open(self):
+        r = self.client.get("/accounts/login/")
+        self.assertNotContains(r, "Create Your Account")

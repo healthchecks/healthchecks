@@ -15,9 +15,10 @@ $(function() {
         $("integration-settings").text("Loading...");
 
         token = tokenMatch[1];
+        var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
         var csrf = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({
-            url: "/integrations/add_trello/settings/",
+            url: base + "/integrations/add_trello/settings/",
             type: "post",
             headers: {"X-CSRFToken": csrf},
             data: {token: token},

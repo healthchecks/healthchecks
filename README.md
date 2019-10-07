@@ -1,4 +1,4 @@
-# healthchecks
+# Healthchecks
 
 [![Build Status](https://travis-ci.org/healthchecks/healthchecks.svg?branch=master)](https://travis-ci.org/healthchecks/healthchecks)
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
@@ -86,19 +86,19 @@ Configurations settings loaded from environment variables:
 
 | Environment variable | Default value | Notes
 | -------------------- | ------------- | ----- |
-| [SECRET_KEY](https://docs.djangoproject.com/en/2.1/ref/settings/#secret-key) | `"---"`
-| [DEBUG](https://docs.djangoproject.com/en/2.1/ref/settings/#debug) | `True` | Set to `False` for production
-| [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.1/ref/settings/#allowed-hosts) | `*` | Separate multiple hosts with commas
-| [DEFAULT_FROM_EMAIL](https://docs.djangoproject.com/en/2.1/ref/settings/#default-from-email) | `"healthchecks@example.org"`
+| [SECRET_KEY](https://docs.djangoproject.com/en/2.2/ref/settings/#secret-key) | `"---"`
+| [DEBUG](https://docs.djangoproject.com/en/2.2/ref/settings/#debug) | `True` | Set to `False` for production
+| [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts) | `*` | Separate multiple hosts with commas
+| [DEFAULT_FROM_EMAIL](https://docs.djangoproject.com/en/2.2/ref/settings/#default-from-email) | `"healthchecks@example.org"`
 | USE_PAYMENTS | `False`
 | REGISTRATION_OPEN | `True`
 | DB | `"sqlite"` | Set to `"postgres"` or `"mysql"`
-| [DB_HOST](https://docs.djangoproject.com/en/2.1/ref/settings/#host) | `""` *(empty string)*
-| [DB_PORT](https://docs.djangoproject.com/en/2.1/ref/settings/#port) | `""` *(empty string)*
-| [DB_NAME](https://docs.djangoproject.com/en/2.1/ref/settings/#name) | `"hc"` (PostgreSQL, MySQL) or `"/path/to/project/hc.sqlite"` (SQLite) | For SQLite, specify the full path to the database file.
-| [DB_USER](https://docs.djangoproject.com/en/2.1/ref/settings/#user) | `"postgres"` or `"root"`
-| [DB_PASSWORD](https://docs.djangoproject.com/en/2.1/ref/settings/#password) | `""` *(empty string)*
-| [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.1/ref/settings/#conn-max-age) | `0`
+| [DB_HOST](https://docs.djangoproject.com/en/2.2/ref/settings/#host) | `""` *(empty string)*
+| [DB_PORT](https://docs.djangoproject.com/en/2.2/ref/settings/#port) | `""` *(empty string)*
+| [DB_NAME](https://docs.djangoproject.com/en/2.2/ref/settings/#name) | `"hc"` (PostgreSQL, MySQL) or `"/path/to/project/hc.sqlite"` (SQLite) | For SQLite, specify the full path to the database file.
+| [DB_USER](https://docs.djangoproject.com/en/2.2/ref/settings/#user) | `"postgres"` or `"root"`
+| [DB_PASSWORD](https://docs.djangoproject.com/en/2.2/ref/settings/#password) | `""` *(empty string)*
+| [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/2.2/ref/settings/#conn-max-age) | `0`
 | DB_SSLMODE | `"prefer"` | PostgreSQL-specific, [details](https://blog.github.com/2018-10-21-october21-incident-report/)
 | DB_TARGET_SESSION_ATTRS | `"read-write"` | PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/static/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS)
 | EMAIL_HOST | `""` *(empty string)*
@@ -127,11 +127,13 @@ Configurations settings loaded from environment variables:
 | TWILIO_ACCOUNT | `None`
 | TWILIO_AUTH | `None`
 | TWILIO_FROM | `None`
+| TWILIO_USE_WHATSAPP | `"False"`
 | PD_VENDOR_KEY | `None`
 | TRELLO_APP_KEY | `None`
 | MATRIX_HOMESERVER | `None`
 | MATRIX_USER_ID | `None`
 | MATRIX_ACCESS_TOKEN | `None`
+| APPRISE_ENABLED | `"False"`
 
 
 Some useful settings keys to override are:
@@ -268,12 +270,21 @@ There are separate Django management commands for each task:
     $ ./manage.py pruneusers
     ```
 
-* Remove old records fromt he `api_tokenbucket` table. The TokenBucket
+* Remove old records from the `api_tokenbucket` table. The TokenBucket
   model is used for rate-limiting login attempts and similar operations.
   Any records older than one day can be safely removed.
 
     ```
     $ ./manage.py prunetokenbucket
+    ```
+
+* Remove old records from the `api_flip` table. The Flip
+  objects are used to track status changes of checks, and to calculate
+  downtime statistics month by month. Flip objects from more than 3 months
+  ago are not used and can be safely removed.
+
+    ```
+    $ ./manage.py pruneflips
     ```
 
 When you first try these commands on your data, it is a good idea to
@@ -326,14 +337,27 @@ To enable Discord integration, you will need to:
 
 ### Pushover
 
-To enable Pushover integration, you will need to:
+Pushover integration works by creating an application on Pushover.net which
+is then subscribed to by Healthchecks users. The registration workflow is as follows:
 
-* register a new application on https://pushover.net/apps/build
-* enable subscriptions in your application and make sure to enable the URL
-  subscription type
-* put the application token and the subscription URL in
+* On Healthchecks, the user adds a "Pushover" integration to a project
+* Healthchecks redirects user's browser to a Pushover.net subscription page
+* User approves adding the Healthchecks subscription to their Pushover account
+* Pushover.net HTTP redirects back to Healthchecks with a subscription token
+* Healthchecks saves the subscription token and uses it for sending Pushover
+  notifications
+
+To enable the Pushover integration, you will need to:
+
+* Register a new application on Pushover via https://pushover.net/apps/build.
+* Within the Pushover 'application' configuration, enable subscriptions.
+  Make sure the subscription type is set to "URL". Also make sure the redirect
+  URL is configured to point back to the root of the Healthchecks instance
+  (e.g., `http://healthchecks.example.com/`).
+* Put the Pushover application API Token and the Pushover subscription URL in
   `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL` environment
-  variables
+  variables. The Pushover subscription URL should look similar to
+  `https://pushover.net/subscribe/yourAppName-randomAlphaNumericData`.
 
 ### Telegram
 
@@ -353,3 +377,48 @@ where to forward channel messages by invoking Telegram's
 
 For this to work, your `SITE_ROOT` needs to be correct and use "https://"
 scheme.
+
+### Apprise
+
+To enable Apprise integration, you will need to:
+
+* ensure you have apprise installed in your local environment:
+```bash
+pip install apprise
+```
+* enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.
+
+## Running in Production
+
+Here is a non-exhaustive list of pointers and things to check before launching a Healthchecks instance
+in production.
+
+* Environment variables, settings.py and local_settings.py.
+  * [DEBUG](https://docs.djangoproject.com/en/2.2/ref/settings/#debug). Make sure it is set to `False`.
+  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts). Make sure it
+    contains the correct domain name you want to use.
+  * Server Errors. When DEBUG=False, Django will not show detailed error pages, and will not print exception
+    tracebacks to standard output. To receive exception tracebacks in email,
+    review and edit the [ADMINS](https://docs.djangoproject.com/en/2.2/ref/settings/#admins) and
+    [SERVER_EMAIL](https://docs.djangoproject.com/en/2.2/ref/settings/#server-email) settings.
+    Another good option for receiving exception tracebacks is to use [Sentry](https://sentry.io/for/django/).
+* Management commands that need to be run during each deployment.
+  * This project uses [Django Compressor](https://django-compressor.readthedocs.io/en/stable/)
+    to combine the CSS and JS files. It is configured for offline compression – run the
+    `manage.py compress` command whenever files in the `/static/` directory change.
+  * This project uses Django's [staticfiles app](https://docs.djangoproject.com/en/2.2/ref/contrib/staticfiles/).
+    Run the `manage.py collectstatic` command whenever files in the `/static/`
+    directory change. This command collects all the static files inside the `static-collected` directory.
+    Configure your web server to serve files from this directory under the `/static/` prefix.
+* Processes that need to be running constantly.
+  * `manage.py runserver` is intended for development only. Do not use it in production,
+    instead consider using [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) or
+    [gunicorn](https://gunicorn.org/).
+  * Make sure the `manage.py sendalerts` command is running and can survive server restarts.
+    On modern linux systems, a good option is to
+    [define a systemd service](https://github.com/healthchecks/healthchecks/issues/273#issuecomment-520560304) for it.
+* General
+  * Make sure the database is secured well and is getting backed up regularly
+  * Make sure the TLS certificates are secured well and are getting refreshed regularly
+  * Have monitoring in place to be sure the Healthchecks instance itself is operational
+    (is accepting pings, is sending out alerts, is not running out of resources).

@@ -121,7 +121,7 @@ def get_checks(request):
     for check in q:
         # precise, final filtering
         if not tags or check.matches_tag_set(tags):
-            checks.append(check.to_dict())
+            checks.append(check.to_dict(readonly=request.readonly))
 
     return JsonResponse({"checks": checks})
 
@@ -153,7 +153,7 @@ def checks(request):
 
 @cors("GET")
 @validate_json()
-@authorize_read
+@authorize
 def channels(request):
     q = Channel.objects.filter(project=request.project)
     channels = [ch.to_dict() for ch in q]

@@ -4,7 +4,7 @@ $(function () {
         $('#ping-details-modal').modal("show");
 
         $.get(this.dataset.url, function(data) {
-            $("#ping-details-body" ).html(data);
+            $("#ping-details-body").html(data);
         });
 
         return false;
@@ -13,11 +13,11 @@ $(function () {
     function switchDateFormat(format) {
         $("#log tr").each(function(index, row) {
             var dt = moment(row.getAttribute("data-dt"));
-            format == "local" ? dt.local() : dt.utc();
+            format == "local" ? dt.local() : dt.tz(format);
 
             $(".date", row).text(dt.format("MMM D"));
-            $(".time", row).text(dt.format("HH:mm"));
-        })
+            $(".time", row).text(dt.format("HH:mm"));                
+        })        
     }
 
     $("#format-switcher").click(function(ev) {

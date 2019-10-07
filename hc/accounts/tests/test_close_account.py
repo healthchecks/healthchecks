@@ -6,10 +6,12 @@ from mock import patch
 
 
 class CloseAccountTestCase(BaseTestCase):
-    @patch("hc.payments.models.Subscription.cancel")
-    def test_it_works(self, mock_cancel):
+    @patch("hc.payments.models.braintree")
+    def test_it_works(self, mock_braintree):
         Check.objects.create(project=self.project, tags="foo a-B_1  baz@")
-        Subscription.objects.create(user=self.alice, subscription_id="123")
+        Subscription.objects.create(
+            user=self.alice, subscription_id="123", customer_id="fake-customer-id"
+        )
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post("/accounts/close/")
@@ -27,7 +29,10 @@ class CloseAccountTestCase(BaseTestCase):
         self.assertFalse(Check.objects.exists())
 
         # Subscription should have been canceled
-        self.assertTrue(mock_cancel.called)
+        self.assertTrue(mock_braintree.Subscription.cancel.called)
+
+        # Braintree customer should have been deleted
+        self.assertTrue(mock_braintree.Customer.delete.called)
 
         # Subscription should be gone
         self.assertFalse(Subscription.objects.exists())

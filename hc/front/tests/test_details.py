@@ -43,3 +43,8 @@ class DetailsTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
+
+    def test_it_shows_new_check_notice(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?new")
+        self.assertContains(r, "Your new check is ready!", status_code=200)

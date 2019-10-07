@@ -6,6 +6,11 @@ $(function () {
         return false;
     });
 
+    $("#new-check-alert a").click(function() {
+        $("#" + this.dataset.target).click();
+        return false;
+    });
+
     $("#edit-desc").click(function() {
         $('#update-name-modal').modal("show");
         $("#update-desc-input").focus();
@@ -44,8 +49,7 @@ $(function () {
         });
     })
 
-    var code = document.getElementById("edit-timeout").dataset.code;
-    var statusUrl = "/checks/" + code + "/status/";
+    var statusUrl = document.getElementById("edit-timeout").dataset.statusUrl;
     var lastStatusText = "";
     var lastUpdated = "";
     adaptiveSetInterval(function() {
@@ -64,6 +68,10 @@ $(function () {
                     lastUpdated = data.updated;
                     $("#log-container").html(data.events);
                     switchDateFormat(lastFormat);
+                }
+
+                if (data.downtimes) {
+                    $("#downtimes").html(data.downtimes);
                 }
 
                 if (document.title != data.title) {
@@ -108,10 +116,10 @@ $(function () {
         lastFormat = format;
         $("#log tr").each(function(index, row) {
             var dt = moment(row.getAttribute("data-dt"));
-            format == "local" ? dt.local() : dt.utc();
+            format == "local" ? dt.local() : dt.tz(format);
 
             $(".date", row).text(dt.format("MMM D"));
-            $(".time", row).text(dt.format("HH:mm"));
+            $(".time", row).text(dt.format("HH:mm"));                
         })
 
         // The table is initially hidden to avoid flickering as we convert dates.

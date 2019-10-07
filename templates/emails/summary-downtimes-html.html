@@ -1,0 +1,82 @@
+{% load humanize hc_extras %}
+{% regroup checks by project as groups %}
+<table style="margin: 0; width: 100%; font-size: 16px;" cellpadding="0" cellspacing="0">
+    {% for group in groups %}
+    <tr>
+        <td colspan="2" style="font-weight: bold; padding: 32px 8px 8px 8px; color: #333;">
+            {{ group.grouper|mangle_link }}
+        </td>
+        {% for dt in month_boundaries %}
+        <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">
+            {{ dt|date:"N Y"}}
+        </td>
+        {% endfor %}
+    </tr>
+    {% for check in group.list|sortchecks:sort %}
+    <tr>
+        <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    {% if check.get_status == "new" %}
+                        <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;">NEW</td>
+                    {% elif check.get_status == "paused" %}
+                        <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">PAUSED</td>
+                    {% elif check.get_status == "grace" %}
+                        <td style="background: #f0ad4e; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">LATE</td>
+                    {% elif check.get_status == "up" %}
+                        <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">UP</td>
+                    {% elif check.get_status == "started" %}
+                        <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">STARTED</td>
+                    {% elif check.get_status == "down" %}
+                        <td style="background: #d9534f; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">DOWN</td>
+                    {% endif %}
+                </tr>
+            </table>
+        </td>
+        <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+            {% if check.name %}
+                {% if check.name|length > 20 %}
+                    <small>{{ check.name|mangle_link }}</small>
+                {% else %}
+                    {{ check.name|mangle_link }}
+                {% endif %}
+            {% else %}
+                <span style="color: #74787E; font-style: italic;">unnamed</span>
+            {% endif %}
+            {% if check.tags %}
+                <br />
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                    {% for tag in check.tags_list %}
+                    <td style="padding-right: 4px">
+                        <table cellpadding="0" cellspacing="0">
+                            <tr>
+                            <td style="background: #eee; font-family: Helvetica, Arial, sans-serif; font-size: 10px; line-height: 10px; color: #555; padding: 4px; margin: 0; border-radius: 2px;">
+                                {{ tag|mangle_link }}
+                            </td>
+                            </tr>
+                        </table>
+                    </td>
+                    {% endfor %}
+                    </tr>
+                </table>
+            {% endif %}
+        </td>
+        {% for boundary, seconds, count in check.downtimes %}
+        {% if count %}
+            <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+                {{ count }} downtime{{ count|pluralize }},
+                <br />
+                {{ seconds|hc_approx_duration }} total
+            </td>
+        {% else %}
+            <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif; color: #9BA2AB;">
+                All good!
+            </td>
+        {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    {% endfor %}
+</table>
+<br />

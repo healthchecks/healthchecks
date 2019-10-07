@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load compress staticfiles hc_extras %}
+<!DOCTYPE html>{% load compress static hc_extras %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -67,7 +67,7 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand"  href="/">
+            <a id="base-url" class="navbar-brand"  href="{% url 'hc-index' %}">
             {% if request.user.is_authenticated and project %}
                 {{ project }}
                 <span class="caret"></span>
@@ -150,6 +150,16 @@
                 </li>
                 {% elif page != "login" %}
                 <li><a href="{% url 'hc-login' %}">Sign In</a></li>
+                {% endif %}
+
+                {% if registration_open %}
+                {% if page == "welcome" or page == "login" %}
+                <li>
+                    <a id="nav-sign-up" href="#" data-toggle="modal" data-target="#signup-modal">
+                        <span>Sign Up</span>
+                    </a>
+                </li>
+                {% endif %}
                 {% endif %}
             </ul>
         </div>

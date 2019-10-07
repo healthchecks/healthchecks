@@ -47,6 +47,7 @@ class Command(BaseCommand):
         # API examples
         _process("list_checks_request", lexers.BashLexer())
         _process("list_checks_response", lexers.JsonLexer())
+        _process("list_checks_response_readonly", lexers.JsonLexer())
         _process("list_channels_request", lexers.BashLexer())
         _process("list_channels_response", lexers.JsonLexer())
         _process("create_check_request_a", lexers.BashLexer())

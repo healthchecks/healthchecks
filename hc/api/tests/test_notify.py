@@ -7,8 +7,9 @@ from django.core import mail
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
-from mock import patch
+from mock import patch, Mock
 from requests.exceptions import ConnectionError, Timeout
+from django.test.utils import override_settings
 
 
 class NotifyTestCase(BaseTestCase):
@@ -33,7 +34,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         mock_get.assert_called_with(
             "get",
-            u"http://example",
+            "http://example",
             headers={"User-Agent": "healthchecks.io"},
             timeout=5,
         )
@@ -73,6 +74,19 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 500")
 
     @patch("hc.api.transports.requests.request")
+    def test_webhooks_support_tags(self, mock_get):
+        template = "http://host/$TAGS"
+        self._setup_data("webhook", template)
+        self.check.tags = "foo bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args[0], "get")
+        self.assertEqual(args[1], "http://host/foo%20bar")
+
+    @patch("hc.api.transports.requests.request")
     def test_webhooks_support_variables(self, mock_get):
         template = "http://host/$CODE/$STATUS/$TAG1/$TAG2/?name=$NAME"
         self._setup_data("webhook", template)
@@ -82,7 +96,7 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        url = u"http://host/%s/down/foo/bar/?name=Hello%%20World" % self.check.code
+        url = "http://host/%s/down/foo/bar/?name=Hello%%20World" % self.check.code
 
         args, kwargs = mock_get.call_args
         self.assertEqual(args[0], "get")
@@ -118,7 +132,7 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        url = u"http://host/%24TAG1"
+        url = "http://host/%24TAG1"
         mock_get.assert_called_with(
             "get", url, headers={"User-Agent": "healthchecks.io"}, timeout=5
         )
@@ -135,7 +149,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_unicode_post_body(self, mock_request):
-        template = u"http://example.com\n\n(╯°□°）╯︵ ┻━┻"
+        template = "http://example.com\n\n(╯°□°）╯︵ ┻━┻"
         self._setup_data("webhook", template)
         self.check.save()
 
@@ -522,12 +536,12 @@ class NotifyTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
+        self.assertEqual(Notification.objects.count(), 1)
 
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
-        self.assertFalse(u"\xa0" in payload["Body"])
+        self.assertFalse("\xa0" in payload["Body"])
 
         # sent SMS counter should go up
         self.profile.refresh_from_db()
@@ -575,3 +589,85 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         self.assertTrue(mock_post.called)
+
+    @patch("hc.api.transports.requests.request")
+    def test_whatsapp(self, mock_post):
+        definition = {"value": "+1234567890", "up": True, "down": True}
+
+        self._setup_data("whatsapp", json.dumps(definition))
+        self.check.last_ping = now() - td(hours=2)
+
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 1)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertEqual(payload["To"], "whatsapp:+1234567890")
+
+        # sent SMS counter should go up
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.sms_sent, 1)
+
+    @patch("hc.api.transports.requests.request")
+    def test_whatsapp_obeys_up_down_flags(self, mock_post):
+        definition = {"value": "+1234567890", "up": True, "down": False}
+
+        self._setup_data("whatsapp", json.dumps(definition))
+        self.check.last_ping = now() - td(hours=2)
+
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 0)
+
+        self.assertFalse(mock_post.called)
+
+    @patch("hc.api.transports.requests.request")
+    def test_whatsapp_limit(self, mock_post):
+        # At limit already:
+        self.profile.last_sms_date = now()
+        self.profile.sms_sent = 50
+        self.profile.save()
+
+        definition = {"value": "+1234567890", "up": True, "down": True}
+        self._setup_data("whatsapp", json.dumps(definition))
+
+        self.channel.notify(self.check)
+        self.assertFalse(mock_post.called)
+
+        n = Notification.objects.get()
+        self.assertTrue("Monthly message limit exceeded" in n.error)
+
+    @patch("apprise.Apprise")
+    @override_settings(APPRISE_ENABLED=True)
+    def test_apprise_enabled(self, mock_apprise):
+        self._setup_data("apprise", "123")
+
+        mock_aobj = Mock()
+        mock_aobj.add.return_value = True
+        mock_aobj.notify.return_value = True
+        mock_apprise.return_value = mock_aobj
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 1)
+
+        self.check.status = "up"
+        self.assertEqual(Notification.objects.count(), 1)
+
+    @patch("apprise.Apprise")
+    @override_settings(APPRISE_ENABLED=False)
+    def test_apprise_disabled(self, mock_apprise):
+        self._setup_data("apprise", "123")
+
+        mock_aobj = Mock()
+        mock_aobj.add.return_value = True
+        mock_aobj.notify.return_value = True
+        mock_apprise.return_value = mock_aobj
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 1)
+
+    def test_not_implimented(self):
+        self._setup_data("webhook", "http://example")
+        self.channel.kind = "invalid"
+
+        with self.assertRaises(NotImplementedError):
+            self.channel.notify(self.check)

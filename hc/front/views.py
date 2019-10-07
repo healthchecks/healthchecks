@@ -26,6 +26,7 @@ from hc.accounts.models import Project
 from hc.api.models import (
     DEFAULT_GRACE,
     DEFAULT_TIMEOUT,
+    MAX_DELTA,
     Channel,
     Check,
     Ping,
@@ -44,6 +45,7 @@ from hc.front.forms import (
     ChannelNameForm,
     EmailSettingsForm,
     AddMatrixForm,
+    AddAppriseForm,
 )
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import num_down_title, down_title, sortchecks
@@ -58,8 +60,7 @@ VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
-ONE_HOUR = td(hours=1)
-TWELVE_HOURS = td(hours=12)
+DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
 
 
 def _tags_statuses(checks):
@@ -153,6 +154,13 @@ def my_checks(request, code):
             if search not in search_key:
                 hidden_checks.add(check)
 
+    # Do we need to show the "Last Duration" header?
+    show_last_duration = False
+    for check in checks:
+        if check.clamped_last_duration():
+            show_last_duration = True
+            break
+
     ctx = {
         "page": "checks",
         "checks": checks,
@@ -166,9 +174,9 @@ def my_checks(request, code):
         "num_available": project.num_checks_available(),
         "sort": request.profile.sort,
         "selected_tags": selected_tags,
-        "show_search": True,
         "search": search,
         "hidden_checks": hidden_checks,
+        "show_last_duration": show_last_duration,
     }
 
     return render(request, "front/my_checks.html", ctx)
@@ -232,9 +240,11 @@ def index(request):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_apprise": settings.APPRISE_ENABLED is True,
         "registration_open": settings.REGISTRATION_OPEN,
     }
 
@@ -289,7 +299,8 @@ def add_check(request, code):
 
     check.assign_all_channels()
 
-    return redirect("hc-checks", code)
+    url = reverse("hc-details", args=[check.code])
+    return redirect(url + "?new")
 
 
 @require_POST
@@ -417,10 +428,6 @@ def remove_check(request, code):
 
 
 def _get_events(check, limit):
-    # max time between start and ping where we will consider
-    # the both events related.
-    max_delta = min(ONE_HOUR + check.grace, TWELVE_HOURS)
-
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
     pings = list(pings)
 
@@ -428,7 +435,7 @@ def _get_events(check, limit):
     for ping in pings:
         if ping.kind == "start" and prev and prev.kind != "start":
             delta = prev.created - ping.created
-            if delta < max_delta:
+            if delta < MAX_DELTA:
                 setattr(prev, "delta", delta)
 
         prev = ping
@@ -474,6 +481,8 @@ def details(request, code):
         "check": check,
         "channels": channels,
         "timezones": pytz.all_timezones,
+        "downtimes": check.downtimes(months=3),
+        "is_new": "new" in request.GET,
     }
 
     return render(request, "front/details.html", ctx)
@@ -523,6 +532,7 @@ def status_single(request, code):
 
     if updated != request.GET.get("u"):
         doc["events"] = EVENTS_TMPL.render({"check": check, "events": events})
+        doc["downtimes"] = DOWNTIMES_TMPL.render({"downtimes": check.downtimes(3)})
 
     return JsonResponse(doc)
 
@@ -603,9 +613,11 @@ def channels(request):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_apprise": settings.APPRISE_ENABLED is True,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -893,6 +905,25 @@ def add_slack(request):
         ctx["state"] = _prepare_state(request, "slack")
 
     return render(request, "integrations/add_slack.html", ctx)
+
+
+@login_required
+def add_mattermost(request):
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="mattermost")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "form": form, "project": request.project}
+
+    return render(request, "integrations/add_mattermost.html", ctx)
 
 
 @login_required
@@ -1223,6 +1254,39 @@ def add_sms(request):
 
 
 @login_required
+def add_whatsapp(request):
+    if not settings.TWILIO_USE_WHATSAPP:
+        raise Http404("whatsapp integration is not available")
+
+    if request.method == "POST":
+        form = AddSmsForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="whatsapp")
+            channel.name = form.cleaned_data["label"]
+            channel.value = json.dumps(
+                {
+                    "value": form.cleaned_data["value"],
+                    "up": form.cleaned_data["up"],
+                    "down": form.cleaned_data["down"],
+                }
+            )
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddSmsForm()
+
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form,
+        "profile": request.project.owner_profile,
+    }
+    return render(request, "integrations/add_whatsapp.html", ctx)
+
+
+@login_required
 def add_trello(request):
     if settings.TRELLO_APP_KEY is None:
         raise Http404("trello integration is not available")
@@ -1286,6 +1350,28 @@ def add_matrix(request):
         "matrix_user_id": settings.MATRIX_USER_ID,
     }
     return render(request, "integrations/add_matrix.html", ctx)
+
+
+@login_required
+def add_apprise(request):
+    if not settings.APPRISE_ENABLED:
+        raise Http404("apprise integration is not available")
+
+    if request.method == "POST":
+        form = AddAppriseForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="apprise")
+            channel.value = form.cleaned_data["url"]
+            channel.save()
+
+            channel.assign_all_checks()
+            messages.success(request, "The Apprise integration has been added!")
+            return redirect("hc-channels")
+    else:
+        form = AddAppriseForm()
+
+    ctx = {"page": "channels", "project": request.project, "form": form}
+    return render(request, "integrations/add_apprise.html", ctx)
 
 
 @login_required

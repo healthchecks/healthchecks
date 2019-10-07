@@ -14,8 +14,8 @@ class Command(BaseCommand):
             Profile.objects.get_or_create(user_id=user.id)
 
         q = Ping.objects
-        q = q.annotate(limit=F("owner__user__profile__ping_log_limit"))
-        q = q.filter(n__lt=F("owner__n_pings") - F("limit"))
+        q = q.annotate(limit=F("owner__project__owner__profile__ping_log_limit"))
+        q = q.filter(n__lte=F("owner__n_pings") - F("limit"))
         q = q.filter(n__gt=0)
         n_pruned, _ = q.delete()
 

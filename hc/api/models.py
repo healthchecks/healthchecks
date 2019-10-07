@@ -13,6 +13,7 @@ from django.utils import timezone
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
+from hc.lib.date import month_boundaries
 import pytz
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
@@ -20,6 +21,8 @@ DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
 NEVER = datetime(3000, 1, 1, tzinfo=pytz.UTC)
 CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
+# max time between start and ping where we will consider both events related:
+MAX_DELTA = td(hours=24)
 
 CHANNEL_KINDS = (
     ("email", "Email"),
@@ -39,6 +42,9 @@ CHANNEL_KINDS = (
     ("zendesk", "Zendesk"),
     ("trello", "Trello"),
     ("matrix", "Matrix"),
+    ("whatsapp", "WhatsApp"),
+    ("apprise", "Apprise"),
+    ("mattermost", "Mattermost"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -67,10 +73,22 @@ class Check(models.Model):
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     last_start = models.DateTimeField(null=True, blank=True)
+    last_duration = models.DurationField(null=True, blank=True)
     last_ping_was_fail = models.NullBooleanField(default=False)
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
+
+    class Meta:
+        indexes = [
+            # Index for the alert_after field. Excludes rows with status=down.
+            # Used in the sendalerts management command.
+            models.Index(
+                fields=["alert_after"],
+                name="api_check_aa_not_down",
+                condition=~models.Q(status="down"),
+            )
+        ]
 
     def __str__(self):
         return "%s (%d)" % (self.name or self.code, self.id)
@@ -89,6 +107,10 @@ class Check(models.Model):
 
     def email(self):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
+
+    def clamped_last_duration(self):
+        if self.last_duration and self.last_duration < MAX_DELTA:
+            return self.last_duration
 
     def get_grace_start(self):
         """ Return the datetime when the grace period starts.
@@ -166,25 +188,39 @@ class Check(models.Model):
     def matches_tag_set(self, tag_set):
         return tag_set.issubset(self.tags_list())
 
-    def to_dict(self):
-        update_rel_url = reverse("hc-api-update", args=[self.code])
-        pause_rel_url = reverse("hc-api-pause", args=[self.code])
-        channel_codes = [str(ch.code) for ch in self.channel_set.all()]
+    def channels_str(self):
+        """ Return a comma-separated string of assigned channel codes. """
+
+        codes = self.channel_set.order_by("code").values_list("code", flat=True)
+        return ",".join(map(str, codes))
+
+    def to_dict(self, readonly=False):
 
         result = {
             "name": self.name,
-            "ping_url": self.url(),
-            "update_url": settings.SITE_ROOT + update_rel_url,
-            "pause_url": settings.SITE_ROOT + pause_rel_url,
             "tags": self.tags,
+            "desc": self.desc,
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
             "status": self.get_status(),
-            "channels": ",".join(sorted(channel_codes)),
             "last_ping": isostring(self.last_ping),
             "next_ping": isostring(self.get_grace_start()),
-            "desc": self.desc,
         }
+
+        if self.last_duration:
+            result["last_duration"] = int(self.last_duration.total_seconds())
+
+        if readonly:
+            code_half = self.code.hex[:16]
+            result["unique_key"] = hashlib.sha1(code_half.encode()).hexdigest()
+        else:
+            update_rel_url = reverse("hc-api-update", args=[self.code])
+            pause_rel_url = reverse("hc-api-pause", args=[self.code])
+
+            result["ping_url"] = self.url()
+            result["update_url"] = settings.SITE_ROOT + update_rel_url
+            result["pause_url"] = settings.SITE_ROOT + pause_rel_url
+            result["channels"] = self.channels_str()
 
         if self.kind == "simple":
             result["timeout"] = int(self.timeout.total_seconds())
@@ -201,8 +237,12 @@ class Check(models.Model):
         elif action == "ign":
             pass
         else:
-            self.last_start = None
             self.last_ping = timezone.now()
+            if self.last_start:
+                self.last_duration = self.last_ping - self.last_start
+                self.last_start = None
+            else:
+                self.last_duration = None
 
             new_status = "down" if action == "fail" else "up"
             if self.status != new_status:
@@ -232,6 +272,44 @@ class Check(models.Model):
         ping.ua = ua[:200]
         ping.body = body[:10000]
         ping.save()
+
+    def downtimes(self, months=2):
+        """ Calculate the number of downtimes and downtime minutes per month.
+
+        Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples.
+
+        """
+
+        def monthkey(dt):
+            return dt.year, dt.month
+
+        # Datetimes of the first days of months we're interested in. Ascending order.
+        boundaries = month_boundaries(months=months)
+
+        # Will accumulate totals here.
+        # (year, month) -> [datetime, total_downtime, number_of_outages]
+        totals = {monthkey(b): [b, td(), 0] for b in boundaries}
+
+        # A list of flips and month boundaries
+        events = [(b, "---") for b in boundaries]
+        q = self.flip_set.filter(created__gt=min(boundaries))
+        for pair in q.values_list("created", "old_status"):
+            events.append(pair)
+
+        # Iterate through flips and month boundaries in reverse order,
+        # and for each "down" event increase the counters in `totals`.
+        dt, status = timezone.now(), self.status
+        for prev_dt, prev_status in sorted(events, reverse=True):
+            if status == "down":
+                delta = dt - prev_dt
+                totals[monthkey(prev_dt)][1] += delta
+                totals[monthkey(prev_dt)][2] += 1
+
+            dt = prev_dt
+            if prev_status != "---":
+                status = prev_status
+
+        return sorted(totals.values())
 
 
 class Ping(models.Model):
@@ -300,7 +378,7 @@ class Channel(models.Model):
             return transports.Email(self)
         elif self.kind == "webhook":
             return transports.Webhook(self)
-        elif self.kind == "slack":
+        elif self.kind in ("slack", "mattermost"):
             return transports.Slack(self)
         elif self.kind == "hipchat":
             return transports.HipChat(self)
@@ -328,6 +406,10 @@ class Channel(models.Model):
             return transports.Trello(self)
         elif self.kind == "matrix":
             return transports.Matrix(self)
+        elif self.kind == "whatsapp":
+            return transports.WhatsApp(self)
+        elif self.kind == "apprise":
+            return transports.Apprise(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -437,7 +519,7 @@ class Channel(models.Model):
 
     @property
     def slack_webhook_url(self):
-        assert self.kind == "slack"
+        assert self.kind in ("slack", "mattermost")
         if not self.value.startswith("{"):
             return self.value
 
@@ -495,7 +577,7 @@ class Channel(models.Model):
 
     @property
     def sms_number(self):
-        assert self.kind == "sms"
+        assert self.kind in ("sms", "whatsapp")
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["value"]
@@ -556,6 +638,18 @@ class Channel(models.Model):
         doc = json.loads(self.value)
         return doc.get("down")
 
+    @property
+    def whatsapp_notify_up(self):
+        assert self.kind == "whatsapp"
+        doc = json.loads(self.value)
+        return doc["up"]
+
+    @property
+    def whatsapp_notify_down(self):
+        assert self.kind == "whatsapp"
+        doc = json.loads(self.value)
+        return doc["down"]
+
 
 class Notification(models.Model):
     class Meta:
@@ -575,9 +669,20 @@ class Notification(models.Model):
 class Flip(models.Model):
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField()
-    processed = models.DateTimeField(null=True, blank=True, db_index=True)
+    processed = models.DateTimeField(null=True, blank=True)
     old_status = models.CharField(max_length=8, choices=STATUSES)
     new_status = models.CharField(max_length=8, choices=STATUSES)
+
+    class Meta:
+        indexes = [
+            # For quickly looking up unprocessed flips.
+            # Used in the sendalerts management command.
+            models.Index(
+                fields=["processed"],
+                name="api_flip_not_processed",
+                condition=models.Q(processed=None),
+            )
+        ]
 
     def send_alerts(self):
         if self.new_status == "up" and self.old_status in ("new", "paused"):

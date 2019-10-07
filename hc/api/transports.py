@@ -8,12 +8,18 @@ from urllib.parse import quote, urlencode
 from hc.accounts.models import Profile
 from hc.lib import emails
 
+try:
+    import apprise
+except ImportError:
+    # Enforce
+    settings.APPRISE_ENABLED = False
+
 
 def tmpl(template_name, **ctx):
     template_path = "integrations/%s" % template_name
     # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
     # and cost twice the money.
-    return render_to_string(template_path, ctx).strip().replace(u"\xa0", " ")
+    return render_to_string(template_path, ctx).strip().replace("\xa0", " ")
 
 
 class Transport(object):
@@ -161,6 +167,9 @@ class Webhook(HttpTransport):
         if "$NAME" in result:
             result = result.replace("$NAME", safe(check.name))
 
+        if "$TAGS" in result:
+            result = result.replace("$TAGS", safe(check.tags))
+
         if "$TAG" in result:
             for i, tag in enumerate(check.tags_list()):
                 placeholder = "$TAG%d" % (i + 1)
@@ -270,7 +279,7 @@ class PagerTree(HttpTransport):
 class PagerTeam(HttpTransport):
     def notify(self, check):
         url = self.channel.value
-        headers = {"Conent-Type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         payload = {
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
@@ -415,6 +424,33 @@ class Sms(HttpTransport):
         return self.post(url, data=data, auth=auth)
 
 
+class WhatsApp(HttpTransport):
+    URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
+
+    def is_noop(self, check):
+        if check.status == "down":
+            return not self.channel.whatsapp_notify_down
+        else:
+            return not self.channel.whatsapp_notify_up
+
+    def notify(self, check):
+        profile = Profile.objects.for_user(self.channel.project.owner)
+        if not profile.authorize_sms():
+            return "Monthly message limit exceeded"
+
+        url = self.URL % settings.TWILIO_ACCOUNT
+        auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
+        text = tmpl("whatsapp_message.html", check=check, site_name=settings.SITE_NAME)
+
+        data = {
+            "From": "whatsapp:%s" % settings.TWILIO_FROM,
+            "To": "whatsapp:%s" % self.channel.sms_number,
+            "Body": text,
+        }
+
+        return self.post(url, data=data, auth=auth)
+
+
 class Trello(HttpTransport):
     URL = "https://api.trello.com/1/cards"
 
@@ -431,3 +467,22 @@ class Trello(HttpTransport):
         }
 
         return self.post(self.URL, params=params)
+
+class Apprise(HttpTransport):
+    def notify(self, check):
+
+        if not settings.APPRISE_ENABLED:
+            # Not supported and/or enabled
+            return "Apprise is disabled and/or not installed."
+
+        a = apprise.Apprise()
+        title = tmpl("apprise_title.html", check=check)
+        body = tmpl("apprise_description.html", check=check)
+
+        a.add(self.channel.value)
+
+        notify_type = apprise.NotifyType.SUCCESS \
+            if check.status == "up" else apprise.NotifyType.FAILURE
+
+        return "Failed" if not \
+            a.notify(body=body, title=title, notify_type=notify_type) else None

@@ -1,0 +1,16 @@
+{% load hc_extras %}
+<table class="table">
+    {% for boundary, seconds, count in downtimes reversed %}
+    <tr>
+        <th>{{ boundary|date:"N Y"}}</th>
+        <td>
+            {% if count %}
+                {{ count }} downtime{{ count|pluralize }},
+                {{ seconds|hc_approx_duration }} total
+            {% else %}
+                All good!
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>

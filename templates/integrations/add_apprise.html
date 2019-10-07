@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Add Apprise - {% site_name %}{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Apprise</h1>
+
+    <p>
+    Identify as many Apprise URLs as you wish. You can use a comma (,) to identify
+		more than on URL if you wish to.
+
+		For a detailed list of all supported Apprise Notification URLs simply
+		<a href="https://github.com/caronc/apprise#popular-notification-services" >click here</a>.
+    </p>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group {{ form.room_id.css_classes }}">
+            <label for="url" class="col-sm-2 control-label">Apprise URL</label>
+            <div class="col-sm-6">
+                <input
+                    id="url"
+                    type="text"
+                    class="form-control"
+                    name="url"
+                    value="{{ form.url.value|default:"" }}">
+
+                {% if form.url.errors %}
+                <div class="help-block">
+                    {{ form.url.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

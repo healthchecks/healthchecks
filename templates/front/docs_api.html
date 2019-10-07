@@ -56,10 +56,24 @@
 
 <h2>Authentication</h2>
 <p>Your requests to {% site_name %} REST API must authenticate using an
-API key. By default, an user account on {% site_name %} doesn't have
-an API key. You can create read-write and read-only API keys
-in the <b>Project Settings</b> page.
+API key. Each project in your {% site_name %} account has separate API keys.
+There are no account-wide API keys. By default, a project on {% site_name %} doesn't have
+an API key. You can create read-write and read-only API keys in the
+<b>Project Settings</b> page.
 </p>
+
+<table class="table table-bordered">
+    <tr>
+        <td>Regular API keys</td>
+        <td>Have full access to all documented API endpoints.</td>
+    </tr>
+    <tr>
+        <td>Read-only API keys</td>
+        <td>Only work with the
+        <a href="#list-checks">Get a list of existing checks</a>
+        endpoint. Some fields are omitted from the API responses.</td>
+    </tr>
+</table>
 
 <p>The client can authenticate itself by sending an appropriate HTTP
 request header. The header's name should be <code>X-Api-Key</code> and
@@ -125,6 +139,13 @@ one or more tags.</p>
 
 <h3 class="api-section">Example Response</h3>
 {% include "front/snippets/list_checks_response.html" %}
+
+<p>When using the read-only API key, the following fields are omitted:
+   <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>,
+   <code>channels</code>. An extra <code>unique_key</code> field is added.
+   This identifier is stable across API calls. Example:
+</p>
+{% include "front/snippets/list_checks_response_readonly.html" %}
 
 <!-- ********************************************************************** /-->
 

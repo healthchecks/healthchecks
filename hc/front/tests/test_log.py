@@ -22,7 +22,7 @@ class LogTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "Local Time", status_code=200)
+        self.assertContains(r, "Browser's time zone", status_code=200)
 
     def test_team_access_works(self):
 

@@ -1,8 +1,9 @@
 $(function () {
+    var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
 
     $(".my-checks-name").click(function() {
         var code = $(this).closest("tr.checks-row").attr("id");
-        var url = "/checks/" + code + "/name/";
+        var url = base + "/checks/" + code + "/name/";
 
         $("#update-name-form").attr("action", url);
         $("#update-name-input").val(this.dataset.name);
@@ -31,7 +32,7 @@ $(function () {
         var checkCode = $(this).closest("tr.checks-row").attr("id");
         var channelCode = $("#ch-" + idx).data("code");
 
-        var url = "/checks/" + checkCode + "/channels/" + channelCode + "/enabled";
+        var url = base + "/checks/" + checkCode + "/channels/" + channelCode + "/enabled";
 
         $.ajax({
             url: url,
@@ -52,12 +53,12 @@ $(function () {
         $('#ping-details-modal').modal("show");
 
         var code = $(this).closest("tr.checks-row").attr("id");
-        var lastPingUrl = "/checks/" + code + "/last_ping/";
+        var lastPingUrl = base + "/checks/" + code + "/last_ping/";
         $.get(lastPingUrl, function(data) {
             $("#ping-details-body" ).html(data);
         });
 
-        var logUrl = "/checks/" + code + "/log/";
+        var logUrl = base + "/checks/" + code + "/log/";
         $("#ping-details-log").attr("href", logUrl);
 
         return false;
@@ -79,7 +80,7 @@ $(function () {
 
         // Update hash
         if (window.history && window.history.replaceState) {
-            var url = $("#checks-table").data("list-url");;
+            var url = $("#checks-table").data("list-url");
             if (qs.length) {
                 url += "?" + $.param(qs);
             }
@@ -132,7 +133,7 @@ $(function () {
 
     $(".show-log").click(function(e) {
         var code = $(this).closest("tr.checks-row").attr("id");
-        var url = "/checks/" + code + "/details/";
+        var url = base + "/checks/" + code + "/details/";
         window.location = url;
         return false;
     });

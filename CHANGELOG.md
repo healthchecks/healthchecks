@@ -4,16 +4,47 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Improvements
+- Add the "Last Duration" field in the "My Checks" page (#257)
+- Add "last_duration" attribute to the Check API resource (#257)
+- Upgrade to psycopg2 2.8.3
+
+### Bug Fixes
+- Usernames now are uuid3(const, email). Prevents multiple accts with same email (#290)
+- Prevent double-clicking the submit button in signup form
+- Upgrade to Django 2.2.6 – fixes sqlite migrations (#284)
+
+
+## 1.9.0 - 2019-09-03
+
+### Improvements
+- Show the number of downtimes and total downtime minutes in monthly reports (#104)
+- Show the number of downtimes and total downtime minutes in "Check Details" page
+- Add the `pruneflips` management command
+- Add Mattermost integration (#276)
+- Three choices in timezone switcher (UTC / check's timezone / browser's timezone) (#278)
+- After adding a new check redirect to the "Check Details" page
+
+### Bug Fixes
+- Fix javascript code to construct correct URLs when running from a subdirectory (#273)
+- Don't show the "Sign Up" link in the login page if registration is closed (#280)
+
+## 1.8.0 - 2019-07-08
+
+### Improvements
 - Add the `prunetokenbucket` management command
 - Show check counts in JSON "badges" (#251)
 - Webhooks support HTTP PUT (#249)
-- Webhooks can use different req. bodies and headers for "up" and "down" events. (#249)
-- Show check's code instead of full URL on 992px - 1200px wide screens. (#253)
+- Webhooks can use different req. bodies and headers for "up" and "down" events (#249)
+- Show check's code instead of full URL on 992px - 1200px wide screens (#253)
+- Add WhatsApp integration (uses Twilio same as the SMS integration)
+- Webhooks support the $TAGS placeholder
+- Don't include ping URLs in API responses when the read-only key is used
 
 ### Bug Fixes
 - Fix badges for tags containing special characters (#240, #237)
 - Fix the "Integrations" page for when the user has no active project
 - Prevent email clients from opening the one-time login links (#255)
+- Fix `prunepings` and `prunepingsslow`, they got broken when adding Projects (#264)
 
 
 ## 1.7.0 - 2019-05-02
@@ -49,7 +80,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Database schema: add uniqueness constraint to Check.code
-- Database schema: add Ping.kind field. Remove "start" and "fail" fields.
+- Database schema: add Ping.kind field. Remove "start" and "fail" fields
 - Add "Email Settings..." dialog and "Subject Must Contain" setting
 - Database schema: add the Project model
 - Move project-specific settings to a new "Project Settings" page

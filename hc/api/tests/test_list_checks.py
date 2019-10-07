@@ -150,3 +150,6 @@ class ListChecksTestCase(BaseTestCase):
 
         r = self.client.get("/api/v1/checks/", HTTP_X_API_KEY="R" * 32)
         self.assertEqual(r.status_code, 200)
+
+        # When using readonly keys, the ping URLs should not be exposed:
+        self.assertNotContains(r, self.a1.url())

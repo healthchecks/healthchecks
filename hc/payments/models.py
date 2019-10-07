@@ -66,11 +66,9 @@ class Subscription(models.Model):
 
     @property
     def payment_method(self):
-        if not self.payment_method_token:
-            return None
-
         if not hasattr(self, "_pm"):
-            self._pm = braintree.PaymentMethod.find(self.payment_method_token)
+            o = self._get_braintree_subscription()
+            self._pm = braintree.PaymentMethod.find(o.payment_method_token)
         return self._pm
 
     def _get_braintree_subscription(self):
@@ -79,39 +77,15 @@ class Subscription(models.Model):
         return self._sub
 
     def get_client_token(self):
+        assert self.customer_id
         return braintree.ClientToken.generate({"customer_id": self.customer_id})
 
     def update_payment_method(self, nonce):
-        # Create customer record if it does not exist:
-        if not self.customer_id:
-            result = braintree.Customer.create({"email": self.user.email})
-            if not result.is_success:
-                return result
+        assert self.subscription_id
 
-            self.customer_id = result.customer.id
-            self.save()
-
-        # Create payment method
-        result = braintree.PaymentMethod.create(
-            {
-                "customer_id": self.customer_id,
-                "payment_method_nonce": nonce,
-                "options": {"make_default": True},
-            }
+        result = braintree.Subscription.update(
+            self.subscription_id, {"payment_method_nonce": nonce}
         )
-
-        if not result.is_success:
-            return result
-
-        self.payment_method_token = result.payment_method.token
-        self.save()
-
-        # Update an existing subscription to use this payment method
-        if self.subscription_id:
-            result = braintree.Subscription.update(
-                self.subscription_id,
-                {"payment_method_token": self.payment_method_token},
-            )
 
         if not result.is_success:
             return result
@@ -141,9 +115,9 @@ class Subscription(models.Model):
         if not result.is_success:
             return result
 
-    def setup(self, plan_id):
+    def setup(self, plan_id, nonce):
         result = braintree.Subscription.create(
-            {"payment_method_token": self.payment_method_token, "plan_id": plan_id}
+            {"payment_method_nonce": nonce, "plan_id": plan_id}
         )
 
         if result.is_success:
@@ -162,11 +136,15 @@ class Subscription(models.Model):
 
         return result
 
-    def cancel(self):
+    def cancel(self, delete_customer=False):
         if self.subscription_id:
             braintree.Subscription.cancel(self.subscription_id)
+            self.subscription_id = ""
 
-        self.subscription_id = ""
+        if self.customer_id and delete_customer:
+            braintree.Customer.delete(self.customer_id)
+            self.customer_id = ""
+
         self.plan_id = ""
         self.plan_name = ""
         self.save()
@@ -194,13 +172,6 @@ class Subscription(models.Model):
                 self._address = None
 
         return self._address
-
-    def flattened_address(self):
-        if self.address_id:
-            ctx = {"a": self.address, "email": self.user.email}
-            return render_to_string("payments/address_plain.html", ctx)
-        else:
-            return self.user.email
 
     @property
     def transactions(self):
