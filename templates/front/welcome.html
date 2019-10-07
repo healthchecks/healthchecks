@@ -99,6 +99,9 @@
                 <div role="tabpanel" class="tab-pane" id="node">
                     {% include "front/snippets/node.html" %}
                 </div>
+                <div role="tabpanel" class="tab-pane" id="go">
+                    {% include "front/snippets/go.html" %}
+                </div>
                 <div role="tabpanel" class="tab-pane" id="php">
                     {% include "front/snippets/php.html" %}
                 </div>
@@ -334,7 +337,7 @@
                 <h3>Apprise<br><small>Push Notifications</small></h3>
             </div>
         </div>
-        {% endif %}  
+        {% endif %}
 
         {% if enable_discord %}
         <div class="col-md-2 col-sm-4 col-xs-6">
@@ -343,8 +346,8 @@
                 <h3>Discord<br><small>Chat</small></h3>
             </div>
         </div>
-        {% endif %}         
-             
+        {% endif %}
+
         {% if enable_matrix %}
         <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
@@ -353,13 +356,13 @@
             </div>
         </div>
         {% endif %}
-        
+
         <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/mattermost.png' %}" class="icon" alt="Mattermost icon" />
                 <h3>Mattermost<br><small>Chat</small></h3>
             </div>
-        </div>             
+        </div>
 
         <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
@@ -382,14 +385,14 @@
                 <img src="{% static 'img/integrations/pagerteam.png' %}" class="icon" alt="Pager Team icon" />
                 <h3>Pager Team <br><small>Incident Management</small></h3>
             </div>
-        </div>        
+        </div>
 
         <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/pagertree.png' %}" class="icon" alt="PagerTree icon" />
                 <h3>PagerTree<br><small>Incident Management</small></h3>
             </div>
-        </div>        
+        </div>
 
         {% if enable_pushbullet %}
         <div class="col-md-2 col-sm-4 col-xs-6">
@@ -399,7 +402,7 @@
             </div>
         </div>
         {% endif %}
-        
+
         {% if enable_pushover %}
         <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
@@ -441,7 +444,7 @@
                 <img src="{% static 'img/integrations/victorops.png' %}" class="icon" alt="VictorOps icon" />
                 <h3>VictorOps<br><small>Incident Management</small></h3>
             </div>
-        </div>        
+        </div>
 
         {% if enable_whatsapp %}
         <div class="col-md-2 col-sm-4 col-xs-6">

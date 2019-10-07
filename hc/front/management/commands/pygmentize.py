@@ -34,6 +34,7 @@ class Command(BaseCommand):
         _process("crontab", lexers.BashLexer())
         _process("cs", lexers.CSharpLexer())
         _process("node", lexers.JavascriptLexer())
+        _process("go", lexers.GoLexer())
         _process("python_urllib2", lexers.PythonLexer())
         _process("python_requests", lexers.PythonLexer())
         _process("python_requests_fail", lexers.PythonLexer())
