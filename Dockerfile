@@ -1,10 +1,8 @@
-ARG BUILD_DATE=""
-ARG ARCH=amd64
-ARG PYTHON_VERSION=3
+ARG BUILD_DATE
 
 
 # First stage
-FROM docker.io/${ARCH}/python:${PYTHON_VERSION}-alpine3.8 as builder
+FROM python:3.8-rc-alpine as builder
 
 # Install deps
 COPY requirements.txt /tmp
@@ -20,7 +18,7 @@ RUN pip install --prefix="/install" --no-warn-script-location -r /tmp/requiremen
 
 
 ## Second stage
-FROM docker.io/${ARCH}/python:${PYTHON_VERSION}-alpine3.8
+FROM python:3.8-rc-alpine
 
 ENV DEBUG False
 ENV DB_NAME /data/hc.sqlite
@@ -48,7 +46,5 @@ USER healthchecks
 EXPOSE 8000/tcp
 
 ARG SYNAPSE_VERSION
-ARG PYTHON_VERSION
-ARG BUILD_DATE
 
-CMD ["uwsgi", "--enable-threads", "uwsgi.ini"]
+CMD ["uwsgi","uwsgi.ini"]

@@ -301,16 +301,11 @@ To run the app, you can:
 
     $ docker build -t healthchecks:latest .
 
-    $ docker volume create \
-	--driver local \
-	--opt type=tmpfs \
-	--opt device=tmpfs \
-	--opt o=uid=900,gid=900 \
-	healthchecks
+    $ docker volume create healthchecks
 
     $ docker run -d \
 	--name healthchecks \
-	--mount source=healthchecks,target=/data \
+	-v healthchecks:/data \
 	-p 8000:8000 \
 	healthchecks:latest
 
