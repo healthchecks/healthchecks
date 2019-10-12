@@ -26,6 +26,7 @@ class LoginTestCase(BaseTestCase):
 
         r = self.client.post("/accounts/login/?next=/integrations/add_slack/", form)
         self.assertRedirects(r, "/accounts/login_link_sent/")
+        self.assertIn("auto-login", r.cookies)
 
         # The check_token link should have a ?next= query parameter:
         self.assertEqual(len(mail.outbox), 1)

@@ -159,7 +159,11 @@ def signup(request):
     else:
         ctx = {"form": form}
 
-    return render(request, "accounts/signup_result.html", ctx)
+    response = render(request, "accounts/signup_result.html", ctx)
+    if ctx.get("created"):
+        response.set_cookie("auto-login", "1", max_age=300, httponly=True)
+
+    return response
 
 
 def login_link_sent(request):
