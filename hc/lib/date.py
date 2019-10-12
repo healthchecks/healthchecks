@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+from random import randint
 from django.utils import timezone
 
 
@@ -81,3 +82,22 @@ def month_boundaries(months=2):
             y = y - 1
 
     return result
+
+
+def choose_next_report_date(now=None):
+    """ Calculate the target date for the next monthly report.
+
+    Monthly reports should get sent on 1st of each month, at a random
+    time after 12PM UTC (so it's over the month boundary even in UTC-12).
+
+    """
+
+    if now is None:
+        now = timezone.now()
+
+    h, m, s = randint(12, 23), randint(0, 59), randint(0, 59)
+
+    if now.month == 12:
+        return now.replace(now.year + 1, 1, 1, h, m, s)
+    else:
+        return now.replace(now.year, now.month + 1, 1, h, m, s)

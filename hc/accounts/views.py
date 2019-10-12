@@ -32,6 +32,7 @@ from hc.accounts.forms import (
 )
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
+from hc.lib.date import choose_next_report_date
 from hc.payments.models import Subscription
 
 NEXT_WHITELIST = (
@@ -355,7 +356,7 @@ def notifications(request):
             if profile.reports_allowed != form.cleaned_data["reports_allowed"]:
                 profile.reports_allowed = form.cleaned_data["reports_allowed"]
                 if profile.reports_allowed:
-                    profile.next_report_date = now() + td(days=30)
+                    profile.next_report_date = choose_next_report_date()
                 else:
                     profile.next_report_date = None
 

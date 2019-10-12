@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add "last_duration" attribute to the Check API resource (#257)
 - Upgrade to psycopg2 2.8.3
 - Add Go usage example
+- Send monthly reports on 1st of every month, not randomly during the month
 
 ### Bug Fixes
 - Prevent double-clicking the submit button in signup form

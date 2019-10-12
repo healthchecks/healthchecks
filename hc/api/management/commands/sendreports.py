@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.utils import timezone
 from hc.accounts.models import NO_NAG, Profile
 from hc.api.models import Check
+from hc.lib.date import choose_next_report_date
 
 
 def num_pinged_checks(profile):
@@ -31,28 +32,29 @@ class Command(BaseCommand):
         )
 
     def handle_one_monthly_report(self):
-        now = timezone.now()
-        month_before = now - timedelta(days=30)
-        month_after = now + timedelta(days=30)
-
-        report_due = Q(next_report_date__lt=now)
+        report_due = Q(next_report_date__lt=timezone.now())
         report_not_scheduled = Q(next_report_date__isnull=True)
 
         q = Profile.objects.filter(report_due | report_not_scheduled)
         q = q.filter(reports_allowed=True)
-        q = q.filter(user__date_joined__lt=month_before)
         profile = q.first()
 
         if profile is None:
+            # No matching profiles found – nothing to do right now.
             return False
 
-        # A sort of optimistic lock. Try to update next_report_date,
+        # A sort of optimistic lock. Will try to update next_report_date,
         # and if does get modified, we're in drivers seat:
         qq = Profile.objects.filter(
             id=profile.id, next_report_date=profile.next_report_date
         )
 
-        num_updated = qq.update(next_report_date=month_after)
+        # Next report date is currently not scheduled: schedule it and move on.
+        if profile.next_report_date is None:
+            qq.update(next_report_date=choose_next_report_date())
+            return True
+
+        num_updated = qq.update(next_report_date=choose_next_report_date())
         if num_updated != 1:
             # next_report_date was already updated elsewhere, skipping
             return True

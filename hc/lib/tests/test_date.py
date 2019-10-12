@@ -1,7 +1,7 @@
-from datetime import timedelta as td
+from datetime import datetime as dt, timedelta as td
 from django.test import TestCase
 
-from hc.lib.date import format_hms
+from hc.lib.date import format_hms, choose_next_report_date
 
 
 class DateFormattingTestCase(TestCase):
@@ -24,3 +24,22 @@ class DateFormattingTestCase(TestCase):
 
         s = format_hms(td(seconds=60 * 60))
         self.assertEqual(s, "1 h 0 min 0 sec")
+
+
+class NextReportDateTestCase(TestCase):
+    def test_it_works(self):
+        # October
+        nao = dt(year=2019, month=10, day=15, hour=6)
+        result = choose_next_report_date(nao)
+        self.assertEqual(result.year, 2019)
+        self.assertEqual(result.month, 11)
+        self.assertEqual(result.day, 1)
+        self.assertTrue(result.hour >= 12)
+
+        # December
+        nao = dt(year=2019, month=12, day=15, hour=6)
+        result = choose_next_report_date(nao)
+        self.assertEqual(result.year, 2020)
+        self.assertEqual(result.month, 1)
+        self.assertEqual(result.day, 1)
+        self.assertTrue(result.hour >= 12)
