@@ -10,7 +10,6 @@ All notable changes to this project will be documented in this file.
 - Add Go usage example
 
 ### Bug Fixes
-- Usernames now are uuid3(const, email). Prevents multiple accts with same email (#290)
 - Prevent double-clicking the submit button in signup form
 - Upgrade to Django 2.2.6 – fixes sqlite migrations (#284)
 

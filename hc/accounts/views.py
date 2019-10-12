@@ -43,8 +43,6 @@ NEXT_WHITELIST = (
     "hc-add-pushover",
 )
 
-NAMESPACE_HC = uuid.UUID("2b25afdf-ce1a-4fa3-adf2-592e35f27fa9")
-
 
 def _is_whitelisted(path):
     try:
@@ -56,10 +54,7 @@ def _is_whitelisted(path):
 
 
 def _make_user(email, with_project=True):
-    # Generate username from email in a deterministic way.
-    # Since the database has an uniqueness constraint on username,
-    # this makes sure that emails also are unique.
-    username = str(uuid.uuid3(NAMESPACE_HC, email))
+    username = str(uuid.uuid4())[:30]
     user = User(username=username, email=email)
     user.set_unusable_password()
     user.save()
