@@ -650,6 +650,24 @@ class Channel(models.Model):
         doc = json.loads(self.value)
         return doc["down"]
 
+    @property
+    def opsgenie_key(self):
+        assert self.kind == "opsgenie"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        return doc["key"]
+
+    @property
+    def opsgenie_region(self):
+        assert self.kind == "opsgenie"
+        if not self.value.startswith("{"):
+            return "us"
+
+        doc = json.loads(self.value)
+        return doc["region"]
+
 
 class Notification(models.Model):
     class Meta:

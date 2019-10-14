@@ -1138,13 +1138,14 @@ def add_opsgenie(request):
         form = AddOpsGenieForm(request.POST)
         if form.is_valid():
             channel = Channel(project=request.project, kind="opsgenie")
-            channel.value = form.cleaned_data["value"]
+            v = {"region": form.cleaned_data["region"], "key": form.cleaned_data["key"]}
+            channel.value = json.dumps(v)
             channel.save()
 
             channel.assign_all_checks()
             return redirect("hc-channels")
     else:
-        form = AddUrlForm()
+        form = AddOpsGenieForm()
 
     ctx = {"page": "channels", "project": request.project, "form": form}
     return render(request, "integrations/add_opsgenie.html", ctx)

@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Send monthly reports on 1st of every month, not randomly during the month
 - Signup form sets the "auto-login" cookie to avoid an extra click during first login
 - Autofocus the email field in the signup form, and submit on enter key
+- Add support for OpsGenie EU region (#294)
 
 ### Bug Fixes
 - Prevent double-clicking the submit button in signup form

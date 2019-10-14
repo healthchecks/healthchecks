@@ -71,13 +71,42 @@
                     id="api-key"
                     type="text"
                     class="form-control"
-                    name="value"
+                    name="key"
                     placeholder=""
-                    value="{{ form.value.value|default:"" }}">
+                    value="{{ form.key.value|default:"" }}">
 
-                {% if form.value.errors %}
+                {% if form.key.errors %}
                 <div class="help-block">
-                    {{ form.value.errors|join:"" }}
+                    {{ form.key.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group {{ form.region.css_classes }}">
+            <label for="api-key" class="col-sm-2 control-label">Region</label>
+            <div class="col-sm-4">
+                <label class="radio-container">
+                    <input
+                        type="radio"
+                        name="region"
+                        value="us"
+                        {% if form.region.value == "us" %} checked {% endif %}>
+                    <span class="radiomark"></span>
+                    US (default)
+                </label>
+                <label class="radio-container">
+                    <input
+                        type="radio"
+                        name="region"
+                        value="eu"
+                        {% if form.region.value == "eu" %} checked {% endif %}>
+                    <span class="radiomark"></span>
+                    EU
+                </label>
+
+                {% if form.region.errors %}
+                <div class="help-block">
+                    {{ form.region.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>

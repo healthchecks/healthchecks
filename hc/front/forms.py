@@ -85,7 +85,8 @@ class CronForm(forms.Form):
 
 class AddOpsGenieForm(forms.Form):
     error_css_class = "has-error"
-    value = forms.CharField(max_length=40)
+    region = forms.ChoiceField(initial="us", choices=(("us", "US"), ("eu", "EU")))
+    key = forms.CharField(max_length=40)
 
 
 class AddEmailForm(forms.Form):

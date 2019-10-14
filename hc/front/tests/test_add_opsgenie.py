@@ -1,3 +1,5 @@
+import json
+
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
@@ -11,7 +13,7 @@ class AddOpsGenieTestCase(BaseTestCase):
         self.assertContains(r, "escalation policies and incident tracking")
 
     def test_it_works(self):
-        form = {"value": "123456"}
+        form = {"key": "123456", "region": "us"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -19,14 +21,28 @@ class AddOpsGenieTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "opsgenie")
-        self.assertEqual(c.value, "123456")
+
+        payload = json.loads(c.value)
+        self.assertEqual(payload["key"], "123456")
+        self.assertEqual(payload["region"], "us")
         self.assertEqual(c.project, self.project)
 
     def test_it_trims_whitespace(self):
-        form = {"value": "   123456   "}
+        form = {"key": "   123456   ", "region": "us"}
 
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.value, "123456")
+        payload = json.loads(c.value)
+        self.assertEqual(payload["key"], "123456")
+
+    def test_it_saves_eu_region(self):
+        form = {"key": "123456", "region": "eu"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+
+        c = Channel.objects.get()
+        payload = json.loads(c.value)
+        self.assertEqual(payload["region"], "eu")

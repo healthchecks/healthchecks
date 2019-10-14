@@ -223,7 +223,7 @@ class OpsGenie(HttpTransport):
     def notify(self, check):
         headers = {
             "Conent-Type": "application/json",
-            "Authorization": "GenieKey %s" % self.channel.value,
+            "Authorization": "GenieKey %s" % self.channel.opsgenie_key,
         }
 
         payload = {"alias": str(check.code), "source": settings.SITE_NAME}
@@ -235,6 +235,9 @@ class OpsGenie(HttpTransport):
             payload["description"] = tmpl("opsgenie_description.html", check=check)
 
         url = "https://api.opsgenie.com/v2/alerts"
+        if self.channel.opsgenie_region == "eu":
+            url = "https://api.eu.opsgenie.com/v2/alerts"
+
         if check.status == "up":
             url += "/%s/close?identifierType=alias" % check.code
 
@@ -468,6 +471,7 @@ class Trello(HttpTransport):
 
         return self.post(self.URL, params=params)
 
+
 class Apprise(HttpTransport):
     def notify(self, check):
 
@@ -481,8 +485,14 @@ class Apprise(HttpTransport):
 
         a.add(self.channel.value)
 
-        notify_type = apprise.NotifyType.SUCCESS \
-            if check.status == "up" else apprise.NotifyType.FAILURE
+        notify_type = (
+            apprise.NotifyType.SUCCESS
+            if check.status == "up"
+            else apprise.NotifyType.FAILURE
+        )
 
-        return "Failed" if not \
-            a.notify(body=body, title=title, notify_type=notify_type) else None
+        return (
+            "Failed"
+            if not a.notify(body=body, title=title, notify_type=notify_type)
+            else None
+        )
