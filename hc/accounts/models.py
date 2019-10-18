@@ -109,6 +109,13 @@ class Profile(models.Model):
         ctx = {"button_text": "Change Email", "button_url": settings.SITE_ROOT + path}
         emails.change_email(self.user.email, ctx)
 
+    def send_sms_limit_notice(self, transport):
+        ctx = {"transport": transport, "limit": self.sms_limit}
+        if self.sms_limit != 500 and settings.USE_PAYMENTS:
+            ctx["url"] = settings.SITE_ROOT + reverse("hc-billing")
+
+        emails.sms_limit(self.user.email, ctx)
+
     def projects(self):
         """ Return a queryset of all projects we have access to. """
 

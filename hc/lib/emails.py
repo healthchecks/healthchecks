@@ -75,3 +75,7 @@ def invoice(to, ctx, filename, pdf_data):
 
 def deletion_notice(to, ctx, headers={}):
     send("deletion-notice", to, ctx, headers)
+
+
+def sms_limit(to, ctx):
+    send("sms-limit", to, ctx)

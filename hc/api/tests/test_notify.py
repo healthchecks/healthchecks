@@ -591,6 +591,13 @@ class NotifyTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertTrue("Monthly SMS limit exceeded" in n.error)
 
+        # And email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "alice@example.org")
+        self.assertEqual(email.subject, "Monthly SMS Limit Reached")
+
     @patch("hc.api.transports.requests.request")
     def test_sms_limit_reset(self, mock_post):
         # At limit, but also into a new month
@@ -651,6 +658,13 @@ class NotifyTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertTrue("Monthly message limit exceeded" in n.error)
+
+        # And email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "alice@example.org")
+        self.assertEqual(email.subject, "Monthly WhatsApp Limit Reached")
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)

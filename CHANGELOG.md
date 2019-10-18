@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Add support for OpsGenie EU region (#294)
 - Update OpsGenie logo and setup illustrations
 - Add a "Create a Copy" function for cloning checks (#288)
+- Send email notification when monthly SMS sending limit is reached (#292)
 
 ### Bug Fixes
 - Prevent double-clicking the submit button in signup form

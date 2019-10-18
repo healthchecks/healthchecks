@@ -412,6 +412,7 @@ class Sms(HttpTransport):
     def notify(self, check):
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
+            profile.send_sms_limit_notice("SMS")
             return "Monthly SMS limit exceeded"
 
         url = self.URL % settings.TWILIO_ACCOUNT
@@ -439,6 +440,7 @@ class WhatsApp(HttpTransport):
     def notify(self, check):
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
+            profile.send_sms_limit_notice("WhatsApp")
             return "Monthly message limit exceeded"
 
         url = self.URL % settings.TWILIO_ACCOUNT
