@@ -1,10 +1,6 @@
 <div id="remove-check-modal" class="modal">
     <div class="modal-dialog">
-        <form
-            id="remove-check-form"
-            {% if check %}action="{% url 'hc-remove-check' check.code %}"{% endif %}
-            method="post">
-
+        <form action="{% url 'hc-remove-check' check.code %}" method="post">
             {% csrf_token %}
             <div class="modal-content">
                 <div class="modal-header">

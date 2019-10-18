@@ -13,6 +13,7 @@ check_urls = [
     path("status/", views.status_single, name="hc-status-single"),
     path("last_ping/", views.ping_details, name="hc-last-ping"),
     path("transfer/", views.transfer, name="hc-transfer"),
+    path("copy/", views.copy, name="hc-copy"),
     path(
         "channels/<uuid:channel_code>/enabled",
         views.switch_channel,

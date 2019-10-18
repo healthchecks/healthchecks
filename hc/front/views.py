@@ -483,6 +483,7 @@ def details(request, code):
         "timezones": pytz.all_timezones,
         "downtimes": check.downtimes(months=3),
         "is_new": "new" in request.GET,
+        "is_copied": "copied" in request.GET,
     }
 
     return render(request, "front/details.html", ctx)
@@ -511,6 +512,27 @@ def transfer(request, code):
 
     ctx = {"check": check}
     return render(request, "front/transfer_modal.html", ctx)
+
+
+@require_POST
+@login_required
+def copy(request, code):
+    check = _get_check_for_user(request, code)
+
+    copied = Check(project=check.project)
+    copied.name = check.name + " (copy)"
+    copied.desc, copied.tags = check.desc, check.tags
+    copied.subject = check.subject
+
+    copied.kind = check.kind
+    copied.timeout, copied.grace = check.timeout, check.grace
+    copied.schedule, copied.tz = check.schedule, check.tz
+    copied.save()
+
+    copied.channel_set.add(*check.channel_set.all())
+
+    url = reverse("hc-details", args=[copied.code])
+    return redirect(url + "?copied")
 
 
 @login_required

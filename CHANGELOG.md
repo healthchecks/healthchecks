@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Autofocus the email field in the signup form, and submit on enter key
 - Add support for OpsGenie EU region (#294)
 - Update OpsGenie logo and setup illustrations
+- Add a "Create a Copy" function for cloning checks (#288)
 
 ### Bug Fixes
 - Prevent double-clicking the submit button in signup form

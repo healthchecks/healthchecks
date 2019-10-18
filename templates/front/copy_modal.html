@@ -1,0 +1,32 @@
+<div id="copy-modal" class="modal">
+    <div class="modal-dialog">
+        <form action="{% url 'hc-copy' check.code %}" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Create a Copy of This Check</h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to <strong>create a new check based on this
+                    check's configuration</strong>. The following items will
+                get copied:</p>
+                    <ul class="checkmarks">
+                        <li>Name, tags and description</li>
+                        <li>Schedule</li>
+                        <li>Assigned notification methods</li>
+                    </ul>
+                    <p>The following items <em>will not</em> be copied:</p>
+                    <ul class="crosses">
+                        <li>Its URL (a new URL will be generated)</li>
+                        <li>The log of already received pings</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create a Copy</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

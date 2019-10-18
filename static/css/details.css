@@ -103,3 +103,25 @@
     text-align: center;
     padding: 32px;
 }
+
+
+ul.checkmarks {
+    padding-left: 20px;
+    list-style: none;
+    color: #117a3f;
+}
+
+ul.checkmarks li:before {
+    content: '✔ ';
+}
+
+
+ul.crosses {
+    padding-left: 20px;
+    list-style: none;
+    color: #aa413e;
+}
+
+ul.crosses li:before {
+    content: '✘ ';
+}

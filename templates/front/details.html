@@ -11,12 +11,23 @@
     <div class="col-sm-12">
         <p id="new-check-alert" class="alert alert-success">
             <strong>Your new check is ready!</strong>
-            You can now 
-            <a data-target="edit-name" href="#" >give it a name</a> 
-            or 
+            You can now
+            <a data-target="edit-name" href="#" >give it a name</a>
+            or
             <a data-target="edit-timeout" href="#" >set its schedule</a>.
         </p>
-    </div>    
+    </div>
+    {% endif %}
+
+    {% if is_copied %}
+    <div class="col-sm-12">
+        <p id="new-check-alert" class="alert alert-success">
+            <strong>Copy created!</strong>
+            This is a brand new check, with details copied over from your existing check.
+            You might now want to
+            <a data-target="edit-name" href="#">update its name and tags</a>.
+        </p>
+    </div>
     {% endif %}
 
     {% if messages %}
@@ -196,15 +207,21 @@
 
         <div class="details-block">
             <h2>Danger Zone</h2>
-            <p>Transfer to a different project, or permanently remove this check.</p>
+            <p>Copy, Transfer, or permanently remove this check.</p>
 
             <div class="text-right">
+                <button
+                    id="copy-btn"
+                    data-toggle="modal"
+                    data-target="#copy-modal"
+                    class="btn btn-sm btn-default">Create a Copy&hellip;</button>
                 <button
                     id="transfer-btn"
                     data-toggle="modal"
                     data-target="#transfer-modal"
                     data-url="{% url 'hc-transfer' check.code %}"
                     class="btn btn-sm btn-default">Transfer to Another Project&hellip;</button>
+                &nbsp;
                 <button
                     id="details-remove-check"
                     data-toggle="modal"
@@ -223,13 +240,13 @@
                 <label class="btn btn-default btn-xs" data-format="UTC">
                     <input type="radio" name="date-format">
                     UTC
-                </label>                
+                </label>
 
                 {% if check.kind == "cron" and check.tz != "UTC" %}
                 <label class="btn btn-default btn-xs" data-format="{{ check.tz }}">
                     <input type="radio" name="date-format">
                     {{ check.tz }}
-                </label>                
+                </label>
                 {% endif %}
 
                 <label class="btn btn-default btn-xs active" data-format="local">
@@ -263,6 +280,7 @@
 {% include "front/show_usage_modal.html" %}
 {% include "front/remove_check_modal.html" %}
 {% include "front/email_settings_modal.html" %}
+{% include "front/copy_modal.html" %}
 
 {% endblock %}
 
