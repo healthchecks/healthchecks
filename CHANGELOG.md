@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.10.0 - 2019-10-21
 
 ### Improvements
 - Add the "Last Duration" field in the "My Checks" page (#257)
