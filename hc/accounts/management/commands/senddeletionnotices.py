@@ -30,7 +30,7 @@ class Command(BaseCommand):
         # Exclude accounts with the deletion notice already sent
         q = q.exclude(deletion_notice_date__gt=year_ago)
         # Exclude paid accounts
-        q = q.exclude(sms_limit__gt=0)
+        q = q.exclude(sms_limit__gt=5)
 
         sent = 0
         for profile in q:
