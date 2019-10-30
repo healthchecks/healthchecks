@@ -55,7 +55,7 @@ class Profile(models.Model):
     token = models.CharField(max_length=128, blank=True)
     current_project = models.ForeignKey("Project", models.SET_NULL, null=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
-    sms_limit = models.IntegerField(default=0)
+    sms_limit = models.IntegerField(default=5)
     sms_sent = models.IntegerField(default=0)
     team_limit = models.IntegerField(default=2)
     sort = models.CharField(max_length=20, default="created")
@@ -112,7 +112,7 @@ class Profile(models.Model):
     def send_sms_limit_notice(self, transport):
         ctx = {"transport": transport, "limit": self.sms_limit}
         if self.sms_limit != 500 and settings.USE_PAYMENTS:
-            ctx["url"] = settings.SITE_ROOT + reverse("hc-billing")
+            ctx["url"] = settings.SITE_ROOT + reverse("hc-pricing")
 
         emails.sms_limit(self.user.email, ctx)
 
