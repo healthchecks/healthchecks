@@ -17,7 +17,7 @@
             </li>
             <li class="active">Log</li>
 
-            <li id="format-switcher-container" class="pull-right">
+            <li id="format-switcher-container" class="pull-right hidden-xs">
                 <div id="format-switcher" class="btn-group" data-toggle="buttons">
                     <label class="btn btn-default btn-xs" data-format="UTC">
                         <input type="radio" name="date-format" checked>
@@ -50,7 +50,7 @@
             </td>
             <td class="date"></td>
             <td class="time"></td>
-            <td class="text-right">
+            <td class="event">
                 {% if event.kind == "fail" %}
                 <span class="label label-danger">Failure</span>
                 {% elif event.kind == "start" %}

@@ -29,6 +29,12 @@
     padding-left: 20px;
 }
 
+@media (max-width: 767px) {
+    #log .delta {
+        display: none;
+    }
+}
+
 #log .details {
     width: 100%;
     max-width: 0;
@@ -58,6 +64,11 @@
     background: #fff3f2;
 }
 
+#log td.event {
+    text-align: right;
+    width: 1%;
+}
+
 #log .n-cell {
     font-family: monospace;
     text-align: right;
@@ -70,3 +81,4 @@
 #log .alert-info {
     font-size: 12px;
 }
+

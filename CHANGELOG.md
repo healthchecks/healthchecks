@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 
  - On mobile, "My Checks" page, always show the gear (Details) button (#286)
+ - Make log events fit better on mobile screens
 
 ## 1.10.0 - 2019-10-21
 
