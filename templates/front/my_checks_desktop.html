@@ -30,7 +30,7 @@
             Period <br />
             <span class="checks-subline">Grace</span>
         </th>
-        <th class="th-last-ping">
+        <th class="th-last-ping hidden-xs">
             {% if sort == "last_ping" %}
             <a href="?sort=created" data-toggle="tooltip" class="sort-last-ping">
                 Last Ping<span class="icon-desc"></span>
@@ -49,7 +49,7 @@
             <span class="checks-subline">Last Duration</span>
             {% endif %}
         </th>
-        <th class="hidden-xs"></th>
+        <th></th>
     </tr>
     {% for check in checks %}
     <tr
@@ -115,12 +115,12 @@
                 </span>
             </div>
         </td>
-        <td>
+        <td class="hidden-xs">
             <div id="lpd-{{ check.code }}" class="last-ping">
                 {% include "front/last_ping_cell.html" with check=check %}
             </div>
         </td>
-        <td class="hidden-xs">
+        <td>
             <button class="btn btn-sm btn-default show-log" type="button">
                 <span class="icon-settings" aria-hidden="true"></span>
             </button>
