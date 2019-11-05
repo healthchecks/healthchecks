@@ -34,6 +34,10 @@
     display: inline;
 }
 
+#how-to-ping code {
+    overflow-wrap: break-word;
+}
+
 #details-schedule th {
     padding-top: 4px;
 }
@@ -82,7 +86,7 @@
 }
 
 #downtimes table {
-    width: 350px;
+    max-width: 350px;
 }
 
 #downtimes tr:first-child td, #downtimes tr:first-child th {
@@ -103,7 +107,6 @@
     text-align: center;
     padding: 32px;
 }
-
 
 ul.checkmarks {
     padding-left: 20px;

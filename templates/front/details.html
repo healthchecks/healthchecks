@@ -64,7 +64,7 @@
             {% endif %}
         </div>
 
-        <div class="details-block">
+        <div id="how-to-ping" class="details-block">
             <h2>How To Ping</h2>
             <div>
                 <p>Keep this check up by making HTTP requests to this URL:</p>
@@ -220,7 +220,9 @@
                     data-toggle="modal"
                     data-target="#transfer-modal"
                     data-url="{% url 'hc-transfer' check.code %}"
-                    class="btn btn-sm btn-default">Transfer to Another Project&hellip;</button>
+                    class="btn btn-sm btn-default">
+                    Transfer<span class="hidden-sm hidden-xs"> to Another Project</span>&hellip;
+                </button>
                 &nbsp;
                 <button
                     id="details-remove-check"
@@ -235,7 +237,7 @@
     <div id="events" class="col-sm-7">
         <h2>
             Log
-            <small>Click on individual items for details</small>
+            <small class="hidden-xs">Click on individual items for details</small>
             <div id="format-switcher" class="btn-group pull-right" data-toggle="buttons">
                 <label class="btn btn-default btn-xs" data-format="UTC">
                     <input type="radio" name="date-format">
