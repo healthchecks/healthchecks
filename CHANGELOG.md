@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Bug Fixes
+
+ - On mobile, "My Checks" page, always show the gear (Details) button (#286)
+
 ## 1.10.0 - 2019-10-21
 
 ### Improvements
