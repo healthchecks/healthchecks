@@ -3,8 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-### Bug Fixes
+### Improvements
+- In monthly reports, no downtime stats for the current month (month has just started)
 
+### Bug Fixes
  - On mobile, "My Checks" page, always show the gear (Details) button (#286)
  - Make log events fit better on mobile screens
 

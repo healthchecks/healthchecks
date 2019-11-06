@@ -273,7 +273,7 @@ class Check(models.Model):
         ping.body = body[:10000]
         ping.save()
 
-    def downtimes(self, months=2):
+    def downtimes(self, months=3):
         """ Calculate the number of downtimes and downtime minutes per month.
 
         Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples.

@@ -7,9 +7,11 @@
             {{ group.grouper|mangle_link }}
         </td>
         {% for dt in month_boundaries %}
+        {% if not forloop.last %}
         <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">
             {{ dt|date:"N Y"}}
         </td>
+        {% endif %}
         {% endfor %}
     </tr>
     {% for check in group.list|sortchecks:sort %}
@@ -63,6 +65,7 @@
             {% endif %}
         </td>
         {% for boundary, seconds, count in check.downtimes %}
+        {% if not forloop.last %}
         {% if count %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
                 {{ count }} downtime{{ count|pluralize }},
@@ -73,6 +76,7 @@
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif; color: #9BA2AB;">
                 All good!
             </td>
+        {% endif %}
         {% endif %}
         {% endfor %}
     </tr>
