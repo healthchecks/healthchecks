@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - In monthly reports, no downtime stats for the current month (month has just started)
+- Add Microsoft Teams integration (#135)
 
 ### Bug Fixes
  - On mobile, "My Checks" page, always show the gear (Details) button (#286)

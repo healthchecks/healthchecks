@@ -699,3 +699,15 @@ class NotifyTestCase(BaseTestCase):
 
         with self.assertRaises(NotImplementedError):
             self.channel.notify(self.check)
+
+    @patch("hc.api.transports.requests.request")
+    def test_mesteams(self, mock_post):
+        self._setup_data("msteams", "http://example.com/webhook")
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(payload["@type"], "MessageCard")

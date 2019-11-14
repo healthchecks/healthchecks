@@ -1415,3 +1415,21 @@ def trello_settings(request):
     r = requests.get(url)
     ctx = {"token": token, "data": r.json()}
     return render(request, "integrations/trello_settings.html", ctx)
+
+
+@login_required
+def add_msteams(request):
+    if request.method == "POST":
+        form = AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="msteams")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddUrlForm()
+
+    ctx = {"page": "channels", "project": request.project, "form": form}
+    return render(request, "integrations/add_msteams.html", ctx)

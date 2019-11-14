@@ -45,6 +45,7 @@ CHANNEL_KINDS = (
     ("whatsapp", "WhatsApp"),
     ("apprise", "Apprise"),
     ("mattermost", "Mattermost"),
+    ("msteams", "Microsoft Teams"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -410,6 +411,8 @@ class Channel(models.Model):
             return transports.WhatsApp(self)
         elif self.kind == "apprise":
             return transports.Apprise(self)
+        elif self.kind == "msteams":
+            return transports.MsTeams(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 

@@ -498,3 +498,10 @@ class Apprise(HttpTransport):
             if not a.notify(body=body, title=title, notify_type=notify_type)
             else None
         )
+
+
+class MsTeams(HttpTransport):
+    def notify(self, check):
+        text = tmpl("msteams_message.json", check=check)
+        payload = json.loads(text)
+        return self.post(self.channel.value, json=payload)

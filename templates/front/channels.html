@@ -102,6 +102,8 @@
                             {% endif %}
                         {% elif ch.kind == "mattermost" %}
                             Mattermost
+                        {% elif ch.kind == "msteams" %}
+                            Microsoft Teams
                         {% else %}
                             {{ ch.kind }}
                         {% endif %}
@@ -249,6 +251,16 @@
             <p>High Trust Messaging for the Enterprise.</p>
 
             <a href="{% url 'hc-add-mattermost' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
+        <li>
+            <img src="{% static 'img/integrations/msteams.png' %}"
+                class="icon" alt="Microsoft Teams" />
+
+            <h2>Microsoft Teams</h2>
+            <p>Chat and collaboration platform for Microsoft Office 365 customers.</p>
+
+            <a href="{% url 'hc-add-msteams' %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         <li>

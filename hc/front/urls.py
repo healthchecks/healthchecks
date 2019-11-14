@@ -46,6 +46,7 @@ channel_urls = [
     path("add_trello/settings/", views.trello_settings, name="hc-trello-settings"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),
     path("add_apprise/", views.add_apprise, name="hc-add-apprise"),
+    path("add_msteams/", views.add_msteams, name="hc-add-msteams"),
     path("<uuid:code>/checks/", views.channel_checks, name="hc-channel-checks"),
     path("<uuid:code>/name/", views.update_channel_name, name="hc-channel-name"),
     path("<uuid:code>/test/", views.send_test_notification, name="hc-channel-test"),

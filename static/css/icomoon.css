@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?q2glnk');
-  src:  url('../fonts/icomoon.eot?q2glnk#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?q2glnk') format('truetype'),
-    url('../fonts/icomoon.woff?q2glnk') format('woff'),
-    url('../fonts/icomoon.svg?q2glnk#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?tg9zp8');
+  src:  url('../fonts/icomoon.eot?tg9zp8#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?tg9zp8') format('truetype'),
+    url('../fonts/icomoon.woff?tg9zp8') format('woff'),
+    url('../fonts/icomoon.svg?tg9zp8#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,6 +24,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-msteams:before {
+  content: "\e916";
+  color: #4e56be;
+}
 .icon-opsgenie:before {
   content: "\e910";
   color: #2684ff;
