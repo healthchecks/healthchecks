@@ -701,7 +701,7 @@ class NotifyTestCase(BaseTestCase):
             self.channel.notify(self.check)
 
     @patch("hc.api.transports.requests.request")
-    def test_mesteams(self, mock_post):
+    def test_msteams(self, mock_post):
         self._setup_data("msteams", "http://example.com/webhook")
         mock_post.return_value.status_code = 200
 
