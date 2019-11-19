@@ -61,7 +61,7 @@ class LogTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "Sent email alert to alice@example.org", status_code=200)
+        self.assertContains(r, "Sent email to alice@example.org", status_code=200)
 
     def test_it_shows_pushover_notification(self):
         ch = Channel.objects.create(kind="po", project=self.project)

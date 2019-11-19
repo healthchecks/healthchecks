@@ -53,34 +53,7 @@
         <td class="date"></td>
         <td class="time"></td>
         <td class="alert-info" colspan="2">
-            {% if event.channel.kind == "email" %}
-                Sent email alert to {{ event.channel.email_value }}
-            {% elif event.channel.kind == "slack" %}
-                Sent Slack alert
-                {% if event.channel.slack_channel %}
-                    to {{ event.channel.slack_channel }}
-                {% endif %}
-            {% elif event.channel.kind == "pd" %}
-                Sent alert to PagerDuty
-            {% elif event.channel.kind == "pagertree" %}
-                Sent alert to PagerTree
-            {% elif event.channel.kind == "pagerteam" %}
-                Sent alert to Pager Team
-            {% elif event.channel.kind == "opsgenie" %}
-                Sent alert to OpsGenie
-            {% elif event.channel.kind == "hipchat" %}
-                Sent alert to HipChat
-            {% elif event.channel.kind == "po" %}
-                Sent a Pushover notification
-            {% elif event.channel.kind == "webhook" %}
-                Called webhook {{ event.channel.url_down }}
-            {% else %}
-                Sent alert to {{ event.channel.kind|capfirst }}
-            {% endif %}
-            {% if event.error %}
-                <br />
-                <strong>Error: {{ event.error }}</strong>
-            {% endif %}
+            {% include "front/event_summary.html" %}
         </td>
     </tr>
     {% endif %}
