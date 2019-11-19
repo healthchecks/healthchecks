@@ -18,6 +18,22 @@ class MyChecksTestCase(BaseTestCase):
             r = self.client.get(self.url)
             self.assertContains(r, "Alice Was Here", status_code=200)
 
+        # last_active_date should have been set
+        self.profile.refresh_from_db()
+        self.assertTrue(self.profile.last_active_date)
+
+    def test_it_bumps_last_active_date(self):
+        self.profile.last_active_date = timezone.now() - td(days=10)
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.get(self.url)
+
+        # last_active_date should have been bumped
+        self.profile.refresh_from_db()
+        delta = timezone.now() - self.profile.last_active_date
+        self.assertTrue(delta.total_seconds() < 1)
+
     def test_it_updates_current_project(self):
         self.profile.current_project = None
         self.profile.save()

@@ -115,8 +115,18 @@ def _get_project_for_user(request, project_code):
         raise Http404("not found")
 
 
+def _refresh_last_active_date(profile):
+    """ Update last_active_date if it is more than a day old. """
+
+    now = timezone.now()
+    if profile.last_active_date is None or (now - profile.last_active_date).days > 0:
+        profile.last_active_date = now
+        profile.save()
+
+
 @login_required
 def my_checks(request, code):
+    _refresh_last_active_date(request.profile)
     project = _get_project_for_user(request, code)
 
     if request.GET.get("sort") in VALID_SORT_VALUES:
@@ -470,6 +480,7 @@ def log(request, code):
 
 @login_required
 def details(request, code):
+    _refresh_last_active_date(request.profile)
     check = _get_check_for_user(request, code)
 
     channels = Channel.objects.filter(project=check.project)
