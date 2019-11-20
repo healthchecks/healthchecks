@@ -207,6 +207,9 @@ MATRIX_ACCESS_TOKEN = os.getenv("MATRIX_ACCESS_TOKEN")
 # Apprise
 APPRISE_ENABLED = envbool("APPRISE_ENABLED", "False")
 
+# Local shell commands
+SHELL_ENABLED = envbool("SHELL_ENABLED", "False")
+
 
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *

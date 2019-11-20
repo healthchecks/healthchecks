@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - In monthly reports, no downtime stats for the current month (month has just started)
 - Add Microsoft Teams integration (#135)
 - Add Profile.last_active_date field for more accurate inactive user detection
+- Add "Shell Commands" integration (#302)
 
 ### Bug Fixes
  - On mobile, "My Checks" page, always show the gear (Details) button (#286)

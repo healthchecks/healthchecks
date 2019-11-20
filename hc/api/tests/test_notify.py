@@ -74,19 +74,6 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 500")
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_support_tags(self, mock_get):
-        template = "http://host/$TAGS"
-        self._setup_data("webhook", template)
-        self.check.tags = "foo bar"
-        self.check.save()
-
-        self.channel.notify(self.check)
-
-        args, kwargs = mock_get.call_args
-        self.assertEqual(args[0], "get")
-        self.assertEqual(args[1], "http://host/foo%20bar")
-
-    @patch("hc.api.transports.requests.request")
     def test_webhooks_support_variables(self, mock_get):
         template = "http://host/$CODE/$STATUS/$TAG1/$TAG2/?name=$NAME"
         self._setup_data("webhook", template)
@@ -711,3 +698,50 @@ class NotifyTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         payload = kwargs["json"]
         self.assertEqual(payload["@type"], "MessageCard")
+
+    @patch("hc.api.transports.os.system")
+    @override_settings(SHELL_ENABLED=True)
+    def test_shell(self, mock_system):
+        definition = {"cmd_down": "logger hello", "cmd_up": ""}
+        self._setup_data("shell", json.dumps(definition))
+        mock_system.return_value = 0
+
+        self.channel.notify(self.check)
+        mock_system.assert_called_with("logger hello")
+
+    @patch("hc.api.transports.os.system")
+    @override_settings(SHELL_ENABLED=True)
+    def test_shell_handles_nonzero_exit_code(self, mock_system):
+        definition = {"cmd_down": "logger hello", "cmd_up": ""}
+        self._setup_data("shell", json.dumps(definition))
+        mock_system.return_value = 123
+
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Command returned exit code 123")
+
+    @patch("hc.api.transports.os.system")
+    @override_settings(SHELL_ENABLED=True)
+    def test_shell_supports_variables(self, mock_system):
+        definition = {"cmd_down": "logger $NAME is $STATUS ($TAG1)", "cmd_up": ""}
+        self._setup_data("shell", json.dumps(definition))
+        mock_system.return_value = 0
+
+        self.check.name = "Database"
+        self.check.tags = "foo bar"
+        self.check.save()
+        self.channel.notify(self.check)
+
+        mock_system.assert_called_with("logger Database is down (foo)")
+
+    @patch("hc.api.transports.os.system")
+    @override_settings(SHELL_ENABLED=False)
+    def test_shell_disabled(self, mock_system):
+        definition = {"cmd_down": "logger hello", "cmd_up": ""}
+        self._setup_data("shell", json.dumps(definition))
+
+        self.channel.notify(self.check)
+        self.assertFalse(mock_system.called)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Shell commands are not enabled")

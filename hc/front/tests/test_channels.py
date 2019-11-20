@@ -96,9 +96,9 @@ class ChannelsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "(up only)")
 
-    def test_it_shows_sms_label(self):
+    def test_it_shows_sms_number(self):
         ch = Channel(kind="sms", project=self.project)
-        ch.value = json.dumps({"value": "+123", "label": "My Phone"})
+        ch.value = json.dumps({"value": "+123"})
         ch.save()
 
         self.client.login(username="alice@example.org", password="password")

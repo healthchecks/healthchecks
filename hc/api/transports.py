@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -7,6 +9,7 @@ from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
 from hc.lib import emails
+from hc.lib.string import replace
 
 try:
     import apprise
@@ -88,6 +91,48 @@ class Email(Transport):
             return not self.channel.email_notify_down
         else:
             return not self.channel.email_notify_up
+
+
+class Shell(Transport):
+    def prepare(self, template, check):
+        """ Replace placeholders with actual values. """
+
+        ctx = {
+            "$CODE": str(check.code),
+            "$STATUS": check.status,
+            "$NOW": timezone.now().replace(microsecond=0).isoformat(),
+            "$NAME": check.name,
+            "$TAGS": check.tags,
+        }
+
+        for i, tag in enumerate(check.tags_list()):
+            ctx["$TAG%d" % (i + 1)] = tag
+
+        return replace(template, ctx)
+
+    def is_noop(self, check):
+        if check.status == "down" and not self.channel.cmd_down:
+            return True
+
+        if check.status == "up" and not self.channel.cmd_up:
+            return True
+
+        return False
+
+    def notify(self, check):
+        if not settings.SHELL_ENABLED:
+            return "Shell commands are not enabled"
+
+        if check.status == "up":
+            cmd = self.channel.cmd_up
+        elif check.status == "down":
+            cmd = self.channel.cmd_down
+
+        cmd = self.prepare(cmd, check)
+        code = os.system(cmd)
+
+        if code != 0:
+            return "Command returned exit code %d" % code
 
 
 class HttpTransport(Transport):
@@ -479,7 +524,7 @@ class Apprise(HttpTransport):
 
         if not settings.APPRISE_ENABLED:
             # Not supported and/or enabled
-            return "Apprise is disabled and/or not installed."
+            return "Apprise is disabled and/or not installed"
 
         a = apprise.Apprise()
         title = tmpl("apprise_title.html", check=check)

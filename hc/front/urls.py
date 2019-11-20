@@ -26,6 +26,7 @@ channel_urls = [
     path("", views.channels, name="hc-channels"),
     path("add_email/", views.add_email, name="hc-add-email"),
     path("add_webhook/", views.add_webhook, name="hc-add-webhook"),
+    path("add_shell/", views.add_shell, name="hc-add-shell"),
     path("add_pd/", views.add_pd, name="hc-add-pd"),
     path("add_pd/<str:state>/", views.add_pd, name="hc-add-pd-state"),
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),

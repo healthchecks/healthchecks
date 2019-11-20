@@ -37,6 +37,11 @@
 {% elif event.channel.kind == "trello" %}
     Added Trello card in
     board "{{ event.channel.trello_board_list|first }}"
+{% elif event.channel.kind == "shell" %}
+    Executed a shell command
+    {% if event.channel.name %}
+        ({{ event.channel.name }})
+    {% endif %}
 {% else %}
     Sent alert to {{ event.channel.kind|capfirst }}
 {% endif %}

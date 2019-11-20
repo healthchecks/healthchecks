@@ -46,6 +46,7 @@ CHANNEL_KINDS = (
     ("apprise", "Apprise"),
     ("mattermost", "Mattermost"),
     ("msteams", "Microsoft Teams"),
+    ("shell", "Shell Command"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -413,6 +414,8 @@ class Channel(models.Model):
             return transports.Apprise(self)
         elif self.kind == "msteams":
             return transports.MsTeams(self)
+        elif self.kind == "shell":
+            return transports.Shell(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -437,6 +440,10 @@ class Channel(models.Model):
 
     def icon_path(self):
         return "img/integrations/%s.png" % self.kind
+
+    @property
+    def json(self):
+        return json.loads(self.value)
 
     @property
     def po_priority(self):
@@ -501,6 +508,16 @@ class Channel(models.Model):
     @property
     def url_up(self):
         return self.up_webhook_spec["url"]
+
+    @property
+    def cmd_down(self):
+        assert self.kind == "shell"
+        return self.json["cmd_down"]
+
+    @property
+    def cmd_up(self):
+        assert self.kind == "shell"
+        return self.json["cmd_up"]
 
     @property
     def slack_team(self):
@@ -587,13 +604,6 @@ class Channel(models.Model):
         return self.value
 
     @property
-    def sms_label(self):
-        assert self.kind == "sms"
-        if self.value.startswith("{"):
-            doc = json.loads(self.value)
-            return doc["label"]
-
-    @property
     def trello_token(self):
         assert self.kind == "trello"
         if self.value.startswith("{"):
@@ -620,8 +630,7 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return self.value
 
-        doc = json.loads(self.value)
-        return doc.get("value")
+        return self.json["value"]
 
     @property
     def email_notify_up(self):

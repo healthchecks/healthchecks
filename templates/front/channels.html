@@ -105,7 +105,7 @@
                         {% elif ch.kind == "msteams" %}
                             Microsoft Teams
                         {% else %}
-                            {{ ch.kind }}
+                            {{ ch.get_kind_display }}
                         {% endif %}
                      </div>
                 </div>
@@ -329,6 +329,18 @@
         </li>
         {% endif %}
 
+        {% if enable_shell %}
+        <li>
+            <img src="{% static 'img/integrations/shell.png' %}"
+                class="icon" alt="Shell icon" />
+
+            <h2>Shell Command</h2>
+            <p>Execute a local shell command when a check goes up or down.</p>
+
+            <a href="{% url 'hc-add-shell' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
         {% if enable_sms %}
         <li>
             <img src="{% static 'img/integrations/sms.png' %}"
@@ -504,6 +516,19 @@
                             {% endif %}
                         {% endif %}
                     {% endwith %}
+                    {% endif %}
+
+
+                    {% if ch.kind == "shell" %}
+                        {% if ch.cmd_down %}
+                            <p><strong>Execute on "down" events:</strong></p>
+                            <pre>{{ ch.cmd_down }}</pre>
+                        {% endif %}
+
+                        {% if ch.cmd_up %}
+                            <p><strong>Execute on "up" events:</strong></p>
+                            <pre>{{ ch.cmd_up }}</pre>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="modal-footer">

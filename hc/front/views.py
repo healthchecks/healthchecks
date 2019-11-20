@@ -46,6 +46,7 @@ from hc.front.forms import (
     EmailSettingsForm,
     AddMatrixForm,
     AddAppriseForm,
+    AddShellForm,
 )
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import num_down_title, down_title, sortchecks
@@ -651,6 +652,7 @@ def channels(request):
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_apprise": settings.APPRISE_ENABLED is True,
+        "enable_shell": settings.SHELL_ENABLED is True,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -814,6 +816,32 @@ def add_webhook(request):
         "now": timezone.now().replace(microsecond=0).isoformat(),
     }
     return render(request, "integrations/add_webhook.html", ctx)
+
+
+@login_required
+def add_shell(request):
+    if not settings.SHELL_ENABLED:
+        raise Http404("shell integration is not available")
+
+    if request.method == "POST":
+        form = AddShellForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="shell")
+            channel.value = form.get_value()
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddShellForm()
+
+    ctx = {
+        "page": "channels",
+        "project": request.project,
+        "form": form,
+        "now": timezone.now().replace(microsecond=0).isoformat(),
+    }
+    return render(request, "integrations/add_shell.html", ctx)
 
 
 def _prepare_state(request, session_key):

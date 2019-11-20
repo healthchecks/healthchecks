@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load compress humanize static hc_extras %}
+
+{% block title %}Add Shell Command - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Shell Command</h1>
+
+        <p>Executes a local shell command when a check
+        goes up or down.</p>
+
+        <p>
+            You can use placeholders <strong>$NAME</strong>, <strong>$STATUS</strong>
+            and others
+            <a href="#" data-toggle="modal" data-target="#reference-modal">(quick reference)</a>.
+        </p>
+        <br />
+
+        <form id="add-shell-form" method="post">
+        {% csrf_token %}
+
+        <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group {{ form.cmd_down.css_classes }}">
+                <label class="control-label">Execute when a check goes <span class="label-down">down</span></label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="cmd_down"
+                    placeholder='/home/user/notify.sh "$NAME has gone down"'>{{ form.cmd_down.value|default:"" }}</textarea>
+                {% if form.cmd_down.errors %}
+                <div class="help-block">
+                    {{ form.cmd_down.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="form-group {{ form.cmd_up.css_classes }}">
+                <label class="control-label">Execute when a check goes <span class="label-up">up</span></label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="cmd_up"
+                    placeholder='/home/user/notify.sh "$NAME is back up"'>{{ form.cmd_up.value|default:"" }}</textarea>
+                {% if form.cmd_up.errors %}
+                <div class="help-block">
+                    {{ form.cmd_up.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+
+        <div class="form-group" class="clearfix">
+            <br>
+            <br>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+        </form>
+
+    </div>
+</div>
+
+<div id="reference-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Supported Placeholders</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    You can use the below placeholders in the command.
+                    {% site_name %} will replace the placeholders
+                    with the correct values.
+                </p>
+
+                <table id="webhook-variables" class="table modal-body">
+                    <tr>
+                        <th><code>$CODE</code></th>
+                        <td>The UUID code of the check</td>
+                    </tr>
+                    <tr>
+                        <th><code>$NAME</code></th>
+                        <td>Name of the check</td>
+                    </tr>
+                    <tr>
+                        <th><code>$NOW</code></th>
+                        <td>
+                            Current UTC time in ISO8601 format.<br />
+                            Example: "{{ now }}"
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><code>$STATUS</code></th>
+                        <td>Check's current status ("up" or "down")</td>
+                    </tr>
+                    <tr>
+                        <th><code>$TAGS</code></th>
+                        <td>Check's tags, separated by spaces</td>
+                    </tr>
+                    <tr>
+                        <th><code>$TAG1, $TAG2, …</code></th>
+                        <td>Value of the first tag, the second tag, …</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Got It!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

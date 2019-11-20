@@ -134,6 +134,7 @@ Configurations settings loaded from environment variables:
 | MATRIX_USER_ID | `None`
 | MATRIX_ACCESS_TOKEN | `None`
 | APPRISE_ENABLED | `"False"`
+| SHELL_ENABLED | `"False"`
 
 
 Some useful settings keys to override are:
@@ -360,6 +361,17 @@ To enable Apprise integration, you will need to:
 pip install apprise
 ```
 * enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.
+
+### Shell Commands
+
+The "Shell Commands" integration runs user-defined local shell commands when checks
+go up or down. This integration is disabled by default, and can be enabled by setting
+the `SHELL_ENABLED` environment variable to `True`.
+
+Note: be careful when using "Shell Commands" integration, and only enable it when
+you fully trust the users of your Healthchecks instance. The commands will be executed
+by the `manage.py sendalerts` process, and will run with the same system permissions as
+the `sendalerts` process.
 
 ## Running in Production
 
