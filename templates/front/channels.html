@@ -51,14 +51,6 @@
                             {% endif %}
                         {% elif ch.kind == "pd" %}
                             PagerDuty account <span>{{ ch.pd_account }}</span>
-                        {% elif ch.kind == "pagertree" %}
-                            PagerTree
-                        {% elif ch.kind == "pagerteam" %}
-                            Pager Team
-                        {% elif ch.kind == "opsgenie" %}
-                            OpsGenie
-                        {% elif ch.kind == "victorops" %}
-                            VictorOps
                         {% elif ch.kind == "po" %}
                             Pushover ({{ ch.po_priority }} priority)
                         {% elif ch.kind == "slack" %}
@@ -67,14 +59,6 @@
                                 team <span>{{ ch.slack_team }}</span>,
                                 channel <span>{{ ch.slack_channel }}</span>
                             {% endif %}
-                        {% elif ch.kind == "webhook" %}
-                            Webhook
-                        {% elif ch.kind == "apprise" %}
-                            Apprise
-                        {% elif ch.kind == "pushbullet" %}
-                            Pushbullet
-                        {% elif ch.kind == "discord" %}
-                            Discord
                         {% elif ch.kind == "telegram" %}
                             Telegram
                             {% if ch.telegram_type == "group" %}
@@ -82,8 +66,6 @@
                             {% elif ch.telegram_type == "private" %}
                                 user <span>{{ ch.telegram_name }}</span>
                             {% endif %}
-                        {% elif ch.kind == "hipchat" %}
-                            HipChat
                         {% elif ch.kind == "sms" %}
                             SMS to <span>{{ ch.sms_number }}</span>
                         {% elif ch.kind == "trello" %}
@@ -100,10 +82,6 @@
                             {% if ch.whatsapp_notify_up and not ch.whatsapp_notify_down %}
                                 (up only)
                             {% endif %}
-                        {% elif ch.kind == "mattermost" %}
-                            Mattermost
-                        {% elif ch.kind == "msteams" %}
-                            Microsoft Teams
                         {% else %}
                             {{ ch.get_kind_display }}
                         {% endif %}

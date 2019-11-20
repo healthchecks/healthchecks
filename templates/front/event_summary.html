@@ -5,18 +5,11 @@
     {% if event.channel.slack_channel %}
         to {{ event.channel.slack_channel }}
     {% endif %}
-{% elif event.channel.kind == "pd" %}
-    Sent alert to PagerDuty
-{% elif event.channel.kind == "pagertree" %}
-    Sent alert to PagerTree
-{% elif event.channel.kind == "pagerteam" %}
-    Sent alert to Pager Team
-{% elif event.channel.kind == "opsgenie" %}
-    Sent alert to OpsGenie
-{% elif event.channel.kind == "hipchat" %}
-    Sent alert to HipChat
 {% elif event.channel.kind == "po" %}
     Sent a Pushover notification
+    {% if event.channel.name %}
+        ({{ event.channel.name }})
+    {% endif %}
 {% elif event.channel.kind == "webhook" %}
     Called webhook {{ event.channel.url_down }}
 {% elif event.channel.kind == "msteams" %}
@@ -43,7 +36,10 @@
         ({{ event.channel.name }})
     {% endif %}
 {% else %}
-    Sent alert to {{ event.channel.kind|capfirst }}
+    Sent alert to {{ event.channel.get_kind_display }}
+    {% if event.channel.name %}
+        ({{ event.channel.name }})
+    {% endif %}
 {% endif %}
 {% if event.error %}
     <br />
