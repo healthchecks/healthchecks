@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?r6898m');
-  src:  url('../fonts/icomoon.eot?r6898m#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?r6898m') format('truetype'),
-    url('../fonts/icomoon.woff?r6898m') format('woff'),
-    url('../fonts/icomoon.svg?r6898m#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?jvwv9j');
+  src:  url('../fonts/icomoon.eot?jvwv9j#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?jvwv9j') format('truetype'),
+    url('../fonts/icomoon.woff?jvwv9j') format('woff'),
+    url('../fonts/icomoon.svg?jvwv9j#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,6 +24,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-pd:before {
+  content: "\e90b";
+  color: #04ac38;
+}
 .icon-shell:before {
   content: "\e917";
 }
@@ -64,10 +68,6 @@
 .icon-victorops:before {
   content: "\e90f";
   color: #f9af4a;
-}
-.icon-pd:before {
-  content: "\e90b";
-  color: #24c050;
 }
 .icon-email:before {
   content: "\e90a";
