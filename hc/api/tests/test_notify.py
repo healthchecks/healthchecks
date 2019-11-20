@@ -92,6 +92,18 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(kwargs["timeout"], 5)
 
     @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_variable_variables(self, mock_get):
+        self._setup_data("webhook", "http://host/$$NAMETAG1")
+        self.check.tags = "foo bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        # $$NAMETAG1 should *not* get transformed to "foo"
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args[1], "http://host/$TAG1")
+
+    @patch("hc.api.transports.requests.request")
     def test_webhooks_support_post(self, mock_request):
         template = "http://example.com\n\nThe Time Is $NOW"
         self._setup_data("webhook", template)

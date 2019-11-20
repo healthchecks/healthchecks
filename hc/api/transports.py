@@ -188,39 +188,23 @@ class HttpTransport(Transport):
 
 class Webhook(HttpTransport):
     def prepare(self, template, check, urlencode=False):
-        """ Replace variables with actual values.
-
-        There should be no bad translations if users use $ symbol in
-        check's name or tags, because $ gets urlencoded to %24
-
-        """
+        """ Replace variables with actual values. """
 
         def safe(s):
             return quote(s) if urlencode else s
 
-        result = template
-        if "$CODE" in result:
-            result = result.replace("$CODE", str(check.code))
+        ctx = {
+            "$CODE": str(check.code),
+            "$STATUS": check.status,
+            "$NOW": safe(timezone.now().replace(microsecond=0).isoformat()),
+            "$NAME": safe(check.name),
+            "$TAGS": safe(check.tags),
+        }
 
-        if "$STATUS" in result:
-            result = result.replace("$STATUS", check.status)
+        for i, tag in enumerate(check.tags_list()):
+            ctx["$TAG%d" % (i + 1)] = safe(tag)
 
-        if "$NOW" in result:
-            s = timezone.now().replace(microsecond=0).isoformat()
-            result = result.replace("$NOW", safe(s))
-
-        if "$NAME" in result:
-            result = result.replace("$NAME", safe(check.name))
-
-        if "$TAGS" in result:
-            result = result.replace("$TAGS", safe(check.tags))
-
-        if "$TAG" in result:
-            for i, tag in enumerate(check.tags_list()):
-                placeholder = "$TAG%d" % (i + 1)
-                result = result.replace(placeholder, safe(tag))
-
-        return result
+        return replace(template, ctx)
 
     def is_noop(self, check):
         if check.status == "down" and not self.channel.url_down:
