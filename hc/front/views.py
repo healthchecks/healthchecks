@@ -256,6 +256,7 @@ def index(request):
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_apprise": settings.APPRISE_ENABLED is True,
+        "enable_shell": settings.SHELL_ENABLED is True,
         "registration_open": settings.REGISTRATION_OPEN,
     }
 
