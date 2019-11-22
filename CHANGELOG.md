@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add Microsoft Teams integration (#135)
 - Add Profile.last_active_date field for more accurate inactive user detection
 - Add "Shell Commands" integration (#302)
+- PagerDuty integration works with or without PD_VENDOR_KEY (#303)
 
 ### Bug Fixes
  - On mobile, "My Checks" page, always show the gear (Details) button (#286)
