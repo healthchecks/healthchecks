@@ -34,19 +34,20 @@ from hc.api.models import (
 )
 from hc.api.transports import Telegram
 from hc.front.forms import (
+    AddAppriseForm,
+    AddEmailForm,
+    AddMatrixForm,
+    AddOpsGenieForm,
+    AddPdForm,
+    AddShellForm,
+    AddSmsForm,
+    AddUrlForm,
     AddWebhookForm,
+    ChannelNameForm,
+    CronForm,
+    EmailSettingsForm,
     NameTagsForm,
     TimeoutForm,
-    AddUrlForm,
-    AddEmailForm,
-    AddOpsGenieForm,
-    CronForm,
-    AddSmsForm,
-    ChannelNameForm,
-    EmailSettingsForm,
-    AddMatrixForm,
-    AddAppriseForm,
-    AddShellForm,
 )
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import num_down_title, down_title, sortchecks
@@ -252,7 +253,6 @@ def index(request):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-        "enable_pd": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_apprise": settings.APPRISE_ENABLED is True,
@@ -649,7 +649,7 @@ def channels(request):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-        "enable_pd": settings.PD_VENDOR_KEY is not None,
+        "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_apprise": settings.APPRISE_ENABLED is True,
@@ -861,6 +861,24 @@ def _get_validated_code(request, session_key, key="code"):
         return None
 
     return request.GET.get(key)
+
+
+@login_required
+def add_pd(request):
+    if request.method == "POST":
+        form = AddPdForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=request.project, kind="pd")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels")
+    else:
+        form = AddPdForm()
+
+    ctx = {"page": "channels", "form": form}
+    return render(request, "integrations/add_pd.html", ctx)
 
 
 def add_pdc(request, state=None):

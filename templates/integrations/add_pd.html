@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load compress humanize staticfiles hc_extras %}
+
+{% block title %}Add PagerDuty - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>PagerDuty</h1>
+
+    <p>
+        If your team uses <a href="https://www.pagerduty.com/">PagerDuty</a>,
+        you can set up {% site_name %} to create a PagerDuty incident
+        when a check goes down, and resolve it when a check goes back up.
+    </p>
+
+    <h2>Setup Guide</h2>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            <p>
+                Log into your PagerDuty account,
+                go to <strong>Configuration &gt; Services</strong>,
+                and click on <strong>New Service</strong>.
+            </p>
+            <p>
+                Give it a descriptive name, and
+                for Integration Type select
+                <strong>Use our API directly</strong>.
+            </p>
+
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pd_s1.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            After adding the new service, take note of its
+            <strong>Integration Key</strong>, a long string
+            of letters and digits.
+
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pd_s2.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>Paste the Integration Key down below. Save the integration, and it's done!</p>
+        </div>
+    </div>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal" action="{% url 'hc-add-pd' %}">
+        {% csrf_token %}
+        <div class="form-group {{ form.value.css_classes }}">
+            <label for="api-key" class="col-sm-2 control-label">Integration Key</label>
+            <div class="col-sm-4">
+                <input
+                    id="api-key"
+                    type="text"
+                    class="form-control"
+                    name="value"
+                    placeholder=""
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.value.errors %}
+                <div class="help-block">
+                    {{ form.value.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

@@ -251,7 +251,6 @@
             <a href="{% url 'hc-add-opsgenie' %}" class="btn btn-primary">Add Integration</a>
         </li>
 
-        {% if enable_pd %}
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />
@@ -259,9 +258,12 @@
             <h2>PagerDuty</h2>
             <p>On-call scheduling, alerting, and incident tracking.</p>
 
-            <a href="{% url 'hc-add-pdc' %}" class="btn btn-primary">Add Integration</a>
+            {% if enable_pdc %}
+                <a href="{% url 'hc-add-pdc' %}" class="btn btn-primary">Add Integration</a>
+            {% else %}
+                <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
+            {% endif %}
         </li>
-        {% endif %}
 
         <li>
             <img src="{% static 'img/integrations/pagerteam.png' %}"
