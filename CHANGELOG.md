@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## 1.11.0 - 2019-11-22
 
 ### Improvements
 - In monthly reports, no downtime stats for the current month (month has just started)
