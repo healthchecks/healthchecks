@@ -4,8 +4,8 @@ from hc.test import BaseTestCase
 
 
 @override_settings(PD_VENDOR_KEY="foo")
-class AddPdTestCase(BaseTestCase):
-    url = "/integrations/add_pd/"
+class AddPdConnectTestCase(BaseTestCase):
+    url = "/integrations/add_pdc/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -18,7 +18,7 @@ class AddPdTestCase(BaseTestCase):
         session.save()
 
         self.client.login(username="alice@example.org", password="password")
-        url = "/integrations/add_pd/1234567890AB/?service_key=123"
+        url = self.url + "1234567890AB/?service_key=123"
         r = self.client.get(url)
         self.assertEqual(r.status_code, 302)
 
@@ -33,11 +33,11 @@ class AddPdTestCase(BaseTestCase):
         session.save()
 
         self.client.login(username="alice@example.org", password="password")
-        url = "/integrations/add_pd/XXXXXXXXXXXX/?service_key=123"
+        url = self.url + "XXXXXXXXXXXX/?service_key=123"
         r = self.client.get(url)
         self.assertEqual(r.status_code, 400)
 
     @override_settings(PD_VENDOR_KEY=None)
     def test_it_requires_vendor_key(self):
-        r = self.client.get("/integrations/add_pd/")
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)

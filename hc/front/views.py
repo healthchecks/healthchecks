@@ -863,7 +863,7 @@ def _get_validated_code(request, session_key, key="code"):
     return request.GET.get(key)
 
 
-def add_pd(request, state=None):
+def add_pdc(request, state=None):
     if settings.PD_VENDOR_KEY is None:
         raise Http404("pagerduty integration is not available")
 
@@ -893,13 +893,13 @@ def add_pd(request, state=None):
         return redirect("hc-channels")
 
     state = _prepare_state(request, "pd")
-    callback = settings.SITE_ROOT + reverse("hc-add-pd-state", args=[state])
+    callback = settings.SITE_ROOT + reverse("hc-add-pdc-state", args=[state])
     connect_url = "https://connect.pagerduty.com/connect?" + urlencode(
         {"vendor": settings.PD_VENDOR_KEY, "callback": callback}
     )
 
     ctx = {"page": "channels", "project": request.project, "connect_url": connect_url}
-    return render(request, "integrations/add_pd.html", ctx)
+    return render(request, "integrations/add_pdc.html", ctx)
 
 
 @login_required
