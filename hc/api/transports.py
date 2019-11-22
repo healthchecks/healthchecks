@@ -279,13 +279,12 @@ class PagerDuty(HttpTransport):
     def notify(self, check):
         description = tmpl("pd_description.html", check=check)
         payload = {
-            "vendor": settings.PD_VENDOR_KEY,
             "service_key": self.channel.pd_service_key,
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
             "description": description,
             "client": settings.SITE_NAME,
-            "client_url": settings.SITE_ROOT,
+            "client_url": check.details_url(),
         }
 
         return self.post(self.URL, json=payload)
