@@ -72,6 +72,8 @@ class Check(models.Model):
     schedule = models.CharField(max_length=100, default="* * * * *")
     tz = models.CharField(max_length=36, default="UTC")
     subject = models.CharField(max_length=100, blank=True)
+    methods = models.CharField(max_length=30, blank=True)
+
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     last_start = models.DateTimeField(null=True, blank=True)

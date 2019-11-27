@@ -1,18 +1,44 @@
 {% load hc_extras %}
 
-<div id="email-settings-modal" class="modal">
+<div id="filtering-rules-modal" class="modal">
     <div class="modal-dialog">
         <form
-            action="{% url 'hc-email-settings' check.code %}"
+            action="{% url 'hc-filtering-rules' check.code %}"
             class="form-horizontal"
             method="post">
             {% csrf_token %}
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="update-timeout-title">Inbound Email Settings</h4>
+                    <h4>Filtering Rules</h4>
                 </div>
                 <div class="modal-body">
+                    <p>Allowed request methods for HTTP requests:</p>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="methods"
+                            value=""
+                            {% if check.methods == "" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        HEAD, GET, POST, PUT
+                    </label>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="methods"
+                            value="POST"
+                            {% if check.methods == "POST" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Only POST
+                        <span class="help-block">
+                            If set, {% site_name %} will ignore HTTP requests
+                            using any other request method.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="modal-body">
+                    <p>Filtering of Inbound Email Messages</p>
                     <div class="form-group">
                         <label for="update-name-input" class="col-sm-4 control-label">
                             Subject Must Contain

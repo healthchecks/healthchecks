@@ -45,7 +45,7 @@ from hc.front.forms import (
     AddWebhookForm,
     ChannelNameForm,
     CronForm,
-    EmailSettingsForm,
+    FilteringRulesForm,
     NameTagsForm,
     TimeoutForm,
 )
@@ -334,11 +334,12 @@ def update_name(request, code):
 
 @require_POST
 @login_required
-def email_settings(request, code):
+def filtering_rules(request, code):
     check = _get_check_for_user(request, code)
-    form = EmailSettingsForm(request.POST)
+    form = FilteringRulesForm(request.POST)
     if form.is_valid():
         check.subject = form.cleaned_data["subject"]
+        check.methods = form.cleaned_data["methods"]
         check.save()
 
     return redirect("hc-details", code)

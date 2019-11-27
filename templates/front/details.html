@@ -67,7 +67,11 @@
         <div id="how-to-ping" class="details-block">
             <h2>How To Ping</h2>
             <div>
-                <p>Keep this check up by making HTTP requests to this URL:</p>
+                <p>
+                    Keep this check up by making HTTP
+                    {% if check.methods == "POST" %}POST{% endif %}
+                    requests to this URL:
+                </p>
                 <code>{{ check.url }}</code>
                 <p>
                     {% if check.subject %}
@@ -90,8 +94,8 @@
             <div class="text-right">
                 <button
                     data-toggle="modal"
-                    data-target="#email-settings-modal"
-                    class="btn btn-sm btn-default">Email Settings&hellip;</button>
+                    data-target="#filtering-rules-modal"
+                    class="btn btn-sm btn-default">Filtering Rules&hellip;</button>
                 <button
                     data-toggle="modal"
                     data-target="#show-usage-modal"
@@ -281,7 +285,7 @@
 {% include "front/update_timeout_modal.html" %}
 {% include "front/show_usage_modal.html" %}
 {% include "front/remove_check_modal.html" %}
-{% include "front/email_settings_modal.html" %}
+{% include "front/filtering_rules_modal.html" %}
 {% include "front/copy_modal.html" %}
 
 {% endblock %}

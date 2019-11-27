@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Improvements
+- "Filtering Rules" dialog, an option to require HTTP POST (#297)
+
+
 ## 1.11.0 - 2019-11-22
 
 ### Improvements
@@ -13,6 +19,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
  - On mobile, "My Checks" page, always show the gear (Details) button (#286)
  - Make log events fit better on mobile screens
+
 
 ## 1.10.0 - 2019-10-21
 
@@ -79,6 +86,7 @@ All notable changes to this project will be documented in this file.
 - Password strength meter and length check in the "Set Password" form
 - Show the Description section even if the description is missing. (#246)
 - Include the description in email alerts. (#247)
+
 
 ## 1.6.0 - 2019-04-01
 

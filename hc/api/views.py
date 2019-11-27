@@ -34,6 +34,9 @@ def ping(request, code, action="success"):
     ua = headers.get("HTTP_USER_AGENT", "")
     body = request.body.decode()
 
+    if check.methods == "POST" and method != "POST":
+        action = "ign"
+
     check.ping(remote_addr, scheme, method, ua, body, action)
 
     response = HttpResponse("OK")

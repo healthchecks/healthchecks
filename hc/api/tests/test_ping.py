@@ -186,3 +186,18 @@ class PingTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertTrue(self.check.last_duration.total_seconds() >= 10)
+
+    def test_it_requires_post(self):
+        self.check.methods = "POST"
+        self.check.save()
+
+        r = self.client.get("/ping/%s/" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "new")
+        self.assertIsNone(self.check.last_ping)
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "http")
+        self.assertEqual(ping.kind, "ign")

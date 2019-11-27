@@ -25,7 +25,7 @@ $(function () {
 
     $("#ping-now").click(function(e) {
         var button = this;
-        $.get(this.dataset.url, function() {
+        $.post(this.dataset.url, function() {
             button.textContent = "Success!";
         });
     });
@@ -119,7 +119,7 @@ $(function () {
             format == "local" ? dt.local() : dt.tz(format);
 
             $(".date", row).text(dt.format("MMM D"));
-            $(".time", row).text(dt.format("HH:mm"));                
+            $(".time", row).text(dt.format("HH:mm"));
         })
 
         // The table is initially hidden to avoid flickering as we convert dates.

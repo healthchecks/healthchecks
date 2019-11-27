@@ -62,8 +62,9 @@ class NameTagsForm(forms.Form):
         return " ".join(result)
 
 
-class EmailSettingsForm(forms.Form):
+class FilteringRulesForm(forms.Form):
     subject = forms.CharField(max_length=100)
+    methods = forms.ChoiceField(required=False, choices=(("", "Any"), ("POST", "POST")))
 
 
 class TimeoutForm(forms.Form):
