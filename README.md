@@ -395,6 +395,7 @@ in production.
     Run the `manage.py collectstatic` command whenever files in the `/static/`
     directory change. This command collects all the static files inside the `static-collected` directory.
     Configure your web server to serve files from this directory under the `/static/` prefix.
+  * Database migration should be run after each update to make sure the database schemas are up to date. You can do that with `./manage.py migrate`.
 * Processes that need to be running constantly.
   * `manage.py runserver` is intended for development only. Do not use it in production,
     instead consider using [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) or
