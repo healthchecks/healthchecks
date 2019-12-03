@@ -41,6 +41,11 @@ def site_root():
 
 
 @register.simple_tag
+def site_version():
+    return settings.VERSION
+
+
+@register.simple_tag
 def debug_warning():
     if settings.DEBUG:
         return mark_safe(

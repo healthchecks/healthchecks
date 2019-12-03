@@ -1,13 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.12.0-dev - Unreleased
 
 ### Improvements
 - "Filtering Rules" dialog, an option to require HTTP POST (#297)
+- Show Healthchecks version in Django admin header (#306)
 
 
-## 1.11.0 - 2019-11-22
+## v1.11.0 - 2019-11-22
 
 ### Improvements
 - In monthly reports, no downtime stats for the current month (month has just started)
@@ -21,7 +22,7 @@ All notable changes to this project will be documented in this file.
  - Make log events fit better on mobile screens
 
 
-## 1.10.0 - 2019-10-21
+## v1.10.0 - 2019-10-21
 
 ### Improvements
 - Add the "Last Duration" field in the "My Checks" page (#257)
@@ -41,7 +42,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to Django 2.2.6 – fixes sqlite migrations (#284)
 
 
-## 1.9.0 - 2019-09-03
+## v1.9.0 - 2019-09-03
 
 ### Improvements
 - Show the number of downtimes and total downtime minutes in monthly reports (#104)
@@ -55,7 +56,7 @@ All notable changes to this project will be documented in this file.
 - Fix javascript code to construct correct URLs when running from a subdirectory (#273)
 - Don't show the "Sign Up" link in the login page if registration is closed (#280)
 
-## 1.8.0 - 2019-07-08
+## v1.8.0 - 2019-07-08
 
 ### Improvements
 - Add the `prunetokenbucket` management command
@@ -74,7 +75,7 @@ All notable changes to this project will be documented in this file.
 - Fix `prunepings` and `prunepingsslow`, they got broken when adding Projects (#264)
 
 
-## 1.7.0 - 2019-05-02
+## v1.7.0 - 2019-05-02
 
 ### Improvements
 - Add the EMAIL_USE_VERIFICATION configuration setting (#232)
@@ -88,7 +89,7 @@ All notable changes to this project will be documented in this file.
 - Include the description in email alerts. (#247)
 
 
-## 1.6.0 - 2019-04-01
+## v1.6.0 - 2019-04-01
 
 ### Improvements
 - Add the "desc" field (check's description) to API responses
@@ -104,7 +105,7 @@ All notable changes to this project will be documented in this file.
 - Fix a "invalid time format" in front.views.status_single on Windows hosts
 
 
-## 1.5.0 - 2019-02-04
+## v1.5.0 - 2019-02-04
 
 ### Improvements
 - Database schema: add uniqueness constraint to Check.code
@@ -116,7 +117,7 @@ All notable changes to this project will be documented in this file.
 - Add the "My Projects" page
 
 
-## 1.4.0 - 2018-12-25
+## v1.4.0 - 2018-12-25
 
 ### Improvements
 - Set Pushover alert priorities for "down" and "up" events separately
@@ -134,7 +135,7 @@ All notable changes to this project will be documented in this file.
 - Validate and reject cron schedules with six components
 
 
-## 1.3.0 - 2018-11-21
+## v1.3.0 - 2018-11-21
 
 ### Improvements
 - Load settings from environment variables
@@ -154,7 +155,7 @@ All notable changes to this project will be documented in this file.
 - During DST transition, handle ambiguous dates as pre-transition
 
 
-## 1.2.0 - 2018-10-20
+## v1.2.0 - 2018-10-20
 
 ### Improvements
 - Content updates in the "Welcome" page.
@@ -169,7 +170,7 @@ All notable changes to this project will be documented in this file.
 - Fix hamburger menu button in "Login" page.
 
 
-## 1.1.0 - 2018-08-20
+## v1.1.0 - 2018-08-20
 
 ### Improvements
 - A new "Check Details" page.
