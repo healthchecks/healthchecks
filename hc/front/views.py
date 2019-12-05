@@ -590,7 +590,8 @@ def badges(request, code):
             {
                 "tag": tag,
                 "svg": get_badge_url(project.badge_key, tag),
-                "json": get_badge_url(project.badge_key, tag, format="json"),
+                "json": get_badge_url(project.badge_key, tag, fmt="json"),
+                "shields": get_badge_url(project.badge_key, tag, fmt="shields"),
             }
         )
 

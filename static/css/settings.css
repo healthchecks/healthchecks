@@ -37,8 +37,12 @@
     padding-top: 32px;
 }
 
-#badges-json {
+#badges-json, #badges-shields {
     display: none;
+}
+
+#badges-shields label:first-child {
+    margin: 20px 0 10px 0;
 }
 
 .json-response code {

@@ -27,27 +27,15 @@ urlpatterns = [
     path("api/v1/notifications/<uuid:code>/bounce", views.bounce, name="hc-api-bounce"),
     path("api/v1/channels/", views.channels),
     path(
-        "badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.svg",
+        "badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>",
         views.badge,
         name="hc-badge",
     ),
     path(
-        "badge/<slug:badge_key>/<slug:signature>.svg",
+        "badge/<slug:badge_key>/<slug:signature>.<slug:fmt>",
         views.badge,
         {"tag": "*"},
         name="hc-badge-all",
-    ),
-    path(
-        "badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.json",
-        views.badge,
-        {"format": "json"},
-        name="hc-badge-json",
-    ),
-    path(
-        "badge/<slug:badge_key>/<slug:signature>.json",
-        views.badge,
-        {"format": "json", "tag": "*"},
-        name="hc-badge-json-all",
     ),
     path("api/v1/status/", views.status),
 ]

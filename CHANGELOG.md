@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - "Filtering Rules" dialog, an option to require HTTP POST (#297)
 - Show Healthchecks version in Django admin header (#306)
+- Added JSON endpoint for Shields.io (#304)
 
 
 ## v1.11.0 - 2019-11-22

@@ -7,13 +7,20 @@ $(function() {
     });
 
     $("#show-svg").click(function() {
-        $("#badges-json").hide();
         $("#badges-svg").show();
+        $("#badges-json").hide();
+        $("#badges-shields").hide();
     })
 
     $("#show-json").click(function() {
         $("#badges-svg").hide();
         $("#badges-json").show();
+        $("#badges-shields").hide();
     })
 
+    $("#show-shields").click(function() {
+        $("#badges-svg").hide();
+        $("#badges-json").hide();
+        $("#badges-shields").show();
+    })
 });

@@ -203,8 +203,11 @@ def pause(request, code):
 
 @never_cache
 @cors("GET")
-def badge(request, badge_key, signature, tag, format="svg"):
+def badge(request, badge_key, signature, tag, fmt="svg"):
     if not check_signature(badge_key, tag, signature):
+        return HttpResponseNotFound()
+
+    if fmt not in ("svg", "json", "shields"):
         return HttpResponseNotFound()
 
     q = Check.objects.filter(project__badge_key=badge_key)
@@ -225,7 +228,7 @@ def badge(request, badge_key, signature, tag, format="svg"):
         if check_status == "down":
             down += 1
             status = "down"
-            if format == "svg":
+            if fmt == "svg":
                 # For SVG badges, we can leave the loop as soon as we
                 # find the first "down"
                 break
@@ -234,7 +237,16 @@ def badge(request, badge_key, signature, tag, format="svg"):
             if status == "up":
                 status = "late"
 
-    if format == "json":
+    if fmt == "shields":
+        color = "success"
+        if status == "down":
+            color = "critical"
+        elif status == "late":
+            color = "important"
+
+        return JsonResponse({"label": label, "message": status, "color": color})
+
+    if fmt == "json":
         return JsonResponse(
             {"status": status, "total": total, "grace": grace, "down": down}
         )
