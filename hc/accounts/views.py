@@ -144,6 +144,7 @@ def logout(request):
 
 
 @require_POST
+@csrf_exempt
 def signup(request):
     if not settings.REGISTRATION_OPEN:
         return HttpResponseForbidden()

@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Show Healthchecks version in Django admin header (#306)
 - Added JSON endpoint for Shields.io (#304)
 
+### Bug Fixes
+- Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection.
+
 
 ## v1.11.0 - 2019-11-22
 
