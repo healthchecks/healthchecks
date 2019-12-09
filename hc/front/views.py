@@ -701,6 +701,7 @@ def verify_email(request, code, token):
     return render(request, "bad_link.html")
 
 
+@csrf_exempt
 def unsubscribe_email(request, code, token):
     channel = get_object_or_404(Channel, code=code)
     if channel.make_token() != token:
