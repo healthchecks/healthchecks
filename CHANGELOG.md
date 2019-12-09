@@ -9,7 +9,8 @@ All notable changes to this project will be documented in this file.
 - Added JSON endpoint for Shields.io (#304)
 
 ### Bug Fixes
-- Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection.
+- Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection
+- Fix List-Unsubscribe email header value: add angle brackets
 
 
 ## v1.11.0 - 2019-11-22

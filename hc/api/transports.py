@@ -61,7 +61,7 @@ class Email(Transport):
 
         unsub_link = self.channel.get_unsub_link()
 
-        headers = {"X-Bounce-Url": bounce_url, "List-Unsubscribe": unsub_link}
+        headers = {"X-Bounce-Url": bounce_url, "List-Unsubscribe": "<%s>" % unsub_link}
 
         try:
             # Look up the sorting preference for this email address

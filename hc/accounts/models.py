@@ -174,7 +174,7 @@ class Profile(models.Model):
 
         unsub_url = self.reports_unsub_url()
 
-        headers = {"List-Unsubscribe": unsub_url, "X-Bounce-Url": unsub_url}
+        headers = {"List-Unsubscribe": "<%s>" % unsub_url, "X-Bounce-Url": unsub_url}
 
         ctx = {
             "checks": checks,
