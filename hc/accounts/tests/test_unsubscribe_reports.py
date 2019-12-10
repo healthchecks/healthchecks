@@ -15,7 +15,7 @@ class UnsubscribeReportsTestCase(BaseTestCase):
         sig = signing.TimestampSigner(salt="reports").sign("alice")
         url = "/accounts/unsubscribe_reports/%s/" % sig
 
-        r = self.client.get(url)
+        r = self.client.post(url)
         self.assertContains(r, "Unsubscribed")
 
         self.profile.refresh_from_db()
@@ -30,16 +30,9 @@ class UnsubscribeReportsTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertContains(r, "Incorrect Link")
 
-    def test_post_works(self):
-        sig = signing.TimestampSigner(salt="reports").sign("alice")
-        url = "/accounts/unsubscribe_reports/%s/" % sig
-
-        r = self.client.post(url)
-        self.assertContains(r, "Unsubscribed")
-
     def test_it_serves_confirmation_form(self):
         sig = signing.TimestampSigner(salt="reports").sign("alice")
-        url = "/accounts/unsubscribe_reports/%s/?ask=1" % sig
+        url = "/accounts/unsubscribe_reports/%s/" % sig
 
         r = self.client.get(url)
         self.assertContains(r, "Please press the button below")

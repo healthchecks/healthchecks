@@ -442,7 +442,7 @@ def unsubscribe_reports(request, username):
 
     # Some email servers open links in emails to check for malicious content.
     # To work around this, we serve a form that auto-submits with JS.
-    if "ask" in request.GET and request.method != "POST":
+    if request.method != "POST":
         return render(request, "accounts/unsubscribe_submit.html")
 
     user = User.objects.get(username=username)

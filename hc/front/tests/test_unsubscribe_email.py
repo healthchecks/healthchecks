@@ -13,7 +13,7 @@ class UnsubscribeEmailTestCase(BaseTestCase):
         token = self.channel.make_token()
         url = "/integrations/%s/unsub/%s/" % (self.channel.code, token)
 
-        r = self.client.get(url)
+        r = self.client.post(url)
         self.assertContains(r, "has been unsubscribed", status_code=200)
 
         q = Channel.objects.filter(code=self.channel.code)
@@ -35,16 +35,9 @@ class UnsubscribeEmailTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertEqual(r.status_code, 400)
 
-    def test_post_works(self):
-        token = self.channel.make_token()
-        url = "/integrations/%s/unsub/%s/" % (self.channel.code, token)
-
-        r = self.client.post(url)
-        self.assertContains(r, "has been unsubscribed", status_code=200)
-
     def test_it_serves_confirmation_form(self):
         token = self.channel.make_token()
-        url = "/integrations/%s/unsub/%s/?ask=1" % (self.channel.code, token)
+        url = "/integrations/%s/unsub/%s/" % (self.channel.code, token)
 
         r = self.client.get(url)
         self.assertContains(r, "Please press the button below")
