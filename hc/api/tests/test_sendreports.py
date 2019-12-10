@@ -46,6 +46,7 @@ class SendReportsTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
+        self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
 
     def test_it_obeys_next_report_date(self):
         self.profile.next_report_date = now() + td(days=1)

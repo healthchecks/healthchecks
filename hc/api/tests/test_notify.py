@@ -274,6 +274,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertTrue("X-Bounce-Url" in email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
+        self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
 
     def test_email_transport_handles_json_value(self):
         payload = {"value": "alice@example.org", "up": True, "down": True}
