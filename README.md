@@ -20,7 +20,7 @@ It is live here: [http://healthchecks.io/](http://healthchecks.io/)
 
 The building blocks are:
 
-* Python 3
+* Python 3.6+
 * Django 3
 * PostgreSQL or MySQL
 
