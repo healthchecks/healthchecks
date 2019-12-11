@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Show Healthchecks version in Django admin header (#306)
 - Added JSON endpoint for Shields.io (#304)
 - Django 3.0
+- `senddeletionnotices` command skips profiles with recent last_active_date
 
 ### Bug Fixes
 - Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection

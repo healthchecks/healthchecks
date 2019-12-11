@@ -19,16 +19,21 @@ class Command(BaseCommand):
 
     """
 
+    def pause(self):
+        time.sleep(1)
+
     def handle(self, *args, **options):
         year_ago = now() - timedelta(days=365)
 
         q = Profile.objects.order_by("id")
-        # Exclude accounts with logins in the last year_ago
+        # Exclude accounts with logins in the last year
         q = q.exclude(user__last_login__gt=year_ago)
-        # Exclude accounts less than a year_ago old
+        # Exclude accounts less than a year old
         q = q.exclude(user__date_joined__gt=year_ago)
         # Exclude accounts with the deletion notice already sent
         q = q.exclude(deletion_notice_date__gt=year_ago)
+        # Exclude accounts with activity in the last year
+        q = q.exclude(last_active_date__gt=year_ago)
         # Exclude paid accounts
         q = q.exclude(sms_limit__gt=5)
 
@@ -36,14 +41,14 @@ class Command(BaseCommand):
         for profile in q:
             members = Member.objects.filter(project__owner_id=profile.user_id)
             if members.exists():
-                print("Skipping %s, has team members" % profile)
+                self.stdout.write("Skipping %s, has team members" % profile)
                 continue
 
             pings = Ping.objects
             pings = pings.filter(owner__project__owner_id=profile.user_id)
             pings = pings.filter(created__gt=year_ago)
             if pings.exists():
-                print("Skipping %s, has pings in last year" % profile)
+                self.stdout.write("Skipping %s, has pings in last year" % profile)
                 continue
 
             self.stdout.write("Sending notice to %s" % profile.user.email)
@@ -53,8 +58,10 @@ class Command(BaseCommand):
 
             ctx = {"email": profile.user.email, "support_email": settings.SUPPORT_EMAIL}
             emails.deletion_notice(profile.user.email, ctx)
+
             # Throttle so we don't send too many emails at once:
-            time.sleep(1)
+            self.pause()
+
             sent += 1
 
         return "Done! Sent %d notices" % sent

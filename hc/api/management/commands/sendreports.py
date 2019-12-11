@@ -1,4 +1,3 @@
-from datetime import timedelta
 import time
 
 from django.core.management.base import BaseCommand
