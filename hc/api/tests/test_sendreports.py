@@ -32,8 +32,7 @@ class SendReportsTestCase(BaseTestCase):
         self.check.save()
 
     def test_it_sends_report(self):
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
+        cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
         found = cmd.handle_one_monthly_report()
@@ -84,8 +83,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_sends_nag(self):
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
+        cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
         found = cmd.handle_one_nag()

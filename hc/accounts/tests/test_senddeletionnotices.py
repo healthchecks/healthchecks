@@ -24,8 +24,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.project.member_set.all().delete()
 
     def test_it_sends_notice(self):
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
+        cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
         result = cmd.handle()
@@ -42,10 +41,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.alice.last_login = now() - td(days=15)
         self.alice.save()
 
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
-
-        result = cmd.handle()
+        result = Command(stdout=Mock()).handle()
         self.assertEqual(result, "Done! Sent 0 notices")
 
         self.profile.refresh_from_db()
@@ -56,10 +52,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.alice.date_joined = now() - td(days=15)
         self.alice.save()
 
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
-
-        result = cmd.handle()
+        result = Command(stdout=Mock()).handle()
         self.assertEqual(result, "Done! Sent 0 notices")
 
         self.profile.refresh_from_db()
@@ -70,10 +63,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.profile.deletion_notice_date = now() - td(days=15)
         self.profile.save()
 
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
-
-        result = cmd.handle()
+        result = Command(stdout=Mock()).handle()
         self.assertEqual(result, "Done! Sent 0 notices")
 
     def test_it_checks_sms_limit(self):
@@ -81,10 +71,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.profile.sms_limit = 50
         self.profile.save()
 
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
-
-        result = cmd.handle()
+        result = Command(stdout=Mock()).handle()
         self.assertEqual(result, "Done! Sent 0 notices")
 
         self.profile.refresh_from_db()
@@ -94,10 +81,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         # bob has access to alice's project
         Member.objects.create(user=self.bob, project=self.project)
 
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
-
-        result = cmd.handle()
+        result = Command(stdout=Mock()).handle()
         self.assertEqual(result, "Done! Sent 0 notices")
 
         self.profile.refresh_from_db()
@@ -107,10 +91,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         check = Check.objects.create(project=self.project)
         Ping.objects.create(owner=check)
 
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
-
-        result = cmd.handle()
+        result = Command(stdout=Mock()).handle()
         self.assertEqual(result, "Done! Sent 0 notices")
 
         self.profile.refresh_from_db()
@@ -121,8 +102,5 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.profile.last_active_date = now() - td(days=15)
         self.profile.save()
 
-        cmd = Command()
-        cmd.stdout = Mock()  # silence output to stdout
-
-        result = cmd.handle()
+        result = Command(stdout=Mock()).handle()
         self.assertEqual(result, "Done! Sent 0 notices")
