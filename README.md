@@ -21,7 +21,7 @@ It is live here: [http://healthchecks.io/](http://healthchecks.io/)
 The building blocks are:
 
 * Python 3
-* Django 2
+* Django 3
 * PostgreSQL or MySQL
 
 ## Setting Up for Development

@@ -84,9 +84,9 @@ class ProjectTestCase(BaseTestCase):
         # And an email should have been sent
         subj = (
             "You have been invited to join"
-            " Alice&#39;s Project on %s" % settings.SITE_NAME
+            " Alice's Project on %s" % settings.SITE_NAME
         )
-        self.assertEqual(mail.outbox[0].subject, subj)
+        self.assertHTMLEqual(mail.outbox[0].subject, subj)
 
     @override_settings(SECRET_KEY="test-secret")
     def test_it_rate_limits_invites(self):

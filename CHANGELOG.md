@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - "Filtering Rules" dialog, an option to require HTTP POST (#297)
 - Show Healthchecks version in Django admin header (#306)
 - Added JSON endpoint for Shields.io (#304)
+- Django 3.0
 
 ### Bug Fixes
 - Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection
