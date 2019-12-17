@@ -20,6 +20,7 @@ class UpdateCheckTestCase(BaseTestCase):
                 "api_key": "X" * 32,
                 "name": "Foo",
                 "tags": "bar,baz",
+                "desc": "My description",
                 "timeout": 3600,
                 "grace": 60,
             },
@@ -32,6 +33,7 @@ class UpdateCheckTestCase(BaseTestCase):
         assert "ping_url" in doc
         self.assertEqual(doc["name"], "Foo")
         self.assertEqual(doc["tags"], "bar,baz")
+        self.assertEqual(doc["desc"], "My description")
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
 
