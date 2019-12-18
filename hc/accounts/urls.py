@@ -16,7 +16,7 @@ urlpatterns = [
     path("profile/notifications/", views.notifications, name="hc-notifications"),
     path("close/", views.close, name="hc-close"),
     path(
-        "unsubscribe_reports/<str:username>/",
+        "unsubscribe_reports/<str:signed_username>/",
         views.unsubscribe_reports,
         name="hc-unsubscribe-reports",
     ),

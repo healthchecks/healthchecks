@@ -7,6 +7,7 @@ from datetime import datetime, timedelta as td
 
 from croniter import croniter
 from django.conf import settings
+from django.core.signing import TimestampSigner
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -372,7 +373,9 @@ class Channel(models.Model):
         emails.verify_email(self.email_value, {"verify_link": verify_link})
 
     def get_unsub_link(self):
-        args = [self.code, self.make_token()]
+        signer = TimestampSigner(salt="alerts")
+        signed_token = signer.sign(self.make_token())
+        args = [self.code, signed_token]
         verify_link = reverse("hc-unsubscribe-alerts", args=args)
         return settings.SITE_ROOT + verify_link
 

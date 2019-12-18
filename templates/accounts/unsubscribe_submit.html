@@ -12,4 +12,9 @@
         class="btn btn-lg btn-primary"
         value="Unsubscribe">
 </form>
+
+{% if autosubmit %}
+	<script>document.getElementById("form").submit();</script>
+{% endif %}
+
 {% endblock %}

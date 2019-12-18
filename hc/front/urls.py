@@ -57,7 +57,7 @@ channel_urls = [
         "<uuid:code>/verify/<slug:token>/", views.verify_email, name="hc-verify-email"
     ),
     path(
-        "<uuid:code>/unsub/<slug:token>/",
+        "<uuid:code>/unsub/<str:signed_token>/",
         views.unsubscribe_email,
         name="hc-unsubscribe-alerts",
     ),

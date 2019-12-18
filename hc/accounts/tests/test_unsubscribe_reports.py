@@ -1,8 +1,10 @@
 from datetime import timedelta as td
+import time
 
 from django.core import signing
 from django.utils.timezone import now
 from hc.test import BaseTestCase
+from mock import patch
 
 
 class UnsubscribeReportsTestCase(BaseTestCase):
@@ -36,3 +38,16 @@ class UnsubscribeReportsTestCase(BaseTestCase):
 
         r = self.client.get(url)
         self.assertContains(r, "Please press the button below")
+        self.assertNotContains(r, "submit()")
+
+    def test_aged_signature_autosubmits(self):
+        with patch("django.core.signing.time") as mock_time:
+            mock_time.time.return_value = time.time() - 301
+            signer = signing.TimestampSigner(salt="reports")
+            sig = signer.sign("alice")
+
+        url = "/accounts/unsubscribe_reports/%s/" % sig
+
+        r = self.client.get(url)
+        self.assertContains(r, "Please press the button below")
+        self.assertContains(r, "submit()")
