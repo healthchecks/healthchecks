@@ -70,6 +70,9 @@ def _update(check, spec):
     if "tags" in spec:
         check.tags = spec["tags"]
 
+    if "desc" in spec:
+        check.desc = spec["desc"]
+
     if "timeout" in spec and "schedule" not in spec:
         check.kind = "simple"
         check.timeout = td(seconds=spec["timeout"])
