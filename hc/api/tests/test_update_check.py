@@ -164,3 +164,12 @@ class UpdateCheckTestCase(BaseTestCase):
         r = self.post(self.check.code, {"api_key": "X" * 32, "channels": None})
 
         self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_non_string_desc(self):
+        r = self.post(
+            self.check.code, {"api_key": "X" * 32, "desc": 123}
+        )
+
+        self.assertEqual(r.status_code, 400)
+
+        self.check.refresh_from_db()

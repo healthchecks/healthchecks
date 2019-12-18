@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Added JSON endpoint for Shields.io (#304)
 - Django 3.0
 - `senddeletionnotices` command skips profiles with recent last_active_date
+- The "Update Check" API call can update check's description (#311)
 
 ### Bug Fixes
 - Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection
