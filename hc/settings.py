@@ -35,7 +35,7 @@ SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 USE_PAYMENTS = envbool("USE_PAYMENTS", "False")
 REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "True")
 VERSION = ""
-with open(os.path.join(BASE_DIR, "CHANGELOG.md")) as f:
+with open(os.path.join(BASE_DIR, "CHANGELOG.md"), encoding="utf-8") as f:
     for line in f.readlines():
         if line.startswith("## v"):
             VERSION = line.split()[1]
