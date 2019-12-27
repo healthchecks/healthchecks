@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Unsubscribe links serve a form, and require HTTP POST to actually unsubscribe
 - For webhook integration, validate each header line separately
 - Fix "Send Test Notification" for webhooks that only fire on checks going up
+- Don't allow adding webhook integrations with both URLs blank
 
 
 ## v1.11.0 - 2019-11-22

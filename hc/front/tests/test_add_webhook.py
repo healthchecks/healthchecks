@@ -144,3 +144,18 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.down_webhook_spec["headers"], {"test": "123"})
+
+    def test_it_rejects_both_empty(self):
+
+        self.client.login(username="alice@example.org", password="password")
+        form = {
+            "method_down": "GET",
+            "url_down": "",
+            "method_up": "GET",
+            "url_up": "",
+        }
+
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "Enter a valid URL.")
+
+        self.assertEqual(Channel.objects.count(), 0)
