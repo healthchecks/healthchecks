@@ -747,6 +747,12 @@ def send_test_notification(request, code):
     dummy.last_ping = timezone.now() - td(days=1)
     dummy.n_pings = 42
 
+    if channel.kind == "webhook" and not channel.url_down:
+        if channel.url_up:
+            # If we don't have url_down, but do have have url_up then
+            # send "TEST is UP" notification instead:
+            dummy.status = "up"
+
     if channel.kind == "email":
         error = channel.transport.notify(dummy, channel.get_unsub_link())
     else:

@@ -221,7 +221,8 @@ class Webhook(HttpTransport):
 
     def notify(self, check):
         spec = self.channel.webhook_spec(check.status)
-        assert spec["url"]
+        if not spec["url"]:
+            return "Empty webhook URL"
 
         url = self.prepare(spec["url"], check, urlencode=True)
         headers = {}
