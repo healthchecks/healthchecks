@@ -28,7 +28,14 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_webhook(self, mock_get):
-        self._setup_data("webhook", "http://example")
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
         mock_get.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -41,7 +48,14 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request", side_effect=Timeout)
     def test_webhooks_handle_timeouts(self, mock_get):
-        self._setup_data("webhook", "http://example")
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
@@ -49,23 +63,28 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request", side_effect=ConnectionError)
     def test_webhooks_handle_connection_errors(self, mock_get):
-        self._setup_data("webhook", "http://example")
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+        self._setup_data("webhook", json.dumps(definition))
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection failed")
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_ignore_up_events(self, mock_get):
-        self._setup_data("webhook", "http://example", status="up")
-        self.channel.notify(self.check)
-
-        self.assertFalse(mock_get.called)
-        self.assertEqual(Notification.objects.count(), 0)
-
-    @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_500(self, mock_get):
-        self._setup_data("webhook", "http://example")
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
         mock_get.return_value.status_code = 500
 
         self.channel.notify(self.check)
@@ -75,8 +94,14 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_support_variables(self, mock_get):
-        template = "http://host/$CODE/$STATUS/$TAG1/$TAG2/?name=$NAME"
-        self._setup_data("webhook", template)
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://host/$CODE/$STATUS/$TAG1/$TAG2/?name=$NAME",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
         self.check.name = "Hello World"
         self.check.tags = "foo bar"
         self.check.save()
@@ -93,7 +118,14 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_variable_variables(self, mock_get):
-        self._setup_data("webhook", "http://host/$$NAMETAG1")
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://host/$$NAMETAG1",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
         self.check.tags = "foo bar"
         self.check.save()
 
@@ -105,8 +137,14 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_support_post(self, mock_request):
-        template = "http://example.com\n\nThe Time Is $NOW"
-        self._setup_data("webhook", template)
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.com",
+            "body_down": "The Time Is $NOW",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
         self.check.save()
 
         self.channel.notify(self.check)
@@ -122,9 +160,14 @@ class NotifyTestCase(BaseTestCase):
     def test_webhooks_dollarsign_escaping(self, mock_get):
         # If name or tag contains what looks like a variable reference,
         # that should be left alone:
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://host/$NAME",
+            "body_down": "",
+            "headers_down": {},
+        }
 
-        template = "http://host/$NAME"
-        self._setup_data("webhook", template)
+        self._setup_data("webhook", json.dumps(definition))
         self.check.name = "$TAG1"
         self.check.tags = "foo"
         self.check.save()
@@ -137,8 +180,14 @@ class NotifyTestCase(BaseTestCase):
         )
 
     @patch("hc.api.transports.requests.request")
-    def test_webhook_fires_on_up_event(self, mock_get):
-        self._setup_data("webhook", "http://foo\nhttp://bar", status="up")
+    def test_webhooks_handle_up_events(self, mock_get):
+        definition = {
+            "method_up": "GET",
+            "url_up": "http://bar",
+            "body_up": "",
+            "headers_up": {},
+        }
+        self._setup_data("webhook", json.dumps(definition), status="up")
 
         self.channel.notify(self.check)
 
@@ -147,38 +196,10 @@ class NotifyTestCase(BaseTestCase):
         )
 
     @patch("hc.api.transports.requests.request")
-    def test_webhooks_handle_unicode_post_body(self, mock_request):
-        template = "http://example.com\n\n(╯°□°）╯︵ ┻━┻"
-        self._setup_data("webhook", template)
-        self.check.save()
-
-        self.channel.notify(self.check)
-        args, kwargs = mock_request.call_args
-
-        # unicode should be encoded into utf-8
-        self.assertIsInstance(kwargs["data"], bytes)
-
-    @patch("hc.api.transports.requests.request")
-    def test_webhooks_handle_json_value(self, mock_request):
-        definition = {
-            "method_down": "GET",
-            "url_down": "http://foo.com",
-            "body_down": "",
-            "headers_down": {},
-        }
-        self._setup_data("webhook", json.dumps(definition))
-        self.channel.notify(self.check)
-
-        headers = {"User-Agent": "healthchecks.io"}
-        mock_request.assert_called_with(
-            "get", "http://foo.com", headers=headers, timeout=5
-        )
-
-    @patch("hc.api.transports.requests.request")
-    def test_webhooks_handle_json_up_event(self, mock_request):
+    def test_webhooks_handle_noop_up_events(self, mock_get):
         definition = {
             "method_up": "GET",
-            "url_up": "http://bar",
+            "url_up": "",
             "body_up": "",
             "headers_up": {},
         }
@@ -186,8 +207,26 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("webhook", json.dumps(definition), status="up")
         self.channel.notify(self.check)
 
-        headers = {"User-Agent": "healthchecks.io"}
-        mock_request.assert_called_with("get", "http://bar", headers=headers, timeout=5)
+        self.assertFalse(mock_get.called)
+        self.assertEqual(Notification.objects.count(), 0)
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_unicode_post_body(self, mock_request):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://foo.com",
+            "body_down": "(╯°□°）╯︵ ┻━┻",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
+        self.check.save()
+
+        self.channel.notify(self.check)
+        args, kwargs = mock_request.call_args
+
+        # unicode should be encoded into utf-8
+        self.assertIsInstance(kwargs["data"], bytes)
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_post_headers(self, mock_request):

@@ -74,7 +74,14 @@ class LogTestCase(BaseTestCase):
 
     def test_it_shows_webhook_notification(self):
         ch = Channel(kind="webhook", project=self.project)
-        ch.value = "foo/$NAME"
+        ch.value = json.dumps(
+            {
+                "method_down": "GET",
+                "url_down": "foo/$NAME",
+                "body_down": "",
+                "headers_down": {},
+            }
+        )
         ch.save()
 
         Notification(owner=self.check, channel=ch, check_status="down").save()
