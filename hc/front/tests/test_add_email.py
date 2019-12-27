@@ -17,7 +17,7 @@ class AddEmailTestCase(BaseTestCase):
         self.assertContains(r, "Requires confirmation")
 
     def test_it_creates_channel(self):
-        form = {"value": "dan@example.org"}
+        form = {"value": "dan@example.org", "down": "true", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -39,7 +39,7 @@ class AddEmailTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "dan@example.org")
 
     def test_team_access_works(self):
-        form = {"value": "bob@example.org"}
+        form = {"value": "bob@example.org", "down": "true", "up": "true"}
 
         self.client.login(username="bob@example.org", password="password")
         self.client.post(self.url, form)
@@ -49,14 +49,14 @@ class AddEmailTestCase(BaseTestCase):
         self.assertEqual(ch.project, self.project)
 
     def test_it_rejects_bad_email(self):
-        form = {"value": "not an email address"}
+        form = {"value": "not an email address", "down": "true", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertContains(r, "Enter a valid email address.")
 
     def test_it_trims_whitespace(self):
-        form = {"value": "   alice@example.org   "}
+        form = {"value": "   alice@example.org   ", "down": "true", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, form)
@@ -73,7 +73,7 @@ class AddEmailTestCase(BaseTestCase):
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
     def test_it_auto_verifies_email(self):
-        form = {"value": "dan@example.org"}
+        form = {"value": "dan@example.org", "down": "true", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -89,7 +89,7 @@ class AddEmailTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_auto_verifies_own_email(self):
-        form = {"value": "alice@example.org"}
+        form = {"value": "alice@example.org", "down": "true", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -103,3 +103,10 @@ class AddEmailTestCase(BaseTestCase):
 
         # Email should *not* have been sent
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_it_rejects_unchecked_up_and_dwon(self):
+        form = {"value": "alice@example.org"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "Please select at least one.")

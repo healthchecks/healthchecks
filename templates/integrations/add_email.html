@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <div id="add-email-notify-group" class="form-group">
+        <div id="add-email-notify-group" class="form-group {{ form.down.css_classes }}">
             <label class="col-sm-2 control-label">Notify When</label>
             <div class="col-sm-10">
                 <label class="checkbox-container">
@@ -62,11 +62,17 @@
                         {% if form.up.value %} checked {% endif %}>
                     <span class="checkmark"></span>
                     A check goes <strong>up</strong>
+                    </span>
+                    {% if form.down.errors %}
+                    <div class="help-block">
+                        {{ form.down.errors|join:"" }}
+                    </div>
+                    {% else %}
                     <br />
                     <span class="text-muted">
                     Ticketing system integrations: untick this and avoid creating new tickets
                     when checks come back up.
-                    </span>
+                    {% endif %}
                 </label>
             </div>
         </div>

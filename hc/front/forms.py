@@ -96,6 +96,15 @@ class AddEmailForm(forms.Form):
     down = forms.BooleanField(required=False, initial=True)
     up = forms.BooleanField(required=False, initial=True)
 
+    def clean(self):
+        super().clean()
+
+        down = self.cleaned_data.get("down")
+        up = self.cleaned_data.get("up")
+
+        if not down and not up:
+            self.add_error("down", "Please select at least one.")
+
 
 class AddUrlForm(forms.Form):
     error_css_class = "has-error"

@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - For webhook integration, validate each header line separately
 - Fix "Send Test Notification" for webhooks that only fire on checks going up
 - Don't allow adding webhook integrations with both URLs blank
+- Don't allow adding email integrations with both "up" and "down" unchecked
 
 
 ## v1.11.0 - 2019-11-22
