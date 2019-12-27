@@ -122,12 +122,12 @@ class AddWebhookTestCase(BaseTestCase):
         form = {
             "method_down": "GET",
             "url_down": "http://example.org",
-            "headers_down": "invalid-headers",
+            "headers_down": "invalid-header\nfoo:bar",
             "method_up": "GET",
         }
 
         r = self.client.post(self.url, form)
-        self.assertContains(r, """invalid-headers""")
+        self.assertContains(r, """invalid-header""")
         self.assertEqual(Channel.objects.count(), 0)
 
     def test_it_strips_headers(self):

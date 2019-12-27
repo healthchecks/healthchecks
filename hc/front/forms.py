@@ -27,7 +27,7 @@ class HeadersField(forms.Field):
             if not line.strip():
                 continue
 
-            if ":" not in value:
+            if ":" not in line:
                 raise ValidationError(self.message)
 
             n, v = line.split(":", maxsplit=1)

@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection
 - Fix List-Unsubscribe email header value: add angle brackets
 - Unsubscribe links serve a form, and require HTTP POST to actually unsubscribe
+- For webhook integration, validate each header line separately
 
 
 ## v1.11.0 - 2019-11-22
