@@ -1,6 +1,6 @@
 croniter==0.3.30
 Django==3.0.1
-git+git://github.com/django-compressor/django-compressor.git@a5bfd775450428e1a261b88e1e5424bfb4dde081#egg=django_compressor
-psycopg2==2.8.3
+django-compressor==2.4
+psycopg2==2.8.4
 pytz==2019.3
 requests==2.22.0
