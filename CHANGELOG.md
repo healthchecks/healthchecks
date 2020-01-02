@@ -1,13 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.12.0-dev - Unreleased
+## v1.12.0 - 2020-01-02
 
 ### Improvements
+- Django 3.0
 - "Filtering Rules" dialog, an option to require HTTP POST (#297)
 - Show Healthchecks version in Django admin header (#306)
 - Added JSON endpoint for Shields.io (#304)
-- Django 3.0
 - `senddeletionnotices` command skips profiles with recent last_active_date
 - The "Update Check" API call can update check's description (#311)
 
