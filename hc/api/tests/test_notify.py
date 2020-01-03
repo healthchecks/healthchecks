@@ -60,6 +60,7 @@ class NotifyTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
+        self.assertEqual(self.channel.last_error, "Connection timed out")
 
     @patch("hc.api.transports.requests.request", side_effect=ConnectionError)
     def test_webhooks_handle_connection_errors(self, mock_get):

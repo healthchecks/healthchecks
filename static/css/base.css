@@ -88,6 +88,9 @@ body {
     border-color: #22bc66;
 }
 
+#broken-channels > a {
+    color: #a94442;
+}
 
 .page-checks .container-fluid, .page-details .container-fluid {
     /* Fluid below 1320px, but max width capped to 1320px ... */

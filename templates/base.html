@@ -97,9 +97,14 @@
                         <a href="{% url 'hc-checks' project.code %}">Checks</a>
                     </li>
 
-                    <li {% if page == 'channels' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-channels' %}">Integrations</a>
+                    {% with b=project.have_broken_channels %}
+                    <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
+                        <a href="{% url 'hc-channels' %}">
+                            Integrations
+                            {% if b %}<span class="icon-grace"></span>{% endif %}
+                        </a>
                     </li>
+                    {% endwith %}
 
                     <li {% if page == 'badges' %} class="active" {% endif %}>
                         <a href="{% url 'hc-badges' project.code %}">Badges</a>

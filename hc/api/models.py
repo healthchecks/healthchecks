@@ -338,6 +338,7 @@ class Channel(models.Model):
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
     value = models.TextField(blank=True)
     email_verified = models.BooleanField(default=False)
+    last_error = models.CharField(max_length=200, blank=True)
     checks = models.ManyToManyField(Check)
 
     def __str__(self):
@@ -440,6 +441,9 @@ class Channel(models.Model):
 
         n.error = error
         n.save()
+
+        self.last_error = error
+        self.save()
 
         return error
 

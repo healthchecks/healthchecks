@@ -282,6 +282,9 @@ class Project(models.Model):
                 break
         return status
 
+    def have_broken_channels(self):
+        return self.channel_set.exclude(last_error="").exists()
+
 
 class Member(models.Model):
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")

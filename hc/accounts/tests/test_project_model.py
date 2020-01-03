@@ -1,6 +1,6 @@
 from hc.test import BaseTestCase
 from hc.accounts.models import Project
-from hc.api.models import Check
+from hc.api.models import Check, Channel
 
 
 class ProjectModelTestCase(BaseTestCase):
@@ -13,3 +13,11 @@ class ProjectModelTestCase(BaseTestCase):
         Check.objects.create(project=p2)
 
         self.assertEqual(self.project.num_checks_available(), 18)
+
+    def test_it_handles_zero_broken_channels(self):
+        self.assertFalse(self.project.have_broken_channels())
+
+    def test_it_handles_one_broken_channel(self):
+        Channel.objects.create(kind="webhook", last_error="x", project=self.project)
+
+        self.assertTrue(self.project.have_broken_channels())
