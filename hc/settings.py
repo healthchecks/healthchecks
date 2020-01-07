@@ -43,6 +43,7 @@ with open(os.path.join(BASE_DIR, "CHANGELOG.md"), encoding="utf-8") as f:
 
 
 INSTALLED_APPS = (
+    "hc.accounts",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,7 +52,6 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "compressor",
-    "hc.accounts",
     "hc.api",
     "hc.front",
     "hc.payments",
