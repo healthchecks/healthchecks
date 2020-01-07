@@ -134,6 +134,11 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
+                        {% if request.user.is_superuser %}
+                            <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
+                            <li role="separator" class="divider"></li>
+                        {% endif %}
+
                         <li class="dropdown-header">Projects</li>
                         {% for project in request.profile.annotated_projects %}
                         <li class="project-item">

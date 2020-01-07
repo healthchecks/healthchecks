@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Show a red "!" in project's top navigation if any integration is not working
 - createsuperuser management command requires an unique email address (#318)
+- For superusers, show "Site Administration" in top navigation, note in README (#317)
 
 
 ## v1.12.0 - 2020-01-02

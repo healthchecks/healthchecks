@@ -189,6 +189,16 @@ DATABASES = {
 }
 ```
 
+## Accessing Administration Panel
+
+healthchecks comes with Django's administation panel where you can manually
+view and modify user accounts, projects, checks, integrations etc. To access it,
+
+ * if you haven't already, create a superuser account: `./manage.py createsuperuser`
+ * log into the site using superuser credentials
+ * in the top navigation, "Account" dropdown, select "Site Administration"
+
+
 ## Sending Emails
 
 healthchecks must be able to send email messages, so it can send out login
