@@ -16,7 +16,6 @@ class Command(BaseCommand):
             raw = input("Email address:")
             form = AvailableEmailForm({"identity": raw})
             if not form.is_valid():
-                print(dir(form))
                 self.stderr.write("Error: " + " ".join(form.errors["identity"]))
                 continue
 
