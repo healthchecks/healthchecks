@@ -29,6 +29,7 @@ class BounceTestCase(BaseTestCase):
 
         self.channel.refresh_from_db()
         self.assertFalse(self.channel.email_verified)
+        self.assertEqual(self.channel.last_error, "foo")
 
     def test_it_checks_ttl(self):
         self.n.created = self.n.created - timedelta(minutes=60)

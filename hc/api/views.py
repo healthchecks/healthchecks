@@ -272,9 +272,13 @@ def bounce(request, code):
     notification.error = request.body.decode()[:200]
     notification.save()
 
+    notification.channel.last_error = notification.error
     if request.GET.get("type") in (None, "Permanent"):
+        # For permanent bounces, mark the channel as not verified, so we
+        # will not try to deliver to it again.
         notification.channel.email_verified = False
-        notification.channel.save()
+
+    notification.channel.save()
 
     return HttpResponse()
 
