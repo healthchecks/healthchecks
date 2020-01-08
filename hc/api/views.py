@@ -272,8 +272,9 @@ def bounce(request, code):
     notification.error = request.body.decode()[:200]
     notification.save()
 
-    notification.channel.email_verified = False
-    notification.channel.save()
+    if request.GET.get("type") in (None, "Permanent"):
+        notification.channel.email_verified = False
+        notification.channel.save()
 
     return HttpResponse()
 
