@@ -173,7 +173,7 @@ class ChannelNameForm(forms.Form):
 
 class AddMatrixForm(forms.Form):
     error_css_class = "has-error"
-    alias = forms.CharField(max_length=40)
+    alias = forms.CharField(max_length=100)
 
     def clean_alias(self):
         v = self.cleaned_data["alias"]
