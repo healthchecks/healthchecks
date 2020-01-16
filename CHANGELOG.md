@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - createsuperuser management command requires an unique email address (#318)
 - For superusers, show "Site Administration" in top navigation, note in README (#317)
 
+### Bug Fixes
+- Increase the allowable length of Matrix room alias to 100 (#320)
+
 
 ## v1.12.0 - 2020-01-02
 
