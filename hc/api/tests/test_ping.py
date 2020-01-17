@@ -25,6 +25,7 @@ class PingTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.scheme, "http")
         self.assertEqual(ping.kind, None)
+        self.assertEqual(ping.created, self.check.last_ping)
 
     def test_it_changes_status_of_paused_check(self):
         self.check.status = "paused"

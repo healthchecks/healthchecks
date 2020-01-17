@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)
+- Make sure Check.last_ping and Ping.created timestamps match exactly
 
 
 ## v1.12.0 - 2020-01-02

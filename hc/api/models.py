@@ -236,13 +236,15 @@ class Check(models.Model):
         return result
 
     def ping(self, remote_addr, scheme, method, ua, body, action):
+        now = timezone.now()
+
         if action == "start":
-            self.last_start = timezone.now()
+            self.last_start = now
             # Don't update "last_ping" field.
         elif action == "ign":
             pass
         else:
-            self.last_ping = timezone.now()
+            self.last_ping = now
             if self.last_start:
                 self.last_duration = self.last_ping - self.last_start
                 self.last_start = None
@@ -267,6 +269,7 @@ class Check(models.Model):
 
         ping = Ping(owner=self)
         ping.n = self.n_pings
+        ping.created = now
         if action in ("start", "fail", "ign"):
             ping.kind = action
 
@@ -321,7 +324,7 @@ class Ping(models.Model):
     id = models.BigAutoField(primary_key=True)
     n = models.IntegerField(null=True)
     owner = models.ForeignKey(Check, models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now)
     kind = models.CharField(max_length=6, blank=True, null=True)
     scheme = models.CharField(max_length=10, default="http")
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
