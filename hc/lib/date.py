@@ -37,8 +37,11 @@ def format_duration(td):
 
 
 def format_hms(td):
-    total_seconds = int(td.total_seconds())
+    total_seconds = td.total_seconds()
+    if 0.01 <= total_seconds < 1:
+        return "%.2f sec" % total_seconds
 
+    total_seconds = int(total_seconds)
     result = []
 
     mins, secs = divmod(total_seconds, 60)

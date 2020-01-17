@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - createsuperuser management command requires an unique email address (#318)
 - For superusers, show "Site Administration" in top navigation, note in README (#317)
 - Make Ping.body size limit configurable (#301)
+- Show sub-second durations with higher precision, 2 digits after decimal point (#321)
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)

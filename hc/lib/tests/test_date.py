@@ -5,6 +5,10 @@ from hc.lib.date import format_hms, choose_next_report_date
 
 
 class DateFormattingTestCase(TestCase):
+    def test_sub_second_works(self):
+        s = format_hms(td(seconds=0.12))
+        self.assertEqual(s, "0.12 sec")
+
     def test_mins_secs_work(self):
         s = format_hms(td(seconds=0))
         self.assertEqual(s, "0 sec")
