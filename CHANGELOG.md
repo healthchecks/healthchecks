@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Show a red "!" in project's top navigation if any integration is not working
 - createsuperuser management command requires an unique email address (#318)
 - For superusers, show "Site Administration" in top navigation, note in README (#317)
+- Make Ping.body size limit configurable (#301)
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)

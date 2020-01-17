@@ -112,6 +112,7 @@ Configurations settings loaded from environment variables:
 | MASTER_BADGE_LABEL | `"Mychecks"`
 | PING_ENDPOINT | `"http://localhost:8000/ping/"`
 | PING_EMAIL_DOMAIN | `"localhost"`
+| PING_BODY_LIMIT | 10000 | In bytes. Set to `None` to always log full request body
 | DISCORD_CLIENT_ID | `None`
 | DISCORD_CLIENT_SECRET | `None`
 | SLACK_CLIENT_ID | `None`
@@ -167,6 +168,10 @@ link when an email address is added to the list of notification methods.
 Set it to `False` if you are setting up a private healthchecks instance where
 you trust your users and want to avoid the extra verification step.
 
+
+`PING_BODY_LIMIT` sets the size limit in bytes for logged ping request bodies.
+The default value is 10000 (10 kilobytes). You can remove the limit altogether by
+setting this value to `None`.
 
 ## Database Configuration
 

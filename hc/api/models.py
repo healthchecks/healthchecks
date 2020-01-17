@@ -275,7 +275,7 @@ class Check(models.Model):
         ping.method = method
         # If User-Agent is longer than 200 characters, truncate it:
         ping.ua = ua[:200]
-        ping.body = body[:10000]
+        ping.body = body[: settings.PING_BODY_LIMIT]
         ping.save()
 
     def downtimes(self, months=3):
@@ -327,7 +327,7 @@ class Ping(models.Model):
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
     method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
-    body = models.CharField(max_length=10000, blank=True, null=True)
+    body = models.TextField(blank=True, null=True)
 
 
 class Channel(models.Model):
