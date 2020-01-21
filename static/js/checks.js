@@ -138,6 +138,21 @@ $(function () {
         return false;
     });
 
+    $(".pause").click(function(e) {
+        var code = $(this).closest("tr.checks-row").attr("id");
+        $("#" + code + " span.status").attr("class", "status icon-paused");
+
+        var url = base + "/checks/" + code + "/pause/";
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            url: url,
+            type: "post",
+            headers: {"X-CSRFToken": token}
+        });
+
+        return false;
+    });
+
     $('[data-toggle="tooltip"]').tooltip({
         html: true,
         container: "body",
@@ -171,7 +186,6 @@ $(function () {
                     if (lastStatus[el.code] != el.status) {
                         lastStatus[el.code] = el.status;
                         $("#" + el.code + " span.status").attr("class", "status icon-" + el.status);
-                        $("#" + el.code + " .pause-li").toggleClass("disabled", el.status == "paused");
                     }
 
                     if (lastPing[el.code] != el.last_ping) {

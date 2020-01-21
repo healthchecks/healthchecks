@@ -428,6 +428,10 @@ def pause(request, code):
     if "/details/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-details", code)
 
+    # Don't redirect after an AJAX request:
+    if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
+        return HttpResponse()
+
     return redirect("hc-checks", check.project.code)
 
 

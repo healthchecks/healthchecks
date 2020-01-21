@@ -120,9 +120,13 @@
                 {% include "front/last_ping_cell.html" with check=check %}
             </div>
         </td>
-        <td>
-            <button class="btn btn-sm btn-default show-log" type="button">
-                <span class="icon-settings" aria-hidden="true"></span>
+        <td class="actions">
+            <button title="Pause" class="btn btn-default pause" type="button">
+                <span class="icon-paused" />
+            </button>
+
+            <button title="Show Details" class="btn btn-default show-log" type="button">
+                <span class="icon-dots" />
             </button>
         </td>
     </tr>

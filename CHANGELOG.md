@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 - For superusers, show "Site Administration" in top navigation, note in README (#317)
 - Make Ping.body size limit configurable (#301)
 - Show sub-second durations with higher precision, 2 digits after decimal point (#321)
+- Replace the gear icon with three horizontal dots icon (#322)
+- Add a Pause button in the checks list (#312)
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)
