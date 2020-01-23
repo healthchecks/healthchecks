@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Replace the gear icon with three horizontal dots icon (#322)
 - Add a Pause button in the checks list (#312)
 - Documentation in Markdown
+- Added an example of capturing and submitting log output (#315)
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)
