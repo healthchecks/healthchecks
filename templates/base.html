@@ -124,7 +124,7 @@
                 {% endif %}
 
                 <li {% if page == 'docs' %} class="active" {% endif %}>
-                    <a href="{% url 'hc-serve-doc' 'introduction' %}">Docs</a>
+                    <a href="{% url 'hc-docs' %}">Docs</a>
                 </li>
 
                 {% if request.user.is_authenticated %}

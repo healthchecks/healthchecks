@@ -8,7 +8,9 @@
 
     <ul class="docs-nav">
         <li class="nav-header">Monitoring</li>
-        {% include "front/docs_nav_item.html" with slug="introduction" title="Introduction" %}
+        <li {% if section == "introduction" %} class="active"{% endif %}>
+            <a href="{% url 'hc-docs' %}">Introduction</a>
+        </li>
         {% include "front/docs_nav_item.html" with slug="monitoring_cron_jobs" title="Monitoring cron jobs" %}
         {% include "front/docs_nav_item.html" with slug="signalling_failures" title="Signalling failures" %}
         {% include "front/docs_nav_item.html" with slug="measuring_script_run_time" title="Measuring script run time" %}

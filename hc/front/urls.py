@@ -72,7 +72,7 @@ urlpatterns = [
     path("projects/<uuid:code>/checks/status/", views.status, name="hc-status"),
     path("checks/<uuid:code>/", include(check_urls)),
     path("integrations/", include(channel_urls)),
-    path("docs/", views.docs, name="hc-docs"),
+    path("docs/", views.serve_doc, name="hc-docs"),
     path("docs/api/", views.docs_api, name="hc-docs-api"),
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
     path("docs/resources/", views.docs_resources, name="hc-docs-resources"),

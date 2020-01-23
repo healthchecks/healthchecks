@@ -264,20 +264,7 @@ def index(request):
     return render(request, "front/welcome.html", ctx)
 
 
-def docs(request):
-    ctx = {
-        "page": "docs",
-        "section": "home",
-        "ping_endpoint": settings.PING_ENDPOINT,
-        "ping_email": "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN,
-        "ping_email_domain": settings.PING_EMAIL_DOMAIN,
-        "ping_url": settings.PING_ENDPOINT + "your-uuid-here",
-    }
-
-    return render(request, "front/docs.html", ctx)
-
-
-def serve_doc(request, doc):
+def serve_doc(request, doc="introduction"):
     path = os.path.join(settings.BASE_DIR, "templates/docs", doc + ".html")
     if not os.path.exists(path):
         raise Http404("not found")
