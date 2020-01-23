@@ -4,9 +4,18 @@
     list-style: none;
 }
 
-.docs-nav li a {
+.docs-nav li {
     display: block;
-    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.docs-nav li.nav-header {
+    color: #333;
+    font-weight: bold;
+}
+
+li + li.nav-header {
+    margin-top: 20px;
 }
 
 .docs-nav li.active > a {
@@ -74,3 +83,11 @@ a.section:hover  {
     border-radius: 4px;
 }
 
+.docs-content li {
+    line-height: 2;
+}
+
+.docs-content img {
+    max-width: 100%;
+    border: 6px solid #DDD;
+}

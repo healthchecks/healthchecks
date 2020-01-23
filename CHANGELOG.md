@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Show sub-second durations with higher precision, 2 digits after decimal point (#321)
 - Replace the gear icon with three horizontal dots icon (#322)
 - Add a Pause button in the checks list (#312)
+- Documentation in Markdown
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)

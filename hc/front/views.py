@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta as td
 import json
+import os
 from urllib.parse import urlencode
 
 from croniter import croniter
@@ -276,6 +277,28 @@ def docs(request):
     return render(request, "front/docs.html", ctx)
 
 
+def serve_doc(request, doc):
+    path = os.path.join(settings.BASE_DIR, "templates/docs", doc + ".html")
+    if not os.path.exists(path):
+        raise Http404("not found")
+
+    content = open(path, "r", encoding="utf-8").read()
+    content = content.replace("SITE_NAME", settings.SITE_NAME)
+    content = content.replace("PING_URL", settings.PING_ENDPOINT + "your-uuid-here")
+    content = content.replace(
+        "PING_EMAIL", "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN
+    )
+
+    ctx = {
+        "page": "docs",
+        "section": "home",
+        "section": doc,
+        "content": content,
+    }
+
+    return render(request, "front/docs_single.html", ctx)
+
+
 def docs_api(request):
     ctx = {
         "page": "docs",
@@ -290,8 +313,7 @@ def docs_api(request):
 
 
 def docs_cron(request):
-    ctx = {"page": "docs", "section": "cron"}
-    return render(request, "front/docs_cron.html", ctx)
+    return render(request, "front/docs_cron.html", {})
 
 
 def docs_resources(request):

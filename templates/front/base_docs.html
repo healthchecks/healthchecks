@@ -4,25 +4,39 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-2">
+    <div class="col-sm-3">
 
     <ul class="docs-nav">
-        <li {% if section == "home" %} class="active" {% endif %}>
-            <a href="{% url 'hc-docs' %}">How {% site_name %} Works</a>
+        <li class="nav-header">Monitoring</li>
+        {% include "front/docs_nav_item.html" with slug="introduction" title="Introduction" %}
+        {% include "front/docs_nav_item.html" with slug="monitoring_cron_jobs" title="Monitoring cron jobs" %}
+        {% include "front/docs_nav_item.html" with slug="signalling_failures" title="Signalling failures" %}
+        {% include "front/docs_nav_item.html" with slug="measuring_script_run_time" title="Measuring script run time" %}
+
+        <li class="nav-header">Platforms</li>
+        {% include "front/docs_nav_item.html" with slug="bash" title="Bash" %}
+        {% include "front/docs_nav_item.html" with slug="python" title="Python" %}
+        {% include "front/docs_nav_item.html" with slug="ruby" title="Ruby" %}
+        {% include "front/docs_nav_item.html" with slug="php" title="PHP" %}
+        {% include "front/docs_nav_item.html" with slug="csharp" title="C#" %}
+        {% include "front/docs_nav_item.html" with slug="javascript" title="Javascript" %}
+        {% include "front/docs_nav_item.html" with slug="powershell" title="PowerShell" %}
+        {% include "front/docs_nav_item.html" with slug="email" title="Email" %}
+
+        <li class="nav-header">Developer Tools</li>
+        <li{% if section == "api" %} class="active"{% endif %}>
+            <a href="{% url 'hc-docs-api' %}">API</a>
         </li>
-        <li {% if section == "api" %} class="active" {% endif %}>
-            <a href="{% url 'hc-docs-api' %}">API Reference</a>
+        <li {% if section == "resources" %} class="active"{% endif %}>
+            <a href="{% url 'hc-docs-resources' %}">Third-party resources</a>
         </li>
-        <li {% if section == "cron" %} class="active" {% endif %}>
-            <a href="{% url 'hc-docs-cron' %}">Cron Syntax</a>
-        </li>
-        <li {% if section == "resources" %} class="active" {% endif %}>
-            <a href="{% url 'hc-docs-resources' %}">Third-Party Resources</a>
-        </li>
+
+        <li class="nav-header">Cron</li>
+        <li><a href="{% url 'hc-docs-cron' %}">Cron Syntax Cheatsheet</a></li>
     </ul>
 
     </div>
-    <div class="col-sm-10">
+    <div class="col-sm-9">
         {% block docs_content %}
         {% endblock %}
     </div>

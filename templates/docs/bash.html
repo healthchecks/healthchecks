@@ -1,0 +1,34 @@
+<h1>Shell scripts</h1>
+<p>You can easily add SITE_NAME monitoring to a shell script. All you
+have to do is make a HTTP request at the end of the script. curl and wget
+are two common command line HTTP clients for that.</p>
+<h2>Using curl</h2>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="c1"># Exit immediately if any command exits with a non-zero status:</span>
+<span class="nb">set</span> -e
+
+<span class="c1"># Do the work here</span>
+<span class="nb">echo</span> <span class="s2">&quot;Pretending to to make backups...&quot;</span>
+sleep <span class="m">5</span>
+<span class="nb">echo</span> <span class="s2">&quot;Backup complete!&quot;</span>
+
+<span class="c1"># As the last thing, ping SITE_NAME using curl:</span>
+<span class="hll">curl --retry <span class="m">3</span> PING_URL
+</span></pre></div>
+
+
+<h2>Using wget</h2>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="c1"># Exit immediately if any command exits with a non-zero status:</span>
+<span class="nb">set</span> -e
+
+<span class="c1"># Do the work here</span>
+<span class="nb">echo</span> <span class="s2">&quot;Pretending to to generate reports...&quot;</span>
+sleep <span class="m">5</span>
+<span class="nb">echo</span> <span class="s2">&quot;Report generation complete!&quot;</span>
+
+<span class="c1"># As the last thing, ping SITE_NAME using wget:</span>
+<span class="hll">wget PING_URL -O /dev/null
+</span></pre></div>

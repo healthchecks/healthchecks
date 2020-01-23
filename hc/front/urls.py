@@ -76,4 +76,5 @@ urlpatterns = [
     path("docs/api/", views.docs_api, name="hc-docs-api"),
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
     path("docs/resources/", views.docs_resources, name="hc-docs-resources"),
+    path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
 ]
