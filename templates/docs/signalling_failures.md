@@ -5,6 +5,8 @@ Requesting the `/fail` URL will immediately mark the check as "down".
 You can use this feature to minimize the delay from your monitored service failing
 to you getting a notification.
 
+## Python
+
 Below is a skeleton code example in Python which signals a failure when the
 work function returns an unexpected value or throws an exception:
 
