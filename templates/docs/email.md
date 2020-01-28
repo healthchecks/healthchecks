@@ -3,10 +3,12 @@
 As an alternative to HTTP/HTTPS requests, you can "ping" checks by
 sending an emails to special email addresses.
 
-## Use Case: Email Delivery Monitoring
+![Email address for pinging via email](IMG_URL/emails.png)
 
-Consider a cron job which runs weekly and sends weekly email
-reports to a list of e-mail addresses. You have already set up a check to get alerted
+## Use Case: Newsletter Delivery Monitoring
+
+Consider a cron job which runs weekly and sends weekly newsletters
+to a list of e-mail addresses. You have already set up a check to get alerted
 when your cron job fails to run. But what you ultimately want to check is if
 **your emails are getting sent and delivered**.
 

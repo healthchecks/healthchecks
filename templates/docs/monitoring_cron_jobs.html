@@ -1,24 +1,26 @@
-<h2>Monitoring Cron Jobs</h2>
-<p>SITE_NAME is perfectly suited for monitoring cron jobs.
-Let's look at an example: a machine with the following cron job:</p>
+<h1>Monitoring Cron Jobs</h1>
+<p>SITE_NAME is perfectly suited for monitoring cron jobs. All you have to do is
+update your cron job command to send a HTTP request to SITE_NAME
+after a job completes.</p>
+<p>Let's look at an example:</p>
 <div class="highlight"><pre><span></span>$ crontab -l
 <span class="c1"># m h dom mon dow command</span>
   <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh
 </pre></div>
 
 
-<p>You can use SITE_NAME to get a notification whenever the <code>backup.sh</code> script does not
-complete successfully. Here is how to set that up.</p>
+<p>The above job runs <code>/home/user/backup.sh</code> every day at 6:08. The backup
+script is presumably a headless, background process. Even if it works
+correctly currently, it can start silently failing in future, without
+anyone noticing.</p>
+<p>You can set up SITE_NAME to notify you whenever the backup script doesn't
+run on time and complete successfully. Here are the steps to do that.</p>
 <ol>
 <li>
 <p>If you have not already, sign up for a free SITE_NAME account.</p>
 </li>
 <li>
 <p>In your SITE_NAME account, <strong>add a new check</strong>.</p>
-<p>Note: in SITE_NAME, a <strong>check</strong> represents a single service you want to
-monitor. For example, a single cron job. For each additional cron job you will
-create another check. SITE_NAME pricing plans are structured primarily
-around how many checks you can have in the account.</p>
 </li>
 <li>
 <p>Give the check <strong>a meaningful name</strong>. Good naming will become

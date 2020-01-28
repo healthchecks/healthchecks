@@ -83,11 +83,31 @@ a.section:hover  {
     border-radius: 4px;
 }
 
-.docs-content li {
+.docs-content {
     line-height: 2;
 }
 
+.docs-content h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.docs-content h2 {
+    margin-top: 30px;
+    font-weight: bold;
+}
+
+.docs-content ul {
+    padding-left: 15px;
+}
+
+.docs-content li {
+    margin-left: 0;
+}
+
 .docs-content img {
-    max-width: 100%;
+    max-width: 66%;
     border: 6px solid #DDD;
 }
+
+

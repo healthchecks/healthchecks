@@ -27,7 +27,7 @@ curl -fsS --retry <span class="m">3</span> -X POST --data-raw <span class="s2">&
 </pre></div>
 
 
-<h2>As One-Liner</h2>
+<h2>All in One Line</h2>
 <p>Finally, all of the above can be packaged in a single line. The one-line
 version can be put directly in crontab, without using a wrapper script.</p>
 <div class="highlight"><pre><span></span><span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span><span class="p">;</span> curl -fsS -X POST --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> <span class="s2">&quot;PING_URL</span><span class="k">$(</span><span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> -n /fail<span class="k">)</span><span class="s2">&quot;</span>

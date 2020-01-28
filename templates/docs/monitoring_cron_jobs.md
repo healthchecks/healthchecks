@@ -1,7 +1,10 @@
-## Monitoring Cron Jobs
+# Monitoring Cron Jobs
 
-SITE_NAME is perfectly suited for monitoring cron jobs.
-Let's look at an example: a machine with the following cron job:
+SITE_NAME is perfectly suited for monitoring cron jobs. All you have to do is
+update your cron job command to send a HTTP request to SITE_NAME
+after a job completes.
+
+Let's look at an example:
 
 ```bash
 $ crontab -l
@@ -9,17 +12,17 @@ $ crontab -l
   8 6 * * * /home/user/backup.sh
 ```
 
-You can use SITE_NAME to get a notification whenever the `backup.sh` script does not
-complete successfully. Here is how to set that up.
+The above job runs `/home/user/backup.sh` every day at 6:08. The backup
+script is presumably a headless, background process. Even if it works
+correctly currently, it can start silently failing in future, without
+anyone noticing.
+
+You can set up SITE_NAME to notify you whenever the backup script doesn't
+run on time and complete successfully. Here are the steps to do that.
 
 1. If you have not already, sign up for a free SITE_NAME account.
 
 1. In your SITE_NAME account, **add a new check**.
-
-    Note: in SITE_NAME, a **check** represents a single service you want to
-    monitor. For example, a single cron job. For each additional cron job you will
-    create another check. SITE_NAME pricing plans are structured primarily
-    around how many checks you can have in the account.
 
 1. Give the check **a meaningful name**. Good naming will become
 increasingly important as you add more checks to your account.

@@ -12,6 +12,7 @@
             <a href="{% url 'hc-docs' %}">Introduction</a>
         </li>
         {% include "front/docs_nav_item.html" with slug="monitoring_cron_jobs" title="Monitoring cron jobs" %}
+        {% include "front/docs_nav_item.html" with slug="configuring_checks" title="Configuring checks" %}
         {% include "front/docs_nav_item.html" with slug="signalling_failures" title="Signalling failures" %}
         {% include "front/docs_nav_item.html" with slug="measuring_script_run_time" title="Measuring script run time" %}
         {% include "front/docs_nav_item.html" with slug="attaching_logs" title="Attaching logs" %}
@@ -30,9 +31,7 @@
         <li{% if section == "api" %} class="active"{% endif %}>
             <a href="{% url 'hc-docs-api' %}">API</a>
         </li>
-        <li {% if section == "resources" %} class="active"{% endif %}>
-            <a href="{% url 'hc-docs-resources' %}">Third-party resources</a>
-        </li>
+        {% include "front/docs_nav_item.html" with slug="resources" title="Third-party resources" %}
 
         <li class="nav-header">Cron</li>
         <li><a href="{% url 'hc-docs-cron' %}">Cron Syntax Cheatsheet</a></li>

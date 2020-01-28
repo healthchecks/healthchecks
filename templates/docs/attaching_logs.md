@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then url=$url/fail; fi
 curl -fsS --retry 3 -X POST --data-raw "$m" $url
 ```
 
-## As One-Liner
+## All in One Line
 
 Finally, all of the above can be packaged in a single line. The one-line
 version can be put directly in crontab, without using a wrapper script.
