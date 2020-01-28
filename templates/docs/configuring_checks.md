@@ -32,7 +32,7 @@ intervals: once an hour, once a day, once a week.
 
 ![Editing the period and grace time](IMG_URL/edit_simple_schedule.png)
 
-For simple schedules you configure two time durations, **Period** and **Grace Time**.
+For simple schedules you configure two time durations, Period and Grace Time.
 
 * **Period**: the expected time between pings
 * **Grace Time**: when a check is late, how long to wait before sending an alert.
@@ -41,7 +41,7 @@ Use this variable to account for small, expected deviations in job execution tim
 ## Cron Schedules
 
 Use "cron" for monitoring processes with more complex schedules, and to ensure
-jobs run **at the correct time** (not just at correct intervals).
+jobs run **at the correct time** (not just at correct time intervals).
 
 ![Editing cron schedule](IMG_URL/edit_cron_schedule.png)
 
