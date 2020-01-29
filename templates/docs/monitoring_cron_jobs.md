@@ -17,8 +17,8 @@ script is presumably a headless, background process. Even if it works
 correctly currently, it can start silently failing in future, without
 anyone noticing.
 
-You can set up SITE_NAME to notify you whenever the backup script doesn't
-run on time and complete successfully. Here are the steps to do that.
+You can set up SITE_NAME to notify you whenever the backup script does not
+run on time or does not complete successfully. Here are the steps to do that.
 
 1. If you have not already, sign up for a free SITE_NAME account.
 

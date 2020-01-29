@@ -83,8 +83,8 @@ a.section:hover  {
     border-radius: 4px;
 }
 
-.docs-content {
-    line-height: 2;
+.docs-content, .docs-content .table td {
+    line-height: 1.8;
 }
 
 .docs-content h1 {

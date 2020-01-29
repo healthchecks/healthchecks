@@ -272,6 +272,7 @@ def serve_doc(request, doc="introduction"):
     content = open(path, "r", encoding="utf-8").read()
     content = content.replace("SITE_NAME", settings.SITE_NAME)
     content = content.replace("PING_URL", settings.PING_ENDPOINT + "your-uuid-here")
+    content = content.replace("PING_ENDPOINT", settings.PING_ENDPOINT)
     content = content.replace("IMG_URL", os.path.join(settings.STATIC_URL, "img/docs"))
     content = content.replace(
         "PING_EMAIL", "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN

@@ -13,11 +13,9 @@
         </li>
         {% include "front/docs_nav_item.html" with slug="monitoring_cron_jobs" title="Monitoring cron jobs" %}
         {% include "front/docs_nav_item.html" with slug="configuring_checks" title="Configuring checks" %}
-        {% include "front/docs_nav_item.html" with slug="signalling_failures" title="Signalling failures" %}
-        {% include "front/docs_nav_item.html" with slug="measuring_script_run_time" title="Measuring script run time" %}
-        {% include "front/docs_nav_item.html" with slug="attaching_logs" title="Attaching logs" %}
 
         <li class="nav-header">Pinging Examples</li>
+        {% include "front/docs_nav_item.html" with slug="http_api" title="HTTP API" %}
         {% include "front/docs_nav_item.html" with slug="bash" title="Shell Scripts" %}
         {% include "front/docs_nav_item.html" with slug="python" title="Python" %}
         {% include "front/docs_nav_item.html" with slug="ruby" title="Ruby" %}
@@ -27,9 +25,14 @@
         {% include "front/docs_nav_item.html" with slug="powershell" title="PowerShell" %}
         {% include "front/docs_nav_item.html" with slug="email" title="Email" %}
 
+        <li class="nav-header">Guides</li>
+        {% include "front/docs_nav_item.html" with slug="signalling_failures" title="Signalling failures" %}
+        {% include "front/docs_nav_item.html" with slug="measuring_script_run_time" title="Measuring script run time" %}
+        {% include "front/docs_nav_item.html" with slug="attaching_logs" title="Attaching logs" %}
+
         <li class="nav-header">Developer Tools</li>
         <li{% if section == "api" %} class="active"{% endif %}>
-            <a href="{% url 'hc-docs-api' %}">API</a>
+            <a href="{% url 'hc-docs-api' %}">Management API</a>
         </li>
         {% include "front/docs_nav_item.html" with slug="resources" title="Third-party resources" %}
 
