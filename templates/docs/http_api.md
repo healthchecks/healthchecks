@@ -78,7 +78,7 @@ OK
 ## Signal a Start
 
 ```text
-HEAD|GET|POST PING_ENDPOINT{uuid}/fail
+HEAD|GET|POST PING_ENDPOINT{uuid}/start
 ```
 
 Sends a "job has started!" message to SITE_NAME. This is
