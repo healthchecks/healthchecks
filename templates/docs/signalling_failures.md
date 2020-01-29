@@ -5,6 +5,22 @@ Requesting the `/fail` URL will immediately mark the check as "down".
 You can use this feature to minimize the delay from your monitored service failing
 to you getting a notification.
 
+## Shell Scripts
+
+The below shell script sends sends either a "success" or "failure" ping depending on
+command's (certbot in this example) exit code:
+
+```bash
+#!/bin/sh
+
+url=PING_URL
+
+/usr/bin/certbot renew
+
+if [ $? -ne 0 ]; then url=$url/fail; fi
+curl --retry 3 $url
+```
+
 ## Python
 
 Below is a skeleton code example in Python which signals a failure when the

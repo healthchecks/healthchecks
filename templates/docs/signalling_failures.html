@@ -3,6 +3,20 @@
 Requesting the <code>/fail</code> URL will immediately mark the check as "down".
 You can use this feature to minimize the delay from your monitored service failing
 to you getting a notification.</p>
+<h2>Shell Scripts</h2>
+<p>The below shell script sends sends either a "success" or "failure" ping depending on
+command's (certbot in this example) exit code:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="nv">url</span><span class="o">=</span>PING_URL
+
+/usr/bin/certbot renew
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">url</span><span class="o">=</span><span class="nv">$url</span>/fail<span class="p">;</span> <span class="k">fi</span>
+curl --retry <span class="m">3</span> <span class="nv">$url</span>
+</pre></div>
+
+
 <h2>Python</h2>
 <p>Below is a skeleton code example in Python which signals a failure when the
 work function returns an unexpected value or throws an exception:</p>
