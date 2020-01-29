@@ -35,7 +35,8 @@ increasingly important as you add more checks to your account.
 
 1. Take note of your check's unique **ping URL**
 
-Finally, edit your crontab and append a curl or wget call after the command:
+Finally, edit your cron job definition and append a curl or wget call
+after the command:
 
 ```bash
 $ crontab -e
@@ -44,7 +45,6 @@ $ crontab -e
 ```
 
 Now, each time your cron job runs, it will send a HTTP request to the ping URL.
-
 Since SITE_NAME knows the schedule of your cron job, it can calculate
 the dates and times when the job should run. As soon as your cron job doesn't
 report at an expected time, SITE_NAME will send you a notification.

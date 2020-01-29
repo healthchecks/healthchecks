@@ -63,7 +63,7 @@ GET /5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/fail HTTP/1.0
 Host: hc-ping.com
 ```
 
-```
+```http
 HTTP/1.1 200 OK
 Server: nginx
 Date: Wed, 29 Jan 2020 09:58:23 GMT
@@ -94,7 +94,7 @@ GET /5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/start HTTP/1.0
 Host: hc-ping.com
 ```
 
-```
+```http
 HTTP/1.1 200 OK
 Server: nginx
 Date: Wed, 29 Jan 2020 09:58:23 GMT

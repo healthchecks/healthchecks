@@ -1,4 +1,4 @@
-# SITE_NAME
+# SITE_NAME Documentation
 
 SITE_NAME is a service for monitoring cron jobs and similar periodic processes:
 

@@ -1,16 +1,13 @@
 {% extends "front/base_docs.html" %}
 {% load compress static hc_extras %}
 
-{% block title %}Documentation - {% site_name %}{% endblock %}
-{% block description %}
-    <meta name="description" content="Monitor any service that can make a HTTP request or send an email: cron jobs, Bash scripts, Python, Ruby, Node, PHP, JS, ...">
-{% endblock %}
-{% block keywords %}
-    <meta name="keywords" content="healthchecks, crontab monitoring, python health check, bash health check, cron monitoring, cron tutorial, cron howto, api health check, open source">
-{% endblock %}
+{% block title %}{{ first_line|striptags }} - {% site_name %}{% endblock %}
+{% block description %}{% endblock %}
+{% block keywords %}{% endblock %}
 
-
-{% block docs_content %}<div class="docs-content">{{ content|safe }}</div>{% endblock %}
+{% block docs_content %}
+<div class="docs-content">{{ content|safe }}</div>
+{% endblock %}
 
 {% block scripts %}
 {% compress js %}

@@ -283,6 +283,7 @@ def serve_doc(request, doc="introduction"):
         "section": "home",
         "section": doc,
         "content": content,
+        "first_line": content.split("\n")[0],
     }
 
     return render(request, "front/docs_single.html", ctx)

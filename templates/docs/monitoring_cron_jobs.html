@@ -38,15 +38,16 @@ increasingly important as you add more checks to your account.</p>
 <p>Take note of your check's unique <strong>ping URL</strong></p>
 </li>
 </ol>
-<p>Finally, edit your crontab and append a curl or wget call after the command:</p>
+<p>Finally, edit your cron job definition and append a curl or wget call
+after the command:</p>
 <div class="highlight"><pre><span></span>$ crontab -e
 <span class="c1"># m h dom mon dow command</span>
   <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS --retry <span class="m">3</span> PING_URL &gt; /dev/null
 </pre></div>
 
 
-<p>Now, each time your cron job runs, it will send a HTTP request to the ping URL.</p>
-<p>Since SITE_NAME knows the schedule of your cron job, it can calculate
+<p>Now, each time your cron job runs, it will send a HTTP request to the ping URL.
+Since SITE_NAME knows the schedule of your cron job, it can calculate
 the dates and times when the job should run. As soon as your cron job doesn't
 report at an expected time, SITE_NAME will send you a notification.</p>
 <p>This monitoring technique takes care of various failure scenarios that could
