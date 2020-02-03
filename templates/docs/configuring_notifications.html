@@ -1,0 +1,46 @@
+<h1>Configuring Notifications</h1>
+<p>You can set up multiple ways to receive notifications when checks in your account
+change state. This is useful for multiple reasons:</p>
+<ul>
+<li><strong>Redundancy in case of notification failures.</strong> Set up notifications using two different
+transports (for example, email and Slack). If one transport fails (e.g., an email
+message goes to spam), you still receive the notification over the other transport.</li>
+<li><strong>Use different notification methods depending on urgency</strong>. For example, if a
+low-priority housekeeping script fails, post a message in chat. If a vital service fails,
+post in chat, send an email, and send SMS.</li>
+<li>Route notifications to the right people.</li>
+</ul>
+<p>Notification methods ("integrations") are scoped to a project:
+if you want to use a notification method in multiple projects, it must be
+set up in each project separately.</p>
+<p>In the web interface, the list of checks shows a visual overview of which alerting
+methods are enabled for each check. You can click the icons to toggle them on and off:</p>
+<p><img alt="Integration icons in the checks list" src="IMG_URL/checks_integrations.png" /></p>
+<p>You can also toggle the integrations on and off when viewing an individual check:</p>
+<p><img alt="Integration on/off toggles in the check details page" src="IMG_URL/details_integrations.png" /></p>
+<h2>Repeated Notifications</h2>
+<p>If you want to receive repeated notifications for as long as a particular check is
+down, you have a few different options:</p>
+<ul>
+<li>If you use an <strong>incident management system</strong> (PagerDuty, VictorOps, OpsGenie, PagerTree,
+Pager Team), you can set up escalation rules there.</li>
+<li>Use the <strong>Pushover</strong> integration with the "Emergency" priority. Pushover will
+play a loud notification sound on your phone every 5 minutes until the notification
+is acknowledged.</li>
+<li>SITE_NAME can send <strong>hourly or daily email reminders</strong> if any check is down
+across all projects you have access to.
+Set them up in <a href="../../accounts/profile/">Account Settings › Email Reports</a>:</li>
+</ul>
+<p><img alt="Email reminder options" src="IMG_URL/email_reports.png" /></p>
+<h2>Monthly Reports</h2>
+<p>SITE_NAME sends monthly email reports at the start of each month. Use them
+to make sure all checks have their expected state and nothing has
+fallen "through the cracks".</p>
+<p>A monthly report shows checks from all projects you have access
+to. For each check it lists:</p>
+<ul>
+<li>check's current status</li>
+<li>the number of downtimes for two previous months</li>
+<li>the downtime duration for two previous months</li>
+</ul>
+<p><img alt="Example monthly report" src="IMG_URL/monthly_report.png" /></p>
