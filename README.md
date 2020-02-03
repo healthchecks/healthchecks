@@ -70,8 +70,8 @@ in development environment.
 
         $ ./manage.py runserver
 
-The site should now be running at `http://localhost:8000`
-To log into Django administration site as a super user,
+The site should now be running at `http://localhost:8000`.
+To access Django administration site, log in as a super user, then
 visit `http://localhost:8000/admin`
 
 ## Configuration
