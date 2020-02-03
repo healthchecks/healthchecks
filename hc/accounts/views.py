@@ -472,10 +472,10 @@ def unsubscribe_reports(request, signed_username):
 def close(request):
     user = request.user
 
-    # Subscription needs to be canceled before it is deleted:
+    # Cancel their subscription:
     sub = Subscription.objects.filter(user=user).first()
     if sub:
-        sub.cancel(delete_customer=True)
+        sub.cancel()
 
     user.delete()
 

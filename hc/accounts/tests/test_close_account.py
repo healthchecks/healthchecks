@@ -31,9 +31,6 @@ class CloseAccountTestCase(BaseTestCase):
         # Subscription should have been canceled
         self.assertTrue(mock_braintree.Subscription.cancel.called)
 
-        # Braintree customer should have been deleted
-        self.assertTrue(mock_braintree.Customer.delete.called)
-
         # Subscription should be gone
         self.assertFalse(Subscription.objects.exists())
 
