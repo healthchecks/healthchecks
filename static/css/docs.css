@@ -111,3 +111,8 @@ a.section:hover  {
 }
 
 
+@media (max-width: 992px) {
+    .docs-content img {
+        max-width: 100%;
+    }
+}
