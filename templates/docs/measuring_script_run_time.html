@@ -28,3 +28,14 @@ success within its configured "Grace Time", or it will get marked as "down".</p>
 <span class="c1"># Signal success:</span>
 <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
 </pre></div>
+
+
+<h2>Viewing Measured Run Times</h2>
+<p>When SITE_NAME receives a "start" signal followed by a regular ping or a "fail"
+signal, and the two events are less than 24 hours apart,
+you will see the time delta displayed in the list of checks. If the two events are
+more than 24 hours apart, they are assumed to be unrelated, and the time delta is
+not displayed.</p>
+<p><img alt="List of checks with durations" src="IMG_URL/checks_durations.png" /></p>
+<p>You can also see durations of the previous runs when viewing an individual check:</p>
+<p><img alt="Log of received pings with durations" src="IMG_URL/details_durations.png" /></p>

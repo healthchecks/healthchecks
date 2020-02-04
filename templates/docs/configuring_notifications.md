@@ -44,13 +44,13 @@ Set them up in [Account Settings › Email Reports](../../accounts/profile/):
 
 SITE_NAME sends monthly email reports at the start of each month. Use them
 to make sure all checks have their expected state and nothing has
-fallen "through the cracks".
+"fallen through the cracks".
 
 A monthly report shows checks from all projects you have access
 to. For each check it lists:
 
 * check's current status
-* the number of downtimes for two previous months
-* the downtime duration for two previous months
+* the number of downtimes by month, for the two previous months
+* the total downtime duration by month, for the two previous months
 
 ![Example monthly report](IMG_URL/monthly_report.png)
