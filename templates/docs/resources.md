@@ -21,6 +21,7 @@ Please submit additions and corrections
 * [frozzare/go-healthchecks](https://github.com/frozzare/go-healthchecks) – API wrapper in Go. Supports pinging and failing.
 * [healthchecks/hchk](https://github.com/healthchecks/hchk) – API wrapper & CLI in Python. Supports creating, pinging.
 * [crontask.sh](https://github.com/pforret/crontask) – bash wrapper to use in crontab. Supports pinging.
+* [SmartCronHelper](https://gitlab.science.ru.nl/bram/sch) – A cron shell wrapper. Automatically registers and pings cron jobs listed in crontab.
 
 ## Plugins & Integrations
 
