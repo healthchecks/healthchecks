@@ -36,7 +36,7 @@ play a loud notification sound on your phone every 5 minutes until the notificat
 is acknowledged.
 * SITE_NAME can send **hourly or daily email reminders** if any check is down
 across all projects you have access to.
-Set them up in [Account Settings › Email Reports](../../accounts/profile/):
+Set them up in [Account Settings › Email Reports](../../accounts/profile/notifications):
 
 ![Email reminder options](IMG_URL/email_reports.png)
 
@@ -54,3 +54,7 @@ to. For each check it lists:
 * the total downtime duration by month, for the two previous months
 
 ![Example monthly report](IMG_URL/monthly_report.png)
+
+You can opt out from the monthly reports in the
+[Account Settings › Email Reports](../../accounts/profile/notifications/) page
+or by clicking the "Unsubscribe" link in report's footer.
