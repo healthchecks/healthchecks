@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Add a Pause button in the checks list (#312)
 - Documentation in Markdown
 - Added an example of capturing and submitting log output (#315)
+- The sendalerts commands measures dwell time and reports it over statsd protocol
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)

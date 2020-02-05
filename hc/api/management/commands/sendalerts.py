@@ -4,6 +4,7 @@ from threading import Thread
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from hc.api.models import Check, Flip
+from statsd.defaults.env import statsd
 
 
 def notify(flip_id, stdout):
@@ -24,9 +25,12 @@ def notify(flip_id, stdout):
         check.project.set_next_nag_date()
 
     # Send notifications
+    send_time = timezone.now()
     errors = flip.send_alerts()
     for ch, error in errors:
         stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
+
+    statsd.timing("hc.sendalerts.dwellTime", send_time - flip.created)
 
 
 def notify_on_thread(flip_id, stdout):
