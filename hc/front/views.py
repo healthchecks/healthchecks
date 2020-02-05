@@ -377,6 +377,15 @@ def update_timeout(request, code):
         check.grace = td(minutes=form.cleaned_data["grace"])
 
     check.alert_after = check.going_down_after()
+    if check.status == "up" and check.alert_after < timezone.now():
+        # Checks can flip from "up" to "down" state as a result of changing check's
+        # schedule.  We don't want to send notifications when changing schedule
+        # interactively in the web UI. So we update the `alert_after` and `status`
+        # fields here the same way as `sendalerts` would do, but without sending
+        # an actual alert:
+        check.alert_after = None
+        check.status = "down"
+
     check.save()
 
     if "/details/" in request.META.get("HTTP_REFERER", ""):
