@@ -4,4 +4,4 @@ django-compressor==2.4
 psycopg2==2.8.4
 pytz==2019.3
 requests==2.22.0
-statsd=3.3.0
+statsd==3.3.0
