@@ -25,12 +25,13 @@ def notify(flip_id, stdout):
         check.project.set_next_nag_date()
 
     # Send notifications
-    send_time = timezone.now()
+    send_start = timezone.now()
     errors = flip.send_alerts()
     for ch, error in errors:
         stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
 
-    statsd.timing("hc.sendalerts.dwellTime", send_time - flip.created)
+    statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
+    statsd.timing("hc.sendalerts.sendTime", timezone.now() - send_start)
 
 
 def notify_on_thread(flip_id, stdout):
