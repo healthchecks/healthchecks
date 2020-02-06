@@ -6,6 +6,9 @@ from django.utils import timezone
 from hc.api.models import Check, Flip
 from statsd.defaults.env import statsd
 
+SENDING_TMPL = "Sending alert, status=%s, code=%s\n"
+SEND_TIME_TMPL = "Sending took %.1fs, code=%s\n"
+
 
 def notify(flip_id, stdout):
     flip = Flip.objects.get(id=flip_id)
@@ -17,8 +20,7 @@ def notify(flip_id, stdout):
     # And just to make sure it doesn't get saved by a future coding accident:
     setattr(check, "save", None)
 
-    tmpl = "Sending alert, status=%s, code=%s\n"
-    stdout.write(tmpl % (flip.new_status, check.code))
+    stdout.write(SENDING_TMPL % (flip.new_status, check.code))
 
     # Set dates for followup nags
     if flip.new_status == "down":
@@ -30,8 +32,13 @@ def notify(flip_id, stdout):
     for ch, error in errors:
         stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
 
+    # If sending took more than 5s, log it
+    send_time = timezone.now() - send_start
+    if send_time.total_seconds() > 5:
+        stdout.write(SEND_TIME_TMPL % (send_time.total_seconds(), check.code))
+
     statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
-    statsd.timing("hc.sendalerts.sendTime", timezone.now() - send_start)
+    statsd.timing("hc.sendalerts.sendTime", send_time)
 
 
 def notify_on_thread(flip_id, stdout):
