@@ -1,3 +1,4 @@
+from datetime import timedelta as td
 import time
 from threading import Thread
 
@@ -103,7 +104,16 @@ class Command(BaseCommand):
         old_status = check.status
         q = Check.objects.filter(id=check.id, status=old_status)
 
-        if check.get_status(with_started=False) != "down":
+        try:
+            status = check.get_status(with_started=False)
+        except Exception as e:
+            # Make sure we don't trip on this check again for an hour:
+            # Otherwise sendalerts may end up in a crash loop.
+            q.update(alert_after=now + td(hours=1))
+            # Then re-raise the exception:
+            raise e
+
+        if status != "down":
             # It is not down yet. Update alert_after
             q.update(alert_after=check.going_down_after())
             return True

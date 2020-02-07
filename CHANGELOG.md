@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 - Increase the allowable length of Matrix room alias to 100 (#320)
 - Make sure Check.last_ping and Ping.created timestamps match exactly
 - Don't trigger "down" notifications when changing schedule interactively in web UI
-
+- Fix sendalerts crash loop when encountering a bad cron schedule
 
 ## v1.12.0 - 2020-01-02
 
