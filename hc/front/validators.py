@@ -25,7 +25,10 @@ class CronExpressionValidator(object):
             raise ValidationError(message=self.message)
 
         try:
-            croniter(value)
+            # Does croniter accept the schedule?
+            it = croniter(value)
+            # Can it calculate the next datetime?
+            it.next()
         except:
             raise ValidationError(message=self.message)
 

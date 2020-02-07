@@ -74,7 +74,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def test_it_validates_cron_expression(self):
         self.client.login(username="alice@example.org", password="password")
-        samples = ["* invalid *", "1,2 3,* * * *"]
+        samples = ["* invalid *", "1,2 3,* * * *", "0 0 31 2 *"]
 
         for sample in samples:
             payload = {"kind": "cron", "schedule": sample, "tz": "UTC", "grace": 60}

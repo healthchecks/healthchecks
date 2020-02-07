@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Make sure Check.last_ping and Ping.created timestamps match exactly
 - Don't trigger "down" notifications when changing schedule interactively in web UI
 - Fix sendalerts crash loop when encountering a bad cron schedule
+- Stricter cron validation, reject schedules like "At midnight of February 31"
 
 ## v1.12.0 - 2020-01-02
 
