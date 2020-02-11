@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     "hc.api",
     "hc.front",
     "hc.payments",
+    "django_extensions",
 )
 
 MIDDLEWARE = (
