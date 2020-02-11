@@ -33,7 +33,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "healthchecks@example.org")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 USE_PAYMENTS = envbool("USE_PAYMENTS", "False")
-REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "True")
+REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "False")
 VERSION = ""
 with open(os.path.join(BASE_DIR, "CHANGELOG.md"), encoding="utf-8") as f:
     for line in f.readlines():
