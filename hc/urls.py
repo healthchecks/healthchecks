@@ -20,5 +20,4 @@ urlpatterns = [
     ),
     path("", include("hc.api.urls")),
     path("", include("hc.front.urls")),
-    path("", include("hc.payments.urls")),
 ]

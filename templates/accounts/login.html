@@ -22,42 +22,7 @@
         {% endif %}
 
         <div class="row">
-            <div class="col-sm-6">
-                <form id="magic-link-form" method="post">
-                    {% csrf_token %}
-
-                    {% if magic_form.identity.errors %}
-                    <p class="text-danger">{{ magic_form.identity.errors|join:"" }}</p>
-                    {% else %}
-                    <p>Enter your <strong>email address</strong>.</p>
-                    {% endif %}
-
-                    <input
-                        type="email"
-                        class="form-control input-lg"
-                        name="identity"
-                        value="{{ magic_form.identity.value|default:"" }}"
-                        placeholder="you@example.org"
-                        autocomplete="email">
-
-                    <p id="link-instruction">
-                        We will email you a magic sign in link.
-                    </p>
-
-                    <button type="submit" class="btn btn-lg btn-primary btn-block">
-                        Email Me a Link
-                    </button>
-                </form>
-                <div id="login-sep" class="hidden-xs"><div>or</div></div>
-            </div>
-
-            <div class="col-xs-12 visible-xs-block">
-                <div id="xs-login-sep">
-                    <div>or</div>
-                </div>
-            </div>
-
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 <form id="login-form" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="login" />
@@ -116,6 +81,8 @@
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/login.js' %}"></script>
+{% if registration_open %}
 <script src="{% static 'js/signup.js' %}"></script>
+{% endif %}
 {% endcompress %}
 {% endblock %}
