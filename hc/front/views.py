@@ -427,7 +427,7 @@ def ping_details(request, code, n=None):
     try:
         ping = q.latest("created")
     except Ping.DoesNotExist:
-        raise Http404("not found")
+        return render(request, "front/ping_details_not_found.html")
 
     ctx = {"check": check, "ping": ping}
 

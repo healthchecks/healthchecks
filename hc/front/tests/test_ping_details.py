@@ -58,4 +58,4 @@ class LastPingTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/%s/pings/123/" % check.code)
-        self.assertEqual(r.status_code, 404)
+        self.assertContains(r, "No additional information is", status_code=200)
