@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Don't trigger "down" notifications when changing schedule interactively in web UI
 - Fix sendalerts crash loop when encountering a bad cron schedule
 - Stricter cron validation, reject schedules like "At midnight of February 31"
+- In hc.front.views.ping_details, if a ping does not exist, return 404 instead of 500
 
 ## v1.12.0 - 2020-01-02
 

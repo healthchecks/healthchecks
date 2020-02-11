@@ -424,7 +424,10 @@ def ping_details(request, code, n=None):
     if n:
         q = q.filter(n=n)
 
-    ping = q.latest("created")
+    try:
+        ping = q.latest("created")
+    except Ping.DoesNotExist:
+        raise Http404("not found")
 
     ctx = {"check": check, "ping": ping}
 

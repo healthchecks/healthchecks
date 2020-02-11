@@ -52,3 +52,10 @@ class LastPingTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get("/checks/%s/last_ping/" % check.code)
         self.assertEqual(r.status_code, 200)
+
+    def test_it_handles_missing_ping(self):
+        check = Check.objects.create(project=self.project)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/%s/pings/123/" % check.code)
+        self.assertEqual(r.status_code, 404)
