@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Added an example of capturing and submitting log output (#315)
 - The sendalerts commands measures dwell time and reports it over statsd protocol
 - Django 3.0.3
+- Show a warning in top navigation if the project has no integrations (#327)
 
 ### Bug Fixes
 - Increase the allowable length of Matrix room alias to 100 (#320)

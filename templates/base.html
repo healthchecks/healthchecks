@@ -97,7 +97,7 @@
                         <a href="{% url 'hc-checks' project.code %}">Checks</a>
                     </li>
 
-                    {% with b=project.have_broken_channels %}
+                    {% with b=project.have_channel_issues %}
                     <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
                         <a href="{% url 'hc-channels' %}">
                             Integrations

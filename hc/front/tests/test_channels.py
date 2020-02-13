@@ -126,7 +126,7 @@ class ChannelsTestCase(BaseTestCase):
         r = self.client.get("/integrations/")
         self.assertRedirects(r, "/")
 
-    def test_it_shows_broken_channel_indicator(self):
+    def test_it_shows_channel_issues_indicator(self):
         Channel.objects.create(kind="sms", project=self.project, last_error="x")
 
         self.client.login(username="alice@example.org", password="password")

@@ -15,9 +15,15 @@ class ProjectModelTestCase(BaseTestCase):
         self.assertEqual(self.project.num_checks_available(), 18)
 
     def test_it_handles_zero_broken_channels(self):
-        self.assertFalse(self.project.have_broken_channels())
+        Channel.objects.create(kind="webhook", last_error="", project=self.project)
+
+        self.assertFalse(self.project.have_channel_issues())
 
     def test_it_handles_one_broken_channel(self):
         Channel.objects.create(kind="webhook", last_error="x", project=self.project)
 
-        self.assertTrue(self.project.have_broken_channels())
+        self.assertTrue(self.project.have_channel_issues())
+
+    def test_it_handles_no_channels(self):
+        # It's an issue if the project has no channels at all:
+        self.assertTrue(self.project.have_channel_issues())

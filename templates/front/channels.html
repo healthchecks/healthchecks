@@ -150,8 +150,14 @@
         {% endfor %}
     </table>
     {% else %}
-        <div class="alert alert-info">
-            The project <strong>{{ project }}</strong> has no integrations set up yet.
+        <div class="alert alert-danger">
+            <p> The project "{{ project }}" does not have any integrations
+                set up yet.
+            </p>
+            <p>With no configured integrations, {% site_name %}
+                <strong>will not send any notifications</strong>
+                when checks change state.
+            </p>
         </div>
     {% endif %}
 
