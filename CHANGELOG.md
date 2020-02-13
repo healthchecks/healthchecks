@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.13.0-dev - Unreleased
+## v1.13.0 - 2020-02-13
 
 ### Improvements
 - Show a red "!" in project's top navigation if any integration is not working
