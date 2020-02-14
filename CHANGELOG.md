@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.14.0 - Unreleased
+
+### Bug Fixes
+- The "render_docs" command checks if markdown and pygments is installed (#329)
+
+
 ## v1.13.0 - 2020-02-13
 
 ### Improvements
