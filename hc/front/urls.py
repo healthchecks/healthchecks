@@ -70,6 +70,7 @@ urlpatterns = [
     path("projects/<uuid:code>/checks/add/", views.add_check, name="hc-add-check"),
     path("checks/cron_preview/", views.cron_preview),
     path("projects/<uuid:code>/checks/status/", views.status, name="hc-status"),
+    path("projects/<uuid:code>/checks/metrics/", views.metrics, name="hc-metrics"),
     path("checks/<uuid:code>/", include(check_urls)),
     path("integrations/", include(channel_urls)),
     path("docs/", views.serve_doc, name="hc-docs"),

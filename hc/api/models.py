@@ -199,6 +199,11 @@ class Check(models.Model):
         codes = self.channel_set.order_by("code").values_list("code", flat=True)
         return ",".join(map(str, codes))
 
+    @property
+    def unique_key(self):
+        code_half = self.code.hex[:16]
+        return hashlib.sha1(code_half.encode()).hexdigest()
+
     def to_dict(self, readonly=False):
 
         result = {
@@ -216,8 +221,7 @@ class Check(models.Model):
             result["last_duration"] = int(self.last_duration.total_seconds())
 
         if readonly:
-            code_half = self.code.hex[:16]
-            result["unique_key"] = hashlib.sha1(code_half.encode()).hexdigest()
+            result["unique_key"] = self.unique_key
         else:
             update_rel_url = reverse("hc-api-update", args=[self.code])
             pause_rel_url = reverse("hc-api-pause", args=[self.code])

@@ -1540,3 +1540,50 @@ def add_msteams(request):
 
     ctx = {"page": "channels", "project": request.project, "form": form}
     return render(request, "integrations/add_msteams.html", ctx)
+
+
+def metrics(request, code):
+    api_key = request.GET.get("api_key", "")
+    if len(api_key) != 32:
+        return HttpResponseBadRequest()
+
+    q = Project.objects.filter(code=code, api_key_readonly=api_key)
+    try:
+        project = q.get()
+    except Project.DoesNotExist:
+        return HttpResponseForbidden()
+
+    checks = Check.objects.filter(project_id=project.id).order_by("id")
+
+    def esc(s):
+        return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+    def output(checks):
+        yield "# HELP hc_check_up Whether the check is currently up (1 for yes, 0 for no).\n"
+        yield "# TYPE hc_check_up gauge\n"
+
+        TMPL = """hc_check_up{name="%s", tags="%s", unique_key="%s"} %d\n"""
+        for check in checks:
+            value = 0 if check.get_status(with_started=False) == "down" else 1
+            yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
+
+        tags_statuses, num_down = _tags_statuses(checks)
+        yield "\n"
+        yield "# HELP hc_tag_up Whether all checks with this tag are up (1 for yes, 0 for no).\n"
+        yield "# TYPE hc_tag_up gauge\n"
+        TMPL = """hc_tag_up{tag="%s"} %d\n"""
+        for tag in sorted(tags_statuses):
+            value = 0 if tags_statuses[tag] == "down" else 1
+            yield TMPL % (esc(tag), value)
+
+        yield "\n"
+        yield "# HELP hc_checks_total The total number of checks.\n"
+        yield "# TYPE hc_checks_total gauge\n"
+        yield "hc_checks_total %d\n" % len(checks)
+        yield "\n"
+
+        yield "# HELP hc_checks_down_total The number of checks currently down.\n"
+        yield "# TYPE hc_checks_down_total gauge\n"
+        yield "hc_checks_down_total %d\n" % num_down
+
+    return HttpResponse(output(checks), content_type="text/plain")

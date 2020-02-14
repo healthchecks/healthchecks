@@ -1,10 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.14.0 - Unreleased
+## v1.14.0-dev - Unreleased
 
 ### Improvements
 - Improved UI to invite users from account's other projects (#258)
+- Experimental Prometheus metrics endpoint (#300)
 
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)

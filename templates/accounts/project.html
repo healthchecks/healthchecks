@@ -43,6 +43,10 @@
                             API key (read-only): <br />
                             <code>{{ project.api_key_readonly }}</code>
                         </p>
+                        <p>
+                            Prometheus metrics endpoint:
+                            <a href="{% url 'hc-metrics' project.code %}?api_key={{ project.api_key_readonly }}">here</a>
+                        </p>
                         {% endif %}
                         <button
                             data-toggle="modal"
