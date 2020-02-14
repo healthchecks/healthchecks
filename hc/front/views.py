@@ -1542,12 +1542,11 @@ def add_msteams(request):
     return render(request, "integrations/add_msteams.html", ctx)
 
 
-def metrics(request, code):
-    api_key = request.GET.get("api_key", "")
-    if len(api_key) != 32:
+def metrics(request, code, key):
+    if len(key) != 32:
         return HttpResponseBadRequest()
 
-    q = Project.objects.filter(code=code, api_key_readonly=api_key)
+    q = Project.objects.filter(code=code, api_key_readonly=key)
     try:
         project = q.get()
     except Project.DoesNotExist:

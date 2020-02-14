@@ -45,7 +45,7 @@
                         </p>
                         <p>
                             Prometheus metrics endpoint:
-                            <a href="{% url 'hc-metrics' project.code %}?api_key={{ project.api_key_readonly }}">here</a>
+                            <a href="{% url 'hc-metrics' project.code project.api_key_readonly %}">here</a>
                         </p>
                         {% endif %}
                         <button
