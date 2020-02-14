@@ -22,7 +22,7 @@ class Command(BaseCommand):
         try:
             from pygments import lexers
         except ImportError:
-            self.stdout.write("This command requires Pygments package.")
+            self.stdout.write("This command requires the Pygments package.")
             self.stdout.write("Please install it with:\n\n")
             self.stdout.write("  pip install Pygments\n\n")
             return

@@ -2,13 +2,23 @@ import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-import markdown
 
 
 class Command(BaseCommand):
     help = "Renders Markdown to HTML"
 
     def handle(self, *args, **options):
+        try:
+            import markdown
+
+            # We use pygments for highlighting code samples
+            import pygments
+        except ImportError as e:
+            self.stdout.write(f"This command requires the {e.name} package.")
+            self.stdout.write("Please install it with:\n\n")
+            self.stdout.write(f"  pip install {e.name}\n\n")
+            return
+
         extensions = ["fenced_code", "codehilite", "tables"]
         ec = {"codehilite": {"css_class": "highlight"}}
 
