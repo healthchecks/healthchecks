@@ -265,6 +265,7 @@ def project(request, code):
         return HttpResponseNotFound()
 
     is_owner = project.owner_id == request.user.id
+    invite_suggestions = project.invite_suggestions()
     ctx = {
         "page": "project",
         "project": project,
@@ -273,6 +274,7 @@ def project(request, code):
         "project_name_status": "default",
         "api_status": "default",
         "team_status": "default",
+        "invite_suggestions": invite_suggestions,
     }
 
     if request.method == "POST":
@@ -293,15 +295,22 @@ def project(request, code):
         elif "show_api_keys" in request.POST:
             ctx["show_api_keys"] = True
         elif "invite_team_member" in request.POST:
-            if not is_owner or not project.can_invite():
+            if not is_owner:
                 return HttpResponseForbidden()
 
             form = InviteTeamMemberForm(request.POST)
             if form.is_valid():
-                if not TokenBucket.authorize_invite(request.user):
-                    return render(request, "try_later.html")
-
                 email = form.cleaned_data["email"]
+
+                if not invite_suggestions.filter(email=email).exists():
+                    # We're inviting a new user. Are we within team size limit?
+                    if not project.can_invite_new_users():
+                        return HttpResponseForbidden()
+
+                    # And are we not hitting a rate limit?
+                    if not TokenBucket.authorize_invite(request.user):
+                        return render(request, "try_later.html")
+
                 try:
                     user = User.objects.get(email=email)
                 except User.DoesNotExist:
@@ -343,9 +352,6 @@ def project(request, code):
                 ctx["project_name_updated"] = True
                 ctx["project_name_status"] = "success"
 
-    # Count members right before rendering the template, in case
-    # we just invited or removed someone
-    ctx["num_members"] = project.member_set.count()
     return render(request, "accounts/project.html", ctx)
 
 

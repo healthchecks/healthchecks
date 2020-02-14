@@ -90,27 +90,53 @@
         <div class="panel panel-{{ team_status }}">
             <div class="panel-body settings-block">
                 <h2>Team Access</h2>
-                {% if num_members %}
-                    <table class="table">
+                {% if project.team.exists or invite_suggestions %}
+                    <table id="team-table" class="table">
+                        <tr>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th></th>
+                        </tr>
                         <tr>
                             <td>{{ project.owner.email }}</td>
                             <td>Owner</td>
                             <td></td>
                         </tr>
-                        {% for member in project.member_set.all %}
+                        {% for user in project.team %}
                         <tr>
-                            <td>{{ member.user.email }} </td>
+                            <td>{{ user.email }} </td>
                             <td>Member</td>
                             <td>
                                 {% if is_owner %}
                                 <a
                                     href="#"
-                                    data-email="{{ member.user.email }}"
+                                    data-email="{{ user.email }}"
                                     class="pull-right member-remove">Remove</a>
                                 {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
+
+                        {% if is_owner and invite_suggestions %}
+                        <tr id="suggestions-row">
+                            <td colspan="3">
+                                Add Users from Other Teams
+                            </td>
+                        </tr>
+
+                        {% for user in project.invite_suggestions %}
+                        <tr class="invite-suggestion">
+                            <td>{{ user.email }} </td>
+                            <td></td>
+                            <td>
+                                <a
+                                    href="#"
+                                    data-email="{{ user.email }}"
+                                    class="pull-right add-to-team">Add to Team</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
                     </table>
                 {% else %}
                     <p>
@@ -123,7 +149,7 @@
                 <br />
 
                 {% if is_owner %}
-                {% if project.can_invite%}
+                {% if project.can_invite_new_users %}
                 <a
                     href="#"
                     class="btn btn-primary pull-right"
@@ -132,7 +158,7 @@
                 {% else %}
                 <div class="alert alert-info">
                     <strong>Team size limit reached.</strong>
-                    To invite more members, please
+                    To invite new members by email, please
                     <a href="{% url 'hc-pricing' %}">upgrade your account!</a>
                 </div>
                 {% endif %}
@@ -234,6 +260,7 @@
     <div class="modal-dialog">
         <form method="post" class="form-horizontal">
             {% csrf_token %}
+            <input type="hidden" name="invite_team_member" value="1" />
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>

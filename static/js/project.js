@@ -14,8 +14,14 @@ $(function() {
         $('#itm-email').focus();
     })
 
-    $('#set-team-name-modal').on('shown.bs.modal', function () {
-        $('#team-name').focus();
+    $('#set-project-name-modal').on('shown.bs.modal', function () {
+        $('#project-name').focus();
     })
+
+    $(".add-to-team").click(function() {
+        $("#itm-email").val(this.dataset.email);
+        $("#invite-team-member-modal form").submit();
+        return false;
+    });
 
 });

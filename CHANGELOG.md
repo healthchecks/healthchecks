@@ -3,8 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## v1.14.0 - Unreleased
 
+### Improvements
+- Improved UI to invite users from account's other projects (#258)
+
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)
+- The team size limit is applied to the n. of distinct users across all projects (#332)
 
 
 ## v1.13.0 - 2020-02-13

@@ -245,8 +245,18 @@ class Project(models.Model):
         self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
         self.save()
 
-    def can_invite(self):
-        return self.member_set.count() < self.owner_profile.team_limit
+    def team(self):
+        return User.objects.filter(memberships__project=self).order_by("email")
+
+    def invite_suggestions(self):
+        q = User.objects.filter(memberships__project__owner_id=self.owner_id)
+        q = q.exclude(memberships__project=self)
+        return q.distinct().order_by("email")
+
+    def can_invite_new_users(self):
+        q = User.objects.filter(memberships__project__owner_id=self.owner_id)
+        used = q.distinct().count()
+        return used < self.owner_profile.team_limit
 
     def invite(self, user):
         Member.objects.create(user=user, project=self)
