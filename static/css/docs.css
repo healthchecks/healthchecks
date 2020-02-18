@@ -83,6 +83,14 @@ a.section:hover  {
     border-radius: 4px;
 }
 
+.page-docs pre code {
+    padding: 0;
+    font-size: 13px;
+    background-color: transparent;
+    border-radius: 0;
+}
+
+
 .docs-content, .docs-content .table td {
     line-height: 1.8;
 }

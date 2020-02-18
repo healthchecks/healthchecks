@@ -4,7 +4,7 @@ have to do is make a HTTP request at the end of the script.
 <a href="https://curl.haxx.se/docs/manpage.html">curl</a> and
 <a href="https://www.gnu.org/software/wget/manual/wget.html">wget</a>
 are two common command line HTTP clients you can use.</p>
-<div class="highlight"><pre><span></span><span class="c1"># Sending a HTTP GET request with curl:</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Sending a HTTP GET request with curl:</span>
 curl --retry <span class="m">3</span> PING_URL
 
 <span class="c1"># Silent version (no stdout/stderr output unless curl hits an error):</span>
@@ -12,7 +12,7 @@ curl -fsS --retry <span class="m">3</span> PING_URL
 
 <span class="c1"># Sending a HTTP GET request with wget:</span>
 wget PING_URL -O /dev/null
-</pre></div>
+</code></pre></div>
 
 
 <h2>Signalling Failure from Shell Scripts</h2>
@@ -23,13 +23,13 @@ signal a failure. The below example:</p>
 <li>if the certbot command is successful (exit code 0), send HTTP GET to <code>PING_URL</code></li>
 <li>otherwise, send HTTP GET to <code>PING_URL/fail</code></li>
 </ul>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="c1"># Payload here:</span>
 /usr/bin/certbot renew
 <span class="c1"># Ping SITE_NAME</span>
 curl --retry <span class="m">3</span> <span class="s2">&quot;PING_URL</span><span class="k">$(</span><span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> -n /fail<span class="k">)</span><span class="s2">&quot;</span>
-</pre></div>
+</code></pre></div>
 
 
 <h2>Logging Command Output</h2>
@@ -37,8 +37,8 @@ curl --retry <span class="m">3</span> <span class="s2">&quot;PING_URL</span><spa
 body. If the request body looks like a valid UTF-8 string, SITE_NAME
 will accept and store first 10KB of the request body.</p>
 <p>In the below example, certbot's output is captured and submitted via HTTP POST:</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
 curl -fsS --retry <span class="m">3</span> -X POST --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
-</pre></div>
+</code></pre></div>
