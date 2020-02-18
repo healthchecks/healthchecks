@@ -41,6 +41,19 @@ def site_root():
 
 
 @register.simple_tag
+def site_scheme():
+    parts = settings.SITE_ROOT.split("://")
+    assert parts[0] in ("http", "https")
+    return parts[0]
+
+
+@register.simple_tag
+def site_hostname():
+    parts = settings.SITE_ROOT.split("://")
+    return parts[1]
+
+
+@register.simple_tag
 def site_version():
     return settings.VERSION
 

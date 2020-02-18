@@ -291,6 +291,16 @@
             <a href="{% url 'hc-add-pagertree' %}" class="btn btn-primary">Add Integration</a>
         </li>
 
+        <li>
+            <img src="{% static 'img/integrations/prometheus.png' %}"
+                class="icon" alt="Prometheus icon" />
+
+            <h2>Prometheus</h2>
+            <p>Export check and tag status values to Prometheus.</p>
+
+            <a href="{% url 'hc-add-prometheus' %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
         {% if enable_pushbullet %}
         <li>
             <img src="{% static 'img/integrations/pushbullet.png' %}"

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Add Prometheus - {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+      <h1>Prometheus</h1>
+
+      <p>
+          {% site_name %} provides a
+          <a href="https://prometheus.io">Prometheus</a>-compatible metrics endpoint
+          for each project. The endpoints are secured using each project's
+          read-only API key.
+
+          If your team uses Prometheus, you can configure it to scrape {% site_name %}
+          and have up-to-date check and tag status values available in Prometheus.
+      </p>
+
+      <h2>Setup Guide</h2>
+
+      <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+              <p>
+                Look up your project's read-only API key in
+                <strong>Project Settings › API Access</strong>.
+              </p>
+              <p>
+                If you have not generated API keys before, you will need to do that
+                first.
+            </p>
+        </div>
+        <div class="col-sm-6">
+          <img
+              class="ai-guide-screenshot"
+              alt="Click create integration button"
+              src="{% static 'img/integrations/setup_prometheus_1.png' %}" />
+        </div>
+      </div>
+
+      <div class="row ai-step">
+          <div class="col-sm-12">
+              <span class="step-no">2</span>
+                <p>
+                    Edit Prometheus configuration and add a new section in the
+                    <code>scrape_configs</code> section.
+                </p>
+                <pre>
+- job_name: 'healthchecks-{{ project|slugify }}'
+  scheme: {% site_scheme %}
+  metrics_path: /projects/{{ project.code }}/metrics/<strong>YOUR-READ-ONLY-API-KEY</strong>
+  static_configs:
+  - targets: ['{% site_hostname %}']</pre>
+          </div>
+      </div>
+
+      <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+              <p>
+                Reload Prometheus' configuration. You should now start seeing
+                {% site_name %} data appear in Prometheus.
+              </p>
+        </div>
+      </div>
+
+  </div>
+</div>
+{% endblock %}

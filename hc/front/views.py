@@ -1542,6 +1542,12 @@ def add_msteams(request):
     return render(request, "integrations/add_msteams.html", ctx)
 
 
+@login_required
+def add_prometheus(request):
+    ctx = {"page": "channels", "project": request.project}
+    return render(request, "integrations/add_prometheus.html", ctx)
+
+
 def metrics(request, code, key):
     if len(key) != 32:
         return HttpResponseBadRequest()
