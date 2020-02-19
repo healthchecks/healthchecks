@@ -143,11 +143,16 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(check.channel_set.count(), 1)
 
     def test_it_rejects_bad_channel_code(self):
-        r = self.post(
-            self.check.code, {"api_key": "X" * 32, "channels": str(uuid.uuid4())}
-        )
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "abc"})
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
+
+    def test_it_rejects_missing_channel(self):
+        code = str(uuid.uuid4())
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": code})
 
         self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.json()["error"], "invalid channel identifier: " + code)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)

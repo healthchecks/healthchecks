@@ -2,7 +2,6 @@ from datetime import timedelta as td
 import uuid
 
 from django.conf import settings
-from django.core.exceptions import SuspiciousOperation
 from django.db import connection
 from django.http import (
     HttpResponse,
@@ -20,6 +19,10 @@ from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.models import Check, Notification, Channel
 from hc.lib.badges import check_signature, get_badge_svg
+
+
+class BadChannelException(Exception):
+    pass
 
 
 @csrf_exempt
@@ -101,13 +104,14 @@ def _update(check, spec):
                 try:
                     chunk = uuid.UUID(chunk)
                 except ValueError:
-                    raise SuspiciousOperation("Invalid channel identifier")
+                    raise BadChannelException("invalid channel identifier: %s" % chunk)
 
                 try:
                     channel = Channel.objects.get(code=chunk)
                     channels.append(channel)
                 except Channel.DoesNotExist:
-                    raise SuspiciousOperation("Invalid channel identifier")
+                    raise BadChannelException("invalid channel identifier: %s" % chunk)
+
             check.channel_set.set(channels)
 
     return check
@@ -145,7 +149,11 @@ def create_check(request):
         check = Check(project=request.project)
         created = True
 
-    _update(check, request.json)
+    try:
+        _update(check, request.json)
+    except BadChannelException as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
     return JsonResponse(check.to_dict(), status=201 if created else 200)
 
 
@@ -177,7 +185,11 @@ def update(request, code):
         return HttpResponseForbidden()
 
     if request.method == "POST":
-        _update(check, request.json)
+        try:
+            _update(check, request.json)
+        except BadChannelException as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
         return JsonResponse(check.to_dict())
 
     elif request.method == "DELETE":

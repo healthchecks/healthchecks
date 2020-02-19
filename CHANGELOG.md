@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)
 - The team size limit is applied to the n. of distinct users across all projects (#332)
-
+- Don't let SuspiciousOperation bubble up when validating channel ids in API
 
 ## v1.13.0 - 2020-02-13
 
