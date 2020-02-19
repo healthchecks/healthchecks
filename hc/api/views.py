@@ -100,6 +100,7 @@ def _update(check, spec):
             check.channel_set.clear()
         else:
             channels = []
+            channel_query = Channel.objects.filter(project=check.project)
             for chunk in spec["channels"].split(","):
                 try:
                     chunk = uuid.UUID(chunk)
@@ -107,8 +108,7 @@ def _update(check, spec):
                     raise BadChannelException("invalid channel identifier: %s" % chunk)
 
                 try:
-                    channel = Channel.objects.get(code=chunk)
-                    channels.append(channel)
+                    channels.append(channel_query.get(code=chunk))
                 except Channel.DoesNotExist:
                     raise BadChannelException("invalid channel identifier: %s" % chunk)
 

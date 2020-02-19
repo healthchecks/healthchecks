@@ -157,6 +157,18 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)
 
+    def test_it_rejects_channel_from_another_project(self):
+        charlies_channel = Channel.objects.create(project=self.charlies_project)
+
+        code = str(charlies_channel.code)
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": code})
+
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.json()["error"], "invalid channel identifier: " + code)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.channel_set.count(), 0)
+
     def test_it_rejects_non_uuid_channel_code(self):
         r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "foo"})
 
