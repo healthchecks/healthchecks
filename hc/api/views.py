@@ -89,6 +89,7 @@ def _update(check, spec):
         if "tz" in spec:
             check.tz = spec["tz"]
 
+    check.alert_after = check.going_down_after()
     check.save()
 
     # This needs to be done after saving the check, because of

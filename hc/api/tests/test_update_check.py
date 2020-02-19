@@ -1,5 +1,7 @@
+from datetime import timedelta as td
 import uuid
 
+from django.utils.timezone import now
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -14,6 +16,10 @@ class UpdateCheckTestCase(BaseTestCase):
         return self.client.post(url, data, content_type="application/json")
 
     def test_it_works(self):
+        self.check.last_ping = now()
+        self.check.status = "up"
+        self.check.save()
+
         r = self.post(
             self.check.code,
             {
@@ -34,7 +40,6 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(doc["name"], "Foo")
         self.assertEqual(doc["tags"], "bar,baz")
         self.assertEqual(doc["desc"], "My description")
-        self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
 
         self.assertTrue("schedule" not in doc)
@@ -47,6 +52,10 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.tags, "bar,baz")
         self.assertEqual(self.check.timeout.total_seconds(), 3600)
         self.assertEqual(self.check.grace.total_seconds(), 60)
+
+        # alert_after should be updated too
+        expected_aa = self.check.last_ping + td(seconds=3600 + 60)
+        self.assertEqual(self.check.alert_after, expected_aa)
 
     def test_it_handles_options(self):
         r = self.client.options("/api/v1/checks/%s" % self.check.code)
