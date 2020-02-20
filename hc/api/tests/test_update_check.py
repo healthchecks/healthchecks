@@ -119,6 +119,15 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 1)
         self.assertEqual(self.check.channel_set.first().code, channel.code)
 
+    def test_it_sets_the_channel_only_once(self):
+        channel = Channel.objects.create(project=self.project)
+        duplicates = "%s,%s" % (channel.code, channel.code)
+        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": duplicates})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.channel_set.count(), 1)
+
     def test_it_handles_comma_separated_channel_codes(self):
         c1 = Channel.objects.create(project=self.project)
         c2 = Channel.objects.create(project=self.project)
@@ -152,9 +161,14 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(check.channel_set.count(), 1)
 
     def test_it_rejects_bad_channel_code(self):
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "abc"})
+        payload = {"api_key": "X" * 32, "channels": "abc", "name": "New Name"}
+        r = self.post(self.check.code, payload,)
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
+
+        # The name should be unchanged
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.name, "")
 
     def test_it_rejects_missing_channel(self):
         code = str(uuid.uuid4())

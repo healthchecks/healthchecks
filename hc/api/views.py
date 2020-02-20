@@ -67,6 +67,21 @@ def _lookup(project, spec):
 
 
 def _update(check, spec):
+    channels = set()
+    # First, validate the supplied channel codes
+    if "channels" in spec and spec["channels"] not in ("*", ""):
+        q = Channel.objects.filter(project=check.project)
+        for s in spec["channels"].split(","):
+            try:
+                code = uuid.UUID(s)
+            except ValueError:
+                raise BadChannelException("invalid channel identifier: %s" % s)
+
+            try:
+                channels.add(q.get(code=code))
+            except Channel.DoesNotExist:
+                raise BadChannelException("invalid channel identifier: %s" % s)
+
     if "name" in spec:
         check.name = spec["name"]
 
@@ -94,26 +109,12 @@ def _update(check, spec):
 
     # This needs to be done after saving the check, because of
     # the M2M relation between checks and channels:
-    if "channels" in spec:
-        if spec["channels"] == "*":
-            check.assign_all_channels()
-        elif spec["channels"] == "":
-            check.channel_set.clear()
-        else:
-            channels = []
-            channel_query = Channel.objects.filter(project=check.project)
-            for chunk in spec["channels"].split(","):
-                try:
-                    chunk = uuid.UUID(chunk)
-                except ValueError:
-                    raise BadChannelException("invalid channel identifier: %s" % chunk)
-
-                try:
-                    channels.append(channel_query.get(code=chunk))
-                except Channel.DoesNotExist:
-                    raise BadChannelException("invalid channel identifier: %s" % chunk)
-
-            check.channel_set.set(channels)
+    if spec.get("channels") == "*":
+        check.assign_all_channels()
+    elif spec.get("channels") == "":
+        check.channel_set.clear()
+    elif channels:
+        check.channel_set.set(channels)
 
     return check
 

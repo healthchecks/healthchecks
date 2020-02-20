@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - API: don't let SuspiciousOperation bubble up when validating channel ids
 - API security: check channel ownership when setting check's channels
 - API: update check's "alert_after" field when changing schedule
+- API: validate channel identifiers before creating/updating a check (#335)
 
 ## v1.13.0 - 2020-02-13
 
