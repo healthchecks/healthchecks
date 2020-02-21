@@ -178,7 +178,6 @@
 
             <h2>Email</h2>
             <p>Get an email message when a check goes up or down.</p>
-
             <a href="{% url 'hc-add-email' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -188,7 +187,6 @@
 
             <h2>Webhook</h2>
             <p>Receive a HTTP callback when a check goes down.</p>
-
             <a href="{% url 'hc-add-webhook' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% if enable_apprise %}
@@ -198,8 +196,7 @@
 
             <h2>Apprise</h2>
             <p>Receive instant push notifications using Apprise; see <a href="https://github.com/caronc/apprise#popular-notification-services" >all of the supported services here</a>.</p>
-
-            <a href="{% url 'hc-add-apprise' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-apprise' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -210,7 +207,6 @@
 
             <h2>Discord</h2>
             <p>Cross-platform voice and text chat app designed for gamers.</p>
-
             <a href="{% url 'hc-add-discord' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -222,7 +218,6 @@
 
             <h2>Matrix</h2>
             <p>Post notifications to a Matrix room.</p>
-
             <a href="{% url 'hc-add-matrix' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -233,7 +228,6 @@
 
             <h2>Mattermost</h2>
             <p>High Trust Messaging for the Enterprise.</p>
-
             <a href="{% url 'hc-add-mattermost' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -243,7 +237,6 @@
 
             <h2>Microsoft Teams</h2>
             <p>Chat and collaboration platform for Microsoft Office 365 customers.</p>
-
             <a href="{% url 'hc-add-msteams' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -253,7 +246,6 @@
 
             <h2>OpsGenie</h2>
             <p> Alerting &amp; Incident Management Solution for Dev &amp; Ops.</p>
-
             <a href="{% url 'hc-add-opsgenie' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -277,7 +269,6 @@
 
             <h2>Pager Team</h2>
             <p>On-call rotations without limits.</p>
-
             <a href="{% url 'hc-add-pagerteam' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -287,7 +278,6 @@
 
             <h2>PagerTree</h2>
             <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications</p>
-
             <a href="{% url 'hc-add-pagertree' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -297,7 +287,6 @@
 
             <h2>Prometheus</h2>
             <p>Export check and tag status values to Prometheus.</p>
-
             <a href="{% url 'hc-add-prometheus' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -308,7 +297,6 @@
 
             <h2>Pushbullet</h2>
             <p>Pushbullet connects your devices, making them feel like one.</p>
-
             <a href="{% url 'hc-add-pushbullet' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -320,7 +308,6 @@
 
             <h2>Pushover</h2>
             <p>Receive instant push notifications on your phone or tablet.</p>
-
             <a href="{% url 'hc-add-pushover' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -332,7 +319,6 @@
 
             <h2>Shell Command</h2>
             <p>Execute a local shell command when a check goes up or down.</p>
-
             <a href="{% url 'hc-add-shell' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -344,7 +330,6 @@
 
             <h2>SMS</h2>
             <p>Get a text message to your phone when a check goes down.</p>
-
             <a href="{% url 'hc-add-sms' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -356,7 +341,6 @@
 
             <h2>Telegram</h2>
             <p>A messaging app with a focus on speed and security.</p>
-
             <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -368,7 +352,6 @@
 
             <h2>Trello</h2>
             <p>Create a Trello card when a check goes down.</p>
-
             <a href="{% url 'hc-add-trello' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -379,7 +362,6 @@
 
             <h2>VictorOps</h2>
             <p>On-call scheduling, alerting, and incident tracking.</p>
-
             <a href="{% url 'hc-add-victorops' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
@@ -390,7 +372,6 @@
 
             <h2>WhatsApp</h2>
             <p>Get a WhatsApp message when a check goes up or down.</p>
-
             <a href="{% url 'hc-add-whatsapp' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}

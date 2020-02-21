@@ -1502,24 +1502,25 @@ def add_matrix(request, code):
 
 
 @login_required
-def add_apprise(request):
+def add_apprise(request, code):
     if not settings.APPRISE_ENABLED:
         raise Http404("apprise integration is not available")
 
+    project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddAppriseForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="apprise")
+            channel = Channel(project=project, kind="apprise")
             channel.value = form.cleaned_data["url"]
             channel.save()
 
             channel.assign_all_checks()
             messages.success(request, "The Apprise integration has been added!")
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddAppriseForm()
 
-    ctx = {"page": "channels", "project": request.project, "form": form}
+    ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_apprise.html", ctx)
 
 

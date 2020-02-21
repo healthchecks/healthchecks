@@ -4,6 +4,8 @@ from hc.test import BaseTestCase
 from mock import patch
 
 
+@override_settings(MATRIX_ACCESS_TOKEN="foo")
+@override_settings(MATRIX_HOMESERVER="fake-homeserver")
 class AddMatrixTestCase(BaseTestCase):
     def setUp(self):
         super(AddMatrixTestCase, self).setUp()
@@ -15,8 +17,6 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Integration Settings", status_code=200)
 
-    @override_settings(MATRIX_ACCESS_TOKEN="foo")
-    @override_settings(MATRIX_HOMESERVER="fake-homeserver")
     @patch("hc.front.forms.requests.post")
     def test_it_works(self, mock_post):
         mock_post.return_value.json.return_value = {"room_id": "fake-room-id"}
@@ -30,3 +30,9 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertEqual(c.kind, "matrix")
         self.assertEqual(c.value, "fake-room-id")
         self.assertEqual(c.project, self.project)
+
+    @override_settings(MATRIX_ACCESS_TOKEN=None)
+    def test_it_requires_access_token(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
