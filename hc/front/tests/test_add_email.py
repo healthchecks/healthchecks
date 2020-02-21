@@ -23,7 +23,7 @@ class AddEmailTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/projects/%s/integrations/" % self.project.code)
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         doc = json.loads(c.value)
@@ -79,7 +79,7 @@ class AddEmailTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/projects/%s/integrations/" % self.project.code)
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         doc = json.loads(c.value)
@@ -95,7 +95,7 @@ class AddEmailTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/projects/%s/integrations/" % self.project.code)
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         doc = json.loads(c.value)

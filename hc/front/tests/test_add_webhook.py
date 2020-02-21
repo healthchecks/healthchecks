@@ -3,7 +3,9 @@ from hc.test import BaseTestCase
 
 
 class AddWebhookTestCase(BaseTestCase):
-    url = "/integrations/add_webhook/"
+    def setUp(self):
+        super(AddWebhookTestCase, self).setUp()
+        self.url = "/projects/%s/add_webhook/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -20,7 +22,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.project, self.project)
@@ -95,7 +97,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.down_webhook_spec["body"], "hello")
@@ -110,7 +112,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(
@@ -140,7 +142,7 @@ class AddWebhookTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.down_webhook_spec["headers"], {"test": "123"})

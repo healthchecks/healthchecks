@@ -189,7 +189,7 @@
             <h2>Webhook</h2>
             <p>Receive a HTTP callback when a check goes down.</p>
 
-            <a href="{% url 'hc-add-webhook' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-webhook' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% if enable_apprise %}
         <li>
