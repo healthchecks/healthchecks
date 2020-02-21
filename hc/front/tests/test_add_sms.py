@@ -5,7 +5,9 @@ from hc.test import BaseTestCase
 
 @override_settings(TWILIO_ACCOUNT="foo", TWILIO_AUTH="foo", TWILIO_FROM="123")
 class AddSmsTestCase(BaseTestCase):
-    url = "/integrations/add_sms/"
+    def setUp(self):
+        super(AddSmsTestCase, self).setUp()
+        self.url = "/projects/%s/add_sms/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -26,7 +28,7 @@ class AddSmsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "sms")
@@ -53,5 +55,5 @@ class AddSmsTestCase(BaseTestCase):
     @override_settings(TWILIO_AUTH=None)
     def test_it_requires_credentials(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/add_sms/")
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)

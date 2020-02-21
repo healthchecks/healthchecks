@@ -1371,28 +1371,29 @@ def add_telegram(request):
 
 
 @login_required
-def add_sms(request):
+def add_sms(request, code):
     if settings.TWILIO_AUTH is None:
         raise Http404("sms integration is not available")
 
+    project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddSmsForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="sms")
+            channel = Channel(project=project, kind="sms")
             channel.name = form.cleaned_data["label"]
             channel.value = json.dumps({"value": form.cleaned_data["value"]})
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddSmsForm()
 
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "project": project,
         "form": form,
-        "profile": request.project.owner_profile,
+        "profile": project.owner_profile,
     }
     return render(request, "integrations/add_sms.html", ctx)
 
