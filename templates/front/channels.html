@@ -259,7 +259,7 @@
             {% if enable_pdc %}
                 <a href="{% url 'hc-add-pdc' %}" class="btn btn-primary">Add Integration</a>
             {% else %}
-                <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
+                <a href="{% url 'hc-add-pd' project.code %}" class="btn btn-primary">Add Integration</a>
             {% endif %}
         </li>
 

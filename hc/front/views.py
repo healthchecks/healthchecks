@@ -921,16 +921,18 @@ def _get_validated_code(request, session_key, key="code"):
 
 
 @login_required
-def add_pd(request):
+def add_pd(request, code):
+    project = _get_project_for_user(request, code)
+
     if request.method == "POST":
         form = AddPdForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="pd")
+            channel = Channel(project=project, kind="pd")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddPdForm()
 

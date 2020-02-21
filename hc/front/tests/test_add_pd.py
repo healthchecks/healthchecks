@@ -3,7 +3,9 @@ from hc.test import BaseTestCase
 
 
 class AddPdTestCase(BaseTestCase):
-    url = "/integrations/add_pd/"
+    def setUp(self):
+        super(AddPdTestCase, self).setUp()
+        self.url = "/projects/%s/add_pd/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -16,7 +18,7 @@ class AddPdTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "pd")
