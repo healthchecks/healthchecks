@@ -40,7 +40,7 @@
 
       <h2>Integration Settings</h2>
 
-      <form method="post" class="form-horizontal" action="{% url 'hc-add-pagerteam' %}">
+      <form method="post" class="form-horizontal">
           {% csrf_token %}
           <div class="form-group {{ form.value.css_classes }}">
               <label for="post-url" class="col-sm-2 control-label">URL</label>
