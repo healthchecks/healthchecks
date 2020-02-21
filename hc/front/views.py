@@ -1101,45 +1101,20 @@ def add_slack_btn(request):
 
 
 @login_required
-def add_pushbullet(request):
+def add_pushbullet(request, code):
     if settings.PUSHBULLET_CLIENT_ID is None:
         raise Http404("pushbullet integration is not available")
 
-    if "code" in request.GET:
-        code = _get_validated_code(request, "pushbullet")
-        if code is None:
-            return HttpResponseBadRequest()
+    project = _get_project_for_user(request, code)
+    redirect_uri = settings.SITE_ROOT + reverse("hc-add-pushbullet-complete")
 
-        result = requests.post(
-            "https://api.pushbullet.com/oauth2/token",
-            {
-                "client_id": settings.PUSHBULLET_CLIENT_ID,
-                "client_secret": settings.PUSHBULLET_CLIENT_SECRET,
-                "code": code,
-                "grant_type": "authorization_code",
-            },
-        )
-
-        doc = result.json()
-        if "access_token" in doc:
-            channel = Channel(kind="pushbullet", project=request.project)
-            channel.user = request.project.owner
-            channel.value = doc["access_token"]
-            channel.save()
-            channel.assign_all_checks()
-            messages.success(request, "The Pushbullet integration has been added!")
-        else:
-            messages.warning(request, "Something went wrong")
-
-        return redirect("hc-channels")
-
-    redirect_uri = settings.SITE_ROOT + reverse("hc-add-pushbullet")
+    state = get_random_string()
     authorize_url = "https://www.pushbullet.com/authorize?" + urlencode(
         {
             "client_id": settings.PUSHBULLET_CLIENT_ID,
             "redirect_uri": redirect_uri,
             "response_type": "code",
-            "state": _prepare_state(request, "pushbullet"),
+            "state": state,
         }
     )
 
@@ -1148,7 +1123,50 @@ def add_pushbullet(request):
         "project": request.project,
         "authorize_url": authorize_url,
     }
+
+    request.session["add_pushbullet"] = (state, str(project.code))
     return render(request, "integrations/add_pushbullet.html", ctx)
+
+
+@login_required
+def add_pushbullet_complete(request):
+    if settings.PUSHBULLET_CLIENT_ID is None:
+        raise Http404("pushbullet integration is not available")
+
+    if "add_pushbullet" not in request.session:
+        return HttpResponseForbidden()
+
+    state, code = request.session.pop("add_pushbullet")
+    project = _get_project_for_user(request, code)
+
+    if request.GET.get("error") == "access_denied":
+        messages.warning(request, "Pushbullet setup was cancelled")
+        return redirect("hc-p-channels", project.code)
+
+    if request.GET.get("state") != state:
+        return HttpResponseForbidden()
+
+    result = requests.post(
+        "https://api.pushbullet.com/oauth2/token",
+        {
+            "client_id": settings.PUSHBULLET_CLIENT_ID,
+            "client_secret": settings.PUSHBULLET_CLIENT_SECRET,
+            "code": request.GET.get("code"),
+            "grant_type": "authorization_code",
+        },
+    )
+
+    doc = result.json()
+    if "access_token" in doc:
+        channel = Channel(kind="pushbullet", project=project)
+        channel.value = doc["access_token"]
+        channel.save()
+        channel.assign_all_checks()
+        messages.success(request, "The Pushbullet integration has been added!")
+    else:
+        messages.warning(request, "Something went wrong")
+
+    return redirect("hc-p-channels", project.code)
 
 
 @login_required
