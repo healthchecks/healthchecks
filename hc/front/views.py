@@ -1270,21 +1270,23 @@ def add_pushover(request):
 
 
 @login_required
-def add_opsgenie(request):
+def add_opsgenie(request, code):
+    project = _get_project_for_user(request, code)
+
     if request.method == "POST":
         form = AddOpsGenieForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="opsgenie")
+            channel = Channel(project=project, kind="opsgenie")
             v = {"region": form.cleaned_data["region"], "key": form.cleaned_data["key"]}
             channel.value = json.dumps(v)
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddOpsGenieForm()
 
-    ctx = {"page": "channels", "project": request.project, "form": form}
+    ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_opsgenie.html", ctx)
 
 

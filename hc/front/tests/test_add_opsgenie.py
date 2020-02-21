@@ -5,7 +5,9 @@ from hc.test import BaseTestCase
 
 
 class AddOpsGenieTestCase(BaseTestCase):
-    url = "/integrations/add_opsgenie/"
+    def setUp(self):
+        super(AddOpsGenieTestCase, self).setUp()
+        self.url = "/projects/%s/add_opsgenie/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -17,7 +19,7 @@ class AddOpsGenieTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "opsgenie")
@@ -41,7 +43,7 @@ class AddOpsGenieTestCase(BaseTestCase):
         form = {"key": "123456", "region": "eu"}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
+        self.client.post(self.url, form)
 
         c = Channel.objects.get()
         payload = json.loads(c.value)
