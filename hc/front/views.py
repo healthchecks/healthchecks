@@ -1457,14 +1457,15 @@ def add_trello(request):
 
 
 @login_required
-def add_matrix(request):
+def add_matrix(request, code):
     if settings.MATRIX_ACCESS_TOKEN is None:
         raise Http404("matrix integration is not available")
 
+    project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddMatrixForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="matrix")
+            channel = Channel(project=project, kind="matrix")
             channel.value = form.cleaned_data["room_id"]
 
             # If user supplied room alias instead of ID, use it as channel name
@@ -1476,13 +1477,13 @@ def add_matrix(request):
 
             channel.assign_all_checks()
             messages.success(request, "The Matrix integration has been added!")
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddMatrixForm()
 
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "project": project,
         "form": form,
         "matrix_user_id": settings.MATRIX_USER_ID,
     }
