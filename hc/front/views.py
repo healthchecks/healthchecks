@@ -1044,21 +1044,22 @@ def add_slack(request):
 
 
 @login_required
-def add_mattermost(request):
+def add_mattermost(request, code):
+    project = _get_project_for_user(request, code)
+
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="mattermost")
+            channel = Channel(project=project, kind="mattermost")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddUrlForm()
 
-    ctx = {"page": "channels", "form": form, "project": request.project}
-
+    ctx = {"page": "channels", "form": form, "project": project}
     return render(request, "integrations/add_mattermost.html", ctx)
 
 

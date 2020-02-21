@@ -44,7 +44,7 @@
                 class="ai-guide-screenshot"
                 alt="Screenshot"
                 src="{% static 'img/integrations/setup_mattermost_2.png' %}">
-        </div>        
+        </div>
     </div>
 
     <div class="row ai-step">
@@ -63,7 +63,7 @@
 
     <h2>Integration Settings</h2>
 
-    <form method="post" class="form-horizontal" action="{% url 'hc-add-mattermost' %}">
+    <form method="post" class="form-horizontal">
         {% csrf_token %}
         <div class="form-group {{ form.value.css_classes }}">
             <label for="callback-url" class="col-sm-2 control-label">
