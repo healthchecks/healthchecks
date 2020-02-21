@@ -24,7 +24,6 @@ check_urls = [
 
 channel_urls = [
     path("", views.channels, name="hc-channels"),
-    path("add_email/", views.add_email, name="hc-add-email"),
     path("add_webhook/", views.add_webhook, name="hc-add-webhook"),
     path("add_shell/", views.add_shell, name="hc-add-shell"),
     path("add_pd/", views.add_pd, name="hc-add-pd"),
@@ -75,6 +74,8 @@ urlpatterns = [
     path("projects/<uuid:code>/metrics/<slug:key>", views.metrics, name="hc-metrics",),
     path("checks/<uuid:code>/", include(check_urls)),
     path("integrations/", include(channel_urls)),
+    path("projects/<uuid:code>/integrations/", views.channels, name="hc-p-channels"),
+    path("projects/<uuid:code>/add_email/", views.add_email, name="hc-add-email"),
     path("docs/", views.serve_doc, name="hc-docs"),
     path("docs/api/", views.docs_api, name="hc-docs-api"),
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),

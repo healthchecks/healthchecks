@@ -629,11 +629,14 @@ def badges(request, code):
 
 
 @login_required
-def channels(request):
-
-    if not request.project:
-        # This can happen when the user deletes their only project.
-        return redirect("hc-index")
+def channels(request, code=None):
+    if code:
+        project = _get_project_for_user(request, code)
+    else:
+        project = request.project
+        if project is None:
+            # This can happen when the user deletes their only project.
+            return redirect("hc-index")
 
     if request.method == "POST":
         code = request.POST["channel"]
@@ -641,7 +644,7 @@ def channels(request):
             channel = Channel.objects.get(code=code)
         except Channel.DoesNotExist:
             return HttpResponseBadRequest()
-        if channel.project_id != request.project.id:
+        if channel.project_id != project.id:
             return HttpResponseForbidden()
 
         new_checks = []
@@ -652,21 +655,21 @@ def channels(request):
                     check = Check.objects.get(code=code)
                 except Check.DoesNotExist:
                     return HttpResponseBadRequest()
-                if check.project_id != request.project.id:
+                if check.project_id != project.id:
                     return HttpResponseForbidden()
                 new_checks.append(check)
 
         channel.checks.set(new_checks)
         return redirect("hc-channels")
 
-    channels = Channel.objects.filter(project=request.project)
+    channels = Channel.objects.filter(project=project)
     channels = channels.order_by("created")
     channels = channels.annotate(n_checks=Count("checks"))
 
     ctx = {
         "page": "channels",
-        "project": request.project,
-        "profile": request.project.owner_profile,
+        "project": project,
+        "profile": project.owner_profile,
         "channels": channels,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -803,11 +806,13 @@ def remove_channel(request, code):
 
 
 @login_required
-def add_email(request):
+def add_email(request, code):
+    project = _get_project_for_user(request, code)
+
     if request.method == "POST":
         form = AddEmailForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="email")
+            channel = Channel(project=project, kind="email")
             channel.value = json.dumps(
                 {
                     "value": form.cleaned_data["value"],
@@ -832,13 +837,13 @@ def add_email(request):
             else:
                 channel.send_verify_link()
 
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddEmailForm()
 
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "project": project,
         "use_verification": settings.EMAIL_USE_VERIFICATION,
         "form": form,
     }

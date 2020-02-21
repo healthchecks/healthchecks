@@ -99,7 +99,7 @@
 
                     {% with b=project.have_channel_issues %}
                     <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
-                        <a href="{% url 'hc-channels' %}">
+                        <a href="{% url 'hc-p-channels' project.code %}">
                             Integrations
                             {% if b %}<span class="icon-grace"></span>{% endif %}
                         </a>

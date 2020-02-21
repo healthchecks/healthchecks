@@ -8,7 +8,9 @@ from hc.test import BaseTestCase
 
 
 class AddEmailTestCase(BaseTestCase):
-    url = "/integrations/add_email/"
+    def setUp(self):
+        super(AddEmailTestCase, self).setUp()
+        self.url = "/projects/%s/add_email/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -21,7 +23,7 @@ class AddEmailTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, "/projects/%s/integrations/" % self.project.code)
 
         c = Channel.objects.get()
         doc = json.loads(c.value)
@@ -77,7 +79,7 @@ class AddEmailTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, "/projects/%s/integrations/" % self.project.code)
 
         c = Channel.objects.get()
         doc = json.loads(c.value)
@@ -93,7 +95,7 @@ class AddEmailTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, "/projects/%s/integrations/" % self.project.code)
 
         c = Channel.objects.get()
         doc = json.loads(c.value)

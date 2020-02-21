@@ -20,7 +20,7 @@
 
     <h2>Integration Settings</h2>
 
-    <form method="post" class="form-horizontal" action="{% url 'hc-add-email' %}">
+    <form method="post" class="form-horizontal">
         {% csrf_token %}
         <div class="form-group {{ form.value.css_classes }}">
             <label for="id_email" class="col-sm-2 control-label">Email</label>
