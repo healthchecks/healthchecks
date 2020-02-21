@@ -298,7 +298,7 @@
             <h2>Prometheus</h2>
             <p>Export check and tag status values to Prometheus.</p>
 
-            <a href="{% url 'hc-add-prometheus' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-prometheus' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         {% if enable_pushbullet %}

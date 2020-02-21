@@ -1560,8 +1560,9 @@ def add_msteams(request, code):
 
 
 @login_required
-def add_prometheus(request):
-    ctx = {"page": "channels", "project": request.project}
+def add_prometheus(request, code):
+    project = _get_project_for_user(request, code)
+    ctx = {"page": "channels", "project": project}
     return render(request, "integrations/add_prometheus.html", ctx)
 
 
