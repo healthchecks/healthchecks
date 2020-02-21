@@ -319,7 +319,7 @@
 
             <h2>Shell Command</h2>
             <p>Execute a local shell command when a check goes up or down.</p>
-            <a href="{% url 'hc-add-shell' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-shell' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 

@@ -5,7 +5,9 @@ from hc.test import BaseTestCase
 
 @override_settings(SHELL_ENABLED=True)
 class AddShellTestCase(BaseTestCase):
-    url = "/integrations/add_shell/"
+    def setUp(self):
+        super(AddShellTestCase, self).setUp()
+        self.url = "/projects/%s/add_shell/" % self.project.code
 
     @override_settings(SHELL_ENABLED=False)
     def test_it_is_disabled_by_default(self):
@@ -23,7 +25,7 @@ class AddShellTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.project, self.project)

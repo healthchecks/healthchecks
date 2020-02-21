@@ -24,7 +24,6 @@ check_urls = [
 
 channel_urls = [
     path("", views.channels, name="hc-channels"),
-    path("add_shell/", views.add_shell, name="hc-add-shell"),
     path("add_pd/", views.add_pd, name="hc-add-pd"),
     path("add_pdc/", views.add_pdc, name="hc-add-pdc"),
     path("add_pdc/<str:state>/", views.add_pdc, name="hc-add-pdc-state"),
@@ -61,6 +60,7 @@ project_urls = [
     path("add_pagerteam/", views.add_pagerteam, name="hc-add-pagerteam"),
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),
     path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),
+    path("add_shell/", views.add_shell, name="hc-add-shell"),
     path("add_sms/", views.add_sms, name="hc-add-sms"),
     path("add_victorops/", views.add_victorops, name="hc-add-victorops"),
     path("add_webhook/", views.add_webhook, name="hc-add-webhook"),

@@ -876,25 +876,26 @@ def add_webhook(request, code):
 
 
 @login_required
-def add_shell(request):
+def add_shell(request, code):
     if not settings.SHELL_ENABLED:
         raise Http404("shell integration is not available")
 
+    project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddShellForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="shell")
+            channel = Channel(project=project, kind="shell")
             channel.value = form.get_value()
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddShellForm()
 
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "project": project,
         "form": form,
         "now": timezone.now().replace(microsecond=0).isoformat(),
     }
