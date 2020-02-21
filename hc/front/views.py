@@ -1295,20 +1295,22 @@ def add_opsgenie(request, code):
 
 
 @login_required
-def add_victorops(request):
+def add_victorops(request, code):
+    project = _get_project_for_user(request, code)
+
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="victorops")
+            channel = Channel(project=project, kind="victorops")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddUrlForm()
 
-    ctx = {"page": "channels", "project": request.project, "form": form}
+    ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_victorops.html", ctx)
 
 
