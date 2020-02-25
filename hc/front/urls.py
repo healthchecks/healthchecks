@@ -33,7 +33,7 @@ channel_urls = [
         views.add_pushbullet_complete,
         name="hc-add-pushbullet-complete",
     ),
-    path("add_discord/", views.add_discord, name="hc-add-discord"),
+    path("add_discord/", views.add_discord_complete, name="hc-add-discord-complete"),
     path("add_pushover/", views.add_pushover, name="hc-add-pushover"),
     path("telegram/bot/", views.telegram_bot, name="hc-telegram-webhook"),
     path("add_telegram/", views.add_telegram, name="hc-add-telegram"),
@@ -55,6 +55,7 @@ channel_urls = [
 
 project_urls = [
     path("add_apprise/", views.add_apprise, name="hc-add-apprise"),
+    path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.add_email, name="hc-add-email"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),
     path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),

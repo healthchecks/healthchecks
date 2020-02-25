@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta as td
 import json
 import os
+from secrets import token_urlsafe
 from urllib.parse import urlencode
 
 from croniter import croniter
@@ -1108,7 +1109,7 @@ def add_pushbullet(request, code):
     project = _get_project_for_user(request, code)
     redirect_uri = settings.SITE_ROOT + reverse("hc-add-pushbullet-complete")
 
-    state = get_random_string()
+    state = token_urlsafe()
     authorize_url = "https://www.pushbullet.com/authorize?" + urlencode(
         {
             "client_id": settings.PUSHBULLET_CLIENT_ID,
@@ -1140,7 +1141,7 @@ def add_pushbullet_complete(request):
     project = _get_project_for_user(request, code)
 
     if request.GET.get("error") == "access_denied":
-        messages.warning(request, "Pushbullet setup was cancelled")
+        messages.warning(request, "Pushbullet setup was cancelled.")
         return redirect("hc-p-channels", project.code)
 
     if request.GET.get("state") != state:
@@ -1170,53 +1171,70 @@ def add_pushbullet_complete(request):
 
 
 @login_required
-def add_discord(request):
+def add_discord(request, code):
     if settings.DISCORD_CLIENT_ID is None:
         raise Http404("discord integration is not available")
 
-    redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord")
-    if "code" in request.GET:
-        code = _get_validated_code(request, "discord")
-        if code is None:
-            return HttpResponseBadRequest()
-
-        result = requests.post(
-            "https://discordapp.com/api/oauth2/token",
-            {
-                "client_id": settings.DISCORD_CLIENT_ID,
-                "client_secret": settings.DISCORD_CLIENT_SECRET,
-                "code": code,
-                "grant_type": "authorization_code",
-                "redirect_uri": redirect_uri,
-            },
-        )
-
-        doc = result.json()
-        if "access_token" in doc:
-            channel = Channel(kind="discord", project=request.project)
-            channel.user = request.project.owner
-            channel.value = result.text
-            channel.save()
-            channel.assign_all_checks()
-            messages.success(request, "The Discord integration has been added!")
-        else:
-            messages.warning(request, "Something went wrong")
-
-        return redirect("hc-channels")
-
+    project = _get_project_for_user(request, code)
+    redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord-complete")
+    state = token_urlsafe()
     auth_url = "https://discordapp.com/api/oauth2/authorize?" + urlencode(
         {
             "client_id": settings.DISCORD_CLIENT_ID,
             "scope": "webhook.incoming",
             "redirect_uri": redirect_uri,
             "response_type": "code",
-            "state": _prepare_state(request, "discord"),
+            "state": state,
         }
     )
 
-    ctx = {"page": "channels", "project": request.project, "authorize_url": auth_url}
+    ctx = {"page": "channels", "project": project, "authorize_url": auth_url}
 
+    request.session["add_discord"] = (state, str(project.code))
     return render(request, "integrations/add_discord.html", ctx)
+
+
+@login_required
+def add_discord_complete(request):
+    if settings.DISCORD_CLIENT_ID is None:
+        raise Http404("discord integration is not available")
+
+    if "add_discord" not in request.session:
+        return HttpResponseForbidden()
+
+    state, code = request.session.pop("add_discord")
+    project = _get_project_for_user(request, code)
+
+    if request.GET.get("error") == "access_denied":
+        messages.warning(request, "Discord setup was cancelled.")
+        return redirect("hc-p-channels", project.code)
+
+    if request.GET.get("state") != state:
+        return HttpResponseForbidden()
+
+    redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord-complete")
+    result = requests.post(
+        "https://discordapp.com/api/oauth2/token",
+        {
+            "client_id": settings.DISCORD_CLIENT_ID,
+            "client_secret": settings.DISCORD_CLIENT_SECRET,
+            "code": request.GET.get("code"),
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+        },
+    )
+
+    doc = result.json()
+    if "access_token" in doc:
+        channel = Channel(kind="discord", project=project)
+        channel.value = result.text
+        channel.save()
+        channel.assign_all_checks()
+        messages.success(request, "The Discord integration has been added!")
+    else:
+        messages.warning(request, "Something went wrong.")
+
+    return redirect("hc-p-channels", project.code)
 
 
 def add_pushover(request):
