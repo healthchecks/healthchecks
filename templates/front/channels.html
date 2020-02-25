@@ -257,7 +257,7 @@
             <p>On-call scheduling, alerting, and incident tracking.</p>
 
             {% if enable_pdc %}
-                <a href="{% url 'hc-add-pdc' %}" class="btn btn-primary">Add Integration</a>
+                <a href="{% url 'hc-add-pdc' project.code %}" class="btn btn-primary">Add Integration</a>
             {% else %}
                 <a href="{% url 'hc-add-pd' project.code %}" class="btn btn-primary">Add Integration</a>
             {% endif %}

@@ -5,7 +5,9 @@ from hc.test import BaseTestCase
 
 @override_settings(PD_VENDOR_KEY="foo")
 class AddPdConnectTestCase(BaseTestCase):
-    url = "/integrations/add_pdc/"
+    def setUp(self):
+        super(AddPdConnectTestCase, self).setUp()
+        self.url = "/projects/%s/add_pdc/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -19,8 +21,8 @@ class AddPdConnectTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         url = self.url + "1234567890AB/?service_key=123"
-        r = self.client.get(url)
-        self.assertEqual(r.status_code, 302)
+        r = self.client.get(url, follow=True)
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "pd")
@@ -29,7 +31,7 @@ class AddPdConnectTestCase(BaseTestCase):
 
     def test_it_validates_code(self):
         session = self.client.session
-        session["pd"] = "1234567890AB"  # 12 characters
+        session["pd"] = "1234567890AB"
         session.save()
 
         self.client.login(username="alice@example.org", password="password")
