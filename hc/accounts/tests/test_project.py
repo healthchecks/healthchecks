@@ -161,6 +161,9 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_it_checks_membership_when_removing_team_member(self):
+        self.profile.current_project = self.project
+        self.profile.save()
+
         self.client.login(username="charlie@example.org", password="password")
 
         url = "/projects/%s/settings/" % self.charlies_project.code

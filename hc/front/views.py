@@ -706,7 +706,7 @@ def channel_checks(request, code):
     channel = _get_channel_for_user(request, code)
 
     assigned = set(channel.checks.values_list("code", flat=True).distinct())
-    checks = Check.objects.filter(project=request.project).order_by("created")
+    checks = Check.objects.filter(project=channel.project).order_by("created")
 
     ctx = {"checks": checks, "assigned": assigned, "channel": channel}
 
@@ -1147,7 +1147,7 @@ def add_pushbullet(request, code):
 
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "project": project,
         "authorize_url": authorize_url,
     }
 

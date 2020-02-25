@@ -20,7 +20,6 @@ class BaseTestCase(TestCase):
 
         self.profile = Profile(user=self.alice)
         self.profile.sms_limit = 50
-        self.profile.current_project = self.project
         self.profile.save()
 
         # Bob is on Alice's team and should have access to her stuff
