@@ -23,7 +23,6 @@ check_urls = [
 ]
 
 channel_urls = [
-    path("", views.channels, name="hc-channels"),
     path(
         "add_pushbullet/",
         views.add_pushbullet_complete,

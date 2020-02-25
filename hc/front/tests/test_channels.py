@@ -17,7 +17,7 @@ class ChannelsTestCase(BaseTestCase):
         ch.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
         self.assertContains(r, "foo-team", status_code=200)
         self.assertContains(r, "#bar")
 
@@ -38,7 +38,7 @@ class ChannelsTestCase(BaseTestCase):
         ch.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
 
         self.assertEqual(r.status_code, 200)
         # These are inside a modal:
@@ -52,7 +52,7 @@ class ChannelsTestCase(BaseTestCase):
         ch.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
 
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "(normal priority)")
@@ -69,7 +69,7 @@ class ChannelsTestCase(BaseTestCase):
         n.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Disabled")
 
@@ -79,7 +79,7 @@ class ChannelsTestCase(BaseTestCase):
         channel.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "Unconfirmed")
 
@@ -91,7 +91,7 @@ class ChannelsTestCase(BaseTestCase):
         channel.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "(down only)")
 
@@ -103,7 +103,7 @@ class ChannelsTestCase(BaseTestCase):
         channel.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "(up only)")
 
@@ -113,22 +113,14 @@ class ChannelsTestCase(BaseTestCase):
         ch.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
 
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "SMS to +123")
-
-    def test_it_requires_current_project(self):
-        self.profile.current_project = None
-        self.profile.save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
-        self.assertRedirects(r, "/")
 
     def test_it_shows_channel_issues_indicator(self):
         Channel.objects.create(kind="sms", project=self.project, last_error="x")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/integrations/")
+        r = self.client.get(self.channels_url)
         self.assertContains(r, "broken-channels", status_code=200)

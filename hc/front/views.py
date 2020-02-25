@@ -21,7 +21,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template, render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.accounts.models import Project
@@ -648,14 +647,8 @@ def badges(request, code):
 
 
 @login_required
-def channels(request, code=None):
-    if code:
-        project = _get_project_for_user(request, code)
-    else:
-        project = request.project
-        if project is None:
-            # This can happen when the user deletes their only project.
-            return redirect("hc-index")
+def channels(request, code):
+    project = _get_project_for_user(request, code)
 
     if request.method == "POST":
         code = request.POST["channel"]
@@ -911,24 +904,6 @@ def add_shell(request, code):
         "now": timezone.now().replace(microsecond=0).isoformat(),
     }
     return render(request, "integrations/add_shell.html", ctx)
-
-
-def _prepare_state(request, session_key):
-    state = get_random_string()
-    request.session[session_key] = state
-    return state
-
-
-def _get_validated_code(request, session_key, key="code"):
-    if session_key not in request.session:
-        return None
-
-    session_state = request.session.pop(session_key)
-    request_state = request.GET.get("state")
-    if session_state is None or session_state != request_state:
-        return None
-
-    return request.GET.get(key)
 
 
 @login_required
