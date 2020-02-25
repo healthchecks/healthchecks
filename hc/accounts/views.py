@@ -40,6 +40,7 @@ NEXT_WHITELIST = (
     "hc-details",
     "hc-log",
     "hc-channels",
+    "hc-p-channels",
     "hc-add-slack",
     "hc-add-pushover",
 )

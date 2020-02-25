@@ -684,6 +684,7 @@ def channels(request, code=None):
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_shell": settings.SHELL_ENABLED is True,
+        "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -1025,35 +1026,102 @@ def add_pagerteam(request, code):
     return render(request, "integrations/add_pagerteam.html", ctx)
 
 
-def add_slack(request):
-    if not settings.SLACK_CLIENT_ID and not request.user.is_authenticated:
-        return redirect("hc-login")
+@login_required
+def add_slack(request, code):
+    project = _get_project_for_user(request, code)
 
     if request.method == "POST":
         form = AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=request.project, kind="slack")
+            channel = Channel(project=project, kind="slack")
             channel.value = form.cleaned_data["value"]
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
     else:
         form = AddUrlForm()
 
     ctx = {
         "page": "channels",
         "form": form,
-        "slack_client_id": settings.SLACK_CLIENT_ID,
     }
 
-    if request.user.is_authenticated:
-        ctx["project"] = request.project
-
-    if settings.SLACK_CLIENT_ID and request.user.is_authenticated:
-        ctx["state"] = _prepare_state(request, "slack")
-
     return render(request, "integrations/add_slack.html", ctx)
+
+
+def add_slack_help(request):
+    if not settings.SLACK_CLIENT_ID:
+        raise Http404("slack integration is not available")
+
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_slack_btn.html", ctx)
+
+
+@login_required
+def add_slack_btn(request, code):
+    if not settings.SLACK_CLIENT_ID:
+        raise Http404("slack integration is not available")
+
+    project = _get_project_for_user(request, code)
+
+    state = token_urlsafe()
+    authorize_url = "https://slack.com/oauth/authorize?" + urlencode(
+        {
+            "scope": "incoming-webhook",
+            "client_id": settings.SLACK_CLIENT_ID,
+            "state": state,
+        }
+    )
+
+    ctx = {
+        "project": project,
+        "page": "channels",
+        "authorize_url": authorize_url,
+    }
+
+    request.session["add_slack"] = (state, str(project.code))
+    return render(request, "integrations/add_slack_btn.html", ctx)
+
+
+@login_required
+def add_slack_complete(request):
+    if not settings.SLACK_CLIENT_ID:
+        raise Http404("slack integration is not available")
+
+    if "add_slack" not in request.session:
+        return HttpResponseForbidden()
+
+    state, code = request.session.pop("add_slack")
+    project = _get_project_for_user(request, code)
+    if request.GET.get("error") == "access_denied":
+        messages.warning(request, "Slack setup was cancelled.")
+        return redirect("hc-p-channels", project.code)
+
+    if request.GET.get("state") != state:
+        return HttpResponseForbidden()
+
+    result = requests.post(
+        "https://slack.com/api/oauth.access",
+        {
+            "client_id": settings.SLACK_CLIENT_ID,
+            "client_secret": settings.SLACK_CLIENT_SECRET,
+            "code": request.GET.get("code"),
+        },
+    )
+
+    doc = result.json()
+    if doc.get("ok"):
+        channel = Channel(kind="slack", project=project)
+        channel.value = result.text
+        channel.save()
+        channel.assign_all_checks()
+        messages.success(request, "The Slack integration has been added!")
+    else:
+        s = doc.get("error")
+        messages.warning(request, "Error message from slack: %s" % s)
+
+    return redirect("hc-p-channels", project.code)
 
 
 @login_required
@@ -1074,36 +1142,6 @@ def add_mattermost(request, code):
 
     ctx = {"page": "channels", "form": form, "project": project}
     return render(request, "integrations/add_mattermost.html", ctx)
-
-
-@login_required
-def add_slack_btn(request):
-    code = _get_validated_code(request, "slack")
-    if code is None:
-        return HttpResponseBadRequest()
-
-    result = requests.post(
-        "https://slack.com/api/oauth.access",
-        {
-            "client_id": settings.SLACK_CLIENT_ID,
-            "client_secret": settings.SLACK_CLIENT_SECRET,
-            "code": code,
-        },
-    )
-
-    doc = result.json()
-    if doc.get("ok"):
-        channel = Channel(kind="slack", project=request.project)
-        channel.user = request.project.owner
-        channel.value = result.text
-        channel.save()
-        channel.assign_all_checks()
-        messages.success(request, "The Slack integration has been added!")
-    else:
-        s = doc.get("error")
-        messages.warning(request, "Error message from slack: %s" % s)
-
-    return redirect("hc-channels")
 
 
 @login_required

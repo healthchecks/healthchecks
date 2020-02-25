@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Add Slack - {% site_name %}{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+
+    <div class="jumbotron">
+        {% if request.user.is_authenticated %}
+        <p>If your team uses <a href="https://slack.com/">Slack</a>, you can set
+        up {% site_name %} to post status updates directly to an appropriate
+        Slack channel.</p>
+
+        <div class="text-center">
+        <a href="{{ authorize_url }}">
+            <img
+                alt="Add to Slack"
+                src="{% static 'img/integrations/add_to_slack.png' %}"
+                srcset="{% static 'img/integrations/add_to_slack.png' %} 1x, {% static 'img/integrations/add_to_slack@2x.png' %} 2x" />
+        </a>
+        </div>
+
+        {% else %}
+        <p>
+        {% site_name %} is a <strong>free</strong> and
+        <a href="https://github.com/healthchecks/healthchecks">open source</a>
+        service for monitoring your cron jobs, background processes and
+        scheduled tasks. Before adding Slack integration, please log into
+        {% site_name %}:</p>
+
+        <div class="text-center">
+            <a href="{% url 'hc-login' %}"
+               class="btn btn-primary btn-lg">Sign In</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <h2>Setup Guide</h2>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">1</span>
+            <p>
+                After {% if request.user.is_authenticated %}{% else %}signing in and{% endif %}
+                clicking on "Add to Slack", you should
+                be on a page that says "{% site_name %} would like access to
+                your Slack team". Select the team you want to add the
+                {% site_name %} integration app to.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_slack_btn_1.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">2</span>
+            <p>
+                You should now be on a page that says "{% site_name %} would
+                like access to <i>TEAM NAME</i>". Select the channel you want to
+                post {% site_name %} notifications to.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_slack_btn_2.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no">3</span>
+            <p>
+                That is all! You will now be redirected back to
+                "Integrations" page on {% site_name %} and see
+                the new integration!
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_slack_btn_3.png' %}">
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

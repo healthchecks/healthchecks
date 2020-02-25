@@ -24,8 +24,6 @@ check_urls = [
 
 channel_urls = [
     path("", views.channels, name="hc-channels"),
-    path("add_slack/", views.add_slack, name="hc-add-slack"),
-    path("add_slack_btn/", views.add_slack_btn, name="hc-add-slack-btn"),
     path(
         "add_pushbullet/",
         views.add_pushbullet_complete,
@@ -34,6 +32,8 @@ channel_urls = [
     path("add_discord/", views.add_discord_complete, name="hc-add-discord-complete"),
     path("add_pushover/", views.add_pushover_help),
     path("telegram/bot/", views.telegram_bot, name="hc-telegram-webhook"),
+    path("add_slack/", views.add_slack_help),
+    path("add_slack_btn/", views.add_slack_complete),
     path("add_telegram/", views.add_telegram, name="hc-add-telegram"),
     path("add_trello/settings/", views.trello_settings, name="hc-trello-settings"),
     path("<uuid:code>/checks/", views.channel_checks, name="hc-channel-checks"),
@@ -67,6 +67,8 @@ project_urls = [
     path("add_pushbullet/", views.add_pushbullet, name="hc-add-pushbullet"),
     path("add_pushover/", views.add_pushover, name="hc-add-pushover"),
     path("add_shell/", views.add_shell, name="hc-add-shell"),
+    path("add_slack/", views.add_slack, name="hc-add-slack"),
+    path("add_slack_btn/", views.add_slack_btn, name="hc-add-slack-btn"),
     path("add_sms/", views.add_sms, name="hc-add-sms"),
     path("add_trello/", views.add_trello, name="hc-add-trello"),
     path("add_victorops/", views.add_victorops, name="hc-add-victorops"),

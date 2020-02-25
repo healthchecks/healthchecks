@@ -24,14 +24,14 @@ class LoginTestCase(BaseTestCase):
     def test_it_sends_link_with_next(self):
         form = {"identity": "alice@example.org"}
 
-        r = self.client.post("/accounts/login/?next=/integrations/add_slack/", form)
+        r = self.client.post("/accounts/login/?next=" + self.channels_url, form)
         self.assertRedirects(r, "/accounts/login_link_sent/")
         self.assertIn("auto-login", r.cookies)
 
         # The check_token link should have a ?next= query parameter:
         self.assertEqual(len(mail.outbox), 1)
         body = mail.outbox[0].body
-        self.assertTrue("/?next=/integrations/add_slack/" in body)
+        self.assertTrue("/?next=" + self.channels_url in body)
 
     @override_settings(SECRET_KEY="test-secret")
     def test_it_rate_limits_emails(self):
@@ -85,7 +85,7 @@ class LoginTestCase(BaseTestCase):
 
         form = {"action": "login", "email": "alice@example.org", "password": "password"}
 
-        samples = ["/integrations/add_slack/", "/checks/%s/details/" % check.code]
+        samples = [self.channels_url, "/checks/%s/details/" % check.code]
 
         for s in samples:
             r = self.client.post("/accounts/login/?next=%s" % s, form)
