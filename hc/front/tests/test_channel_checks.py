@@ -31,7 +31,7 @@ class ChannelChecksTestCase(BaseTestCase):
         url = "/integrations/%s/checks/" % self.channel.code
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.get(url)
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 404)
 
     def test_missing_channel(self):
         # Valid UUID but there is no channel for it:
@@ -39,4 +39,4 @@ class ChannelChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
-        assert r.status_code == 404
+        self.assertEqual(r.status_code, 404)

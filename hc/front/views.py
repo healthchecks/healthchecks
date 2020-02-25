@@ -95,14 +95,31 @@ def _get_check_for_user(request, code):
     if not request.user.is_authenticated:
         raise Http404("not found")
 
-    if request.user.is_superuser:
-        q = Check.objects
-    else:
-        q = request.profile.checks_from_all_projects()
+    q = Check.objects
+    if not request.user.is_superuser:
+        project_ids = request.profile.projects().values("id")
+        q = q.filter(project_id__in=project_ids)
 
     try:
         return q.get(code=code)
     except Check.DoesNotExist:
+        raise Http404("not found")
+
+
+def _get_channel_for_user(request, code):
+    """ Return specified channel if current user has access to it. """
+
+    if not request.user.is_authenticated:
+        raise Http404("not found")
+
+    q = Channel.objects
+    if not request.user.is_superuser:
+        project_ids = request.profile.projects().values("id")
+        q = q.filter(project_id__in=project_ids)
+
+    try:
+        return q.get(code=code)
+    except Channel.DoesNotExist:
         raise Http404("not found")
 
 
@@ -662,7 +679,7 @@ def channels(request, code=None):
                 new_checks.append(check)
 
         channel.checks.set(new_checks)
-        return redirect("hc-channels")
+        return redirect("hc-p-channels", project.code)
 
     channels = Channel.objects.filter(project=project)
     channels = channels.order_by("created")
@@ -693,9 +710,7 @@ def channels(request, code=None):
 
 @login_required
 def channel_checks(request, code):
-    channel = get_object_or_404(Channel, code=code)
-    if channel.project_id != request.project.id:
-        return HttpResponseForbidden()
+    channel = _get_channel_for_user(request, code)
 
     assigned = set(channel.checks.values_list("code", flat=True).distinct())
     checks = Check.objects.filter(project=request.project).order_by("created")
@@ -708,16 +723,14 @@ def channel_checks(request, code):
 @require_POST
 @login_required
 def update_channel_name(request, code):
-    channel = get_object_or_404(Channel, code=code)
-    if channel.project_id != request.project.id:
-        return HttpResponseForbidden()
+    channel = _get_channel_for_user(request, code)
 
     form = ChannelNameForm(request.POST)
     if form.is_valid():
         channel.name = form.cleaned_data["name"]
         channel.save()
 
-    return redirect("hc-channels")
+    return redirect("hc-p-channels", channel.project.code)
 
 
 def verify_email(request, code, token):
@@ -768,9 +781,7 @@ def unsubscribe_email(request, code, signed_token):
 @require_POST
 @login_required
 def send_test_notification(request, code):
-    channel = get_object_or_404(Channel, code=code)
-    if channel.project_id != request.project.id:
-        return HttpResponseForbidden()
+    channel = _get_channel_for_user(request, code)
 
     dummy = Check(name="TEST", status="down")
     dummy.last_ping = timezone.now() - td(days=1)
@@ -792,20 +803,17 @@ def send_test_notification(request, code):
     else:
         messages.success(request, "Test notification sent!")
 
-    return redirect("hc-channels")
+    return redirect("hc-p-channels", channel.project.code)
 
 
 @require_POST
 @login_required
 def remove_channel(request, code):
-    # user may refresh the page during POST and cause two deletion attempts
-    channel = Channel.objects.filter(code=code).first()
-    if channel:
-        if channel.project_id != request.project.id:
-            return HttpResponseForbidden()
-        channel.delete()
+    channel = _get_channel_for_user(request, code)
+    project = channel.project
+    channel.delete()
 
-    return redirect("hc-channels")
+    return redirect("hc-p-channels", project.code)
 
 
 @login_required

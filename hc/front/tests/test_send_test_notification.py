@@ -20,7 +20,7 @@ class SendTestNotificationTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Test notification sent!")
 
         # And email should have been sent
@@ -52,7 +52,7 @@ class SendTestNotificationTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Test notification sent!")
 
     def test_it_handles_webhooks_with_no_urls(self):
@@ -73,5 +73,10 @@ class SendTestNotificationTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Could not send a test notification")
+
+    def test_it_checks_channel_ownership(self):
+        self.client.login(username="charlie@example.org", password="password")
+        r = self.client.post(self.url, {}, follow=True)
+        self.assertEqual(r.status_code, 404)

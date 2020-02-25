@@ -16,8 +16,8 @@ class UpdateChannelTestCase(BaseTestCase):
         payload = {"channel": self.channel.code, "check-%s" % self.check.code: True}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post("/integrations/", data=payload)
-        self.assertRedirects(r, "/integrations/")
+        r = self.client.post(self.channels_url, data=payload)
+        self.assertRedirects(r, self.channels_url)
 
         channel = Channel.objects.get(code=self.channel.code)
         checks = channel.checks.all()
@@ -30,19 +30,19 @@ class UpdateChannelTestCase(BaseTestCase):
         # Logging in as bob, not alice. Bob has team access so this
         # should work.
         self.client.login(username="bob@example.org", password="password")
-        r = self.client.post("/integrations/", data=payload, follow=True)
+        r = self.client.post(self.channels_url, data=payload, follow=True)
         self.assertEqual(r.status_code, 200)
 
     def test_it_checks_channel_user(self):
         payload = {"channel": self.channel.code}
 
         self.client.login(username="charlie@example.org", password="password")
-        r = self.client.post("/integrations/", data=payload)
+        r = self.client.post(self.channels_url, data=payload)
 
         # self.channel does not belong to charlie, this should fail--
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 404)
 
-    def test_it_checks_check_user(self):
+    def test_it_checks_check_owner(self):
         charlies_project = Project.objects.create(owner=self.charlie)
         charlies_channel = Channel(project=charlies_project, kind="email")
         charlies_channel.email = "charlie@example.org"
@@ -50,18 +50,18 @@ class UpdateChannelTestCase(BaseTestCase):
 
         payload = {"channel": charlies_channel.code, "check-%s" % self.check.code: True}
         self.client.login(username="charlie@example.org", password="password")
-        r = self.client.post("/integrations/", data=payload)
+        r = self.client.post(self.channels_url, data=payload)
 
         # mc belongs to charlie but self.check does not--
-        assert r.status_code == 403
+        self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_channel(self):
         # Correct UUID but there is no channel for it:
         payload = {"channel": "6837d6ec-fc08-4da5-a67f-08a9ed1ccf62"}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post("/integrations/", data=payload)
-        assert r.status_code == 400
+        r = self.client.post(self.channels_url, data=payload)
+        self.assertEqual(r.status_code, 400)
 
     def test_it_handles_missing_check(self):
         # check- key has a correct UUID but there's no check object for it
@@ -71,5 +71,5 @@ class UpdateChannelTestCase(BaseTestCase):
         }
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post("/integrations/", data=payload)
-        assert r.status_code == 400
+        r = self.client.post(self.channels_url, data=payload)
+        self.assertEqual(r.status_code, 400)
