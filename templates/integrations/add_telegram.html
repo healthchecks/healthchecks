@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load humanize static hc_extras %}
+{% load compress humanize static hc_extras %}
 
 {% block title %}Notification Channels - {% site_name %}{% endblock %}
 
@@ -19,18 +19,35 @@
             {% else %}
                 a Telegram chat
             {% endif %}
-            named <strong>{{ chat_name }}</strong>. Sound good?
+            named <strong>{{ chat_name }}</strong>.
         </p>
-
-        <form method="post" class="text-center">
-            {% csrf_token %}
-
-            <button type="submit" class="btn btn-lg btn-default">
-                <img class="ai-icon" src="{% static 'img/integrations/telegram.png' %}" alt="Telegram" />
-                Yes, connect Telegram
-            </button>
-        </form>
     </div>
+
+<h2>Integration Settings</h2>
+
+    <form id="add-telegram" method="post" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Project</label>
+            <div class="col-sm-8">
+                <select name="project" class="selectpicker">
+                    {% for project in projects %}
+                    <option value="{{ project.code }}">{{ project }}</option>
+                    {% endfor %}
+                </select>
+           </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-8">
+                <button type="submit" class="btn btn-default">
+                    <img class="ai-icon" src="{% static 'img/integrations/telegram.png' %}" alt="Telegram" />
+                    Connect Telegram
+                </button>
+            </div>
+        </div>
+    </form>
+
     {% else %}
     <p>If your team uses <a href="https://telegram.org/">Telegram</a>,
     you can set up {% site_name %} to post status updates directly to an
@@ -93,4 +110,12 @@
     {% endif %}
 </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+{% endcompress %}
 {% endblock %}

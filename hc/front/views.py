@@ -1430,7 +1430,8 @@ def add_telegram(request):
         chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
 
     if request.method == "POST":
-        channel = Channel(project=request.project, kind="telegram")
+        project = _get_project_for_user(request, request.POST.get("project"))
+        channel = Channel(project=project, kind="telegram")
         channel.value = json.dumps(
             {"id": chat_id, "type": chat_type, "name": chat_name}
         )
@@ -1438,11 +1439,11 @@ def add_telegram(request):
 
         channel.assign_all_checks()
         messages.success(request, "The Telegram integration has been added!")
-        return redirect("hc-channels")
+        return redirect("hc-p-channels", project.code)
 
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "projects": request.profile.projects(),
         "chat_id": chat_id,
         "chat_type": chat_type,
         "chat_name": chat_name,

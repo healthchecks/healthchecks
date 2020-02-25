@@ -23,8 +23,9 @@ class AddTelegramTestCase(BaseTestCase):
         payload = signing.dumps((123, "group", "My Group"))
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url + "?" + payload, {})
-        self.assertRedirects(r, "/integrations/")
+        form = {"project": str(self.project.code)}
+        r = self.client.post(self.url + "?" + payload, form)
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "telegram")
