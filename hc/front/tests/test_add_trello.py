@@ -5,8 +5,10 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
-class AddPagerTreeTestCase(BaseTestCase):
-    url = "/integrations/add_trello/"
+class AddTrelloTestCase(BaseTestCase):
+    def setUp(self):
+        super(AddTrelloTestCase, self).setUp()
+        self.url = "/projects/%s/add_trello/" % self.project.code
 
     @override_settings(TRELLO_APP_KEY="foo")
     def test_instructions_work(self):
@@ -29,7 +31,7 @@ class AddPagerTreeTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "trello")

@@ -1477,18 +1477,20 @@ def add_whatsapp(request, code):
 
 
 @login_required
-def add_trello(request):
+def add_trello(request, code):
     if settings.TRELLO_APP_KEY is None:
         raise Http404("trello integration is not available")
 
+    project = _get_project_for_user(request, code)
     if request.method == "POST":
-        channel = Channel(project=request.project, kind="trello")
+        channel = Channel(project=project, kind="trello")
         channel.value = request.POST["settings"]
         channel.save()
 
         channel.assign_all_checks()
-        return redirect("hc-channels")
+        return redirect("hc-p-channels", project.code)
 
+    return_url = settings.SITE_ROOT + reverse("hc-add-trello", args=[project.code])
     authorize_url = "https://trello.com/1/authorize?" + urlencode(
         {
             "expiration": "never",
@@ -1496,13 +1498,13 @@ def add_trello(request):
             "scope": "read,write",
             "response_type": "token",
             "key": settings.TRELLO_APP_KEY,
-            "return_url": settings.SITE_ROOT + reverse("hc-add-trello"),
+            "return_url": return_url,
         }
     )
 
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "project": project,
         "authorize_url": authorize_url,
     }
 
