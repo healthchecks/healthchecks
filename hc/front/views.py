@@ -41,6 +41,7 @@ from hc.front.forms import (
     AddMatrixForm,
     AddOpsGenieForm,
     AddPdForm,
+    AddPushoverForm,
     AddShellForm,
     AddSmsForm,
     AddUrlForm,
@@ -1254,7 +1255,6 @@ def add_pushover(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        # Initiate the subscription
         state = token_urlsafe()
 
         failure_url = settings.SITE_ROOT + reverse("hc-p-channels", args=[project.code])
@@ -1288,27 +1288,17 @@ def add_pushover(request, code):
         if request.GET.get("state") != state:
             return HttpResponseForbidden()
 
-        key = request.GET.get("pushover_user_key")
-        if key is None:
-            return HttpResponseBadRequest()
-
-        # Validate priority
-        prio = request.GET.get("prio")
-        if prio not in ("-2", "-1", "0", "1", "2"):
-            return HttpResponseBadRequest()
-
-        prio_up = request.GET.get("prio_up")
-        if prio_up not in ("-2", "-1", "0", "1", "2"):
-            return HttpResponseBadRequest()
-
         if request.GET.get("pushover_unsubscribed") == "1":
             # Unsubscription: delete all Pushover channels for this project
             Channel.objects.filter(project=project, kind="po").delete()
-            return redirect("hc-channels")
+            return redirect("hc-p-channels", project.code)
 
-        # Subscription
+        form = AddPushoverForm(request.GET)
+        if not form.is_valid():
+            return HttpResponseBadRequest()
+
         channel = Channel(project=project, kind="po")
-        channel.value = "%s|%s|%s" % (key, prio, prio_up)
+        channel.value = form.get_value()
         channel.save()
         channel.assign_all_checks()
 
