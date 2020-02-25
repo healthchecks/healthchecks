@@ -22,6 +22,7 @@ urlpatterns = [
     path("ping/<uuid:code>/fail", views.ping, {"action": "fail"}, name="hc-fail"),
     path("ping/<uuid:code>/start", views.ping, {"action": "start"}, name="hc-start"),
     path("api/v1/checks/", views.checks),
+    path("api/v1/checks/<uuid:code>", views.single, name="hc-api-single"),
     path("api/v1/checks/<uuid:code>", views.update, name="hc-api-update"),
     path("api/v1/checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
     path("api/v1/notifications/<uuid:code>/bounce", views.bounce, name="hc-api-bounce"),

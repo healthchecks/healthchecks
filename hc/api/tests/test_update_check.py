@@ -72,11 +72,6 @@ class UpdateCheckTestCase(BaseTestCase):
         check = Check.objects.get()
         self.assertEqual(check.channel_set.count(), 0)
 
-    def test_it_requires_post(self):
-        url = "/api/v1/checks/%s" % self.check.code
-        r = self.client.get(url, HTTP_X_API_KEY="X" * 32)
-        self.assertEqual(r.status_code, 405)
-
     def test_it_handles_invalid_uuid(self):
         r = self.post("not-an-uuid", {"api_key": "X" * 32})
         self.assertEqual(r.status_code, 404)
