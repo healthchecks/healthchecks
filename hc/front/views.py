@@ -1241,25 +1241,26 @@ def add_discord_complete(request):
     return redirect("hc-p-channels", project.code)
 
 
-def add_pushover(request):
-    if (
-        settings.PUSHOVER_API_TOKEN is None
-        or settings.PUSHOVER_SUBSCRIPTION_URL is None
-    ):
+def add_pushover_help(request):
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_pushover_help.html", ctx)
+
+
+@login_required
+def add_pushover(request, code):
+    if settings.PUSHOVER_API_TOKEN is None:
         raise Http404("pushover integration is not available")
 
-    if not request.user.is_authenticated:
-        ctx = {"page": "channels"}
-        return render(request, "integrations/add_pushover.html", ctx)
+    project = _get_project_for_user(request, code)
 
     if request.method == "POST":
         # Initiate the subscription
-        state = _prepare_state(request, "pushover")
+        state = token_urlsafe()
 
-        failure_url = settings.SITE_ROOT + reverse("hc-channels")
+        failure_url = settings.SITE_ROOT + reverse("hc-p-channels", args=[project.code])
         success_url = (
             settings.SITE_ROOT
-            + reverse("hc-add-pushover")
+            + reverse("hc-add-pushover", args=[project.code])
             + "?"
             + urlencode(
                 {
@@ -1275,11 +1276,19 @@ def add_pushover(request):
             + urlencode({"success": success_url, "failure": failure_url})
         )
 
+        request.session["pushover"] = state
         return redirect(subscription_url)
 
     # Handle successful subscriptions
     if "pushover_user_key" in request.GET:
-        key = _get_validated_code(request, "pushover", "pushover_user_key")
+        if "pushover" not in request.session:
+            return HttpResponseForbidden()
+
+        state = request.session.pop("pushover")
+        if request.GET.get("state") != state:
+            return HttpResponseForbidden()
+
+        key = request.GET.get("pushover_user_key")
         if key is None:
             return HttpResponseBadRequest()
 
@@ -1294,22 +1303,22 @@ def add_pushover(request):
 
         if request.GET.get("pushover_unsubscribed") == "1":
             # Unsubscription: delete all Pushover channels for this project
-            Channel.objects.filter(project=request.project, kind="po").delete()
+            Channel.objects.filter(project=project, kind="po").delete()
             return redirect("hc-channels")
 
         # Subscription
-        channel = Channel(project=request.project, kind="po")
+        channel = Channel(project=project, kind="po")
         channel.value = "%s|%s|%s" % (key, prio, prio_up)
         channel.save()
         channel.assign_all_checks()
 
         messages.success(request, "The Pushover integration has been added!")
-        return redirect("hc-channels")
+        return redirect("hc-p-channels", project.code)
 
     # Show Integration Settings form
     ctx = {
         "page": "channels",
-        "project": request.project,
+        "project": project,
         "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
         "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
     }
