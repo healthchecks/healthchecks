@@ -346,9 +346,6 @@ def project(request, code):
                 project.name = form.cleaned_data["name"]
                 project.save()
 
-                if request.profile.current_project == project:
-                    request.profile.current_project.name = project.name
-
                 ctx["project_name_updated"] = True
                 ctx["project_name_status"] = "success"
 

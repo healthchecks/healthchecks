@@ -5,7 +5,7 @@ from hc.accounts.models import Profile
 class BasicBackend(object):
     def get_user(self, user_id):
         try:
-            q = User.objects.select_related("profile", "profile__current_project")
+            q = User.objects.select_related("profile")
 
             return q.get(pk=user_id)
         except User.DoesNotExist:
