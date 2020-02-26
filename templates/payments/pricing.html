@@ -12,9 +12,7 @@
 {% endblock %}
 
 {% block content %}
-
-<!-- Plans -->
-<section id="plans" {% if request.user.is_authenticated %} data- {% endif %}>
+<section id="plans">
     <div class="container">
         {% if request.user.is_authenticated %}
         <div class="row">
