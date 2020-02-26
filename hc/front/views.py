@@ -154,9 +154,8 @@ def my_checks(request, code):
         request.profile.sort = request.GET["sort"]
         request.profile.save()
 
-    if request.profile.current_project_id != project.id:
-        request.profile.current_project = project
-        request.profile.save()
+    if request.session.get("last_project_id") != project.id:
+        request.session["last_project_id"] = project.id
 
     q = Check.objects.filter(project=project)
     checks = list(q.prefetch_related("channel_set"))
@@ -257,7 +256,12 @@ def index(request):
     if request.user.is_authenticated:
         projects = list(request.profile.projects())
 
-        ctx = {"page": "projects", "projects": projects}
+        ctx = {
+            "page": "projects",
+            "projects": projects,
+            "last_project_id": request.session.get("last_project_id"),
+        }
+
         return render(request, "front/projects.html", ctx)
 
     check = Check()
@@ -555,14 +559,9 @@ def transfer(request, code):
 
         check.project = target_project
         check.save()
-
         check.assign_all_channels()
 
-        request.profile.current_project = target_project
-        request.profile.save()
-
         messages.success(request, "Check transferred successfully!")
-
         return redirect("hc-details", code)
 
     ctx = {"check": check}
