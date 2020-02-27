@@ -8,17 +8,27 @@
 <div class="col-sm-12">
     <h1>Pushover</h1>
     <div class="jumbotron">
+        {% if request.user.is_authenticated %}
         <p>
-        {% site_name %} is a <strong>free</strong> and
-        <a href="https://github.com/healthchecks/healthchecks">open source</a>
-        service for monitoring your cron jobs, background processes and
-        scheduled tasks. Before adding Pushover integration, please log into
-        {% site_name %}:</p>
+            <a href="https://www.pushover.net/">Pushover</a> delivers
+            real-time notifications on your Android, iPhone, iPad, Desktop,
+            Android Wear and Apple Watch. You can set up {% site_name %} to
+            receive Pushover notifications in a few simple steps.
+        </p>
+        {% else %}
+        <p>
+            {% site_name %} is a <strong>free</strong> and
+            <a href="https://github.com/healthchecks/healthchecks">open source</a>
+            service for monitoring your cron jobs, background processes and
+            scheduled tasks. Before adding Pushover integration, please log into
+            {% site_name %}:
+        </p>
 
         <div class="text-center">
             <a href="{% url 'hc-login' %} %}"
                class="btn btn-primary btn-lg">Sign In</a>
         </div>
+        {% endif %}
     </div>
 
     <h2>Setup Guide</h2>
@@ -27,7 +37,29 @@
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                After logging in, go to "Integrations &rarr; Add Pushover".
+                {% if request.user.is_authenticated %}
+                Go
+                {% else %}
+                After logging in, go
+                {% endif %}
+
+                to the <strong>Integrations</strong> page,
+                and click on <strong>Add Integration</strong> next to the
+                Pushover integration.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pushover_0.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
                 Pushover supports different notification priorities from
                 silent to "Emergency". Select your preferred priorities
                 and click "Subscribe with Pushover".

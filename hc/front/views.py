@@ -1257,6 +1257,7 @@ def add_discord_complete(request):
     return redirect("hc-p-channels", project.code)
 
 
+@require_setting("PUSHOVER_API_TOKEN")
 def add_pushover_help(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_pushover_help.html", ctx)

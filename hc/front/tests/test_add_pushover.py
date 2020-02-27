@@ -17,10 +17,6 @@ class AddPushoverTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_instructions_work_without_login(self):
-        r = self.client.get("/integrations/add_pushover/")
-        self.assertContains(r, "Setup Guide")
-
     def test_it_shows_form(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
