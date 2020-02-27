@@ -15,6 +15,7 @@
         you can set up {% site_name %} to create a PagerDuty incident when
         a check goes down, and resolve it when a check goes back up.</p>
 
+        {% if connect_url %}
         <div class="text-center">
             <div class="text-center">
                 <a href="{{ connect_url|safe }}">
@@ -25,6 +26,7 @@
                 </a>
             </div>
         </div>
+        {% endif %}
 
         {% else %}
         <p>
@@ -43,12 +45,36 @@
 
     <h2>Setup Guide</h2>
 
+    {% if not connect_url %}
+        <div class="row ai-step">
+            <div class="col-sm-6">
+                <span class="step-no"></span>
+                <p>
+                    {% if request.user.is_authenticated %}
+                    Go
+                    {% else %}
+                    After logging in, go
+                    {% endif %}
+
+                    to the <strong>Integrations</strong> page,
+                    and click on <strong>Add Integration</strong> next to the
+                    PagerDuty integration.
+                </p>
+            </div>
+            <div class="col-sm-6">
+                <img
+                    class="ai-guide-screenshot"
+                    alt="Screenshot"
+                    src="{% static 'img/integrations/setup_pdc_0.png' %}">
+            </div>
+        </div>
+    {% endif %}
+
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">1</span>
+            <span class="step-no"></span>
             <p>
-                After {% if request.user.is_authenticated %}{% else %}logging in and{% endif %}
-                clicking on "Alert with PagerDuty", you will be
+                Click on "Alert with PagerDuty", and you will be
                 asked to log into your PagerDuty account.
             </p>
         </div>
@@ -62,7 +88,7 @@
 
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">2</span>
+            <span class="step-no"></span>
             <p>
                 Next, PagerDuty will let set the name and escalation policy
                 for this integration.
@@ -78,7 +104,7 @@
 
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">3</span>
+            <span class="step-no"></span>
             <p>
                 And that is all! You will then be redirected back to
                 "Integrations" page on {% site_name %} and see

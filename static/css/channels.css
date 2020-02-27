@@ -185,6 +185,12 @@ table.channels-table > tbody > tr > th {
 
 .ai-step {
     margin: 2em 0;
+    counter-increment: ai-step;
+}
+
+.ai-step .step-no::after {
+    content: counter(ai-step);
+
 }
 
 .ai-step .step-no {
