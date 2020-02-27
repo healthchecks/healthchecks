@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+from urllib.parse import urlparse
 import uuid
 
 from django.conf import settings
@@ -42,12 +43,17 @@ NEXT_WHITELIST = (
     "hc-p-channels",
     "hc-add-slack",
     "hc-add-pushover",
+    "hc-add-telegram",
 )
 
 
-def _is_whitelisted(path):
+def _is_whitelisted(redirect_url):
+    if not redirect_url:
+        return False
+
+    parsed = urlparse(redirect_url)
     try:
-        match = resolve(path)
+        match = resolve(parsed.path)
     except Resolver404:
         return False
 

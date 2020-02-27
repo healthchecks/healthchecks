@@ -1398,12 +1398,24 @@ def telegram_bot(request):
     return HttpResponse()
 
 
+def add_telegram_help(request):
+    ctx = {
+        "page": "channels",
+        "bot_name": settings.TELEGRAM_BOT_NAME,
+    }
+
+    return render(request, "integrations/add_telegram.html", ctx)
+
+
 @login_required
 def add_telegram(request):
     chat_id, chat_type, chat_name = None, None, None
     qs = request.META["QUERY_STRING"]
     if qs:
-        chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
+        try:
+            chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
+        except signing.BadSignature:
+            return render(request, "bad_link.html")
 
     if request.method == "POST":
         project = _get_project_for_user(request, request.POST.get("project"))

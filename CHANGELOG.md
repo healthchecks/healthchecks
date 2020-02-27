@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - API security: check channel ownership when setting check's channels
 - API: update check's "alert_after" field when changing schedule
 - API: validate channel identifiers before creating/updating a check (#335)
+- Fix redirect after login when adding Telegram integration
 
 ## v1.13.0 - 2020-02-13
 

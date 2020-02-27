@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Notification Channels - {% site_name %}{% endblock %}
+{% block title %}Telegram Integration for {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -23,8 +23,7 @@
         </p>
     </div>
 
-<h2>Integration Settings</h2>
-
+    <h2>Integration Settings</h2>
     <form id="add-telegram" method="post" class="form-horizontal">
         {% csrf_token %}
         <div class="form-group">
@@ -98,7 +97,9 @@
             <p>Click or tap on the confirmation link, and
             {% site_name %} will open in a browser window asking you to
              confirm the new integration.</p>
-            <p>Confirm the integration, and it's done!</p>
+            <p>Select the project you want the Telegram integration added to,
+            click on "Connect Telegram", and it's done!</p>
+
         </div>
         <div class="col-sm-6">
             <img

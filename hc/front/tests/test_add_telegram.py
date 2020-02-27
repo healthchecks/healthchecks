@@ -34,6 +34,13 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(c.telegram_name, "My Group")
         self.assertEqual(c.project, self.project)
 
+    def test_it_handles_bad_signature(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?bad-signature")
+        self.assertContains(r, "Incorrect Link")
+
+        self.assertFalse(Channel.objects.exists())
+
     @patch("hc.api.transports.requests.request")
     def test_it_sends_invite(self, mock_get):
         data = {
