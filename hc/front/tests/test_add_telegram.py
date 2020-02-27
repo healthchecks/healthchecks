@@ -1,9 +1,11 @@
 from django.core import signing
+from django.test.utils import override_settings
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 from mock import patch
 
 
+@override_settings(TELEGRAM_TOKEN="fake-token")
 class AddTelegramTestCase(BaseTestCase):
     url = "/integrations/add_telegram/"
 
@@ -11,6 +13,14 @@ class AddTelegramTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "start@ExampleBot")
+
+    @override_settings(TELEGRAM_TOKEN=None)
+    def test_it_requires_token(self):
+        payload = signing.dumps((123, "group", "My Group"))
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?" + payload)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_shows_confirmation(self):
         payload = signing.dumps((123, "group", "My Group"))

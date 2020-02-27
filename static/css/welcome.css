@@ -72,11 +72,19 @@
 }
 
 #welcome-integrations .integration {
+    display: block;
+    color: #333;
     border: 1px solid #ddd;
     border-radius: 3px;
     padding: 20px 0;
     text-align: center;
     margin-bottom: 30px;
+    text-decoration: none;
+}
+
+#welcome-integrations a.integration:hover {
+    border-color: #0091EA;
+    text-decoration: none;
 }
 
 #welcome-integrations img {

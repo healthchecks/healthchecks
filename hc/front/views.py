@@ -271,16 +271,18 @@ def index(request):
         "page": "welcome",
         "check": check,
         "ping_url": check.url(),
+        "enable_apprise": settings.APPRISE_ENABLED is True,
+        "enable_discord": settings.DISCORD_CLIENT_ID is not None,
+        "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
-        "enable_discord": settings.DISCORD_CLIENT_ID is not None,
-        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
-        "enable_sms": settings.TWILIO_AUTH is not None,
-        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-        "enable_trello": settings.TRELLO_APP_KEY is not None,
-        "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
-        "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_shell": settings.SHELL_ENABLED is True,
+        "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
+        "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
+        "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "registration_open": settings.REGISTRATION_OPEN,
     }
 
@@ -683,18 +685,18 @@ def channels(request, code):
         "project": project,
         "profile": project.owner_profile,
         "channels": channels,
+        "enable_apprise": settings.APPRISE_ENABLED is True,
+        "enable_discord": settings.DISCORD_CLIENT_ID is not None,
+        "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
-        "enable_discord": settings.DISCORD_CLIENT_ID is not None,
-        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
-        "enable_sms": settings.TWILIO_AUTH is not None,
-        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-        "enable_pdc": settings.PD_VENDOR_KEY is not None,
-        "enable_trello": settings.TRELLO_APP_KEY is not None,
-        "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
-        "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
+        "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
+        "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -925,7 +927,7 @@ def add_pd(request, code):
 
 
 @require_setting("PD_VENDOR_KEY")
-def add_pdc_help(request):
+def pdc_help(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_pdc.html", ctx)
 
@@ -1042,7 +1044,7 @@ def add_slack(request, code):
 
 
 @require_setting("SLACK_CLIENT_ID")
-def add_slack_help(request):
+def slack_help(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_slack_btn.html", ctx)
 
@@ -1258,7 +1260,7 @@ def add_discord_complete(request):
 
 
 @require_setting("PUSHOVER_API_TOKEN")
-def add_pushover_help(request):
+def pushover_help(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_pushover_help.html", ctx)
 
@@ -1398,7 +1400,8 @@ def telegram_bot(request):
     return HttpResponse()
 
 
-def add_telegram_help(request):
+@require_setting("TELEGRAM_TOKEN")
+def telegram_help(request):
     ctx = {
         "page": "channels",
         "bot_name": settings.TELEGRAM_BOT_NAME,
@@ -1407,6 +1410,7 @@ def add_telegram_help(request):
     return render(request, "integrations/add_telegram.html", ctx)
 
 
+@require_setting("TELEGRAM_TOKEN")
 @login_required
 def add_telegram(request):
     chat_id, chat_type, chat_name = None, None, None

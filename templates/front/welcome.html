@@ -329,10 +329,17 @@
         </div>
 
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+            {% if enable_slack_btn %}
+            <a href="{% url 'hc-slack-help' %}" class="integration">
+                <img src="{% static 'img/integrations/slack.png' %}" class="icon" alt="" />
+                <h3>Slack<br><small>Chat</small></h3>
+            </a>
+            {% else %}
             <div class="integration">
                 <img src="{% static 'img/integrations/slack.png' %}" class="icon" alt="" />
                 <h3>Slack<br><small>Chat</small></h3>
             </div>
+            {% endif %}
         </div>
 
         {% if enable_apprise %}
@@ -384,10 +391,17 @@
         </div>
 
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+            {% if enable_pdc %}
+            <a href="{% url 'hc-pdc-help' %}" class="integration">
+                <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="" />
+                <h3>PagerDuty<br><small>Incident Management</small></h3>
+            </a>
+            {% else %}
             <div class="integration">
                 <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="" />
                 <h3>PagerDuty<br><small>Incident Management</small></h3>
             </div>
+            {% endif %}
         </div>
 
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
@@ -422,10 +436,10 @@
 
         {% if enable_pushover %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-            <div class="integration">
+            <a href="{% url 'hc-pushover-help' %}" class="integration">
                 <img src="{% static 'img/integrations/po.png' %}" class="icon" alt="" />
                 <h3>Pushover<br><small>Push Notifications</small></h3>
-            </div>
+            </a>
         </div>
         {% endif %}
 
@@ -449,10 +463,10 @@
 
         {% if enable_telegram %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-            <div class="integration">
+            <a href="{% url 'hc-telegram-help' %}" class="integration">
                 <img src="{% static 'img/integrations/telegram.png' %}" class="icon" alt="" />
                 <h3>Telegram<br><small>Chat</small></h3>
-            </div>
+            </a>
         </div>
         {% endif %}
 
