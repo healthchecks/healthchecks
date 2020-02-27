@@ -925,39 +925,24 @@ def add_pd(request, code):
     return render(request, "integrations/add_pd.html", ctx)
 
 
-def add_pdc(request, code, state=None):
+def add_pdc_help(request):
+    if settings.PD_VENDOR_KEY is None:
+        raise Http404("pagerduty integration is not available")
+
+    ctx = {"page": "channels"}
+    return render(request, "integrations/add_pdc.html", ctx)
+
+
+@login_required
+def add_pdc(request, code):
     if settings.PD_VENDOR_KEY is None:
         raise Http404("pagerduty integration is not available")
 
     project = _get_project_for_user(request, code)
 
-    if state and request.user.is_authenticated:
-        if "pd" not in request.session:
-            return HttpResponseBadRequest()
-
-        session_state = request.session.pop("pd")
-        if session_state != state:
-            return HttpResponseBadRequest()
-
-        if request.GET.get("error") == "cancelled":
-            messages.warning(request, "PagerDuty setup was cancelled.")
-            return redirect("hc-p-channels", project.code)
-
-        channel = Channel(kind="pd", project=project)
-        channel.value = json.dumps(
-            {
-                "service_key": request.GET.get("service_key"),
-                "account": request.GET.get("account"),
-            }
-        )
-        channel.save()
-        channel.assign_all_checks()
-        messages.success(request, "The PagerDuty integration has been added!")
-        return redirect("hc-p-channels", project.code)
-
     state = token_urlsafe()
     callback = settings.SITE_ROOT + reverse(
-        "hc-add-pdc-state", args=[project.code, state]
+        "hc-add-pdc-complete", args=[project.code, state]
     )
     connect_url = "https://connect.pagerduty.com/connect?" + urlencode(
         {"vendor": settings.PD_VENDOR_KEY, "callback": callback}
@@ -966,6 +951,37 @@ def add_pdc(request, code, state=None):
     ctx = {"page": "channels", "project": project, "connect_url": connect_url}
     request.session["pd"] = state
     return render(request, "integrations/add_pdc.html", ctx)
+
+
+@login_required
+def add_pdc_complete(request, code, state):
+    if settings.PD_VENDOR_KEY is None:
+        raise Http404("pagerduty integration is not available")
+
+    if "pd" not in request.session:
+        return HttpResponseBadRequest()
+
+    project = _get_project_for_user(request, code)
+
+    session_state = request.session.pop("pd")
+    if session_state != state:
+        return HttpResponseBadRequest()
+
+    if request.GET.get("error") == "cancelled":
+        messages.warning(request, "PagerDuty setup was cancelled.")
+        return redirect("hc-p-channels", project.code)
+
+    channel = Channel(kind="pd", project=project)
+    channel.value = json.dumps(
+        {
+            "service_key": request.GET.get("service_key"),
+            "account": request.GET.get("account"),
+        }
+    )
+    channel.save()
+    channel.assign_all_checks()
+    messages.success(request, "The PagerDuty integration has been added!")
+    return redirect("hc-p-channels", project.code)
 
 
 @login_required
