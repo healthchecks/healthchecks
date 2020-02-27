@@ -24,6 +24,21 @@ You can also toggle the integrations on and off when viewing an individual check
 
 ![Integration on/off toggles in the check details page](IMG_URL/details_integrations.png)
 
+## SMS and WhatsApp Monthly Quotas
+
+SITE_NAME limits the maximum number of SMS and WhatsApp notifications an account
+can send per any given month. The specific limit depends on account's billing plan.
+
+The limit is applied to the combined number of sent SMS and WhatsApp notifications. It
+automatically resets at the start of each month. The "unused" sends from one month do
+not carry over to the next month.
+
+When an account exceeds its SMS / WhatsApp monthly limit, SITE_NAME will:
+
+* Send a warning email to account's primary email address
+* Show a warning message in the **Integrations** page
+
+
 ## Repeated Notifications
 
 If you want to receive repeated notifications for as long as a particular check is

@@ -37,10 +37,13 @@ The members **can not**:
 * manage project's billing
 * remove the project
 
-## Projects and Resource Limits
+## Projects and Check Limits
 
-Your account limits (such as the total number of checks) are shared by all projects
-owned by your account. For example, consider a Business account with two projects,
+**Check limit** is the total number of checks your account can have. The specifc
+limit depends on the account's billing plan.
+
+Account's check limit is shared by all projects owned by your account.
+For example, consider a Business account with two projects,
 "Project A" and "Project B". If A has 70 checks, then B cannot have more than
 30 checks, in order to not exceed Bussiness account's total limit of 100.
 
@@ -48,6 +51,12 @@ However, only checks from your own projects count towards your account's
 quota. If you get invited to somebody else's project, that does not change
 the number of checks you can create in your own projects.
 
+## Projects and Team Size Limits
+
+**Team size** is the number of unique users you can invite in your projects.
+The team size limit is also shared by all projects owned by your account.
+However, if you invite the same user (using the same email address) into several
+projects, it only takes up a single "seat".
 
 ## Projects and Monthly Reports
 
