@@ -30,11 +30,6 @@ class UpdateNameTestCase(BaseTestCase):
         self.assertEqual(self.check.name, "Bob Was Here")
 
     def test_it_allows_cross_team_access(self):
-        # Bob's current profile is not set
-        self.bobs_profile.current_project = None
-        self.bobs_profile.save()
-
-        # But this should still work:
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url, data={"name": "Bob Was Here"})
         self.assertRedirects(r, self.redirect_url)

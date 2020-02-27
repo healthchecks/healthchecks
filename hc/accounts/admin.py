@@ -22,7 +22,6 @@ class ProfileFieldset(Fieldset):
     name = "User Profile"
     fields = (
         "email",
-        "current_project",
         "reports_allowed",
         "next_report_date",
         "nag_period",
@@ -51,7 +50,6 @@ class ProfileAdmin(admin.ModelAdmin):
         css = {"all": ("css/admin/profiles.css",)}
 
     readonly_fields = ("user", "email")
-    raw_id_fields = ("current_project",)
     search_fields = ["id", "user__email"]
     list_per_page = 50
     list_select_related = ("user",)

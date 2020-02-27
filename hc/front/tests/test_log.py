@@ -91,9 +91,6 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "Called webhook foo/$NAME", status_code=200)
 
     def test_it_allows_cross_team_access(self):
-        self.bobs_profile.current_project = None
-        self.bobs_profile.save()
-
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)

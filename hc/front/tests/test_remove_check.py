@@ -48,9 +48,6 @@ class RemoveCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 405)
 
     def test_it_allows_cross_team_access(self):
-        self.bobs_profile.current_project = None
-        self.bobs_profile.save()
-
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.remove_url)
         self.assertRedirects(r, self.redirect_url)

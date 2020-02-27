@@ -43,9 +43,6 @@ class LastPingTestCase(BaseTestCase):
         self.assertContains(r, "bar-456", status_code=200)
 
     def test_it_allows_cross_team_access(self):
-        self.bobs_profile.current_project = None
-        self.bobs_profile.save()
-
         check = Check.objects.create(project=self.project)
         Ping.objects.create(owner=check, body="this is body")
 

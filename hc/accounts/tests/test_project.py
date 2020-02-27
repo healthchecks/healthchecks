@@ -76,8 +76,6 @@ class ProjectTestCase(BaseTestCase):
             project=self.project, user__email="frank@example.org"
         )
 
-        profile = member.user.profile
-        self.assertEqual(profile.current_project, self.project)
         # The new user should not have their own project
         self.assertFalse(member.user.project_set.exists())
 
@@ -148,10 +146,7 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
-        self.assertEqual(Member.objects.count(), 0)
-
-        self.bobs_profile.refresh_from_db()
-        self.assertEqual(self.bobs_profile.current_project, None)
+        self.assertFalse(Member.objects.exists())
 
     def test_it_requires_owner_to_remove_team_member(self):
         self.client.login(username="bob@example.org", password="password")
@@ -161,18 +156,12 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_it_checks_membership_when_removing_team_member(self):
-        self.profile.current_project = self.project
-        self.profile.save()
-
         self.client.login(username="charlie@example.org", password="password")
 
         url = "/projects/%s/settings/" % self.charlies_project.code
         form = {"remove_team_member": "1", "email": "alice@example.org"}
         r = self.client.post(url, form)
         self.assertEqual(r.status_code, 400)
-
-        self.profile.refresh_from_db()
-        self.assertIsNotNone(self.profile.current_project)
 
     def test_it_sets_project_name(self):
         self.client.login(username="alice@example.org", password="password")

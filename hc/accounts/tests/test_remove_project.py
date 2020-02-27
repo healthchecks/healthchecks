@@ -15,10 +15,6 @@ class RemoveProjectTestCase(BaseTestCase):
         r = self.client.post(self.url)
         self.assertRedirects(r, "/")
 
-        # Alice's current project should be not set
-        self.profile.refresh_from_db()
-        self.assertEqual(self.profile.current_project, None)
-
         # Alice should not own any projects
         self.assertFalse(self.alice.project_set.exists())
 

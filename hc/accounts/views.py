@@ -79,9 +79,7 @@ def _make_user(email, with_project=True):
         channel.checks.add(check)
 
     # Ensure a profile gets created
-    profile = Profile.objects.for_user(user)
-    profile.current_project = project
-    profile.save()
+    Profile.objects.for_user(user)
 
     return user
 
@@ -222,10 +220,6 @@ def profile(request):
             except Project.DoesNotExist:
                 return HttpResponseBadRequest()
 
-            if profile.current_project == project:
-                profile.current_project = None
-                profile.save()
-
             Member.objects.filter(project=project, user=request.user).delete()
 
             ctx["left_project"] = project
@@ -332,9 +326,6 @@ def project(request, code):
                 farewell_user = q.first()
                 if farewell_user is None:
                     return HttpResponseBadRequest()
-
-                farewell_user.profile.current_project = None
-                farewell_user.profile.save()
 
                 Member.objects.filter(project=project, user=farewell_user).delete()
 

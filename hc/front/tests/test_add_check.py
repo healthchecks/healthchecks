@@ -19,19 +19,6 @@ class AddCheckTestCase(BaseTestCase):
         redirect_url = "/checks/%s/details/?new" % check.code
         self.assertRedirects(r, redirect_url)
 
-    def test_it_handles_unset_current_project(self):
-        self.profile.current_project = None
-        self.profile.save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url)
-
-        check = Check.objects.get()
-        self.assertEqual(check.project, self.project)
-
-        redirect_url = "/checks/%s/details/?new" % check.code
-        self.assertRedirects(r, redirect_url)
-
     def test_team_access_works(self):
         self.client.login(username="bob@example.org", password="password")
         self.client.post(self.url)

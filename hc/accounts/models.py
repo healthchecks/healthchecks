@@ -260,12 +260,6 @@ class Project(models.Model):
 
     def invite(self, user):
         Member.objects.create(user=user, project=self)
-
-        # Switch the invited user over to the new team so they
-        # notice the new team on next visit:
-        user.profile.current_project = self
-        user.profile.save()
-
         user.profile.send_instant_login_link(self)
 
     def set_next_nag_date(self):

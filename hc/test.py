@@ -32,7 +32,6 @@ class BaseTestCase(TestCase):
         self.bobs_project.save()
 
         self.bobs_profile = Profile(user=self.bob)
-        self.bobs_profile.current_project = self.project
         self.bobs_profile.save()
 
         Member.objects.create(user=self.bob, project=self.project)
@@ -47,7 +46,6 @@ class BaseTestCase(TestCase):
         self.charlies_project.save()
 
         self.charlies_profile = Profile(user=self.charlie)
-        self.charlies_profile.current_project = self.charlies_project
         self.charlies_profile.save()
 
         self.channels_url = "/projects/%s/integrations/" % self.project.code
