@@ -20,3 +20,9 @@ class AddSlackBtnTestCase(BaseTestCase):
 
         # There should now be a key in session
         self.assertTrue("add_slack" in self.client.session)
+
+    @override_settings(SLACK_CLIENT_ID=None)
+    def test_it_requires_client_id(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)

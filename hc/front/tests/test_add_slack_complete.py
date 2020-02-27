@@ -67,3 +67,9 @@ class AddSlackCompleteTestCase(BaseTestCase):
         r = self.client.get(url, follow=True)
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "something went wrong")
+
+    @override_settings(SLACK_CLIENT_ID=None)
+    def test_it_requires_client_id(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/integrations/add_slack_btn/?code=12345678&state=foo")
+        self.assertEqual(r.status_code, 404)

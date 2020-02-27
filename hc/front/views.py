@@ -34,6 +34,7 @@ from hc.api.models import (
     Notification,
 )
 from hc.api.transports import Telegram
+from hc.front.decorators import require_setting
 from hc.front.forms import (
     AddAppriseForm,
     AddEmailForm,
@@ -878,11 +879,9 @@ def add_webhook(request, code):
     return render(request, "integrations/add_webhook.html", ctx)
 
 
+@require_setting("SHELL_ENABLED")
 @login_required
 def add_shell(request, code):
-    if not settings.SHELL_ENABLED:
-        raise Http404("shell integration is not available")
-
     project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddShellForm(request.POST)
@@ -925,19 +924,15 @@ def add_pd(request, code):
     return render(request, "integrations/add_pd.html", ctx)
 
 
+@require_setting("PD_VENDOR_KEY")
 def add_pdc_help(request):
-    if settings.PD_VENDOR_KEY is None:
-        raise Http404("pagerduty integration is not available")
-
     ctx = {"page": "channels"}
     return render(request, "integrations/add_pdc.html", ctx)
 
 
+@require_setting("PD_VENDOR_KEY")
 @login_required
 def add_pdc(request, code):
-    if settings.PD_VENDOR_KEY is None:
-        raise Http404("pagerduty integration is not available")
-
     project = _get_project_for_user(request, code)
 
     state = token_urlsafe()
@@ -953,11 +948,9 @@ def add_pdc(request, code):
     return render(request, "integrations/add_pdc.html", ctx)
 
 
+@require_setting("PD_VENDOR_KEY")
 @login_required
 def add_pdc_complete(request, code, state):
-    if settings.PD_VENDOR_KEY is None:
-        raise Http404("pagerduty integration is not available")
-
     if "pd" not in request.session:
         return HttpResponseBadRequest()
 
@@ -1048,19 +1041,15 @@ def add_slack(request, code):
     return render(request, "integrations/add_slack.html", ctx)
 
 
+@require_setting("SLACK_CLIENT_ID")
 def add_slack_help(request):
-    if not settings.SLACK_CLIENT_ID:
-        raise Http404("slack integration is not available")
-
     ctx = {"page": "channels"}
     return render(request, "integrations/add_slack_btn.html", ctx)
 
 
+@require_setting("SLACK_CLIENT_ID")
 @login_required
 def add_slack_btn(request, code):
-    if not settings.SLACK_CLIENT_ID:
-        raise Http404("slack integration is not available")
-
     project = _get_project_for_user(request, code)
 
     state = token_urlsafe()
@@ -1082,11 +1071,9 @@ def add_slack_btn(request, code):
     return render(request, "integrations/add_slack_btn.html", ctx)
 
 
+@require_setting("SLACK_CLIENT_ID")
 @login_required
 def add_slack_complete(request):
-    if not settings.SLACK_CLIENT_ID:
-        raise Http404("slack integration is not available")
-
     if "add_slack" not in request.session:
         return HttpResponseForbidden()
 
@@ -1142,11 +1129,9 @@ def add_mattermost(request, code):
     return render(request, "integrations/add_mattermost.html", ctx)
 
 
+@require_setting("PUSHBULLET_CLIENT_ID")
 @login_required
 def add_pushbullet(request, code):
-    if settings.PUSHBULLET_CLIENT_ID is None:
-        raise Http404("pushbullet integration is not available")
-
     project = _get_project_for_user(request, code)
     redirect_uri = settings.SITE_ROOT + reverse("hc-add-pushbullet-complete")
 
@@ -1170,11 +1155,9 @@ def add_pushbullet(request, code):
     return render(request, "integrations/add_pushbullet.html", ctx)
 
 
+@require_setting("PUSHBULLET_CLIENT_ID")
 @login_required
 def add_pushbullet_complete(request):
-    if settings.PUSHBULLET_CLIENT_ID is None:
-        raise Http404("pushbullet integration is not available")
-
     if "add_pushbullet" not in request.session:
         return HttpResponseForbidden()
 
@@ -1211,11 +1194,9 @@ def add_pushbullet_complete(request):
     return redirect("hc-p-channels", project.code)
 
 
+@require_setting("DISCORD_CLIENT_ID")
 @login_required
 def add_discord(request, code):
-    if settings.DISCORD_CLIENT_ID is None:
-        raise Http404("discord integration is not available")
-
     project = _get_project_for_user(request, code)
     redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord-complete")
     state = token_urlsafe()
@@ -1235,11 +1216,9 @@ def add_discord(request, code):
     return render(request, "integrations/add_discord.html", ctx)
 
 
+@require_setting("DISCORD_CLIENT_ID")
 @login_required
 def add_discord_complete(request):
-    if settings.DISCORD_CLIENT_ID is None:
-        raise Http404("discord integration is not available")
-
     if "add_discord" not in request.session:
         return HttpResponseForbidden()
 
@@ -1283,11 +1262,9 @@ def add_pushover_help(request):
     return render(request, "integrations/add_pushover_help.html", ctx)
 
 
+@require_setting("PUSHOVER_API_TOKEN")
 @login_required
 def add_pushover(request, code):
-    if settings.PUSHOVER_API_TOKEN is None:
-        raise Http404("pushover integration is not available")
-
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
@@ -1451,11 +1428,9 @@ def add_telegram(request):
     return render(request, "integrations/add_telegram.html", ctx)
 
 
+@require_setting("TWILIO_AUTH")
 @login_required
 def add_sms(request, code):
-    if settings.TWILIO_AUTH is None:
-        raise Http404("sms integration is not available")
-
     project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddSmsForm(request.POST)
@@ -1479,11 +1454,9 @@ def add_sms(request, code):
     return render(request, "integrations/add_sms.html", ctx)
 
 
+@require_setting("TWILIO_USE_WHATSAPP")
 @login_required
 def add_whatsapp(request, code):
-    if not settings.TWILIO_USE_WHATSAPP:
-        raise Http404("whatsapp integration is not available")
-
     project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddSmsForm(request.POST)
@@ -1513,11 +1486,9 @@ def add_whatsapp(request, code):
     return render(request, "integrations/add_whatsapp.html", ctx)
 
 
+@require_setting("TRELLO_APP_KEY")
 @login_required
 def add_trello(request, code):
-    if settings.TRELLO_APP_KEY is None:
-        raise Http404("trello integration is not available")
-
     project = _get_project_for_user(request, code)
     if request.method == "POST":
         channel = Channel(project=project, kind="trello")
@@ -1548,11 +1519,9 @@ def add_trello(request, code):
     return render(request, "integrations/add_trello.html", ctx)
 
 
+@require_setting("MATRIX_ACCESS_TOKEN")
 @login_required
 def add_matrix(request, code):
-    if settings.MATRIX_ACCESS_TOKEN is None:
-        raise Http404("matrix integration is not available")
-
     project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddMatrixForm(request.POST)
@@ -1582,11 +1551,9 @@ def add_matrix(request, code):
     return render(request, "integrations/add_matrix.html", ctx)
 
 
+@require_setting("APPRISE_ENABLED")
 @login_required
 def add_apprise(request, code):
-    if not settings.APPRISE_ENABLED:
-        raise Http404("apprise integration is not available")
-
     project = _get_project_for_user(request, code)
     if request.method == "POST":
         form = AddAppriseForm(request.POST)
@@ -1605,6 +1572,7 @@ def add_apprise(request, code):
     return render(request, "integrations/add_apprise.html", ctx)
 
 
+@require_setting("TRELLO_APP_KEY")
 @login_required
 @require_POST
 def trello_settings(request):

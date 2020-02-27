@@ -61,3 +61,11 @@ class AddPushbulletTestCase(BaseTestCase):
 
         # Session should now be clean
         self.assertFalse("add_pushbullet" in self.client.session)
+
+    @override_settings(PUSHBULLET_CLIENT_ID=None)
+    def test_it_requires_client_id(self):
+        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 404)
