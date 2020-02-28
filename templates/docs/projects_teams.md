@@ -39,7 +39,7 @@ The members **can not**:
 
 ## Projects and Check Limits
 
-**Check limit** is the total number of checks your account can have. The specifc
+**Check limit** is the total number of checks your account can have. The specific
 limit depends on the account's billing plan.
 
 Account's check limit is shared by all projects owned by your account.
