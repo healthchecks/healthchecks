@@ -1,7 +1,8 @@
+from unittest.mock import patch
+
 from django.test.utils import override_settings
 from hc.api.models import Channel
 from hc.test import BaseTestCase
-from mock import patch
 
 
 @override_settings(MATRIX_ACCESS_TOKEN="foo")

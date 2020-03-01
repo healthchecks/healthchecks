@@ -1,9 +1,9 @@
 import json
+from unittest.mock import patch
 
 from django.test.utils import override_settings
 from hc.api.models import Channel
 from hc.test import BaseTestCase
-from mock import patch
 
 
 @override_settings(DISCORD_CLIENT_ID="t1", DISCORD_CLIENT_SECRET="s1")

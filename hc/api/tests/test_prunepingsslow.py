@@ -1,10 +1,10 @@
 from datetime import timedelta
+from unittest.mock import Mock
 
 from django.utils import timezone
 from hc.api.management.commands.prunepingsslow import Command
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
-from mock import Mock
 
 
 class PrunePingsSlowTestCase(BaseTestCase):

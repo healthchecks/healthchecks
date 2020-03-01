@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+from unittest.mock import Mock
 
 from django.core import mail
 from django.utils.timezone import now
@@ -6,7 +7,6 @@ from hc.accounts.management.commands.senddeletionnotices import Command
 from hc.accounts.models import Member
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
-from mock import Mock
 
 
 class SendDeletionNoticesTestCase(BaseTestCase):

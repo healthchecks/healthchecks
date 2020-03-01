@@ -2,12 +2,12 @@
 
 from datetime import timedelta as td
 import json
+from unittest.mock import patch, Mock
 
 from django.core import mail
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
-from mock import patch, Mock
 from requests.exceptions import ConnectionError, Timeout
 from django.test.utils import override_settings
 

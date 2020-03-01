@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import Mock
 
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -6,7 +7,6 @@ from hc.accounts.management.commands.pruneusers import Command
 from hc.accounts.models import Project
 from hc.api.models import Check
 from hc.test import BaseTestCase
-from mock import Mock
 
 
 class PruneUsersTestCase(BaseTestCase):

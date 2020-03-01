@@ -1,10 +1,10 @@
 from datetime import timedelta as td
 import time
+from unittest.mock import patch
 
 from django.core import signing
 from django.utils.timezone import now
 from hc.test import BaseTestCase
-from mock import patch
 
 
 class UnsubscribeReportsTestCase(BaseTestCase):

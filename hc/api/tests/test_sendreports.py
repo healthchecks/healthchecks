@@ -1,11 +1,11 @@
 from datetime import timedelta as td
+from unittest.mock import Mock
 
 from django.core import mail
 from django.utils.timezone import now
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
-from mock import Mock
 
 
 class SendReportsTestCase(BaseTestCase):

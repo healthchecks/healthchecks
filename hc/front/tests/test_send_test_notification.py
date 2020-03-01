@@ -1,9 +1,9 @@
 import json
+from unittest.mock import patch
 
 from django.core import mail
 from hc.api.models import Channel
 from hc.test import BaseTestCase
-from mock import patch
 
 
 class SendTestNotificationTestCase(BaseTestCase):

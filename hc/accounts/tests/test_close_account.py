@@ -1,8 +1,9 @@
+from unittest.mock import patch
+
 from django.contrib.auth.models import User
 from hc.api.models import Check
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
-from mock import patch
 
 
 class CloseAccountTestCase(BaseTestCase):

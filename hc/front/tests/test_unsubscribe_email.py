@@ -1,8 +1,9 @@
 import time
+from unittest.mock import patch
+
 from django.core.signing import TimestampSigner
 from hc.api.models import Channel
 from hc.test import BaseTestCase
-from mock import patch
 
 
 class UnsubscribeEmailTestCase(BaseTestCase):
