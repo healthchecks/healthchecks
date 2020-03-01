@@ -2,57 +2,60 @@ from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
 
-class LastPingTestCase(BaseTestCase):
+class PingDetailsTestCase(BaseTestCase):
+    def setUp(self):
+        super(PingDetailsTestCase, self).setUp()
+        self.check = Check.objects.create(project=self.project)
+        self.url = "/checks/%s/last_ping/" % self.check.code
+
     def test_it_works(self):
-        check = Check.objects.create(project=self.project)
-        Ping.objects.create(owner=check, body="this is body")
+        Ping.objects.create(owner=self.check, body="this is body")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/checks/%s/last_ping/" % check.code)
+        r = self.client.get(self.url)
         self.assertContains(r, "this is body", status_code=200)
 
+    def test_it_requires_logged_in_user(self):
+        Ping.objects.create(owner=self.check, body="this is body")
+
+        r = self.client.get(self.url)
+        self.assertRedirects(r, "/accounts/login/?next=" + self.url)
+
     def test_it_shows_fail(self):
-        check = Check.objects.create(project=self.project)
-        Ping.objects.create(owner=check, kind="fail")
+        Ping.objects.create(owner=self.check, kind="fail")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/checks/%s/last_ping/" % check.code)
+        r = self.client.get(self.url)
         self.assertContains(r, "/fail", status_code=200)
 
     def test_it_shows_start(self):
-        check = Check.objects.create(project=self.project)
-        Ping.objects.create(owner=check, kind="start")
+        Ping.objects.create(owner=self.check, kind="start")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/checks/%s/last_ping/" % check.code)
+        r = self.client.get(self.url)
         self.assertContains(r, "/start", status_code=200)
 
     def test_it_accepts_n(self):
-        check = Check.objects.create(project=self.project)
-
         # remote_addr, scheme, method, ua, body:
-        check.ping("1.2.3.4", "http", "post", "tester", "foo-123", "success")
-        check.ping("1.2.3.4", "http", "post", "tester", "bar-456", "success")
+        self.check.ping("1.2.3.4", "http", "post", "tester", "foo-123", "success")
+        self.check.ping("1.2.3.4", "http", "post", "tester", "bar-456", "success")
 
         self.client.login(username="alice@example.org", password="password")
 
-        r = self.client.get("/checks/%s/pings/1/" % check.code)
+        r = self.client.get("/checks/%s/pings/1/" % self.check.code)
         self.assertContains(r, "foo-123", status_code=200)
 
-        r = self.client.get("/checks/%s/pings/2/" % check.code)
+        r = self.client.get("/checks/%s/pings/2/" % self.check.code)
         self.assertContains(r, "bar-456", status_code=200)
 
     def test_it_allows_cross_team_access(self):
-        check = Check.objects.create(project=self.project)
-        Ping.objects.create(owner=check, body="this is body")
+        Ping.objects.create(owner=self.check, body="this is body")
 
         self.client.login(username="bob@example.org", password="password")
-        r = self.client.get("/checks/%s/last_ping/" % check.code)
+        r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
 
     def test_it_handles_missing_ping(self):
-        check = Check.objects.create(project=self.project)
-
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/checks/%s/pings/123/" % check.code)
+        r = self.client.get("/checks/%s/pings/123/" % self.check.code)
         self.assertContains(r, "No additional information is", status_code=200)

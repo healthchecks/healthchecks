@@ -92,8 +92,7 @@ def _tags_statuses(checks):
 def _get_check_for_user(request, code):
     """ Return specified check if current user has access to it. """
 
-    if not request.user.is_authenticated:
-        raise Http404("not found")
+    assert request.user.is_authenticated
 
     q = Check.objects
     if not request.user.is_superuser:
@@ -109,8 +108,7 @@ def _get_check_for_user(request, code):
 def _get_channel_for_user(request, code):
     """ Return specified channel if current user has access to it. """
 
-    if not request.user.is_authenticated:
-        raise Http404("not found")
+    assert request.user.is_authenticated
 
     q = Channel.objects
     if not request.user.is_superuser:
@@ -443,6 +441,7 @@ def cron_preview(request):
     return render(request, "front/cron_preview.html", ctx)
 
 
+@login_required
 def ping_details(request, code, n=None):
     check = _get_check_for_user(request, code)
     q = Ping.objects.filter(owner=check)
