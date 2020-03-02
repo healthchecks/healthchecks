@@ -53,7 +53,6 @@ class Profile(models.Model):
     ping_log_limit = models.IntegerField(default=100)
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
-    current_project = models.ForeignKey("Project", models.SET_NULL, null=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
     sms_limit = models.IntegerField(default=5)
     sms_sent = models.IntegerField(default=0)
