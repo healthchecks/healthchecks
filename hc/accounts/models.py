@@ -1,6 +1,5 @@
-from base64 import urlsafe_b64encode
 from datetime import timedelta
-import os
+from secrets import token_urlsafe
 import uuid
 
 from django.conf import settings
@@ -76,7 +75,7 @@ class Profile(models.Model):
         return settings.SITE_ROOT + path
 
     def prepare_token(self, salt):
-        token = urlsafe_b64encode(os.urandom(24)).decode()
+        token = token_urlsafe(24)
         self.token = make_password(token, salt)
         self.save()
         return token
@@ -240,8 +239,8 @@ class Project(models.Model):
         return self.owner_profile.check_limit - num_used
 
     def set_api_keys(self):
-        self.api_key = urlsafe_b64encode(os.urandom(24)).decode()
-        self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
+        self.api_key = token_urlsafe(nbytes=24)
+        self.api_key_readonly = token_urlsafe(nbytes=24)
         self.save()
 
     def team(self):
