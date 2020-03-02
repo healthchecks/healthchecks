@@ -276,15 +276,19 @@ def serve_doc(request, doc="introduction"):
     if not os.path.exists(path):
         raise Http404("not found")
 
+    replaces = {
+        "{{ default_timeout }}": str(int(DEFAULT_TIMEOUT.total_seconds())),
+        "{{ default_grace }}": str(int(DEFAULT_GRACE.total_seconds())),
+        "SITE_NAME": settings.SITE_NAME,
+        "SITE_ROOT": settings.SITE_ROOT,
+        "PING_ENDPOINT": settings.PING_ENDPOINT,
+        "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
+        "PING_EMAIL": "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN,
+    }
+
     content = open(path, "r", encoding="utf-8").read()
-    content = content.replace("SITE_NAME", settings.SITE_NAME)
-    content = content.replace("SITE_ROOT", settings.SITE_ROOT)
-    content = content.replace("PING_URL", settings.PING_ENDPOINT + "your-uuid-here")
-    content = content.replace("PING_ENDPOINT", settings.PING_ENDPOINT)
-    content = content.replace("IMG_URL", os.path.join(settings.STATIC_URL, "img/docs"))
-    content = content.replace(
-        "PING_EMAIL", "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN
-    )
+    for placeholder, value in replaces.items():
+        content = content.replace(placeholder, value)
 
     ctx = {
         "page": "docs",

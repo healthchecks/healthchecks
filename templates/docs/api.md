@@ -66,7 +66,7 @@ tag=&lt;value&gt;
 
     Example:
 
-    `SITE_ROOT/api/v1/checks/?tag=foo&amp;tag=bar`
+    `SITE_ROOT/api/v1/checks/?tag=foo&tag=bar`
 
 ### Example Request
 
