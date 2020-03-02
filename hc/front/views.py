@@ -283,7 +283,6 @@ def serve_doc(request, doc="introduction"):
         "SITE_ROOT": settings.SITE_ROOT,
         "PING_ENDPOINT": settings.PING_ENDPOINT,
         "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
-        "PING_EMAIL": "your-uuid-here@%s" % settings.PING_EMAIL_DOMAIN,
     }
 
     content = open(path, "r", encoding="utf-8").read()
