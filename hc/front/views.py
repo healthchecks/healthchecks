@@ -35,23 +35,7 @@ from hc.api.models import (
 )
 from hc.api.transports import Telegram
 from hc.front.decorators import require_setting
-from hc.front.forms import (
-    AddAppriseForm,
-    AddEmailForm,
-    AddMatrixForm,
-    AddOpsGenieForm,
-    AddPdForm,
-    AddPushoverForm,
-    AddShellForm,
-    AddSmsForm,
-    AddUrlForm,
-    AddWebhookForm,
-    ChannelNameForm,
-    CronForm,
-    FilteringRulesForm,
-    NameTagsForm,
-    TimeoutForm,
-)
+from hc.front import forms
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import num_down_title, down_title, sortchecks
 from hc.lib import jsonschema
@@ -349,7 +333,7 @@ def add_check(request, code):
 @login_required
 def update_name(request, code):
     check = _get_check_for_user(request, code)
-    form = NameTagsForm(request.POST)
+    form = forms.NameTagsForm(request.POST)
     if form.is_valid():
         check.name = form.cleaned_data["name"]
         check.tags = form.cleaned_data["tags"]
@@ -366,7 +350,7 @@ def update_name(request, code):
 @login_required
 def filtering_rules(request, code):
     check = _get_check_for_user(request, code)
-    form = FilteringRulesForm(request.POST)
+    form = forms.FilteringRulesForm(request.POST)
     if form.is_valid():
         check.subject = form.cleaned_data["subject"]
         check.methods = form.cleaned_data["methods"]
@@ -382,7 +366,7 @@ def update_timeout(request, code):
 
     kind = request.POST.get("kind")
     if kind == "simple":
-        form = TimeoutForm(request.POST)
+        form = forms.TimeoutForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
@@ -390,7 +374,7 @@ def update_timeout(request, code):
         check.timeout = form.cleaned_data["timeout"]
         check.grace = form.cleaned_data["grace"]
     elif kind == "cron":
-        form = CronForm(request.POST)
+        form = forms.CronForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
@@ -719,7 +703,7 @@ def channel_checks(request, code):
 def update_channel_name(request, code):
     channel = _get_channel_for_user(request, code)
 
-    form = ChannelNameForm(request.POST)
+    form = forms.ChannelNameForm(request.POST)
     if form.is_valid():
         channel.name = form.cleaned_data["name"]
         channel.save()
@@ -815,7 +799,7 @@ def add_email(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddEmailForm(request.POST)
+        form = forms.AddEmailForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="email")
             channel.value = json.dumps(
@@ -844,7 +828,7 @@ def add_email(request, code):
 
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddEmailForm()
+        form = forms.AddEmailForm()
 
     ctx = {
         "page": "channels",
@@ -860,7 +844,7 @@ def add_webhook(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddWebhookForm(request.POST)
+        form = forms.AddWebhookForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="webhook")
             channel.value = form.get_value()
@@ -869,7 +853,7 @@ def add_webhook(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddWebhookForm()
+        form = forms.AddWebhookForm()
 
     ctx = {
         "page": "channels",
@@ -885,7 +869,7 @@ def add_webhook(request, code):
 def add_shell(request, code):
     project = _get_project_for_user(request, code)
     if request.method == "POST":
-        form = AddShellForm(request.POST)
+        form = forms.AddShellForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="shell")
             channel.value = form.get_value()
@@ -894,7 +878,7 @@ def add_shell(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddShellForm()
+        form = forms.AddShellForm()
 
     ctx = {
         "page": "channels",
@@ -910,7 +894,7 @@ def add_pd(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddPdForm(request.POST)
+        form = forms.AddPdForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="pd")
             channel.value = form.cleaned_data["value"]
@@ -919,7 +903,7 @@ def add_pd(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddPdForm()
+        form = forms.AddPdForm()
 
     ctx = {"page": "channels", "form": form}
     return render(request, "integrations/add_pd.html", ctx)
@@ -983,7 +967,7 @@ def add_pagertree(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddUrlForm(request.POST)
+        form = forms.AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="pagertree")
             channel.value = form.cleaned_data["value"]
@@ -992,7 +976,7 @@ def add_pagertree(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddUrlForm()
+        form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_pagertree.html", ctx)
@@ -1003,7 +987,7 @@ def add_pagerteam(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddUrlForm(request.POST)
+        form = forms.AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="pagerteam")
             channel.value = form.cleaned_data["value"]
@@ -1012,7 +996,7 @@ def add_pagerteam(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddUrlForm()
+        form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_pagerteam.html", ctx)
@@ -1023,7 +1007,7 @@ def add_slack(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddUrlForm(request.POST)
+        form = forms.AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="slack")
             channel.value = form.cleaned_data["value"]
@@ -1032,7 +1016,7 @@ def add_slack(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddUrlForm()
+        form = forms.AddUrlForm()
 
     ctx = {
         "page": "channels",
@@ -1115,7 +1099,7 @@ def add_mattermost(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddUrlForm(request.POST)
+        form = forms.AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="mattermost")
             channel.value = form.cleaned_data["value"]
@@ -1124,7 +1108,7 @@ def add_mattermost(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddUrlForm()
+        form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "form": form, "project": project}
     return render(request, "integrations/add_mattermost.html", ctx)
@@ -1308,7 +1292,7 @@ def add_pushover(request, code):
             Channel.objects.filter(project=project, kind="po").delete()
             return redirect("hc-p-channels", project.code)
 
-        form = AddPushoverForm(request.GET)
+        form = forms.AddPushoverForm(request.GET)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
@@ -1335,7 +1319,7 @@ def add_opsgenie(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddOpsGenieForm(request.POST)
+        form = forms.AddOpsGenieForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="opsgenie")
             v = {"region": form.cleaned_data["region"], "key": form.cleaned_data["key"]}
@@ -1345,7 +1329,7 @@ def add_opsgenie(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddOpsGenieForm()
+        form = forms.AddOpsGenieForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_opsgenie.html", ctx)
@@ -1356,7 +1340,7 @@ def add_victorops(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddUrlForm(request.POST)
+        form = forms.AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="victorops")
             channel.value = form.cleaned_data["value"]
@@ -1365,7 +1349,7 @@ def add_victorops(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddUrlForm()
+        form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_victorops.html", ctx)
@@ -1449,7 +1433,7 @@ def add_telegram(request):
 def add_sms(request, code):
     project = _get_project_for_user(request, code)
     if request.method == "POST":
-        form = AddSmsForm(request.POST)
+        form = forms.AddSmsForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="sms")
             channel.name = form.cleaned_data["label"]
@@ -1459,7 +1443,7 @@ def add_sms(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddSmsForm()
+        form = forms.AddSmsForm()
 
     ctx = {
         "page": "channels",
@@ -1475,7 +1459,7 @@ def add_sms(request, code):
 def add_whatsapp(request, code):
     project = _get_project_for_user(request, code)
     if request.method == "POST":
-        form = AddSmsForm(request.POST)
+        form = forms.AddSmsForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="whatsapp")
             channel.name = form.cleaned_data["label"]
@@ -1491,7 +1475,7 @@ def add_whatsapp(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddSmsForm()
+        form = forms.AddSmsForm()
 
     ctx = {
         "page": "channels",
@@ -1540,7 +1524,7 @@ def add_trello(request, code):
 def add_matrix(request, code):
     project = _get_project_for_user(request, code)
     if request.method == "POST":
-        form = AddMatrixForm(request.POST)
+        form = forms.AddMatrixForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="matrix")
             channel.value = form.cleaned_data["room_id"]
@@ -1556,7 +1540,7 @@ def add_matrix(request, code):
             messages.success(request, "The Matrix integration has been added!")
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddMatrixForm()
+        form = forms.AddMatrixForm()
 
     ctx = {
         "page": "channels",
@@ -1572,7 +1556,7 @@ def add_matrix(request, code):
 def add_apprise(request, code):
     project = _get_project_for_user(request, code)
     if request.method == "POST":
-        form = AddAppriseForm(request.POST)
+        form = forms.AddAppriseForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="apprise")
             channel.value = form.cleaned_data["url"]
@@ -1582,7 +1566,7 @@ def add_apprise(request, code):
             messages.success(request, "The Apprise integration has been added!")
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddAppriseForm()
+        form = forms.AddAppriseForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_apprise.html", ctx)
@@ -1614,7 +1598,7 @@ def add_msteams(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = AddUrlForm(request.POST)
+        form = forms.AddUrlForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="msteams")
             channel.value = form.cleaned_data["value"]
@@ -1623,7 +1607,7 @@ def add_msteams(request, code):
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
     else:
-        form = AddUrlForm()
+        form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_msteams.html", ctx)
