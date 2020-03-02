@@ -35,44 +35,10 @@ li + li.nav-header {
     font-family: monospace;
 }
 
-.docs-heading {
-    margin-top: 40px;
-}
-
 h2.rule {
     border-top: 3px solid #eee;
     margin-top: 30px;
     padding-top: 30px;
-}
-
-h3.api-section {
-    font-size: 14px;
-    font-weight: bold;
-    margin: 20px 0;
-}
-
-h3.docs-example {
-    margin-top: 40px;
-}
-
-.api-path {
-    font-family: monospace;
-    font-weight: bold;
-    margin-bottom: 1em;
-    background: #f5f5f5;
-    color: #333;
-    display: inline-block;
-    padding: 2px 4px;
-    border-radius: 2px;
-}
-
-a.section {
-    color: #000;
-    text-decoration: none;
-}
-
-a.section:hover  {
-    text-decoration: none;
 }
 
 .page-docs code {
@@ -105,6 +71,12 @@ a.section:hover  {
     font-weight: bold;
 }
 
+.docs-content h3 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
 .docs-content ul {
     padding-left: 15px;
 }
@@ -123,4 +95,40 @@ a.section:hover  {
     .docs-content img {
         max-width: 100%;
     }
+}
+
+.docs-api table {
+    width: 100%;
+    margin: 8px 0;
+}
+
+.docs-api th {
+    display: none;
+}
+
+.docs-api td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+
+.docs-api dl {
+    display: grid;
+    grid-template-columns: 120px auto;
+}
+
+.docs-api dt {
+    font-weight: normal;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+.docs-api dt, .docs-api dd {
+    border-top: 1px solid #DDD;
+    padding: 8px 0;
+}
+
+.rule + p code {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 2px 4px;
 }

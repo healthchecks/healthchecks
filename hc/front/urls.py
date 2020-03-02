@@ -91,7 +91,6 @@ urlpatterns = [
     path("integrations/", include(channel_urls)),
     path("projects/<uuid:code>/", include(project_urls)),
     path("docs/", views.serve_doc, name="hc-docs"),
-    path("docs/api/", views.docs_api, name="hc-docs-api"),
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
     path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
 ]

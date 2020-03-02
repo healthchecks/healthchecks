@@ -19,7 +19,7 @@ class Command(BaseCommand):
             self.stdout.write(f"  pip install {e.name}\n\n")
             return
 
-        extensions = ["fenced_code", "codehilite", "tables"]
+        extensions = ["fenced_code", "codehilite", "tables", "def_list", "attr_list"]
         ec = {"codehilite": {"css_class": "highlight"}}
 
         docs_path = os.path.join(settings.BASE_DIR, "templates/docs")

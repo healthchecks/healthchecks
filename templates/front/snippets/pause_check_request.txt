@@ -1,2 +1,0 @@
-curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause \
-    --request POST --header "X-Api-Key: your-api-key" --data ""

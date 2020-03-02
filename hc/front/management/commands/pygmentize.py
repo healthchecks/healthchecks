@@ -44,18 +44,3 @@ class Command(BaseCommand):
         _process("powershell", lexers.shell.PowerShellLexer())
         _process("powershell_inline", lexers.shell.BashLexer())
         _process("ruby", lexers.RubyLexer())
-
-        # API examples
-        _process("list_checks_request", lexers.BashLexer())
-        _process("list_checks_response", lexers.JsonLexer())
-        _process("list_checks_response_readonly", lexers.JsonLexer())
-        _process("list_channels_request", lexers.BashLexer())
-        _process("list_channels_response", lexers.JsonLexer())
-        _process("create_check_request_a", lexers.BashLexer())
-        _process("create_check_request_b", lexers.BashLexer())
-        _process("update_check_request_a", lexers.BashLexer())
-        _process("update_check_request_b", lexers.BashLexer())
-        _process("create_check_response", lexers.JsonLexer())
-        _process("pause_check_request", lexers.BashLexer())
-        _process("pause_check_response", lexers.JsonLexer())
-        _process("delete_check_request", lexers.BashLexer())

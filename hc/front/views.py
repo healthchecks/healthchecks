@@ -278,6 +278,7 @@ def serve_doc(request, doc="introduction"):
 
     content = open(path, "r", encoding="utf-8").read()
     content = content.replace("SITE_NAME", settings.SITE_NAME)
+    content = content.replace("SITE_ROOT", settings.SITE_ROOT)
     content = content.replace("PING_URL", settings.PING_ENDPOINT + "your-uuid-here")
     content = content.replace("PING_ENDPOINT", settings.PING_ENDPOINT)
     content = content.replace("IMG_URL", os.path.join(settings.STATIC_URL, "img/docs"))
@@ -294,19 +295,6 @@ def serve_doc(request, doc="introduction"):
     }
 
     return render(request, "front/docs_single.html", ctx)
-
-
-def docs_api(request):
-    ctx = {
-        "page": "docs",
-        "section": "api",
-        "SITE_ROOT": settings.SITE_ROOT,
-        "PING_ENDPOINT": settings.PING_ENDPOINT,
-        "default_timeout": int(DEFAULT_TIMEOUT.total_seconds()),
-        "default_grace": int(DEFAULT_GRACE.total_seconds()),
-    }
-
-    return render(request, "front/docs_api.html", ctx)
 
 
 def docs_cron(request):

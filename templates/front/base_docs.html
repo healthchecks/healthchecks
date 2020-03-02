@@ -33,9 +33,7 @@
         {% include "front/docs_nav_item.html" with slug="attaching_logs" title="Attaching logs" %}
 
         <li class="nav-header">Developer Tools</li>
-        <li{% if section == "api" %} class="active"{% endif %}>
-            <a href="{% url 'hc-docs-api' %}">Management API</a>
-        </li>
+        {% include "front/docs_nav_item.html" with slug="api" title="Management API" %}
         {% include "front/docs_nav_item.html" with slug="resources" title="Third-party resources" %}
 
         <li class="nav-header">Cron</li>

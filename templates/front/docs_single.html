@@ -6,7 +6,7 @@
 {% block keywords %}{% endblock %}
 
 {% block docs_content %}
-<div class="docs-content">{{ content|safe }}</div>
+<div class="docs-content docs-{{ section }}">{{ content|safe }}</div>
 {% endblock %}
 
 {% block scripts %}

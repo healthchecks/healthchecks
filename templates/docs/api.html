@@ -1,0 +1,487 @@
+<h1>API Reference</h1>
+<p>SITE_NAME REST API supports listing, creating, updating, pausing and deleting
+checks in user's account.</p>
+<h2>API Endpoints</h2>
+<table>
+<thead>
+<tr>
+<th>Endpoint Name</th>
+<th>Endpoint Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#list-checks">Get a list of existing checks</a></td>
+<td><code>GET SITE_ROOT/api/v1/checks/</code></td>
+</tr>
+<tr>
+<td><a href="#create-check">Create a new check</a></td>
+<td><code>POST SITE_ROOT/api/v1/checks/</code></td>
+</tr>
+<tr>
+<td><a href="#update-check">Update an existing check</a></td>
+<td><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
+</tr>
+<tr>
+<td><a href="#pause-check">Pause monitoring of a check</a></td>
+<td><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pause</code></td>
+</tr>
+<tr>
+<td><a href="#delete-check">Delete check</a></td>
+<td><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
+</tr>
+<tr>
+<td><a href="#list-channels">Get a list of existing integrations</a></td>
+<td><code>GET SITE_ROOT/api/v1/channels/</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Authentication</h2>
+<p>Your requests to SITE_NAME REST API must authenticate using an
+API key. Each project in your SITE_NAME account has separate API keys.
+There are no account-wide API keys. By default, a project on SITE_NAME doesn't have
+an API key. You can create read-write and read-only API keys in the
+<strong>Project Settings</strong> page.</p>
+<table>
+<thead>
+<tr>
+<th>Key Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Regular API key</td>
+<td>Have full access to all documented API endpoints.</td>
+</tr>
+<tr>
+<td>Read-only API key</td>
+<td>Only work with the <a href="#list-checks">Get a list of existing checks</a> endpoint. Some fields are omitted from the API responses.</td>
+</tr>
+</tbody>
+</table>
+<p>The client can authenticate itself by sending an appropriate HTTP
+request header. The header's name should be <code>X-Api-Key</code> and
+its value should be your API key.</p>
+<p>Alternatively, for POST requests with a JSON request body,
+the client can include an <code>api_key</code> field in the JSON document.
+See below the "Create a check" section for an example.</p>
+<h2>API Requests</h2>
+<p>For POST requests, the SITE_NAME API expects request body to be
+a JSON document (<em>not</em> a <code>multipart/form-data</code> encoded form data).</p>
+<h2>API Responses</h2>
+<p>SITE_NAME uses HTTP status codes wherever possible.
+In general, 2xx class indicates success, 4xx indicates an client error,
+and 5xx indicates a server error.</p>
+<p>The response may contain a JSON document with additional data.</p>
+<h2 class="rule" id="list-checks">Get a List of Existing Checks</h2>
+<p><code>GET SITE_ROOT/api/v1/checks/</code></p>
+<p>Returns a list of checks belonging to the user, optionally filtered by
+one or more tags.</p>
+<h3>Query String Parameters</h3>
+<dl>
+<dt>tag=&lt;value&gt;</dt>
+<dd>
+<p>Filters the checks, and returns only the checks that are tagged with the
+specified value.</p>
+<p>This parameter can be repeated multiple times.</p>
+<p>Example:</p>
+<p><code>SITE_ROOT/api/v1/checks/?tag=foo&amp;amp;tag=bar</code></p>
+</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Longer free-form description goes here&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">900</span><span class="p">,</span>
+      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-01-04T13:24:39.903464+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Api test 1&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-01-04T14:24:39.903464+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6/pause&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINT662ebe36-ecab-48db-afe3-e20029cb71e6&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;up&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+      <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Api test 2&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/9d17c61f-5c4f-4cab-b517-11e6b2679ced/pause&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINT9d17c61f-5c4f-4cab-b517-11e6b2679ced&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;0/10 * * * *&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;bar baz&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;tz&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/9d17c61f-5c4f-4cab-b517-11e6b2679ced&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<p>When using the read-only API key, the following fields are omitted:
+<code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>channels</code>.  An extra <code>unique_key</code> field
+is added. This identifier is stable across API calls. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Longer free-form description goes here&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">900</span><span class="p">,</span>
+      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-01-04T13:24:39.903464+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Api test 1&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;up&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+      <span class="nt">&quot;unique_key&quot;</span><span class="p">:</span> <span class="s2">&quot;2872190d95224bad120f41d3c06aab94b8175bb6&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Api test 2&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+      <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;0/10 * * * *&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;bar baz&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;tz&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;unique_key&quot;</span><span class="p">:</span> <span class="s2">&quot;9b5fc29129560ff2c5c1803803a7415e4f80cf7e&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<h2 class="rule" id="create-check">Create a Check</h2>
+<p><code>POST SITE_ROOT/api/v1/checks/</code></p>
+<p>Creates a new check and returns its ping URL.
+All request parameters are optional and will use their default
+values if omitted.</p>
+<p>This API call can be used to create both "simple" and "cron" checks.
+To create a "simple" check, specify the "timeout" parameter.
+To create a "cron" check, specify the "schedule" and "tz" parameters.</p>
+<h3>Request Parameters</h3>
+<dl>
+<dt>name</dt>
+<dd>
+<p>string, optional, default value: ""</p>
+<p>Name for the new check.</p>
+</dd>
+<dt>tags</dt>
+<dd>
+<p>string, optional, default value: ""</p>
+<p>A space-delimited list of tags for the new check.
+Example:</p>
+<p><pre>{"tags": "reports staging"}</pre></p>
+</dd>
+<dt>desc</dt>
+<dd>
+<p>string, optional.</p>
+<p>Description for the check.</p>
+</dd>
+<dt>timeout</dt>
+<dd>
+<p>number, optional, default value: {{ default_timeout }}.</p>
+<p>A number of seconds, the expected period of this check.</p>
+<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+<p>Example for 5 minute timeout:</p>
+<p><pre>{"kind": "simple", "timeout": 300}</pre></p>
+</dd>
+<dt>grace</dt>
+<dd>
+<p>number, optional, default value: {{ default_grace }}.</p>
+<p>A number of seconds, the grace period for this check.</p>
+<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+</dd>
+<dt>schedule</dt>
+<dd>
+<p>string, optional, default value: "<em> * </em> * *".</p>
+<p>A cron expression defining this check's schedule.</p>
+<p>If you specify both "timeout" and "schedule" parameters, "timeout" will be
+ignored and "schedule" will be used.</p>
+<p>Example for a check running every half-hour:</p>
+<p><pre>{"schedule": "0,30 * <em> * </em>"}</pre></p>
+</dd>
+<dt>tz</dt>
+<dd>
+<p>string, optional, default value: "UTC".</p>
+<p>Server's timezone. This setting only has effect in combination with the
+"schedule" paremeter.</p>
+<p>Example:</p>
+<p><pre>{"tz": "Europe/Riga"}</pre></p>
+</dd>
+<dt>channels</dt>
+<dd>
+<p>string, optional</p>
+<p>By default, if a check is created through API, no notification channels
+(integrations) are assigned to it. So, when the check goes up or down, no
+notifications will get sent.</p>
+<p>Set this field to a special value "*" to automatically assign all existing
+integrations.</p>
+<p>To assign specific integrations, use a comma-separated list of integration
+identifiers. Use the <a href="#list-channels">Get a List of Existing Integrations</a> call to
+look up integration identifiers.</p>
+</dd>
+<dt>unique</dt>
+<dd>
+<p>array of string values, optional, default value: [].</p>
+<p>Before creating a check, look for existing checks, filtered by fields listed
+in <code>unique</code>. If a matching check is found, return it with HTTP status code 200.
+If no matching check is found, proceed as normal: create a check and return it
+with HTTP status code 201.</p>
+<p>The accepted values are: <code>name</code>, <code>tags</code>, <code>timeout</code> and <code>grace</code>.</p>
+<p>Example:</p>
+<p><pre>{"name": "Backups", unique: ["name"]}</pre></p>
+<p>In this example, if a check named "Backups" exists, it will be returned.
+Otherwise, a new check will be created and returned.</p>
+</dd>
+</dl>
+<h3>Response Codes</h3>
+<dl>
+<dt>201 Created</dt>
+<dd>Returned if the check was successfully created.</dd>
+<dt>200 OK</dt>
+<dd>Returned if the <code>unique</code> parameter was used and an existing check was matched.</dd>
+<dt>403 Forbidden</dt>
+<dd>Returned if the account's check limit has been reached. For free accounts,
+the limit is 20 checks per account.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
+    --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> <span class="se">\</span>
+    --data <span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
+</code></pre></div>
+
+
+<p>Or, alternatively:</p>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
+    --data <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<h2 class="rule" id="update-check">Update an Existing Check</h2>
+<p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
+<p>Updates an existing check. All request parameters are optional. The check is
+updated only with the supplied request parameters. If any parameter is omitted,
+its value is left unchanged.</p>
+<h3>Request Parameters</h3>
+<dl>
+<dt>name</dt>
+<dd>
+<p>string, optional.</p>
+<p>Name for the check.</p>
+</dd>
+<dt>tags</dt>
+<dd>
+<p>string, optional.</p>
+<p>A space-delimited list of tags for the check.</p>
+<p>Example:</p>
+<p><pre>{"tags": "reports staging"}</pre></p>
+</dd>
+<dt>desc</dt>
+<dd>
+<p>string, optional.</p>
+<p>Description for the check.</p>
+</dd>
+<dt>timeout</dt>
+<dd>
+<p>number, optional.</p>
+<p>A number of seconds, the expected period of this check.</p>
+<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+<p>Example for 5 minute timeout:</p>
+<p><pre>{"kind": "simple", "timeout": 300}</pre></p>
+</dd>
+<dt>grace</dt>
+<dd>
+<p>number, optional.</p>
+<p>A number of seconds, the grace period for this check.</p>
+<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+</dd>
+<dt>schedule</dt>
+<dd>
+<p>string, optional.</p>
+<p>A cron expression defining this check's schedule.</p>
+<p>If you specify both "timeout" and "schedule" parameters, "timeout" will be
+ignored and "schedule" will be used.</p>
+<p>Example for a check running every half-hour:</p>
+<p><pre>{"schedule": "0,30 * <em> * </em>"}</pre></p>
+</dd>
+<dt>tz</dt>
+<dd>
+<p>string, optional.</p>
+<p>Server's timezone. This setting only has effect in combination with the
+"schedule" paremeter.</p>
+<p>Example:</p>
+<p><pre>{"tz": "Europe/Riga"}</pre></p>
+</dd>
+<dt>channels</dt>
+<dd>
+<p>string, optional.</p>
+<p>Set this field to a special value "*" to automatically assign all existing
+notification channels.</p>
+<p>Set this field to a special value "" (empty string) to automatically <em>unassign</em>
+all notification channels.</p>
+<p>Set this field to a comma-separated list of channel identifiers to assign
+specific notification channels.</p>
+<p>Example:</p>
+<p><pre>{"channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre></p>
+</dd>
+</dl>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>Returned if the check was successfully updated.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+    --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> <span class="se">\</span>
+    --data <span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
+</code></pre></div>
+
+
+<p>Or, alternatively:</p>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+    --data <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<h2 class="rule" id="pause-check">Pause Monitoring of a Check</h2>
+<p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pause</code></p>
+<p>Disables monitoring for a check, without removing it. The check goes into a "paused"
+state. You can resume monitoring of the check by pinging it.</p>
+<p>This API call has no request parameters.</p>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause <span class="se">\</span>
+    --request POST --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> --data <span class="s2">&quot;&quot;</span>
+</code></pre></div>
+
+
+<p>Note: the <code>--data ""</code> argument forces curl to send a <code>Content-Length</code> request header
+even though the request body is empty. For HTTP POST requests, the <code>Content-Length</code>
+header is sometimes required by some network proxies and web servers.</p>
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;paused&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<h2 class="rule" id="delete-check">Delete Check</h2>
+<p><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
+<p>Permanently deletes the check from user's account. Returns JSON representation of the
+check that was just deleted.</p>
+<p>This API call has no request parameters.</p>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+    --request DELETE --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<h2 class="rule" id="list-channels">Get a List of Existing Integrations</h2>
+<p><code>GET SITE_ROOT/api/v1/channels/</code></p>
+<p>Returns a list of integrations belonging to the user.</p>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/channels/
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;4ec5a071-2d08-4baa-898a-eb4eb3cd6941&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;My Work Email&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;email&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;746a083e-f542-4554-be1a-707ce16d3acc&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;My Phone&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;sms&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>

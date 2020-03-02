@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Improved UI to invite users from account's other projects (#258)
 - Experimental Prometheus metrics endpoint (#300)
 - Don't store user's current project in DB, put it explicitly in page URLs (#336)
+- API reference in Markdown
 
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)
