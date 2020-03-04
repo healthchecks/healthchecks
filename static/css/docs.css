@@ -114,7 +114,7 @@ h2.rule {
 
 .docs-api dl {
     display: grid;
-    grid-template-columns: 120px auto;
+    grid-template-columns: 150px auto;
 }
 
 .docs-api dt {

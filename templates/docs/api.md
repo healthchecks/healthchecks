@@ -68,6 +68,14 @@ tag=&lt;value&gt;
 
     `SITE_ROOT/api/v1/checks/?tag=foo&tag=bar`
 
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
 ### Example Request
 
 ```bash
@@ -255,13 +263,20 @@ unique
 ### Response Codes
 
 201 Created
-:   Returned if the check was successfully created.
+:   The check was successfully created.
 
 200 OK
-:   Returned if the `unique` parameter was used and an existing check was matched.
+:   The `unique` parameter was used and an existing check was matched.
+
+400 Bad Request
+:   The request is not well-formed, violates schema, or uses invalid
+    field values.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
 
 403 Forbidden
-:   Returned if the account's check limit has been reached. For free accounts,
+:   The account's check limit has been reached. For free accounts,
     the limit is 20 checks per account.
 
 ### Example Request
@@ -388,7 +403,21 @@ channels
 ### Response Codes
 
 200 OK
-:   Returned if the check was successfully updated.
+:   The check was successfully updated.
+
+400 Bad Request
+:   The request is not well-formed, violates schema, or uses invalid
+    field values.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
 
 ### Example Request
 
@@ -434,6 +463,20 @@ state. You can resume monitoring of the check by pinging it.
 
 This API call has no request parameters.
 
+### Response Codes
+
+200 OK
+:   The check was successfully paused.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
 ### Example Request
 
 ```bash
@@ -474,6 +517,20 @@ check that was just deleted.
 
 This API call has no request parameters.
 
+### Response Codes
+
+200 OK
+:   The check was successfully deleted.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
 ### Example Request
 
 ```bash
@@ -506,6 +563,14 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 `GET SITE_ROOT/api/v1/channels/`
 
 Returns a list of integrations belonging to the user.
+
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
 
 ### Example Request
 

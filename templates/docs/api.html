@@ -89,6 +89,13 @@ specified value.</p>
 <p><code>SITE_ROOT/api/v1/checks/?tag=foo&amp;tag=bar</code></p>
 </dd>
 </dl>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+</dl>
 <h3>Example Request</h3>
 <div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/
 </code></pre></div>
@@ -254,11 +261,16 @@ Otherwise, a new check will be created and returned.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>201 Created</dt>
-<dd>Returned if the check was successfully created.</dd>
+<dd>The check was successfully created.</dd>
 <dt>200 OK</dt>
-<dd>Returned if the <code>unique</code> parameter was used and an existing check was matched.</dd>
+<dd>The <code>unique</code> parameter was used and an existing check was matched.</dd>
+<dt>400 Bad Request</dt>
+<dd>The request is not well-formed, violates schema, or uses invalid
+field values.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
 <dt>403 Forbidden</dt>
-<dd>Returned if the account's check limit has been reached. For free accounts,
+<dd>The account's check limit has been reached. For free accounts,
 the limit is 20 checks per account.</dd>
 </dl>
 <h3>Example Request</h3>
@@ -364,7 +376,16 @@ specific notification channels.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
-<dd>Returned if the check was successfully updated.</dd>
+<dd>The check was successfully updated.</dd>
+<dt>400 Bad Request</dt>
+<dd>The request is not well-formed, violates schema, or uses invalid
+field values.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+<dt>403 Forbidden</dt>
+<dd>Access denied, wrong API key.</dd>
+<dt>404 Not Found</dt>
+<dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
 <div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
@@ -403,6 +424,17 @@ specific notification channels.</p>
 <p>Disables monitoring for a check, without removing it. The check goes into a "paused"
 state. You can resume monitoring of the check by pinging it.</p>
 <p>This API call has no request parameters.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The check was successfully paused.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+<dt>403 Forbidden</dt>
+<dd>Access denied, wrong API key.</dd>
+<dt>404 Not Found</dt>
+<dd>The specified check does not exist.</dd>
+</dl>
 <h3>Example Request</h3>
 <div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause <span class="se">\</span>
     --request POST --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> --data <span class="s2">&quot;&quot;</span>
@@ -436,6 +468,17 @@ header is sometimes required by some network proxies and web servers.</p>
 <p>Permanently deletes the check from user's account. Returns JSON representation of the
 check that was just deleted.</p>
 <p>This API call has no request parameters.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The check was successfully deleted.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+<dt>403 Forbidden</dt>
+<dd>Access denied, wrong API key.</dd>
+<dt>404 Not Found</dt>
+<dd>The specified check does not exist.</dd>
+</dl>
 <h3>Example Request</h3>
 <div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
     --request DELETE --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
@@ -464,6 +507,13 @@ check that was just deleted.</p>
 <h2 class="rule" id="list-channels">Get a List of Existing Integrations</h2>
 <p><code>GET SITE_ROOT/api/v1/channels/</code></p>
 <p>Returns a list of integrations belonging to the user.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+</dl>
 <h3>Example Request</h3>
 <div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/channels/
 </code></pre></div>
