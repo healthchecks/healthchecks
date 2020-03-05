@@ -193,10 +193,10 @@
             <h2>Notification Methods</h2>
             <table id="details-integrations" class="table">
             {% for channel in channels %}
-                <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in check.channel_set.all %}class="on"{% endif %}>
+                <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in enabled_channels %}class="on"{% endif %}>
                     <th>
                         <span class="label">
-                            {% if channel in check.channel_set.all %}ON{% else %}OFF{% endif %}
+                            {% if channel in enabled_channels %}ON{% else %}OFF{% endif %}
                         </span>
                     </th>
                     <td>

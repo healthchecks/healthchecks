@@ -521,6 +521,7 @@ def details(request, code):
         "project": check.project,
         "check": check,
         "channels": channels,
+        "enabled_channels": list(check.channel_set.all()),
         "timezones": pytz.all_timezones,
         "downtimes": check.downtimes(months=3),
         "is_new": "new" in request.GET,
