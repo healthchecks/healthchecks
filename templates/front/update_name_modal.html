@@ -43,9 +43,8 @@
                                 name="tags"
                                 type="text"
                                 maxlength="500"
-                                value="{{ check.tags }}"
-                                placeholder="production www"
-                                class="form-control" />
+                                data-all-tags="{{ all_tags }}"
+                                value="{{ check.tags }}" />
 
                             <span class="help-block">
                                 Use tags for easy filtering and for status badges.
@@ -63,9 +62,12 @@
                                 id="update-desc-input"
                                 class="form-control"
                                 rows="5"
-                                placeholder="Additional notes for your own reference.
-Will appear in email alerts about this check going DOWN and in Slack notifications."
                                 name="desc">{{ check.desc }}</textarea>
+                            <span class="help-block">
+                                Additional notes for your own reference. Will appear
+                                in email alerts about this check going down and in
+                                Slack notifications.
+                            </span>
                         </div>
                     </div>
                 </div>

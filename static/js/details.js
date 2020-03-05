@@ -6,6 +6,24 @@ $(function () {
         return false;
     });
 
+    // Configure Selectize for entering tags
+    var options = [];
+    var allTags = $("#update-tags-input").data("all-tags").split(" ");
+    for (var i=0, tag; tag = allTags[i]; i++) {
+        options.push({value: tag});
+    }
+
+    $("#update-tags-input").selectize({
+        create: true,
+        createOnBlur: true,
+        delimiter: " ",
+        labelField: "value",
+        searchField: ["value"],
+        hideSelected: true,
+        highlight: false,
+        options: options
+    });
+
     $("#new-check-alert a").click(function() {
         $("#" + this.dataset.target).click();
         return false;
@@ -151,6 +169,5 @@ $(function () {
     $("#transfer-modal").on("change", "#target-project", function() {
         $("#transfer-confirm").prop("disabled", !this.value);
     });
-
 
 });

@@ -43,7 +43,6 @@
             {{ check.name_then_code }}
             <small><a id="edit-name" href="#">(edit&hellip;)</a></small>
         </h1>
-        <span class="label label-tag">{{ check.project }}</span>
         {% for tag in check.tags_list %}
             <span class="label label-tag">{{ tag }}</span>
         {% endfor %}
@@ -294,6 +293,7 @@
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>

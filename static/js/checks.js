@@ -7,7 +7,7 @@ $(function () {
 
         $("#update-name-form").attr("action", url);
         $("#update-name-input").val(this.dataset.name);
-        $("#update-tags-input").val(this.dataset.tags);
+        tagsSelectize.setValue(this.dataset.tags.split(" "));
         $("#update-desc-input").val(this.dataset.desc);
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
@@ -231,6 +231,22 @@ $(function () {
     clipboard.on('error', function(e) {
         var text = e.trigger.getAttribute("data-clipboard-text");
         prompt("Press Ctrl+C to select:", text)
+    });
+
+    // Configure Selectize for entering tags
+    $("#update-tags-input").selectize({
+        create: true,
+        createOnBlur: true,
+        delimiter: " ",
+        labelField: "value",
+        searchField: ["value"],
+        hideSelected: true,
+        highlight: false
+    });
+
+    var tagsSelectize = document.getElementById("update-tags-input").selectize;
+    $("#my-checks-tags div").each(function(idx, el) {
+        tagsSelectize.addOption({value: el.textContent});
     });
 
 });

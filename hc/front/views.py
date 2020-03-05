@@ -511,6 +511,11 @@ def details(request, code):
     channels = Channel.objects.filter(project=check.project)
     channels = list(channels.order_by("created"))
 
+    all_tags = set()
+    q = Check.objects.filter(project=check.project).exclude(tags="")
+    for tags in q.values_list("tags", flat=True):
+        all_tags.update(tags.split(" "))
+
     ctx = {
         "page": "details",
         "project": check.project,
@@ -520,6 +525,7 @@ def details(request, code):
         "downtimes": check.downtimes(months=3),
         "is_new": "new" in request.GET,
         "is_copied": "copied" in request.GET,
+        "all_tags": " ".join(sorted(all_tags)),
     }
 
     return render(request, "front/details.html", ctx)
