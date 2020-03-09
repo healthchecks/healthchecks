@@ -42,3 +42,24 @@ will accept and store first 10KB of the request body.</p>
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
 curl -fsS --retry <span class="m">3</span> -X POST --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
 </code></pre></div>
+
+
+<h2>Auto-provisioning New Checks</h2>
+<p>This example uses SITE_NAME <a href="../api/">Management API</a> to create a check "on the fly"
+(if it does not already exist) and to retrieve its ping URL.
+Using this technique, you can write services that automatically
+register with SITE_NAME the first time they run.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="nv">API_KEY</span><span class="o">=</span>your-api-key-here
+
+<span class="c1"># Check&#39;s parameters. This example uses system&#39;s hostname for check&#39;s name.</span>
+<span class="nv">PAYLOAD</span><span class="o">=</span><span class="s1">&#39;{&quot;name&quot;: &quot;&#39;</span><span class="sb">`</span>hostname<span class="sb">`</span><span class="s1">&#39;&quot;, &quot;timeout&quot;: 60, &quot;grace&quot;: 60, &quot;unique&quot;: [&quot;name&quot;]}&#39;</span>
+
+<span class="c1"># Create the check if it does not exist.</span>
+<span class="c1"># Grab the ping_url from JSON response using the jq utility:</span>
+<span class="nv">URL</span><span class="o">=</span><span class="sb">`</span>curl -s SITE_ROOT/api/v1/checks/  -H <span class="s2">&quot;X-Api-Key: </span><span class="nv">$API_KEY</span><span class="s2">&quot;</span> -d <span class="s2">&quot;</span><span class="nv">$PAYLOAD</span><span class="s2">&quot;</span>  <span class="p">|</span> jq -r .ping_url<span class="sb">`</span>
+
+<span class="c1"># Finally, send a ping:</span>
+curl --retry <span class="m">3</span> <span class="nv">$URL</span>
+</code></pre></div>
