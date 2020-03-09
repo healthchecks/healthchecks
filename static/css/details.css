@@ -100,7 +100,7 @@
     color: #888;
 }
 
-.alert.no-events {
+.alert.no-events, .alert.no-channels {
     border: #ddd;
     background: #F5F5F5;
     color: #444;

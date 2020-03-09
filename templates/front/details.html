@@ -191,6 +191,7 @@
 
         <div class="details-block">
             <h2>Notification Methods</h2>
+            {% if channels %}
             <table id="details-integrations" class="table">
             {% for channel in channels %}
                 <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in enabled_channels %}class="on"{% endif %}>
@@ -206,6 +207,15 @@
                 </tr>
             {% endfor %}
             </table>
+            {% else %}
+            <div class="alert no-channels">
+                No notification methods set up yet.
+                <br />
+                Set up your preferred methods of notification in the
+                <a href="{% url 'hc-p-channels' project.code %}">Integrations</a>
+                page.
+            </div>
+            {% endif %}
         </div>
 
         <div class="details-block">
