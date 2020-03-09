@@ -7,7 +7,10 @@ $(function () {
 
         $("#update-name-form").attr("action", url);
         $("#update-name-input").val(this.dataset.name);
+
+        var tagsSelectize = document.getElementById("update-tags-input").selectize;
         tagsSelectize.setValue(this.dataset.tags.split(" "));
+
         $("#update-desc-input").val(this.dataset.desc);
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
@@ -234,6 +237,10 @@ $(function () {
     });
 
     // Configure Selectize for entering tags
+    function divToOption() {
+        return {value: this.textContent};
+    }
+
     $("#update-tags-input").selectize({
         create: true,
         createOnBlur: true,
@@ -241,12 +248,8 @@ $(function () {
         labelField: "value",
         searchField: ["value"],
         hideSelected: true,
-        highlight: false
-    });
-
-    var tagsSelectize = document.getElementById("update-tags-input").selectize;
-    $("#my-checks-tags div").each(function(idx, el) {
-        tagsSelectize.addOption({value: el.textContent});
+        highlight: false,
+        options: $("#my-checks-tags div").map(divToOption).get()
     });
 
 });

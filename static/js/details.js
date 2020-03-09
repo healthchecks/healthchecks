@@ -7,12 +7,7 @@ $(function () {
     });
 
     // Configure Selectize for entering tags
-    var options = [];
     var allTags = $("#update-tags-input").data("all-tags").split(" ");
-    for (var i=0, tag; tag = allTags[i]; i++) {
-        options.push({value: tag});
-    }
-
     $("#update-tags-input").selectize({
         create: true,
         createOnBlur: true,
@@ -21,7 +16,7 @@ $(function () {
         searchField: ["value"],
         hideSelected: true,
         highlight: false,
-        options: options
+        options: allTags.map(function(tag) { return {value: tag} })
     });
 
     $("#new-check-alert a").click(function() {
