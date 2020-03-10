@@ -1,6 +1,6 @@
 # Cloning Checks
 
-You can individually clone individual checks SITE_NAME from the "Check Details"
+You can clone individual checks from the "Check Details"
 page:
 
 ![The "Create a Copy" button](IMG_URL/create_copy.png)
