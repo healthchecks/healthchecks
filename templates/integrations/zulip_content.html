@@ -1,0 +1,9 @@
+{% load hc_extras humanize %}
+
+[{{ check.name_then_code }}]({{ check.details_url }}) is **{{ check.status|upper }}**. {% if check.status == "down" %}Last ping was {{ check.last_ping|naturaltime }}.{% endif %}
+
+{% if check.desc %}
+---
+**Description**
+{{ check.desc}}
+{% endif %}
