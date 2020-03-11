@@ -75,6 +75,7 @@ project_urls = [
     path("add_victorops/", views.add_victorops, name="hc-add-victorops"),
     path("add_webhook/", views.add_webhook, name="hc-add-webhook"),
     path("add_whatsapp/", views.add_whatsapp, name="hc-add-whatsapp"),
+    path("add_zulip/", views.add_zulip, name="hc-add-zulip"),
     path("badges/", views.badges, name="hc-badges"),
     path("checks/", views.my_checks, name="hc-checks"),
     path("checks/add/", views.add_check, name="hc-add-check"),

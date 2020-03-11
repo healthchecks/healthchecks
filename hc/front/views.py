@@ -1353,6 +1353,26 @@ def add_victorops(request, code):
     return render(request, "integrations/add_victorops.html", ctx)
 
 
+@login_required
+def add_zulip(request, code):
+    project = _get_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddZulipForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="zulip")
+            channel.value = form.get_value()
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-p-channels", project.code)
+    else:
+        form = forms.AddZulipForm()
+
+    ctx = {"page": "channels", "project": project, "form": form}
+    return render(request, "integrations/add_zulip.html", ctx)
+
+
 @csrf_exempt
 @require_POST
 def telegram_bot(request):

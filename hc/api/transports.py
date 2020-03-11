@@ -141,6 +141,10 @@ class Shell(Transport):
 
 class HttpTransport(Transport):
     @classmethod
+    def get_error(cls, r):
+        return "Received status code %d" % r.status_code
+
+    @classmethod
     def _request(cls, method, url, **kwargs):
         try:
             options = dict(kwargs)
@@ -152,7 +156,7 @@ class HttpTransport(Transport):
 
             r = requests.request(method, url, **options)
             if r.status_code not in (200, 201, 202, 204):
-                return "Received status code %d" % r.status_code
+                return cls.get_error(r)
         except requests.exceptions.Timeout:
             # Well, we tried
             return "Connection timed out"
@@ -538,3 +542,29 @@ class MsTeams(HttpTransport):
         text = tmpl("msteams_message.json", check=check)
         payload = json.loads(text)
         return self.post(self.channel.value, json=payload)
+
+
+class Zulip(HttpTransport):
+    @classmethod
+    def get_error(cls, r):
+        try:
+            doc = r.json()
+            if "msg" in doc:
+                return doc["msg"]
+        except ValueError:
+            pass
+
+        return super().get_error(r)
+
+    def notify(self, check):
+        _, domain = self.channel.zulip_bot_email.split("@")
+        url = "https://%s/api/v1/messages" % domain
+        auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
+        data = {
+            "type": self.channel.zulip_type,
+            "to": self.channel.zulip_to,
+            "topic": tmpl("zulip_topic.html", check=check),
+            "content": tmpl("zulip_content.html", check=check),
+        }
+
+        return self.post(url, data=data, auth=auth)

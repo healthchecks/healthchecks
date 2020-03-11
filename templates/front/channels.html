@@ -82,6 +82,13 @@
                             {% if ch.whatsapp_notify_up and not ch.whatsapp_notify_down %}
                                 (up only)
                             {% endif %}
+                        {% elif ch.kind == "zulip" %}
+                            Zulip
+                            {% if ch.zulip_type == "stream" %}
+                            stream <span>{{ ch.zulip_to}}</span>
+                            {% elif ch.zulip_type == "private" %}
+                            user <span>{{ ch.zulip_to}}</span>
+                            {% endif %}
                         {% else %}
                             {{ ch.get_kind_display }}
                         {% endif %}
@@ -379,6 +386,15 @@
             <a href="{% url 'hc-add-whatsapp' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+
+        <li>
+            <img src="{% static 'img/integrations/zulip.png' %}"
+                class="icon" alt="Zulip icon" />
+
+            <h2>Zulip</h2>
+            <p>Open-source group chat.</p>
+            <a href="{% url 'hc-add-zulip' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
 
         <li class="link-to-github">
             <img src="{% static 'img/integrations/missing.png' %}"

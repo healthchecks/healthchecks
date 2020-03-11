@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load compress humanize static hc_extras %}
+
+{% block title %}Zulip Integration for {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Zulip</h1>
+    <p>
+        <a href="https://zulipchat.com/">Zulip</a> is an open-source group chat app
+        with an email threading model. If you use or plan on using Zulip,
+        you can can integrate it
+        with your {% site_name %} account in few simple steps.
+    </p>
+
+    <h2>Setup Guide</h2>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Log into your Zulip account,
+                click on the <strong>gear icon</strong> in the upper right corner,
+                and select <strong>Settings</strong>.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_zulip_1.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Got to <strong>Your bots › Add a new bot </strong> and fill
+                out the fields.
+            </p>
+            <p>
+                For <strong>Bot Type</strong>,
+                select "Incoming webhook". You can choose your own preferred values
+                for bot's name and email.
+            </p>
+            <p>
+                For the profile picture, feel free to use the {% site_name %} logo:
+            </p>
+            <p>
+                <img src="{% static 'img/logo.png'%}" alt="{% site_name %} logo">
+            </p>
+            <p>
+                After you have filled out the values,
+                click on <strong>Create Bot</strong>.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_zulip_2.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Copy the displayed bot's credentials into the form below.
+                Also specify the stream or the private user you want {% site_name %}
+                to post notifications to.
+            </p>
+            <p>
+                Save the integration and you are done!
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_zulip_3.png' %}">
+        </div>
+    </div>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group {{ form.bot_email.css_classes }}">
+            <label for="bot-email" class="col-sm-2 control-label">Bot Email</label>
+            <div class="col-sm-4">
+                <input
+                    id="bot-email"
+                    type="text"
+                    class="form-control"
+                    name="bot_email"
+                    value="{{ form.bot_email.value|default:"" }}">
+
+                <div class="help-block">
+                {% if form.bot_email.errors %}
+                    {{ form.bot_email.errors|join:"" }}
+                {% else %}
+                    Example: healthchecks-bot@zulip.mycompany.com
+                {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group {{ form.api_key.css_classes }}">
+            <label for="api-key" class="col-sm-2 control-label">API Key</label>
+            <div class="col-sm-4">
+                <input
+                    id="api-key"
+                    type="text"
+                    class="form-control"
+                    name="api_key"
+                    value="{{ form.api_key.value|default:"" }}">
+
+                {% if form.api_key.errors %}
+                <div class="help-block">
+                    {{ form.api_key.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="z-mtype-group" class="form-group {{ form.mtype.css_classes }}">
+            <label class="col-sm-2 control-label">Post To</label>
+            <div class="col-sm-4">
+                <label class="radio-container">
+                    <input
+                        type="radio"
+                        name="mtype"
+                        value="stream"
+                        {% if form.mtype.value != "private" %} checked {% endif %}>
+                    <span class="radiomark"></span>
+                    Stream
+                </label>
+                <label class="radio-container">
+                    <input
+                        type="radio"
+                        name="mtype"
+                        value="private"
+                        {% if form.mtype.value == "private" %} checked {% endif %}>
+                    <span class="radiomark"></span>
+                    Private user
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group {{ form.to.css_classes }}">
+            <label id="z-to-label" for="z-to" class="col-sm-2 control-label">
+            {% if form.mtype.value == "private" %}
+                User's Email
+            {% else %}
+                Stream Name
+            {% endif %}
+            </label>
+            <div class="col-sm-4">
+                <input
+                    id="z-to"
+                    type="text"
+                    class="form-control"
+                    name="to"
+                    value="{{ form.to.value|default:"" }}">
+
+                <div id="z-to-help" class="help-block">
+                {% if form.to.errors %}
+                    {{ form.to.errors|join:"" }}
+                {% else %}
+                    Example: "{% if form.mtype.value == "private" %}alice@example.org{% else %}general{% endif%}""
+                {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/add_zulip.js' %}"></script>
+{% endcompress %}
+{% endblock %}

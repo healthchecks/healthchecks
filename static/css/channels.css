@@ -226,6 +226,10 @@ table.channels-table > tbody > tr > th {
     animation: marker-ripple 1.2s ease-out infinite;
 }
 
+.ai-step p {
+    margin-left: 80px;
+}
+
 @keyframes marker-ripple {
   0%, 35% {
     transform: scale(0);

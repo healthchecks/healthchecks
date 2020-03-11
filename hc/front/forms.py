@@ -221,3 +221,17 @@ class AddAppriseForm(forms.Form):
 class AddPdForm(forms.Form):
     error_css_class = "has-error"
     value = forms.CharField(max_length=32)
+
+
+ZULIP_TARGETS = (("stream", "Stream"), ("private", "Private"))
+
+
+class AddZulipForm(forms.Form):
+    error_css_class = "has-error"
+    bot_email = forms.EmailField(max_length=100)
+    api_key = forms.CharField(max_length=50)
+    mtype = forms.ChoiceField(choices=ZULIP_TARGETS)
+    to = forms.CharField(max_length=100)
+
+    def get_value(self):
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)

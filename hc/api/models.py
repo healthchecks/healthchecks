@@ -48,6 +48,7 @@ CHANNEL_KINDS = (
     ("mattermost", "Mattermost"),
     ("msteams", "Microsoft Teams"),
     ("shell", "Shell Command"),
+    ("zulip", "Zulip"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -359,6 +360,11 @@ class Channel(models.Model):
             return "Slack %s" % self.slack_channel
         elif self.kind == "telegram":
             return "Telegram %s" % self.telegram_name
+        elif self.kind == "zulip":
+            if self.zulip_type == "stream":
+                return "Zulip stream %s" % self.zulip_to
+            if self.zulip_type == "private":
+                return "Zulip user %s" % self.zulip_to
 
         return self.get_kind_display()
 
@@ -429,6 +435,8 @@ class Channel(models.Model):
             return transports.MsTeams(self)
         elif self.kind == "shell":
             return transports.Shell(self)
+        elif self.kind == "zulip":
+            return transports.Zulip(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -673,6 +681,30 @@ class Channel(models.Model):
 
         doc = json.loads(self.value)
         return doc["region"]
+
+    @property
+    def zulip_bot_email(self):
+        assert self.kind == "zulip"
+        doc = json.loads(self.value)
+        return doc["bot_email"]
+
+    @property
+    def zulip_api_key(self):
+        assert self.kind == "zulip"
+        doc = json.loads(self.value)
+        return doc["api_key"]
+
+    @property
+    def zulip_type(self):
+        assert self.kind == "zulip"
+        doc = json.loads(self.value)
+        return doc["mtype"]
+
+    @property
+    def zulip_to(self):
+        assert self.kind == "zulip"
+        doc = json.loads(self.value)
+        return doc["to"]
 
 
 class Notification(models.Model):

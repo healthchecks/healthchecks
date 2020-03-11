@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Don't store user's current project in DB, put it explicitly in page URLs (#336)
 - API reference in Markdown
 - Use Selectize.js for entering tags (#324)
+- Zulip integration (#202)
 
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)
