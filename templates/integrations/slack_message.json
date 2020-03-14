@@ -13,6 +13,12 @@
         "mrkdwn_in": ["fields"],
         "text": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
         "fields": [
+            {% if check.project.name %}
+                {"title": "Project Name",
+                 "value": "{{ check.project.name|escapejs }}"
+                },
+            {% endif %}
+            
             {% if check.desc %}
                 {"title": "Description",
                  "value": "{{ check.desc|escapejs }}"
