@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Use Selectize.js for entering tags (#324)
 - Zulip integration (#202)
 - OpsGenie integration returns more detailed error messages
+- Telegram integration returns more detailed error messages
 
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)

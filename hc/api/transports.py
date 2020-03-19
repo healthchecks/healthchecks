@@ -142,7 +142,9 @@ class Shell(Transport):
 class HttpTransport(Transport):
     @classmethod
     def get_error(cls, response):
-        return f"Received status code {response.status_code}"
+        # Override in subclasses: look for a specific error message in the
+        # response and return it.
+        return None
 
     @classmethod
     def _request(cls, method, url, **kwargs):
@@ -156,7 +158,12 @@ class HttpTransport(Transport):
 
             r = requests.request(method, url, **options)
             if r.status_code not in (200, 201, 202, 204):
-                return cls.get_error(r)
+                m = cls.get_error(r)
+                if m:
+                    return f'Received status code {r.status_code} with a message: "{m}"'
+
+                return f"Received status code {r.status_code}"
+
         except requests.exceptions.Timeout:
             # Well, we tried
             return "Connection timed out"
@@ -261,14 +268,9 @@ class OpsGenie(HttpTransport):
     @classmethod
     def get_error(cls, response):
         try:
-            m = response.json().get("message")
-            if m:
-                code = response.status_code
-                return f'Received status code {code} with a message: "{m}"'
+            return response.json().get("message")
         except ValueError:
             pass
-
-        return super().get_error(response)
 
     def notify(self, check):
         headers = {
@@ -442,6 +444,13 @@ class Telegram(HttpTransport):
     SM = "https://api.telegram.org/bot%s/sendMessage" % settings.TELEGRAM_TOKEN
 
     @classmethod
+    def get_error(cls, response):
+        try:
+            return response.json().get("description")
+        except ValueError:
+            pass
+
+    @classmethod
     def send(cls, chat_id, text):
         return cls.post(
             cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"}
@@ -560,14 +569,9 @@ class Zulip(HttpTransport):
     @classmethod
     def get_error(cls, response):
         try:
-            m = response.json().get("msg")
-            if m:
-                code = response.status_code
-                return f'Received status code {code} with a message: "{m}"'
+            return response.json().get("msg")
         except ValueError:
             pass
-
-        return super().get_error(response)
 
     def notify(self, check):
         _, domain = self.channel.zulip_bot_email.split("@")

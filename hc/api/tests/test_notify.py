@@ -593,6 +593,16 @@ class NotifyTestCase(BaseTestCase):
         self.assertTrue("The check" in payload["text"])
 
     @patch("hc.api.transports.requests.request")
+    def test_telegram_returns_error(self, mock_post):
+        self._setup_data("telegram", json.dumps({"id": 123}))
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.json.return_value = {"description": "Hi"}
+
+        self.channel.notify(self.check)
+        n = Notification.objects.first()
+        self.assertEqual(n.error, 'Received status code 400 with a message: "Hi"')
+
+    @patch("hc.api.transports.requests.request")
     def test_sms(self, mock_post):
         self._setup_data("sms", "+1234567890")
         self.check.last_ping = now() - td(hours=2)
