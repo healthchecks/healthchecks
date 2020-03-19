@@ -775,7 +775,7 @@ def send_test_notification(request, code):
         error = channel.transport.notify(dummy)
 
     if error:
-        messages.warning(request, "Could not send a test notification: %s" % error)
+        messages.warning(request, "Could not send a test notification. %s" % error)
     else:
         messages.success(request, "Test notification sent!")
 

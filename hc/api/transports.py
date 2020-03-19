@@ -141,8 +141,8 @@ class Shell(Transport):
 
 class HttpTransport(Transport):
     @classmethod
-    def get_error(cls, r):
-        return "Received status code %d" % r.status_code
+    def get_error(cls, response):
+        return f"Received status code {response.status_code}"
 
     @classmethod
     def _request(cls, method, url, **kwargs):
@@ -258,6 +258,18 @@ class HipChat(HttpTransport):
 
 
 class OpsGenie(HttpTransport):
+    @classmethod
+    def get_error(cls, response):
+        try:
+            m = response.json().get("message")
+            if m:
+                code = response.status_code
+                return f'Received status code {code} with a message: "{m}"'
+        except ValueError:
+            pass
+
+        return super().get_error(response)
+
     def notify(self, check):
         headers = {
             "Conent-Type": "application/json",

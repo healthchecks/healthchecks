@@ -503,6 +503,16 @@ class NotifyTestCase(BaseTestCase):
         self.assertIn("api.eu.opsgenie.com", args[1])
 
     @patch("hc.api.transports.requests.request")
+    def test_opsgenie_returns_error(self, mock_post):
+        self._setup_data("opsgenie", "123")
+        mock_post.return_value.status_code = 403
+        mock_post.return_value.json.return_value = {"message": "Nice try"}
+
+        self.channel.notify(self.check)
+        n = Notification.objects.first()
+        self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
+
+    @patch("hc.api.transports.requests.request")
     def test_pushover(self, mock_post):
         self._setup_data("po", "123|0")
         mock_post.return_value.status_code = 200
