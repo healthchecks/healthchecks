@@ -558,15 +558,16 @@ class MsTeams(HttpTransport):
 
 class Zulip(HttpTransport):
     @classmethod
-    def get_error(cls, r):
+    def get_error(cls, response):
         try:
-            doc = r.json()
-            if "msg" in doc:
-                return doc["msg"]
+            m = response.json().get("msg")
+            if m:
+                code = response.status_code
+                return f'Received status code {code} with a message: "{m}"'
         except ValueError:
             pass
 
-        return super().get_error(r)
+        return super().get_error(response)
 
     def notify(self, check):
         _, domain = self.channel.zulip_bot_email.split("@")
