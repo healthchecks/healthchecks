@@ -14,7 +14,7 @@
         "text": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
         "fields": [
             {% if check.project.name %}
-                {"title": "Project Name",
+                {"title": "Project",
                  "value": "{{ check.project.name|escapejs }}"
                 },
             {% endif %}
