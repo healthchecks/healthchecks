@@ -19,6 +19,7 @@ from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.models import Check, Notification, Channel
 from hc.lib.badges import check_signature, get_badge_svg
+from hc.lib.jsonschema import ValidationError, validate
 
 
 class BadChannelException(Exception):
@@ -178,18 +179,19 @@ def channels(request):
 
 
 @csrf_exempt
-@cors("POST", "DELETE")
-@validate_json(schemas.check)
+@cors("POST", "DELETE", "GET")
+@validate_json()
 @authorize
-def update(request, code):
+def single(request, code):
     check = get_object_or_404(Check, code=code)
     if check.project != request.project:
         return HttpResponseForbidden()
 
     if request.method == "POST":
         try:
+            validate(request.json, schemas.check)
             _update(check, request.json)
-        except BadChannelException as e:
+        except (BadChannelException,ValidationError) as e:
             return JsonResponse({"error": str(e)}, status=400)
 
         return JsonResponse(check.to_dict())
@@ -199,8 +201,19 @@ def update(request, code):
         check.delete()
         return JsonResponse(response)
 
+    elif request.method == "GET":
+        return JsonResponse(check.to_dict())
+
     # Otherwise, method not allowed
     return HttpResponse(status=405)
+
+
+@csrf_exempt
+@cors("POST", "DELETE")
+@validate_json(schemas.check)
+@authorize
+def update(request, code):
+    single(request, code)
 
 
 @cors("POST")

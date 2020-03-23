@@ -15,6 +15,10 @@ checks in user's account.</p>
 <td><code>GET SITE_ROOT/api/v1/checks/</code></td>
 </tr>
 <tr>
+<td><a href="#get-check">Create a single check</a></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
+</tr>
+<tr>
 <td><a href="#create-check">Create a new check</a></td>
 <td><code>POST SITE_ROOT/api/v1/checks/</code></td>
 </tr>
@@ -170,6 +174,40 @@ is added. This identifier is stable across API calls. Example:</p>
       <span class="nt">&quot;unique_key&quot;</span><span class="p">:</span> <span class="s2">&quot;9b5fc29129560ff2c5c1803803a7415e4f80cf7e&quot;</span>
     <span class="p">}</span>
   <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+<h2 class="rule" id="get-check">Get a single Check</h2>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
+<p>Returns a JSON object containing information information from a single check.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/&lt;uuid&gt;
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Longer free-form description goes here&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">900</span><span class="p">,</span>
+  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-01-04T13:24:39.903464+00:00&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Api test 1&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2017-01-04T14:24:39.903464+00:00&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6/pause&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINT662ebe36-ecab-48db-afe3-e20029cb71e6&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;up&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
+  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6&quot;</span>
 <span class="p">}</span>
 </code></pre></div>
 
