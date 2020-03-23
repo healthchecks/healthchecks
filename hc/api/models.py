@@ -224,7 +224,7 @@ class Check(models.Model):
         if readonly:
             result["unique_key"] = self.unique_key
         else:
-            update_rel_url = reverse("hc-api-update", args=[self.code])
+            update_rel_url = reverse("hc-api-single", args=[self.code])
             pause_rel_url = reverse("hc-api-pause", args=[self.code])
 
             result["ping_url"] = self.url()

@@ -8,6 +8,7 @@ checks in user's account.
 Endpoint Name                                         | Endpoint Address
 ------------------------------------------------------|-------
 [Get a list of existing checks](#list-checks)         | `GET SITE_ROOT/api/v1/checks/`
+[Create a single check](#get-check)                   | `GET SITE_ROOT/api/v1/checks/<uuid>`
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v1/checks/`
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
@@ -154,6 +155,45 @@ is added. This identifier is stable across API calls. Example:
       "unique_key": "9b5fc29129560ff2c5c1803803a7415e4f80cf7e"
     }
   ]
+}
+```
+
+## Get a single Check {: #get-check .rule }
+`GET SITE_ROOT/api/v1/checks/<uuid>`
+
+Returns a JSON object containing information information from a single check.
+
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+### Example Request
+
+```bash
+curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
+```
+
+### Example Response
+
+```json
+{
+  "channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc",
+  "desc": "Longer free-form description goes here",
+  "grace": 900,
+  "last_ping": "2017-01-04T13:24:39.903464+00:00",
+  "n_pings": 1,
+  "name": "Api test 1",
+  "next_ping": "2017-01-04T14:24:39.903464+00:00",
+  "pause_url": "SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6/pause",
+  "ping_url": "PING_ENDPOINT662ebe36-ecab-48db-afe3-e20029cb71e6",
+  "status": "up",
+  "tags": "foo",
+  "timeout": 3600,
+  "update_url": "SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6"
 }
 ```
 
