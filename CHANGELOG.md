@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.14.0-dev - Unreleased
+## v1.14.0 - 2020-03-23
 
 ### Improvements
 - Improved UI to invite users from account's other projects (#258)
