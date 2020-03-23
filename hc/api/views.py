@@ -191,7 +191,7 @@ def single(request, code):
         try:
             validate(request.json, schemas.check)
             _update(check, request.json)
-        except (BadChannelException,ValidationError) as e:
+        except (BadChannelException, ValidationError) as e:
             return JsonResponse({"error": str(e)}, status=400)
 
         return JsonResponse(check.to_dict())
@@ -206,14 +206,6 @@ def single(request, code):
 
     # Otherwise, method not allowed
     return HttpResponse(status=405)
-
-
-@csrf_exempt
-@cors("POST", "DELETE")
-@validate_json(schemas.check)
-@authorize
-def update(request, code):
-    single(request, code)
 
 
 @cors("POST")

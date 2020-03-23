@@ -8,7 +8,7 @@ checks in user's account.
 Endpoint Name                                         | Endpoint Address
 ------------------------------------------------------|-------
 [Get a list of existing checks](#list-checks)         | `GET SITE_ROOT/api/v1/checks/`
-[Create a single check](#get-check)                   | `GET SITE_ROOT/api/v1/checks/<uuid>`
+[Get a single check](#get-check)                   | `GET SITE_ROOT/api/v1/checks/<uuid>`
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v1/checks/`
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
@@ -158,10 +158,10 @@ is added. This identifier is stable across API calls. Example:
 }
 ```
 
-## Get a single Check {: #get-check .rule }
+## Get a Single Check {: #get-check .rule }
 `GET SITE_ROOT/api/v1/checks/<uuid>`
 
-Returns a JSON object containing information information from a single check.
+Returns a JSON representation of a single check.
 
 ### Response Codes
 
@@ -170,6 +170,13 @@ Returns a JSON object containing information information from a single check.
 
 401 Unauthorized
 :   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
 
 ### Example Request
 

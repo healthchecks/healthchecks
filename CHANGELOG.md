@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Zulip integration (#202)
 - OpsGenie integration returns more detailed error messages
 - Telegram integration returns more detailed error messages
+- Added the "Get a single check" API call (#337)
 
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)

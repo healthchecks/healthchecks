@@ -15,7 +15,7 @@ checks in user's account.</p>
 <td><code>GET SITE_ROOT/api/v1/checks/</code></td>
 </tr>
 <tr>
-<td><a href="#get-check">Create a single check</a></td>
+<td><a href="#get-check">Get a single check</a></td>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
 </tr>
 <tr>
@@ -178,15 +178,19 @@ is added. This identifier is stable across API calls. Example:</p>
 </code></pre></div>
 
 
-<h2 class="rule" id="get-check">Get a single Check</h2>
+<h2 class="rule" id="get-check">Get a Single Check</h2>
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
-<p>Returns a JSON object containing information information from a single check.</p>
+<p>Returns a JSON representation of a single check.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
 <dt>401 Unauthorized</dt>
 <dd>The API key is either missing or invalid.</dd>
+<dt>403 Forbidden</dt>
+<dd>Access denied, wrong API key.</dd>
+<dt>404 Not Found</dt>
+<dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
 <div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/&lt;uuid&gt;
