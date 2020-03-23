@@ -282,6 +282,7 @@ def serve_doc(request, doc="introduction"):
         "SITE_NAME": settings.SITE_NAME,
         "SITE_ROOT": settings.SITE_ROOT,
         "PING_ENDPOINT": settings.PING_ENDPOINT,
+        "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
         "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
     }
 
