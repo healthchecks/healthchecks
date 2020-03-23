@@ -13,17 +13,26 @@
         "mrkdwn_in": ["fields"],
         "text": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
         "fields": [
-            {% if check.project.name %}
-                {"title": "Project",
-                 "value": "{{ check.project.name|escapejs }}"
-                },
-            {% endif %}
-            
             {% if check.desc %}
                 {"title": "Description",
                  "value": "{{ check.desc|escapejs }}"
                 },
             {% endif %}
+
+            {% if check.project.name %}
+                {"title": "Project",
+                 "value": "{{ check.project.name|escapejs }}",
+                 "short": true
+                },
+            {% endif %}
+
+            {% if check.tags_list %}
+                {"title": "Tags",
+                 "value": "{% for tag in check.tags_list %}`{{ tag|escapejs }}` {% endfor %}",
+                 "short": true
+                },
+            {% endif %}
+
             {% if check.kind == "simple" %}
                 {"title": "Period",
                  "value": "{{ check.timeout|hc_duration }}",
@@ -45,12 +54,6 @@
              "short": true
             },
 
-            {% if check.tags_list %}
-                {"title": "Tags",
-                 "value": "{% for tag in check.tags_list %}`{{ tag|escapejs }}` {% endfor %}",
-                 "short": true
-                },
-            {% endif %}
 
             {"title": "Total Pings",
              "value": "{{ check.n_pings }}",

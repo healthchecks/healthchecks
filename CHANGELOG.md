@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - OpsGenie integration returns more detailed error messages
 - Telegram integration returns more detailed error messages
 - Added the "Get a single check" API call (#337)
+- Display project name in Slack notifications (#342)
 
 ### Bug Fixes
 - The "render_docs" command checks if markdown and pygments is installed (#329)
