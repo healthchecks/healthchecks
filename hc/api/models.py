@@ -813,3 +813,10 @@ class TokenBucket(models.Model):
 
         # 20 password attempts per day
         return TokenBucket.authorize(value, 20, 3600 * 24)
+
+    @staticmethod
+    def authorize_telegram(telegram_id):
+        value = "tg-%s" % telegram_id
+
+        # 10 messages for a single chat per minute:
+        return TokenBucket.authorize(value, 10, 60)

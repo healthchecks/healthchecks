@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v1.15.0-dev - Unreleased
 
+### Improvements
+- Rate limiting for Telegram notifications (10 notifications per chat per minute)
+
 ### Bug Fixes
 - "Get a single check" API call now supports read-only API keys (#346)
 

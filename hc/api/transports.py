@@ -452,11 +452,18 @@ class Telegram(HttpTransport):
 
     @classmethod
     def send(cls, chat_id, text):
+        # Telegram.send is a separate method because it is also used in
+        # hc.front.views.telegram_bot to send invite links.
         return cls.post(
             cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"}
         )
 
     def notify(self, check):
+        from hc.api.models import TokenBucket
+
+        if not TokenBucket.authorize_telegram(self.channel.telegram_id):
+            return "Rate limit exceeded"
+
         text = tmpl("telegram_message.html", check=check)
         return self.send(self.channel.telegram_id, text)
 

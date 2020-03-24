@@ -6,7 +6,7 @@ from unittest.mock import patch, Mock
 
 from django.core import mail
 from django.utils.timezone import now
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Notification, TokenBucket
 from hc.test import BaseTestCase
 from requests.exceptions import ConnectionError, Timeout
 from django.test.utils import override_settings
@@ -601,6 +601,15 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         n = Notification.objects.first()
         self.assertEqual(n.error, 'Received status code 400 with a message: "Hi"')
+
+    def test_telegram_obeys_rate_limit(self):
+        self._setup_data("telegram", json.dumps({"id": 123}))
+
+        TokenBucket.objects.create(value="tg-123", tokens=0)
+
+        self.channel.notify(self.check)
+        n = Notification.objects.first()
+        self.assertEqual(n.error, "Rate limit exceeded")
 
     @patch("hc.api.transports.requests.request")
     def test_sms(self, mock_post):
