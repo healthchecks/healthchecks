@@ -89,35 +89,35 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
 {
   "checks": [
     {
-      "channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc",
-      "desc": "Longer free-form description goes here",
-      "grace": 900,
-      "last_ping": "2017-01-04T13:24:39.903464+00:00",
+      "name": "Filesystem Backup",
+      "tags": "backup fs",
+      "desc": "Runs incremental backup every hour",
+      "grace": 600,
       "n_pings": 1,
-      "name": "Api test 1",
-      "next_ping": "2017-01-04T14:24:39.903464+00:00",
-      "pause_url": "SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6/pause",
-      "ping_url": "PING_ENDPOINT662ebe36-ecab-48db-afe3-e20029cb71e6",
       "status": "up",
-      "tags": "foo",
-      "timeout": 3600,
-      "update_url": "SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6"
+      "last_ping": "2020-03-24T14:02:03+00:00",
+      "next_ping": "2020-03-24T15:02:03+00:00",
+      "ping_url": "PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712",
+      "update_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712",
+      "pause_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause",
+      "channels": "1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c",
+      "timeout": 3600
     },
     {
-      "channels": "",
-      "desc": "",
-      "grace": 3600,
-      "last_ping": null,
-      "n_pings": 0,
-      "name": "Api test 2",
+      "name": "Database Backup",
+      "tags": "production db",
+      "desc": "Runs ~/db-backup.sh",
+      "grace": 1200,
+      "n_pings": 7,
+      "status": "down",
+      "last_ping": "2020-03-23T10:19:32+00:00",
       "next_ping": null,
-      "pause_url": "SITE_ROOT/api/v1/checks/9d17c61f-5c4f-4cab-b517-11e6b2679ced/pause",
-      "ping_url": "PING_ENDPOINT9d17c61f-5c4f-4cab-b517-11e6b2679ced",
-      "schedule": "0/10 * * * *",
-      "status": "new",
-      "tags": "bar baz",
-      "tz": "UTC",
-      "update_url": "SITE_ROOT/api/v1/checks/9d17c61f-5c4f-4cab-b517-11e6b2679ced"
+      "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
+      "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
+      "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
+      "channels": "1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c",
+      "schedule": "15 5 * * *",
+      "tz": "UTC"
     }
   ]
 }
@@ -131,28 +131,29 @@ is added. This identifier is stable across API calls. Example:
 {
   "checks": [
     {
-      "desc": "Longer free-form description goes here",
-      "grace": 900,
-      "last_ping": "2017-01-04T13:24:39.903464+00:00",
+      "name": "Filesystem Backup",
+      "tags": "backup fs",
+      "desc": "Runs incremental backup every hour",
+      "grace": 600,
       "n_pings": 1,
-      "name": "Api test 1",
       "status": "up",
-      "tags": "foo",
-      "timeout": 3600,
-      "unique_key": "2872190d95224bad120f41d3c06aab94b8175bb6"
+      "last_ping": "2020-03-24T14:02:03+00:00",
+      "next_ping": "2020-03-24T15:02:03+00:00",
+      "unique_key": "a6c7b0a8a66bed0df66abfdab3c77736861703ee",
+      "timeout": 3600
     },
     {
-      "desc": "",
-      "grace": 3600,
-      "last_ping": null,
-      "n_pings": 0,
-      "name": "Api test 2",
+      "name": "Database Backup",
+      "tags": "production db",
+      "desc": "Runs ~/db-backup.sh",
+      "grace": 1200,
+      "n_pings": 7,
+      "status": "down",
+      "last_ping": "2020-03-23T10:19:32+00:00",
       "next_ping": null,
-      "schedule": "0/10 * * * *",
-      "status": "new",
-      "tags": "bar baz",
-      "tz": "UTC",
-      "unique_key": "9b5fc29129560ff2c5c1803803a7415e4f80cf7e"
+      "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
+      "schedule": "15 5 * * *",
+      "tz": "UTC"
     }
   ]
 }
@@ -188,19 +189,47 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
 
 ```json
 {
-  "channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc",
-  "desc": "Longer free-form description goes here",
-  "grace": 900,
-  "last_ping": "2017-01-04T13:24:39.903464+00:00",
-  "n_pings": 1,
-  "name": "Api test 1",
-  "next_ping": "2017-01-04T14:24:39.903464+00:00",
-  "pause_url": "SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6/pause",
-  "ping_url": "PING_ENDPOINT662ebe36-ecab-48db-afe3-e20029cb71e6",
-  "status": "up",
-  "tags": "foo",
-  "timeout": 3600,
-  "update_url": "SITE_ROOT/api/v1/checks/662ebe36-ecab-48db-afe3-e20029cb71e6"
+  "name": "Database Backup",
+  "tags": "production db",
+  "desc": "Runs ~/db-backup.sh",
+  "grace": 1200,
+  "n_pings": 7,
+  "status": "down",
+  "last_ping": "2020-03-23T10:19:32+00:00",
+  "next_ping": null,
+  "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
+  "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
+  "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
+  "channels": "1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c",
+  "schedule": "15 5 * * *",
+  "tz": "UTC"
+}
+```
+
+### Example Read-Only Response
+
+When using the read-only API key, the following fields are omitted:
+`ping_url`, `update_url`, `pause_url`, `channels`.  An extra `unique_key` field is
+added. This identifier is stable across API calls.
+
+
+Note: the `ping_url`, `update_url` and `pause_url` fields, although omitted, are not
+really secret. The client already knows the check's unique UUID and so can easily
+construct these URLs by itself.
+
+```json
+{
+  "name": "Database Backup",
+  "tags": "production db",
+  "desc": "Runs ~/db-backup.sh",
+  "grace": 1200,
+  "n_pings": 7,
+  "status": "down",
+  "last_ping": "2020-03-23T10:19:32+00:00",
+  "next_ping": null,
+  "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
+  "schedule": "15 5 * * *",
+  "tz": "UTC"
 }
 ```
 

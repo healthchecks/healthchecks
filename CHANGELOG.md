@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.15.0-dev - Unreleased
+
+### Bug Fixes
+- "Get a single check" API call now supports read-only API keys (#346)
+
 ## v1.14.0 - 2020-03-23
 
 ### Improvements

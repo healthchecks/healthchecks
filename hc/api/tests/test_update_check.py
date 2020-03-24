@@ -218,3 +218,10 @@ class UpdateCheckTestCase(BaseTestCase):
         # Schedule should be unchanged
         self.check.refresh_from_db()
         self.assertEqual(self.check.schedule, "5 * * * *")
+
+    def test_it_rejects_readonly_key(self):
+        self.project.api_key_readonly = "R" * 32
+        self.project.save()
+
+        r = self.post(self.check.code, {"api_key": "R" * 32, "name": "Foo"})
+        self.assertEqual(r.status_code, 401)

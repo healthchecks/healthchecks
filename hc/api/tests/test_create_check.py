@@ -219,7 +219,7 @@ class CreateCheckTestCase(BaseTestCase):
         r = self.post({"api_key": "X" * 32})
         self.assertEqual(r.status_code, 403)
 
-    def test_readonly_key_does_not_work(self):
+    def test_it_rejects_readonly_key(self):
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 

@@ -178,34 +178,53 @@ def channels(request):
     return JsonResponse({"channels": channels})
 
 
-@csrf_exempt
-@cors("POST", "DELETE", "GET")
 @validate_json()
-@authorize
-def single(request, code):
+@authorize_read
+def get_check(request, code):
     check = get_object_or_404(Check, code=code)
     if check.project != request.project:
         return HttpResponseForbidden()
 
+    return JsonResponse(check.to_dict(readonly=request.readonly))
+
+
+@validate_json(schemas.check)
+@authorize
+def update_check(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project != request.project:
+        return HttpResponseForbidden()
+
+    try:
+        _update(check, request.json)
+    except BadChannelException as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse(check.to_dict())
+
+
+@validate_json()
+@authorize
+def delete_check(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project != request.project:
+        return HttpResponseForbidden()
+
+    response = check.to_dict()
+    check.delete()
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@cors("POST", "DELETE", "GET")
+def single(request, code):
     if request.method == "POST":
-        try:
-            validate(request.json, schemas.check)
-            _update(check, request.json)
-        except (BadChannelException, ValidationError) as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        return update_check(request, code)
 
-        return JsonResponse(check.to_dict())
+    if request.method == "DELETE":
+        return delete_check(request, code)
 
-    elif request.method == "DELETE":
-        response = check.to_dict()
-        check.delete()
-        return JsonResponse(response)
-
-    elif request.method == "GET":
-        return JsonResponse(check.to_dict())
-
-    # Otherwise, method not allowed
-    return HttpResponse(status=405)
+    return get_check(request, code)
 
 
 @cors("POST")
