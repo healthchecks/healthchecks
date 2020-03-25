@@ -345,6 +345,14 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
         self.assertEqual(len(mail.outbox), 0)
 
+    def test_email_handles_amperstand(self):
+        self._setup_data("email", "alice@example.org")
+        self.check.name = "Foo & Bar"
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, "DOWN | Foo & Bar")
+
     @patch("hc.api.transports.requests.request")
     def test_pd(self, mock_post):
         self._setup_data("pd", "123")

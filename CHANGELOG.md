@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - "Get a single check" API call now supports read-only API keys (#346)
+- Don't escape HTML in the subject line of notification emails
 
 ## v1.14.0 - 2020-03-23
 
