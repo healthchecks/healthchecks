@@ -185,6 +185,8 @@ def get_check(request, code):
     if check.project != request.project:
         return HttpResponseForbidden()
 
+    if 'history' in request.GET:
+        return JsonResponse(check.to_dict(readonly=request.readonly, history=request.GET['history']))
     return JsonResponse(check.to_dict(readonly=request.readonly))
 
 
