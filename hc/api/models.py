@@ -16,6 +16,7 @@ from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 import pytz
+import re
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -206,7 +207,7 @@ class Check(models.Model):
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
 
-    def to_dict(self, readonly=False):
+    def to_dict(self, readonly=False, history=None):
 
         result = {
             "name": self.name,
@@ -223,6 +224,29 @@ class Check(models.Model):
         if self.last_duration:
             result["last_duration"] = int(self.last_duration.total_seconds())
 
+        if history:
+            split = re.split(r'(h|d|w)$',history,maxsplit=0)
+            if len(split) == 3: # re.split should return a list of 3 items if the parameter is set correctly
+                zone = pytz.timezone(self.tz)
+                current_now = datetime.now(tz=zone)
+                
+                if split[1] == 'd':
+                    cutoff = current_now - td(days=int(split[0]))
+                elif split[1] == 'h':
+                    cutoff = current_now - td(hours=int(split[0]))
+                elif split[1] == 'w':
+                    cutoff = current_now - td(weeks=int(split[0]))
+
+                pings = Ping.objects.filter(owner=self, created__gte=cutoff).order_by("-id")#[:limit]
+                pings = list(pings)
+
+                alerts = Notification.objects.select_related("channel").filter(
+                    owner=self, check_status="down", created__gt=cutoff
+                )
+
+                events = pings + list(alerts)
+                events.sort(key=lambda el: el.created, reverse=True)
+                result['history'] = list(map(lambda x: {'timestamp':x.created,'status':x.kind}, events))
         if readonly:
             result["unique_key"] = self.unique_key
         else:
