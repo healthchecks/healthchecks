@@ -235,16 +235,11 @@ class Check(models.Model):
                 elif split[1] == 'w':
                     cutoff = current_now - td(weeks=int(split[0]))
 
-                pings = Ping.objects.filter(owner=self, created__gte=cutoff).order_by("-id")#[:limit]
-                pings = list(pings)
-
-                alerts = Notification.objects.select_related("channel").filter(
-                    owner=self, check_status="down", created__gt=cutoff
-                )
-
-                events = pings + list(alerts)
-                events.sort(key=lambda el: el.created, reverse=True)
-                result['history'] = list(map(lambda x: {'timestamp':x.created,'status':x.kind}, events))
+                flips = Flip.objects.select_related("owner").filter(
+                    owner=self, new_status__in=("down","up"), created__gt=cutoff
+                ).order_by("created")
+                dictStatus = {"up":1,"down":0} 
+                result['history'] = list(map(lambda x: {'timestamp':x.created,'status':dictStatus[x.new_status]}, flips))
         if readonly:
             result["unique_key"] = self.unique_key
         else:
