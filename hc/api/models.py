@@ -528,7 +528,11 @@ class Channel(models.Model):
             return None
 
         doc = json.loads(self.value)
-        return doc["team_name"]
+        if "team_name" in doc:
+            return doc["team_name"]
+
+        if "team" in doc:
+            return doc["team"]["name"]
 
     @property
     def slack_channel(self):

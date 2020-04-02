@@ -1037,7 +1037,7 @@ def add_slack_btn(request, code):
     project = _get_project_for_user(request, code)
 
     state = token_urlsafe()
-    authorize_url = "https://slack.com/oauth/authorize?" + urlencode(
+    authorize_url = "https://slack.com/oauth/v2/authorize?" + urlencode(
         {
             "scope": "incoming-webhook",
             "client_id": settings.SLACK_CLIENT_ID,
@@ -1071,7 +1071,7 @@ def add_slack_complete(request):
         return HttpResponseForbidden()
 
     result = requests.post(
-        "https://slack.com/api/oauth.access",
+        "https://slack.com/api/oauth.v2.access",
         {
             "client_id": settings.SLACK_CLIENT_ID,
             "client_secret": settings.SLACK_CLIENT_SECRET,
