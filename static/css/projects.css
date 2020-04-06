@@ -20,6 +20,9 @@
 #project-selector .project h4 {
     font-weight: bold;
     margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #project-selector .project.selected {
