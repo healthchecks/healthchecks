@@ -7,10 +7,7 @@ class UpdateChannelTestCase(BaseTestCase):
     def setUp(self):
         super(UpdateChannelTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project)
-
-        self.channel = Channel(project=self.project, kind="email")
-        self.channel.email = "alice@example.org"
-        self.channel.save()
+        self.channel = Channel.objects.create(project=self.project, kind="email")
 
     def test_it_works(self):
         payload = {"channel": self.channel.code, "check-%s" % self.check.code: True}

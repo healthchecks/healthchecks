@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Add Webhook Integration - {% site_name %}{% endblock %}
+{% block title %}
+    {% if channel %}
+    Webhook Settings - {% site_name %}
+    {% else %}
+    Add Webhook Integration - {% site_name %}
+    {% endif %}
+{% endblock %}
 
 
 {% block content %}
@@ -9,17 +15,29 @@
     <div class="col-sm-12">
         <h1>Webhook</h1>
 
-        <p>Executes an HTTP request to your specified URL when a check
-        goes up or down.</p>
-
         <p>
-            You can use placeholders <strong>$NAME</strong>, <strong>$STATUS</strong> and others in webhook URLs,
-            request body and header values
-            <a href="#" data-toggle="modal" data-target="#reference-modal">(quick reference)</a>.
+            Executes an HTTP request to your specified URL when a check
+            goes up or down.  You can use placeholders <strong>$NAME</strong>,
+            <strong>$STATUS</strong> and others in webhook URLs, request body and
+            header values
+            <a href="#" data-toggle="modal" data-target="#reference-modal">(available placeholders)</a>.
         </p>
 
         <form id="add-webhook-form" method="post">
         {% csrf_token %}
+
+        <div class="form-group {{ form.name.css_classes }}">
+            <br>
+            <label>Name</label>
+            <input
+                id="webhook-form-name"
+                name="name"
+                value="{{ form.name.value|default:"" }}"
+                type="text"
+                class="form-control" />
+
+            <div class="help-block">Give this integration a descriptive name, so you can easily recognize it later. </div>
+        </div>
 
         <div class="row">
         <div class="col-sm-6">
@@ -140,7 +158,13 @@
             <br>
             <br>
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Save Integration</button>
+                <button type="submit" class="btn btn-primary">
+                    {% if channel %}
+                    Save Changes
+                    {% else %}
+                    Save Integration
+                    {% endif %}
+                </button>
             </div>
         </div>
         </form>

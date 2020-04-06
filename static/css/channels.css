@@ -105,6 +105,10 @@ table.channels-table > tbody > tr > th {
     color: #000;
 }
 
+.channel-row .actions {
+    text-align: right;
+}
+
 .channel-row .actions form {
     display: inline;
 }

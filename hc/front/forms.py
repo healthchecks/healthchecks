@@ -136,8 +136,9 @@ class AddUrlForm(forms.Form):
 METHODS = ("GET", "POST", "PUT")
 
 
-class AddWebhookForm(forms.Form):
+class WebhookForm(forms.Form):
     error_css_class = "has-error"
+    name = forms.CharField(max_length=100, required=False)
 
     method_down = forms.ChoiceField(initial="GET", choices=zip(METHODS, METHODS))
     body_down = forms.CharField(max_length=1000, required=False)
@@ -160,7 +161,8 @@ class AddWebhookForm(forms.Form):
         url_up = self.cleaned_data.get("url_up")
 
         if not url_down and not url_up:
-            self.add_error("url_down", "Enter a valid URL.")
+            if not self.has_error("url_down"):
+                self.add_error("url_down", "Enter a valid URL.")
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)

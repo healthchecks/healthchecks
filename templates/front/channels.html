@@ -131,6 +131,9 @@
                 {% endif %}
             </td>
             <td class="actions">
+                {% if ch.kind == "webhook" %}
+                <a class="btn btn-sm btn-default" href="{% url 'hc-edit-webhook' ch.code %}">Edit</a>
+                {% endif %}
                 <form action="{% url 'hc-channel-test' ch.code %}" method="post">
                     {% csrf_token %}
                     <button

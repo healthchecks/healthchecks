@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Rate limiting for Telegram notifications (10 notifications per chat per minute)
 - Use Slack V2 OAuth flow
+- "Edit" function for webhook integrations (#176)
 
 ### Bug Fixes
 - "Get a single check" API call now supports read-only API keys (#346)

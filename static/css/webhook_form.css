@@ -38,3 +38,7 @@
 .label-up {
     color: #5cb85c
 }
+
+#webhook-form-name {
+    max-width: 400px;
+}

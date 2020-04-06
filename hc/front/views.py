@@ -843,16 +843,18 @@ def add_webhook(request, code):
     project = _get_project_for_user(request, code)
 
     if request.method == "POST":
-        form = forms.AddWebhookForm(request.POST)
+        form = forms.WebhookForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="webhook")
+            channel.name = form.cleaned_data["name"]
             channel.value = form.get_value()
             channel.save()
 
             channel.assign_all_checks()
             return redirect("hc-p-channels", project.code)
+
     else:
-        form = forms.AddWebhookForm()
+        form = forms.WebhookForm()
 
     ctx = {
         "page": "channels",
@@ -860,7 +862,43 @@ def add_webhook(request, code):
         "form": form,
         "now": timezone.now().replace(microsecond=0).isoformat(),
     }
-    return render(request, "integrations/add_webhook.html", ctx)
+    return render(request, "integrations/webhook_form.html", ctx)
+
+
+@login_required
+def edit_webhook(request, code):
+    channel = _get_channel_for_user(request, code)
+    if channel.kind != "webhook":
+        return HttpResponseBadRequest()
+
+    if request.method == "POST":
+        form = forms.WebhookForm(request.POST)
+        if form.is_valid():
+            channel.name = form.cleaned_data["name"]
+            channel.value = form.get_value()
+            channel.save()
+
+            return redirect("hc-p-channels", channel.project.code)
+    else:
+
+        def flatten(d):
+            return "\n".join("%s: %s" % pair for pair in d.items())
+
+        doc = json.loads(channel.value)
+        doc["headers_down"] = flatten(doc["headers_down"])
+        doc["headers_up"] = flatten(doc["headers_up"])
+        doc["name"] = channel.name
+
+        form = forms.WebhookForm(doc)
+
+    ctx = {
+        "page": "channels",
+        "project": channel.project,
+        "channel": channel,
+        "form": form,
+        "now": timezone.now().replace(microsecond=0).isoformat(),
+    }
+    return render(request, "integrations/webhook_form.html", ctx)
 
 
 @require_setting("SHELL_ENABLED")

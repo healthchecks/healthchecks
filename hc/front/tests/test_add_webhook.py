@@ -12,6 +12,22 @@ class AddWebhookTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Executes an HTTP request")
 
+    def test_it_saves_name(self):
+        form = {
+            "name": "Call foo.com",
+            "method_down": "GET",
+            "url_down": "http://foo.com",
+            "method_up": "GET",
+            "url_up": "",
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertRedirects(r, self.channels_url)
+
+        c = Channel.objects.get()
+        self.assertEqual(c.name, "Call foo.com")
+
     def test_it_adds_two_webhook_urls_and_redirects(self):
         form = {
             "method_down": "GET",
