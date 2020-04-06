@@ -16,7 +16,7 @@ class AddSlackBtnTestCase(BaseTestCase):
     def test_slack_button(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "slack.com/oauth/authorize", status_code=200)
+        self.assertContains(r, "slack.com/oauth/v2/authorize", status_code=200)
 
         # There should now be a key in session
         self.assertTrue("add_slack" in self.client.session)
