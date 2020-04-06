@@ -179,7 +179,6 @@ def my_checks(request, code):
         "checks": checks,
         "channels": channels,
         "num_down": num_down,
-        "now": timezone.now(),
         "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": pytz.all_timezones,
@@ -860,7 +859,6 @@ def add_webhook(request, code):
         "page": "channels",
         "project": project,
         "form": form,
-        "now": timezone.now().replace(microsecond=0).isoformat(),
     }
     return render(request, "integrations/webhook_form.html", ctx)
 
@@ -896,7 +894,6 @@ def edit_webhook(request, code):
         "project": channel.project,
         "channel": channel,
         "form": form,
-        "now": timezone.now().replace(microsecond=0).isoformat(),
     }
     return render(request, "integrations/webhook_form.html", ctx)
 
@@ -921,7 +918,6 @@ def add_shell(request, code):
         "page": "channels",
         "project": project,
         "form": form,
-        "now": timezone.now().replace(microsecond=0).isoformat(),
     }
     return render(request, "integrations/add_shell.html", ctx)
 

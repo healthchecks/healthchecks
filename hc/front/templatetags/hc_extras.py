@@ -4,6 +4,7 @@ from django import template
 from django.conf import settings
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.utils.timezone import now
 
 from hc.lib.date import format_duration, format_approx_duration, format_hms
 
@@ -151,3 +152,8 @@ def fix_asterisks(s):
 @register.filter
 def format_headers(headers):
     return "\n".join("%s: %s" % (k, v) for k, v in headers.items())
+
+
+@register.simple_tag
+def now_isoformat():
+    return now().replace(microsecond=0).isoformat()
