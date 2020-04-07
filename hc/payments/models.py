@@ -130,6 +130,10 @@ class Subscription(models.Model):
                 self.plan_name = "Business Plus ($80 / month)"
             elif plan_id == "Y768":
                 self.plan_name = "Business Plus ($768 / year)"
+            elif plan_id == "S5":
+                self.plan_name = "Supporter ($5 / month)"
+            elif plan_id == "S48":
+                self.plan_name = "Supporter ($48 / year)"
 
             self.save()
 

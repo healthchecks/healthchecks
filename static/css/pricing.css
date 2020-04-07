@@ -1,24 +1,64 @@
-.panel-pricing .list-group-item {
-  color: #777777;
-}
-.panel-pricing .list-group-item:last-child {
-  border-bottom-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-}
-.panel-pricing .list-group-item:first-child {
-  border-top-right-radius: 0px;
-  border-top-left-radius: 0px;
-}
-.panel-pricing .panel-body {
-    font-size: 40px;
-    color: #777777;
-    padding: 20px;
-    margin: 0px;
-    background-color: #f0f0f0;
-}
-
 #subscription-status form {
     display: inline-block;
+}
+
+#pricing-table {
+}
+
+
+.panel.plan h1 {
+    font-size: 24px;
+    font-weight: bold;
+
+    display: inline-block;
+    line-height: 0.9;
+    text-shadow: 0px 1px white, -1px 1px white, 1px 1px white, -1px 0px white;
+}
+
+.hobbyist h1 {
+    color: #0a220c;
+    border-bottom: 3px solid #A5D6A7;
+}
+
+.supporter h1 {
+    color: #1d190f;
+    border-bottom: 3px solid #FFE082;
+}
+
+.business h1 {
+    color: #141c22;
+    border-bottom: 3px solid #90CAF9;
+}
+
+.business-plus h1 {
+    color: #221f1e;
+    border-bottom: 3px solid #BCAAA4;
+}
+
+.mo {
+    font-size: 16px;
+}
+
+.plan .btn  {
+    font-weight: bold;
+    color: #1ea65a;
+    border-color: #1ea65a;
+    background: #FFF;
+    transition: all 0.2s ease;
+
+    border-radius: 5px;
+    padding: 8px 20px;
+}
+
+.plan .btn:hover {
+    color: #fff;
+    background: #22bc66;
+    border-color: #22bc66;
+}
+
+.plan .list-group-item:last-child {
+    border-bottom: 0;
+
 }
 
 #payment-method-modal .modal-header {
@@ -42,10 +82,6 @@
     font-weight: bold;
 }
 
-.mo {
-    font-size: 18px;
-    color: #888;
-}
 
 #period-controls {
     text-align: center;

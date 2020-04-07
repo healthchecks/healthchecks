@@ -110,7 +110,7 @@ def update(request):
         request.session["payment_method_status"] = "success"
         return redirect("hc-billing")
 
-    if plan_id not in ("", "P20", "P80", "Y192", "Y768"):
+    if plan_id not in ("", "P20", "P80", "Y192", "Y768", "S5", "S48"):
         return HttpResponseBadRequest()
 
     # Cancel the previous plan and reset limits:
@@ -120,7 +120,7 @@ def update(request):
     profile.ping_log_limit = 100
     profile.check_limit = 20
     profile.team_limit = 2
-    profile.sms_limit = 0
+    profile.sms_limit = 5
     profile.save()
 
     if plan_id == "":
@@ -133,17 +133,24 @@ def update(request):
 
     # Update user's profile
     profile = request.user.profile
-    if plan_id in ("P20", "Y192"):
+    if plan_id in ("S5", "S48"):
+        profile.check_limit = 20
+        profile.team_limit = 2
         profile.ping_log_limit = 1000
+        profile.sms_limit = 5
+        profile.sms_sent = 0
+        profile.save()
+    elif plan_id in ("P20", "Y192"):
         profile.check_limit = 100
         profile.team_limit = 9
+        profile.ping_log_limit = 1000
         profile.sms_limit = 50
         profile.sms_sent = 0
         profile.save()
     elif plan_id in ("P80", "Y768"):
-        profile.ping_log_limit = 1000
         profile.check_limit = 1000
         profile.team_limit = 500
+        profile.ping_log_limit = 1000
         profile.sms_limit = 500
         profile.sms_sent = 0
         profile.save()

@@ -32,9 +32,9 @@ $(function () {
         }
 
         $("#payment-form-submit").prop("disabled", true);
-        $("#payment-method-modal").modal("show");        
+        $("#payment-method-modal").modal("show");
 
-        getToken(function(token) {            
+        getToken(function(token) {
             braintree.dropin.create({
                 authorization: token,
                 container: "#dropin",
@@ -48,7 +48,7 @@ $(function () {
                     instance.requestPaymentMethod(function (err, payload) {
                         $("#payment-method-modal").modal("hide");
                         $("#please-wait-modal").modal("show");
-                        
+
                         $("#nonce").val(payload.nonce);
                         $("#update-subscription-form").submit();
                     });
@@ -76,7 +76,7 @@ $(function () {
     });
 
     $("#update-payment-method").click(function() {
-        showPaymentMethodForm($("#old-plan-id").val());        
+        showPaymentMethodForm($("#old-plan-id").val());
     });
 
     $("#billing-history").load("/accounts/profile/billing/history/");
@@ -98,6 +98,12 @@ $(function () {
         updateChangePlanForm();
     });
 
+    $("#plan-supporter").click(function() {
+        $(".plan").removeClass("selected");
+        $("#plan-supporter").addClass("selected");
+        updateChangePlanForm();
+    });
+
     $("#plan-business").click(function() {
         $(".plan").removeClass("selected");
         $("#plan-business").addClass("selected");
@@ -116,6 +122,7 @@ $(function () {
         // "Monthly" is selected: dispplay monthly prices
         if ($("#billing-monthly").is(":checked")) {
             var period = "monthly";
+            $("#supporter-price").text("$5");
             $("#business-price").text("$20");
             $("#business-plus-price").text("$80");
         }
@@ -123,6 +130,7 @@ $(function () {
         // "Annual" is selected: dispplay annual prices
         if ($("#billing-annual").is(":checked")) {
             var period = "annual";
+            $("#supporter-price").text("$4");
             $("#business-price").text("$16");
             $("#business-plus-price").text("$64");
         }
@@ -130,6 +138,11 @@ $(function () {
         // "Hobbyist" is selected, set planId
         if ($("#plan-hobbyist").hasClass("selected")) {
             planId = "";
+        }
+
+        // "Supporter" is selected, set planId
+        if ($("#plan-supporter").hasClass("selected")) {
+            planId = period == "monthly" ? "S5" : "S48";
         }
 
         // "Business" is selected, set planId
@@ -141,7 +154,7 @@ $(function () {
         if ($("#plan-business-plus").hasClass("selected")) {
             planId = period == "monthly" ? "P80" : "Y768";
         }
-        
+
         if (planId == $("#old-plan-id").val()) {
             $("#change-plan-btn")
                 .attr("disabled", "disabled")

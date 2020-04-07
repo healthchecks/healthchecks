@@ -49,6 +49,34 @@ class UpdateSubscriptionTestCase(BaseTestCase):
         self.assertTrue(mock.Subscription.create.called)
 
     @patch("hc.payments.models.braintree")
+    def test_supporter_works(self, mock):
+        self._setup_mock(mock)
+
+        self.profile.sms_limit = 0
+        self.profile.sms_sent = 1
+        self.profile.save()
+
+        r = self.run_update("S5")
+        self.assertRedirects(r, "/accounts/profile/billing/")
+
+        # Subscription should be filled out:
+        sub = Subscription.objects.get(user=self.alice)
+        self.assertEqual(sub.subscription_id, "t-sub-id")
+        self.assertEqual(sub.plan_id, "S5")
+        self.assertEqual(sub.plan_name, "Supporter ($5 / month)")
+
+        # User's profile should have adjusted limits
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.ping_log_limit, 1000)
+        self.assertEqual(self.profile.check_limit, 20)
+        self.assertEqual(self.profile.team_limit, 2)
+        self.assertEqual(self.profile.sms_limit, 5)
+        self.assertEqual(self.profile.sms_sent, 0)
+
+        # braintree.Subscription.cancel should have not been called
+        assert not mock.Subscription.cancel.called
+
+    @patch("hc.payments.models.braintree")
     def test_yearly_works(self, mock):
         self._setup_mock(mock)
 
@@ -133,7 +161,7 @@ class UpdateSubscriptionTestCase(BaseTestCase):
         self.assertEqual(self.profile.ping_log_limit, 100)
         self.assertEqual(self.profile.check_limit, 20)
         self.assertEqual(self.profile.team_limit, 2)
-        self.assertEqual(self.profile.sms_limit, 0)
+        self.assertEqual(self.profile.sms_limit, 5)
 
         self.assertTrue(mock.Subscription.cancel.called)
 

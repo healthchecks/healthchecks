@@ -69,90 +69,120 @@
             </div>
         </div>
 
-        <!-- Free -->
-        <div class="col-sm-4 text-center">
-            <div class="panel panel-default">
-                <div class="panel-body text-center free">
+        <!-- Hobbyist -->
+        <div class="col-sm-3 text-center">
+            <div class="panel panel-default plan hobbyist">
+                <div class="panel-body text-center">
                     <h1>Hobbyist</h1>
-                    <h2>$0<span class="mo">/mo</span></h2>
+                    <h2>$0 <span class="mo">/ month</span></h2>
                 </div>
                 <ul class="list-group text-center">
-                    <li class="list-group-item"><i class="fa fa-check"></i> 20 Checks</li>
-                    <li class="list-group-item">3 Team Members</li>
-                    <li class="list-group-item">100 Log Entries per Check</li>
-                    <li class="list-group-item">API Access</li>
-                    <li class="list-group-item">5 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} Alerts per Month</li>
+                    <li class="list-group-item"><i class="fa fa-check"></i> 20 checks</li>
+                    <li class="list-group-item">3 team members</li>
+                    <li class="list-group-item">100 log entries per check</li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">5 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} credits</li>
                     <li class="list-group-item">&nbsp;</li>
                 </ul>
+
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-success">Get Started</a>
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">Sign Up</a>
                 </div>
                 {% endif %}
             </div>
         </div>
-        <!-- /item -->
 
-        <!-- P5 -->
-        <div class="col-sm-4 text-center">
-            <div class="panel panel-default">
+        <!-- Supporter -->
+        <div class="col-sm-3 text-center">
+            <div class="panel panel-default plan supporter">
+                <div class="panel-body text-center free">
+                    <h1>Supporter</h1>
+                    <h2>
+                        <span id="supporter-price">$5</span>
+                        <span class="mo">/ month</span>
+                    </h2>
+                </div>
+                <ul class="list-group text-center">
+                    <li class="list-group-item"><i class="fa fa-check"></i> 20 checks</li>
+                    <li class="list-group-item">3 team members</li>
+                    <li class="list-group-item">1000 log entries per check</li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">5 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} credits</li>
+                    <li class="list-group-item">Email support</li>
+                </ul>
+
+                {% if not request.user.is_authenticated %}
+                <div class="panel-footer">
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">
+                        Sign Up
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Business -->
+        <div class="col-sm-3 text-center">
+            <div class="panel panel-default plan business">
                 <div class="panel-body text-center">
                     <h1>Business</h1>
                     <h2>
-                        <span id="s-price">$20</span><span class="mo">/mo</span>
+                        <span id="business-price">$20</span>
+                        <span class="mo">/ month</span>
                     </h2>
                 </div>
 
                 <ul class="list-group text-center">
-                    <li class="list-group-item">100 Checks</li>
-                    <li class="list-group-item">10 Team Members</li>
-                    <li class="list-group-item">1000 Log Entries per Check</li>
-                    <li class="list-group-item">API Access</li>
-                    <li class="list-group-item">50 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} Alerts per Month</li>
-                    <li class="list-group-item">Email Support</li>
+                    <li class="list-group-item">100 checks</li>
+                    <li class="list-group-item">10 team members</li>
+                    <li class="list-group-item">1000 log entries per check</li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">50 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} credits</li>
+                    <li class="list-group-item">Email support</li>
                 </ul>
+
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
-                        Get Started
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">
+                        Sign Up
                     </a>
                 </div>
                 {% endif %}
             </div>
         </div>
-        <!-- /item -->
 
-        <!-- P50 -->
-        <div class="col-sm-4 text-center">
-            <div class="panel panel-default">
+        <!-- Business Plus -->
+        <div class="col-sm-3 text-center">
+            <div class="panel panel-default plan business-plus">
                 <div class="panel-body text-center">
                     <h1>Business Plus</h1>
                     <h2>
-                        <span id="p-price">$80</span><span class="mo">/mo</span>
+                        <span id="business-plus-price">$80</span>
+                        <span class="mo">/ month</span>
                     </h2>
                 </div>
 
                 <ul class="list-group text-center">
-                    <li class="list-group-item">1000 Checks</li>
-                    <li class="list-group-item">Unlimited Team Members</li>
-                    <li class="list-group-item">1000 Log Entries per Check</li>
-                    <li class="list-group-item">API Access</li>
-                    <li class="list-group-item">500 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} Alerts per Month</li>
-                    <li class="list-group-item">Priority Email Support</li>
+                    <li class="list-group-item">1000 checks</li>
+                    <li class="list-group-item">Unlimited team members</li>
+                    <li class="list-group-item">1000 log entries per check</li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">500 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} credits</li>
+                    <li class="list-group-item">Priority email support</li>
                 </ul>
+
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
-                        Get Started
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">
+                        Sign Up
                     </a>
                 </div>
                 {% endif %}
             </div>
         </div>
-        <!-- /item -->
     </div>
 </section>
-<!-- /Plans -->
 
 <section id="faq">
     <div class="container">
