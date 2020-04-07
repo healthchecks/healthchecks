@@ -56,6 +56,10 @@
     border-color: #22bc66;
 }
 
+.plan .list-group-item {
+    padding: 10px 8px;
+}
+
 .plan .list-group-item:last-child {
     border-bottom: 0;
 
@@ -99,4 +103,13 @@
 #annual-note {
     margin: 10px 0;
     color: #AAA;
+}
+
+.page-pricing span[data-help] {
+    border-bottom: 1px dashed #888;
+    cursor: help;
+}
+
+.page-pricing .tooltip-inner {
+    text-align: left;
 }

@@ -12,4 +12,11 @@ $(function () {
             $("#business-plus-price").text("$64");
         }
     });
+
+    $('[data-help]').tooltip({
+        html: true,
+        title: function() {
+            return $("#" + this.dataset.help).html();
+        }
+    });
 });
