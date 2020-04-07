@@ -1,3 +1,1 @@
-from django.db import models
-
-# Create your models here.
+# The front app has no models.

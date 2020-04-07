@@ -19,7 +19,6 @@ from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.models import Check, Notification, Channel
 from hc.lib.badges import check_signature, get_badge_svg
-from hc.lib.jsonschema import ValidationError, validate
 
 
 class BadChannelException(Exception):

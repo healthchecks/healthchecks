@@ -291,7 +291,6 @@ def serve_doc(request, doc="introduction"):
 
     ctx = {
         "page": "docs",
-        "section": "home",
         "section": doc,
         "content": content,
         "first_line": content.split("\n")[0],
