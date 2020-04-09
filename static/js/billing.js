@@ -163,8 +163,7 @@ $(function () {
         } else {
             var caption = "Change Billing Plan";
             if (planId) {
-                var amount = planId.substr(1);
-                caption += " And Pay $" + amount + " Now";
+                caption += " And Pay $" + getAmount(planId) + " Now";
             }
 
             $("#change-plan-btn")
