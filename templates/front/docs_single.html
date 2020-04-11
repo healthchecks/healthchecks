@@ -1,0 +1,19 @@
+{% extends "front/base_docs.html" %}
+{% load compress static hc_extras %}
+
+{% block title %}{{ first_line|striptags }} - {% site_name %}{% endblock %}
+{% block description %}{% endblock %}
+{% block keywords %}{% endblock %}
+
+{% block docs_content %}
+<div class="docs-content docs-{{ section }}">{{ content|safe }}</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/clipboard.min.js' %}"></script>
+<script src="{% static 'js/snippet-copy.js' %}"></script>
+{% endcompress %}
+{% endblock %}

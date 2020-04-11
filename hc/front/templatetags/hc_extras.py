@@ -4,6 +4,7 @@ from django import template
 from django.conf import settings
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.utils.timezone import now
 
 from hc.lib.date import format_duration, format_approx_duration, format_hms
 
@@ -38,6 +39,24 @@ def mangle_link(s):
 @register.simple_tag
 def site_root():
     return settings.SITE_ROOT
+
+
+@register.simple_tag
+def site_scheme():
+    parts = settings.SITE_ROOT.split("://")
+    assert parts[0] in ("http", "https")
+    return parts[0]
+
+
+@register.simple_tag
+def site_hostname():
+    parts = settings.SITE_ROOT.split("://")
+    return parts[1]
+
+
+@register.simple_tag
+def site_version():
+    return settings.VERSION
 
 
 @register.simple_tag
@@ -133,3 +152,8 @@ def fix_asterisks(s):
 @register.filter
 def format_headers(headers):
     return "\n".join("%s: %s" % (k, v) for k, v in headers.items())
+
+
+@register.simple_tag
+def now_isoformat():
+    return now().replace(microsecond=0).isoformat()

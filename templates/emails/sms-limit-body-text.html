@@ -1,0 +1,9 @@
+{% load hc_extras %}Hello,
+
+We could not deliver a {{ transport }} notification because your {% site_name %} account has reached its monthly sending limit of {{ limit }} sends per month. The limit resets at the start of each month.
+{% if url %}You can increase the monthly sending limit by upgrading your billing plan.
+{% endif %}
+
+--
+Regards,
+The {% site_name %} Team

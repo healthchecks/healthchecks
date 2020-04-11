@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Add OpsGenie - {% site_name %}{% endblock %}
+{% block title %}OpsGenie Integration for {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -17,14 +17,14 @@
     <h2>Setup Guide</h2>
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">1</span>
+            <span class="step-no"></span>
             <p>
                 Log into your OpsGenie account,
-                go to <strong>Integrations &gt; Add New Integrations</strong>,
-                and add the "API" integration.
+                go to <strong>Settings &gt; Integration list</strong>,
+                and add a new "API" integration.
             </p>
             <p>
-                Give it a descriptive name, then
+                Give it a descriptive name, select its team, then
                 save the integration.
             </p>
 
@@ -38,9 +38,9 @@
     </div>
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">2</span>
+            <span class="step-no"></span>
             After adding the new integration, take note of its
-            <strong>API key</strong>, a long string
+            <strong>API Key</strong>, a long string
             of letters and digits.
 
         </div>
@@ -54,30 +54,61 @@
 
     <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">3</span>
-            <p>Paste the API key down below. Save the integration, and
-            you are done!</p>
+            <span class="step-no"></span>
+            <p>Paste the API Key down below, and make sure the correct
+                <strong>service region</strong> is selected.
+                Save the integration, and you are done!
+            </p>
         </div>
     </div>
 
     <h2>Integration Settings</h2>
 
-    <form method="post" class="form-horizontal" action="{% url 'hc-add-opsgenie' %}">
+    <form method="post" class="form-horizontal">
         {% csrf_token %}
-        <div class="form-group {{ form.value.css_classes }}">
+        <div class="form-group {{ form.key.css_classes }}">
             <label for="api-key" class="col-sm-2 control-label">API Key</label>
             <div class="col-sm-4">
                 <input
                     id="api-key"
                     type="text"
                     class="form-control"
-                    name="value"
+                    name="key"
                     placeholder=""
-                    value="{{ form.value.value|default:"" }}">
+                    value="{{ form.key.value|default:"" }}">
 
-                {% if form.value.errors %}
+                {% if form.key.errors %}
                 <div class="help-block">
-                    {{ form.value.errors|join:"" }}
+                    {{ form.key.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group {{ form.region.css_classes }}">
+            <label for="api-key" class="col-sm-2 control-label">Region</label>
+            <div class="col-sm-4">
+                <label class="radio-container">
+                    <input
+                        type="radio"
+                        name="region"
+                        value="us"
+                        {% if form.region.value == "us" %} checked {% endif %}>
+                    <span class="radiomark"></span>
+                    US (default)
+                </label>
+                <label class="radio-container">
+                    <input
+                        type="radio"
+                        name="region"
+                        value="eu"
+                        {% if form.region.value == "eu" %} checked {% endif %}>
+                    <span class="radiomark"></span>
+                    EU
+                </label>
+
+                {% if form.region.errors %}
+                <div class="help-block">
+                    {{ form.region.errors|join:"" }}
                 </div>
                 {% endif %}
             </div>

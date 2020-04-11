@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import Mock
 
 from django.utils import timezone
 from hc.api.management.commands.prunepingsslow import Command
@@ -19,6 +20,6 @@ class PrunePingsSlowTestCase(BaseTestCase):
         Ping.objects.create(owner=c, n=1)
         Ping.objects.create(owner=c, n=2)
 
-        Command().handle()
+        Command(stdout=Mock()).handle()
 
         self.assertEqual(Ping.objects.count(), 1)

@@ -9,9 +9,5 @@ class TeamAccessMiddleware(object):
         if not request.user.is_authenticated:
             return self.get_response(request)
 
-        profile = Profile.objects.for_user(request.user)
-
-        request.profile = profile
-        request.project = profile.current_project
-
+        request.profile = Profile.objects.for_user(request.user)
         return self.get_response(request)

@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -7,6 +9,7 @@ from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
 from hc.lib import emails
+from hc.lib.string import replace
 
 try:
     import apprise
@@ -58,7 +61,11 @@ class Email(Transport):
 
         unsub_link = self.channel.get_unsub_link()
 
-        headers = {"X-Bounce-Url": bounce_url, "List-Unsubscribe": unsub_link}
+        headers = {
+            "X-Bounce-Url": bounce_url,
+            "List-Unsubscribe": "<%s>" % unsub_link,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        }
 
         try:
             # Look up the sorting preference for this email address
@@ -90,7 +97,55 @@ class Email(Transport):
             return not self.channel.email_notify_up
 
 
+class Shell(Transport):
+    def prepare(self, template, check):
+        """ Replace placeholders with actual values. """
+
+        ctx = {
+            "$CODE": str(check.code),
+            "$STATUS": check.status,
+            "$NOW": timezone.now().replace(microsecond=0).isoformat(),
+            "$NAME": check.name,
+            "$TAGS": check.tags,
+        }
+
+        for i, tag in enumerate(check.tags_list()):
+            ctx["$TAG%d" % (i + 1)] = tag
+
+        return replace(template, ctx)
+
+    def is_noop(self, check):
+        if check.status == "down" and not self.channel.cmd_down:
+            return True
+
+        if check.status == "up" and not self.channel.cmd_up:
+            return True
+
+        return False
+
+    def notify(self, check):
+        if not settings.SHELL_ENABLED:
+            return "Shell commands are not enabled"
+
+        if check.status == "up":
+            cmd = self.channel.cmd_up
+        elif check.status == "down":
+            cmd = self.channel.cmd_down
+
+        cmd = self.prepare(cmd, check)
+        code = os.system(cmd)
+
+        if code != 0:
+            return "Command returned exit code %d" % code
+
+
 class HttpTransport(Transport):
+    @classmethod
+    def get_error(cls, response):
+        # Override in subclasses: look for a specific error message in the
+        # response and return it.
+        return None
+
     @classmethod
     def _request(cls, method, url, **kwargs):
         try:
@@ -103,7 +158,12 @@ class HttpTransport(Transport):
 
             r = requests.request(method, url, **options)
             if r.status_code not in (200, 201, 202, 204):
-                return "Received status code %d" % r.status_code
+                m = cls.get_error(r)
+                if m:
+                    return f'Received status code {r.status_code} with a message: "{m}"'
+
+                return f"Received status code {r.status_code}"
+
         except requests.exceptions.Timeout:
             # Well, we tried
             return "Connection timed out"
@@ -143,39 +203,23 @@ class HttpTransport(Transport):
 
 class Webhook(HttpTransport):
     def prepare(self, template, check, urlencode=False):
-        """ Replace variables with actual values.
-
-        There should be no bad translations if users use $ symbol in
-        check's name or tags, because $ gets urlencoded to %24
-
-        """
+        """ Replace variables with actual values. """
 
         def safe(s):
             return quote(s) if urlencode else s
 
-        result = template
-        if "$CODE" in result:
-            result = result.replace("$CODE", str(check.code))
+        ctx = {
+            "$CODE": str(check.code),
+            "$STATUS": check.status,
+            "$NOW": safe(timezone.now().replace(microsecond=0).isoformat()),
+            "$NAME": safe(check.name),
+            "$TAGS": safe(check.tags),
+        }
 
-        if "$STATUS" in result:
-            result = result.replace("$STATUS", check.status)
+        for i, tag in enumerate(check.tags_list()):
+            ctx["$TAG%d" % (i + 1)] = safe(tag)
 
-        if "$NOW" in result:
-            s = timezone.now().replace(microsecond=0).isoformat()
-            result = result.replace("$NOW", safe(s))
-
-        if "$NAME" in result:
-            result = result.replace("$NAME", safe(check.name))
-
-        if "$TAGS" in result:
-            result = result.replace("$TAGS", safe(check.tags))
-
-        if "$TAG" in result:
-            for i, tag in enumerate(check.tags_list()):
-                placeholder = "$TAG%d" % (i + 1)
-                result = result.replace(placeholder, safe(tag))
-
-        return result
+        return replace(template, ctx)
 
     def is_noop(self, check):
         if check.status == "down" and not self.channel.url_down:
@@ -188,7 +232,8 @@ class Webhook(HttpTransport):
 
     def notify(self, check):
         spec = self.channel.webhook_spec(check.status)
-        assert spec["url"]
+        if not spec["url"]:
+            return "Empty webhook URL"
 
         url = self.prepare(spec["url"], check, urlencode=True)
         headers = {}
@@ -220,10 +265,17 @@ class HipChat(HttpTransport):
 
 
 class OpsGenie(HttpTransport):
+    @classmethod
+    def get_error(cls, response):
+        try:
+            return response.json().get("message")
+        except ValueError:
+            pass
+
     def notify(self, check):
         headers = {
             "Conent-Type": "application/json",
-            "Authorization": "GenieKey %s" % self.channel.value,
+            "Authorization": "GenieKey %s" % self.channel.opsgenie_key,
         }
 
         payload = {"alias": str(check.code), "source": settings.SITE_NAME}
@@ -235,6 +287,9 @@ class OpsGenie(HttpTransport):
             payload["description"] = tmpl("opsgenie_description.html", check=check)
 
         url = "https://api.opsgenie.com/v2/alerts"
+        if self.channel.opsgenie_region == "eu":
+            url = "https://api.eu.opsgenie.com/v2/alerts"
+
         if check.status == "up":
             url += "/%s/close?identifierType=alias" % check.code
 
@@ -247,13 +302,12 @@ class PagerDuty(HttpTransport):
     def notify(self, check):
         description = tmpl("pd_description.html", check=check)
         payload = {
-            "vendor": settings.PD_VENDOR_KEY,
             "service_key": self.channel.pd_service_key,
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
             "description": description,
             "client": settings.SITE_NAME,
-            "client_url": settings.SITE_ROOT,
+            "client_url": check.details_url(),
         }
 
         return self.post(self.URL, json=payload)
@@ -390,12 +444,26 @@ class Telegram(HttpTransport):
     SM = "https://api.telegram.org/bot%s/sendMessage" % settings.TELEGRAM_TOKEN
 
     @classmethod
+    def get_error(cls, response):
+        try:
+            return response.json().get("description")
+        except ValueError:
+            pass
+
+    @classmethod
     def send(cls, chat_id, text):
+        # Telegram.send is a separate method because it is also used in
+        # hc.front.views.telegram_bot to send invite links.
         return cls.post(
             cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"}
         )
 
     def notify(self, check):
+        from hc.api.models import TokenBucket
+
+        if not TokenBucket.authorize_telegram(self.channel.telegram_id):
+            return "Rate limit exceeded"
+
         text = tmpl("telegram_message.html", check=check)
         return self.send(self.channel.telegram_id, text)
 
@@ -409,6 +477,7 @@ class Sms(HttpTransport):
     def notify(self, check):
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
+            profile.send_sms_limit_notice("SMS")
             return "Monthly SMS limit exceeded"
 
         url = self.URL % settings.TWILIO_ACCOUNT
@@ -436,6 +505,7 @@ class WhatsApp(HttpTransport):
     def notify(self, check):
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
+            profile.send_sms_limit_notice("WhatsApp")
             return "Monthly message limit exceeded"
 
         url = self.URL % settings.TWILIO_ACCOUNT
@@ -468,12 +538,13 @@ class Trello(HttpTransport):
 
         return self.post(self.URL, params=params)
 
+
 class Apprise(HttpTransport):
     def notify(self, check):
 
         if not settings.APPRISE_ENABLED:
             # Not supported and/or enabled
-            return "Apprise is disabled and/or not installed."
+            return "Apprise is disabled and/or not installed"
 
         a = apprise.Apprise()
         title = tmpl("apprise_title.html", check=check)
@@ -481,8 +552,43 @@ class Apprise(HttpTransport):
 
         a.add(self.channel.value)
 
-        notify_type = apprise.NotifyType.SUCCESS \
-            if check.status == "up" else apprise.NotifyType.FAILURE
+        notify_type = (
+            apprise.NotifyType.SUCCESS
+            if check.status == "up"
+            else apprise.NotifyType.FAILURE
+        )
 
-        return "Failed" if not \
-            a.notify(body=body, title=title, notify_type=notify_type) else None
+        return (
+            "Failed"
+            if not a.notify(body=body, title=title, notify_type=notify_type)
+            else None
+        )
+
+
+class MsTeams(HttpTransport):
+    def notify(self, check):
+        text = tmpl("msteams_message.json", check=check)
+        payload = json.loads(text)
+        return self.post(self.channel.value, json=payload)
+
+
+class Zulip(HttpTransport):
+    @classmethod
+    def get_error(cls, response):
+        try:
+            return response.json().get("msg")
+        except ValueError:
+            pass
+
+    def notify(self, check):
+        _, domain = self.channel.zulip_bot_email.split("@")
+        url = "https://%s/api/v1/messages" % domain
+        auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
+        data = {
+            "type": self.channel.zulip_type,
+            "to": self.channel.zulip_to,
+            "topic": tmpl("zulip_topic.html", check=check),
+            "content": tmpl("zulip_content.html", check=check),
+        }
+
+        return self.post(url, data=data, auth=auth)

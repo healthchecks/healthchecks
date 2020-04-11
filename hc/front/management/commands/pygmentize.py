@@ -22,7 +22,7 @@ class Command(BaseCommand):
         try:
             from pygments import lexers
         except ImportError:
-            self.stdout.write("This command requires Pygments package.")
+            self.stdout.write("This command requires the Pygments package.")
             self.stdout.write("Please install it with:\n\n")
             self.stdout.write("  pip install Pygments\n\n")
             return
@@ -34,6 +34,7 @@ class Command(BaseCommand):
         _process("crontab", lexers.BashLexer())
         _process("cs", lexers.CSharpLexer())
         _process("node", lexers.JavascriptLexer())
+        _process("go", lexers.GoLexer())
         _process("python_urllib2", lexers.PythonLexer())
         _process("python_requests", lexers.PythonLexer())
         _process("python_requests_fail", lexers.PythonLexer())
@@ -43,18 +44,3 @@ class Command(BaseCommand):
         _process("powershell", lexers.shell.PowerShellLexer())
         _process("powershell_inline", lexers.shell.BashLexer())
         _process("ruby", lexers.RubyLexer())
-
-        # API examples
-        _process("list_checks_request", lexers.BashLexer())
-        _process("list_checks_response", lexers.JsonLexer())
-        _process("list_checks_response_readonly", lexers.JsonLexer())
-        _process("list_channels_request", lexers.BashLexer())
-        _process("list_channels_response", lexers.JsonLexer())
-        _process("create_check_request_a", lexers.BashLexer())
-        _process("create_check_request_b", lexers.BashLexer())
-        _process("update_check_request_a", lexers.BashLexer())
-        _process("update_check_request_b", lexers.BashLexer())
-        _process("create_check_response", lexers.JsonLexer())
-        _process("pause_check_request", lexers.BashLexer())
-        _process("pause_check_response", lexers.JsonLexer())
-        _process("delete_check_request", lexers.BashLexer())

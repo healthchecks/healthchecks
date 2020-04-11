@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import Mock
 
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -19,7 +20,7 @@ class PruneUsersTestCase(BaseTestCase):
         charlies_project = Project.objects.create(owner=self.charlie)
         Check(project=charlies_project).save()
 
-        Command().handle()
+        Command(stdout=Mock()).handle()
 
         self.assertEqual(User.objects.filter(username="charlie").count(), 0)
         self.assertEqual(Check.objects.count(), 0)
@@ -29,6 +30,7 @@ class PruneUsersTestCase(BaseTestCase):
         self.bob.last_login = self.year_ago
         self.bob.save()
 
-        Command().handle()
+        Command(stdout=Mock()).handle()
+
         # Bob belongs to a team so should not get removed
         self.assertEqual(User.objects.filter(username="bob").count(), 1)

@@ -1,0 +1,55 @@
+{% load hc_extras humanize %}
+{
+    "@type": "MessageCard",
+    "@context": "https://schema.org/extensions",
+    "themeColor": "{% if check.status == "up" %}5cb85c{% endif %}{% if check.status == "down" %}d9534f{% endif %}",
+    "text": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
+    "sections": [
+        {
+            "facts": [
+                {% if check.tags_list %}
+                {
+                    "name": "Tags:",
+                    "value": "{% for tag in check.tags_list %}`{{ tag|escapejs }}` {% endfor %}"
+                },
+                {% endif %}
+                {% if check.kind == "simple" %}
+                {
+                    "name": "Period:",
+                    "value": "{{ check.timeout|hc_duration }}"
+                },
+                {% elif check.kind == "cron" %}
+                {
+                    "name": "Schedule:",
+                    "value": "{{ check.schedule|escapejs }}"
+                },
+                {% endif %}
+                {
+                    "name": "Last Ping:",
+                    {% if check.last_ping %}
+                    "value": "{{ check.last_ping|naturaltime }}"
+                    {% else %}
+                    "value": "Never"
+                    {% endif %}
+                },
+                {
+                    "name": "Total Pings:",
+                    "value": "{{ check.n_pings }}"
+                }
+            ],
+            "text": "{{ check.desc|escapejs }}"
+        }
+    ],
+    "potentialAction": [
+        {
+            "@type": "OpenUri",
+            "name": "View in {% site_name %}",
+            "targets": [
+                {
+                    "os": "default",
+                    "uri": "{{ check.details_url }}"
+                }
+            ]
+        }
+    ]
+}

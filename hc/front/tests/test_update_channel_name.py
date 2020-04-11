@@ -15,7 +15,7 @@ class UpdateChannelNameTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.name, "My work email")
@@ -36,7 +36,7 @@ class UpdateChannelNameTestCase(BaseTestCase):
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, data=payload)
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_uuid(self):
         # Valid UUID but there is no check for it:

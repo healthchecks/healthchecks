@@ -26,9 +26,6 @@ class PauseTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 405)
 
     def test_it_allows_cross_team_access(self):
-        self.bobs_profile.current_project = None
-        self.bobs_profile.save()
-
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url)
         self.assertRedirects(r, self.redirect_url)
@@ -44,3 +41,8 @@ class PauseTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.last_start, None)
         self.assertEqual(self.check.alert_after, None)
+
+    def test_it_does_not_redirect_ajax(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        self.assertEqual(r.status_code, 200)

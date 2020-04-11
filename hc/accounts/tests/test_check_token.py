@@ -40,9 +40,9 @@ class CheckTokenTestCase(BaseTestCase):
         self.assertContains(r, "incorrect or expired")
 
     def test_it_handles_next_parameter(self):
-        url = "/accounts/check_token/alice/secret-token/?next=/integrations/add_slack/"
+        url = "/accounts/check_token/alice/secret-token/?next=" + self.channels_url
         r = self.client.post(url)
-        self.assertRedirects(r, "/integrations/add_slack/")
+        self.assertRedirects(r, self.channels_url)
 
     def test_it_ignores_bad_next_parameter(self):
         url = "/accounts/check_token/alice/secret-token/?next=/evil/"

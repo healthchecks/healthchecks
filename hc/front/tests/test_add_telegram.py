@@ -1,9 +1,12 @@
+from unittest.mock import patch
+
 from django.core import signing
+from django.test.utils import override_settings
 from hc.api.models import Channel
 from hc.test import BaseTestCase
-from mock import patch
 
 
+@override_settings(TELEGRAM_TOKEN="fake-token")
 class AddTelegramTestCase(BaseTestCase):
     url = "/integrations/add_telegram/"
 
@@ -11,6 +14,14 @@ class AddTelegramTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "start@ExampleBot")
+
+    @override_settings(TELEGRAM_TOKEN=None)
+    def test_it_requires_token(self):
+        payload = signing.dumps((123, "group", "My Group"))
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?" + payload)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_shows_confirmation(self):
         payload = signing.dumps((123, "group", "My Group"))
@@ -23,8 +34,9 @@ class AddTelegramTestCase(BaseTestCase):
         payload = signing.dumps((123, "group", "My Group"))
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url + "?" + payload, {})
-        self.assertRedirects(r, "/integrations/")
+        form = {"project": str(self.project.code)}
+        r = self.client.post(self.url + "?" + payload, form)
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "telegram")
@@ -32,6 +44,13 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(c.telegram_type, "group")
         self.assertEqual(c.telegram_name, "My Group")
         self.assertEqual(c.project, self.project)
+
+    def test_it_handles_bad_signature(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?bad-signature")
+        self.assertContains(r, "Incorrect Link")
+
+        self.assertFalse(Channel.objects.exists())
 
     @patch("hc.api.transports.requests.request")
     def test_it_sends_invite(self, mock_get):

@@ -61,7 +61,7 @@ class LogTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "Sent email alert to alice@example.org", status_code=200)
+        self.assertContains(r, "Sent email to alice@example.org", status_code=200)
 
     def test_it_shows_pushover_notification(self):
         ch = Channel.objects.create(kind="po", project=self.project)
@@ -74,7 +74,14 @@ class LogTestCase(BaseTestCase):
 
     def test_it_shows_webhook_notification(self):
         ch = Channel(kind="webhook", project=self.project)
-        ch.value = "foo/$NAME"
+        ch.value = json.dumps(
+            {
+                "method_down": "GET",
+                "url_down": "foo/$NAME",
+                "body_down": "",
+                "headers_down": {},
+            }
+        )
         ch.save()
 
         Notification(owner=self.check, channel=ch, check_status="down").save()
@@ -84,9 +91,6 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "Called webhook foo/$NAME", status_code=200)
 
     def test_it_allows_cross_team_access(self):
-        self.bobs_profile.current_project = None
-        self.bobs_profile.save()
-
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)

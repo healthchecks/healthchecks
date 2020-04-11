@@ -1,6 +1,5 @@
-from base64 import urlsafe_b64encode
 from datetime import timedelta
-import os
+from secrets import token_urlsafe
 import uuid
 
 from django.conf import settings
@@ -53,13 +52,13 @@ class Profile(models.Model):
     ping_log_limit = models.IntegerField(default=100)
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
-    current_project = models.ForeignKey("Project", models.SET_NULL, null=True)
     last_sms_date = models.DateTimeField(null=True, blank=True)
-    sms_limit = models.IntegerField(default=0)
+    sms_limit = models.IntegerField(default=5)
     sms_sent = models.IntegerField(default=0)
     team_limit = models.IntegerField(default=2)
     sort = models.CharField(max_length=20, default="created")
     deletion_notice_date = models.DateTimeField(null=True, blank=True)
+    last_active_date = models.DateTimeField(null=True, blank=True)
 
     objects = ProfileManager()
 
@@ -76,7 +75,7 @@ class Profile(models.Model):
         return settings.SITE_ROOT + path
 
     def prepare_token(self, salt):
-        token = urlsafe_b64encode(os.urandom(24)).decode()
+        token = token_urlsafe(24)
         self.token = make_password(token, salt)
         self.save()
         return token
@@ -108,6 +107,13 @@ class Profile(models.Model):
         path = reverse("hc-change-email", args=[token])
         ctx = {"button_text": "Change Email", "button_url": settings.SITE_ROOT + path}
         emails.change_email(self.user.email, ctx)
+
+    def send_sms_limit_notice(self, transport):
+        ctx = {"transport": transport, "limit": self.sms_limit}
+        if self.sms_limit != 500 and settings.USE_PAYMENTS:
+            ctx["url"] = settings.SITE_ROOT + reverse("hc-pricing")
+
+        emails.sms_limit(self.user.email, ctx)
 
     def projects(self):
         """ Return a queryset of all projects we have access to. """
@@ -166,7 +172,11 @@ class Profile(models.Model):
 
         unsub_url = self.reports_unsub_url()
 
-        headers = {"List-Unsubscribe": unsub_url, "X-Bounce-Url": unsub_url}
+        headers = {
+            "List-Unsubscribe": "<%s>" % unsub_url,
+            "X-Bounce-Url": unsub_url,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        }
 
         ctx = {
             "checks": checks,
@@ -229,21 +239,25 @@ class Project(models.Model):
         return self.owner_profile.check_limit - num_used
 
     def set_api_keys(self):
-        self.api_key = urlsafe_b64encode(os.urandom(24)).decode()
-        self.api_key_readonly = urlsafe_b64encode(os.urandom(24)).decode()
+        self.api_key = token_urlsafe(nbytes=24)
+        self.api_key_readonly = token_urlsafe(nbytes=24)
         self.save()
 
-    def can_invite(self):
-        return self.member_set.count() < self.owner_profile.team_limit
+    def team(self):
+        return User.objects.filter(memberships__project=self).order_by("email")
+
+    def invite_suggestions(self):
+        q = User.objects.filter(memberships__project__owner_id=self.owner_id)
+        q = q.exclude(memberships__project=self)
+        return q.distinct().order_by("email")
+
+    def can_invite_new_users(self):
+        q = User.objects.filter(memberships__project__owner_id=self.owner_id)
+        used = q.distinct().count()
+        return used < self.owner_profile.team_limit
 
     def invite(self, user):
         Member.objects.create(user=user, project=self)
-
-        # Switch the invited user over to the new team so they
-        # notice the new team on next visit:
-        user.profile.current_project = self
-        user.profile.save()
-
         user.profile.send_instant_login_link(self)
 
     def set_next_nag_date(self):
@@ -269,6 +283,16 @@ class Project(models.Model):
                 status = "down"
                 break
         return status
+
+    def have_channel_issues(self):
+        errors = list(self.channel_set.values_list("last_error", flat=True))
+
+        # It's a problem if a project has no integrations at all
+        if len(errors) == 0:
+            return True
+
+        # It's a problem if any integration has a logged error
+        return True if max(errors) else False
 
 
 class Member(models.Model):

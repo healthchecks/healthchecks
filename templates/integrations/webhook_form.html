@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load compress humanize static hc_extras %}
+
+{% block title %}
+    {% if channel %}
+    Webhook Settings - {% site_name %}
+    {% else %}
+    Add Webhook Integration - {% site_name %}
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Webhook</h1>
+
+        <p>
+            Executes an HTTP request to your specified URL when a check
+            goes up or down.  You can use placeholders <strong>$NAME</strong>,
+            <strong>$STATUS</strong> and others in webhook URLs, request body and
+            header values
+            <a href="#" data-toggle="modal" data-target="#reference-modal">(available placeholders)</a>.
+        </p>
+
+        <form id="add-webhook-form" method="post">
+        {% csrf_token %}
+
+        <div class="form-group {{ form.name.css_classes }}">
+            <br>
+            <label>Name</label>
+            <input
+                id="webhook-form-name"
+                name="name"
+                value="{{ form.name.value|default:"" }}"
+                type="text"
+                class="form-control" />
+
+            <div class="help-block">Give this integration a descriptive name, so you can easily recognize it later. </div>
+        </div>
+
+        <div class="row">
+        <div class="col-sm-6">
+            <h2>Execute when a check goes <strong class="label-down">down</strong></h2>
+            <br />
+
+            <div class="form-group {{ form.url_down.css_classes }}">
+                <label>URL</label>
+                <div class="method-url-group">
+                    <select id="method-down" name="method_down" class="selectpicker">
+                        <option{% if form.method_down.value == "GET" %} selected{% endif %}>GET</option>
+                        <option{% if form.method_down.value == "POST" %} selected{% endif %}>POST</option>
+                        <option{% if form.method_down.value == "PUT" %} selected{% endif %}>PUT</option>
+                    </select>
+                    <input
+                        name="url_down"
+                        value="{{ form.url_down.value|default:"" }}"
+                        type="text"
+                        class="form-control"
+                        placeholder="https://..." />
+                </div>
+                {% if form.url_down.errors %}
+                <div class="help-block">
+                    {{ form.url_down.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div id="body-down-group" class="form-group {{ form.body_down.css_classes }}" style="display: none">
+                <label class="control-label">Request Body</label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="body_down"
+                    placeholder='{"status": "$STATUS"}'>{{ form.body_down.value|default:"" }}</textarea>
+                {% if form.body_down.errors %}
+                <div class="help-block">
+                    {{ form.body_down.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group {{ form.headers_down.css_classes }}">
+                <label class="control-label">Request Headers</label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="headers_down"
+                    placeholder="X-Sample-Header: $NAME has gone down">{{ form.headers_down.value|default:"" }}</textarea>
+                <div class="help-block">
+                    {% if form.headers_down.errors %}
+                        {{ form.headers_down.errors|join:"" }}
+                    {% else %}
+                        Optional "Header-Name: value" pairs, one pair per line.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <h2>Execute when a check goes <strong class="label-up">up</strong></h2>
+            <br />
+            <div class="form-group {{ form.url_up.css_classes }}">
+                <label>URL</label>
+                <div class="method-url-group">
+                    <select id="method-up" name="method_up" class="selectpicker">
+                        <option{% if form.method_up.value == "GET" %} selected{% endif %}>GET</option>
+                        <option{% if form.method_up.value == "POST" %} selected{% endif %}>POST</option>
+                        <option{% if form.method_up.value == "PUT" %} selected{% endif %}>PUT</option>
+                    </select>
+                    <input
+                        name="url_up"
+                        value="{{ form.url_up.value|default:"" }}"
+                        type="text"
+                        class="form-control"
+                        placeholder="https://..." />
+                </div>
+
+                {% if form.url_up.errors %}
+                <div class="help-block">
+                    {{ form.url_up.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+            <div id="body-up-group" class="form-group {{ form.body_up.css_classes }}" style="display: none">
+                <label class="control-label">Request Body</label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="body_up"
+                    placeholder='{"status": "$STATUS"}'>{{ form.body_up.value|default:"" }}</textarea>
+                {% if form.post_data.errors %}
+                <div class="help-block">
+                    {{ form.post_data.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group {{ form.headers_up.css_classes }}">
+                <label class="control-label">Request Headers</label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    name="headers_up"
+                    placeholder="X-Sample-Header: $NAME is back up">{{ form.headers_up.value|default:"" }}</textarea>
+                <div class="help-block">
+                    {% if form.headers_up.errors %}
+                        {{ form.headers_up.errors|join:"" }}
+                    {% else %}
+                        Optional "Header-Name: value" pairs, one pair per line.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="form-group" class="clearfix">
+            <br>
+            <br>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">
+                    {% if channel %}
+                    Save Changes
+                    {% else %}
+                    Save Integration
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+        </form>
+
+    </div>
+</div>
+
+<div id="reference-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Supported Placeholders</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    You can use the below placeholders in webhook URL, request body
+                    and header values.  {% site_name %} will replace the placeholders
+                    with the correct values.
+                </p>
+
+                <table id="webhook-variables" class="table modal-body">
+                    <tr>
+                        <th><code>$CODE</code></th>
+                        <td>The UUID code of the check</td>
+                    </tr>
+                    <tr>
+                        <th><code>$NAME</code></th>
+                        <td>Name of the check</td>
+                    </tr>
+                    <tr>
+                        <th><code>$NOW</code></th>
+                        <td>
+                            Current UTC time in ISO8601 format.<br />
+                            Example: "{% now_isoformat %}"
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><code>$STATUS</code></th>
+                        <td>Check's current status ("up" or "down")</td>
+                    </tr>
+                    <tr>
+                        <th><code>$TAGS</code></th>
+                        <td>Check's tags, separated by spaces</td>
+                    </tr>
+                    <tr>
+                        <th><code>$TAG1, $TAG2, …</code></th>
+                        <td>Value of the first tag, the second tag, …</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Got It!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'js/webhook.js' %}"></script>
+{% endcompress %}
+{% endblock %}

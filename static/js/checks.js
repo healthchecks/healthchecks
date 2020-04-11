@@ -7,7 +7,10 @@ $(function () {
 
         $("#update-name-form").attr("action", url);
         $("#update-name-input").val(this.dataset.name);
-        $("#update-tags-input").val(this.dataset.tags);
+
+        var tagsSelectize = document.getElementById("update-tags-input").selectize;
+        tagsSelectize.setValue(this.dataset.tags.split(" "));
+
         $("#update-desc-input").val(this.dataset.desc);
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
@@ -138,6 +141,21 @@ $(function () {
         return false;
     });
 
+    $(".pause").click(function(e) {
+        var code = $(this).closest("tr.checks-row").attr("id");
+        $("#" + code + " span.status").attr("class", "status icon-paused");
+
+        var url = base + "/checks/" + code + "/pause/";
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            url: url,
+            type: "post",
+            headers: {"X-CSRFToken": token}
+        });
+
+        return false;
+    });
+
     $('[data-toggle="tooltip"]').tooltip({
         html: true,
         container: "body",
@@ -171,7 +189,6 @@ $(function () {
                     if (lastStatus[el.code] != el.status) {
                         lastStatus[el.code] = el.status;
                         $("#" + el.code + " span.status").attr("class", "status icon-" + el.status);
-                        $("#" + el.code + " .pause-li").toggleClass("disabled", el.status == "paused");
                     }
 
                     if (lastPing[el.code] != el.last_ping) {
@@ -217,6 +234,22 @@ $(function () {
     clipboard.on('error', function(e) {
         var text = e.trigger.getAttribute("data-clipboard-text");
         prompt("Press Ctrl+C to select:", text)
+    });
+
+    // Configure Selectize for entering tags
+    function divToOption() {
+        return {value: this.textContent};
+    }
+
+    $("#update-tags-input").selectize({
+        create: true,
+        createOnBlur: true,
+        delimiter: " ",
+        labelField: "value",
+        searchField: ["value"],
+        hideSelected: true,
+        highlight: false,
+        options: $("#my-checks-tags div").map(divToOption).get()
     });
 
 });

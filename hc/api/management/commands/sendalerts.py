@@ -1,9 +1,14 @@
+from datetime import timedelta as td
 import time
 from threading import Thread
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from hc.api.models import Check, Flip
+from statsd.defaults.env import statsd
+
+SENDING_TMPL = "Sending alert, status=%s, code=%s\n"
+SEND_TIME_TMPL = "Sending took %.1fs, code=%s\n"
 
 
 def notify(flip_id, stdout):
@@ -16,17 +21,25 @@ def notify(flip_id, stdout):
     # And just to make sure it doesn't get saved by a future coding accident:
     setattr(check, "save", None)
 
-    tmpl = "Sending alert, status=%s, code=%s\n"
-    stdout.write(tmpl % (flip.new_status, check.code))
+    stdout.write(SENDING_TMPL % (flip.new_status, check.code))
 
     # Set dates for followup nags
     if flip.new_status == "down":
         check.project.set_next_nag_date()
 
     # Send notifications
+    send_start = timezone.now()
     errors = flip.send_alerts()
     for ch, error in errors:
         stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
+
+    # If sending took more than 5s, log it
+    send_time = timezone.now() - send_start
+    if send_time.total_seconds() > 5:
+        stdout.write(SEND_TIME_TMPL % (send_time.total_seconds(), check.code))
+
+    statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
+    statsd.timing("hc.sendalerts.sendTime", send_time)
 
 
 def notify_on_thread(flip_id, stdout):
@@ -82,9 +95,6 @@ class Command(BaseCommand):
 
         now = timezone.now()
 
-        # In PostgreSQL, add this index to run the below query efficiently:
-        # CREATE INDEX api_check_up ON api_check (alert_after) WHERE status = 'up'
-
         q = Check.objects.filter(alert_after__lt=now).exclude(status="down")
         # Sort by alert_after, to avoid unnecessary sorting by id:
         check = q.order_by("alert_after").first()
@@ -94,7 +104,16 @@ class Command(BaseCommand):
         old_status = check.status
         q = Check.objects.filter(id=check.id, status=old_status)
 
-        if check.get_status(with_started=False) != "down":
+        try:
+            status = check.get_status(with_started=False)
+        except Exception as e:
+            # Make sure we don't trip on this check again for an hour:
+            # Otherwise sendalerts may end up in a crash loop.
+            q.update(alert_after=now + td(hours=1))
+            # Then re-raise the exception:
+            raise e
+
+        if status != "down":
             # It is not down yet. Update alert_after
             q.update(alert_after=check.going_down_after())
             return True

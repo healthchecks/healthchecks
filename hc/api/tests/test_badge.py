@@ -27,6 +27,10 @@ class BadgeTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
         self.assertContains(r, "#4c1")
 
+    def test_it_rejects_bad_format(self):
+        r = self.client.get(self.json_url + "foo")
+        self.assertEqual(r.status_code, 404)
+
     def test_it_handles_options(self):
         r = self.client.options(self.svg_url)
         self.assertEqual(r.status_code, 204)

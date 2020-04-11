@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.template.loader import render_to_string
 
 if settings.USE_PAYMENTS:
     import braintree
@@ -131,19 +130,19 @@ class Subscription(models.Model):
                 self.plan_name = "Business Plus ($80 / month)"
             elif plan_id == "Y768":
                 self.plan_name = "Business Plus ($768 / year)"
+            elif plan_id == "S5":
+                self.plan_name = "Supporter ($5 / month)"
+            elif plan_id == "S48":
+                self.plan_name = "Supporter ($48 / year)"
 
             self.save()
 
         return result
 
-    def cancel(self, delete_customer=False):
+    def cancel(self):
         if self.subscription_id:
             braintree.Subscription.cancel(self.subscription_id)
             self.subscription_id = ""
-
-        if self.customer_id and delete_customer:
-            braintree.Customer.delete(self.customer_id)
-            self.customer_id = ""
 
         self.plan_id = ""
         self.plan_name = ""

@@ -8,18 +8,27 @@ class PricingTestCase(BaseTestCase):
     def test_anonymous(self):
         r = self.client.get("/pricing/")
         self.assertContains(r, "Unlimited Team Members", status_code=200)
+        self.assertNotContains(r, "jumbotron")
 
         # A subscription object should have NOT been created
-        assert Subscription.objects.count() == 0
+        self.assertFalse(Subscription.objects.exists())
 
     def test_authenticated(self):
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/pricing/")
         self.assertContains(r, "Unlimited Team Members", status_code=200)
+        self.assertContains(r, "jumbotron")
 
         # A subscription object still should have NOT been created
-        assert Subscription.objects.count() == 0
+        self.assertFalse(Subscription.objects.exists())
+
+    def test_authenticated_for_project(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/projects/%s/pricing/" % self.project.code)
+        self.assertContains(r, "Unlimited Team Members", status_code=200)
+        self.assertContains(r, "jumbotron")
 
     @override_settings(USE_PAYMENTS=True)
     def test_pricing_is_visible_for_all(self):
@@ -32,17 +41,8 @@ class PricingTestCase(BaseTestCase):
     def test_it_offers_to_switch(self):
         self.client.login(username="bob@example.org", password="password")
 
-        r = self.client.get("/pricing/")
+        r = self.client.get("/projects/%s/pricing/" % self.project.code)
         self.assertContains(r, "To manage billing for this project")
-
-    def test_it_handles_null_project(self):
-        self.profile.current_project = None
-        self.profile.save()
-
-        self.client.login(username="alice@example.org", password="password")
-
-        r = self.client.get("/pricing/")
-        self.assertContains(r, "Unlimited Team Members")
 
     def test_it_shows_active_plan(self):
         self.sub = Subscription(user=self.alice)
@@ -54,4 +54,7 @@ class PricingTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/pricing/")
+        self.assertContains(r, "Business ($20 / month)", status_code=200)
+
+        r = self.client.get("/projects/%s/pricing/" % self.project.code)
         self.assertContains(r, "Business ($20 / month)", status_code=200)

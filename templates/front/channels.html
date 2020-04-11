@@ -51,14 +51,6 @@
                             {% endif %}
                         {% elif ch.kind == "pd" %}
                             PagerDuty account <span>{{ ch.pd_account }}</span>
-                        {% elif ch.kind == "pagertree" %}
-                            PagerTree
-                        {% elif ch.kind == "pagerteam" %}
-                            Pager Team
-                        {% elif ch.kind == "opsgenie" %}
-                            OpsGenie
-                        {% elif ch.kind == "victorops" %}
-                            VictorOps
                         {% elif ch.kind == "po" %}
                             Pushover ({{ ch.po_priority }} priority)
                         {% elif ch.kind == "slack" %}
@@ -67,14 +59,6 @@
                                 team <span>{{ ch.slack_team }}</span>,
                                 channel <span>{{ ch.slack_channel }}</span>
                             {% endif %}
-                        {% elif ch.kind == "webhook" %}
-                            Webhook
-                        {% elif ch.kind == "apprise" %}
-                            Apprise
-                        {% elif ch.kind == "pushbullet" %}
-                            Pushbullet
-                        {% elif ch.kind == "discord" %}
-                            Discord
                         {% elif ch.kind == "telegram" %}
                             Telegram
                             {% if ch.telegram_type == "group" %}
@@ -82,8 +66,6 @@
                             {% elif ch.telegram_type == "private" %}
                                 user <span>{{ ch.telegram_name }}</span>
                             {% endif %}
-                        {% elif ch.kind == "hipchat" %}
-                            HipChat
                         {% elif ch.kind == "sms" %}
                             SMS to <span>{{ ch.sms_number }}</span>
                         {% elif ch.kind == "trello" %}
@@ -100,10 +82,15 @@
                             {% if ch.whatsapp_notify_up and not ch.whatsapp_notify_down %}
                                 (up only)
                             {% endif %}
-                        {% elif ch.kind == "mattermost" %}
-                            Mattermost
+                        {% elif ch.kind == "zulip" %}
+                            Zulip
+                            {% if ch.zulip_type == "stream" %}
+                            stream <span>{{ ch.zulip_to}}</span>
+                            {% elif ch.zulip_type == "private" %}
+                            user <span>{{ ch.zulip_to}}</span>
+                            {% endif %}
                         {% else %}
-                            {{ ch.kind }}
+                            {{ ch.get_kind_display }}
                         {% endif %}
                      </div>
                 </div>
@@ -144,6 +131,9 @@
                 {% endif %}
             </td>
             <td class="actions">
+                {% if ch.kind == "webhook" %}
+                <a class="btn btn-sm btn-default" href="{% url 'hc-edit-webhook' ch.code %}">Edit</a>
+                {% endif %}
                 <form action="{% url 'hc-channel-test' ch.code %}" method="post">
                     {% csrf_token %}
                     <button
@@ -170,8 +160,14 @@
         {% endfor %}
     </table>
     {% else %}
-        <div class="alert alert-info">
-            The project <strong>{{ project }}</strong> has no integrations set up yet.
+        <div class="alert alert-danger">
+            <p> The project "{{ project }}" does not have any integrations
+                set up yet.
+            </p>
+            <p>With no configured integrations, {% site_name %}
+                <strong>will not send any notifications</strong>
+                when checks change state.
+            </p>
         </div>
     {% endif %}
 
@@ -184,7 +180,11 @@
 
             <h2>Slack</h2>
             <p>A messaging app for teams.</p>
-            <a href="{% url 'hc-add-slack' %}" class="btn btn-primary">Add Integration</a>
+            {% if enable_slack_btn %}
+            <a href="{% url 'hc-add-slack-btn' project.code %}" class="btn btn-primary">Add Integration</a>
+            {% else %}
+            <a href="{% url 'hc-add-slack' project.code %}" class="btn btn-primary">Add Integration</a>
+            {% endif %}
         </li>
         <li>
             <img src="{% static 'img/integrations/email.png' %}"
@@ -192,8 +192,7 @@
 
             <h2>Email</h2>
             <p>Get an email message when a check goes up or down.</p>
-
-            <a href="{% url 'hc-add-email' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-email' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         <li>
@@ -202,8 +201,7 @@
 
             <h2>Webhook</h2>
             <p>Receive a HTTP callback when a check goes down.</p>
-
-            <a href="{% url 'hc-add-webhook' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-webhook' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% if enable_apprise %}
         <li>
@@ -212,8 +210,7 @@
 
             <h2>Apprise</h2>
             <p>Receive instant push notifications using Apprise; see <a href="https://github.com/caronc/apprise#popular-notification-services" >all of the supported services here</a>.</p>
-
-            <a href="{% url 'hc-add-apprise' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-apprise' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -224,8 +221,7 @@
 
             <h2>Discord</h2>
             <p>Cross-platform voice and text chat app designed for gamers.</p>
-
-            <a href="{% url 'hc-add-discord' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-discord' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -236,8 +232,7 @@
 
             <h2>Matrix</h2>
             <p>Post notifications to a Matrix room.</p>
-
-            <a href="{% url 'hc-add-matrix' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-matrix' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -247,9 +242,17 @@
 
             <h2>Mattermost</h2>
             <p>High Trust Messaging for the Enterprise.</p>
+            <a href="{% url 'hc-add-mattermost' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
 
-            <a href="{% url 'hc-add-mattermost' %}" class="btn btn-primary">Add Integration</a>
-        </li>        
+        <li>
+            <img src="{% static 'img/integrations/msteams.png' %}"
+                class="icon" alt="Microsoft Teams" />
+
+            <h2>Microsoft Teams</h2>
+            <p>Chat and collaboration platform for Microsoft Office 365 customers.</p>
+            <a href="{% url 'hc-add-msteams' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
 
         <li>
             <img src="{% static 'img/integrations/opsgenie.png' %}"
@@ -257,11 +260,9 @@
 
             <h2>OpsGenie</h2>
             <p> Alerting &amp; Incident Management Solution for Dev &amp; Ops.</p>
-
-            <a href="{% url 'hc-add-opsgenie' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-opsgenie' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
-        {% if enable_pd %}
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />
@@ -269,9 +270,12 @@
             <h2>PagerDuty</h2>
             <p>On-call scheduling, alerting, and incident tracking.</p>
 
-            <a href="{% url 'hc-add-pd' %}" class="btn btn-primary">Add Integration</a>
+            {% if enable_pdc %}
+                <a href="{% url 'hc-add-pdc' project.code %}" class="btn btn-primary">Add Integration</a>
+            {% else %}
+                <a href="{% url 'hc-add-pd' project.code %}" class="btn btn-primary">Add Integration</a>
+            {% endif %}
         </li>
-        {% endif %}
 
         <li>
             <img src="{% static 'img/integrations/pagerteam.png' %}"
@@ -279,8 +283,7 @@
 
             <h2>Pager Team</h2>
             <p>On-call rotations without limits.</p>
-
-            <a href="{% url 'hc-add-pagerteam' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-pagerteam' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         <li>
@@ -289,8 +292,16 @@
 
             <h2>PagerTree</h2>
             <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications</p>
+            <a href="{% url 'hc-add-pagertree' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
 
-            <a href="{% url 'hc-add-pagertree' %}" class="btn btn-primary">Add Integration</a>
+        <li>
+            <img src="{% static 'img/integrations/prometheus.png' %}"
+                class="icon" alt="Prometheus icon" />
+
+            <h2>Prometheus</h2>
+            <p>Export check and tag status values to Prometheus.</p>
+            <a href="{% url 'hc-add-prometheus' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         {% if enable_pushbullet %}
@@ -300,8 +311,7 @@
 
             <h2>Pushbullet</h2>
             <p>Pushbullet connects your devices, making them feel like one.</p>
-
-            <a href="{% url 'hc-add-pushbullet' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-pushbullet' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -312,8 +322,18 @@
 
             <h2>Pushover</h2>
             <p>Receive instant push notifications on your phone or tablet.</p>
+            <a href="{% url 'hc-add-pushover' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
 
-            <a href="{% url 'hc-add-pushover' %}" class="btn btn-primary">Add Integration</a>
+        {% if enable_shell %}
+        <li>
+            <img src="{% static 'img/integrations/shell.png' %}"
+                class="icon" alt="Shell icon" />
+
+            <h2>Shell Command</h2>
+            <p>Execute a local shell command when a check goes up or down.</p>
+            <a href="{% url 'hc-add-shell' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -322,10 +342,9 @@
             <img src="{% static 'img/integrations/sms.png' %}"
                 class="icon" alt="SMS icon" />
 
-            <h2>SMS {% if use_payments %}<small>(paid plans)</small>{% endif %}</h2>
+            <h2>SMS</h2>
             <p>Get a text message to your phone when a check goes down.</p>
-
-            <a href="{% url 'hc-add-sms' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-sms' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -336,7 +355,6 @@
 
             <h2>Telegram</h2>
             <p>A messaging app with a focus on speed and security.</p>
-
             <a href="{% url 'hc-add-telegram' %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
@@ -348,8 +366,7 @@
 
             <h2>Trello</h2>
             <p>Create a Trello card when a check goes down.</p>
-
-            <a href="{% url 'hc-add-trello' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-trello' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 
@@ -359,8 +376,7 @@
 
             <h2>VictorOps</h2>
             <p>On-call scheduling, alerting, and incident tracking.</p>
-
-            <a href="{% url 'hc-add-victorops' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-victorops' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         {% if enable_whatsapp %}
@@ -368,12 +384,20 @@
             <img src="{% static 'img/integrations/whatsapp.png' %}"
                 class="icon" alt="WhatsApp icon" />
 
-            <h2>WhatsApp {% if use_payments %}<small>(paid plans)</small>{% endif %}</h2>
+            <h2>WhatsApp</h2>
             <p>Get a WhatsApp message when a check goes up or down.</p>
-
-            <a href="{% url 'hc-add-whatsapp' %}" class="btn btn-primary">Add Integration</a>
+            <a href="{% url 'hc-add-whatsapp' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+
+        <li>
+            <img src="{% static 'img/integrations/zulip.png' %}"
+                class="icon" alt="Zulip icon" />
+
+            <h2>Zulip</h2>
+            <p>Open-source group chat.</p>
+            <a href="{% url 'hc-add-zulip' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
 
         <li class="link-to-github">
             <img src="{% static 'img/integrations/missing.png' %}"
@@ -437,7 +461,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="update-timeout-title">Integration Details</h4>
+                    <h4>Integration Details</h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -493,8 +517,25 @@
                         {% endif %}
                     {% endwith %}
                     {% endif %}
+
+
+                    {% if ch.kind == "shell" %}
+                        {% if ch.cmd_down %}
+                            <p><strong>Execute on "down" events:</strong></p>
+                            <pre>{{ ch.cmd_down }}</pre>
+                        {% endif %}
+
+                        {% if ch.cmd_up %}
+                            <p><strong>Execute on "up" events:</strong></p>
+                            <pre>{{ ch.cmd_up }}</pre>
+                        {% endif %}
+                    {% endif %}
                 </div>
                 <div class="modal-footer">
+                    {% if ch.kind == "webhook" %}
+                    <a class="btn btn-default pull-left" href="{% url 'hc-edit-webhook' ch.code %}">Edit Webhook Parameters&hellip;</a>
+                    {% endif %}
+
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>

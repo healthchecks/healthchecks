@@ -1,0 +1,41 @@
+<h1>Measuring Script Run Time</h1>
+<p>Append <code>/start</code> to a ping URL and use it to signal when a job starts.
+ After receiving a start signal, Healthchecks.io will show the check as "Started".
+ It will store the "start" events and display the job execution times. The job
+ execution times are calculated as the time gaps between adjacent "start" and
+ "complete" events.</p>
+<p>Signalling a start kicks off a separate timer: the job now <strong>must</strong> signal a
+success within its configured "Grace Time", or it will get marked as "down".</p>
+<p>Below is a code example in Python:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
+
+
+<span class="c1"># &quot;/start&quot; kicks off a timer: if the job takes longer than</span>
+<span class="c1"># the configured grace time, the check will be marked as &quot;down&quot;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="o">+</span> <span class="s2">&quot;/start&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+    <span class="c1"># If the network request fails for any reason, we don&#39;t want</span>
+    <span class="c1"># it to prevent the main job from running</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># TODO: run the job here</span>
+<span class="n">fib</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;F(42) = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">fib</span><span class="p">(</span><span class="mi">42</span><span class="p">))</span>
+
+<span class="c1"># Signal success:</span>
+<span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
+</code></pre></div>
+
+
+<h2>Viewing Measured Run Times</h2>
+<p>When SITE_NAME receives a "start" signal followed by a regular ping or a "fail"
+signal, and the two events are less than 24 hours apart,
+you will see the time delta displayed in the list of checks. If the two events are
+more than 24 hours apart, they are assumed to be unrelated, and the time delta is
+not displayed.</p>
+<p><img alt="List of checks with durations" src="IMG_URL/checks_durations.png" /></p>
+<p>You can also see durations of the previous runs when viewing an individual check:</p>
+<p><img alt="Log of received pings with durations" src="IMG_URL/details_durations.png" /></p>

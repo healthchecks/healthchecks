@@ -3,7 +3,9 @@ from hc.test import BaseTestCase
 
 
 class AddPagerTreeTestCase(BaseTestCase):
-    url = "/integrations/add_pagertree/"
+    def setUp(self):
+        super(AddPagerTreeTestCase, self).setUp()
+        self.url = "/projects/%s/add_pagertree/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -15,7 +17,7 @@ class AddPagerTreeTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "pagertree")

@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
+from unittest.mock import patch
 
 from django.utils import timezone
 from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
-from mock import patch
 
 
 class CheckModelTestCase(BaseTestCase):

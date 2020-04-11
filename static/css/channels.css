@@ -105,6 +105,10 @@ table.channels-table > tbody > tr > th {
     color: #000;
 }
 
+.channel-row .actions {
+    text-align: right;
+}
+
 .channel-row .actions form {
     display: inline;
 }
@@ -185,6 +189,12 @@ table.channels-table > tbody > tr > th {
 
 .ai-step {
     margin: 2em 0;
+    counter-increment: ai-step;
+}
+
+.ai-step .step-no::after {
+    content: counter(ai-step);
+
 }
 
 .ai-step .step-no {
@@ -192,7 +202,7 @@ table.channels-table > tbody > tr > th {
     float: left;
     font-size: 24px;
     width: 48px;
-    heigth: 48px;
+    height: 48px;
     background: #7ec1ea;
     border-radius: 32px;
     text-align: center;
@@ -218,6 +228,10 @@ table.channels-table > tbody > tr > th {
     border-radius: 10px;
     opacity: 0;
     animation: marker-ripple 1.2s ease-out infinite;
+}
+
+.ai-step p {
+    margin-left: 80px;
 }
 
 @keyframes marker-ripple {

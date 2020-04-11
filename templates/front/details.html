@@ -11,12 +11,23 @@
     <div class="col-sm-12">
         <p id="new-check-alert" class="alert alert-success">
             <strong>Your new check is ready!</strong>
-            You can now 
-            <a data-target="edit-name" href="#" >give it a name</a> 
-            or 
+            You can now
+            <a data-target="edit-name" href="#" >give it a name</a>
+            or
             <a data-target="edit-timeout" href="#" >set its schedule</a>.
         </p>
-    </div>    
+    </div>
+    {% endif %}
+
+    {% if is_copied %}
+    <div class="col-sm-12">
+        <p id="new-check-alert" class="alert alert-success">
+            <strong>Copy created!</strong>
+            This is a brand new check, with details copied over from your existing check.
+            You might now want to
+            <a data-target="edit-name" href="#">update its name and tags</a>.
+        </p>
+    </div>
     {% endif %}
 
     {% if messages %}
@@ -32,7 +43,6 @@
             {{ check.name_then_code }}
             <small><a id="edit-name" href="#">(edit&hellip;)</a></small>
         </h1>
-        <span class="label label-tag">{{ check.project }}</span>
         {% for tag in check.tags_list %}
             <span class="label label-tag">{{ tag }}</span>
         {% endfor %}
@@ -53,10 +63,14 @@
             {% endif %}
         </div>
 
-        <div class="details-block">
+        <div id="how-to-ping" class="details-block">
             <h2>How To Ping</h2>
             <div>
-                <p>Keep this check up by making HTTP requests to this URL:</p>
+                <p>
+                    Keep this check up by making HTTP
+                    {% if check.methods == "POST" %}POST{% endif %}
+                    requests to this URL:
+                </p>
                 <code>{{ check.url }}</code>
                 <p>
                     {% if check.subject %}
@@ -69,18 +83,18 @@
                 <code>{{ check.email }}</code>
 
                 <p>You can also explicitly
-                    <a href="{% url 'hc-docs' %}#fail-event">
+                    <a href="{% url 'hc-serve-doc' 'signalling_failures' %}">
                         signal a failure</a>
                     and
-                    <a href="{% url 'hc-docs' %}#start-event">
+                    <a href="{% url 'hc-serve-doc' 'measuring_script_run_time' %}">
                         measure job execution time</a>.
                 </p>
             </div>
             <div class="text-right">
                 <button
                     data-toggle="modal"
-                    data-target="#email-settings-modal"
-                    class="btn btn-sm btn-default">Email Settings&hellip;</button>
+                    data-target="#filtering-rules-modal"
+                    class="btn btn-sm btn-default">Filtering Rules&hellip;</button>
                 <button
                     data-toggle="modal"
                     data-target="#show-usage-modal"
@@ -177,12 +191,13 @@
 
         <div class="details-block">
             <h2>Notification Methods</h2>
+            {% if channels %}
             <table id="details-integrations" class="table">
             {% for channel in channels %}
-                <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in check.channel_set.all %}class="on"{% endif %}>
+                <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in enabled_channels %}class="on"{% endif %}>
                     <th>
                         <span class="label">
-                            {% if channel in check.channel_set.all %}ON{% else %}OFF{% endif %}
+                            {% if channel in enabled_channels %}ON{% else %}OFF{% endif %}
                         </span>
                     </th>
                     <td>
@@ -192,19 +207,36 @@
                 </tr>
             {% endfor %}
             </table>
+            {% else %}
+            <div class="alert no-channels">
+                No notification methods set up yet.
+                <br />
+                Set up your preferred methods of notification in the
+                <a href="{% url 'hc-p-channels' project.code %}">Integrations</a>
+                page.
+            </div>
+            {% endif %}
         </div>
 
         <div class="details-block">
             <h2>Danger Zone</h2>
-            <p>Transfer to a different project, or permanently remove this check.</p>
+            <p>Copy, Transfer, or permanently remove this check.</p>
 
             <div class="text-right">
+                <button
+                    id="copy-btn"
+                    data-toggle="modal"
+                    data-target="#copy-modal"
+                    class="btn btn-sm btn-default">Create a Copy&hellip;</button>
                 <button
                     id="transfer-btn"
                     data-toggle="modal"
                     data-target="#transfer-modal"
                     data-url="{% url 'hc-transfer' check.code %}"
-                    class="btn btn-sm btn-default">Transfer to Another Project&hellip;</button>
+                    class="btn btn-sm btn-default">
+                    Transfer<span class="hidden-sm hidden-xs"> to Another Project</span>&hellip;
+                </button>
+                &nbsp;
                 <button
                     id="details-remove-check"
                     data-toggle="modal"
@@ -218,18 +250,18 @@
     <div id="events" class="col-sm-7">
         <h2>
             Log
-            <small>Click on individual items for details</small>
+            <small class="hidden-xs">Click on individual items for details</small>
             <div id="format-switcher" class="btn-group pull-right" data-toggle="buttons">
                 <label class="btn btn-default btn-xs" data-format="UTC">
                     <input type="radio" name="date-format">
                     UTC
-                </label>                
+                </label>
 
                 {% if check.kind == "cron" and check.tz != "UTC" %}
                 <label class="btn btn-default btn-xs" data-format="{{ check.tz }}">
                     <input type="radio" name="date-format">
                     {{ check.tz }}
-                </label>                
+                </label>
                 {% endif %}
 
                 <label class="btn btn-default btn-xs active" data-format="local">
@@ -262,7 +294,8 @@
 {% include "front/update_timeout_modal.html" %}
 {% include "front/show_usage_modal.html" %}
 {% include "front/remove_check_modal.html" %}
-{% include "front/email_settings_modal.html" %}
+{% include "front/filtering_rules_modal.html" %}
+{% include "front/copy_modal.html" %}
 
 {% endblock %}
 
@@ -270,6 +303,7 @@
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/clipboard.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>

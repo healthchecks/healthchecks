@@ -6,7 +6,6 @@
 <p>Please press the button below to unsubscribe:</p>
 <br />
 <form id="form" method="post">
-    {% csrf_token %}
     <input
         id="submit-btn"
         type="submit"
@@ -14,5 +13,8 @@
         value="Unsubscribe">
 </form>
 
-<script>document.getElementById("form").submit();</script>
+{% if autosubmit %}
+	<script>document.getElementById("form").submit();</script>
+{% endif %}
+
 {% endblock %}

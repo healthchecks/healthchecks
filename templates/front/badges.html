@@ -24,6 +24,9 @@
             <label id="show-json" class="btn btn-default">
                 <input type="radio" autocomplete="off"> JSON
             </label>
+            <label id="show-shields" class="btn btn-default">
+                <input type="radio" autocomplete="off"> Shields.io
+            </label>
         </div>
 
         <table id="badges-svg" class="badges table">
@@ -44,7 +47,7 @@
                     <td>
                         <img src="{{ urldict.svg }}" alt="" />
                     </td>
-                    <td class="svg-url">
+                    <td>
                         <code>{{ urldict.svg }}</code>
                     </td>
                 </tr>
@@ -67,12 +70,40 @@
                 <tr>
                     <td class="json-response" data-url="{{ urldict.json }}">
                     </td>
-                    <td class="json-url">
+                    <td>
                         <code>{{ urldict.json }}</code>
                     </td>
                 </tr>
             {% endfor %}
         </table>
+
+        <div id="badges-shields">
+        <table class="badges table">
+            {% if have_tags %}
+            <tr>
+                <th>Shields.io badge</th>
+                <th>JSON endpoint for Shields.io <a href="https://shields.io/endpoint">(how to use)</a></th>
+            </tr>
+            {% endif %}
+
+            {% for urldict in badges %}
+                {% if urldict.tag == "*" %}
+                <tr>
+                    <th colspan="2">Overall Status</th>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <td>
+                        <img src="https://img.shields.io/endpoint?url={{ urldict.shields|urlencode:"" }}" alt="" />
+                    </td>
+                    <td>
+                        <code>{{ urldict.shields }}</code>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        </div>
     </div>
 </div>
 {% endblock %}

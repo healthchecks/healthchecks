@@ -26,6 +26,10 @@ $(function() {
         return false;
     });
 
+    $(".channel-modal").on('shown.bs.modal', function () {
+        $(".input-name", this).focus();
+    })
+
     $('[data-toggle="tooltip"]').tooltip();
 
 });

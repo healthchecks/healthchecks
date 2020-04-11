@@ -13,6 +13,7 @@ class SignupTestCase(TestCase):
 
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "Account created")
+        self.assertIn("auto-login", r.cookies)
 
         # An user should have been created
         user = User.objects.get()

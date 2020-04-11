@@ -1,0 +1,11 @@
+{% extends "admin/base_site.html" %}
+{% load hc_extras %}
+{% block title %}{% site_name %} Administration{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+	<a href="{% url 'admin:index' %}">{% site_name %}</a>
+	<small>{% site_version %}</small>
+</h1>
+{% endblock %}
+

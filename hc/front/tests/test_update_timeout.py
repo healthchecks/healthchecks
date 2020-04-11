@@ -31,7 +31,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         expected_aa = self.check.last_ping + td(seconds=3600 + 60)
         self.assertEqual(self.check.alert_after, expected_aa)
 
-    def test_it_does_not_update_status(self):
+    def test_it_does_not_update_status_to_up(self):
         self.check.last_ping = timezone.now() - td(days=2)
         self.check.status = "down"
         self.check.save()
@@ -44,6 +44,22 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "down")
+
+    def test_it_updates_status_to_down(self):
+        self.check.last_ping = timezone.now() - td(hours=1)
+        self.check.status = "up"
+        self.check.alert_after = self.check.going_down_after()
+        self.check.save()
+
+        # 1 + 1 minute:
+        payload = {"kind": "simple", "timeout": 60, "grace": 60}
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url, data=payload)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "down")
+        self.assertIsNone(self.check.alert_after)
 
     def test_it_saves_cron_expression(self):
         payload = {"kind": "cron", "schedule": "5 * * * *", "tz": "UTC", "grace": 60}
@@ -58,7 +74,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def test_it_validates_cron_expression(self):
         self.client.login(username="alice@example.org", password="password")
-        samples = ["* invalid *", "1,2 3,* * * *"]
+        samples = ["* invalid *", "1,2 3,* * * *", "0 0 31 2 *"]
 
         for sample in samples:
             payload = {"kind": "cron", "schedule": sample, "tz": "UTC", "grace": 60}
@@ -159,9 +175,6 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 405)
 
     def test_it_allows_cross_team_access(self):
-        self.bobs_profile.current_project = None
-        self.bobs_profile.save()
-
         payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
         self.client.login(username="bob@example.org", password="password")

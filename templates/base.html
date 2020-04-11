@@ -14,16 +14,17 @@
     <meta name="application-name" content="{% site_name %}">
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-180.png' %}">
-
+    {% block head %}{% endblock %}
     {% compress css %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-select.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/selectize.hc.css' %}" type="text/css">
 
     <link rel="stylesheet" href="{% static 'css/add_project_modal.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/add_pushover.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/add_webhook.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/webhook_form.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/base.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/billing.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/bootstrap-select.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/channel_checks.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/channels.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/checkbox.css' %}" type="text/css">
@@ -67,7 +68,7 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a id="base-url" class="navbar-brand"  href="{% url 'hc-index' %}">
+            <a id="base-url" class="navbar-brand" href="{% url 'hc-index' %}">
             {% if request.user.is_authenticated and project %}
                 {{ project }}
                 <span class="caret"></span>
@@ -97,9 +98,14 @@
                         <a href="{% url 'hc-checks' project.code %}">Checks</a>
                     </li>
 
-                    <li {% if page == 'channels' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-channels' %}">Integrations</a>
+                    {% with b=project.have_channel_issues %}
+                    <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
+                        <a href="{% url 'hc-p-channels' project.code %}">
+                            Integrations
+                            {% if b %}<span class="icon-grace"></span>{% endif %}
+                        </a>
                     </li>
+                    {% endwith %}
 
                     <li {% if page == 'badges' %} class="active" {% endif %}>
                         <a href="{% url 'hc-badges' project.code %}">Badges</a>
@@ -114,7 +120,11 @@
             <ul id="global-links" class="nav navbar-nav navbar-right">
                 {% if show_pricing %}
                 <li {% if page == 'pricing' %} class="active" {% endif %}>
+                    {% if project %}
+                    <a href="{% url 'hc-p-pricing' project.code %}">Pricing</a>
+                    {% else %}
                     <a href="{% url 'hc-pricing' %}">Pricing</a>
+                    {% endif %}
                 </li>
                 {% endif %}
 
@@ -129,6 +139,11 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
+                        {% if request.user.is_superuser %}
+                            <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
+                            <li role="separator" class="divider"></li>
+                        {% endif %}
+
                         <li class="dropdown-header">Projects</li>
                         {% for project in request.profile.annotated_projects %}
                         <li class="project-item">

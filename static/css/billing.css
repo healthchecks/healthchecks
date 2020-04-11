@@ -13,7 +13,7 @@
 
 @media (min-width: 992px) {
     #change-billing-plan-modal .modal-dialog, #payment-method-modal .modal-dialog, #please-wait-modal .modal-dialog {
-        width: 850px;
+        width: 900px;
     }
 }
 
@@ -75,7 +75,7 @@
 
 #change-billing-plan-modal .plan li {
     margin: 0;
-    padding: 0;
+    padding: 1px 0;
 }
 
 #change-billing-plan-modal .text-warning {
@@ -89,5 +89,5 @@
 #please-wait-modal .modal-body {
     text-align: center;
     padding: 100px;
-    font-size: 18px;    
+    font-size: 18px;
 }

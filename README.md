@@ -20,8 +20,8 @@ It is live here: [http://healthchecks.io/](http://healthchecks.io/)
 
 The building blocks are:
 
-* Python 3
-* Django 2
+* Python 3.6+
+* Django 3
 * PostgreSQL or MySQL
 
 ## Setting Up for Development
@@ -70,9 +70,9 @@ in development environment.
 
         $ ./manage.py runserver
 
-The site should now be running at `http://localhost:8080`
-To log into Django administration site as a super user,
-visit `http://localhost:8080/admin`
+The site should now be running at `http://localhost:8000`.
+To access Django administration site, log in as a super user, then
+visit `http://localhost:8000/admin`
 
 ## Configuration
 
@@ -112,6 +112,7 @@ Configurations settings loaded from environment variables:
 | MASTER_BADGE_LABEL | `"Mychecks"`
 | PING_ENDPOINT | `"http://localhost:8000/ping/"`
 | PING_EMAIL_DOMAIN | `"localhost"`
+| PING_BODY_LIMIT | 10000 | In bytes. Set to `None` to always log full request body
 | DISCORD_CLIENT_ID | `None`
 | DISCORD_CLIENT_SECRET | `None`
 | SLACK_CLIENT_ID | `None`
@@ -134,6 +135,7 @@ Configurations settings loaded from environment variables:
 | MATRIX_USER_ID | `None`
 | MATRIX_ACCESS_TOKEN | `None`
 | APPRISE_ENABLED | `"False"`
+| SHELL_ENABLED | `"False"`
 
 
 Some useful settings keys to override are:
@@ -167,6 +169,10 @@ Set it to `False` if you are setting up a private healthchecks instance where
 you trust your users and want to avoid the extra verification step.
 
 
+`PING_BODY_LIMIT` sets the size limit in bytes for logged ping request bodies.
+The default value is 10000 (10 kilobytes). You can remove the limit altogether by
+setting this value to `None`.
+
 ## Database Configuration
 
 Database configuration is loaded from environment variables. If you
@@ -187,6 +193,16 @@ DATABASES = {
     }
 }
 ```
+
+## Accessing Administration Panel
+
+healthchecks comes with Django's administation panel where you can manually
+view and modify user accounts, projects, checks, integrations etc. To access it,
+
+ * if you haven't already, create a superuser account: `./manage.py createsuperuser`
+ * log into the site using superuser credentials
+ * in the top navigation, "Account" dropdown, select "Site Administration"
+
 
 ## Sending Emails
 
@@ -383,6 +399,17 @@ pip install apprise
 ```
 * enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.
 
+### Shell Commands
+
+The "Shell Commands" integration runs user-defined local shell commands when checks
+go up or down. This integration is disabled by default, and can be enabled by setting
+the `SHELL_ENABLED` environment variable to `True`.
+
+Note: be careful when using "Shell Commands" integration, and only enable it when
+you fully trust the users of your Healthchecks instance. The commands will be executed
+by the `manage.py sendalerts` process, and will run with the same system permissions as
+the `sendalerts` process.
+
 ## Running in Production
 
 Here is a non-exhaustive list of pointers and things to check before launching a Healthchecks instance
@@ -405,6 +432,7 @@ in production.
     Run the `manage.py collectstatic` command whenever files in the `/static/`
     directory change. This command collects all the static files inside the `static-collected` directory.
     Configure your web server to serve files from this directory under the `/static/` prefix.
+  * Database migration should be run after each update to make sure the database schemas are up to date. You can do that with `./manage.py migrate`.
 * Processes that need to be running constantly.
   * `manage.py runserver` is intended for development only. Do not use it in production,
     instead consider using [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) or

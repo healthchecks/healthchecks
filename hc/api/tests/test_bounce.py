@@ -29,6 +29,7 @@ class BounceTestCase(BaseTestCase):
 
         self.channel.refresh_from_db()
         self.assertFalse(self.channel.email_verified)
+        self.assertEqual(self.channel.last_error, "foo")
 
     def test_it_checks_ttl(self):
         self.n.created = self.n.created - timedelta(minutes=60)
@@ -49,3 +50,18 @@ class BounceTestCase(BaseTestCase):
         url = "/api/v1/notifications/%s/bounce" % fake_code
         r = self.client.post(url, "", content_type="text/plain")
         self.assertEqual(r.status_code, 404)
+
+    def test_it_requires_post(self):
+        url = "/api/v1/notifications/%s/bounce" % self.n.code
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 405)
+
+    def test_does_not_unsubscribe_transient_bounces(self):
+        url = "/api/v1/notifications/%s/bounce?type=Transient" % self.n.code
+        self.client.post(url, "foo", content_type="text/plain")
+
+        self.n.refresh_from_db()
+        self.assertEqual(self.n.error, "foo")
+
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.email_verified)

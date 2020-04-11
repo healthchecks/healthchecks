@@ -3,7 +3,9 @@ from hc.test import BaseTestCase
 
 
 class AddPagerTeamTestCase(BaseTestCase):
-    url = "/integrations/add_pagerteam/"
+    def setUp(self):
+        super(AddPagerTeamTestCase, self).setUp()
+        self.url = "/projects/%s/add_pagerteam/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -15,7 +17,7 @@ class AddPagerTeamTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "pagerteam")

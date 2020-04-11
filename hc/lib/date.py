@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+from random import randint
 from django.utils import timezone
 
 
@@ -36,8 +37,11 @@ def format_duration(td):
 
 
 def format_hms(td):
-    total_seconds = int(td.total_seconds())
+    total_seconds = td.total_seconds()
+    if 0.01 <= total_seconds < 1:
+        return "%.2f sec" % total_seconds
 
+    total_seconds = int(total_seconds)
     result = []
 
     mins, secs = divmod(total_seconds, 60)
@@ -67,7 +71,7 @@ def format_approx_duration(td):
     return ""
 
 
-def month_boundaries(months=2):
+def month_boundaries(months=3):
     result = []
 
     now = timezone.now()
@@ -81,3 +85,22 @@ def month_boundaries(months=2):
             y = y - 1
 
     return result
+
+
+def choose_next_report_date(now=None):
+    """ Calculate the target date for the next monthly report.
+
+    Monthly reports should get sent on 1st of each month, at a random
+    time after 12PM UTC (so it's over the month boundary even in UTC-12).
+
+    """
+
+    if now is None:
+        now = timezone.now()
+
+    h, m, s = randint(12, 23), randint(0, 59), randint(0, 59)
+
+    if now.month == 12:
+        return now.replace(now.year + 1, 1, 1, h, m, s)
+    else:
+        return now.replace(now.year, now.month + 1, 1, h, m, s)

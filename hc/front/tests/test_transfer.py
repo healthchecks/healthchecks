@@ -2,9 +2,9 @@ from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
-class TrabsferTestCase(BaseTestCase):
+class TransferTestCase(BaseTestCase):
     def setUp(self):
-        super(TrabsferTestCase, self).setUp()
+        super(TransferTestCase, self).setUp()
 
         self.check = Check.objects.create(project=self.bobs_project)
         self.url = "/checks/%s/transfer/" % self.check.code
@@ -15,9 +15,6 @@ class TrabsferTestCase(BaseTestCase):
         self.assertContains(r, "Transfer to Another Project")
 
     def test_it_works(self):
-        self.bobs_profile.current_project = self.bobs_project
-        self.bobs_profile.save()
-
         self.client.login(username="bob@example.org", password="password")
         payload = {"project": self.project.code}
         r = self.client.post(self.url, payload, follow=True)
@@ -26,10 +23,6 @@ class TrabsferTestCase(BaseTestCase):
 
         check = Check.objects.get()
         self.assertEqual(check.project, self.project)
-
-        # Bob's current project should have been updated
-        self.bobs_profile.refresh_from_db()
-        self.assertEqual(self.bobs_profile.current_project, self.project)
 
     def test_it_obeys_check_limit(self):
         # Alice's projects cannot accept checks due to limits:

@@ -1,7 +1,7 @@
 from datetime import datetime
+from unittest.mock import patch
 
 from hc.test import BaseTestCase
-from mock import patch
 import pytz
 
 

@@ -1,10 +1,10 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from hc.api.models import Check
+from hc.front.views import _get_project_for_user
 from hc.payments.forms import InvoiceEmailingForm
 from hc.payments.models import Subscription
 
@@ -15,21 +15,24 @@ def token(request):
     return JsonResponse({"client_token": sub.get_client_token()})
 
 
-def pricing(request):
-    if request.user.is_authenticated:
-        if request.project and request.project.owner != request.user:
-            ctx = {"page": "pricing"}
+def pricing(request, code=None):
+    project = None
+    if code:
+        if not request.user.is_authenticated:
+            raise Http404()
+
+        project = _get_project_for_user(request, code)
+        if project.owner != request.user:
+            ctx = {"page": "pricing", "project": project}
             return render(request, "payments/pricing_not_owner.html", ctx)
 
-    # Don't use Subscription.objects.for_user method here, so a
-    # subscription object is not created just by viewing a page.
-    sub = Subscription.objects.filter(user_id=request.user.id).first()
+    sub = None
+    if request.user.is_authenticated:
+        # Don't use Subscription.objects.for_user method here, so a
+        # subscription object is not created just by viewing a page.
+        sub = Subscription.objects.filter(user_id=request.user.id).first()
 
-    ctx = {
-        "page": "pricing",
-        "sub": sub,
-        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-    }
+    ctx = {"page": "pricing", "project": project, "sub": sub}
     return render(request, "payments/pricing.html", ctx)
 
 
@@ -101,7 +104,7 @@ def update(request):
         request.session["payment_method_status"] = "success"
         return redirect("hc-billing")
 
-    if plan_id not in ("", "P20", "P80", "Y192", "Y768"):
+    if plan_id not in ("", "P20", "P80", "Y192", "Y768", "S5", "S48"):
         return HttpResponseBadRequest()
 
     # Cancel the previous plan and reset limits:
@@ -111,7 +114,7 @@ def update(request):
     profile.ping_log_limit = 100
     profile.check_limit = 20
     profile.team_limit = 2
-    profile.sms_limit = 0
+    profile.sms_limit = 5
     profile.save()
 
     if plan_id == "":
@@ -124,17 +127,24 @@ def update(request):
 
     # Update user's profile
     profile = request.user.profile
-    if plan_id in ("P20", "Y192"):
+    if plan_id in ("S5", "S48"):
+        profile.check_limit = 20
+        profile.team_limit = 2
         profile.ping_log_limit = 1000
+        profile.sms_limit = 5
+        profile.sms_sent = 0
+        profile.save()
+    elif plan_id in ("P20", "Y192"):
         profile.check_limit = 100
         profile.team_limit = 9
+        profile.ping_log_limit = 1000
         profile.sms_limit = 50
         profile.sms_sent = 0
         profile.save()
     elif plan_id in ("P80", "Y768"):
-        profile.ping_log_limit = 1000
         profile.check_limit = 1000
         profile.team_limit = 500
+        profile.ping_log_limit = 1000
         profile.sms_limit = 500
         profile.sms_sent = 0
         profile.save()

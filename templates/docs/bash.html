@@ -1,0 +1,65 @@
+<h1>Shell Scripts</h1>
+<p>You can easily add SITE_NAME monitoring to a shell script. All you
+have to do is make a HTTP request at the end of the script.
+<a href="https://curl.haxx.se/docs/manpage.html">curl</a> and
+<a href="https://www.gnu.org/software/wget/manual/wget.html">wget</a>
+are two common command line HTTP clients you can use.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Sending a HTTP GET request with curl:</span>
+curl --retry <span class="m">3</span> PING_URL
+
+<span class="c1"># Silent version (no stdout/stderr output unless curl hits an error):</span>
+curl -fsS --retry <span class="m">3</span> PING_URL
+
+<span class="c1"># Sending a HTTP GET request with wget:</span>
+wget PING_URL -O /dev/null
+</code></pre></div>
+
+
+<h2>Signalling Failure from Shell Scripts</h2>
+<p>You can append <code>/fail</code> to any ping URL and  use the resulting URL to actively
+signal a failure. The below example:</p>
+<ul>
+<li>runs <code>/usr/bin/certbot renew</code></li>
+<li>if the certbot command is successful (exit code 0), send HTTP GET to <code>PING_URL</code></li>
+<li>otherwise, send HTTP GET to <code>PING_URL/fail</code></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+
+<span class="c1"># Payload here:</span>
+/usr/bin/certbot renew
+<span class="c1"># Ping SITE_NAME</span>
+curl --retry <span class="m">3</span> <span class="s2">&quot;PING_URL</span><span class="k">$(</span><span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> -n /fail<span class="k">)</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+
+<h2>Logging Command Output</h2>
+<p>When pinging with HTTP POST, you can put extra diagnostic information in request
+body. If the request body looks like a valid UTF-8 string, SITE_NAME
+will accept and store first 10KB of the request body.</p>
+<p>In the below example, certbot's output is captured and submitted via HTTP POST:</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+
+<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
+curl -fsS --retry <span class="m">3</span> -X POST --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
+</code></pre></div>
+
+
+<h2>Auto-provisioning New Checks</h2>
+<p>This example uses SITE_NAME <a href="../api/">Management API</a> to create a check "on the fly"
+(if it does not already exist) and to retrieve its ping URL.
+Using this technique, you can write services that automatically
+register with SITE_NAME the first time they run.</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="nv">API_KEY</span><span class="o">=</span>your-api-key-here
+
+<span class="c1"># Check&#39;s parameters. This example uses system&#39;s hostname for check&#39;s name.</span>
+<span class="nv">PAYLOAD</span><span class="o">=</span><span class="s1">&#39;{&quot;name&quot;: &quot;&#39;</span><span class="sb">`</span>hostname<span class="sb">`</span><span class="s1">&#39;&quot;, &quot;timeout&quot;: 60, &quot;grace&quot;: 60, &quot;unique&quot;: [&quot;name&quot;]}&#39;</span>
+
+<span class="c1"># Create the check if it does not exist.</span>
+<span class="c1"># Grab the ping_url from JSON response using the jq utility:</span>
+<span class="nv">URL</span><span class="o">=</span><span class="sb">`</span>curl -s SITE_ROOT/api/v1/checks/  -H <span class="s2">&quot;X-Api-Key: </span><span class="nv">$API_KEY</span><span class="s2">&quot;</span> -d <span class="s2">&quot;</span><span class="nv">$PAYLOAD</span><span class="s2">&quot;</span>  <span class="p">|</span> jq -r .ping_url<span class="sb">`</span>
+
+<span class="c1"># Finally, send a ping:</span>
+curl --retry <span class="m">3</span> <span class="nv">$URL</span>
+</code></pre></div>

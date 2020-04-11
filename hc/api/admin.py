@@ -201,6 +201,7 @@ class ChannelsAdmin(admin.ModelAdmin):
 @admin.register(Notification)
 class NotificationsAdmin(admin.ModelAdmin):
     search_fields = ["owner__name", "owner__code", "channel__value"]
+    readonly_fields = ("owner",)
     list_select_related = ("owner", "channel")
     list_display = (
         "id",
@@ -209,6 +210,7 @@ class NotificationsAdmin(admin.ModelAdmin):
         "owner",
         "channel_kind",
         "channel_value",
+        "error",
     )
     list_filter = ("created", "check_status", "channel__kind")
 

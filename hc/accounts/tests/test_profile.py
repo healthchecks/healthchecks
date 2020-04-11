@@ -117,7 +117,6 @@ class ProfileTestCase(BaseTestCase):
         self.assertNotContains(r, "Alice's Project")
 
         self.bobs_profile.refresh_from_db()
-        self.assertIsNone(self.bobs_profile.current_project)
         self.assertFalse(self.bob.memberships.exists())
 
     def test_leaving_checks_membership(self):

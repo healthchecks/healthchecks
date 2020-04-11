@@ -2,6 +2,7 @@ check = {
     "type": "object",
     "properties": {
         "name": {"type": "string", "maxLength": 100},
+        "desc": {"type": "string"},
         "tags": {"type": "string", "maxLength": 500},
         "timeout": {"type": "number", "minimum": 60, "maximum": 2592000},
         "grace": {"type": "number", "minimum": 60, "maximum": 2592000},

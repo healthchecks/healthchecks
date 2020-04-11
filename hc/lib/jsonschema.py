@@ -22,7 +22,10 @@ def validate(obj, schema, obj_name="value"):
             raise ValidationError("%s is too long" % obj_name)
         if schema.get("format") == "cron":
             try:
-                croniter(obj)
+                # Does croniter accept the schedule?
+                it = croniter(obj)
+                # Can it calculate the next datetime?
+                it.next()
             except:
                 raise ValidationError("%s is not a valid cron expression" % obj_name)
         if schema.get("format") == "timezone" and obj not in all_timezones:

@@ -1,8 +1,9 @@
+from unittest.mock import patch
+
 from django.contrib.auth.models import User
 from hc.api.models import Check
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
-from mock import patch
 
 
 class CloseAccountTestCase(BaseTestCase):
@@ -21,18 +22,11 @@ class CloseAccountTestCase(BaseTestCase):
         alices = User.objects.filter(username="alice")
         self.assertFalse(alices.exists())
 
-        # Bob's current team should now be None
-        self.bobs_profile.refresh_from_db()
-        self.assertIsNone(self.bobs_profile.current_project)
-
         # Check should be gone
         self.assertFalse(Check.objects.exists())
 
         # Subscription should have been canceled
         self.assertTrue(mock_braintree.Subscription.cancel.called)
-
-        # Braintree customer should have been deleted
-        self.assertTrue(mock_braintree.Customer.delete.called)
 
         # Subscription should be gone
         self.assertFalse(Subscription.objects.exists())

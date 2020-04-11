@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+from urllib.parse import urlparse
 import uuid
 
 from django.conf import settings
@@ -32,23 +33,27 @@ from hc.accounts.forms import (
 )
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
+from hc.lib.date import choose_next_report_date
 from hc.payments.models import Subscription
 
 NEXT_WHITELIST = (
     "hc-checks",
     "hc-details",
     "hc-log",
-    "hc-channels",
+    "hc-p-channels",
     "hc-add-slack",
     "hc-add-pushover",
+    "hc-add-telegram",
 )
 
-NAMESPACE_HC = uuid.UUID("2b25afdf-ce1a-4fa3-adf2-592e35f27fa9")
 
+def _is_whitelisted(redirect_url):
+    if not redirect_url:
+        return False
 
-def _is_whitelisted(path):
+    parsed = urlparse(redirect_url)
     try:
-        match = resolve(path)
+        match = resolve(parsed.path)
     except Resolver404:
         return False
 
@@ -56,10 +61,7 @@ def _is_whitelisted(path):
 
 
 def _make_user(email, with_project=True):
-    # Generate username from email in a deterministic way.
-    # Since the database has an uniqueness constraint on username,
-    # this makes sure that emails also are unique.
-    username = str(uuid.uuid3(NAMESPACE_HC, email))
+    username = str(uuid.uuid4())[:30]
     user = User(username=username, email=email)
     user.set_unusable_password()
     user.save()
@@ -83,9 +85,7 @@ def _make_user(email, with_project=True):
         channel.checks.add(check)
 
     # Ensure a profile gets created
-    profile = Profile.objects.for_user(user)
-    profile.current_project = project
-    profile.save()
+    Profile.objects.for_user(user)
 
     return user
 
@@ -148,6 +148,7 @@ def logout(request):
 
 
 @require_POST
+@csrf_exempt
 def signup(request):
     if not settings.REGISTRATION_OPEN:
         return HttpResponseForbidden()
@@ -163,7 +164,11 @@ def signup(request):
     else:
         ctx = {"form": form}
 
-    return render(request, "accounts/signup_result.html", ctx)
+    response = render(request, "accounts/signup_result.html", ctx)
+    if ctx.get("created"):
+        response.set_cookie("auto-login", "1", max_age=300, httponly=True)
+
+    return response
 
 
 def login_link_sent(request):
@@ -221,10 +226,6 @@ def profile(request):
             except Project.DoesNotExist:
                 return HttpResponseBadRequest()
 
-            if profile.current_project == project:
-                profile.current_project = None
-                profile.save()
-
             Member.objects.filter(project=project, user=request.user).delete()
 
             ctx["left_project"] = project
@@ -264,6 +265,7 @@ def project(request, code):
         return HttpResponseNotFound()
 
     is_owner = project.owner_id == request.user.id
+    invite_suggestions = project.invite_suggestions()
     ctx = {
         "page": "project",
         "project": project,
@@ -272,6 +274,7 @@ def project(request, code):
         "project_name_status": "default",
         "api_status": "default",
         "team_status": "default",
+        "invite_suggestions": invite_suggestions,
     }
 
     if request.method == "POST":
@@ -292,15 +295,22 @@ def project(request, code):
         elif "show_api_keys" in request.POST:
             ctx["show_api_keys"] = True
         elif "invite_team_member" in request.POST:
-            if not is_owner or not project.can_invite():
+            if not is_owner:
                 return HttpResponseForbidden()
 
             form = InviteTeamMemberForm(request.POST)
             if form.is_valid():
-                if not TokenBucket.authorize_invite(request.user):
-                    return render(request, "try_later.html")
-
                 email = form.cleaned_data["email"]
+
+                if not invite_suggestions.filter(email=email).exists():
+                    # We're inviting a new user. Are we within team size limit?
+                    if not project.can_invite_new_users():
+                        return HttpResponseForbidden()
+
+                    # And are we not hitting a rate limit?
+                    if not TokenBucket.authorize_invite(request.user):
+                        return render(request, "try_later.html")
+
                 try:
                     user = User.objects.get(email=email)
                 except User.DoesNotExist:
@@ -323,9 +333,6 @@ def project(request, code):
                 if farewell_user is None:
                     return HttpResponseBadRequest()
 
-                farewell_user.profile.current_project = None
-                farewell_user.profile.save()
-
                 Member.objects.filter(project=project, user=farewell_user).delete()
 
                 ctx["team_member_removed"] = form.cleaned_data["email"]
@@ -336,15 +343,9 @@ def project(request, code):
                 project.name = form.cleaned_data["name"]
                 project.save()
 
-                if request.profile.current_project == project:
-                    request.profile.current_project.name = project.name
-
                 ctx["project_name_updated"] = True
                 ctx["project_name_status"] = "success"
 
-    # Count members right before rendering the template, in case
-    # we just invited or removed someone
-    ctx["num_members"] = project.member_set.count()
     return render(request, "accounts/project.html", ctx)
 
 
@@ -360,7 +361,7 @@ def notifications(request):
             if profile.reports_allowed != form.cleaned_data["reports_allowed"]:
                 profile.reports_allowed = form.cleaned_data["reports_allowed"]
                 if profile.reports_allowed:
-                    profile.next_report_date = now() + td(days=30)
+                    profile.next_report_date = choose_next_report_date()
                 else:
                     profile.next_report_date = None
 
@@ -432,17 +433,28 @@ def change_email_done(request):
 
 
 @csrf_exempt
-def unsubscribe_reports(request, username):
+def unsubscribe_reports(request, signed_username):
+    # Some email servers open links in emails to check for malicious content.
+    # To work around this, for GET requests we serve a confirmation form.
+    # If the signature is more than 5 minutes old, we also include JS code to
+    # auto-submit the form.
+
+    ctx = {}
     signer = signing.TimestampSigner(salt="reports")
+    # First, check the signature without looking at the timestamp:
     try:
-        username = signer.unsign(username)
+        username = signer.unsign(signed_username)
     except signing.BadSignature:
         return render(request, "bad_link.html")
 
-    # Some email servers open links in emails to check for malicious content.
-    # To work around this, we serve a form that auto-submits with JS.
-    if "ask" in request.GET and request.method != "POST":
-        return render(request, "accounts/unsubscribe_submit.html")
+    # Check if timestamp is older than 5 minutes:
+    try:
+        username = signer.unsign(signed_username, max_age=300)
+    except signing.SignatureExpired:
+        ctx["autosubmit"] = True
+
+    if request.method != "POST":
+        return render(request, "accounts/unsubscribe_submit.html", ctx)
 
     user = User.objects.get(username=username)
     profile = Profile.objects.for_user(user)
@@ -460,10 +472,10 @@ def unsubscribe_reports(request, username):
 def close(request):
     user = request.user
 
-    # Subscription needs to be canceled before it is deleted:
+    # Cancel their subscription:
     sub = Subscription.objects.filter(user=user).first()
     if sub:
-        sub.cancel(delete_customer=True)
+        sub.cancel()
 
     user.delete()
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Add Pager Team - {% site_name %}{% endblock %}
+{% block title %}Pager Team Integration for {% site_name %}{% endblock %}
 
 
 {% block content %}
@@ -16,7 +16,7 @@
 
       <div class="row ai-step">
         <div class="col-sm-6">
-            <span class="step-no">1</span>
+            <span class="step-no"></span>
             <p>
                 Log into your Pager Team account, select the rotation you wish to add this integration to. Click the <strong>Copy Webhook</strong> button.
             </p>
@@ -31,7 +31,7 @@
 
       <div class="row ai-step">
           <div class="col-sm-6">
-              <span class="step-no">2</span>
+              <span class="step-no"></span>
               <p>
                 Paste the <strong>Webhook URL</strong> below. Save the integration, and you are done!
               </p>
@@ -40,7 +40,7 @@
 
       <h2>Integration Settings</h2>
 
-      <form method="post" class="form-horizontal" action="{% url 'hc-add-pagerteam' %}">
+      <form method="post" class="form-horizontal">
           {% csrf_token %}
           <div class="form-group {{ form.value.css_classes }}">
               <label for="post-url" class="col-sm-2 control-label">URL</label>

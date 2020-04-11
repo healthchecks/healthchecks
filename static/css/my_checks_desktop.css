@@ -132,3 +132,29 @@ tr:hover .copy-link {
     color: #888;
     white-space: nowrap;
 }
+
+#checks-table .actions {
+    white-space: nowrap;
+}
+
+#checks-table .btn {
+    border-color: transparent;
+    font-size: 20px;
+    color: #999;
+}
+
+#checks-table tr:hover .btn {
+    color: #666;
+    background: transparent;
+    opacity: 1;
+}
+
+#checks-table tr:hover .btn:hover {
+    background: #DDD;
+    color: #000;
+}
+
+#checks-table .pause {
+    opacity: 0;
+}
+

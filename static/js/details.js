@@ -6,6 +6,24 @@ $(function () {
         return false;
     });
 
+    // Configure Selectize for entering tags
+    function toOption(tag) {
+        return {value: tag}
+    }
+
+    var allTags = $("#update-tags-input").data("all-tags");
+    var options = allTags ? allTags.split(" ").map(toOption) : [];
+    $("#update-tags-input").selectize({
+        create: true,
+        createOnBlur: true,
+        delimiter: " ",
+        labelField: "value",
+        searchField: ["value"],
+        hideSelected: true,
+        highlight: false,
+        options: options
+    });
+
     $("#new-check-alert a").click(function() {
         $("#" + this.dataset.target).click();
         return false;
@@ -25,7 +43,7 @@ $(function () {
 
     $("#ping-now").click(function(e) {
         var button = this;
-        $.get(this.dataset.url, function() {
+        $.post(this.dataset.url, function() {
             button.textContent = "Success!";
         });
     });
@@ -119,7 +137,7 @@ $(function () {
             format == "local" ? dt.local() : dt.tz(format);
 
             $(".date", row).text(dt.format("MMM D"));
-            $(".time", row).text(dt.format("HH:mm"));                
+            $(".time", row).text(dt.format("HH:mm"));
         })
 
         // The table is initially hidden to avoid flickering as we convert dates.
@@ -151,6 +169,5 @@ $(function () {
     $("#transfer-modal").on("change", "#target-project", function() {
         $("#transfer-confirm").prop("disabled", !this.value);
     });
-
 
 });

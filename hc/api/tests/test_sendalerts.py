@@ -1,6 +1,6 @@
 from datetime import timedelta as td
 from io import StringIO
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 
 from django.core.management import call_command
 from django.utils.timezone import now

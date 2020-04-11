@@ -22,8 +22,9 @@
     border-color: @border-color;
     .box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
     &:focus {
+      @color-rgba: rgba(red(@border-color), green(@border-color), blue(@border-color), .2);
       border-color: darken(@border-color, 10%);
-      @shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten(@border-color, 20%);
+      @shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 0 4px @color-rgba;
       .box-shadow(@shadow);
     }
   }
@@ -53,11 +54,11 @@
 // Example usage: change the default blue border and shadow to white for better
 // contrast against a dark gray background.
 .form-control-focus(@color: @input-border-focus) {
-  @color-rgba: rgba(red(@color), green(@color), blue(@color), .6);
+  @color-rgba: rgba(red(@color), green(@color), blue(@color), .2);
   &:focus {
     border-color: @color;
     outline: 0;
-    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px @{color-rgba}");
+    .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 0 4px @{color-rgba}");
   }
 }
 

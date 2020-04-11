@@ -12,7 +12,9 @@ TEST_CREDENTIALS = {
 
 @override_settings(**TEST_CREDENTIALS)
 class AddWhatsAppTestCase(BaseTestCase):
-    url = "/integrations/add_whatsapp/"
+    def setUp(self):
+        super(AddWhatsAppTestCase, self).setUp()
+        self.url = "/projects/%s/add_whatsapp/" % self.project.code
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -38,7 +40,7 @@ class AddWhatsAppTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "whatsapp")
@@ -53,7 +55,7 @@ class AddWhatsAppTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertRedirects(r, "/integrations/")
+        self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "whatsapp")

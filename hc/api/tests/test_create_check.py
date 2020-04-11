@@ -84,6 +84,14 @@ class CreateCheckTestCase(BaseTestCase):
         check = Check.objects.get()
         self.assertEqual(check.channel_set.get(), channel)
 
+    def test_it_rejects_bad_channel_code(self):
+        r = self.post({"api_key": "X" * 32, "channels": "abc"})
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
+
+        # The check should not have been saved
+        self.assertFalse(Check.objects.exists())
+
     def test_it_supports_unique(self):
         Check.objects.create(project=self.project, name="Foo")
 
@@ -211,7 +219,7 @@ class CreateCheckTestCase(BaseTestCase):
         r = self.post({"api_key": "X" * 32})
         self.assertEqual(r.status_code, 403)
 
-    def test_readonly_key_does_not_work(self):
+    def test_it_rejects_readonly_key(self):
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 

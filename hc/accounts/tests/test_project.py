@@ -3,7 +3,7 @@ from django.core import mail
 from django.conf import settings
 from django.test.utils import override_settings
 from hc.test import BaseTestCase
-from hc.accounts.models import Member
+from hc.accounts.models import Member, Project
 from hc.api.models import TokenBucket
 
 
@@ -76,17 +76,37 @@ class ProjectTestCase(BaseTestCase):
             project=self.project, user__email="frank@example.org"
         )
 
-        profile = member.user.profile
-        self.assertEqual(profile.current_project, self.project)
         # The new user should not have their own project
         self.assertFalse(member.user.project_set.exists())
 
         # And an email should have been sent
         subj = (
             "You have been invited to join"
-            " Alice&#39;s Project on %s" % settings.SITE_NAME
+            " Alice's Project on %s" % settings.SITE_NAME
         )
-        self.assertEqual(mail.outbox[0].subject, subj)
+        self.assertHTMLEqual(mail.outbox[0].subject, subj)
+
+    def test_it_adds_member_from_another_team(self):
+        # With team limit at zero, we should not be able to invite any new users
+        self.profile.team_limit = 0
+        self.profile.save()
+
+        # But Charlie will have an existing membership in another Alice's project
+        # so Alice *should* be able to invite Charlie:
+        p2 = Project.objects.create(owner=self.alice)
+        Member.objects.create(user=self.charlie, project=p2)
+
+        self.client.login(username="alice@example.org", password="password")
+        form = {"invite_team_member": "1", "email": "charlie@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        q = Member.objects.filter(project=self.project, user=self.charlie)
+        self.assertEqual(q.count(), 1)
+
+        # And this should not have affected the rate limit:
+        q = TokenBucket.objects.filter(value="invite-%d" % self.alice.id)
+        self.assertFalse(q.exists())
 
     @override_settings(SECRET_KEY="test-secret")
     def test_it_rate_limits_invites(self):
@@ -126,10 +146,7 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
-        self.assertEqual(Member.objects.count(), 0)
-
-        self.bobs_profile.refresh_from_db()
-        self.assertEqual(self.bobs_profile.current_project, None)
+        self.assertFalse(Member.objects.exists())
 
     def test_it_requires_owner_to_remove_team_member(self):
         self.client.login(username="bob@example.org", password="password")
@@ -145,9 +162,6 @@ class ProjectTestCase(BaseTestCase):
         form = {"remove_team_member": "1", "email": "alice@example.org"}
         r = self.client.post(url, form)
         self.assertEqual(r.status_code, 400)
-
-        self.profile.refresh_from_db()
-        self.assertIsNotNone(self.profile.current_project)
 
     def test_it_sets_project_name(self):
         self.client.login(username="alice@example.org", password="password")

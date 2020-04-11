@@ -12,9 +12,7 @@
 {% endblock %}
 
 {% block content %}
-
-<!-- Plans -->
-<section id="plans" {% if request.user.is_authenticated %} data- {% endif %}>
+<section id="plans">
     <div class="container">
         {% if request.user.is_authenticated %}
         <div class="row">
@@ -43,7 +41,7 @@
         {% else %}
         <div class="row">
             <div class="col-sm-12 text-center">
-                <h1>{% site_name %} Pricing Plans</h1>
+                <h1 id="pricing-tagline">Monitor 20 Cron Jobs for Free. Affordable Plans When You Need More.</h1>
             </div>
         </div>
         {% endif %}
@@ -51,19 +49,19 @@
         <div class="row">
             <div class="col-sm-12" id="period-controls">
                 <div class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default">
-                        <input
-                            type="radio"
-                            name="period"
-                            value="monthly"
-                            autocomplete="off"> Monthly
-                    </label>
                     <label class="btn btn-default active">
                         <input
                             type="radio"
                             name="period"
-                            value="annual"
+                            value="monthly"
                             checked
+                            autocomplete="off"> Monthly
+                    </label>
+                    <label class="btn btn-default">
+                        <input
+                            type="radio"
+                            name="period"
+                            value="annual"
                             autocomplete="off"> Annual
                     </label>
                 </div>
@@ -71,90 +69,144 @@
             </div>
         </div>
 
-        <!-- Free -->
-        <div class="col-sm-4 text-center">
-            <div class="panel panel-default">
-                <div class="panel-body text-center free">
+        <!-- Hobbyist -->
+        <div class="col-sm-6 col-md-3 text-center">
+            <div class="panel panel-default plan hobbyist">
+                <div class="panel-body text-center">
                     <h1>Hobbyist</h1>
-                    <h2>$0<span class="mo">/mo</span></h2>
+                    <h2>$0 <span class="mo">/ month</span></h2>
                 </div>
                 <ul class="list-group text-center">
-                    <li class="list-group-item"><i class="fa fa-check"></i> 20 Checks</li>
-                    <li class="list-group-item">3 Team Members</li>
-                    <li class="list-group-item">100 Log Entries per Check</li>
-                    <li class="list-group-item">API Access</li>
-                    <li class="list-group-item">&nbsp;</li>
+                    <li class="list-group-item"><i class="fa fa-check"></i> 20 checks</li>
+                    <li class="list-group-item">
+                        <span data-help="team-size-help">3 team members</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span data-help="log-limit-help">100 log entries per check</span>
+                    </li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">
+                        <span data-help="sms-help">5 SMS &amp; WhatsApp credits</span>
+                    </li>
                     <li class="list-group-item">&nbsp;</li>
                 </ul>
+
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-success">Get Started</a>
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">Sign Up</a>
                 </div>
                 {% endif %}
             </div>
         </div>
-        <!-- /item -->
 
-        <!-- P5 -->
-        <div class="col-sm-4 text-center">
-            <div class="panel panel-default">
+        <!-- Supporter -->
+        <div class="col-sm-6 col-md-3 text-center">
+            <div class="panel panel-default plan supporter">
+                <div class="panel-body text-center free">
+                    <h1>Supporter</h1>
+                    <h2>
+                        <span id="supporter-price">$5</span>
+                        <span class="mo">/ month</span>
+                    </h2>
+                </div>
+                <ul class="list-group text-center">
+                    <li class="list-group-item"><i class="fa fa-check"></i> 20 checks</li>
+                    <li class="list-group-item">
+                        <span data-help="team-size-help">3 team members</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span data-help="log-limit-help">1000 log entries per check</span>
+                    </li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">
+                        <span data-help="sms-help">5 SMS &amp; WhatsApp credits</span>
+                    </li>
+                    <li class="list-group-item">Email support</li>
+                </ul>
+
+                {% if not request.user.is_authenticated %}
+                <div class="panel-footer">
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">
+                        Sign Up
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Business -->
+        <div class="col-sm-6 col-md-3 text-center">
+            <div class="panel panel-default plan business">
                 <div class="panel-body text-center">
                     <h1>Business</h1>
                     <h2>
-                        <span id="s-price">$16</span><span class="mo">/mo</span>
+                        <span id="business-price">$20</span>
+                        <span class="mo">/ month</span>
                     </h2>
                 </div>
 
                 <ul class="list-group text-center">
-                    <li class="list-group-item">100 Checks</li>
-                    <li class="list-group-item">10 Team Members</li>
-                    <li class="list-group-item">1000 Log Entries per Check</li>
-                    <li class="list-group-item">API Access</li>
-                    <li class="list-group-item">50 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} Alerts per Month</li>
-                    <li class="list-group-item">Email Support</li>
+                    <li class="list-group-item">100 checks</li>
+                    <li class="list-group-item">
+                        <span data-help="team-size-help">10 team members</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span data-help="log-limit-help">1000 log entries per check</span>
+                    </li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">
+                        <span data-help="sms-help">50 SMS &amp; WhatsApp credits</span>
+                    </li>
+                    <li class="list-group-item">Email support</li>
                 </ul>
+
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
-                        Get Started
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">
+                        Sign Up
                     </a>
                 </div>
                 {% endif %}
             </div>
         </div>
-        <!-- /item -->
 
-        <!-- P50 -->
-        <div class="col-sm-4 text-center">
-            <div class="panel panel-default">
+        <!-- Business Plus -->
+        <div class="col-sm-6 col-md-3 text-center">
+            <div class="panel panel-default plan business-plus">
                 <div class="panel-body text-center">
                     <h1>Business Plus</h1>
                     <h2>
-                        <span id="p-price">$64</span><span class="mo">/mo</span>
+                        <span id="business-plus-price">$80</span>
+                        <span class="mo">/ month</span>
                     </h2>
                 </div>
 
                 <ul class="list-group text-center">
-                    <li class="list-group-item">1000 Checks</li>
-                    <li class="list-group-item">Unlimited Team Members</li>
-                    <li class="list-group-item">1000 Log Entries per Check</li>
-                    <li class="list-group-item">API Access</li>
-                    <li class="list-group-item">500 SMS {% if enable_whatsapp %}&amp; WhatsApp{% endif %} Alerts per Month</li>
-                    <li class="list-group-item">Priority Email Support</li>
+                    <li class="list-group-item">1000 checks</li>
+                    <li class="list-group-item">
+                        <span data-help="team-size-help">Unlimited team members</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span data-help="log-limit-help">1000 log entries per check</span>
+                    </li>
+                    <li class="list-group-item">API access</li>
+                    <li class="list-group-item">
+                        <span data-help="sms-help">500 SMS &amp; WhatsApp credits</span>
+                    </li>
+                    <li class="list-group-item">Priority email support</li>
                 </ul>
+
                 {% if not request.user.is_authenticated %}
                 <div class="panel-footer">
-                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
-                        Get Started
+                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn">
+                        Sign Up
                     </a>
                 </div>
                 {% endif %}
             </div>
         </div>
-        <!-- /item -->
     </div>
 </section>
-<!-- /Plans -->
 
 <section id="faq">
     <div class="container">
@@ -163,7 +215,7 @@
                 <h1>Billing Questions</h1>
                 <h2>What payment methods do you accept?</h2>
                 <p>
-                    We accept Visa, Master Card and PayPal.
+                    We accept Visa, Master Card, American Express and PayPal.
                 </p>
 
                 <h2>Will my credit card data be safe?</h2>
@@ -189,17 +241,23 @@
             </div>
             <div class="col-sm-6">
                 <h1>Premium Features</h1>
+                <h2>What's the difference between "Hobbyist" and "Supporter" plans?</h2>
+
+                <p>
+                    Both plans are similar. The "Supporter" plan is offered
+                    in case "Hobbyist" fits your usage but you wish
+                    to support {% site_name %} financially.
+                </p>
+
+
                 <h2>What's "3 / 10 / Unlimited Team Members"?</h2>
+
                 <p>
                     Invite your colleagues
                     to your account so they can access your checks,
                     logs, and configured integrations. Inviting team members
                     is <strong>more convenient and more secure</strong>
                     than sharing a single login and password.
-                </p>
-                <p>
-                    Each plan has a specific team size limit. When you reach
-                    the limit, you cannot invite more team members.
                 </p>
 
                 <h2>What is the "log entries per check" number?</h2>
@@ -211,8 +269,8 @@
                 <p>
                     There is a per-check limit of how many log entries are
                     kept. When this limit is reached, the oldest log entries
-                    are culled. You can increase the limit by upgrading to
-                    paid plans.
+                    start getting removed to make room for new ones.
+                    You can increase the limit by upgrading to paid plans.
                 </p>
 
                 <h2>When is 100 log entries per check sufficient?</h2>
@@ -230,6 +288,24 @@
         </div>
     </div>
 </section>
+
+<div id="team-size-help" class="hidden">
+    Invite your colleagues to your projects so they can access your checks, logs,
+    and configured integrations. A higher limit lets you invite more people.
+</div>
+
+<div id="log-limit-help" class="hidden">
+    The maximum number of log entries {% site_name %} will store for each check.
+    When the limit is reached, the oldest log entries start getting removed to make
+    room for new ones.
+</div>
+
+<div id="sms-help" class="hidden">
+    <p>The maximum number of SMS &amp; WhatsApp notifications per month.</p>
+
+    <p>The limit is applied to the combined number of sent SMS and
+    WhatsApp notifications. </p>
+</div>
 
 {% if not request.user.is_authenticated %}
 {% include "front/signup_modal.html" %}

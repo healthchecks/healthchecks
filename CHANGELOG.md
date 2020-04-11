@@ -1,20 +1,119 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.15.0-dev - Unreleased
+
+### Improvements
+- Rate limiting for Telegram notifications (10 notifications per chat per minute)
+- Use Slack V2 OAuth flow
+- "Edit" function for webhook integrations (#176)
+
+### Bug Fixes
+- "Get a single check" API call now supports read-only API keys (#346)
+- Don't escape HTML in the subject line of notification emails
+
+## v1.14.0 - 2020-03-23
+
+### Improvements
+- Improved UI to invite users from account's other projects (#258)
+- Experimental Prometheus metrics endpoint (#300)
+- Don't store user's current project in DB, put it explicitly in page URLs (#336)
+- API reference in Markdown
+- Use Selectize.js for entering tags (#324)
+- Zulip integration (#202)
+- OpsGenie integration returns more detailed error messages
+- Telegram integration returns more detailed error messages
+- Added the "Get a single check" API call (#337)
+- Display project name in Slack notifications (#342)
+
+### Bug Fixes
+- The "render_docs" command checks if markdown and pygments is installed (#329)
+- The team size limit is applied to the n. of distinct users across all projects (#332)
+- API: don't let SuspiciousOperation bubble up when validating channel ids
+- API security: check channel ownership when setting check's channels
+- API: update check's "alert_after" field when changing schedule
+- API: validate channel identifiers before creating/updating a check (#335)
+- Fix redirect after login when adding Telegram integration
+
+## v1.13.0 - 2020-02-13
+
+### Improvements
+- Show a red "!" in project's top navigation if any integration is not working
+- createsuperuser management command requires an unique email address (#318)
+- For superusers, show "Site Administration" in top navigation, note in README (#317)
+- Make Ping.body size limit configurable (#301)
+- Show sub-second durations with higher precision, 2 digits after decimal point (#321)
+- Replace the gear icon with three horizontal dots icon (#322)
+- Add a Pause button in the checks list (#312)
+- Documentation in Markdown
+- Added an example of capturing and submitting log output (#315)
+- The sendalerts commands measures dwell time and reports it over statsd protocol
+- Django 3.0.3
+- Show a warning in top navigation if the project has no integrations (#327)
+
+### Bug Fixes
+- Increase the allowable length of Matrix room alias to 100 (#320)
+- Make sure Check.last_ping and Ping.created timestamps match exactly
+- Don't trigger "down" notifications when changing schedule interactively in web UI
+- Fix sendalerts crash loop when encountering a bad cron schedule
+- Stricter cron validation, reject schedules like "At midnight of February 31"
+- In hc.front.views.ping_details, if a ping does not exist, return a friendly message
+
+## v1.12.0 - 2020-01-02
+
+### Improvements
+- Django 3.0
+- "Filtering Rules" dialog, an option to require HTTP POST (#297)
+- Show Healthchecks version in Django admin header (#306)
+- Added JSON endpoint for Shields.io (#304)
+- `senddeletionnotices` command skips profiles with recent last_active_date
+- The "Update Check" API call can update check's description (#311)
+
+### Bug Fixes
+- Don't set CSRF cookie on first visit. Signup is exempt from CSRF protection
+- Fix List-Unsubscribe email header value: add angle brackets
+- Unsubscribe links serve a form, and require HTTP POST to actually unsubscribe
+- For webhook integration, validate each header line separately
+- Fix "Send Test Notification" for webhooks that only fire on checks going up
+- Don't allow adding webhook integrations with both URLs blank
+- Don't allow adding email integrations with both "up" and "down" unchecked
+
+
+## v1.11.0 - 2019-11-22
+
+### Improvements
+- In monthly reports, no downtime stats for the current month (month has just started)
+- Add Microsoft Teams integration (#135)
+- Add Profile.last_active_date field for more accurate inactive user detection
+- Add "Shell Commands" integration (#302)
+- PagerDuty integration works with or without PD_VENDOR_KEY (#303)
+
+### Bug Fixes
+ - On mobile, "My Checks" page, always show the gear (Details) button (#286)
+ - Make log events fit better on mobile screens
+
+
+## v1.10.0 - 2019-10-21
 
 ### Improvements
 - Add the "Last Duration" field in the "My Checks" page (#257)
 - Add "last_duration" attribute to the Check API resource (#257)
 - Upgrade to psycopg2 2.8.3
+- Add Go usage example
+- Send monthly reports on 1st of every month, not randomly during the month
+- Signup form sets the "auto-login" cookie to avoid an extra click during first login
+- Autofocus the email field in the signup form, and submit on enter key
+- Add support for OpsGenie EU region (#294)
+- Update OpsGenie logo and setup illustrations
+- Add a "Create a Copy" function for cloning checks (#288)
+- Send email notification when monthly SMS sending limit is reached (#292)
 
 ### Bug Fixes
-- Usernames now are uuid3(const, email). Prevents multiple accts with same email (#290)
 - Prevent double-clicking the submit button in signup form
 - Upgrade to Django 2.2.6 – fixes sqlite migrations (#284)
 
 
-## 1.9.0 - 2019-09-03
+## v1.9.0 - 2019-09-03
 
 ### Improvements
 - Show the number of downtimes and total downtime minutes in monthly reports (#104)
@@ -28,7 +127,7 @@ All notable changes to this project will be documented in this file.
 - Fix javascript code to construct correct URLs when running from a subdirectory (#273)
 - Don't show the "Sign Up" link in the login page if registration is closed (#280)
 
-## 1.8.0 - 2019-07-08
+## v1.8.0 - 2019-07-08
 
 ### Improvements
 - Add the `prunetokenbucket` management command
@@ -47,7 +146,7 @@ All notable changes to this project will be documented in this file.
 - Fix `prunepings` and `prunepingsslow`, they got broken when adding Projects (#264)
 
 
-## 1.7.0 - 2019-05-02
+## v1.7.0 - 2019-05-02
 
 ### Improvements
 - Add the EMAIL_USE_VERIFICATION configuration setting (#232)
@@ -60,7 +159,8 @@ All notable changes to this project will be documented in this file.
 - Show the Description section even if the description is missing. (#246)
 - Include the description in email alerts. (#247)
 
-## 1.6.0 - 2019-04-01
+
+## v1.6.0 - 2019-04-01
 
 ### Improvements
 - Add the "desc" field (check's description) to API responses
@@ -76,7 +176,7 @@ All notable changes to this project will be documented in this file.
 - Fix a "invalid time format" in front.views.status_single on Windows hosts
 
 
-## 1.5.0 - 2019-02-04
+## v1.5.0 - 2019-02-04
 
 ### Improvements
 - Database schema: add uniqueness constraint to Check.code
@@ -88,7 +188,7 @@ All notable changes to this project will be documented in this file.
 - Add the "My Projects" page
 
 
-## 1.4.0 - 2018-12-25
+## v1.4.0 - 2018-12-25
 
 ### Improvements
 - Set Pushover alert priorities for "down" and "up" events separately
@@ -106,7 +206,7 @@ All notable changes to this project will be documented in this file.
 - Validate and reject cron schedules with six components
 
 
-## 1.3.0 - 2018-11-21
+## v1.3.0 - 2018-11-21
 
 ### Improvements
 - Load settings from environment variables
@@ -126,7 +226,7 @@ All notable changes to this project will be documented in this file.
 - During DST transition, handle ambiguous dates as pre-transition
 
 
-## 1.2.0 - 2018-10-20
+## v1.2.0 - 2018-10-20
 
 ### Improvements
 - Content updates in the "Welcome" page.
@@ -141,7 +241,7 @@ All notable changes to this project will be documented in this file.
 - Fix hamburger menu button in "Login" page.
 
 
-## 1.1.0 - 2018-08-20
+## v1.1.0 - 2018-08-20
 
 ### Improvements
 - A new "Check Details" page.

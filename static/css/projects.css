@@ -20,6 +20,9 @@
 #project-selector .project h4 {
     font-weight: bold;
     margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #project-selector .project.selected {
@@ -44,4 +47,18 @@
 #project-selector #add-project:hover .project {
     border-color: #0091EA;
     color: #333;
+}
+
+.invite-suggestion {
+    color: #888;
+}
+
+#suggestions-row td {
+    border-top: 0;
+    font-size: 85%;
+    padding-top: 20px;
+}
+
+#team-table th {
+    border-top: 0;
 }

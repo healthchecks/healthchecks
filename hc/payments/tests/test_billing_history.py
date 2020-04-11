@@ -1,4 +1,4 @@
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 from hc.payments.models import Subscription

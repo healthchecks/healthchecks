@@ -2,7 +2,6 @@ from datetime import timedelta as td
 import uuid
 
 from django.conf import settings
-from django.core.exceptions import SuspiciousOperation
 from django.db import connection
 from django.http import (
     HttpResponse,
@@ -14,11 +13,16 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.models import Check, Notification, Channel
 from hc.lib.badges import check_signature, get_badge_svg
+
+
+class BadChannelException(Exception):
+    pass
 
 
 @csrf_exempt
@@ -33,6 +37,9 @@ def ping(request, code, action="success"):
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")
     body = request.body.decode()
+
+    if check.methods == "POST" and method != "POST":
+        action = "ign"
 
     check.ping(remote_addr, scheme, method, ua, body, action)
 
@@ -60,11 +67,29 @@ def _lookup(project, spec):
 
 
 def _update(check, spec):
+    channels = set()
+    # First, validate the supplied channel codes
+    if "channels" in spec and spec["channels"] not in ("*", ""):
+        q = Channel.objects.filter(project=check.project)
+        for s in spec["channels"].split(","):
+            try:
+                code = uuid.UUID(s)
+            except ValueError:
+                raise BadChannelException("invalid channel identifier: %s" % s)
+
+            try:
+                channels.add(q.get(code=code))
+            except Channel.DoesNotExist:
+                raise BadChannelException("invalid channel identifier: %s" % s)
+
     if "name" in spec:
         check.name = spec["name"]
 
     if "tags" in spec:
         check.tags = spec["tags"]
+
+    if "desc" in spec:
+        check.desc = spec["desc"]
 
     if "timeout" in spec and "schedule" not in spec:
         check.kind = "simple"
@@ -79,29 +104,17 @@ def _update(check, spec):
         if "tz" in spec:
             check.tz = spec["tz"]
 
+    check.alert_after = check.going_down_after()
     check.save()
 
     # This needs to be done after saving the check, because of
     # the M2M relation between checks and channels:
-    if "channels" in spec:
-        if spec["channels"] == "*":
-            check.assign_all_channels()
-        elif spec["channels"] == "":
-            check.channel_set.clear()
-        else:
-            channels = []
-            for chunk in spec["channels"].split(","):
-                try:
-                    chunk = uuid.UUID(chunk)
-                except ValueError:
-                    raise SuspiciousOperation("Invalid channel identifier")
-
-                try:
-                    channel = Channel.objects.get(code=chunk)
-                    channels.append(channel)
-                except Channel.DoesNotExist:
-                    raise SuspiciousOperation("Invalid channel identifier")
-            check.channel_set.set(channels)
+    if spec.get("channels") == "*":
+        check.assign_all_channels()
+    elif spec.get("channels") == "":
+        check.channel_set.clear()
+    elif channels:
+        check.channel_set.set(channels)
 
     return check
 
@@ -138,7 +151,11 @@ def create_check(request):
         check = Check(project=request.project)
         created = True
 
-    _update(check, request.json)
+    try:
+        _update(check, request.json)
+    except BadChannelException as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
     return JsonResponse(check.to_dict(), status=201 if created else 200)
 
 
@@ -160,26 +177,53 @@ def channels(request):
     return JsonResponse({"channels": channels})
 
 
-@csrf_exempt
-@cors("POST", "DELETE")
-@validate_json(schemas.check)
-@authorize
-def update(request, code):
+@validate_json()
+@authorize_read
+def get_check(request, code):
     check = get_object_or_404(Check, code=code)
     if check.project != request.project:
         return HttpResponseForbidden()
 
-    if request.method == "POST":
+    return JsonResponse(check.to_dict(readonly=request.readonly))
+
+
+@validate_json(schemas.check)
+@authorize
+def update_check(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project != request.project:
+        return HttpResponseForbidden()
+
+    try:
         _update(check, request.json)
-        return JsonResponse(check.to_dict())
+    except BadChannelException as e:
+        return JsonResponse({"error": str(e)}, status=400)
 
-    elif request.method == "DELETE":
-        response = check.to_dict()
-        check.delete()
-        return JsonResponse(response)
+    return JsonResponse(check.to_dict())
 
-    # Otherwise, method not allowed
-    return HttpResponse(status=405)
+
+@validate_json()
+@authorize
+def delete_check(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project != request.project:
+        return HttpResponseForbidden()
+
+    response = check.to_dict()
+    check.delete()
+    return JsonResponse(response)
+
+
+@csrf_exempt
+@cors("POST", "DELETE", "GET")
+def single(request, code):
+    if request.method == "POST":
+        return update_check(request, code)
+
+    if request.method == "DELETE":
+        return delete_check(request, code)
+
+    return get_check(request, code)
 
 
 @cors("POST")
@@ -200,8 +244,11 @@ def pause(request, code):
 
 @never_cache
 @cors("GET")
-def badge(request, badge_key, signature, tag, format="svg"):
+def badge(request, badge_key, signature, tag, fmt="svg"):
     if not check_signature(badge_key, tag, signature):
+        return HttpResponseNotFound()
+
+    if fmt not in ("svg", "json", "shields"):
         return HttpResponseNotFound()
 
     q = Check.objects.filter(project__badge_key=badge_key)
@@ -222,7 +269,7 @@ def badge(request, badge_key, signature, tag, format="svg"):
         if check_status == "down":
             down += 1
             status = "down"
-            if format == "svg":
+            if fmt == "svg":
                 # For SVG badges, we can leave the loop as soon as we
                 # find the first "down"
                 break
@@ -231,7 +278,16 @@ def badge(request, badge_key, signature, tag, format="svg"):
             if status == "up":
                 status = "late"
 
-    if format == "json":
+    if fmt == "shields":
+        color = "success"
+        if status == "down":
+            color = "critical"
+        elif status == "late":
+            color = "important"
+
+        return JsonResponse({"label": label, "message": status, "color": color})
+
+    if fmt == "json":
         return JsonResponse(
             {"status": status, "total": total, "grace": grace, "down": down}
         )
@@ -241,6 +297,7 @@ def badge(request, badge_key, signature, tag, format="svg"):
 
 
 @csrf_exempt
+@require_POST
 def bounce(request, code):
     notification = get_object_or_404(Notification, code=code)
 
@@ -252,7 +309,12 @@ def bounce(request, code):
     notification.error = request.body.decode()[:200]
     notification.save()
 
-    notification.channel.email_verified = False
+    notification.channel.last_error = notification.error
+    if request.GET.get("type") in (None, "Permanent"):
+        # For permanent bounces, mark the channel as not verified, so we
+        # will not try to deliver to it again.
+        notification.channel.email_verified = False
+
     notification.channel.save()
 
     return HttpResponse()

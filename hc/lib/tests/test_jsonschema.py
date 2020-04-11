@@ -74,8 +74,10 @@ class JsonSchemaTestCase(TestCase):
             validate("baz", {"enum": ["foo", "bar"]})
 
     def test_it_checks_cron_format(self):
-        with self.assertRaises(ValidationError):
-            validate("x * * * *", {"type": "string", "format": "cron"})
+        samples = ["x * * * *", "0 0 31 2 *"]
+        for sample in samples:
+            with self.assertRaises(ValidationError):
+                validate(sample, {"type": "string", "format": "cron"})
 
     def test_it_checks_timezone_format(self):
         with self.assertRaises(ValidationError):
