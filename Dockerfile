@@ -2,7 +2,7 @@ ARG BUILD_DATE
 
 
 # First stage
-FROM python:3.8-rc-alpine as builder
+FROM python:alpine as builder
 
 # Install deps
 COPY requirements.txt /tmp
@@ -18,7 +18,7 @@ RUN pip install --prefix="/install" --no-warn-script-location -r /tmp/requiremen
 
 
 ## Second stage
-FROM python:3.8-rc-alpine
+FROM python:alpine
 
 ENV DEBUG False
 ENV DB_NAME /data/hc.sqlite
