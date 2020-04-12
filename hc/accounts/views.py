@@ -30,6 +30,7 @@ from hc.accounts.forms import (
     ProjectNameForm,
     AvailableEmailForm,
     EmailLoginForm,
+    TransferForm,
 )
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
@@ -265,16 +266,11 @@ def project(request, code):
         return HttpResponseNotFound()
 
     is_owner = project.owner_id == request.user.id
-    invite_suggestions = project.invite_suggestions()
     ctx = {
         "page": "project",
         "project": project,
         "is_owner": is_owner,
         "show_api_keys": "show_api_keys" in request.GET,
-        "project_name_status": "default",
-        "api_status": "default",
-        "team_status": "default",
-        "invite_suggestions": invite_suggestions,
     }
 
     if request.method == "POST":
@@ -302,6 +298,7 @@ def project(request, code):
             if form.is_valid():
                 email = form.cleaned_data["email"]
 
+                invite_suggestions = project.invite_suggestions()
                 if not invite_suggestions.filter(email=email).exists():
                     # We're inviting a new user. Are we within team size limit?
                     if not project.can_invite_new_users():
@@ -345,6 +342,69 @@ def project(request, code):
 
                 ctx["project_name_updated"] = True
                 ctx["project_name_status"] = "success"
+
+        elif "transfer_project" in request.POST:
+            if not is_owner:
+                return HttpResponseForbidden()
+
+            form = TransferForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data["email"]
+
+                # Revoke any previous transfer requests
+                project.member_set.update(transfer_request_date=None)
+
+                # Initiate the new request
+                q = project.member_set.filter(user__email=email)
+                q.update(transfer_request_date=now())
+
+                ctx["transfer_initiated"] = True
+                ctx["transfer_status"] = "success"
+
+                # FIXME send email
+
+        elif "cancel_transfer" in request.POST:
+            if not is_owner:
+                return HttpResponseForbidden()
+
+            project.member_set.update(transfer_request_date=None)
+            ctx["transfer_cancelled"] = True
+            ctx["transfer_status"] = "success"
+
+        elif "accept_transfer" in request.POST:
+            if not project.transfer_request:
+                return HttpResponseForbidden()
+
+            tr = project.transfer_request()
+            if not tr or tr.user != request.user:
+                return HttpResponseForbidden()
+
+            if not tr.can_accept():
+                return HttpResponseBadRequest()
+
+            # 1. Remove user's membership
+            tr.delete()
+
+            # 2. Invite the current owner as a member
+            Member.objects.create(user=project.owner, project=project)
+
+            # 3. Change project's owner
+            project.owner = request.user
+            project.save()
+
+            ctx["is_owner"] = True
+            messages.success(request, "You are now the owner of this project!")
+
+        elif "reject_transfer" in request.POST:
+            if not project.transfer_request:
+                return HttpResponseForbidden()
+
+            tr = project.transfer_request()
+            if not tr or tr.user != request.user:
+                return HttpResponseForbidden()
+
+            tr.transfer_request_date = None
+            tr.save()
 
     return render(request, "accounts/project.html", ctx)
 

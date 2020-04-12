@@ -5,13 +5,57 @@
 
 
 {% block content %}
+{% with project.transfer_request as transfer_request %}
 <div class="row">
     <div class="col-sm-9 col-md-6">
         {% for message in messages %}
             <p class="alert alert-{{ message.tags }}">{{ message }}</p>
         {% endfor %}
 
-        <div class="panel panel-{{ project_name_status }}">
+        {% if transfer_request and transfer_request.user == request.user %}
+        {% with can_accept=transfer_request.can_accept %}
+        <div id="transfer-request" class="panel">
+            <div class="panel-body settings-block">
+                <h2>Ownership Transfer Request</h2>
+                <p>
+                    <strong>{{ project.owner.email }}</strong> would like to transfer
+                    the ownership of this project to you.
+                </p>
+
+                {% if not can_accept %}
+                {% with num_checks=project.num_checks num_available=request.profile.num_checks_available %}
+                <p>
+                    This project has
+                    <strong>{{ num_checks }} check{{ num_checks|pluralize}}</strong>,
+                    but your account only has space for
+                    <strong>{{ num_available }} additional check{{ num_available|pluralize }}</strong>.
+                    To accept the transfer, please
+                    <a href="{% url 'hc-billing' %}">upgrade your account first!</a>
+                </p>
+                {% endwith%}
+                {% endif %}
+
+                <div class="pull-right">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button
+                            type="submit"
+                            name="reject_transfer"
+                            class="btn btn-default">Reject</button>
+                        <button
+                            type="submit"
+                            name="accept_transfer"
+                            {% if not can_accept %}disabled{% endif %}
+                            class="btn btn-primary">Accept</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        {% endwith %}
+        {% endif %}
+
+        <div class="panel panel-{{ project_name_status|default:'default' }}">
             <div class="panel-body settings-block">
                 <h2>Project Name</h2>
                 {{ project }}
@@ -29,7 +73,7 @@
             {% endif %}
         </div>
 
-        <div class="panel panel-{{ api_status }}">
+        <div class="panel panel-{{ api_status|default:'default' }}">
             <div class="panel-body settings-block">
                 <h2>API Access</h2>
                 {% if project.api_key %}
@@ -91,7 +135,7 @@
             {% endif %}
         </div>
 
-        <div class="panel panel-{{ team_status }}">
+        <div class="panel panel-{{ team_status|default:'default' }}">
             <div class="panel-body settings-block">
                 <h2>Team Access</h2>
                 {% if project.team.exists or invite_suggestions %}
@@ -121,14 +165,16 @@
                         </tr>
                         {% endfor %}
 
-                        {% if is_owner and invite_suggestions %}
+                        {% if is_owner %}
+                        {% with invite_suggestions=project.invite_suggestions %}
+                        {% if invite_suggestions %}
                         <tr id="suggestions-row">
                             <td colspan="3">
                                 Add Users from Other Teams
                             </td>
                         </tr>
 
-                        {% for user in project.invite_suggestions %}
+                        {% for user in invite_suggestions %}
                         <tr class="invite-suggestion">
                             <td>{{ user.email }} </td>
                             <td></td>
@@ -140,6 +186,8 @@
                             </td>
                         </tr>
                         {% endfor %}
+                        {% endif %}
+                        {% endwith %}
                         {% endif %}
                     </table>
                 {% else %}
@@ -181,6 +229,46 @@
             </div>
             {% endif %}
         </div>
+
+        {% if is_owner %}
+        <div class="panel panel-{{ transfer_status|default:'default' }}"">
+            <div class="panel-body settings-block">
+                <h2>Transfer Ownership</h2>
+
+                {% if transfer_request %}
+                <form method="post">
+                    {% csrf_token %}
+                    <button
+                        type="submit"
+                        name="cancel_transfer"
+                        class="btn btn-default pull-right">Cancel Transfer</button>
+                </form>
+
+                Transfer initiated, awaiting confirmation from
+                <strong>{{ transfer_request.user.email }}</strong>.
+
+                {% else %}
+                <a href="#"
+                   class="btn btn-default pull-right"
+                   data-toggle="modal"
+                   data-target="#transfer-modal">Transfer Project&hellip;</a>
+                Transfer this project to a team member.
+                {% endif %}
+            </div>
+
+           {% if transfer_initiated %}
+            <div class="panel-footer">
+                Transfer initiated!
+            </div>
+            {% endif %}
+
+           {% if transfer_cancelled %}
+            <div class="panel-footer">
+                Transfer cancelled!
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
         {% if is_owner %}
         <div class="panel panel-default">
@@ -359,12 +447,60 @@
     </div>
 </div>
 
+{% if not transfer_request %}
+<div id="transfer-modal" class="modal">
+    <div class="modal-dialog">
+    <form
+        class="form-horizontal"
+        method="post">
+        {% csrf_token %}
+        <input type="hidden" name="transfer_project" value="1" />
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Transfer Ownership</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="update-name-input" class="col-sm-4 control-label">
+                        Choose owner
+                    </label>
+                    <div class="col-sm-7">
+                        <select
+                            id="new-owner"
+                            name="email"
+                            title="Select..."
+                            class="form-control selectpicker">
+                            {% for user in project.team %}
+                            <option>{{ user.email }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button
+                    id="transfer-confirm"
+                    disabled
+                    type="submit"
+                    class="btn btn-primary">Initiate Transfer</button>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+{% endif %}
+
+{% endwith %}
 {% endblock %}
 
 {% block scripts %}
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'js/project.js' %}"></script>
 {% endcompress %}
 {% endblock %}

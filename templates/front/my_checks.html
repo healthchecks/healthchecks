@@ -4,6 +4,7 @@
 {% block title %}{{ num_down|num_down_title }}{% endblock %}
 
 {% block content %}
+
 {% if checks %}
 <div class="row">
     <div id="my-checks-tags" class="col-sm-9">
@@ -46,8 +47,12 @@
         {% else %}
             <div class="alert alert-info">
                 <strong>Check limit reached.</strong>
-                To add more checks, please
+                To add more checks in this project, please
+                {% if request.user == project.owner %}
                 <a href="{% url 'hc-billing' %}">upgrade your account!</a>
+                {% else %}
+                ask <strong>{{ project.owner.email }}</strong> to upgrade their account!
+                {% endif %}
             </div>
         {% endif %}
     </div>

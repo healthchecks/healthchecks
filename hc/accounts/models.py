@@ -216,6 +216,17 @@ class Profile(models.Model):
         self.save()
         return True
 
+    def num_checks_used(self):
+        from hc.api.models import Check
+
+        return Check.objects.filter(project__owner_id=self.user_id).count()
+
+    def num_checks_available(self):
+        return self.check_limit - self.num_checks_used()
+
+    def can_accept(self, project):
+        return project.num_checks() <= self.num_checks_available()
+
 
 class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -232,11 +243,11 @@ class Project(models.Model):
     def owner_profile(self):
         return Profile.objects.for_user(self.owner)
 
-    def num_checks_available(self):
-        from hc.api.models import Check
+    def num_checks(self):
+        return self.check_set.count()
 
-        num_used = Check.objects.filter(project__owner=self.owner).count()
-        return self.owner_profile.check_limit - num_used
+    def num_checks_available(self):
+        return self.owner_profile.num_checks_available()
 
     def set_api_keys(self):
         self.api_key = token_urlsafe(nbytes=24)
@@ -294,7 +305,14 @@ class Project(models.Model):
         # It's a problem if any integration has a logged error
         return True if max(errors) else False
 
+    def transfer_request(self):
+        return self.member_set.filter(transfer_request_date__isnull=False).first()
+
 
 class Member(models.Model):
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
     project = models.ForeignKey(Project, models.CASCADE)
+    transfer_request_date = models.DateTimeField(null=True, blank=True)
+
+    def can_accept(self):
+        return self.user.profile.can_accept(self.project)

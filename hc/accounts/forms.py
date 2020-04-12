@@ -104,3 +104,7 @@ class RemoveTeamMemberForm(forms.Form):
 
 class ProjectNameForm(forms.Form):
     name = forms.CharField(max_length=200, required=True)
+
+
+class TransferForm(forms.Form):
+    email = LowercaseEmailField()

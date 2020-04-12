@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from hc.api.models import Check
 from hc.front.views import _get_project_for_user
 from hc.payments.forms import InvoiceEmailingForm
 from hc.payments.models import Subscription
@@ -56,7 +55,6 @@ def billing(request):
         "page": "billing",
         "profile": request.profile,
         "sub": sub,
-        "num_checks": Check.objects.filter(project__owner=request.user).count(),
         "send_invoices_status": send_invoices_status,
         "set_plan_status": "default",
         "address_status": "default",

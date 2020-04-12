@@ -56,9 +56,11 @@
                             {% endif %}
                             <tr>
                                 <td>Checks Used</td>
+                                {% with num_checks=profile.num_checks_used %}
                                 <td {% if num_checks >= profile.check_limit %} class="at-limit" {% endif %}>
                                     <span>{{ num_checks }} of {{ profile.check_limit }}</span>
                                 </td>
+                                {% endwith %}
                             </tr>
                         </table>
 

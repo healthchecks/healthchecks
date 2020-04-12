@@ -62,3 +62,11 @@
 #team-table th {
     border-top: 0;
 }
+
+#transfer-request {
+    border: 5px solid #ffdc3e;
+}
+
+#transfer-request .settings-block {
+    padding: 20px;
+}

@@ -24,4 +24,10 @@ $(function() {
         return false;
     });
 
+    // Enable the submit button in transfer form when user selects
+    // the target owner:
+    $("#new-owner").on("change", function() {
+        $("#transfer-confirm").prop("disabled", !this.value);
+    });
+
 });
