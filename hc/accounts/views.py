@@ -372,9 +372,6 @@ def project(request, code):
             ctx["transfer_status"] = "success"
 
         elif "accept_transfer" in request.POST:
-            if not project.transfer_request:
-                return HttpResponseForbidden()
-
             tr = project.transfer_request()
             if not tr or tr.user != request.user:
                 return HttpResponseForbidden()
@@ -396,9 +393,6 @@ def project(request, code):
             messages.success(request, "You are now the owner of this project!")
 
         elif "reject_transfer" in request.POST:
-            if not project.transfer_request:
-                return HttpResponseForbidden()
-
             tr = project.transfer_request()
             if not tr or tr.user != request.user:
                 return HttpResponseForbidden()
