@@ -49,24 +49,3 @@
     color: #333;
 }
 
-.invite-suggestion {
-    color: #888;
-}
-
-#suggestions-row td {
-    border-top: 0;
-    font-size: 85%;
-    padding-top: 20px;
-}
-
-#team-table th {
-    border-top: 0;
-}
-
-#transfer-request {
-    border: 5px solid #ffdc3e;
-}
-
-#transfer-request .settings-block {
-    padding: 20px;
-}

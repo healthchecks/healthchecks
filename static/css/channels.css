@@ -35,13 +35,6 @@
 }
 
 
-.channels-table .value-cell {
-    max-width: 400px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 .channels-table .channel-row:hover > td {
     background: #f5f5f5;
 }
@@ -50,22 +43,8 @@ table.channels-table > tbody > tr > th {
     border-top: 0;
 }
 
-.word-up {
-    color: #5cb85c;
-    font-weight: bold
-}
-
-.word-down {
-    color: #d9534f;
-    font-weight: bold
-}
-
 .preposition, .description {
     color: #888;
-}
-
-.channel-unconfirmed {
-    font-size: small;
 }
 
 .channel-disabled {
@@ -291,15 +270,4 @@ table.channels-table > tbody > tr > th {
 
 .channel-modal .modal-body {
     padding: 15px 40px;
-}
-
-
-/* Add Webhook */
-
-.webhook-header input.form-control {
-    width: 300px;
-}
-
-.webhook-header {
-    margin-bottom: 4px;
 }

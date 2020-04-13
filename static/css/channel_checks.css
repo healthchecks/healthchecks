@@ -1,28 +1,9 @@
-.channel-checks-table tr:first-child td {
-    border-top: 0;
-}
-
 .channel-checks-table td:first-child, .channel-checks-table th:first-child {
     padding-left: 16px;
 }
 
 .channel-checks-table .check-all-cell {
     background: #EEE;
-}
-
-.channel-checks-table .check-all-cell .cbx-container {
-    background: #FFF;
-}
-
-.channel-checks-table input[type=checkbox]:checked + label:after {
-    font-family: 'Glyphicons Halflings';
-    content: "\e013";
-}
-
-.channel-checks-table label:after {
-    padding-left: 4px;
-    padding-top: 2px;
-    font-size: 9px;
 }
 
 .channel-checks-table .unnamed {

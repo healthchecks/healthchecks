@@ -22,14 +22,6 @@ li + li.nav-header {
     font-weight: bold;
 }
 
-
-.docs-nav ul {
-    margin: 0 0 0 20px;
-    padding: 0;
-    list-style: none;
-
-}
-
 .curl-opts th {
     white-space: nowrap;
     font-family: monospace;

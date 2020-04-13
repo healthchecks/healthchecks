@@ -11,7 +11,7 @@
     padding-bottom: 24px;
 }
 
-.page-profile .icon-ok {
+.page-project .icon-ok {
     color: #5cb85c;
 }
 
@@ -23,10 +23,6 @@
 
 #close-account:hover, #remove-project:hover {
     background-color: #ffebea;
-}
-
-.table td.overall-status {
-    border-top: 0;
 }
 
 .table.badges th {
@@ -49,4 +45,26 @@
     display: inline-block;
     background: #eee;
     padding: 3px;
+}
+
+.invite-suggestion {
+    color: #888;
+}
+
+#suggestions-row td {
+    border-top: 0;
+    font-size: 85%;
+    padding-top: 20px;
+}
+
+#team-table th {
+    border-top: 0;
+}
+
+#transfer-request {
+    border: 5px solid #ffdc3e;
+}
+
+#transfer-request .settings-block {
+    padding: 20px;
 }
