@@ -34,6 +34,13 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
 
+    def test_transfer_project_checks_membership(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"transfer_project": "1", "email": "charlie@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 400)
+
     def test_cancel_works(self):
         self.bobs_membership.transfer_request_date = now()
         self.bobs_membership.save()

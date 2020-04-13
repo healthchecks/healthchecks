@@ -2,6 +2,7 @@ from datetime import timedelta as td
 from urllib.parse import urlparse
 import uuid
 
+from django.db import transaction
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
@@ -339,20 +340,26 @@ def project(request, code):
 
             form = forms.TransferForm(request.POST)
             if form.is_valid():
+                # Look up the proposed new owner
                 email = form.cleaned_data["email"]
+                try:
+                    membership = project.member_set.filter(user__email=email).get()
+                except Member.DoesNotExist:
+                    return HttpResponseBadRequest()
 
                 # Revoke any previous transfer requests
                 project.member_set.update(transfer_request_date=None)
 
                 # Initiate the new request
-                q = project.member_set.filter(user__email=email)
-                q.update(transfer_request_date=now())
+                membership.transfer_request_date = now()
+                membership.save()
+
+                # Send an email notification
+                profile = Profile.objects.for_user(membership.user)
+                profile.send_transfer_request(project)
 
                 ctx["transfer_initiated"] = True
                 ctx["transfer_status"] = "success"
-
-                profile = Profile.objects.get(user__email=email)
-                profile.send_transfer_request(project)
 
         elif "cancel_transfer" in request.POST:
             if not is_owner:
@@ -370,15 +377,15 @@ def project(request, code):
             if not tr.can_accept():
                 return HttpResponseBadRequest()
 
-            # 1. Remove user's membership
-            tr.delete()
+            with transaction.atomic():
+                # 1. Reuse the existing membership, and change its user
+                tr.user = project.owner
+                tr.transfer_request_date = None
+                tr.save()
 
-            # 2. Invite the current owner as a member
-            Member.objects.create(user=project.owner, project=project)
-
-            # 3. Change project's owner
-            project.owner = request.user
-            project.save()
+                # 2. Change project's owner
+                project.owner = request.user
+                project.save()
 
             ctx["is_owner"] = True
             messages.success(request, "You are now the owner of this project!")
