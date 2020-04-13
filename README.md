@@ -196,7 +196,7 @@ DATABASES = {
 
 ## Accessing Administration Panel
 
-healthchecks comes with Django's administation panel where you can manually
+healthchecks comes with Django's administration panel where you can manually
 view and modify user accounts, projects, checks, integrations etc. To access it,
 
  * if you haven't already, create a superuser account: `./manage.py createsuperuser`
