@@ -20,18 +20,7 @@ from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from hc.accounts.forms import (
-    ChangeEmailForm,
-    PasswordLoginForm,
-    InviteTeamMemberForm,
-    RemoveTeamMemberForm,
-    ReportSettingsForm,
-    SetPasswordForm,
-    ProjectNameForm,
-    AvailableEmailForm,
-    EmailLoginForm,
-    TransferForm,
-)
+from hc.accounts import forms
 from hc.accounts.models import Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.lib.date import choose_next_report_date
@@ -106,18 +95,18 @@ def _redirect_after_login(request):
 
 
 def login(request):
-    form = PasswordLoginForm()
-    magic_form = EmailLoginForm()
+    form = forms.PasswordLoginForm()
+    magic_form = forms.EmailLoginForm()
 
     if request.method == "POST":
         if request.POST.get("action") == "login":
-            form = PasswordLoginForm(request.POST)
+            form = forms.PasswordLoginForm(request.POST)
             if form.is_valid():
                 auth_login(request, form.user)
                 return _redirect_after_login(request)
 
         else:
-            magic_form = EmailLoginForm(request.POST)
+            magic_form = forms.EmailLoginForm(request.POST)
             if magic_form.is_valid():
                 redirect_url = request.GET.get("next")
                 if not _is_whitelisted(redirect_url):
@@ -155,7 +144,7 @@ def signup(request):
         return HttpResponseForbidden()
 
     ctx = {}
-    form = AvailableEmailForm(request.POST)
+    form = forms.AvailableEmailForm(request.POST)
     if form.is_valid():
         email = form.cleaned_data["identity"]
         user = _make_user(email)
@@ -241,7 +230,7 @@ def profile(request):
 @login_required
 @require_POST
 def add_project(request):
-    form = ProjectNameForm(request.POST)
+    form = forms.ProjectNameForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest()
 
@@ -294,7 +283,7 @@ def project(request, code):
             if not is_owner:
                 return HttpResponseForbidden()
 
-            form = InviteTeamMemberForm(request.POST)
+            form = forms.InviteTeamMemberForm(request.POST)
             if form.is_valid():
                 email = form.cleaned_data["email"]
 
@@ -321,7 +310,7 @@ def project(request, code):
             if not is_owner:
                 return HttpResponseForbidden()
 
-            form = RemoveTeamMemberForm(request.POST)
+            form = forms.RemoveTeamMemberForm(request.POST)
             if form.is_valid():
                 q = User.objects
                 q = q.filter(email=form.cleaned_data["email"])
@@ -335,7 +324,7 @@ def project(request, code):
                 ctx["team_member_removed"] = form.cleaned_data["email"]
                 ctx["team_status"] = "info"
         elif "set_project_name" in request.POST:
-            form = ProjectNameForm(request.POST)
+            form = forms.ProjectNameForm(request.POST)
             if form.is_valid():
                 project.name = form.cleaned_data["name"]
                 project.save()
@@ -347,7 +336,7 @@ def project(request, code):
             if not is_owner:
                 return HttpResponseForbidden()
 
-            form = TransferForm(request.POST)
+            form = forms.TransferForm(request.POST)
             if form.is_valid():
                 email = form.cleaned_data["email"]
 
@@ -410,7 +399,7 @@ def notifications(request):
     ctx = {"status": "default", "page": "profile", "profile": profile}
 
     if request.method == "POST":
-        form = ReportSettingsForm(request.POST)
+        form = forms.ReportSettingsForm(request.POST)
         if form.is_valid():
             if profile.reports_allowed != form.cleaned_data["reports_allowed"]:
                 profile.reports_allowed = form.cleaned_data["reports_allowed"]
@@ -440,7 +429,7 @@ def set_password(request, token):
         return HttpResponseBadRequest()
 
     if request.method == "POST":
-        form = SetPasswordForm(request.POST)
+        form = forms.SetPasswordForm(request.POST)
         if form.is_valid():
             password = form.cleaned_data["password"]
             request.user.set_password(password)
@@ -466,7 +455,7 @@ def change_email(request, token):
         return HttpResponseBadRequest()
 
     if request.method == "POST":
-        form = ChangeEmailForm(request.POST)
+        form = forms.ChangeEmailForm(request.POST)
         if form.is_valid():
             request.user.email = form.cleaned_data["email"]
             request.user.set_unusable_password()
@@ -477,7 +466,7 @@ def change_email(request, token):
 
             return redirect("hc-change-email-done")
     else:
-        form = ChangeEmailForm()
+        form = forms.ChangeEmailForm()
 
     return render(request, "accounts/change_email.html", {"form": form})
 
