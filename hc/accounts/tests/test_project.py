@@ -172,3 +172,12 @@ class ProjectTestCase(BaseTestCase):
 
         self.project.refresh_from_db()
         self.assertEqual(self.project.name, "Alpha Team")
+
+    def test_it_shows_invite_suggestions(self):
+        p2 = Project.objects.create(owner=self.alice)
+
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/projects/%s/settings/" % p2.code)
+        self.assertContains(r, "Add Users from Other Teams")
+        self.assertContains(r, "bob@example.org")

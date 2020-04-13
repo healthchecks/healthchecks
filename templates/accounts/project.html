@@ -135,6 +135,7 @@
             {% endif %}
         </div>
 
+        {% with invite_suggestions=project.invite_suggestions %}
         <div class="panel panel-{{ team_status|default:'default' }}">
             <div class="panel-body settings-block">
                 <h2>Team Access</h2>
@@ -165,9 +166,7 @@
                         </tr>
                         {% endfor %}
 
-                        {% if is_owner %}
-                        {% with invite_suggestions=project.invite_suggestions %}
-                        {% if invite_suggestions %}
+                        {% if is_owner and invite_suggestions %}
                         <tr id="suggestions-row">
                             <td colspan="3">
                                 Add Users from Other Teams
@@ -186,8 +185,6 @@
                             </td>
                         </tr>
                         {% endfor %}
-                        {% endif %}
-                        {% endwith %}
                         {% endif %}
                     </table>
                 {% else %}
@@ -216,6 +213,7 @@
                 {% endif %}
                 {% endif %}
             </div>
+            {% endwith %}
 
            {% if team_member_invited %}
             <div class="panel-footer">
