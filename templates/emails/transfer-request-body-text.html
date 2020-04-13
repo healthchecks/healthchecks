@@ -1,0 +1,14 @@
+{% load hc_extras %}
+{% block content %}Hello,
+
+{{ project.owner.email }} would like to transfer the ownership of their
+project {% if project.name %}"{{ project.name }}"{% endif %} to you.
+
+To accept or reject this request, please visit the project's Settings
+page:
+
+{{ button_url }}
+
+Thanks,
+The {% site_name %} Team
+{% endblock %}

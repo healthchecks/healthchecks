@@ -1,3 +1,4 @@
+from django.core import mail
 from django.utils.timezone import now
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -20,6 +21,11 @@ class ProjectTestCase(BaseTestCase):
 
         self.bobs_membership.refresh_from_db()
         self.assertIsNotNone(self.bobs_membership.transfer_request_date)
+
+        # Bob should receive an email notification
+        self.assertEqual(len(mail.outbox), 1)
+        body = mail.outbox[0].body
+        self.assertTrue("/?next=" + self.url in body)
 
     def test_transfer_project_checks_ownership(self):
         self.client.login(username="bob@example.org", password="password")

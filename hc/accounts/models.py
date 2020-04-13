@@ -96,6 +96,19 @@ class Profile(models.Model):
         }
         emails.login(self.user.email, ctx)
 
+    def send_transfer_request(self, project):
+        token = self.prepare_token("login")
+        settings_path = reverse("hc-project-settings", args=[project.code])
+        path = reverse("hc-check-token", args=[self.user.username, token])
+        path += "?next=%s" % settings_path
+
+        ctx = {
+            "button_text": "Project Settings",
+            "button_url": settings.SITE_ROOT + path,
+            "project": project,
+        }
+        emails.transfer_request(self.user.email, ctx)
+
     def send_set_password_link(self):
         token = self.prepare_token("set-password")
         path = reverse("hc-set-password", args=[token])

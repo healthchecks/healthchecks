@@ -34,6 +34,7 @@ NEXT_WHITELIST = (
     "hc-add-slack",
     "hc-add-pushover",
     "hc-add-telegram",
+    "hc-project-settings",
 )
 
 
@@ -350,7 +351,8 @@ def project(request, code):
                 ctx["transfer_initiated"] = True
                 ctx["transfer_status"] = "success"
 
-                # FIXME send email
+                profile = Profile.objects.get(user__email=email)
+                profile.send_transfer_request(project)
 
         elif "cancel_transfer" in request.POST:
             if not is_owner:

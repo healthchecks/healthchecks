@@ -159,6 +159,8 @@
                         {% endfor %}
 
                     <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">{{ request.user.email }}</li>
+
                     <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
                     <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
                     </ul>

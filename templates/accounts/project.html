@@ -460,6 +460,7 @@
             </div>
             <div class="modal-body">
 
+                {% if project.team %}
                 <div class="form-group">
                     <label for="update-name-input" class="col-sm-4 control-label">
                         Choose owner
@@ -476,6 +477,13 @@
                         </select>
                     </div>
                 </div>
+                {% else %}
+                <p>
+                    This project currently has no team members.
+                    To transfer the ownership of this project, please start by
+                    inviting the new owner as a team member.
+                </p>
+                {% endif %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
