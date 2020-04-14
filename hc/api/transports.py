@@ -42,7 +42,7 @@ class Transport(object):
     def is_noop(self, check):
         """ Return True if transport will ignore check's current status.
 
-        This method is overriden in Webhook subclass where the user can
+        This method is overridden in Webhook subclass where the user can
         configure webhook urls for "up" and "down" events, and both are
         optional.
 

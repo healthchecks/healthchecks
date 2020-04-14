@@ -299,7 +299,7 @@ tz
 :   string, optional, default value: "UTC".
 
     Server's timezone. This setting only has effect in combination with the
-    "schedule" paremeter.
+    "schedule" parameter.
 
     Example:
 
@@ -453,7 +453,7 @@ tz
 :   string, optional.
 
     Server's timezone. This setting only has effect in combination with the
-    "schedule" paremeter.
+    "schedule" parameter.
 
     Example:
 
