@@ -45,7 +45,7 @@ limit depends on the account's billing plan.
 Account's check limit is shared by all projects owned by your account.
 For example, consider a Business account with two projects,
 "Project A" and "Project B". If A has 70 checks, then B cannot have more than
-30 checks, in order to not exceed business account's total limit of 100.
+30 checks, in order to not exceed the Business account's total limit of 100.
 
 However, only checks from your own projects count towards your account's
 quota. If you get invited to somebody else's project, that does not change
