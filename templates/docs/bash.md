@@ -47,7 +47,7 @@ In the below example, certbot's output is captured and submitted via HTTP POST:
 #!/bin/sh
 
 m=$(/usr/bin/certbot renew 2>&1)
-curl -fsS --retry 3 -X POST --data-raw "$m" PING_URL
+curl -fsS --retry 3 --data-raw "$m" PING_URL
 ```
 
 ## Auto-provisioning New Checks

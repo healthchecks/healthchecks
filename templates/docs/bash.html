@@ -40,7 +40,7 @@ will accept and store first 10KB of the request body.</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
-curl -fsS --retry <span class="m">3</span> -X POST --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
+curl -fsS --retry <span class="m">3</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
 </code></pre></div>
 
 
