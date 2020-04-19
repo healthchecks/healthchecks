@@ -15,7 +15,7 @@ the captured output to SITE_NAME:
 #!/bin/sh
 
 m=$(/usr/bin/certbot renew 2>&1)
-curl -fsS --retry 3 -X POST --data-raw "$m" PING_URL
+curl -fsS --retry 3 --data-raw "$m" PING_URL
 ```
 
 ## In Combination with the `/fail` Endpoint
@@ -31,7 +31,7 @@ url=PING_URL
 m=$(/usr/bin/certbot renew 2>&1)
 
 if [ $? -ne 0 ]; then url=$url/fail; fi
-curl -fsS --retry 3 -X POST --data-raw "$m" $url
+curl -fsS --retry 3 --data-raw "$m" $url
 ```
 
 ## All in One Line
@@ -40,5 +40,5 @@ Finally, all of the above can be packaged in a single line. The one-line
 version can be put directly in crontab, without using a wrapper script.
 
 ```bash
-m=$(/usr/bin/certbot renew 2>&1); curl -fsS -X POST --data-raw "$m" "PING_URL$([ $? -ne 0 ] && echo -n /fail)"
+m=$(/usr/bin/certbot renew 2>&1); curl -fsS --data-raw "$m" "PING_URL$([ $? -ne 0 ] && echo -n /fail)"
 ```
