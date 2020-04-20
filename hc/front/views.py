@@ -556,6 +556,9 @@ def transfer(request, code):
 def copy(request, code):
     check = _get_check_for_user(request, code)
 
+    if check.project.num_checks_available() <= 0:
+        return HttpResponseBadRequest()
+
     copied = Check(project=check.project)
     copied.name = check.name + " (copy)"
     copied.desc, copied.tags = check.desc, check.tags

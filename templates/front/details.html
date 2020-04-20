@@ -223,11 +223,13 @@
             <p>Copy, Transfer, or permanently remove this check.</p>
 
             <div class="text-right">
+                {% if project.num_checks_available > 0 %}
                 <button
                     id="copy-btn"
                     data-toggle="modal"
                     data-target="#copy-modal"
                     class="btn btn-sm btn-default">Create a Copy&hellip;</button>
+                {% endif %}
                 <button
                     id="transfer-btn"
                     data-toggle="modal"
