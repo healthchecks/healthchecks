@@ -70,6 +70,21 @@ class Subscription(models.Model):
             self._pm = braintree.PaymentMethod.find(o.payment_method_token)
         return self._pm
 
+    @property
+    def is_supporter(self):
+        return self.plan_id in ("S5", "S48")
+
+    @property
+    def is_business(self):
+        return self.plan_id in ("P20", "Y192")
+
+    @property
+    def is_business_plus(self):
+        return self.plan_id in ("P80", "Y768")
+
+    def is_annual(self):
+        return self.plan_id in ("S48", "Y192", "Y768")
+
     def _get_braintree_subscription(self):
         if not hasattr(self, "_sub"):
             self._sub = braintree.Subscription.find(self.subscription_id)

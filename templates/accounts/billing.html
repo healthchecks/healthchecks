@@ -192,7 +192,7 @@
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div id="plan-supporter" class="panel plan {% if sub.plan_id == "S5" or sub.plan_id == "S48" %}selected{% endif %}">
+                        <div id="plan-supporter" class="panel plan {% if sub.is_supporter %}selected{% endif %}">
                             <div class="marker">Selected Plan</div>
 
                             <h2>Supporter</h2>
@@ -208,7 +208,7 @@
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div id="plan-business" class="panel plan {% if sub.plan_id == "P20" or sub.plan_id == "Y192" %}selected{% endif %}">
+                        <div id="plan-business" class="panel plan {% if sub.is_business %}selected{% endif %}">
                             <div class="marker">Selected Plan</div>
 
                             <h2>Business</h2>
@@ -224,7 +224,7 @@
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3">
-                        <div id="plan-business-plus" class="panel plan {% if sub.plan_id == "P80" or sub.plan_id == "Y768" %}selected{% endif %}">
+                        <div id="plan-business-plus" class="panel plan {% if sub.is_business_plus %}selected{% endif %}">
                             <div class="marker">Selected Plan</div>
 
                             <h2>Business Plus</h2>
@@ -251,7 +251,7 @@
                                 type="radio"
                                 name="billing_period"
                                 value="monthly"
-                                {% if sub.plan_id == "Y192" or sub.plan_id == "Y768" %}{% else %}checked{% endif %}>
+                                {% if not sub.is_annual %}checked{% endif %}>
                             <span class="radiomark"></span>
                             Monthly
                         </label>
@@ -261,7 +261,7 @@
                                 type="radio"
                                 name="billing_period"
                                 value="annual"
-                                {% if sub.plan_id == "Y192" or sub.plan_id == "Y768" %} checked {% endif %}>
+                                {% if sub.is_annual %} checked {% endif %}>
                             <span class="radiomark"></span>
                             Annual, 20% off
                         </label>
