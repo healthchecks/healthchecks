@@ -154,3 +154,8 @@ tr:hover .copy-link {
     opacity: 0;
 }
 
+#checks-table tr:hover .pause.confirm:hover {
+    background: #0091ea;
+    color: #FFF;
+    outline: none;
+}

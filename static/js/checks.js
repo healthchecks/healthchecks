@@ -141,8 +141,25 @@ $(function () {
         return false;
     });
 
-    $(".pause").click(function(e) {
-        var code = $(this).closest("tr.checks-row").attr("id");
+
+    $(".pause").tooltip({
+        title: "Pause this check?<br />Click again to confirm.",
+        trigger: "manual",
+        html: true
+    });
+
+    $(".pause").click(function() {
+        var btn = $(this);
+
+        // First click: show a confirmation tooltip
+        if (!btn.hasClass("confirm")) {
+            btn.addClass("confirm").tooltip("show");
+            return false;
+        }
+
+        // Second click: update UI and pause the check
+        btn.removeClass("confirm").tooltip("hide");
+        var code = btn.closest("tr.checks-row").attr("id");
         $("#" + code + " span.status").attr("class", "status icon-paused");
 
         var url = base + "/checks/" + code + "/pause/";
@@ -155,6 +172,11 @@ $(function () {
 
         return false;
     });
+
+    $(".pause").mouseleave(function() {
+        $(this).removeClass("confirm").tooltip("hide");
+    });
+
 
     $('[data-toggle="tooltip"]').tooltip({
         html: true,

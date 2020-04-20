@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Use Slack V2 OAuth flow
 - Users can edit their existing webhook integrations (#176)
 - Add a "Transfer Ownership" feature in Project Settings
+- In checks list, the pause button asks for confirmation (#356)
 
 ### Bug Fixes
 - "Get a single check" API call now supports read-only API keys (#346)
