@@ -65,6 +65,28 @@ class TeamFieldset(Fieldset):
     )
 
 
+class NumChecksFilter(admin.SimpleListFilter):
+    title = "Checks"
+
+    parameter_name = "num_checks"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("20", "more than 20"),
+            ("50", "more than 50"),
+            ("100", "more than 100"),
+            ("500", "more than 500"),
+            ("1000", "more than 1000"),
+        )
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return
+
+        value = int(self.value())
+        return queryset.filter(num_checks__gt=value)
+
+
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     class Media:
@@ -72,15 +94,15 @@ class ProfileAdmin(admin.ModelAdmin):
 
     readonly_fields = ("user", "email")
     search_fields = ["id", "user__email"]
-    list_per_page = 50
+    list_per_page = 30
     list_select_related = ("user",)
     list_display = (
         "id",
         "email",
-        "usage",
         "date_joined",
         "last_active_date",
         "projects",
+        "checks",
         "invited",
         "sms",
         "reports_allowed",
@@ -90,6 +112,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "last_active_date",
         "reports_allowed",
         "check_limit",
+        NumChecksFilter,
     )
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
@@ -99,12 +122,8 @@ class ProfileAdmin(admin.ModelAdmin):
         qs = qs.prefetch_related("user__project_set")
         qs = qs.annotate(num_members=Count("user__project__member", distinct=True))
         qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
-        qs = qs.annotate(num_channels=Count("user__project__channel", distinct=True))
         qs = qs.annotate(plan=F("user__subscription__plan_name"))
         return qs
-
-    def usage(self, obj):
-        return _format_usage(obj.num_checks, obj.num_channels)
 
     @mark_safe
     def email(self, obj):
@@ -120,6 +139,9 @@ class ProfileAdmin(admin.ModelAdmin):
     @mark_safe
     def projects(self, obj):
         return render_to_string("admin/profile_list_projects.html", {"profile": obj})
+
+    def checks(self, obj):
+        return "%d of %d" % (obj.num_checks, obj.check_limit)
 
     def invited(self, obj):
         return "%d of %d" % (obj.num_members, obj.team_limit)
