@@ -1,6 +1,10 @@
 {% extends "admin/base_site.html" %}
-{% load hc_extras %}
+{% load hc_extras static %}
 {% block title %}{% site_name %} Administration{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'css/icomoon.css' %}" type="text/css">
+{% endblock %}
 
 {% block branding %}
 <h1 id="site-name">

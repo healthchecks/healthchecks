@@ -42,7 +42,7 @@ class ChecksAdmin(admin.ModelAdmin):
         url = reverse("hc-checks", args=[obj.project.code])
         name = escape(obj.project_name or "Default")
         email = escape(obj.email)
-        return f'<a href="{url}"">{name}</a> &bull; {email}'
+        return f'{email} &rsaquo; <a href="{url}"">{name}</a>'
 
     @mark_safe
     def name_tags(self, obj):
@@ -177,9 +177,9 @@ class ChannelsAdmin(admin.ModelAdmin):
     search_fields = ["value", "project__owner__email"]
     list_display = (
         "id",
+        "kind_",
         "name",
         "project_",
-        "formatted_kind",
         "value",
         "num_notifications",
     )
@@ -191,7 +191,7 @@ class ChannelsAdmin(admin.ModelAdmin):
         url = reverse("hc-checks", args=[obj.project.code])
         name = escape(obj.project_name or "Default")
         email = escape(obj.email)
-        return f"<a href='{url}'>{name}</a> &bull; {email}"
+        return f"{email} &rsaquo; <a href='{url}'>{name}</a>"
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -201,13 +201,8 @@ class ChannelsAdmin(admin.ModelAdmin):
         return qs
 
     @mark_safe
-    def formatted_kind(self, obj):
-        if obj.kind == "email" and not obj.email_verified:
-            return "Email <i>(unconfirmed)</i>"
-
-        return obj.get_kind_display()
-
-    formatted_kind.short_description = "Kind"
+    def kind_(self, obj):
+        return f'<span class="icon-{ obj.kind }"></span> &nbsp; {obj.kind}'
 
     def num_notifications(self, obj):
         return obj.notification__count
