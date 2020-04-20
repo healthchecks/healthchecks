@@ -9,6 +9,27 @@ from django.utils.safestring import mark_safe
 from hc.accounts.models import Profile, Project
 
 
+@mark_safe
+def _format_usage(num_checks, num_channels):
+    result = ""
+
+    if num_checks == 0:
+        result += "0 checks, "
+    elif num_checks == 1:
+        result += "1 check, "
+    else:
+        result += f"<strong>{num_checks} checks</strong>, "
+
+    if num_channels == 0:
+        result += "0 channels"
+    elif num_channels == 1:
+        result += "1 channel"
+    else:
+        result += f"<strong>{num_channels} channels</strong>"
+
+    return result
+
+
 class Fieldset:
     name = None
     fields = []
@@ -56,9 +77,9 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "email",
-        "engagement",
+        "usage",
         "date_joined",
-        "last_login",
+        "last_active_date",
         "projects",
         "invited",
         "sms",
@@ -66,7 +87,7 @@ class ProfileAdmin(admin.ModelAdmin):
     )
     list_filter = (
         "user__date_joined",
-        "user__last_login",
+        "last_active_date",
         "reports_allowed",
         "check_limit",
     )
@@ -82,25 +103,8 @@ class ProfileAdmin(admin.ModelAdmin):
         qs = qs.annotate(plan=F("user__subscription__plan_name"))
         return qs
 
-    @mark_safe
-    def engagement(self, obj):
-        result = ""
-
-        if obj.num_checks == 0:
-            result += "0 checks, "
-        elif obj.num_checks == 1:
-            result += "1 check, "
-        else:
-            result += "<strong>%d checks</strong>, " % obj.num_checks
-
-        if obj.num_channels == 0:
-            result += "0 channels"
-        elif obj.num_channels == 1:
-            result += "1 channel, "
-        else:
-            result += "<strong>%d channels</strong>, " % obj.num_channels
-
-        return result
+    def usage(self, obj):
+        return _format_usage(obj.num_checks, obj.num_channels)
 
     @mark_safe
     def email(self, obj):
@@ -109,9 +113,6 @@ class ProfileAdmin(admin.ModelAdmin):
             return "<span title='%s'>%s</span>" % (obj.plan, s)
 
         return s
-
-    def last_login(self, obj):
-        return obj.user.last_login
 
     def date_joined(self, obj):
         return obj.user.date_joined
@@ -131,7 +132,7 @@ class ProfileAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     readonly_fields = ("code", "owner")
     list_select_related = ("owner",)
-    list_display = ("id", "name_", "users", "engagement", "switch")
+    list_display = ("id", "name_", "users", "usage", "switch")
     search_fields = ["id", "name", "owner__email"]
 
     class Media:
@@ -160,25 +161,8 @@ class ProjectAdmin(admin.ModelAdmin):
     def email(self, obj):
         return obj.owner.email
 
-    @mark_safe
-    def engagement(self, obj):
-        result = ""
-
-        if obj.num_checks == 0:
-            result += "0 checks, "
-        elif obj.num_checks == 1:
-            result += "1 check, "
-        else:
-            result += "<strong>%d checks</strong>, " % obj.num_checks
-
-        if obj.num_channels == 0:
-            result += "0 channels"
-        elif obj.num_channels == 1:
-            result += "1 channel, "
-        else:
-            result += "<strong>%d channels</strong>, " % obj.num_channels
-
-        return result
+    def usage(self, obj):
+        return _format_usage(obj.num_checks, obj.num_channels)
 
     @mark_safe
     def switch(self, obj):
@@ -191,7 +175,7 @@ class HcUserAdmin(UserAdmin):
     list_display = (
         "id",
         "email",
-        "engagement",
+        "usage",
         "date_joined",
         "last_login",
         "is_staff",
@@ -210,24 +194,8 @@ class HcUserAdmin(UserAdmin):
         return qs
 
     @mark_safe
-    def engagement(self, user):
-        result = ""
-
-        if user.num_checks == 0:
-            result += "0 checks, "
-        elif user.num_checks == 1:
-            result += "1 check, "
-        else:
-            result += "<strong>%d checks</strong>, " % user.num_checks
-
-        if user.num_channels == 0:
-            result += "0 channels"
-        elif user.num_channels == 1:
-            result += "1 channel, "
-        else:
-            result += "<strong>%d channels</strong>, " % user.num_channels
-
-        return result
+    def usage(self, user):
+        return _format_usage(user.num_checks, user.num_channels)
 
     def send_report(self, request, qs):
         for user in qs:

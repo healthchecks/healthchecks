@@ -2,3 +2,10 @@
     font-family: monospace;
     font-size: 80%;
 }
+
+.field-name_tags span {
+    color: #555;
+    background: #EEE;
+    padding: 1px 4px;
+    border-radius: 2px;
+}

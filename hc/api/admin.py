@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
 from django.db.models import Count, F
+from django.urls import reverse
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.date import format_duration
@@ -17,7 +19,7 @@ class ChecksAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name_tags",
-        "email",
+        "project_",
         "created",
         "n_pings",
         "timeout_schedule",
@@ -32,16 +34,26 @@ class ChecksAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(email=F("project__owner__email"))
+        qs = qs.annotate(project_name=F("project__name"))
         return qs
 
-    def email(self, obj):
-        return obj.email
+    @mark_safe
+    def project_(self, obj):
+        url = reverse("hc-checks", args=[obj.project.code])
+        name = escape(obj.project_name or "Default")
+        email = escape(obj.email)
+        return f'<a href="{url}"">{name}</a> &bull; {email}'
 
+    @mark_safe
     def name_tags(self, obj):
-        if not obj.tags:
-            return obj.name
+        url = reverse("hc-details", args=[obj.code])
+        name = escape(obj.name or "unnamed")
 
-        return "%s [%s]" % (obj.name, obj.tags)
+        s = f'<a href="{url}"">{name}</a>'
+        for tag in obj.tags_list():
+            s += " <span>%s</span>" % escape(tag)
+
+        return s
 
     def timeout_schedule(self, obj):
         if obj.kind == "simple":
@@ -166,7 +178,7 @@ class ChannelsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
-        "email",
+        "project_",
         "formatted_kind",
         "value",
         "num_notifications",
@@ -174,14 +186,19 @@ class ChannelsAdmin(admin.ModelAdmin):
     list_filter = ("kind",)
     raw_id_fields = ("project", "checks")
 
+    @mark_safe
+    def project_(self, obj):
+        url = reverse("hc-checks", args=[obj.project.code])
+        name = escape(obj.project_name or "Default")
+        email = escape(obj.email)
+        return f"<a href='{url}'>{name}</a> &bull; {email}"
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(Count("notification", distinct=True))
+        qs = qs.annotate(project_name=F("project__name"))
         qs = qs.annotate(email=F("project__owner__email"))
         return qs
-
-    def email(self, obj):
-        return obj.email
 
     @mark_safe
     def formatted_kind(self, obj):
@@ -213,6 +230,7 @@ class NotificationsAdmin(admin.ModelAdmin):
         "error",
     )
     list_filter = ("created", "check_status", "channel__kind")
+    raw_id_fields = ("channel",)
 
     def channel_kind(self, obj):
         return obj.channel.kind
