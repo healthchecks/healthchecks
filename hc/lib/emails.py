@@ -32,8 +32,12 @@ def send(name, to, ctx, headers={}):
 
     t = EmailThread(subject, text, html, to, headers)
     if hasattr(settings, "BLOCKING_EMAILS"):
+        # In tests, we send emails synchronously
+        # so we can inspect the outgoing messages
         t.run()
     else:
+        # Outside tests, we send emails on thread,
+        # so there is no delay for the user.
         t.start()
 
 
@@ -63,18 +67,6 @@ def verify_email(to, ctx):
 
 def report(to, ctx, headers={}):
     send("report", to, ctx, headers)
-
-
-def invoice(to, ctx, filename, pdf_data):
-    ctx["SITE_ROOT"] = settings.SITE_ROOT
-    subject = render("emails/invoice-subject.html", ctx).strip()
-    text = render("emails/invoice-body-text.html", ctx)
-    html = render("emails/invoice-body-html.html", ctx)
-
-    msg = EmailMultiAlternatives(subject, text, to=(to,))
-    msg.attach_alternative(html, "text/html")
-    msg.attach(filename, pdf_data, "application/pdf")
-    msg.send()
 
 
 def deletion_notice(to, ctx, headers={}):
