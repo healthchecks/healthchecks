@@ -20,13 +20,3 @@ class ApiAdminTestCase(BaseTestCase):
 
         r = self.client.get("/admin/api/channel/")
         self.assertContains(r, "Pushbullet")
-
-    def test_it_shows_channel_list_with_unverified_email(self):
-        self.client.login(username="alice@example.org", password="password")
-
-        Channel.objects.create(
-            project=self.project, kind="email", value="foo@example.org"
-        )
-
-        r = self.client.get("/admin/api/channel/")
-        self.assertContains(r, "Email <i>(unconfirmed)</i>")
