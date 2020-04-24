@@ -282,7 +282,8 @@ class Project(models.Model):
 
     def invite(self, user):
         Member.objects.create(user=user, project=self)
-        user.profile.send_instant_login_link(self)
+        checks_url = reverse("hc-checks", args=[self.code])
+        user.profile.send_instant_login_link(self, redirect_url=checks_url)
 
     def set_next_nag_date(self):
         """ Set next_nag_date on profiles of all members of this project. """
