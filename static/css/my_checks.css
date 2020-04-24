@@ -196,3 +196,7 @@
 #update-name-modal .modal-body {
     padding: 15px 40px;
 }
+
+#my-checks-bottom-actions {
+    margin-bottom: 20px;
+}

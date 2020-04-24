@@ -1,3 +1,9 @@
+#pricing-tagline {
+    font-weight: bold;
+    margin: 20px 0;
+    font-size: 28px;
+}
+
 #subscription-status form {
     display: inline-block;
 }

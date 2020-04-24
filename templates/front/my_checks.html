@@ -32,7 +32,7 @@
     {% endif %}
     </div>
 </div>
-<div class="row">
+<div id="my-checks-bottom-actions" class="row">
     <div class="col-sm-12">
         {% if num_available > 0 %}
             <form method="post" action="{% url 'hc-add-check' project.code %}" class="text-center">

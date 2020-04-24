@@ -8,7 +8,7 @@
 }
 
 .get-started-bleed {
-    background: #e5ece5;
+    background: #f2f5f2;
     padding: 3em 0;
 }
 
@@ -21,10 +21,19 @@
     text-align: center;
     padding: 100px 0;
     margin: 0;
-    font-size: 28px;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+#pitch small {
+    display: block;
+    margin-top: 10px;
+    font-size: 18px;
+    color: #333;
 }
 
 #pitch-subtitle {
+    font-size: 14px;
     margin-top: 0;
     text-align: center;
 }
@@ -35,12 +44,11 @@
     margin: 10px auto;
 }
 
-#pitch-url-input {
-    text-align: center;
-    background: #FFF;
-    border: 0;
-    box-shadow: none;
-    cursor: text;
+#pitch-url code {
+    background: #f5f5f5;
+    display: inline-block;
+    margin-top: 0px;
+    padding: 6px 9px;
 }
 
 #pitch-text {
@@ -63,6 +71,15 @@
 
 
 .tour-section {
+    margin-bottom: 80px;
+}
+
+.tour-section h3 {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#welcome-integrations {
     margin-bottom: 80px;
 }
 
@@ -110,8 +127,8 @@
     border-top: 0;
 }
 
-.tab-pane p {
-    padding: 15px;
+#email.tab-pane {
+    padding: 20px;
     margin: 0;
 }
 
