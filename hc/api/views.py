@@ -329,10 +329,12 @@ def metrics(request):
     if key != settings.METRICS_KEY:
         return HttpResponseForbidden()
 
-    doc = {}
-    doc["ts"] = int(time.time())
-    doc["max_ping_id"] = Ping.objects.values_list("id", flat=True).last()
-    doc["num_unprocessed_flips"] = Flip.objects.filter(processed__isnull=True).count()
+    doc = {
+        "ts": int(time.time()),
+        "max_ping_id": Ping.objects.values_list("id", flat=True).last(),
+        "max_notification_id": Notification.objects.values_list("id", flat=True).last(),
+        "num_unprocessed_flips": Flip.objects.filter(processed__isnull=True).count(),
+    }
 
     return JsonResponse(doc)
 

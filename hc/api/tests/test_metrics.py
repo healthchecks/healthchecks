@@ -1,6 +1,6 @@
 from django.test.utils import override_settings
 from django.utils.timezone import now
-from hc.api.models import Check, Flip, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -32,6 +32,18 @@ class MetricsTestCase(BaseTestCase):
 
         doc = r.json()
         self.assertEqual(doc["max_ping_id"], last_ping.id)
+
+    def test_it_returns_max_notification_id(self):
+        check = Check.objects.create(project=self.project, status="down")
+        channel = Channel.objects.create(project=self.project, kind="email")
+        Notification.objects.create(owner=check, channel=channel, check_status="down")
+        last_notification = Notification.objects.last()
+
+        r = self.client.get(self.url, HTTP_X_METRICS_KEY="foo")
+        self.assertEqual(r.status_code, 200)
+
+        doc = r.json()
+        self.assertEqual(doc["max_notification_id"], last_notification.id)
 
     @override_settings(METRICS_KEY=None)
     def test_it_handles_unset_metrics_key(self):
