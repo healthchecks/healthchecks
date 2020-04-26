@@ -17,7 +17,7 @@ from django.views.decorators.http import require_POST
 
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
-from hc.api.models import Check, Notification, Channel
+from hc.api.models import Flip, Channel, Check, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg
 
 
@@ -318,6 +318,21 @@ def bounce(request, code):
     notification.channel.save()
 
     return HttpResponse()
+
+
+def metrics(request):
+    if not settings.METRICS_KEY:
+        return HttpResponseForbidden()
+
+    key = request.META.get("HTTP_X_METRICS_KEY")
+    if key != settings.METRICS_KEY:
+        return HttpResponseForbidden()
+
+    doc = {}
+    doc["max_ping_id"] = Ping.objects.values_list("id", flat=True).last()
+    doc["num_unprocessed_flips"] = Flip.objects.filter(processed__isnull=True).count()
+
+    return JsonResponse(doc)
 
 
 def status(request):

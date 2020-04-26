@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Users can edit their existing webhook integrations (#176)
 - Add a "Transfer Ownership" feature in Project Settings
 - In checks list, the pause button asks for confirmation (#356)
+- Added /api/v1/metrics/ endpoint, useful for monitoring the service itself
 
 ### Bug Fixes
 - "Get a single check" API call now supports read-only API keys (#346)

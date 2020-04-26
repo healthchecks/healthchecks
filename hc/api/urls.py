@@ -37,5 +37,6 @@ urlpatterns = [
         {"tag": "*"},
         name="hc-badge-all",
     ),
+    path("api/v1/metrics/", views.metrics),
     path("api/v1/status/", views.status),
 ]
