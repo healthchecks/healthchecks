@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+import time
 import uuid
 
 from django.conf import settings
@@ -329,6 +330,7 @@ def metrics(request):
         return HttpResponseForbidden()
 
     doc = {}
+    doc["ts"] = int(time.time())
     doc["max_ping_id"] = Ping.objects.values_list("id", flat=True).last()
     doc["num_unprocessed_flips"] = Flip.objects.filter(processed__isnull=True).count()
 
