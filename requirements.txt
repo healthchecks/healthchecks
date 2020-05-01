@@ -1,7 +1,7 @@
-croniter==0.3.30
+croniter==0.3.31
 Django==3.0.4
 django-compressor==2.4
 psycopg2==2.8.4
-pytz==2019.3
-requests==2.22.0
+pytz==2020.1
+requests==2.23.0
 statsd==3.3.0
