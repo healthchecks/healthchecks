@@ -36,3 +36,4 @@ Please submit additions and corrections
 
 * [HealthTray](https://github.com/taylus/HealthTray) – Watch your healthchecks in Windows system tray.
 * [healthchecks/dashboard](https://github.com/healthchecks/dashboard) – A standalone HTML page showing the status of the checks in your account.
+* [runitor](https://github.com/bdd/runitor) - A command runner with healthchecks.io integration to keep your scripts and containers simple.
