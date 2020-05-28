@@ -84,6 +84,7 @@ class Check(models.Model):
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
+    unique_key = models.CharField(max_length=40, blank=True)
 
     class Meta:
         indexes = [
@@ -95,6 +96,12 @@ class Check(models.Model):
                 condition=~models.Q(status="down"),
             )
         ]
+
+    def save(self, *args, **kwargs):
+        if not self.unique_key:
+            code_half = self.code.hex[:16]
+            self.unique_key = hashlib.sha1(code_half.encode()).hexdigest()
+        super().save(*args,**kwargs)
 
     def __str__(self):
         return "%s (%d)" % (self.name or self.code, self.id)
@@ -200,10 +207,6 @@ class Check(models.Model):
         codes = self.channel_set.order_by("code").values_list("code", flat=True)
         return ",".join(map(str, codes))
 
-    @property
-    def unique_key(self):
-        code_half = self.code.hex[:16]
-        return hashlib.sha1(code_half.encode()).hexdigest()
 
     def to_dict(self, readonly=False):
 

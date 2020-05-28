@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 - Add a "Transfer Ownership" feature in Project Settings
 - In checks list, the pause button asks for confirmation (#356)
 - Added /api/v1/metrics/ endpoint, useful for monitoring the service itself
+- Migrated the `unique_key` field on a Check from a Python property to a database property
+- Allowed the /api/v1/checks/ endpoint to receive a UUID or `unique_key`
 
 ### Bug Fixes
 - "Get a single check" API call now supports read-only API keys (#346)

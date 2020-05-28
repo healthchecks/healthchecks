@@ -181,7 +181,10 @@ def channels(request):
 @validate_json()
 @authorize_read
 def get_check(request, code):
-    check = get_object_or_404(Check, code=code)
+    if type(code) == str:
+        check = get_object_or_404(Check, unique_key=code)
+    else:
+        check = get_object_or_404(Check, code=code)
     if check.project != request.project:
         return HttpResponseForbidden()
 
