@@ -66,7 +66,11 @@
 
                         <button
                             data-toggle="modal"
+                            {% if sub.address_id %}
                             data-target="#change-billing-plan-modal"
+                            {% else %}
+                            data-target="#no-billing-address-modal"
+                            {% endif %}
                             class="btn btn-default pull-right">
                             Change Billing Plan
                         </button>
@@ -88,7 +92,8 @@
                         <button
                             id="update-payment-method"
                             class="btn btn-default pull-right">
-                            Change Payment Method</button>
+                            Change Payment Method
+                        </button>
                     </div>
                     {% if payment_method_status == "success" %}
                     <div class="panel-footer">
@@ -168,9 +173,9 @@
     </div>
 </div>
 
+{% if sub.address_id %}
 <div id="change-billing-plan-modal" class="modal">
     <div class="modal-dialog">
-        {% if sub.address_id %}
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -284,35 +289,13 @@
                 </button>
             </div>
         </div>
-        {% else %}
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4>Country not specified.</h4>
-            </div>
-            <div class="modal-body">
-                <p>For tax accounting purposes, please specify
-                    your <strong>Country</strong> in the "Billing Details"
-                    section.
-                </p>
-                <p>
-                    Optionally, add your
-                    <strong>company name</strong>, <strong>address</strong>
-                    and <strong>VAT ID</strong>
-                    to have them displayed on invoices.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-            </div>
-        </div>
-        {% endif %}
     </div>
 </div>
+{% endif %}
 
+{% if sub.address_id %}
 <div id="payment-method-modal" class="modal pm-modal">
     <div class="modal-dialog">
-        {% if sub.address_id %}
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -330,7 +313,13 @@
                 </button>
             </div>
         </div>
-        {% else %}
+    </div>
+</div>
+{% endif %}
+
+{% if not sub.address_id %}
+<div id="no-billing-address-modal" class="modal">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -352,9 +341,9 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
             </div>
         </div>
-        {% endif %}
     </div>
 </div>
+{% endif %}
 
 <div id="billing-address-modal" class="modal">
     <div class="modal-dialog">

@@ -76,6 +76,11 @@ $(function () {
     });
 
     $("#update-payment-method").click(function() {
+        if ($("#no-billing-address-modal").length) {
+            $("#no-billing-address-modal").modal("show");
+            return;
+        }
+
         showPaymentMethodForm($("#old-plan-id").val());
     });
 
