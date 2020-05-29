@@ -46,7 +46,7 @@
                                 <td>Current Plan</td>
                                 <td>{{ sub.plan_name|default:"Hobbyist" }}</td>
                             </tr>
-                            {% if sub.plan_id %}
+                            {% if sub.subscription_id %}
                             <tr>
                                 <td>Next Payment</td>
                                 <td id="next-billing-date">
@@ -78,7 +78,7 @@
                     {% endif %}
                 </div>
 
-                {% if sub.subscription_id %}
+                {% if sub.plan_id %}
                 <div class="panel panel-{{ payment_method_status }}">
                     <div class="panel-body settings-block">
                         <h2>Payment Method</h2>
@@ -288,24 +288,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4>Some details are missing…</h4>
+                <h4>Country not specified.</h4>
             </div>
             <div class="modal-body">
-                {% if not sub.address_id %}
-                <div id="no-billing-address">
-                    <h4>Country not specified.</h4>
-                    <p>For tax accounting purposes, please specify
-                        your <strong>Country</strong> in the "Billing Details"
-                        section.
-                    </p>
-                    <p>
-                        Optionally, add your
-                        <strong>company name</strong>, <strong>address</strong>
-                        and <strong>VAT ID</strong>
-                        to have them displayed on invoices.
-                    </p>
-                </div>
-                {% endif %}
+                <p>For tax accounting purposes, please specify
+                    your <strong>Country</strong> in the "Billing Details"
+                    section.
+                </p>
+                <p>
+                    Optionally, add your
+                    <strong>company name</strong>, <strong>address</strong>
+                    and <strong>VAT ID</strong>
+                    to have them displayed on invoices.
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
@@ -317,6 +312,7 @@
 
 <div id="payment-method-modal" class="modal pm-modal">
     <div class="modal-dialog">
+        {% if sub.address_id %}
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -334,6 +330,29 @@
                 </button>
             </div>
         </div>
+        {% else %}
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Country not specified.</h4>
+            </div>
+            <div class="modal-body">
+                <p>For tax accounting purposes, please specify
+                    your <strong>Country</strong> in the "Billing Details"
+                    section.
+                </p>
+                <p>
+                    Optionally, add your
+                    <strong>company name</strong>, <strong>address</strong>
+                    and <strong>VAT ID</strong>
+                    to have them displayed on invoices.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 

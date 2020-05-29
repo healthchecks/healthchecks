@@ -11,7 +11,7 @@ class UpdatePaymentMethodTestCase(BaseTestCase):
         mock.credit_card.CreditCard = list
         mock.PaymentMethod.find.return_value = {"email": "foo@example.org"}
 
-        Subscription.objects.create(user=self.alice)
+        Subscription.objects.create(user=self.alice, subscription_id="fake-id")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/accounts/profile/billing/payment_method/")
@@ -23,7 +23,7 @@ class UpdatePaymentMethodTestCase(BaseTestCase):
         mock.credit_card.CreditCard = dict
         mock.PaymentMethod.find.return_value = {"masked_number": "1***2"}
 
-        Subscription.objects.create(user=self.alice)
+        Subscription.objects.create(user=self.alice, subscription_id="fake-id")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/accounts/profile/billing/payment_method/")

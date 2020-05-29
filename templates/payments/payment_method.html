@@ -1,11 +1,11 @@
-{% if sub.pm_is_card %}
+{% if not sub.subscription_id %}
+    <span class="billing-empty">No payment method added</span>
+{% elif sub.pm_is_card %}
     <img src="{{ pm.image_url }}" height="30" /> <span class="masked_number">{{ pm.masked_number }}</span>
     {% if pm.expired %}
         <span class="text-danger">(expired)</span>
     {% endif %}
-{% endif %}
-
-{% if sub.pm_is_paypal %}
+{% elif sub.pm_is_paypal %}
     <img src="{{ pm.image_url }}" height="30" /> {{ pm.email }}
 {% endif %}
 

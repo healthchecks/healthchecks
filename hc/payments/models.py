@@ -65,6 +65,9 @@ class Subscription(models.Model):
 
     @property
     def payment_method(self):
+        if not self.subscription_id:
+            return None
+
         if not hasattr(self, "_pm"):
             o = self._get_braintree_subscription()
             self._pm = braintree.PaymentMethod.find(o.payment_method_token)
@@ -152,7 +155,8 @@ class Subscription(models.Model):
 
             self.save()
 
-        return result
+        if not result.is_success:
+            return result
 
     def cancel(self):
         if self.subscription_id:

@@ -95,7 +95,11 @@ def update(request):
     sub = Subscription.objects.for_user(request.user)
     # If plan_id has not changed then just update the payment method:
     if plan_id == sub.plan_id:
-        error = sub.update_payment_method(nonce)
+        if not sub.subscription_id:
+            error = sub.setup(plan_id, nonce)
+        else:
+            error = sub.update_payment_method(nonce)
+
         if error:
             return log_and_bail(request, error)
 
@@ -119,9 +123,9 @@ def update(request):
         request.session["set_plan_status"] = "success"
         return redirect("hc-billing")
 
-    result = sub.setup(plan_id, nonce)
-    if not result.is_success:
-        return log_and_bail(request, result)
+    error = sub.setup(plan_id, nonce)
+    if error:
+        return log_and_bail(request, error)
 
     # Update user's profile
     profile = request.user.profile
