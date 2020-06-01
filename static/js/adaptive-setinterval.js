@@ -40,8 +40,6 @@ function adaptiveSetInterval(fn, runNow) {
         }
     });
 
-    if (runNow) {
-        quota = 20;
-        scheduleRun();
-    }
+    quota = 20;
+    scheduledId = setTimeout(scheduleRun, runNow ? 1 : 3000);
 }
