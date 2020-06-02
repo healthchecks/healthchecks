@@ -344,6 +344,7 @@ def filtering_rules(request, code):
     if form.is_valid():
         check.subject = form.cleaned_data["subject"]
         check.methods = form.cleaned_data["methods"]
+        check.manual_resume = form.cleaned_data["manual_resume"]
         check.save()
 
     return redirect("hc-details", code)
@@ -442,14 +443,25 @@ def pause(request, code):
     check.alert_after = None
     check.save()
 
-    if "/details/" in request.META.get("HTTP_REFERER", ""):
-        return redirect("hc-details", code)
-
     # Don't redirect after an AJAX request:
     if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
         return HttpResponse()
 
-    return redirect("hc-checks", check.project.code)
+    return redirect("hc-details", code)
+
+
+@require_POST
+@login_required
+def resume(request, code):
+    check = _get_check_for_user(request, code)
+
+    check.status = "new"
+    check.last_start = None
+    check.last_ping = None
+    check.alert_after = None
+    check.save()
+
+    return redirect("hc-details", code)
 
 
 @require_POST

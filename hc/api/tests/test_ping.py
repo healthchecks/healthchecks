@@ -209,3 +209,18 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.latest("id")
         self.assertEqual(len(ping.body), 20000)
+
+    def test_it_handles_manual_resume_flag(self):
+        self.check.status = "paused"
+        self.check.manual_resume = True
+        self.check.save()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "paused")
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "http")
+        self.assertEqual(ping.kind, "ign")

@@ -10,7 +10,7 @@ class PauseTestCase(BaseTestCase):
         super(PauseTestCase, self).setUp()
         self.check = Check.objects.create(project=self.project, status="up")
         self.url = "/checks/%s/pause/" % self.check.code
-        self.redirect_url = "/projects/%s/checks/" % self.project.code
+        self.redirect_url = "/checks/%s/details/" % self.check.code
 
     def test_it_pauses(self):
         self.client.login(username="alice@example.org", password="password")

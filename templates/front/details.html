@@ -127,7 +127,11 @@
             <div class="text-right">
                 <form action="{% url 'hc-pause' check.code %}" method="post">
                     {% csrf_token %}
-                    <input type="submit" class="btn btn-sm btn-default" value="Pause" />
+                    <input
+                        id="pause-btn"
+                        type="submit"
+                        {% if check.status == "paused" %}disabled{% endif %}
+                        class="btn btn-sm btn-default" value="Pause" />
                 </form>
 
                 <button
@@ -289,8 +293,12 @@
     </div>
 </div>
 
-<div id="transfer-modal" class="modal">
-</div>
+<div id="transfer-modal" class="modal"></div>
+
+<form id="resume-form" action="{% url 'hc-resume' check.code %}" method="post">
+    {% csrf_token %}
+</form>
+
 
 {% include "front/update_name_modal.html" %}
 {% include "front/update_timeout_modal.html" %}

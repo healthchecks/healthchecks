@@ -36,6 +36,11 @@ $(function () {
         return false;
     });
 
+    $("#log-status-text").on("click", "#resume-btn", function() {
+        $("#resume-form").submit();
+        return false;
+    });
+
     $("#pause").click(function(e) {
         $("#pause-form").submit();
         return false;
@@ -79,7 +84,9 @@ $(function () {
                 if (data.status_text != lastStatusText) {
                     lastStatusText = data.status_text;
                     $("#log-status-icon").attr("class", "status icon-" + data.status);
-                    $("#log-status-text").text(data.status_text);
+                    $("#log-status-text").html(data.status_text);
+
+                    $('#pause-btn').prop('disabled', data.status == "paused");
                 }
 
                 if (data.events) {

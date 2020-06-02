@@ -50,3 +50,15 @@ class StatusSingleTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get("/checks/%s/status/" % self.check.code)
         self.assertEqual(r.status_code, 200)
+
+    def test_it_handles_manual_resume(self):
+        self.check.status = "paused"
+        self.check.manual_resume = True
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/checks/%s/status/" % self.check.code)
+        doc = r.json()
+
+        self.assertEqual(doc["status"], "paused")
+        self.assertTrue("will ignore pings until resumed" in doc["status_text"])

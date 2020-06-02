@@ -63,8 +63,9 @@ class NameTagsForm(forms.Form):
 
 
 class FilteringRulesForm(forms.Form):
-    subject = forms.CharField(max_length=100)
+    subject = forms.CharField(required=False, max_length=100)
     methods = forms.ChoiceField(required=False, choices=(("", "Any"), ("POST", "POST")))
+    manual_resume = forms.BooleanField(required=False)
 
 
 class TimeoutForm(forms.Form):

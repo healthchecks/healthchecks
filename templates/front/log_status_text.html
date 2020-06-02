@@ -6,8 +6,13 @@
         This check is up. Last ping was {{ check.last_ping|naturaltime }}.
     {% elif status == "grace" %}
         This check is late. Last ping was {{ check.last_ping|naturaltime }}.
+    {% elif status == "paused" and check.manual_resume %}
+        This check is paused, and will ignore pings until resumed.
+        <a id="resume-btn" href="#">(Resume&nbsp;Now)</a>
     {% elif status == "paused" %}
         This check is paused.
+    {% elif status == "new" and check.n_pings %}
+        This check is ready for pings.
     {% elif status == "new" %}
         This check has never received a ping.
     {% elif status == "started" %}

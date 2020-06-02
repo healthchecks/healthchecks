@@ -8,6 +8,7 @@ check_urls = [
     path("filtering_rules/", views.filtering_rules, name="hc-filtering-rules"),
     path("timeout/", views.update_timeout, name="hc-update-timeout"),
     path("pause/", views.pause, name="hc-pause"),
+    path("resume/", views.resume, name="hc-resume"),
     path("remove/", views.remove_check, name="hc-remove-check"),
     path("log/", views.log, name="hc-log"),
     path("status/", views.status_single, name="hc-status-single"),

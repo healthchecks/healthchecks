@@ -75,6 +75,7 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     subject = models.CharField(max_length=100, blank=True)
     methods = models.CharField(max_length=30, blank=True)
+    manual_resume = models.NullBooleanField(default=False)
 
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
@@ -242,6 +243,9 @@ class Check(models.Model):
 
     def ping(self, remote_addr, scheme, method, ua, body, action):
         now = timezone.now()
+
+        if self.status == "paused" and self.manual_resume:
+            action = "ign"
 
         if action == "start":
             self.last_start = now
