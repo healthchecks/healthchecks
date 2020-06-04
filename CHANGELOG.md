@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.15.0-dev - Unreleased
+## v1.15.0 - 2020-06-04
 
 ### Improvements
 - Rate limiting for Telegram notifications (10 notifications per chat per minute)
