@@ -478,11 +478,11 @@ def _get_events(check, limit):
     pings = list(pings)
 
     prev = None
-    for ping in pings:
-        if ping.kind == "start" and prev and prev.kind != "start":
-            delta = prev.created - ping.created
+    for ping in reversed(pings):
+        if ping.kind != "start" and prev and prev.kind == "start":
+            delta = ping.created - prev.created
             if delta < MAX_DELTA:
-                setattr(prev, "delta", delta)
+                setattr(ping, "delta", delta)
 
         prev = ping
 
