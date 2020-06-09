@@ -225,3 +225,20 @@ class UpdateCheckTestCase(BaseTestCase):
 
         r = self.post(self.check.code, {"api_key": "R" * 32, "name": "Foo"})
         self.assertEqual(r.status_code, 401)
+
+    def test_it_sets_manual_resume_to_true(self):
+        r = self.post(self.check.code, {"api_key": "X" * 32, "manual_resume": True})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertTrue(self.check.manual_resume)
+
+    def test_it_sets_manual_resume_to_false(self):
+        self.check.manual_resume = True
+        self.check.save()
+
+        r = self.post(self.check.code, {"api_key": "X" * 32, "manual_resume": False})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertFalse(self.check.manual_resume)

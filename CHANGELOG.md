@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Improvements
+- Paused ping handling can be controlled via API (#376)
+
 ### Bug Fixes
 - Removing Pager Team integration, project appears to be discontinued
 

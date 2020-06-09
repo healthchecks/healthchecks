@@ -217,6 +217,7 @@ class Check(models.Model):
             "status": self.get_status(),
             "last_ping": isostring(self.last_ping),
             "next_ping": isostring(self.get_grace_start()),
+            "manual_resume": self.manual_resume,
         }
 
         if self.last_duration:

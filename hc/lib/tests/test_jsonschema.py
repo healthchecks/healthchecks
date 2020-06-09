@@ -82,3 +82,7 @@ class JsonSchemaTestCase(TestCase):
     def test_it_checks_timezone_format(self):
         with self.assertRaises(ValidationError):
             validate("X/Y", {"type": "string", "format": "timezone"})
+
+    def test_it_checks_boolean_type(self):
+        with self.assertRaises(ValidationError):
+            validate(123, {"type": "boolean"})

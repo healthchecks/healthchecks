@@ -225,3 +225,15 @@ class CreateCheckTestCase(BaseTestCase):
 
         r = self.post({"api_key": "R" * 32, "name": "Foo"})
         self.assertEqual(r.status_code, 401)
+
+    def test_it_sets_manual_resume(self):
+        r = self.post({"api_key": "X" * 32, "manual_resume": True})
+
+        self.assertEqual(r.status_code, 201)
+        check = Check.objects.get()
+        self.assertTrue(check.manual_resume)
+
+    def test_it_rejects_non_boolean_manual_resume(self):
+        r = self.post({"api_key": "X" * 32, "manual_resume": "surprise"})
+
+        self.assertEqual(r.status_code, 400)

@@ -97,6 +97,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "status": "up",
       "last_ping": "2020-03-24T14:02:03+00:00",
       "next_ping": "2020-03-24T15:02:03+00:00",
+      "manual_resume": false,
       "ping_url": "PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712",
       "update_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712",
       "pause_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause",
@@ -112,6 +113,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "status": "down",
       "last_ping": "2020-03-23T10:19:32+00:00",
       "next_ping": null,
+      "manual_resume": false,
       "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
       "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
       "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -139,6 +141,7 @@ is added. This identifier is stable across API calls. Example:
       "status": "up",
       "last_ping": "2020-03-24T14:02:03+00:00",
       "next_ping": "2020-03-24T15:02:03+00:00",
+      "manual_resume": false,
       "unique_key": "a6c7b0a8a66bed0df66abfdab3c77736861703ee",
       "timeout": 3600
     },
@@ -151,6 +154,7 @@ is added. This identifier is stable across API calls. Example:
       "status": "down",
       "last_ping": "2020-03-23T10:19:32+00:00",
       "next_ping": null,
+      "manual_resume": false,
       "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
       "schedule": "15 5 * * *",
       "tz": "UTC"
@@ -197,6 +201,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
   "status": "down",
   "last_ping": "2020-03-23T10:19:32+00:00",
   "next_ping": null,
+  "manual_resume": false,
   "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
   "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
   "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -227,6 +232,7 @@ construct these URLs by itself.
   "status": "down",
   "last_ping": "2020-03-23T10:19:32+00:00",
   "next_ping": null,
+  "manual_resume": false,
   "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
   "schedule": "15 5 * * *",
   "tz": "UTC"
@@ -305,6 +311,15 @@ tz
 
     <pre>{"tz": "Europe/Riga"}</pre>
 
+manual_resume
+:   boolean, optional, default value: false.
+
+    Controls whether a paused ping resumes automatically when pinged (the default),
+    or not. If set to false, a paused check will leave the paused state when it receives
+    a ping. If set to true, a paused check will ignore pings and stay paused until it is
+    either manually resumed from the web dashboard or the `manual_resume` flag is
+    changed.
+
 channels
 :   string, optional
 
@@ -381,6 +396,7 @@ curl SITE_ROOT/api/v1/checks/ \
   "n_pings": 0,
   "name": "Backups",
   "next_ping": null,
+  "manual_resume": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -459,6 +475,15 @@ tz
 
     <pre>{"tz": "Europe/Riga"}</pre>
 
+manual_resume
+:   boolean, optional, default value: false.
+
+    Controls whether a paused ping resumes automatically when pinged (the default),
+    or not. If set to false, a paused check will leave the paused state when it receives
+    a ping. If set to true, a paused check will ignore pings and stay paused until it is
+    either manually resumed from the web dashboard or the `manual_resume` flag is
+    changed.
+
 channels
 :   string, optional.
 
@@ -521,6 +546,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "n_pings": 0,
   "name": "Backups",
   "next_ping": null,
+  "manual_resume": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -575,6 +601,7 @@ header is sometimes required by some network proxies and web servers.
   "n_pings": 0,
   "name": "Backups",
   "next_ping": null,
+  "manual_resume": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "paused",
@@ -625,6 +652,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "n_pings": 0,
   "name": "Backups",
   "next_ping": null,
+  "manual_resume": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",

@@ -39,6 +39,10 @@ def validate(obj, schema, obj_name="value"):
         if "maximum" in schema and obj > schema["maximum"]:
             raise ValidationError("%s is too large" % obj_name)
 
+    elif schema.get("type") == "boolean":
+        if not isinstance(obj, bool):
+            raise ValidationError("%s is not a boolean" % obj_name)
+
     elif schema.get("type") == "array":
         if not isinstance(obj, list):
             raise ValidationError("%s is not an array" % obj_name)

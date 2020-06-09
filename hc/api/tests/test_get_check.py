@@ -33,7 +33,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 13)
+        self.assertEqual(len(doc), 14)
 
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)
@@ -43,6 +43,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["status"], "new")
         self.assertEqual(doc["channels"], str(self.c1.code))
         self.assertEqual(doc["desc"], "This is description")
+        self.assertFalse(doc["manual_resume"])
 
     def test_it_handles_invalid_uuid(self):
         r = self.get("not-an-uuid")
