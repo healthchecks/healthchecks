@@ -44,8 +44,8 @@ When an account exceeds its SMS / WhatsApp monthly limit, SITE_NAME will:
 If you want to receive repeated notifications for as long as a particular check is
 down, you have a few different options:
 
-* If you use an **incident management system** (PagerDuty, VictorOps, OpsGenie, PagerTree,
-Pager Team), you can set up escalation rules there.
+* If you use an **incident management system** (PagerDuty, VictorOps, OpsGenie,
+PagerTree), you can set up escalation rules there.
 * Use the **Pushover** integration with the "Emergency" priority. Pushover will
 play a loud notification sound on your phone every 5 minutes until the notification
 is acknowledged.

@@ -61,7 +61,6 @@ project_urls = [
     path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),
     path("add_msteams/", views.add_msteams, name="hc-add-msteams"),
     path("add_opsgenie/", views.add_opsgenie, name="hc-add-opsgenie"),
-    path("add_pagerteam/", views.add_pagerteam, name="hc-add-pagerteam"),
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),
     path("add_pd/", views.add_pd, name="hc-add-pd"),
     path("add_pdc/", views.add_pdc, name="hc-add-pdc"),

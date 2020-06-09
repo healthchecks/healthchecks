@@ -331,20 +331,8 @@ class PagerTree(HttpTransport):
 
 
 class PagerTeam(HttpTransport):
-    def notify(self, check):
-        url = self.channel.value
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "incident_key": str(check.code),
-            "event_type": "trigger" if check.status == "down" else "resolve",
-            "title": tmpl("pagerteam_title.html", check=check),
-            "description": tmpl("pagerteam_description.html", check=check),
-            "client": settings.SITE_NAME,
-            "client_url": settings.SITE_ROOT,
-            "tags": ",".join(check.tags_list()),
-        }
-
-        return self.post(url, json=payload, headers=headers)
+    def is_noop(self, check):
+        return True
 
 
 class Pushbullet(HttpTransport):
