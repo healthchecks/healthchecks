@@ -8,11 +8,12 @@ checks in user's account.
 Endpoint Name                                         | Endpoint Address
 ------------------------------------------------------|-------
 [Get a list of existing checks](#list-checks)         | `GET SITE_ROOT/api/v1/checks/`
-[Get a single check](#get-check)                   | `GET SITE_ROOT/api/v1/checks/<uuid>`
+[Get a single check](#get-check)                      | `GET SITE_ROOT/api/v1/checks/<uuid>`
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v1/checks/`
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
+[Get a list of checks's logged pings](#list-pings)    | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
 [Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
 
 ## Authentication
@@ -25,8 +26,8 @@ an API key. You can create read-write and read-only API keys in the
 
 Key Type           | Description
 -------------------|------------
-Regular API key    | Have full access to all documented API endpoints.
-Read-only API key  | Only work with the [Get a list of existing checks](#list-checks) endpoint. Some fields are omitted from the API responses.
+Regular API key    | Has full access to all documented API endpoints.
+Read-only API key  | Only works with the [Get a list of existing checks](#list-checks) and [Get a single check](#get-check) endpoints. Some fields are omitted from the API responses.
 
 The client can authenticate itself by sending an appropriate HTTP
 request header. The header's name should be `X-Api-Key` and
@@ -662,11 +663,90 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 }
 ```
 
+## Get a list of checks's logged pings {: #list-pings .rule }
+
+`GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+
+Returns a list of pings this check has received.
+
+This endpoint returns pings in reverse order (most recent first), and the total
+number of returned pings depends on account's billing plan: 100 for free accounts,
+1000 for paid accounts.
+
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
+### Example Request
+
+```bash
+curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
+    --header "X-Api-Key: your-api-key"
+```
+
+### Example Response
+
+```json
+{
+  "pings": [
+    {
+      "type": "success",
+      "date": "2020-06-09T14:51:06.113073+00:00",
+      "n": 4,
+      "scheme": "http",
+      "remote_addr": "192.0.2.0",
+      "method": "GET",
+      "ua": "curl/7.68.0",
+      "duration": 2.896736
+    },
+    {
+      "type": "start",
+      "date": "2020-06-09T14:51:03.216337+00:00",
+      "n": 3,
+      "scheme": "http",
+      "remote_addr": "192.0.2.0",
+      "method": "GET",
+      "ua": "curl/7.68.0"
+    },
+    {
+      "type": "success",
+      "date": "2020-06-09T14:50:59.633577+00:00",
+      "n": 2,
+      "scheme": "http",
+      "remote_addr": "192.0.2.0",
+      "method": "GET",
+      "ua": "curl/7.68.0",
+      "duration": 2.997976
+    },
+    {
+      "type": "start",
+      "date": "2020-06-09T14:50:56.635601+00:00",
+      "n": 1,
+      "scheme": "http",
+      "remote_addr": "192.0.2.0",
+      "method": "GET",
+      "ua": "curl/7.68.0"
+    }
+  ]
+}
+```
+
+
 ## Get a List of Existing Integrations {: #list-channels .rule }
 
 `GET SITE_ROOT/api/v1/channels/`
 
-Returns a list of integrations belonging to the user.
+Returns a list of integrations belonging to the project.
 
 ### Response Codes
 

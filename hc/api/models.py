@@ -342,6 +342,17 @@ class Ping(models.Model):
     ua = models.CharField(max_length=200, blank=True)
     body = models.TextField(blank=True, null=True)
 
+    def to_dict(self):
+        return {
+            "type": self.kind or "success",
+            "date": self.created.isoformat(),
+            "n": self.n,
+            "scheme": self.scheme,
+            "remote_addr": self.remote_addr,
+            "method": self.method,
+            "ua": self.ua,
+        }
+
 
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)

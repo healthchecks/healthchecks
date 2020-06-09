@@ -16,9 +16,10 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from hc.accounts.models import Profile
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
-from hc.api.models import Flip, Channel, Check, Notification, Ping
+from hc.api.models import MAX_DELTA, Flip, Channel, Check, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg
 
 
@@ -244,6 +245,39 @@ def pause(request, code):
     check.alert_after = None
     check.save()
     return JsonResponse(check.to_dict())
+
+
+@cors("GET")
+@validate_json()
+@authorize
+def pings(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    # Look up ping log limit from account's profile.
+    # There might be more pings in the database (depends on how pruning is handled)
+    # but we will not return more than the limit allows.
+    profile = Profile.objects.get(user__project=request.project)
+    limit = profile.ping_log_limit
+
+    # Query in descending order so we're sure to get the most recent
+    # pings, regardless of the limit restriction
+    pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
+
+    # Ascending order is more convenient for calculating duration, so use reverse()
+    prev, dicts = None, []
+    for ping in reversed(pings):
+        d = ping.to_dict()
+        if ping.kind != "start" and prev and prev.kind == "start":
+            delta = ping.created - prev.created
+            if delta < MAX_DELTA:
+                d["duration"] = delta.total_seconds()
+
+        dicts.insert(0, d)
+        prev = ping
+
+    return JsonResponse({"pings": dicts})
 
 
 @never_cache

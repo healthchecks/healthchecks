@@ -35,6 +35,10 @@ checks in user's account.</p>
 <td><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
 </tr>
 <tr>
+<td><a href="#list-pings">Get a list of checks's logged pings</a></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></td>
+</tr>
+<tr>
 <td><a href="#list-channels">Get a list of existing integrations</a></td>
 <td><code>GET SITE_ROOT/api/v1/channels/</code></td>
 </tr>
@@ -56,11 +60,11 @@ an API key. You can create read-write and read-only API keys in the
 <tbody>
 <tr>
 <td>Regular API key</td>
-<td>Have full access to all documented API endpoints.</td>
+<td>Has full access to all documented API endpoints.</td>
 </tr>
 <tr>
 <td>Read-only API key</td>
-<td>Only work with the <a href="#list-checks">Get a list of existing checks</a> endpoint. Some fields are omitted from the API responses.</td>
+<td>Only works with the <a href="#list-checks">Get a list of existing checks</a> and <a href="#get-check">Get a single check</a> endpoints. Some fields are omitted from the API responses.</td>
 </tr>
 </tbody>
 </table>
@@ -599,9 +603,78 @@ check that was just deleted.</p>
 </code></pre></div>
 
 
+<h2 class="rule" id="list-pings">Get a list of checks's logged pings</h2>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></p>
+<p>Returns a list of pings this check has received.</p>
+<p>This endpoint returns pings in reverse order (most recent first), and the total
+number of returned pings depends on account's billing plan: 100 for free accounts,
+1000 for paid accounts.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+<dt>403 Forbidden</dt>
+<dd>Access denied, wrong API key.</dd>
+<dt>404 Not Found</dt>
+<dd>The specified check does not exist.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ <span class="se">\</span>
+    --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;pings&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:51:06.113073+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;duration&quot;</span><span class="p">:</span> <span class="mf">2.896736</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:51:03.216337+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:50:59.633577+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;duration&quot;</span><span class="p">:</span> <span class="mf">2.997976</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:50:56.635601+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
 <h2 class="rule" id="list-channels">Get a List of Existing Integrations</h2>
 <p><code>GET SITE_ROOT/api/v1/channels/</code></p>
-<p>Returns a list of integrations belonging to the user.</p>
+<p>Returns a list of integrations belonging to the project.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
