@@ -186,7 +186,7 @@ def channels(request):
 @authorize_read
 def get_check(request, code):
     check = get_object_or_404(Check, code=code)
-    if check.project != request.project:
+    if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
     return JsonResponse(check.to_dict(readonly=request.readonly))
@@ -196,7 +196,7 @@ def get_check(request, code):
 @authorize
 def update_check(request, code):
     check = get_object_or_404(Check, code=code)
-    if check.project != request.project:
+    if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
     try:
@@ -211,7 +211,7 @@ def update_check(request, code):
 @authorize
 def delete_check(request, code):
     check = get_object_or_404(Check, code=code)
-    if check.project != request.project:
+    if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
     response = check.to_dict()
@@ -237,7 +237,7 @@ def single(request, code):
 @authorize
 def pause(request, code):
     check = get_object_or_404(Check, code=code)
-    if check.project != request.project:
+    if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
     check.status = "paused"
