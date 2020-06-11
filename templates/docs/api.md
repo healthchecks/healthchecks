@@ -14,7 +14,7 @@ Endpoint Name                                         | Endpoint Address
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
-[Get a list of checks's logged pings](#list-pings)    | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+[Get a list of check's logged pings](#list-pings)    | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
 [Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
 
 ## Authentication
@@ -667,7 +667,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 }
 ```
 
-## Get a list of checks's logged pings {: #list-pings .rule }
+## Get a list of check's logged pings {: #list-pings .rule }
 
 `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
 
