@@ -192,6 +192,18 @@ def get_check(request, code):
     return JsonResponse(check.to_dict(readonly=request.readonly))
 
 
+@cors("GET")
+@csrf_exempt
+@validate_json()
+@authorize_read
+def get_check_by_unique_key(request, unique_key):
+    checks = Check.objects.filter(project=request.project.id)
+    for check in checks:
+        if check.unique_key == unique_key:
+            return JsonResponse(check.to_dict(readonly=request.readonly))
+    return HttpResponseNotFound()
+
+
 @validate_json(schemas.check)
 @authorize
 def update_check(request, code):
