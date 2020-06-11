@@ -19,6 +19,10 @@ checks in user's account.</p>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
 </tr>
 <tr>
+<td><a href="#get-check">Get a check by its unique_key</a></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;</code></td>
+</tr>
+<tr>
 <td><a href="#create-check">Create a new check</a></td>
 <td><code>POST SITE_ROOT/api/v1/checks/</code></td>
 </tr>
@@ -152,7 +156,7 @@ specified value.</p>
 
 <p>When using the read-only API key, the following fields are omitted:
 <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>channels</code>.  An extra <code>unique_key</code> field
-is added. This identifier is stable across API calls. Example:</p>
+is added which can be used <a href="#get-check">to <code>GET</code> a check</a> in place of the <code>UUID</code>. The <code>unique_key</code> identifier is stable across API calls. Example:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
@@ -188,8 +192,11 @@ is added. This identifier is stable across API calls. Example:</p>
 
 
 <h2 class="rule" id="get-check">Get a Single Check</h2>
-<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
-<p>Returns a JSON representation of a single check.</p>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code><br>
+<code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;</code></p>
+<p>Returns a JSON representation of a single check. Accepts either check's UUID or
+the <code>unique_key</code> (a field derived from UUID, and returned by API responses when
+using the read-only API key) as an identifier.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>

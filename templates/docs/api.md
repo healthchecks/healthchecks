@@ -9,7 +9,7 @@ Endpoint Name                                         | Endpoint Address
 ------------------------------------------------------|-------
 [Get a list of existing checks](#list-checks)         | `GET SITE_ROOT/api/v1/checks/`
 [Get a single check](#get-check)                      | `GET SITE_ROOT/api/v1/checks/<uuid>`
-[Get a single check (using Read Only API)](#get-check)                   | `GET SITE_ROOT/api/v1/checks/<unique_key>`
+[Get a check by its unique_key](#get-check)           | `GET SITE_ROOT/api/v1/checks/<unique_key>`
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v1/checks/`
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
@@ -166,9 +166,12 @@ is added which can be used [to `GET` a check](#get-check) in place of the `UUID`
 ```
 
 ## Get a Single Check {: #get-check .rule }
-`GET SITE_ROOT/api/v1/checks/<uuid>` OR `GET SITE_ROOT/api/v1/checks/<unique_key>`
+`GET SITE_ROOT/api/v1/checks/<uuid>`<br>
+`GET SITE_ROOT/api/v1/checks/<unique_key>`
 
-Returns a JSON representation of a single check. Can take either the UUID or the  `unique_key` (see [information above](#list-checks)) as the identifier of the check to return.
+Returns a JSON representation of a single check. Accepts either check's UUID or
+the `unique_key` (a field derived from UUID, and returned by API responses when
+using the read-only API key) as an identifier.
 
 ### Response Codes
 

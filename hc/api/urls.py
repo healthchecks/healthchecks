@@ -5,7 +5,7 @@ from hc.api import views
 
 
 class QuoteConverter:
-    regex = "[\w%~_.-]+"
+    regex = r"[\w%~_.-]+"
 
     def to_python(self, value):
         return unquote(value)
@@ -13,7 +13,8 @@ class QuoteConverter:
     def to_url(self, value):
         return quote(value, safe="")
 
-class UniqueKeyConverter:
+
+class SHA1Converter:
     regex = "[A-z0-9]{40}"
 
     def to_python(self, value):
@@ -22,8 +23,9 @@ class UniqueKeyConverter:
     def to_url(self, value):
         return value
 
+
 register_converter(QuoteConverter, "quoted")
-register_converter(UniqueKeyConverter, "unique_key")
+register_converter(SHA1Converter, "sha1")
 
 urlpatterns = [
     path("ping/<uuid:code>/", views.ping, name="hc-ping-slash"),
@@ -32,7 +34,7 @@ urlpatterns = [
     path("ping/<uuid:code>/start", views.ping, {"action": "start"}, name="hc-start"),
     path("api/v1/checks/", views.checks),
     path("api/v1/checks/<uuid:code>", views.single, name="hc-api-single"),
-    path("api/v1/checks/<unique_key:code>", views.single, name="hc-api-single"),
+    path("api/v1/checks/<sha1:unique_key>", views.get_check_by_unique_key),
     path("api/v1/checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
     path("api/v1/notifications/<uuid:code>/bounce", views.bounce, name="hc-api-bounce"),
     path("api/v1/checks/<uuid:code>/pings/", views.pings, name="hc-api-pings"),
