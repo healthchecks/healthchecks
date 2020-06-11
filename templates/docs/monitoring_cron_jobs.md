@@ -41,7 +41,7 @@ after the command:
 ```bash
 $ crontab -e
 # m h dom mon dow command
-  8 6 * * * /home/user/backup.sh && curl -fsS --retry 3 PING_URL > /dev/null
+  8 6 * * * /home/user/backup.sh && curl -fsS --retry 3 --output /dev/null PING_URL
 ```
 
 Now, each time your cron job runs, it will send a HTTP request to the ping URL.
