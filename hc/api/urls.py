@@ -13,8 +13,17 @@ class QuoteConverter:
     def to_url(self, value):
         return quote(value, safe="")
 
+class UniqueKeyConverter:
+    regex = "[A-z0-9]{40}"
+
+    def to_python(self, value):
+        return value
+
+    def to_url(self, value):
+        return value
 
 register_converter(QuoteConverter, "quoted")
+register_converter(UniqueKeyConverter, "unique_key")
 
 urlpatterns = [
     path("ping/<uuid:code>/", views.ping, name="hc-ping-slash"),
@@ -23,6 +32,7 @@ urlpatterns = [
     path("ping/<uuid:code>/start", views.ping, {"action": "start"}, name="hc-start"),
     path("api/v1/checks/", views.checks),
     path("api/v1/checks/<uuid:code>", views.single, name="hc-api-single"),
+    path("api/v1/checks/<unique_key:code>", views.single, name="hc-api-single"),
     path("api/v1/checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
     path("api/v1/notifications/<uuid:code>/bounce", views.bounce, name="hc-api-bounce"),
     path("api/v1/checks/<uuid:code>/pings/", views.pings, name="hc-api-pings"),

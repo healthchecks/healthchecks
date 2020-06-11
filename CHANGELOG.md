@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Paused ping handling can be controlled via API (#376)
 - Add "Get a list of checks's logged pings" API call (#371)
+- Allowed the /api/v1/checks/ endpoint to receive a UUID or `unique_key` (#370)
 
 
 ### Bug Fixes

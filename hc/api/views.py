@@ -191,6 +191,14 @@ def get_check(request, code):
 
     return JsonResponse(check.to_dict(readonly=request.readonly))
 
+@validate_json()
+@authorize_read
+def get_check_unique(request, code):
+    checks = Check.objects.filter(project=request.project.id)
+    for check in checks:
+        if check.unique_key == code:
+            return JsonResponse(check.to_dict(readonly=request.readonly))
+    return HttpResponseNotFound()
 
 @validate_json(schemas.check)
 @authorize
@@ -228,7 +236,10 @@ def single(request, code):
     if request.method == "DELETE":
         return delete_check(request, code)
 
-    return get_check(request, code)
+    if type(code) == uuid.UUID:
+        return get_check(request, code)
+    else:
+        return get_check_unique(request, code)
 
 
 @cors("POST")
