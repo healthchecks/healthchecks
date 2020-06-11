@@ -241,7 +241,7 @@ class Check(models.Model):
                     owner=self, new_status__in=("down","up"), created__gt=cutoff
                 ).order_by("created")
                 dictStatus = {"up":1,"down":0} 
-                result['history'] = list(map(lambda x: {'timestamp':x.created,'status':dictStatus[x.new_status]}, flips))
+                result['history'] = list(map(lambda x: {'timestamp':x.created,'up':dictStatus[x.new_status]}, flips))
         if readonly:
             result["unique_key"] = self.unique_key
         else:
