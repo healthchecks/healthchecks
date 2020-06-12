@@ -304,27 +304,31 @@ def flips(request, code):
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
-    if any(x in request.GET for x in ('start','end')) and 'seconds' in request.GET:
-        return HttpResponseBadRequest()
+    if all(x not in request.GET for x in ('start','end','seconds')):
+        flips = Flip.objects.select_related("owner").filter(
+            owner=check, new_status__in=("down","up"),
+        ).order_by("created")
+    else:
+        if any(x in request.GET for x in ('start','end')) and 'seconds' in request.GET:
+            return HttpResponseBadRequest()
 
-    history_start = None
-    history_end = datetime.now()
+        history_start = None
+        history_end = datetime.now()
 
-    if 'start' in request.GET:
-        history_start = datetime.fromtimestamp(int(request.GET['start']))
-    if 'end' in request.GET:
-        history_end = datetime.fromtimestamp(int(request.GET['end']))
+        if 'start' in request.GET:
+            history_start = datetime.fromtimestamp(int(request.GET['start']))
+        if 'end' in request.GET:
+            history_end = datetime.fromtimestamp(int(request.GET['end']))
 
-    if 'seconds' in request.GET:
-        history_start = datetime.now()-td(seconds=int(request.GET['seconds']))
-    elif not history_start:
-        history_start = datetime.now()-td(seconds=3600)
+        if 'seconds' in request.GET:
+            history_start = datetime.now()-td(seconds=int(request.GET['seconds']))
+        
+        flips = Flip.objects.select_related("owner").filter(
+            owner=check, new_status__in=("down","up"),
+            created__gt=history_start,
+            created__lt=history_end
+        ).order_by("created")
 
-    flips = Flip.objects.select_related("owner").filter(
-        owner=check, new_status__in=("down","up"),
-        created__gt=history_start,
-        created__lt=history_end
-    ).order_by("created")
     dictStatus = {"up":1,"down":0}
 
     return JsonResponse({"flips": list(map(lambda x: {'timestamp':x.created,'up':dictStatus[x.new_status]}, flips))})
