@@ -207,7 +207,7 @@ class Check(models.Model):
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
 
-    def to_dict(self, readonly=False, history=None):
+    def to_dict(self, readonly=False):
 
         result = {
             "name": self.name,
@@ -224,24 +224,6 @@ class Check(models.Model):
         if self.last_duration:
             result["last_duration"] = int(self.last_duration.total_seconds())
 
-        if history:
-            split = re.split(r'(h|d|w)$',history,maxsplit=0)
-            if len(split) == 3: # re.split should return a list of 3 items if the parameter is set correctly
-                zone = pytz.timezone(self.tz)
-                current_now = datetime.now(tz=zone)
-                
-                if split[1] == 'd':
-                    cutoff = current_now - td(days=int(split[0]))
-                elif split[1] == 'h':
-                    cutoff = current_now - td(hours=int(split[0]))
-                elif split[1] == 'w':
-                    cutoff = current_now - td(weeks=int(split[0]))
-
-                flips = Flip.objects.select_related("owner").filter(
-                    owner=self, new_status__in=("down","up"), created__gt=cutoff
-                ).order_by("created")
-                dictStatus = {"up":1,"down":0} 
-                result['history'] = list(map(lambda x: {'timestamp':x.created,'up':dictStatus[x.new_status]}, flips))
         if readonly:
             result["unique_key"] = self.unique_key
         else:

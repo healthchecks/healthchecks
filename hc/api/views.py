@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+from datetime import datetime
 import time
 import uuid
 
@@ -8,6 +9,7 @@ from django.http import (
     HttpResponse,
     HttpResponseForbidden,
     HttpResponseNotFound,
+    HttpResponseBadRequest,
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404
@@ -293,6 +295,57 @@ def pings(request, code):
 
     return JsonResponse({"pings": dicts})
 
+@cors("GET")
+@csrf_exempt
+@validate_json()
+@authorize_read
+def flips(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    if any(x in request.GET for x in ('start','end')) and 'seconds' in request.GET:
+        return HttpResponseBadRequest()
+
+    history_start = None
+    history_end = datetime.now()
+
+    if 'start' in request.GET:
+        history_start = datetime.fromtimestamp(int(request.GET['start']))
+    if 'end' in request.GET:
+        history_end = datetime.fromtimestamp(int(request.GET['end']))
+
+    if 'seconds' in request.GET:
+        history_start = datetime.now()-td(seconds=int(request.GET['seconds']))
+    elif not history_start:
+        history_start = datetime.now()-td(seconds=3600)
+
+    flips = Flip.objects.select_related("owner").filter(
+        owner=check, new_status__in=("down","up"),
+        created__gt=history_start,
+        created__lt=history_end
+    ).order_by("created")
+    dictStatus = {"up":1,"down":0}
+
+    return JsonResponse({"flips": list(map(lambda x: {'timestamp':x.created,'up':dictStatus[x.new_status]}, flips))})
+
+    # return JsonResponse(check.to_dict(
+    #     readonly=request.readonly,
+    #     history=(
+    #         history_start,history_end
+    #         )
+    #     ))
+
+@cors("GET")
+@csrf_exempt
+@validate_json()
+@authorize_read
+def get_flips_by_unique_key(request, unique_key):
+    checks = Check.objects.filter(project=request.project.id)
+    for check in checks:
+        if check.unique_key == unique_key:
+            return flips(request,check.code)
+    return HttpResponseNotFound()
 
 @never_cache
 @cors("GET")
