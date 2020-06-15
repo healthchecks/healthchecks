@@ -7,7 +7,7 @@ to you getting a notification.
 
 ## Shell Scripts
 
-The below shell script sends sends either a "success" or "failure" ping depending on
+The below shell script sends either a "success" or "failure" ping depending on
 command's (certbot in this example) exit code:
 
 ```bash
