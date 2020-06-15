@@ -43,6 +43,10 @@ checks in user's account.</p>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></td>
 </tr>
 <tr>
+<td><a href="#list-flips">Get a list of check's status changes</a></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code></td>
+</tr>
+<tr>
 <td><a href="#list-channels">Get a list of existing integrations</a></td>
 <td><code>GET SITE_ROOT/api/v1/channels/</code></td>
 </tr>
@@ -676,6 +680,69 @@ number of returned pings depends on account's billing plan: 100 for free account
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">}</span>
+</code></pre></div>
+
+
+<h2 class="rule" id="list-flips">Get a list of check's status changes</h2>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br>
+<code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></p>
+<p>Returns a list of "flips" this check has experienced. A flip is a change of status
+(from "down" to "up", or from "up" to "down").</p>
+<h3>Query String Parameters</h3>
+<dl>
+<dt>seconds=&lt;value&gt;</dt>
+<dd>
+<p>Returns the flips from the last <code>value</code> seconds</p>
+<p>Example:</p>
+<p><code>SITE_ROOT/api/v1/checks/&lt;uuid|unique_key&gt;/flips/?seconds=3600</code></p>
+</dd>
+<dt>start=&lt;value&gt;</dt>
+<dd>
+<p>Returns flips that are newer than the specified UNIX timestamp.</p>
+<p>Example:</p>
+<p><code>SITE_ROOT/api/v1/checks/&lt;uuid|unique_key&gt;/flips/?start=1592214380</code></p>
+</dd>
+<dt>end=&lt;value&gt;</dt>
+<dd>
+<p>Returns flips that are older than the specified UNIX timestamp.</p>
+<p>Example:</p>
+<p><code>SITE_ROOT/api/v1/checks/&lt;uuid|unique_key&gt;/flips/?end=1592217980</code></p>
+</dd>
+</dl>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>400 Bad Request</dt>
+<dd>Invalid query parameters.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+<dt>403 Forbidden</dt>
+<dd>Access denied, wrong API key.</dd>
+<dt>404 Not Found</dt>
+<dd>The specified check does not exist.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ <span class="se">\</span>
+    --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
+</code></pre></div>
+
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:18:23+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:17:15+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:16:18+00:00&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+<span class="p">]</span>
 </code></pre></div>
 
 

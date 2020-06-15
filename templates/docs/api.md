@@ -14,7 +14,8 @@ Endpoint Name                                         | Endpoint Address
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
-[Get a list of check's logged pings](#list-pings)    | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+[Get a list of check's logged pings](#list-pings)     | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+[Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`
 [Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
 
 ## Authentication
@@ -745,6 +746,81 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
 }
 ```
 
+
+## Get a list of check's status changes {: #list-flips .rule }
+
+`GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>
+`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
+
+Returns a list of "flips" this check has experienced. A flip is a change of status
+(from "down" to "up", or from "up" to "down").
+
+### Query String Parameters
+
+seconds=&lt;value&gt;
+:   Returns the flips from the last `value` seconds
+
+    Example:
+
+    `SITE_ROOT/api/v1/checks/<uuid|unique_key>/flips/?seconds=3600`
+
+start=&lt;value&gt;
+:   Returns flips that are newer than the specified UNIX timestamp.
+
+    Example:
+
+    `SITE_ROOT/api/v1/checks/<uuid|unique_key>/flips/?start=1592214380`
+
+end=&lt;value&gt;
+:   Returns flips that are older than the specified UNIX timestamp.
+
+    Example:
+
+    `SITE_ROOT/api/v1/checks/<uuid|unique_key>/flips/?end=1592217980`
+
+
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+400 Bad Request
+:   Invalid query parameters.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
+### Example Request
+
+```bash
+curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ \
+    --header "X-Api-Key: your-api-key"
+```
+
+### Example Response
+
+```json
+[
+    {
+      "timestamp": "2020-03-23T10:18:23+00:00",
+      "up": 1
+    },
+    {
+      "timestamp": "2020-03-23T10:17:15+00:00",
+      "up": 0
+    },
+    {
+      "timestamp": "2020-03-23T10:16:18+00:00",
+      "up": 1
+    }
+]
+```
 
 ## Get a List of Existing Integrations {: #list-channels .rule }
 

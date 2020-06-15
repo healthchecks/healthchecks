@@ -760,6 +760,12 @@ class Flip(models.Model):
             )
         ]
 
+    def to_dict(self):
+        return {
+            "timestamp": isostring(self.created),
+            "up": 1 if self.new_status == "up" else 0,
+        }
+
     def send_alerts(self):
         if self.new_status == "up" and self.old_status in ("new", "paused"):
             # Don't send alerts on new->up and paused->up transitions

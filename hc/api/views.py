@@ -8,6 +8,7 @@ from django.http import (
     HttpResponse,
     HttpResponseForbidden,
     HttpResponseNotFound,
+    HttpResponseBadRequest,
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404
@@ -19,6 +20,7 @@ from django.views.decorators.http import require_POST
 from hc.accounts.models import Profile
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
+from hc.api.forms import FlipsFiltersForm
 from hc.api.models import MAX_DELTA, Flip, Channel, Check, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg
 
@@ -188,7 +190,6 @@ def get_check(request, code):
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
-
     return JsonResponse(check.to_dict(readonly=request.readonly))
 
 
@@ -290,6 +291,50 @@ def pings(request, code):
         prev = ping
 
     return JsonResponse({"pings": dicts})
+
+
+def flips(request, check):
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    form = FlipsFiltersForm(request.GET)
+    if not form.is_valid():
+        return HttpResponseBadRequest()
+
+    flips = Flip.objects.filter(owner=check).order_by("-id")
+
+    if form.cleaned_data["start"]:
+        flips = flips.filter(created__gte=form.cleaned_data["start"])
+
+    if form.cleaned_data["end"]:
+        flips = flips.filter(created__lt=form.cleaned_data["end"])
+
+    if form.cleaned_data["seconds"]:
+        threshold = timezone.now() - td(seconds=form.cleaned_data["seconds"])
+        flips = flips.filter(created__gte=threshold)
+
+    return JsonResponse({"flips": [flip.to_dict() for flip in flips]})
+
+
+@cors("GET")
+@csrf_exempt
+@validate_json()
+@authorize_read
+def flips_by_uuid(request, code):
+    check = get_object_or_404(Check, code=code)
+    return flips(request, check)
+
+
+@cors("GET")
+@csrf_exempt
+@validate_json()
+@authorize_read
+def flips_by_unique_key(request, unique_key):
+    checks = Check.objects.filter(project=request.project.id)
+    for check in checks:
+        if check.unique_key == unique_key:
+            return flips(request, check)
+    return HttpResponseNotFound()
 
 
 @never_cache

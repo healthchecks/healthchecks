@@ -38,6 +38,8 @@ urlpatterns = [
     path("api/v1/checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
     path("api/v1/notifications/<uuid:code>/bounce", views.bounce, name="hc-api-bounce"),
     path("api/v1/checks/<uuid:code>/pings/", views.pings, name="hc-api-pings"),
+    path("api/v1/checks/<uuid:code>/flips/", views.flips_by_uuid, name="hc-api-flips"),
+    path("api/v1/checks/<sha1:unique_key>/flips/", views.flips_by_unique_key),
     path("api/v1/channels/", views.channels),
     path(
         "badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>",
