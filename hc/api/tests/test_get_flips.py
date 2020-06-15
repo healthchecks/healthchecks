@@ -25,13 +25,12 @@ class GetFlipsTestCase(BaseTestCase):
         return self.client.get(self.url, HTTP_X_API_KEY=api_key)
 
     def test_it_works(self):
-        self.f1 = Flip(
+        Flip.objects.create(
             owner=self.a1,
-            created=dt(2020,6,1,12,24,32,tzinfo=timezone.utc),
-            old_status='new',
-            new_status='up',
+            created=dt(2020, 6, 1, 12, 24, 32, 123000, tzinfo=timezone.utc),
+            old_status="new",
+            new_status="up",
         )
-        self.f1.save()
 
         r = self.get()
         self.assertEqual(r.status_code, 200)
@@ -41,7 +40,8 @@ class GetFlipsTestCase(BaseTestCase):
         self.assertEqual(len(doc["flips"]), 1)
 
         flip = doc["flips"][0]
-        self.assertEqual(flip["timestamp"], dt(2020,6,1,12,24,32,tzinfo=timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
+        # Microseconds (123000) should be stripped out
+        self.assertEqual(flip["timestamp"], "2020-06-01T12:24:32+00:00")
         self.assertEqual(flip["up"], 1)
 
     def test_readonly_key_is_allowed(self):
