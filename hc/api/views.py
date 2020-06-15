@@ -190,9 +190,6 @@ def get_check(request, code):
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
-
-    if 'history' in request.GET:
-        return JsonResponse(check.to_dict(readonly=request.readonly, history=request.GET['history']))
     return JsonResponse(check.to_dict(readonly=request.readonly))
 
 
@@ -295,60 +292,52 @@ def pings(request, code):
 
     return JsonResponse({"pings": dicts})
 
-@cors("GET")
-@csrf_exempt
-@validate_json()
-@authorize_read
-def flips(request, code):
-    check = get_object_or_404(Check, code=code)
+def flips(request, check):
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
     if all(x not in request.GET for x in ('start','end','seconds')):
-        flips = Flip.objects.select_related("owner").filter(
+        flips = Flip.objects.filter(
             owner=check, new_status__in=("down","up"),
         ).order_by("created")
     else:
-        if any(x in request.GET for x in ('start','end')) and 'seconds' in request.GET:
+        if "seconds" in request.GET and ("start" in request.GET or "end" in request.GET):
             return HttpResponseBadRequest()
 
-        history_start = None
-        history_end = datetime.now()
+        flips = Flip.objects.filter(
+            owner=check, new_status__in=("down","up"))
 
         if 'start' in request.GET:
-            history_start = datetime.fromtimestamp(int(request.GET['start']))
+            flips = flips.filter(created_gt=datetime.fromtimestamp(int(request.GET['start'])))
+        
         if 'end' in request.GET:
-            history_end = datetime.fromtimestamp(int(request.GET['end']))
+            flips = flips.filter(created__lt=datetime.fromtimestamp(int(request.GET['end'])))
 
         if 'seconds' in request.GET:
-            history_start = datetime.now()-td(seconds=int(request.GET['seconds']))
+            flips = flips.filter(created_gt=datetime.now()-td(seconds=int(request.GET['seconds'])))
+
+        flips = flips.order_by("created")
         
-        flips = Flip.objects.select_related("owner").filter(
-            owner=check, new_status__in=("down","up"),
-            created__gt=history_start,
-            created__lt=history_end
-        ).order_by("created")
 
-    dictStatus = {"up":1,"down":0}
-
-    return JsonResponse({"flips": list(map(lambda x: {'timestamp':x.created,'up':dictStatus[x.new_status]}, flips))})
-
-    # return JsonResponse(check.to_dict(
-    #     readonly=request.readonly,
-    #     history=(
-    #         history_start,history_end
-    #         )
-    #     ))
+    return JsonResponse({"flips": [flip.to_dict() for flip in flips]})
 
 @cors("GET")
 @csrf_exempt
 @validate_json()
 @authorize_read
-def get_flips_by_unique_key(request, unique_key):
+def flips_by_uuid(request,code):
+    check = get_object_or_404(Check, code=code)
+    return flips(request,check)
+
+@cors("GET")
+@csrf_exempt
+@validate_json()
+@authorize_read
+def flips_by_unique_key(request, unique_key):
     checks = Check.objects.filter(project=request.project.id)
     for check in checks:
         if check.unique_key == unique_key:
-            return flips(request,check.code)
+            return flips(request,check)
     return HttpResponseNotFound()
 
 @never_cache

@@ -778,6 +778,9 @@ class Flip(models.Model):
                 condition=models.Q(processed=None),
             )
         ]
+    
+    def to_dict(self):
+        return {"timestamp": self.created, "up": 1 if self.new_status == "up" else 0}
 
     def send_alerts(self):
         if self.new_status == "up" and self.old_status in ("new", "paused"):
