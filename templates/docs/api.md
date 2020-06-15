@@ -14,7 +14,8 @@ Endpoint Name                                         | Endpoint Address
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
-[Get a list of check's logged pings](#list-pings)    | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+[Get a list of check's logged pings](#list-pings)     | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+[Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`
 [Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
 
 ## Authentication
@@ -746,33 +747,36 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
 ```
 
 
-## Get a list of check's flips {: #list-flips .rule }
+## Get a list of check's status changes {: #list-flips .rule }
 
-`GET SITE_ROOT/api/v1/checks/<uuid>/flips/` or `GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
+`GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>
+`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
 
-Returns a list of flips this check has experienced. A flip is a change of status (up, or down).
-
-This endpoint returns the status of a check for the period of time passed according to the below parameters. If no parameters are passed, the default is to return flips occuring in the previous 3600 seconds (`/?seconds=3600`), which is the last hour.
+Returns a list of "flips" this check has experienced. A flip is a change of status
+(from "down" to "up", or from "up" to "down").
 
 ### Query String Parameters
 
-Either the seconds or the start (and end) parameters can be passed. Passing both the seconds parameter and the start/end parameters will return a 400 error (see below).
-
 seconds=&lt;value&gt;
-:   Filters the checks, and returns the flip history in the last `n` seconds
+:   Returns the flips from the last `value` seconds
 
     Example:
 
     `SITE_ROOT/api/v1/checks/<uuid|unique_key>/flips/?seconds=3600`
 
-start=&lt;value&gt;&amp;end=&lt;value&gt
-:   Filters the checks, and returns the flip history between the start and end timestamps.
-
-    If provided, both values must be unix timestamps. The `end` parameter is optional and defaults to the timestamp of the current date and time.
+start=&lt;value&gt;
+:   Returns flips that are newer than the specified UNIX timestamp.
 
     Example:
 
-    `SITE_ROOT/api/v1/checks/<uuid|unique_key>/flips/?seconds=3600`
+    `SITE_ROOT/api/v1/checks/<uuid|unique_key>/flips/?start=1592214380`
+
+end=&lt;value&gt;
+:   Returns flips that are older than the specified UNIX timestamp.
+
+    Example:
+
+    `SITE_ROOT/api/v1/checks/<uuid|unique_key>/flips/?end=1592217980`
 
 
 ### Response Codes
@@ -781,7 +785,7 @@ start=&lt;value&gt;&amp;end=&lt;value&gt
 :   The request succeeded.
 
 400 Bad Request
-:   Both a seconds and a start or end query string parameter has been passed, which is unsupported.
+:   Invalid query parameters.
 
 401 Unauthorized
 :   The API key is either missing or invalid.
@@ -802,25 +806,20 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ \
 ### Example Response
 
 ```json
-{
-    "name": "My First Check",
-    "tags": "",
-    "desc": "",
-    "grace": 3600,
-    "n_pings": 2,
-    "status": "up",
-    "last_ping": "2020-06-12T02:18:46+00:00",
-    "next_ping": "2020-06-13T02:18:46+00:00",
-    "manual_resume": false,
-    "history": [
-        {
-            "timestamp": "2020-03-23T23:30:18.767Z",
-            "up": 1
-        }
-    ],
-    "unique_key": "e855898bebff1756cde7c571319d877d07a38dab",
-    "timeout": 86400
-}
+[
+    {
+      "timestamp": "2020-03-23T10:18:23+00:00",
+      "up": 1
+    },
+    {
+      "timestamp": "2020-03-23T10:17:15+00:00",
+      "up": 0
+    },
+    {
+      "timestamp": "2020-03-23T10:16:18+00:00",
+      "up": 1
+    }
+]
 ```
 
 ## Get a List of Existing Integrations {: #list-channels .rule }
