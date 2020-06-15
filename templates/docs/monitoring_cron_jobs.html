@@ -42,7 +42,7 @@ increasingly important as you add more checks to your account.</p>
 after the command:</p>
 <div class="highlight"><pre><span></span><code>$ crontab -e
 <span class="c1"># m h dom mon dow command</span>
-  <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS --retry <span class="m">3</span> PING_URL &gt; /dev/null
+  <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS --retry <span class="m">3</span> --output /dev/null PING_URL
 </code></pre></div>
 
 
