@@ -41,7 +41,7 @@ after the command:
 ```bash
 $ crontab -e
 # m h dom mon dow command
-  8 6 * * * /home/user/backup.sh && curl -fsS --retry 3 --output /dev/null PING_URL
+  8 6 * * * /home/user/backup.sh && curl -fsS --retry 3 -o /dev/null PING_URL
 ```
 
 Now, each time your cron job runs, it will send a HTTP request to the ping URL.
@@ -74,11 +74,12 @@ there is an error. Feel free to adjust the curl options to suit your needs.
     </tr>
     <tr>
         <th>-s, --silent</th>
-        <td>Silent or quiet mode. Don't show progress meter or error messages.</td>
+        <td>Silent or quiet mode. Use it to hide progress meter,
+            but it also hides error messages.</td>
     </tr>
     <tr>
         <th>-S, --show-error</th>
-        <td>When used with -s it makes curl show error message if it fails.</td>
+        <td>Re-enables error messages when -s is used.</td>
     </tr>
     <tr>
         <th>--retry &lt;num&gt;</th>
@@ -86,14 +87,14 @@ there is an error. Feel free to adjust the curl options to suit your needs.
             If a transient error is returned when curl tries to perform a
             transfer, it will retry this number of times before  giving  up.
             Setting  the number  to  0  makes curl do no retries
-            (which is the default). Transient error means either: a timeout,
-            an FTP 4xx response code or an HTTP 5xx response code.
+            (which is the default). Transient error is a timeout or an HTTP 5xx
+            response code.
         </td>
     </tr>
     <tr>
-        <th>&gt; /dev/null</th>
+        <th>-o /dev/null</th>
         <td>
-            Redirect curl's stdout to /dev/null (error messages go to stderr,)
+            Redirect curl's stdout to /dev/null (error messages still go to stderr)
         </td>
     </tr>
 </table>
