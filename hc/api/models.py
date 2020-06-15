@@ -16,7 +16,6 @@ from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 import pytz
-import re
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)

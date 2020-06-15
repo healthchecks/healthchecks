@@ -19,18 +19,19 @@ class GetFlipsTestCase(BaseTestCase):
         self.a1.desc = "This is description"
         self.a1.save()
 
-        self.url = "/api/v1/checks/%s/flips/" % self.a1.code
-
-    def get(self, api_key="X" * 32):
-        return self.client.get(self.url, HTTP_X_API_KEY=api_key)
-
-    def test_it_works(self):
         Flip.objects.create(
             owner=self.a1,
             created=dt(2020, 6, 1, 12, 24, 32, 123000, tzinfo=timezone.utc),
             old_status="new",
             new_status="up",
         )
+
+        self.url = "/api/v1/checks/%s/flips/" % self.a1.code
+
+    def get(self, api_key="X" * 32, qs=""):
+        return self.client.get(self.url + qs, HTTP_X_API_KEY=api_key)
+
+    def test_it_works(self):
 
         r = self.get()
         self.assertEqual(r.status_code, 200)
@@ -54,3 +55,23 @@ class GetFlipsTestCase(BaseTestCase):
     def test_it_rejects_post(self):
         r = self.client.post(self.url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 405)
+
+    def test_it_rejects_non_integer_start(self):
+        r = self.get(qs="?start=abc")
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_negative_start(self):
+        r = self.get(qs="?start=-123")
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_huge_start(self):
+        r = self.get(qs="?start=12345678901234567890")
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_negative_seconds(self):
+        r = self.get(qs="?seconds=-123")
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_huge_seconds(self):
+        r = self.get(qs="?seconds=12345678901234567890")
+        self.assertEqual(r.status_code, 400)
