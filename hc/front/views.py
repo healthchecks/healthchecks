@@ -4,6 +4,7 @@ import os
 from secrets import token_urlsafe
 from urllib.parse import urlencode
 
+from cron_descriptor import ExpressionDescriptor
 from croniter import croniter
 from django.conf import settings
 from django.contrib import messages
@@ -408,6 +409,8 @@ def cron_preview(request):
         it = croniter(schedule, now_local)
         for i in range(0, 6):
             ctx["dates"].append(it.get_next(datetime))
+
+        ctx["desc"] = str(ExpressionDescriptor(schedule, use_24hour_time_format=True))
     except UnknownTimeZoneError:
         ctx["bad_tz"] = True
     except:

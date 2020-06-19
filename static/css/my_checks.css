@@ -87,9 +87,19 @@
     width: 300px;
 }
 
+#cron-description {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+    color: #FFF;
+    color: #333;
+    padding: 16px 8px 0px 8px;
+}
+
 #cron-preview {
     background: #f8f8f8;
-    height: 256px;
+    min-height: 298px;
 }
 
 #cron-preview p {
@@ -101,6 +111,10 @@
     border-top: 0;
     font-weight: normal;
     font-size: small;
+}
+
+#cron-preview-table {
+    margin: 0;
 }
 
 #cron-preview-table tr td:nth-child(1) {

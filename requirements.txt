@@ -1,3 +1,4 @@
+cron-descriptor==1.2.24
 croniter==0.3.31
 Django==3.0.7
 django-compressor==2.4
