@@ -1,5 +1,6 @@
 from datetime import timedelta as td
 import time
+import requests
 from threading import Thread
 
 from django.core.management.base import BaseCommand
@@ -154,5 +155,6 @@ class Command(BaseCommand):
             if i % 60 == 0:
                 timestamp = timezone.now().isoformat()
                 self.stdout.write("-- MARK %s --\n" % timestamp)
+                requests.get('https://hc-ping.com/8bbf4b71-45cd-47d5-8425-4d5982419823')
 
         return "Sent %d alert(s)" % sent
