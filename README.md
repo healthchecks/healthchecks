@@ -1,8 +1,6 @@
 # Healthchecks
 
-[![Build Status](https://travis-ci.org/healthchecks/healthchecks.svg?branch=master)](https://travis-ci.org/healthchecks/healthchecks)
-[![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
-
+## How Squad has configured HealthChecks along with below stuff can be found [here](https://docs.google.com/document/d/137E_6e-kCRk-5wmDTMffZ8vlmLT4yw4NghajnRkiO_8/edit)
 
 ![Screenshot of Welcome page](/static/img/welcome.png?raw=true "Welcome Page")
 
