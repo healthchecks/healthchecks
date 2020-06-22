@@ -1,6 +1,7 @@
 from datetime import timedelta as td
 import time
 import requests
+from django.db.models import F
 from threading import Thread
 
 from django.core.management.base import BaseCommand
@@ -69,12 +70,17 @@ class Command(BaseCommand):
         )
 
     def process_one_flip(self, use_threads=True):
+        def _notify(_flip):
+            if use_threads:
+                notify_on_thread(_flip.id, self.stdout)
+            else:
+                notify(_flip.id, self.stdout)
+
         """ Find unprocessed flip, send notifications.  """
 
         # Order by processed, otherwise Django will automatically order by id
         # and make the query less efficient
-        q = Flip.objects.filter(processed=None).order_by("processed")
-        flip = q.first()
+        flip = Flip.objects.filter(processed=None).order_by("processed").first()
         if flip is None:
             return False
 
@@ -83,11 +89,20 @@ class Command(BaseCommand):
         if num_updated != 1:
             # Nothing got updated: another worker process got there first.
             return True
+        _notify(flip)
 
-        if use_threads:
-            notify_on_thread(flip.id, self.stdout)
-        else:
-            notify(flip.id, self.stdout)
+        ####
+        # This is custom code for Squad following the above practices, since don't want to change logic much
+        # ####
+        flip = Flip.objects.filter(next_alert_at__lte=timezone.now()).order_by("id").first()
+        if flip is None:
+            return False
+
+        q = Flip.objects.filter(id=flip.id, next_alert_at__lte=timezone.now())
+        num_updated = q.updated(next_alert_at=F('next_alert_at') + flip.check.timeout)
+        if num_updated != 1:
+            return True
+        _notify(flip)
 
         return True
 
@@ -104,7 +119,6 @@ class Command(BaseCommand):
 
         old_status = check.status
         q = Check.objects.filter(id=check.id, status=old_status)
-
         try:
             status = check.get_status(with_started=False)
         except Exception as e:
@@ -129,6 +143,7 @@ class Command(BaseCommand):
         flip = Flip(owner=check)
         flip.created = flip_time
         flip.old_status = old_status
+        flip.next_alert_at = flip_time + check.timeout
         flip.new_status = "down"
         flip.save()
 

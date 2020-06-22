@@ -5,17 +5,9 @@ from django.core.management.base import BaseCommand
 from hc.api.models import Check, DEFAULT_TIMEOUT
 
 
-PROJECT_ID_TO_API_KEY_MAP = {
-    2: 'eB-PDSWREOVFjjxZr1ena3hOqB9EglWX',
-    1: 'RZ9BZERmgS40paCpfsGw9zomL1VIxlYe',
-    3: '5IVMol_f50_6DjsGCImPIcawsNzEZoxb',
-}
+PROJECT_ID_TO_API_KEY_MAP = {}
 
-PROJECT_ID_TO_INTEGRATION_ID_MAP = {
-    2: 'https://hooks.slack.com/services/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',
-    1: 'https://hooks.slack.com/services/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',
-    3: 'https://hooks.slack.com/services/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',
-}
+PROJECT_ID_TO_INTEGRATION_ID_MAP = {}
 
 API_CHECKS_URL = 'https://healthchecks.io/api/v1/checks/'
 

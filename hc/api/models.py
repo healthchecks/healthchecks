@@ -9,6 +9,7 @@ from croniter import croniter
 from django.conf import settings
 from django.core.signing import TimestampSigner
 from django.db import models
+from django.db.models import Max
 from django.urls import reverse
 from django.utils import timezone
 from hc.accounts.models import Project
@@ -749,6 +750,13 @@ class Flip(models.Model):
     old_status = models.CharField(max_length=8, choices=STATUSES)
     new_status = models.CharField(max_length=8, choices=STATUSES)
 
+    next_alert_at = models.DateTimeField(
+        null=True, blank=True,
+        help_text="Denotes the time next alerts should be sent in case this "
+                  "flip does not come back to success from failure",
+        db_index=True
+    )
+
     class Meta:
         indexes = [
             # For quickly looking up unprocessed flips.
@@ -759,6 +767,19 @@ class Flip(models.Model):
                 condition=models.Q(processed=None),
             )
         ]
+
+    def x(cls):
+        check_to_latest_flip_id_map = cls.objects.values('owner_id').order_by('id').annotate(latest_flip=Max('id'))
+        flip_id_to_obj_map = cls.objects.filter(id__in=check_to_latest_flip_id_map.values()).in_bulk()
+
+        for flip_id, flip_obj in flip_id_to_obj_map.items():
+            if flip_obj.new_status == "down":
+                if flip_obj.processed <= flip_obj.check.timeout + flip_obj.check.grace:
+                    pass
+
+                pass
+            else:
+                pass
 
     def to_dict(self):
         return {
