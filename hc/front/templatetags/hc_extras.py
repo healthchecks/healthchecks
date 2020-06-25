@@ -87,7 +87,7 @@ def last_ping_key(check):
 
 
 def not_down_key(check):
-    return check.get_status(with_started=True) != "down"
+    return check.get_status() != "down"
 
 
 @register.filter
@@ -126,7 +126,7 @@ def down_title(check):
     """
 
     s = "%s – %s" % (check.name_then_code(), settings.SITE_NAME)
-    if check.get_status(with_started=True) == "down":
+    if check.get_status() == "down":
         s = "DOWN – " + s
 
     return s

@@ -207,8 +207,9 @@ def status(request, code):
         details.append(
             {
                 "code": str(check.code),
-                "status": check.get_status(with_started=True),
+                "status": check.get_status(),
                 "last_ping": LAST_PING_TMPL.render(ctx),
+                "started": check.last_start is not None,
             }
         )
 
@@ -594,7 +595,7 @@ def copy(request, code):
 def status_single(request, code):
     check = _get_check_for_user(request, code)
 
-    status = check.get_status(with_started=True)
+    status = check.get_status()
     events = _get_events(check, 20)
     updated = "1"
     if len(events):

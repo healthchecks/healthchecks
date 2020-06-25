@@ -119,8 +119,8 @@ class CheckModelTestCase(BaseTestCase):
         check.last_start = timezone.now() - timedelta(minutes=5)
 
         self.assertEqual(check.get_status(with_started=True), "started")
-        # Starting a check starts the grace period:
-        self.assertEqual(check.get_status(), "grace")
+        # A started check still is considered "up":
+        self.assertEqual(check.get_status(), "up")
 
     def test_get_status_handles_up_then_started_and_expired(self):
         check = Check(status="up")

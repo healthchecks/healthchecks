@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.16.0-dev - Unreleased
 
 ### Improvements
 - Paused ping handling can be controlled via API (#376)
@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - The /api/v1/checks/ endpoint now accepts either UUID or `unique_key` (#370)
 - Added /api/v1/checks/uuid/flips/ endpoint (#349)
 - In the cron expression dialog, show a human-friendly version of the expression
-
+- Indicate a started check with a progress spinner under status icon (#338)
 
 ### Bug Fixes
 - Removing Pager Team integration, project appears to be discontinued

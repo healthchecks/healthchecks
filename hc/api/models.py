@@ -119,7 +119,7 @@ class Check(models.Model):
         if self.last_duration and self.last_duration < MAX_DELTA:
             return self.last_duration
 
-    def get_grace_start(self):
+    def get_grace_start(self, with_started=True):
         """ Return the datetime when the grace period starts.
 
         If the check is currently new, paused or down, return None.
@@ -142,7 +142,7 @@ class Check(models.Model):
             it = croniter(self.schedule, last_local)
             result = it.next(datetime)
 
-        if self.last_start and self.status != "down":
+        if with_started and self.last_start and self.status != "down":
             result = min(result, self.last_start)
 
         if result != NEVER:
@@ -175,7 +175,7 @@ class Check(models.Model):
         if self.status in ("new", "paused", "down"):
             return self.status
 
-        grace_start = self.get_grace_start()
+        grace_start = self.get_grace_start(with_started=with_started)
         grace_end = grace_start + self.grace
         if now >= grace_end:
             return "down"

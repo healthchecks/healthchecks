@@ -199,6 +199,7 @@ $(function () {
     // Schedule refresh to run every 3s when tab is visible and user
     // is active, every 60s otherwise
     var lastStatus = {};
+    var lastStarted = {};
     var lastPing = {};
     var statusUrl = $("#checks-table").data("status-url");
     function refreshStatus() {
@@ -211,6 +212,11 @@ $(function () {
                     if (lastStatus[el.code] != el.status) {
                         lastStatus[el.code] = el.status;
                         $("#" + el.code + " span.status").attr("class", "status icon-" + el.status);
+                    }
+
+                    if (lastStarted[el.code] != el.started) {
+                        lastStarted[el.code] = el.started;
+                        $("#" + el.code + " .spinner").toggleClass("started", el.started);
                     }
 
                     if (lastPing[el.code] != el.last_ping) {

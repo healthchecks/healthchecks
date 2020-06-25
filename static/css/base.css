@@ -168,3 +168,51 @@ pre {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.spinner {
+    display: none;
+    width: 24px;
+    height: 8px;
+    margin: 4px  auto 0 auto;
+
+}
+
+.spinner.started {
+    display: block;
+}
+
+
+.spinner > div {
+    float: left;
+    width: 4px;
+    height: 4px;
+    margin: 0 2px;
+
+    background: #AAA;
+    border-radius: 2px;
+    animation-duration: 1s;
+    animation-name: spinner-pulse;
+    animation-iteration-count: infinite;
+}
+
+.spinner .d2 {
+    animation-delay: 0.15s;
+}
+
+.spinner .d3 {
+    animation-delay: 0.3s;
+}
+
+@keyframes spinner-pulse {
+    from {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
