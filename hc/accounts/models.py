@@ -300,7 +300,7 @@ class Project(models.Model):
     def overall_status(self):
         status = "up"
         for check in self.check_set.all():
-            check_status = check.get_status(with_started=False)
+            check_status = check.get_status()
             if status == "up" and check_status == "grace":
                 status = "grace"
 

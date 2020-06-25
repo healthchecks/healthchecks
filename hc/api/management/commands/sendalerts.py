@@ -105,7 +105,7 @@ class Command(BaseCommand):
         q = Check.objects.filter(id=check.id, status=old_status)
 
         try:
-            status = check.get_status(with_started=False)
+            status = check.get_status()
         except Exception as e:
             # Make sure we don't trip on this check again for an hour:
             # Otherwise sendalerts may end up in a crash loop.

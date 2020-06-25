@@ -29,12 +29,8 @@ class CheckModelTestCase(BaseTestCase):
 
     def test_get_status_handles_paused_check(self):
         check = Check()
-
-        check.status = "up"
-        check.last_ping = timezone.now() - timedelta(days=1, minutes=30)
-        self.assertEqual(check.get_status(), "grace")
-
         check.status = "paused"
+        check.last_ping = timezone.now() - timedelta(days=1, minutes=30)
         self.assertEqual(check.get_status(), "paused")
 
     def test_status_works_with_cron_syntax(self):
@@ -103,7 +99,7 @@ class CheckModelTestCase(BaseTestCase):
         check.last_start = timezone.now() - timedelta(minutes=5)
         for status in ("new", "paused", "up", "down"):
             check.status = status
-            self.assertEqual(check.get_status(), "started")
+            self.assertEqual(check.get_status(with_started=True), "started")
 
     def test_get_status_handles_down_then_started_and_expired(self):
         check = Check(status="down")
@@ -112,8 +108,8 @@ class CheckModelTestCase(BaseTestCase):
         # Last start was 2 hours ago - the check is past its grace time
         check.last_start = timezone.now() - timedelta(hours=2)
 
+        self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
-        self.assertEqual(check.get_status(with_started=False), "down")
 
     def test_get_status_handles_up_then_started(self):
         check = Check(status="up")
@@ -122,9 +118,9 @@ class CheckModelTestCase(BaseTestCase):
         # Last start was 5 minutes ago
         check.last_start = timezone.now() - timedelta(minutes=5)
 
-        self.assertEqual(check.get_status(), "started")
+        self.assertEqual(check.get_status(with_started=True), "started")
         # Starting a check starts the grace period:
-        self.assertEqual(check.get_status(with_started=False), "grace")
+        self.assertEqual(check.get_status(), "grace")
 
     def test_get_status_handles_up_then_started_and_expired(self):
         check = Check(status="up")
@@ -133,23 +129,23 @@ class CheckModelTestCase(BaseTestCase):
         # Last start was 2 hours ago - the check is past its grace time
         check.last_start = timezone.now() - timedelta(hours=2)
 
+        self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
-        self.assertEqual(check.get_status(with_started=False), "down")
 
     def test_get_status_handles_paused_then_started_and_expired(self):
         check = Check(status="paused")
         # Last start was 2 hours ago - the check is past its grace time
         check.last_start = timezone.now() - timedelta(hours=2)
 
+        self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
-        self.assertEqual(check.get_status(with_started=False), "down")
 
     def test_get_status_handles_started_and_mia(self):
         check = Check()
         check.last_start = timezone.now() - timedelta(hours=2)
 
+        self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
-        self.assertEqual(check.get_status(with_started=False), "down")
 
     def test_next_ping_with_cron_syntax(self):
         dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)

@@ -60,7 +60,7 @@
         {% if check in hidden_checks %}style="display: none"{% endif %}>
 
         <td class="indicator-cell">
-            <span class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
+            <span class="status icon-{{ check.get_status_with_started }}" data-toggle="tooltip"></span>
         </td>
         <td>
             <div data-name="{{ check.name }}"

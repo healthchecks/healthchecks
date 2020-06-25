@@ -1,5 +1,5 @@
 {% load humanize %}
-{% with check.get_status as status %}
+{% with check.get_status_with_started as status %}
     {% if status == "down" %}
         This check is down. Last ping was {{ check.last_ping|naturaltime }}.
     {% elif status == "up" %}

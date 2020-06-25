@@ -160,7 +160,7 @@ class Check(models.Model):
         if grace_start is not None:
             return grace_start + self.grace
 
-    def get_status(self, now=None, with_started=True):
+    def get_status(self, now=None, with_started=False):
         """ Return current status for display. """
 
         if now is None:
@@ -184,6 +184,9 @@ class Check(models.Model):
             return "grace"
 
         return "up"
+
+    def get_status_with_started(self):
+        return self.get_status(with_started=True)
 
     def assign_all_channels(self):
         channels = Channel.objects.filter(project=self.project)
@@ -214,7 +217,7 @@ class Check(models.Model):
             "desc": self.desc,
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
-            "status": self.get_status(),
+            "status": self.get_status(with_started=True),
             "last_ping": isostring(self.last_ping),
             "next_ping": isostring(self.get_grace_start()),
             "manual_resume": self.manual_resume,

@@ -56,7 +56,7 @@ DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
 def _tags_statuses(checks):
     tags, down, grace, num_down = {}, {}, {}, 0
     for check in checks:
-        status = check.get_status(with_started=False)
+        status = check.get_status()
 
         if status == "down":
             num_down += 1
@@ -207,7 +207,7 @@ def status(request, code):
         details.append(
             {
                 "code": str(check.code),
-                "status": check.get_status(),
+                "status": check.get_status(with_started=True),
                 "last_ping": LAST_PING_TMPL.render(ctx),
             }
         )
@@ -594,7 +594,7 @@ def copy(request, code):
 def status_single(request, code):
     check = _get_check_for_user(request, code)
 
-    status = check.get_status()
+    status = check.get_status(with_started=True)
     events = _get_events(check, 20)
     updated = "1"
     if len(events):
@@ -1691,7 +1691,7 @@ def metrics(request, code, key):
 
         TMPL = """hc_check_up{name="%s", tags="%s", unique_key="%s"} %d\n"""
         for check in checks:
-            value = 0 if check.get_status(with_started=False) == "down" else 1
+            value = 0 if check.get_status() == "down" else 1
             yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
 
         tags_statuses, num_down = _tags_statuses(checks)

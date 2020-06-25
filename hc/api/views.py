@@ -359,7 +359,7 @@ def badge(request, badge_key, signature, tag, fmt="svg"):
             continue
 
         total += 1
-        check_status = check.get_status(with_started=False)
+        check_status = check.get_status()
 
         if check_status == "down":
             down += 1
