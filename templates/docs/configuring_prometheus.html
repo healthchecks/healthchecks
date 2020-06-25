@@ -1,0 +1,20 @@
+<h1>Configuring Prometheus</h1>
+<p>Healthchecks.io supports exporting metrics and check statuses to <a href="https://prometheus.io/">Prometheus</a>, for use with <a href="https://grafana.com/">Grafana</a>.  </p>
+<p>You can generate the metrics export endpoint by going to your project settings (last tab up top) and clicking "Create API Keys". You will then see the link to the prometheus endpoint, which looks like this:</p>
+<div class="highlight"><pre><span></span>https://healthchecks.io/projects/45sd78-eeee-dddd-8888-b25a9887ecfd/metrics/NXyGzks4s8xcF1J-wzoaioyoqXIANGD0
+</pre></div>
+
+
+<h2>Update the prometheus.yml</h2>
+<p>You can take that link and add it to the prometheus config:</p>
+<div class="highlight"><pre><span></span>  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">job_name</span><span class="p p-Indicator">:</span> <span class="s">&quot;healthchecks&quot;</span>
+    <span class="l l-Scalar l-Scalar-Plain">scrape_interval</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">60s</span>
+    <span class="l l-Scalar l-Scalar-Plain">scheme</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https</span>
+    <span class="l l-Scalar l-Scalar-Plain">metrics_path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/projects/45sd78-eeee-dddd-8888-b25a9887ecfd/metrics/NXyGzks4s8xcF1J-wzoaioyoqXIANGD0</span>
+    <span class="l l-Scalar l-Scalar-Plain">static_configs</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">targets</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;healthchecks.io&quot;</span><span class="p p-Indicator">]</span>
+</pre></div>
+
+
+<p>Notice how we split up the URL and paste in the scheme, domain, and path separately. </p>
+<p>Reload promethus and your changes should be live, coming in under the <code>hc_</code> prefix.</p>

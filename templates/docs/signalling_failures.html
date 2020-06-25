@@ -6,7 +6,7 @@ to you getting a notification.</p>
 <h2>Shell Scripts</h2>
 <p>The below shell script sends either a "success" or "failure" ping depending on
 command's (certbot in this example) exit code:</p>
-<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
 
 <span class="nv">url</span><span class="o">=</span>PING_URL
 
@@ -14,26 +14,26 @@ command's (certbot in this example) exit code:</p>
 
 <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">url</span><span class="o">=</span><span class="nv">$url</span>/fail<span class="p">;</span> <span class="k">fi</span>
 curl --retry <span class="m">3</span> <span class="nv">$url</span>
-</code></pre></div>
+</pre></div>
 
 
 <h2>Python</h2>
 <p>Below is a skeleton code example in Python which signals a failure when the
 work function returns an unexpected value or throws an exception:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
 
 <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
     <span class="c1"># Do your number crunching, backup dumping, newsletter sending work here.</span>
     <span class="c1"># Return a truthy value on success.</span>
     <span class="c1"># Return a falsy value or throw an exception on failure.</span>
-    <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="bp">True</span>
 
-<span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">success</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="n">success</span> <span class="o">=</span> <span class="n">do_work</span><span class="p">()</span>
 <span class="k">finally</span><span class="p">:</span>
     <span class="c1"># On success, requests PING_URL</span>
     <span class="c1"># On failure, requests PING_URL/fail</span>
     <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span> <span class="k">if</span> <span class="n">success</span> <span class="k">else</span> <span class="n">URL</span> <span class="o">+</span> <span class="s2">&quot;/fail&quot;</span><span class="p">)</span>
-</code></pre></div>
+</pre></div>

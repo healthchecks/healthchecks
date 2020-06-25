@@ -1,26 +1,26 @@
 <h1>Python</h1>
 <p>If you are already using the requests library, it's convenient to also use it here:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># using requests:</span>
+<div class="highlight"><pre><span></span><span class="c1"># using requests:</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">)</span>
-</code></pre></div>
+</pre></div>
 
 
 <p>Otherwise, you can use the urllib standard module.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># urllib with python 3.x:</span>
+<div class="highlight"><pre><span></span><span class="c1"># urllib with python 3.x:</span>
 <span class="kn">import</span> <span class="nn">urllib.request</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">)</span>
-</code></pre></div>
+</pre></div>
 
 
-<div class="highlight"><pre><span></span><code><span class="c1"># urllib with python 2.x:</span>
+<div class="highlight"><pre><span></span><span class="c1"># urllib with python 2.x:</span>
 <span class="kn">import</span> <span class="nn">urllib</span>
 <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">)</span>
-</code></pre></div>
+</pre></div>
 
 
 <p>You can include additional diagnostic information in the in the request body (for POST requests):</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Passing diagnostic information in the POST body:</span>
+<div class="highlight"><pre><span></span><span class="c1"># Passing diagnostic information in the POST body:</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;temperature=-7&quot;</span><span class="p">)</span>
-</code></pre></div>
+</pre></div>
