@@ -3,10 +3,10 @@
 update your cron job command to send a HTTP request to SITE_NAME
 after a job completes.</p>
 <p>Let's look at an example:</p>
-<div class="highlight"><pre><span></span>$ crontab -l
+<div class="highlight"><pre><span></span><code>$ crontab -l
 <span class="c1"># m h dom mon dow command</span>
   <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh
-</pre></div>
+</code></pre></div>
 
 
 <p>The above job runs <code>/home/user/backup.sh</code> every day at 6:08. The backup
@@ -40,10 +40,10 @@ increasingly important as you add more checks to your account.</p>
 </ol>
 <p>Finally, edit your cron job definition and append a curl or wget call
 after the command:</p>
-<div class="highlight"><pre><span></span>$ crontab -e
+<div class="highlight"><pre><span></span><code>$ crontab -e
 <span class="c1"># m h dom mon dow command</span>
   <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS --retry <span class="m">3</span> -o /dev/null PING_URL
-</pre></div>
+</code></pre></div>
 
 
 <p>Now, each time your cron job runs, it will send a HTTP request to the ping URL.
@@ -101,7 +101,7 @@ there is an error. Feel free to adjust the curl options to suit your needs.</p>
 <h2>Looking up Your Machine's Time Zone</h2>
 <p>On modern GNU/Linux systems, you can look up the time zone using the
 <code>timedatectl status</code> command and looking for "Time zone" in its output:</p>
-<div class="highlight"><pre><span></span>$ timedatectl status
+<div class="highlight"><pre><span></span><code>$ timedatectl status
 
                Local time: C  2020-01-23 12:35:50 EET
            Universal time: C  2020-01-23 10:35:50 UTC
@@ -110,4 +110,4 @@ there is an error. Feel free to adjust the curl options to suit your needs.</p>
 </span>System clock synchronized: yes
               NTP service: active
           RTC in local TZ: no
-</pre></div>
+</code></pre></div>

@@ -16,7 +16,7 @@ an existing deployment in a new region. The SITE_NAME web interface does
 not have a function to clone an entire project, but this can be done relatively
 easily using the <a href="../api/">Management API</a> calls. Below is an example using Python
 and the requests library:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/&quot;</span>
 <span class="n">SOURCE_PROJECT_READONLY_KEY</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span>
@@ -24,6 +24,6 @@ and the requests library:</p>
 
 <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X-Api-Key&quot;</span><span class="p">:</span> <span class="n">SOURCE_PROJECT_READONLY_KEY</span><span class="p">})</span>
 <span class="k">for</span> <span class="n">check</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;checks&quot;</span><span class="p">]:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Cloning </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">check</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cloning </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">check</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
     <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">API_URL</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">check</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;X-Api-Key&quot;</span><span class="p">:</span> <span class="n">TARGET_PROJECT_KEY</span><span class="p">})</span>
-</pre></div>
+</code></pre></div>

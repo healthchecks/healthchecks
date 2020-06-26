@@ -5,19 +5,19 @@
 <p>Here is a simple PowerShell script that pings SITE_NAME. When scheduled to
 run with Task Scheduler, it will essentially just send regular "I'm alive" messages.
 You can of course extend it to do more things.</p>
-<div class="highlight"><pre><span></span><span class="c1"># inside a PowerShell script:</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># inside a PowerShell script:</span>
 Invoke-RestMethod PING_URL
-</pre></div>
+</code></pre></div>
 
 
 <p>Save the above to e.g. <code>C:\Scripts\healthchecks.ps1</code>.
 Then use the following command in a Scheduled Task to run the script:</p>
-<div class="highlight"><pre><span></span>powershell.exe -ExecutionPolicy bypass -File C:<span class="se">\S</span>cripts<span class="se">\h</span>ealthchecks.ps1
-</pre></div>
+<div class="highlight"><pre><span></span><code>powershell.exe -ExecutionPolicy bypass -File C:<span class="se">\S</span>cripts<span class="se">\h</span>ealthchecks.ps1
+</code></pre></div>
 
 
 <p>In simple cases, you can also pass the script to PowerShell directly,
 using the "-command" argument:</p>
-<div class="highlight"><pre><span></span><span class="c1"># Without an underlying script, passing the command to PowerShell directly:</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Without an underlying script, passing the command to PowerShell directly:</span>
 powershell.exe -command <span class="p">&amp;</span><span class="o">{</span>Invoke-RestMethod PING_URL<span class="o">}</span>
-</pre></div>
+</code></pre></div>
