@@ -38,7 +38,13 @@ from hc.api.transports import Telegram
 from hc.front.decorators import require_setting
 from hc.front import forms
 from hc.front.schemas import telegram_callback
-from hc.front.templatetags.hc_extras import num_down_title, down_title, sortchecks
+from hc.front.templatetags.hc_extras import (
+    num_down_title,
+    down_title,
+    sortchecks,
+    site_hostname,
+    site_scheme,
+)
 from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
 import pytz
@@ -282,6 +288,8 @@ def serve_doc(request, doc="introduction"):
         "{{ default_grace }}": str(int(DEFAULT_GRACE.total_seconds())),
         "SITE_NAME": settings.SITE_NAME,
         "SITE_ROOT": settings.SITE_ROOT,
+        "SITE_HOSTNAME": site_hostname(),
+        "SITE_SCHEME": site_scheme(),
         "PING_ENDPOINT": settings.PING_ENDPOINT,
         "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
         "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
