@@ -7,7 +7,7 @@
 <p>Signalling a start kicks off a separate timer: the job now <strong>must</strong> signal a
 success within its configured "Grace Time", or it will get marked as "down".</p>
 <p>Below is a code example in Python:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
 
 
@@ -23,11 +23,11 @@ success within its configured "Grace Time", or it will get marked as "down".</p>
 
 <span class="c1"># TODO: run the job here</span>
 <span class="n">fib</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;F(42) = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">fib</span><span class="p">(</span><span class="mi">42</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;F(42) = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">fib</span><span class="p">(</span><span class="mi">42</span><span class="p">))</span>
 
 <span class="c1"># Signal success:</span>
 <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
-</code></pre></div>
+</pre></div>
 
 
 <h2>Viewing Measured Run Times</h2>
