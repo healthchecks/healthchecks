@@ -36,7 +36,7 @@
 #checks-table .integrations,
 #checks-table .timeout-grace,
 #checks-table .last-ping {
-    border: 1px solid #FFF;
+    border: 1px solid transparent;
     padding: 6px;
 }
 

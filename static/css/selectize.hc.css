@@ -27,7 +27,7 @@
 }
 .selectize-input,
 .selectize-control.single .selectize-input.input-active {
-  background: #ffffff;
+  background: transparent;
   cursor: text;
   display: inline-block;
 }
@@ -52,7 +52,7 @@
   padding: 4px 12px 1px;
 }
 .selectize-input.full {
-  background-color: #ffffff;
+  background-color: transparent;
 }
 .selectize-input.disabled,
 .selectize-input.disabled * {
@@ -123,7 +123,7 @@
   content: ' ';
   display: block;
   position: absolute;
-  background: #ffffff;
+  background: rgba(204, 204, 204, 0.008);
   height: 1px;
   bottom: 0;
   left: 0;
@@ -227,7 +227,7 @@
 }
 .selectize-control .selectize-input.disabled {
   opacity: 0.5;
-  background-color: #ffffff;
+  background-color: transparent;
 }
 .selectize-dropdown,
 .selectize-dropdown.form-control {

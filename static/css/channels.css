@@ -53,7 +53,7 @@ table.channels-table > tbody > tr > th {
 
 .edit-name, .edit-checks {
     padding: 12px 6px;
-    border: 1px solid #FFF;
+    border: 1px solid transparent;
     cursor: pointer;
 }
 

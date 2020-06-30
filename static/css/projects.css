@@ -35,7 +35,7 @@
 }
 
 #project-selector #add-project .project {
-    border: 1px dashed #ddd;
+    border-style: dashed;
     padding: 0;
     text-align: center;
     font-size: 18px;
