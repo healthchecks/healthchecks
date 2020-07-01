@@ -14,7 +14,7 @@ $(function() {
         $(".jumbotron").hide();
         $("integration-settings").text("Loading...");
 
-        token = tokenMatch[1];
+        var token = tokenMatch[1];
         var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
         var csrf = $('input[name=csrfmiddlewaretoken]').val();
         $.ajax({

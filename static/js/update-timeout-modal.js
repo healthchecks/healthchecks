@@ -6,7 +6,7 @@ $(function () {
         if (!code) {
             code = this.dataset.code;
         }
-       
+
         var url = base + "/checks/" + code + "/timeout/";
 
         $("#update-timeout-form").attr("action", url);
@@ -58,7 +58,7 @@ $(function () {
         }
 
         return result;
-    }
+    };
 
     var periodSlider = document.getElementById("period-slider");
     noUiSlider.create(periodSlider, {

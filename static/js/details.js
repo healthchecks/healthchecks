@@ -70,7 +70,7 @@ $(function () {
             headers: {"X-CSRFToken": token},
             data: {"state": isOn ? "on" : "off"}
         });
-    })
+    });
 
     var statusUrl = document.getElementById("edit-timeout").dataset.statusUrl;
     var lastStatusText = "";

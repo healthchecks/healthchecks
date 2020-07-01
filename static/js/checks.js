@@ -252,7 +252,7 @@ $(function () {
         setTimeout(function() {
             e.target.textContent = "copy";
         }, 300);
-    })
+    });
 
     clipboard.on('success', function(e) {
         e.trigger.textContent = "copied!";
