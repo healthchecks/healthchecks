@@ -88,9 +88,6 @@ class Email(Transport):
         emails.alert(self.channel.email_value, ctx, headers)
 
     def is_noop(self, check):
-        if not self.channel.email_verified:
-            return True
-
         if check.status == "down":
             return not self.channel.email_notify_down
         else:

@@ -57,22 +57,6 @@ class ChannelsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "(normal priority)")
 
-    def test_it_shows_disabled_email(self):
-        check = Check(project=self.project, status="up")
-        check.save()
-
-        channel = Channel(project=self.project, kind="email")
-        channel.value = "alice@example.org"
-        channel.save()
-
-        n = Notification(owner=check, channel=channel, error="Invalid address")
-        n.save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.channels_url)
-        self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "Disabled")
-
     def test_it_shows_unconfirmed_email(self):
         channel = Channel(project=self.project, kind="email")
         channel.value = "alice@example.org"

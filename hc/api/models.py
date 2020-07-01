@@ -459,11 +459,18 @@ class Channel(models.Model):
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
-    def notify(self, check):
+    def notify(self, check, is_test=False):
         if self.transport.is_noop(check):
             return "no-op"
 
-        n = Notification(owner=check, channel=self)
+        n = Notification(channel=self)
+        if is_test:
+            # When sending a test notification we leave the owner field null.
+            # (the passed check is a dummy, unsaved Check instance)
+            pass
+        else:
+            n.owner = check
+
         n.check_status = check.status
         n.error = "Sending"
         n.save()
@@ -735,7 +742,7 @@ class Notification(models.Model):
         get_latest_by = "created"
 
     code = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
-    owner = models.ForeignKey(Check, models.CASCADE)
+    owner = models.ForeignKey(Check, models.CASCADE, null=True)
     check_status = models.CharField(max_length=6)
     channel = models.ForeignKey(Channel, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)

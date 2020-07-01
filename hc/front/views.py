@@ -795,10 +795,11 @@ def send_test_notification(request, code):
             # send "TEST is UP" notification instead:
             dummy.status = "up"
 
-    if channel.kind == "email":
-        error = channel.transport.notify(dummy, channel.get_unsub_link())
-    else:
-        error = channel.transport.notify(dummy)
+    # Delete all older test notifications for this channel
+    Notification.objects.filter(channel=channel, owner=None).delete()
+
+    # Send the test notification
+    error = channel.notify(dummy, is_test=True)
 
     if error:
         messages.warning(request, "Could not send a test notification. %s" % error)

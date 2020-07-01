@@ -327,14 +327,13 @@ class NotifyTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
 
-    def test_it_skips_unverified_email(self):
+    def test_it_reports_unverified_email(self):
         self._setup_data("email", "alice@example.org", email_verified=False)
         self.channel.notify(self.check)
 
-        # If an email is not verified, it should be skipped over
-        # without logging a notification:
-        self.assertEqual(Notification.objects.count(), 0)
-        self.assertEqual(len(mail.outbox), 0)
+        # If an email is not verified, it should say so in the notification:
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Email not verified")
 
     def test_email_checks_up_down_flags(self):
         payload = {"value": "alice@example.org", "up": True, "down": False}
