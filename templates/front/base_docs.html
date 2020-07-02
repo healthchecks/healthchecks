@@ -7,18 +7,21 @@
     <div class="col-sm-3">
 
     <ul class="docs-nav">
-        <li class="nav-header">Monitoring</li>
+        <li class="nav-header">{% site_name %}</li>
         <li {% if section == "introduction" %} class="active"{% endif %}>
             <a href="{% url 'hc-docs' %}">Introduction</a>
         </li>
-        {% include "front/docs_nav_item.html" with slug="monitoring_cron_jobs" title="Monitoring cron jobs" %}
         {% include "front/docs_nav_item.html" with slug="configuring_checks" title="Configuring checks" %}
         {% include "front/docs_nav_item.html" with slug="configuring_notifications" title="Configuring notifications" %}
         {% include "front/docs_nav_item.html" with slug="projects_teams" title="Projects and teams" %}
 
+        <li class="nav-header">API</li>
+        {% include "front/docs_nav_item.html" with slug="http_api" title="Pinging API" %}
+        {% include "front/docs_nav_item.html" with slug="api" title="Management API" %}
+
         <li class="nav-header">Pinging Examples</li>
-        {% include "front/docs_nav_item.html" with slug="http_api" title="HTTP API" %}
-        {% include "front/docs_nav_item.html" with slug="bash" title="Shell Scripts" %}
+        {% include "front/docs_nav_item.html" with slug="reliability_tips" title="Reliability Tips" %}
+        {% include "front/docs_nav_item.html" with slug="bash" title="Shell scripts" %}
         {% include "front/docs_nav_item.html" with slug="python" title="Python" %}
         {% include "front/docs_nav_item.html" with slug="ruby" title="Ruby" %}
         {% include "front/docs_nav_item.html" with slug="php" title="PHP" %}
@@ -28,18 +31,18 @@
         {% include "front/docs_nav_item.html" with slug="email" title="Email" %}
 
         <li class="nav-header">Guides</li>
+        {% include "front/docs_nav_item.html" with slug="monitoring_cron_jobs" title="Monitoring cron jobs" %}
         {% include "front/docs_nav_item.html" with slug="signalling_failures" title="Signalling failures" %}
         {% include "front/docs_nav_item.html" with slug="measuring_script_run_time" title="Measuring script run time" %}
         {% include "front/docs_nav_item.html" with slug="attaching_logs" title="Attaching logs" %}
-        {% include "front/docs_nav_item.html" with slug="cloning_checks" title="Cloning Checks" %}
+        {% include "front/docs_nav_item.html" with slug="cloning_checks" title="Cloning checks" %}
         {% include "front/docs_nav_item.html" with slug="configuring_prometheus" title="Configuring Prometheus" %}
 
         <li class="nav-header">Developer Tools</li>
-        {% include "front/docs_nav_item.html" with slug="api" title="Management API" %}
         {% include "front/docs_nav_item.html" with slug="resources" title="Third-party resources" %}
 
-        <li class="nav-header">Cron</li>
-        <li><a href="{% url 'hc-docs-cron' %}">Cron Syntax Cheatsheet</a></li>
+        <li class="nav-header">Reference</li>
+        <li><a href="{% url 'hc-docs-cron' %}">Cron syntax cheatsheet</a></li>
     </ul>
 
     </div>

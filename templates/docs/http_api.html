@@ -1,6 +1,6 @@
-<h1>HTTP API</h1>
-<p>The SITE_NAME pinging API is used for submitting success, failure and job start
-signals from the monitored systems.</p>
+<h1>Pinging API</h1>
+<p>The SITE_NAME pinging API is used for submitting "start", "success" and "fail"
+signals ("pings") from the monitored systems.</p>
 <h2>General Notes</h2>
 <p>All ping endpoints support:</p>
 <ul>
@@ -14,7 +14,7 @@ If the request body looks like a UTF-8 string, SITE_NAME stores the request body
 </ul>
 <p>Successful responses will have the "200 OK" HTTP response status code and a short
 and simple string "OK" in the response body.</p>
-<h2>Signal Success ("ping")</h2>
+<h2>Send a "success" Signal</h2>
 <div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}
 </code></pre></div>
 
@@ -40,7 +40,7 @@ OK
 </code></pre></div>
 
 
-<h2>Signal Failure</h2>
+<h2>Send a "fail" Signal</h2>
 <div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}/fail
 </code></pre></div>
 
@@ -65,7 +65,7 @@ OK
 </code></pre></div>
 
 
-<h2>Signal a Start</h2>
+<h2>Send a "start" Signal</h2>
 <div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}/start
 </code></pre></div>
 

@@ -20,7 +20,8 @@ methods are enabled for each check. You can click the icons to toggle them on an
 
 ![Integration icons in the checks list](IMG_URL/checks_integrations.png)
 
-You can also toggle the integrations on and off when viewing an individual check:
+You can also toggle the integrations on and off when viewing an individual check by
+clicking on the "ON" / "OFF" labels:
 
 ![Integration on/off toggles in the check details page](IMG_URL/details_integrations.png)
 

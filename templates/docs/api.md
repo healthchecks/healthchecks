@@ -1,6 +1,6 @@
-# API Reference
+# Management API
 
-SITE_NAME REST API supports listing, creating, updating, pausing and deleting
+SITE_NAME Management API supports listing, creating, updating, pausing and deleting
 checks in user's account.
 
 ## API Endpoints
@@ -20,7 +20,7 @@ Endpoint Name                                         | Endpoint Address
 
 ## Authentication
 
-Your requests to SITE_NAME REST API must authenticate using an
+Your requests to SITE_NAME Management API must authenticate using an
 API key. Each project in your SITE_NAME account has separate API keys.
 There are no account-wide API keys. By default, a project on SITE_NAME doesn't have
 an API key. You can create read-write and read-only API keys in the

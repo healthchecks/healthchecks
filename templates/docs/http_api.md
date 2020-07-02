@@ -1,7 +1,7 @@
-# HTTP API
+# Pinging API
 
-The SITE_NAME pinging API is used for submitting success, failure and job start
-signals from the monitored systems.
+The SITE_NAME pinging API is used for submitting "start", "success" and "fail"
+signals ("pings") from the monitored systems.
 
 ## General Notes
 
@@ -18,7 +18,7 @@ If the request body looks like a UTF-8 string, SITE_NAME stores the request body
 Successful responses will have the "200 OK" HTTP response status code and a short
 and simple string "OK" in the response body.
 
-## Signal Success ("ping")
+## Send a "success" Signal
 
 ```text
 HEAD|GET|POST PING_ENDPOINT{uuid}
@@ -47,7 +47,7 @@ Access-Control-Allow-Origin: *
 OK
 ```
 
-## Signal Failure
+## Send a "fail" Signal
 
 ```text
 HEAD|GET|POST PING_ENDPOINT{uuid}/fail
@@ -75,7 +75,7 @@ Access-Control-Allow-Origin: *
 OK
 ```
 
-## Signal a Start
+## Send a "start" Signal
 
 ```text
 HEAD|GET|POST PING_ENDPOINT{uuid}/start

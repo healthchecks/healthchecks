@@ -1,0 +1,32 @@
+<h1>Pinging Reliability Tips</h1>
+<p>Sending monitoring signals over public internet is inherently unreliable.
+HTTP requests can sometimes take excessively long or fail completely
+for a variety of reasons. Here are some general tips to make your monitoring
+code more robust.</p>
+<h2>Specify HTTP Request Timeout</h2>
+<p>Put a time limit on how long each ping is allowed to take. This is especially
+important when sending a "start" signal at the start of a job: you don't want
+a stuck ping prevent the actual job from running. Another case is a continuously
+running worker process which pings SITE_NAME after each completed item. A stuck
+request would block the whole process, so it is important to guard against.</p>
+<p>Specifying the timeout depends on the tool you use. curl, for example, has the
+<code>--max-time</code> (shorthand: <code>-m</code>) parameter:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Send a HTTP, 10 second timeout:</span>
+curl -m <span class="m">10</span> PING_URL
+</code></pre></div>
+
+
+<h2>Use Retries</h2>
+<p>To minimize the amount of false alerts you get from SITE_NAME, instruct your HTTP
+client to retry failed requests several times.</p>
+<p>Specifying the retry policy depends on the tool you use. curl, for example, has the
+<code>--retry</code> parameter:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Retry up to 5 times, uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...)</span>
+curl --retry <span class="m">5</span> PING_URL
+</code></pre></div>
+
+
+<h2>Handle Exceptions</h2>
+<p>Make sure you know how your HTTP client handles failed requests. For example,
+if you use a HTTP library which raises exceptions, decide if you want to
+catch the exceptions, or let them bubble up.</p>
