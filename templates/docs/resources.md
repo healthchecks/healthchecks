@@ -14,6 +14,7 @@ Please submit additions and corrections
 
 ## API Wrappers
 
+* [pauldenver/healthchecks-io-client](https://github.com/pauldenver/healthchecks-io-client) – API wrapper in Javascript. Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.
 * [jwulf/healthchecks.io](https://github.com/jwulf/healthchecks.io) – API wrapper in Javascript. Supports pinging.
 * [MyPropertyOffice/node-hchk](https://github.com/MyPropertyOffice/node-hchk) –  API wrapper in Javascript. Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.
 * [gyde-tv/checks](https://github.com/gyde-tv/checks) – API wrapper in Ruby. Supports pinging.
