@@ -2,15 +2,6 @@
     {% for project in profile.user.project_set.all %}
     <li>
         <a href="{% url 'hc-checks' project.code %}">{{ project }}</a>
-        {% if profile.num_checks > 1 %}
-        {% with project.num_checks as n %}
-            {% if n > 1 %}
-                <strong>({{ n }})</strong>
-            {% else %}
-                ({{ n }})
-            {% endif %}
-        {% endwith %}
-        {% endif %}
     </li>
     {% endfor %}
 </ul>

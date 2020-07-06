@@ -72,6 +72,7 @@ class NumChecksFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
+            ("10", "more than 10"),
             ("20", "more than 20"),
             ("50", "more than 50"),
             ("100", "more than 100"),
@@ -129,7 +130,10 @@ class ProfileAdmin(admin.ModelAdmin):
     def email(self, obj):
         s = escape(obj.user.email)
         if obj.plan:
-            return "<span title='%s'>%s</span>" % (obj.plan, s)
+            s = "<span title='%s'>%s</span>" % (obj.plan, s)
+
+        v = min(30, obj.num_checks) * 8
+        s += """<div class="nchecks"><div style="width: %dpx"></div>""" % v
 
         return s
 
