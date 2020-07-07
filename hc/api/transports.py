@@ -585,10 +585,9 @@ class Spike(HttpTransport):
         url = self.channel.value
         headers = {"Conent-Type": "application/json"}
         payload = {
-            "incident_key": str(check.code),
             "title": tmpl("spike_title.html", check=check),
-            "description": tmpl("spike_description.html", check=check),
-            "client": settings.SITE_NAME,
+            "message": tmpl("spike_description.html", check=check),
+            "status": check.status
         }
 
         return self.post(url, json=payload, headers=headers)
