@@ -1,4 +1,23 @@
 <h1>PHP</h1>
 <p>Below is an example of making a HTTP request to SITE_NAME from PHP.</p>
-<div class="highlight"><pre><span></span><code><span class="x">file_get_contents(&#39;https://hc-ping.com/your-uuid-here&#39;);</span>
+<div class="highlight"><pre><span></span><code><span class="x">file_get_contents(&#39;PING_URL&#39;);</span>
 </code></pre></div>
+
+
+<p>If you would like to setup timeout and retry options, as discussed in the
+<a href="../reliability_tips/">reliability tips section</a>, there is a
+<a href="https://www.phpcurlclass.com/">curl package</a> available that lets you do that easily:</p>
+<p>```php startinline=True
+use Curl\Curl;</p>
+<p>$curl = new Curl();
+$curl-&gt;setRetry(20);
+$curl-&gt;setTimeout(5);
+$curl-&gt;get('PING_URL');
+```</p>
+<p>:::php
+use Curl\Curl;
+$curl = new Curl();
+$curl-&gt;setRetry(20);
+$curl-&gt;setTimeout(5);
+$curl-&gt;get('PING_URL');</p>
+<p>Note: this code never throws any exception.</p>
