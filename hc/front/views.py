@@ -1724,3 +1724,25 @@ def metrics(request, code, key):
         yield "hc_checks_down_total %d\n" % num_down
 
     return HttpResponse(output(checks), content_type="text/plain")
+
+
+
+@login_required
+def add_spike(request, code):
+    project = _get_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="spike")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-p-channels", project.code)
+    else:
+        form = forms.AddUrlForm()
+
+    ctx = {"page": "channels", "project": project, "form": form}
+    return render(request, "integrations/add_spike.html", ctx)
+
