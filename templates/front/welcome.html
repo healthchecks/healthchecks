@@ -455,6 +455,13 @@
         </div>
         {% endif %}
 
+	<div class="col-md-2 col-sm-4 col-xs-6">
+            <div class="integration">
+                <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="Spike.sh icon" />
+                <h3>Spike.sh <br><small>Incident Management</small></h3>
+            </div>
+        </div>
+
         {% if enable_telegram %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="{% url 'hc-telegram-help' %}" class="integration">
