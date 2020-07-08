@@ -2,299 +2,310 @@
 {% load compress hc_extras humanize static %}
 
 {% block description %}
-<meta name="description"
-    content="Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and background tasks. Receive alerts when your tasks don't run on time.">
+    <meta name="description" content="Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and background tasks. Receive alerts when your tasks don't run on time.">
 {% endblock %}
 
 
 {% block head %}
-<link rel="canonical" href="{% site_root %}" />
+    <link rel="canonical" href="{% site_root %}" />
 {% endblock %}
 
 {% block containers %}
 <div class="index-bleed">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <h1 id="pitch">
-                    Monitoring for your nightly backups,
-                    weekly reports, cron jobs and background tasks.</h1>
-            </div>
+<div class="container">
+    <div class="row">
+    <div class="col-sm-12">
+        <h1 id="pitch">
+            Monitoring for your nightly backups,
+            weekly reports, cron jobs and background tasks.</h1>
+    </div>
+    </div>
+
+    <div class="row">
+    <div class="col-sm-6 col-sm-push-6">
+        <p id="pitch-text">
+            Make HTTP requests to the Ping URL at regular intervals.
+            <strong>
+                When the URL is not pinged on time,
+                {% site_name %} will send you an alert.
+            </strong>
+
+            You can monitor any service that can make HTTP requests
+            or send emails.
+        </p>
+    </div>
+    <div class="col-sm-6 col-sm-pull-6">
+        <h2 id="pitch-subtitle">
+            For each of your periodic tasks,
+            {% site_name %} provides an unique URL like this one:
+        </h2>
+        <div id="pitch-url">
+            <code>{{ ping_url }}</code>
         </div>
+    </div>
+    </div>
 
-        <div class="row">
-            <div class="col-sm-6 col-sm-push-6">
-                <p id="pitch-text">
-                    Make HTTP requests to the Ping URL at regular intervals.
-                    <strong>
-                        When the URL is not pinged on time,
-                        {% site_name %} will send you an alert.
-                    </strong>
-
-                    You can monitor any service that can make HTTP requests
-                    or send emails.
-                </p>
-            </div>
-            <div class="col-sm-6 col-sm-pull-6">
-                <h2 id="pitch-subtitle">
-                    For each of your periodic tasks,
-                    {% site_name %} provides an unique URL like this one:
-                </h2>
-                <div id="pitch-url">
-                    <code>{{ ping_url }}</code>
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active">
+                    <a href="#crontab" data-toggle="tab">Crontab</a>
+                </li>
+                <li>
+                    <a href="#bash" data-toggle="tab">Bash</a>
+                </li>
+                <li>
+                    <a href="#python" data-toggle="tab">Python</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#ruby" data-toggle="tab">Ruby</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#node" data-toggle="tab">Node.js</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#go" data-toggle="tab">Go</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#php" data-toggle="tab">PHP</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#cs" data-toggle="tab">C#</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#browser" data-toggle="tab">Browser</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#powershell" data-toggle="tab">PowerShell</a>
+                </li>
+                <li class="hidden-xs">
+                    <a href="#email" data-toggle="tab">Email</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="crontab">
+                    {% include "front/snippets/crontab.html" %}
                 </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12">
-                <ul class="nav nav-tabs" role="tablist">
-                    <li class="active">
-                        <a href="#crontab" data-toggle="tab">Crontab</a>
-                    </li>
-                    <li>
-                        <a href="#bash" data-toggle="tab">Bash</a>
-                    </li>
-                    <li>
-                        <a href="#python" data-toggle="tab">Python</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#ruby" data-toggle="tab">Ruby</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#node" data-toggle="tab">Node.js</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#go" data-toggle="tab">Go</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#php" data-toggle="tab">PHP</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#cs" data-toggle="tab">C#</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#browser" data-toggle="tab">Browser</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#powershell" data-toggle="tab">PowerShell</a>
-                    </li>
-                    <li class="hidden-xs">
-                        <a href="#email" data-toggle="tab">Email</a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="crontab">
-                        {% include "front/snippets/crontab.html" %}
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="bash">
-                        {% include "front/snippets/bash_curl.html" %}
-                        {% include "front/snippets/bash_wget.html" %}
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="python">
-                        {% include "front/snippets/python_urllib2.html" %}
-                        {% include "front/snippets/python_requests.html" %}
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="ruby">
-                        {% include "front/snippets/ruby.html" %}
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="node">
-                        {% include "front/snippets/node.html" %}
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="go">
-                        {% include "front/snippets/go.html" %}
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="php">
-                        {% include "front/snippets/php.html" %}
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="cs">
-                        {% include "front/snippets/cs.html" %}
-                    </div>
-                    <div class="tab-pane" id="browser">
-                        {% include "front/snippets/browser.html" %}
-                    </div>
-                    <div class="tab-pane" id="powershell">
-                        {% include "front/snippets/powershell.html" %}
-                        {% include "front/snippets/powershell_inline.html" %}
-                    </div>
-                    <div class="tab-pane tab-pane-email" id="email">
-                        <p>
-                            As an alternative to HTTP and HTTPS requests,
-                            you can "ping" this check by sending an
-                            email message to
-                            <a href="mailto:{{ check.email }}">{{ check.email }}</a>
-                        </p>
-                    </div>
+                <div role="tabpanel" class="tab-pane" id="bash">
+                    {% include "front/snippets/bash_curl.html" %}
+                    {% include "front/snippets/bash_wget.html" %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="python">
+                    {% include "front/snippets/python_urllib2.html" %}
+                    {% include "front/snippets/python_requests.html" %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="ruby">
+                    {% include "front/snippets/ruby.html" %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="node">
+                    {% include "front/snippets/node.html" %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="go">
+                    {% include "front/snippets/go.html" %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="php">
+                    {% include "front/snippets/php.html" %}
+                </div>
+                <div role="tabpanel" class="tab-pane" id="cs">
+                    {% include "front/snippets/cs.html" %}
+                </div>
+                <div class="tab-pane" id="browser">
+                    {% include "front/snippets/browser.html" %}
+                </div>
+                <div class="tab-pane" id="powershell">
+                    {% include "front/snippets/powershell.html" %}
+                    {% include "front/snippets/powershell_inline.html" %}
+                </div>
+                <div class="tab-pane tab-pane-email" id="email">
+                    <p>
+                        As an alternative to HTTP and HTTPS requests,
+                        you can "ping" this check by sending an
+                        email message to
+                        <a href="mailto:{{ check.email }}">{{ check.email }}</a>
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 
 {% if registration_open %}
 <div class="get-started-bleed">
-    <div class="container">
-        <div class="row">
-            <div id="get-started" class="col-sm-8 col-sm-offset-2 text-center">
-                <h1>{% site_name %} monitors the heartbeat messages sent by your cron jobs, services and APIs.
-                    Get immediate alerts when they don't arrive on schedule. </h1>
-                <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
-                    Sign Up – It's Free
-                </a>
-            </div>
+<div class="container">
+    <div class="row">
+        <div id="get-started" class="col-sm-8 col-sm-offset-2 text-center">
+            <h1>{% site_name %} monitors the heartbeat messages sent by your cron jobs, services and APIs.
+            Get immediate alerts when they don't arrive on schedule. </h1>
+            <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
+                Sign Up – It's Free
+            </a>
         </div>
     </div>
+</div>
 </div>
 {% endif %}
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <h2 class="tour-title">A quick peek of what's inside:</h2>
-        </div>
+    <div class="col-sm-12">
+        <h2 class="tour-title">A quick peek of what's inside:</h2>
+    </div>
     </div>
 
     <div class="row tour-section">
-        <div class="col-sm-8">
-            <img class="img-responsive" src="{% static 'img/my_checks.png' %}"
-                srcset="{% static 'img/my_checks.png'%} 1x, {% static 'img/my_checks@2x.png'%} 2x"
-                alt="My Checks page" />
-        </div>
-        <div class="col-sm-4">
-            <h3>Live-updating Dashboard</h3>
-            <p>
-                A list of your checks, one for each Cron job, daemon or
-                scheduled task you want to monitor.
-            </p>
-            <p>
-                Give names and assign tags to your checks to easily recognize
-                them later.
-            </p>
-            <p>
-                Tap on the integration icons to toggle them on and off.
-            </p>
-            <p>
-                Adjust Period and Grace time to match the
-                periodicity and duration of your tasks.
-            </p>
-        </div>
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/my_checks.png' %}"
+            srcset="{% static 'img/my_checks.png'%} 1x, {% static 'img/my_checks@2x.png'%} 2x"
+            alt="My Checks page" />
+    </div>
+    <div class="col-sm-4">
+        <h3>Live-updating Dashboard</h3>
+        <p>
+            A list of your checks, one for each Cron job, daemon or
+            scheduled task you want to monitor.
+        </p>
+        <p>
+            Give names and assign tags to your checks to easily recognize
+            them later.
+        </p>
+        <p>
+            Tap on the integration icons to toggle them on and off.
+        </p>
+        <p>
+            Adjust Period and Grace time to match the
+            periodicity and duration of your tasks.
+        </p>
+    </div>
     </div>
 
     <div class="row tour-section">
-        <div class="col-sm-8">
-            <img class="img-responsive" src="{% static 'img/period_grace.png' %}"
-                srcset="{% static 'img/period_grace.png'%} 1x, {% static 'img/period_grace@2x.png'%} 2x"
-                alt="Period/Grace Time dialog" />
-        </div>
-        <div class="col-sm-4">
-            <h3>Simple Configuration</h3>
-            Each check has configurable <strong>Period</strong> and <strong>Grace Time</strong> parameters.
-            Depending on these parameters and time since the last ping, the check is in one of the
-            following states:
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/period_grace.png' %}"
+            srcset="{% static 'img/period_grace.png'%} 1x, {% static 'img/period_grace@2x.png'%} 2x"
+            alt="Period/Grace Time dialog" />
+    </div>
+    <div class="col-sm-4">
+        <h3>Simple Configuration</h3>
+        Each check has configurable <strong>Period</strong> and <strong>Grace Time</strong> parameters.
+        Depending on these parameters and time since the last ping, the check is in one of the
+        following states:
 
-            <table class="table">
-                <tr>
-                    <td>
-                        <span class="status icon-new"></span>
-                    </td>
-                    <td>
-                        New.
-                        A check that has been created, but has not received any pings yet.
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="status icon-up"></span>
-                    </td>
-                    <td>
-                        Up.
-                        Time since last ping has not exceeded <strong>Period</strong>.
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="status icon-grace"></span>
-                    </td>
-                    <td>
-                        Late.
-                        Time since last ping has exceeded <strong>Period</strong>,
-                        but has not yet exceeded <strong>Period</strong> + <strong>Grace</strong>.
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="status icon-down"></span>
-                    </td>
-                    <td>
-                        Down.
-                        Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
-                        When check goes from "Late" to "Down", {% site_name %}
-                        sends you a notification.
-                    </td>
-                </tr>
-            </table>
+        <table class="table">
+            <tr>
+                <td>
+                    <span class="status icon-new"></span>
+                </td>
+                <td>
+                    New.
+                    A check that has been created, but has not received any pings yet.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="status icon-up"></span>
+                </td>
+                <td>
+                    Up.
+                    Time since last ping has not exceeded <strong>Period</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="status icon-grace"></span>
+                </td>
+                <td>
+                    Late.
+                    Time since last ping has exceeded <strong>Period</strong>,
+                    but has not yet exceeded <strong>Period</strong> + <strong>Grace</strong>.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="status icon-down"></span>
+                </td>
+                <td>
+                    Down.
+                    Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
+                    When check goes from "Late" to "Down", {% site_name %}
+                    sends you a notification.
+                </td>
+            </tr>
+        </table>
 
-        </div>
+    </div>
     </div>
 
     <div class="row tour-section">
-        <div class="col-sm-8">
-            <img class="img-responsive" src="{% static 'img/cron.png' %}"
-                srcset="{% static 'img/cron.png'%} 1x, {% static 'img/cron@2x.png'%} 2x" alt="Cron dialog" />
-        </div>
-        <div class="col-sm-4">
-            <h3>Cron Expression Support</h3>
-            <p>
-                Alternatively, you can define the expected ping dates and times
-                using a cron expression. See
-                <a href="{% url 'hc-docs-cron' %}">Cron Syntax Cheatsheet</a>
-                for the supported syntax features.
-            </p>
-            <p>
-                <strong>Grace Time</strong> specifies how "late" a ping can
-                be before you will be alerted. Set it to be a little above
-                the expected duration of your cron job.
-            </p>
-        </div>
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/cron.png' %}"
+            srcset="{% static 'img/cron.png'%} 1x, {% static 'img/cron@2x.png'%} 2x"
+            alt="Cron dialog" />
+    </div>
+    <div class="col-sm-4">
+        <h3>Cron Expression Support</h3>
+        <p>
+            Alternatively, you can define the expected ping dates and times
+            using a cron expression. See
+            <a href="{% url 'hc-docs-cron' %}">Cron Syntax Cheatsheet</a>
+            for the supported syntax features.
+        </p>
+        <p>
+            <strong>Grace Time</strong> specifies how "late" a ping can
+            be before you will be alerted. Set it to be a little above
+            the expected duration of your cron job.
+        </p>
+    </div>
     </div>
 
     <div class="row tour-section">
-        <div class="col-sm-8">
-            <img class="img-responsive" src="{% static 'img/check_details.png' %}"
-                srcset="{% static 'img/check_details.png'%} 1x, {% static 'img/check_details@2x.png'%} 2x"
-                alt="Details Page" />
-        </div>
-        <div class="col-sm-4">
-            <h3>Details and Event Log</h3>
-            <p>
-                You can add a longer, free-form description to each
-                check. Leave notes and pointers for yourself and
-                for your team.
-            </p>
-            <p>
-                You can also see the log of received pings and
-                sent "Down" notifications.
-            </p>
-        </div>
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/check_details.png' %}"
+            srcset="{% static 'img/check_details.png'%} 1x, {% static 'img/check_details@2x.png'%} 2x"
+            alt="Details Page" />
+    </div>
+    <div class="col-sm-4">
+        <h3>Details and Event Log</h3>
+        <p>
+            You can add a longer, free-form description to each
+            check. Leave notes and pointers for yourself and
+            for your team.
+        </p>
+        <p>
+            You can also see the log of received pings and
+            sent "Down" notifications.
+        </p>
+    </div>
     </div>
 
     <div class="row tour-section">
-        <div class="col-sm-8">
-            <img class="img-responsive" src="{% static 'img/badges.png' %}"
-                srcset="{% static 'img/badges.png'%} 1x, {% static 'img/badges@2x.png'%} 2x" alt="Details Page" />
-        </div>
-        <div class="col-sm-4">
-            <h3>Public Status Badges</h3>
-            <p>
-                {% site_name %} provides status badges for each of the tags
-                you have used. Additionally, the "{% site_name %}" badge
-                shows the overall status of all checks in your account.
-            </p>
-            <p>
-                The badges have public, but hard-to-guess URLs.
-                You can use them in your READMEs, dashboards or status pages.
-            </p>
-        </div>
+    <div class="col-sm-8">
+        <img
+            class="img-responsive"
+            src="{% static 'img/badges.png' %}"
+            srcset="{% static 'img/badges.png'%} 1x, {% static 'img/badges@2x.png'%} 2x"
+            alt="Details Page" />
+    </div>
+    <div class="col-sm-4">
+        <h3>Public Status Badges</h3>
+        <p>
+            {% site_name %} provides status badges for each of the tags
+            you have used. Additionally, the "{% site_name %}" badge
+            shows the overall status of all checks in your account.
+        </p>
+        <p>
+            The badges have public, but hard-to-guess URLs.
+            You can use them in your READMEs, dashboards or status pages.
+        </p>
+    </div>
     </div>
 
     <div id="welcome-integrations" class="row">
@@ -403,14 +414,6 @@
 
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
-                <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="" />
-                <h3>Spike.sh<br><small>Incident Management and Alerts</small></h3>
-            </div>
-        </div>
-
-
-        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-            <div class="integration">
                 <img src="{% static 'img/integrations/prometheus.png' %}" class="icon" alt="" />
                 <h3>Prometheus<br><small>Event Monitoring</small></h3>
             </div>
@@ -501,9 +504,9 @@
         <div class="col-sm-6 use-cases">
             <h2>Cron Jobs</h2>
             <p>{% site_name %} monitoring is a great fit for cron jobs and cron-like systems
-                (systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi cron-like
-                interface, Heroku Scheduler, ...). A failed cron job often has no immediate visible
-                consequences, and can go unnoticed for a long time.</p>
+            (systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi cron-like
+            interface, Heroku Scheduler, ...). A failed cron job often has no immediate visible
+            consequences, and can go unnoticed for a long time.</p>
 
             <p>Specific examples:</p>
             <ul>
@@ -520,9 +523,9 @@
             <h2>Processes, Services, Servers</h2>
 
             <p>{% site_name %} monitoring can be used for lightweight server monitoring:
-                ensuring a particular system service, or the server as a whole is alive and healthy.
-                Write a shell script that checks for a specific condition, and pings {% site_name %}
-                if successful. Run the shell script regularly.</p>
+            ensuring a particular system service, or the server as a whole is alive and healthy.
+            Write a shell script that checks for a specific condition, and pings {% site_name %}
+            if successful. Run the shell script regularly.</p>
 
             <p>Specific examples:</p>
             <ul>
@@ -538,21 +541,21 @@
 
     <div class="row">
 
-        {% if registration_open %}
-        <div class="footer-jumbo-bleed">
-            <div class="col-sm-10 col-sm-offset-1">
-                <div id="footer-cta" class="jumbotron text-center">
-                    <p>{% site_name %} is a <strong>free</strong> and
-                        <a href="https://github.com/healthchecks/healthchecks">open source</a> service.
-                        Setting up monitoring for your cron jobs only takes minutes.
-                        Start sleeping better at nights!</p>
-                    <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
-                        Sign Up
-                    </a>
-                </div>
-            </div>
+    {% if registration_open %}
+    <div class="footer-jumbo-bleed">
+    <div class="col-sm-10 col-sm-offset-1">
+        <div id="footer-cta" class="jumbotron text-center">
+            <p>{% site_name %} is a <strong>free</strong> and
+            <a href="https://github.com/healthchecks/healthchecks">open source</a> service.
+            Setting up monitoring for your cron jobs only takes minutes.
+            Start sleeping better at nights!</p>
+            <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
+                Sign Up
+            </a>
         </div>
-        {% endif %}
+    </div>
+    </div>
+    {% endif %}
 
     </div>
 </div>
