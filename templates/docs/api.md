@@ -34,7 +34,8 @@ read-only key
     * [Get a single check](#get-check)
     * [Get a list of check's status changes](#list-flips)
 
-    Omits some fields from the API responses (documented below).
+    Omits sensitive information from the API responses. See the documentation of
+    individual API endpoints for details.
 
 The client can authenticate itself by including an `X-Api-Key: <your-api-key>`
 header in a HTTP request. Alternatively, for POST requests with a JSON request body,
