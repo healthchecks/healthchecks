@@ -8,37 +8,38 @@ checks in user's account.
 Endpoint Name                                         | Endpoint Address
 ------------------------------------------------------|-------
 [Get a list of existing checks](#list-checks)         | `GET SITE_ROOT/api/v1/checks/`
-[Get a single check](#get-check)                      | `GET SITE_ROOT/api/v1/checks/<uuid>`
-[Get a check by its unique_key](#get-check)           | `GET SITE_ROOT/api/v1/checks/<unique_key>`
+[Get a single check](#get-check)                      | `GET SITE_ROOT/api/v1/checks/<uuid>`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>`
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v1/checks/`
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
 [Get a list of check's logged pings](#list-pings)     | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
-[Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`
+[Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
 [Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
 
 ## Authentication
 
 Your requests to SITE_NAME Management API must authenticate using an
-API key. Each project in your SITE_NAME account has separate API keys.
-There are no account-wide API keys. By default, a project on SITE_NAME doesn't have
-an API key. You can create read-write and read-only API keys in the
-**Project Settings** page.
+API key. API keys are project-specific, there are no account-wide API keys.
+By default, a project on SITE_NAME doesn't have an API key. You can create read-write
+and read-only API keys in the **Project Settings** page.
 
-Key Type           | Description
--------------------|------------
-Regular API key    | Has full access to all documented API endpoints.
-Read-only API key  | Only works with the [Get a list of existing checks](#list-checks) and [Get a single check](#get-check) endpoints. Some fields are omitted from the API responses.
+read-write key
+:   Has full access to all documented API endpoints.
 
-The client can authenticate itself by sending an appropriate HTTP
-request header. The header's name should be `X-Api-Key` and
-its value should be your API key.
+read-only key
+:   Only works with the following API endpoints:
 
+    * [Get a list of existing checks](#list-checks)
+    * [Get a single check](#get-check)
+    * [Get a list of check's status changes](#list-flips)
 
-Alternatively, for POST requests with a JSON request body,
+    Omits some fields from the API responses (documented below).
+
+The client can authenticate itself by including an `X-Api-Key: <your-api-key>`
+header in a HTTP request. Alternatively, for POST requests with a JSON request body,
 the client can include an `api_key` field in the JSON document.
-See below the "Create a check" section for an example.
+See the [Create a new check](#create-check) section for an example.
 
 ## API Requests
 
