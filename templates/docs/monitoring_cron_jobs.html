@@ -30,19 +30,19 @@ increasingly important as you add more checks to your account.</p>
 <p>Edit the check's <strong>schedule</strong>:</p>
 <ul>
 <li>change its type from "Simple" to "Cron"</li>
-<li>enter <code>8 6 * * *</code> in the cron epression field</li>
+<li>enter <code>8 6 * * *</code> in the cron expression field</li>
 <li>set the timezone to match your machine's timezone</li>
 </ul>
 </li>
 <li>
-<p>Take note of your check's unique <strong>ping URL</strong></p>
+<p>Take note of your check's unique <strong>ping URL</strong>.</p>
 </li>
 </ol>
 <p>Finally, edit your cron job definition and append a curl or wget call
 after the command:</p>
 <div class="highlight"><pre><span></span><code>$ crontab -e
 <span class="c1"># m h dom mon dow command</span>
-  <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS --retry <span class="m">3</span> -o /dev/null PING_URL
+  <span class="m">8</span> <span class="m">6</span> * * * /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS --retry <span class="m">5</span> -o /dev/null PING_URL
 </code></pre></div>
 
 
@@ -58,46 +58,26 @@ potentially go unnoticed otherwise:</p>
 <li>cron does start your task, but the task exits with non-zero exit code</li>
 </ul>
 <h2>Curl Options</h2>
-<p>The extra options tells curl to not print anything to standard output unless
-there is an error. Feel free to adjust the curl options to suit your needs.</p>
-<table class="table curl-opts">
-    <tr>
-        <th>&amp;&amp;</th>
-        <td>Run curl only if <code>/home/user/backup.sh</code> exits with an exit code 0</td>
-    </tr>
-    <tr>
-        <th>
-            -f,  --fail
-        </th>
-        <td>Makes curl treat non-200 responses as errors</td>
-    </tr>
-    <tr>
-        <th>-s, --silent</th>
-        <td>Silent or quiet mode. Use it to hide progress meter,
-            but it also hides error messages.</td>
-    </tr>
-    <tr>
-        <th>-S, --show-error</th>
-        <td>Re-enables error messages when -s is used.</td>
-    </tr>
-    <tr>
-        <th>--retry &lt;num&gt;</th>
-        <td>
-            If a transient error is returned when curl tries to perform a
-            transfer, it will retry this number of times before  giving  up.
-            Setting  the number  to  0  makes curl do no retries
-            (which is the default). Transient error is a timeout or an HTTP 5xx
-            response code.
-        </td>
-    </tr>
-    <tr>
-        <th>-o /dev/null</th>
-        <td>
-            Redirect curl's stdout to /dev/null (error messages still go to stderr)
-        </td>
-    </tr>
-</table>
-
+<p>The extra options in the above example tells curl to retry failed HTTP requests, and
+to silence output unless there is an error. Feel free to adjust the curl options to
+suit your needs.</p>
+<dl>
+<dt><strong>&amp;&amp;</strong></dt>
+<dd>Run curl only if <code>/home/user/backup.sh</code> exits with an exit code 0.</dd>
+<dt><strong>-f, --fail</strong></dt>
+<dd>Makes curl treat non-200 responses as errors.</dd>
+<dt><strong>-s, --silent</strong></dt>
+<dd>Silent or quiet mode. Hides the progress meter, but also hides error messages.</dd>
+<dt><strong>-S, --show-error</strong></dt>
+<dd>Re-enables error messages when -s is used.</dd>
+<dt><strong>--retry &lt;num&gt;</strong></dt>
+<dd>If a transient error is returned when curl tries to perform a
+transfer, it will retry this number of times before  giving  up.
+Setting  the number to  0 makes curl do no retries (which is the default).
+Transient error is a timeout or an HTTP 5xx response code.</dd>
+<dt><strong>-o /dev/null</strong></dt>
+<dd>Redirect curl's stdout to /dev/null (error messages still go to stderr).</dd>
+</dl>
 <h2>Looking up Your Machine's Time Zone</h2>
 <p>On modern GNU/Linux systems, you can look up the time zone using the
 <code>timedatectl status</code> command and looking for "Time zone" in its output:</p>

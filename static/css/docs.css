@@ -104,17 +104,17 @@ h2.rule {
 }
 
 
-.docs-api dl {
+.page-docs dl {
     display: grid;
     grid-template-columns: 150px auto;
 }
 
-.docs-api dt {
+.page-docs dt {
     font-weight: normal;
     font-family: "Lucida Console", Monaco, monospace;
 }
 
-.docs-api dt, .docs-api dd {
+.page-docs dt, .page-docs dd {
     border-top: 1px solid #DDD;
     padding: 8px 0;
 }

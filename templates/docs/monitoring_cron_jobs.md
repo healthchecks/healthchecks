@@ -30,10 +30,10 @@ increasingly important as you add more checks to your account.
 1. Edit the check's **schedule**:
 
     * change its type from "Simple" to "Cron"
-    * enter `8 6 * * *` in the cron epression field
+    * enter `8 6 * * *` in the cron expression field
     * set the timezone to match your machine's timezone
 
-1. Take note of your check's unique **ping URL**
+1. Take note of your check's unique **ping URL**.
 
 Finally, edit your cron job definition and append a curl or wget call
 after the command:
@@ -41,7 +41,7 @@ after the command:
 ```bash
 $ crontab -e
 # m h dom mon dow command
-  8 6 * * * /home/user/backup.sh && curl -fsS --retry 3 -o /dev/null PING_URL
+  8 6 * * * /home/user/backup.sh && curl -fsS --retry 5 -o /dev/null PING_URL
 ```
 
 Now, each time your cron job runs, it will send a HTTP request to the ping URL.
@@ -58,46 +58,30 @@ potentially go unnoticed otherwise:
 
 ## Curl Options
 
-The extra options tells curl to not print anything to standard output unless
-there is an error. Feel free to adjust the curl options to suit your needs.
+The extra options in the above example tells curl to retry failed HTTP requests, and
+to silence output unless there is an error. Feel free to adjust the curl options to
+suit your needs.
 
-<table class="table curl-opts">
-    <tr>
-        <th>&amp;&amp;</th>
-        <td>Run curl only if <code>/home/user/backup.sh</code> exits with an exit code 0</td>
-    </tr>
-    <tr>
-        <th>
-            -f,  --fail
-        </th>
-        <td>Makes curl treat non-200 responses as errors</td>
-    </tr>
-    <tr>
-        <th>-s, --silent</th>
-        <td>Silent or quiet mode. Use it to hide progress meter,
-            but it also hides error messages.</td>
-    </tr>
-    <tr>
-        <th>-S, --show-error</th>
-        <td>Re-enables error messages when -s is used.</td>
-    </tr>
-    <tr>
-        <th>--retry &lt;num&gt;</th>
-        <td>
-            If a transient error is returned when curl tries to perform a
-            transfer, it will retry this number of times before  giving  up.
-            Setting  the number  to  0  makes curl do no retries
-            (which is the default). Transient error is a timeout or an HTTP 5xx
-            response code.
-        </td>
-    </tr>
-    <tr>
-        <th>-o /dev/null</th>
-        <td>
-            Redirect curl's stdout to /dev/null (error messages still go to stderr)
-        </td>
-    </tr>
-</table>
+**&amp;&amp;**
+:   Run curl only if `/home/user/backup.sh` exits with an exit code 0.
+
+**-f, --fail**
+:   Makes curl treat non-200 responses as errors.
+
+**-s, --silent**
+:   Silent or quiet mode. Hides the progress meter, but also hides error messages.
+
+**-S, --show-error**
+:   Re-enables error messages when -s is used.
+
+**--retry &lt;num&gt;**
+:   If a transient error is returned when curl tries to perform a
+    transfer, it will retry this number of times before  giving  up.
+    Setting  the number to  0 makes curl do no retries (which is the default).
+    Transient error is a timeout or an HTTP 5xx response code.
+
+**-o /dev/null**
+:   Redirect curl's stdout to /dev/null (error messages still go to stderr).
 
 ## Looking up Your Machine's Time Zone
 

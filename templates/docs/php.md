@@ -19,4 +19,4 @@ $curl->setTimeout(5);
 $curl->get('PING_URL');
 ```
 
-Note: this code never throws any exception.
+Note: this code does not throw any exceptions.
