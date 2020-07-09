@@ -49,7 +49,6 @@ CHANNEL_KINDS = (
     ("msteams", "Microsoft Teams"),
     ("shell", "Shell Command"),
     ("zulip", "Zulip"),
-    ("spike", "Spike"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -457,8 +456,6 @@ class Channel(models.Model):
             return transports.Shell(self)
         elif self.kind == "zulip":
             return transports.Zulip(self)
-        elif self.kind == "spike":
-            return transports.Spike(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
