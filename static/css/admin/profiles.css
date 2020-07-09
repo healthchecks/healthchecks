@@ -8,7 +8,7 @@
     list-style-type: none;
 }
 
-.field-email span {
+td.field-email span {
     border-bottom: 2px solid #FFEB3B;
 }
 
