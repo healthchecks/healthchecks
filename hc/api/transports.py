@@ -577,3 +577,17 @@ class Zulip(HttpTransport):
         }
 
         return self.post(url, data=data, auth=auth)
+
+
+
+class Spike(HttpTransport):
+    def notify(self, check):
+        url = self.channel.value
+        headers = {"Conent-Type": "application/json"}
+        payload = {
+            "title": tmpl("spike_title.html", check=check),
+            "message": tmpl("spike_description.html", check=check),
+            "status": check.status
+        }
+
+        return self.post(url, json=payload, headers=headers)
