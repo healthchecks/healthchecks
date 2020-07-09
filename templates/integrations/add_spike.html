@@ -9,8 +9,9 @@
     <div class="col-sm-12">
         <h1>Spike.sh</h1>
 
-        <p>If you are using <a href="https://spike.sh">Spike.sh</a>, make sure to please copy the Healthchecks webhook
-            and paste it here. Read through the instructions.</p>
+        <p>If you are using <a href="https://spike.sh">Spike.sh</a>,
+            you can set up {% site_name %} to create a Spike.sh incident when a check
+            goes down, and resolve it when a check goes back up.</p>
 
         <h2>Setup Guide</h2>
 
@@ -18,17 +19,14 @@
             <div class="col-sm-6">
                 <span class="step-no"></span>
                 <p>
-                    Create a <strong>Healthchecks</strong> integration by clicking on <a
-                        href="https://app.spike.sh/integrations/new">add
-                        integration</a> on Spike.sh’s dashboard.
+                    Log into your Spike.sh account and go to
+                    <strong>Integrations › New Integration</strong>.
+                    Select "Healthchecks" and click "Next".
                 </p>
             </div>
             <div class="col-sm-6">
-                <div class="marker-wrap">
-                    <span style="left: 89%; top: 19%;" class="marker"></span>
-                    <img class="ai-guide-screenshot" alt="Click create integration button"
-                        src="{% static 'img/integrations/setup_spike_1.png' %}" />
-                </div>
+                <img class="ai-guide-screenshot" alt="Click create integration button"
+                    src="{% static 'img/integrations/setup_spike_1.png' %}" />
             </div>
         </div>
 
@@ -36,7 +34,8 @@
             <div class="col-sm-6">
                 <span class="step-no"></span>
                 <p>
-                    After you have created the integration, click on copy webhook.
+                    After you have created the integration, click on
+                    <strong>Copy Webhook</strong>.
 
                 </p>
             </div>
@@ -50,19 +49,13 @@
             <div class="col-sm-6">
                 <span class="step-no"></span>
                 <p>
-                    This modal with the details for the webhook will show up. Copy that webhook and paste it below. Make
-                    sure you have Healthchecks integration’s webhook so Spike.sh can create and resolve incidents
-                    automatically.
-
+                    Copy the shown webhook URL and paste it in the form below.
+                    Save the integration, and you are done!
                 </p>
             </div>
             <div class="col-sm-6">
-                <div class="marker-wrap">
-                    <span style="left: 32%; top: 59%;" class="marker"></span>
-
-                    <img class="ai-guide-screenshot" alt="Copy the Webhook URL"
-                        src="{% static 'img/integrations/setup_spike_3.png' %}">
-                </div>
+                <img class="ai-guide-screenshot" alt="Copy the Webhook URL"
+                    src="{% static 'img/integrations/setup_spike_3.png' %}">
             </div>
         </div>
 
@@ -71,7 +64,7 @@
         <form method="post" class="form-horizontal">
             {% csrf_token %}
             <div class="form-group {{ form.value.css_classes }}">
-                <label for="post-url" class="col-sm-2 control-label">Endpoint</label>
+                <label for="post-url" class="col-sm-2 control-label">Webhook URL</label>
                 <div class="col-sm-10">
                     <input id="post-url" type="text" class="form-control" name="value" placeholder="https://"
                         value="{{ form.value.value|default:"" }}">
