@@ -207,7 +207,14 @@ class AddMatrixForm(forms.Form):
         url = settings.MATRIX_HOMESERVER
         url += "/_matrix/client/r0/join/%s?" % quote(v)
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
-        doc = requests.post(url, {}).json()
+        r = requests.post(url, {})
+        if r.status_code == 429:
+            raise forms.ValidationError(
+                "Matrix server returned status code 429 (Too Many Requests), "
+                "please try again later."
+            )
+
+        doc = r.json()
         if "error" in doc:
             raise forms.ValidationError("Response from Matrix: %s" % doc["error"])
 

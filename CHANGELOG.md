@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Removing Pager Team integration, project appears to be discontinued
 - Sending a test notification updates Channel.last_error (#391)
+- Handle HTTP 429 responses from Matrix server when joining a Matrix room
 
 ## v1.15.0 - 2020-06-04
 

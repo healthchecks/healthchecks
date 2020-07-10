@@ -1,3 +1,4 @@
+from json import JSONDecodeError
 from unittest.mock import patch
 
 from django.test.utils import override_settings
@@ -37,3 +38,14 @@ class AddMatrixTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
+
+    @patch("hc.front.forms.requests.post")
+    def test_it_handles_429(self, mock_post):
+        mock_post.return_value.status_code = 429
+
+        form = {"alias": "!foo:example.org"}
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+
+        self.assertContains(r, "Matrix server returned status code 429")
+        self.assertFalse(Channel.objects.exists())
