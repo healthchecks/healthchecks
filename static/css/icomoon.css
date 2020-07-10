@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?agj6xa');
-  src:  url('../fonts/icomoon.eot?agj6xa#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?agj6xa') format('truetype'),
-    url('../fonts/icomoon.woff?agj6xa') format('woff'),
-    url('../fonts/icomoon.svg?agj6xa#icomoon') format('svg');
+  src:  url('../fonts/icomoon.eot?37tb6f');
+  src:  url('../fonts/icomoon.eot?37tb6f#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?37tb6f') format('truetype'),
+    url('../fonts/icomoon.woff?37tb6f') format('woff'),
+    url('../fonts/icomoon.svg?37tb6f#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -12,7 +12,7 @@
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
-  speak: none;
+  speak: never;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -24,6 +24,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-spike:before {
+  content: "\e919";
+  color: #007bff;
+}
 .icon-zulip:before {
   content: "\e918";
   color: #1e9459;
