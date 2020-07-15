@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - In the cron expression dialog, show a human-friendly version of the expression
 - Indicate a started check with a progress spinner under status icon (#338)
 - Added "Docs > Reliability Tips" page
+- Spike.sh integration (#402)
 
 ### Bug Fixes
 - Removing Pager Team integration, project appears to be discontinued
