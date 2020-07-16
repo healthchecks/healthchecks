@@ -188,7 +188,7 @@ class ChannelsAdmin(admin.ModelAdmin):
 
     @mark_safe
     def project_(self, obj):
-        url = reverse("hc-checks", args=[obj.project.code])
+        url = reverse("hc-checks", args=[obj.project_code])
         name = escape(obj.project_name or "Default")
         email = escape(obj.email)
         return f"{email} &rsaquo; <a href='{url}'>{name}</a>"
@@ -196,6 +196,7 @@ class ChannelsAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(Count("notification", distinct=True))
+        qs = qs.annotate(project_code=F("project__code"))
         qs = qs.annotate(project_name=F("project__name"))
         qs = qs.annotate(email=F("project__owner__email"))
         return qs
