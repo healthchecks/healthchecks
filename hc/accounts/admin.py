@@ -100,10 +100,10 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "email",
+        "checks",
         "date_joined",
         "last_active_date",
         "projects",
-        "checks",
         "invited",
         "sms",
         "reports_allowed",
@@ -130,10 +130,7 @@ class ProfileAdmin(admin.ModelAdmin):
     def email(self, obj):
         s = escape(obj.user.email)
         if obj.plan:
-            s = "<span title='%s'>%s</span>" % (obj.plan, s)
-
-        v = min(30, obj.num_checks) * 8
-        s += """<div class="nchecks"><div style="width: %dpx"></div>""" % v
+            s = "%s <span>%s</span>" % (s, obj.plan)
 
         return s
 
@@ -144,8 +141,12 @@ class ProfileAdmin(admin.ModelAdmin):
     def projects(self, obj):
         return render_to_string("admin/profile_list_projects.html", {"profile": obj})
 
+    @mark_safe
     def checks(self, obj):
-        return "%d of %d" % (obj.num_checks, obj.check_limit)
+        s = "%d of %d" % (obj.num_checks, obj.check_limit)
+        if obj.num_checks > 10:
+            s = "<b>%s</b>" % s
+        return s
 
     def invited(self, obj):
         return "%d of %d" % (obj.num_members, obj.team_limit)

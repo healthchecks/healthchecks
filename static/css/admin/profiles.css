@@ -9,17 +9,8 @@
 }
 
 td.field-email span {
-    border-bottom: 2px solid #FFEB3B;
-}
-
-.nchecks {
-    margin-top: 4px;
-    width: 240px;
-    height: 7px;
-    background-image: url(data:image/gif;base64,R0lGODlh8AABAKECAN3d3e7u7v///////yH5BAEKAAMALAAAAADwAAEAAAImhA+Cp5v+XFsTVQav0ZHmL4FeSFLBiQZCiq6s+sKvy9Kp3cb4KRQAOw==);
-}
-
-.nchecks div {
-    background-image: url(data:image/gif;base64,R0lGODlhCAABAKEBAHmuyP///////////yH5BAEKAAIALAAAAAAIAAEAAAIDhA9RADs=);
-    height: 7px;
+    color: #555;
+    background: #EEE;
+    padding: 1px 4px;
+    border-radius: 2px;
 }
