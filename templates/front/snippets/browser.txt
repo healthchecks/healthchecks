@@ -1,4 +1,4 @@
-// the server returns appropriate CORS headers so cross-domain AJAX requests should work:
+// the server returns appropriate CORS headers so cross-domain AJAX requests work:
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'PING_URL', true);
 xhr.send(null);

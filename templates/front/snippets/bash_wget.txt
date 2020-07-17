@@ -1,2 +1,2 @@
-# using wget:
-wget PING_URL -O /dev/null
+# using wget (10 second timeout, retry up to 5 times):
+wget PING_URL -T 10 -t 5 -O /dev/null

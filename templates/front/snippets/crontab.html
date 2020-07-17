@@ -1,3 +1,3 @@
 <div class="highlight"><pre><span></span><span class="c1"># m h dom mon dow command</span>
-  <span class="m">8</span> <span class="m">6</span> *   *   *   /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS --retry <span class="m">3</span> -o /dev/null {{ ping_url }}
+  <span class="m">8</span> <span class="m">6</span> *   *   *   /home/user/backup.sh <span class="o">&amp;&amp;</span> curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> -o /dev/null {{ ping_url }}
 </pre></div>

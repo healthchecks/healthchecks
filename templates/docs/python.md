@@ -3,9 +3,13 @@
 If you are already using the requests library, it's convenient to also use it here:
 
 ```python
-# using requests:
 import requests
-requests.get("PING_URL")
+
+try:
+    requests.get("PING_URL", timeout=10)
+except requests.RequestException as e:
+    # Log ping failure here...
+    print("Ping failed: %s" % e)
 ```
 
 Otherwise, you can use the urllib standard module.

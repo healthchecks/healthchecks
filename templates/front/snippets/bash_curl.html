@@ -1,4 +1,3 @@
-<div class="highlight"><pre><span></span><span class="c1"># using curl:</span>
-<span class="c1"># (make sure it is installed on your system!)</span>
-curl --retry <span class="m">3</span> {{ ping_url }}
+<div class="highlight"><pre><span></span><span class="c1"># using curl (10 second timeout, retry up to 5 times):</span>
+curl -m <span class="m">10</span> --retry <span class="m">5</span> {{ ping_url }}
 </pre></div>

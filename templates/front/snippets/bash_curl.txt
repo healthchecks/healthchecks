@@ -1,3 +1,2 @@
-# using curl:
-# (make sure it is installed on your system!)
-curl --retry 3 PING_URL
+# using curl (10 second timeout, retry up to 5 times):
+curl -m 10 --retry 5 PING_URL

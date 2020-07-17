@@ -37,7 +37,7 @@
     <div class="col-sm-6 col-sm-pull-6">
         <h2 id="pitch-subtitle">
             For each of your periodic tasks,
-            {% site_name %} provides an unique URL like this one:
+            {% site_name %} provides an unique URL similar to this one:
         </h2>
         <div id="pitch-url">
             <code>{{ ping_url }}</code>
@@ -118,10 +118,15 @@
                 </div>
                 <div class="tab-pane tab-pane-email" id="email">
                     <p>
-                        As an alternative to HTTP and HTTPS requests,
-                        you can "ping" this check by sending an
-                        email message to
-                        <a href="mailto:{{ check.email }}">{{ check.email }}</a>
+                        As an alternative to HTTP requests,
+                        you can also report "liveness" by
+                        <strong>sending email messages</strong>.
+                    </p>
+                    <p>
+                        You can instruct {% site_name %} to look for a particular
+                        keyword in the subject line. This is handy when your backup
+                        software sends an email after every run, and uses a different
+                        subject line depending on success or failure.
                     </p>
                 </div>
             </div>
