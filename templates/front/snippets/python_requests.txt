@@ -1,4 +1,4 @@
-# using requests:
+# Using the requests library:
 import requests
 
 try:

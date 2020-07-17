@@ -1,4 +1,4 @@
-# C#
+# C\#
 
 Below is an example of making a HTTP request to SITE_NAME from C#.
 

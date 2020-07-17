@@ -1,5 +1,5 @@
 <h1>Python</h1>
-<p>If you are already using the requests library, it's convenient to also use it here:</p>
+<p>If you are already using the requests library, it is convenient to also use it here:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -10,16 +10,15 @@
 </code></pre></div>
 
 
-<p>Otherwise, you can use the urllib standard module.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># urllib with python 3.x:</span>
+<p>Otherwise, you can use the urllib module from Python 3 standard libary:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">urllib.request</span>
-<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">)</span>
-</code></pre></div>
 
-
-<div class="highlight"><pre><span></span><code><span class="c1"># urllib with python 2.x:</span>
-<span class="kn">import</span> <span class="nn">urllib</span>
-<span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Log ping failure here...</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ping failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
 </code></pre></div>
 
 

@@ -1,7 +1,9 @@
-# urllib with python 3.x:
+# Using Python 3 standard library:
+import socket
 import urllib.request
-urllib.request.urlopen("PING_URL")
 
-# urllib with python 2.x:
-import urllib
-urllib.urlopen("PING_URL")
+try:
+    urllib.request.urlopen("PING_URL", timeout=10)
+except socket.error as e:
+    # Log ping failure here...
+    print("Ping failed: %s" % e)

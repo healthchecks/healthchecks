@@ -1,6 +1,6 @@
 # Python
 
-If you are already using the requests library, it's convenient to also use it here:
+If you are already using the requests library, it is convenient to also use it here:
 
 ```python
 import requests
@@ -12,18 +12,17 @@ except requests.RequestException as e:
     print("Ping failed: %s" % e)
 ```
 
-Otherwise, you can use the urllib standard module.
+Otherwise, you can use the urllib module from Python 3 standard libary:
 
 ```python
-# urllib with python 3.x:
+import socket
 import urllib.request
-urllib.request.urlopen("PING_URL")
-```
 
-```python
-# urllib with python 2.x:
-import urllib
-urllib.urlopen("PING_URL")
+try:
+    urllib.request.urlopen("PING_URL", timeout=10)
+except socket.error as e:
+    # Log ping failure here...
+    print("Ping failed: %s" % e)
 ```
 
 You can include additional diagnostic information in the in the request body (for POST requests):

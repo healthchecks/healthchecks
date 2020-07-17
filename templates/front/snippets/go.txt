@@ -2,10 +2,15 @@ package main
 
 import "fmt"
 import "net/http"
+import "time"
 
 func main() {
-	_, err := http.Head("PING_URL")
-	if err != nil {
-		fmt.Printf("%s", err)
-	}
+    var client = &http.Client{
+        Timeout: 10 * time.Second,
+    }
+
+    _, err := client.Head("PING_URL")
+    if err != nil {
+        fmt.Printf("%s", err)
+    }
 }
