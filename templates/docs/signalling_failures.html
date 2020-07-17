@@ -6,7 +6,7 @@ to you getting a notification.</p>
 <h2>Shell Scripts</h2>
 <p>The below shell script sends either a "success" or "failure" ping depending on
 command's (certbot in this example) exit code:</p>
-<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="nv">url</span><span class="o">=</span>PING_URL
 
@@ -20,7 +20,7 @@ curl --retry <span class="m">3</span> <span class="nv">$url</span>
 <h2>Python</h2>
 <p>Below is a skeleton code example in Python which signals a failure when the
 work function returns an unexpected value or throws an exception:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<div class="python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
 
 <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>

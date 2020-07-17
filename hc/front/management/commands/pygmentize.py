@@ -40,7 +40,7 @@ class Command(BaseCommand):
         _process("python_requests_fail", lexers.PythonLexer())
         _process("python_requests_start", lexers.PythonLexer())
         _process("python_requests_payload", lexers.PythonLexer())
-        _process("php", lexers.PhpLexer())
+        _process("php", lexers.PhpLexer(startinline=True))
         _process("powershell", lexers.shell.PowerShellLexer())
         _process("powershell_inline", lexers.shell.BashLexer())
         _process("ruby", lexers.RubyLexer())

@@ -8,7 +8,7 @@ Here is a simple PowerShell script that pings SITE_NAME. When scheduled to
 run with Task Scheduler, it will essentially just send regular "I'm alive" messages.
 You can of course extend it to do more things.
 
-```bash
+```powershell
 # inside a PowerShell script:
 Invoke-RestMethod PING_URL
 ```
@@ -16,14 +16,14 @@ Invoke-RestMethod PING_URL
 Save the above to e.g. `C:\Scripts\healthchecks.ps1`.
 Then use the following command in a Scheduled Task to run the script:
 
-```bash
+```bat
 powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
 ```
 
 In simple cases, you can also pass the script to PowerShell directly,
 using the "-command" argument:
 
-```bash
+```bat
 # Without an underlying script, passing the command to PowerShell directly:
 powershell.exe -command &{Invoke-RestMethod PING_URL}
 ```

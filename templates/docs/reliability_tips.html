@@ -11,7 +11,7 @@ running worker process which pings SITE_NAME after each completed item. A stuck
 request would block the whole process, so it is important to guard against.</p>
 <p>Specifying the timeout depends on the tool you use. curl, for example, has the
 <code>--max-time</code> (shorthand: <code>-m</code>) parameter:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Send a HTTP, 10 second timeout:</span>
+<div class="bash highlight"><pre><span></span><code><span class="c1"># Send a HTTP, 10 second timeout:</span>
 curl -m <span class="m">10</span> PING_URL
 </code></pre></div>
 
@@ -21,7 +21,7 @@ curl -m <span class="m">10</span> PING_URL
 client to retry failed requests several times.</p>
 <p>Specifying the retry policy depends on the tool you use. curl, for example, has the
 <code>--retry</code> parameter:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Retry up to 5 times, uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...)</span>
+<div class="bash highlight"><pre><span></span><code><span class="c1"># Retry up to 5 times, uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...)</span>
 curl --retry <span class="m">5</span> PING_URL
 </code></pre></div>
 

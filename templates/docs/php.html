@@ -1,18 +1,18 @@
 <h1>PHP</h1>
 <p>Below is an example of making a HTTP request to SITE_NAME from PHP.</p>
-<div class="highlight"><pre><span></span><code><span class="x">file_get_contents(&#39;PING_URL&#39;);</span>
+<div class="php highlight"><pre><span></span><code><span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">&#39;PING_URL&#39;</span><span class="p">);</span>
 </code></pre></div>
 
 
 <p>If you would like to setup timeout and retry options, as discussed in the
 <a href="../reliability_tips/">reliability tips section</a>, there is a
 <a href="https://www.phpcurlclass.com/">curl package</a> available that lets you do that easily:</p>
-<div class="highlight"><pre><span></span><code><span class="x">use Curl\Curl;</span>
+<div class="php highlight"><pre><span></span><code><span class="k">use</span> <span class="nx">Curl\Curl</span><span class="p">;</span>
 
-<span class="x">$curl = new Curl();</span>
-<span class="x">$curl-&gt;setRetry(20);</span>
-<span class="x">$curl-&gt;setTimeout(5);</span>
-<span class="x">$curl-&gt;get(&#39;PING_URL&#39;);</span>
+<span class="nv">$curl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Curl</span><span class="p">();</span>
+<span class="nv">$curl</span><span class="o">-&gt;</span><span class="na">setRetry</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+<span class="nv">$curl</span><span class="o">-&gt;</span><span class="na">setTimeout</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="nv">$curl</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;PING_URL&#39;</span><span class="p">);</span>
 </code></pre></div>
 
 

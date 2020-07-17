@@ -4,7 +4,7 @@ have to do is make a HTTP request at an appropriate place in the script.
 <a href="https://curl.haxx.se/docs/manpage.html">curl</a> and
 <a href="https://www.gnu.org/software/wget/manual/wget.html">wget</a>
 are two common command line HTTP clients you can use.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Sends a HTTP GET request with curl:</span>
+<div class="bash highlight"><pre><span></span><code><span class="c1"># Sends a HTTP GET request with curl:</span>
 curl -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL
 
 <span class="c1"># Silent version (no stdout/stderr output unless curl hits an error):</span>
@@ -38,7 +38,7 @@ signal a failure. The following example:</p>
 <li>if the certbot command is successful (exit code 0), sends HTTP GET to <code>PING_URL</code></li>
 <li>otherwise, sends HTTP GET to <code>PING_URL/fail</code></li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="c1"># Payload here:</span>
 /usr/bin/certbot renew
@@ -52,7 +52,7 @@ curl -m <span class="m">10</span> --retry <span class="m">5</span> <span class="
 body. If the request body looks like a valid UTF-8 string, SITE_NAME
 will accept and store first 10KB of the request body.</p>
 <p>In the below example, certbot's output is captured and submitted via HTTP POST:</p>
-<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
 curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
@@ -64,7 +64,7 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-r
 (if it does not already exist) and to retrieve its ping URL.
 Using this technique, you can write services that automatically
 register with SITE_NAME the first time they run.</p>
-<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 
 <span class="nv">API_KEY</span><span class="o">=</span>your-api-key-here
 

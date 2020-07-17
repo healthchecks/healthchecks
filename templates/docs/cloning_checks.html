@@ -16,7 +16,7 @@ an existing deployment in a new region. The SITE_NAME web interface does
 not have a function to clone an entire project, but this can be done relatively
 easily using the <a href="../api/">Management API</a> calls. Below is an example using Python
 and the requests library:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<div class="python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/&quot;</span>
 <span class="n">SOURCE_PROJECT_READONLY_KEY</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span>
