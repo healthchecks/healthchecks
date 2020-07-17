@@ -570,6 +570,22 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(fields["Last Ping"], "an hour ago")
 
     @patch("hc.api.transports.requests.request")
+    def test_discord_rewrites_discordapp_com(self, mock_post):
+        v = json.dumps({"webhook": {"url": "https://discordapp.com/foo"}})
+        self._setup_data("discord", v)
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        url = args[1]
+
+        # discordapp.com is deprecated. For existing webhook URLs, wwe should
+        # rewrite discordapp.com to discord.com:
+        self.assertEqual(url, "https://discord.com/foo/slack")
+
+    @patch("hc.api.transports.requests.request")
     def test_pushbullet(self, mock_post):
         self._setup_data("pushbullet", "fake-token")
         mock_post.return_value.status_code = 200

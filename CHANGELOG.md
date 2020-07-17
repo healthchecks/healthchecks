@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Indicate a started check with a progress spinner under status icon (#338)
 - Added "Docs > Reliability Tips" page
 - Spike.sh integration (#402)
+- Updated Discord integration to use discord.com instead of discordapp.com
 
 ### Bug Fixes
 - Removing Pager Team integration, project appears to be discontinued
