@@ -177,4 +177,11 @@ $(function () {
         $("#transfer-confirm").prop("disabled", !this.value);
     });
 
+
+    // Enable/disable fields in the "Filtering Rules" modal
+    $("input[type=radio][name=filter_by_subject]").on("change", function() {
+        var enableInputs = this.value == "yes";
+        $(".filter-by-subject").prop("disabled", !enableInputs);
+    });
+
 });

@@ -75,6 +75,7 @@ class Check(models.Model):
     schedule = models.CharField(max_length=100, default="* * * * *")
     tz = models.CharField(max_length=36, default="UTC")
     subject = models.CharField(max_length=100, blank=True)
+    subject_fail = models.CharField(max_length=100, blank=True)
     methods = models.CharField(max_length=30, blank=True)
     manual_resume = models.NullBooleanField(default=False)
 

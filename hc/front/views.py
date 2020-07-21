@@ -353,6 +353,7 @@ def filtering_rules(request, code):
     form = forms.FilteringRulesForm(request.POST)
     if form.is_valid():
         check.subject = form.cleaned_data["subject"]
+        check.subject_fail = form.cleaned_data["subject_fail"]
         check.methods = form.cleaned_data["methods"]
         check.manual_resume = form.cleaned_data["manual_resume"]
         check.save()
@@ -1726,7 +1727,6 @@ def metrics(request, code, key):
     return HttpResponse(output(checks), content_type="text/plain")
 
 
-
 @login_required
 def add_spike(request, code):
     project = _get_project_for_user(request, code)
@@ -1745,4 +1745,3 @@ def add_spike(request, code):
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_spike.html", ctx)
-

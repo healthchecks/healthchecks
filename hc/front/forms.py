@@ -63,9 +63,23 @@ class NameTagsForm(forms.Form):
 
 
 class FilteringRulesForm(forms.Form):
+    filter_by_subject = forms.ChoiceField(choices=(("no", "no"), ("yes", "yes")))
     subject = forms.CharField(required=False, max_length=100)
+    subject_fail = forms.CharField(required=False, max_length=100)
     methods = forms.ChoiceField(required=False, choices=(("", "Any"), ("POST", "POST")))
     manual_resume = forms.BooleanField(required=False)
+
+    def clean_subject(self):
+        if self.cleaned_data["filter_by_subject"] == "yes":
+            return self.cleaned_data["subject"]
+
+        return ""
+
+    def clean_subject_fail(self):
+        if self.cleaned_data["filter_by_subject"] == "yes":
+            return self.cleaned_data["subject_fail"]
+
+        return ""
 
 
 class TimeoutForm(forms.Form):

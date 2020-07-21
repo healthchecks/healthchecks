@@ -8,11 +8,8 @@
             method="post">
             {% csrf_token %}
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4>Filtering Rules</h4>
-                </div>
                 <div class="modal-body">
+                    <h2>HTTP Requests</h2>
                     <p>Allowed request methods for HTTP requests:</p>
                     <label class="radio-container">
                         <input
@@ -38,29 +35,70 @@
                     </label>
                 </div>
 
+                <hr>
+
                 <div class="modal-body">
-                    <p>Filtering of Inbound Email Messages</p>
+                    <h2>Inbound Emails</h2>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="filter_by_subject"
+                            value="no"
+                            {% if not check.subject and not check.subject_fail %}checked{% endif %} />
+                        <span class="radiomark"></span>
+                        No filtering. Treat all emails as "success"
+                    </label>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="filter_by_subject"
+                            value="yes"
+                            {% if check.subject or check.subject_fail %}checked{% endif %} />
+                        <span class="radiomark"></span>
+                        Filter by keywords in the Subject line:
+                    </label>
+
+
                     <div class="form-group">
                         <label for="update-name-input" class="col-sm-4 control-label">
-                            Subject Must Contain
+                            Success Keyword
                         </label>
                         <div class="col-sm-7">
                             <input
                                 name="subject"
                                 type="text"
                                 value="{{ check.subject }}"
-                                class="input-name form-control" />
-
+                                {% if not check.subject and not check.subject_fail %}disabled{% endif %}
+                                class="input-name form-control filter-by-subject" />
                             <span class="help-block">
-                                If set, {% site_name %} will ignore emails
-                                without this value in the Subject line.
+                                If Subject contains this keyword,
+                                treat it as "success".
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="update-name-input" class="col-sm-4 control-label">
+                            Failure Keyword
+                        </label>
+                        <div class="col-sm-7">
+                            <input
+                                name="subject_fail"
+                                type="text"
+                                value="{{ check.subject_fail }}"
+                                {% if not check.subject and not check.subject_fail %}disabled{% endif %}
+                                class="input-name form-control filter-by-subject" />
+                            <span class="help-block">
+                                If Subject contains this keyword,
+                                treat it as "failure".
                             </span>
                         </div>
                     </div>
                 </div>
+                <hr>
 
                 <div class="modal-body">
-                    <p>Handling of pings while paused:</p>
+                    <h2>Pinging a Paused Check</h2>
+                    <p>When a paused check receives a ping:</p>
                     <label class="radio-container">
                         <input
                             type="radio"
@@ -77,7 +115,7 @@
                             value="1"
                             {% if check.manual_resume %}checked{% endif %}>
                         <span class="radiomark"></span>
-                        Ignore pings, stay in the paused state
+                        Ignore the ping, stay in the paused state
                     </label>
                 </div>
 

@@ -128,3 +128,22 @@ ul.crosses {
 ul.crosses li:before {
     content: '✘ ';
 }
+
+@media (min-width: 992px) {
+    #filtering-rules-modal .modal-dialog {
+        width: 650px;
+    }
+}
+
+#filtering-rules-modal .modal-body {
+    padding: 24px;
+}
+
+#filtering-rules-modal h2 {
+    margin-top: 0;
+}
+
+
+#filtering-rules-modal hr {
+    margin: 0;
+}
