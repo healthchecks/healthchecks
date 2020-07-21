@@ -66,6 +66,7 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "hc.accounts.middleware.TeamAccessMiddleware",
 )
 
@@ -146,6 +147,7 @@ USE_TZ = True
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
+LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
 SITE_NAME = os.getenv("SITE_NAME", "Mychecks")

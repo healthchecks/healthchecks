@@ -1,0 +1,466 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# FULL NAME <EMAIL@ADDRESS>, 2020.
+# Pēteris Caune <cuu508@gmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.16-dev\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-21 19:32+0000\n"
+"PO-Revision-Date: 2020-07-21 22:55+0300\n"
+"Last-Translator: Pēteris Caune <cuu508@gmail.com>\n"
+"Language-Team: lv <>\n"
+"Language: lv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+"X-Generator: Gtranslator 3.36.0\n"
+
+#: templates/base.html:5
+#, python-format
+msgid ""
+"%(site_name)s - Monitor Cron Jobs. Get Notified When Your Cron Jobs Fail"
+msgstr ""
+"%(site_name)s - uzrauga cron darbus. Sūta brīdinājumus, kad tie nenotiek "
+"laikā"
+
+#: templates/base.html:65
+msgid "Toggle navigation"
+msgstr "Pārslēgt navigāciju"
+
+#: templates/base.html:99
+msgid "Checks"
+msgstr "Detektori"
+
+#: templates/base.html:106 templates/front/welcome.html:368
+msgid "Integrations"
+msgstr "Integrācijas"
+
+#: templates/base.html:114
+msgid "Badges"
+msgstr "Nozīmītes"
+
+#: templates/base.html:120
+msgid "Settings"
+msgstr "Iestatījumi"
+
+#: templates/base.html:131 templates/base.html:135
+msgid "Pricing"
+msgstr "Cenas"
+
+#: templates/base.html:143
+msgid "Docs"
+msgstr "Dokumentācija"
+
+#: templates/base.html:150
+msgid "Account"
+msgstr "Konts"
+
+#: templates/base.html:156
+#| msgid "Simple Configuration"
+msgid "Site Administration"
+msgstr "Administrācija"
+
+#: templates/base.html:162
+msgid "Projects"
+msgstr "Projekti"
+
+#: templates/base.html:182
+msgid "Account Settings"
+msgstr "Konta iestatījumi"
+
+#: templates/base.html:187
+msgid "Log Out"
+msgstr "Atteikties"
+
+#: templates/base.html:195
+#| msgid "Sign Up"
+msgid "Sign In"
+msgstr "Pierakstīties"
+
+#: templates/base.html:204 templates/front/welcome.html:710
+msgid "Sign Up"
+msgstr "Reģistrēties"
+
+#: templates/base.html:225
+msgid "Powered by Healthchecks open-source project"
+msgstr "Healthchecks atvērtā koda projekts"
+
+#: templates/front/welcome.html:5
+msgid ""
+"Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and "
+"background tasks. Receive alerts when your tasks don't run on time."
+msgstr ""
+"Cron darbu pārraudzība. Uzraugi rezerves kopiju veidošanu, iknedēļas "
+"atskaišu ģenerēšanu, cron darbus, fona darbus. Saņem brīdinājumus, kad tie "
+"nenotiek laikā."
+
+#: templates/front/welcome.html:19
+msgid ""
+"Monitoring for your nightly backups, weekly reports, cron jobs and "
+"background tasks."
+msgstr "Rezerves kopiju, iknedēļas atskaišu, cron darbu uzraudzība."
+
+#: templates/front/welcome.html:27
+msgid "Make HTTP requests to the Ping URL at regular intervals."
+msgstr "Ar regulāru intervālu sūti HTTP pieprasījumus uz ping adresi."
+
+#: templates/front/welcome.html:29
+#, python-format
+msgid ""
+"When the URL is not pinged on time, %(site_name)s will send you an alert."
+msgstr "Kad pieprasījums netiek saņemts laikā, %(site_name)s ceļ trauksmi."
+
+#: templates/front/welcome.html:35
+msgid "You can monitor any service that can make HTTP requests or send emails."
+msgstr ""
+"Šādi iespējams pārraudzīt jebkuru servisu, kurš ir spējīgs sūtīt HTTP "
+"pieprasījumus vai epastus."
+
+#: templates/front/welcome.html:40
+#, python-format
+msgid ""
+"For each of your periodic tasks, %(site_name)s provides an unique URL "
+"similar to this one:"
+msgstr ""
+"Katram pārraugāmajam servisam %(site_name)s sagatavo unikālu ping adresi, "
+"līdzīgu šai:"
+
+#: templates/front/welcome.html:79
+msgid "Browser"
+msgstr "Pārlūkprogramma"
+
+#: templates/front/welcome.html:85 templates/front/welcome.html:378
+msgid "Email"
+msgstr "E-pasts"
+
+#: templates/front/welcome.html:124
+msgid ""
+"As an alternative to HTTP requests, you can also report \"liveness\" by "
+"<strong>sending email messages</strong>."
+msgstr ""
+"Papildus HTTP pieprasījumiem, servisi par sevi var ziņot sūtot "
+"<strong>epastu</strong>."
+
+#: templates/front/welcome.html:131
+#, python-format
+msgid ""
+"You can instruct %(site_name)s to look for a particular keyword in the "
+"subject line. This is handy when your backup software sends an email after "
+"every run, and uses a different subject line depending on success or failure."
+msgstr ""
+"Iespējams norādīt atslēgvārdu, kuru %(site_name)s meklēs epasta tematā. Tas "
+"ir parocīgi, piemēram, ja dublējumu programmatūra pēc katra dublējuma "
+"izveidošanas sūta epastu ar rezultātu epasta tematā."
+
+#: templates/front/welcome.html:151
+#, python-format
+msgid ""
+"%(site_name)s monitors the heartbeat messages sent by your cron jobs,  "
+"services and APIs. Get immediate alerts when they don't arrive on schedule."
+msgstr ""
+"%(site_name)s seko ping signāliem no pārraugāmajiem cron darbiem un "
+"servisiem, un izsūta brīdinājumus tiklīdz kāds no signāliem neierodas laikā."
+
+#: templates/front/welcome.html:158
+msgid "Sign Up – It's Free"
+msgstr "Reģistrējies (bezmaksas)"
+
+#: templates/front/welcome.html:170
+msgid "A quick peek of what's inside:"
+msgstr "Ieskatam:"
+
+#: templates/front/welcome.html:185
+msgid "Live-updating Dashboard"
+msgstr "Informācijas panelis"
+
+#: templates/front/welcome.html:188
+msgid ""
+"A list of your checks, one for each Cron job, daemon or scheduled task you "
+"want to monitor."
+msgstr ""
+"Detektoru saraksts. Katram cron darbam vai servisam, ko nepieciešams "
+"uzraudzīt, atbilst viens detektors."
+
+#: templates/front/welcome.html:194
+msgid ""
+"Give names and assign tags to your checks to easily recognize them later."
+msgstr ""
+"Detektoriem var piešķirt nosaukumus un birkas, lai tos būtu viegli atpazīt "
+"un atšķirt."
+
+#: templates/front/welcome.html:200
+msgid "Tap on the integration icons to toggle them on and off."
+msgstr "Uz integrāciju ikonām var klikšķināt lai tās ieslēgtu un izslēgtu."
+
+#: templates/front/welcome.html:205
+msgid ""
+"Adjust Period and Grace time to match the periodicity and duration of your "
+"tasks."
+msgstr ""
+"Periodu un pagarinājuma laiku jānorāda tā, lai tie atbilstu uzraugāmo darbu "
+"biežumam un ilgumam."
+
+#: templates/front/welcome.html:222
+msgid "Simple Configuration"
+msgstr "Vienkārša konfigurācija"
+
+#: templates/front/welcome.html:223
+msgid ""
+"Each check has configurable <strong>Period</strong> and <strong>Grace Time</"
+"strong> parameters. Depending on these parameters and time since the last "
+"ping, the check is in one of the following states:"
+msgstr ""
+"Katram detektoram var iestatīt <strong>periodu</strong> un "
+"<strong>pagarinājuma laiku</strong>. Atkarībā no šo parametru vērtībām un "
+"saņemtajiem ping signāliem, detektors atrodas vienā no stāvokļiem:"
+
+#: templates/front/welcome.html:235
+msgid "New. A check that has been created, but has not received any pings yet."
+msgstr "Jauns. Vēl nav saņēmis nevienu ping signālu."
+
+#: templates/front/welcome.html:246
+msgid "Up. Time since last ping has not exceeded <strong>Period</strong>."
+msgstr ""
+"Viss kārtībā. Laika intervāls kopš pēdējā saņemtā ping signāla nav "
+"pārniedzis iestatīto <strong>periodu</strong>."
+
+#: templates/front/welcome.html:257
+msgid ""
+"Late. Time since last ping has exceeded <strong>Period</strong>, but has not "
+"yet exceeded <strong>Period</strong> + <strong>Grace</strong>."
+msgstr ""
+"Kavējas. Laika intervāls kopš pēdējā saņemtā signāla ir pārsniedzis "
+"<strong>periodu</strong>, bet vēl nav pārsniedzis <strong>periodu</strong> + "
+"<strong>pagarinājuma laiku</strong>."
+
+#: templates/front/welcome.html:269
+#, python-format
+msgid ""
+"Down. Time since last ping has exceeded <strong>Period</strong> + "
+"<strong>Grace</strong>. When check goes from \"Late\" to \"Down\", "
+"%(site_name)s sends you a notification."
+msgstr ""
+"Trauksme. Laika intervāls kopš pēdējā saņemtā signāla ir pārsniedzis "
+"<strong>periodu</strong> + <strong>pagarinājuma laiku</strong>. Kad "
+"detektora statuss izmainās no \"Kavējas\" uz \"Trauksme\", %(site_name)s "
+"izsūta brīdinājumus."
+
+#: templates/front/welcome.html:291
+msgid "Cron Expression Support"
+msgstr "Cron izteiksmes"
+
+#: templates/front/welcome.html:293
+msgid ""
+"Alternatively, you can define the expected ping dates and times using a cron "
+"expression. See"
+msgstr ""
+"Sagaidāmos signālu laikus iespējams norādīt arī lietojot cron izteiksmes. "
+"Skatiet"
+
+#: templates/front/welcome.html:298
+msgid "Cron Syntax Cheatsheet"
+msgstr "cron sintakses paraugus,"
+
+#: templates/front/welcome.html:300
+msgid "for the supported syntax features."
+msgstr "lai iepazītos ar iespējām."
+
+#: templates/front/welcome.html:305
+msgid ""
+"<strong>Grace Time</strong> specifies how \"late\" a ping can be before you "
+"will be alerted. Set it to be a little above the expected duration of your "
+"cron job."
+msgstr ""
+"<strong>Pagarinājuma laiks</strong> norāda, cik ilgi ping signālam "
+"pieļaujams kavēties. Ieteicams norādīt laika intervālu, kas nedaudz "
+"pārsniedz cron darba tipisko izpildes ilgumu."
+
+#: templates/front/welcome.html:323
+msgid "Details and Event Log"
+msgstr "Apraksts un notikumu žurnāls"
+
+#: templates/front/welcome.html:325
+msgid ""
+"You can add a longer, free-form description to each check. Leave notes and "
+"pointers for yourself and for your team."
+msgstr ""
+"Katram detektoram iespējams pievienot garāku aprakstu brīvā formātā. Tajā "
+"var iekļaut sev un kolēģiem noderīgas piezīmes."
+
+#: templates/front/welcome.html:332
+msgid ""
+"You can also see the log of received pings and sent \"Down\" notifications."
+msgstr "Tiek uzturēts saņemto ping signālu un izsūtīto brīdinājumu žurnāls."
+
+#: templates/front/welcome.html:349
+msgid "Public Status Badges"
+msgstr "Publiskas statusa nozīmītes"
+
+#: templates/front/welcome.html:351
+#, python-format
+msgid ""
+"%(site_name)s provides status badges for each of the tags you have used. "
+"Additionally, the \"%(site_name)s\" badge shows the overall status of all "
+"checks in your account."
+msgstr ""
+"Katrai detektoru birkai atbilst statusa nozīmīte. Pieejama arī kopējā "
+"%(site_name)s statusa nozīmīte, kas rāda visu detektoru kopējo statusu."
+
+#: templates/front/welcome.html:358
+msgid ""
+"The badges have public, but hard-to-guess URLs. You can use them in your "
+"READMEs, dashboards or status pages."
+msgstr ""
+"Statusa nozīmītēm ir publiskas, bet grūti uzminamas adreses. Tās var lietot "
+"README dokumentos, informācijas paneļos un statusa lapās."
+
+#: templates/front/welcome.html:370
+msgid "Set up multiple ways to get notified:"
+msgstr "Dažādas iespējas, kā saņemt brīdinājumus:"
+
+#: templates/front/welcome.html:400 templates/front/welcome.html:408
+#: templates/front/welcome.html:432 templates/front/welcome.html:444
+#: templates/front/welcome.html:455 templates/front/welcome.html:465
+#: templates/front/welcome.html:584 templates/front/welcome.html:618
+#: templates/front/welcome.html:629
+msgid "Chat"
+msgstr "Tērzēšana"
+
+#: templates/front/welcome.html:420 templates/front/welcome.html:526
+#: templates/front/welcome.html:538
+msgid "Push Notifications"
+msgstr "Pašpiegādes paziņojumi"
+
+#: templates/front/welcome.html:475 templates/front/welcome.html:486
+#: templates/front/welcome.html:494 templates/front/welcome.html:505
+#: templates/front/welcome.html:573 templates/front/welcome.html:607
+msgid "Incident Management"
+msgstr "Incidentu pārvaldība"
+
+#: templates/front/welcome.html:515
+msgid "Event Monitoring"
+msgstr "Sistēmu uzraudzība"
+
+#: templates/front/welcome.html:549
+msgid "Shell Commands"
+msgstr "Shell komandas"
+
+#: templates/front/welcome.html:561
+msgid "SMS"
+msgstr "SMS"
+
+#: templates/front/welcome.html:596
+msgid "Project Management"
+msgstr "Projektu vadība"
+
+#: templates/front/welcome.html:638
+#, python-format
+msgid "What Can I Monitor With %(site_name)s?"
+msgstr "Kur var pielietot %(site_name)s?"
+
+#: templates/front/welcome.html:644
+msgid "Cron Jobs"
+msgstr "Cron darbi"
+
+#: templates/front/welcome.html:646
+#, python-format
+msgid ""
+"%(site_name)s monitoring is a great fit for cron jobs and cron-like systems "
+"(systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi "
+"cron-like interface, Heroku Scheduler, ...). A failed cron job often has no "
+"immediate visible consequences, and can go unnoticed for a long time."
+msgstr ""
+"%(site_name)s ir īpaši pielāgots cron darbu un līdzīgu uzdevumu (systemd "
+"taimeri, Jenkins būvējumi, Windows Scheduled Tasks, wp-cron, uwsgi cron "
+"funkcionalitāte, Heroku Scheduler, ...) pārraudzībai. Cron darbu avārijām "
+"bieži nav redzamu seku, un tās var ilgi palikt nepamanītas."
+
+#: templates/front/welcome.html:655 templates/front/welcome.html:679
+msgid "Specific examples:"
+msgstr "Piemēri:"
+
+#: templates/front/welcome.html:657
+msgid "Filesystem backups"
+msgstr "Failu sistēmu dublējumi"
+
+#: templates/front/welcome.html:658
+msgid "Database backups"
+msgstr "Datubāzu dublējumi"
+
+#: templates/front/welcome.html:659
+msgid "Daily, weekly, monthly report emails"
+msgstr "Ikdienas, iknedēļas vai ikmēneša atskaišu epasti"
+
+#: templates/front/welcome.html:660
+msgid "SSL renewals"
+msgstr "SSL sertifikātu atjaunošana"
+
+#: templates/front/welcome.html:661
+msgid "Business data import and sync"
+msgstr "Biznesa datu imports un sinhronizācija"
+
+#: templates/front/welcome.html:662
+msgid "Antivirus scans"
+msgstr "Antivīrusa darbība"
+
+#: templates/front/welcome.html:663
+msgid "Dynamic DNS updates"
+msgstr "DDNS klienta darbība"
+
+#: templates/front/welcome.html:667
+msgid "Processes, Services, Servers"
+msgstr "Procesu, servisu, serveru uzraudzība"
+
+#: templates/front/welcome.html:670
+#, python-format
+msgid ""
+"%(site_name)s monitoring can be used for lightweight server monitoring: "
+"ensuring a particular system service, or the server as a whole is alive and "
+"healthy. Write a shell script that checks for a specific condition, and "
+"pings %(site_name)s if successful. Run the shell script regularly."
+msgstr ""
+"%(site_name)s var pielieot vienkāršai serveru un atsevišķu procesu "
+"uzraudzībai. To dara, izveidojot shell skriptu, kas pārbauda kādu sistēmas "
+"parametru un nosūta ping signālu %(site_name)s, un pievienojot šo skriptu "
+"sistēmas cron darbiem."
+
+#: templates/front/welcome.html:681
+msgid "Check a specific docker container is running"
+msgstr "Pārbaude, vai kāds noteikts Docker konteiners strādā"
+
+#: templates/front/welcome.html:682
+msgid "Check a specific application process is running"
+msgstr "Pārbaude, vai kāda noteikta aplikācija strādā"
+
+#: templates/front/welcome.html:683
+msgid "Check database replication lag"
+msgstr "Datubāzes replikācijas aiztures pārbaude"
+
+#: templates/front/welcome.html:684
+msgid "Check system resources: free disk, free RAM, ..."
+msgstr "Sistēmas resursu (brīvā atmiņa, ...) pārbaude"
+
+#: templates/front/welcome.html:686
+msgid ""
+"Send simple, unconditional \"I'm alive\" messages from your server (or your "
+"NAS, router, Raspberry Pi, ...)"
+msgstr ""
+"Regulāri beznosacījuma signāli no servera (vai NAS, vai maršrutētāja, vai "
+"Raspberry Pi, ...)"
+
+#: templates/front/welcome.html:702
+#, python-format
+msgid ""
+"%(site_name)s is a <strong>free</strong> and <a href=\"https://github.com/"
+"healthchecks/healthchecks\">open source</a> service. Setting up monitoring "
+"for your cron jobs only takes minutes. Start sleeping better at nights!"
+msgstr ""
+"%(site_name)s ir <strong>bezmaksas</strong> un <a href=\"https://github.com/"
+"healthchecks/healthchecks\">atvērta koda</a> serviss. Tā ieviešana prasa "
+"tikai dažas minūtes. Ar %(site_name)s naktīs labāk nāk miegs!"

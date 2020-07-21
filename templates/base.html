@@ -1,8 +1,8 @@
-<!DOCTYPE html>{% load compress static hc_extras %}
+<!DOCTYPE html>{% load compress i18n static hc_extras %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}{{ site_name }} - Monitor Cron Jobs. Get Notified When Your Cron Jobs Fail{% endblock %}</title>
+    <title>{% block title %}{% blocktrans trimmed %}{{ site_name }} - Monitor Cron Jobs. Get Notified When Your Cron Jobs Fail{% endblocktrans %}{% endblock %}</title>
     {% block description %}
     <meta name="description" content="Monitor and Get Notified When Your Cron Jobs Fail. Free alternative to Cronitor and Dead Man's Snitch.">
     {% endblock %}
@@ -62,7 +62,7 @@
                 data-target="#navbar"
                 aria-expanded="false"
                 aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only">{% trans "Toggle navigation" %}</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -95,24 +95,30 @@
             {% if project %}
             <ul id="nav-main-sections" class="nav navbar-nav">
                     <li {% if page == 'checks' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-checks' project.code %}">Checks</a>
+                        <a href="{% url 'hc-checks' project.code %}">
+                            {% trans "Checks" %}
+                        </a>
                     </li>
 
                     {% with b=project.have_channel_issues %}
                     <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
                         <a href="{% url 'hc-p-channels' project.code %}">
-                            Integrations
+                            {% trans "Integrations" %}
                             {% if b %}<span class="icon-grace"></span>{% endif %}
                         </a>
                     </li>
                     {% endwith %}
 
                     <li {% if page == 'badges' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-badges' project.code %}">Badges</a>
+                        <a href="{% url 'hc-badges' project.code %}">
+                            {% trans "Badges" %}
+                        </a>
                     </li>
 
                     <li {% if page == 'project' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-project-settings' project.code %}">Settings</a>
+                        <a href="{% url 'hc-project-settings' project.code %}">
+                            {% trans "Settings" %}
+                        </a>
                     </li>
             </ul>
             {% endif %}
@@ -121,30 +127,40 @@
                 {% if show_pricing %}
                 <li {% if page == 'pricing' %} class="active" {% endif %}>
                     {% if project %}
-                    <a href="{% url 'hc-p-pricing' project.code %}">Pricing</a>
+                    <a href="{% url 'hc-p-pricing' project.code %}">
+                        {% trans "Pricing" %}
+                    </a>
                     {% else %}
-                    <a href="{% url 'hc-pricing' %}">Pricing</a>
+                    <a href="{% url 'hc-pricing' %}">
+                        {% trans "Pricing" %}
+                    </a>
                     {% endif %}
                 </li>
                 {% endif %}
 
                 <li {% if page == 'docs' %} class="active" {% endif %}>
-                    <a href="{% url 'hc-docs' %}">Docs</a>
+                    <a href="{% url 'hc-docs' %}">
+                        {% trans "Docs" %}
+                    </a>
                 </li>
 
                 {% if request.user.is_authenticated %}
                 <li class="dropdown">
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                        Account
+                        {% trans "Account" %}
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         {% if request.user.is_superuser %}
-                            <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
+                            <li><a href="{% url 'admin:index' %}">
+                                {% trans "Site Administration" %}
+                            </a></li>
                             <li role="separator" class="divider"></li>
                         {% endif %}
 
-                        <li class="dropdown-header">Projects</li>
+                        <li class="dropdown-header">
+                            {% trans "Projects" %}
+                        </li>
                         {% for project in request.profile.annotated_projects %}
                         <li class="project-item">
                             <a href="{% url 'hc-checks' project.code %}">
@@ -161,19 +177,31 @@
                     <li role="separator" class="divider"></li>
                     <li class="dropdown-header">{{ request.user.email }}</li>
 
-                    <li><a href="{% url 'hc-profile' %}">Account Settings</a></li>
-                    <li><a href="{% url 'hc-logout' %}">Log Out</a></li>
+                    <li>
+                        <a href="{% url 'hc-profile' %}">
+                            {% trans "Account Settings" %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'hc-logout' %}">
+                            {% trans "Log Out" %}
+                        </a>
+                    </li>
                     </ul>
                 </li>
                 {% elif page != "login" %}
-                <li><a href="{% url 'hc-login' %}">Sign In</a></li>
+                <li>
+                    <a href="{% url 'hc-login' %}">
+                        {% trans "Sign In" %}
+                    </a>
+                </li>
                 {% endif %}
 
                 {% if registration_open %}
                 {% if page == "welcome" or page == "login" %}
                 <li>
                     <a id="nav-sign-up" href="#" data-toggle="modal" data-target="#signup-modal">
-                        <span>Sign Up</span>
+                        <span>{% trans "Sign Up" %}</span>
                     </a>
                 </li>
                 {% endif %}
@@ -194,7 +222,7 @@
         <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
             <ul>
                 <li>
-                    Powered by Healthchecks open-source project
+                    {% trans "Powered by Healthchecks open-source project" %}
                     (<a href="https://github.com/healthchecks/healthchecks">github</a>,
                      <a href="https://healthchecks.io">healthchecks.io</a>)
                 </li>
