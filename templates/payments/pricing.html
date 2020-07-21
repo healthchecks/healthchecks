@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static compress hc_extras %}
 
-{% block title %}Pricing - It's Free! - {% site_name %}{% endblock %}
+{% block title %}Pricing - It's Free! - {{ site_name }}{% endblock %}
 
 {% block description %}
     <meta name="description" content="With the Free plan, you can monitor up to 20 services for free. Paid plans lift the limits significantly and are reasonably priced. Special offer for open source projects.">
@@ -22,7 +22,7 @@
                         {% if sub.plan_id %}
                             Your account is currently on the
                             <strong>{{ sub.plan_name }}</strong>
-                            plan. Thank you for supporting {% site_name %}!
+                            plan. Thank you for supporting {{ site_name }}!
                         {% else %}
                             Your account is currently on the
                             <strong>{{ sub.plan_name|default:"Hobbyist" }}</strong> plan.
@@ -226,7 +226,7 @@
                     <a href="https://braintreepayments.com">Braintree</a>,
                     a division of PayPal. Your credit card or PayPal
                     credentials are never directly handled by or
-                    stored on {% site_name %} servers.
+                    stored on {{ site_name }} servers.
                 </p>
                 <p>
                     Braintree is a validated Level 1 PCI DSS Compliant
@@ -248,7 +248,7 @@
                 <p>
                     Both plans are similar. The "Supporter" plan is offered
                     in case "Hobbyist" fits your usage but you wish
-                    to support {% site_name %} financially.
+                    to support {{ site_name }} financially.
                 </p>
 
 
@@ -264,7 +264,7 @@
 
                 <h2>What is the "log entries per check" number?</h2>
                 <p>
-                    For each of your checks, {% site_name %} keeps a
+                    For each of your checks, {{ site_name }} keeps a
                     historic log of the received pings. The log can be useful
                     for auditing past activity of your cron jobs.
                 </p>
@@ -297,7 +297,7 @@
 </div>
 
 <div id="log-limit-help" class="hidden">
-    The maximum number of log entries {% site_name %} will store for each check.
+    The maximum number of log entries {{ site_name }} will store for each check.
     When the limit is reached, the oldest log entries start getting removed to make
     room for new ones.
 </div>

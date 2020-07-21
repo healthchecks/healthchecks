@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Mattermost Integration for {% site_name %}{% endblock %}
+{% block title %}Mattermost Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
     <h1>Mattermost</h1>
 
     <p>If your team uses <a href="https://mattermost.com/">Mattermost</a>, you can set
-    up {% site_name %} to post status updates directly to an appropriate
+    up {{ site_name }} to post status updates directly to an appropriate
     Mattermost channel.</p>
 
     <h2>Setup Guide</h2>

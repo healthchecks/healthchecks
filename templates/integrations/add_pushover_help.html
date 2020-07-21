@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Pushover Integration for {% site_name %}{% endblock %}
+{% block title %}Pushover Integration for {{ site_name }}{% endblock %}
 
 {% block description %}
-    <meta name="description" content="Use {% site_name %} with Pushover: configure {% site_name %} to send Pushover notifications when a checks go up or down.">
+    <meta name="description" content="Use {{ site_name }} with Pushover: configure {{ site_name }} to send Pushover notifications when a checks go up or down.">
 {% endblock %}
 
 {% block content %}
@@ -16,16 +16,16 @@
         <p>
             <a href="https://www.pushover.net/">Pushover</a> delivers
             real-time notifications on your Android, iPhone, iPad, Desktop,
-            Android Wear and Apple Watch. You can set up {% site_name %} to
+            Android Wear and Apple Watch. You can set up {{ site_name }} to
             receive Pushover notifications in a few simple steps.
         </p>
         {% else %}
         <p>
-            {% site_name %} is a <strong>free</strong> and
+            {{ site_name }} is a <strong>free</strong> and
             <a href="https://github.com/healthchecks/healthchecks">open source</a>
             service for monitoring your cron jobs, background processes and
             scheduled tasks. Before adding Pushover integration, please log into
-            {% site_name %}:
+            {{ site_name }}:
         </p>
 
         <div class="text-center">
@@ -100,7 +100,7 @@
             <span class="step-no"></span>
             <p>
                 That is all! You will now be redirected back to
-                "Integrations" page on {% site_name %} and see
+                "Integrations" page on {{ site_name }} and see
                 the new integration!
             </p>
         </div>

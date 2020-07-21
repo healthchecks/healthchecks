@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Spike.sh Integration for {% site_name %}{% endblock %}
+{% block title %}Spike.sh Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -10,7 +10,7 @@
         <h1>Spike.sh</h1>
 
         <p>If you are using <a href="https://spike.sh">Spike.sh</a>,
-            you can set up {% site_name %} to create a Spike.sh incident when a check
+            you can set up {{ site_name }} to create a Spike.sh incident when a check
             goes down, and resolve it when a check goes back up.</p>
 
         <h2>Setup Guide</h2>

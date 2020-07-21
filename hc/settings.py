@@ -87,6 +87,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "hc.front.context_processors.branding",
                 "hc.payments.context_processors.payments",
             ]
         },
@@ -141,13 +142,10 @@ if os.getenv("DB") == "mysql":
         }
     }
 
-TIME_ZONE = "UTC"
-
-USE_I18N = False
-
-USE_L10N = False
-
 USE_TZ = True
+TIME_ZONE = "UTC"
+USE_I18N = True
+USE_L10N = True
 
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
 SITE_NAME = os.getenv("SITE_NAME", "Mychecks")

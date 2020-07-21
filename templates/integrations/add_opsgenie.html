@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}OpsGenie Integration for {% site_name %}{% endblock %}
+{% block title %}OpsGenie Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 
     <p><a href="https://www.opsgenie.com/">OpsGenie</a> provides
     alerting, on-call scheduling, escalation policies and incident tracking.
-    You can can integrate it with your {% site_name %} account in few
+    You can can integrate it with your {{ site_name }} account in few
     simple steps.</p>
 
     <h2>Setup Guide</h2>

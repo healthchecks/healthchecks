@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}PagerTree Integration for {% site_name %}{% endblock %}
+{% block title %}PagerTree Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -10,7 +10,7 @@
       <h1>PagerTree</h1>
 
       <p>If your team uses <a href="https://pagertree.com">PagerTree</a>,
-      you can set up {% site_name %} to create a PagerTree incident when
+      you can set up {{ site_name }} to create a PagerTree incident when
       a check goes down, and resolve it when a check goes back up.</p>
 
       <h2>Setup Guide</h2>

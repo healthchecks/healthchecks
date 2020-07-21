@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Telegram Integration for {% site_name %}{% endblock %}
+{% block title %}Telegram Integration for {{ site_name }}{% endblock %}
 
 {% block description %}
-    <meta name="description" content="Use {% site_name %} with Telegram: configure {% site_name %} to post status updates to a Telegram chat or user.">
+    <meta name="description" content="Use {{ site_name }} with Telegram: configure {{ site_name }} to post status updates to a Telegram chat or user.">
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
     <div class="jumbotron">
         <p>
             When a check goes <strong>up</strong> or <strong>down</strong>,
-            {% site_name %} will send notifications to
+            {{ site_name }} will send notifications to
             {% if chat_type == "private" %}
                 a Telegram user
             {% else %}
@@ -52,7 +52,7 @@
 
     {% else %}
     <p>If your team uses <a href="https://telegram.org/">Telegram</a>,
-    you can set up {% site_name %} to post status updates directly to an
+    you can set up {{ site_name }} to post status updates directly to an
     appropriate Telegram chat or user.</p>
 
     <h2>Setup Guide</h2>
@@ -98,7 +98,7 @@
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>Click or tap on the confirmation link, and
-            {% site_name %} will open in a browser window asking you to
+            {{ site_name }} will open in a browser window asking you to
              confirm the new integration.</p>
             <p>Select the project you want the Telegram integration added to,
             click on "Connect Telegram", and it's done!</p>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}PagerDuty Integration for {% site_name %}{% endblock %}
+{% block title %}PagerDuty Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 
     <p>
         If your team uses <a href="https://www.pagerduty.com/">PagerDuty</a>,
-        you can set up {% site_name %} to create a PagerDuty incident
+        you can set up {{ site_name }} to create a PagerDuty incident
         when a check goes down, and resolve it when a check goes back up.
     </p>
 

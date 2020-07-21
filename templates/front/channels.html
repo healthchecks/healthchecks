@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Integrations - {% site_name %}{% endblock %}
+{% block title %}Integrations - {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -160,7 +160,7 @@
             <p> The project "{{ project }}" does not have any integrations
                 set up yet.
             </p>
-            <p>With no configured integrations, {% site_name %}
+            <p>With no configured integrations, {{ site_name }}
                 <strong>will not send any notifications</strong>
                 when checks change state.
             </p>

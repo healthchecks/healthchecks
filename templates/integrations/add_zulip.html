@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Zulip Integration for {% site_name %}{% endblock %}
+{% block title %}Zulip Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -12,7 +12,7 @@
         <a href="https://zulipchat.com/">Zulip</a> is an open-source group chat app
         with an email threading model. If you use or plan on using Zulip,
         you can can integrate it
-        with your {% site_name %} account in few simple steps.
+        with your {{ site_name }} account in few simple steps.
     </p>
 
     <h2>Setup Guide</h2>
@@ -45,10 +45,10 @@
                 for bot's name and email.
             </p>
             <p>
-                For the profile picture, feel free to use the {% site_name %} logo:
+                For the profile picture, feel free to use the {{ site_name }} logo:
             </p>
             <p>
-                <img src="{% static 'img/logo.png'%}" alt="{% site_name %} logo">
+                <img src="{% static 'img/logo.png'%}" alt="{{ site_name }} logo">
             </p>
             <p>
                 After you have filled out the values,
@@ -68,7 +68,7 @@
             <span class="step-no"></span>
             <p>
                 Copy the displayed bot's credentials into the form below.
-                Also specify the stream or the private user you want {% site_name %}
+                Also specify the stream or the private user you want {{ site_name }}
                 to post notifications to.
             </p>
             <p>

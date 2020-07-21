@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Matrix Integration for {% site_name %}{% endblock %}
+{% block title %}Matrix Integration for {{ site_name }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -10,7 +10,7 @@
 
     <p>
     If your team uses <a href="https://matrix.org/">Matrix</a>,
-    you can set up {% site_name %} to post notifications
+    you can set up {{ site_name }} to post notifications
     to an appropriate Matrix room.
     </p>
 
@@ -63,7 +63,7 @@
             <p>
                 {{ matrix_user_id }} will shortly join your room.
                 After that, you are all set! From now on
-                {% site_name %} will post notifications
+                {{ site_name }} will post notifications
                 to your room when checks go down or up.
             </p>
         </div>

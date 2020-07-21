@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Trello Integration for {% site_name %}{% endblock %}
+{% block title %}Trello Integration for {{ site_name }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -10,7 +10,7 @@
 
     <div class="jumbotron">
         <p>
-            With this integration, {% site_name %} will create a
+            With this integration, {{ site_name }} will create a
             <a href="https://trello.com/">Trello</a> card each
             time a check goes down.
         </p>

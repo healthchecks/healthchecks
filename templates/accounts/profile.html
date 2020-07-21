@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress static hc_extras %}
 
-{% block title %}Account Settings - {% site_name %}{% endblock %}
+{% block title %}Account Settings - {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -49,7 +49,7 @@
                     </p>
                     <p class="clearfix"></p>
                     <p>
-                        Attach a password to your {% site_name %} account
+                        Attach a password to your {{ site_name }} account
                         <button
                             type="submit"
                             name="set_password"
@@ -132,7 +132,7 @@
                         class="btn btn-default pull-right"
                         data-toggle="modal"
                         data-target="#close-account-modal">Close Account</a>
-                    This will permanently remove your {% site_name %} account
+                    This will permanently remove your {{ site_name }} account
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress hc_extras humanize static %}
+{% load compress humanize static %}
 
 {% block description %}
     <meta name="description" content="Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and background tasks. Receive alerts when your tasks don't run on time.">
@@ -7,7 +7,7 @@
 
 
 {% block head %}
-    <link rel="canonical" href="{% site_root %}" />
+    <link rel="canonical" href="{{ site_root }}" />
 {% endblock %}
 
 {% block containers %}
@@ -27,7 +27,7 @@
             Make HTTP requests to the Ping URL at regular intervals.
             <strong>
                 When the URL is not pinged on time,
-                {% site_name %} will send you an alert.
+                {{ site_name }} will send you an alert.
             </strong>
 
             You can monitor any service that can make HTTP requests
@@ -37,7 +37,7 @@
     <div class="col-sm-6 col-sm-pull-6">
         <h2 id="pitch-subtitle">
             For each of your periodic tasks,
-            {% site_name %} provides an unique URL similar to this one:
+            {{ site_name }} provides an unique URL similar to this one:
         </h2>
         <div id="pitch-url">
             <code>{{ ping_url }}</code>
@@ -123,7 +123,7 @@
                         <strong>sending email messages</strong>.
                     </p>
                     <p>
-                        You can instruct {% site_name %} to look for a particular
+                        You can instruct {{ site_name }} to look for a particular
                         keyword in the subject line. This is handy when your backup
                         software sends an email after every run, and uses a different
                         subject line depending on success or failure.
@@ -140,7 +140,7 @@
 <div class="container">
     <div class="row">
         <div id="get-started" class="col-sm-8 col-sm-offset-2 text-center">
-            <h1>{% site_name %} monitors the heartbeat messages sent by your cron jobs, services and APIs.
+            <h1>{{ site_name }} monitors the heartbeat messages sent by your cron jobs, services and APIs.
             Get immediate alerts when they don't arrive on schedule. </h1>
             <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
                 Sign Up – It's Free
@@ -236,7 +236,7 @@
                 <td>
                     Down.
                     Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
-                    When check goes from "Late" to "Down", {% site_name %}
+                    When check goes from "Late" to "Down", {{ site_name }}
                     sends you a notification.
                 </td>
             </tr>
@@ -302,8 +302,8 @@
     <div class="col-sm-4">
         <h3>Public Status Badges</h3>
         <p>
-            {% site_name %} provides status badges for each of the tags
-            you have used. Additionally, the "{% site_name %}" badge
+            {{ site_name }} provides status badges for each of the tags
+            you have used. Additionally, the "{{ site_name }}" badge
             shows the overall status of all checks in your account.
         </p>
         <p>
@@ -511,11 +511,11 @@
 
     <div class="row tour-section">
         <div class="col-sm-12">
-            <h1 class="text-center">What Can I Monitor With {% site_name %}?</h1>
+            <h1 class="text-center">What Can I Monitor With {{ site_name }}?</h1>
         </div>
         <div class="col-sm-6 use-cases">
             <h2>Cron Jobs</h2>
-            <p>{% site_name %} monitoring is a great fit for cron jobs and cron-like systems
+            <p>{{ site_name }} monitoring is a great fit for cron jobs and cron-like systems
             (systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi cron-like
             interface, Heroku Scheduler, ...). A failed cron job often has no immediate visible
             consequences, and can go unnoticed for a long time.</p>
@@ -534,9 +534,9 @@
         <div class="col-sm-6 use-cases">
             <h2>Processes, Services, Servers</h2>
 
-            <p>{% site_name %} monitoring can be used for lightweight server monitoring:
+            <p>{{ site_name }} monitoring can be used for lightweight server monitoring:
             ensuring a particular system service, or the server as a whole is alive and healthy.
-            Write a shell script that checks for a specific condition, and pings {% site_name %}
+            Write a shell script that checks for a specific condition, and pings {{ site_name }}
             if successful. Run the shell script regularly.</p>
 
             <p>Specific examples:</p>
@@ -557,7 +557,7 @@
     <div class="footer-jumbo-bleed">
     <div class="col-sm-10 col-sm-offset-1">
         <div id="footer-cta" class="jumbotron text-center">
-            <p>{% site_name %} is a <strong>free</strong> and
+            <p>{{ site_name }} is a <strong>free</strong> and
             <a href="https://github.com/healthchecks/healthchecks">open source</a> service.
             Setting up monitoring for your cron jobs only takes minutes.
             Start sleeping better at nights!</p>

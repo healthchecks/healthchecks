@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Pushbullet Integration for {% site_name %}{% endblock %}
+{% block title %}Pushbullet Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 
     <div class="jumbotron">
         <p>
-            With this integration, {% site_name %} will send
+            With this integration, {{ site_name }} will send
             a <a href="http://pushbullet.com/">Pushbullet</a>
             notification when a check
             goes <strong>up</strong> or <strong>down</strong>.

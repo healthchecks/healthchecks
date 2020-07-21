@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Set Up Email Notifications - {% site_name %}{% endblock %}
+{% block title %}Set Up Email Notifications - {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -13,7 +13,7 @@
     {% if use_verification %}
     <p class="alert alert-info">
         <strong>Requires confirmation.</strong>
-        After entering an email address, {% site_name %} will send out a confirmation link.
+        After entering an email address, {{ site_name }} will send out a confirmation link.
         Only confirmed addresses receive notifications.
     </p>
     {% endif %}

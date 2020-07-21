@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Microsoft Teams Integration for {% site_name %}{% endblock %}
+{% block title %}Microsoft Teams Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -10,7 +10,7 @@
         <h1>Microsoft Teams</h1>
 
         <p>If your team uses <a href="https://products.office.com/en-us/microsoft-teams/group-chat-software">Microsoft Teams</a>,
-        you can set up {% site_name %} to post status updates directly to an appropriate
+        you can set up {{ site_name }} to post status updates directly to an appropriate
         Microsoft Teams channel.</p>
 
         <h2>Setup Guide</h2>
@@ -40,7 +40,7 @@
             <div class="col-sm-6">
                 <span class="step-no"></span>
                 <p>
-                  Select the channel where you want {% site_name %} to post
+                  Select the channel where you want {{ site_name }} to post
                   notifications.
                 </p>
             </div>

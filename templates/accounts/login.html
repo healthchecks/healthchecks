@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% load compress hc_extras static %}
+{% load compress static %}
 
-{% block title %}Sign In - {% site_name %}{% endblock %}
+{% block title %}Sign In - {{ site_name }}{% endblock %}
 
 {% block description %}{% endblock %}
 
 {% block head %}
-    <link rel="canonical" href="{% site_root %}{% url 'hc-login' %}" />
+    <link rel="canonical" href="{{ site_root }}{% url 'hc-login' %}" />
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-xs-10 col-xs-offset-1 col-sm-12 col-sm-offset-0 col-lg-8 col-lg-offset-2">
 
-        <h1>Sign In to {% site_name %}</h1>
+        <h1>Sign In to {{ site_name }}</h1>
         {% if bad_link %}
         <div class="alert alert-warning">
             <p>The login link you just used is either incorrect or expired.</p>

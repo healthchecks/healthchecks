@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>{% block title %}{% site_name %} - Monitor Cron Jobs. Get Notified When Your Cron Jobs Fail{% endblock %}</title>
+    <title>{% block title %}{{ site_name }} - Monitor Cron Jobs. Get Notified When Your Cron Jobs Fail{% endblock %}</title>
     {% block description %}
     <meta name="description" content="Monitor and Get Notified When Your Cron Jobs Fail. Free alternative to Cronitor and Dead Man's Snitch.">
     {% endblock %}
@@ -10,8 +10,8 @@
     <meta name="keywords" content="healthchecks, monitor cron jobs, cron monitoring, cron job syntax, health checks, crontab cheat sheet, crontab monitoring, cronjob monitoring, cron dashboard">
     {% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="apple-mobile-web-app-title" content="{% site_name %}">
-    <meta name="application-name" content="{% site_name %}">
+    <meta name="apple-mobile-web-app-title" content="{{ site_name }}">
+    <meta name="application-name" content="{{ site_name }}">
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-180.png' %}">
     {% block head %}{% endblock %}
@@ -79,7 +79,7 @@
                     width="59"
                     src="{% static 'img/logo.png'%}"
                     srcset="{% static 'img/logo.png'%} 1x, {% static 'img/logo@2x.png'%} 2x"
-                    alt="{% site_name %}">
+                    alt="{{ site_name }}">
             {% else %}
                 <img
                     id="logo"
@@ -87,7 +87,7 @@
                     width="200"
                     src="{% static 'img/logo-full.png'%}"
                     srcset="{% static 'img/logo-full.png'%} 1x, {% static 'img/logo-full@2x.png'%} 2x"
-                    alt="{% site_name %}">
+                    alt="{{ site_name }}">
             {% endif %}
             </a>
         </div>

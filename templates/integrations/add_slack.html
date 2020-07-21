@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Slack Integration for {% site_name %}{% endblock %}
+{% block title %}Slack Integration for {{ site_name }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -9,7 +9,7 @@
     <h1>Slack</h1>
 
     <p>If your team uses <a href="https://slack.com/">Slack</a>, you can set
-    up {% site_name %} to post status updates directly to an appropriate
+    up {{ site_name }} to post status updates directly to an appropriate
     Slack channel.</p>
 
     <h2>Setup Guide</h2>

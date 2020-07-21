@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}PagerDuty Integration for {% site_name %}{% endblock %}
+{% block title %}PagerDuty Integration for {{ site_name }}{% endblock %}
 
 {% block description %}
-    <meta name="description" content="Use {% site_name %} with PagerDuty: configure {% site_name %} to create a PagerDuty incident when a check goes down, and resolve it when a check goes back up.">
+    <meta name="description" content="Use {{ site_name }} with PagerDuty: configure {{ site_name }} to create a PagerDuty incident when a check goes down, and resolve it when a check goes back up.">
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
     <div class="jumbotron">
         {% if request.user.is_authenticated %}
         <p>If your team uses <a href="https://www.pagerduty.com">PagerDuty</a>,
-        you can set up {% site_name %} to create a PagerDuty incident when
+        you can set up {{ site_name }} to create a PagerDuty incident when
         a check goes down, and resolve it when a check goes back up.</p>
 
         {% if connect_url %}
@@ -33,11 +33,11 @@
 
         {% else %}
         <p>
-        {% site_name %} is a <strong>free</strong> and
+        {{ site_name }} is a <strong>free</strong> and
         <a href="https://github.com/healthchecks/healthchecks">open source</a>
         service for monitoring your cron jobs, background processes and
         scheduled tasks. Before adding PagerDuty integration, please log into
-        {% site_name %}:</p>
+        {{ site_name }}:</p>
 
         <div class="text-center">
             <a href="{% url 'hc-login' %}"
@@ -110,7 +110,7 @@
             <span class="step-no"></span>
             <p>
                 And that is all! You will then be redirected back to
-                "Integrations" page on {% site_name %} and see
+                "Integrations" page on {{ site_name }} and see
                 the new integration!
             </p>
         </div>

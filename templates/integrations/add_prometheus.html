@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Prometheus Integration for {% site_name %}{% endblock %}
+{% block title %}Prometheus Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -10,12 +10,12 @@
       <h1>Prometheus</h1>
 
       <p>
-          {% site_name %} provides a
+          {{ site_name }} provides a
           <a href="https://prometheus.io">Prometheus</a>-compatible metrics endpoint
           for each project. The endpoints are secured using each project's
           read-only API key.
 
-          If your team uses Prometheus, you can configure it to scrape {% site_name %}
+          If your team uses Prometheus, you can configure it to scrape {{ site_name }}
           and have up-to-date check and tag status values available in Prometheus.
       </p>
 
@@ -62,7 +62,7 @@
             <span class="step-no"></span>
               <p>
                 Reload Prometheus' configuration. You should now start seeing
-                {% site_name %} data appear in Prometheus.
+                {{ site_name }} data appear in Prometheus.
               </p>
         </div>
       </div>

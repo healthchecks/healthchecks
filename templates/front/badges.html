@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress static hc_extras %}
 
-{% block title %}Status Badges - {% site_name %}{% endblock %}
+{% block title %}Status Badges - {{ site_name }}{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -9,8 +9,8 @@
         <h1>Status Badges</h1>
 
         <p id="badges-description">
-            {% site_name %} provides status badges for each of the tags
-            you have used. Additionally, the "{% site_name %}"
+            {{ site_name }} provides status badges for each of the tags
+            you have used. Additionally, the "{{ site_name }}"
             badge shows the overall status of all checks in a
             project. The badges have public, but hard-to-guess
             URLs. You can use them in your READMEs,

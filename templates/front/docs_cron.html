@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load hc_extras %}
 
-{% block title %}Cron Syntax Cheatsheet - {% site_name %}{% endblock %}
+{% block title %}Cron Syntax Cheatsheet - {{ site_name }}{% endblock %}
 
 {% block description %}
     <meta name="description" content="Visual examples of main Cron syntax features: numeric values, commas, ranges, ranges with step, day and month names.">
@@ -16,7 +16,7 @@
 <h2>Cron Syntax Cheatsheet</h2>
 
 <p>
-    {% site_name %} understands most of the traditional cron syntax features.
+    {{ site_name }} understands most of the traditional cron syntax features.
     Under the hood, it uses the
     <a href="https://github.com/taichino/croniter">croniter package</a>
     to parse and interpret cron expressions. Below is a showcase of
@@ -462,7 +462,7 @@
                 Cron daemon uses server's <strong>local time</strong>.
                 If your server's timezone is other than UTC, make sure
                 to set a matching timezone for your check
-                on {% site_name %} as well.
+                on {{ site_name }} as well.
             </p>
 
             <p>On Ubuntu systems you can check the server's timezone
