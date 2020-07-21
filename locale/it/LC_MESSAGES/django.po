@@ -1,0 +1,329 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-19 16:34+0200\n"
+"PO-Revision-Date: 2020-07-19 17:40+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.6\n"
+
+#: templates/base.html:133
+msgid "Docs"
+msgstr "Documentazione"
+
+#: templates/base.html:171
+msgid "Sign In"
+msgstr "Accedi"
+
+#: templates/front/welcome.html:7
+msgid ""
+"Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and "
+"background tasks. Receive alerts when your tasks don't run on time."
+msgstr ""
+"Sistema di Monitoraggio. Controllo backup notturni, report settimanali, cron "
+"job e attività in background. Ricevi avvisi quando le tue attività non "
+"vengono eseguite in tempo."
+
+#: templates/front/welcome.html:21
+msgid ""
+"Monitoring for your nightly backups, weekly reports, cron jobs and "
+"background tasks."
+msgstr ""
+"Sistema di Monitoraggio di servizi, processi, backup notturni, cron job e "
+"attività in background. Invio di avvisi quando le attività non vengono "
+"eseguite in tempo."
+
+#: templates/front/welcome.html:28
+msgid "Make HTTP requests to the Ping URL at regular intervals."
+msgstr ""
+"Invia una richiesta HTTP presso l'URL di controllo (Ping URL) ad un "
+"intervallo regolare."
+
+#: templates/front/welcome.html:30
+msgid "When the URL is not pinged on time, "
+msgstr "Quando l'URL non viene pingato per tempo,"
+
+#: templates/front/welcome.html:31
+msgid "will send you an alert."
+msgstr "ti invierà un alert."
+
+#: templates/front/welcome.html:34
+msgid "You can monitor any service that can make HTTP requests or send emails."
+msgstr ""
+"Puoi monitorare qualsiasi tipo di servizio inviando una richiesta http "
+"periodica, o una email."
+
+#: templates/front/welcome.html:39
+msgid "For each of your periodic tasks, "
+msgstr "Per ognuno dei tuoi processi periodici,"
+
+#: templates/front/welcome.html:40
+msgid "provides an unique URL like this one:"
+msgstr "crea un indirizzo web univoco, come il seguente:"
+
+#: templates/front/welcome.html:154
+msgid "A quick peek of what's inside:"
+msgstr "Un rapido sguardo:"
+
+#: templates/front/welcome.html:167
+msgid "Live-updating Dashboard"
+msgstr "Dashboard che si auto aggiorna"
+
+#: templates/front/welcome.html:169
+msgid ""
+"A list of your checks, one for each Cron job, daemon or scheduled task you "
+"want to monitor."
+msgstr ""
+"Una lista di controlli, una per ogni risorsa registrata, servizio o processo "
+"schedulato che desideri monitorare."
+
+#: templates/front/welcome.html:172
+msgid ""
+"Give names and assign tags to your checks to easily recognize them later."
+msgstr ""
+"Rinomina e aggiungi tag ai tuoi controlli periodici, così che tu possa "
+"individuarli meglio in seguito."
+
+#: templates/front/welcome.html:175
+msgid "Tap on the integration icons to toggle them on and off."
+msgstr ""
+"Clicca sulle icone di integrazione per escludere momentaneamente alcuni "
+"recapiti."
+
+#: templates/front/welcome.html:178
+msgid ""
+"Adjust Period and Grace time to match the periodicity and duration of your "
+"tasks."
+msgstr ""
+"Configura un periodo di attesa (Period) e un periodo di Grazia (Grace) "
+"corrispondenti alla durata dei tuoi processi."
+
+#: templates/front/welcome.html:192
+msgid "Simple Configuration"
+msgstr "Configurazione Semplice"
+
+#: templates/front/welcome.html:193
+msgid "Each check has configurable "
+msgstr "Ogni controllo consente di configurare un "
+
+#: templates/front/welcome.html:193
+msgid "and"
+msgstr "e"
+
+#: templates/front/welcome.html:194
+msgid ""
+"Depending on these parameters and time since the last ping, the check is in "
+"one of the following states:"
+msgstr ""
+"In base a questi parametri e a partire dall'ultimo ping ricevuto, il "
+"controllo può assumere uno dei seguenti stati:"
+
+#: templates/front/welcome.html:202
+msgid "New. A check that has been created, but has not received any pings yet."
+msgstr ""
+"New. Un controllo che è stato creato, ma non ha ancora ricevuto alcun ping."
+
+#: templates/front/welcome.html:210
+msgid "Up."
+msgstr "Up."
+
+#: templates/front/welcome.html:211
+msgid "Time since last ping has not exceeded "
+msgstr "Il ping è giunto per tempo "
+
+#: templates/front/welcome.html:219
+msgid "Late. "
+msgstr "Ritardo."
+
+#: templates/front/welcome.html:220
+msgid "Time since last ping has exceeded"
+msgstr "Tempo a partire dall'ultimo ping ricevuto "
+
+#: templates/front/welcome.html:221
+msgid "but has not yet exceeded "
+msgstr "ma non è ancora scaduto "
+
+#: templates/front/welcome.html:229
+msgid "Down."
+msgstr "Down."
+
+#: templates/front/welcome.html:230
+msgid "Time since last ping has exceeded "
+msgstr "Tempo da quando il tuo ultimo ping è scaduto "
+
+#: templates/front/welcome.html:231
+msgid "When check goes from \"Late\" to \"Down\""
+msgstr "Quando un controllo va da \"Late\" a \"Down\""
+
+#: templates/front/welcome.html:232
+msgid "sends you a notification."
+msgstr "invia una notifica."
+
+#: templates/front/welcome.html:249
+msgid "Cron Expression Support"
+msgstr "Supporto alle espressioni Cron"
+
+#: templates/front/welcome.html:251
+msgid ""
+"Alternatively, you can define the expected ping dates and times using a cron "
+"expression. See "
+msgstr ""
+"In alternativa, è possibile definire le date e gli orari del ping previsti "
+"utilizzando un'espressione cron. Vedere "
+
+#: templates/front/welcome.html:253
+msgid "for the supported syntax features. "
+msgstr "per le sintassi supportate."
+
+#: templates/front/welcome.html:256
+msgid ""
+"specifies how 'late' a ping can be before you will be alerted. Set it to be "
+"a little above the expected duration of your cron job."
+msgstr ""
+"specifica di quanto possa ritardare un ping prima di essere ritenuto "
+"fallito. Impostalo in modo che sia leggermente superiore alla durata "
+"prevista della tua procedura."
+
+#: templates/front/welcome.html:270
+msgid "Details and Event Log"
+msgstr "Dettagli e log eventi"
+
+#: templates/front/welcome.html:272
+msgid ""
+"You can add a longer, free-form description to each check. Leave notes and "
+"pointers for yourself and for your team."
+msgstr ""
+"È possibile aggiungere una descrizione più lunga e in formato libero a "
+"ciascun controllo. Lascia note e suggerimenti per te e per la tua squadra."
+
+#: templates/front/welcome.html:275
+msgid ""
+"You can also see the log of received pings and sent \"Down\" notifications."
+msgstr ""
+"Puoi anche vedere il registro dei ping ricevuti e le notifiche \"Down\" "
+"inviate."
+
+#: templates/front/welcome.html:289
+msgid "Public Status Badges"
+msgstr "Badges pubblici"
+
+#: templates/front/welcome.html:291
+msgid ""
+"provides status badges for each of the tags you have used. Additionally, the"
+msgstr ""
+"fornisce badge di stato per ciascuno dei tag che hai usato. Inoltre, il"
+
+#: templates/front/welcome.html:291
+msgid "badge shows the overall status of all checks in your account."
+msgstr "badge mostra lo stato generale di tutti gli assegni nel tuo account."
+
+#: templates/front/welcome.html:294
+msgid ""
+"The badges have public, but hard-to-guess URLs. You can use them in your "
+"READMEs, dashboards or status pages."
+msgstr ""
+"I badge hanno URL pubblici, ma difficili da indovinare. Puoi usarli nei tuoi "
+"README, dashboard, pagine di stato, scheda dei servizi."
+
+#: templates/front/welcome.html:301
+msgid "Integrations"
+msgstr "Integrazioni"
+
+#: templates/front/welcome.html:302
+msgid "Set up multiple ways to get notified"
+msgstr "Seleziona sistemi di notifica differenti"
+
+#: templates/front/welcome.html:490
+msgid "What Can I Monitor With"
+msgstr "Cosa posso monitorare con"
+
+#: templates/front/welcome.html:494
+msgid ""
+"monitoring is a great fit for cron jobs and cron-like systems (systemd "
+"timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi cron-"
+"like interface, Heroku Scheduler, ...). A failed cron job often has no "
+"immediate visible consequences, and can go unnoticed for a long time."
+msgstr ""
+"si adatta perfettamente a lavori cron e sistemi simil-cron (timer di "
+"sistema, lavori di compilazione di Jenkins, operazioni pianificate di "
+"Windows, wp-cron, interfaccia simil-uwsgi-cron, Heroku Scheduler, ...). Un "
+"cron job fallito spesso non ha conseguenze visibili immediate e può passare "
+"inosservato per molto tempo."
+
+#: templates/front/welcome.html:496 templates/front/welcome.html:512
+msgid "Specific examples"
+msgstr "Esempi specifici"
+
+#: templates/front/welcome.html:508
+msgid "Processes, Services, Servers"
+msgstr "Processi, Servizi, Sistemi"
+
+#: templates/front/welcome.html:510
+msgid ""
+"monitoring can be used for lightweight server monitoring: ensuring a "
+"particular system service, or the server as a whole is alive and healthy. "
+"Write a shell script that checks for a specific condition, and pings"
+msgstr ""
+"può essere utilizzato per un controllo agile: garantisce per un particolare "
+"servizio di sistema o che il server nel suo insieme sia vivo ed integro. "
+"Scrivi uno script di shell che verifica una condizione specifica e avvia un "
+"ping"
+
+#: templates/front/welcome.html:510
+msgid "if successful. Run the shell script regularly."
+msgstr "se attivo. Avvia lo script regolarmente."
+
+#: templates/front/welcome.html:514
+msgid "Check a specific docker container is running"
+msgstr ""
+"Controlla che una macchina virtuale o un container sia correttamente in "
+"esecuzione"
+
+#: templates/front/welcome.html:515
+msgid "Check a specific application process is running"
+msgstr "Controlla che una applicazione sia correttamente in esecuzione"
+
+#: templates/front/welcome.html:516
+msgid "Check database replication lag"
+msgstr "Controlla le latenze di replica delle basi dati"
+
+#: templates/front/welcome.html:517
+msgid "Check system resources: free disk, free RAM"
+msgstr "Controlla le risorse di sistema: spazio disco, ram disponibile"
+
+#: templates/front/welcome.html:518
+msgid ""
+"Send simple, unconditional \"I am alive\" messages from your server (or your "
+"NAS, router, Raspberry Pi"
+msgstr ""
+"Invia messaggi \"I am alive\" semplici e incondizionati dal tuo server (o "
+"dal tuo NAS, router, Raspberry Pi"
+
+#: templates/front/welcome.html:530
+msgid ""
+"service. Setting up monitoring for your cron jobs only takes minutes. Start "
+"sleeping better at nights!"
+msgstr ""
+"servizio. L'impostazione del monitoraggio per i tuoi lavori cron richiede "
+"solo pochi minuti."
+
+#: templates/front/welcome.html:532
+msgid "Sign Up"
+msgstr "Accedi"
+
+#~ msgid "specifies how "
+#~ msgstr "specifica come"
+
+#~ msgid "Send simple, unconditional "
+#~ msgstr "Invia un semplice, incondizionato"

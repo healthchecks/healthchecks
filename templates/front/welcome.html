@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load compress hc_extras humanize static %}
 
 {% block description %}
-    <meta name="description" content="Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and background tasks. Receive alerts when your tasks don't run on time.">
+    <meta name="description" content="
+        {% trans "Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and background tasks. Receive alerts when your tasks don't run on time." %}">
 {% endblock %}
 
 
@@ -16,28 +18,31 @@
     <div class="row">
     <div class="col-sm-12">
         <h1 id="pitch">
-            Monitoring for your nightly backups,
-            weekly reports, cron jobs and background tasks.</h1>
+            {% trans "Monitoring for your nightly backups, weekly reports, cron jobs and background tasks." %}</h1>
     </div>
     </div>
 
     <div class="row">
     <div class="col-sm-6 col-sm-push-6">
         <p id="pitch-text">
-            Make HTTP requests to the Ping URL at regular intervals.
+            {% trans "Make HTTP requests to the Ping URL at regular intervals." %}
             <strong>
-                When the URL is not pinged on time,
-                {% site_name %} will send you an alert.
+                {% trans "When the URL is not pinged on time, " %}
+                {% site_name %} {% trans "will send you an alert." %}
             </strong>
 
-            You can monitor any service that can make HTTP requests
-            or send emails.
+            {% trans "You can monitor any service that can make HTTP requests or send emails." %}
         </p>
     </div>
     <div class="col-sm-6 col-sm-pull-6">
         <h2 id="pitch-subtitle">
+<<<<<<< HEAD
             For each of your periodic tasks,
             {% site_name %} provides an unique URL similar to this one:
+=======
+            {% trans "For each of your periodic tasks, " %}
+            {% site_name %} {% trans "provides an unique URL like this one:" %}
+>>>>>>> a7d6967... Localization support
         </h2>
         <div id="pitch-url">
             <code>{{ ping_url }}</code>
@@ -116,6 +121,7 @@
                     {% include "front/snippets/powershell.html" %}
                     {% include "front/snippets/powershell_inline.html" %}
                 </div>
+<!--
                 <div class="tab-pane tab-pane-email" id="email">
                     <p>
                         As an alternative to HTTP requests,
@@ -129,6 +135,7 @@
                         subject line depending on success or failure.
                     </p>
                 </div>
+-->
             </div>
         </div>
     </div>
@@ -154,7 +161,7 @@
 <div class="container">
     <div class="row">
     <div class="col-sm-12">
-        <h2 class="tour-title">A quick peek of what's inside:</h2>
+        <h2 class="tour-title">{% trans "A quick peek of what's inside:" %}</h2>
     </div>
     </div>
 
@@ -167,21 +174,18 @@
             alt="My Checks page" />
     </div>
     <div class="col-sm-4">
-        <h3>Live-updating Dashboard</h3>
+        <h3>{% trans "Live-updating Dashboard" %}</h3>
         <p>
-            A list of your checks, one for each Cron job, daemon or
-            scheduled task you want to monitor.
+            {% trans "A list of your checks, one for each Cron job, daemon or scheduled task you want to monitor." %}
         </p>
         <p>
-            Give names and assign tags to your checks to easily recognize
-            them later.
+            {% trans "Give names and assign tags to your checks to easily recognize them later." %}
         </p>
         <p>
-            Tap on the integration icons to toggle them on and off.
+            {% trans "Tap on the integration icons to toggle them on and off." %}
         </p>
         <p>
-            Adjust Period and Grace time to match the
-            periodicity and duration of your tasks.
+            {% trans "Adjust Period and Grace time to match the periodicity and duration of your tasks." %}
         </p>
     </div>
     </div>
@@ -195,10 +199,9 @@
             alt="Period/Grace Time dialog" />
     </div>
     <div class="col-sm-4">
-        <h3>Simple Configuration</h3>
-        Each check has configurable <strong>Period</strong> and <strong>Grace Time</strong> parameters.
-        Depending on these parameters and time since the last ping, the check is in one of the
-        following states:
+        <h3>{% trans "Simple Configuration" %}</h3>
+        {% trans "Each check has configurable " %}<strong>Period</strong> {% trans "and" %} <strong>Grace Time</strong> parameters.
+        {% trans "Depending on these parameters and time since the last ping, the check is in one of the following states:" %}
 
         <table class="table">
             <tr>
@@ -206,8 +209,7 @@
                     <span class="status icon-new"></span>
                 </td>
                 <td>
-                    New.
-                    A check that has been created, but has not received any pings yet.
+                    {% trans "New. A check that has been created, but has not received any pings yet." %}
                 </td>
             </tr>
             <tr>
@@ -215,8 +217,8 @@
                     <span class="status icon-up"></span>
                 </td>
                 <td>
-                    Up.
-                    Time since last ping has not exceeded <strong>Period</strong>.
+                    {% trans "Up." %}
+                    {% trans "Time since last ping has not exceeded " %}<strong>Period</strong>.
                 </td>
             </tr>
             <tr>
@@ -224,9 +226,9 @@
                     <span class="status icon-grace"></span>
                 </td>
                 <td>
-                    Late.
-                    Time since last ping has exceeded <strong>Period</strong>,
-                    but has not yet exceeded <strong>Period</strong> + <strong>Grace</strong>.
+                    {% trans "Late. " %}
+                    {% trans "Time since last ping has exceeded" %}<strong>Period</strong>,
+                    {% trans "but has not yet exceeded " %}<strong>Period</strong> + <strong>Grace</strong>.
                 </td>
             </tr>
             <tr>
@@ -234,10 +236,10 @@
                     <span class="status icon-down"></span>
                 </td>
                 <td>
-                    Down.
-                    Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
-                    When check goes from "Late" to "Down", {% site_name %}
-                    sends you a notification.
+                    {% trans "Down." %}
+                    {% trans "Time since last ping has exceeded " %}<strong>Period</strong> + <strong>Grace</strong>.
+                    {% trans 'When check goes from "Late" to "Down"' %}, {% site_name %}
+                    {% trans "sends you a notification." %}
                 </td>
             </tr>
         </table>
@@ -254,17 +256,14 @@
             alt="Cron dialog" />
     </div>
     <div class="col-sm-4">
-        <h3>Cron Expression Support</h3>
+        <h3>{% trans "Cron Expression Support" %}</h3>
         <p>
-            Alternatively, you can define the expected ping dates and times
-            using a cron expression. See
+            {% trans "Alternatively, you can define the expected ping dates and times using a cron expression. See " %}
             <a href="{% url 'hc-docs-cron' %}">Cron Syntax Cheatsheet</a>
-            for the supported syntax features.
+            {% trans "for the supported syntax features. " %}
         </p>
         <p>
-            <strong>Grace Time</strong> specifies how "late" a ping can
-            be before you will be alerted. Set it to be a little above
-            the expected duration of your cron job.
+            <strong>Grace Time</strong> {% trans "specifies how 'late' a ping can be before you will be alerted. Set it to be a little above the expected duration of your cron job." %}
         </p>
     </div>
     </div>
@@ -278,15 +277,12 @@
             alt="Details Page" />
     </div>
     <div class="col-sm-4">
-        <h3>Details and Event Log</h3>
+        <h3>{% trans "Details and Event Log" %}</h3>
         <p>
-            You can add a longer, free-form description to each
-            check. Leave notes and pointers for yourself and
-            for your team.
+            {% trans "You can add a longer, free-form description to each check. Leave notes and pointers for yourself and for your team." %}
         </p>
         <p>
-            You can also see the log of received pings and
-            sent "Down" notifications.
+            {% trans 'You can also see the log of received pings and sent "Down" notifications.' %}
         </p>
     </div>
     </div>
@@ -300,23 +296,20 @@
             alt="Details Page" />
     </div>
     <div class="col-sm-4">
-        <h3>Public Status Badges</h3>
+        <h3>{% trans "Public Status Badges" %}</h3>
         <p>
-            {% site_name %} provides status badges for each of the tags
-            you have used. Additionally, the "{% site_name %}" badge
-            shows the overall status of all checks in your account.
+            {% site_name %} {% trans "provides status badges for each of the tags you have used. Additionally, the" %} "{% site_name %}" {% trans "badge shows the overall status of all checks in your account." %}
         </p>
         <p>
-            The badges have public, but hard-to-guess URLs.
-            You can use them in your READMEs, dashboards or status pages.
+            {% trans "The badges have public, but hard-to-guess URLs. You can use them in your READMEs, dashboards or status pages." %}
         </p>
     </div>
     </div>
 
     <div id="welcome-integrations" class="row">
         <div class="col-sm-12">
-            <h1>Integrations<br>
-                <small>Set up multiple ways to get notified:</small>
+            <h1>{% trans "Integrations" %}<br>
+                <small>{% trans "Set up multiple ways to get notified" %}:</small>
             </h1>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
@@ -511,16 +504,13 @@
 
     <div class="row tour-section">
         <div class="col-sm-12">
-            <h1 class="text-center">What Can I Monitor With {% site_name %}?</h1>
+            <h1 class="text-center">{% trans "What Can I Monitor With" %} {% site_name %}?</h1>
         </div>
         <div class="col-sm-6 use-cases">
             <h2>Cron Jobs</h2>
-            <p>{% site_name %} monitoring is a great fit for cron jobs and cron-like systems
-            (systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi cron-like
-            interface, Heroku Scheduler, ...). A failed cron job often has no immediate visible
-            consequences, and can go unnoticed for a long time.</p>
+            <p>{% site_name %} {% trans "monitoring is a great fit for cron jobs and cron-like systems (systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi cron-like interface, Heroku Scheduler, ...). A failed cron job often has no immediate visible consequences, and can go unnoticed for a long time." %}</p>
 
-            <p>Specific examples:</p>
+            <p>{% trans "Specific examples" %}:</p>
             <ul>
                 <li>Filesystem backups</li>
                 <li>Database backups</li>
@@ -532,21 +522,17 @@
             </ul>
         </div>
         <div class="col-sm-6 use-cases">
-            <h2>Processes, Services, Servers</h2>
+            <h2>{% trans "Processes, Services, Servers" %}</h2>
 
-            <p>{% site_name %} monitoring can be used for lightweight server monitoring:
-            ensuring a particular system service, or the server as a whole is alive and healthy.
-            Write a shell script that checks for a specific condition, and pings {% site_name %}
-            if successful. Run the shell script regularly.</p>
+            <p>{% site_name %} {% trans "monitoring can be used for lightweight server monitoring: ensuring a particular system service, or the server as a whole is alive and healthy. Write a shell script that checks for a specific condition, and pings" %} {% site_name %} {% trans "if successful. Run the shell script regularly." %}</p>
 
-            <p>Specific examples:</p>
+            <p>{% trans "Specific examples" %}:</p>
             <ul>
-                <li>Check a specific docker container is running</li>
-                <li>Check a specific application process is running</li>
-                <li>Check database replication lag</li>
-                <li>Check system resources: free disk, free RAM, ...</li>
-                <li>Send simple, unconditional "I'm alive" messages from your server (or your NAS,
-                    router, Raspberry Pi, ...)</li>
+                <li>{% trans "Check a specific docker container is running" %}</li>
+                <li>{% trans "Check a specific application process is running" %}</li>
+                <li>{% trans "Check database replication lag" %}</li>
+                <li>{% trans "Check system resources: free disk, free RAM" %}, ...</li>
+                <li>{% trans 'Send simple, unconditional "I am alive" messages from your server (or your NAS, router, Raspberry Pi' %}, ...)</li>
             </ul>
         </div>
     </div>
@@ -558,11 +544,9 @@
     <div class="col-sm-10 col-sm-offset-1">
         <div id="footer-cta" class="jumbotron text-center">
             <p>{% site_name %} is a <strong>free</strong> and
-            <a href="https://github.com/healthchecks/healthchecks">open source</a> service.
-            Setting up monitoring for your cron jobs only takes minutes.
-            Start sleeping better at nights!</p>
+            <a href="https://github.com/healthchecks/healthchecks">open source</a> {% trans "service. Setting up monitoring for your cron jobs only takes minutes. Start sleeping better at nights!" %}</p>
             <a href="#" data-toggle="modal" data-target="#signup-modal" class="btn btn-lg btn-primary">
-                Sign Up
+                {% trans "Sign Up" %}
             </a>
         </div>
     </div>

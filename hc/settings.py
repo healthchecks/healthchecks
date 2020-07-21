@@ -58,7 +58,7 @@ INSTALLED_APPS = (
     "hc.payments",
 )
 
-MIDDLEWARE = (
+MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -67,7 +67,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "hc.accounts.middleware.TeamAccessMiddleware",
-)
+]
 
 AUTHENTICATION_BACKENDS = (
     "hc.accounts.backends.EmailBackend",
@@ -142,12 +142,16 @@ if os.getenv("DB") == "mysql":
     }
 
 TIME_ZONE = "UTC"
-
-USE_I18N = False
-
-USE_L10N = False
-
+USE_I18N = True
+USE_L10N = True
 USE_TZ = True
+
+# GETTEXT LOCALIZATION
+MIDDLEWARE.append('django.middleware.locale.LocaleMiddleware')
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, "locale"),
+)
+#
 
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
 SITE_NAME = os.getenv("SITE_NAME", "Mychecks")
