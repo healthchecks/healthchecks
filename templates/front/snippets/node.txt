@@ -1,2 +1,4 @@
 var https = require('https');
-https.get("PING_URL");
+https.get('PING_URL').on('error', (err) => {
+    console.log('Ping failed: ' + err)
+});

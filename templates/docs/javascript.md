@@ -4,7 +4,9 @@ Below is an example of making a HTTP request to SITE_NAME from Node.js.
 
 ```js
 var https = require('https');
-https.get("PING_URL");
+https.get('PING_URL').on('error', (err) => {
+    console.log('Ping failed: ' + err)
+});
 ```
 
 You can also send pings from a browser environment. SITE_NAME sets the

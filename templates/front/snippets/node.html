@@ -1,3 +1,5 @@
 <div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;https&#39;</span><span class="p">);</span>
-<span class="nx">https</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;{{ ping_url }}&quot;</span><span class="p">);</span>
+<span class="nx">https</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;{{ ping_url }}&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ping failed: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">)</span>
+<span class="p">});</span>
 </pre></div>
