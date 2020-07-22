@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: 1.16-dev\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-07-21 19:32+0000\n"
-"PO-Revision-Date: 2020-07-21 22:55+0300\n"
+"PO-Revision-Date: 2020-07-22 11:04+0300\n"
 "Last-Translator: Pēteris Caune <cuu508@gmail.com>\n"
 "Language-Team: lv <>\n"
 "Language: lv\n"
@@ -35,7 +35,7 @@ msgstr "Pārslēgt navigāciju"
 
 #: templates/base.html:99
 msgid "Checks"
-msgstr "Detektori"
+msgstr "Sensori"
 
 #: templates/base.html:106 templates/front/welcome.html:368
 msgid "Integrations"
@@ -108,7 +108,7 @@ msgstr "Rezerves kopiju, iknedēļas atskaišu, cron darbu uzraudzība."
 
 #: templates/front/welcome.html:27
 msgid "Make HTTP requests to the Ping URL at regular intervals."
-msgstr "Ar regulāru intervālu sūti HTTP pieprasījumus uz ping adresi."
+msgstr "Sūti HTTP pieprasījumus uz ping adresi ar regulāriem intervāliem."
 
 #: templates/front/welcome.html:29
 #, python-format
@@ -119,7 +119,7 @@ msgstr "Kad pieprasījums netiek saņemts laikā, %(site_name)s ceļ trauksmi."
 #: templates/front/welcome.html:35
 msgid "You can monitor any service that can make HTTP requests or send emails."
 msgstr ""
-"Šādi iespējams pārraudzīt jebkuru servisu, kurš ir spējīgs sūtīt HTTP "
+"Šādi iespējams pārraudzīt jebkuru servisu, kurš spēj nosūtīt HTTP "
 "pieprasījumus vai epastus."
 
 #: templates/front/welcome.html:40
@@ -154,9 +154,9 @@ msgid ""
 "subject line. This is handy when your backup software sends an email after "
 "every run, and uses a different subject line depending on success or failure."
 msgstr ""
-"Iespējams norādīt atslēgvārdu, kuru %(site_name)s meklēs epasta tematā. Tas "
-"ir parocīgi, piemēram, ja dublējumu programmatūra pēc katra dublējuma "
-"izveidošanas sūta epastu ar rezultātu epasta tematā."
+"%(site_name)s piedāvā norādīt atslēgvārdu, kuram būs jābūt atrodamam epasta "
+"tematā. Tas ir parocīgi, piemēram, ja dublējumu programmatūra pēc katra "
+"dublējuma izveidošanas sūta epastu ar rezultātu epasta tematā."
 
 #: templates/front/welcome.html:151
 #, python-format
@@ -184,15 +184,15 @@ msgid ""
 "A list of your checks, one for each Cron job, daemon or scheduled task you "
 "want to monitor."
 msgstr ""
-"Detektoru saraksts. Katram cron darbam vai servisam, ko nepieciešams "
-"uzraudzīt, atbilst viens detektors."
+"Sensoru saraksts. Katram cron darbam vai servisam, ko nepieciešams "
+"uzraudzīt, atbilst viens sensors."
 
 #: templates/front/welcome.html:194
 msgid ""
 "Give names and assign tags to your checks to easily recognize them later."
 msgstr ""
-"Detektoriem var piešķirt nosaukumus un birkas, lai tos būtu viegli atpazīt "
-"un atšķirt."
+"Sensoriem var piešķirt nosaukumus un birkas, lai tos būtu viegli atpazīt un "
+"atšķirt."
 
 #: templates/front/welcome.html:200
 msgid "Tap on the integration icons to toggle them on and off."
@@ -216,9 +216,9 @@ msgid ""
 "strong> parameters. Depending on these parameters and time since the last "
 "ping, the check is in one of the following states:"
 msgstr ""
-"Katram detektoram var iestatīt <strong>periodu</strong> un "
+"Katram sensoram var iestatīt <strong>periodu</strong> un "
 "<strong>pagarinājuma laiku</strong>. Atkarībā no šo parametru vērtībām un "
-"saņemtajiem ping signāliem, detektors atrodas vienā no stāvokļiem:"
+"saņemtajiem ping signāliem, sensors atrodas vienā no stāvokļiem:"
 
 #: templates/front/welcome.html:235
 msgid "New. A check that has been created, but has not received any pings yet."
@@ -247,9 +247,9 @@ msgid ""
 "%(site_name)s sends you a notification."
 msgstr ""
 "Trauksme. Laika intervāls kopš pēdējā saņemtā signāla ir pārsniedzis "
-"<strong>periodu</strong> + <strong>pagarinājuma laiku</strong>. Kad "
-"detektora statuss izmainās no \"Kavējas\" uz \"Trauksme\", %(site_name)s "
-"izsūta brīdinājumus."
+"<strong>periodu</strong> + <strong>pagarinājuma laiku</strong>. Kad sensora "
+"statuss izmainās no \"Kavējas\" uz \"Trauksme\", %(site_name)s izsūta "
+"brīdinājumus."
 
 #: templates/front/welcome.html:291
 msgid "Cron Expression Support"
@@ -290,8 +290,8 @@ msgid ""
 "You can add a longer, free-form description to each check. Leave notes and "
 "pointers for yourself and for your team."
 msgstr ""
-"Katram detektoram iespējams pievienot garāku aprakstu brīvā formātā. Tajā "
-"var iekļaut sev un kolēģiem noderīgas piezīmes."
+"Katram sensoram iespējams pievienot garāku aprakstu brīvā formātā. Tajā var "
+"iekļaut sev un kolēģiem noderīgas piezīmes."
 
 #: templates/front/welcome.html:332
 msgid ""
@@ -309,8 +309,8 @@ msgid ""
 "Additionally, the \"%(site_name)s\" badge shows the overall status of all "
 "checks in your account."
 msgstr ""
-"Katrai detektoru birkai atbilst statusa nozīmīte. Pieejama arī kopējā "
-"%(site_name)s statusa nozīmīte, kas rāda visu detektoru kopējo statusu."
+"Katrai sensoru birkai atbilst statusa nozīmīte. Pieejama arī kopējā "
+"%(site_name)s statusa nozīmīte, kas rāda visu sensoru kopējo statusu."
 
 #: templates/front/welcome.html:358
 msgid ""
