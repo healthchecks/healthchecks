@@ -61,7 +61,7 @@
 
                     <div class="form-group">
                         <label for="update-name-input" class="col-sm-4 control-label">
-                            Success Keyword
+                            Success Keywords
                         </label>
                         <div class="col-sm-7">
                             <input
@@ -71,14 +71,14 @@
                                 {% if not check.subject and not check.subject_fail %}disabled{% endif %}
                                 class="input-name form-control filter-by-subject" />
                             <span class="help-block">
-                                If Subject contains this keyword,
-                                treat it as "success".
+                                Comma-separated list of keywords. If Subject contains
+                                any of the keywords, treat it as "success".
                             </span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="update-name-input" class="col-sm-4 control-label">
-                            Failure Keyword
+                            Failure Keywords
                         </label>
                         <div class="col-sm-7">
                             <input
@@ -88,8 +88,8 @@
                                 {% if not check.subject and not check.subject_fail %}disabled{% endif %}
                                 class="input-name form-control filter-by-subject" />
                             <span class="help-block">
-                                If Subject contains this keyword,
-                                treat it as "failure".
+                                Comma-separated list of keywords. If Subject contains
+                                any of the keywords, treat it as "failure".
                             </span>
                         </div>
                     </div>

@@ -12,6 +12,15 @@ RE_UUID = re.compile(
 )
 
 
+def _match(subject, keywords):
+    for s in keywords.split(","):
+        s = s.strip()
+        if s and s in subject:
+            return True
+
+    return False
+
+
 def _process_message(remote_addr, mailfrom, mailto, data):
     to_parts = mailto.split("@")
     code = to_parts[0]
@@ -33,9 +42,9 @@ def _process_message(remote_addr, mailfrom, mailto, data):
     if check.subject or check.subject_fail:
         action = "ign"
         subject = email.message_from_string(data).get("subject", "")
-        if check.subject and check.subject in subject:
+        if check.subject and _match(subject, check.subject):
             action = "success"
-        elif check.subject_fail and check.subject_fail in subject:
+        elif check.subject_fail and _match(subject, check.subject_fail):
             action = "fail"
 
     ua = "Email from %s" % mailfrom

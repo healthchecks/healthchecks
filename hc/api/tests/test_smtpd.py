@@ -74,3 +74,27 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.scheme, "email")
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, "ign")
+
+    def test_it_handles_multiple_subject_keywords(self):
+        self.check.subject = "SUCCESS, OK"
+        self.check.save()
+
+        body = PAYLOAD_TMPL % "[OK] Backup completed"
+        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "email")
+        self.assertEqual(ping.ua, "Email from foo@example.org")
+        self.assertEqual(ping.kind, None)
+
+    def test_it_handles_multiple_subject_fail_keywords(self):
+        self.check.subject_fail = "FAIL, WARNING"
+        self.check.save()
+
+        body = PAYLOAD_TMPL % "[WARNING] Backup did not complete"
+        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "email")
+        self.assertEqual(ping.ua, "Email from foo@example.org")
+        self.assertEqual(ping.kind, "fail")

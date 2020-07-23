@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Spike.sh integration (#402)
 - Updated Discord integration to use discord.com instead of discordapp.com
 - Add "Failure Keyword" filtering for inbound emails (#396)
+- Add support for multiple, comma-separated keywords (#396)
 
 ### Bug Fixes
 - Removing Pager Team integration, project appears to be discontinued
