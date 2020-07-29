@@ -193,17 +193,6 @@
             <a href="{% url 'hc-add-email' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
-        {% if enable_call %}
-        <li>
-            <img src="{% static 'img/integrations/call.png' %}"
-                class="icon" alt="Phone icon" />
-
-            <h2>Phone Call</h2>
-            <p>Get a phone call when a check goes down.</p>
-            <a href="{% url 'hc-add-call' project.code %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
-
         <li>
             <img src="{% static 'img/integrations/webhook.png' %}"
                 class="icon" alt="Webhook icon" />
@@ -295,6 +284,17 @@
             <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications.</p>
             <a href="{% url 'hc-add-pagertree' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+
+        {% if enable_call %}
+        <li>
+            <img src="{% static 'img/integrations/call.png' %}"
+                class="icon" alt="Phone icon" />
+
+            <h2>Phone Call</h2>
+            <p>Get a phone call when a check goes down.</p>
+            <a href="{% url 'hc-add-call' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
 
         <li>
             <img src="{% static 'img/integrations/prometheus.png' %}"
