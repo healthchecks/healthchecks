@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Add Phone Call Integration - {{ site_name }}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Phone Call</h1>
+    <p>
+        Get a phone call when a check goes down. When you pick up the call,
+        a text-to-speech engine will read out a message and then hang up.
+    </p>
+
+    {% if show_pricing and profile.sms_limit == 0 %}
+    <p class="alert alert-info">
+        <strong>Paid plan required.</strong>
+        Phone call notifications are not available on the free plan–they
+        cost too much! Please upgrade to a
+        <a href="{% url 'hc-billing' %}">paid plan</a>
+        to enable phone call notifications.
+    </p>
+    {% endif %}
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group {{ form.label.css_classes }}">
+            <label for="id_label" class="col-sm-2 control-label">Label</label>
+            <div class="col-sm-6">
+                <input
+                    id="id_label"
+                    type="text"
+                    class="form-control"
+                    name="label"
+                    placeholder="Alice's Phone"
+                    value="{{ form.label.value|default:"" }}">
+
+                {% if form.label.errors %}
+                <div class="help-block">
+                    {{ form.label.errors|join:"" }}
+                </div>
+                {% else %}
+                <span class="help-block">
+                    Optional. If you add multiple phone numbers,
+                    the labels will help you tell them apart.
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group {{ form.value.css_classes }}">
+            <label for="id_number" class="col-sm-2 control-label">Phone Number</label>
+            <div class="col-sm-3">
+                <input
+                    id="id_number"
+                    type="tel"
+                    class="form-control"
+                    name="value"
+                    placeholder="+1234567890"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.value.errors %}
+                <div class="help-block">
+                    {{ form.value.errors|join:"" }}
+                </div>
+                {% else %}
+                <span class="help-block">
+                    Make sure the phone number starts with "+" and  has the
+                    country code.
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

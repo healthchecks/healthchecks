@@ -269,6 +269,7 @@ def index(request):
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_call": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
@@ -702,6 +703,7 @@ def channels(request, code):
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_call": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
@@ -1513,6 +1515,32 @@ def add_sms(request, code):
         "profile": project.owner_profile,
     }
     return render(request, "integrations/add_sms.html", ctx)
+
+
+@require_setting("TWILIO_AUTH")
+@login_required
+def add_call(request, code):
+    project = _get_project_for_user(request, code)
+    if request.method == "POST":
+        form = forms.AddSmsForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="call")
+            channel.name = form.cleaned_data["label"]
+            channel.value = json.dumps({"value": form.cleaned_data["value"]})
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-p-channels", project.code)
+    else:
+        form = forms.AddSmsForm()
+
+    ctx = {
+        "page": "channels",
+        "project": project,
+        "form": form,
+        "profile": project.owner_profile,
+    }
+    return render(request, "integrations/add_call.html", ctx)
 
 
 @require_setting("TWILIO_USE_WHATSAPP")

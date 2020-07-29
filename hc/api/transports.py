@@ -478,6 +478,31 @@ class Sms(HttpTransport):
         return self.post(url, data=data, auth=auth)
 
 
+class Call(HttpTransport):
+    URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Calls.json"
+
+    def is_noop(self, check):
+        return check.status != "down"
+
+    def notify(self, check):
+        profile = Profile.objects.for_user(self.channel.project.owner)
+        if not profile.authorize_sms():
+            profile.send_sms_limit_notice("phone call")
+            return "Monthly phone call limit exceeded"
+
+        url = self.URL % settings.TWILIO_ACCOUNT
+        auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
+        twiml = tmpl("call_message.html", check=check, site_name=settings.SITE_NAME)
+
+        data = {
+            "From": settings.TWILIO_FROM,
+            "To": self.channel.sms_number,
+            "Twiml": twiml,
+        }
+
+        return self.post(url, data=data, auth=auth)
+
+
 class WhatsApp(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
 

@@ -754,6 +754,44 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly WhatsApp Limit Reached")
 
+    @patch("hc.api.transports.requests.request")
+    def test_call(self, mock_post):
+        value = {"label": "foo", "value": "+1234567890"}
+        self._setup_data("call", json.dumps(value))
+        self.check.last_ping = now() - td(hours=2)
+
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertEqual(payload["To"], "+1234567890")
+
+    @patch("hc.api.transports.requests.request")
+    def test_call_limit(self, mock_post):
+        # At limit already:
+        self.profile.last_sms_date = now()
+        self.profile.sms_sent = 50
+        self.profile.save()
+
+        definition = {"value": "+1234567890"}
+        self._setup_data("call", json.dumps(definition))
+
+        self.channel.notify(self.check)
+        self.assertFalse(mock_post.called)
+
+        n = Notification.objects.get()
+        self.assertTrue("Monthly phone call limit exceeded" in n.error)
+
+        # And email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.to[0], "alice@example.org")
+        self.assertEqual(email.subject, "Monthly Phone Call Limit Reached")
+
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
     def test_apprise_enabled(self, mock_apprise):

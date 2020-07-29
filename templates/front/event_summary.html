@@ -35,6 +35,11 @@
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
+{% elif event.channel.kind == "call" %}
+    Made a phone call to {{ event.channel.sms_number }}
+    {% if event.channel.name %}
+        ({{ event.channel.name }})
+    {% endif %}
 {% else %}
     Sent alert to {{ event.channel.get_kind_display }}
     {% if event.channel.name %}

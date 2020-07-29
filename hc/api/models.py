@@ -50,6 +50,7 @@ CHANNEL_KINDS = (
     ("shell", "Shell Command"),
     ("zulip", "Zulip"),
     ("spike", "Spike"),
+    ("call", "Phone Call"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -460,6 +461,8 @@ class Channel(models.Model):
             return transports.Zulip(self)
         elif self.kind == "spike":
             return transports.Spike(self)
+        elif self.kind == "call":
+            return transports.Call(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -640,7 +643,7 @@ class Channel(models.Model):
 
     @property
     def sms_number(self):
-        assert self.kind in ("sms", "whatsapp")
+        assert self.kind in ("call", "sms", "whatsapp")
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["value"]

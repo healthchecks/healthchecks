@@ -507,6 +507,18 @@
             </div>
         </div>
 
+        {% if enable_call %}
+        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+            <div class="integration">
+                <img src="{% static 'img/integrations/call.png' %}" class="icon" alt="" />
+                <h3>
+                    {% trans "Phone Call" %}<br>
+                    <small>&nbsp;</small>
+                </h3>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="{% url 'hc-serve-doc' 'configuring_prometheus' %}" class="integration">
                 <img src="{% static 'img/integrations/prometheus.png' %}" class="icon" alt="" />
@@ -565,7 +577,7 @@
         </div>
         {% endif %}
 
-	<div class="col-md-2 col-sm-4 col-xs-6">
+	   <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="Spike.sh icon" />
                 <h3>

@@ -68,6 +68,8 @@
                             {% endif %}
                         {% elif ch.kind == "sms" %}
                             SMS to <span>{{ ch.sms_number }}</span>
+                        {% elif ch.kind == "call" %}
+                            Phone call to <span>{{ ch.sms_number }}</span>
                         {% elif ch.kind == "trello" %}
                             Trello
                             board <span>{{ ch.trello_board_list|first }}</span>,
@@ -122,7 +124,7 @@
                 {% else %}
                 Never
                 {% endif %}
-                {% if ch.kind == "sms" or ch.kind == "whatsapp" %}
+                {% if ch.kind == "sms" or ch.kind == "whatsapp" or ch.kind == "call" %}
                     <p>Used {{ profile.sms_sent_this_month }} of {{ profile.sms_limit }} sends this month.</p>
                 {% endif %}
             </td>
@@ -191,6 +193,17 @@
             <a href="{% url 'hc-add-email' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
+        {% if enable_call %}
+        <li>
+            <img src="{% static 'img/integrations/call.png' %}"
+                class="icon" alt="Phone icon" />
+
+            <h2>Phone Call</h2>
+            <p>Get a phone call when a check goes down.</p>
+            <a href="{% url 'hc-add-call' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
         <li>
             <img src="{% static 'img/integrations/webhook.png' %}"
                 class="icon" alt="Webhook icon" />
@@ -199,6 +212,7 @@
             <p>Receive a HTTP callback when a check goes down.</p>
             <a href="{% url 'hc-add-webhook' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+
         {% if enable_apprise %}
         <li>
             <img src="{% static 'img/integrations/apprise.png' %}"
