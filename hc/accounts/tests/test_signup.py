@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from django.test.utils import override_settings
-from hc.accounts.models import Project
+from hc.accounts.models import Profile, Project
 from hc.api.models import Channel, Check
 from django.conf import settings
 
@@ -17,6 +17,11 @@ class SignupTestCase(TestCase):
 
         # An user should have been created
         user = User.objects.get()
+
+        # A profile should have been created
+        profile = Profile.objects.get()
+        self.assertEqual(profile.sms_limit, 5)
+        self.assertEqual(profile.call_limit, 0)
 
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
@@ -36,6 +41,17 @@ class SignupTestCase(TestCase):
         # A channel should have been created
         channel = Channel.objects.get()
         self.assertEqual(channel.project, project)
+
+    @override_settings(USE_PAYMENTS=False)
+    def test_it_sets_high_limits(self):
+        form = {"identity": "alice@example.org"}
+
+        self.client.post("/accounts/signup/", form)
+
+        # A profile should have been created
+        profile = Profile.objects.get()
+        self.assertEqual(profile.sms_limit, 500)
+        self.assertEqual(profile.call_limit, 500)
 
     @override_settings(REGISTRATION_OPEN=False)
     def test_it_obeys_registration_open(self):

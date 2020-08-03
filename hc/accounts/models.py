@@ -37,6 +37,7 @@ class ProfileManager(models.Manager):
                 # If not using payments, set high limits
                 profile.check_limit = 500
                 profile.sms_limit = 500
+                profile.call_limit = 500
                 profile.team_limit = 500
 
             profile.save()
@@ -52,9 +53,15 @@ class Profile(models.Model):
     ping_log_limit = models.IntegerField(default=100)
     check_limit = models.IntegerField(default=20)
     token = models.CharField(max_length=128, blank=True)
+
     last_sms_date = models.DateTimeField(null=True, blank=True)
     sms_limit = models.IntegerField(default=5)
     sms_sent = models.IntegerField(default=0)
+
+    last_call_date = models.DateTimeField(null=True, blank=True)
+    call_limit = models.IntegerField(default=0)
+    calls_sent = models.IntegerField(default=0)
+
     team_limit = models.IntegerField(default=2)
     sort = models.CharField(max_length=20, default="created")
     deletion_notice_date = models.DateTimeField(null=True, blank=True)
@@ -226,6 +233,29 @@ class Profile(models.Model):
 
         self.sms_sent = sent_this_month + 1
         self.last_sms_date = timezone.now()
+        self.save()
+        return True
+
+    def calls_sent_this_month(self):
+        # IF last_call_date was never set, we have not made any phone calls yet.
+        if not self.last_call_date:
+            return 0
+
+        # If last sent date is not from this month, we've made 0 calls this month.
+        if month(timezone.now()) > month(self.last_call_date):
+            return 0
+
+        return self.calls_sent
+
+    def authorize_call(self):
+        """ If monthly limit not exceeded, increase counter and return True """
+
+        sent_this_month = self.calls_sent_this_month()
+        if sent_this_month >= self.call_limit:
+            return False
+
+        self.calls_sent = sent_this_month + 1
+        self.last_call_date = timezone.now()
         self.save()
         return True
 

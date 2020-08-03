@@ -87,8 +87,9 @@
                         </li>
                         <li class="list-group-item">API access</li>
                         <li class="list-group-item">
-                            <span data-help="sms-help">5 SMS, WhatsApp and call credits</span>
+                            <span data-help="sms-help">5 SMS &amp; WhatsApp credits</span>
                         </li>
+                        <li class="list-group-item">&nbsp;</li>
                         <li class="list-group-item">&nbsp;</li>
                     </ul>
 
@@ -120,7 +121,10 @@
                         </li>
                         <li class="list-group-item">API access</li>
                         <li class="list-group-item">
-                            <span data-help="sms-help">5 SMS, WhatsApp and call credits</span>
+                            <span data-help="sms-help">5 SMS &amp; WhatsApp credits</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span data-help="phone-call-help">5 phone call credits</span>
                         </li>
                         <li class="list-group-item">Email support</li>
                     </ul>
@@ -156,7 +160,10 @@
                         </li>
                         <li class="list-group-item">API access</li>
                         <li class="list-group-item">
-                            <span data-help="sms-help">50 SMS, WhatsApp and call credits</span>
+                            <span data-help="sms-help">50 SMS &amp; WhatsApp credits</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span data-help="phone-call-help">20 phone call credits</span>
                         </li>
                         <li class="list-group-item">Email support</li>
                     </ul>
@@ -192,7 +199,10 @@
                         </li>
                         <li class="list-group-item">API access</li>
                         <li class="list-group-item">
-                            <span data-help="sms-help">500 SMS, WhatsApp and call credits</span>
+                            <span data-help="sms-help">500 SMS &amp; WhatsApp credits</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span data-help="phone-call-help">100 phone call credits</span>
                         </li>
                         <li class="list-group-item">Priority email support</li>
                     </ul>
@@ -303,10 +313,14 @@
 </div>
 
 <div id="sms-help" class="hidden">
-    <p>The maximum number of SMS, WhatsApp and phone call notifications per month.</p>
+    <p>The maximum number of SMS and WhatsApp notifications per month.</p>
 
-    <p>The limit is applied to the combined number of sent SMS, WhatsApp and phone
-    call notifications. </p>
+    <p>The limit is applied to the combined number of sent SMS and WhatsApp
+    notifications.</p>
+</div>
+
+<div id="phone-call-help" class="hidden">
+    <p>The maximum number of phone call notifications per month.</p>
 </div>
 
 {% if not request.user.is_authenticated %}

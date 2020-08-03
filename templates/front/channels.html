@@ -124,8 +124,11 @@
                 {% else %}
                 Never
                 {% endif %}
-                {% if ch.kind == "sms" or ch.kind == "whatsapp" or ch.kind == "call" %}
+                {% if ch.kind == "sms" or ch.kind == "whatsapp" %}
                     <p>Used {{ profile.sms_sent_this_month }} of {{ profile.sms_limit }} sends this month.</p>
+                {% endif %}
+                {% if ch.kind == "call" %}
+                    <p>Used {{ profile.calls_sent_this_month }} of {{ profile.call_limit }} phone calls this month.</p>
                 {% endif %}
             </td>
             <td class="actions">

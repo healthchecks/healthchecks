@@ -486,7 +486,7 @@ class Call(HttpTransport):
 
     def notify(self, check):
         profile = Profile.objects.for_user(self.channel.project.owner)
-        if not profile.authorize_sms():
+        if not profile.authorize_call():
             profile.send_sms_limit_notice("phone call")
             return "Monthly phone call limit exceeded"
 

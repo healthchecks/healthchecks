@@ -22,6 +22,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
 
         self.profile.sms_limit = 0
         self.profile.sms_sent = 1
+        self.profile.call_limit = 0
+        self.profile.calls_sent = 1
         self.profile.save()
 
         r = self.run_update()
@@ -41,6 +43,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
         self.assertEqual(self.profile.team_limit, 9)
         self.assertEqual(self.profile.sms_limit, 50)
         self.assertEqual(self.profile.sms_sent, 0)
+        self.assertEqual(self.profile.call_limit, 20)
+        self.assertEqual(self.profile.calls_sent, 0)
 
         # braintree.Subscription.cancel should have not been called
         # because there was no previous subscription
@@ -54,6 +58,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
 
         self.profile.sms_limit = 0
         self.profile.sms_sent = 1
+        self.profile.call_limit = 0
+        self.profile.calls_sent = 1
         self.profile.save()
 
         r = self.run_update("S5")
@@ -72,6 +78,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
         self.assertEqual(self.profile.team_limit, 2)
         self.assertEqual(self.profile.sms_limit, 5)
         self.assertEqual(self.profile.sms_sent, 0)
+        self.assertEqual(self.profile.call_limit, 5)
+        self.assertEqual(self.profile.calls_sent, 0)
 
         # braintree.Subscription.cancel should have not been called
         assert not mock.Subscription.cancel.called
@@ -82,6 +90,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
 
         self.profile.sms_limit = 0
         self.profile.sms_sent = 1
+        self.profile.call_limit = 0
+        self.profile.calls_sent = 1
         self.profile.save()
 
         r = self.run_update("Y192")
@@ -100,6 +110,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
         self.assertEqual(self.profile.team_limit, 9)
         self.assertEqual(self.profile.sms_limit, 50)
         self.assertEqual(self.profile.sms_sent, 0)
+        self.assertEqual(self.profile.call_limit, 20)
+        self.assertEqual(self.profile.calls_sent, 0)
 
         # braintree.Subscription.cancel should have not been called
         assert not mock.Subscription.cancel.called
@@ -110,6 +122,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
 
         self.profile.sms_limit = 0
         self.profile.sms_sent = 1
+        self.profile.call_limit = 0
+        self.profile.calls_sent = 1
         self.profile.save()
 
         r = self.run_update("P80")
@@ -128,6 +142,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
         self.assertEqual(self.profile.team_limit, 500)
         self.assertEqual(self.profile.sms_limit, 500)
         self.assertEqual(self.profile.sms_sent, 0)
+        self.assertEqual(self.profile.call_limit, 100)
+        self.assertEqual(self.profile.calls_sent, 0)
 
         # braintree.Subscription.cancel should have not been called
         assert not mock.Subscription.cancel.called
@@ -144,6 +160,8 @@ class UpdateSubscriptionTestCase(BaseTestCase):
 
         self.profile.sms_limit = 1
         self.profile.sms_sent = 1
+        self.profile.call_limit = 1
+        self.profile.calls_sent = 1
         self.profile.save()
 
         r = self.run_update("")
@@ -162,6 +180,7 @@ class UpdateSubscriptionTestCase(BaseTestCase):
         self.assertEqual(self.profile.check_limit, 20)
         self.assertEqual(self.profile.team_limit, 2)
         self.assertEqual(self.profile.sms_limit, 5)
+        self.assertEqual(self.profile.call_limit, 0)
 
         self.assertTrue(mock.Subscription.cancel.called)
 

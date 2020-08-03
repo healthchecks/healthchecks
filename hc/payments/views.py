@@ -117,6 +117,7 @@ def update(request):
     profile.check_limit = 20
     profile.team_limit = 2
     profile.sms_limit = 5
+    profile.call_limit = 0
     profile.save()
 
     if plan_id == "":
@@ -135,6 +136,8 @@ def update(request):
         profile.ping_log_limit = 1000
         profile.sms_limit = 5
         profile.sms_sent = 0
+        profile.call_limit = 5
+        profile.calls_sent = 0
         profile.save()
     elif plan_id in ("P20", "Y192"):
         profile.check_limit = 100
@@ -142,6 +145,8 @@ def update(request):
         profile.ping_log_limit = 1000
         profile.sms_limit = 50
         profile.sms_sent = 0
+        profile.call_limit = 20
+        profile.calls_sent = 0
         profile.save()
     elif plan_id in ("P80", "Y768"):
         profile.check_limit = 1000
@@ -149,6 +154,8 @@ def update(request):
         profile.ping_log_limit = 1000
         profile.sms_limit = 500
         profile.sms_sent = 0
+        profile.call_limit = 100
+        profile.calls_sent = 0
         profile.save()
 
     request.session["set_plan_status"] = "success"

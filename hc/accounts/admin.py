@@ -62,6 +62,9 @@ class TeamFieldset(Fieldset):
         "sms_limit",
         "sms_sent",
         "last_sms_date",
+        "call_limit",
+        "calls_sent",
+        "last_call_date",
     )
 
 

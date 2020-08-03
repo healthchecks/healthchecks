@@ -756,6 +756,9 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_call(self, mock_post):
+        self.profile.call_limit = 1
+        self.profile.save()
+
         value = {"label": "foo", "value": "+1234567890"}
         self._setup_data("call", json.dumps(value))
         self.check.last_ping = now() - td(hours=2)
@@ -772,8 +775,8 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_call_limit(self, mock_post):
         # At limit already:
-        self.profile.last_sms_date = now()
-        self.profile.sms_sent = 50
+        self.profile.last_call_date = now()
+        self.profile.calls_sent = 50
         self.profile.save()
 
         definition = {"value": "+1234567890"}
@@ -791,6 +794,19 @@ class NotifyTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly Phone Call Limit Reached")
+
+    @patch("hc.api.transports.requests.request")
+    def test_call_limit_reset(self, mock_post):
+        # At limit, but also into a new month
+        self.profile.calls_sent = 50
+        self.profile.last_call_date = now() - td(days=100)
+        self.profile.save()
+
+        self._setup_data("sms", "+1234567890")
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        self.assertTrue(mock_post.called)
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
