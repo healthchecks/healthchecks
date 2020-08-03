@@ -135,6 +135,13 @@ class Profile(models.Model):
 
         emails.sms_limit(self.user.email, ctx)
 
+    def send_call_limit_notice(self):
+        ctx = {"limit": self.call_limit}
+        if self.call_limit != 500 and settings.USE_PAYMENTS:
+            ctx["url"] = settings.SITE_ROOT + reverse("hc-pricing")
+
+        emails.call_limit(self.user.email, ctx)
+
     def projects(self):
         """ Return a queryset of all projects we have access to. """
 

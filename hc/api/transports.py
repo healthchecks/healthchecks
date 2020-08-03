@@ -487,7 +487,7 @@ class Call(HttpTransport):
     def notify(self, check):
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_call():
-            profile.send_sms_limit_notice("phone call")
+            profile.send_call_limit_notice()
             return "Monthly phone call limit exceeded"
 
         url = self.URL % settings.TWILIO_ACCOUNT

@@ -75,3 +75,7 @@ def deletion_notice(to, ctx, headers={}):
 
 def sms_limit(to, ctx):
     send("sms-limit", to, ctx)
+
+
+def call_limit(to, ctx):
+    send("phone-call-limit", to, ctx)
