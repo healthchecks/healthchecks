@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.16.0-dev - Unreleased
+## v1.16.0 - 2020-08-04
 
 ### Improvements
 - Paused ping handling can be controlled via API (#376)
