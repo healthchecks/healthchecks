@@ -18,12 +18,12 @@
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "sms" %}
-    Sent SMS to {{ event.channel.sms_number }}
+    Sent SMS to {{ event.channel.phone_number }}
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "whatsapp" %}
-    Sent WhatsApp message to {{ event.channel.sms_number }}
+    Sent WhatsApp message to {{ event.channel.phone_number }}
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
@@ -36,7 +36,7 @@
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "call" %}
-    Made a phone call to {{ event.channel.sms_number }}
+    Made a phone call to {{ event.channel.phone_number }}
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}

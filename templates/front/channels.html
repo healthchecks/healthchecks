@@ -67,9 +67,9 @@
                                 user <span>{{ ch.telegram_name }}</span>
                             {% endif %}
                         {% elif ch.kind == "sms" %}
-                            SMS to <span>{{ ch.sms_number }}</span>
+                            SMS to <span>{{ ch.phone_number }}</span>
                         {% elif ch.kind == "call" %}
-                            Phone call to <span>{{ ch.sms_number }}</span>
+                            Phone call to <span>{{ ch.phone_number }}</span>
                         {% elif ch.kind == "trello" %}
                             Trello
                             board <span>{{ ch.trello_board_list|first }}</span>,
@@ -77,7 +77,7 @@
                         {% elif ch.kind == "matrix" %}
                             Matrix <span>{{ ch.value }}</span>
                         {% elif ch.kind == "whatsapp" %}
-                            WhatsApp to <span>{{ ch.sms_number }}</span>
+                            WhatsApp to <span>{{ ch.phone_number }}</span>
                             {% if ch.whatsapp_notify_down and not ch.whatsapp_notify_up %}
                                 (down only)
                             {% endif %}

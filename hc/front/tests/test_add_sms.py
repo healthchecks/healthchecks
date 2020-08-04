@@ -32,7 +32,7 @@ class AddSmsTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "sms")
-        self.assertEqual(c.sms_number, "+1234567890")
+        self.assertEqual(c.phone_number, "+1234567890")
         self.assertEqual(c.name, "My Phone")
         self.assertEqual(c.project, self.project)
 
@@ -50,7 +50,7 @@ class AddSmsTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.sms_number, "+1234567890")
+        self.assertEqual(c.phone_number, "+1234567890")
 
     @override_settings(TWILIO_AUTH=None)
     def test_it_requires_credentials(self):

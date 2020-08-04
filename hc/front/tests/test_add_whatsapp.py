@@ -44,7 +44,7 @@ class AddWhatsAppTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "whatsapp")
-        self.assertEqual(c.sms_number, "+1234567890")
+        self.assertEqual(c.phone_number, "+1234567890")
         self.assertEqual(c.name, "My Phone")
         self.assertTrue(c.whatsapp_notify_down)
         self.assertTrue(c.whatsapp_notify_up)
@@ -59,7 +59,7 @@ class AddWhatsAppTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "whatsapp")
-        self.assertEqual(c.sms_number, "+1234567890")
+        self.assertEqual(c.phone_number, "+1234567890")
         self.assertEqual(c.name, "My Phone")
         self.assertFalse(c.whatsapp_notify_down)
         self.assertFalse(c.whatsapp_notify_up)

@@ -471,7 +471,7 @@ class Sms(HttpTransport):
 
         data = {
             "From": settings.TWILIO_FROM,
-            "To": self.channel.sms_number,
+            "To": self.channel.phone_number,
             "Body": text,
         }
 
@@ -496,7 +496,7 @@ class Call(HttpTransport):
 
         data = {
             "From": settings.TWILIO_FROM,
-            "To": self.channel.sms_number,
+            "To": self.channel.phone_number,
             "Twiml": twiml,
         }
 
@@ -524,7 +524,7 @@ class WhatsApp(HttpTransport):
 
         data = {
             "From": "whatsapp:%s" % settings.TWILIO_FROM,
-            "To": "whatsapp:%s" % self.channel.sms_number,
+            "To": "whatsapp:%s" % self.channel.phone_number,
             "Body": text,
         }
 

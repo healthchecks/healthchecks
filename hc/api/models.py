@@ -377,7 +377,7 @@ class Channel(models.Model):
         if self.kind == "email":
             return "Email to %s" % self.email_value
         elif self.kind == "sms":
-            return "SMS to %s" % self.sms_number
+            return "SMS to %s" % self.phone_number
         elif self.kind == "slack":
             return "Slack %s" % self.slack_channel
         elif self.kind == "telegram":
@@ -642,7 +642,7 @@ class Channel(models.Model):
         return Notification.objects.filter(channel=self).latest()
 
     @property
-    def sms_number(self):
+    def phone_number(self):
         assert self.kind in ("call", "sms", "whatsapp")
         if self.value.startswith("{"):
             doc = json.loads(self.value)
