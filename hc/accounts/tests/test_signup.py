@@ -8,6 +8,7 @@ from django.conf import settings
 
 
 class SignupTestCase(TestCase):
+    @override_settings(USE_PAYMENTS=False)
     def test_it_sends_link(self):
         form = {"identity": "alice@example.org"}
 
