@@ -429,15 +429,19 @@ def notification_status(request, code):
 
     error, mark_not_verified = None, False
 
-    # Look for "error" and "unsub" keys:
+    # Look for "error" and "mark_not_verified" keys:
     if request.POST.get("error"):
         error = request.POST["error"][:200]
         mark_not_verified = request.POST.get("mark_not_verified")
 
-    # Handle "failed" and "undelivered" callbacks from Twilio
+    # Handle "MessageStatus" key from Twilio
     if request.POST.get("MessageStatus") in ("failed", "undelivered"):
         status = request.POST["MessageStatus"]
         error = f"Delivery failed (status={status})."
+
+    # Handle "CallStatus" key from Twilio
+    if request.POST.get("CallStatus") == "failed":
+        error = f"Delivery failed (status=failed)."
 
     if error:
         notification.error = error

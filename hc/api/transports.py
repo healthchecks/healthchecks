@@ -500,6 +500,7 @@ class Call(HttpTransport):
             "From": settings.TWILIO_FROM,
             "To": self.channel.phone_number,
             "Twiml": twiml,
+            "StatusCallback": check.status_url,
         }
 
         return self.post(url, data=data, auth=auth)
@@ -528,6 +529,7 @@ class WhatsApp(HttpTransport):
             "From": "whatsapp:%s" % settings.TWILIO_FROM,
             "To": "whatsapp:%s" % self.channel.phone_number,
             "Body": text,
+            "StatusCallback": check.status_url,
         }
 
         return self.post(url, data=data, auth=auth)

@@ -89,3 +89,14 @@ class NotificationStatusTestCase(BaseTestCase):
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Received complaint.")
         self.assertFalse(self.channel.email_verified)
+
+    def test_it_handles_twilio_call_status_failed(self):
+        r = self.client.post(self.url, {"CallStatus": "failed"})
+        self.assertEqual(r.status_code, 200)
+
+        self.n.refresh_from_db()
+        self.assertEqual(self.n.error, "Delivery failed (status=failed).")
+
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.last_error, "Delivery failed (status=failed).")
+        self.assertTrue(self.channel.email_verified)

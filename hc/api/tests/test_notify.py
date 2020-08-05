@@ -716,11 +716,14 @@ class NotifyTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        self.assertEqual(Notification.objects.count(), 1)
 
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertEqual(payload["To"], "whatsapp:+1234567890")
+
+        n = Notification.objects.get()
+        callback_path = f"/api/v1/notifications/{n.code}/status"
+        self.assertTrue(payload["StatusCallback"].endswith(callback_path))
 
         # sent SMS counter should go up
         self.profile.refresh_from_db()
@@ -773,11 +776,14 @@ class NotifyTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
+
+        n = Notification.objects.get()
+        callback_path = f"/api/v1/notifications/{n.code}/status"
+        self.assertTrue(payload["StatusCallback"].endswith(callback_path))
 
     @patch("hc.api.transports.requests.request")
     def test_call_limit(self, mock_post):
