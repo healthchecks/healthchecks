@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.17.0-dev - Unreleased
+
+## Improvements
+- Django 3.1
+
 ## v1.16.0 - 2020-08-04
 
 ### Improvements
