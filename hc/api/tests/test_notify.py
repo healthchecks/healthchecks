@@ -60,6 +60,8 @@ class NotifyTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
+
+        self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Connection timed out")
 
     @patch("hc.api.transports.requests.request", side_effect=ConnectionError)
@@ -313,6 +315,7 @@ class NotifyTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertTrue("X-Bounce-Url" in email.extra_headers)
+        self.assertTrue("X-Status-Url" in email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
 
@@ -638,12 +641,16 @@ class NotifyTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        self.assertEqual(Notification.objects.count(), 1)
+
+        n = Notification.objects.get()
 
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
         self.assertFalse("\xa0" in payload["Body"])
+
+        callback_path = f"/api/v1/notifications/{n.code}/status"
+        self.assertTrue(payload["StatusCallback"].endswith(callback_path))
 
         # sent SMS counter should go up
         self.profile.refresh_from_db()

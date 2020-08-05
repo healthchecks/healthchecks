@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ## Improvements
 - Django 3.1
+- Handle status callbacks from Twilio, show SMS delivery failures in Integrations
 
 ## v1.16.0 - 2020-08-04
 

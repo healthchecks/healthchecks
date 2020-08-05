@@ -482,16 +482,14 @@ class Channel(models.Model):
         n.error = "Sending"
         n.save()
 
-        if self.kind == "email":
-            error = self.transport.notify(check, n.bounce_url()) or ""
-        else:
-            error = self.transport.notify(check) or ""
+        # These are not database fields. It is just a convenient way to pass
+        # status_url to transport classes.
+        check.bounce_url = n.bounce_url()
+        check.status_url = n.status_url()
 
-        n.error = error
-        n.save()
-
-        self.last_error = error
-        self.save()
+        error = self.transport.notify(check) or ""
+        Notification.objects.filter(id=n.id).update(error=error)
+        Channel.objects.filter(id=self.id).update(last_error=error)
 
         return error
 
@@ -764,6 +762,10 @@ class Notification(models.Model):
 
     def bounce_url(self):
         return settings.SITE_ROOT + reverse("hc-api-bounce", args=[self.code])
+
+    def status_url(self):
+        path = reverse("hc-api-notification-status", args=[self.code])
+        return settings.SITE_ROOT + path
 
 
 class Flip(models.Model):

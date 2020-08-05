@@ -415,6 +415,42 @@ def bounce(request, code):
     return HttpResponse()
 
 
+@csrf_exempt
+@require_POST
+def notification_status(request, code):
+    """ Handle notification delivery status callbacks. """
+
+    notification = get_object_or_404(Notification, code=code)
+
+    # If webhook is more than 1 hour late, don't accept it:
+    td = timezone.now() - notification.created
+    if td.total_seconds() > 3600:
+        return HttpResponseForbidden()
+
+    error, mark_not_verified = None, False
+
+    # Look for "error" and "unsub" keys:
+    if request.POST.get("error"):
+        error = request.POST["error"][:200]
+        mark_not_verified = request.POST.get("mark_not_verified")
+
+    # Handle "failed" and "undelivered" callbacks from Twilio
+    if request.POST.get("MessageStatus") in ("failed", "undelivered"):
+        status = request.POST["MessageStatus"]
+        error = f"Delivery failed (status={status})."
+
+    if error:
+        notification.error = error
+        notification.save(update_fields=["error"])
+
+        channel_q = Channel.objects.filter(id=notification.channel_id)
+        channel_q.update(last_error=error)
+        if mark_not_verified:
+            channel_q.update(email_verified=False)
+
+    return HttpResponse()
+
+
 def metrics(request):
     if not settings.METRICS_KEY:
         return HttpResponseForbidden()

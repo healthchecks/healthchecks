@@ -55,14 +55,15 @@ class Transport(object):
 
 
 class Email(Transport):
-    def notify(self, check, bounce_url):
+    def notify(self, check):
         if not self.channel.email_verified:
             return "Email not verified"
 
         unsub_link = self.channel.get_unsub_link()
 
         headers = {
-            "X-Bounce-Url": bounce_url,
+            "X-Bounce-Url": check.bounce_url,
+            "X-Status-Url": check.status_url,
             "List-Unsubscribe": "<%s>" % unsub_link,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
@@ -473,6 +474,7 @@ class Sms(HttpTransport):
             "From": settings.TWILIO_FROM,
             "To": self.channel.phone_number,
             "Body": text,
+            "StatusCallback": check.status_url,
         }
 
         return self.post(url, data=data, auth=auth)
