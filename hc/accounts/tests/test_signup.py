@@ -20,8 +20,8 @@ class SignupTestCase(TestCase):
 
         # A profile should have been created
         profile = Profile.objects.get()
-        self.assertEqual(profile.sms_limit, 5)
-        self.assertEqual(profile.call_limit, 0)
+        self.assertEqual(profile.sms_limit, 500)
+        self.assertEqual(profile.call_limit, 500)
 
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
@@ -42,7 +42,7 @@ class SignupTestCase(TestCase):
         channel = Channel.objects.get()
         self.assertEqual(channel.project, project)
 
-    @override_settings(USE_PAYMENTS=False)
+    @override_settings(USE_PAYMENTS=True)
     def test_it_sets_high_limits(self):
         form = {"identity": "alice@example.org"}
 
@@ -50,8 +50,8 @@ class SignupTestCase(TestCase):
 
         # A profile should have been created
         profile = Profile.objects.get()
-        self.assertEqual(profile.sms_limit, 500)
-        self.assertEqual(profile.call_limit, 500)
+        self.assertEqual(profile.sms_limit, 5)
+        self.assertEqual(profile.call_limit, 0)
 
     @override_settings(REGISTRATION_OPEN=False)
     def test_it_obeys_registration_open(self):
