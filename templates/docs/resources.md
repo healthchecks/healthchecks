@@ -24,6 +24,7 @@ Please submit additions and corrections
 * [crontask.sh](https://github.com/pforret/crontask) – bash wrapper to use in crontab. Supports pinging.
 * [SmartCronHelper](https://gitlab.science.ru.nl/bram/sch) – A cron shell wrapper. Automatically registers and pings cron jobs listed in crontab.
 * [davehope/HealthChecksIOStatusReport](https://github.com/davehope/HealthChecksIOStatusReport) – PowerShell module. Supports pinging.
+* [henrywhitaker3/PHP-healthchecks.io](https://github.com/henrywhitaker3/PHP-healthchecks.io) – API wrapper in PHP. Supports listing, creating, updating, deleting, pausing, pinging, failing and starting checks. Supports listing integrations.
 
 ## Plugins & Integrations
 
