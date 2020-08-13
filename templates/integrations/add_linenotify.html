@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}LineNotify Integration for {% site_name %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+      <h1>LineNotify</h1>
+
+      <p><a href="https://notify-bot.line.me/en/">LineNotify</a>
+      allows you to send web notifications directly to your LINE chats.
+      If you use or plan on using LineNotify,
+      you can set up {% site_name %} to post status updates directly to an appropriate LineNotify channel.
+      Here are a few steps that can integrate it with your {% site_name %} account.</p>
+
+
+      <h2>Setup Guide</h2>
+
+      <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Log into your Line account,
+                go to <strong>My Pages</strong> in the upper right corner.
+                In the <strong>My Pages</strong>, scroll to the bottom of the page,
+                and click on <strong>Generate token</strong> button.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <div class="marker-wrap">
+                <span style="left: 77%; top: 14%;" class="marker"></span>
+                <img
+                    class="ai-guide-screenshot"
+                    alt="Screenshot"
+                    src="{% static 'img/integrations/setup_linenotify_1.png' %}" />
+            </div>
+        </div>
+      </div>
+
+      <div class="row ai-step">
+          <div class="col-sm-6">
+              <span class="step-no"></span>
+              <p>
+                  It will pop up the <strong>Generate token</strong> Form.
+                  Fill out the details, and click the button.
+              </p>
+          </div>
+          <div class="col-sm-6">
+              <img
+                  class="ai-guide-screenshot"
+                  alt="Screenshot"
+                  src="{% static 'img/integrations/setup_linenotify_2.png' %}">
+          </div>
+      </div>
+
+      <div class="row ai-step">
+          <div class="col-sm-6">
+              <span class="step-no"></span>
+              <p>
+                Copy the displayed <strong>Token</strong> and paste it
+                in the form below.
+                Save the integration, and it's done!
+              </p>
+          </div>
+          <div class="col-sm-6">
+              <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_linenotify_3.png' %}">
+          </div>
+      </div>
+
+      <h2>Integration Settings</h2>
+
+      <form method="post" class="form-horizontal">
+          {% csrf_token %}
+          <div class="form-group {{ form.value.css_classes }}">
+              <label for="api-token" class="col-sm-2 control-label">API Token</label>
+              <div class="col-sm-10">
+                  <input
+                      id="api-token"
+                      type="text"
+                      class="form-control"
+                      name="token"
+                      placeholder=""
+                      value="{{ form.token.value|default:"" }}">
+
+                  {% if form.token.errors %}
+                  <div class="help-block">
+                      {{ form.token.errors|join:"" }}
+                  </div>
+                  {% endif %}
+              </div>
+          </div>
+          <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary">Save Integration</button>
+              </div>
+          </div>
+      </form>
+  </div>
+</div>
+{% endblock %}

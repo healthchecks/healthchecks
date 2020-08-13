@@ -642,6 +642,15 @@
                 </h3>
             </div>
         </div>
+
+        {% comment %} {% if enable_linenotify %} {% endcomment %}
+        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+            <div class="integration">
+                <img src="{% static 'img/integrations/linenotify.png' %}" class="icon" alt="" />
+                <h3>LineNotify<br><small>Chat</small></h3>
+            </div>
+        </div>
+        {% comment %} {% endif %} {% endcomment %}
     </div>
 
     <div class="row tour-section">
