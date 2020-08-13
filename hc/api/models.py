@@ -51,6 +51,7 @@ CHANNEL_KINDS = (
     ("zulip", "Zulip"),
     ("spike", "Spike"),
     ("call", "Phone Call"),
+    ("linenotify", "LineNotify"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -463,6 +464,8 @@ class Channel(models.Model):
             return transports.Spike(self)
         elif self.kind == "call":
             return transports.Call(self)
+        elif self.kind == "linenotify":
+            return transports.LineNotify(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -747,6 +750,14 @@ class Channel(models.Model):
         doc = json.loads(self.value)
         return doc["to"]
 
+    @property
+    def linenotify_token(self):
+        assert self.kind == "linenotify"
+        if not self.value.startswith("{"):
+            return self.value
+
+        doc = json.loads(self.value)
+        return doc["token"]
 
 class Notification(models.Model):
     class Meta:

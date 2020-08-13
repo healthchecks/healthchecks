@@ -104,6 +104,8 @@ class AddOpsGenieForm(forms.Form):
     region = forms.ChoiceField(initial="us", choices=(("us", "US"), ("eu", "EU")))
     key = forms.CharField(max_length=40)
 
+class AddLineNotifyForm(forms.Form):
+    token = forms.CharField(max_length=40)
 
 PRIO_CHOICES = [
     ("-2", "Lowest Priority"),

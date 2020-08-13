@@ -619,3 +619,17 @@ class Spike(HttpTransport):
         }
 
         return self.post(url, json=payload, headers=headers)
+
+
+class LineNotify(HttpTransport):
+    URL = "https://notify-api.line.me/api/notify"
+
+    def notify(self, check):
+        headers = {
+            "Content-Type": "multipart/form-data",
+            "Authorization": "Bearer %s" % settings.LINE_NOTIFY_ACCESS_TOKEN,
+        }
+        payload = {
+            "message": tmpl("linenotify_message.html", check=check)
+        }
+        return self.post(URL, headers=headers, params=payload)
