@@ -626,10 +626,10 @@ class LineNotify(HttpTransport):
 
     def notify(self, check):
         headers = {
-            "Content-Type": "multipart/form-data",
-            "Authorization": "Bearer %s" % settings.LINE_NOTIFY_ACCESS_TOKEN,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer %s" % self.channel.linenotify_token,
         }
         payload = {
             "message": tmpl("linenotify_message.html", check=check)
         }
-        return self.post(URL, headers=headers, params=payload)
+        return self.post(self.URL, headers=headers, params=payload)

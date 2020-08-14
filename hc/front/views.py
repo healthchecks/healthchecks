@@ -273,7 +273,6 @@ def index(request):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-        "enable_linenotify": settings.LINE_NOTIFY_ACCESS_TOKEN is not None,
         "registration_open": settings.REGISTRATION_OPEN,
     }
 
@@ -712,7 +711,6 @@ def channels(request, code):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-        "enable_linenotify": settings.LINE_NOTIFY_ACCESS_TOKEN is not None,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -1383,26 +1381,6 @@ def add_opsgenie(request, code):
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_opsgenie.html", ctx)
 
-# @require_setting("LINE_NOTIFY_ACCESS_TOKEN")
-@login_required
-def add_linenotify(request, code):
-    project = _get_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddLineNotifyForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="linenotify")
-            channel.value = form.cleaned_data["value"]
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-p-channels", project.code)
-    else:
-        form = forms.AddLineNotifyForm()
-
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_linenotify.html", ctx)
-
 
 @login_required
 def add_victorops(request, code):
@@ -1799,3 +1777,23 @@ def add_spike(request, code):
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_spike.html", ctx)
+
+
+@login_required
+def add_linenotify(request, code):
+    project = _get_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddLineNotifyForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="linenotify")
+            channel.value = form.cleaned_data["token"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-p-channels", project.code)
+    else:
+        form = forms.AddLineNotifyForm()
+
+    ctx = {"page": "channels", "project": project, "form": form}
+    return render(request, "integrations/add_linenotify.html", ctx)
