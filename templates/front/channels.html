@@ -412,7 +412,6 @@
             <a href="{% url 'hc-add-zulip' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
-        {% comment %} {% if enable_linenotify %} {% endcomment %}
         <li>
             <img src="{% static 'img/integrations/linenotify.png' %}"
                 class="icon" alt="LineNotify icon" />
@@ -421,7 +420,6 @@
             <p>Get a LineNotify message when a check goes up or down.</p>
             <a href="{% url 'hc-add-linenotify' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
-        {% comment %} {% endif %} {% endcomment %}
 
         <li class="link-to-github">
             <img src="{% static 'img/integrations/missing.png' %}"

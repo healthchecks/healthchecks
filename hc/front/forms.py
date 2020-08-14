@@ -104,8 +104,6 @@ class AddOpsGenieForm(forms.Form):
     region = forms.ChoiceField(initial="us", choices=(("us", "US"), ("eu", "EU")))
     key = forms.CharField(max_length=40)
 
-class AddLineNotifyForm(forms.Form):
-    token = forms.CharField(max_length=40)
 
 PRIO_CHOICES = [
     ("-2", "Lowest Priority"),
@@ -261,3 +259,8 @@ class AddZulipForm(forms.Form):
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
+class AddLineNotifyForm(forms.Form):
+    error_css_class = "has-error"
+    token = forms.CharField(max_length=50)

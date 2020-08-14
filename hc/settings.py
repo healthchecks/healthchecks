@@ -208,9 +208,6 @@ PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 # Trello
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 
-# Line notify integration
-LINE_NOTIFY_ACCESS_TOKEN = os.getenv("LINE_NOTIFY_ACCESS_TOKEN")
-
 # Matrix
 MATRIX_HOMESERVER = os.getenv("MATRIX_HOMESERVER")
 MATRIX_USER_ID = os.getenv("MATRIX_USER_ID")
