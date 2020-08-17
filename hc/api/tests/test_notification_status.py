@@ -57,7 +57,11 @@ class NotificationStatusTestCase(BaseTestCase):
         self.n.save()
 
         r = self.client.post(self.url, {"MessageStatus": "failed"})
-        self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.status_code, 200)
+
+        # The notification should not have the error field set:
+        self.n.refresh_from_db()
+        self.assertEqual(self.n.error, "")
 
     def test_it_handles_missing_notification(self):
         fake_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"

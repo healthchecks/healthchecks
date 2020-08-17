@@ -422,10 +422,11 @@ def notification_status(request, code):
 
     notification = get_object_or_404(Notification, code=code)
 
-    # If webhook is more than 1 hour late, don't accept it:
     td = timezone.now() - notification.created
     if td.total_seconds() > 3600:
-        return HttpResponseForbidden()
+        # If the webhook is called more than 1 hour after the notification, ignore it.
+        # Return HTTP 200 so the other party doesn't retry over and over again:
+        return HttpResponse()
 
     error, mark_not_verified = None, False
 
