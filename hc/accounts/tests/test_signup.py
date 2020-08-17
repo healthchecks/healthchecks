@@ -81,3 +81,11 @@ class SignupTestCase(TestCase):
         form = {"identity": "alice at example org"}
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "Enter a valid email address")
+
+    def test_it_checks_length(self):
+        aaa = "a" * 300
+        form = {"identity": f"alice+{aaa}@example.org"}
+        r = self.client.post("/accounts/signup/", form)
+        self.assertContains(r, "Address is too long.")
+
+        self.assertFalse(User.objects.exists())

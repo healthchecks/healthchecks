@@ -20,6 +20,9 @@ class AvailableEmailForm(forms.Form):
 
     def clean_identity(self):
         v = self.cleaned_data["identity"]
+        if len(v) > 254:
+            raise forms.ValidationError("Address is too long.")
+
         if User.objects.filter(email=v).exists():
             raise forms.ValidationError(
                 "An account with this email address already exists."

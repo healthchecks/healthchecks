@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Django 3.1
 - Handle status callbacks from Twilio, show delivery failures in Integrations
 
+## Bug Fixes
+- Handle excessively long email addresses in the signup form.
+
 ## v1.16.0 - 2020-08-04
 
 ### Improvements
