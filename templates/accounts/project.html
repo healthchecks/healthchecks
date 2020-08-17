@@ -147,13 +147,13 @@
                             <th></th>
                         </tr>
                         <tr>
-                            <td>{{ project.owner.email }}</td>
+                            <td class="email">{{ project.owner.email }}</td>
                             <td>Owner</td>
                             <td></td>
                         </tr>
                         {% for user in project.team %}
                         <tr>
-                            <td>{{ user.email }} </td>
+                            <td class="email">{{ user.email }}</td>
                             <td>Member</td>
                             <td>
                                 {% if is_owner %}
@@ -369,6 +369,7 @@
                                 class="form-control"
                                 id="itm-email"
                                 name="email"
+                                maxlength="254"
                                 placeholder="friend@example.org">
                         </div>
                     </div>

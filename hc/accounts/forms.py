@@ -98,7 +98,7 @@ class ChangeEmailForm(forms.Form):
 
 
 class InviteTeamMemberForm(forms.Form):
-    email = LowercaseEmailField()
+    email = LowercaseEmailField(max_length=254)
 
 
 class RemoveTeamMemberForm(forms.Form):

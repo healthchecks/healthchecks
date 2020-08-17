@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ## Bug Fixes
 - Handle excessively long email addresses in the signup form.
+- Handle excessively long email addresses in the team member invite form.
 
 ## v1.16.0 - 2020-08-04
 

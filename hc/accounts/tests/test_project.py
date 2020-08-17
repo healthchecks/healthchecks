@@ -108,6 +108,17 @@ class ProjectTestCase(BaseTestCase):
         q = TokenBucket.objects.filter(value="invite-%d" % self.alice.id)
         self.assertFalse(q.exists())
 
+    def test_it_rejects_too_long_email_addresses(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        aaa = "a" * 300
+        form = {"invite_team_member": "1", "email": f"frank+{aaa}@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        # No email should have been sent
+        self.assertEqual(len(mail.outbox), 0)
+
     @override_settings(SECRET_KEY="test-secret")
     def test_it_rate_limits_invites(self):
         obj = TokenBucket(value="invite-%d" % self.alice.id)
