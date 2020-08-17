@@ -62,7 +62,6 @@ class Email(Transport):
         unsub_link = self.channel.get_unsub_link()
 
         headers = {
-            "X-Bounce-Url": check.bounce_url,
             "X-Status-Url": check.status_url,
             "List-Unsubscribe": "<%s>" % unsub_link,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",

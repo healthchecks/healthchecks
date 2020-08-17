@@ -314,7 +314,6 @@ class NotifyTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
-        self.assertTrue("X-Bounce-Url" in email.extra_headers)
         self.assertTrue("X-Status-Url" in email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)

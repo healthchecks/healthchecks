@@ -484,7 +484,6 @@ class Channel(models.Model):
 
         # These are not database fields. It is just a convenient way to pass
         # status_url to transport classes.
-        check.bounce_url = n.bounce_url()
         check.status_url = n.status_url()
 
         error = self.transport.notify(check) or ""
@@ -759,9 +758,6 @@ class Notification(models.Model):
     channel = models.ForeignKey(Channel, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=200, blank=True)
-
-    def bounce_url(self):
-        return settings.SITE_ROOT + reverse("hc-api-bounce", args=[self.code])
 
     def status_url(self):
         path = reverse("hc-api-notification-status", args=[self.code])

@@ -36,7 +36,6 @@ urlpatterns = [
     path("api/v1/checks/<uuid:code>", views.single, name="hc-api-single"),
     path("api/v1/checks/<sha1:unique_key>", views.get_check_by_unique_key),
     path("api/v1/checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
-    path("api/v1/notifications/<uuid:code>/bounce", views.bounce, name="hc-api-bounce"),
     path(
         "api/v1/notifications/<uuid:code>/status",
         views.notification_status,

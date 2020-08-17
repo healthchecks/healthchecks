@@ -393,30 +393,6 @@ def badge(request, badge_key, signature, tag, fmt="svg"):
 
 @csrf_exempt
 @require_POST
-def bounce(request, code):
-    notification = get_object_or_404(Notification, code=code)
-
-    # If webhook is more than 10 minutes late, don't accept it:
-    td = timezone.now() - notification.created
-    if td.total_seconds() > 600:
-        return HttpResponseForbidden()
-
-    notification.error = request.body.decode()[:200]
-    notification.save()
-
-    notification.channel.last_error = notification.error
-    if request.GET.get("type") in (None, "Permanent"):
-        # For permanent bounces, mark the channel as not verified, so we
-        # will not try to deliver to it again.
-        notification.channel.email_verified = False
-
-    notification.channel.save()
-
-    return HttpResponse()
-
-
-@csrf_exempt
-@require_POST
 def notification_status(request, code):
     """ Handle notification delivery status callbacks. """
 
