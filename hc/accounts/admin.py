@@ -147,7 +147,7 @@ class ProfileAdmin(admin.ModelAdmin):
     @mark_safe
     def checks(self, obj):
         s = "%d of %d" % (obj.num_checks, obj.check_limit)
-        if obj.num_checks > 10:
+        if obj.num_checks > 1:
             s = "<b>%s</b>" % s
         return s
 

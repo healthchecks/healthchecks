@@ -175,14 +175,7 @@ class ChannelsAdmin(admin.ModelAdmin):
         css = {"all": ("css/admin/channels.css",)}
 
     search_fields = ["value", "project__owner__email"]
-    list_display = (
-        "id",
-        "kind_",
-        "name",
-        "project_",
-        "value",
-        "num_notifications",
-    )
+    list_display = ("id", "transport", "name", "project_", "value", "ok")
     list_filter = ("kind",)
     raw_id_fields = ("project", "checks")
 
@@ -195,20 +188,23 @@ class ChannelsAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.annotate(Count("notification", distinct=True))
         qs = qs.annotate(project_code=F("project__code"))
         qs = qs.annotate(project_name=F("project__name"))
         qs = qs.annotate(email=F("project__owner__email"))
         return qs
 
     @mark_safe
-    def kind_(self, obj):
-        return f'<span class="icon-{ obj.kind }"></span> &nbsp; {obj.kind}'
+    def transport(self, obj):
+        note = ""
+        if obj.kind == "email" and not obj.email_verified:
+            note = " (not verified)"
 
-    def num_notifications(self, obj):
-        return obj.notification__count
+        return f'<span class="icon-{ obj.kind }"></span> &nbsp; {obj.kind}{note}'
 
-    num_notifications.short_description = "# Notifications"
+    def ok(self, obj):
+        return False if obj.last_error else True
+
+    ok.boolean = True
 
 
 @admin.register(Notification)
