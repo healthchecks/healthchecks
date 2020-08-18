@@ -16,6 +16,8 @@ class Command(BaseCommand):
         - deletion notice has not been sent recently
         - last login more than a year ago
         - none of the owned projects has invited team members
+        - none of the owned projects has pings in the last year
+        - is on a free plan
 
     """
 
@@ -38,17 +40,21 @@ class Command(BaseCommand):
         q = q.exclude(sms_limit__gt=5)
 
         sent = 0
+        skipped_has_team = 0
+        skipped_has_pings = 0
+
         for profile in q:
             members = Member.objects.filter(project__owner_id=profile.user_id)
             if members.exists():
-                self.stdout.write("Skipping %s, has team members" % profile)
+                # Don't send deletion notice: this account has team members
+                skipped_has_team += 1
                 continue
 
-            pings = Ping.objects
-            pings = pings.filter(owner__project__owner_id=profile.user_id)
+            pings = Ping.objects.filter(owner__project__owner_id=profile.user_id)
             pings = pings.filter(created__gt=year_ago)
             if pings.exists():
-                self.stdout.write("Skipping %s, has pings in last year" % profile)
+                # Don't send deletion notice: this account has pings in the last year
+                skipped_has_pings += 1
                 continue
 
             self.stdout.write("Sending notice to %s" % profile.user.email)
@@ -58,10 +64,14 @@ class Command(BaseCommand):
 
             ctx = {"email": profile.user.email, "support_email": settings.SUPPORT_EMAIL}
             emails.deletion_notice(profile.user.email, ctx)
+            sent += 1
 
             # Throttle so we don't send too many emails at once:
             self.pause()
 
-            sent += 1
-
-        return "Done! Sent %d notices" % sent
+        return (
+            f"Done!\n"
+            f"* Notices sent: {sent}\n"
+            f"* Skipped (has team members): {skipped_has_team}\n"
+            f"* Skipped (has pings in the last year): {skipped_has_pings}\n"
+        )

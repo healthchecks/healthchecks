@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+import re
 from unittest.mock import Mock
 
 from django.core import mail
@@ -7,6 +8,11 @@ from hc.accounts.management.commands.senddeletionnotices import Command
 from hc.accounts.models import Member
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
+
+
+def counts(result):
+    """ Extract integer values from command's return value. """
+    return [int(s) for s in re.findall(r"\d+", result)]
 
 
 class SendDeletionNoticesTestCase(BaseTestCase):
@@ -28,7 +34,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         cmd.pause = Mock()  # don't pause for 1s
 
         result = cmd.handle()
-        self.assertEqual(result, "Done! Sent 1 notices")
+        self.assertEqual(counts(result), [1, 0, 0])
 
         self.profile.refresh_from_db()
         self.assertTrue(self.profile.deletion_notice_date)
@@ -42,7 +48,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.alice.save()
 
         result = Command(stdout=Mock()).handle()
-        self.assertEqual(result, "Done! Sent 0 notices")
+        self.assertEqual(counts(result), [0, 0, 0])
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.deletion_notice_date)
@@ -53,7 +59,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.alice.save()
 
         result = Command(stdout=Mock()).handle()
-        self.assertEqual(result, "Done! Sent 0 notices")
+        self.assertEqual(counts(result), [0, 0, 0])
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.deletion_notice_date)
@@ -64,7 +70,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.profile.save()
 
         result = Command(stdout=Mock()).handle()
-        self.assertEqual(result, "Done! Sent 0 notices")
+        self.assertEqual(counts(result), [0, 0, 0])
 
     def test_it_checks_sms_limit(self):
         # alice has a paid account
@@ -72,7 +78,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.profile.save()
 
         result = Command(stdout=Mock()).handle()
-        self.assertEqual(result, "Done! Sent 0 notices")
+        self.assertEqual(counts(result), [0, 0, 0])
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.deletion_notice_date)
@@ -82,7 +88,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         Member.objects.create(user=self.bob, project=self.project)
 
         result = Command(stdout=Mock()).handle()
-        self.assertEqual(result, "Done! Sent 0 notices")
+        self.assertEqual(counts(result), [0, 1, 0])
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.deletion_notice_date)
@@ -92,7 +98,7 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         Ping.objects.create(owner=check)
 
         result = Command(stdout=Mock()).handle()
-        self.assertEqual(result, "Done! Sent 0 notices")
+        self.assertEqual(counts(result), [0, 0, 1])
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.deletion_notice_date)
@@ -103,4 +109,4 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.profile.save()
 
         result = Command(stdout=Mock()).handle()
-        self.assertEqual(result, "Done! Sent 0 notices")
+        self.assertEqual(counts(result), [0, 0, 0])
