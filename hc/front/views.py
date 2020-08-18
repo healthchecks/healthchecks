@@ -279,6 +279,10 @@ def index(request):
     return render(request, "front/welcome.html", ctx)
 
 
+def dashboard(request):
+    return render(request, "front/dashboard.html", {})
+
+
 def serve_doc(request, doc="introduction"):
     path = os.path.join(settings.BASE_DIR, "templates/docs", doc + ".html")
     if not os.path.exists(path):

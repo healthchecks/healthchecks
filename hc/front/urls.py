@@ -90,6 +90,7 @@ project_urls = [
 
 urlpatterns = [
     path("", views.index, name="hc-index"),
+    path("tv/", views.dashboard, name="hc-dashboard"),
     path("checks/cron_preview/", views.cron_preview),
     path("checks/<uuid:code>/", include(check_urls)),
     path("integrations/", include(channel_urls)),

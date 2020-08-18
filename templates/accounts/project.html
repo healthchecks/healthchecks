@@ -80,17 +80,24 @@
                     {% if show_api_keys %}
                         <p>
                             API key: <br />
-                            <code>{{ project.api_key }}</code>
+                            <pre>{{ project.api_key }}</pre>
                         </p>
                         {% if project.api_key_readonly %}
                         <p>
                             API key (read-only): <br />
-                            <code>{{ project.api_key_readonly }}</code>
+                            <pre>{{ project.api_key_readonly }}</pre>
                         </p>
-                        <p>
-                            Prometheus metrics endpoint:
-                            <a href="{% url 'hc-metrics' project.code project.api_key_readonly %}">here</a>
-                        </p>
+                        <p>Related links:</p>
+                        <ul>
+                            <li><a href="{% url 'hc-serve-doc' 'api' %}">API documentation</a></li>
+                            <li>
+                                <a href="{% url 'hc-metrics' project.code project.api_key_readonly %}">Prometheus metrics endpoint</a>
+                            </li>
+                            <li>
+                                <a href="{{ project.dashboard_url }}">Read-only dashboard</a>
+                                (<a href="https://github.com/healthchecks/dashboard/">more info</a>)
+                            </li>
+                        </ul>
                         {% endif %}
                         <button
                             data-toggle="modal"
@@ -106,7 +113,7 @@
                             <button
                                 type="submit"
                                 name="show_api_keys"
-                                class="btn btn-default pull-right">Show API keys</button>
+                                class="btn btn-default pull-right">Show API Keys</button>
                         </form>
                     {% endif %}
                 {% else %}
@@ -117,7 +124,7 @@
                         <button
                             type="submit"
                             name="create_api_keys"
-                            class="btn btn-default pull-right">Create API keys</button>
+                            class="btn btn-default pull-right">Create API Keys</button>
                     </form>
                 {% endif %}
             </div>

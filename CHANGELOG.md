@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Handle status callbacks from Twilio, show delivery failures in Integrations
 - Removing unused /api/v1/notifications/{uuid}/bounce endpoint
 - Less verbose output in the `senddeletionnotices` command
+- Host a read-only dashboard (from github.com/healthchecks/dashboard/)
 
 ## Bug Fixes
 - Handle excessively long email addresses in the signup form.

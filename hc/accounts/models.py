@@ -1,5 +1,6 @@
 from datetime import timedelta
 from secrets import token_urlsafe
+from urllib.parse import quote, urlencode
 import uuid
 
 from django.conf import settings
@@ -358,6 +359,13 @@ class Project(models.Model):
 
     def transfer_request(self):
         return self.member_set.filter(transfer_request_date__isnull=False).first()
+
+    def dashboard_url(self):
+        if not self.api_key_readonly:
+            return None
+
+        frag = urlencode({self.api_key_readonly: str(self)}, quote_via=quote)
+        return reverse("hc-dashboard") + "#" + frag
 
 
 class Member(models.Model):
