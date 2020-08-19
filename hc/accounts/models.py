@@ -319,9 +319,16 @@ class Project(models.Model):
         return used < self.owner_profile.team_limit
 
     def invite(self, user):
+        if Member.objects.filter(user=user, project=self).exists():
+            return False
+
+        if self.owner_id == user.id:
+            return False
+
         Member.objects.create(user=user, project=self)
         checks_url = reverse("hc-checks", args=[self.code])
         user.profile.send_instant_login_link(self, redirect_url=checks_url)
+        return True
 
     def set_next_nag_date(self):
         """ Set next_nag_date on profiles of all members of this project. """
@@ -372,6 +379,13 @@ class Member(models.Model):
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
     project = models.ForeignKey(Project, models.CASCADE)
     transfer_request_date = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "project"], name="accounts_member_no_duplicates"
+            )
+        ]
 
     def can_accept(self):
         return self.user.profile.can_accept(self.project)

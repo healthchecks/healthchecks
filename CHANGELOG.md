@@ -11,8 +11,9 @@ All notable changes to this project will be documented in this file.
 - Host a read-only dashboard (from github.com/healthchecks/dashboard/)
 
 ## Bug Fixes
-- Handle excessively long email addresses in the signup form.
-- Handle excessively long email addresses in the team member invite form.
+- Handle excessively long email addresses in the signup form
+- Handle excessively long email addresses in the team member invite form
+- Don't allow duplicate team memberships
 
 ## v1.16.0 - 2020-08-04
 

@@ -304,9 +304,12 @@ def project(request, code):
                 except User.DoesNotExist:
                     user = _make_user(email, with_project=False)
 
-                project.invite(user)
-                ctx["team_member_invited"] = email
-                ctx["team_status"] = "success"
+                if project.invite(user):
+                    ctx["team_member_invited"] = email
+                    ctx["team_status"] = "success"
+                else:
+                    ctx["team_member_duplicate"] = email
+                    ctx["team_status"] = "info"
 
         elif "remove_team_member" in request.POST:
             if not is_owner:

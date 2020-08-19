@@ -228,6 +228,12 @@
             </div>
             {% endif %}
 
+           {% if team_member_duplicate %}
+            <div class="panel-footer">
+                {{ team_member_duplicate }} is already a member
+            </div>
+            {% endif %}
+
            {% if team_member_removed %}
             <div class="panel-footer">
                 {{ team_member_removed }} removed from team

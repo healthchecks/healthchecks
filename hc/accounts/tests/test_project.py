@@ -108,6 +108,26 @@ class ProjectTestCase(BaseTestCase):
         q = TokenBucket.objects.filter(value="invite-%d" % self.alice.id)
         self.assertFalse(q.exists())
 
+    def test_it_rejects_duplicate_membership(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "bob@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "bob@example.org is already a member")
+
+        # The number of memberships should have not increased
+        self.assertEqual(self.project.member_set.count(), 1)
+
+    def test_it_rejects_owner_as_a_member(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "alice@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "alice@example.org is already a member")
+
+        # The number of memberships should have not increased
+        self.assertEqual(self.project.member_set.count(), 1)
+
     def test_it_rejects_too_long_email_addresses(self):
         self.client.login(username="alice@example.org", password="password")
 
