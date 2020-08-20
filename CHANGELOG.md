@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Removing unused /api/v1/notifications/{uuid}/bounce endpoint
 - Less verbose output in the `senddeletionnotices` command
 - Host a read-only dashboard (from github.com/healthchecks/dashboard/)
+- LINE Notify integration (#412)
 
 ## Bug Fixes
 - Handle excessively long email addresses in the signup form

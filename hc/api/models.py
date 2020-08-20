@@ -51,7 +51,7 @@ CHANNEL_KINDS = (
     ("zulip", "Zulip"),
     ("spike", "Spike"),
     ("call", "Phone Call"),
-    ("linenotify", "LineNotify"),
+    ("linenotify", "LINE Notify"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -758,6 +758,7 @@ class Channel(models.Model):
 
         doc = json.loads(self.value)
         return doc["token"]
+
 
 class Notification(models.Model):
     class Meta:

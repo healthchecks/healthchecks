@@ -227,6 +227,15 @@
         </li>
         {% endif %}
 
+        <li>
+            <img src="{% static 'img/integrations/linenotify.png' %}"
+                class="icon" alt="LINE Notify icon" />
+
+            <h2>LINE Notify</h2>
+            <p>Receive a notification on LINE when a check goes up or down.</p>
+            <a href="{% url 'hc-add-linenotify' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
         {% if enable_matrix %}
         <li>
             <img src="{% static 'img/integrations/matrix.png' %}"
@@ -410,15 +419,6 @@
             <h2>Zulip</h2>
             <p>Open-source group chat.</p>
             <a href="{% url 'hc-add-zulip' project.code %}" class="btn btn-primary">Add Integration</a>
-        </li>
-
-        <li>
-            <img src="{% static 'img/integrations/linenotify.png' %}"
-                class="icon" alt="LineNotify icon" />
-
-            <h2>LineNotify</h2>
-            <p>Get a LineNotify message when a check goes up or down.</p>
-            <a href="{% url 'hc-add-linenotify' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         <li class="link-to-github">
