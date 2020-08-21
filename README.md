@@ -310,6 +310,22 @@ backups set up.
 
 ## Integrations
 
+### Slack
+
+To enable the Slack "self-service" integration, you will need to create a "Slack App".
+
+To do so:
+* Create a _new Slack app_ on https://api.slack.com/apps/
+* Add at least _one scope_ in the permissions section to be able to deploy the app in your workspace (By example `incoming-webhook` for the `Bot Token Scopes`
+https://api.slack.com/apps/APP_ID/oauth?).
+* Add a _redirect url_ in the format `SITE_ROOT/integrations/add_slack_btn/`.
+  For example, if your SITE_ROOT is `https://my-hc.example.org` then the redirect URL would be
+  `https://my-hc.example.org/integrations/add_slack_btn/`.
+* Look up your Slack app for the Client ID and Client Secret at https://api.slack.com/apps/APP_ID/general? . Put them
+  in `SLACK_CLIENT_ID` and `SLACK_CLIENT_SECRET` environment
+  variables.
+
+
 ### Discord
 
 To enable Discord integration, you will need to:
