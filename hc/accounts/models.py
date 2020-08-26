@@ -318,14 +318,14 @@ class Project(models.Model):
         used = q.distinct().count()
         return used < self.owner_profile.team_limit
 
-    def invite(self, user):
+    def invite(self, user, rw):
         if Member.objects.filter(user=user, project=self).exists():
             return False
 
         if self.owner_id == user.id:
             return False
 
-        Member.objects.create(user=user, project=self)
+        Member.objects.create(user=user, project=self, rw=rw)
         checks_url = reverse("hc-checks", args=[self.code])
         user.profile.send_instant_login_link(self, redirect_url=checks_url)
         return True

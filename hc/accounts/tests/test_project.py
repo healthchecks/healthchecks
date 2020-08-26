@@ -65,7 +65,7 @@ class ProjectTestCase(BaseTestCase):
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        form = {"invite_team_member": "1", "email": "frank@example.org", "rw": "1"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
@@ -76,6 +76,9 @@ class ProjectTestCase(BaseTestCase):
             project=self.project, user__email="frank@example.org"
         )
 
+        # The read-write flag should be set
+        self.assertTrue(member.rw)
+
         # The new user should not have their own project
         self.assertFalse(member.user.project_set.exists())
 
@@ -85,6 +88,20 @@ class ProjectTestCase(BaseTestCase):
             " Alice's Project on %s" % settings.SITE_NAME
         )
         self.assertHTMLEqual(mail.outbox[0].subject, subj)
+
+    def test_it_adds_readonly_team_member(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        member = Member.objects.get(
+            project=self.project, user__email="frank@example.org"
+        )
+
+        # The new user should not have their own project
+        self.assertFalse(member.rw)
 
     def test_it_adds_member_from_another_team(self):
         # With team limit at zero, we should not be able to invite any new users

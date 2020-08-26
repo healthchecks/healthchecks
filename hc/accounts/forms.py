@@ -99,6 +99,7 @@ class ChangeEmailForm(forms.Form):
 
 class InviteTeamMemberForm(forms.Form):
     email = LowercaseEmailField(max_length=254)
+    rw = forms.BooleanField(required=False)
 
 
 class RemoveTeamMemberForm(forms.Form):

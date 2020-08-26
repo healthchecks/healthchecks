@@ -306,7 +306,7 @@ def project(request, code):
                 except User.DoesNotExist:
                     user = _make_user(email, with_project=False)
 
-                if project.invite(user):
+                if project.invite(user, rw=form.cleaned_data["rw"]):
                     ctx["team_member_invited"] = email
                     ctx["team_status"] = "success"
                 else:

@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Less verbose output in the `senddeletionnotices` command
 - Host a read-only dashboard (from github.com/healthchecks/dashboard/)
 - LINE Notify integration (#412)
+- Read-only team members
 
 ## Bug Fixes
 - Handle excessively long email addresses in the signup form
