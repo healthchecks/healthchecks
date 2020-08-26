@@ -362,6 +362,9 @@ def update_name(request, code):
 @login_required
 def filtering_rules(request, code):
     check, rw = _get_check_for_user(request, code)
+    if not rw:
+        return HttpResponseForbidden()
+
     form = forms.FilteringRulesForm(request.POST)
     if form.is_valid():
         check.subject = form.cleaned_data["subject"]

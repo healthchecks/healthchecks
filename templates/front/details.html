@@ -95,10 +95,12 @@
                 </p>
             </div>
             <div class="text-right">
+                {% if rw %}
                 <button
                     data-toggle="modal"
                     data-target="#filtering-rules-modal"
                     class="btn btn-sm btn-default">Filtering Rules&hellip;</button>
+                {% endif %}
                 <button
                     data-toggle="modal"
                     data-target="#show-usage-modal"
