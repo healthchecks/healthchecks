@@ -146,7 +146,7 @@ if os.getenv("DB") == "mysql":
 USE_TZ = True
 TIME_ZONE = "UTC"
 USE_I18N = True
-USE_L10N = True
+USE_L10N = False
 LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
