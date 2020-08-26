@@ -126,9 +126,11 @@
             </div>
         </td>
         <td class="actions">
+            {% if rw %}
             <button class="btn btn-default pause" type="button">
                 <span class="icon-paused" />
             </button>
+            {% endif %}
 
             <button title="Show Details" class="btn btn-default show-log" type="button">
                 <span class="icon-dots" />

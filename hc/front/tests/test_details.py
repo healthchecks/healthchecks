@@ -55,4 +55,5 @@ class DetailsTestCase(BaseTestCase):
 
         self.assertNotContains(r, "edit-name", status_code=200)
         self.assertNotContains(r, "edit-desc")
+        self.assertNotContains(r, "pause-btn")
         self.assertNotContains(r, "Change Schedule")

@@ -129,6 +129,7 @@
                 </tr>
             </table>
             <div class="text-right">
+                {% if rw %}
                 <form action="{% url 'hc-pause' check.code %}" method="post">
                     {% csrf_token %}
                     <input
@@ -137,6 +138,7 @@
                         {% if check.status == "paused" %}disabled{% endif %}
                         class="btn btn-sm btn-default" value="Pause" />
                 </form>
+                {% endif %}
 
                 <button
                     id="ping-now"

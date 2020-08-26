@@ -46,3 +46,11 @@ class PauseTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
         self.assertEqual(r.status_code, 200)
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url)
+        self.assertEqual(r.status_code, 403)

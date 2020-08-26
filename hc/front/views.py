@@ -323,6 +323,9 @@ def docs_cron(request):
 @login_required
 def add_check(request, code):
     project, rw = _get_project_for_user(request, code)
+    if not rw:
+        return HttpResponseForbidden()
+
     if project.num_checks_available() <= 0:
         return HttpResponseBadRequest()
 
@@ -461,6 +464,8 @@ def ping_details(request, code, n=None):
 @login_required
 def pause(request, code):
     check, rw = _get_check_for_user(request, code)
+    if not rw:
+        return HttpResponseForbidden()
 
     check.status = "paused"
     check.last_start = None

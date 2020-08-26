@@ -32,6 +32,8 @@
     {% endif %}
     </div>
 </div>
+
+{% if rw %}
 <div id="my-checks-bottom-actions" class="row">
     <div class="col-sm-12">
         {% if num_available > 0 %}
@@ -57,6 +59,7 @@
         {% endif %}
     </div>
 </div>
+{% endif %}
 
 {% include "front/update_name_modal.html" %}
 {% include "front/update_timeout_modal.html" %}

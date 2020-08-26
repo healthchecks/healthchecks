@@ -17,6 +17,8 @@ class MyChecksTestCase(BaseTestCase):
             self.client.login(username=email, password="password")
             r = self.client.get(self.url)
             self.assertContains(r, "Alice Was Here", status_code=200)
+            # The pause button:
+            self.assertContains(r, "btn btn-default pause", status_code=200)
 
         # last_active_date should have been set
         self.profile.refresh_from_db()
@@ -125,3 +127,15 @@ class MyChecksTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, """<div class="btn btn-xs grace ">foo</div>""")
+
+    def test_it_hides_actions_from_readonly_users(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertNotContains(r, "Add Check", status_code=200)
+
+        # The pause button:
+        self.assertNotContains(r, "btn btn-default pause", status_code=200)
