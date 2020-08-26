@@ -246,25 +246,27 @@ def add_project(request):
 
 @login_required
 def project(request, code):
-    if request.user.is_superuser:
-        q = Project.objects
-    else:
-        q = request.profile.projects()
-
-    try:
-        project = q.get(code=code)
-    except Project.DoesNotExist:
-        return HttpResponseNotFound()
-
+    project = get_object_or_404(Project, code=code)
     is_owner = project.owner_id == request.user.id
+
+    if request.user.is_superuser or is_owner:
+        rw = True
+    else:
+        membership = get_object_or_404(Member, project=project, user=request.user)
+        rw = membership.rw
+
     ctx = {
         "page": "project",
+        "rw": rw,
         "project": project,
         "is_owner": is_owner,
         "show_api_keys": "show_api_keys" in request.GET,
     }
 
     if request.method == "POST":
+        if not rw:
+            return HttpResponseForbidden()
+
         if "create_api_keys" in request.POST:
             project.set_api_keys()
             project.save()

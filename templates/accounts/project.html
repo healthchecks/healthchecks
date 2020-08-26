@@ -59,11 +59,13 @@
             <div class="panel-body settings-block">
                 <h2>Project Name</h2>
                 {{ project }}
+                {% if rw %}
                 <a
                     href="#"
                     class="btn btn-default pull-right"
                     data-toggle="modal"
                     data-target="#set-project-name-modal">Change Project Name</a>
+                {% endif %}
             </div>
 
            {% if project_name_updated %}
@@ -110,10 +112,12 @@
                         API access is enabled.
                             {% csrf_token %}
 
+                            {% if rw %}
                             <button
                                 type="submit"
                                 name="show_api_keys"
                                 class="btn btn-default pull-right">Show API Keys</button>
+                            {% endif %}
                         </form>
                     {% endif %}
                 {% else %}

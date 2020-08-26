@@ -212,3 +212,23 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.get("/projects/%s/settings/" % p2.code)
         self.assertContains(r, "Add Users from Other Teams")
         self.assertContains(r, "bob@example.org")
+
+    def test_it_checks_rw_access_when_updating_project_name(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+
+        form = {"set_project_name": "1", "name": "Alpha Team"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 403)
+
+    def test_it_hides_actions_for_readonly_users(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+
+        r = self.client.get(self.url)
+        self.assertNotContains(r, "#set-project-name-modal", status_code=200)
+        self.assertNotContains(r, "Show API Keys")
