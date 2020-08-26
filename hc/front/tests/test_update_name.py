@@ -41,6 +41,16 @@ class UpdateNameTestCase(BaseTestCase):
         r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 404)
 
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        payload = {"name": "Charlie Sent This"}
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, data=payload)
+        self.assertEqual(r.status_code, 403)
+
     def test_it_handles_bad_uuid(self):
         url = "/checks/not-uuid/name/"
         payload = {"name": "Alice Was Here"}

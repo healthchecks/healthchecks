@@ -1,7 +1,7 @@
 $(function () {
     var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
 
-    $(".timeout-grace").click(function() {
+    $(".rw .timeout-grace").click(function() {
         var code = $(this).closest("tr.checks-row").attr("id");
         if (!code) {
             code = this.dataset.code;

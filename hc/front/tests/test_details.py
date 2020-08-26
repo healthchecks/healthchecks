@@ -45,3 +45,14 @@ class DetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url + "?new")
         self.assertContains(r, "Your new check is ready!", status_code=200)
+
+    def test_it_hides_actions_from_readonly_users(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertNotContains(r, "edit-name", status_code=200)
+        self.assertNotContains(r, "edit-desc")
+        self.assertNotContains(r, "Change Schedule")

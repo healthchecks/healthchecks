@@ -20,7 +20,7 @@ def pricing(request, code=None):
         if not request.user.is_authenticated:
             raise Http404()
 
-        project = _get_project_for_user(request, code)
+        project, rw = _get_project_for_user(request, code)
         if project.owner != request.user:
             ctx = {"page": "pricing", "project": project}
             return render(request, "payments/pricing_not_owner.html", ctx)

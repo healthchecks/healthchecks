@@ -40,9 +40,9 @@
     padding: 6px;
 }
 
-#checks-table tr:hover .my-checks-name,
-#checks-table tr:hover .integrations,
-#checks-table tr:hover .timeout-grace,
+#checks-table.rw tr:hover .my-checks-name,
+#checks-table.rw tr:hover .integrations,
+#checks-table.rw tr:hover .timeout-grace,
 #checks-table tr:hover .last-ping {
     border: 1px dotted #AAA;
     cursor: pointer;

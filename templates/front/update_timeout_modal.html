@@ -128,7 +128,7 @@
                     </div>
 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button id="update-cron-submit" type="submit" class="btn btn-primary">
+                    <button id="update-cron-submit" type="submit" class="btn btn-primary" {% if not rw %}disabled{% endif %}>
                         Save
                     </button>
                 </div>

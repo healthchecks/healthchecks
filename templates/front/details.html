@@ -41,7 +41,9 @@
     <div id="details-head" class="col-sm-12">
         <h1>
             {{ check.name_then_code }}
+            {% if rw %}
             <small><a id="edit-name" href="#">(edit&hellip;)</a></small>
+            {% endif %}
         </h1>
         {% for tag in check.tags_list %}
             <span class="label label-tag">{{ tag }}</span>
@@ -49,6 +51,7 @@
     </div>
 
     <div class="col-sm-5">
+        {% if rw %}
         <div class="details-block">
             <h2>Description</h2>
             {% if check.desc %}
@@ -62,6 +65,12 @@
             <small><a id="edit-desc" href="#">Add description&hellip;</a></small>
             {% endif %}
         </div>
+        {% elif check.desc %}
+        <div class="details-block">
+            <h2>Description</h2>
+            {{ check.desc|linebreaks|urlize }}
+        </div>
+        {% endif %}
 
         <div id="how-to-ping" class="details-block">
             <h2>How To Ping</h2>
@@ -173,7 +182,8 @@
                     </td>
                 </tr>
             </table>
-            <div class="text-right">
+            {% if rw %}
+            <div class="text-right rw">
                 <button
                     id="edit-timeout"
                     class="btn btn-sm btn-default timeout-grace"
@@ -186,6 +196,7 @@
                     data-tz="{{ check.tz }}">
                     Change Schedule&hellip;</button>
             </div>
+            {% endif %}
         </div>
 
         <div class="details-block">
@@ -248,7 +259,7 @@
 
     </div>
 
-    <div id="events" class="col-sm-7">
+    <div id="events" class="col-sm-7" data-status-url="{% url 'hc-status-single' check.code %}">
         <h2>
             Log
             <small class="hidden-xs">Click on individual items for details</small>

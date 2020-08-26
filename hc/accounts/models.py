@@ -379,6 +379,7 @@ class Member(models.Model):
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
     project = models.ForeignKey(Project, models.CASCADE)
     transfer_request_date = models.DateTimeField(null=True, blank=True)
+    rw = models.BooleanField(default=True)
 
     class Meta:
         constraints = [

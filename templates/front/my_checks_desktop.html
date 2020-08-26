@@ -1,7 +1,7 @@
 {% load hc_extras static %}
 <table
     id="checks-table"
-    class="table"
+    class="table {% if rw %}rw{% endif%}"
     data-list-url="{% url 'hc-checks' project.code %}"
     data-status-url="{% url 'hc-status' project.code %}">
     <tr>

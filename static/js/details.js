@@ -72,7 +72,7 @@ $(function () {
         });
     });
 
-    var statusUrl = document.getElementById("edit-timeout").dataset.statusUrl;
+    var statusUrl = document.getElementById("events").dataset.statusUrl;
     var lastStatusText = "";
     var lastUpdated = "";
     adaptiveSetInterval(function() {
