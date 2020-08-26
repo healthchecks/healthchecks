@@ -110,15 +110,23 @@ def _get_channel_for_user(request, code):
 
     assert request.user.is_authenticated
 
-    q = Channel.objects
-    if not request.user.is_superuser:
-        project_ids = request.profile.projects().values("id")
-        q = q.filter(project_id__in=project_ids)
+    channel = get_object_or_404(Channel.objects.select_related("project"), code=code)
+    if request.user.is_superuser:
+        return channel, True
 
-    try:
-        return q.get(code=code)
-    except Channel.DoesNotExist:
-        raise Http404("not found")
+    if request.user.id == channel.project.owner_id:
+        return channel, True
+
+    membership = get_object_or_404(Member, project=channel.project, user=request.user)
+    return channel, membership.rw
+
+
+def _get_rw_channel_for_user(request, code):
+    channel, rw = _get_channel_for_user(request, code)
+    if not rw:
+        raise PermissionDenied
+
+    return channel
 
 
 def _get_project_for_user(request, project_code):
@@ -693,6 +701,9 @@ def channels(request, code):
     project, rw = _get_project_for_user(request, code)
 
     if request.method == "POST":
+        if not rw:
+            return HttpResponseForbidden()
+
         code = request.POST["channel"]
         try:
             channel = Channel.objects.get(code=code)
@@ -722,6 +733,7 @@ def channels(request, code):
 
     ctx = {
         "page": "channels",
+        "rw": rw,
         "project": project,
         "profile": project.owner_profile,
         "channels": channels,
@@ -746,7 +758,7 @@ def channels(request, code):
 
 @login_required
 def channel_checks(request, code):
-    channel = _get_channel_for_user(request, code)
+    channel = _get_rw_channel_for_user(request, code)
 
     assigned = set(channel.checks.values_list("code", flat=True).distinct())
     checks = Check.objects.filter(project=channel.project).order_by("created")
@@ -759,7 +771,7 @@ def channel_checks(request, code):
 @require_POST
 @login_required
 def update_channel_name(request, code):
-    channel = _get_channel_for_user(request, code)
+    channel = _get_rw_channel_for_user(request, code)
 
     form = forms.ChannelNameForm(request.POST)
     if form.is_valid():
@@ -817,7 +829,7 @@ def unsubscribe_email(request, code, signed_token):
 @require_POST
 @login_required
 def send_test_notification(request, code):
-    channel = _get_channel_for_user(request, code)
+    channel, rw = _get_channel_for_user(request, code)
 
     dummy = Check(name="TEST", status="down")
     dummy.last_ping = timezone.now() - td(days=1)
@@ -846,7 +858,7 @@ def send_test_notification(request, code):
 @require_POST
 @login_required
 def remove_channel(request, code):
-    channel = _get_channel_for_user(request, code)
+    channel = _get_rw_channel_for_user(request, code)
     project = channel.project
     channel.delete()
 
@@ -926,7 +938,7 @@ def add_webhook(request, code):
 
 @login_required
 def edit_webhook(request, code):
-    channel = _get_channel_for_user(request, code)
+    channel = _get_rw_channel_for_user(request, code)
     if channel.kind != "webhook":
         return HttpResponseBadRequest()
 

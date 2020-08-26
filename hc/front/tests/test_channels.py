@@ -108,3 +108,16 @@ class ChannelsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.channels_url)
         self.assertContains(r, "broken-channels", status_code=200)
+
+    def test_it_hides_actions_from_readonly_users(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        Channel.objects.create(project=self.project, kind="webhook", value="{}")
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.channels_url)
+
+        self.assertNotContains(r, "Add Integration", status_code=200)
+        self.assertNotContains(r, "icon-delete")
+        self.assertNotContains(r, "edit_webhook")

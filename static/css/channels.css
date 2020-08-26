@@ -54,7 +54,6 @@ table.channels-table > tbody > tr > th {
 .edit-name, .edit-checks {
     padding: 12px 6px;
     border: 1px solid transparent;
-    cursor: pointer;
 }
 
 .edit-name .channel-details-mini {
@@ -70,9 +69,10 @@ table.channels-table > tbody > tr > th {
     color: #111;
 }
 
-.channel-row:hover .edit-name,
-.channel-row:hover .edit-checks {
+.rw .channel-row:hover .edit-name,
+.rw .channel-row:hover .edit-checks {
     border: 1px dotted #AAA;
+    cursor: pointer;
 }
 
 .edit-checks {

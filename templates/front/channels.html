@@ -16,7 +16,7 @@
 
 <div class="col-sm-12">
     {% if channels %}
-    <table class="table channels-table">
+    <table class="table channels-table {% if rw %}rw{% endif %}">
         <tr>
             <th></th>
             <th class="th-name">Name, Details</th>
@@ -132,7 +132,7 @@
                 {% endif %}
             </td>
             <td class="actions">
-                {% if ch.kind == "webhook" %}
+                {% if ch.kind == "webhook" and rw %}
                 <a class="btn btn-sm btn-default" href="{% url 'hc-edit-webhook' ch.code %}">Edit</a>
                 {% endif %}
                 <form action="{% url 'hc-channel-test' ch.code %}" method="post">
@@ -145,6 +145,7 @@
                         Test!
                     </button>
                 </form>
+                {% if rw %}
                 <button
                     data-kind="{{ ch.get_kind_display }}"
                     data-url="{% url 'hc-remove-channel' ch.code %}"
@@ -152,6 +153,7 @@
                     type="button">
                     <span class="icon-delete"></span>
                 </button>
+                {% endif %}
             </td>
             <td>
 
@@ -173,6 +175,7 @@
     {% endif %}
 
 
+    {% if rw %}
     <h1 class="ai-title">Add More</h1>
     <ul class="add-integration">
         <li>
@@ -431,6 +434,7 @@
         </li>
 
     </ul>
+    {% endif %}
 </div>
 </div>
 
@@ -472,6 +476,7 @@
     </div>
 </div>
 
+{% if rw  %}
 {% for ch in channels %}
 <div id="name-{{ ch.code }}" class="modal channel-modal">
     <div class="modal-dialog">
@@ -566,6 +571,7 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
 
 {% endblock %}
 
