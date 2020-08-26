@@ -9,6 +9,8 @@ class CopyCheckTestCase(BaseTestCase):
         self.check.name = "Foo"
         self.check.subject = "success-keyword"
         self.check.subject_fail = "failure-keyword"
+        self.check.methods = "POST"
+        self.check.manual_resume = True
         self.check.save()
 
         self.copy_url = "/checks/%s/copy/" % self.check.code
@@ -17,9 +19,12 @@ class CopyCheckTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.copy_url, follow=True)
         self.assertContains(r, "This is a brand new check")
-        self.assertContains(r, "Foo (copy)")
-        self.assertContains(r, "success-keyword")
-        self.assertContains(r, "failure-keyword")
+
+        copy = Check.objects.get(name="Foo (copy)")
+        self.assertEqual(copy.subject, "success-keyword")
+        self.assertEqual(copy.subject_fail, "failure-keyword")
+        self.assertEqual(copy.methods, "POST")
+        self.assertTrue(copy.manual_resume)
 
     def test_it_obeys_limit(self):
         self.profile.check_limit = 0
