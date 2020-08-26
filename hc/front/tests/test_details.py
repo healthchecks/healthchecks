@@ -61,3 +61,16 @@ class DetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "Create a Copy&hellip;")
         self.assertNotContains(r, "transfer-btn")
         self.assertNotContains(r, "details-remove-check")
+
+    def test_it_hides_resume_action_from_readonly_users(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.check.status = "paused"
+        self.check.manual_resume = True
+        self.check.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertNotContains(r, "resume-btn", status_code=200)

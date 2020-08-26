@@ -8,7 +8,9 @@
         This check is late. Last ping was {{ check.last_ping|naturaltime }}.
     {% elif status == "paused" and check.manual_resume %}
         This check is paused, and will ignore pings until resumed.
+        {% if rw %}
         <a id="resume-btn" href="#">(Resume&nbsp;Now)</a>
+        {% endif %}
     {% elif status == "paused" %}
         This check is paused.
     {% elif status == "new" and check.n_pings %}

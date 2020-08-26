@@ -494,7 +494,7 @@ def pause(request, code):
 @require_POST
 @login_required
 def resume(request, code):
-    check, rw = _get_check_for_user(request, code)
+    check = _get_rw_check_for_user(request, code)
 
     check.status = "new"
     check.last_start = None
