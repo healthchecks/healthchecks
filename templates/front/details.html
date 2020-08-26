@@ -232,6 +232,7 @@
             {% endif %}
         </div>
 
+        {% if rw %}
         <div class="details-block">
             <h2>Danger Zone</h2>
             <p>Copy, Transfer, or permanently remove this check.</p>
@@ -239,7 +240,6 @@
             <div class="text-right">
                 {% if project.num_checks_available > 0 %}
                 <button
-                    id="copy-btn"
                     data-toggle="modal"
                     data-target="#copy-modal"
                     class="btn btn-sm btn-default">Create a Copy&hellip;</button>
@@ -260,7 +260,7 @@
                     class="btn btn-sm btn-default">Remove</button>
             </div>
         </div>
-
+        {% endif %}
     </div>
 
     <div id="events" class="col-sm-7" data-status-url="{% url 'hc-status-single' check.code %}">

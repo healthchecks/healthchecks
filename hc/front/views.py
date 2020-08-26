@@ -500,6 +500,9 @@ def resume(request, code):
 @login_required
 def remove_check(request, code):
     check, rw = _get_check_for_user(request, code)
+    if not rw:
+        return HttpResponseForbidden()
+
     project = check.project
     check.delete()
     return redirect("hc-checks", project.code)
@@ -579,6 +582,8 @@ def details(request, code):
 @login_required
 def transfer(request, code):
     check, rw = _get_check_for_user(request, code)
+    if not rw:
+        return HttpResponseForbidden()
 
     if request.method == "POST":
         target_project, rw = _get_project_for_user(request, request.POST["project"])
@@ -600,6 +605,8 @@ def transfer(request, code):
 @login_required
 def copy(request, code):
     check, rw = _get_check_for_user(request, code)
+    if not rw:
+        return HttpResponseForbidden()
 
     if check.project.num_checks_available() <= 0:
         return HttpResponseBadRequest()

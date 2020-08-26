@@ -63,3 +63,13 @@ class TransferTestCase(BaseTestCase):
         payload = {"project": self.charlies_project.code}
         r = self.client.post(self.url, payload)
         self.assertEqual(r.status_code, 404)
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        payload = {"project": self.project.code}
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, payload)
+        self.assertEqual(r.status_code, 403)

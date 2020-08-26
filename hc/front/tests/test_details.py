@@ -58,3 +58,6 @@ class DetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "Filtering Rules")
         self.assertNotContains(r, "pause-btn")
         self.assertNotContains(r, "Change Schedule")
+        self.assertNotContains(r, "Create a Copy&hellip;")
+        self.assertNotContains(r, "transfer-btn")
+        self.assertNotContains(r, "details-remove-check")
