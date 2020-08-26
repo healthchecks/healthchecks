@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Handle excessively long email addresses in the signup form
 - Handle excessively long email addresses in the team member invite form
 - Don't allow duplicate team memberships
+- When copying a check, also copy the "failure keyword" field (#417)
 
 ## v1.16.0 - 2020-08-04
 

@@ -593,6 +593,7 @@ def copy(request, code):
     copied.name = check.name + " (copy)"
     copied.desc, copied.tags = check.desc, check.tags
     copied.subject = check.subject
+    copied.subject_fail = check.subject_fail
 
     copied.kind = check.kind
     copied.timeout, copied.grace = check.timeout, check.grace
