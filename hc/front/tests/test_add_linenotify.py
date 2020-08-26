@@ -1,6 +1,7 @@
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
+
 class AddLineNotifyTestCase(BaseTestCase):
     url = "/integrations/add_linenotify/"
 
@@ -37,3 +38,11 @@ class AddLineNotifyTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.value, "foo123")
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 403)

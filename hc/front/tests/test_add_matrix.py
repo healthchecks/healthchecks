@@ -1,4 +1,3 @@
-from json import JSONDecodeError
 from unittest.mock import patch
 
 from django.test.utils import override_settings
@@ -49,3 +48,11 @@ class AddMatrixTestCase(BaseTestCase):
 
         self.assertContains(r, "Matrix server returned status code 429")
         self.assertFalse(Channel.objects.exists())
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 403)

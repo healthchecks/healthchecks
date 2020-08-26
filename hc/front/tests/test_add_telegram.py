@@ -90,3 +90,14 @@ class AddTelegramTestCase(BaseTestCase):
             else:
                 # JSON decodes but message structure not recognized
                 self.assertEqual(r.status_code, 200)
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        payload = signing.dumps((123, "group", "My Group"))
+
+        self.client.login(username="bob@example.org", password="password")
+        form = {"project": str(self.project.code)}
+        r = self.client.post(self.url + "?" + payload, form)
+        self.assertEqual(r.status_code, 403)

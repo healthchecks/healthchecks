@@ -24,3 +24,15 @@ class AddPdcCompleteTestCase(BaseTestCase):
 
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        session = self.client.session
+        session["pd"] = "1234567890AB"
+        session.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 403)

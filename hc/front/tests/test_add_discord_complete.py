@@ -74,3 +74,11 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url + "?code=12345678&state=bar")
         self.assertEqual(r.status_code, 404)
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url + "?code=12345678&state=bar")
+        self.assertEqual(r.status_code, 403)

@@ -69,3 +69,12 @@ class AddPushbulletTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 404)
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 403)

@@ -32,3 +32,11 @@ class AddPdTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.value, "123456")
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 403)

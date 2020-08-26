@@ -79,3 +79,11 @@ class AddPushoverTestCase(BaseTestCase):
         params = "?pushover_user_key=a&state=INVALID&prio=0"
         r = self.client.get(self.url + params)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_requires_rw_access(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 403)
