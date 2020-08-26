@@ -149,7 +149,7 @@ class CreateCheckTestCase(BaseTestCase):
             expected_fragment="name is too long",
         )
 
-    def test_unique_accepts_only_whitelisted_values(self):
+    def test_unique_accepts_only_specific_values(self):
         self.post(
             {"api_key": "X" * 32, "name": "Foo", "unique": ["status"]},
             expected_fragment="unexpected value",

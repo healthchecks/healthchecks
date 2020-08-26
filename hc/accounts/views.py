@@ -11,11 +11,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
-from django.http import (
-    HttpResponseForbidden,
-    HttpResponseBadRequest,
-    HttpResponseNotFound,
-)
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.urls import resolve, Resolver404
@@ -27,7 +23,7 @@ from hc.api.models import Channel, Check, TokenBucket
 from hc.lib.date import choose_next_report_date
 from hc.payments.models import Subscription
 
-NEXT_WHITELIST = (
+POST_LOGIN_ROUTES = (
     "hc-checks",
     "hc-details",
     "hc-log",
@@ -39,7 +35,7 @@ NEXT_WHITELIST = (
 )
 
 
-def _is_whitelisted(redirect_url):
+def _allow_redirect(redirect_url):
     if not redirect_url:
         return False
 
@@ -49,7 +45,7 @@ def _is_whitelisted(redirect_url):
     except Resolver404:
         return False
 
-    return match.url_name in NEXT_WHITELIST
+    return match.url_name in POST_LOGIN_ROUTES
 
 
 def _make_user(email, with_project=True):
@@ -86,7 +82,7 @@ def _redirect_after_login(request):
     """ Redirect to the URL indicated in ?next= query parameter. """
 
     redirect_url = request.GET.get("next")
-    if _is_whitelisted(redirect_url):
+    if _allow_redirect(redirect_url):
         return redirect(redirect_url)
 
     if request.user.project_set.count() == 1:
@@ -111,7 +107,7 @@ def login(request):
             magic_form = forms.EmailLoginForm(request.POST)
             if magic_form.is_valid():
                 redirect_url = request.GET.get("next")
-                if not _is_whitelisted(redirect_url):
+                if not _allow_redirect(redirect_url):
                     redirect_url = None
 
                 profile = Profile.objects.for_user(magic_form.user)
