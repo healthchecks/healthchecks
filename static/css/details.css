@@ -73,7 +73,7 @@
     background: #22bc66;
 }
 
-#details-integrations tr:hover th, #details-integrations tr:hover td {
+#details-integrations.rw tr:hover th, #details-integrations.rw tr:hover td {
     cursor: pointer;
     background-color: #f5f5f5;
 }

@@ -230,6 +230,8 @@ def status(request, code):
 @require_POST
 def switch_channel(request, code, channel_code):
     check, rw = _get_check_for_user(request, code)
+    if not rw:
+        return HttpResponseForbidden()
 
     channel = get_object_or_404(Channel, code=channel_code)
     if channel.project_id != check.project_id:

@@ -206,7 +206,7 @@
         <div class="details-block">
             <h2>Notification Methods</h2>
             {% if channels %}
-            <table id="details-integrations" class="table">
+            <table id="details-integrations" class="table {% if rw %}rw{% endif %}">
             {% for channel in channels %}
                 <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in enabled_channels %}class="on"{% endif %}>
                     <th>
