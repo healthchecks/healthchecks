@@ -85,6 +85,10 @@ suit your needs.
 
 ## Looking up Your Machine's Time Zone
 
+If your cron job consistently pings SITE_NAME an hour early or an hour late,
+the likely cause is a timezone mismatch: your machine may be using a different timezone
+than what is configured on SITE_NAME.
+
 On modern GNU/Linux systems, you can look up the time zone using the
 `timedatectl status` command and looking for "Time zone" in its output:
 
@@ -98,4 +102,21 @@ $ timedatectl status
 System clock synchronized: yes
               NTP service: active
           RTC in local TZ: no
+```
+
+## Viewing cron logs using `journalctl`
+
+On a systemd-based system, you can use the `journalctl` utility to see system logs,
+including logs from the cron daemon.
+
+To see live logs:
+
+```bash
+journalctl -f
+```
+
+To see logs from e.g. the last hour, and only from the cron daemon:
+
+```bash
+journalctl --since "1 hour ago" -t CRON
 ```

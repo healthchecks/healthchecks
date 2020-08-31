@@ -79,6 +79,9 @@ Transient error is a timeout or an HTTP 5xx response code.</dd>
 <dd>Redirect curl's stdout to /dev/null (error messages still go to stderr).</dd>
 </dl>
 <h2>Looking up Your Machine's Time Zone</h2>
+<p>If your cron job consistently pings SITE_NAME an hour early or an hour late,
+the likely cause is a timezone mismatch: your machine may be using a different timezone
+than what is configured on SITE_NAME.</p>
 <p>On modern GNU/Linux systems, you can look up the time zone using the
 <code>timedatectl status</code> command and looking for "Time zone" in its output:</p>
 <div class="text highlight"><pre><span></span><code>$ timedatectl status
@@ -90,4 +93,17 @@ Transient error is a timeout or an HTTP 5xx response code.</dd>
 </span>System clock synchronized: yes
               NTP service: active
           RTC in local TZ: no
+</code></pre></div>
+
+
+<h2>Viewing cron logs using <code>journalctl</code></h2>
+<p>On a systemd-based system, you can use the <code>journalctl</code> utility to see system logs,
+including logs from the cron daemon.</p>
+<p>To see live logs:</p>
+<div class="bash highlight"><pre><span></span><code>journalctl -f
+</code></pre></div>
+
+
+<p>To see logs from e.g. the last hour, and only from the cron daemon:</p>
+<div class="bash highlight"><pre><span></span><code>journalctl --since <span class="s2">&quot;1 hour ago&quot;</span> -t CRON
 </code></pre></div>
