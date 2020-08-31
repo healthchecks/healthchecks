@@ -83,10 +83,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertFalse(member.user.project_set.exists())
 
         # And an email should have been sent
-        subj = (
-            "You have been invited to join"
-            " Alice's Project on %s" % settings.SITE_NAME
-        )
+        subj = f"You have been invited to join Alices Project on {settings.SITE_NAME}"
         self.assertHTMLEqual(mail.outbox[0].subject, subj)
 
     def test_it_adds_readonly_team_member(self):

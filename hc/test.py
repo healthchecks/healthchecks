@@ -14,7 +14,7 @@ class BaseTestCase(TestCase):
         self.alice.save()
 
         self.project = Project(owner=self.alice, api_key="X" * 32)
-        self.project.name = "Alice's Project"
+        self.project.name = "Alices Project"
         self.project.badge_key = self.alice.username
         self.project.save()
 

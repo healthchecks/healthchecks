@@ -64,14 +64,14 @@
                     {% csrf_token %}
                     <h2>My Projects</h2>
 
-                    {% if projects %}
+                    {% if profile.projects.exists %}
                     <table id="my-projects" class="table">
                         <tr>
                             <th>Project</th>
                             <th>My role</th>
                             <th></th>
                         </tr>
-                        {% for project in profile.projects %}
+                        {% for project in request.user.project_set.all %}
                         <tr>
                             <td>
                                 <div class="name">
@@ -80,25 +80,37 @@
                                     </a>
                                 </div>
                             </td>
+                            <td>Owner</td>
                             <td>
-                                {% if project.owner == request.user %}
-                                Owner
-                                {% else %}
-                                Collaborator
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if project.owner == request.user %}
                                 <a
                                     href="{% url 'hc-project-settings' project.code %}"
                                     class="pull-right">Settings</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {% for m in request.user.memberships.all %}
+                        <tr>
+                            <td>
+                                <div class="name">
+                                    <a href="{% url 'hc-checks' m.project.code %}">
+                                        {{ m.project }}
+                                    </a>
+                                </div>
+                            </td>
+                            <td>
+                                {% if m.rw %}
+                                Member
                                 {% else %}
+                                Read-only
+                                {% endif %}
+                            </td>
+                            <td>
                                 <a
                                     href="#"
-                                    data-name="{{ project }}"
-                                    data-code="{{ project.code }}"
+                                    data-name="{{ m.project }}"
+                                    data-code="{{ m.project.code }}"
                                     class="pull-right leave-project">Leave</a>
-                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
@@ -112,7 +124,7 @@
                         href="#"
                         class="btn btn-default pull-right"
                         data-toggle="modal"
-                        data-target="#add-project-modal">Create New Project</a>
+                        data-target="#add-project-modal">Create a New Project</a>
             </div>
 
             {% if left_project %}

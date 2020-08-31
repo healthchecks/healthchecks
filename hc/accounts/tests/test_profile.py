@@ -113,8 +113,8 @@ class ProfileTestCase(BaseTestCase):
 
         form = {"code": str(self.project.code), "leave_project": "1"}
         r = self.client.post("/accounts/profile/", form)
-        self.assertContains(r, "Left project")
-        self.assertNotContains(r, "Alice's Project")
+        self.assertContains(r, "Left project <strong>Alices Project</strong>")
+        self.assertNotContains(r, "Member")
 
         self.bobs_profile.refresh_from_db()
         self.assertFalse(self.bob.memberships.exists())
@@ -125,3 +125,28 @@ class ProfileTestCase(BaseTestCase):
         form = {"code": str(self.project.code), "leave_project": "1"}
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 400)
+
+    def test_it_shows_project_membership(self):
+        self.client.login(username="bob@example.org", password="password")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "Alices Project")
+        self.assertContains(r, "Member")
+
+    def test_it_shows_readonly_project_membership(self):
+        self.bobs_membership.rw = False
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "Alices Project")
+        self.assertContains(r, "Read-only")
+
+    def test_it_handles_no_projects(self):
+        self.project.delete()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "You do not have any projects. Create one!")

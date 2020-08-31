@@ -219,9 +219,6 @@ def profile(request):
             ctx["left_project"] = project
             ctx["my_projects_status"] = "info"
 
-    # Retrieve projects right before rendering the template--
-    # The list of the projects might have *just* changed
-    ctx["projects"] = list(profile.projects())
     return render(request, "accounts/profile.html", ctx)
 
 
