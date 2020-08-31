@@ -1,15 +1,15 @@
 <h1>Attaching Logs</h1>
 <p>SITE_NAME ping endpoints accept HTTP HEAD, GET and POST request methods.</p>
 <p>When using HTTP POST, <strong>you can include arbitrary payload in the request body</strong>.
-If the request body looks like a UTF-8 string, SITE_NAME will log the first 10 kilobytes of
-the request body, so you can inspect it later.</p>
+If the request body looks like a UTF-8 string, SITE_NAME will log the
+first 10 kilobytes (10 000 bytes) of the request body, so you can inspect it later.</p>
 <h2>Logging Command Output</h2>
 <p>In this example, we run <code>certbot renew</code>, capture its output, and submit
 the captured output to SITE_NAME:</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
-curl -fsS --retry <span class="m">3</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
+curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
 </code></pre></div>
 
 
@@ -23,12 +23,45 @@ depending on the exit code:</p>
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
 
 <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">url</span><span class="o">=</span><span class="nv">$url</span>/fail<span class="p">;</span> <span class="k">fi</span>
-curl -fsS --retry <span class="m">3</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> <span class="nv">$url</span>
+curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> <span class="nv">$url</span>
 </code></pre></div>
 
 
-<h2>All in One Line</h2>
-<p>Finally, all of the above can be packaged in a single line. The one-line
-version can be put directly in crontab, without using a wrapper script.</p>
+<p>The above script can be packaged in a single line. The one-line
+version sacrifices some readability, but it can be used directly in crontab,
+without using a wrapper script:</p>
 <div class="bash highlight"><pre><span></span><code><span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span><span class="p">;</span> curl -fsS --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> <span class="s2">&quot;PING_URL</span><span class="k">$(</span><span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> -n /fail<span class="k">)</span><span class="s2">&quot;</span>
 </code></pre></div>
+
+
+<h2>Using Runitor</h2>
+<p><a href="https://github.com/bdd/runitor">Runitor</a> is a third party utility that runs the
+supplied command, captures its output and and reports to SITE_NAME.
+It also measures the execution time, and retries HTTP requests on transient errors.
+Best of all, the syntax is simple and clean:</p>
+<div class="bash highlight"><pre><span></span><code>runitor -uuid your-uuid-here -- /usr/bin/certbot renew
+</code></pre></div>
+
+
+<h2>Handling More Than 10KB of Logs</h2>
+<p>While SITE_NAME can store a small amount of logs in a pinch, it is not specifically
+designed for that. If you run into the issue of logs getting cut off, consider
+the following options:</p>
+<ul>
+<li>See if the logs can be made less verbose. For example, if you have a batch job
+that outputs a line of text per item processed, perhaps it can output a short
+summary with the totals instead.</li>
+<li>If the important content is usually at the end, submit the <strong>last 10KB</strong> instead
+of the first. Here is an example that submits the last 10KB of <code>dmesg</code> output:</li>
+</ul>
+<div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+
+<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>dmesg <span class="p">|</span> tail --bytes<span class="o">=</span><span class="m">10000</span><span class="k">)</span>
+curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
+</code></pre></div>
+
+
+<ul>
+<li>Finally, if for your use case it is critical to capture the entire log output,
+consider using a dedicated log aggregation service for capturing the logs.</li>
+</ul>
