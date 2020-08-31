@@ -37,6 +37,22 @@ The members **can not**:
 * manage project's billing
 * remove the project
 
+## Read-only Access
+
+When inviting a team member, their membership can be marked as read-only:
+
+![The Access Level parameter in the Invite form](IMG_URL/invite_member.png)
+
+Read-only members can:
+
+* view checks, including check details and ping logs
+* view integrations
+* give up their membership
+
+Read-only members can not modify checks, integrations or project settings.
+They also cannot access project's API keys as that would effectively give them
+read-write access through API.
+
 ## Projects and Check Limits
 
 **Check limit** is the total number of checks your account can have. The specific
