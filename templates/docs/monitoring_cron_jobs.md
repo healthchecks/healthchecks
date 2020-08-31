@@ -104,7 +104,7 @@ System clock synchronized: yes
           RTC in local TZ: no
 ```
 
-## Viewing cron logs using `journalctl`
+## Viewing Cron Logs Using `journalctl`
 
 On a systemd-based system, you can use the `journalctl` utility to see system logs,
 including logs from the cron daemon.
