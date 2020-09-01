@@ -259,8 +259,3 @@ class AddZulipForm(forms.Form):
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
-
-
-class AddLineNotifyForm(forms.Form):
-    error_css_class = "has-error"
-    token = forms.CharField(max_length=50)
