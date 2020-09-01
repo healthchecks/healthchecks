@@ -30,6 +30,7 @@ channel_urls = [
         name="hc-add-pushbullet-complete",
     ),
     path("add_discord/", views.add_discord_complete, name="hc-add-discord-complete"),
+    path("add_linenotify/", views.add_linenotify_complete),
     path("add_pushover/", views.pushover_help, name="hc-pushover-help"),
     path("telegram/", views.telegram_help, name="hc-telegram-help"),
     path("telegram/bot/", views.telegram_bot, name="hc-telegram-webhook"),

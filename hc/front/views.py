@@ -290,7 +290,9 @@ def index(request):
         "check": check,
         "ping_url": check.url(),
         "enable_apprise": settings.APPRISE_ENABLED is True,
+        "enable_call": settings.TWILIO_AUTH is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
+        "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
@@ -298,7 +300,6 @@ def index(request):
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
-        "enable_call": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
@@ -738,7 +739,9 @@ def channels(request, code):
         "profile": project.owner_profile,
         "channels": channels,
         "enable_apprise": settings.APPRISE_ENABLED is True,
+        "enable_call": settings.TWILIO_AUTH is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
+        "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
@@ -746,7 +749,6 @@ def channels(request, code):
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
-        "enable_call": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
@@ -1819,21 +1821,82 @@ def add_spike(request, code):
     return render(request, "integrations/add_spike.html", ctx)
 
 
+@require_setting("LINENOTIFY_CLIENT_ID")
 @login_required
 def add_linenotify(request, code):
     project = _get_rw_project_for_user(request, code)
+    redirect_uri = settings.SITE_ROOT + reverse(add_linenotify_complete)
 
-    if request.method == "POST":
-        form = forms.AddLineNotifyForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="linenotify")
-            channel.value = form.cleaned_data["token"]
-            channel.save()
+    state = token_urlsafe()
+    authorize_url = " https://notify-bot.line.me/oauth/authorize?" + urlencode(
+        {
+            "client_id": settings.LINENOTIFY_CLIENT_ID,
+            "redirect_uri": redirect_uri,
+            "response_type": "code",
+            "state": state,
+            "scope": "notify",
+        }
+    )
 
-            channel.assign_all_checks()
-            return redirect("hc-p-channels", project.code)
-    else:
-        form = forms.AddLineNotifyForm()
+    ctx = {
+        "page": "channels",
+        "project": project,
+        "authorize_url": authorize_url,
+    }
 
-    ctx = {"page": "channels", "project": project, "form": form}
+    request.session["add_linenotify"] = (state, str(project.code))
     return render(request, "integrations/add_linenotify.html", ctx)
+
+
+@require_setting("LINENOTIFY_CLIENT_ID")
+@login_required
+def add_linenotify_complete(request):
+    if "add_linenotify" not in request.session:
+        return HttpResponseForbidden()
+
+    state, code = request.session.pop("add_linenotify")
+    if request.GET.get("state") != state:
+        return HttpResponseForbidden()
+
+    project = _get_rw_project_for_user(request, code)
+    if request.GET.get("error") == "access_denied":
+        messages.warning(request, "LINE Notify setup was cancelled.")
+        return redirect("hc-p-channels", project.code)
+
+    # Exchange code for access token
+    redirect_uri = settings.SITE_ROOT + reverse(add_linenotify_complete)
+    result = requests.post(
+        "https://notify-bot.line.me/oauth/token",
+        {
+            "grant_type": "authorization_code",
+            "code": request.GET.get("code"),
+            "redirect_uri": redirect_uri,
+            "client_id": settings.LINENOTIFY_CLIENT_ID,
+            "client_secret": settings.LINENOTIFY_CLIENT_SECRET,
+        },
+    )
+
+    doc = result.json()
+    if doc.get("status") != 200:
+        messages.warning(request, "Something went wrong.")
+        return redirect("hc-p-channels", project.code)
+
+    # Fetch notification target's name, will use it as channel name:
+    token = doc["access_token"]
+    result = requests.get(
+        "https://notify-api.line.me/api/status",
+        headers={"Authorization": "Bearer %s" % token},
+    )
+    doc = result.json()
+
+    channel = Channel(kind="linenotify", project=project)
+    channel.name = doc.get("target")
+    channel.value = token
+    channel.save()
+    channel.assign_all_checks()
+    messages.success(request, "The LINE Notify integration has been added!")
+
+    return redirect("hc-p-channels", project.code)
+
+
+# Forks: add custom views after this line

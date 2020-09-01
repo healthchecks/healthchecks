@@ -136,6 +136,8 @@ Configurations settings loaded from environment variables:
 | MATRIX_ACCESS_TOKEN | `None`
 | APPRISE_ENABLED | `"False"`
 | SHELL_ENABLED | `"False"`
+| LINENOTIFY_CLIENT_ID | `None`
+| LINENOTIFY_CLIENT_SECRET | `None`
 
 
 Some useful settings keys to override are:

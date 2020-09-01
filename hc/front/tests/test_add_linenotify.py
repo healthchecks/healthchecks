@@ -1,10 +1,9 @@
-from hc.api.models import Channel
+from django.test.utils import override_settings
 from hc.test import BaseTestCase
 
 
+@override_settings(LINENOTIFY_CLIENT_ID="t1", LINENOTIFY_CLIENT_SECRET="s1")
 class AddLineNotifyTestCase(BaseTestCase):
-    url = "/integrations/add_linenotify/"
-
     def setUp(self):
         super(AddLineNotifyTestCase, self).setUp()
         self.url = "/projects/%s/add_linenotify/" % self.project.code
@@ -12,32 +11,17 @@ class AddLineNotifyTestCase(BaseTestCase):
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "LineNotify")
+        self.assertContains(r, "notify-bot.line.me/oauth/authorize", status_code=200)
+        self.assertContains(r, "Connect LINE Notify")
 
-    def test_it_works(self):
-        form = {"token": "helloworld"}
+        # There should now be a key in session
+        self.assertTrue("add_linenotify" in self.client.session)
 
+    @override_settings(LINENOTIFY_CLIENT_ID=None)
+    def test_it_requires_client_id(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
-        self.assertRedirects(r, self.channels_url)
-
-        c = Channel.objects.get()
-        self.assertEqual(c.kind, "linenotify")
-        self.assertEqual(c.value, "helloworld")
-        self.assertEqual(c.project, self.project)
-
-    def test_it_handles_json_linenotify_value(self):
-        c = Channel(kind="linenotify", value="foo123")
-        self.assertEqual(c.linenotify_token, "foo123")
-
-    def test_it_save_token(self):
-        form = {"token": "foo123"}
-
-        self.client.login(username="alice@example.org", password="password")
-        self.client.post(self.url, form)
-
-        c = Channel.objects.get()
-        self.assertEqual(c.value, "foo123")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_requires_rw_access(self):
         self.bobs_membership.rw = False

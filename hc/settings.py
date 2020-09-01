@@ -219,6 +219,9 @@ APPRISE_ENABLED = envbool("APPRISE_ENABLED", "False")
 # Local shell commands
 SHELL_ENABLED = envbool("SHELL_ENABLED", "False")
 
+# LINE Notify
+LINENOTIFY_CLIENT_ID = os.getenv("LINENOTIFY_CLIENT_ID")
+LINENOTIFY_CLIENT_SECRET = os.getenv("LINENOTIFY_CLIENT_SECRET")
 
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *

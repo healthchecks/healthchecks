@@ -1,4 +1,3 @@
-import json
 from unittest.mock import patch
 
 from django.test.utils import override_settings
@@ -6,65 +5,67 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
-@override_settings(PUSHBULLET_CLIENT_ID="t1", PUSHBULLET_CLIENT_SECRET="s1")
-class AddPushbulletTestCase(BaseTestCase):
-    url = "/integrations/add_pushbullet/"
+@override_settings(LINENOTIFY_CLIENT_ID="t1", LINENOTIFY_CLIENT_SECRET="s1")
+class AddLineNotifyCompleteTestCase(BaseTestCase):
+    url = "/integrations/add_linenotify/"
 
-    @patch("hc.front.views.requests.post")
-    def test_it_handles_oauth_response(self, mock_post):
+    @patch("hc.front.views.requests")
+    def test_it_handles_oauth_response(self, mock_requests):
         session = self.client.session
-        session["add_pushbullet"] = ("foo", str(self.project.code))
+        session["add_linenotify"] = ("foo", str(self.project.code))
         session.save()
 
-        oauth_response = {"access_token": "test-token"}
+        mock_requests.post.return_value.json.return_value = {
+            "status": 200,
+            "access_token": "test-token",
+        }
 
-        mock_post.return_value.text = json.dumps(oauth_response)
-        mock_post.return_value.json.return_value = oauth_response
+        mock_requests.get.return_value.json.return_value = {"target": "Alice"}
 
-        url = self.url + "?code=12345678&state=foo&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=foo"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
         self.assertRedirects(r, self.channels_url)
-        self.assertContains(r, "The Pushbullet integration has been added!")
+        self.assertContains(r, "The LINE Notify integration has been added!")
 
         ch = Channel.objects.get()
         self.assertEqual(ch.value, "test-token")
+        self.assertEqual(ch.name, "Alice")
         self.assertEqual(ch.project, self.project)
 
         # Session should now be clean
-        self.assertFalse("add_pushbullet" in self.client.session)
+        self.assertFalse("add_linenotify" in self.client.session)
 
     def test_it_avoids_csrf(self):
         session = self.client.session
-        session["add_pushbullet"] = ("foo", str(self.project.code))
+        session["add_linenotify"] = ("foo", str(self.project.code))
         session.save()
 
-        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=bar"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.front.views.requests.post")
-    def test_it_handles_denial(self, mock_post):
+    def test_it_handles_denial(self):
         session = self.client.session
-        session["add_pushbullet"] = ("foo", str(self.project.code))
+        session["add_linenotify"] = ("foo", str(self.project.code))
         session.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url + "?error=access_denied", follow=True)
+        r = self.client.get(self.url + "?error=access_denied&state=foo", follow=True)
         self.assertRedirects(r, self.channels_url)
-        self.assertContains(r, "Pushbullet setup was cancelled")
+        self.assertContains(r, "LINE Notify setup was cancelled")
 
         self.assertEqual(Channel.objects.count(), 0)
 
         # Session should now be clean
-        self.assertFalse("add_pushbullet" in self.client.session)
+        self.assertFalse("add_linenotify" in self.client.session)
 
-    @override_settings(PUSHBULLET_CLIENT_ID=None)
+    @override_settings(LINENOTIFY_CLIENT_ID=None)
     def test_it_requires_client_id(self):
-        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=bar"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
@@ -74,7 +75,7 @@ class AddPushbulletTestCase(BaseTestCase):
         self.bobs_membership.rw = False
         self.bobs_membership.save()
 
-        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=bar"
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)

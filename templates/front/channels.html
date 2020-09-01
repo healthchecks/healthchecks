@@ -230,6 +230,7 @@
         </li>
         {% endif %}
 
+        {% if enable_linenotify %}
         <li>
             <img src="{% static 'img/integrations/linenotify.png' %}"
                 class="icon" alt="LINE Notify icon" />
@@ -238,6 +239,7 @@
             <p>Receive a notification on LINE when a check goes up or down.</p>
             <a href="{% url 'hc-add-linenotify' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_matrix %}
         <li>
