@@ -24,12 +24,8 @@ check_urls = [
 ]
 
 channel_urls = [
-    path(
-        "add_pushbullet/",
-        views.add_pushbullet_complete,
-        name="hc-add-pushbullet-complete",
-    ),
-    path("add_discord/", views.add_discord_complete, name="hc-add-discord-complete"),
+    path("add_pushbullet/", views.add_pushbullet_complete),
+    path("add_discord/", views.add_discord_complete),
     path("add_linenotify/", views.add_linenotify_complete),
     path("add_pushover/", views.pushover_help, name="hc-pushover-help"),
     path("telegram/", views.telegram_help, name="hc-telegram-help"),

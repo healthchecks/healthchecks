@@ -1206,13 +1206,12 @@ def add_mattermost(request, code):
 @login_required
 def add_pushbullet(request, code):
     project = _get_rw_project_for_user(request, code)
-    redirect_uri = settings.SITE_ROOT + reverse("hc-add-pushbullet-complete")
 
     state = token_urlsafe()
     authorize_url = "https://www.pushbullet.com/authorize?" + urlencode(
         {
             "client_id": settings.PUSHBULLET_CLIENT_ID,
-            "redirect_uri": redirect_uri,
+            "redirect_uri": settings.SITE_ROOT + reverse(add_pushbullet_complete),
             "response_type": "code",
             "state": state,
         }
@@ -1271,13 +1270,12 @@ def add_pushbullet_complete(request):
 @login_required
 def add_discord(request, code):
     project = _get_rw_project_for_user(request, code)
-    redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord-complete")
     state = token_urlsafe()
     auth_url = "https://discordapp.com/api/oauth2/authorize?" + urlencode(
         {
             "client_id": settings.DISCORD_CLIENT_ID,
             "scope": "webhook.incoming",
-            "redirect_uri": redirect_uri,
+            "redirect_uri": settings.SITE_ROOT + reverse(add_discord_complete),
             "response_type": "code",
             "state": state,
         }
@@ -1305,7 +1303,6 @@ def add_discord_complete(request):
     if request.GET.get("state") != state:
         return HttpResponseForbidden()
 
-    redirect_uri = settings.SITE_ROOT + reverse("hc-add-discord-complete")
     result = requests.post(
         "https://discordapp.com/api/oauth2/token",
         {
@@ -1313,7 +1310,7 @@ def add_discord_complete(request):
             "client_secret": settings.DISCORD_CLIENT_SECRET,
             "code": request.GET.get("code"),
             "grant_type": "authorization_code",
-            "redirect_uri": redirect_uri,
+            "redirect_uri": settings.SITE_ROOT + reverse(add_discord_complete),
         },
     )
 
@@ -1825,13 +1822,12 @@ def add_spike(request, code):
 @login_required
 def add_linenotify(request, code):
     project = _get_rw_project_for_user(request, code)
-    redirect_uri = settings.SITE_ROOT + reverse(add_linenotify_complete)
 
     state = token_urlsafe()
     authorize_url = " https://notify-bot.line.me/oauth/authorize?" + urlencode(
         {
             "client_id": settings.LINENOTIFY_CLIENT_ID,
-            "redirect_uri": redirect_uri,
+            "redirect_uri": settings.SITE_ROOT + reverse(add_linenotify_complete),
             "response_type": "code",
             "state": state,
             "scope": "notify",
@@ -1864,13 +1860,12 @@ def add_linenotify_complete(request):
         return redirect("hc-p-channels", project.code)
 
     # Exchange code for access token
-    redirect_uri = settings.SITE_ROOT + reverse(add_linenotify_complete)
     result = requests.post(
         "https://notify-bot.line.me/oauth/token",
         {
             "grant_type": "authorization_code",
             "code": request.GET.get("code"),
-            "redirect_uri": redirect_uri,
+            "redirect_uri": settings.SITE_ROOT + reverse(add_linenotify_complete),
             "client_id": settings.LINENOTIFY_CLIENT_ID,
             "client_secret": settings.LINENOTIFY_CLIENT_SECRET,
         },
