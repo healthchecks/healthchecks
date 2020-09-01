@@ -21,7 +21,7 @@ class AddPushbulletTestCase(BaseTestCase):
         mock_post.return_value.text = json.dumps(oauth_response)
         mock_post.return_value.json.return_value = oauth_response
 
-        url = self.url + "?code=12345678&state=foo&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=foo"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
@@ -40,7 +40,7 @@ class AddPushbulletTestCase(BaseTestCase):
         session["add_pushbullet"] = ("foo", str(self.project.code))
         session.save()
 
-        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=bar"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
@@ -64,7 +64,7 @@ class AddPushbulletTestCase(BaseTestCase):
 
     @override_settings(PUSHBULLET_CLIENT_ID=None)
     def test_it_requires_client_id(self):
-        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=foo"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
@@ -74,7 +74,7 @@ class AddPushbulletTestCase(BaseTestCase):
         self.bobs_membership.rw = False
         self.bobs_membership.save()
 
-        url = self.url + "?code=12345678&state=bar&project=%s" % self.project.code
+        url = self.url + "?code=12345678&state=foo"
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
