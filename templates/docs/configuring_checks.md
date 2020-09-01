@@ -56,13 +56,23 @@ for a late check.
 
 ## Filtering Rules
 
+In the "Filtering Rules" dialog you can control several advanced aspects of
+how SITE_NAME handles incoming pings for a particular check.
+
 ![Setting filtering rules](IMG_URL/filtering_rules.png)
 
-* **Allowed request methods for HTTP requests**: optionally require the HTTP ping
-requests to use HTTP POST. Use this if you run into issues of bots hitting the ping
-URLs when you send them in email or post them in chat.
-* **Subject must contain**: when pinging via [email](../email/), require a particular
-keyword in the subject line. SITE_NAME will ignore any email messages with the
-keyword missing. This is useful, for example, when backup software sends
-emails with "Backup Successful" or "Backup Failed" subject lines after each run,
-and you want SITE_NAME to ignore the "Backup Failed" messages.
+* **Allowed request methods for HTTP requests**. You can require the ping
+requests to use HTTP POST. Use the "Only POST" option if you run into issues of
+preview bots hitting the ping URLs when you send them in email or post them in chat.
+* **Filter by keywords in the Subject line**. When pinging via [email](../email/),
+look for specific keywords in the subject line. If the subject line contains any of
+the keywords listed in **Success Keywords**, SITE_NAME will assume it to be a success
+signal. Likewise, if it contains any of the keywords listed in **Failure Keywords**,
+SITE_NAME will treat it as an explicit failure signal.
+This is useful, for example, if your backup software sends an email after each backup
+run with a different subject line depending on success or failure.
+* **Pinging a Paused Check**. When you ping a paused check, normally it leaves
+the paused state and goes into the "up" or "down" state (depending on the type of
+the ping). This changes if you select the "Ignore the ping, stay in the paused state"
+option: the paused state becomes "sticky". SITE_NAME will ignore all incoming pings
+until you explicitly *resume* the check.
