@@ -27,7 +27,7 @@ POST_LOGIN_ROUTES = (
     "hc-checks",
     "hc-details",
     "hc-log",
-    "hc-p-channels",
+    "hc-channels",
     "hc-add-slack",
     "hc-add-pushover",
     "hc-add-telegram",

@@ -83,7 +83,7 @@ project_urls = [
     path("checks/metrics/<slug:key>", views.metrics,),
     path("metrics/<slug:key>", views.metrics, name="hc-metrics",),
     path("checks/status/", views.status, name="hc-status"),
-    path("integrations/", views.channels, name="hc-p-channels"),
+    path("integrations/", views.channels, name="hc-channels"),
 ]
 
 urlpatterns = [
