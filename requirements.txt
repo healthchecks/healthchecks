@@ -1,6 +1,6 @@
 cron-descriptor==1.2.24
 croniter==0.3.31
-Django==3.1
+Django==3.1.1
 django-compressor==2.4
 psycopg2==2.8.4
 pytz==2020.1
