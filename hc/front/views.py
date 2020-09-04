@@ -653,7 +653,7 @@ def status_single(request, code):
 
     doc = {
         "status": status,
-        "status_text": STATUS_TEXT_TMPL.render({"check": check}),
+        "status_text": STATUS_TEXT_TMPL.render({"check": check, "rw": rw}),
         "title": down_title(check),
         "updated": updated,
     }
