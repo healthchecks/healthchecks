@@ -1,5 +1,6 @@
 import asyncore
 import email
+import email.policy
 import re
 from smtpd import SMTPServer
 
@@ -41,7 +42,9 @@ def _process_message(remote_addr, mailfrom, mailto, data):
     action = "success"
     if check.subject or check.subject_fail:
         action = "ign"
-        subject = email.message_from_string(data).get("subject", "")
+        # Specify policy, the default policy does not decode encoded headers:
+        parsed = email.message_from_string(data, policy=email.policy.SMTP)
+        subject = parsed.get("subject", "")
         if check.subject and _match(subject, check.subject):
             action = "success"
         elif check.subject_fail and _match(subject, check.subject_fail):

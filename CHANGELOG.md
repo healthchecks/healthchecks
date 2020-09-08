@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - Don't allow duplicate team memberships
 - When copying a check, copy all fields from the "Filtering Rules" dialog (#417)
 - Fix missing Resume button (#421)
+- When decoding inbound emails, decode encoded headers (#420)
 
 ## v1.16.0 - 2020-08-04
 

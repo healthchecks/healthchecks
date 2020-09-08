@@ -98,3 +98,15 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.scheme, "email")
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, "fail")
+
+    def test_it_handles_encoded_subject(self):
+        self.check.subject = "SUCCESS"
+        self.check.save()
+
+        body = PAYLOAD_TMPL % "=?US-ASCII?B?W1NVQ0NFU1NdIEJhY2t1cCBjb21wbGV0ZWQ=?="
+        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "email")
+        self.assertEqual(ping.ua, "Email from foo@example.org")
+        self.assertEqual(ping.kind, None)
