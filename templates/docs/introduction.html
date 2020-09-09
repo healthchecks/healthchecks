@@ -1,12 +1,13 @@
 <h1>SITE_NAME Documentation</h1>
 <p>SITE_NAME is a service for monitoring cron jobs and similar periodic processes:</p>
 <ul>
-<li>SITE_NAME <strong>listens for HTTP requests ("pings")</strong> from services being monitored.</li>
+<li>SITE_NAME <strong>listens for HTTP requests ("pings")</strong> from your cron jobs and scheduled
+  tasks.</li>
 <li>It <strong>keeps silent</strong> as long as pings arrive on time.</li>
 <li>It <strong>raises an alert</strong> as soon as a ping does not arrive on time.</li>
 </ul>
 <p>SITE_NAME works as a <a href="https://en.wikipedia.org/wiki/Dead_man%27s_switch">dead man's switch</a> for processes that need to
-run continuously or on regular, known schedule. For example:</p>
+run continuously or on a regular, known schedule. For example:</p>
 <ul>
 <li>filesystem backups, database backups</li>
 <li>task queues</li>

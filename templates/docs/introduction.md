@@ -2,12 +2,13 @@
 
 SITE_NAME is a service for monitoring cron jobs and similar periodic processes:
 
-* SITE_NAME **listens for HTTP requests ("pings")** from services being monitored.
+* SITE_NAME **listens for HTTP requests ("pings")** from your cron jobs and scheduled
+  tasks.
 * It **keeps silent** as long as pings arrive on time.
 * It **raises an alert** as soon as a ping does not arrive on time.
 
 SITE_NAME works as a [dead man's switch](https://en.wikipedia.org/wiki/Dead_man%27s_switch) for processes that need to
-run continuously or on regular, known schedule. For example:
+run continuously or on a regular, known schedule. For example:
 
 * filesystem backups, database backups
 * task queues
