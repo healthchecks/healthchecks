@@ -1,7 +1,7 @@
 # Management API
 
-SITE_NAME Management API supports listing, creating, updating, pausing and deleting
-checks in user's account.
+With the Management API, you can programmatically manage checks and integrations
+in your account.
 
 ## API Endpoints
 
@@ -20,7 +20,7 @@ Endpoint Name                                         | Endpoint Address
 ## Authentication
 
 Your requests to SITE_NAME Management API must authenticate using an
-API key. API keys are project-specific, there are no account-wide API keys.
+API key. All API keys are project-specific. There are no account-wide API keys.
 By default, a project on SITE_NAME doesn't have an API key. You can create read-write
 and read-only API keys in the **Project Settings** page.
 
@@ -38,19 +38,19 @@ read-only key
     individual API endpoints for details.
 
 The client can authenticate itself by including an `X-Api-Key: <your-api-key>`
-header in a HTTP request. Alternatively, for POST requests with a JSON request body,
-the client can include an `api_key` field in the JSON document.
+header in an HTTP request. Alternatively, for POST requests with a JSON request body,
+the client can put an `api_key` field in the JSON document.
 See the [Create a new check](#create-check) section for an example.
 
 ## API Requests
 
-For POST requests, the SITE_NAME API expects request body to be
+For POST requests, the SITE_NAME API expects the request body to be
 a JSON document (*not* a `multipart/form-data` encoded form data).
 
 ## API Responses
 
 SITE_NAME uses HTTP status codes wherever possible.
-In general, 2xx class indicates success, 4xx indicates an client error,
+In general, 2xx class indicates success, 4xx indicates a client error,
 and 5xx indicates a server error.
 
 The response may contain a JSON document with additional data.
@@ -130,9 +130,13 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
 }
 ```
 
-When using the read-only API key, the following fields are omitted:
-`ping_url`, `update_url`, `pause_url`, `channels`.  An extra `unique_key` field
-is added which can be used [to `GET` a check](#get-check) in place of the `UUID`. The `unique_key` identifier is stable across API calls. Example:
+When using the read-only API key, SITE_NAME omits the following fields from responses:
+`ping_url`, `update_url`, `pause_url`, `channels`.  It adds an extra
+`unique_key` field. The `unique_key` identifier is stable across API calls, and
+you can use it in the [Get a single check](#get-check)
+and [Get a list of check's status changes](#list-flips) API calls.
+
+Example:
 
 ```json
 {
@@ -221,14 +225,13 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
 
 ### Example Read-Only Response
 
-When using the read-only API key, the following fields are omitted:
-`ping_url`, `update_url`, `pause_url`, `channels`.  An extra `unique_key` field is
-added. This identifier is stable across API calls.
+When using the read-only API key, SITE_NAME omits the following fields from responses:
+`ping_url`, `update_url`, `pause_url`, `channels`.  It adds an extra
+`unique_key` field. This identifier is stable across API calls.
 
-
-Note: the `ping_url`, `update_url` and `pause_url` fields, although omitted, are not
-really secret. The client already knows the check's unique UUID and so can easily
-construct these URLs by itself.
+Note: although API omits the `ping_url`, `update_url`, and `pause_url` in read-only
+API responses, the client can easily construct these URLs themselves *if* they know the
+check's unique UUID.
 
 ```json
 {
@@ -255,9 +258,10 @@ Creates a new check and returns its ping URL.
 All request parameters are optional and will use their default
 values if omitted.
 
-This API call can be used to create both "simple" and "cron" checks.
-To create a "simple" check, specify the "timeout" parameter.
-To create a "cron" check, specify the "schedule" and "tz" parameters.
+With this API call, you can create both Simple and Cron checks:
+
+* To create a Simple check, specify the `timeout` parameter.
+* To create a Cron check, specify the `schedule` and `tz` parameters.
 
 ### Request Parameters
 
@@ -302,8 +306,9 @@ schedule
 
     A cron expression defining this check's schedule.
 
-    If you specify both "timeout" and "schedule" parameters, "timeout" will be
-    ignored and "schedule" will be used.
+    If you specify both `timeout` and `schedule` parameters,
+    SITE_NAME will create a Cron check and ignore
+    the `timeout` value.
 
     Example for a check running every half-hour:
 
@@ -313,7 +318,7 @@ tz
 :   string, optional, default value: "UTC".
 
     Server's timezone. This setting only has effect in combination with the
-    "schedule" parameter.
+    `schedule` parameter.
 
     Example:
 
@@ -322,35 +327,38 @@ tz
 manual_resume
 :   boolean, optional, default value: false.
 
-    Controls whether a paused ping resumes automatically when pinged (the default),
+    Controls whether a paused check automatically resumes when pinged (the default)
     or not. If set to false, a paused check will leave the paused state when it receives
-    a ping. If set to true, a paused check will ignore pings and stay paused until it is
-    either manually resumed from the web dashboard or the `manual_resume` flag is
-    changed.
+    a ping. If set to true, a paused check will ignore pings and stay paused until
+    you manually resume it from the web dashboard.
 
 channels
 :   string, optional
 
-    By default, if a check is created through API, no notification channels
-    (integrations) are assigned to it. So, when the check goes up or down, no
-    notifications will get sent.
+    By default, this API call assigns no integrations to the newly created
+    check.
 
     Set this field to a special value "*" to automatically assign all existing
     integrations.
 
     To assign specific integrations, use a comma-separated list of integration
-    identifiers. Use the [Get a List of Existing Integrations](#list-channels) call to
-    look up integration identifiers.
+    identifiers. Use the [Get a List of Existing Integrations](#list-channels)
+    API call to look up the available integration identifiers.
 
 unique
 :   array of string values, optional, default value: [].
 
-    Before creating a check, look for existing checks, filtered by fields listed
-    in `unique`. If a matching check is found, return it with HTTP status code 200.
-    If no matching check is found, proceed as normal: create a check and return it
-    with HTTP status code 201.
+    Enables "upsert" functionality. Before creating a check, SITE_NAME looks for
+    existing checks, filtered by fields listed in `unique`.
 
-    The accepted values are: `name`, `tags`, `timeout` and `grace`.
+    If no matching check is found, SITE_NAME creates a new check and returns it
+    with the HTTP status code 201.
+
+    If a matching check *is* found, SITE_NAME will update it
+    and return it with HTTP status code 200.
+
+    The accepted values for the `unique` field are:
+    `name`, `tags`, `timeout` and `grace`.
 
     Example:
 
@@ -362,10 +370,10 @@ unique
 ### Response Codes
 
 201 Created
-:   The check was successfully created.
+:   A new check was successfully created.
 
 200 OK
-:   The `unique` parameter was used and an existing check was matched.
+:   An existing check was found and updated.
 
 400 Bad Request
 :   The request is not well-formed, violates schema, or uses invalid

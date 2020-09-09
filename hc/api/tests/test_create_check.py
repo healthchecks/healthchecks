@@ -93,15 +93,21 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertFalse(Check.objects.exists())
 
     def test_it_supports_unique(self):
-        Check.objects.create(project=self.project, name="Foo")
+        check = Check.objects.create(project=self.project, name="Foo")
 
-        r = self.post({"api_key": "X" * 32, "name": "Foo", "unique": ["name"]})
+        r = self.post(
+            {"api_key": "X" * 32, "name": "Foo", "tags": "bar", "unique": ["name"]}
+        )
 
         # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
         # And there should be only one check in the database:
         self.assertEqual(Check.objects.count(), 1)
+
+        # The tags field should have a value now:
+        check.refresh_from_db()
+        self.assertEqual(check.tags, "bar")
 
     def test_it_handles_missing_request_body(self):
         r = self.client.post(self.URL, content_type="application/json")

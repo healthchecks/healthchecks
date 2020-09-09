@@ -1,7 +1,7 @@
 # Pinging API
 
-The SITE_NAME pinging API is used for submitting "start", "success" and "fail"
-signals ("pings") from the monitored systems.
+With the Pinging API, you can signal **success**, **fail**, and **start** events from
+your systems.
 
 ## General Notes
 
@@ -10,13 +10,13 @@ All ping endpoints support:
 * HTTP and HTTPS
 * HTTP 1.0, HTTP 1.1 and HTTP 2
 * IPv4 and IPv6
-* HEAD, GET and POST requests methods. The HTTP POST requests
+* HEAD, GET, and POST requests methods. The HTTP POST requests
 can optionally include diagnostic information in the request body.
 If the request body looks like a UTF-8 string, SITE_NAME stores the request body
-(limited to first 10KB for each received ping).
+(limited to the first 10KB for each received ping).
 
 Successful responses will have the "200 OK" HTTP response status code and a short
-and simple string "OK" in the response body.
+"OK" string in the response body.
 
 ## Send a "success" Signal
 
@@ -24,8 +24,8 @@ and simple string "OK" in the response body.
 HEAD|GET|POST PING_ENDPOINT{uuid}
 ```
 
-Signals to SITE_NAME that the job has completed successfully (or, for
-continuously running processes, is still running and healthy). The `uuid` parameter
+Signals to SITE_NAME that the job has completed successfully (or,
+continuously running processes are still running and healthy). The `uuid` parameter
 is unique for each check.
 
 **Example**
@@ -53,7 +53,7 @@ OK
 HEAD|GET|POST PING_ENDPOINT{uuid}/fail
 ```
 
-Signals to SITE_NAME that the job has failed. Actively signalling a failure
+Signals to SITE_NAME that the job has failed. Actively signaling a failure
 minimizes the delay from your monitored service failing to you receiving an alert.
 
 **Example**

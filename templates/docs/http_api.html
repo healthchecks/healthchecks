@@ -1,26 +1,26 @@
 <h1>Pinging API</h1>
-<p>The SITE_NAME pinging API is used for submitting "start", "success" and "fail"
-signals ("pings") from the monitored systems.</p>
+<p>With the Pinging API, you can signal <strong>success</strong>, <strong>fail</strong>, and <strong>start</strong> events from
+your systems.</p>
 <h2>General Notes</h2>
 <p>All ping endpoints support:</p>
 <ul>
 <li>HTTP and HTTPS</li>
 <li>HTTP 1.0, HTTP 1.1 and HTTP 2</li>
 <li>IPv4 and IPv6</li>
-<li>HEAD, GET and POST requests methods. The HTTP POST requests
+<li>HEAD, GET, and POST requests methods. The HTTP POST requests
 can optionally include diagnostic information in the request body.
 If the request body looks like a UTF-8 string, SITE_NAME stores the request body
-(limited to first 10KB for each received ping).</li>
+(limited to the first 10KB for each received ping).</li>
 </ul>
 <p>Successful responses will have the "200 OK" HTTP response status code and a short
-and simple string "OK" in the response body.</p>
+"OK" string in the response body.</p>
 <h2>Send a "success" Signal</h2>
 <div class="text highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}
 </code></pre></div>
 
 
-<p>Signals to SITE_NAME that the job has completed successfully (or, for
-continuously running processes, is still running and healthy). The <code>uuid</code> parameter
+<p>Signals to SITE_NAME that the job has completed successfully (or,
+continuously running processes are still running and healthy). The <code>uuid</code> parameter
 is unique for each check.</p>
 <p><strong>Example</strong></p>
 <div class="http highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
@@ -45,7 +45,7 @@ OK
 </code></pre></div>
 
 
-<p>Signals to SITE_NAME that the job has failed. Actively signalling a failure
+<p>Signals to SITE_NAME that the job has failed. Actively signaling a failure
 minimizes the delay from your monitored service failing to you receiving an alert.</p>
 <p><strong>Example</strong></p>
 <div class="http highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/fail</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
