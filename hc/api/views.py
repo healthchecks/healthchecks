@@ -98,6 +98,9 @@ def _update(check, spec):
     if "manual_resume" in spec:
         check.manual_resume = spec["manual_resume"]
 
+    if "methods" in spec:
+        check.methods = spec["methods"]
+
     if "timeout" in spec and "schedule" not in spec:
         check.kind = "simple"
         check.timeout = td(seconds=spec["timeout"])

@@ -10,6 +10,7 @@ check = {
         "tz": {"type": "string", "format": "timezone", "maxLength": 36},
         "channels": {"type": "string"},
         "manual_resume": {"type": "boolean"},
+        "methods": {"enum": ["", "POST"]},
         "unique": {
             "type": "array",
             "items": {"enum": ["name", "tags", "timeout", "grace"]},

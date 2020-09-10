@@ -103,6 +103,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "last_ping": "2020-03-24T14:02:03+00:00",
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
+      "methods": "",
       "ping_url": "PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712",
       "update_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712",
       "pause_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause",
@@ -119,6 +120,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "last_ping": "2020-03-23T10:19:32+00:00",
       "next_ping": null,
       "manual_resume": false,
+      "methods": "",
       "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
       "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
       "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -151,6 +153,7 @@ Example:
       "last_ping": "2020-03-24T14:02:03+00:00",
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
+      "methods": "",
       "unique_key": "a6c7b0a8a66bed0df66abfdab3c77736861703ee",
       "timeout": 3600
     },
@@ -164,6 +167,7 @@ Example:
       "last_ping": "2020-03-23T10:19:32+00:00",
       "next_ping": null,
       "manual_resume": false,
+      "methods": "",
       "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
       "schedule": "15 5 * * *",
       "tz": "UTC"
@@ -214,6 +218,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
   "last_ping": "2020-03-23T10:19:32+00:00",
   "next_ping": null,
   "manual_resume": false,
+  "methods": "",
   "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
   "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
   "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -244,6 +249,7 @@ check's unique UUID.
   "last_ping": "2020-03-23T10:19:32+00:00",
   "next_ping": null,
   "manual_resume": false,
+  "methods": "",
   "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
   "schedule": "15 5 * * *",
   "tz": "UTC"
@@ -281,7 +287,7 @@ tags
 desc
 :   string, optional.
 
-    Description for the check.
+    Description of the check.
 
 timeout
 :   number, optional, default value: {{ default_timeout }}.
@@ -302,7 +308,7 @@ grace
     Minimum: 60 (one minute), maximum: 2592000 (30 days).
 
 schedule
-:   string, optional, default value: "* * * * *".
+:   string, optional, default value: "`* * * * *`".
 
     A cron expression defining this check's schedule.
 
@@ -317,7 +323,7 @@ schedule
 tz
 :   string, optional, default value: "UTC".
 
-    Server's timezone. This setting only has effect in combination with the
+    Server's timezone. This setting only has an effect in combination with the
     `schedule` parameter.
 
     Example:
@@ -331,6 +337,21 @@ manual_resume
     or not. If set to false, a paused check will leave the paused state when it receives
     a ping. If set to true, a paused check will ignore pings and stay paused until
     you manually resume it from the web dashboard.
+
+methods
+:   string, optional, default value: "".
+
+    Specifies the allowed HTTP methods for making ping requests.
+    Must be one of the two values: "" (an empty string) or "POST".
+
+    Set this field to "" (an empty string) to allow HEAD, GET,
+    and POST requests.
+
+    Set this field to "POST" to allow only POST requests.
+
+    Example:
+
+    <pre>{"methods": "POST"}</pre>
 
 channels
 :   string, optional
@@ -351,13 +372,13 @@ unique
     Enables "upsert" functionality. Before creating a check, SITE_NAME looks for
     existing checks, filtered by fields listed in `unique`.
 
-    If no matching check is found, SITE_NAME creates a new check and returns it
+    If SITE_NAME does not find a matching check, it creates a new check and returns it
     with the HTTP status code 201.
 
-    If a matching check *is* found, SITE_NAME will update it
-    and return it with HTTP status code 200.
+    If SITE_NAME finds a matching check, it updates the existing check and
+    and returns it with HTTP status code 200.
 
-    The accepted values for the `unique` field are:
+    The accepted values for the `unique` field are
     `name`, `tags`, `timeout` and `grace`.
 
     Example:
@@ -383,7 +404,7 @@ unique
 :   The API key is either missing or invalid.
 
 403 Forbidden
-:   The account's check limit has been reached. For free accounts,
+:   The account has hit its check limit. For free accounts,
     the limit is 20 checks per account.
 
 ### Example Request
@@ -413,6 +434,7 @@ curl SITE_ROOT/api/v1/checks/ \
   "name": "Backups",
   "next_ping": null,
   "manual_resume": false,
+  "methods": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -426,9 +448,8 @@ curl SITE_ROOT/api/v1/checks/ \
 
 `POST SITE_ROOT/api/v1/checks/<uuid>`
 
-Updates an existing check. All request parameters are optional. The check is
-updated only with the supplied request parameters. If any parameter is omitted,
-its value is left unchanged.
+Updates an existing check. All request parameters are optional. If you omit  any
+parameter, SITE_NAME will leave its value unchanged.
 
 ### Request Parameters
 
@@ -449,7 +470,7 @@ tags
 desc
 :   string, optional.
 
-    Description for the check.
+    Description of the check.
 
 timeout
 :   number, optional.
@@ -474,8 +495,9 @@ schedule
 
     A cron expression defining this check's schedule.
 
-    If you specify both "timeout" and "schedule" parameters, "timeout" will be
-    ignored and "schedule" will be used.
+    If you specify both `timeout` and `schedule` parameters,
+    SITE_NAME will save the `schedule` parameter and ignore
+    the `timeout`.
 
     Example for a check running every half-hour:
 
@@ -484,7 +506,7 @@ schedule
 tz
 :   string, optional.
 
-    Server's timezone. This setting only has effect in combination with the
+    Server's timezone. This setting only has an effect in combination with the
     "schedule" parameter.
 
     Example:
@@ -494,11 +516,25 @@ tz
 manual_resume
 :   boolean, optional, default value: false.
 
-    Controls whether a paused ping resumes automatically when pinged (the default),
+    Controls whether a paused ping automatically resumes when pinged (the default),
     or not. If set to false, a paused check will leave the paused state when it receives
-    a ping. If set to true, a paused check will ignore pings and stay paused until it is
-    either manually resumed from the web dashboard or the `manual_resume` flag is
-    changed.
+    a ping. If set to true, a paused check will ignore pings and stay paused until
+    you manually resume it from the web dashboard.
+
+methods
+:   string, optional, default value: "".
+
+    Specifies the allowed HTTP methods for making ping requests.
+    Must be one of the two values: "" (an empty string) or "POST".
+
+    Set this field to "" (an empty string) to allow HEAD, GET,
+    and POST requests.
+
+    Set this field to "POST" to allow only POST requests.
+
+    Example:
+
+    <pre>{"methods": "POST"}</pre>
 
 channels
 :   string, optional.
@@ -563,6 +599,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "name": "Backups",
   "next_ping": null,
   "manual_resume": false,
+  "methods": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -618,6 +655,7 @@ header is sometimes required by some network proxies and web servers.
   "name": "Backups",
   "next_ping": null,
   "manual_resume": false,
+  "methods": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "paused",
@@ -669,6 +707,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "name": "Backups",
   "next_ping": null,
   "manual_resume": false,
+  "methods": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",

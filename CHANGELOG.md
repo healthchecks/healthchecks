@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Host a read-only dashboard (from github.com/healthchecks/dashboard/)
 - LINE Notify integration (#412)
 - Read-only team members
+- API support for setting the allowed HTTP methods for making ping requests
 
 ## Bug Fixes
 - Handle excessively long email addresses in the signup form

@@ -40,6 +40,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(doc["tags"], "bar,baz")
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
+        self.assertEqual(doc["methods"], "")
 
         self.assertTrue("schedule" not in doc)
         self.assertTrue("tz" not in doc)
@@ -47,6 +48,7 @@ class CreateCheckTestCase(BaseTestCase):
         check = Check.objects.get()
         self.assertEqual(check.name, "Foo")
         self.assertEqual(check.tags, "bar,baz")
+        self.assertEqual(check.methods, "")
         self.assertEqual(check.timeout.total_seconds(), 3600)
         self.assertEqual(check.grace.total_seconds(), 60)
         self.assertEqual(check.project, self.project)
@@ -242,4 +244,15 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_rejects_non_boolean_manual_resume(self):
         r = self.post({"api_key": "X" * 32, "manual_resume": "surprise"})
 
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_sets_methods(self):
+        r = self.post({"api_key": "X" * 32, "methods": "POST"})
+
+        self.assertEqual(r.status_code, 201)
+        check = Check.objects.get()
+        self.assertEqual(check.methods, "POST")
+
+    def test_it_rejects_bad_methods_value(self):
+        r = self.post({"api_key": "X" * 32, "methods": "bad-value"})
         self.assertEqual(r.status_code, 400)

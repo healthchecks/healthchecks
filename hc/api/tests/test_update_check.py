@@ -242,3 +242,36 @@ class UpdateCheckTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertFalse(self.check.manual_resume)
+
+    def test_it_sets_methods(self):
+        r = self.post(self.check.code, {"api_key": "X" * 32, "methods": "POST"})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.methods, "POST")
+
+    def test_it_clears_methods(self):
+        self.check.methods = "POST"
+        self.check.save()
+
+        # Client supplies an empty string: we should save it
+        r = self.post(self.check.code, {"api_key": "X" * 32, "methods": ""})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.methods, "")
+
+    def test_it_leaves_methods_unchanged(self):
+        self.check.methods = "POST"
+        self.check.save()
+
+        # Client omits the methods key: we should leave it unchanged
+        r = self.post(self.check.code, {"api_key": "X" * 32})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.methods, "POST")
+
+    def test_it_rejects_bad_methods_value(self):
+        r = self.post(self.check.code, {"api_key": "X" * 32, "methods": "bad-value"})
+        self.assertEqual(r.status_code, 400)
