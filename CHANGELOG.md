@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - When copying a check, copy all fields from the "Filtering Rules" dialog (#417)
 - Fix missing Resume button (#421)
 - When decoding inbound emails, decode encoded headers (#420)
+- Escape markdown in MS Teams notifications (#426)
 
 ## v1.16.0 - 2020-08-04
 

@@ -866,6 +866,26 @@ class NotifyTestCase(BaseTestCase):
         payload = kwargs["json"]
         self.assertEqual(payload["@type"], "MessageCard")
 
+    @patch("hc.api.transports.requests.request")
+    def test_msteams_escapes_markdown(self, mock_post):
+        self._setup_data("msteams", "http://example.com/webhook")
+        mock_post.return_value.status_code = 200
+
+        self.check.name = """
+            TEST _underscore_ `backticks` <u>underline</u> \\backslash\\ "quoted"
+        """
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        text = kwargs["json"]["text"]
+
+        self.assertIn(r"\_underscore\_", text)
+        self.assertIn(r"\`backticks\`", text)
+        self.assertIn("&lt;u&gt;underline&lt;/u&gt;", text)
+        self.assertIn(r"\\backslash\\ ", text)
+        self.assertIn("&quot;quoted&quot;", text)
+
     @patch("hc.api.transports.os.system")
     @override_settings(SHELL_ENABLED=True)
     def test_shell(self, mock_system):

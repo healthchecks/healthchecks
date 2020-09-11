@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.html import escape
 import json
 import requests
 from urllib.parse import quote, urlencode
@@ -582,6 +583,15 @@ class MsTeams(HttpTransport):
     def notify(self, check):
         text = tmpl("msteams_message.json", check=check)
         payload = json.loads(text)
+
+        # Escape special HTML characters in check's name
+        safe_name = escape(check.name_then_code())
+        # Escape characters that have special meaning in Markdown
+        for c in r"\`*_{}[]()#+-.!|":
+            safe_name = safe_name.replace(c, "\\" + c)
+
+        payload["text"] = f"“{safe_name}” is {check.status.upper()}."
+
         return self.post(self.channel.value, json=payload)
 
 
@@ -629,7 +639,5 @@ class LineNotify(HttpTransport):
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Bearer %s" % self.channel.linenotify_token,
         }
-        payload = {
-            "message": tmpl("linenotify_message.html", check=check)
-        }
+        payload = {"message": tmpl("linenotify_message.html", check=check)}
         return self.post(self.URL, headers=headers, params=payload)
