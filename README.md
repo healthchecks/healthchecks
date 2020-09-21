@@ -113,31 +113,31 @@ Configurations settings loaded from environment variables:
 | PING_ENDPOINT | `"http://localhost:8000/ping/"`
 | PING_EMAIL_DOMAIN | `"localhost"`
 | PING_BODY_LIMIT | 10000 | In bytes. Set to `None` to always log full request body
+| APPRISE_ENABLED | `"False"`
 | DISCORD_CLIENT_ID | `None`
 | DISCORD_CLIENT_SECRET | `None`
-| SLACK_CLIENT_ID | `None`
-| SLACK_CLIENT_SECRET | `None`
-| PUSHOVER_API_TOKEN | `None`
-| PUSHOVER_SUBSCRIPTION_URL | `None`
-| PUSHOVER_EMERGENCY_RETRY_DELAY | `300`
-| PUSHOVER_EMERGENCY_EXPIRATION | `86400`
+| LINENOTIFY_CLIENT_ID | `None`
+| LINENOTIFY_CLIENT_SECRET | `None`
+| MATRIX_ACCESS_TOKEN | `None`
+| MATRIX_HOMESERVER | `None`
+| MATRIX_USER_ID | `None`
+| PD_VENDOR_KEY | `None`
 | PUSHBULLET_CLIENT_ID | `None`
 | PUSHBULLET_CLIENT_SECRET | `None`
+| PUSHOVER_API_TOKEN | `None`
+| PUSHOVER_EMERGENCY_EXPIRATION | `86400`
+| PUSHOVER_EMERGENCY_RETRY_DELAY | `300`
+| PUSHOVER_SUBSCRIPTION_URL | `None`
+| SHELL_ENABLED | `"False"`
+| SLACK_CLIENT_ID | `None`
+| SLACK_CLIENT_SECRET | `None`
 | TELEGRAM_BOT_NAME | `"ExampleBot"`
 | TELEGRAM_TOKEN | `None`
+| TRELLO_APP_KEY | `None`
 | TWILIO_ACCOUNT | `None`
 | TWILIO_AUTH | `None`
 | TWILIO_FROM | `None`
 | TWILIO_USE_WHATSAPP | `"False"`
-| PD_VENDOR_KEY | `None`
-| TRELLO_APP_KEY | `None`
-| MATRIX_HOMESERVER | `None`
-| MATRIX_USER_ID | `None`
-| MATRIX_ACCESS_TOKEN | `None`
-| APPRISE_ENABLED | `"False"`
-| SHELL_ENABLED | `"False"`
-| LINENOTIFY_CLIENT_ID | `None`
-| LINENOTIFY_CLIENT_SECRET | `None`
 
 
 Some useful settings keys to override are:
@@ -405,6 +405,22 @@ Note: be careful when using "Shell Commands" integration, and only enable it whe
 you fully trust the users of your Healthchecks instance. The commands will be executed
 by the `manage.py sendalerts` process, and will run with the same system permissions as
 the `sendalerts` process.
+
+### Matrix
+
+To enable the Matrix integration you will need to:
+
+* Register a bot user (for posting notifications) in your preferred homeserver.
+* Use the [Login API call](https://www.matrix.org/docs/guides/client-server-api#login)
+  to retrieve bot user's access token. You can run it as shown in the documentation,
+  using curl in command shell.
+* Set the `MATRIX_` environment variables. Example:
+
+```
+MATRIX_HOMESERVER=https://matrix.org
+MATRIX_USER_ID=@mychecks:matrix.org
+MATRIX_ACCESS_TOKEN=[a long string of characters returned by the login call]
+```
 
 ## Running in Production
 
