@@ -452,8 +452,9 @@ in production.
   * Make sure the `manage.py sendalerts` command is running and can survive server restarts.
     On modern linux systems, a good option is to
     [define a systemd service](https://github.com/healthchecks/healthchecks/issues/273#issuecomment-520560304) for it.
-* General
+* General list
   * Make sure the database is secured well and is getting backed up regularly
   * Make sure the TLS certificates are secured well and are getting refreshed regularly
   * Have monitoring in place to be sure the Healthchecks instance itself is operational
     (is accepting pings, is sending out alerts, is not running out of resources).
+    
