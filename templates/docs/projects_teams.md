@@ -29,7 +29,7 @@ are **members**. The members can:
 * rename the project
 * view and regenerate project's API keys
 * give up their membership
-(from their [Account Settings](../../accounts/profile) page)
+(from their [Account Settings](../../accounts/profile/) page)
 
 The members **can not**:
 

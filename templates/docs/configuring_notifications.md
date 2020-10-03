@@ -51,7 +51,7 @@ play a loud notification sound on your phone every 5 minutes until the notificat
 is acknowledged.
 * SITE_NAME can send **hourly or daily email reminders** if any check is down
 in any of your projects.
-Set them up in [Account Settings › Email Reports](../../accounts/profile/notifications):
+Set them up in [Account Settings › Email Reports](../../accounts/profile/notifications/):
 
 ![Email reminder options](IMG_URL/email_reports.png)
 
