@@ -859,6 +859,8 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("msteams", "http://example.com/webhook")
         mock_post.return_value.status_code = 200
 
+        self.check.name = "_underscores_ & more"
+
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
@@ -866,19 +868,24 @@ class NotifyTestCase(BaseTestCase):
         payload = kwargs["json"]
         self.assertEqual(payload["@type"], "MessageCard")
 
+        # summary and title should be the same, except
+        # title should have any special HTML characters escaped
+        self.assertEqual(payload["summary"], "“_underscores_ & more” is DOWN.")
+        self.assertEqual(payload["title"], "“_underscores_ &amp; more” is DOWN.")
+
     @patch("hc.api.transports.requests.request")
-    def test_msteams_escapes_markdown(self, mock_post):
+    def test_msteams_escapes_html_and_markdown_in_desc(self, mock_post):
         self._setup_data("msteams", "http://example.com/webhook")
         mock_post.return_value.status_code = 200
 
-        self.check.name = """
+        self.check.desc = """
             TEST _underscore_ `backticks` <u>underline</u> \\backslash\\ "quoted"
         """
 
         self.channel.notify(self.check)
 
         args, kwargs = mock_post.call_args
-        text = kwargs["json"]["text"]
+        text = kwargs["json"]["sections"][0]["text"]
 
         self.assertIn(r"\_underscore\_", text)
         self.assertIn(r"\`backticks\`", text)

@@ -35,8 +35,7 @@
                     "name": "Total Pings:",
                     "value": "{{ check.n_pings }}"
                 }
-            ],
-            "text": "{{ check.desc|escapejs }}"
+            ]
         }
     ],
     "potentialAction": [
