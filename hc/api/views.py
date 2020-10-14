@@ -97,36 +97,58 @@ def _update(check, spec):
 
             new_channels.add(matches[0])
 
-    if "name" in spec:
+    need_save = False
+    if check.pk is None:
+        # Empty pk means we're inserting a new check,
+        # and so do need to save() it:
+        need_save = True
+
+    if "name" in spec and check.name != spec["name"]:
         check.name = spec["name"]
+        need_save = True
 
-    if "tags" in spec:
+    if "tags" in spec and check.tags != spec["tags"]:
         check.tags = spec["tags"]
+        need_save = True
 
-    if "desc" in spec:
+    if "desc" in spec and check.desc != spec["desc"]:
         check.desc = spec["desc"]
+        need_save = True
 
-    if "manual_resume" in spec:
+    if "manual_resume" in spec and check.manual_resume != spec["manual_resume"]:
         check.manual_resume = spec["manual_resume"]
+        need_save = True
 
-    if "methods" in spec:
+    if "methods" in spec and check.methods != spec["methods"]:
         check.methods = spec["methods"]
+        need_save = True
 
     if "timeout" in spec and "schedule" not in spec:
-        check.kind = "simple"
-        check.timeout = td(seconds=spec["timeout"])
+        new_timeout = td(seconds=spec["timeout"])
+        if check.kind != "simple" or check.timeout != new_timeout:
+            check.kind = "simple"
+            check.timeout = new_timeout
+            need_save = True
 
     if "grace" in spec:
-        check.grace = td(seconds=spec["grace"])
+        new_grace = td(seconds=spec["grace"])
+        if check.grace != new_grace:
+            check.grace = new_grace
+            need_save = True
 
     if "schedule" in spec:
-        check.kind = "cron"
-        check.schedule = spec["schedule"]
-        if "tz" in spec:
-            check.tz = spec["tz"]
+        if check.kind != "cron" or check.schedule != spec["schedule"]:
+            check.kind = "cron"
+            check.schedule = spec["schedule"]
+            need_save = True
 
-    check.alert_after = check.going_down_after()
-    check.save()
+    if "tz" in spec and check.tz != spec["tz"]:
+        check.tz = spec["tz"]
+        need_save = True
+
+    if need_save:
+        check.alert_after = check.going_down_after()
+        check.save()
 
     # This needs to be done after saving the check, because of
     # the M2M relation between checks and channels:
