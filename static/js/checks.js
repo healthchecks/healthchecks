@@ -67,6 +67,11 @@ $(function () {
         return false;
     });
 
+    $(".last-ping").tooltip({
+        selector: ".label-confirmation",
+        title: 'The word "confirm" found in request body'
+    });
+
     function applyFilters() {
         // Make a list of currently checked tags:
         var checked = [];
@@ -176,7 +181,6 @@ $(function () {
     $(".pause").mouseleave(function() {
         $(this).removeClass("confirm").tooltip("hide");
     });
-
 
     $('[data-toggle="tooltip"]').tooltip({
         html: true,

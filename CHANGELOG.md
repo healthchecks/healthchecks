@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.18.0-dev - Unreleased
+
+## Improvements
+- Add a tooltip to the 'confirmation link' label (#436)
+
 ## v1.17.0 - 2020-10-14
 
 ## Improvements
