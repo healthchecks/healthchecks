@@ -347,10 +347,20 @@ and POST requests.</p>
 <p>By default, this API call assigns no integrations to the newly created
 check.</p>
 <p>Set this field to a special value "*" to automatically assign all existing
-integrations.</p>
+integrations. Example:</p>
+<p><pre>{"channels": "*"}</pre></p>
 <p>To assign specific integrations, use a comma-separated list of integration
-identifiers. Use the <a href="#list-channels">Get a List of Existing Integrations</a>
-API call to look up the available integration identifiers.</p>
+UUIDs. You can look up integration UUIDs using the
+<a href="#list-channels">Get a List of Existing Integrations</a> API call.</p>
+<p>Example:</p>
+<p><pre>{"channels":
+ "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre></p>
+<p>Alternatively, if you have named your integrations in SITE_NAME dashboard,
+you can specify integrations by their names. For this to work, your integrations
+need non-empty and unique names, and they must not contain commas. The names
+must match exactly, whitespace is significant.</p>
+<p>Example:</p>
+<p><pre>{"channels": "Email to Alice,SMS to Alice"}</pre></p>
 </dd>
 <dt>unique</dt>
 <dd>
@@ -496,13 +506,23 @@ and POST requests.</p>
 <dd>
 <p>string, optional.</p>
 <p>Set this field to a special value "*" to automatically assign all existing
-notification channels.</p>
+integrations. Example:</p>
+<p><pre>{"channels": "*"}</pre></p>
 <p>Set this field to a special value "" (empty string) to automatically <em>unassign</em>
-all notification channels.</p>
-<p>Set this field to a comma-separated list of channel identifiers to assign
-specific notification channels.</p>
+all existing integrations. Example:</p>
+<p><pre>{"channels": ""}</pre></p>
+<p>To assign specific integrations, use a comma-separated list of integration
+UUIDs. You can look up integration UUIDs using the
+<a href="#list-channels">Get a List of Existing Integrations</a> API call.</p>
 <p>Example:</p>
-<p><pre>{"channels": "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre></p>
+<p><pre>{"channels":
+ "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre></p>
+<p>Alternatively, if you have named your integrations in SITE_NAME dashboard,
+you can specify integrations by their names. For this to work, your integrations
+need non-empty and unique names, and they must not contain commas. The names
+must match exactly, whitespace is significant.</p>
+<p>Example:</p>
+<p><pre>{"channels": "Email to Alice,SMS to Alice"}</pre></p>
 </dd>
 </dl>
 <h3>Response Codes</h3>

@@ -1,6 +1,5 @@
 from datetime import timedelta as td
 import time
-import uuid
 
 from django.conf import settings
 from django.db import connection
@@ -71,20 +70,32 @@ def _lookup(project, spec):
 
 
 def _update(check, spec):
-    channels = set()
-    # First, validate the supplied channel codes
-    if "channels" in spec and spec["channels"] not in ("*", ""):
-        q = Channel.objects.filter(project=check.project)
-        for s in spec["channels"].split(","):
-            try:
-                code = uuid.UUID(s)
-            except ValueError:
-                raise BadChannelException("invalid channel identifier: %s" % s)
+    # First, validate the supplied channel codes/names
+    if "channels" not in spec:
+        # If the channels key is not present, don't update check's channels
+        new_channels = None
+    elif spec["channels"] == "*":
+        # "*" means "all project's channels"
+        new_channels = Channel.objects.filter(project=check.project)
+    elif spec.get("channels") == "":
+        # "" means "empty list"
+        new_channels = []
+    else:
+        # expect a comma-separated list of channel codes or names
+        new_channels = set()
+        available = list(Channel.objects.filter(project=check.project))
 
-            try:
-                channels.add(q.get(code=code))
-            except Channel.DoesNotExist:
+        for s in spec["channels"].split(","):
+            if s == "":
+                raise BadChannelException("empty channel identifier")
+
+            matches = [c for c in available if str(c.code) == s or c.name == s]
+            if len(matches) == 0:
                 raise BadChannelException("invalid channel identifier: %s" % s)
+            elif len(matches) > 1:
+                raise BadChannelException("non-unique channel identifier: %s" % s)
+
+            new_channels.add(matches[0])
 
     if "name" in spec:
         check.name = spec["name"]
@@ -119,12 +130,8 @@ def _update(check, spec):
 
     # This needs to be done after saving the check, because of
     # the M2M relation between checks and channels:
-    if spec.get("channels") == "*":
-        check.assign_all_channels()
-    elif spec.get("channels") == "":
-        check.channel_set.clear()
-    elif channels:
-        check.channel_set.set(channels)
+    if new_channels is not None:
+        check.channel_set.set(new_channels)
 
     return check
 
