@@ -86,10 +86,53 @@ class CreateCheckTestCase(BaseTestCase):
         check = Check.objects.get()
         self.assertEqual(check.channel_set.get(), channel)
 
-    def test_it_rejects_bad_channel_code(self):
+    def test_it_sets_channel_by_name(self):
+        channel = Channel.objects.create(project=self.project, name="alerts")
+
+        r = self.post({"api_key": "X" * 32, "channels": "alerts"})
+        self.assertEqual(r.status_code, 201)
+
+        check = Check.objects.get()
+        assigned_channel = check.channel_set.get()
+        self.assertEqual(assigned_channel, channel)
+
+    def test_it_sets_channel_by_name_formatted_as_uuid(self):
+        name = "102eaa82-a274-4b15-a499-c1bb6bbcd7b6"
+        channel = Channel.objects.create(project=self.project, name=name)
+
+        r = self.post({"api_key": "X" * 32, "channels": name})
+        self.assertEqual(r.status_code, 201)
+
+        check = Check.objects.get()
+        assigned_channel = check.channel_set.get()
+        self.assertEqual(assigned_channel, channel)
+
+    def test_it_handles_channel_lookup_by_name_with_no_results(self):
         r = self.post({"api_key": "X" * 32, "channels": "abc"})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
+
+        # The check should not have been saved
+        self.assertFalse(Check.objects.exists())
+
+    def test_it_handles_channel_lookup_by_name_with_multiple_results(self):
+        Channel.objects.create(project=self.project, name="foo")
+        Channel.objects.create(project=self.project, name="foo")
+
+        r = self.post({"api_key": "X" * 32, "channels": "foo"})
+
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.json()["error"], "non-unique channel identifier: foo")
+
+        # The check should not have been saved
+        self.assertFalse(Check.objects.exists())
+
+    def test_it_rejects_multiple_empty_channel_names(self):
+        Channel.objects.create(project=self.project, name="")
+
+        r = self.post({"api_key": "X" * 32, "channels": ","})
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(r.json()["error"], "empty channel identifier")
 
         # The check should not have been saved
         self.assertFalse(Check.objects.exists())
