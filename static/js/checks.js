@@ -69,7 +69,7 @@ $(function () {
 
     $(".last-ping").tooltip({
         selector: ".label-confirmation",
-        title: 'The word "confirm" found in request body'
+        title: 'The word "confirm" was found in request body'
     });
 
     function applyFilters() {
