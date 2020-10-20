@@ -1,12 +1,12 @@
 from datetime import timedelta as td
 import json
+import re
 from urllib.parse import quote, urlencode
 
 from django import forms
 from django.forms import URLField
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
 from hc.front.validators import (
     CronExpressionValidator,
     TimezoneValidator,
@@ -193,17 +193,21 @@ class AddShellForm(forms.Form):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
 
 
-phone_validator = RegexValidator(
-    regex="^\+\d{5,15}$", message="Invalid phone number format."
-)
-
-
 class AddSmsForm(forms.Form):
     error_css_class = "has-error"
     label = forms.CharField(max_length=100, required=False)
-    value = forms.CharField(max_length=16, validators=[phone_validator])
+    value = forms.CharField()
     down = forms.BooleanField(required=False, initial=True)
     up = forms.BooleanField(required=False, initial=True)
+
+    def clean_value(self):
+        v = self.cleaned_data["value"]
+
+        stripped = v.encode("ascii", "ignore").decode("ascii")
+        if not re.match(r"^\+\d{5,15}$", stripped):
+            raise forms.ValidationError("Invalid phone number format.")
+
+        return stripped
 
 
 class ChannelNameForm(forms.Form):

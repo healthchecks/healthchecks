@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ## Improvements
 - Add a tooltip to the 'confirmation link' label (#436)
 - Update API to allow specifying channels by names (#440)
+- When saving a phone number, remove any invisible unicode characers
 
 ## v1.17.0 - 2020-10-14
 
