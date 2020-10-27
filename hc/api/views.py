@@ -162,7 +162,8 @@ def _update(check, spec):
 @authorize_read
 def get_checks(request):
     q = Check.objects.filter(project=request.project)
-    q = q.prefetch_related("channel_set")
+    if not request.readonly:
+        q = q.prefetch_related("channel_set")
 
     tags = set(request.GET.getlist("tag"))
     for tag in tags:

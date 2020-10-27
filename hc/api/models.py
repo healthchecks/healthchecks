@@ -205,8 +205,10 @@ class Check(models.Model):
     def channels_str(self):
         """ Return a comma-separated string of assigned channel codes. """
 
-        codes = self.channel_set.order_by("code").values_list("code", flat=True)
-        return ",".join(map(str, codes))
+        # self.channel_set may already be prefetched.
+        # Sort in python to make sure we do't run additional queries
+        codes = [str(channel.code) for channel in self.channel_set.all()]
+        return ",".join(sorted(codes))
 
     @property
     def unique_key(self):

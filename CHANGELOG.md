@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Update API to allow specifying channels by names (#440)
 - When saving a phone number, remove any invisible unicode characers
 - Update the read-only dashboard's CSS for better mobile support (#442)
+- Reduce the number of SQL queries used in the "Get Checks" API call
 
 ## v1.17.0 - 2020-10-14
 
