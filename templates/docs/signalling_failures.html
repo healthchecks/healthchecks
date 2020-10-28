@@ -1,19 +1,26 @@
 <h1>Signalling failures</h1>
-<p>Append <code>/fail</code> to a ping URL and use it to actively signal a failure.
-Requesting the <code>/fail</code> URL will immediately mark the check as "down".
-You can use this feature to minimize the delay from your monitored service failing
-to you getting a notification.</p>
+<p>You can actively signal a failure to SITE_NAME by slightly changing the
+ping URL: append either <code>/fail</code> or <code>/{exit-status}</code> to your normal ping URL.
+The exit status should be a 0-255 integer. SITE_NAME will interpret
+exit status 0 as success, and all non-zero values as failures.</p>
+<p>Examples:</p>
+<div class="bash highlight"><pre><span></span><code><span class="c1"># Reports failure by appending the /fail suffix:</span>
+curl --retry <span class="m">3</span> PING_URL/fail
+
+<span class="c1"># Reports failure by appending a non-zero exit status:</span>
+curl --retry <span class="m">3</span> PING_URL/1
+</code></pre></div>
+
+
+<p>By actively signalling failures to SITE_NAME, you can minimize the delay from your
+monitored service encountering a problem to you getting notified about it.</p>
 <h2>Shell Scripts</h2>
-<p>The below shell script sends either a "success" or "failure" ping depending on
-command's (certbot in this example) exit code:</p>
+<p>The below shell script appends <code>$?</code> (a special variable which contains the
+exit status of the last executed command) to the ping URL:</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
-<span class="nv">url</span><span class="o">=</span>PING_URL
-
 /usr/bin/certbot renew
-
-<span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">url</span><span class="o">=</span><span class="nv">$url</span>/fail<span class="p">;</span> <span class="k">fi</span>
-curl --retry <span class="m">3</span> <span class="nv">$url</span>
+curl --retry <span class="m">3</span> PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 
 

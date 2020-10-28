@@ -4,8 +4,8 @@
 If the request body looks like a UTF-8 string, SITE_NAME will log the
 first 10 kilobytes (10 000 bytes) of the request body, so you can inspect it later.</p>
 <h2>Logging Command Output</h2>
-<p>In this example, we run <code>certbot renew</code>, capture its output, and submit
-the captured output to SITE_NAME:</p>
+<p>In this example, we run <code>certbot renew</code>, capture its output (both the stdout
+and stderr streams), and submit the captured output to SITE_NAME:</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
@@ -13,24 +13,13 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-r
 </code></pre></div>
 
 
-<h2>In Combination with the <code>/fail</code> Endpoint</h2>
+<h2>In Combination with the <code>/fail</code> and <code>/{exit-status}</code> Endpoints</h2>
 <p>We can extend the previous example and signal either success or failure
 depending on the exit code:</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
-<span class="nv">url</span><span class="o">=</span>PING_URL
-
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
-
-<span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">url</span><span class="o">=</span><span class="nv">$url</span>/fail<span class="p">;</span> <span class="k">fi</span>
-curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> <span class="nv">$url</span>
-</code></pre></div>
-
-
-<p>The above script can be packaged in a single line. The one-line
-version sacrifices some readability, but it can be used directly in crontab,
-without using a wrapper script:</p>
-<div class="bash highlight"><pre><span></span><code><span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span><span class="p">;</span> curl -fsS --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> <span class="s2">&quot;PING_URL</span><span class="k">$(</span><span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> -n /fail<span class="k">)</span><span class="s2">&quot;</span>
+curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 
 

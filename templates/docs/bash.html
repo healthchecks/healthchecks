@@ -31,19 +31,17 @@ hides error messages.</dd>
 <dd>Redirect curl's stdout to /dev/null (error messages still go to stderr).</dd>
 </dl>
 <h2>Signalling Failure from Shell Scripts</h2>
-<p>You can append <code>/fail</code> to any ping URL and  use the resulting URL to actively
-signal a failure. The following example:</p>
-<ul>
-<li>runs <code>/usr/bin/certbot renew</code></li>
-<li>if the certbot command is successful (exit code 0), sends HTTP GET to <code>PING_URL</code></li>
-<li>otherwise, sends HTTP GET to <code>PING_URL/fail</code></li>
-</ul>
+<p>You can append <code>/fail</code> or <code>/{exit-status}</code> to any ping URL and  use the resulting URL
+to actively signal a failure. The exit status should be a 0-255 integer.
+SITE_NAME will interpret exit status 0 as success, and all non-zero values as failures.</p>
+<p>The following example runs <code>/usr/bin/certbot renew</code>, and uses the <code>$?</code> variable to
+look up its exit status:</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="c1"># Payload here:</span>
 /usr/bin/certbot renew
 <span class="c1"># Ping SITE_NAME</span>
-curl -m <span class="m">10</span> --retry <span class="m">5</span> <span class="s2">&quot;PING_URL</span><span class="k">$(</span><span class="o">[</span> <span class="nv">$?</span> -ne <span class="m">0</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> -n /fail<span class="k">)</span><span class="s2">&quot;</span>
+curl -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 
 

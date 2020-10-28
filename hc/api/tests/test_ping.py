@@ -224,3 +224,23 @@ class PingTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.scheme, "http")
         self.assertEqual(ping.kind, "ign")
+
+    def test_zero_exit_status_works(self):
+        r = self.client.get("/ping/%s/0" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "up")
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.kind, None)
+
+    def test_nonzero_exit_status_works(self):
+        r = self.client.get("/ping/%s/123" % self.check.code)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "down")
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.kind, "fail")

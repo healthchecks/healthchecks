@@ -92,3 +92,29 @@ optional but enables a few extra features:</p>
 
 OK
 </code></pre></div>
+
+
+<h2>Report Script's Exit Status</h2>
+<div class="text highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}/{exit-status}
+</code></pre></div>
+
+
+<p>Sends a success or failure signal depending on the exit status
+included in the URL. The exit status is a 0-255 integer. SITE_NAME
+interprets 0 as success, and all other values as failure.</p>
+<p><strong>Example</strong></p>
+<div class="http highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
+</code></pre></div>
+
+
+<div class="http highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">nginx</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Wed, 29 Jan 2020 09:58:23 GMT</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
+<span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+
+OK
+</code></pre></div>

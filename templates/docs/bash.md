@@ -40,12 +40,12 @@ Here's what each curl parameter does:
 
 ## Signalling Failure from Shell Scripts
 
-You can append `/fail` to any ping URL and  use the resulting URL to actively
-signal a failure. The following example:
+You can append `/fail` or `/{exit-status}` to any ping URL and  use the resulting URL
+to actively signal a failure. The exit status should be a 0-255 integer.
+SITE_NAME will interpret exit status 0 as success, and all non-zero values as failures.
 
-* runs `/usr/bin/certbot renew`
-* if the certbot command is successful (exit code 0), sends HTTP GET to `PING_URL`
-* otherwise, sends HTTP GET to `PING_URL/fail`
+The following example runs `/usr/bin/certbot renew`, and uses the `$?` variable to
+look up its exit status:
 
 ```bash
 #!/bin/sh
@@ -53,7 +53,7 @@ signal a failure. The following example:
 # Payload here:
 /usr/bin/certbot renew
 # Ping SITE_NAME
-curl -m 10 --retry 5 "PING_URL$([ $? -ne 0 ] && echo -n /fail)"
+curl -m 10 --retry 5 PING_URL/$?
 ```
 
 ## Logging Command Output

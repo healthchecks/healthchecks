@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - When saving a phone number, remove any invisible unicode characers
 - Update the read-only dashboard's CSS for better mobile support (#442)
 - Reduce the number of SQL queries used in the "Get Checks" API call
+- Add support for script's exit status in ping URLs (#429)
 
 ## v1.17.0 - 2020-10-14
 

@@ -1,24 +1,35 @@
 # Signalling failures
 
-Append `/fail` to a ping URL and use it to actively signal a failure.
-Requesting the `/fail` URL will immediately mark the check as "down".
-You can use this feature to minimize the delay from your monitored service failing
-to you getting a notification.
+You can actively signal a failure to SITE_NAME by slightly changing the
+ping URL: append either `/fail` or `/{exit-status}` to your normal ping URL.
+The exit status should be a 0-255 integer. SITE_NAME will interpret
+exit status 0 as success, and all non-zero values as failures.
+
+Examples:
+
+```bash
+
+# Reports failure by appending the /fail suffix:
+curl --retry 3 PING_URL/fail
+
+# Reports failure by appending a non-zero exit status:
+curl --retry 3 PING_URL/1
+```
+
+By actively signalling failures to SITE_NAME, you can minimize the delay from your
+monitored service encountering a problem to you getting notified about it.
 
 ## Shell Scripts
 
-The below shell script sends either a "success" or "failure" ping depending on
-command's (certbot in this example) exit code:
+The below shell script appends `$?` (a special variable which contains the
+exit status of the last executed command) to the ping URL:
 
 ```bash
 #!/bin/sh
 
-url=PING_URL
-
 /usr/bin/certbot renew
+curl --retry 3 PING_URL/$?
 
-if [ $? -ne 0 ]; then url=$url/fail; fi
-curl --retry 3 $url
 ```
 
 ## Python

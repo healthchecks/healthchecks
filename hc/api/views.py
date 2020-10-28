@@ -30,7 +30,7 @@ class BadChannelException(Exception):
 
 @csrf_exempt
 @never_cache
-def ping(request, code, action="success"):
+def ping(request, code, action="success", exitstatus=0):
     check = get_object_or_404(Check, code=code)
 
     headers = request.META
@@ -40,6 +40,9 @@ def ping(request, code, action="success"):
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")
     body = request.body.decode()
+
+    if exitstatus > 0:
+        action = "fail"
 
     if check.methods == "POST" and method != "POST":
         action = "ign"

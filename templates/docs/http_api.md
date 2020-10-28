@@ -105,3 +105,32 @@ Access-Control-Allow-Origin: *
 
 OK
 ```
+
+## Report Script's Exit Status
+
+```text
+HEAD|GET|POST PING_ENDPOINT{uuid}/{exit-status}
+```
+
+Sends a success or failure signal depending on the exit status
+included in the URL. The exit status is a 0-255 integer. SITE_NAME
+interprets 0 as success, and all other values as failure.
+
+**Example**
+
+```http
+GET /5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/1 HTTP/1.0
+Host: hc-ping.com
+```
+
+```http
+HTTP/1.1 200 OK
+Server: nginx
+Date: Wed, 29 Jan 2020 09:58:23 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 2
+Connection: close
+Access-Control-Allow-Origin: *
+
+OK
+```

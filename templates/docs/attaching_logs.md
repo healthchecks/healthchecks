@@ -8,8 +8,8 @@ first 10 kilobytes (10 000 bytes) of the request body, so you can inspect it lat
 
 ## Logging Command Output
 
-In this example, we run `certbot renew`, capture its output, and submit
-the captured output to SITE_NAME:
+In this example, we run `certbot renew`, capture its output (both the stdout
+and stderr streams), and submit the captured output to SITE_NAME:
 
 ```bash
 #!/bin/sh
@@ -18,7 +18,7 @@ m=$(/usr/bin/certbot renew 2>&1)
 curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL
 ```
 
-## In Combination with the `/fail` Endpoint
+## In Combination with the `/fail` and `/{exit-status}` Endpoints
 
 We can extend the previous example and signal either success or failure
 depending on the exit code:
@@ -26,20 +26,8 @@ depending on the exit code:
 ```bash
 #!/bin/sh
 
-url=PING_URL
-
 m=$(/usr/bin/certbot renew 2>&1)
-
-if [ $? -ne 0 ]; then url=$url/fail; fi
-curl -fsS -m 10 --retry 5 --data-raw "$m" $url
-```
-
-The above script can be packaged in a single line. The one-line
-version sacrifices some readability, but it can be used directly in crontab,
-without using a wrapper script:
-
-```bash
-m=$(/usr/bin/certbot renew 2>&1); curl -fsS --data-raw "$m" "PING_URL$([ $? -ne 0 ] && echo -n /fail)"
+curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL/$?
 ```
 
 ## Using Runitor
