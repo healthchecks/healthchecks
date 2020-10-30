@@ -1,3 +1,4 @@
+import smtplib
 from threading import Thread
 
 from django.conf import settings
@@ -6,6 +7,8 @@ from django.template.loader import render_to_string as render
 
 
 class EmailThread(Thread):
+    MAX_TRIES = 3
+
     def __init__(self, subject, text, html, to, headers):
         Thread.__init__(self)
         self.subject = subject
@@ -15,12 +18,22 @@ class EmailThread(Thread):
         self.headers = headers
 
     def run(self):
-        msg = EmailMultiAlternatives(
-            self.subject, self.text, to=(self.to,), headers=self.headers
-        )
+        for attempt in range(0, self.MAX_TRIES):
+            try:
+                msg = EmailMultiAlternatives(
+                    self.subject, self.text, to=(self.to,), headers=self.headers
+                )
 
-        msg.attach_alternative(self.html, "text/html")
-        msg.send()
+                msg.attach_alternative(self.html, "text/html")
+                msg.send()
+            except smtplib.SMTPServerDisconnected as e:
+                if attempt + 1 == self.MAX_TRIES:
+                    # This was the last attempt and it failed:
+                    # re-raise the exception
+                    raise e
+            else:
+                # There was no exception, break out of the retry loop
+                break
 
 
 def send(name, to, ctx, headers={}):
