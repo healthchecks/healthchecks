@@ -75,3 +75,23 @@ class AddSmsTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.phone_number, "+1234567890")
+
+    def test_it_strips_hyphens(self):
+        form = {"label": "My Phone", "value": "+123-4567890"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertRedirects(r, self.channels_url)
+
+        c = Channel.objects.get()
+        self.assertEqual(c.phone_number, "+1234567890")
+
+    def test_it_strips_spaces(self):
+        form = {"label": "My Phone", "value": "+123 45 678 90"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertRedirects(r, self.channels_url)
+
+        c = Channel.objects.get()
+        self.assertEqual(c.phone_number, "+1234567890")

@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Update the read-only dashboard's CSS for better mobile support (#442)
 - Reduce the number of SQL queries used in the "Get Checks" API call
 - Add support for script's exit status in ping URLs (#429)
+- Improve phone number sanitization: remove spaces and hyphens
 
 ## v1.17.0 - 2020-10-14
 

@@ -204,6 +204,7 @@ class AddSmsForm(forms.Form):
         v = self.cleaned_data["value"]
 
         stripped = v.encode("ascii", "ignore").decode("ascii")
+        stripped = stripped.replace(" ", "").replace("-", "")
         if not re.match(r"^\+\d{5,15}$", stripped):
             raise forms.ValidationError("Invalid phone number format.")
 
