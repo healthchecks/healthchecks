@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Reduce the number of SQL queries used in the "Get Checks" API call
 - Add support for script's exit status in ping URLs (#429)
 - Improve phone number sanitization: remove spaces and hyphens
+- Change the "Test Integration" behavior for webhooks: don't retry failed requests
 
 ## v1.17.0 - 2020-10-14
 

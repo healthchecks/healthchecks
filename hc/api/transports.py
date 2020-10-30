@@ -169,9 +169,8 @@ class HttpTransport(Transport):
             return "Connection failed"
 
     @classmethod
-    def get(cls, url, **kwargs):
-        # Make 3 attempts--
-        for x in range(0, 3):
+    def get(cls, url, num_tries=3, **kwargs):
+        for x in range(0, num_tries):
             error = cls._request("get", url, **kwargs)
             if error is None:
                 break
@@ -179,9 +178,8 @@ class HttpTransport(Transport):
         return error
 
     @classmethod
-    def post(cls, url, **kwargs):
-        # Make 3 attempts--
-        for x in range(0, 3):
+    def post(cls, url, num_tries=3, **kwargs):
+        for x in range(0, num_tries):
             error = cls._request("post", url, **kwargs)
             if error is None:
                 break
@@ -189,9 +187,8 @@ class HttpTransport(Transport):
         return error
 
     @classmethod
-    def put(cls, url, **kwargs):
-        # Make 3 attempts--
-        for x in range(0, 3):
+    def put(cls, url, num_tries=3, **kwargs):
+        for x in range(0, num_tries):
             error = cls._request("put", url, **kwargs)
             if error is None:
                 break
@@ -240,14 +237,19 @@ class Webhook(HttpTransport):
 
         body = spec["body"]
         if body:
-            body = self.prepare(body, check)
+            body = self.prepare(body, check).encode()
+
+        num_tries = 3
+        if getattr(check, "is_test"):
+            # When sending a test notification, don't retry on failures.
+            num_tries = 1
 
         if spec["method"] == "GET":
-            return self.get(url, headers=headers)
+            return self.get(url, num_tries=num_tries, headers=headers)
         elif spec["method"] == "POST":
-            return self.post(url, data=body.encode(), headers=headers)
+            return self.post(url, num_tries=num_tries, data=body, headers=headers)
         elif spec["method"] == "PUT":
-            return self.put(url, data=body.encode(), headers=headers)
+            return self.put(url, num_tries=num_tries, data=body, headers=headers)
 
 
 class Slack(HttpTransport):

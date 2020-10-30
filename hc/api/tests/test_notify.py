@@ -58,6 +58,9 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("webhook", json.dumps(definition))
         self.channel.notify(self.check)
 
+        # The transport should have retried 3 times
+        self.assertEqual(mock_get.call_count, 3)
+
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
 
@@ -74,6 +77,9 @@ class NotifyTestCase(BaseTestCase):
         }
         self._setup_data("webhook", json.dumps(definition))
         self.channel.notify(self.check)
+
+        # The transport should have retried 3 times
+        self.assertEqual(mock_get.call_count, 3)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection failed")
@@ -92,8 +98,29 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
+        # The transport should have retried 3 times
+        self.assertEqual(mock_get.call_count, 3)
+
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
+
+    @patch("hc.api.transports.requests.request", side_effect=Timeout)
+    def test_webhooks_dont_retry_when_sending_test_notifications(self, mock_get):
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data("webhook", json.dumps(definition))
+        self.channel.notify(self.check, is_test=True)
+
+        # is_test flag is set, the transport should not retry:
+        self.assertEqual(mock_get.call_count, 1)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Connection timed out")
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_support_variables(self, mock_get):

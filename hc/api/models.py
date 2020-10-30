@@ -489,7 +489,8 @@ class Channel(models.Model):
         n.save()
 
         # These are not database fields. It is just a convenient way to pass
-        # status_url to transport classes.
+        # status_url and the is_test flag to transport classes.
+        check.is_test = is_test
         check.status_url = n.status_url()
 
         error = self.transport.notify(check) or ""
