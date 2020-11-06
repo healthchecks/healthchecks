@@ -765,15 +765,15 @@ class Channel(models.Model):
 
 
 class Notification(models.Model):
-    class Meta:
-        get_latest_by = "created"
-
     code = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
     owner = models.ForeignKey(Check, models.CASCADE, null=True)
     check_status = models.CharField(max_length=6)
     channel = models.ForeignKey(Channel, models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=200, blank=True)
+
+    class Meta:
+        get_latest_by = "created"
 
     def status_url(self):
         path = reverse("hc-api-notification-status", args=[self.code])
