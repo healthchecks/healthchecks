@@ -397,6 +397,7 @@ class Credential(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)
     name = models.CharField(max_length=200, blank=True)
     user = models.ForeignKey(User, models.CASCADE, related_name="credentials")
+    created = models.DateTimeField(auto_now_add=True)
     data = models.BinaryField()
 
     def unpack(self):

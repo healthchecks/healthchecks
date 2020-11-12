@@ -62,3 +62,6 @@ span.loading {
   text-overflow: ellipsis;
 }
 
+#my-keys th {
+    border-top: 0;
+}

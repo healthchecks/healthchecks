@@ -63,26 +63,34 @@
             <div class="panel-body settings-block">
                 <form method="post">
                     {% csrf_token %}
-                    <h2>Two Factor Authentication</h2>
+                    <h2>Two-factor Authentication</h2>
                     {% if profile.user.credentials.exists %}
-                    <table class="table">
+                    <table id="my-keys" class="table">
+                        <tr>
+                            <th>Security keys</th>
+                        </tr>
                         {% for credential in profile.user.credentials.all %}
                         <tr>
-                            <td>{{ credential.code }}</td>
-                            <td>{{ credential.name|default:"unnamed" }}</td>
+                            <td>
+                                <strong>{{ credential.name|default:"unnamed" }}</strong>
+                                – registered on {{ credential.created|date:"M j, Y" }}
+                            </td>
+                            <td class="text-right"><a href="#">Remove</a></td>
                         </tr>
                         {% endfor %}
                     </table>
 
                     {% else %}
                     <p>
-                        Your account has no registered two factor authentication
-                        methods.
+                        Your account has no registered security keys.
+                        Two-factor authentication is disabled.
                     </p>
                     {% endif %}
                     <a
                         href="{% url 'hc-add-credential' %}"
-                        class="btn btn-default pull-right">Add 2FA Credential</a>
+                        class="btn btn-default pull-right">
+                        Register New Security Key
+                    </a>
                 </form>
             </div>
         </div>
