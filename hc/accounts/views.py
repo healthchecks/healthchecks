@@ -1,3 +1,4 @@
+import base64
 from datetime import timedelta as td
 from urllib.parse import urlparse
 import uuid
@@ -17,8 +18,13 @@ from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from fido2.client import ClientData
+from fido2.ctap2 import AttestationObject
+from fido2.server import Fido2Server
+from fido2.webauthn import PublicKeyCredentialRpEntity
+from fido2 import cbor
 from hc.accounts import forms
-from hc.accounts.models import Profile, Project, Member
+from hc.accounts.models import Credential, Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.lib.date import choose_next_report_date
 from hc.payments.models import Subscription
@@ -176,8 +182,8 @@ def check_token(request, username, token):
     # To work around this, we sign user in if the method is POST
     # *or* if the browser presents a cookie we had set when sending the login link.
     #
-    # If the method is GET, we instead serve a HTML form and a piece
-    # of Javascript to automatically submit it.
+    # If the method is GET and the auto-login cookie isn't present, we serve
+    # a HTML form with a submit button.
 
     if request.method == "POST" or "auto-login" in request.COOKIES:
         user = authenticate(username=username, token=token)
@@ -541,3 +547,54 @@ def remove_project(request, code):
     project = get_object_or_404(Project, code=code, owner=request.user)
     project.delete()
     return redirect("hc-index")
+
+
+def _verify_origin(aaa):
+    return lambda o: True
+
+
+@login_required
+def add_credential(request):
+    rp = PublicKeyCredentialRpEntity("localhost", "Healthchecks")
+    # FIXME use HTTPS, remove the verify_origin hack
+    server = Fido2Server(rp, verify_origin=_verify_origin)
+
+    def decode(form, key):
+        return base64.b64decode(request.POST[key].encode())
+
+    if request.method == "POST":
+        # idea: use AddCredentialForm
+        client_data = ClientData(decode(request.POST, "clientDataJSON"))
+        att_obj = AttestationObject(decode(request.POST, "attestationObject"))
+        print("clientData", client_data)
+        print("AttestationObject:", att_obj)
+
+        auth_data = server.register_complete(
+            request.session["state"], client_data, att_obj
+        )
+
+        c = Credential(user=request.user)
+        c.name = request.POST["name"]
+        c.data = auth_data.credential_data
+        c.save()
+
+        print("REGISTERED CREDENTIAL:", auth_data.credential_data)
+        return render(request, "accounts/success.html")
+
+    credentials = [c.unpack() for c in request.user.credentials.all()]
+    print(credentials)
+
+    options, state = server.register_begin(
+        {
+            "id": request.user.username.encode(),
+            "name": request.user.email,
+            "displayName": request.user.email,
+        },
+        credentials,
+    )
+
+    request.session["state"] = state
+
+    # FIXME: avoid using cbor and cbor.js?
+    ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
+    return render(request, "accounts/add_credential.html", ctx)

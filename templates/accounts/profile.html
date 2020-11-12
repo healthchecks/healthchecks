@@ -59,6 +59,35 @@
             </div>
         </div>
 
+        <div class="panel panel-default">
+            <div class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Two Factor Authentication</h2>
+                    {% if profile.user.credentials.exists %}
+                    <table class="table">
+                        {% for credential in profile.user.credentials.all %}
+                        <tr>
+                            <td>{{ credential.code }}</td>
+                            <td>{{ credential.name|default:"unnamed" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+
+                    {% else %}
+                    <p>
+                        Your account has no registered two factor authentication
+                        methods.
+                    </p>
+                    {% endif %}
+                    <a
+                        href="{% url 'hc-add-credential' %}"
+                        class="btn btn-default pull-right">Add 2FA Credential</a>
+                </form>
+            </div>
+        </div>
+
+
         <div class="panel panel-{{ my_projects_status }}">
             <div class="panel-body settings-block">
                     {% csrf_token %}

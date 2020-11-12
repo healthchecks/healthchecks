@@ -11,6 +11,7 @@ from django.db import models
 from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils import timezone
+from fido2.ctap2 import AttestedCredentialData
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 
@@ -390,3 +391,14 @@ class Member(models.Model):
 
     def can_accept(self):
         return self.user.profile.can_accept(self.project)
+
+
+class Credential(models.Model):
+    code = models.UUIDField(default=uuid.uuid4, unique=True)
+    name = models.CharField(max_length=200, blank=True)
+    user = models.ForeignKey(User, models.CASCADE, related_name="credentials")
+    data = models.BinaryField()
+
+    def unpack(self):
+        unpacked, remaining_data = AttestedCredentialData.unpack_from(self.data)
+        return unpacked
