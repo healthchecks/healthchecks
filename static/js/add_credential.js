@@ -1,8 +1,8 @@
 $(function() {
     var form = document.getElementById("add-credential-form");
-    var optionsBinary = btoa(form.dataset.options);
-    var array = Uint8Array.from(atob(form.dataset.options), c => c.charCodeAt(0));
-    var options = CBOR.decode(array.buffer);
+    var optionsBytes = Uint8Array.from(atob(form.dataset.options), c => c.charCodeAt(0));
+    // cbor.js expects ArrayBuffer as input when decoding
+    var options = CBOR.decode(optionsBytes.buffer);
     console.log("decoded options:", options);
 
     function b64(arraybuffer) {
@@ -12,11 +12,14 @@ $(function() {
     navigator.credentials.create(options).then(function(attestation) {
         console.log("got attestation: ", attestation);
 
-        document.getElementById("attestationObject").value = b64(attestation.response.attestationObject);
-        document.getElementById("clientDataJSON").value = b64(attestation.response.clientDataJSON);
+        $("#attestation_object").val(b64(attestation.response.attestationObject));
+        $("#client_data_json").val(b64(attestation.response.clientDataJSON));
         console.log("form updated, all is well");
+
         $("#add-credential-submit").prop("disabled", "");
+        $("#add-credential-success").removeClass("hide");
     }).catch(function(err) {
-        console.log("Something went wrong", err);
+        $("#add-credential-error span").text(err);
+        $("#add-credential-error").removeClass("hide");
     });
 });

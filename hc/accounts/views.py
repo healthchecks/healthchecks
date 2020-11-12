@@ -18,8 +18,6 @@ from django.utils.timezone import now
 from django.urls import resolve, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from fido2.client import ClientData
-from fido2.ctap2 import AttestationObject
 from fido2.server import Fido2Server
 from fido2.webauthn import PublicKeyCredentialRpEntity
 from fido2 import cbor
@@ -559,18 +557,15 @@ def add_credential(request):
     # FIXME use HTTPS, remove the verify_origin hack
     server = Fido2Server(rp, verify_origin=_verify_origin)
 
-    def decode(form, key):
-        return base64.b64decode(request.POST[key].encode())
-
     if request.method == "POST":
-        # idea: use AddCredentialForm
-        client_data = ClientData(decode(request.POST, "clientDataJSON"))
-        att_obj = AttestationObject(decode(request.POST, "attestationObject"))
-        print("clientData", client_data)
-        print("AttestationObject:", att_obj)
+        form = forms.AddCredentialForm(request.POST)
+        if not form.is_valid():
+            return HttpResponseBadRequest()
 
         auth_data = server.register_complete(
-            request.session["state"], client_data, att_obj
+            request.session["state"],
+            form.cleaned_data["client_data_json"],
+            form.cleaned_data["attestation_object"],
         )
 
         c = Credential(user=request.user)
@@ -578,12 +573,9 @@ def add_credential(request):
         c.data = auth_data.credential_data
         c.save()
 
-        print("REGISTERED CREDENTIAL:", auth_data.credential_data)
-        return render(request, "accounts/success.html")
+        return redirect("hc-profile")
 
     credentials = [c.unpack() for c in request.user.credentials.all()]
-    print(credentials)
-
     options, state = server.register_begin(
         {
             "id": request.user.username.encode(),
@@ -595,6 +587,5 @@ def add_credential(request):
 
     request.session["state"] = state
 
-    # FIXME: avoid using cbor and cbor.js?
     ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
     return render(request, "accounts/add_credential.html", ctx)

@@ -1,7 +1,11 @@
+import base64
 from datetime import timedelta as td
+
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from fido2.ctap2 import AttestationObject
+from fido2.client import ClientData
 from hc.api.models import TokenBucket
 
 
@@ -112,3 +116,23 @@ class ProjectNameForm(forms.Form):
 
 class TransferForm(forms.Form):
     email = LowercaseEmailField()
+
+
+class AddCredentialForm(forms.Form):
+    name = forms.CharField(max_length=100, required=False)
+    client_data_json = forms.CharField(required=True)
+    attestation_object = forms.CharField(required=True)
+
+    def clean_client_data_json(self):
+        v = self.cleaned_data["client_data_json"]
+        binary = base64.b64decode(v.encode())
+        obj = ClientData(binary)
+
+        return obj
+
+    def clean_attestation_object(self):
+        v = self.cleaned_data["attestation_object"]
+        binary = base64.b64decode(v.encode())
+        obj = AttestationObject(binary)
+
+        return obj
