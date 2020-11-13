@@ -22,6 +22,7 @@ from fido2.server import Fido2Server
 from fido2.webauthn import PublicKeyCredentialRpEntity
 from fido2 import cbor
 from hc.accounts import forms
+from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.models import Credential, Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.lib.date import choose_next_report_date
@@ -552,6 +553,7 @@ def _verify_origin(aaa):
 
 
 @login_required
+@require_sudo_mode
 def add_credential(request):
     rp = PublicKeyCredentialRpEntity("localhost", "Healthchecks")
     # FIXME use HTTPS, remove the verify_origin hack
