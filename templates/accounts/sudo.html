@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="hc-dialog">
+            <h1>Enter a Confirmation Code</h1>
+            <br />
+            <p>
+                We have sent a confirmation code to your email
+                address. Please enter it below to continue:
+            </p>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group {% if wrong_code %}has-error{% endif %}">
+                    <input
+                        class="form-control input-lg"
+                        type="text" name="sudo_code" />
+
+                    {% if wrong_code %}
+                    <div class="help-block">The entered code was not correct.</div>
+                    {% endif %}
+                </div>
+
+                <button
+                    class="btn btn-lg btn-primary btn-block"
+                    type="submit">
+                    Continue
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "emails/base.html" %}
+{% load hc_extras %}
+
+{% block content %}
+Hello,<br />
+
+<br />
+
+We send a confirmation code before performing sensitive actions on {% site_name%}.<br />
+Your confirmation code is:<br />
+<br />
+<div style="font-family: monospace; font-weight: bold; font-size: 24px">
+    {{ sudo_code }}
+</div>
+<br />
+
+Note: this code is only valid for 15 minutes.<br />
+
+<br />
+{% endblock %}
+
+{% block content_more %}
+All the Best,<br>
+The {% site_name %} Team
+<br /><br />
+
+{% endblock %}

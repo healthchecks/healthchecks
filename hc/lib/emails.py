@@ -92,3 +92,7 @@ def sms_limit(to, ctx):
 
 def call_limit(to, ctx):
     send("phone-call-limit", to, ctx)
+
+
+def sudo_code(to, ctx):
+    send("sudo-code", to, ctx)
