@@ -16,11 +16,16 @@
 
                 <div class="form-group {% if wrong_code %}has-error{% endif %}">
                     <input
+                        id="sudo-code"
+                        type="text"
                         class="form-control input-lg"
-                        type="text" name="sudo_code" />
+                        maxlength="6"
+                        name="sudo_code" />
 
                     {% if wrong_code %}
-                    <div class="help-block">The entered code was not correct.</div>
+                    <div class="help-block">
+                        Not a valid code. Did you type it in correctly?
+                    </div>
                     {% endif %}
                 </div>
 

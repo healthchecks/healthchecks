@@ -884,3 +884,10 @@ class TokenBucket(models.Model):
 
         # 10 messages for a single chat per minute:
         return TokenBucket.authorize(value, 10, 60)
+
+    @staticmethod
+    def authorize_sudo_code(user):
+        value = "sudo-%d" % user.id
+
+        # 10 sudo attempts per day
+        return TokenBucket.authorize(value, 10, 3600 * 24)

@@ -3,6 +3,7 @@ import secrets
 
 from django.core.signing import TimestampSigner, SignatureExpired
 from django.shortcuts import redirect, render
+from hc.api.models import TokenBucket
 from hc.lib import emails
 
 
@@ -24,6 +25,9 @@ def require_sudo_mode(f):
         # is sudo mode active and has not expired yet?
         if _session_unsign(request, "sudo", 1800) == "active":
             return f(request, *args, **kwds)
+
+        if not TokenBucket.authorize_sudo_code(request.user):
+            return render(request, "try_later.html")
 
         # has the user submitted a code to enter sudo mode?
         if "sudo_code" in request.POST:
