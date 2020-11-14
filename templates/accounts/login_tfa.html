@@ -3,40 +3,20 @@
 
 {% block content %}
 
-{{ registration_dict|json_script:"registration" }}
 <div class="row">
 <form
-    id="add-credential-form"
+    id="login-tfa-form"
     class="col-sm-6 col-sm-offset-3"
     data-options="{{ options }}"
     method="post"
     encrypt="multipart/form-data">
-    <h1>Add Security Key</h1>
+    <h1>Two-factor Authentication</h1>
 
     {% csrf_token %}
-    <input id="attestation_object" type="hidden" name="attestation_object">
+    <input id="credential_id" type="hidden" name="credential_id">
+    <input id="authenticator_data" type="hidden" name="authenticator_data">
     <input id="client_data_json" type="hidden" name="client_data_json">
-
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input
-            type="text"
-            class="form-control"
-            id="name"
-            name="name"
-            required>
-        <div class="help-block">
-            Give this credential a descriptive name. Example: "My primary Yubikey"
-        </div>
-    </div>
-
-    <div class="form-group text-right">
-        <button
-            id="name-next"
-            class="btn btn-default" type="button">
-            Confirm Name and Continue
-        </button>
-    </div>
+    <input id="signature" type="hidden" name="signature">
 
     <div id="waiting" class="hide">
         <h2>Waiting for security key</h2>
@@ -70,15 +50,6 @@
             <strong>Success!</strong>
             Credential acquired.
         </div>
-
-        <div class="form-group text-right">
-            <input
-                id="add-credential-submit"
-                class="btn btn-primary"
-                type="submit"
-                name=""
-                value="Save Security Key">
-        </div>
     </div>
 </form>
 </div>
@@ -89,6 +60,6 @@
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/cbor.js' %}"></script>
-<script src="{% static 'js/add_credential.js' %}"></script>
+<script src="{% static 'js/login_tfa.js' %}"></script>
 {% endcompress %}
 {% endblock %}

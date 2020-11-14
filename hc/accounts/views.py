@@ -623,3 +623,37 @@ def remove_credential(request, code):
 
     ctx = {"credential": credential}
     return render(request, "accounts/remove_credential.html", ctx)
+
+
+def login_tfa(request):
+    rp = PublicKeyCredentialRpEntity("localhost", "Healthchecks")
+    # FIXME use HTTPS, remove the verify_origin hack
+    server = Fido2Server(rp, verify_origin=_verify_origin)
+
+    # FIXME
+    user_id = 1
+    user = User.objects.get(id=user_id)
+    credentials = [c.unpack() for c in user.credentials.all()]
+
+    if request.method == "POST":
+        form = forms.LoginTfaForm(request.POST)
+        if not form.is_valid():
+            return HttpResponseBadRequest()
+
+        server.authenticate_complete(
+            request.session.pop("state", ""),
+            credentials,
+            form.cleaned_data["credential_id"],
+            form.cleaned_data["client_data_json"],
+            form.cleaned_data["authenticator_data"],
+            form.cleaned_data["signature"],
+        )
+        from django.http import HttpResponse
+
+        return HttpResponse("all is well!")
+
+    options, state = server.authenticate_begin(credentials)
+
+    request.session["state"] = state
+    ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
+    return render(request, "accounts/login_tfa.html", ctx)
