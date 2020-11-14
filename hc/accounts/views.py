@@ -203,7 +203,21 @@ def check_token(request, username, token):
 def profile(request):
     profile = request.profile
 
-    ctx = {"page": "profile", "profile": profile, "my_projects_status": "default"}
+    ctx = {
+        "page": "profile",
+        "profile": profile,
+        "my_projects_status": "default",
+        "tfa_status": "default",
+        "added_credential_name": request.session.pop("added_credential_name", ""),
+        "removed_credential_name": request.session.pop("removed_credential_name", ""),
+        "credentials": request.user.credentials.order_by("id"),
+    }
+
+    if ctx["added_credential_name"]:
+        ctx["tfa_status"] = "success"
+
+    if ctx["removed_credential_name"]:
+        ctx["tfa_status"] = "info"
 
     if request.method == "POST":
         if "change_email" in request.POST:
@@ -575,6 +589,7 @@ def add_credential(request):
         c.data = auth_data.credential_data
         c.save()
 
+        request.session["added_credential_name"] = c.name
         return redirect("hc-profile")
 
     credentials = [c.unpack() for c in request.user.credentials.all()]
@@ -591,3 +606,20 @@ def add_credential(request):
 
     ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
     return render(request, "accounts/add_credential.html", ctx)
+
+
+@login_required
+@require_sudo_mode
+def remove_credential(request, code):
+    try:
+        credential = Credential.objects.get(user=request.user, code=code)
+    except Credential.DoesNotExist:
+        return HttpResponseBadRequest()
+
+    if request.method == "POST" and "remove_credential" in request.POST:
+        request.session["removed_credential_name"] = credential.name
+        credential.delete()
+        return redirect("hc-profile")
+
+    ctx = {"credential": credential}
+    return render(request, "accounts/remove_credential.html", ctx)

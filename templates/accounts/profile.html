@@ -59,30 +59,33 @@
             </div>
         </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-{{ tfa_status }}">
             <div class="panel-body settings-block">
                 <form method="post">
                     {% csrf_token %}
                     <h2>Two-factor Authentication</h2>
-                    {% if profile.user.credentials.exists %}
+                    {% if credentials.exists %}
+
                     <table id="my-keys" class="table">
                         <tr>
                             <th>Security keys</th>
                         </tr>
-                        {% for credential in profile.user.credentials.all %}
+                        {% for credential in credentials %}
                         <tr>
                             <td>
                                 <strong>{{ credential.name|default:"unnamed" }}</strong>
                                 – registered on {{ credential.created|date:"M j, Y" }}
                             </td>
-                            <td class="text-right"><a href="#">Remove</a></td>
+                            <td class="text-right">
+                                <a href="{% url 'hc-remove-credential' credential.code  %}">Remove</a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
 
                     {% else %}
                     <p>
-                        Your account has no registered security keys.
+                        Your account has no registered security keys.<br />
                         Two-factor authentication is disabled.
                     </p>
                     {% endif %}
@@ -93,6 +96,18 @@
                     </a>
                 </form>
             </div>
+
+            {% if added_credential_name %}
+            <div class="panel-footer">
+                Added security key <strong>{{ added_credential_name }}</strong>.
+            </div>
+            {% endif %}
+
+            {% if removed_credential_name %}
+            <div class="panel-footer">
+                Removed security key <strong>{{ removed_credential_name }}</strong>.
+            </div>
+            {% endif %}
         </div>
 
 

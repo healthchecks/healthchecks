@@ -30,6 +30,13 @@ $(function() {
         });
     }
 
+    $("#name").on('keypress',function(e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            requestCredentials();
+        }
+    });
+
     $("#name-next").click(requestCredentials);
     $("#retry").click(requestCredentials);
 

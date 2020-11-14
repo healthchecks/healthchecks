@@ -119,7 +119,7 @@ class TransferForm(forms.Form):
 
 
 class AddCredentialForm(forms.Form):
-    name = forms.CharField(max_length=100, required=False)
+    name = forms.CharField(max_length=100)
     client_data_json = forms.CharField(required=True)
     attestation_object = forms.CharField(required=True)
 

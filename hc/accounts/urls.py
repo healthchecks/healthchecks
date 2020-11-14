@@ -24,4 +24,9 @@ urlpatterns = [
     path("change_email/done/", views.change_email_done, name="hc-change-email-done"),
     path("change_email/<slug:token>/", views.change_email, name="hc-change-email"),
     path("two_factor/add/", views.add_credential, name="hc-add-credential"),
+    path(
+        "two_factor/<uuid:code>/remove/",
+        views.remove_credential,
+        name="hc-remove-credential",
+    ),
 ]
