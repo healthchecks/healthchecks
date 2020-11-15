@@ -15,7 +15,7 @@ from django.core import signing
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
-from django.urls import resolve, Resolver404
+from django.urls import resolve, reverse, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from fido2.server import Fido2Server
@@ -97,6 +97,21 @@ def _redirect_after_login(request):
     return redirect("hc-index")
 
 
+def _check_2fa(request, user):
+    if user.credentials.exists():
+        request.session["2fa_user_id"] = user.id
+
+        path = reverse("hc-login-tfa")
+        redirect_url = request.GET.get("next")
+        if _allow_redirect(redirect_url):
+            path += "?next=%s" % redirect_url
+
+        return redirect(path)
+
+    auth_login(request, user)
+    return _redirect_after_login(request)
+
+
 def login(request):
     form = forms.PasswordLoginForm()
     magic_form = forms.EmailLoginForm()
@@ -105,8 +120,7 @@ def login(request):
         if request.POST.get("action") == "login":
             form = forms.PasswordLoginForm(request.POST)
             if form.is_valid():
-                auth_login(request, form.user)
-                return _redirect_after_login(request)
+                return _check_2fa(request, form.user)
 
         else:
             magic_form = forms.EmailLoginForm(request.POST)
@@ -189,9 +203,7 @@ def check_token(request, username, token):
         if user is not None and user.is_active:
             user.profile.token = ""
             user.profile.save()
-            auth_login(request, user)
-
-            return _redirect_after_login(request)
+            return _check_2fa(request, user)
 
         request.session["bad_link"] = True
         return redirect("hc-login")
@@ -630,9 +642,10 @@ def login_tfa(request):
     # FIXME use HTTPS, remove the verify_origin hack
     server = Fido2Server(rp, verify_origin=_verify_origin)
 
-    # FIXME
-    user_id = 1
-    user = User.objects.get(id=user_id)
+    if "2fa_user_id" not in request.session:
+        return HttpResponseBadRequest()
+
+    user = User.objects.get(id=request.session["2fa_user_id"])
     credentials = [c.unpack() for c in user.credentials.all()]
 
     if request.method == "POST":
@@ -648,12 +661,13 @@ def login_tfa(request):
             form.cleaned_data["authenticator_data"],
             form.cleaned_data["signature"],
         )
-        from django.http import HttpResponse
 
-        return HttpResponse("all is well!")
+        request.session.pop("2fa_user_id")
+        auth_login(request, user, "hc.accounts.backends.EmailBackend")
+        return _redirect_after_login(request)
 
     options, state = server.authenticate_begin(credentials)
-
     request.session["state"] = state
+
     ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
     return render(request, "accounts/login_tfa.html", ctx)
