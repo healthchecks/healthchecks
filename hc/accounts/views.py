@@ -574,16 +574,11 @@ def remove_project(request, code):
     return redirect("hc-index")
 
 
-def _verify_origin(aaa):
-    return lambda o: True
-
-
 @login_required
 @require_sudo_mode
 def add_credential(request):
     rp = PublicKeyCredentialRpEntity("localhost", "Healthchecks")
-    # FIXME use HTTPS, remove the verify_origin hack
-    server = Fido2Server(rp, verify_origin=_verify_origin)
+    server = Fido2Server(rp)
 
     if request.method == "POST":
         form = forms.AddCredentialForm(request.POST)
@@ -639,8 +634,7 @@ def remove_credential(request, code):
 
 def login_tfa(request):
     rp = PublicKeyCredentialRpEntity("localhost", "Healthchecks")
-    # FIXME use HTTPS, remove the verify_origin hack
-    server = Fido2Server(rp, verify_origin=_verify_origin)
+    server = Fido2Server(rp)
 
     if "2fa_user_id" not in request.session:
         return HttpResponseBadRequest()
