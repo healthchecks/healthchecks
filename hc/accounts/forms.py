@@ -135,7 +135,7 @@ class AddCredentialForm(forms.Form):
     attestation_object = Base64Field()
 
 
-class LoginTfaForm(forms.Form):
+class WebauthnForm(forms.Form):
     credential_id = Base64Field()
     client_data_json = Base64Field()
     authenticator_data = Base64Field()

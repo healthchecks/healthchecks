@@ -3,7 +3,7 @@ from unittest.mock import patch
 from hc.test import BaseTestCase
 
 
-class LoginTfaTestCase(BaseTestCase):
+class LoginWebauthnTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 

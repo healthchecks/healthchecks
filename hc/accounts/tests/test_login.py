@@ -113,7 +113,7 @@ class LoginTestCase(BaseTestCase):
         r = self.client.get("/accounts/login/")
         self.assertNotContains(r, "Create Your Account")
 
-    def test_it_redirects_to_login_tfa(self):
+    def test_it_redirects_to_webauthn_form(self):
         Credential.objects.create(user=self.alice, name="Alices Key")
 
         form = {"action": "login", "email": "alice@example.org", "password": "password"}

@@ -3,7 +3,7 @@ from hc.accounts import views
 
 urlpatterns = [
     path("login/", views.login, name="hc-login"),
-    path("login/two_factor/", views.login_tfa, name="hc-login-tfa"),
+    path("login/two_factor/", views.login_webauthn, name="hc-login-webauthn"),
     path("logout/", views.logout, name="hc-logout"),
     path("signup/", views.signup, name="hc-signup"),
     path("login_link_sent/", views.login_link_sent, name="hc-login-link-sent"),

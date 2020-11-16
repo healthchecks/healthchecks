@@ -105,7 +105,7 @@ def _check_2fa(request, user):
     if user.credentials.exists():
         request.session["2fa_user_id"] = user.id
 
-        path = reverse("hc-login-tfa")
+        path = reverse("hc-login-webauthn")
         redirect_url = request.GET.get("next")
         if _allow_redirect(redirect_url):
             path += "?next=%s" % redirect_url
@@ -223,17 +223,17 @@ def profile(request):
         "page": "profile",
         "profile": profile,
         "my_projects_status": "default",
-        "tfa_status": "default",
+        "2fa_status": "default",
         "added_credential_name": request.session.pop("added_credential_name", ""),
         "removed_credential_name": request.session.pop("removed_credential_name", ""),
         "credentials": request.user.credentials.order_by("id"),
     }
 
     if ctx["added_credential_name"]:
-        ctx["tfa_status"] = "success"
+        ctx["2fa_status"] = "success"
 
     if ctx["removed_credential_name"]:
-        ctx["tfa_status"] = "info"
+        ctx["2fa_status"] = "info"
 
     if request.method == "POST":
         if "change_email" in request.POST:
@@ -670,7 +670,7 @@ def _check_credential(request, form, credentials):
     return True
 
 
-def login_tfa(request):
+def login_webauthn(request):
     if "2fa_user_id" not in request.session:
         return HttpResponseBadRequest()
 
@@ -678,7 +678,7 @@ def login_tfa(request):
     credentials = [c.unpack() for c in user.credentials.all()]
 
     if request.method == "POST":
-        form = forms.LoginTfaForm(request.POST)
+        form = forms.WebauthnForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
@@ -694,4 +694,4 @@ def login_tfa(request):
     request.session["state"] = state
 
     ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
-    return render(request, "accounts/login_tfa.html", ctx)
+    return render(request, "accounts/login_webauthn.html", ctx)

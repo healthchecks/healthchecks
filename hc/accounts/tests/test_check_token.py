@@ -50,7 +50,7 @@ class CheckTokenTestCase(BaseTestCase):
         r = self.client.post(url)
         self.assertRedirects(r, self.checks_url)
 
-    def test_it_redirects_to_login_tfa(self):
+    def test_it_redirects_to_webauthn_form(self):
         Credential.objects.create(user=self.alice, name="Alices Key")
 
         r = self.client.post("/accounts/check_token/alice/secret-token/")
