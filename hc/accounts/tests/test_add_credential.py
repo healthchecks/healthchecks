@@ -52,4 +52,27 @@ class AddCredentialTestCase(BaseTestCase):
         c = Credential.objects.get()
         self.assertEqual(c.name, "My New Key")
 
-    # FIXME: test authentication failure
+    def test_it_rejects_bad_base64(self):
+        self.client.login(username="alice@example.org", password="password")
+        self._set_sudo_flag()
+
+        payload = {
+            "name": "My New Key",
+            "client_data_json": "not valid base64",
+            "attestation_object": "not valid base64",
+        }
+
+        r = self.client.post(self.url, payload)
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_requires_client_data_json(self):
+        self.client.login(username="alice@example.org", password="password")
+        self._set_sudo_flag()
+
+        payload = {
+            "name": "My New Key",
+            "attestation_object": "e30=",
+        }
+
+        r = self.client.post(self.url, payload)
+        self.assertEqual(r.status_code, 400)
