@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
@@ -480,10 +480,9 @@ def set_password(request, token):
             request.profile.token = ""
             request.profile.save()
 
-            # Setting a password logs the user out, so here we
-            # log them back in.
-            u = authenticate(username=request.user.email, password=password)
-            auth_login(request, u)
+            # update the session with the new password hash so that
+            # the user doesn't  get logged out
+            update_session_auth_hash(request, request.user)
 
             messages.success(request, "Your password has been set!")
             return redirect("hc-profile")
