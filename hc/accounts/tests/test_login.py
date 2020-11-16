@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
+from hc.accounts.models import Credential
 from hc.api.models import Check, TokenBucket
 from hc.test import BaseTestCase
 
@@ -8,7 +9,7 @@ from hc.test import BaseTestCase
 class LoginTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.checks_url = "/projects/%s/checks/" % self.project.code
+        self.checks_url = f"/projects/{self.project.code}/checks/"
 
     def test_it_sends_link(self):
         form = {"identity": "alice@example.org"}
@@ -111,3 +112,17 @@ class LoginTestCase(BaseTestCase):
     def test_it_obeys_registration_open(self):
         r = self.client.get("/accounts/login/")
         self.assertNotContains(r, "Create Your Account")
+
+    def test_it_redirects_to_login_tfa(self):
+        Credential.objects.create(user=self.alice, name="Alices Key")
+
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
+        r = self.client.post("/accounts/login/", form)
+        self.assertRedirects(
+            r, "/accounts/login/two_factor/", fetch_redirect_response=False
+        )
+
+        # It should not log the user in yet
+        self.assertNotIn("_auth_user_id", self.client.session)
+        # Instead, it should set 2fa_user_id in the session
+        self.assertEqual(self.client.session["2fa_user_id"], self.alice.id)

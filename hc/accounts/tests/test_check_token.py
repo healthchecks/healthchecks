@@ -1,4 +1,5 @@
 from django.contrib.auth.hashers import make_password
+from hc.accounts.models import Credential
 from hc.test import BaseTestCase
 
 
@@ -48,3 +49,16 @@ class CheckTokenTestCase(BaseTestCase):
         url = "/accounts/check_token/alice/secret-token/?next=/evil/"
         r = self.client.post(url)
         self.assertRedirects(r, self.checks_url)
+
+    def test_it_redirects_to_login_tfa(self):
+        Credential.objects.create(user=self.alice, name="Alices Key")
+
+        r = self.client.post("/accounts/check_token/alice/secret-token/")
+        self.assertRedirects(
+            r, "/accounts/login/two_factor/", fetch_redirect_response=False
+        )
+
+        # It should not log the user in yet
+        self.assertNotIn("_auth_user_id", self.client.session)
+        # Instead, it should set 2fa_user_id in the session
+        self.assertEqual(self.client.session["2fa_user_id"], self.alice.id)
