@@ -21,7 +21,7 @@ urlpatterns = [
         views.unsubscribe_reports,
         name="hc-unsubscribe-reports",
     ),
-    path("set_password/<slug:token>/", views.set_password, name="hc-set-password"),
+    path("set_password/", views.set_password, name="hc-set-password"),
     path("change_email/done/", views.change_email_done, name="hc-change-email-done"),
     path("change_email/<slug:token>/", views.change_email, name="hc-change-email"),
     path("two_factor/add/", views.add_credential, name="hc-add-credential"),

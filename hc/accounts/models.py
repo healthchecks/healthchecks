@@ -118,12 +118,6 @@ class Profile(models.Model):
         }
         emails.transfer_request(self.user.email, ctx)
 
-    def send_set_password_link(self):
-        token = self.prepare_token("set-password")
-        path = reverse("hc-set-password", args=[token])
-        ctx = {"button_text": "Set Password", "button_url": settings.SITE_ROOT + path}
-        emails.set_password(self.user.email, ctx)
-
     def send_change_email_link(self):
         token = self.prepare_token("change-email")
         path = reverse("hc-change-email", args=[token])

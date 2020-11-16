@@ -9,23 +9,6 @@ from hc.api.models import Check
 
 
 class ProfileTestCase(BaseTestCase):
-    def test_it_sends_set_password_link(self):
-        self.client.login(username="alice@example.org", password="password")
-
-        form = {"set_password": "1"}
-        r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 302
-
-        # profile.token should be set now
-        self.profile.refresh_from_db()
-        token = self.profile.token
-        self.assertTrue(len(token) > 10)
-
-        # And an email should have been sent
-        self.assertEqual(len(mail.outbox), 1)
-        expected_subject = "Set password on %s" % settings.SITE_NAME
-        self.assertEqual(mail.outbox[0].subject, expected_subject)
-
     def test_it_sends_report(self):
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now()

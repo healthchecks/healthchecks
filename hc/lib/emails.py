@@ -62,10 +62,6 @@ def transfer_request(to, ctx):
     send("transfer-request", to, ctx)
 
 
-def set_password(to, ctx):
-    send("set-password", to, ctx)
-
-
 def change_email(to, ctx):
     send("change-email", to, ctx)
 

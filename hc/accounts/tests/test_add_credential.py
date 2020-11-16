@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-from django.core.signing import TimestampSigner
 from hc.test import BaseTestCase
 from hc.accounts.models import Credential
 
@@ -11,11 +10,6 @@ class AddCredentialTestCase(BaseTestCase):
 
         self.url = "/accounts/two_factor/add/"
 
-    def _set_sudo_flag(self):
-        session = self.client.session
-        session["sudo"] = TimestampSigner().sign("active")
-        session.save()
-
     def test_it_requires_sudo_mode(self):
         self.client.login(username="alice@example.org", password="password")
 
@@ -24,7 +18,7 @@ class AddCredentialTestCase(BaseTestCase):
 
     def test_it_shows_form(self):
         self.client.login(username="alice@example.org", password="password")
-        self._set_sudo_flag()
+        self.set_sudo_flag()
 
         r = self.client.get(self.url)
         self.assertContains(r, "Add Security Key")
@@ -37,7 +31,7 @@ class AddCredentialTestCase(BaseTestCase):
         mock_get_credential_data.return_value = b"dummy-credential-data"
 
         self.client.login(username="alice@example.org", password="password")
-        self._set_sudo_flag()
+        self.set_sudo_flag()
 
         payload = {
             "name": "My New Key",
@@ -54,7 +48,7 @@ class AddCredentialTestCase(BaseTestCase):
 
     def test_it_rejects_bad_base64(self):
         self.client.login(username="alice@example.org", password="password")
-        self._set_sudo_flag()
+        self.set_sudo_flag()
 
         payload = {
             "name": "My New Key",
@@ -67,7 +61,7 @@ class AddCredentialTestCase(BaseTestCase):
 
     def test_it_requires_client_data_json(self):
         self.client.login(username="alice@example.org", password="password")
-        self._set_sudo_flag()
+        self.set_sudo_flag()
 
         payload = {
             "name": "My New Key",

@@ -239,9 +239,6 @@ def profile(request):
         if "change_email" in request.POST:
             profile.send_change_email_link()
             return redirect("hc-link-sent")
-        elif "set_password" in request.POST:
-            profile.send_set_password_link()
-            return redirect("hc-link-sent")
         elif "leave_project" in request.POST:
             code = request.POST["code"]
             try:
@@ -466,10 +463,8 @@ def notifications(request):
 
 
 @login_required
-def set_password(request, token):
-    if not request.profile.check_token(token, "set-password"):
-        return HttpResponseBadRequest()
-
+@require_sudo_mode
+def set_password(request):
     if request.method == "POST":
         form = forms.SetPasswordForm(request.POST)
         if form.is_valid():

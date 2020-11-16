@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.signing import TimestampSigner
 from django.test import TestCase
 
 from hc.accounts.models import Member, Profile, Project
@@ -51,3 +52,8 @@ class BaseTestCase(TestCase):
         self.charlies_profile.save()
 
         self.channels_url = "/projects/%s/integrations/" % self.project.code
+
+    def set_sudo_flag(self):
+        session = self.client.session
+        session["sudo"] = TimestampSigner().sign("active")
+        session.save()

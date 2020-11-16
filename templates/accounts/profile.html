@@ -50,10 +50,9 @@
                     <p class="clearfix"></p>
                     <p>
                         Attach a password to your {{ site_name }} account
-                        <button
-                            type="submit"
-                            name="set_password"
-                            class="btn btn-default pull-right">Set Password</button>
+                        <a
+                            href="{% url 'hc-set-password' %}"
+                            class="btn btn-default pull-right">Set Password</a>
                     </p>
                 </form>
             </div>
