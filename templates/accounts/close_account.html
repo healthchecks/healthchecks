@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load compress static hc_extras %}
+
+{% block content %}
+
+<div class="row">
+<form class="col-sm-6 col-sm-offset-3" method="post">
+    {% csrf_token %}
+    <div class="panel panel-default">
+        <div class="panel-body settings-block">
+            <h2>Close Account?</h2>
+            <p></p>
+
+            <p>
+                You are about to close your {% site_name %} account. This
+                operation will permanently remove:
+            </p>
+
+            <ul>
+                <li>{{ request.user.project_set.count }} project{{ request.user.project_set.count|pluralize }}</li>
+                <li>{{ request.profile.num_checks_used }} check{{ request.profile.num_checks_used|pluralize }}</li>
+            </ul>
+
+            <p>
+                To confirm, please type your account's email address
+                (<code>{{ request.user.email }}</code>) below:
+            </p>
+
+            <div class="form-group {% if wrong_confirmation%}has-error{% endif %}">
+                <input
+                    class="form-control"
+                    type="text"
+                    name="confirmation"
+                    placeholder="type your email address to confirm" />
+            </div>
+
+            <div class="text-right">
+                <a
+                    href="{% url 'hc-profile' %}"
+                    class="btn btn-default">Cancel</a>
+                <button
+                    type="submit"
+                    name="close_account"
+                    class="btn btn-danger">Close Account</button>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+{% endblock %}

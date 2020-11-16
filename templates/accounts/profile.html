@@ -193,42 +193,15 @@
             <div class="panel-body settings-block">
                     {% csrf_token %}
                     <h2>Close Account</h2>
-                    <a
-                        id="close-account"
-                        href="#"
-                        class="btn btn-default pull-right"
-                        data-toggle="modal"
-                        data-target="#close-account-modal">Close Account</a>
-                    This will permanently remove your {{ site_name }} account
+                    <p>This will permanently remove your {{ site_name }} account.</p>
+                    <div class="text-right">
+                        <a
+                            id="close-account"
+                            href="{% url 'hc-close' %}"
+                            class="btn btn-default">Close Account</a>
+                    </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div id="close-account-modal" class="modal">
-    <div class="modal-dialog">
-        <form method="post" action="{% url 'hc-close' %}">
-            {% csrf_token %}
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4>Close Account?</h4>
-                </div>
-                <div class="modal-body">
-                    <p></p>
-                    <p>You are about to permanently remove
-                    the account <strong>{{ request.user.email }}</strong> and all
-                    of its associated projects, checks and integrations. Are you sure?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button
-                        type="submit"
-                        class="btn btn-danger">Close Account</button>
-                </div>
-            </div>
-        </form>
     </div>
 </div>
 

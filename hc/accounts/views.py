@@ -540,22 +540,29 @@ def unsubscribe_reports(request, signed_username):
     return render(request, "accounts/unsubscribed.html")
 
 
-@require_POST
 @login_required
+@require_sudo_mode
 def close(request):
     user = request.user
 
-    # Cancel their subscription:
-    sub = Subscription.objects.filter(user=user).first()
-    if sub:
-        sub.cancel()
+    if request.method == "POST":
+        if request.POST.get("confirmation") == request.user.email:
+            # Cancel their subscription:
+            sub = Subscription.objects.filter(user=user).first()
+            if sub:
+                sub.cancel()
 
-    user.delete()
+            # Deleting user also deletes its profile, checks, channels etc.
+            user.delete()
 
-    # Deleting user also deletes its profile, checks, channels etc.
+            request.session.flush()
+            return redirect("hc-index")
 
-    request.session.flush()
-    return redirect("hc-index")
+    ctx = {}
+    if "confirmation" in request.POST:
+        ctx["wrong_confirmation"] = True
+
+    return render(request, "accounts/close_account.html", ctx)
 
 
 @require_POST
