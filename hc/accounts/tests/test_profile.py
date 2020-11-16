@@ -4,6 +4,7 @@ from django.core import mail
 from django.conf import settings
 from django.utils.timezone import now
 from hc.test import BaseTestCase
+from hc.accounts.models import Credential
 from hc.api.models import Check
 
 
@@ -150,3 +151,10 @@ class ProfileTestCase(BaseTestCase):
 
         r = self.client.get("/accounts/profile/")
         self.assertContains(r, "You do not have any projects. Create one!")
+
+    def test_it_shows_security_key(self):
+        Credential.objects.create(user=self.alice, name="Alices Key")
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "Alices Key")
