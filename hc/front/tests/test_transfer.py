@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class TransferTestCase(BaseTestCase):
     def setUp(self):
-        super(TransferTestCase, self).setUp()
+        super().setUp()
 
         self.check = Check.objects.create(project=self.bobs_project)
         self.url = "/checks/%s/transfer/" % self.check.code

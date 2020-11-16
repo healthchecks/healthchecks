@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 @override_settings(SHELL_ENABLED=True)
 class AddShellTestCase(BaseTestCase):
     def setUp(self):
-        super(AddShellTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_shell/" % self.project.code
 
     @override_settings(SHELL_ENABLED=False)

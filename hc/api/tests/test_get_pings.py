@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 
 class GetPingsTestCase(BaseTestCase):
     def setUp(self):
-        super(GetPingsTestCase, self).setUp()
+        super().setUp()
 
         self.a1 = Check(project=self.project, name="Alice 1")
         self.a1.timeout = td(seconds=3600)

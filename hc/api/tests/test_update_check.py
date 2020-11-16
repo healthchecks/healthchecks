@@ -8,7 +8,7 @@ from hc.test import BaseTestCase
 
 class UpdateCheckTestCase(BaseTestCase):
     def setUp(self):
-        super(UpdateCheckTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project)
 
     def post(self, code, data):

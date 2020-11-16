@@ -4,7 +4,7 @@ from hc.api.models import Check
 
 class BadgesTestCase(BaseTestCase):
     def setUp(self):
-        super(BadgesTestCase, self).setUp()
+        super().setUp()
 
         self.url = "/projects/%s/badges/" % self.project.code
 

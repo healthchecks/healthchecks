@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class VerifyEmailTestCase(BaseTestCase):
     def setUp(self):
-        super(VerifyEmailTestCase, self).setUp()
+        super().setUp()
         self.channel = Channel(project=self.project, kind="email")
         self.channel.value = "alice@example.org"
         self.channel.save()

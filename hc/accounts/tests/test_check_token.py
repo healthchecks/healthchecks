@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class CheckTokenTestCase(BaseTestCase):
     def setUp(self):
-        super(CheckTokenTestCase, self).setUp()
+        super().setUp()
         self.profile.token = make_password("secret-token", "login")
         self.profile.save()
 

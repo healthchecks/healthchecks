@@ -2,9 +2,9 @@ from hc.api.models import Check
 from hc.test import BaseTestCase
 
 
-class MyChecksTestCase(BaseTestCase):
+class StatusTestCase(BaseTestCase):
     def setUp(self):
-        super(MyChecksTestCase, self).setUp()
+        super().setUp()
         self.check = Check(project=self.project, name="Alice Was Here")
         self.check.tags = "foo"
         self.check.save()

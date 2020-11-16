@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class FilteringRulesTestCase(BaseTestCase):
     def setUp(self):
-        super(FilteringRulesTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project)
 
         self.url = "/checks/%s/filtering_rules/" % self.check.code

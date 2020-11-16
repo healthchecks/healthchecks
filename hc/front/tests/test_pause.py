@@ -7,7 +7,7 @@ from hc.test import BaseTestCase
 
 class PauseTestCase(BaseTestCase):
     def setUp(self):
-        super(PauseTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project, status="up")
         self.url = "/checks/%s/pause/" % self.check.code
         self.redirect_url = "/checks/%s/details/" % self.check.code

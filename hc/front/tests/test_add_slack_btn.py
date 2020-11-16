@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 @override_settings(SLACK_CLIENT_ID="fake-client-id")
 class AddSlackBtnTestCase(BaseTestCase):
     def setUp(self):
-        super(AddSlackBtnTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_slack_btn/" % self.project.code
 
     def test_instructions_work(self):

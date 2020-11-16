@@ -10,7 +10,7 @@ from hc.test import BaseTestCase
 
 class SendReportsTestCase(BaseTestCase):
     def setUp(self):
-        super(SendReportsTestCase, self).setUp()
+        super().setUp()
 
         # Make alice eligible for a monthly report:
         self.profile.next_report_date = now() - td(hours=1)

@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class MyChecksTestCase(BaseTestCase):
     def setUp(self):
-        super(MyChecksTestCase, self).setUp()
+        super().setUp()
         self.check = Check(project=self.project, name="Alice Was Here")
         self.check.save()
 

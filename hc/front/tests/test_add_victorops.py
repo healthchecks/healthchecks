@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddVictorOpsTestCase(BaseTestCase):
     def setUp(self):
-        super(AddVictorOpsTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_victorops/" % self.project.code
 
     def test_instructions_work(self):

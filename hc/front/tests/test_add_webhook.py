@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddWebhookTestCase(BaseTestCase):
     def setUp(self):
-        super(AddWebhookTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_webhook/" % self.project.code
 
     def test_instructions_work(self):

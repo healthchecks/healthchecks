@@ -6,7 +6,7 @@ from django.test.utils import override_settings
 @override_settings(APPRISE_ENABLED=True)
 class AddAppriseTestCase(BaseTestCase):
     def setUp(self):
-        super(AddAppriseTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_apprise/" % self.project.code
 
     def test_instructions_work(self):

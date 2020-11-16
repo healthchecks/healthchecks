@@ -7,7 +7,7 @@ from hc.test import BaseTestCase
 
 class LoginTestCase(BaseTestCase):
     def setUp(self):
-        super(LoginTestCase, self).setUp()
+        super().setUp()
         self.checks_url = "/projects/%s/checks/" % self.project.code
 
     def test_it_sends_link(self):

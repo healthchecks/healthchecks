@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class PingDetailsTestCase(BaseTestCase):
     def setUp(self):
-        super(PingDetailsTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.url = "/checks/%s/last_ping/" % self.check.code
 

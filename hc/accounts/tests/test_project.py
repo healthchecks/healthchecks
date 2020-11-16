@@ -9,7 +9,7 @@ from hc.api.models import TokenBucket
 
 class ProjectTestCase(BaseTestCase):
     def setUp(self):
-        super(ProjectTestCase, self).setUp()
+        super().setUp()
 
         self.url = "/projects/%s/settings/" % self.project.code
 

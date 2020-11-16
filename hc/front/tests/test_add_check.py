@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddCheckTestCase(BaseTestCase):
     def setUp(self):
-        super(AddCheckTestCase, self).setUp()
+        super().setUp()
 
         self.url = "/projects/%s/checks/add/" % self.project.code
         self.redirect_url = "/projects/%s/checks/" % self.project.code

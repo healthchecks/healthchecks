@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class DetailsTestCase(BaseTestCase):
     def setUp(self):
-        super(DetailsTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project)
 
         ping = Ping.objects.create(owner=self.check)

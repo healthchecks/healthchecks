@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 @override_settings(PUSHBULLET_CLIENT_ID="t1", PUSHBULLET_CLIENT_SECRET="s1")
 class AddPushbulletTestCase(BaseTestCase):
     def setUp(self):
-        super(AddPushbulletTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_pushbullet/" % self.project.code
 
     def test_instructions_work(self):

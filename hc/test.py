@@ -6,7 +6,7 @@ from hc.accounts.models import Member, Profile, Project
 
 class BaseTestCase(TestCase):
     def setUp(self):
-        super(BaseTestCase, self).setUp()
+        super().setUp()
 
         # Alice is a normal user for tests. Alice has team access enabled.
         self.alice = User(username="alice", email="alice@example.org")

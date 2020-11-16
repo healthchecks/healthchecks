@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class CopyCheckTestCase(BaseTestCase):
     def setUp(self):
-        super(CopyCheckTestCase, self).setUp()
+        super().setUp()
         self.check = Check(project=self.project)
         self.check.name = "Foo"
         self.check.subject = "success-keyword"

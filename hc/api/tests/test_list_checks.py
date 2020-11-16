@@ -9,7 +9,7 @@ from hc.test import BaseTestCase
 
 class ListChecksTestCase(BaseTestCase):
     def setUp(self):
-        super(ListChecksTestCase, self).setUp()
+        super().setUp()
 
         self.now = now().replace(microsecond=0)
 

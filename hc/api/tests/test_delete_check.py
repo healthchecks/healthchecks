@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class DeleteCheckTestCase(BaseTestCase):
     def setUp(self):
-        super(DeleteCheckTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project)
 
     def test_it_works(self):

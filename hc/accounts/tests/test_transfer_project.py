@@ -4,9 +4,9 @@ from hc.api.models import Check
 from hc.test import BaseTestCase
 
 
-class ProjectTestCase(BaseTestCase):
+class TransferProjectTestCase(BaseTestCase):
     def setUp(self):
-        super(ProjectTestCase, self).setUp()
+        super().setUp()
 
         Check.objects.create(project=self.project)
 

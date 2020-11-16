@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 @override_settings(DISCORD_CLIENT_ID="t1", DISCORD_CLIENT_SECRET="s1")
 class AddDiscordTestCase(BaseTestCase):
     def setUp(self):
-        super(AddDiscordTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_discord/" % self.project.code
 
     def test_instructions_work(self):

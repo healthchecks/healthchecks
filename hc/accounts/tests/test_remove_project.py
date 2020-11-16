@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class RemoveProjectTestCase(BaseTestCase):
     def setUp(self):
-        super(RemoveProjectTestCase, self).setUp()
+        super().setUp()
 
         self.url = "/projects/%s/remove/" % self.project.code
 

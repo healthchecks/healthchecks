@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class ResumeTestCase(BaseTestCase):
     def setUp(self):
-        super(ResumeTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project, status="paused")
         self.url = "/checks/%s/resume/" % self.check.code
         self.redirect_url = "/checks/%s/details/" % self.check.code

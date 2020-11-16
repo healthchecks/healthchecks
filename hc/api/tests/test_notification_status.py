@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 
 class NotificationStatusTestCase(BaseTestCase):
     def setUp(self):
-        super(NotificationStatusTestCase, self).setUp()
+        super().setUp()
 
         self.check = Check(project=self.project, status="up")
         self.check.save()

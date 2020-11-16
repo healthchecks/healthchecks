@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddMattermostTestCase(BaseTestCase):
     def setUp(self):
-        super(AddMattermostTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_mattermost/" % self.project.code
 
     def test_instructions_work(self):

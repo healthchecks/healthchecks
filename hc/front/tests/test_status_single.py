@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class StatusSingleTestCase(BaseTestCase):
     def setUp(self):
-        super(StatusSingleTestCase, self).setUp()
+        super().setUp()
         self.check = Check(project=self.project, name="Alice Was Here")
         self.check.save()
 

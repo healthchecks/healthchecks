@@ -10,7 +10,7 @@ from hc.test import BaseTestCase
 
 class BadgeTestCase(BaseTestCase):
     def setUp(self):
-        super(BadgeTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project, tags="foo bar")
 
         sig = base64_hmac(str(self.project.badge_key), "foo", settings.SECRET_KEY)

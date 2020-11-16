@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 
 class EditWebhookTestCase(BaseTestCase):
     def setUp(self):
-        super(EditWebhookTestCase, self).setUp()
+        super().setUp()
 
         definition = {
             "method_down": "GET",

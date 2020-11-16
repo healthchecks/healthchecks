@@ -8,7 +8,7 @@ from hc.test import BaseTestCase
 )
 class AddPushoverTestCase(BaseTestCase):
     def setUp(self):
-        super(AddPushoverTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_pushover/" % self.project.code
 
     @override_settings(PUSHOVER_API_TOKEN=None)

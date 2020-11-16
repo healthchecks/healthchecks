@@ -8,7 +8,7 @@ from hc.test import BaseTestCase
 @override_settings(TRELLO_APP_KEY="foo")
 class AddTrelloTestCase(BaseTestCase):
     def setUp(self):
-        super(AddTrelloTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_trello/" % self.project.code
 
     def test_instructions_work(self):

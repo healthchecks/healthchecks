@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 
 class AddOpsGenieTestCase(BaseTestCase):
     def setUp(self):
-        super(AddOpsGenieTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_opsgenie/" % self.project.code
 
     def test_instructions_work(self):

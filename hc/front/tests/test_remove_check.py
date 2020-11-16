@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class RemoveCheckTestCase(BaseTestCase):
     def setUp(self):
-        super(RemoveCheckTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.remove_url = "/checks/%s/remove/" % self.check.code
         self.redirect_url = "/projects/%s/checks/" % self.project.code

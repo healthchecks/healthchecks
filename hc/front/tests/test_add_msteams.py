@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddMsTeamsTestCase(BaseTestCase):
     def setUp(self):
-        super(AddMsTeamsTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_msteams/" % self.project.code
 
     def test_instructions_work(self):

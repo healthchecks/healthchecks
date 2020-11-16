@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddPdTestCase(BaseTestCase):
     def setUp(self):
-        super(AddPdTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_pd/" % self.project.code
 
     def test_instructions_work(self):

@@ -8,7 +8,7 @@ from hc.test import BaseTestCase
 
 class SendTestNotificationTestCase(BaseTestCase):
     def setUp(self):
-        super(SendTestNotificationTestCase, self).setUp()
+        super().setUp()
         self.channel = Channel(kind="email", project=self.project)
         self.channel.email_verified = True
         self.channel.value = "alice@example.org"

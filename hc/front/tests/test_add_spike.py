@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddSpikeTestCase(BaseTestCase):
     def setUp(self):
-        super(AddSpikeTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_spike/" % self.project.code
 
     def test_instructions_work(self):

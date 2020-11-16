@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 @override_settings(TWILIO_ACCOUNT="foo", TWILIO_AUTH="foo", TWILIO_FROM="123")
 class AddSmsTestCase(BaseTestCase):
     def setUp(self):
-        super(AddSmsTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_sms/" % self.project.code
 
     def test_instructions_work(self):

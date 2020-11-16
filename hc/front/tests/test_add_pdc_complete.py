@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 @override_settings(PD_VENDOR_KEY="foo")
 class AddPdcCompleteTestCase(BaseTestCase):
     def setUp(self):
-        super(AddPdcCompleteTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_pdc/" % self.project.code
         self.url += "XXXXXXXXXXXX/?service_key=123"
 

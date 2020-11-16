@@ -9,7 +9,7 @@ from hc.test import BaseTestCase
 @override_settings(MATRIX_HOMESERVER="fake-homeserver")
 class AddMatrixTestCase(BaseTestCase):
     def setUp(self):
-        super(AddMatrixTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_matrix/" % self.project.code
 
     @override_settings(MATRIX_ACCESS_TOKEN="foo")

@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 
 class ListChannelsTestCase(BaseTestCase):
     def setUp(self):
-        super(ListChannelsTestCase, self).setUp()
+        super().setUp()
 
         self.c1 = Channel(project=self.project)
         self.c1.kind = "email"

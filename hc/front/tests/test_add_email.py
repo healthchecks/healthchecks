@@ -9,7 +9,7 @@ from hc.test import BaseTestCase
 
 class AddEmailTestCase(BaseTestCase):
     def setUp(self):
-        super(AddEmailTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_email/" % self.project.code
 
     def test_instructions_work(self):

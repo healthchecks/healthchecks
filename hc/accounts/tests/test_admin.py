@@ -3,7 +3,7 @@ from hc.test import BaseTestCase
 
 class AccountsAdminTestCase(BaseTestCase):
     def setUp(self):
-        super(AccountsAdminTestCase, self).setUp()
+        super().setUp()
 
         self.alice.is_staff = True
         self.alice.is_superuser = True

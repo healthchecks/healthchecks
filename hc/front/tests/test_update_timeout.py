@@ -7,7 +7,7 @@ from hc.test import BaseTestCase
 
 class UpdateTimeoutTestCase(BaseTestCase):
     def setUp(self):
-        super(UpdateTimeoutTestCase, self).setUp()
+        super().setUp()
         self.check = Check(project=self.project, status="up")
         self.check.last_ping = timezone.now()
         self.check.save()

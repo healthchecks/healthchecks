@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class MetricsTestCase(BaseTestCase):
     def setUp(self):
-        super(MetricsTestCase, self).setUp()
+        super().setUp()
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 

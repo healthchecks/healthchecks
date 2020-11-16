@@ -17,7 +17,7 @@ def counts(result):
 
 class SendDeletionNoticesTestCase(BaseTestCase):
     def setUp(self):
-        super(SendDeletionNoticesTestCase, self).setUp()
+        super().setUp()
 
         # Make alice eligible for notice -- signed up more than 1 year ago
         self.alice.date_joined = now() - td(days=500)

@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 @override_settings(LINENOTIFY_CLIENT_ID="t1", LINENOTIFY_CLIENT_SECRET="s1")
 class AddLineNotifyTestCase(BaseTestCase):
     def setUp(self):
-        super(AddLineNotifyTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_linenotify/" % self.project.code
 
     def test_instructions_work(self):

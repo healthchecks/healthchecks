@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddZulipTestCase(BaseTestCase):
     def setUp(self):
-        super(AddZulipTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_zulip/" % self.project.code
 
     def test_instructions_work(self):

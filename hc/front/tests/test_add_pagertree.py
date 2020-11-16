@@ -4,7 +4,7 @@ from hc.test import BaseTestCase
 
 class AddPagerTreeTestCase(BaseTestCase):
     def setUp(self):
-        super(AddPagerTreeTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_pagertree/" % self.project.code
 
     def test_instructions_work(self):

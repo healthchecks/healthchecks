@@ -13,7 +13,7 @@ TEST_CREDENTIALS = {
 @override_settings(**TEST_CREDENTIALS)
 class AddWhatsAppTestCase(BaseTestCase):
     def setUp(self):
-        super(AddWhatsAppTestCase, self).setUp()
+        super().setUp()
         self.url = "/projects/%s/add_whatsapp/" % self.project.code
 
     def test_instructions_work(self):

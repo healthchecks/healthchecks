@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 
 class UpdateChannelTestCase(BaseTestCase):
     def setUp(self):
-        super(UpdateChannelTestCase, self).setUp()
+        super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.channel = Channel.objects.create(project=self.project, kind="email")
 
