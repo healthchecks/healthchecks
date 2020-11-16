@@ -75,23 +75,6 @@ class ProfileTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_sends_change_email_link(self):
-        self.client.login(username="alice@example.org", password="password")
-
-        form = {"change_email": "1"}
-        r = self.client.post("/accounts/profile/", form)
-        assert r.status_code == 302
-
-        # profile.token should be set now
-        self.profile.refresh_from_db()
-        token = self.profile.token
-        self.assertTrue(len(token) > 10)
-
-        # And an email should have been sent
-        self.assertEqual(len(mail.outbox), 1)
-        expected_subject = "Change email address on %s" % settings.SITE_NAME
-        self.assertEqual(mail.outbox[0].subject, expected_subject)
-
     def test_leaving_works(self):
         self.client.login(username="bob@example.org", password="password")
 

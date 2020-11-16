@@ -118,12 +118,6 @@ class Profile(models.Model):
         }
         emails.transfer_request(self.user.email, ctx)
 
-    def send_change_email_link(self):
-        token = self.prepare_token("change-email")
-        path = reverse("hc-change-email", args=[token])
-        ctx = {"button_text": "Change Email", "button_url": settings.SITE_ROOT + path}
-        emails.change_email(self.user.email, ctx)
-
     def send_sms_limit_notice(self, transport):
         ctx = {"transport": transport, "limit": self.sms_limit}
         if self.sms_limit != 500 and settings.USE_PAYMENTS:

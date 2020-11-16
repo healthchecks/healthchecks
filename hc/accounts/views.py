@@ -186,10 +186,6 @@ def login_link_sent(request):
     return render(request, "accounts/login_link_sent.html")
 
 
-def link_sent(request):
-    return render(request, "accounts/link_sent.html")
-
-
 def check_token(request, username, token):
     if request.user.is_authenticated and request.user.username == username:
         # User is already logged in
@@ -235,21 +231,17 @@ def profile(request):
     if ctx["removed_credential_name"]:
         ctx["2fa_status"] = "info"
 
-    if request.method == "POST":
-        if "change_email" in request.POST:
-            profile.send_change_email_link()
-            return redirect("hc-link-sent")
-        elif "leave_project" in request.POST:
-            code = request.POST["code"]
-            try:
-                project = Project.objects.get(code=code, member__user=request.user)
-            except Project.DoesNotExist:
-                return HttpResponseBadRequest()
+    if request.method == "POST" and "leave_project" in request.POST:
+        code = request.POST["code"]
+        try:
+            project = Project.objects.get(code=code, member__user=request.user)
+        except Project.DoesNotExist:
+            return HttpResponseBadRequest()
 
-            Member.objects.filter(project=project, user=request.user).delete()
+        Member.objects.filter(project=project, user=request.user).delete()
 
-            ctx["left_project"] = project
-            ctx["my_projects_status"] = "info"
+        ctx["left_project"] = project
+        ctx["my_projects_status"] = "info"
 
     return render(request, "accounts/profile.html", ctx)
 
@@ -486,10 +478,8 @@ def set_password(request):
 
 
 @login_required
-def change_email(request, token):
-    if not request.profile.check_token(token, "change-email"):
-        return HttpResponseBadRequest()
-
+@require_sudo_mode
+def change_email(request):
     if request.method == "POST":
         form = forms.ChangeEmailForm(request.POST)
         if form.is_valid():

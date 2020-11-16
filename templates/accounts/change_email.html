@@ -20,44 +20,49 @@
                 </p>
 
                 {% if request.user.has_usable_password %}
-                <p>
-                    Note: Changing the email address will also
-                    <strong>reset your current password</strong>
+                <p class="alert alert-warning">
+                    <strong>Your password will be reset.</strong>
+                    For security purposes, after updating your email address,
+                    {% site_name %} will also reset your current password
                     and log you out.
+                </p>
+                {% endif %}
+
+                {% if request.user.credentials.exists %}
+                <p class="alert alert-warning">
+                    <strong>Two-factor authentication is active.</strong>
+                    If you are handing this account over to somebody else,
+                    consider disabling two-factor authentication first.
                 </p>
                 {% endif %}
             </div>
 
-            <form class="form-horizontal" method="post">
+            <form method="post">
                 {% csrf_token %}
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Current Email</label>
-                    <div class="col-sm-9">
-                        <input
-                            type="text"
-                            class="form-control"
-                            disabled
-                            value="{{ request.user.email }}">
-                    </div>
+                    <label class="control-label">Current Email</label>
+                    <input
+                        type="text"
+                        class="form-control input-lg"
+                        disabled
+                        value="{{ request.user.email }}">
                 </div>
 
                 <div class="form-group {{ form.email.css_classes }}">
-                    <label for="ce-email" class="col-sm-3 control-label">New Email</label>
-                    <div class="col-sm-9">
-                        <input
-                            type="email"
-                            class="form-control"
-                            id="ce-email"
-                            name="email"
-                            placeholder="you@example.org">
-                            {% if form.email.errors %}
-                            <div class="help-block">
-                                {{ form.email.errors|join:"" }}
-                            </div>
-                            {% endif %}
+                    <label for="ce-email" class="control-label">New Email</label>
+                    <input
+                        type="email"
+                        class="form-control input-lg"
+                        id="ce-email"
+                        name="email"
+                        placeholder="you@example.org">
+                        {% if form.email.errors %}
+                        <div class="help-block">
+                            {{ form.email.errors|join:"" }}
+                        </div>
+                        {% endif %}
 
-                    </div>
                 </div>
 
                 <div class="clearfix">

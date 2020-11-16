@@ -7,7 +7,6 @@ urlpatterns = [
     path("logout/", views.logout, name="hc-logout"),
     path("signup/", views.signup, name="hc-signup"),
     path("login_link_sent/", views.login_link_sent, name="hc-login-link-sent"),
-    path("link_sent/", views.link_sent, name="hc-link-sent"),
     path(
         "check_token/<slug:username>/<slug:token>/",
         views.check_token,
@@ -23,7 +22,7 @@ urlpatterns = [
     ),
     path("set_password/", views.set_password, name="hc-set-password"),
     path("change_email/done/", views.change_email_done, name="hc-change-email-done"),
-    path("change_email/<slug:token>/", views.change_email, name="hc-change-email"),
+    path("change_email/", views.change_email, name="hc-change-email"),
     path("two_factor/add/", views.add_credential, name="hc-add-credential"),
     path(
         "two_factor/<uuid:code>/remove/",

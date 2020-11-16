@@ -42,10 +42,9 @@
                         Your account's email address is
                         <code>{{ request.user.email }}</code>
 
-                        <button
-                            type="submit"
-                            name="change_email"
-                            class="btn btn-default pull-right">Change Email</button>
+                        <a
+                            href="{% url 'hc-change-email' %}"
+                            class="btn btn-default pull-right">Change Email</a>
                     </p>
                     <p class="clearfix"></p>
                     <p>

@@ -2,7 +2,7 @@ from hc.test import BaseTestCase
 
 
 class SetPasswordTestCase(BaseTestCase):
-    def test_it_requires_sudo_mod(self):
+    def test_it_requires_sudo_mode(self):
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/accounts/set_password/")
