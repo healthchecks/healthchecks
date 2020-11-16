@@ -33,7 +33,7 @@
     </div>
 
     <div class="col-sm-9 col-md-6">
-        <div class="panel panel-default">
+        <div class="panel panel-{{ email_password_status|default:'default' }}">
             <div class="panel-body settings-block">
                 <form method="post">
                     {% csrf_token %}
@@ -55,6 +55,11 @@
                     </p>
                 </form>
             </div>
+            {% if changed_password %}
+            <div class="panel-footer">
+                Your new password has been set!
+            </div>
+            {% endif %}
         </div>
 
         <div class="panel panel-{{ 2fa_status }}">

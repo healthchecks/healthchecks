@@ -231,6 +231,10 @@ def profile(request):
     if ctx["removed_credential_name"]:
         ctx["2fa_status"] = "info"
 
+    if request.session.pop("changed_password", False):
+        ctx["changed_password"] = True
+        ctx["email_password_status"] = "success"
+
     if request.method == "POST" and "leave_project" in request.POST:
         code = request.POST["code"]
         try:
@@ -471,7 +475,7 @@ def set_password(request):
             # the user doesn't  get logged out
             update_session_auth_hash(request, request.user)
 
-            messages.success(request, "Your password has been set!")
+            request.session["changed_password"] = True
             return redirect("hc-profile")
 
     return render(request, "accounts/set_password.html", {})
