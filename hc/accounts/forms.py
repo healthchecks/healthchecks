@@ -4,8 +4,6 @@ from datetime import timedelta as td
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from fido2.ctap2 import AttestationObject, AuthenticatorData
-from fido2.client import ClientData
 from hc.api.models import TokenBucket
 
 
@@ -125,17 +123,11 @@ class AddCredentialForm(forms.Form):
 
     def clean_client_data_json(self):
         v = self.cleaned_data["client_data_json"]
-        binary = base64.b64decode(v.encode())
-        obj = ClientData(binary)
-
-        return obj
+        return base64.b64decode(v.encode())
 
     def clean_attestation_object(self):
         v = self.cleaned_data["attestation_object"]
-        binary = base64.b64decode(v.encode())
-        obj = AttestationObject(binary)
-
-        return obj
+        return base64.b64decode(v.encode())
 
 
 class LoginTfaForm(forms.Form):
@@ -150,17 +142,11 @@ class LoginTfaForm(forms.Form):
 
     def clean_client_data_json(self):
         v = self.cleaned_data["client_data_json"]
-        binary = base64.b64decode(v.encode())
-        obj = ClientData(binary)
-
-        return obj
+        return base64.b64decode(v.encode())
 
     def clean_authenticator_data(self):
         v = self.cleaned_data["authenticator_data"]
-        binary = base64.b64decode(v.encode())
-        obj = AuthenticatorData(binary)
-
-        return obj
+        return base64.b64decode(v.encode())
 
     def clean_signature(self):
         v = self.cleaned_data["signature"]

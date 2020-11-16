@@ -18,6 +18,8 @@ from django.utils.timezone import now
 from django.urls import resolve, reverse, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from fido2.ctap2 import AttestationObject, AuthenticatorData
+from fido2.client import ClientData
 from fido2.server import Fido2Server
 from fido2.webauthn import PublicKeyCredentialRpEntity
 from fido2 import cbor
@@ -38,6 +40,8 @@ POST_LOGIN_ROUTES = (
     "hc-add-telegram",
     "hc-project-settings",
 )
+
+FIDO2_SERVER = Fido2Server(PublicKeyCredentialRpEntity(settings.RP_ID, "healthchecks"))
 
 
 def _allow_redirect(redirect_url):
@@ -574,33 +578,46 @@ def remove_project(request, code):
     return redirect("hc-index")
 
 
+def _get_credential_data(request, form):
+    """ Complete Webauthn registration, return binary credential data.
+
+    This function is an interface to the fido2 library. It is separated
+    out so that we don't need to mock ClientData, AttestationObject,
+    register_complete separately in tests.
+
+    """
+
+    auth_data = FIDO2_SERVER.register_complete(
+        request.session["state"],
+        ClientData(form.cleaned_data["client_data_json"]),
+        AttestationObject(form.cleaned_data["attestation_object"]),
+    )
+
+    return auth_data.credential_data
+
+
 @login_required
 @require_sudo_mode
 def add_credential(request):
-    rp = PublicKeyCredentialRpEntity("localhost", "Healthchecks")
-    server = Fido2Server(rp)
-
     if request.method == "POST":
         form = forms.AddCredentialForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
-        auth_data = server.register_complete(
-            request.session["state"],
-            form.cleaned_data["client_data_json"],
-            form.cleaned_data["attestation_object"],
-        )
+        credential_data = _get_credential_data(request, form)
+        if not credential_data:
+            return HttpResponseBadRequest()
 
         c = Credential(user=request.user)
-        c.name = request.POST["name"]
-        c.data = auth_data.credential_data
+        c.name = form.cleaned_data["name"]
+        c.data = credential_data
         c.save()
 
         request.session["added_credential_name"] = c.name
         return redirect("hc-profile")
 
     credentials = [c.unpack() for c in request.user.credentials.all()]
-    options, state = server.register_begin(
+    options, state = FIDO2_SERVER.register_begin(
         {
             "id": request.user.username.encode(),
             "name": request.user.email,
@@ -632,10 +649,28 @@ def remove_credential(request, code):
     return render(request, "accounts/remove_credential.html", ctx)
 
 
-def login_tfa(request):
-    rp = PublicKeyCredentialRpEntity("localhost", "Healthchecks")
-    server = Fido2Server(rp)
+def _check_credential(request, form, credentials):
+    """ Complete Webauthn authentication, return True on success.
 
+    This function is an interface to the fido2 library. It is separated
+    out so that we don't need to mock ClientData, AuthenticatorData,
+    authenticate_complete separately in tests.
+
+    """
+
+    FIDO2_SERVER.authenticate_complete(
+        request.session["state"],
+        credentials,
+        form.cleaned_data["credential_id"],
+        ClientData(form.cleaned_data["client_data_json"]),
+        AuthenticatorData(form.cleaned_data["authenticator_data"]),
+        form.cleaned_data["signature"],
+    )
+
+    return True
+
+
+def login_tfa(request):
     if "2fa_user_id" not in request.session:
         return HttpResponseBadRequest()
 
@@ -647,20 +682,15 @@ def login_tfa(request):
         if not form.is_valid():
             return HttpResponseBadRequest()
 
-        server.authenticate_complete(
-            request.session.pop("state", ""),
-            credentials,
-            form.cleaned_data["credential_id"],
-            form.cleaned_data["client_data_json"],
-            form.cleaned_data["authenticator_data"],
-            form.cleaned_data["signature"],
-        )
+        if not _check_credential(request, form, credentials):
+            return HttpResponseBadRequest()
 
+        request.session.pop("state")
         request.session.pop("2fa_user_id")
         auth_login(request, user, "hc.accounts.backends.EmailBackend")
         return _redirect_after_login(request)
 
-    options, state = server.authenticate_begin(credentials)
+    options, state = FIDO2_SERVER.authenticate_begin(credentials)
     request.session["state"] = state
 
     ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
