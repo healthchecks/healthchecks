@@ -164,7 +164,7 @@ STATICFILES_FINDERS = (
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_HASHING_METHOD = "content"
 
-# Webauthn
+# WebAuthn
 RP_ID = os.getenv("RP_ID")
 
 # Discord integration

@@ -575,7 +575,7 @@ def remove_project(request, code):
 
 
 def _get_credential_data(request, form):
-    """ Complete Webauthn registration, return binary credential data.
+    """ Complete WebAuthn registration, return binary credential data.
 
     This function is an interface to the fido2 library. It is separated
     out so that we don't need to mock ClientData, AttestationObject,
@@ -652,7 +652,7 @@ def remove_credential(request, code):
 
 
 def _check_credential(request, form, credentials):
-    """ Complete Webauthn authentication, return True on success.
+    """ Complete WebAuthn authentication, return True on success.
 
     This function is an interface to the fido2 library. It is separated
     out so that we don't need to mock ClientData, AuthenticatorData,
@@ -684,7 +684,7 @@ def login_webauthn(request):
     credentials = [c.unpack() for c in user.credentials.all()]
 
     if request.method == "POST":
-        form = forms.WebauthnForm(request.POST)
+        form = forms.WebAuthnForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 

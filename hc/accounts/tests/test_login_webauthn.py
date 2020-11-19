@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 
 
 @override_settings(RP_ID="testserver")
-class LoginWebauthnTestCase(BaseTestCase):
+class LoginWebAuthnTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 
