@@ -1,3 +1,4 @@
+import time
 from unittest.mock import patch
 
 from django.test.utils import override_settings
@@ -11,7 +12,7 @@ class LoginWebAuthnTestCase(BaseTestCase):
 
         # This is the user we're trying to authenticate
         session = self.client.session
-        session["2fa_user_id"] = self.alice.id
+        session["2fa_user"] = [self.alice.id, self.alice.email, (time.time()) + 300]
         session.save()
 
         self.url = "/accounts/login/two_factor/"
@@ -23,6 +24,28 @@ class LoginWebAuthnTestCase(BaseTestCase):
 
         # It should put a "state" key in the session:
         self.assertIn("state", self.client.session)
+
+    def test_it_requires_unauthenticated_user(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_changed_email(self):
+        session = self.client.session
+        session["2fa_user"] = [self.alice.id, "eve@example.org", int(time.time())]
+        session.save()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_old_timestamp(self):
+        session = self.client.session
+        session["2fa_user"] = [self.alice.id, self.alice.email, int(time.time()) - 310]
+        session.save()
+
+        r = self.client.get(self.url)
+        self.assertRedirects(r, "/accounts/login/")
 
     @override_settings(RP_ID=None)
     def test_it_requires_rp_id(self):

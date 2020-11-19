@@ -2,6 +2,7 @@ import base64
 from datetime import timedelta as td
 from secrets import token_bytes
 from urllib.parse import urlparse
+import time
 import uuid
 
 from django.db import transaction
@@ -104,7 +105,12 @@ def _redirect_after_login(request):
 
 def _check_2fa(request, user):
     if user.credentials.exists():
-        request.session["2fa_user_id"] = user.id
+        # We have verified user's password or token, and now must
+        # verify their security key. We store the following in user's session:
+        # - user.id, to look up the user in the login_webauthn view
+        # - user.email, to make sure email was not changed between the auth steps
+        # - timestamp, to limit the max time between the auth steps
+        request.session["2fa_user"] = [user.id, user.email, int(time.time())]
 
         path = reverse("hc-login-webauthn")
         redirect_url = request.GET.get("next")
@@ -684,14 +690,26 @@ def _check_credential(request, form, credentials):
 
 
 def login_webauthn(request):
-    if "2fa_user_id" not in request.session:
-        return HttpResponseBadRequest()
-
     # We require RP_ID. Fail predicably if it is not set:
     if not settings.RP_ID:
         return HttpResponse(status=500)
 
-    user = User.objects.get(id=request.session["2fa_user_id"])
+    # Expect an unauthenticated user
+    if request.user.is_authenticated:
+        return HttpResponseBadRequest()
+
+    if "2fa_user" not in request.session:
+        return HttpResponseBadRequest()
+
+    user_id, email, timestamp = request.session["2fa_user"]
+    if timestamp + 300 < time.time():
+        return redirect("hc-login")
+
+    try:
+        user = User.objects.get(id=user_id, email=email)
+    except User.DoesNotExist:
+        return HttpResponseBadRequest()
+
     credentials = [c.unpack() for c in user.credentials.all()]
 
     if request.method == "POST":
@@ -703,7 +721,7 @@ def login_webauthn(request):
             return HttpResponseBadRequest()
 
         request.session.pop("state")
-        request.session.pop("2fa_user_id")
+        request.session.pop("2fa_user")
         auth_login(request, user, "hc.accounts.backends.EmailBackend")
         return _redirect_after_login(request)
 
