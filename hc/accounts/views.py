@@ -1,5 +1,6 @@
 import base64
 from datetime import timedelta as td
+from secrets import token_bytes
 from urllib.parse import urlparse
 import uuid
 
@@ -616,9 +617,19 @@ def add_credential(request):
         return redirect("hc-profile")
 
     credentials = [c.unpack() for c in request.user.credentials.all()]
+    # User handle is used in a username-less authentication, to map a credential
+    # received from browser with an user account in the database.
+    # Since we only use security keys as a second factor,
+    # the user handle is not of much use to us.
+    #
+    # The user handle:
+    #  - must not be blank,
+    #  - must not be a constant value,
+    #  - must not contain personally identifiable information.
+    # So we use random bytes, and don't store them on our end:
     options, state = FIDO2_SERVER.register_begin(
         {
-            "id": request.user.username.encode(),
+            "id": token_bytes(16),
             "name": request.user.email,
             "displayName": request.user.email,
         },
