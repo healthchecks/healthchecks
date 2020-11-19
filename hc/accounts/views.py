@@ -223,7 +223,7 @@ def profile(request):
         "2fa_status": "default",
         "added_credential_name": request.session.pop("added_credential_name", ""),
         "removed_credential_name": request.session.pop("removed_credential_name", ""),
-        "credentials": request.user.credentials.order_by("id"),
+        "credentials": list(request.user.credentials.order_by("id")),
         "use_2fa": settings.RP_ID,
     }
 
@@ -658,7 +658,7 @@ def remove_credential(request, code):
         credential.delete()
         return redirect("hc-profile")
 
-    ctx = {"credential": credential}
+    ctx = {"credential": credential, "is_last": request.user.credentials.count() == 1}
     return render(request, "accounts/remove_credential.html", ctx)
 
 

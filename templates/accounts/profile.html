@@ -68,7 +68,7 @@
                 <form method="post">
                     {% csrf_token %}
                     <h2>Two-factor Authentication</h2>
-                    {% if credentials.exists %}
+                    {% if credentials %}
 
                     <table id="my-keys" class="table">
                         <tr>
@@ -87,10 +87,18 @@
                         {% endfor %}
                     </table>
 
+                    {% if credentials|length == 1 %}
+                    <p class="alert alert-info">
+                        <strong>Tip: add a second key!</strong>
+                        It is a good practice to register at least two security keys
+                        and store them separately.
+                    </p>
+                    {% endif %}
+
                     {% else %}
                     <p>
                         Your account has no registered security keys.<br />
-                        Two-factor authentication is disabled.
+                        Two-factor authentication is not active.
                     </p>
                     {% endif %}
                     <a
