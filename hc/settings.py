@@ -165,7 +165,7 @@ COMPRESS_OFFLINE = True
 COMPRESS_CSS_HASHING_METHOD = "content"
 
 # Webauthn
-RP_ID = "localhost"
+RP_ID = os.getenv("RP_ID")
 
 # Discord integration
 DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")

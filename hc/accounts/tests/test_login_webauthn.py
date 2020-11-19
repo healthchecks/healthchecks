@@ -1,8 +1,10 @@
 from unittest.mock import patch
 
+from django.test.utils import override_settings
 from hc.test import BaseTestCase
 
 
+@override_settings(RP_ID="testserver")
 class LoginWebauthnTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -21,6 +23,11 @@ class LoginWebauthnTestCase(BaseTestCase):
 
         # It should put a "state" key in the session:
         self.assertIn("state", self.client.session)
+
+    @override_settings(RP_ID=None)
+    def test_it_requires_rp_id(self):
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 500)
 
     @patch("hc.accounts.views._check_credential")
     def test_it_logs_in(self, mock_check_credential):

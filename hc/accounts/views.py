@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.urls import resolve, reverse, Resolver404
@@ -223,6 +223,7 @@ def profile(request):
         "added_credential_name": request.session.pop("added_credential_name", ""),
         "removed_credential_name": request.session.pop("removed_credential_name", ""),
         "credentials": request.user.credentials.order_by("id"),
+        "use_2fa": settings.RP_ID,
     }
 
     if ctx["added_credential_name"]:
@@ -594,6 +595,9 @@ def _get_credential_data(request, form):
 @login_required
 @require_sudo_mode
 def add_credential(request):
+    if not settings.RP_ID:
+        return HttpResponse(status=404)
+
     if request.method == "POST":
         form = forms.AddCredentialForm(request.POST)
         if not form.is_valid():
@@ -630,6 +634,9 @@ def add_credential(request):
 @login_required
 @require_sudo_mode
 def remove_credential(request, code):
+    if not settings.RP_ID:
+        return HttpResponse(status=404)
+
     try:
         credential = Credential.objects.get(user=request.user, code=code)
     except Credential.DoesNotExist:
@@ -668,6 +675,10 @@ def _check_credential(request, form, credentials):
 def login_webauthn(request):
     if "2fa_user_id" not in request.session:
         return HttpResponseBadRequest()
+
+    # We require RP_ID. Fail predicably if it is not set:
+    if not settings.RP_ID:
+        return HttpResponse(status=500)
 
     user = User.objects.get(id=request.session["2fa_user_id"])
     credentials = [c.unpack() for c in user.credentials.all()]

@@ -1,9 +1,11 @@
 from unittest.mock import patch
 
+from django.test.utils import override_settings
 from hc.test import BaseTestCase
 from hc.accounts.models import Credential
 
 
+@override_settings(RP_ID="testserver")
 class AddCredentialTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -15,6 +17,14 @@ class AddCredentialTestCase(BaseTestCase):
 
         r = self.client.get(self.url)
         self.assertContains(r, "We have sent a confirmation code")
+
+    @override_settings(RP_ID=None)
+    def test_it_requires_rp_id(self):
+        self.client.login(username="alice@example.org", password="password")
+        self.set_sudo_flag()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
 
     def test_it_shows_form(self):
         self.client.login(username="alice@example.org", password="password")

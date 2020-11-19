@@ -1,7 +1,7 @@
 from datetime import timedelta as td
 from django.core import mail
 
-from django.conf import settings
+from django.test.utils import override_settings
 from django.utils.timezone import now
 from hc.test import BaseTestCase
 from hc.accounts.models import Credential
@@ -9,6 +9,12 @@ from hc.api.models import Check
 
 
 class ProfileTestCase(BaseTestCase):
+    def test_it_shows_profile_page(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "Email and Password")
+
     def test_it_sends_report(self):
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now()
@@ -118,6 +124,22 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.get("/accounts/profile/")
         self.assertContains(r, "You do not have any projects. Create one!")
 
+    @override_settings(RP_ID=None)
+    def test_it_hides_2fa_section_if_rp_id_not_set(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertNotContains(r, "Two-factor Authentication")
+
+    @override_settings(RP_ID="testserver")
+    def test_it_handles_no_credentials(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "Two-factor Authentication")
+        self.assertContains(r, "Your account has no registered security keys")
+
+    @override_settings(RP_ID="testserver")
     def test_it_shows_security_key(self):
         Credential.objects.create(user=self.alice, name="Alices Key")
 

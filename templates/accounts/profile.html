@@ -62,6 +62,7 @@
             {% endif %}
         </div>
 
+        {% if use_2fa %}
         <div class="panel panel-{{ 2fa_status }}">
             <div class="panel-body settings-block">
                 <form method="post">
@@ -112,7 +113,7 @@
             </div>
             {% endif %}
         </div>
-
+        {% endif %}
 
         <div class="panel panel-{{ my_projects_status }}">
             <div class="panel-body settings-block">

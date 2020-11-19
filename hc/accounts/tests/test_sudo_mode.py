@@ -11,7 +11,7 @@ class SudoModeTestCase(BaseTestCase):
         super().setUp()
 
         self.c = Credential.objects.create(user=self.alice, name="Alices Key")
-        self.url = f"/accounts/two_factor/{self.c.code}/remove/"
+        self.url = f"/accounts/set_password/"
 
     def test_it_sends_code(self):
         self.client.login(username="alice@example.org", password="password")
@@ -60,7 +60,7 @@ class SudoModeTestCase(BaseTestCase):
         session.save()
 
         r = self.client.get(self.url)
-        self.assertContains(r, "Remove Security Key")
+        self.assertContains(r, "Please pick a password")
 
     def test_it_uses_rate_limiting(self):
         self.client.login(username="alice@example.org", password="password")
