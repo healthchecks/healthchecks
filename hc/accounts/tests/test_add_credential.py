@@ -80,3 +80,19 @@ class AddCredentialTestCase(BaseTestCase):
 
         r = self.client.post(self.url, payload)
         self.assertEqual(r.status_code, 400)
+
+    @patch("hc.accounts.views._get_credential_data")
+    def test_it_handles_authentication_failure(self, mock_get_credential_data):
+        mock_get_credential_data.return_value = None
+
+        self.client.login(username="alice@example.org", password="password")
+        self.set_sudo_flag()
+
+        payload = {
+            "name": "My New Key",
+            "client_data_json": "e30=",
+            "attestation_object": "e30=",
+        }
+
+        r = self.client.post(self.url, payload, follow=True)
+        self.assertEqual(r.status_code, 400)

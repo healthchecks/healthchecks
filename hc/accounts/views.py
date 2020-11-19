@@ -590,11 +590,14 @@ def _get_credential_data(request, form):
 
     """
 
-    auth_data = FIDO2_SERVER.register_complete(
-        request.session["state"],
-        ClientData(form.cleaned_data["client_data_json"]),
-        AttestationObject(form.cleaned_data["attestation_object"]),
-    )
+    try:
+        auth_data = FIDO2_SERVER.register_complete(
+            request.session["state"],
+            ClientData(form.cleaned_data["client_data_json"]),
+            AttestationObject(form.cleaned_data["attestation_object"]),
+        )
+    except ValueError:
+        return None
 
     return auth_data.credential_data
 
@@ -677,14 +680,17 @@ def _check_credential(request, form, credentials):
 
     """
 
-    FIDO2_SERVER.authenticate_complete(
-        request.session["state"],
-        credentials,
-        form.cleaned_data["credential_id"],
-        ClientData(form.cleaned_data["client_data_json"]),
-        AuthenticatorData(form.cleaned_data["authenticator_data"]),
-        form.cleaned_data["signature"],
-    )
+    try:
+        FIDO2_SERVER.authenticate_complete(
+            request.session["state"],
+            credentials,
+            form.cleaned_data["credential_id"],
+            ClientData(form.cleaned_data["client_data_json"]),
+            AuthenticatorData(form.cleaned_data["authenticator_data"]),
+            form.cleaned_data["signature"],
+        )
+    except ValueError:
+        return False
 
     return True
 
