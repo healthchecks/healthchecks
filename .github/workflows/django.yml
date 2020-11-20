@@ -15,6 +15,11 @@ jobs:
       matrix:
         db: [sqlite, postgres, mysql]
         python-version: [3.6, 3.7, 3.8]
+        include:
+          - db: postgres
+            db_port: 5432
+          - db: mysql
+            db_port: 3306
 
     services:
       postgres:
@@ -28,14 +33,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 2020:5432
+          - 5432:5432
       mysql:
         image: mysql:5.7
         env:
           MYSQL_USER: hc
           MYSQL_PASSWORD: hunter2
         ports:
-          - 2020:3306
+          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval=10s
@@ -57,7 +62,7 @@ jobs:
       env:
         DB: ${{ matrix.db }}
         DB_HOST: 127.0.0.1
-        DB_PORT: 2020
+        DB_PORT: ${{ matrix.db_port }}
         DB_USER: hc
         DB_PASSWORD: hunter2
       run: |
