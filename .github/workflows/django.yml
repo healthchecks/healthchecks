@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 4
       matrix:
@@ -39,6 +39,7 @@ jobs:
         env:
           MYSQL_USER: hc
           MYSQL_PASSWORD: hunter2
+          MYSQL_RANDOM_ROOT_PASSWORD: yes
         ports:
           - 3306:3306
         options: >-
