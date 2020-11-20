@@ -17,7 +17,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:10
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -32,7 +32,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
-          - 3306
+          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval=10s
@@ -53,7 +53,7 @@ jobs:
     - name: Run Tests
       env:
         DB: mysql
-        DB_HOST: localhost
+        DB_HOST: 127.0.0.1
         DB_PORT: 3306
         DB_USER: root
       run: |
