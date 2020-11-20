@@ -18,6 +18,8 @@ jobs:
     services:
       postgres:
         image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -42,5 +44,7 @@ jobs:
         DB: postgres
         DB_HOST: localhost
         DB_PORT: 5432
+        DB_USER: postgres
+        DB_PASSWORD: postgres
       run: |
         python manage.py test
