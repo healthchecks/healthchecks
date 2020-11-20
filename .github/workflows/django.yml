@@ -16,34 +16,11 @@ jobs:
         python-version: [3.6, 3.7, 3.8]
         include:
           - db: postgres
-            db_port: 5432
+            db_user: runner
+            db_password: ''
           - db: mysql
-            db_port: 3306
-
-    services:
-      postgres:
-        image: postgres:10
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: hunter2
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: hunter2
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+            db_user: root
+            db_password: root
 
     steps:
     - uses: actions/checkout@v2
@@ -51,11 +28,14 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Restore pip Cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt') }}
+    - name: Start MySQL
+      if: matrix.db == 'mysql'
+      run: sudo systemctl start mysql.service
+    - name: Start PostgreSQL
+      if: matrix.db == 'postgres'
+      run: |
+        sudo systemctl start postgresql.service
+        sudo -u postgres createuser -s runner
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
@@ -64,9 +44,8 @@ jobs:
     - name: Run Tests
       env:
         DB: ${{ matrix.db }}
-        DB_HOST: 127.0.0.1
-        DB_PORT: ${{ matrix.db_port }}
-        DB_PASSWORD: hunter2
+        DB_USER: ${{ matrix.db_user }}
+        DB_PASSWORD: ${{ matrix.db_password }}
       run: |
         coverage run --omit=*/tests/* --source=hc manage.py test
     - name: Coveralls
