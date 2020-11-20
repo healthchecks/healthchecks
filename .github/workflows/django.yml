@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-20.04
     strategy:
@@ -64,18 +64,15 @@ jobs:
         DB_PASSWORD: hunter2
       run: |
         coverage run --omit=*/tests/* --source=hc manage.py test
-    - name: Coveralls Parallel
-      uses: coverallsapp/github-action@master
+    - name: Coveralls
+      uses: AndreMiras/coveralls-python-action@develop
       with:
-        github-token: ${{ secrets.github_token }}
-        flag-name: run-${{ matrix.python-version }}-${{ matrix.db }}
         parallel: true
   finish:
-    needs: build
+    needs: test
     runs-on: ubuntu-20.04
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
+      uses: AndreMiras/coveralls-python-action@develop
       with:
-        github-token: ${{ secrets.github_token }}
         parallel-finished: true
