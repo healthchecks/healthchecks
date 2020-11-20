@@ -55,7 +55,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install braintree mysqlclient apprise
+        pip install apprise braintree coverage mysqlclient
     - name: Run Tests
       env:
         DB: ${{ matrix.db }}
@@ -63,4 +63,19 @@ jobs:
         DB_PORT: ${{ matrix.db_port }}
         DB_PASSWORD: hunter2
       run: |
-        python manage.py test
+        coverage run --omit=*/tests/* --source=hc manage.py test
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        flag-name: run-${{ matrix.python-version }}-${{ matrix.db }}
+        parallel: true
+  finish:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
