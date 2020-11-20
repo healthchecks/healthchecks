@@ -27,6 +27,17 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
     - uses: actions/checkout@v2
@@ -41,10 +52,9 @@ jobs:
         pip install braintree mysqlclient apprise
     - name: Run Tests
       env:
-        DB: postgres
+        DB: mysql
         DB_HOST: localhost
-        DB_PORT: 5432
-        DB_USER: postgres
-        DB_PASSWORD: postgres
+        DB_PORT: 3306
+        DB_USER: root
       run: |
         python manage.py test
