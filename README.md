@@ -1,6 +1,6 @@
 # Healthchecks
 
-[![Build Status](https://travis-ci.org/healthchecks/healthchecks.svg?branch=master)](https://travis-ci.org/healthchecks/healthchecks)
+![Build Status](https://github.com/healthchecks/healthchecks/workflows/Django%20CI/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
 
