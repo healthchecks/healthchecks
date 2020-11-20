@@ -25,7 +25,7 @@ jobs:
       postgres:
         image: postgres:10
         env:
-          POSTGRES_USER: hc
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: hunter2
         options: >-
           --health-cmd pg_isready
@@ -37,9 +37,7 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_USER: hc
-          MYSQL_PASSWORD: hunter2
-          MYSQL_RANDOM_ROOT_PASSWORD: yes
+          MYSQL_ROOT_PASSWORD: hunter2
         ports:
           - 3306:3306
         options: >-
@@ -64,7 +62,6 @@ jobs:
         DB: ${{ matrix.db }}
         DB_HOST: 127.0.0.1
         DB_PORT: ${{ matrix.db_port }}
-        DB_USER: hc
         DB_PASSWORD: hunter2
       run: |
         python manage.py test
