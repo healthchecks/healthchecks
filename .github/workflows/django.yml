@@ -28,14 +28,14 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:2020
+          - 2020:5432
       mysql:
         image: mysql:5.7
         env:
           MYSQL_USER: hc
           MYSQL_PASSWORD: hunter2
         ports:
-          - 3306:2020
+          - 2020:3306
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval=10s
