@@ -55,7 +55,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install apprise braintree coverage mysqlclient
+        pip install apprise braintree coverage coveralls mysqlclient
     - name: Run Tests
       env:
         DB: ${{ matrix.db }}
@@ -65,14 +65,7 @@ jobs:
       run: |
         coverage run --omit=*/tests/* --source=hc manage.py test
     - name: Coveralls
-      uses: AndreMiras/coveralls-python-action@develop
-      with:
-        parallel: true
-  finish:
-    needs: test
-    runs-on: ubuntu-20.04
-    steps:
-    - name: Coveralls Finished
-      uses: AndreMiras/coveralls-python-action@develop
-      with:
-        parallel-finished: true
+      if: matrix.db == 'postgres' && matrix.python-version == '3.8'
+      run: coveralls
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
