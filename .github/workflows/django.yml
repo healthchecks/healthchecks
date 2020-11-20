@@ -25,6 +25,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install braintree mysqlclient apprise
     - name: Run Tests
       run: |
         python manage.py test
