@@ -1,0 +1,55 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        db: [sqlite, postgres, mysql]
+        python-version: [3.6, 3.7, 3.8]
+        include:
+          - db: postgres
+            db_user: runner
+            db_password: ''
+          - db: mysql
+            db_user: root
+            db_password: root
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Start MySQL
+      if: matrix.db == 'mysql'
+      run: sudo systemctl start mysql.service
+    - name: Start PostgreSQL
+      if: matrix.db == 'postgres'
+      run: |
+        sudo systemctl start postgresql.service
+        sudo -u postgres createuser -s runner
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install apprise braintree coverage coveralls mysqlclient
+    - name: Run Tests
+      env:
+        DB: ${{ matrix.db }}
+        DB_USER: ${{ matrix.db_user }}
+        DB_PASSWORD: ${{ matrix.db_password }}
+      run: |
+        coverage run --omit=*/tests/* --source=hc manage.py test
+    - name: Coveralls
+      if: matrix.db == 'postgres' && matrix.python-version == '3.8'
+      run: coveralls
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
