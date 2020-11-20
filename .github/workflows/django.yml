@@ -13,26 +13,29 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
+        db: [sqlite, postgres, mysql]
         python-version: [3.6, 3.7, 3.8]
 
     services:
       postgres:
         image: postgres:10
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: hc
+          POSTGRES_PASSWORD: hunter2
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5432:2020
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_USER: hc
+          MYSQL_PASSWORD: hunter2
         ports:
-          - 3306:3306
+          - 3306:2020
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval=10s
@@ -52,9 +55,10 @@ jobs:
         pip install braintree mysqlclient apprise
     - name: Run Tests
       env:
-        DB: mysql
+        DB: ${{ matrix.db }}
         DB_HOST: 127.0.0.1
-        DB_PORT: 3306
-        DB_USER: root
+        DB_PORT: 2020
+        DB_USER: hc
+        DB_PASSWORD: hunter2
       run: |
         python manage.py test
