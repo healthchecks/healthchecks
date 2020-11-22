@@ -2,39 +2,62 @@
 <p>A collection of third-party software projects that integrate with SITE_NAME.
 Please submit additions and corrections
 <a href="https://github.com/healthchecks/healthchecks/issues">on GitHub</a>.</p>
-<h2>Deployment Tools</h2>
+<h2>Tools for Self-Hosting</h2>
 <ul>
-<li><a href="https://github.com/iphoting/healthchecks/">iphoting/healthchecks</a> – Deploy Healthchecks to Heroku</li>
-<li><a href="https://github.com/haswalt/docker-healthchecks">haswalt/docker-healthchecks</a> – Docker image</li>
-<li><a href="https://github.com/galexrt/docker-healthchecks">galexrt/docker-healthchecks</a> – Docker image</li>
 <li><a href="https://github.com/linuxserver/docker-healthchecks">linuxserver/docker-healthchecks</a> – Docker image</li>
+<li><a href="https://github.com/galexrt/docker-healthchecks">galexrt/docker-healthchecks</a> – Docker image</li>
+<li><a href="https://github.com/haswalt/docker-healthchecks">haswalt/docker-healthchecks</a> – Docker image</li>
+<li><a href="https://github.com/iphoting/healthchecks/">iphoting/healthchecks</a> – Deploy Healthchecks to Heroku</li>
+<li><a href="https://github.com/kristofferahl/terraform-provider-healthchecksio">terraform-provider-healthchecksio</a> – Terraform Provider for Healthchecks.io.</li>
 <li><a href="https://galaxy.ansible.com/coaxial/healthchecks">coaxial/healthchecks</a> – Ansible role for deploying Healthchecks</li>
 </ul>
-<h2>API Wrappers</h2>
+<h2>Command Runners, Shell Wrappers</h2>
 <ul>
-<li><a href="https://github.com/pauldenver/healthchecks-io-client">pauldenver/healthchecks-io-client</a> – API wrapper in Javascript. Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.</li>
-<li><a href="https://github.com/jwulf/healthchecks.io">jwulf/healthchecks.io</a> – API wrapper in Javascript. Supports pinging.</li>
-<li><a href="https://github.com/MyPropertyOffice/node-hchk">MyPropertyOffice/node-hchk</a> –  API wrapper in Javascript. Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.</li>
-<li><a href="https://github.com/gyde-tv/checks">gyde-tv/checks</a> – API wrapper in Ruby. Supports pinging.</li>
-<li><a href="https://github.com/kristofferahl/go-healthchecksio">kristofferahl/go-healthchecksio</a> – API wrapper in Go. Supports listing, creating, updating, deleting, pausing, pinging.</li>
-<li><a href="https://github.com/frozzare/go-healthchecks">frozzare/go-healthchecks</a> – API wrapper in Go. Supports pinging and failing.</li>
-<li><a href="https://github.com/healthchecks/hchk">healthchecks/hchk</a> – API wrapper &amp; CLI in Python. Supports creating, pinging.</li>
-<li><a href="https://github.com/pforret/crontask">crontask.sh</a> – bash wrapper to use in crontab. Supports pinging.</li>
+<li><a href="https://github.com/bdd/runitor">runitor</a> - A command runner with Healthchecks.io integration to keep your scripts and containers simple.</li>
 <li><a href="https://gitlab.science.ru.nl/bram/sch">SmartCronHelper</a> – A cron shell wrapper. Automatically registers and pings cron jobs listed in crontab.</li>
-<li><a href="https://github.com/davehope/HealthChecksIOStatusReport">davehope/HealthChecksIOStatusReport</a> – PowerShell module. Supports pinging.</li>
-<li><a href="https://github.com/henrywhitaker3/PHP-healthchecks.io">henrywhitaker3/PHP-healthchecks.io</a> – API wrapper in PHP. Supports listing, creating, updating, deleting, pausing, pinging, failing and starting checks. Supports listing integrations.</li>
+<li><a href="https://github.com/pforret/crontask">crontask.sh</a> – bash wrapper to use in crontab. Supports pinging.</li>
 </ul>
-<h2>Plugins &amp; Integrations</h2>
+<h2>API Wrappers</h2>
+<h3>Go</h3>
 <ul>
-<li><a href="https://github.com/kristofferahl/terraform-provider-healthchecksio">terraform-provider-healthchecksio</a> – Terraform Provider for Healthchecks.io.</li>
+<li><a href="https://github.com/kristofferahl/go-healthchecksio">kristofferahl/go-healthchecksio</a> – Supports listing, creating, updating, deleting, pausing, pinging.</li>
+<li><a href="https://github.com/frozzare/go-healthchecks">frozzare/go-healthchecks</a> – Supports pinging and failing.</li>
+</ul>
+<h3>Javascript</h3>
+<ul>
+<li><a href="https://github.com/pauldenver/healthchecks-io-client">pauldenver/healthchecks-io-client</a> – Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.</li>
+<li><a href="https://github.com/jwulf/healthchecks.io">jwulf/healthchecks.io</a> – Supports pinging.</li>
+<li><a href="https://github.com/MyPropertyOffice/node-hchk">MyPropertyOffice/node-hchk</a> –  Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.</li>
+</ul>
+<h3>PHP</h3>
+<ul>
+<li><a href="https://github.com/henrywhitaker3/PHP-healthchecks.io">henrywhitaker3/PHP-healthchecks.io</a> –  Supports listing, creating, updating, deleting, pausing, pinging, failing and starting checks. Supports listing integrations.</li>
 <li><a href="https://github.com/prgTW/healthchecks-bundle">prgTW/healthchecks-bundle</a> – Symfony bundle. Supports listing, creating, pinging, pausing.</li>
 <li><a href="https://github.com/janiscaunecm/Healthchecks_Magento">janiscaunecm/Healthchecks_Magento</a> – Magento module for Healthchecks.io.</li>
+</ul>
+<h3>PowerShell</h3>
+<ul>
+<li><a href="https://github.com/davehope/HealthChecksIOStatusReport">davehope/HealthChecksIOStatusReport</a> – Supports pinging.</li>
+</ul>
+<h3>Python</h3>
+<ul>
+<li><a href="https://github.com/healthchecks/hchk">healthchecks/hchk</a> – Supports creating, pinging.</li>
+</ul>
+<h3>Ruby</h3>
+<ul>
+<li><a href="https://github.com/gyde-tv/checks">gyde-tv/checks</a> – Supports pinging.</li>
+</ul>
+<h3>Rust</h3>
+<ul>
+<li><a href="https://github.com/msfjarvis/healthchecks-rs">msfjarvis/healthchecks-rs</a> – Supports all current Ping API and Management API calls.</li>
+</ul>
+<h2>Backup Software Integrations</h2>
+<ul>
 <li><a href="https://github.com/binarybucks/restic-tools">binarybucks/restic-tools</a> – Wrapper around restic backup, with Healthchecks.io support.</li>
 <li><a href="https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook">borgmatic</a> – backup software for servers and workstations, includes Healthchecks.io support.</li>
 </ul>
-<h2>Other</h2>
+<h2>Dashboards</h2>
 <ul>
-<li><a href="https://github.com/taylus/HealthTray">HealthTray</a> – Watch your healthchecks in Windows system tray.</li>
 <li><a href="https://github.com/healthchecks/dashboard">healthchecks/dashboard</a> – A standalone HTML page showing the status of the checks in your account.</li>
-<li><a href="https://github.com/bdd/runitor">runitor</a> - A command runner with Healthchecks.io integration to keep your scripts and containers simple.</li>
+<li><a href="https://github.com/taylus/HealthTray">HealthTray</a> – Watch your healthchecks in Windows system tray.</li>
 </ul>
