@@ -10,15 +10,27 @@
 
         <p id="badges-description">
             {{ site_name }} provides status badges for each of the tags
-            you have used. Additionally, the "{{ site_name }}"
-            badge shows the overall status of all checks in a
-            project. The badges have public, but hard-to-guess
+            you have used. The badges have public, but hard-to-guess
             URLs. You can use them in your READMEs,
             dashboards or status pages.
         </p>
 
-        <div id="b-format" class="btn-group" data-toggle="buttons">
-            <label id="show-svg" class="btn btn-default active">
+        <p>Each badge can be in one of the following states:</p>
+        <ul>
+            <li><strong>up</strong> – all matching checks are up.</li>
+            <li><strong>down</strong> – at least one check is currently down.</li>
+        </ul>
+
+        <p>
+            As an option, the badges can report a third state:
+           <strong>late</strong> (when at least one check is running late but has not
+           exceeded its grace time yet).
+        </p>
+
+        <br />
+
+        <div class="btn-group" data-toggle="buttons">
+            <label id="show-svg" class="btn btn-default active" data->
                 <input type="radio" autocomplete="off" checked> SVG
             </label>
             <label id="show-json" class="btn btn-default">
@@ -28,8 +40,42 @@
                 <input type="radio" autocomplete="off"> Shields.io
             </label>
         </div>
+        &nbsp;
 
-        <table id="badges-svg" class="badges table">
+        <div class="btn-group" data-toggle="buttons">
+            <label id="show-no-late" class="btn btn-default active">
+                <input type="radio" autocomplete="off" checked> Badge states: <b>up</b> or <b>down</b>
+            </label>
+            <label id="show-with-late" class="btn btn-default">
+                <input type="radio" autocomplete="off"> Badge states: <b>up</b>, <b>late</b> or <b>down</b>
+            </label>
+        </div>
+
+        <table id="badges-svg" class="table badge-preview">
+            {% if have_tags %}
+            <tr><th colspan="2">Tags</th></tr>
+            {% endif %}
+
+            {% for urldict in badges %}
+                {% if urldict.tag == "*" %}
+                <tr>
+                    <th colspan="2">Overall Status</th>
+                </tr>
+                {% endif %}
+
+                <tr>
+                    <td>
+                        <img class="no-late" src="{{ urldict.svg }}" alt="" />
+                        <img class="with-late" src="{{ urldict.svg3 }}" alt="" />
+                    </td>
+                    <td>
+                        <code class="no-late">{{ urldict.svg }}</code>
+                        <code class="with-late">{{ urldict.svg3 }}</code>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <table id="badges-json" class="table badge-preview">
             {% if have_tags %}
             <tr>
                 <th colspan="2">Tags</th>
@@ -45,40 +91,18 @@
 
                 <tr>
                     <td>
-                        <img src="{{ urldict.svg }}" alt="" />
+                        <code class="fetch-json no-late" data-url="{{ urldict.json }}"></code>
+                        <code class="fetch-json with-late" data-url="{{ urldict.json3 }}"></code>
                     </td>
                     <td>
-                        <code>{{ urldict.svg }}</code>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <table id="badges-json" class="badges table">
-            {% if have_tags %}
-            <tr>
-                <th colspan="2">Tags</th>
-            </tr>
-            {% endif %}
-
-            {% for urldict in badges %}
-                {% if urldict.tag == "*" %}
-                <tr>
-                    <th colspan="2">Overall Status</th>
-                </tr>
-                {% endif %}
-
-                <tr>
-                    <td class="json-response" data-url="{{ urldict.json }}">
-                    </td>
-                    <td>
-                        <code>{{ urldict.json }}</code>
+                        <code class="no-late">{{ urldict.json }}</code>
+                        <code class="with-late">{{ urldict.json3 }}</code>
                     </td>
                 </tr>
             {% endfor %}
         </table>
 
-        <div id="badges-shields">
-        <table class="badges table">
+        <table id="badges-shields" class="table badge-preview">
             {% if have_tags %}
             <tr>
                 <th>Shields.io badge</th>
@@ -95,10 +119,12 @@
 
                 <tr>
                     <td>
-                        <img src="https://img.shields.io/endpoint?url={{ urldict.shields|urlencode:"" }}" alt="" />
+                        <img class="no-late" src="https://img.shields.io/endpoint?url={{ urldict.shields|urlencode:"" }}" alt="" />
+                        <img class="with-late" src="https://img.shields.io/endpoint?url={{ urldict.shields3|urlencode:"" }}" alt="" />
                     </td>
                     <td>
-                        <code>{{ urldict.shields }}</code>
+                        <code class="no-late">{{ urldict.shields }}</code>
+                        <code class="with-late">{{ urldict.shields3 }}</code>
                     </td>
                 </tr>
             {% endfor %}

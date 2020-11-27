@@ -99,16 +99,17 @@ def get_badge_svg(tag, status):
 
 def check_signature(username, tag, sig):
     ours = base64_hmac(str(username), tag, settings.SECRET_KEY)
-    ours = ours[:8]
-    return ours == sig
+    return ours[:8] == sig[:8]
 
 
-def get_badge_url(username, tag, fmt="svg"):
-    sig = base64_hmac(str(username), tag, settings.SECRET_KEY)
+def get_badge_url(username, tag, fmt="svg", with_late=False):
+    sig = base64_hmac(str(username), tag, settings.SECRET_KEY)[:8]
+    if not with_late:
+        sig += "-2"
 
     if tag == "*":
-        url = reverse("hc-badge-all", args=[username, sig[:8], fmt])
+        url = reverse("hc-badge-all", args=[username, sig, fmt])
     else:
-        url = reverse("hc-badge", args=[username, sig[:8], tag, fmt])
+        url = reverse("hc-badge", args=[username, sig, tag, fmt])
 
     return settings.SITE_ROOT + url

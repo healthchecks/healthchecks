@@ -25,28 +25,6 @@
     background-color: #ffebea;
 }
 
-.table.badges th {
-    border-top: 0;
-    color: #777777;
-    font-weight: normal;
-    font-size: 12px;
-    padding-top: 32px;
-}
-
-#badges-json, #badges-shields {
-    display: none;
-}
-
-#badges-shields label:first-child {
-    margin: 20px 0 10px 0;
-}
-
-.json-response code {
-    display: inline-block;
-    background: #eee;
-    padding: 3px;
-}
-
 .invite-suggestion {
     color: #888;
 }

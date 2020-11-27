@@ -1,8 +1,8 @@
 $(function() {
 
-    $(".json-response").each(function(idx, el) {
+    $(".fetch-json").each(function(idx, el) {
         $.getJSON(el.dataset.url, function(data) {
-            el.innerHTML = "<code>" + JSON.stringify(data) + "</code>";
+            el.innerText = JSON.stringify(data);
         });
     });
 
@@ -23,4 +23,15 @@ $(function() {
         $("#badges-json").hide();
         $("#badges-shields").show();
     })
+
+    $("#show-with-late").click(function() {
+        $(".no-late").hide();
+        $(".with-late").show();
+    })
+
+    $("#show-no-late").click(function() {
+        $(".with-late").hide();
+        $(".no-late").show();
+    })
+
 });

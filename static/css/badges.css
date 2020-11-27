@@ -1,0 +1,16 @@
+.table.badge-preview th {
+    border-top: 0;
+    color: #777777;
+    font-weight: normal;
+    font-size: 12px;
+    padding-top: 32px;
+}
+
+#badges-json .fetch-json {
+    background: #eee;
+    padding: 3px;
+}
+
+#badges-json, #badges-shields, .badge-preview .with-late {
+    display: none;
+}

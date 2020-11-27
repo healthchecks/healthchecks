@@ -676,14 +676,18 @@ def badges(request, code):
     sorted_tags = sorted(tags, key=lambda s: s.lower())
     sorted_tags.append("*")  # For the "overall status" badge
 
+    key = project.badge_key
     urls = []
     for tag in sorted_tags:
         urls.append(
             {
                 "tag": tag,
-                "svg": get_badge_url(project.badge_key, tag),
-                "json": get_badge_url(project.badge_key, tag, fmt="json"),
-                "shields": get_badge_url(project.badge_key, tag, fmt="shields"),
+                "svg": get_badge_url(key, tag),
+                "svg3": get_badge_url(key, tag, with_late=True),
+                "json": get_badge_url(key, tag, fmt="json"),
+                "json3": get_badge_url(key, tag, fmt="json", with_late=True),
+                "shields": get_badge_url(key, tag, fmt="shields"),
+                "shields3": get_badge_url(key, tag, fmt="shields", with_late=True),
             }
         )
 

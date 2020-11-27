@@ -375,11 +375,15 @@ def flips_by_unique_key(request, unique_key):
 
 @never_cache
 @cors("GET")
-def badge(request, badge_key, signature, tag, fmt="svg"):
-    if not check_signature(badge_key, tag, signature):
+def badge(request, badge_key, signature, tag, fmt):
+    if fmt not in ("svg", "json", "shields"):
         return HttpResponseNotFound()
 
-    if fmt not in ("svg", "json", "shields"):
+    with_late = True
+    if len(signature) == 10 and signature.endswith("-2"):
+        with_late = False
+
+    if not check_signature(badge_key, tag, signature):
         return HttpResponseNotFound()
 
     q = Check.objects.filter(project__badge_key=badge_key)
@@ -406,7 +410,7 @@ def badge(request, badge_key, signature, tag, fmt="svg"):
                 break
         elif check_status == "grace":
             grace += 1
-            if status == "up":
+            if status == "up" and with_late:
                 status = "late"
 
     if fmt == "shields":
