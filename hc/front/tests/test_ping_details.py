@@ -59,3 +59,17 @@ class PingDetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/checks/%s/pings/123/" % self.check.code)
         self.assertContains(r, "No additional information is", status_code=200)
+
+    def test_it_shows_nonzero_exitstatus(self):
+        Ping.objects.create(owner=self.check, kind="fail", exitstatus=42)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "(failure, exit status 42)", status_code=200)
+
+    def test_it_shows_zero_exitstatus(self):
+        Ping.objects.create(owner=self.check, exitstatus=0)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "(exit status 0)", status_code=200)

@@ -51,7 +51,9 @@
             <td class="date"></td>
             <td class="time"></td>
             <td class="event">
-                {% if event.kind == "fail" %}
+                {% if event.exitstatus %}
+                <span class="label label-danger">Status {{ event.exitstatus }}</span>
+                {% elif event.kind == "fail" %}
                 <span class="label label-danger">Failure</span>
                 {% elif event.kind == "start" %}
                 <span class="label label-start">Started</span>

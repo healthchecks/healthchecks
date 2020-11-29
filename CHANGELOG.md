@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Require confirmation codes (sent to email) before sensitive actions
 - Implement WebAuthn two-factor authentication
 - Implement badge mode (up/down vs up/late/down) selector (#282)
+- Add Ping.exitstatus field, store client's reported exit status values (#455)
 
 ## v1.17.0 - 2020-10-14
 

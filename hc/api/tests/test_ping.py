@@ -11,7 +11,7 @@ class PingTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
-        self.url = "/ping/%s/" % self.check.code
+        self.url = "/ping/%s" % self.check.code
 
     def test_it_works(self):
         r = self.client.get(self.url)
@@ -26,6 +26,7 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(ping.scheme, "http")
         self.assertEqual(ping.kind, None)
         self.assertEqual(ping.created, self.check.last_ping)
+        self.assertIsNone(ping.exitstatus)
 
     def test_it_changes_status_of_paused_check(self):
         self.check.status = "paused"
@@ -234,6 +235,7 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.kind, None)
+        self.assertEqual(ping.exitstatus, 0)
 
     def test_nonzero_exit_status_works(self):
         r = self.client.get("/ping/%s/123" % self.check.code)
@@ -244,3 +246,4 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.kind, "fail")
+        self.assertEqual(ping.exitstatus, 123)

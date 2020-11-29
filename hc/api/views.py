@@ -30,7 +30,7 @@ class BadChannelException(Exception):
 
 @csrf_exempt
 @never_cache
-def ping(request, code, action="success", exitstatus=0):
+def ping(request, code, action="success", exitstatus=None):
     check = get_object_or_404(Check, code=code)
 
     headers = request.META
@@ -41,13 +41,13 @@ def ping(request, code, action="success", exitstatus=0):
     ua = headers.get("HTTP_USER_AGENT", "")
     body = request.body.decode()
 
-    if exitstatus > 0:
+    if exitstatus is not None and exitstatus > 0:
         action = "fail"
 
     if check.methods == "POST" and method != "POST":
         action = "ign"
 
-    check.ping(remote_addr, scheme, method, ua, body, action)
+    check.ping(remote_addr, scheme, method, ua, body, action, exitstatus)
 
     response = HttpResponse("OK")
     response["Access-Control-Allow-Origin"] = "*"

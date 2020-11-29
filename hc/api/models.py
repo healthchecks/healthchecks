@@ -252,7 +252,7 @@ class Check(models.Model):
 
         return result
 
-    def ping(self, remote_addr, scheme, method, ua, body, action):
+    def ping(self, remote_addr, scheme, method, ua, body, action, exitstatus=None):
         now = timezone.now()
 
         if self.status == "paused" and self.manual_resume:
@@ -299,6 +299,7 @@ class Check(models.Model):
         # If User-Agent is longer than 200 characters, truncate it:
         ping.ua = ua[:200]
         ping.body = body[: settings.PING_BODY_LIMIT]
+        ping.exitstatus = exitstatus
         ping.save()
 
     def downtimes(self, months=3):
@@ -351,6 +352,7 @@ class Ping(models.Model):
     method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
     body = models.TextField(blank=True, null=True)
+    exitstatus = models.SmallIntegerField(null=True)
 
     def to_dict(self):
         return {
