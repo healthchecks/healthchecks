@@ -10,7 +10,6 @@ Please submit additions and corrections
 * [galexrt/docker-healthchecks](https://github.com/galexrt/docker-healthchecks) – Docker image
 * [haswalt/docker-healthchecks](https://github.com/haswalt/docker-healthchecks) – Docker image
 * [iphoting/healthchecks](https://github.com/iphoting/healthchecks/) – Deploy Healthchecks to Heroku
-* [terraform-provider-healthchecksio](https://github.com/kristofferahl/terraform-provider-healthchecksio) – Terraform Provider for Healthchecks.io.
 * [coaxial/healthchecks](https://galaxy.ansible.com/coaxial/healthchecks) – Ansible role for deploying Healthchecks
 
 ## Command Runners, Shell Wrappers
@@ -53,6 +52,10 @@ Please submit additions and corrections
 ### Rust
 
 * [msfjarvis/healthchecks-rs](https://github.com/msfjarvis/healthchecks-rs) – Supports all current Ping API and Management API calls.
+
+### Terraform
+
+* [terraform-provider-healthchecksio](https://github.com/kristofferahl/terraform-provider-healthchecksio) – Terraform Provider for Healthchecks.io. Supports creating, updating, deleting checks.
 
 ## Backup Software Integrations
 
