@@ -32,7 +32,7 @@ in development environment.
 * install dependencies (Debian/Ubuntu)
 
         $ sudo apt-get update
-        $ sudo apt-get install -y gcc python3-dev python3-venv
+        $ sudo apt-get install -y gcc python3-dev python3-venv libpq-dev
 
 * prepare directory for project code and virtualenv:
 
@@ -44,6 +44,7 @@ in development environment.
 
         $ python3 -m venv hc-venv
         $ source hc-venv/bin/activate
+        $ pip3 install wheel #make sure wheel is installed in the venv
 
 * check out project code:
 
