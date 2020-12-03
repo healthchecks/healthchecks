@@ -1,4 +1,7 @@
 from hc.accounts.models import Profile
+from django.contrib.auth.middleware import RemoteUserMiddleware
+from django.contrib.auth.backends import RemoteUserBackend
+from django.conf import settings
 
 
 class TeamAccessMiddleware(object):
@@ -11,3 +14,8 @@ class TeamAccessMiddleware(object):
 
         request.profile = Profile.objects.for_user(request.user)
         return self.get_response(request)
+
+from django.contrib.auth.middleware import RemoteUserMiddleware
+
+class CustomHeaderMiddleware(RemoteUserMiddleware):
+    header = settings.REMOTE_USER_HEADER

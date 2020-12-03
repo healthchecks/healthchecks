@@ -58,12 +58,17 @@ INSTALLED_APPS = (
     "hc.payments",
 )
 
+REMOTE_USER_HEADER = os.getenv("REMOTE_USER_HEADER", "AUTH_USER")
+REMOTE_USER_HEADER_TYPE = os.getenv("REMOTE_USER_HEADER_TYPE", "").upper()
+if REMOTE_USER_HEADER_TYPE not in ["EMAIL", "ID"]: REMOTE_USER_HEADER_TYPE = None
+
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "hc.accounts.middleware.CustomHeaderMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -73,6 +78,7 @@ MIDDLEWARE = (
 AUTHENTICATION_BACKENDS = (
     "hc.accounts.backends.EmailBackend",
     "hc.accounts.backends.ProfileBackend",
+    "hc.accounts.backends.CustomHeaderBackend",
 )
 
 ROOT_URLCONF = "hc.urls"
