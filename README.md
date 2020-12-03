@@ -134,6 +134,8 @@ Healthchecks reads configuration from the following environment variables:
 | PUSHOVER_EMERGENCY_EXPIRATION | `86400`
 | PUSHOVER_EMERGENCY_RETRY_DELAY | `300`
 | PUSHOVER_SUBSCRIPTION_URL | `None`
+| REMOTE_USER_HEADER | `AUTH_USER` | An incoming HTTP header that will be used to identify the user in place of authentication (e.g., for identity-aware proxies). See [the django docs](https://docs.djangoproject.com/en/3.1/howto/auth-remote-user/) for more details.
+| REMOTE_USER_HEADER_TYPE | `""` | If set to `EMAIL`, the application will log users in by the email present in the specified header. If set to `ID`, it will treat the header as their UUID. If unset or set to any other value, header-based authentication will be disabled.
 | SHELL_ENABLED | `"False"`
 | SLACK_CLIENT_ID | `None`
 | SLACK_CLIENT_SECRET | `None`
