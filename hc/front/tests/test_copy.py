@@ -41,3 +41,13 @@ class CopyCheckTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.copy_url)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_handles_long_check_name(self):
+        self.check.name = "A" * 100
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.copy_url)
+
+        q = Check.objects.filter(name="A" * 90 + "... (copy)")
+        self.assertTrue(q.exists())

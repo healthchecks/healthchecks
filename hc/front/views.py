@@ -623,8 +623,13 @@ def copy(request, code):
     if check.project.num_checks_available() <= 0:
         return HttpResponseBadRequest()
 
+    new_name = check.name + " (copy)"
+    # Make sure we don't exceed the 100 character db field limit:
+    if len(new_name) > 100:
+        new_name = check.name[:90] + "... (copy)"
+
     copied = Check(project=check.project)
-    copied.name = check.name + " (copy)"
+    copied.name = new_name
     copied.desc, copied.tags = check.desc, check.tags
     copied.subject, copied.subject_fail = check.subject, check.subject_fail
     copied.methods = check.methods

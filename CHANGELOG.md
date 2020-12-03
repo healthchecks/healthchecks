@@ -18,6 +18,9 @@ All notable changes to this project will be documented in this file.
 - Implement badge mode (up/down vs up/late/down) selector (#282)
 - Add Ping.exitstatus field, store client's reported exit status values (#455)
 
+## Bug Fixes
+- Fix db field overflow when copying a check with a long name
+
 ## v1.17.0 - 2020-10-14
 
 ## Improvements
