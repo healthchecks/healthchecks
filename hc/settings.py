@@ -60,7 +60,10 @@ INSTALLED_APPS = (
 
 REMOTE_USER_HEADER = os.getenv("REMOTE_USER_HEADER", "AUTH_USER")
 REMOTE_USER_HEADER_TYPE = os.getenv("REMOTE_USER_HEADER_TYPE", "").upper()
-if REMOTE_USER_HEADER_TYPE not in ["EMAIL", "ID"]: REMOTE_USER_HEADER_TYPE = None
+if REMOTE_USER_HEADER_TYPE not in ["EMAIL", "ID", ""]: 
+    warnings.warn(f"Unknown REMOTE_USER_HEADER_TYPE '{REMOTE_USER_HEADER_TYPE}'! header-based authentication has been disabled.")
+    REMOTE_USER_HEADER_TYPE = None
+if REMOTE_USER_HEADER_TYPE == "": REMOTE_USER_HEADER_TYPE = None
 
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
