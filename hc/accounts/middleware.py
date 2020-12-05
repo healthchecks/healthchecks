@@ -19,3 +19,8 @@ from django.contrib.auth.middleware import RemoteUserMiddleware
 
 class CustomHeaderMiddleware(RemoteUserMiddleware):
     header = settings.REMOTE_USER_HEADER
+
+    def process_request(self, request):
+        if settings.REMOTE_USER_HEADER_TYPE == None: return None
+        if settings.REMOTE_USER_HEADER_TYPE == "": return None
+        return super().process_request(request)

@@ -42,8 +42,11 @@ class EmailBackend(BasicBackend):
 
 class CustomHeaderBackend(RemoteUserBackend):
     def clean_username(self, username):
-        if settings.REMOTE_USER_HEADER_TYPE == None: return None
-        elif settings.REMOTE_USER_HEADER_TYPE == "ID": return username
+        if settings.REMOTE_USER_HEADER_TYPE == "ID": return username
+
+        # "EMAIL" and "ID" are the only two values that should reach here
+        if settings.REMOTE_USER_HEADER_TYPE != "EMAIL": 
+            raise Exception(f"Unexpected value for REMOTE_USER_HEADER_TYPE ({settings.REMOTE_USER_HEADER_TYPE})!")
 
         #else, it's the email address
         try:
