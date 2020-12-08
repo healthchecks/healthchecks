@@ -7,11 +7,6 @@
     font-size: 13px;
 }
 
-#log th {
-    border-top: 0;
-    border-bottom: 1px solid #E5E5E5;
-}
-
 #log td {
     color: #444;
     position: relative;

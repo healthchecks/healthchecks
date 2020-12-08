@@ -22,11 +22,6 @@ li + li.nav-header {
     font-weight: bold;
 }
 
-.curl-opts th {
-    white-space: nowrap;
-    font-family: monospace;
-}
-
 h2.rule {
     border-top: 3px solid #eee;
     margin-top: 30px;
