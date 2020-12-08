@@ -58,12 +58,6 @@ INSTALLED_APPS = (
     "hc.payments",
 )
 
-REMOTE_USER_HEADER = os.getenv("REMOTE_USER_HEADER", "AUTH_USER")
-REMOTE_USER_HEADER_TYPE = os.getenv("REMOTE_USER_HEADER_TYPE", "").upper()
-if REMOTE_USER_HEADER_TYPE not in ["EMAIL", "ID", ""]: 
-    warnings.warn(f"Unknown REMOTE_USER_HEADER_TYPE '{REMOTE_USER_HEADER_TYPE}'! header-based authentication has been disabled.")
-    REMOTE_USER_HEADER_TYPE = None
-if REMOTE_USER_HEADER_TYPE == "": REMOTE_USER_HEADER_TYPE = None
 
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
@@ -81,8 +75,11 @@ MIDDLEWARE = (
 AUTHENTICATION_BACKENDS = (
     "hc.accounts.backends.EmailBackend",
     "hc.accounts.backends.ProfileBackend",
-    "hc.accounts.backends.CustomHeaderBackend",
 )
+
+REMOTE_USER_HEADER = os.getenv("REMOTE_USER_HEADER")
+if REMOTE_USER_HEADER:
+    AUTHENTICATION_BACKENDS = ("hc.accounts.backends.CustomHeaderBackend",)
 
 ROOT_URLCONF = "hc.urls"
 

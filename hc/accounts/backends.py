@@ -1,8 +1,7 @@
 from django.contrib.auth.models import User
-from hc.accounts.models import Profile
-from django.contrib.auth.backends import RemoteUserBackend
-from hc.accounts import views
 from django.conf import settings
+from hc.accounts.models import Profile
+from hc.accounts.views import _make_user
 
 
 class BasicBackend(object):
@@ -40,16 +39,30 @@ class EmailBackend(BasicBackend):
         if user.check_password(password):
             return user
 
-class CustomHeaderBackend(RemoteUserBackend):
-    def clean_username(self, username):
-        if settings.REMOTE_USER_HEADER_TYPE == "ID": return username
 
-        # "EMAIL" and "ID" are the only two values that should reach here
-        if settings.REMOTE_USER_HEADER_TYPE != "EMAIL": 
-            raise Exception(f"Unexpected value for REMOTE_USER_HEADER_TYPE ({settings.REMOTE_USER_HEADER_TYPE})!")
+class CustomHeaderBackend(BasicBackend):
+    """
+    This backend works in conjunction with the ``CustomHeaderMiddleware``,
+    and is used when the server is handling authentication outside of Django.
 
-        #else, it's the email address
+    """
+
+    def authenticate(self, request, remote_user_email):
+        """
+        The email address passed as remote_user_email is considered trusted.
+        Return the User object with the given email address. Create a new User
+        if it does not exist.
+
+        """
+
+        # This backend should only be used when header-based authentication is enabled
+        assert settings.REMOTE_USER_HEADER
+        # remote_user_email should have a value
+        assert remote_user_email
+
         try:
-            return User.objects.get(email=username).username
+            user = User.objects.get(email=remote_user_email)
         except User.DoesNotExist:
-            return views._make_user(username).username
+            user = _make_user(remote_user_email)
+
+        return user

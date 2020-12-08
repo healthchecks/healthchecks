@@ -134,8 +134,7 @@ Healthchecks reads configuration from the following environment variables:
 | PUSHOVER_EMERGENCY_EXPIRATION | `86400`
 | PUSHOVER_EMERGENCY_RETRY_DELAY | `300`
 | PUSHOVER_SUBSCRIPTION_URL | `None`
-| REMOTE_USER_HEADER | `AUTH_USER` | See [External Authentication](#external-authentication) for details.
-| REMOTE_USER_HEADER_TYPE | `None` | See [External Authentication](#external-authentication) for details.
+| REMOTE_USER_HEADER | `None` | See [External Authentication](#external-authentication) for details.
 | SHELL_ENABLED | `"False"`
 | SLACK_CLIENT_ID | `None`
 | SLACK_CLIENT_SECRET | `None`
@@ -332,12 +331,25 @@ from the `django-sslserver` package.
 
 ## External Authentication
 
-HealthChecks supports external authentication by means of HTTP headers set by reverse proxies or the WSGI server. This allows you to integrate it into your existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy. When this option is enabled, *healtchecks will trust the header's value implicitly*, so it is *very important* to ensure that attackers cannot set the value themselves (and thus impersonate any user). How to do this varies by your chosen proxy, but generally involves configuring it to strip out headers that normalize to the same name as the chosen identity header. More information about configuring this can be found in the [Django documentation](https://docs.djangoproject.com/en/3.1/howto/auth-remote-user/).
+HealthChecks supports external authentication by means of HTTP headers set by
+reverse proxies or the WSGI server. This allows you to integrate it into your
+existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy.
+When this option is enabled, **healtchecks will trust the header's value implicitly**,
+so it is **very important** to ensure that attackers cannot set the value themselves
+(and thus impersonate any user). How to do this varies by your chosen proxy,
+but generally involves configuring it to strip out headers that normalize to the
+same name as the chosen identity header.
 
-To enable this feature, set the following environment variables:
+To enable this feature, set the `REMOTE_USER_HEADER` value to a header you wish to
+authenticate with. HTTP headers will be prefixed with `HTTP_` and have any dashes
+converted to underscores. Headers without that prefix can be set by the WSGI server
+itself only, which is more secure.
 
-1. `REMOTE_USER_HEADER` &mdash; set this to the header you wish to authenticate with. HTTP headers will be prefixed with `HTTP_` and have any dashes converted to underscores. Headers without that prefix can be set by the WSGI server itself only, which is more secure.
-2. `REMOTE_USER_HEADER_TYPE` &mdash; If set to `EMAIL`, the specified header will be treated as the user's email. If set to `ID`, the specified header will be set to the user's UUID. Any other value (including empty, the default) disables header-based authentication.
+When `REMOTE_USER_HEADER` is set, Healthchecks will:
+ - assume the header contains user's email address
+ - look up and automatically log in the user with a matching email address
+ - automatically create an user account if it does not exist
+ - disable the default authentication methods (login link to email, password)
 
 ## Integrations
 
