@@ -29,7 +29,8 @@
 #link-instruction {
     color: #999;
     font-style: italic;
-    padding: 12px 16px;
+    padding: 13px 16px;
+    margin-bottom: 36px;
 }
 
 #login-sep {
@@ -85,4 +86,20 @@
 
 #login-signup-cta a:hover {
     color:  #0091EA;
+}
+
+#login-password {
+    margin-bottom: 0;
+}
+
+#forgot-password {
+    float: right;
+    display: block;
+    height: 36px;
+    padding-top: 2px;
+    margin: 0;
+}
+
+#lost-password-modal ol {
+    line-height: 1.8;
 }

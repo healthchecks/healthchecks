@@ -81,10 +81,15 @@
                         autocomplete="email">
 
                     <input
+                        id="login-password"
                         type="password"
                         class="form-control input-lg"
                         name="password"
                         placeholder="your password">
+
+                    <p id="forgot-password">
+                        <a href="#" data-toggle="modal" data-target="#lost-password-modal">Lost your password?</a>
+                    </p>
 
                     <button type="submit" class="btn btn-lg btn-primary btn-block">
                         Sign In
@@ -109,13 +114,46 @@
 {% include "front/signup_modal.html" %}
 {% endif %}
 
+<div id="lost-password-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Lost Password?</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    If you need to reset your password, please do the following:
+                </p>
+                <ol>
+                    <li>Sign in using the <strong>Email Me a Link</strong> method.</li>
+                    <li>
+                        Once in your account, go to
+                        <strong>Account Settings › Set Password</strong>
+                        to set a new password.
+                    </li>
+                </ol>
+                {% if support_email %}
+                <p>
+                    Please contact us at
+                    <a href="mailto:{{ support_email }}">{{ support_email }}</a>
+                    in case you need assistance!
+                </p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Got it</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 {% compress js %}
 <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/login.js' %}"></script>
 <script src="{% static 'js/signup.js' %}"></script>
 {% endcompress %}
 {% endblock %}

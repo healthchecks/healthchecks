@@ -156,6 +156,7 @@ def login(request):
         "magic_form": magic_form,
         "bad_link": bad_link,
         "registration_open": settings.REGISTRATION_OPEN,
+        "support_email": settings.SUPPORT_EMAIL,
     }
     return render(request, "accounts/login.html", ctx)
 

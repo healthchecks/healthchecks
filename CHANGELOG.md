@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 - Implement WebAuthn two-factor authentication
 - Implement badge mode (up/down vs up/late/down) selector (#282)
 - Add Ping.exitstatus field, store client's reported exit status values (#455)
+- Implement header-based authentication (#457)
+- Add a "Lost password?" link with instructions in the Sign In page
 
 ## Bug Fixes
 - Fix db field overflow when copying a check with a long name
