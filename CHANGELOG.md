@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.19.0 - Unreleased
+
+## Improvements
+- Add tighter parameter checks in hc.front.views.serve_doc
+
+
 ## v1.18.0 - 2020-12-09
 
 ## Improvements

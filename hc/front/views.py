@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta as td
 import json
 import os
+import re
 from secrets import token_urlsafe
 from urllib.parse import urlencode
 
@@ -314,6 +315,11 @@ def dashboard(request):
 
 
 def serve_doc(request, doc="introduction"):
+    # Filenames in /templates/docs/ consist of lowercase letters and underscores,
+    # -- make sure we don't accept anything else
+    if not re.match(r"^[a-z_]+$", doc):
+        raise Http404("not found")
+
     path = os.path.join(settings.BASE_DIR, "templates/docs", doc + ".html")
     if not os.path.exists(path):
         raise Http404("not found")
