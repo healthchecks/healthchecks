@@ -10,8 +10,8 @@
     <h1>OpsGenie</h1>
 
     <p><a href="https://www.opsgenie.com/">OpsGenie</a> provides
-    alerting, on-call scheduling, escalation policies and incident tracking.
-    You can can integrate it with your {{ site_name }} account in few
+    alerting, on-call scheduling, escalation policies, and incident tracking.
+    You can integrate it with your {{ site_name }} account in a few
     simple steps.</p>
 
     <h2>Setup Guide</h2>
@@ -20,14 +20,9 @@
             <span class="step-no"></span>
             <p>
                 Log into your OpsGenie account,
-                go to <strong>Settings › Integration list</strong>,
-                and add a new "API" integration.
+                select a team, and go to the team's
+                <strong>Integrations › Add integration</strong> page.
             </p>
-            <p>
-                Give it a descriptive name, select its team, then
-                save the integration.
-            </p>
-
         </div>
         <div class="col-sm-6">
             <img
@@ -39,16 +34,33 @@
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no"></span>
-            After adding the new integration, take note of its
-            <strong>API Key</strong>, a long string
-            of letters and digits.
-
+            Select <strong>API</strong> in the grid of offered integration types.
         </div>
         <div class="col-sm-6">
             <img
                 class="ai-guide-screenshot"
                 alt="Screenshot"
                 src="{% static 'img/integrations/setup_opsgenie_2.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>The integration needs a <strong>Create and Update Access</strong>
+                permission, make sure it is <strong>checked</strong>.
+            </p>The integration does not need the <strong>Read Access</strong> and
+                <strong>Delete Access</strong> checkboxes – make sure they are
+                <strong>unchecked</strong>.
+            </p>
+            <p>Give the integration a descriptive name,
+                take note of its <strong>API Key</strong>, then save the integration.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_opsgenie_3.png' %}">
         </div>
     </div>
 
