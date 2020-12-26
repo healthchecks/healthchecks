@@ -11,7 +11,9 @@ $(function () {
         return {value: tag}
     }
 
-    var allTags = $("#update-tags-input").data("all-tags");
+    // Use attr() instead of data() here, as data() converts attribute's string value
+    // to a JS object, but we need an unconverted string:
+    var allTags = $("#update-tags-input").attr("data-all-tags");
     var options = allTags ? allTags.split(" ").map(toOption) : [];
     $("#update-tags-input").selectize({
         create: true,
