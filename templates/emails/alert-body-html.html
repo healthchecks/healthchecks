@@ -1,32 +1,108 @@
-{% extends "emails/base.html" %}
-{% load hc_extras %}
-{% block content %}
+{% load hc_extras humanize %}
 
-The check <a href="{{ check.details_url }}">{{ check.name_then_code|mangle_link }}</a>
-has gone <strong>{{ check.status|upper }}</strong>.
-<br>
+<p>
+    "{{ check.name_then_code }}" is {{ check.status|upper }}.
+    <a href="{{ check.details_url }}">View on {% site_name %}&hellip;</a>
+</p>
 
-{% if check.status == "down" and check.desc %}
-Additional notes:<br><br>
-<div style="padding: 10px 15px; background: #F2F4F6;">
-    {{ check.desc|linebreaksbr|urlize }}
-</div>
+
+{% if check.desc %}
+<p>
+    <b>Description</b><br>
+    {{ check.desc|linebreaksbr }}
+</p>
 {% endif %}
 
-<br />
-A summary of your checks:
-<br />
+{% cycle '' '</tr><tr>' as trtr silent %}
+<table>
+    <tr>
+        {% if check.project.name %}
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Project</b><br>
+            {{ check.project.name }}
+        </td>
+        {{ trtr|safe }} {% cycle trtr %}
+        {% endif %}
 
-{% include "emails/summary-html.html" %}
+        {% if check.tags_list %}
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Tags</b><br>
+            {% for tag in check.tags_list %}
+            <code style="background-color: #eeeeee; padding: 2px 4px; border-radius: 2px;">{{ tag }}</code>
+            {% endfor %}
+        </td>
+        {{ trtr|safe }} {% cycle trtr %}
+        {% endif %}
 
-Thanks,<br>
-The {% site_name %} Team
+        {% if check.kind == "simple" %}
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Period</b><br>
+            {{ check.timeout|hc_duration }}
+        </td>
+        {{ trtr|safe }} {% cycle trtr %}
+        {% endif %}
 
-{% endblock %}
+        {% if check.kind == "cron" %}
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Schedule</b><br>
+            <code>{{ check.schedule }}</code>
+        </td>
+        {% if trttr %}Yo!{% endif %}
+        {{ trtr|safe }} {% cycle trtr %}
+        {% endif %}
 
-{% block unsub %}
-<br>
+        {% if ping %}
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Last Ping</b><br>
+            {{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}
+        </td>
+        {% if trttr %}Yo!{% endif %}
+        {{ trtr|safe }} {% cycle trtr %}
+        {% endif %}
+
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Total Pings</b><br>
+            {{ check.n_pings }}
+            {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}
+        </td>
+    </tr>
+</table>
+
+{% if ping.body %}
+<p><b>Last Ping Body</b></p>
+<pre style="background: #eeeeee">{{ ping.body|slice:":10000"|linebreaksbr }}{% if ping.body|length > 10000 %} [truncated]{% endif %}</pre>
+{% endif %}
+
+{% if projects %}
+<p><b>Projects Overview</b></p>
+<table>
+    {% for project in projects %}
+    <tr>
+        <td style="padding-right: 32px; padding-bottom: 4px;">
+            <a href="{{ project.checks_url }}">{{ project }}</a>
+        </td>
+        <td style="padding-right: 32px; padding-bottom: 4px;">
+            {% with project.get_n_down as n_down %}
+                {% if n_down %}
+                <b>{{ n_down }} check{{ n_down|pluralize }} down</b>
+                {% else %}
+                OK, all checks up
+                {% endif %}
+            {% endwith %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<p style="color: #666666">
+&mdash;<br>
+{% site_name %}<br>
 <a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">
+    {% if check.project.name %}
+    Unsubscribe from "{{ check.project.name }}" notifications
+    {% else %}
     Unsubscribe
+    {% endif %}
 </a>
-{% endblock %}
+</p>

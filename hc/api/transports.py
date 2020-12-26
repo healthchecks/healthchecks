@@ -68,21 +68,20 @@ class Email(Transport):
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
 
-        try:
-            # Look up the sorting preference for this email address
-            p = Profile.objects.get(user__email=self.channel.email_value)
-            sort = p.sort
-        except Profile.DoesNotExist:
-            # Default sort order is by check's creation time
-            sort = "created"
+        from hc.accounts.models import Profile
 
-        # list() executes the query, to avoid DB access while
-        # rendering a template
+        # If this email address has an associated account, include
+        # a summary of projects the account has access to
+        try:
+            profile = Profile.objects.get(user__email=self.channel.email_value)
+            projects = list(profile.projects())
+        except Profile.DoesNotExist:
+            projects = None
+
         ctx = {
             "check": check,
-            "checks": list(self.checks()),
-            "sort": sort,
-            "now": timezone.now(),
+            "ping": check.ping_set.order_by("created").last(),
+            "projects": projects,
             "unsub_link": unsub_link,
         }
 

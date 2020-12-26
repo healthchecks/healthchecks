@@ -343,6 +343,14 @@ class Project(models.Model):
                 break
         return status
 
+    def get_n_down(self):
+        result = 0
+        for check in self.check_set.all():
+            if check.get_status() == "down":
+                result += 1
+
+        return result
+
     def have_channel_issues(self):
         errors = list(self.channel_set.values_list("last_error", flat=True))
 
@@ -362,6 +370,9 @@ class Project(models.Model):
 
         frag = urlencode({self.api_key_readonly: str(self)}, quote_via=quote)
         return reverse("hc-dashboard") + "#" + frag
+
+    def checks_url(self):
+        return settings.SITE_ROOT + reverse("hc-checks", args=[self.code])
 
 
 class Member(models.Model):

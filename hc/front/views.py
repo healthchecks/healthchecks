@@ -848,7 +848,7 @@ def unsubscribe_email(request, code, signed_token):
 def send_test_notification(request, code):
     channel, rw = _get_channel_for_user(request, code)
 
-    dummy = Check(name="TEST", status="down")
+    dummy = Check(name="TEST", status="down", project=channel.project)
     dummy.last_ping = timezone.now() - td(days=1)
     dummy.n_pings = 42
 
