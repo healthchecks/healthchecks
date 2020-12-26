@@ -70,7 +70,7 @@
 
 {% if ping.body %}
 <p><b>Last Ping Body</b></p>
-<pre style="background: #eeeeee">{{ ping.body|slice:":10000"|linebreaksbr }}{% if ping.body|length > 10000 %} [truncated]{% endif %}</pre>
+<pre>{{ ping.body|slice:":10000"|linebreaksbr }}{% if ping.body|length > 10000 %} [truncated]{% endif %}</pre>
 {% endif %}
 
 {% if projects %}
