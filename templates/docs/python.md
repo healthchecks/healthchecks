@@ -12,7 +12,7 @@ except requests.RequestException as e:
     print("Ping failed: %s" % e)
 ```
 
-Otherwise, you can use the urllib module from Python 3 standard libary:
+Otherwise, you can use the urllib module from Python 3 standard library:
 
 ```python
 import socket
