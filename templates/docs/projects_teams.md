@@ -8,7 +8,7 @@ your checks between them as your usage grows.
 
 Checks and integrations are project-scoped: each check and each configured
 integration always belongs to a particular project. Checks can be transferred
-from one project to another, preserving check's ping address:
+between projects. The transfer operation preserves check's ping address:
 
 ![The transfer dialog](IMG_URL/transfer_check.png)
 
@@ -61,8 +61,8 @@ you will not be able to create new checks.
 
 All projects owned by your account shares your account's Check Limit.
 For example, consider a Business account with two projects,
-"Project A" and "Project B". If A has 70 checks, then B cannot have more than
-30 checks, in order to not exceed the Business account's total limit of 100.
+"Project A" and "Project B." If A has 70 checks, then B cannot have more than
+30 checks in order to not exceed the Business account's total limit of 100.
 
 However, only checks from your own projects count towards your account's
 quota. If you get invited to somebody else's project, that does not change
@@ -70,7 +70,7 @@ the number of checks you can create in your projects.
 
 ## Projects and Team Size Limits
 
-**Team Size** is the number of *unique* users you can invite in your projects.
+**Team Size** is the number of *unique* users you can invite to your projects.
 Same as with Check Limit, all projects share your account's Team Size limit.
 However, if you invite the same user (using the same email address) into multiple
 projects, it only takes up a single seat.
@@ -79,4 +79,4 @@ projects, it only takes up a single seat.
 
 SITE_NAME sends monthly email reports at the start of each month. The monthly reports
 list a summary of checks from **all your projects**. It contains status summaries for
-both the projects you own, and the projects you are a member of.
+both the projects you own and the projects you are a member of.

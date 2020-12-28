@@ -22,7 +22,7 @@ Endpoint Name                                         | Endpoint Address
 Your requests to SITE_NAME Management API must authenticate using an
 API key. All API keys are project-specific. There are no account-wide API keys.
 By default, a project on SITE_NAME doesn't have an API key. You can create read-write
-and read-only API keys in the **Project Settings** page.
+and read-only API keys on the **Project Settings** page.
 
 read-write key
 :   Has full access to all documented API endpoints.
@@ -65,7 +65,7 @@ one or more tags.
 ### Query String Parameters
 
 tag=&lt;value&gt;
-:   Filters the checks, and returns only the checks that are tagged with the
+:   Filters the checks and returns only the checks that are tagged with the
     specified value.
 
     This parameter can be repeated multiple times.
@@ -181,7 +181,7 @@ Example:
 `GET SITE_ROOT/api/v1/checks/<unique_key>`
 
 Returns a JSON representation of a single check. Accepts either check's UUID or
-the `unique_key` (a field derived from UUID, and returned by API responses when
+the `unique_key` (a field derived from UUID and returned by API responses when
 using the read-only API key) as an identifier.
 
 ### Response Codes
@@ -296,7 +296,7 @@ timeout
 
     Minimum: 60 (one minute), maximum: 2592000 (30 days).
 
-    Example for 5 minute timeout:
+    Example for a 5-minute timeout:
 
     <pre>{"kind": "simple", "timeout": 300}</pre>
 
@@ -375,8 +375,8 @@ channels
 
     Alternatively, if you have named your integrations in SITE_NAME dashboard,
     you can specify integrations by their names. For this to work, your integrations
-    need non-empty and unique names, and they must not contain commas. The names
-    must match exactly, whitespace is significant.
+    need non-empty unique names, and they must not contain commas.
+    The names must match exactly, whitespace is significant.
 
     Example:
 
@@ -392,10 +392,10 @@ unique
     with the HTTP status code 201.
 
     If SITE_NAME finds a matching check, it updates the existing check and
-    and returns it with HTTP status code 200.
+    returns it with HTTP status code 200.
 
     The accepted values for the `unique` field are
-    `name`, `tags`, `timeout` and `grace`.
+    `name`, `tags`, `timeout`, and `grace`.
 
     Example:
 
@@ -495,7 +495,7 @@ timeout
 
     Minimum: 60 (one minute), maximum: 2592000 (30 days).
 
-    Example for 5 minute timeout:
+    Example for a 5-minute timeout:
 
     <pre>{"kind": "simple", "timeout": 300}</pre>
 
@@ -644,7 +644,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 
 `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 
-Disables monitoring for a check, without removing it. The check goes into a "paused"
+Disables monitoring for a check without removing it. The check goes into a "paused"
 state. You can resume monitoring of the check by pinging it.
 
 This API call has no request parameters.
@@ -700,7 +700,7 @@ header is sometimes required by some network proxies and web servers.
 
 `DELETE SITE_ROOT/api/v1/checks/<uuid>`
 
-Permanently deletes the check from user's account. Returns JSON representation of the
+Permanently deletes the check from the user's account. Returns JSON representation of the
 check that was just deleted.
 
 This API call has no request parameters.
@@ -755,7 +755,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 Returns a list of pings this check has received.
 
 This endpoint returns pings in reverse order (most recent first), and the total
-number of returned pings depends on account's billing plan: 100 for free accounts,
+number of returned pings depends on the account's billing plan: 100 for free accounts,
 1000 for paid accounts.
 
 ### Response Codes
@@ -833,7 +833,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
 `GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
 
 Returns a list of "flips" this check has experienced. A flip is a change of status
-(from "down" to "up", or from "up" to "down").
+(from "down" to "up," or from "up" to "down").
 
 ### Query String Parameters
 

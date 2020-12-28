@@ -1,6 +1,6 @@
 <h1>Configuring Notifications</h1>
 <p>You can set up multiple ways to receive notifications when checks in your account
-change state. This is useful for several reasons:</p>
+change state. Doing so is useful for several reasons:</p>
 <ul>
 <li><strong>Redundancy in case of notification failures.</strong> Set up notifications using two
 different notification channels (for example, email and Slack). If one transport
@@ -8,7 +8,7 @@ fails (e.g., an email message goes to spam), you still receive a notification ov
 other channel.</li>
 <li><strong>Use different notification methods depending on urgency</strong>. For example, if a
 low-priority housekeeping script fails, post a message in chat. If a vital service fails,
-post in chat, send an email and send SMS.</li>
+post in chat, send an email, and send SMS.</li>
 <li>Route notifications to the right people.</li>
 </ul>
 <p>Each notification method ("integration") belongs to a project:
@@ -27,8 +27,8 @@ account's billing plan. The quota automatically resets at the start of each mont
 The "unused" sends from one month do not carry over to the next month.</p>
 <p>When an account exceeds its monthly limit, SITE_NAME will:</p>
 <ul>
-<li>Send a warning email to account's primary email address</li>
-<li>Show a warning message in the <strong>Integrations</strong> page</li>
+<li>Send a warning email to the account's primary email address</li>
+<li>Show a warning message on the <strong>Integrations</strong> page</li>
 </ul>
 <h2>Repeated Notifications</h2>
 <p>If you want to receive repeated notifications for as long as a particular check is
@@ -46,10 +46,10 @@ Set them up in <a href="../../accounts/profile/notifications/">Account Settings 
 <p><img alt="Email reminder options" src="IMG_URL/email_reports.png" /></p>
 <h2>Monthly Reports</h2>
 <p>SITE_NAME sends monthly email reports at the start of each month. Use them
-to make sure all checks have their expected state and nothing has
+to make sure all checks have their expected state, and nothing has
 "fallen through the cracks."</p>
 <p>A monthly report shows checks from all your projects.
-For each check it lists:</p>
+For each check, it lists:</p>
 <ul>
 <li>check's current status</li>
 <li>the number of downtimes by month, for the last two months</li>

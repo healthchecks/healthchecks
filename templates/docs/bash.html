@@ -1,10 +1,10 @@
 <h1>Shell Scripts</h1>
 <p>You can easily add SITE_NAME monitoring to a shell script. All you
-have to do is make a HTTP request at an appropriate place in the script.
+have to do is make an HTTP request at an appropriate place in the script.
 <a href="https://curl.haxx.se/docs/manpage.html">curl</a> and
 <a href="https://www.gnu.org/software/wget/manual/wget.html">wget</a>
-are two common command line HTTP clients you can use.</p>
-<div class="bash highlight"><pre><span></span><code><span class="c1"># Sends a HTTP GET request with curl:</span>
+are two common command-line HTTP clients you can use.</p>
+<div class="bash highlight"><pre><span></span><code><span class="c1"># Sends an HTTP GET request with curl:</span>
 curl -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL
 
 <span class="c1"># Silent version (no stdout/stderr output unless curl hits an error):</span>
@@ -17,7 +17,7 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> -o /dev/
 <dt><strong>-m &lt;seconds&gt;</strong></dt>
 <dd>Maximum time in seconds that you allow the whole operation to take.</dd>
 <dt><strong>--retry &lt;num&gt;</strong></dt>
-<dd>If a HTTP request fails, retry up to this many times. By default, curl
+<dd>If an HTTP request fails, retry up to this many times. By default, curl
 uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...).
 See also <a href="https://curl.haxx.se/docs/manpage.html#--retry-delay">--retry-delay</a>.</dd>
 <dt><strong>-f, --fail</strong></dt>
@@ -30,10 +30,10 @@ hides error messages.</dd>
 <dt><strong>-o /dev/null</strong></dt>
 <dd>Redirect curl's stdout to /dev/null (error messages still go to stderr).</dd>
 </dl>
-<h2>Signalling Failure from Shell Scripts</h2>
+<h2>Signaling Failure from Shell Scripts</h2>
 <p>You can append <code>/fail</code> or <code>/{exit-status}</code> to any ping URL and  use the resulting URL
 to actively signal a failure. The exit status should be a 0-255 integer.
-SITE_NAME will interpret exit status 0 as success, and all non-zero values as failures.</p>
+SITE_NAME will interpret exit status 0 as success and all non-zero values as failures.</p>
 <p>The following example runs <code>/usr/bin/certbot renew</code>, and uses the <code>$?</code> variable to
 look up its exit status:</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
@@ -46,9 +46,9 @@ curl -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL/<spa
 
 
 <h2>Logging Command Output</h2>
-<p>When pinging with HTTP POST, you can put extra diagnostic information in request
+<p>When pinging with HTTP POST, you can put extra diagnostic information in the request
 body. If the request body looks like a valid UTF-8 string, SITE_NAME
-will accept and store first 10KB of the request body.</p>
+will accept and store the first 10KB of the request body.</p>
 <p>In the below example, certbot's output is captured and submitted via HTTP POST:</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
@@ -59,7 +59,7 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-r
 
 <h2>Auto-provisioning New Checks</h2>
 <p>This example uses SITE_NAME <a href="../api/">Management API</a> to create a check "on the fly"
-(if it does not already exist) and to retrieve its ping URL.
+(if it does not already exist) and retrieve its ping URL.
 Using this technique, you can write services that automatically
 register with SITE_NAME the first time they run.</p>
 <div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>

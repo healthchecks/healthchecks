@@ -1,6 +1,6 @@
 # Go
 
-Below is an example of making a HTTP request to SITE_NAME from Go.
+Below is an example of making an HTTP request to SITE_NAME from Go.
 
 ```go
 package main

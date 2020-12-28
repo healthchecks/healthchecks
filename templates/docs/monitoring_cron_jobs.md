@@ -1,8 +1,8 @@
 # Monitoring Cron Jobs
 
 SITE_NAME is perfectly suited for monitoring cron jobs. All you have to do is
-update your cron job command to send a HTTP request to SITE_NAME
-after a job completes.
+update your cron job command to send an HTTP request to SITE_NAME
+after completing the job.
 
 Let's look at an example:
 
@@ -14,11 +14,11 @@ $ crontab -l
 
 The above job runs `/home/user/backup.sh` every day at 6:08. The backup
 script is presumably a headless, background process. Even if it works
-correctly currently, it can start silently failing in future, without
+correctly currently, it can start silently failing in the future without
 anyone noticing.
 
 You can set up SITE_NAME to notify you whenever the backup script does not
-run on time or does not complete successfully. Here are the steps to do that.
+run on time, or it does not complete successfully. Here are the steps to do that.
 
 1. If you have not already, sign up for a free SITE_NAME account.
 
@@ -44,8 +44,8 @@ $ crontab -e
   8 6 * * * /home/user/backup.sh && curl -fsS --retry 5 -o /dev/null PING_URL
 ```
 
-Now, each time your cron job runs, it will send a HTTP request to the ping URL.
-Since SITE_NAME knows the schedule of your cron job, it can calculate
+Now, each time your cron job runs, it will send an HTTP request to the ping URL.
+Since SITE_NAME knows your cron job's schedule, it can calculate
 the dates and times when the job should run. As soon as your cron job doesn't
 report at an expected time, SITE_NAME will send you a notification.
 
@@ -53,13 +53,13 @@ This monitoring technique takes care of various failure scenarios that could
 potentially go unnoticed otherwise:
 
 * The whole machine goes down (power outage, janitor stumbles on wires, VPS provider problems, etc.)
-* cron daemon is not running, or has invalid configuration
-* cron does start your task, but the task exits with non-zero exit code
+* the cron daemon is not running or has an invalid configuration
+* cron does start your task, but the task exits with a non-zero exit code
 
 ## Curl Options
 
-The extra options in the above example tells curl to retry failed HTTP requests, and
-to silence output unless there is an error. Feel free to adjust the curl options to
+The extra options in the above example tell curl to retry failed HTTP requests, and
+silence output unless there is an error. Feel free to adjust the curl options to
 suit your needs.
 
 **&amp;&amp;**
@@ -86,8 +86,8 @@ suit your needs.
 ## Looking up Your Machine's Time Zone
 
 If your cron job consistently pings SITE_NAME an hour early or an hour late,
-the likely cause is a timezone mismatch: your machine may be using a different timezone
-than what is configured on SITE_NAME.
+the likely cause is a timezone mismatch: your machine may be using a timezone
+different from what you have configured on SITE_NAME.
 
 On modern GNU/Linux systems, you can look up the time zone using the
 `timedatectl status` command and looking for "Time zone" in its output:
@@ -115,7 +115,7 @@ To see live logs:
 journalctl -f
 ```
 
-To see logs from e.g. the last hour, and only from the cron daemon:
+To see the logs from e.g. the last hour, and only from the cron daemon:
 
 ```bash
 journalctl --since "1 hour ago" -t CRON

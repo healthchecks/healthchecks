@@ -1,8 +1,9 @@
 <h1>Attaching Logs</h1>
 <p>SITE_NAME ping endpoints accept HTTP HEAD, GET and POST request methods.</p>
-<p>When using HTTP POST, <strong>you can include arbitrary payload in the request body</strong>.
+<p>When using HTTP POST, <strong>you can include an arbitrary payload in the request body</strong>.
 If the request body looks like a UTF-8 string, SITE_NAME will log the
-first 10 kilobytes (10 000 bytes) of the request body, so you can inspect it later.</p>
+first 10 kilobytes (10 000 bytes) of the request body, so that you can inspect
+it later.</p>
 <h2>Logging Command Output</h2>
 <p>In this example, we run <code>certbot renew</code>, capture its output (both the stdout
 and stderr streams), and submit the captured output to SITE_NAME:</p>
@@ -25,8 +26,8 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-r
 
 <h2>Using Runitor</h2>
 <p><a href="https://github.com/bdd/runitor">Runitor</a> is a third party utility that runs the
-supplied command, captures its output and and reports to SITE_NAME.
-It also measures the execution time, and retries HTTP requests on transient errors.
+supplied command, captures its output and reports to SITE_NAME.
+It also measures the execution time and retries HTTP requests on transient errors.
 Best of all, the syntax is simple and clean:</p>
 <div class="bash highlight"><pre><span></span><code>runitor -uuid your-uuid-here -- /usr/bin/certbot renew
 </code></pre></div>
@@ -38,8 +39,8 @@ designed for that. If you run into the issue of logs getting cut off, consider
 the following options:</p>
 <ul>
 <li>See if the logs can be made less verbose. For example, if you have a batch job
-that outputs a line of text per item processed, perhaps it can output a short
-summary with the totals instead.</li>
+that outputs a line of text per item processed, perhaps it can output a summary with
+the totals instead.</li>
 <li>If the important content is usually at the end, submit the <strong>last 10KB</strong> instead
 of the first. Here is an example that submits the last 10KB of <code>dmesg</code> output:</li>
 </ul>
@@ -51,6 +52,6 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-r
 
 
 <ul>
-<li>Finally, if for your use case it is critical to capture the entire log output,
+<li>Finally, if it is critical to capture the entire log output,
 consider using a dedicated log aggregation service for capturing the logs.</li>
 </ul>

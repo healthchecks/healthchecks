@@ -1,9 +1,9 @@
-# Signalling failures
+# Signaling failures
 
 You can actively signal a failure to SITE_NAME by slightly changing the
 ping URL: append either `/fail` or `/{exit-status}` to your normal ping URL.
 The exit status should be a 0-255 integer. SITE_NAME will interpret
-exit status 0 as success, and all non-zero values as failures.
+exit status 0 as success and all non-zero values as failures.
 
 Examples:
 
@@ -16,7 +16,7 @@ curl --retry 3 PING_URL/fail
 curl --retry 3 PING_URL/1
 ```
 
-By actively signalling failures to SITE_NAME, you can minimize the delay from your
+By actively signaling failures to SITE_NAME, you can minimize the delay from your
 monitored service encountering a problem to you getting notified about it.
 
 ## Shell Scripts

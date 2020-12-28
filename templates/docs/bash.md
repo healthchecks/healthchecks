@@ -1,13 +1,13 @@
 # Shell Scripts
 
 You can easily add SITE_NAME monitoring to a shell script. All you
-have to do is make a HTTP request at an appropriate place in the script.
+have to do is make an HTTP request at an appropriate place in the script.
 [curl](https://curl.haxx.se/docs/manpage.html) and
 [wget](https://www.gnu.org/software/wget/manual/wget.html)
-are two common command line HTTP clients you can use.
+are two common command-line HTTP clients you can use.
 
 ```bash
-# Sends a HTTP GET request with curl:
+# Sends an HTTP GET request with curl:
 curl -m 10 --retry 5 PING_URL
 
 # Silent version (no stdout/stderr output unless curl hits an error):
@@ -21,7 +21,7 @@ Here's what each curl parameter does:
 :   Maximum time in seconds that you allow the whole operation to take.
 
 **--retry &lt;num&gt;**
-:   If a HTTP request fails, retry up to this many times. By default, curl
+:   If an HTTP request fails, retry up to this many times. By default, curl
     uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...).
     See also [--retry-delay](https://curl.haxx.se/docs/manpage.html#--retry-delay).
 
@@ -38,11 +38,11 @@ Here's what each curl parameter does:
 **-o /dev/null**
 :   Redirect curl's stdout to /dev/null (error messages still go to stderr).
 
-## Signalling Failure from Shell Scripts
+## Signaling Failure from Shell Scripts
 
 You can append `/fail` or `/{exit-status}` to any ping URL and  use the resulting URL
 to actively signal a failure. The exit status should be a 0-255 integer.
-SITE_NAME will interpret exit status 0 as success, and all non-zero values as failures.
+SITE_NAME will interpret exit status 0 as success and all non-zero values as failures.
 
 The following example runs `/usr/bin/certbot renew`, and uses the `$?` variable to
 look up its exit status:
@@ -58,9 +58,9 @@ curl -m 10 --retry 5 PING_URL/$?
 
 ## Logging Command Output
 
-When pinging with HTTP POST, you can put extra diagnostic information in request
+When pinging with HTTP POST, you can put extra diagnostic information in the request
 body. If the request body looks like a valid UTF-8 string, SITE_NAME
-will accept and store first 10KB of the request body.
+will accept and store the first 10KB of the request body.
 
 In the below example, certbot's output is captured and submitted via HTTP POST:
 
@@ -74,7 +74,7 @@ curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL
 ## Auto-provisioning New Checks
 
 This example uses SITE_NAME [Management API](../api/) to create a check "on the fly"
-(if it does not already exist) and to retrieve its ping URL.
+(if it does not already exist) and retrieve its ping URL.
 Using this technique, you can write services that automatically
 register with SITE_NAME the first time they run.
 

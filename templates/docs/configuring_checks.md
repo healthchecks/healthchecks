@@ -13,9 +13,9 @@ Describe each check using an optional name, tags, and description fields.
 ![Editing name, tags and description](IMG_URL/edit_name.png)
 
 * **Name**: names are optional, but it is a good idea to set them.
-Good naming becomes especially important as you add more checks in the
+Good naming becomes especially important as you add more checks to the
 account. SITE_NAME will display check names in the web interface, in email reports,
-and in notifications.
+and notifications.
 * **Tags**: a space-separated list of optional labels. Use tags to organize and group
 checks within a project. You can tag checks by the environment
 (`prod`, `staging`, `dev`, etc.) or by role (`www`, `db`, `worker`, etc.) or using

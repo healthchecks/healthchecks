@@ -1,6 +1,6 @@
 # Javascript
 
-Below is an example of making a HTTP request to SITE_NAME from Node.js.
+Below is an example of making an HTTP request to SITE_NAME from Node.js.
 
 ```js
 var https = require('https');

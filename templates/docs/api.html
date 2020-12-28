@@ -52,7 +52,7 @@ in your account.</p>
 <p>Your requests to SITE_NAME Management API must authenticate using an
 API key. All API keys are project-specific. There are no account-wide API keys.
 By default, a project on SITE_NAME doesn't have an API key. You can create read-write
-and read-only API keys in the <strong>Project Settings</strong> page.</p>
+and read-only API keys on the <strong>Project Settings</strong> page.</p>
 <dl>
 <dt>read-write key</dt>
 <dd>Has full access to all documented API endpoints.</dd>
@@ -88,7 +88,7 @@ one or more tags.</p>
 <dl>
 <dt>tag=&lt;value&gt;</dt>
 <dd>
-<p>Filters the checks, and returns only the checks that are tagged with the
+<p>Filters the checks and returns only the checks that are tagged with the
 specified value.</p>
 <p>This parameter can be repeated multiple times.</p>
 <p>Example:</p>
@@ -196,7 +196,7 @@ and <a href="#list-flips">Get a list of check's status changes</a> API calls.</p
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code><br>
 <code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;</code></p>
 <p>Returns a JSON representation of a single check. Accepts either check's UUID or
-the <code>unique_key</code> (a field derived from UUID, and returned by API responses when
+the <code>unique_key</code> (a field derived from UUID and returned by API responses when
 using the read-only API key) as an identifier.</p>
 <h3>Response Codes</h3>
 <dl>
@@ -295,7 +295,7 @@ Example:</p>
 <p>number, optional, default value: {{ default_timeout }}.</p>
 <p>A number of seconds, the expected period of this check.</p>
 <p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
-<p>Example for 5 minute timeout:</p>
+<p>Example for a 5-minute timeout:</p>
 <p><pre>{"kind": "simple", "timeout": 300}</pre></p>
 </dd>
 <dt>grace</dt>
@@ -357,8 +357,8 @@ UUIDs. You can look up integration UUIDs using the
  "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre></p>
 <p>Alternatively, if you have named your integrations in SITE_NAME dashboard,
 you can specify integrations by their names. For this to work, your integrations
-need non-empty and unique names, and they must not contain commas. The names
-must match exactly, whitespace is significant.</p>
+need non-empty unique names, and they must not contain commas.
+The names must match exactly, whitespace is significant.</p>
 <p>Example:</p>
 <p><pre>{"channels": "Email to Alice,SMS to Alice"}</pre></p>
 </dd>
@@ -370,9 +370,9 @@ existing checks, filtered by fields listed in <code>unique</code>.</p>
 <p>If SITE_NAME does not find a matching check, it creates a new check and returns it
 with the HTTP status code 201.</p>
 <p>If SITE_NAME finds a matching check, it updates the existing check and
-and returns it with HTTP status code 200.</p>
+returns it with HTTP status code 200.</p>
 <p>The accepted values for the <code>unique</code> field are
-<code>name</code>, <code>tags</code>, <code>timeout</code> and <code>grace</code>.</p>
+<code>name</code>, <code>tags</code>, <code>timeout</code>, and <code>grace</code>.</p>
 <p>Example:</p>
 <p><pre>{"name": "Backups", unique: ["name"]}</pre></p>
 <p>In this example, if a check named "Backups" exists, it will be returned.
@@ -456,7 +456,7 @@ parameter, SITE_NAME will leave its value unchanged.</p>
 <p>number, optional.</p>
 <p>A number of seconds, the expected period of this check.</p>
 <p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
-<p>Example for 5 minute timeout:</p>
+<p>Example for a 5-minute timeout:</p>
 <p><pre>{"kind": "simple", "timeout": 300}</pre></p>
 </dd>
 <dt>grace</dt>
@@ -575,7 +575,7 @@ field values.</dd>
 
 <h2 class="rule" id="pause-check">Pause Monitoring of a Check</h2>
 <p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pause</code></p>
-<p>Disables monitoring for a check, without removing it. The check goes into a "paused"
+<p>Disables monitoring for a check without removing it. The check goes into a "paused"
 state. You can resume monitoring of the check by pinging it.</p>
 <p>This API call has no request parameters.</p>
 <h3>Response Codes</h3>
@@ -621,7 +621,7 @@ header is sometimes required by some network proxies and web servers.</p>
 
 <h2 class="rule" id="delete-check">Delete Check</h2>
 <p><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
-<p>Permanently deletes the check from user's account. Returns JSON representation of the
+<p>Permanently deletes the check from the user's account. Returns JSON representation of the
 check that was just deleted.</p>
 <p>This API call has no request parameters.</p>
 <h3>Response Codes</h3>
@@ -666,7 +666,7 @@ check that was just deleted.</p>
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></p>
 <p>Returns a list of pings this check has received.</p>
 <p>This endpoint returns pings in reverse order (most recent first), and the total
-number of returned pings depends on account's billing plan: 100 for free accounts,
+number of returned pings depends on the account's billing plan: 100 for free accounts,
 1000 for paid accounts.</p>
 <h3>Response Codes</h3>
 <dl>
@@ -735,7 +735,7 @@ number of returned pings depends on account's billing plan: 100 for free account
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br>
 <code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></p>
 <p>Returns a list of "flips" this check has experienced. A flip is a change of status
-(from "down" to "up", or from "up" to "down").</p>
+(from "down" to "up," or from "up" to "down").</p>
 <h3>Query String Parameters</h3>
 <dl>
 <dt>seconds=&lt;value&gt;</dt>

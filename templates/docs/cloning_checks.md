@@ -5,22 +5,22 @@ page:
 
 ![The "Create a Copy" button](IMG_URL/create_copy.png)
 
-The "Create a Copy..." function creates a new check in the same project, and copies
+The "Create a Copy..." function creates a new check in the same project and copies
 over the following:
 
 * Name, tags, description
 * Schedule
 * Assigned notification methods
 
-The newly created check has a different ping URL and it starts with an empty log.
+The newly created check has a different ping URL, and it starts with an empty log.
 
 ## Cloning All Checks Into a New Project
 
 It is sometimes useful to clone an entire project. For example, when recreating
 an existing deployment in a new region. The SITE_NAME web interface does
-not have a function to clone an entire project, but this can be done relatively
-easily using the [Management API](../api/) calls. Below is an example using Python
-and the requests library:
+not have a function to clone an entire project, but you can clone all checks in the
+project relatively easily using the [Management API](../api/) calls.
+Below is an example using Python and the [requests](https://requests.readthedocs.io/en/master/) library:
 
 ```python
 import requests

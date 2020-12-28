@@ -1,13 +1,13 @@
 # Measuring Script Run Time
 
  Append `/start` to a ping URL and use it to signal when a job starts.
- After receiving a start signal, Healthchecks.io will show the check as "Started".
- It will store the "start" events and display the job execution times. The job
- execution times are calculated as the time gaps between adjacent "start" and
+ After receiving a start signal, Healthchecks.io will show the check as "Started."
+ It will store the "start" events and display the job execution times. SITE_NAME
+ calculates the job execution times as the time gaps between adjacent "start" and
  "complete" events.
 
-Signalling a start kicks off a separate timer: the job now **must** signal a
-success within its configured "Grace Time", or it will get marked as "down".
+Signaling a start kicks off a separate timer: the job now **must** signal a
+success within its configured "Grace Time," or it will get marked as "down."
 
 Below is a code example in Python:
 

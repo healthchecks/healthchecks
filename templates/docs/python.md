@@ -1,6 +1,7 @@
 # Python
 
-If you are already using the requests library, it is convenient to also use it here:
+If you are already using the [requests](https://requests.readthedocs.io/en/master/)
+library, it is convenient to also use it here:
 
 ```python
 import requests
@@ -12,7 +13,8 @@ except requests.RequestException as e:
     print("Ping failed: %s" % e)
 ```
 
-Otherwise, you can use the urllib module from Python 3 standard library:
+Otherwise, you can use the [urllib.request](https://docs.python.org/3/library/urllib.request.html)
+module from Python 3 standard library:
 
 ```python
 import socket

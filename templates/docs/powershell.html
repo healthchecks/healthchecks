@@ -1,16 +1,16 @@
 <h1>PowerShell</h1>
 <p>You can use <a href="https://msdn.microsoft.com/en-us/powershell/mt173057.aspx">PowerShell</a>
  and Windows Task Scheduler to automate various tasks on a Windows system.
- From within a PowerShell script it is also easy to ping SITE_NAME.</p>
+ From within a PowerShell script, it is also easy to ping SITE_NAME.</p>
 <p>Here is a simple PowerShell script that pings SITE_NAME. When scheduled to
 run with Task Scheduler, it will essentially just send regular "I'm alive" messages.
-You can of course extend it to do more things.</p>
+Of course, you can extend it to do more things.</p>
 <div class="powershell highlight"><pre><span></span><code><span class="c"># inside a PowerShell script:</span>
 <span class="nb">Invoke-RestMethod</span> <span class="n">PING_URL</span>
 </code></pre></div>
 
 
-<p>Save the above to e.g. <code>C:\Scripts\healthchecks.ps1</code>.
+<p>Save the above to e.g., <code>C:\Scripts\healthchecks.ps1</code>.
 Then use the following command in a Scheduled Task to run the script:</p>
 <div class="bat highlight"><pre><span></span><code>powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
 </code></pre></div>

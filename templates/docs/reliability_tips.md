@@ -1,6 +1,6 @@
 # Pinging Reliability Tips
 
-Sending monitoring signals over public internet is inherently unreliable.
+Sending monitoring signals over the public internet is inherently unreliable.
 HTTP requests can sometimes take excessively long or fail completely
 for a variety of reasons. Here are some general tips to make your monitoring
 code more robust.
@@ -9,15 +9,16 @@ code more robust.
 
 Put a time limit on how long each ping is allowed to take. This is especially
 important when sending a "start" signal at the start of a job: you don't want
-a stuck ping prevent the actual job from running. Another case is a continuously
-running worker process which pings SITE_NAME after each completed item. A stuck
-request would block the whole process, so it is important to guard against.
+a stuck ping to prevent the actual job from running. Another case is a continuously
+running worker process that pings SITE_NAME after each completed item. A stuck
+request could block the whole process. An explicit per-request time limit mitigates
+this problem.
 
 Specifying the timeout depends on the tool you use. curl, for example, has the
 `--max-time` (shorthand: `-m`) parameter:
 
 ```bash
-# Send a HTTP, 10 second timeout:
+# Send an HTTP request, 10 second timeout:
 curl -m 10 PING_URL
 ```
 
@@ -37,5 +38,5 @@ curl --retry 5 PING_URL
 ## Handle Exceptions
 
 Make sure you know how your HTTP client handles failed requests. For example,
-if you use a HTTP library which raises exceptions, decide if you want to
-catch the exceptions, or let them bubble up.
+if you use an HTTP library that raises exceptions, decide if you want to
+catch the exceptions or let them bubble up.

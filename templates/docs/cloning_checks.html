@@ -2,20 +2,20 @@
 <p>You can clone individual checks from the "Check Details"
 page:</p>
 <p><img alt="The &quot;Create a Copy&quot; button" src="IMG_URL/create_copy.png" /></p>
-<p>The "Create a Copy..." function creates a new check in the same project, and copies
+<p>The "Create a Copy..." function creates a new check in the same project and copies
 over the following:</p>
 <ul>
 <li>Name, tags, description</li>
 <li>Schedule</li>
 <li>Assigned notification methods</li>
 </ul>
-<p>The newly created check has a different ping URL and it starts with an empty log.</p>
+<p>The newly created check has a different ping URL, and it starts with an empty log.</p>
 <h2>Cloning All Checks Into a New Project</h2>
 <p>It is sometimes useful to clone an entire project. For example, when recreating
 an existing deployment in a new region. The SITE_NAME web interface does
-not have a function to clone an entire project, but this can be done relatively
-easily using the <a href="../api/">Management API</a> calls. Below is an example using Python
-and the requests library:</p>
+not have a function to clone an entire project, but you can clone all checks in the
+project relatively easily using the <a href="../api/">Management API</a> calls.
+Below is an example using Python and the <a href="https://requests.readthedocs.io/en/master/">requests</a> library:</p>
 <div class="python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/&quot;</span>

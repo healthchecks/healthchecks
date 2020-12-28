@@ -1,7 +1,7 @@
 # Configuring Notifications
 
 You can set up multiple ways to receive notifications when checks in your account
-change state. This is useful for several reasons:
+change state. Doing so is useful for several reasons:
 
 * **Redundancy in case of notification failures.** Set up notifications using two
 different notification channels (for example, email and Slack). If one transport
@@ -9,7 +9,7 @@ fails (e.g., an email message goes to spam), you still receive a notification ov
 other channel.
 * **Use different notification methods depending on urgency**. For example, if a
 low-priority housekeeping script fails, post a message in chat. If a vital service fails,
-post in chat, send an email and send SMS.
+post in chat, send an email, and send SMS.
 * Route notifications to the right people.
 
 Each notification method ("integration") belongs to a project:
@@ -35,8 +35,8 @@ The "unused" sends from one month do not carry over to the next month.
 
 When an account exceeds its monthly limit, SITE_NAME will:
 
-* Send a warning email to account's primary email address
-* Show a warning message in the **Integrations** page
+* Send a warning email to the account's primary email address
+* Show a warning message on the **Integrations** page
 
 
 ## Repeated Notifications
@@ -58,11 +58,11 @@ Set them up in [Account Settings › Email Reports](../../accounts/profile/notif
 ## Monthly Reports
 
 SITE_NAME sends monthly email reports at the start of each month. Use them
-to make sure all checks have their expected state and nothing has
+to make sure all checks have their expected state, and nothing has
 "fallen through the cracks."
 
 A monthly report shows checks from all your projects.
-For each check it lists:
+For each check, it lists:
 
 * check's current status
 * the number of downtimes by month, for the last two months

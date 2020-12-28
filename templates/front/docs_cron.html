@@ -37,7 +37,7 @@
         </div>
         <div class="panel-body">
             <p>A cron expression has five fields, separated by spaces.
-            Asterisk is a wild card character and means "any value".
+            Asterisk is a wild card character and means "any value."
             </p>
 
             <div class="desc">"Run every minute"</div>
@@ -98,7 +98,7 @@
         </div>
         <div class="panel-body">
             <p>Use numeric values instead of asterisks to match specific
-               minutes, hours, days and months.
+               minutes, hours, days, and months.
             </p>
 
             <div class="desc">"Run at 6PM on Fridays"</div>
@@ -160,7 +160,7 @@
         <div class="panel-body">
             <p>Use <code>{v1},{v2},...,{vn}</code> to list multiple values.</p>
 
-            <div class="desc">"Run at 9AM, 12PM and 6PM every day"</div>
+            <div class="desc">"Run at 9AM, 12PM, and 6PM every day"</div>
 
             <table class="cron-example">
                 <tr>
@@ -245,7 +245,7 @@
                     <td>
                         <div class="guide"></div>
                     </td>
-                    <td>Run on Monday to Friday</td>
+                    <td>Run from Monday to Friday</td>
                 </tr>
                 <tr>
                     <td colspan="2" class="minor">
@@ -336,7 +336,7 @@
             <h3 class="panel-title">Combine numeric values and ranges in lists</h3>
         </div>
         <div class="panel-body">
-            <p>In the comma-separated lists you can combine not only
+            <p>In the comma-separated lists, you can combine not only
             numeric values but also ranges.</p>
 
             <div class="desc">"Run every round hour outside office hours"</div>
@@ -459,13 +459,13 @@
         </div>
         <div class="panel-body">
             <p>
-                Cron daemon uses server's <strong>local time</strong>.
+                The cron daemon uses the server's <strong>local time</strong>.
                 If your server's timezone is other than UTC, make sure
                 to set a matching timezone for your check
                 on {{ site_name }} as well.
             </p>
 
-            <p>On Ubuntu systems you can check the server's timezone
+            <p>On Ubuntu systems, you can check the server's timezone
             with:</p>
             <pre>cat /etc/timezone</pre>
         </div>

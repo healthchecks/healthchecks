@@ -81,8 +81,8 @@ OK
 HEAD|GET|POST PING_ENDPOINT{uuid}/start
 ```
 
-Sends a "job has started!" message to SITE_NAME. This is
-optional but enables a few extra features:
+Sends a "job has started!" message to SITE_NAME. Sending a "start" signal is
+optional, but it enables a few extra features:
 
 * SITE_NAME will measure and display job execution times
 * SITE_NAME will detect if the job runs longer than its configured grace time
@@ -114,7 +114,7 @@ HEAD|GET|POST PING_ENDPOINT{uuid}/{exit-status}
 
 Sends a success or failure signal depending on the exit status
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
-interprets 0 as success, and all other values as failure.
+interprets 0 as success and all other values as failure.
 
 **Example**
 
