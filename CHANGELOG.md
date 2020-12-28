@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 ## Improvements
 - Add tighter parameter checks in hc.front.views.serve_doc
 - Update OpsGenie instructions (#450)
-
+- Update the email notification template to include more check and last ping details
 
 ## v1.18.0 - 2020-12-09
 

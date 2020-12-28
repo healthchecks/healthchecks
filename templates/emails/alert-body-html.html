@@ -47,16 +47,6 @@
             <b>Schedule</b><br>
             <code>{{ check.schedule }}</code>
         </td>
-        {% if trttr %}Yo!{% endif %}
-        {{ trtr|safe }} {% cycle trtr %}
-        {% endif %}
-
-        {% if ping %}
-        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
-            <b>Last Ping</b><br>
-            {{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}
-        </td>
-        {% if trttr %}Yo!{% endif %}
         {{ trtr|safe }} {% cycle trtr %}
         {% endif %}
 
@@ -66,9 +56,46 @@
             {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}
         </td>
     </tr>
+
+    {% if ping %}
+    <tr>
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Last Ping</b><br>
+            {{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}
+        </td>
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Last Ping Type</b><br>
+            {% if ping.exitstatus > 0 %}
+            <span style="background-color: #f2dede; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Exit status {{ ping.exitstatus }}
+            </span>
+            {% elif ping.exitstatus == 0 %}
+            <span style="background-color: #dff0d8; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Exit status 0
+            </span>
+            {% elif ping.kind == "fail" %}
+            <span style="background-color: #f2dede; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Failure
+            </span>
+            {% elif ping.kind == "start" %}
+            <span style="background-color: #dff0d8; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Started
+            </span>
+            {% elif ping.kind == "ign" %}
+            <span style="background-color: #eeeeee; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Ignored
+            </span>
+            {% else %}
+            <span style="background-color: #dff0d8; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Success
+            </span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
 </table>
 
-{% if ping.body %}
+{% if ping and ping.body %}
 <p><b>Last Ping Body</b></p>
 <pre>{{ ping.body|slice:":10000"|linebreaksbr }}{% if ping.body|length > 10000 %} [truncated]{% endif %}</pre>
 {% endif %}
