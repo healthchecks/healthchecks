@@ -74,7 +74,7 @@ For example, this is useful if your backup software sends an email after each ba
 run with a different subject line depending on success or failure.
 * **Pinging a Paused Check**. Normally, when you ping a paused check, it leaves the
 paused state and goes into the "up" state (or the "down" state
-in case of [a failure signal](../signalling_failures/)).
+in case of [a failure signal](../signaling_failures/)).
 You can change this behavior by selecting the "Ignore the ping, stay in
 the paused state" option. With this option selected, the paused state becomes "sticky":
 SITE_NAME will ignore all incoming pings until you explicitly *resume* the check.
