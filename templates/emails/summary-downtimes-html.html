@@ -39,11 +39,7 @@
         </td>
         <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
             {% if check.name %}
-                {% if check.name|length > 20 %}
-                    <small>{{ check.name|mangle_link }}</small>
-                {% else %}
-                    {{ check.name|mangle_link }}
-                {% endif %}
+                {{ check.name|mangle_link }}
             {% else %}
                 <span style="color: #74787E; font-style: italic;">unnamed</span>
             {% endif %}
@@ -70,7 +66,7 @@
         {% if not forloop.last %}
         {% if count %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-                {{ count }} downtime{{ count|pluralize }},
+                {{ count }}&nbsp;downtime{{ count|pluralize }},
                 <br />
                 {{ seconds|hc_approx_duration }} total
             </td>
