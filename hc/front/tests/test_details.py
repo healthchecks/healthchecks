@@ -1,3 +1,5 @@
+from datetime import timedelta as td
+
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
@@ -74,3 +76,32 @@ class DetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
 
         self.assertNotContains(r, "resume-btn", status_code=200)
+
+    def test_crontab_example_guesses_schedules(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        pairs = [
+            (td(minutes=1), "* * * * *"),
+            (td(minutes=12), "*/12 * * * *"),
+            (td(hours=1), "0 * * * *"),
+            (td(hours=6), "0 */6 * * *"),
+            (td(days=1), "0 0 * * *"),
+        ]
+
+        for timeout, expression in pairs:
+            self.check.timeout = timeout
+            self.check.save()
+
+            r = self.client.get(self.url)
+            self.assertContains(r, f"{expression} /your/command.sh")
+            self.assertNotContains(r, 'FIXME: replace "* * * * *"')
+
+    def test_crontab_example_handles_unsupported_timeout_values(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        self.check.timeout = td(minutes=13)
+        self.check.save()
+
+        r = self.client.get(self.url)
+        self.assertContains(r, f"* * * * * /your/command.sh")
+        self.assertContains(r, 'FIXME: replace "* * * * *"')

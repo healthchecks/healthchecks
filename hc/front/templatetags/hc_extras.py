@@ -157,3 +157,33 @@ def format_headers(headers):
 @register.simple_tag
 def now_isoformat():
     return now().replace(microsecond=0).isoformat()
+
+
+@register.filter
+def guess_schedule(check):
+    if check.kind == "cron":
+        return check.schedule
+
+    v = int(check.timeout.total_seconds())
+
+    # every minute
+    if v == 60:
+        return "* * * * *"
+
+    # every hour
+    if v == 3600:
+        return "0 * * * *"
+
+    # every day
+    if v == 3600 * 24:
+        return "0 0 * * *"
+
+    # every X minutes, if 60 is divisible by X
+    minutes, seconds = divmod(v, 60)
+    if minutes in (2, 3, 4, 5, 6, 10, 12, 15, 20, 30) and seconds == 0:
+        return f"*/{minutes} * * * *"
+
+    # every X hours, if 24 is divisible by X
+    hours, seconds = divmod(v, 3600)
+    if hours in (2, 3, 4, 6, 8, 12) and seconds == 0:
+        return f"0 */{hours} * * *"
