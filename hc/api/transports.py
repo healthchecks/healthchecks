@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.utils.html import escape
 import json
 import requests
+import subprocess
 from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
@@ -659,3 +660,27 @@ class LineNotify(HttpTransport):
         }
         payload = {"message": tmpl("linenotify_message.html", check=check)}
         return self.post(self.URL, headers=headers, params=payload)
+
+
+class Signal(Transport):
+    def is_noop(self, check):
+        if check.status == "down":
+            return not self.channel.signal_notify_down
+        else:
+            return not self.channel.signal_notify_up
+
+    def notify(self, check):
+        if not settings.SIGNAL_CLI_USERNAME:
+            return "Signal notifications are not enabled"
+
+        text = tmpl("signal_message.html", check=check, site_name=settings.SITE_NAME)
+
+        args = settings.SIGNAL_CLI_CMD.split()
+        args.extend(["-u", settings.SIGNAL_CLI_USERNAME])
+        args.extend(["send", self.channel.phone_number])
+        args.extend(["-m", text])
+
+        result = subprocess.run(args, timeout=10)
+
+        if result.returncode != 0:
+            return "signal-cli returned exit code %d" % result.returncode

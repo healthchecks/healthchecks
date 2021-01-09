@@ -9,7 +9,7 @@ from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
 
 
-class NotifyTestCase(BaseTestCase):
+class NotifyEmailTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 

@@ -52,6 +52,7 @@ CHANNEL_KINDS = (
     ("spike", "Spike"),
     ("call", "Phone Call"),
     ("linenotify", "LINE Notify"),
+    ("signal", "Signal"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -471,6 +472,8 @@ class Channel(models.Model):
             return transports.Call(self)
         elif self.kind == "linenotify":
             return transports.LineNotify(self)
+        elif self.kind == "signal":
+            return transports.Signal(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -649,7 +652,7 @@ class Channel(models.Model):
 
     @property
     def phone_number(self):
-        assert self.kind in ("call", "sms", "whatsapp")
+        assert self.kind in ("call", "sms", "whatsapp", "signal")
         if self.value.startswith("{"):
             doc = json.loads(self.value)
             return doc["value"]
@@ -711,6 +714,18 @@ class Channel(models.Model):
     @property
     def whatsapp_notify_down(self):
         assert self.kind == "whatsapp"
+        doc = json.loads(self.value)
+        return doc["down"]
+
+    @property
+    def signal_notify_up(self):
+        assert self.kind == "signal"
+        doc = json.loads(self.value)
+        return doc["up"]
+
+    @property
+    def signal_notify_down(self):
+        assert self.kind == "signal"
         doc = json.loads(self.value)
         return doc["down"]
 

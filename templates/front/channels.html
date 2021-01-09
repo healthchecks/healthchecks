@@ -91,6 +91,14 @@
                             {% elif ch.zulip_type == "private" %}
                             user <span>{{ ch.zulip_to}}</span>
                             {% endif %}
+                        {% elif ch.kind == "signal" %}
+                            Signal to <span>{{ ch.phone_number }}</span>
+                            {% if ch.signal_notify_down and not ch.signal_notify_up %}
+                                (down only)
+                            {% endif %}
+                            {% if ch.signal_notify_up and not ch.signal_notify_down %}
+                                (up only)
+                            {% endif %}
                         {% else %}
                             {{ ch.get_kind_display }}
                         {% endif %}
@@ -352,6 +360,17 @@
             <h2>Shell Command</h2>
             <p>Execute a local shell command when a check goes up or down.</p>
             <a href="{% url 'hc-add-shell' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
+        {% if enable_signal %}
+        <li>
+            <img src="{% static 'img/integrations/signal.png' %}"
+                class="icon" alt="Signal icon" />
+
+            <h2>Signal</h2>
+            <p>Get a Signal message when a check goes up or down.</p>
+            <a href="{% url 'hc-add-signal' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
 

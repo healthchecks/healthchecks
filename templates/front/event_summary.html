@@ -40,6 +40,11 @@
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
+{% elif event.channel.kind == "signal" %}
+    Sent Signal message to {{ event.channel.phone_number }}
+    {% if event.channel.name %}
+        ({{ event.channel.name }})
+    {% endif %}
 {% else %}
     Sent alert to {{ event.channel.get_kind_display }}
     {% if event.channel.name %}

@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Update OpsGenie instructions (#450)
 - Update the email notification template to include more check and last ping details
 - Improve the crontab snippet in the "Check Details" page (#465)
+- Add Signal integration (#428)
 
 ## v1.18.0 - 2020-12-09
 

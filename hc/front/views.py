@@ -299,6 +299,7 @@ def index(request):
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
+        "enable_signal": settings.SIGNAL_CLI_USERNAME is not None,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
@@ -762,6 +763,7 @@ def channels(request, code):
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
+        "enable_signal": settings.SIGNAL_CLI_USERNAME is not None,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
@@ -1630,6 +1632,38 @@ def add_whatsapp(request, code):
         "profile": project.owner_profile,
     }
     return render(request, "integrations/add_whatsapp.html", ctx)
+
+
+@require_setting("SIGNAL_CLI_USERNAME")
+@login_required
+def add_signal(request, code):
+    project = _get_rw_project_for_user(request, code)
+    if request.method == "POST":
+        form = forms.AddSmsForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="signal")
+            channel.name = form.cleaned_data["label"]
+            channel.value = json.dumps(
+                {
+                    "value": form.cleaned_data["value"],
+                    "up": form.cleaned_data["up"],
+                    "down": form.cleaned_data["down"],
+                }
+            )
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels", project.code)
+    else:
+        form = forms.AddSmsForm()
+
+    ctx = {
+        "page": "channels",
+        "project": project,
+        "form": form,
+        "profile": project.owner_profile,
+    }
+    return render(request, "integrations/add_signal.html", ctx)
 
 
 @require_setting("TRELLO_APP_KEY")
