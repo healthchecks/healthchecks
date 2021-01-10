@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file.
 - Improve the crontab snippet in the "Check Details" page (#465)
 - Add Signal integration (#428)
 
+## Bug Fixes
+- Fix unwanted HTML escaping in SMS and WhatsApp notifications
+
 ## v1.18.0 - 2020-12-09
 
 ## Improvements
