@@ -24,7 +24,7 @@ class AddCallTestCase(BaseTestCase):
         self.assertContains(r, "upgrade to a")
 
     def test_it_creates_channel(self):
-        form = {"label": "My Phone", "value": "+1234567890"}
+        form = {"label": "My Phone", "phone": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -37,14 +37,14 @@ class AddCallTestCase(BaseTestCase):
         self.assertEqual(c.project, self.project)
 
     def test_it_rejects_bad_number(self):
-        form = {"value": "not a phone number"}
+        form = {"phone": "not a phone number"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertContains(r, "Invalid phone number format.")
 
     def test_it_trims_whitespace(self):
-        form = {"value": "   +1234567890   "}
+        form = {"phone": "   +1234567890   "}
 
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, form)

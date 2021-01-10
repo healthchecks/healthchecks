@@ -50,20 +50,20 @@
             </div>
         </div>
 
-        <div class="form-group {{ form.value.css_classes }}">
+        <div class="form-group {{ form.phone.css_classes }}">
             <label for="id_number" class="col-sm-2 control-label">Phone Number</label>
             <div class="col-sm-3">
                 <input
                     id="id_number"
                     type="tel"
                     class="form-control"
-                    name="value"
+                    name="phone"
                     placeholder="+1234567890"
-                    value="{{ form.value.value|default:"" }}">
+                    value="{{ form.phone.value|default:"" }}">
 
-                {% if form.value.errors %}
+                {% if form.phone.errors %}
                 <div class="help-block">
-                    {{ form.value.errors|join:"" }}
+                    {{ form.phone.errors|join:"" }}
                 </div>
                 {% else %}
                 <span class="help-block">

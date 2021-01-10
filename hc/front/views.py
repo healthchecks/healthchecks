@@ -1555,17 +1555,17 @@ def add_telegram(request):
 def add_sms(request, code):
     project = _get_rw_project_for_user(request, code)
     if request.method == "POST":
-        form = forms.AddSmsForm(request.POST)
+        form = forms.PhoneNumberForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="sms")
             channel.name = form.cleaned_data["label"]
-            channel.value = json.dumps({"value": form.cleaned_data["value"]})
+            channel.value = form.get_json()
             channel.save()
 
             channel.assign_all_checks()
             return redirect("hc-channels", project.code)
     else:
-        form = forms.AddSmsForm()
+        form = forms.PhoneNumberForm()
 
     ctx = {
         "page": "channels",
@@ -1581,17 +1581,17 @@ def add_sms(request, code):
 def add_call(request, code):
     project = _get_rw_project_for_user(request, code)
     if request.method == "POST":
-        form = forms.AddSmsForm(request.POST)
+        form = forms.PhoneNumberForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="call")
             channel.name = form.cleaned_data["label"]
-            channel.value = json.dumps({"value": form.cleaned_data["value"]})
+            channel.value = form.get_json()
             channel.save()
 
             channel.assign_all_checks()
             return redirect("hc-channels", project.code)
     else:
-        form = forms.AddSmsForm()
+        form = forms.PhoneNumberForm()
 
     ctx = {
         "page": "channels",
@@ -1607,23 +1607,17 @@ def add_call(request, code):
 def add_whatsapp(request, code):
     project = _get_rw_project_for_user(request, code)
     if request.method == "POST":
-        form = forms.AddSmsForm(request.POST)
+        form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="whatsapp")
             channel.name = form.cleaned_data["label"]
-            channel.value = json.dumps(
-                {
-                    "value": form.cleaned_data["value"],
-                    "up": form.cleaned_data["up"],
-                    "down": form.cleaned_data["down"],
-                }
-            )
+            channel.value = form.get_json()
             channel.save()
 
             channel.assign_all_checks()
             return redirect("hc-channels", project.code)
     else:
-        form = forms.AddSmsForm()
+        form = forms.PhoneUpDownForm()
 
     ctx = {
         "page": "channels",
@@ -1639,23 +1633,17 @@ def add_whatsapp(request, code):
 def add_signal(request, code):
     project = _get_rw_project_for_user(request, code)
     if request.method == "POST":
-        form = forms.AddSmsForm(request.POST)
+        form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="signal")
             channel.name = form.cleaned_data["label"]
-            channel.value = json.dumps(
-                {
-                    "value": form.cleaned_data["value"],
-                    "up": form.cleaned_data["up"],
-                    "down": form.cleaned_data["down"],
-                }
-            )
+            channel.value = form.get_json()
             channel.save()
 
             channel.assign_all_checks()
             return redirect("hc-channels", project.code)
     else:
-        form = forms.AddSmsForm()
+        form = forms.PhoneUpDownForm()
 
     ctx = {
         "page": "channels",

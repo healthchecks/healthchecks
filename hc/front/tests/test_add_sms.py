@@ -24,7 +24,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertContains(r, "upgrade to a")
 
     def test_it_creates_channel(self):
-        form = {"label": "My Phone", "value": "+1234567890"}
+        form = {"label": "My Phone", "phone": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -38,13 +38,13 @@ class AddSmsTestCase(BaseTestCase):
 
     def test_it_rejects_bad_number(self):
         for v in ["not a phone number address", False, 15, "+123456789A"]:
-            form = {"value": v}
+            form = {"phone": v}
             self.client.login(username="alice@example.org", password="password")
             r = self.client.post(self.url, form)
             self.assertContains(r, "Invalid phone number format.")
 
     def test_it_trims_whitespace(self):
-        form = {"value": "   +1234567890   "}
+        form = {"phone": "   +1234567890   "}
 
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, form)
@@ -67,7 +67,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_it_strips_invisible_formatting_characters(self):
-        form = {"label": "My Phone", "value": "\u202c+1234567890\u202c"}
+        form = {"label": "My Phone", "phone": "\u202c+1234567890\u202c"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -77,7 +77,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.phone_number, "+1234567890")
 
     def test_it_strips_hyphens(self):
-        form = {"label": "My Phone", "value": "+123-4567890"}
+        form = {"label": "My Phone", "phone": "+123-4567890"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -87,7 +87,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.phone_number, "+1234567890")
 
     def test_it_strips_spaces(self):
-        form = {"label": "My Phone", "value": "+123 45 678 90"}
+        form = {"label": "My Phone", "phone": "+123 45 678 90"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)

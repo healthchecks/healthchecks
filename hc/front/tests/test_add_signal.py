@@ -17,7 +17,7 @@ class AddSignalTestCase(BaseTestCase):
     def test_it_creates_channel(self):
         form = {
             "label": "My Phone",
-            "value": "+1234567890",
+            "phone": "+1234567890",
             "down": "true",
             "up": "true",
         }
@@ -35,7 +35,7 @@ class AddSignalTestCase(BaseTestCase):
         self.assertEqual(c.project, self.project)
 
     def test_it_obeys_up_down_flags(self):
-        form = {"label": "My Phone", "value": "+1234567890"}
+        form = {"label": "My Phone", "phone": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -46,7 +46,7 @@ class AddSignalTestCase(BaseTestCase):
         self.assertFalse(c.signal_notify_up)
 
     @override_settings(SIGNAL_CLI_USERNAME=None)
-    def test_it_handles_unset_username(self):
+    def test_it_handles_unset_sender_username(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)

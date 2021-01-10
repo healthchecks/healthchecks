@@ -193,15 +193,13 @@ class AddShellForm(forms.Form):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
 
 
-class AddSmsForm(forms.Form):
+class PhoneNumberForm(forms.Form):
     error_css_class = "has-error"
     label = forms.CharField(max_length=100, required=False)
-    value = forms.CharField()
-    down = forms.BooleanField(required=False, initial=True)
-    up = forms.BooleanField(required=False, initial=True)
+    phone = forms.CharField()
 
-    def clean_value(self):
-        v = self.cleaned_data["value"]
+    def clean_phone(self):
+        v = self.cleaned_data["phone"]
 
         stripped = v.encode("ascii", "ignore").decode("ascii")
         stripped = stripped.replace(" ", "").replace("-", "")
@@ -209,6 +207,23 @@ class AddSmsForm(forms.Form):
             raise forms.ValidationError("Invalid phone number format.")
 
         return stripped
+
+    def get_json(self):
+        return json.dumps({"value": self.cleaned_data["phone"]})
+
+
+class PhoneUpDownForm(PhoneNumberForm):
+    up = forms.BooleanField(required=False, initial=True)
+    down = forms.BooleanField(required=False, initial=True)
+
+    def get_json(self):
+        return json.dumps(
+            {
+                "value": self.cleaned_data["phone"],
+                "up": self.cleaned_data["up"],
+                "down": self.cleaned_data["down"],
+            }
+        )
 
 
 class ChannelNameForm(forms.Form):

@@ -33,7 +33,7 @@ class AddWhatsAppTestCase(BaseTestCase):
     def test_it_creates_channel(self):
         form = {
             "label": "My Phone",
-            "value": "+1234567890",
+            "phone": "+1234567890",
             "down": "true",
             "up": "true",
         }
@@ -51,7 +51,7 @@ class AddWhatsAppTestCase(BaseTestCase):
         self.assertEqual(c.project, self.project)
 
     def test_it_obeys_up_down_flags(self):
-        form = {"label": "My Phone", "value": "+1234567890"}
+        form = {"label": "My Phone", "phone": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
