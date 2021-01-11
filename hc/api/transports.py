@@ -680,7 +680,9 @@ class Signal(Transport):
         args.extend(["send", self.channel.phone_number])
         args.extend(["-m", text])
 
-        result = subprocess.run(args, timeout=10)
+        # Need a high timeout because sending the first message to a new
+        # recipient sometimes takes 20+ seconds
+        result = subprocess.run(args, timeout=30)
 
         if result.returncode != 0:
             return "signal-cli returned exit code %d" % result.returncode
