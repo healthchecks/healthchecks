@@ -673,6 +673,11 @@ class Signal(Transport):
         if not settings.SIGNAL_CLI_USERNAME:
             return "Signal notifications are not enabled"
 
+        from hc.api.models import TokenBucket
+
+        if not TokenBucket.authorize_signal(self.channel.phone_number):
+            return "Rate limit exceeded"
+
         text = tmpl("signal_message.html", check=check, site_name=settings.SITE_NAME)
 
         args = settings.SIGNAL_CLI_CMD.split()

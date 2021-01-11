@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from django.utils.timezone import now
 from django.test.utils import override_settings
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Notification, TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -80,3 +80,14 @@ class NotifySignalTestCase(BaseTestCase):
         cmd = " ".join(args[0])
 
         self.assertIn("Foo & Bar", cmd)
+
+    @override_settings(SECRET_KEY="test-secret")
+    def test_it_obeys_rate_limit(self):
+        # "2862..." is sha1("+123456789test-secret")
+        obj = TokenBucket(value="signal-2862991ccaa15c8856e7ee0abaf3448fb3c292e0")
+        obj.tokens = 0
+        obj.save()
+
+        self.channel.notify(self.check)
+        n = Notification.objects.first()
+        self.assertEqual(n.error, "Rate limit exceeded")
