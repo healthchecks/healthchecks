@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
-from django.db.models import Count, F
+from django.db.models import F
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -209,7 +209,7 @@ class ChannelsAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationsAdmin(admin.ModelAdmin):
-    search_fields = ["owner__name", "owner__code", "channel__value"]
+    search_fields = ["owner__name", "owner__code", "channel__value", "error"]
     readonly_fields = ("owner",)
     list_select_related = ("owner", "channel")
     list_display = (
