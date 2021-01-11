@@ -899,8 +899,8 @@ class TokenBucket(models.Model):
     def authorize_telegram(telegram_id):
         value = "tg-%s" % telegram_id
 
-        # 10 messages for a single chat per minute:
-        return TokenBucket.authorize(value, 10, 60)
+        # 6 messages for a single chat per minute:
+        return TokenBucket.authorize(value, 6, 60)
 
     @staticmethod
     def authorize_sudo_code(user):
