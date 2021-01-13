@@ -3,7 +3,7 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
-@override_settings(SIGNAL_CLI_USERNAME="+123456789")
+@override_settings(SIGNAL_CLI_ENABLED=True)
 class AddSignalTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
