@@ -45,8 +45,8 @@ class AddSignalTestCase(BaseTestCase):
         self.assertFalse(c.signal_notify_down)
         self.assertFalse(c.signal_notify_up)
 
-    @override_settings(SIGNAL_CLI_USERNAME=None)
-    def test_it_handles_unset_sender_username(self):
+    @override_settings(SIGNAL_CLI_ENABLED=False)
+    def test_it_handles_disabled_integration(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)

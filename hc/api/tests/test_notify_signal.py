@@ -28,24 +28,22 @@ class NotifySignalTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.subprocess.run")
-    def test_it_works(self, mock_run):
-        mock_run.return_value.returncode = 0
-
+    @patch("hc.api.transports.dbus")
+    @patch("hc.api.transports.Signal.get_service")
+    def test_it_works(self, mock_get_service, mock_dbus):
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
-        self.assertTrue(mock_run.called)
-        args, kwargs = mock_run.call_args
-        cmd = " ".join(args[0])
+        self.assertTrue(mock_get_service.called)
+        args, kwargs = mock_get_service.return_value.sendMessage.call_args
+        self.assertIn("is DOWN", args[0])
+        self.assertEqual(args[2], ["+123456789"])
 
-        self.assertIn("-u +987654321", cmd)
-        self.assertIn("send +123456789", cmd)
-
-    @patch("hc.api.transports.subprocess.run")
-    def test_it_obeys_down_flag(self, mock_run):
+    @patch("hc.api.transports.dbus")
+    @patch("hc.api.transports.Signal.get_service")
+    def test_it_obeys_down_flag(self, mock_get_service, mock_dbus):
         payload = {"value": "+123456789", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
         self.channel.save()
@@ -54,35 +52,35 @@ class NotifySignalTestCase(BaseTestCase):
 
         # This channel should not notify on "down" events:
         self.assertEqual(Notification.objects.count(), 0)
-        self.assertFalse(mock_run.called)
 
-    @patch("hc.api.transports.subprocess.run")
-    def test_it_requires_signal_cli_username(self, mock_run):
+        self.assertFalse(mock_get_service.called)
 
-        with override_settings(SIGNAL_CLI_USERNAME=None):
+    @patch("hc.api.transports.dbus")
+    @patch("hc.api.transports.Signal.get_service")
+    def test_it_requires_signal_cli_enabled(self, mock_get_service, mock_dbus):
+        with override_settings(SIGNAL_CLI_ENABLED=False):
             self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Signal notifications are not enabled")
 
-        self.assertFalse(mock_run.called)
+        self.assertFalse(mock_get_service.called)
 
-    @patch("hc.api.transports.subprocess.run")
-    def test_it_does_not_escape_special_characters(self, mock_run):
+    @patch("hc.api.transports.dbus")
+    @patch("hc.api.transports.Signal.get_service")
+    def test_it_does_not_escape_special_characters(self, mock_get_service, mock_dbus):
         self.check.name = "Foo & Bar"
         self.check.save()
 
-        mock_run.return_value.returncode = 0
         self.channel.notify(self.check)
 
-        self.assertTrue(mock_run.called)
-        args, kwargs = mock_run.call_args
-        cmd = " ".join(args[0])
-
-        self.assertIn("Foo & Bar", cmd)
+        args, kwargs = mock_get_service.return_value.sendMessage.call_args
+        self.assertIn("Foo & Bar", args[0])
 
     @override_settings(SECRET_KEY="test-secret")
-    def test_it_obeys_rate_limit(self):
+    @patch("hc.api.transports.dbus")
+    @patch("hc.api.transports.Signal.get_service")
+    def test_it_obeys_rate_limit(self, mock_get_service, mock_dbus):
         # "2862..." is sha1("+123456789test-secret")
         obj = TokenBucket(value="signal-2862991ccaa15c8856e7ee0abaf3448fb3c292e0")
         obj.tokens = 0
@@ -91,3 +89,5 @@ class NotifySignalTestCase(BaseTestCase):
         self.channel.notify(self.check)
         n = Notification.objects.first()
         self.assertEqual(n.error, "Rate limit exceeded")
+
+        self.assertFalse(mock_get_service.called)

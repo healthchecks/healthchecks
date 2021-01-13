@@ -299,7 +299,7 @@ def index(request):
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
-        "enable_signal": settings.SIGNAL_CLI_USERNAME is not None,
+        "enable_signal": settings.SIGNAL_CLI_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
@@ -763,7 +763,7 @@ def channels(request, code):
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
-        "enable_signal": settings.SIGNAL_CLI_USERNAME is not None,
+        "enable_signal": settings.SIGNAL_CLI_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
@@ -1628,7 +1628,7 @@ def add_whatsapp(request, code):
     return render(request, "integrations/add_whatsapp.html", ctx)
 
 
-@require_setting("SIGNAL_CLI_USERNAME")
+@require_setting("SIGNAL_CLI_ENABLED")
 @login_required
 def add_signal(request, code):
     project = _get_rw_project_for_user(request, code)

@@ -6,7 +6,6 @@ from django.utils import timezone
 from django.utils.html import escape
 import json
 import requests
-import subprocess
 from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
@@ -18,6 +17,12 @@ try:
 except ImportError:
     # Enforce
     settings.APPRISE_ENABLED = False
+
+try:
+    import dbus
+except ImportError:
+    # Enforce
+    settings.SIGNAL_CLI_ENABLED = False
 
 
 def tmpl(template_name, **ctx):
@@ -669,8 +674,13 @@ class Signal(Transport):
         else:
             return not self.channel.signal_notify_up
 
+    def get_service(self):
+        bus = dbus.SystemBus()
+        signal_object = bus.get_object("org.asamk.Signal", "/org/asamk/Signal")
+        return dbus.Interface(signal_object, "org.asamk.Signal")
+
     def notify(self, check):
-        if not settings.SIGNAL_CLI_USERNAME:
+        if not settings.SIGNAL_CLI_ENABLED:
             return "Signal notifications are not enabled"
 
         from hc.api.models import TokenBucket
@@ -680,14 +690,10 @@ class Signal(Transport):
 
         text = tmpl("signal_message.html", check=check, site_name=settings.SITE_NAME)
 
-        args = settings.SIGNAL_CLI_CMD.split()
-        args.extend(["-u", settings.SIGNAL_CLI_USERNAME])
-        args.extend(["send", self.channel.phone_number])
-        args.extend(["-m", text])
+        try:
+            self.get_service().sendMessage(text, [], [self.channel.phone_number])
+        except dbus.exceptions.DBusException as e:
+            if "NotFoundException" in str(e):
+                return "Recipient not found"
 
-        # Need a high timeout because sending the first message to a new
-        # recipient sometimes takes 20+ seconds
-        result = subprocess.run(args, timeout=30)
-
-        if result.returncode != 0:
-            return "signal-cli returned exit code %d" % result.returncode
+            return "signal-cli call failed"

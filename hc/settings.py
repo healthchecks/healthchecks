@@ -231,8 +231,7 @@ LINENOTIFY_CLIENT_ID = os.getenv("LINENOTIFY_CLIENT_ID")
 LINENOTIFY_CLIENT_SECRET = os.getenv("LINENOTIFY_CLIENT_SECRET")
 
 # Signal
-SIGNAL_CLI_USERNAME = os.getenv("SIGNAL_CLI_USERNAME")
-SIGNAL_CLI_CMD = os.getenv("SIGNAL_CLI_CMD", "signal-cli")
+SIGNAL_CLI_ENABLED = envbool("SIGNAL_CLI_ENABLED", "False")
 
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *

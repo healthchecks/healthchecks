@@ -136,8 +136,7 @@ Healthchecks reads configuration from the following environment variables:
 | PUSHOVER_SUBSCRIPTION_URL | `None`
 | REMOTE_USER_HEADER | `None` | See [External Authentication](#external-authentication) for details.
 | SHELL_ENABLED | `"False"`
-| SIGNAL_CLI_USERNAME | `None`
-| SIGNAL_CLI_CMD | `signal-cli` | Path to the signal-cli executable
+| SIGNAL_CLI_ENABLED | `"False"`
 | SLACK_CLIENT_ID | `None`
 | SLACK_CLIENT_SECRET | `None`
 | TELEGRAM_BOT_NAME | `"ExampleBot"`
@@ -412,34 +411,14 @@ To enable the Pushover integration, you will need to:
 ### Signal
 
 Healthchecks uses [signal-cli](https://github.com/AsamK/signal-cli) to send Signal
-notifications. It requires the `signal-cli` program to be installed and available on
-the local machine.
-
-To send notifications, healthchecks executes "signal-cli send" calls.
-It does not handle phone number registration and verification. You must do that
-manually, before using the integration.
+notifications. Healthcecks interacts with signal-cli over DBus.
 
 To enable the Signal integration:
 
-* Download and install signal-cli in your preferred location
-  (for example, in `/srv/signal-cli-0.7.2/`).
-* Register and verify phone number, or [link it](https://github.com/AsamK/signal-cli/wiki/Linking-other-devices-(Provisioning))
-  to an existing registration.
-* Test your signal-cli configuration by sending a message manually from command line.
-* Put the sender phone number in the `SIGNAL_CLI_USERNAME` environment variable.
-  Example: `SIGNAL_CLI_USERNAME=+123456789`.
-* If `signal-cli` is not in the system path, specify its path in `SIGNAL_CLI_CMD`.
-  Example: `SIGNAL_CLI_CMD=/srv/signal-cli-0.7.2/bin/signal-cli`
-
-It is possible to use a separate system user for running signal-cli:
-
-* Create a separate system user, (for example, "signal-user").
-* Configure signal-cli while logged in as signal-user.
-* Change `SIGNAL_CLI_CMD` to run signal-cli through sudo:
-  `sudo -u signal-user /srv/signal-cli-0.7.2/bin/signal-cli`.
-* Configure sudo to not require password. For example, if healthchecks
-  runs under the www-data system user, the sudoers rule would be:
-  `www-data ALL=(signal-user) NOPASSWD: /srv/signal-cli-0.7.2/bin/signal-cli`.
+* Set up and configure signal-cli to listen on DBus system bus ([instructions](https://github.com/AsamK/signal-cli/wiki/DBus-service)).
+  Make sure you can send test messages from command line, using the `dbus-send`
+  example given in the signal-cli instructions.
+* Set the `SIGNAL_CLI_ENABLED` environment variable to `True`.
 
 
 ### Telegram
