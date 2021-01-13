@@ -22,6 +22,7 @@ try:
     import dbus
 except ImportError:
     # Enforce
+    dbus = None
     settings.SIGNAL_CLI_ENABLED = False
 
 

@@ -10,7 +10,7 @@ from hc.api.models import Channel, Check, Notification, TokenBucket
 from hc.test import BaseTestCase
 
 
-@override_settings(SIGNAL_CLI_USERNAME="+987654321")
+@override_settings(SIGNAL_CLI_ENABLED=True)
 class NotifySignalTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
