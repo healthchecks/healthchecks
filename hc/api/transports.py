@@ -692,7 +692,15 @@ class Signal(Transport):
         text = tmpl("signal_message.html", check=check, site_name=settings.SITE_NAME)
 
         try:
-            self.get_service().sendMessage(text, [], [self.channel.phone_number])
+            dbus.SystemBus().call_blocking(
+                "org.asamk.Signal",
+                "/org/asamk/Signal",
+                "org.asamk.Signal",
+                "sendMessage",
+                "sasas",
+                (text, [], [self.channel.phone_number]),
+                timeout=30,
+            )
         except dbus.exceptions.DBusException as e:
             if "NotFoundException" in str(e):
                 return "Recipient not found"

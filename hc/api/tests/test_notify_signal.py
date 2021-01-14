@@ -29,21 +29,20 @@ class NotifySignalTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.dbus")
-    @patch("hc.api.transports.Signal.get_service")
-    def test_it_works(self, mock_get_service, mock_dbus):
+    def test_it_works(self, mock_bus):
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
-        self.assertTrue(mock_get_service.called)
-        args, kwargs = mock_get_service.return_value.sendMessage.call_args
-        self.assertIn("is DOWN", args[0])
-        self.assertEqual(args[2], ["+123456789"])
+        args, kwargs = mock_bus.SystemBus.return_value.call_blocking.call_args
+        message, attachments, recipients = args[-1]
+
+        self.assertIn("is DOWN", message)
+        self.assertEqual(recipients, ["+123456789"])
 
     @patch("hc.api.transports.dbus")
-    @patch("hc.api.transports.Signal.get_service")
-    def test_it_obeys_down_flag(self, mock_get_service, mock_dbus):
+    def test_it_obeys_down_flag(self, mock_bus):
         payload = {"value": "+123456789", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
         self.channel.save()
@@ -53,34 +52,32 @@ class NotifySignalTestCase(BaseTestCase):
         # This channel should not notify on "down" events:
         self.assertEqual(Notification.objects.count(), 0)
 
-        self.assertFalse(mock_get_service.called)
+        self.assertFalse(mock_bus.SystemBus.called)
 
     @patch("hc.api.transports.dbus")
-    @patch("hc.api.transports.Signal.get_service")
-    def test_it_requires_signal_cli_enabled(self, mock_get_service, mock_dbus):
+    def test_it_requires_signal_cli_enabled(self, mock_bus):
         with override_settings(SIGNAL_CLI_ENABLED=False):
             self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Signal notifications are not enabled")
 
-        self.assertFalse(mock_get_service.called)
+        self.assertFalse(mock_bus.SystemBus.called)
 
     @patch("hc.api.transports.dbus")
-    @patch("hc.api.transports.Signal.get_service")
-    def test_it_does_not_escape_special_characters(self, mock_get_service, mock_dbus):
+    def test_it_does_not_escape_special_characters(self, mock_bus):
         self.check.name = "Foo & Bar"
         self.check.save()
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_get_service.return_value.sendMessage.call_args
-        self.assertIn("Foo & Bar", args[0])
+        args, kwargs = mock_bus.SystemBus.return_value.call_blocking.call_args
+        message, attachments, recipients = args[-1]
+        self.assertIn("Foo & Bar", message)
 
     @override_settings(SECRET_KEY="test-secret")
     @patch("hc.api.transports.dbus")
-    @patch("hc.api.transports.Signal.get_service")
-    def test_it_obeys_rate_limit(self, mock_get_service, mock_dbus):
+    def test_it_obeys_rate_limit(self, mock_bus):
         # "2862..." is sha1("+123456789test-secret")
         obj = TokenBucket(value="signal-2862991ccaa15c8856e7ee0abaf3448fb3c292e0")
         obj.tokens = 0
@@ -90,4 +87,4 @@ class NotifySignalTestCase(BaseTestCase):
         n = Notification.objects.first()
         self.assertEqual(n.error, "Rate limit exceeded")
 
-        self.assertFalse(mock_get_service.called)
+        self.assertFalse(mock_bus.SysemBus.called)
