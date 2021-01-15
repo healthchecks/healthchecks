@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import time
 import uuid
 from datetime import datetime, timedelta as td
 
@@ -822,20 +823,28 @@ class Flip(models.Model):
         }
 
     def send_alerts(self):
+        """Loop over the enabled channels, call notify() on each.
+
+        For each channel, yield a (channel, error, send_time) triple:
+         * channel is a Channel instance
+         * error is an empty string ("") on success, error message otherwise
+         * send_time is the send time in seconds (float)
+        """
+
+        # Don't send alerts on new->up and paused->up transitions
         if self.new_status == "up" and self.old_status in ("new", "paused"):
-            # Don't send alerts on new->up and paused->up transitions
-            return []
+            return
 
         if self.new_status not in ("up", "down"):
             raise NotImplementedError("Unexpected status: %s" % self.status)
 
-        errors = []
         for channel in self.owner.channel_set.all():
+            start = time.time()
             error = channel.notify(self.owner)
-            if error not in ("", "no-op"):
-                errors.append((channel, error))
+            if error == "no-op":
+                continue
 
-        return errors
+            yield (channel, error, time.time() - start)
 
 
 class TokenBucket(models.Model):

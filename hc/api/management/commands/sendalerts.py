@@ -29,14 +29,19 @@ def notify(flip_id, stdout):
 
     # Send notifications
     send_start = timezone.now()
-    errors = flip.send_alerts()
-    for ch, error in errors:
-        stdout.write("ERROR: %s %s %s\n" % (ch.kind, ch.value, error))
 
-    # If sending took more than 5s, log it
+    for ch, error, secs in flip.send_alerts():
+        label = "OK"
+        if error:
+            label = "ERROR"
+        elif secs > 5:
+            label = "SLOW"
+
+        s = " * %-5s %4.1fs %-10s %s %s\n" % (label, secs, ch.kind, ch.code, error)
+        stdout.write(s)
+
     send_time = timezone.now() - send_start
-    if send_time.total_seconds() > 5:
-        stdout.write(SEND_TIME_TMPL % (send_time.total_seconds(), check.code))
+    stdout.write(SEND_TIME_TMPL % (send_time.total_seconds(), check.code))
 
     statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
     statsd.timing("hc.sendalerts.sendTime", send_time)
