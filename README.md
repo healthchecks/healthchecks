@@ -374,7 +374,7 @@ https://api.slack.com/apps/APP_ID/oauth?).
 
 To enable Discord integration, you will need to:
 
-* register a new application on https://discordapp.com/developers/applications/me
+* Register a new application on https://discordapp.com/developers/applications/me
 * add a redirect URI to your Discord application. The URI format is
   `SITE_ROOT/integrations/add_discord/`. For example, if you are running a
   development server on `localhost:8000` then the redirect URI would be
@@ -387,16 +387,7 @@ To enable Discord integration, you will need to:
 ### Pushover
 
 Pushover integration works by creating an application on Pushover.net which
-is then subscribed to by Healthchecks users. The registration workflow is as follows:
-
-* On Healthchecks, the user adds a "Pushover" integration to a project
-* Healthchecks redirects user's browser to a Pushover.net subscription page
-* User approves adding the Healthchecks subscription to their Pushover account
-* Pushover.net HTTP redirects back to Healthchecks with a subscription token
-* Healthchecks saves the subscription token and uses it for sending Pushover
-  notifications
-
-To enable the Pushover integration, you will need to:
+is then subscribed to by Healthchecks users. To enable the Pushover integration, you will need to:
 
 * Register a new application on Pushover via https://pushover.net/apps/build.
 * Within the Pushover 'application' configuration, enable subscriptions.
@@ -407,6 +398,16 @@ To enable the Pushover integration, you will need to:
   `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL` environment
   variables. The Pushover subscription URL should look similar to
   `https://pushover.net/subscribe/yourAppName-randomAlphaNumericData`.
+  
+The registration workflow is as follows:
+
+* On Healthchecks, the user adds a "Pushover" integration to a project
+* Healthchecks redirects user's browser to a Pushover.net subscription page
+* User approves adding the Healthchecks subscription to their Pushover account
+* Pushover.net HTTP redirects back to Healthchecks with a subscription token
+* Healthchecks saves the subscription token and uses it for sending Pushover
+  notifications
+
 
 ### Signal
 
@@ -444,11 +445,11 @@ scheme.
 
 To enable Apprise integration, you will need to:
 
-* ensure you have apprise installed in your local environment:
+* Ensure you have apprise installed in your local environment:
 ```bash
 pip install apprise
 ```
-* enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.
+* Enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.
 
 ### Shell Commands
 

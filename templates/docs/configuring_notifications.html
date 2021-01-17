@@ -20,6 +20,115 @@ methods are active for each check. You can click the icons to toggle them on and
 <p>You can also toggle the integrations by clicking the "ON" / "OFF" labels in
 individual check's details pages:</p>
 <p><img alt="Integration on/off toggles in the check details page" src="IMG_URL/details_integrations.png" /></p>
+<h2>Integration Setup</h2>
+<h3>Slack</h3>
+<p>To enable the Slack "self-service" integration, you will need to create a "Slack App".</p>
+<p>To do so:</p>
+<ul>
+    <li>Create a <em>new Slack app</em> on <a href=" https://api.slack.com/apps/">https://api.slack.com/apps/</a></li>
+    <li>Add at least <em>one scope</em> in the permissions section to be able to deploy the app in your workspace (By example <code>incoming-webhook</code> for the <code>Bot Token Scopes</code>
+        <a href="https://api.slack.com/apps/APP_ID/oauth?">https://api.slack.com/apps/APP_ID/oauth?</a>).</li>
+    <li>Add a <em>redirect url</em> in the format <code>SITE_ROOT/integrations/add_slack_btn/</code>.
+        For example, if your SITE_ROOT is <code>https://my-hc.example.org</code> then the redirect URL would be
+        <code>https://my-hc.example.org/integrations/add_slack_btn/</code>.</li>
+    <li>Look up your Slack app for the Client ID and Client Secret at <a href="https://api.slack.com/apps/APP_ID/general?">https://api.slack.com/apps/APP_ID/general?</a> . Put them
+        in <code>SLACK_CLIENT_ID</code> and <code>SLACK_CLIENT_SECRET</code> environment
+        variables.</li>
+</ul>
+<h3>Discord</h3>
+<p>To enable Discord integration, you will need to:</p>
+<ul>
+    <li>Register a new application on <a href="https://discordapp.com/developers/applications/me">https://discordapp.com/developers/applications/me</a></li>
+    <li>add a redirect URI to your Discord application. The URI format is
+        <co1de>SITE_ROOT/integrations/add_discord/</code>. For example, if you are running a
+        development server on <code>localhost:8000</code> then the redirect URI would be
+        <code>http://localhost:8000/integrations/add_discord/</code></li>
+    <li>Look up your Discord app's Client ID and Client Secret. Put them
+        in <code>DISCORD_CLIENT_ID</code> and <code>DISCORD_CLIENT_SECRET</code> environment
+        variables.</li>
+</ul>
+<h3>Pushover</h3>
+<p>Pushover integration works by creating an application on Pushover.net which
+    is then subscribed to by Healthchecks users. To enable the Pushover integration, you will need to:</p>
+<ul>
+    <li>Register a new application on Pushover via https://pushover.net/apps/build.
+    <li>Within the Pushover 'application' configuration, enable subscriptions.
+    <ul>
+        <li>Make sure the subscription type is set to "URL".</li>
+        <li>Also make sure the redirect URL is configured to point back to the root of the Healthchecks instance
+            (e.g., <code>http://healthchecks.example.com/</code>).</li>
+    </ul></li>
+    <li>Put the Pushover application API Token and the Pushover subscription URL in
+          <code>PUSHOVER_API_TOKEN</code> and <code>PUSHOVER_SUBSCRIPTION_URL</code> environment
+          variables. (The Pushover subscription URL should look similar to
+          <code>https://pushover.net/subscribe/yourAppName-randomAlphaNumericData</code>.</li>          
+</ul>
+<p>The registration workflow is as follows:</p>
+<ul>
+    <li>On Healthchecks, the user adds a "Pushover" integration to a project</li>
+    <li>Healthchecks redirects user's browser to a <a href="http://pushover.net/">Pushover.net</a> subscription page</li>
+    <li>User approves adding the Healthchecks subscription to their Pushover account</li>
+    <li><a href="http://pushover.net/">Pushover.net</a> HTTP redirects back to Healthchecks with a subscription token</li>
+    <li>Healthchecks saves the subscription token and uses it for sending Pushover notifications</li>
+</ul>
+
+<h3>Signal</h3>
+<p>Healthchecks uses <a href="https://github.com/AsamK/signal-cli">signal-cli</a> to send Signal
+    notifications. Healthcecks interacts with signal-cli over DBus.</p>
+<p>To enable the Signal integration:</p>
+<ul>
+    <li>Set up and configure signal-cli to listen on DBus system bus (<a href="https://github.com/AsamK/signal-cli/wiki/DBus-service">instructions</a>).
+        <ul>
+            <li>Make sure you can send test messages from command line, using the `dbus-send` example given in the signal-cli instructions.</li>
+        </ul></li>
+    <li>Set the <code>SIGNAL_CLI_ENABLED</code> environment variable to <code>True</code>.</li>
+</ul>
+
+
+<h3>Telegram</h3>
+<ul>
+    <li>Create a Telegram bot by talking to the <a href="https://core.telegram.org/bots#6-botfather">BotFather</a>. Set the bot's name, description, user picture, and add a "/start" command.</li>
+    <li>After creating the bot you will have the bot's name and token. Put them in <code>TELEGRAM_BOT_NAME</code> and <code>TELEGRAM_TOKEN</code> environment variables.</li>
+    <li>Run `settelegramwebhook` management command. This command tells Telegram where to forward channel messages by invoking Telegram's <a href="https://core.telegram.org/bots/api#setwebhook">setWebhook</a> API call:</li>
+    <pre>
+        $ ./manage.py settelegramwebhook
+        Done, Telegram's webhook set to: https://my-monitoring-project.com/integrations/telegram/bot/
+    </pre>
+</ul>
+<p>For this to work, your `SITE_ROOT` needs to be correct and use "https://" scheme.</p>
+
+<h3>Apprise</h3>
+<p>To enable Apprise integration, you will need to:</p>
+<ul>
+    <li>Ensure you have apprise installed in your local environment:</li>
+    <pre>pip install apprise</pre>
+    <li>Enable the apprise functionality by setting the <code>APPRISE_ENABLED</code> environment variable.</li>
+</ul>
+
+
+<h3>Shell Commands</h3>
+<p>The "Shell Commands" integration runs user-defined local shell commands when checks
+go up or down. This integration is disabled by default, and can be enabled by setting
+the `<code>SHELL_ENABLED</code>` environment variable to <code>True</code>.</p>
+<p>Note: be careful when using "Shell Commands" integration, and only enable it when
+you fully trust the users of your Healthchecks instance. The commands will be executed
+by the <code>manage.py sendalerts</code> process, and will run with the same system permissions as
+the <code>sendalerts</code> process.</p>
+
+<h3>Matrix</h3>
+<p>To enable the Matrix integration you will need to:</p>
+<ul>
+    <li>Register a bot user (for posting notifications) in your preferred homeserver.</li>
+    <li>Use the <a href="https://www.matrix.org/docs/guides/client-server-api#login">Login API call</a> to retrieve bot user's access token. You can run it as shown in the documentation, using curl in command shell.</li>
+    <li>Set the `MATRIX_` environment variables. Example:
+        <pre>
+            MATRIX_HOMESERVER=https://matrix.org
+            MATRIX_USER_ID=@mychecks:matrix.org
+            MATRIX_ACCESS_TOKEN=[a long string of characters returned by the login call]
+        </pre>
+    </li>
+</ul>
+
 <h2>SMS, WhatsApp, and Phone Call Monthly Quotas</h2>
 <p>SITE_NAME sets a quota on the maximum number of SMS, WhatsApp, and phone-call
 notifications an account can send per given month. The specific limit depends on the
