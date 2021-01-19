@@ -14,9 +14,13 @@
 
 ![Screenshot of Integrations page](/static/img/channels.png?raw=true "Integrations Page")
 
-healthchecks is a watchdog for your cron jobs. It's a web server that listens for pings from your cron jobs, plus a web interface.
+Healthchecks is a cron job monitoring service. It listens for HTTP requests
+and email messages ("pings") from your cron jobs and scheduled tasks ("checks").
+When a ping does not arrive on time, Healthchecks sends out alerts.
 
-It is live here: [http://healthchecks.io/](http://healthchecks.io/)
+Healthchecks comes with a web dashboard, API, 25+ integrations for
+delivering notifications, monthly email reports, WebAuthn 2FA support,
+team management features: projects, team members, read-only access.
 
 The building blocks are:
 
@@ -24,56 +28,65 @@ The building blocks are:
 * Django 3
 * PostgreSQL or MySQL
 
+Healthchecks is licensed under the BSD 3-clause license.
+
+Healthchecks is available as a hosted service
+at [https://healthchecks.io/](https://healthchecks.io/).
+
 ## Setting Up for Development
 
-These are instructions for setting up healthchecks Django app
-in development environment.
+To set up Healthchecks development environment:
 
-* install dependencies (Debian/Ubuntu)
+* Install dependencies (Debian/Ubuntu):
 
         $ sudo apt-get update
         $ sudo apt-get install -y gcc python3-dev python3-venv libpq-dev
 
-* prepare directory for project code and virtualenv:
+* Prepare directory for project code and virtualenv. Feel free to use a
+  different location:
 
         $ mkdir -p ~/webapps
         $ cd ~/webapps
 
-* prepare virtual environment
+* Prepare virtual environment
   (with virtualenv you get pip, we'll use it soon to install requirements):
 
         $ python3 -m venv hc-venv
         $ source hc-venv/bin/activate
-        $ pip3 install wheel #make sure wheel is installed in the venv
+        $ pip3 install wheel # make sure wheel is installed in the venv
 
-* check out project code:
+* Check out project code:
 
         $ git clone https://github.com/healthchecks/healthchecks.git
 
-* install requirements (Django, ...) into virtualenv:
+* Install requirements (Django, ...) into virtualenv:
 
         $ pip install -r healthchecks/requirements.txt
 
-* healthchecks is configured to use a SQLite database by default. To use
-  PostgreSQL or MySQL database, create and edit `hc/local_settings.py` file.
-  There is a template you can copy and edit as needed:
 
-        $ cd ~/webapps/healthchecks
-        $ cp hc/local_settings.py.example hc/local_settings.py
-
-* create database tables and the superuser account:
+* Create database tables and a superuser account:
 
         $ cd ~/webapps/healthchecks
         $ ./manage.py migrate
         $ ./manage.py createsuperuser
 
-* run development server:
+  With the default configuration, Healthchecks stores data in a SQLite file
+  `hc.sqlite` in the checkout directory (`~/webapps/healthchecks`).
+
+  To use PostgreSQL or MySQL, see the section **Database Configuration** section
+  below.
+
+* Run tests:
+
+        $ ./manage.py test
+
+* Run development server:
 
         $ ./manage.py runserver
 
 The site should now be running at `http://localhost:8000`.
-To access Django administration site, log in as a super user, then
-visit `http://localhost:8000/admin`
+To access Django administration site, log in as a superuser, then
+visit `http://localhost:8000/admin/`
 
 ## Configuration
 
