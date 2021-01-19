@@ -783,38 +783,3 @@ class NotifyTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Shell commands are not enabled")
-
-    @patch("hc.api.transports.requests.request")
-    def test_zulip(self, mock_post):
-        definition = {
-            "bot_email": "bot@example.org",
-            "api_key": "fake-key",
-            "mtype": "stream",
-            "to": "general",
-        }
-        self._setup_data("zulip", json.dumps(definition))
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
-
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
-        self.assertIn("DOWN", payload["topic"])
-
-    @patch("hc.api.transports.requests.request")
-    def test_zulip_returns_error(self, mock_post):
-        definition = {
-            "bot_email": "bot@example.org",
-            "api_key": "fake-key",
-            "mtype": "stream",
-            "to": "general",
-        }
-        self._setup_data("zulip", json.dumps(definition))
-        mock_post.return_value.status_code = 403
-        mock_post.return_value.json.return_value = {"msg": "Nice try"}
-
-        self.channel.notify(self.check)
-
-        n = Notification.objects.first()
-        self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')

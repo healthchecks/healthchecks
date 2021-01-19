@@ -274,6 +274,7 @@ class AddZulipForm(forms.Form):
     error_css_class = "has-error"
     bot_email = forms.EmailField(max_length=100)
     api_key = forms.CharField(max_length=50)
+    site = forms.URLField(max_length=100, validators=[WebhookValidator()])
     mtype = forms.ChoiceField(choices=ZULIP_TARGETS)
     to = forms.CharField(max_length=100)
 

@@ -629,8 +629,7 @@ class Zulip(HttpTransport):
             pass
 
     def notify(self, check):
-        _, domain = self.channel.zulip_bot_email.split("@")
-        url = "https://%s/api/v1/messages" % domain
+        url = self.channel.zulip_site + "/api/v1/messages"
         auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
         data = {
             "type": self.channel.zulip_type,

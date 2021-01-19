@@ -755,6 +755,18 @@ class Channel(models.Model):
         return doc["bot_email"]
 
     @property
+    def zulip_site(self):
+        assert self.kind == "zulip"
+        doc = json.loads(self.value)
+        if "site" in doc:
+            return doc["site"]
+
+        # Fallback if we don't have the site value:
+        # derive it from bot's email
+        _, domain = doc["bot_email"].split("@")
+        return "https://" + domain
+
+    @property
     def zulip_api_key(self):
         assert self.kind == "zulip"
         doc = json.loads(self.value)

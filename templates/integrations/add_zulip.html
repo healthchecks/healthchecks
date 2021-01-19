@@ -67,7 +67,8 @@
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                Copy the displayed bot's credentials into the form below.
+                Download the bot's <code>zuliprc</code> file by clicking on the
+                <strong>cyan download icon</strong>, and upload it in the form below.
                 Also specify the stream or the private user you want {{ site_name }}
                 to post notifications to.
             </p>
@@ -87,44 +88,23 @@
 
     <form method="post" class="form-horizontal">
         {% csrf_token %}
+        <input type="hidden" name="api_key" id="zulip-api-key">
+        <input type="hidden" name="bot_email" id="zulip-bot-email">
+        <input type="hidden" name="site" id="zulip-site">
 
-        <div class="form-group {{ form.bot_email.css_classes }}">
-            <label for="bot-email" class="col-sm-2 control-label">Bot Email</label>
+        <div class="form-group">
+            <label for="zuliprc" class="col-sm-2 control-label">The zuliprc File</label>
             <div class="col-sm-4">
-                <input
-                    id="bot-email"
-                    type="text"
-                    class="form-control"
-                    name="bot_email"
-                    value="{{ form.bot_email.value|default:"" }}">
-
-                <div class="help-block">
-                {% if form.bot_email.errors %}
-                    {{ form.bot_email.errors|join:"" }}
-                {% else %}
-                    Example: healthchecks-bot@zulip.mycompany.com
+                <input id="zuliprc" type="file">
+                <div id="zuliprc-help" class="help-block">
+                {% if form.api_key.errors or form.bot_email.errors or form.site.errors %}
+                    Invalid file format.
                 {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="form-group {{ form.api_key.css_classes }}">
-            <label for="api-key" class="col-sm-2 control-label">API Key</label>
-            <div class="col-sm-4">
-                <input
-                    id="api-key"
-                    type="text"
-                    class="form-control"
-                    name="api_key"
-                    value="{{ form.api_key.value|default:"" }}">
 
-                {% if form.api_key.errors %}
-                <div class="help-block">
-                    {{ form.api_key.errors|join:"" }}
-                </div>
-                {% endif %}
-            </div>
-        </div>
 
         <div id="z-mtype-group" class="form-group {{ form.mtype.css_classes }}">
             <label class="col-sm-2 control-label">Post To</label>
@@ -178,7 +158,11 @@
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Save Integration</button>
+                <button
+                    id="save-integration"
+                    type="submit"
+                    disabled
+                    class="btn btn-primary">Save Integration</button>
             </div>
         </div>
     </form>

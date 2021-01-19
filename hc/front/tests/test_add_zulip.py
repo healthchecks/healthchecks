@@ -2,6 +2,19 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
+def _get_payload(**kwargs):
+    payload = {
+        "bot_email": "foo@example.org",
+        "api_key": "fake-key",
+        "site": "https://example.org",
+        "mtype": "stream",
+        "to": "general",
+    }
+
+    payload.update(kwargs)
+    return payload
+
+
 class AddZulipTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -13,15 +26,8 @@ class AddZulipTestCase(BaseTestCase):
         self.assertContains(r, "open-source group chat app")
 
     def test_it_works(self):
-        form = {
-            "bot_email": "foo@example.org",
-            "api_key": "fake-key",
-            "mtype": "stream",
-            "to": "general",
-        }
-
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
+        r = self.client.post(self.url, _get_payload())
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
@@ -32,51 +38,39 @@ class AddZulipTestCase(BaseTestCase):
         self.assertEqual(c.zulip_to, "general")
 
     def test_it_rejects_bad_email(self):
-        form = {
-            "bot_email": "not@an@email",
-            "api_key": "fake-key",
-            "mtype": "stream",
-            "to": "general",
-        }
-
+        payload = _get_payload(bot_email="not@an@email")
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
-        self.assertContains(r, "Enter a valid email address.")
+        r = self.client.post(self.url, payload)
+        self.assertContains(r, "Invalid file format.")
 
     def test_it_rejects_missing_api_key(self):
-        form = {
-            "bot_email": "foo@example.org",
-            "api_key": "",
-            "mtype": "stream",
-            "to": "general",
-        }
-
+        payload = _get_payload(api_key="")
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
-        self.assertContains(r, "This field is required.")
+        r = self.client.post(self.url, payload)
+        self.assertContains(r, "Invalid file format.")
+
+    def test_it_rejects_missing_site(self):
+        payload = _get_payload(site="")
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, payload)
+        self.assertContains(r, "Invalid file format.")
+
+    def test_it_rejects_malformed_site(self):
+        payload = _get_payload(site="not-an-url")
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, payload)
+        self.assertContains(r, "Invalid file format.")
 
     def test_it_rejects_bad_mtype(self):
-        form = {
-            "bot_email": "foo@example.org",
-            "api_key": "fake-key",
-            "mtype": "this-should-not-work",
-            "to": "general",
-        }
-
+        payload = _get_payload(mtype="this-should-not-work")
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
+        r = self.client.post(self.url, payload)
         self.assertEqual(r.status_code, 200)
 
     def test_it_rejects_missing_stream_name(self):
-        form = {
-            "bot_email": "foo@example.org",
-            "api_key": "fake-key",
-            "mtype": "stream",
-            "to": "",
-        }
-
+        payload = _get_payload(to="")
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
+        r = self.client.post(self.url, payload)
         self.assertContains(r, "This field is required.")
 
     def test_it_requires_rw_access(self):
