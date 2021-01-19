@@ -664,33 +664,6 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.assertTrue(mock_post.called)
 
-    @patch("apprise.Apprise")
-    @override_settings(APPRISE_ENABLED=True)
-    def test_apprise_enabled(self, mock_apprise):
-        self._setup_data("apprise", "123")
-
-        mock_aobj = Mock()
-        mock_aobj.add.return_value = True
-        mock_aobj.notify.return_value = True
-        mock_apprise.return_value = mock_aobj
-        self.channel.notify(self.check)
-        self.assertEqual(Notification.objects.count(), 1)
-
-        self.check.status = "up"
-        self.assertEqual(Notification.objects.count(), 1)
-
-    @patch("apprise.Apprise")
-    @override_settings(APPRISE_ENABLED=False)
-    def test_apprise_disabled(self, mock_apprise):
-        self._setup_data("apprise", "123")
-
-        mock_aobj = Mock()
-        mock_aobj.add.return_value = True
-        mock_aobj.notify.return_value = True
-        mock_apprise.return_value = mock_aobj
-        self.channel.notify(self.check)
-        self.assertEqual(Notification.objects.count(), 1)
-
     def test_not_implimented(self):
         self._setup_data("webhook", "http://example")
         self.channel.kind = "invalid"
