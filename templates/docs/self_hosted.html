@@ -59,11 +59,9 @@ $ ./manage.py migrate
 $ ./manage.py createsuperuser
 </code></pre></div>
 
-</li>
-</ul>
 <p>With the default configuration, Healthchecks stores data in a SQLite file
-  <code>hc.sqlite</code> in the checkout directory (<code>~/webapps/healthchecks</code>).</p>
-<ul>
+<code>hc.sqlite</code> in the checkout directory (<code>~/webapps/healthchecks</code>).</p>
+</li>
 <li>
 <p>Run tests:</p>
 <div class="highlight"><pre><span></span><code>$ ./manage.py <span class="nb">test</span>
@@ -76,11 +74,99 @@ $ ./manage.py createsuperuser
 </code></pre></div>
 
 </li>
+<li>
+<p>From another shell, run the <code>sendalerts</code> management command, responsible for
+  sending out notifications:</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py sendalerts
+</code></pre></div>
+
+</li>
 </ul>
 <p>At this point, the site should now be running at <code>http://localhost:8000</code>.</p>
-<p>To access Django administration site, log in as a superuser, then
-visit <code>http://localhost:8000/admin/</code>.</p>
-<p>FIXME note about no email configuration, no sendalerts, and the devserver</p>
+<h2>Accessing Administration Panel</h2>
+<p>Healthchecks comes with Django's administration panel where you can manually
+view and modify user accounts, projects, checks, integrations etc. To access it,
+if you haven't already, create a superuser account:</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py createsuperuser
+</code></pre></div>
+
+<p>Then, log into the site using the superuser credentials. Once logged in,
+click on the "Account" dropdown in top navigation, and select "Site Administration".</p>
+<h2>Sending Emails</h2>
+<p>Healthchecks needs SMTP credentials to be able to send emails:
+login links, monitoring notifications, monthly reports.</p>
+<p>Specify SMTP credentials using the <code>EMAIL_HOST</code>, <code>EMAIL_PORT</code>, <code>EMAIL_HOST_USER</code>,
+<code>EMAIL_HOST_PASSWORD</code>, and <code>EMAIL_USE_TLS</code> environment variables. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="na">EMAIL_HOST</span><span class="o">=</span><span class="s">my-smtp-server-here.com</span>
+<span class="na">EMAIL_PORT</span><span class="o">=</span><span class="s">587</span>
+<span class="na">EMAIL_HOST_USER</span><span class="o">=</span><span class="s">my-username</span>
+<span class="na">EMAIL_HOST_PASSWORD</span><span class="o">=</span><span class="s">mypassword</span>
+<span class="na">EMAIL_USE_TLS</span> <span class="o">=</span> <span class="s">True</span>
+</code></pre></div>
+
+<p>You can read more about handling outbound email in the Django documentation,
+<a href="https://docs.djangoproject.com/en/3.1/topics/email/">Sending Email</a> section.</p>
+<h2>Receiving Emails</h2>
+<p>Healthchecks comes with a <code>smtpd</code> management command, which starts up a
+SMTP listener service. With the command running, you can ping your
+checks by sending email messages.</p>
+<p>Start the SMTP listener on port 2525:</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py smtpd --port <span class="m">2525</span>
+</code></pre></div>
+
+<p>Send a test email:</p>
+<div class="highlight"><pre><span></span><code>$ curl --url <span class="s1">&#39;smtp://127.0.0.1:2525&#39;</span> <span class="se">\</span>
+    --mail-from <span class="s1">&#39;foo@example.org&#39;</span> <span class="se">\</span>
+    --mail-rcpt <span class="s1">&#39;11111111-1111-1111-1111-111111111111@my-hc.example.org&#39;</span> <span class="se">\</span>
+    -F <span class="s1">&#39;=&#39;</span>
+</code></pre></div>
+
+<h2>Sending Status Notifications</h2>
+<p>The <code>sendalerts</code> management command continuously polls the database for any checks
+changing state, and sends out notifications as needed.
+When <code>sendalerts</code> is not running, the Healthchecks instance will not send out any
+alerts.</p>
+<p>Within an activated virtualenv, run the <code>sendalerts</code> command like so:</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py sendalerts
+</code></pre></div>
+
+<p>In a production setup, make sure the <code>sendalerts</code> command can survive
+server restarts.</p>
+<h2>Database Cleanup</h2>
+<p>With time and use the Healthchecks database will grow in size. You may
+decide to prune old data: inactive user accounts, old checks not assigned
+to users, old records of outgoing email messages and old records of received pings.
+There are separate Django management commands for each task:</p>
+<p>Remove old records from the <code>api_ping</code> table. For each check, keep 100 most
+recent pings:</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py prunepings
+</code></pre></div>
+
+<p>Remove old records of sent notifications. For each check, remove notifications that
+are older than the oldest stored ping for the corresponding check.</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py prunenotifications
+</code></pre></div>
+
+<p>Remove inactive user accounts:</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py pruneusers
+</code></pre></div>
+
+<p>Remove old records from the <code>api_tokenbucket</code> table. The TokenBucket
+model is used for rate-limiting login attempts and similar operations.
+Any records older than one day can be safely removed.</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py prunetokenbucket
+</code></pre></div>
+
+<p>Remove old records from the <code>api_flip</code> table. The Flip objects are used to track
+status changes of checks, and to calculate downtime statistics month by month.
+Flip objects from more than 3 months ago are not used and can be safely removed.</p>
+<div class="highlight"><pre><span></span><code>$ ./manage.py pruneflips
+</code></pre></div>
+
+<p>When you first try these commands on your data, it is a good idea to
+test them on a copy of your database, and not on the live system.</p>
+<p>In a production setup, you will want to run these commands regularly, as well as
+have regular, automatic database backups set up.</p>
 <h2>Next Steps</h2>
 <p>Get the <a href="https://github.com/healthchecks/healthchecks">source code</a>.</p>
 <p>See <a href="../self_hosted_configuration/">Configuration</a> for a list of configuration options.</p>

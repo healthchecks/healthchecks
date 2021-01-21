@@ -37,6 +37,8 @@ Default: `True`
 
 A boolean that turns on/off debug mode.
 
+_Never run a Healthchecks instance in production with the debug mode turned on!_
+
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#debug).
 
@@ -193,6 +195,8 @@ Default: `None`
 
 Default: same as `SITE_NAME`
 
+The label for the "Overall Status" status badge.
+
 ## `MATRIX_ACCESS_TOKEN`
 
 Default: `None`
@@ -245,9 +249,27 @@ the it altogether by setting this value to `None`.
 
 Default: `localhost`
 
+The domain to use for generating ping email addresses. Example:
+
+```ini
+PING_EMAIL_DOMAIN=ping.my-hc.example.org
+```
+
+In this example, Healthchecks would generate ping email addresses similar
+to `3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org`.
+
 ## `PING_ENDPOINT`
 
-Default: `http://localhost:8000/ping/`
+Default: `{SITE_ROOT}/ping/`
+
+The base URL to use for generating ping URLs. Example:
+
+```ini
+PING_ENDPOINT=https://ping.my-hc.example.org
+```
+
+In this example, Healthchecks would generate ping URLs similar
+to `https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86`.
 
 ## `PUSHBULLET_CLIENT_ID`
 
@@ -390,9 +412,15 @@ To enable the Signal integration:
 
 Default: `http://localhost:8000`
 
+The base URL of this Healthchecks instance. Healthchecks uses `SITE_ROOT` whenever
+it needs to construct absolute URLs.
+
 ## `SITE_NAME`
 
 Default: `Mychecks`
+
+The display name of this Healthchecks instance. Healthchecks uses it throughout
+web UI and documentation.
 
 ## `SLACK_CLIENT_ID`
 
@@ -452,6 +480,12 @@ The Telegram bot user's authentication token, required by the Telegram integrati
 ## `TRELLO_APP_KEY`
 
 Default: `None`
+
+The [Trello](https://trello.com/) app key, required by the Trello integration.
+
+To set up the Trello integration, get a developer API key from
+[https://trello.com/app-key](https://trello.com/app-key) and put it in the
+`TRELLO_APP_KEY` environment variable.
 
 ## `TWILIO_ACCOUNT`
 

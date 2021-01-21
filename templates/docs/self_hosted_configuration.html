@@ -22,6 +22,7 @@ integration.</p>
 <h2><code>DEBUG</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off debug mode.</p>
+<p><em>Never run a Healthchecks instance in production with the debug mode turned on!</em></p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/3.1/ref/settings/#debug">Django documentation</a>.</p>
 <h2><code>DEFAULT_FROM_EMAIL</code></h2>
@@ -115,6 +116,7 @@ set <code>EMAIL_USE_VERIFICATION</code> to <code>False</code>.</p>
 <p>Default: <code>None</code></p>
 <h2><code>MASTER_BADGE_LABEL</code></h2>
 <p>Default: same as <code>SITE_NAME</code></p>
+<p>The label for the "Overall Status" status badge.</p>
 <h2><code>MATRIX_ACCESS_TOKEN</code></h2>
 <p>Default: <code>None</code></p>
 <p>The <a href="https://matrix.org/">Matrix</a> bot user's access token, required by the Matrix
@@ -149,8 +151,20 @@ The default value is 10000 (10 kilobytes). You can adjust the limit or you can r
 the it altogether by setting this value to <code>None</code>.</p>
 <h2><code>PING_EMAIL_DOMAIN</code></h2>
 <p>Default: <code>localhost</code></p>
+<p>The domain to use for generating ping email addresses. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="na">PING_EMAIL_DOMAIN</span><span class="o">=</span><span class="s">ping.my-hc.example.org</span>
+</code></pre></div>
+
+<p>In this example, Healthchecks would generate ping email addresses similar
+to <code>3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org</code>.</p>
 <h2><code>PING_ENDPOINT</code></h2>
-<p>Default: <code>http://localhost:8000/ping/</code></p>
+<p>Default: <code>{SITE_ROOT}/ping/</code></p>
+<p>The base URL to use for generating ping URLs. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="na">PING_ENDPOINT</span><span class="o">=</span><span class="s">https://ping.my-hc.example.org</span>
+</code></pre></div>
+
+<p>In this example, Healthchecks would generate ping URLs similar
+to <code>https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86</code>.</p>
 <h2><code>PUSHBULLET_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <h2><code>PUSHBULLET_CLIENT_SECRET</code></h2>
@@ -244,8 +258,12 @@ notifications. Healthcecks interacts with signal-cli over DBus.</p>
 </ul>
 <h2><code>SITE_ROOT</code></h2>
 <p>Default: <code>http://localhost:8000</code></p>
+<p>The base URL of this Healthchecks instance. Healthchecks uses <code>SITE_ROOT</code> whenever
+it needs to construct absolute URLs.</p>
 <h2><code>SITE_NAME</code></h2>
 <p>Default: <code>Mychecks</code></p>
+<p>The display name of this Healthchecks instance. Healthchecks uses it throughout
+web UI and documentation.</p>
 <h2><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Slack Client ID, required by the Slack integration.</p>
@@ -288,6 +306,10 @@ scheme.</p>
 <p>The Telegram bot user's authentication token, required by the Telegram integration.</p>
 <h2><code>TRELLO_APP_KEY</code></h2>
 <p>Default: <code>None</code></p>
+<p>The <a href="https://trello.com/">Trello</a> app key, required by the Trello integration.</p>
+<p>To set up the Trello integration, get a developer API key from
+<a href="https://trello.com/app-key">https://trello.com/app-key</a> and put it in the
+<code>TRELLO_APP_KEY</code> environment variable.</p>
 <h2><code>TWILIO_ACCOUNT</code></h2>
 <p>Default: <code>None</code></p>
 <h2><code>TWILIO_AUTH</code></h2>
