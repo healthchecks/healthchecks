@@ -20,7 +20,7 @@ services:
         - DB_HOST=db
         - DB_PORT=5432
         - DB_PASSWORD=fixme-postgres-password
-        - DEFAULT_FROM_EMAIL=healthchecks.io@healthchecks.io
+        - DEFAULT_FROM_EMAIL=healthchecks@example.org
         - EMAIL_HOST=fixme-smtp-server.example.org
         - EMAIL_HOST_USER=fixme-smtp-username
         - EMAIL_HOST_PASSWORD=fixme-smtp-password
