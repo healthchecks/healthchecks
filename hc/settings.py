@@ -6,7 +6,6 @@ https://docs.djangoproject.com/en/2.1/ref/settings
 """
 
 import os
-import warnings
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -235,5 +234,3 @@ SIGNAL_CLI_ENABLED = envbool("SIGNAL_CLI_ENABLED", "False")
 
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
-else:
-    warnings.warn("local_settings.py not found, using defaults")
