@@ -46,6 +46,7 @@ jobs:
         DB: ${{ matrix.db }}
         DB_USER: ${{ matrix.db_user }}
         DB_PASSWORD: ${{ matrix.db_password }}
+        SECRET_KEY: dummy-key
       run: |
         coverage run --omit=*/tests/* --source=hc manage.py test
     - name: Coveralls
