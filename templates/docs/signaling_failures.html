@@ -4,30 +4,28 @@ ping URL: append either <code>/fail</code> or <code>/{exit-status}</code> to you
 The exit status should be a 0-255 integer. SITE_NAME will interpret
 exit status 0 as success and all non-zero values as failures.</p>
 <p>Examples:</p>
-<div class="bash highlight"><pre><span></span><code><span class="c1"># Reports failure by appending the /fail suffix:</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reports failure by appending the /fail suffix:</span>
 curl --retry <span class="m">3</span> PING_URL/fail
 
 <span class="c1"># Reports failure by appending a non-zero exit status:</span>
 curl --retry <span class="m">3</span> PING_URL/1
 </code></pre></div>
 
-
 <p>By actively signaling failures to SITE_NAME, you can minimize the delay from your
 monitored service encountering a problem to you getting notified about it.</p>
 <h2>Shell Scripts</h2>
 <p>The below shell script appends <code>$?</code> (a special variable which contains the
 exit status of the last executed command) to the ping URL:</p>
-<div class="bash highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 /usr/bin/certbot renew
 curl --retry <span class="m">3</span> PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 
-
 <h2>Python</h2>
 <p>Below is a skeleton code example in Python which signals a failure when the
 work function returns an unexpected value or throws an exception:</p>
-<div class="python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
 
 <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>

@@ -12,20 +12,18 @@ request could block the whole process. An explicit per-request time limit mitiga
 this problem.</p>
 <p>Specifying the timeout depends on the tool you use. curl, for example, has the
 <code>--max-time</code> (shorthand: <code>-m</code>) parameter:</p>
-<div class="bash highlight"><pre><span></span><code><span class="c1"># Send an HTTP request, 10 second timeout:</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Send an HTTP request, 10 second timeout:</span>
 curl -m <span class="m">10</span> PING_URL
 </code></pre></div>
-
 
 <h2>Use Retries</h2>
 <p>To minimize the amount of false alerts you get from SITE_NAME, instruct your HTTP
 client to retry failed requests several times.</p>
 <p>Specifying the retry policy depends on the tool you use. curl, for example, has the
 <code>--retry</code> parameter:</p>
-<div class="bash highlight"><pre><span></span><code><span class="c1"># Retry up to 5 times, uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...)</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Retry up to 5 times, uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...)</span>
 curl --retry <span class="m">5</span> PING_URL
 </code></pre></div>
-
 
 <h2>Handle Exceptions</h2>
 <p>Make sure you know how your HTTP client handles failed requests. For example,

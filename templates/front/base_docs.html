@@ -42,6 +42,10 @@
         <li class="nav-header">Developer Tools</li>
         {% include "front/docs_nav_item.html" with slug="resources" title="Third-party resources" %}
 
+        <li class="nav-header">Self-hosted</li>
+        {% include "front/docs_nav_item.html" with slug="self_hosted" title="Overview" %}
+        {% include "front/docs_nav_item.html" with slug="self_hosted_configuration" title="Configuration" %}
+
         <li class="nav-header">Reference</li>
         <li><a href="{% url 'hc-docs-cron' %}">Cron syntax cheatsheet</a></li>
     </ul>

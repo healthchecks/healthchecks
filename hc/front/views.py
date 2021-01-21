@@ -325,21 +325,23 @@ def serve_doc(request, doc="introduction"):
     if not os.path.exists(path):
         raise Http404("not found")
 
-    replaces = {
-        "{{ default_timeout }}": str(int(DEFAULT_TIMEOUT.total_seconds())),
-        "{{ default_grace }}": str(int(DEFAULT_GRACE.total_seconds())),
-        "SITE_NAME": settings.SITE_NAME,
-        "SITE_ROOT": settings.SITE_ROOT,
-        "SITE_HOSTNAME": site_hostname(),
-        "SITE_SCHEME": site_scheme(),
-        "PING_ENDPOINT": settings.PING_ENDPOINT,
-        "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
-        "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
-    }
-
     content = open(path, "r", encoding="utf-8").read()
-    for placeholder, value in replaces.items():
-        content = content.replace(placeholder, value)
+
+    if not doc.startswith("self_hosted"):
+        replaces = {
+            "{{ default_timeout }}": str(int(DEFAULT_TIMEOUT.total_seconds())),
+            "{{ default_grace }}": str(int(DEFAULT_GRACE.total_seconds())),
+            "SITE_NAME": settings.SITE_NAME,
+            "SITE_ROOT": settings.SITE_ROOT,
+            "SITE_HOSTNAME": site_hostname(),
+            "SITE_SCHEME": site_scheme(),
+            "PING_ENDPOINT": settings.PING_ENDPOINT,
+            "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
+            "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
+        }
+
+        for placeholder, value in replaces.items():
+            content = content.replace(placeholder, value)
 
     ctx = {
         "page": "docs",

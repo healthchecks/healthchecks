@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Improve the crontab snippet in the "Check Details" page (#465)
 - Add Signal integration (#428)
 - Change Zulip onboarding, ask for the zuliprc file (#202)
+- Add a section in Docs about running self-hosted instances
 
 ## Bug Fixes
 - Fix unwanted HTML escaping in SMS and WhatsApp notifications

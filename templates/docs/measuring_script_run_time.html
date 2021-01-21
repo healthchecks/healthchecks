@@ -7,7 +7,7 @@
 <p>Signaling a start kicks off a separate timer: the job now <strong>must</strong> signal a
 success within its configured "Grace Time," or it will get marked as "down."</p>
 <p>Below is a code example in Python:</p>
-<div class="python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
 
 
@@ -28,7 +28,6 @@ success within its configured "Grace Time," or it will get marked as "down."</p>
 <span class="c1"># Signal success:</span>
 <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
 </code></pre></div>
-
 
 <h2>Viewing Measured Run Times</h2>
 <p>When SITE_NAME receives a "start" signal followed by a regular ping or a "fail"

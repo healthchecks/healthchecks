@@ -1,15 +1,14 @@
 <h1>Javascript</h1>
 <p>Below is an example of making an HTTP request to SITE_NAME from Node.js.</p>
-<div class="js highlight"><pre><span></span><code><span class="kd">var</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;https&#39;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;https&#39;</span><span class="p">);</span>
 <span class="nx">https</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;PING_URL&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Ping failed: &#39;</span> <span class="o">+</span> <span class="nx">err</span><span class="p">)</span>
 <span class="p">});</span>
 </code></pre></div>
 
-
 <p>You can also send pings from a browser environment. SITE_NAME sets the
 <code>Access-Control-Allow-Origin:*</code> CORS header, so cross-domain AJAX requests work.</p>
-<div class="js highlight"><pre><span></span><code><span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
 <span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;PING_URL&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 <span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
 </code></pre></div>

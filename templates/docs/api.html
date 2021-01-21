@@ -103,12 +103,11 @@ specified value.</p>
 <dd>The API key is either missing or invalid.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Filesystem Backup&quot;</span><span class="p">,</span>
@@ -149,14 +148,13 @@ specified value.</p>
 <span class="p">}</span>
 </code></pre></div>
 
-
 <p>When using the read-only API key, SITE_NAME omits the following fields from responses:
 <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>channels</code>.  It adds an extra
 <code>unique_key</code> field. The <code>unique_key</code> identifier is stable across API calls, and
 you can use it in the <a href="#get-check">Get a single check</a>
 and <a href="#list-flips">Get a list of check's status changes</a> API calls.</p>
 <p>Example:</p>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Filesystem Backup&quot;</span><span class="p">,</span>
@@ -191,7 +189,6 @@ and <a href="#list-flips">Get a list of check's status changes</a> API calls.</p
 <span class="p">}</span>
 </code></pre></div>
 
-
 <h2 class="rule" id="get-check">Get a Single Check</h2>
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code><br>
 <code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;</code></p>
@@ -210,12 +207,11 @@ using the read-only API key) as an identifier.</p>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/&lt;uuid&gt;
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/&lt;uuid&gt;
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span>
   <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;production db&quot;</span><span class="p">,</span>
   <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span>
@@ -235,7 +231,6 @@ using the read-only API key) as an identifier.</p>
 <span class="p">}</span>
 </code></pre></div>
 
-
 <h3>Example Read-Only Response</h3>
 <p>When using the read-only API key, SITE_NAME omits the following fields from responses:
 <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>channels</code>.  It adds an extra
@@ -243,7 +238,7 @@ using the read-only API key) as an identifier.</p>
 <p>Note: although API omits the <code>ping_url</code>, <code>update_url</code>, and <code>pause_url</code> in read-only
 API responses, the client can easily construct these URLs themselves <em>if</em> they know the
 check's unique UUID.</p>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span>
   <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;production db&quot;</span><span class="p">,</span>
   <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span>
@@ -259,7 +254,6 @@ check's unique UUID.</p>
   <span class="nt">&quot;tz&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span>
 <span class="p">}</span>
 </code></pre></div>
-
 
 <h2 class="rule" id="create-check">Create a Check</h2>
 <p><code>POST SITE_ROOT/api/v1/checks/</code></p>
@@ -395,20 +389,18 @@ field values.</dd>
 the limit is 20 checks per account.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
-
 <p>Or, alternatively:</p>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
@@ -426,7 +418,6 @@ the limit is 20 checks per account.</dd>
   <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
-
 
 <h2 class="rule" id="update-check">Update an Existing Check</h2>
 <p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
@@ -540,20 +531,18 @@ field values.</dd>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
-
 <p>Or, alternatively:</p>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
@@ -571,7 +560,6 @@ field values.</dd>
   <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
-
 
 <h2 class="rule" id="pause-check">Pause Monitoring of a Check</h2>
 <p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pause</code></p>
@@ -590,16 +578,15 @@ state. You can resume monitoring of the check by pinging it.</p>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause <span class="se">\</span>
     --request POST --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> --data <span class="s2">&quot;&quot;</span>
 </code></pre></div>
-
 
 <p>Note: the <code>--data ""</code> argument forces curl to send a <code>Content-Length</code> request header
 even though the request body is empty. For HTTP POST requests, the <code>Content-Length</code>
 header is sometimes required by some network proxies and web servers.</p>
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
@@ -618,7 +605,6 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="p">}</span>
 </code></pre></div>
 
-
 <h2 class="rule" id="delete-check">Delete Check</h2>
 <p><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
 <p>Permanently deletes the check from the user's account. Returns JSON representation of the
@@ -636,13 +622,12 @@ check that was just deleted.</p>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
     --request DELETE --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
   <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
@@ -660,7 +645,6 @@ check that was just deleted.</p>
   <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
-
 
 <h2 class="rule" id="list-pings">Get a list of check's logged pings</h2>
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></p>
@@ -680,13 +664,12 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;pings&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
@@ -730,7 +713,6 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="p">}</span>
 </code></pre></div>
 
-
 <h2 class="rule" id="list-flips">Get a list of check's status changes</h2>
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br>
 <code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></p>
@@ -771,13 +753,12 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
     <span class="p">{</span>
       <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:18:23+00:00&quot;</span><span class="p">,</span>
       <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="mi">1</span>
@@ -793,7 +774,6 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="p">]</span>
 </code></pre></div>
 
-
 <h2 class="rule" id="list-channels">Get a List of Existing Integrations</h2>
 <p><code>GET SITE_ROOT/api/v1/channels/</code></p>
 <p>Returns a list of integrations belonging to the project.</p>
@@ -805,12 +785,11 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <dd>The API key is either missing or invalid.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="bash highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/channels/
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/channels/
 </code></pre></div>
 
-
 <h3>Example Response</h3>
-<div class="json highlight"><pre><span></span><code><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
   <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;4ec5a071-2d08-4baa-898a-eb4eb3cd6941&quot;</span><span class="p">,</span>

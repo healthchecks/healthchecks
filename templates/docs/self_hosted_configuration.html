@@ -1,0 +1,301 @@
+<h1>Server Configuration</h1>
+<p>Healthchecks prepares its configuration in <code>hc/settings.py</code>. It reads configuration
+from environment variables. Below is a list of variables it reads and uses:</p>
+<h2><code>ALLOWED_HOSTS</code></h2>
+<p>Default: <code>*</code></p>
+<p>A list of strings representing the host/domain names that this site can serve.
+You can specify multiple domain names by separating them with commas:</p>
+<div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">my-hc.example.org,alternative-name.example.org</span>
+</code></pre></div>
+
+<p>Aside from the comma-separated syntax, this is a standard Django setting.
+Read more about it in the
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts">Django documentation</a>.</p>
+<h2><code>APPRISE_ENABLED</code></h2>
+<p>Default: <code>False</code></p>
+<p>A boolean that turns on/off the <a href="https://github.com/caronc/apprise">Apprise</a>
+integration.</p>
+<p>Before enabling the Apprise integration, make sure the <code>apprise</code> package is installed:</p>
+<div class="highlight"><pre><span></span><code>pip install apprise
+</code></pre></div>
+
+<h2><code>DEBUG</code></h2>
+<p>Default: <code>True</code></p>
+<p>A boolean that turns on/off debug mode.</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#debug">Django documentation</a>.</p>
+<h2><code>DEFAULT_FROM_EMAIL</code></h2>
+<p>Default: <code>healthchecks@example.org</code></p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email">Django documentation</a>.</p>
+<h2><code>DB</code></h2>
+<p>Default: <code>sqlite</code></p>
+<p>The database enginge to use. Possible values: <code>sqlite</code>, <code>postgres</code>, <code>mysql</code>.</p>
+<h2><code>DB_CONN_MAX_AGE</code></h2>
+<p>Default: <code>0</code></p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#conn-max-age">Django documentation</a>.</p>
+<h2><code>DB_HOST</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#host">Django documentation</a>.</p>
+<h2><code>DB_NAME</code></h2>
+<p>Default: <code>hc</code> (PostgreSQL, MySQL) or <code>{project-path}/hc.sqlite</code> (SQLite)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#name">Django documentation</a>.</p>
+<h2><code>DB_PASSWORD</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#password">Django documentation</a>.</p>
+<h2><code>DB_PORT</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#port">Django documentation</a>.</p>
+<h2><code>DB_SSLMODE</code></h2>
+<p>Default: <code>prefer</code></p>
+<p>PostgreSQL-specific, <a href="https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNECT-SSLMODE">details</a></p>
+<h2><code>DB_TARGET_SESSION_ATTRS</code></h2>
+<p>Default: <code>read-write</code></p>
+<p>PostgreSQL-specific, <a href="https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS">details</a></p>
+<h2><code>DB_USER</code></h2>
+<p>Default: <code>postgres</code> (PostgreSQL) or <code>root</code> (MySQL)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#user">Django documentation</a>.</p>
+<h2><code>DISCORD_CLIENT_ID</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Discord Client ID, required by the Discord integration.</p>
+<p>To set up the Discord integration:</p>
+<ul>
+<li>Register a new application at
+  <a href="https://discordapp.com/developers/applications/me">https://discordapp.com/developers/applications/me</a></li>
+<li>Add a Redirect URI to your Discord application. The URI format is
+  <code>SITE_ROOT/integrations/add_discord/</code>. For example, if <code>your SITE_ROOT</code>
+  is <code>https://my-hc.example.org</code> then the Redirect URI would be
+  <code>https://my-hc.example.org/integrations/add_discord/</code></li>
+<li>Look up your Discord app's <em>Client ID</em> and <em>Client Secret</em>. Put them
+  in the <code>DISCORD_CLIENT_ID</code> and <code>DISCORD_CLIENT_SECRET</code> environment
+  variables.</li>
+</ul>
+<h2><code>DISCORD_CLIENT_SECRET</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Discord Client Secret, required by the Slack integration. Look it up at
+<a href="https://discordapp.com/developers/applications/me">https://discordapp.com/developers/applications/me</a>.</p>
+<h2><code>EMAIL_HOST</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#email-host">Django documentation</a>.</p>
+<h2><code>EMAIL_HOST_PASSWORD</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-password">Django documentation</a>.</p>
+<h2><code>EMAIL_HOST_USER</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-user">Django documentation</a>.</p>
+<h2><code>EMAIL_PORT</code></h2>
+<p>Default: <code>587</code></p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#email-port">Django documentation</a>.</p>
+<h2><code>EMAIL_USE_TLS</code></h2>
+<p>Default: <code>True</code></p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#email-use-tls">Django documentation</a>.</p>
+<h2><code>EMAIL_USE_VERIFICATION</code></h2>
+<p>Default: <code>True</code></p>
+<p>A boolean that turns on/off a verification step when adding an email integration.</p>
+<p>If enabled, whenever an user adds an email integration, Healthchecks emails a
+verification link to the new address. The new integration becomes active only
+after user clicks the verification link.</p>
+<p>If you are setting up a private healthchecks instance where
+you trust your users, you can opt to disable the verification step. In that case,
+set <code>EMAIL_USE_VERIFICATION</code> to <code>False</code>.</p>
+<h2><code>LINENOTIFY_CLIENT_ID</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>LINENOTIFY_CLIENT_SECRET</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>MASTER_BADGE_LABEL</code></h2>
+<p>Default: same as <code>SITE_NAME</code></p>
+<h2><code>MATRIX_ACCESS_TOKEN</code></h2>
+<p>Default: <code>None</code></p>
+<p>The <a href="https://matrix.org/">Matrix</a> bot user's access token, required by the Matrix
+integration.</p>
+<p>To set up the Matrix integration:</p>
+<ul>
+<li>Register a bot user (for posting notifications) in your preferred Matrix homeserver.</li>
+<li>Use the <a href="https://www.matrix.org/docs/guides/client-server-api#login">Login API call</a>
+  to retrieve bot user's access token. You can run it as shown in the documentation,
+  using curl in command shell.</li>
+<li>Set the <code>MATRIX_</code> environment variables. Example:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="na">MATRIX_ACCESS_TOKEN</span><span class="o">=</span><span class="s">[a long string of characters returned by the login call]</span>
+<span class="na">MATRIX_HOMESERVER</span><span class="o">=</span><span class="s">https://matrix.org</span>
+<span class="na">MATRIX_USER_ID</span><span class="o">=</span><span class="s">@mychecks:matrix.org</span>
+</code></pre></div>
+
+<h2><code>MATRIX_HOMESERVER</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Matrix bot's homeserver address, required by the Matrix integration.</p>
+<h2><code>MATRIX_USER_ID</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Matrix bot's user identifier, required by the Matrix integration.</p>
+<h2><code>PD_VENDOR_KEY</code></h2>
+<p>Default: <code>None</code></p>
+<p><a href="https://www.pagerduty.com/">PagerDuty</a> vendor key,
+required by the PagerDuty integration.</p>
+<h2><code>PING_BODY_LIMIT</code></h2>
+<p>Default: <code>10000</code></p>
+<p>The upper size limit in bytes for logged ping request bodies.
+The default value is 10000 (10 kilobytes). You can adjust the limit or you can remove
+the it altogether by setting this value to <code>None</code>.</p>
+<h2><code>PING_EMAIL_DOMAIN</code></h2>
+<p>Default: <code>localhost</code></p>
+<h2><code>PING_ENDPOINT</code></h2>
+<p>Default: <code>http://localhost:8000/ping/</code></p>
+<h2><code>PUSHBULLET_CLIENT_ID</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>PUSHBULLET_CLIENT_SECRET</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>PUSHOVER_API_TOKEN</code></h2>
+<p>Default: <code>None</code></p>
+<p>The <a href="https://pushover.net/">Pushover</a> API token, required by the Pushover integration.</p>
+<p>To enable the Pushover integration:</p>
+<ul>
+<li>Register a new Pushover application at
+  <a href="https://pushover.net/apps/build">https://pushover.net/apps/build</a>.</li>
+<li>Within the Pushover application configuration, enable subscriptions.
+  Make sure the subscription type is set to "URL". Also make sure the redirect
+  URL is configured to point back to the root of the Healthchecks instance
+  (e.g., <code>https://my-hc.example.org/</code>).</li>
+<li>Put the Pushover application's <em>API Token</em> and the <em>Subscription URL</em> in
+  <code>PUSHOVER_API_TOKEN</code> and <code>PUSHOVER_SUBSCRIPTION_URL</code> environment
+  variables. The Pushover subscription URL should look similar to
+  <code>https://pushover.net/subscribe/yourAppName-randomAlphaNumericData</code>.</li>
+</ul>
+<h2><code>PUSHOVER_EMERGENCY_EXPIRATION</code></h2>
+<p>Default: <code>86400</code> (24 hours)</p>
+<p>Specifies how many seconds an emergency Pushoover notification
+will continue to be retried for.</p>
+<p>More information in <a href="https://pushover.net/api#priority">Pushover API documentation</a>.</p>
+<h2><code>PUSHOVER_EMERGENCY_RETRY_DELAY</code></h2>
+<p>Default: <code>300</code> (5 minutes)</p>
+<p>Specifies how often (in seconds) the Pushover servers will send the same notification
+to the user.</p>
+<p>More information in <a href="https://pushover.net/api#priority">Pushover API documentation</a>.</p>
+<h2><code>PUSHOVER_SUBSCRIPTION_URL</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Pushover Subscription URL, required by the Pushover integration.</p>
+<h2><code>REGISTRATION_OPEN</code></h2>
+<p>Default: <code>True</code></p>
+<p>A boolean that controls whether site visitors can create new accounts.
+Set it to <code>False</code> if you are setting up a private Healthchecks instance, but
+it needs to be publicly accessible (so, for example, your cloud services
+can send pings to it).</p>
+<p>If you close new user registration, you can still selectively invite users
+to your team account.</p>
+<h2><code>REMOTE_USER_HEADER</code></h2>
+<p>Default: <code>None</code></p>
+<p>Specifies the request header to use for external authentication.</p>
+<p>Healthchecks supports external authentication by means of HTTP headers set by
+reverse proxies or the WSGI server. This allows you to integrate it into your
+existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy. When this option is enabled, <strong>Healtchecks will trust the header's value implicitly</strong>, so it is <strong>very important</strong> to ensure that attackers cannot set the value themselves (and thus impersonate any user). How to do this varies by your chosen proxy, but generally involves configuring it to strip out headers that normalize to the same name as the chosen identity header.</p>
+<p>To enable this feature, set the <code>REMOTE_USER_HEADER</code> value to a header you wish to authenticate with. HTTP headers will be prefixed with <code>HTTP_</code> and have any dashes converted to underscores. Headers without that prefix can be set by the WSGI server itself only, which is more secure.</p>
+<p>When <code>REMOTE_USER_HEADER</code> is set, Healthchecks will:
+ - assume the header contains user's email address
+ - look up and automatically log in the user with a matching email address
+ - automatically create an user account if it does not exist
+ - disable the default authentication methods (login link to email, password)</p>
+<h2><code>RP_ID</code></h2>
+<p>Default: <code>None</code></p>
+<p>The <a href="https://www.w3.org/TR/webauthn-2/#relying-party-identifier">Relying Party identifier</a>,
+required by the WebAuthn second-factor authentication feature.</p>
+<p>Healthchecks optionally supports two-factor authentication using the WebAuthn
+standard. To enable WebAuthn support, set the <code>RP_ID</code> setting to a non-null value.
+Set its value to your site's domain without scheme and without port. For example,
+if your site runs on <code>https://my-hc.example.org</code>, set <code>RP_ID</code> to <code>my-hc.example.org</code>.</p>
+<p>Note that WebAuthn requires HTTPS, even if running on localhost. To test WebAuthn
+locally with a self-signed certificate, you can use the <code>runsslserver</code> command
+from the <code>django-sslserver</code> package.</p>
+<h2><code>SECRET_KEY</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>A secret key used for cryptographic signing.</p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#secret-key">Django documentation</a>.</p>
+<h2><code>SHELL_ENABLED</code></h2>
+<p>Default: <code>False</code></p>
+<p>A boolean that turns on/off the "Shell Commands" integration.</p>
+<p>The "Shell Commands" integration runs user-defined local shell commands when checks
+go up or down. This integration is disabled by default, and can be enabled by setting
+the <code>SHELL_ENABLED</code> environment variable to <code>True</code>.</p>
+<p>Note: be careful when using "Shell Commands" integration, and only enable it when
+you fully trust the users of your Healthchecks instance. The commands will be executed
+by the <code>manage.py sendalerts</code> process, and will run with its system permissions.</p>
+<h2><code>SIGNAL_CLI_ENABLED</code></h2>
+<p>Default: <code>False</code></p>
+<p>A boolean that turns on/off the <a href="https://signal.org/">Signal</a> integration.</p>
+<p>Healthchecks uses <a href="https://github.com/AsamK/signal-cli">signal-cli</a> to send Signal
+notifications. Healthcecks interacts with signal-cli over DBus.</p>
+<p>To enable the Signal integration:</p>
+<ul>
+<li>Set up and configure signal-cli to listen on DBus system bus
+  (<a href="https://github.com/AsamK/signal-cli/wiki/DBus-service">instructions</a>).
+  Make sure you can send test messages from command line, using the <code>dbus-send</code>
+  example given in the signal-cli instructions.</li>
+<li>Set the <code>SIGNAL_CLI_ENABLED</code> environment variable to <code>True</code>.</li>
+</ul>
+<h2><code>SITE_ROOT</code></h2>
+<p>Default: <code>http://localhost:8000</code></p>
+<h2><code>SITE_NAME</code></h2>
+<p>Default: <code>Mychecks</code></p>
+<h2><code>SLACK_CLIENT_ID</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Slack Client ID, required by the Slack integration.</p>
+<p>Go to <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>
+to create a <em>Slack app</em>, and look up its <em>Client ID</em> and <em>Client Secret</em>.</p>
+<p>When setting up the Slack app, make sure to:</p>
+<ul>
+<li>Add the <a href="https://api.slack.com/scopes/incoming-webhook">incoming-webhook</a>
+  scope to the Bot Token Scopes.</li>
+<li>Add a <em>Redirect URL</em> in the format <code>SITE_ROOT/integrations/add_slack_btn/</code>.
+  For example, if your <code>SITE_ROOT</code> is <code>https://my-hc.example.org</code> then the
+  Redirect URL would be <code>https://my-hc.example.org/integrations/add_slack_btn/</code>.</li>
+</ul>
+<h2><code>SLACK_CLIENT_SECRET</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Slack Client Secret, required by the Slack integration.
+Look it up at <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>.</p>
+<h2><code>TELEGRAM_BOT_NAME</code></h2>
+<p>Default: <code>ExampleBot</code></p>
+<p>The <a href="https://telegram.org/">Telegram</a> bot name, required by the Telegram integration.</p>
+<p>To set up the Telegram integration:</p>
+<ul>
+<li>Create a Telegram bot by talking to the
+<a href="https://core.telegram.org/bots#6-botfather">BotFather</a>. Set the bot's name,
+description, user picture, and add a "/start" command.</li>
+<li>After creating the bot you will have the bot's name and token. Put them
+in <code>TELEGRAM_BOT_NAME</code> and <code>TELEGRAM_TOKEN</code> environment variables.</li>
+<li>Run the <code>settelegramwebhook</code> management command. This command tells Telegram
+where to forward channel messages by invoking Telegram's
+<a href="https://core.telegram.org/bots/api#setwebhook">setWebhook</a> API call:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>$ ./manage.py settelegramwebhook
+Done, Telegram<span class="err">&#39;</span>s webhook <span class="nb">set</span> to: https://my-monitoring-project.com/integrations/telegram/bot/
+</code></pre></div>
+
+<p>For this to work, your <code>SITE_ROOT</code> must be publicy accessible and use the "https://"
+scheme.</p>
+<h2><code>TELEGRAM_TOKEN</code></h2>
+<p>Default: <code>None</code></p>
+<p>The Telegram bot user's authentication token, required by the Telegram integration.</p>
+<h2><code>TRELLO_APP_KEY</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>TWILIO_ACCOUNT</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>TWILIO_AUTH</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>TWILIO_FROM</code></h2>
+<p>Default: <code>None</code></p>
+<h2><code>TWILIO_USE_WHATSAPP</code></h2>
+<p>Default: <code>False</code></p>
+<h2><code>USE_PAYMENTS</code></h2>
+<p>Default: <code>False</code></p>
+<p>A boolean that turns on/off billing features.</p>
