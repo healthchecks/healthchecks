@@ -1,0 +1,34 @@
+version: "3"
+volumes:
+    db-data:
+
+services:
+  db:
+    image: postgres:12
+    volumes:
+      - db-data:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=hc
+      - POSTGRES_PASSWORD=fixme-postgres-password
+  web:
+    build:
+        context: ..
+        dockerfile: docker/Dockerfile
+    environment:
+        - DEBUG=False
+        - DB=postgres
+        - DB_HOST=db
+        - DB_PORT=5432
+        - DB_PASSWORD=fixme-postgres-password
+        - DEFAULT_FROM_EMAIL=healthchecks.io@healthchecks.io
+        - EMAIL_HOST=fixme-smtp-server.example.org
+        - EMAIL_HOST_USER=fixme-smtp-username
+        - EMAIL_HOST_PASSWORD=fixme-smtp-password
+        - SECRET_KEY=fixme-secret-key
+        - SITE_ROOT=http://localhost:8000
+    ports:
+        - 8000:8000
+    depends_on:
+        - db
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uwsgi /opt/healthchecks/docker/uwsgi.ini'
+

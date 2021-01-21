@@ -1,6 +1,6 @@
 # Configuring Prometheus
 
-Healthchecks.io supports exporting metrics and check statuses to
+SITE_NAME supports exporting metrics and check statuses to
 [Prometheus](https://prometheus.io/), for use with [Grafana](https://grafana.com/).
 
 You can generate the metrics export endpoint by going to your project settings
