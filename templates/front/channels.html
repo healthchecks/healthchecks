@@ -186,6 +186,8 @@
     {% if rw %}
     <h1 class="ai-title">Add More</h1>
     <ul class="add-integration">
+
+        {% if enable_slack %}
         <li>
             <img src="{% static 'img/integrations/slack.png' %}"
                 class="icon" alt="Slack icon" />
@@ -198,6 +200,9 @@
             <a href="{% url 'hc-add-slack' project.code %}" class="btn btn-primary">Add Integration</a>
             {% endif %}
         </li>
+        {% endif %}
+
+        {% if enable_email %}
         <li>
             <img src="{% static 'img/integrations/email.png' %}"
                 class="icon" alt="Email icon" />
@@ -206,7 +211,9 @@
             <p>Get an email message when a check goes up or down.</p>
             <a href="{% url 'hc-add-email' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
+        {% if enable_webhook %}
         <li>
             <img src="{% static 'img/integrations/webhook.png' %}"
                 class="icon" alt="Webhook icon" />
@@ -215,6 +222,7 @@
             <p>Receive an HTTP callback when a check goes down.</p>
             <a href="{% url 'hc-add-webhook' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_apprise %}
         <li>
@@ -260,6 +268,7 @@
         </li>
         {% endif %}
 
+        {% if enable_mattermost %}
         <li>
             <img src="{% static 'img/integrations/mattermost.png' %}"
                 class="icon" alt="Mattermost icon" />
@@ -268,7 +277,9 @@
             <p>High Trust Messaging for the Enterprise.</p>
             <a href="{% url 'hc-add-mattermost' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
+        {% if enable_msteams %}
         <li>
             <img src="{% static 'img/integrations/msteams.png' %}"
                 class="icon" alt="Microsoft Teams" />
@@ -277,7 +288,9 @@
             <p>Chat and collaboration platform for Microsoft Office 365 customers.</p>
             <a href="{% url 'hc-add-msteams' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
+        {% if enable_opsgenie %}
         <li>
             <img src="{% static 'img/integrations/opsgenie.png' %}"
                 class="icon" alt="OpsGenie icon" />
@@ -286,7 +299,9 @@
             <p> Alerting &amp; Incident Management Solution for Dev &amp; Ops.</p>
             <a href="{% url 'hc-add-opsgenie' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
+        {% if enable_pagerduty %}
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />
@@ -300,7 +315,9 @@
                 <a href="{% url 'hc-add-pd' project.code %}" class="btn btn-primary">Add Integration</a>
             {% endif %}
         </li>
+        {% endif %}
 
+        {% if enable_pagertree %}
         <li>
             <img src="{% static 'img/integrations/pagertree.png' %}"
                 class="icon" alt="PagerTree icon" />
@@ -309,6 +326,7 @@
             <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications.</p>
             <a href="{% url 'hc-add-pagertree' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_call %}
         <li>
@@ -321,6 +339,7 @@
         </li>
         {% endif %}
 
+        {% if enable_prometheus %}
         <li>
             <img src="{% static 'img/integrations/prometheus.png' %}"
                 class="icon" alt="Prometheus icon" />
@@ -329,6 +348,7 @@
             <p>Export check and tag status values to Prometheus.</p>
             <a href="{% url 'hc-add-prometheus' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_pushbullet %}
         <li>
@@ -385,6 +405,7 @@
         </li>
         {% endif %}
 
+        {% if enable_spike %}
         <li>
             <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="Spike.sh icon" />
 
@@ -393,6 +414,7 @@
 
                 <a href="{% url 'hc-add-spike' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_telegram %}
         <li>
@@ -416,6 +438,7 @@
         </li>
         {% endif %}
 
+        {% if enable_victorops %}
         <li>
             <img src="{% static 'img/integrations/victorops.png' %}"
                 class="icon" alt="VictorOps icon" />
@@ -424,6 +447,7 @@
             <p>On-call scheduling, alerting, and incident tracking.</p>
             <a href="{% url 'hc-add-victorops' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_whatsapp %}
         <li>
@@ -436,6 +460,7 @@
         </li>
         {% endif %}
 
+        {% if enable_zulip %}
         <li>
             <img src="{% static 'img/integrations/zulip.png' %}"
                 class="icon" alt="Zulip icon" />
@@ -444,6 +469,7 @@
             <p>Open-source group chat.</p>
             <a href="{% url 'hc-add-zulip' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         <li class="link-to-github">
             <img src="{% static 'img/integrations/missing.png' %}"

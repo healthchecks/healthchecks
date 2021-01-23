@@ -64,6 +64,8 @@ class Transport(object):
 
 class Email(Transport):
     def notify(self, check):
+        if not settings.EMAIL_ENABLED:
+            return "Emails are not enabled"
         if not self.channel.email_verified:
             return "Email not verified"
 
@@ -260,6 +262,8 @@ class Webhook(HttpTransport):
 
 class Slack(HttpTransport):
     def notify(self, check):
+        if not settings.SLACK_ENABLED:
+            return "Slack is not enabled"
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
         return self.post(self.channel.slack_webhook_url, json=payload)
@@ -279,6 +283,8 @@ class OpsGenie(HttpTransport):
             pass
 
     def notify(self, check):
+        if not settings.OPSGENIE_ENABLED:
+            return "OpsGenie is not enabled"
         headers = {
             "Conent-Type": "application/json",
             "Authorization": "GenieKey %s" % self.channel.opsgenie_key,
@@ -306,6 +312,8 @@ class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
     def notify(self, check):
+        if not settings.PAGERDUTY_ENABLED:
+            return "PagerDuty is not enabled"
         description = tmpl("pd_description.html", check=check)
         payload = {
             "service_key": self.channel.pd_service_key,
@@ -321,6 +329,8 @@ class PagerDuty(HttpTransport):
 
 class PagerTree(HttpTransport):
     def notify(self, check):
+        if not settings.PAGERTREE_ENABLED:
+            return "PagerTree is not enabled"
         url = self.channel.value
         headers = {"Conent-Type": "application/json"}
         payload = {
@@ -343,6 +353,8 @@ class PagerTeam(HttpTransport):
 
 class Pushbullet(HttpTransport):
     def notify(self, check):
+        if not settings.PUSHBULLET_ENABLED:
+            return "Pushbullet is not enabled"
         text = tmpl("pushbullet_message.html", check=check)
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
@@ -358,6 +370,8 @@ class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
 
     def notify(self, check):
+        if not settings.PUSHOVER_ENABLED:
+            return "Pushover is not enabled"
         others = self.checks().filter(status="down").exclude(code=check.code)
 
         # list() executes the query, to avoid DB access while
@@ -391,6 +405,8 @@ class Pushover(HttpTransport):
 
 class VictorOps(HttpTransport):
     def notify(self, check):
+        if not settings.VICTOROPS_ENABLED:
+            return "VictorOps is not enabled"
         description = tmpl("victorops_description.html", check=check)
         mtype = "CRITICAL" if check.status == "down" else "RECOVERY"
         payload = {
@@ -414,6 +430,8 @@ class Matrix(HttpTransport):
         return url
 
     def notify(self, check):
+        if not settings.MATRIX_ENABLED:
+            return "Matrix Chat is not enabled"
         plain = tmpl("matrix_description.html", check=check)
         formatted = tmpl("matrix_description_formatted.html", check=check)
         payload = {
@@ -428,6 +446,8 @@ class Matrix(HttpTransport):
 
 class Discord(HttpTransport):
     def notify(self, check):
+        if not settings.DISCORD_ENABLED:
+            return "Discord Chat is not enabled"
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
         url = self.channel.discord_webhook_url + "/slack"
@@ -453,6 +473,8 @@ class Telegram(HttpTransport):
         )
 
     def notify(self, check):
+        if not settings.TELEGRAM_ENABLED:
+            return "Telegram Chat is not enabled"
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_telegram(self.channel.telegram_id):
@@ -469,6 +491,8 @@ class Sms(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
+        if not settings.SMS_ENABLED:
+            return "Sms is not enabled"
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("SMS")
@@ -495,6 +519,8 @@ class Call(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
+        if not settings.CALL_ENABLED:
+            return "Call is not enabled"
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_call():
             profile.send_call_limit_notice()
@@ -524,6 +550,8 @@ class WhatsApp(HttpTransport):
             return not self.channel.whatsapp_notify_up
 
     def notify(self, check):
+        if not settings.WHATSAPP_ENABLED:
+            return "WhatsApp is not enabled"
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("WhatsApp")
@@ -550,6 +578,8 @@ class Trello(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
+        if not settings.TRELLO_ENABLED:
+            return "Trello is not enabled"
         params = {
             "idList": self.channel.trello_list_id,
             "name": tmpl("trello_name.html", check=check),
@@ -597,6 +627,8 @@ class MsTeams(HttpTransport):
         return s
 
     def notify(self, check):
+        if not settings.MSTEAMS_ENABLED:
+            return "MsTeams is not enabled"
         text = tmpl("msteams_message.json", check=check)
         payload = json.loads(text)
 
@@ -629,6 +661,8 @@ class Zulip(HttpTransport):
             pass
 
     def notify(self, check):
+        if not settings.ZULIP_ENABLED:
+            return "Zulip is not enabled"
         url = self.channel.zulip_site + "/api/v1/messages"
         auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
         data = {
@@ -643,6 +677,8 @@ class Zulip(HttpTransport):
 
 class Spike(HttpTransport):
     def notify(self, check):
+        if not settings.SPIKE_ENABLED:
+            return "Spike is not enabled"
         url = self.channel.value
         headers = {"Conent-Type": "application/json"}
         payload = {
@@ -659,6 +695,8 @@ class LineNotify(HttpTransport):
     URL = "https://notify-api.line.me/api/notify"
 
     def notify(self, check):
+        if not settings.LINENOTIFY_ENABLED:
+            return "LineNotify is not enabled"
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Bearer %s" % self.channel.linenotify_token,
