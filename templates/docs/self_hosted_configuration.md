@@ -3,7 +3,7 @@
 Healthchecks prepares its configuration in `hc/settings.py`. It reads configuration
 from environment variables. Below is a list of variables it reads and uses:
 
-## `ALLOWED_HOSTS`
+## `ALLOWED_HOSTS` {: #ALLOWED_HOSTS }
 
 Default: `*`
 
@@ -18,7 +18,7 @@ Aside from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts).
 
-## `APPRISE_ENABLED`
+## `APPRISE_ENABLED` {: #APPRISE_ENABLED }
 
 Default: `False`
 
@@ -31,7 +31,7 @@ Before enabling the Apprise integration, make sure the `apprise` package is inst
 pip install apprise
 ```
 
-## `DEBUG`
+## `DEBUG` {: #DEBUG }
 
 Default: `True`
 
@@ -42,74 +42,74 @@ _Never run a Healthchecks instance in production with the debug mode turned on!_
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#debug).
 
-## `DEFAULT_FROM_EMAIL`
+## `DEFAULT_FROM_EMAIL` {: #DEFAULT_FROM_EMAIL }
 
 Default: `healthchecks@example.org`
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email).
 
-## `DB`
+## `DB` {: #DB }
 
 Default: `sqlite`
 
 The database enginge to use. Possible values: `sqlite`, `postgres`, `mysql`.
 
-## `DB_CONN_MAX_AGE`
+## `DB_CONN_MAX_AGE` {: #DB_CONN_MAX_AGE }
 
 Default: `0`
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#conn-max-age).
 
-## `DB_HOST`
+## `DB_HOST` {: #DB_HOST }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#host).
 
-## `DB_NAME`
+## `DB_NAME` {: #DB_NAME }
 
-Default: `hc` (PostgreSQL, MySQL) or `{project-path}/hc.sqlite` (SQLite)
+Default: `hc` (PostgreSQL, MySQL) or `/path/to/projectdir/hc.sqlite` (SQLite)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#name).
 
-## `DB_PASSWORD`
+## `DB_PASSWORD` {: #DB_PASSWORD }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#password).
 
-## `DB_PORT`
+## `DB_PORT` {: #DB_PORT }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#port).
 
-## `DB_SSLMODE`
+## `DB_SSLMODE` {: #DB_SSLMODE }
 
 Default: `prefer`
 
 PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNECT-SSLMODE)
 
-## `DB_TARGET_SESSION_ATTRS`
+## `DB_TARGET_SESSION_ATTRS` {: #DB_TARGET_SESSION_ATTRS }
 
 Default: `read-write`
 
 PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS)
 
-## `DB_USER`
+## `DB_USER` {: #DB_USER }
 
 Default: `postgres` (PostgreSQL) or `root` (MySQL)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#user).
 
-## `DISCORD_CLIENT_ID`
+## `DISCORD_CLIENT_ID` {: #DISCORD_CLIENT_ID }
 
 Default: `None`
 
@@ -127,49 +127,49 @@ To set up the Discord integration:
   in the `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET` environment
   variables.
 
-## `DISCORD_CLIENT_SECRET`
+## `DISCORD_CLIENT_SECRET` {: #DISCORD_CLIENT_SECRET }
 
 Default: `None`
 
-The Discord Client Secret, required by the Slack integration. Look it up at
+The Discord Client Secret, required by the Discord integration. Look it up at
 [https://discordapp.com/developers/applications/me](https://discordapp.com/developers/applications/me).
 
-## `EMAIL_HOST`
+## `EMAIL_HOST` {: #EMAIL_HOST }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host).
 
-## `EMAIL_HOST_PASSWORD`
+## `EMAIL_HOST_PASSWORD` {: #EMAIL_HOST_PASSWORD }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-password).
 
-## `EMAIL_HOST_USER`
+## `EMAIL_HOST_USER` {: #EMAIL_HOST_USER }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-user).
 
-## `EMAIL_PORT`
+## `EMAIL_PORT` {: #EMAIL_PORT }
 
 Default: `587`
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-port).
 
-## `EMAIL_USE_TLS`
+## `EMAIL_USE_TLS` {: #EMAIL_USE_TLS }
 
 Default: `True`
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-use-tls).
 
-## `EMAIL_USE_VERIFICATION`
+## `EMAIL_USE_VERIFICATION` {: #EMAIL_USE_VERIFICATION }
 
 Default: `True`
 
@@ -183,21 +183,21 @@ If you are setting up a private healthchecks instance where
 you trust your users, you can opt to disable the verification step. In that case,
 set `EMAIL_USE_VERIFICATION` to `False`.
 
-## `LINENOTIFY_CLIENT_ID`
+## `LINENOTIFY_CLIENT_ID` {: #LINENOTIFY_CLIENT_ID }
 
 Default: `None`
 
-## `LINENOTIFY_CLIENT_SECRET`
+## `LINENOTIFY_CLIENT_SECRET` {: #LINENOTIFY_CLIENT_SECRET }
 
 Default: `None`
 
-## `MASTER_BADGE_LABEL`
+## `MASTER_BADGE_LABEL` {: #MASTER_BADGE_URL }
 
 Default: same as `SITE_NAME`
 
 The label for the "Overall Status" status badge.
 
-## `MATRIX_ACCESS_TOKEN`
+## `MATRIX_ACCESS_TOKEN` {: #MATRIX_ACCESS_TOKEN }
 
 Default: `None`
 
@@ -218,26 +218,26 @@ MATRIX_HOMESERVER=https://matrix.org
 MATRIX_USER_ID=@mychecks:matrix.org
 ```
 
-## `MATRIX_HOMESERVER`
+## `MATRIX_HOMESERVER` {: #MATRIX_HOMESERVER }
 
 Default: `None`
 
 The Matrix bot's homeserver address, required by the Matrix integration.
 
-## `MATRIX_USER_ID`
+## `MATRIX_USER_ID` {: #MATRIX_USER_ID }
 
 Default: `None`
 
 The Matrix bot's user identifier, required by the Matrix integration.
 
-## `PD_VENDOR_KEY`
+## `PD_VENDOR_KEY` {: #PD_VENDOR_KEY }
 
 Default: `None`
 
 [PagerDuty](https://www.pagerduty.com/) vendor key,
 required by the PagerDuty integration.
 
-## `PING_BODY_LIMIT`
+## `PING_BODY_LIMIT` {: #PING_BODY_LIMIT }
 
 Default: `10000`
 
@@ -245,7 +245,7 @@ The upper size limit in bytes for logged ping request bodies.
 The default value is 10000 (10 kilobytes). You can adjust the limit or you can remove
 the it altogether by setting this value to `None`.
 
-## `PING_EMAIL_DOMAIN`
+## `PING_EMAIL_DOMAIN` {: #PING_EMAIL_DOMAIN }
 
 Default: `localhost`
 
@@ -258,9 +258,9 @@ PING_EMAIL_DOMAIN=ping.my-hc.example.org
 In this example, Healthchecks would generate ping email addresses similar
 to `3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org`.
 
-## `PING_ENDPOINT`
+## `PING_ENDPOINT` {: #PING_ENDPOINT }
 
-Default: `{SITE_ROOT}/ping/`
+Default: `SITE_ROOT` + `/ping/`
 
 The base URL to use for generating ping URLs. Example:
 
@@ -271,15 +271,15 @@ PING_ENDPOINT=https://ping.my-hc.example.org
 In this example, Healthchecks would generate ping URLs similar
 to `https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86`.
 
-## `PUSHBULLET_CLIENT_ID`
+## `PUSHBULLET_CLIENT_ID` {: #PUSHBULLET_CLIENT_ID }
 
 Default: `None`
 
-## `PUSHBULLET_CLIENT_SECRET`
+## `PUSHBULLET_CLIENT_SECRET` {: #PUSHBULLET_CLIENT_SECRET }
 
 Default: `None`
 
-## `PUSHOVER_API_TOKEN`
+## `PUSHOVER_API_TOKEN` {: #PUSHOVER_API_TOKEN }
 
 Default: `None`
 
@@ -298,7 +298,7 @@ To enable the Pushover integration:
   variables. The Pushover subscription URL should look similar to
   `https://pushover.net/subscribe/yourAppName-randomAlphaNumericData`.
 
-## `PUSHOVER_EMERGENCY_EXPIRATION`
+## `PUSHOVER_EMERGENCY_EXPIRATION` {: #PUSHOVER_EMERGENCY_EXPIRATION }
 
 Default: `86400` (24 hours)
 
@@ -307,7 +307,7 @@ will continue to be retried for.
 
 More information in [Pushover API documentation](https://pushover.net/api#priority).
 
-## `PUSHOVER_EMERGENCY_RETRY_DELAY`
+## `PUSHOVER_EMERGENCY_RETRY_DELAY` {: #PUSHOVER_EMERGENCY_RETRY_DELAY }
 
 Default: `300` (5 minutes)
 
@@ -316,13 +316,13 @@ to the user.
 
 More information in [Pushover API documentation](https://pushover.net/api#priority).
 
-## `PUSHOVER_SUBSCRIPTION_URL`
+## `PUSHOVER_SUBSCRIPTION_URL` {: #PUSHOVER_SUBSCRIPTION_URL }
 
 Default: `None`
 
 The Pushover Subscription URL, required by the Pushover integration.
 
-## `REGISTRATION_OPEN`
+## `REGISTRATION_OPEN` {: #REGISTRATION_OPEN }
 
 Default: `True`
 
@@ -334,7 +334,7 @@ can send pings to it).
 If you close new user registration, you can still selectively invite users
 to your team account.
 
-## `REMOTE_USER_HEADER`
+## `REMOTE_USER_HEADER` {: #REMOTE_USER_HEADER }
 
 Default: `None`
 
@@ -352,7 +352,7 @@ When `REMOTE_USER_HEADER` is set, Healthchecks will:
  - automatically create an user account if it does not exist
  - disable the default authentication methods (login link to email, password)
 
-## `RP_ID`
+## `RP_ID` {: #RP_ID }
 
 Default: `None`
 
@@ -368,7 +368,7 @@ Note that WebAuthn requires HTTPS, even if running on localhost. To test WebAuth
 locally with a self-signed certificate, you can use the `runsslserver` command
 from the `django-sslserver` package.
 
-## `SECRET_KEY`
+## `SECRET_KEY` {: #SECRET_KEY }
 
 Default: `""` (empty string)
 
@@ -377,7 +377,7 @@ A secret key used for cryptographic signing.
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#secret-key).
 
-## `SHELL_ENABLED`
+## `SHELL_ENABLED` {: #SHELL_ENABLED }
 
 Default: `False`
 
@@ -391,7 +391,7 @@ Note: be careful when using "Shell Commands" integration, and only enable it whe
 you fully trust the users of your Healthchecks instance. The commands will be executed
 by the `manage.py sendalerts` process, and will run with its system permissions.
 
-## `SIGNAL_CLI_ENABLED`
+## `SIGNAL_CLI_ENABLED` {: #SIGNAL_CLI_ENABLED }
 
 Default: `False`
 
@@ -408,21 +408,21 @@ To enable the Signal integration:
   example given in the signal-cli instructions.
 * Set the `SIGNAL_CLI_ENABLED` environment variable to `True`.
 
-## `SITE_ROOT`
+## `SITE_ROOT` {: #SITE_ROOT }
 
 Default: `http://localhost:8000`
 
 The base URL of this Healthchecks instance. Healthchecks uses `SITE_ROOT` whenever
 it needs to construct absolute URLs.
 
-## `SITE_NAME`
+## `SITE_NAME` {: #SITE_NAME }
 
 Default: `Mychecks`
 
 The display name of this Healthchecks instance. Healthchecks uses it throughout
-web UI and documentation.
+its web UI and documentation.
 
-## `SLACK_CLIENT_ID`
+## `SLACK_CLIENT_ID` {: #SLACK_CLIENT_ID }
 
 Default: `None`
 
@@ -439,14 +439,14 @@ When setting up the Slack app, make sure to:
   For example, if your `SITE_ROOT` is `https://my-hc.example.org` then the
   Redirect URL would be `https://my-hc.example.org/integrations/add_slack_btn/`.
 
-## `SLACK_CLIENT_SECRET`
+## `SLACK_CLIENT_SECRET` {: #SLACK_CLIENT_SECRET }
 
 Default: `None`
 
 The Slack Client Secret, required by the Slack integration.
 Look it up at [https://api.slack.com/apps/](https://api.slack.com/apps/).
 
-## `TELEGRAM_BOT_NAME`
+## `TELEGRAM_BOT_NAME` {: #TELEGRAM_BOT_NAME }
 
 Default: `ExampleBot`
 
@@ -471,13 +471,13 @@ Done, Telegram's webhook set to: https://my-monitoring-project.com/integrations/
 For this to work, your `SITE_ROOT` must be publicy accessible and use the "https://"
 scheme.
 
-## `TELEGRAM_TOKEN`
+## `TELEGRAM_TOKEN` {: #TELEGRAM_TOKEN }
 
 Default: `None`
 
 The Telegram bot user's authentication token, required by the Telegram integration.
 
-## `TRELLO_APP_KEY`
+## `TRELLO_APP_KEY` {: #TRELLO_APP_KEY }
 
 Default: `None`
 
@@ -487,23 +487,23 @@ To set up the Trello integration, get a developer API key from
 [https://trello.com/app-key](https://trello.com/app-key) and put it in the
 `TRELLO_APP_KEY` environment variable.
 
-## `TWILIO_ACCOUNT`
+## `TWILIO_ACCOUNT` {: #TWILIO_ACCOUNT }
 
 Default: `None`
 
-## `TWILIO_AUTH`
+## `TWILIO_AUTH` {: #TWILIO_AUTH }
 
 Default: `None`
 
-## `TWILIO_FROM`
+## `TWILIO_FROM` {: #TWILIO_FROM }
 
 Default: `None`
 
-## `TWILIO_USE_WHATSAPP`
+## `TWILIO_USE_WHATSAPP` {: #TWILIO_USE_WHATSAPP }
 
 Default: `False`
 
-## `USE_PAYMENTS`
+## `USE_PAYMENTS` {: #USE_PAYMENTS }
 
 Default: `False`
 

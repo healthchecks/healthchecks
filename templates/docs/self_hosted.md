@@ -2,9 +2,9 @@
 
 Healthchecks is open-source, and is licensed under the BSD 3-clause license.
 
-Rather than using the hosted service at
-[https://healthchecks.io](https://healthchecks.io), you have the option to host an
-instance yourself.
+As an alternative to using the hosted service at
+[https://healthchecks.io](https://healthchecks.io), you have the option to host a
+Healthchecks instance yourself.
 
 The building blocks are:
 
@@ -56,7 +56,7 @@ The following instructions assume you are using a Debian-based OS.
         $ ./manage.py createsuperuser
 
     With the default configuration, Healthchecks stores data in a SQLite file
-    `hc.sqlite` in the checkout directory (`~/webapps/healthchecks`).
+    `hc.sqlite` in the project directory (`~/webapps/healthchecks/`).
 
 * Run tests:
 
