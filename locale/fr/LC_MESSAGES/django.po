@@ -138,7 +138,7 @@ msgid ""
 "similar to this one:"
 msgstr ""
 "Pour chacune de vos tâches périodiques, %(site_name)s fournit une URL unique "
-"similaire à celui-ci:"
+"similaire à celle-ci:"
 
 #: templates/front/welcome.html:79
 msgid "Browser"
@@ -197,14 +197,14 @@ msgid ""
 "A list of your checks, one for each Cron job, daemon or scheduled task you "
 "want to monitor."
 msgstr ""
-"Une liste de vos contrôles, un pour chaque tâche Cron, démon ou tâche planifiée que vous"
+"Une liste de vos contrôles, un pour chaque tâche Cron, démon ou tâche planifiée que vous "
 "voulez surveiller."
 
 #: templates/front/welcome.html:194
 msgid ""
 "Give names and assign tags to your checks to easily recognize them later."
 msgstr ""
-"Donnez des noms et attribuez des balises à vos chèques pour les reconnaître facilement plus tard."
+"Donnez des noms et attribuez des balises à vos contrôles pour les reconnaître facilement plus tard."
 
 #: templates/front/welcome.html:200
 msgid "Tap on the integration icons to toggle them on and off."
@@ -216,7 +216,7 @@ msgid ""
 "Adjust Period and Grace time to match the periodicity and duration of your "
 "tasks."
 msgstr ""
-"Ajustez la période et le délai de grâce en fonction de la périodicité et de la durée de votre"
+"Ajustez la période et le délai de grâce en fonction de la périodicité et de la durée de votre "
 "tâche."
 
 #: templates/front/welcome.html:222
@@ -230,8 +230,8 @@ msgid ""
 "strong> parameters. Depending on these parameters and time since the last "
 "ping, the check is in one of the following states:"
 msgstr ""
-"Chaque contrôle a des paramètres configurables que sont  <strong> période </strong> et un <strong> délai de grâce </"
-"strong>. En fonction de ces paramètres et du temps écoulé depuis le dernier"
+"Chaque contrôle a des paramètres configurables que sont  <strong> période </strong> et <strong> délai de grâce </"
+"strong>. En fonction de ces paramètres et du temps écoulé depuis le dernier "
 "ping, le contrôle est dans l'un des états suivants:"
 
 #: templates/front/welcome.html:235
@@ -249,8 +249,8 @@ msgid ""
 "Late. Time since last ping has exceeded <strong>Period</strong>, but has not "
 "yet exceeded <strong>Period</strong> + <strong>Grace</strong>."
 msgstr ""
-"En retard. Le temps écoulé depuis le dernier ping a dépassé la <strong> période </strong>, mais n'a pas"
-"encore dépassé la <strong> période </strong> + <strong> grâce </strong>."
+"En retard. Le temps écoulé depuis le dernier ping a dépassé la <strong> période </strong>, mais n'a pas "
+"encore dépassé <strong> période </strong> + <strong> grâce </strong>."
 
 #: templates/front/welcome.html:269
 #, python-format
@@ -259,7 +259,7 @@ msgid ""
 "<strong>Grace</strong>. When check goes from \"Late\" to \"Down\", "
 "%(site_name)s sends you a notification."
 msgstr ""
-"KO. Le temps écoulé depuis le dernier ping a dépassé la <strong> période </strong> +"
+"KO. Le temps écoulé depuis le dernier ping a dépassé <strong> période </strong> +"
 "<strong> Grace </strong>. Lorsque la vérification passe de \"En retard\" à \"KO\", "
 "%(site_name)s vous envoie une notification."
 
@@ -293,7 +293,7 @@ msgid ""
 "cron job."
 msgstr ""
 "<strong>Temps de Grace</strong> spécifie à quel point un ping peut être \" en retard \" avant l'envoi "
-"d'une alerte. Réglez-le légèrement au-dessus de la durée prévue de votre"
+"d'une alerte. Réglez-le légèrement au-dessus de la durée prévue de votre "
 "Tâche planifiée."
 
 #: templates/front/welcome.html:323
@@ -306,8 +306,8 @@ msgid ""
 "You can add a longer, free-form description to each check. Leave notes and "
 "pointers for yourself and for your team."
 msgstr ""
-"Vous pouvez ajouter une description plus longue et de forme libre à chaque contôle. Laissez des notes et"
-"des pointeurs pour vous et pour votre équipe."
+"Vous pouvez ajouter une description plus longue et de forme libre à chaque contôle. Laissez des notes et "
+"des pointeurs pour vous et votre équipe."
 
 #: templates/front/welcome.html:332
 msgid ""
@@ -327,8 +327,8 @@ msgid ""
 "Additionally, the \"%(site_name)s\" badge shows the overall status of all "
 "checks in your account."
 msgstr ""
-"%(site_name)s fournit des badges de statut pour chacune des balises que vous avez utilisées."
-"De plus, le badge \"%(site_name)s \" indique l'état général de tous"
+"%(site_name)s fournit des badges de statut pour chacune des balises que vous avez utilisées. "
+"De plus, le badge \"%(site_name)s \" indique l'état général de tous "
 "les contrôles de votre compte."
 
 #: templates/front/welcome.html:358
@@ -336,7 +336,7 @@ msgid ""
 "The badges have public, but hard-to-guess URLs. You can use them in your "
 "READMEs, dashboards or status pages."
 msgstr ""
-"Les badges ont des URL publiques, mais difficiles à deviner. Vous pouvez les utiliser dans votre"
+"Les badges ont des URL publiques, mais difficiles à deviner. Vous pouvez les utiliser dans votre "
 "README, tableaux de bord ou pages d'état."
 
 #: templates/front/welcome.html:370
@@ -470,9 +470,9 @@ msgid ""
 "healthy. Write a shell script that checks for a specific condition, and "
 "pings %(site_name)s if successful. Run the shell script regularly."
 msgstr ""
-"La surveillance de %(site_name)s peut être utilisée pour la surveillance de webservice:"
-"garantir qu'un service système particulier, ou le serveur dans son ensemble est actif et"
-"sain. Écrivez un script shell qui vérifie une condition spécifique, et"
+"La surveillance de %(site_name)s peut être utilisée pour la surveillance de webservice: "
+"garantir qu'un service système particulier, ou le serveur dans son ensemble est actif et "
+"sain. Écrivez un script shell qui vérifie une condition spécifique, et "
 "pings %(site_name)s en cas de succès. Exécutez ce script shell a fréquence régulière."
 
 #: templates/front/welcome.html:714
@@ -500,7 +500,7 @@ msgid ""
 "Send simple, unconditional \"I'm alive\" messages from your server (or your "
 "NAS, router, Raspberry Pi, ...)"
 msgstr ""
-"Envoyez des messages simples et inconditionnels \"Je suis en vie\" depuis un serveur"
+"Envoyez des messages simples et inconditionnels \"Je suis en vie\" depuis un serveur, "
 "un service,  ...)"
 
 #: templates/front/welcome.html:735
