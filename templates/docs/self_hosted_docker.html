@@ -12,8 +12,15 @@ SSL-terminating load balancer or reverse proxy in front of it.</p>
 <ul>
 <li>Grab the Healthchecks source code
   <a href="https://github.com/healthchecks/healthchecks">from the Github repository</a>.</li>
-<li>Edit the <code>/docker/docker-compose.yml</code> file; add your SMTP credentials
-  and any other needed <a href="../self_hosted_configuration/">environment variables</a>.</li>
+<li>Add your <a href="../self_hosted_configuration/">configuration</a> in the <code>/docker/.env</code> file.
+  As a minimum, set the following fields:<ul>
+<li><code>DEFAULT_FROM_EMAIL</code> – the "From:" address for outbound emails</li>
+<li><code>EMAIL_HOST</code> – the SMTP server</li>
+<li><code>EMAIL_HOST_PASSWORD</code> – the SMTP password</li>
+<li><code>EMAIL_HOST_USER</code> – the SMTP username</li>
+<li><code>SECRET_KEY</code> – secures HTTP sessions, set to a random value</li>
+</ul>
+</li>
 <li>
 <p>Create and start containers:</p>
 <div class="highlight"><pre><span></span><code>$ <span class="nb">cd</span> docker
