@@ -31,24 +31,6 @@ Before enabling the Apprise integration, make sure the `apprise` package is inst
 pip install apprise
 ```
 
-## `DEBUG` {: #DEBUG }
-
-Default: `True`
-
-A boolean that turns on/off debug mode.
-
-_Never run a Healthchecks instance in production with the debug mode turned on!_
-
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#debug).
-
-## `DEFAULT_FROM_EMAIL` {: #DEFAULT_FROM_EMAIL }
-
-Default: `healthchecks@example.org`
-
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email).
-
 ## `DB` {: #DB }
 
 Default: `sqlite`
@@ -108,6 +90,24 @@ Default: `postgres` (PostgreSQL) or `root` (MySQL)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#user).
+
+## `DEBUG` {: #DEBUG }
+
+Default: `True`
+
+A boolean that turns on/off debug mode.
+
+_Never run a Healthchecks instance in production with the debug mode turned on!_
+
+This is a standard Django setting, read more in
+[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#debug).
+
+## `DEFAULT_FROM_EMAIL` {: #DEFAULT_FROM_EMAIL }
+
+Default: `healthchecks@example.org`
+
+This is a standard Django setting, read more in
+[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email).
 
 ## `DISCORD_CLIENT_ID` {: #DISCORD_CLIENT_ID }
 
@@ -408,19 +408,19 @@ To enable the Signal integration:
   example given in the signal-cli instructions.
 * Set the `SIGNAL_CLI_ENABLED` environment variable to `True`.
 
-## `SITE_ROOT` {: #SITE_ROOT }
-
-Default: `http://localhost:8000`
-
-The base URL of this Healthchecks instance. Healthchecks uses `SITE_ROOT` whenever
-it needs to construct absolute URLs.
-
 ## `SITE_NAME` {: #SITE_NAME }
 
 Default: `Mychecks`
 
 The display name of this Healthchecks instance. Healthchecks uses it throughout
 its web UI and documentation.
+
+## `SITE_ROOT` {: #SITE_ROOT }
+
+Default: `http://localhost:8000`
+
+The base URL of this Healthchecks instance. Healthchecks uses `SITE_ROOT` whenever
+it needs to construct absolute URLs.
 
 ## `SLACK_CLIENT_ID` {: #SLACK_CLIENT_ID }
 

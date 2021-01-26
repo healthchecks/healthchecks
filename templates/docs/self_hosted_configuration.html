@@ -19,16 +19,6 @@ integration.</p>
 <div class="highlight"><pre><span></span><code>pip install apprise
 </code></pre></div>
 
-<h2 id="DEBUG"><code>DEBUG</code></h2>
-<p>Default: <code>True</code></p>
-<p>A boolean that turns on/off debug mode.</p>
-<p><em>Never run a Healthchecks instance in production with the debug mode turned on!</em></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#debug">Django documentation</a>.</p>
-<h2 id="DEFAULT_FROM_EMAIL"><code>DEFAULT_FROM_EMAIL</code></h2>
-<p>Default: <code>healthchecks@example.org</code></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email">Django documentation</a>.</p>
 <h2 id="DB"><code>DB</code></h2>
 <p>Default: <code>sqlite</code></p>
 <p>The database enginge to use. Possible values: <code>sqlite</code>, <code>postgres</code>, <code>mysql</code>.</p>
@@ -62,6 +52,16 @@ integration.</p>
 <p>Default: <code>postgres</code> (PostgreSQL) or <code>root</code> (MySQL)</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/3.1/ref/settings/#user">Django documentation</a>.</p>
+<h2 id="DEBUG"><code>DEBUG</code></h2>
+<p>Default: <code>True</code></p>
+<p>A boolean that turns on/off debug mode.</p>
+<p><em>Never run a Healthchecks instance in production with the debug mode turned on!</em></p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#debug">Django documentation</a>.</p>
+<h2 id="DEFAULT_FROM_EMAIL"><code>DEFAULT_FROM_EMAIL</code></h2>
+<p>Default: <code>healthchecks@example.org</code></p>
+<p>This is a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email">Django documentation</a>.</p>
 <h2 id="DISCORD_CLIENT_ID"><code>DISCORD_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Discord Client ID, required by the Discord integration.</p>
@@ -256,14 +256,14 @@ notifications. Healthcecks interacts with signal-cli over DBus.</p>
   example given in the signal-cli instructions.</li>
 <li>Set the <code>SIGNAL_CLI_ENABLED</code> environment variable to <code>True</code>.</li>
 </ul>
-<h2 id="SITE_ROOT"><code>SITE_ROOT</code></h2>
-<p>Default: <code>http://localhost:8000</code></p>
-<p>The base URL of this Healthchecks instance. Healthchecks uses <code>SITE_ROOT</code> whenever
-it needs to construct absolute URLs.</p>
 <h2 id="SITE_NAME"><code>SITE_NAME</code></h2>
 <p>Default: <code>Mychecks</code></p>
 <p>The display name of this Healthchecks instance. Healthchecks uses it throughout
 its web UI and documentation.</p>
+<h2 id="SITE_ROOT"><code>SITE_ROOT</code></h2>
+<p>Default: <code>http://localhost:8000</code></p>
+<p>The base URL of this Healthchecks instance. Healthchecks uses <code>SITE_ROOT</code> whenever
+it needs to construct absolute URLs.</p>
 <h2 id="SLACK_CLIENT_ID"><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Slack Client ID, required by the Slack integration.</p>
