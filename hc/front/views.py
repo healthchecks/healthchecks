@@ -749,41 +749,40 @@ def channels(request, code):
     channels = Channel.objects.filter(project=project)
     channels = channels.order_by("created")
     channels = channels.annotate(n_checks=Count("checks"))
-
     ctx = {
         "page": "channels",
         "rw": rw,
         "project": project,
         "profile": project.owner_profile,
         "channels": channels,
-        "enable_email": settings.EMAIL_ENABLED is True,
         "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_call": settings.TWILIO_AUTH is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
-        "enable_mattermost": settings.MATTERMOST_ENABLED is True,
-        "enable_msteams": settings.MSTEAMS_ENABLED is True,
-        "enable_pagerduty": settings.PAGERDUTY_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
-        "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
-        "enable_spike": settings.SPIKE_ENABLED is True,
         "enable_shell": settings.SHELL_ENABLED is True,
-        "enable_slack": settings.SLACK_ENABLED is True,
         "enable_signal": settings.SIGNAL_CLI_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
-        "enable_sms": settings.SMS_ENABLED is True,
-        "enable_telegram": settings.TELEGRAM_ENABLED is True,
-        "enable_trello": settings.TRELLO_ENABLED is True,
+        "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
+        "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
+
+        "enable_mattermost": settings.MATTERMOST_ENABLED is True,
+        "enable_msteams": settings.MSTEAMS_ENABLED is True,
+        "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
+        "enable_spike": settings.SPIKE_ENABLED is True,
         "enable_zulip": settings.ZULIP_ENABLED is True,
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
         "enable_victorops": settings.VICTOROPS_ENABLED is True,
         "enable_webhook": settings.WEBHOOK_ENABLED is True,
-        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
+
         "use_payments": settings.USE_PAYMENTS,
     }
+
 
     return render(request, "front/channels.html", ctx)
 

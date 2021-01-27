@@ -26,7 +26,7 @@ def envint(s, default):
     return int(v)
 
 
-SECRET_KEY = os.getenv("SECRET_KEY", "")
+SECRET_KEY = os.getenv("SECRET_KEY", "---")
 METRICS_KEY = os.getenv("METRICS_KEY")
 DEBUG = envbool("DEBUG", "True")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
@@ -172,8 +172,9 @@ COMPRESS_CSS_HASHING_METHOD = "content"
 # WebAuthn
 RP_ID = os.getenv("RP_ID")
 
+#Integrations are enabled is settings are not empty
+
 # Discord integration
-DISCORD_ENABLED = envbool("DISCORD_ENABLED", "True")
 DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
 
@@ -187,25 +188,21 @@ EMAIL_USE_TLS = envbool("EMAIL_USE_TLS", "True")
 EMAIL_USE_VERIFICATION = envbool("EMAIL_USE_VERIFICATION", "True")
 
 # Slack integration
-SLACK_ENABLED = envbool("SLACK_ENABLED", "True")
 SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID")
 SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET")
 
 # Pushover integration
-PUSHOVER_ENABLED = envbool("PUSHOVER_ENABLED", "True")
 PUSHOVER_API_TOKEN = os.getenv("PUSHOVER_API_TOKEN")
 PUSHOVER_SUBSCRIPTION_URL = os.getenv("PUSHOVER_SUBSCRIPTION_URL")
 PUSHOVER_EMERGENCY_RETRY_DELAY = int(os.getenv("PUSHOVER_EMERGENCY_RETRY_DELAY", "300"))
 PUSHOVER_EMERGENCY_EXPIRATION = int(os.getenv("PUSHOVER_EMERGENCY_EXPIRATION", "86400"))
 
 # Pushbullet integration
-PUSHBULLET_ENABLED = envbool("PUSHBULLET_ENABLED", "True")
 PUSHBULLET_CLIENT_ID = os.getenv("PUSHBULLET_CLIENT_ID")
 PUSHBULLET_CLIENT_SECRET = os.getenv("PUSHBULLET_CLIENT_SECRET")
 
 # Telegram integration -- override in local_settings.py
-TELEGRAM_ENABLED = envbool("TELEGRAM_ENABLED", "True")
-TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "ExampleBot")
+TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 # SMS and WhatsApp (Twilio) integration
@@ -219,11 +216,9 @@ PAGERDUTY_ENABLED = envbool("PAGERDUTY_ENABLED", "True")
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 
 # Trello
-TRELLO_ENABLED = envbool("TRELLO_ENABLED", "True")
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 
 # Matrix
-MATRIX_ENABLED = envbool("MATRIX_ENABLED", "True")
 MATRIX_HOMESERVER = os.getenv("MATRIX_HOMESERVER")
 MATRIX_USER_ID = os.getenv("MATRIX_USER_ID")
 MATRIX_ACCESS_TOKEN = os.getenv("MATRIX_ACCESS_TOKEN")
@@ -235,21 +230,16 @@ APPRISE_ENABLED = envbool("APPRISE_ENABLED", "False")
 SHELL_ENABLED = envbool("SHELL_ENABLED", "False")
 
 #Intégration Feature Toggle
-MATTERMOST_ENABLED = envbool("MATTERMOST_ENABLED", "True")
-OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "True")
-PAGERTREE_ENABLED = envbool("PAGERTREE_ENABLED", "True")
-PROMETHEUS_ENABLED = envbool("PROMETHEUS_ENABLED", "True")
-VICTOROPS_ENABLED = envbool("VICTOROPS_ENABLED", "True")
-SMS_ENABLED = envbool("SMS_ENABLED", "True")
-CALL_ENABLED = envbool("CALL_ENABLED", "True")
+MATTERMOST_ENABLED = envbool("MATTERMOST_ENABLED", "False")
+OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "False")
+VICTOROPS_ENABLED = envbool("VICTOROPS_ENABLED", "False")
 WEBHOOK_ENABLED = envbool("WEBHOOK_ENABLED", "True")
-WHATSAPP_ENABLED = envbool("WHATSAPP_ENABLED", "True")
 MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
-ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
-SPIKE_ENABLED = envbool("SPIKE_ENABLED", "True")
+ZULIP_ENABLED = envbool("ZULIP_ENABLED", "False")
+SPIKE_ENABLED = envbool("SPIKE_ENABLED", "False")
+PROMETHEUS_ENABLED = envbool("PROMETHEUS_ENABLED", "False")
 
 # LINE Notify
-LINENOTIFY_ENABLED = envbool("LINENOTIFY_ENABLED", "True")
 LINENOTIFY_CLIENT_ID = os.getenv("LINENOTIFY_CLIENT_ID")
 LINENOTIFY_CLIENT_SECRET = os.getenv("LINENOTIFY_CLIENT_SECRET")
 
