@@ -48,3 +48,8 @@ class CronPreviewTestCase(BaseTestCase):
         payload = {"schedule": "0 3 * * *", "tz": "Europe/Riga"}
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertNotContains(r, "Invalid cron expression", status_code=200)
+
+    def test_it_handles_feb_29(self):
+        payload = {"schedule": "0 0 29 2 *", "tz": "UTC"}
+        r = self.client.post("/checks/cron_preview/", payload)
+        self.assertContains(r, "Feb 29")

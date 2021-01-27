@@ -22,6 +22,10 @@ def validate(obj, schema, obj_name="value"):
             raise ValidationError("%s is too long" % obj_name)
         if schema.get("format") == "cron":
             try:
+                # Does it have 5 components?
+                if len(obj.split()) != 5:
+                    raise ValueError()
+
                 # Does croniter accept the schedule?
                 it = croniter(obj)
                 # Can it calculate the next datetime?
