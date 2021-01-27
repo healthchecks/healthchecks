@@ -262,7 +262,7 @@ class Webhook(HttpTransport):
 
 class Slack(HttpTransport):
     def notify(self, check):
-        if not settings.SLACK_ENABLED:
+        if settings.SLACK_CLIENT_ID is None:
             return "Slack is not enabled"
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
@@ -312,7 +312,7 @@ class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
     def notify(self, check):
-        if not settings.PAGERDUTY_ENABLED:
+        if settings.PUSHBULLET_CLIENT_ID is not None:
             return "PagerDuty is not enabled"
         description = tmpl("pd_description.html", check=check)
         payload = {
@@ -353,7 +353,7 @@ class PagerTeam(HttpTransport):
 
 class Pushbullet(HttpTransport):
     def notify(self, check):
-        if not settings.PUSHBULLET_ENABLED:
+        if settings.PUSHBULLET_CLIENT_ID is None:
             return "Pushbullet is not enabled"
         text = tmpl("pushbullet_message.html", check=check)
         url = "https://api.pushbullet.com/v2/pushes"
@@ -370,7 +370,7 @@ class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
 
     def notify(self, check):
-        if not settings.PUSHOVER_ENABLED:
+        if settings.PUSHOVER_API_TOKEN is None:
             return "Pushover is not enabled"
         others = self.checks().filter(status="down").exclude(code=check.code)
 
@@ -430,7 +430,7 @@ class Matrix(HttpTransport):
         return url
 
     def notify(self, check):
-        if not settings.MATRIX_ENABLED:
+        if settings.MATRIX_ACCESS_TOKEN is None:
             return "Matrix Chat is not enabled"
         plain = tmpl("matrix_description.html", check=check)
         formatted = tmpl("matrix_description_formatted.html", check=check)
@@ -446,7 +446,7 @@ class Matrix(HttpTransport):
 
 class Discord(HttpTransport):
     def notify(self, check):
-        if not settings.DISCORD_ENABLED:
+        if settings.DISCORD_CLIENT_ID is None:
             return "Discord Chat is not enabled"
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
@@ -473,7 +473,7 @@ class Telegram(HttpTransport):
         )
 
     def notify(self, check):
-        if not settings.TELEGRAM_ENABLED:
+        if settings.TELEGRAM_TOKEN is None:
             return "Telegram Chat is not enabled"
         from hc.api.models import TokenBucket
 
@@ -491,7 +491,7 @@ class Sms(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
-        if not settings.SMS_ENABLED:
+        if settings.TWILIO_AUTH is None:
             return "Sms is not enabled"
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
@@ -519,7 +519,7 @@ class Call(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
-        if not settings.CALL_ENABLED:
+        if not settings.TWILIO_AUTH is None:
             return "Call is not enabled"
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_call():
@@ -550,7 +550,7 @@ class WhatsApp(HttpTransport):
             return not self.channel.whatsapp_notify_up
 
     def notify(self, check):
-        if not settings.WHATSAPP_ENABLED:
+        if not settings.TWILIO_USE_WHATSAPP:
             return "WhatsApp is not enabled"
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
@@ -578,7 +578,7 @@ class Trello(HttpTransport):
         return check.status != "down"
 
     def notify(self, check):
-        if not settings.TRELLO_ENABLED:
+        if settings.TRELLO_APP_KEY is None:
             return "Trello is not enabled"
         params = {
             "idList": self.channel.trello_list_id,
@@ -695,7 +695,7 @@ class LineNotify(HttpTransport):
     URL = "https://notify-api.line.me/api/notify"
 
     def notify(self, check):
-        if not settings.LINENOTIFY_ENABLED:
+        if settings.LINENOTIFY_CLIENT_ID is None:
             return "LineNotify is not enabled"
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",

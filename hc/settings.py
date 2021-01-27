@@ -172,7 +172,7 @@ COMPRESS_CSS_HASHING_METHOD = "content"
 # WebAuthn
 RP_ID = os.getenv("RP_ID")
 
-#Integrations are enabled is settings are not empty
+#Integrations are enabled if settings are not empty
 
 # Discord integration
 DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
@@ -202,7 +202,7 @@ PUSHBULLET_CLIENT_ID = os.getenv("PUSHBULLET_CLIENT_ID")
 PUSHBULLET_CLIENT_SECRET = os.getenv("PUSHBULLET_CLIENT_SECRET")
 
 # Telegram integration -- override in local_settings.py
-TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME")
+TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "ExampleBot")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 # SMS and WhatsApp (Twilio) integration
@@ -229,22 +229,24 @@ APPRISE_ENABLED = envbool("APPRISE_ENABLED", "False")
 # Local shell commands
 SHELL_ENABLED = envbool("SHELL_ENABLED", "False")
 
-#Intégration Feature Toggle
-MATTERMOST_ENABLED = envbool("MATTERMOST_ENABLED", "False")
-OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "False")
-VICTOROPS_ENABLED = envbool("VICTOROPS_ENABLED", "False")
-WEBHOOK_ENABLED = envbool("WEBHOOK_ENABLED", "True")
-MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
-ZULIP_ENABLED = envbool("ZULIP_ENABLED", "False")
-SPIKE_ENABLED = envbool("SPIKE_ENABLED", "False")
-PROMETHEUS_ENABLED = envbool("PROMETHEUS_ENABLED", "False")
-
 # LINE Notify
 LINENOTIFY_CLIENT_ID = os.getenv("LINENOTIFY_CLIENT_ID")
 LINENOTIFY_CLIENT_SECRET = os.getenv("LINENOTIFY_CLIENT_SECRET")
 
 # Signal
 SIGNAL_CLI_ENABLED = envbool("SIGNAL_CLI_ENABLED", "False")
+
+#Intégration Feature Toggle for integrations that need no parms
+MATTERMOST_ENABLED = envbool("MATTERMOST_ENABLED", "True")
+OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "True")
+VICTOROPS_ENABLED = envbool("VICTOROPS_ENABLED", "True")
+WEBHOOK_ENABLED = envbool("WEBHOOK_ENABLED", "True")
+MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
+ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
+SPIKE_ENABLED = envbool("SPIKE_ENABLED", "True")
+PROMETHEUS_ENABLED = envbool("PROMETHEUS_ENABLED", "True")
+PAGERTREE_ENABLED = envbool("PAGERTREE_ENABLED", "True")
+
 
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *

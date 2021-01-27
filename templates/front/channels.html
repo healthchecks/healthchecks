@@ -187,7 +187,7 @@
     <h1 class="ai-title">Add More</h1>
     <ul class="add-integration">
 
-        {% if enable_slack %}
+        {% if enable_slack_btn %}
         <li>
             <img src="{% static 'img/integrations/slack.png' %}"
                 class="icon" alt="Slack icon" />
@@ -301,7 +301,7 @@
         </li>
         {% endif %}
 
-        {% if enable_pagerduty %}
+        {% if enable_pdc %}
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />

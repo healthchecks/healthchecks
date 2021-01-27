@@ -749,6 +749,7 @@ def channels(request, code):
     channels = Channel.objects.filter(project=project)
     channels = channels.order_by("created")
     channels = channels.annotate(n_checks=Count("checks"))
+
     ctx = {
         "page": "channels",
         "rw": rw,
@@ -770,7 +771,7 @@ def channels(request, code):
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-
+        "enable_pagertree": settings.PAGERTREE_ENABLED is True,
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
         "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
@@ -779,7 +780,6 @@ def channels(request, code):
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
         "enable_victorops": settings.VICTOROPS_ENABLED is True,
         "enable_webhook": settings.WEBHOOK_ENABLED is True,
-
         "use_payments": settings.USE_PAYMENTS,
     }
 
