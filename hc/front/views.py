@@ -756,6 +756,7 @@ def channels(request, code):
         "project": project,
         "profile": project.owner_profile,
         "channels": channels,
+        "enable_email": settings.EMAIL_ENABLED is True,
         "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_call": settings.TWILIO_AUTH is not None,
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,

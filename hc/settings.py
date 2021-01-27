@@ -26,7 +26,7 @@ def envint(s, default):
     return int(v)
 
 
-SECRET_KEY = os.getenv("SECRET_KEY", "---")
+SECRET_KEY = os.getenv("SECRET_KEY", "")
 METRICS_KEY = os.getenv("METRICS_KEY")
 DEBUG = envbool("DEBUG", "True")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
@@ -212,7 +212,6 @@ TWILIO_FROM = os.getenv("TWILIO_FROM")
 TWILIO_USE_WHATSAPP = envbool("TWILIO_USE_WHATSAPP", "False")
 
 # PagerDuty
-PAGERDUTY_ENABLED = envbool("PAGERDUTY_ENABLED", "True")
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 
 # Trello
