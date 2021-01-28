@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ## Bug Fixes
 - Fix unwanted HTML escaping in SMS and WhatsApp notifications
+- Fix a crash when adding an integration for an empty Trello account
 
 ## v1.18.0 - 2020-12-09
 

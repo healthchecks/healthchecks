@@ -24,3 +24,12 @@ class AddTrelloTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
+
+    @patch("hc.front.views.requests.get")
+    def test_it_handles_no_lists(self, mock_get):
+        mock_get.return_value.json.return_value = []
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url)
+        self.assertNotContains(r, "Please select the Trello list")
+        self.assertContains(r, "Could not find any boards with lists")

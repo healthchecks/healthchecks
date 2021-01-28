@@ -1661,8 +1661,12 @@ def add_signal(request, code):
 def add_trello(request, code):
     project = _get_rw_project_for_user(request, code)
     if request.method == "POST":
+        form = forms.AddTrelloForm(request.POST)
+        if not form.is_valid():
+            return HttpResponseBadRequest()
+
         channel = Channel(project=project, kind="trello")
-        channel.value = request.POST["settings"]
+        channel.value = form.get_value()
         channel.save()
 
         channel.assign_all_checks()
@@ -1753,14 +1757,17 @@ def trello_settings(request):
         {
             "key": settings.TRELLO_APP_KEY,
             "token": token,
+            "filter": "open",
             "fields": "id,name",
             "lists": "open",
             "list_fields": "id,name",
         }
     )
 
-    r = requests.get(url)
-    ctx = {"token": token, "data": r.json()}
+    boards = requests.get(url).json()
+    num_lists = sum(len(board["lists"]) for board in boards)
+
+    ctx = {"token": token, "boards": boards, "num_lists": num_lists}
     return render(request, "integrations/trello_settings.html", ctx)
 
 

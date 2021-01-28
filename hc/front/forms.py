@@ -280,3 +280,13 @@ class AddZulipForm(forms.Form):
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
+class AddTrelloForm(forms.Form):
+    token = forms.RegexField(regex=r"^[0-9a-fA-F]{64}$")
+    board_name = forms.CharField(max_length=100)
+    list_name = forms.CharField(max_length=100)
+    list_id = forms.RegexField(regex=r"^[0-9a-fA-F]{16,32}$")
+
+    def get_value(self):
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)

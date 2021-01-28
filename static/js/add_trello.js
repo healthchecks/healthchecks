@@ -1,12 +1,9 @@
 $(function() {
     function updateSettings() {
         var opt = $('#list-selector').find(":selected");
-        $("#settings").val(JSON.stringify({
-            "token": $("#settings").data("token"),
-            "list_id": opt.data("listId"),
-            "board_name": opt.data("boardName"),
-            "list_name": opt.data("listName")
-        }));
+        $("#board-name").val(opt.data("boardName"));
+        $("#list-name").val(opt.data("listName"));
+        $("#list-id").val(opt.data("listId"));
     }
 
     var tokenMatch = window.location.hash.match(/token=(\w+)/);

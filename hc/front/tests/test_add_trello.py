@@ -18,14 +18,10 @@ class AddTrelloTestCase(BaseTestCase):
 
     def test_it_works(self):
         form = {
-            "settings": json.dumps(
-                {
-                    "token": "fake-token",
-                    "board_name": "My Board",
-                    "list_name": "My List",
-                    "list_id": "fake-list-id",
-                }
-            )
+            "token": "0" * 64,
+            "board_name": "My Board",
+            "list_name": "My List",
+            "list_id": "1" * 32,
         }
 
         self.client.login(username="alice@example.org", password="password")
@@ -34,7 +30,7 @@ class AddTrelloTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "trello")
-        self.assertEqual(c.trello_token, "fake-token")
+        self.assertEqual(c.trello_token, "0" * 64)
         self.assertEqual(c.project, self.project)
 
     @override_settings(TRELLO_APP_KEY=None)
@@ -50,3 +46,16 @@ class AddTrelloTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_requires_board_name(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {
+            "token": "0" * 64,
+            "board_name": "",
+            "list_name": "My List",
+            "list_id": "1" * 32,
+        }
+
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 400)

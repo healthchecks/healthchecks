@@ -1,15 +1,19 @@
-<p class="text-success">Authentication successful!</p>
+{% if num_lists %}
+<p class="alert alert-success">Authentication successful!</p>
 <p>Please select the Trello list to post notifications to:</p>
 
 <form method="post" class="form-horizontal">
     {% csrf_token %}
-    <input type="hidden" id="settings" name="settings" data-token="{{ token }}"/>
+    <input type="hidden" name="token" value="{{ token }}" />
+    <input id="board-name" type="hidden" name="board_name" value="" />
+    <input id="list-name" type="hidden" name="list_name" value="" />
+    <input id="list-id" type="hidden" name="list_id" value="" />
 
     <div class="form-group {{ form.value.css_classes }}">
         <label for="list-selector" class="col-sm-3 control-label">Post Notifications to</label>
         <div class="col-sm-3">
             <select id="list-selector" name="board_list_id" class="form-control">
-            {% for board in data %}
+            {% for board in boards %}
                 <optgroup label="{{ board.name }}">
                     {% for list in board.lists %}
                         <option
@@ -35,3 +39,9 @@
         </div>
     </div>
 </form>
+{% else %}
+<p class="alert alert-warning">
+    Could not find any boards with lists in your Trello account.
+    Are you logged in the correct Trello account?
+</p>
+{% endif %}
