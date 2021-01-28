@@ -90,137 +90,13 @@ visit `http://localhost:8000/admin/`
 
 ## Configuration
 
-Healthchecks prepares its configuration in `hc/settings.py`. It reads configuration
-from two places:
+Healthchecks reads configuration from environment variables.
 
- * environment variables (see the variable names in the table below)
- * it imports configuration for `hc/local_settings.py` file, if it exists
-
-You can use either mechanism, depending on what is more convenient. Using
-`hc/local_settings.py` allows more flexibility: you can set
-each and every [Django setting](https://docs.djangoproject.com/en/3.1/ref/settings/),
-you can run Python code to load configuration from an external source.
-
-Healthchecks reads configuration from the following environment variables:
-
-| Environment variable | Default value | Notes
-| -------------------- | ------------- | ----- |
-| [SECRET_KEY](https://docs.djangoproject.com/en/3.1/ref/settings/#secret-key) | `"---"`
-| [DEBUG](https://docs.djangoproject.com/en/3.1/ref/settings/#debug) | `True` | Set to `False` for production
-| [ALLOWED_HOSTS](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts) | `*` | Separate multiple hosts with commas
-| [DEFAULT_FROM_EMAIL](https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email) | `"healthchecks@example.org"`
-| USE_PAYMENTS | `False`
-| REGISTRATION_OPEN | `True`
-| DB | `"sqlite"` | Set to `"postgres"` or `"mysql"`
-| [DB_HOST](https://docs.djangoproject.com/en/3.1/ref/settings/#host) | `""` *(empty string)*
-| [DB_PORT](https://docs.djangoproject.com/en/3.1/ref/settings/#port) | `""` *(empty string)*
-| [DB_NAME](https://docs.djangoproject.com/en/3.1/ref/settings/#name) | `"hc"` (PostgreSQL, MySQL) or `"/path/to/project/hc.sqlite"` (SQLite) | For SQLite, specify the full path to the database file.
-| [DB_USER](https://docs.djangoproject.com/en/3.1/ref/settings/#user) | `"postgres"` or `"root"`
-| [DB_PASSWORD](https://docs.djangoproject.com/en/3.1/ref/settings/#password) | `""` *(empty string)*
-| [DB_CONN_MAX_AGE](https://docs.djangoproject.com/en/3.1/ref/settings/#conn-max-age) | `0`
-| DB_SSLMODE | `"prefer"` | PostgreSQL-specific, [details](https://blog.github.com/2018-10-21-october21-incident-report/)
-| DB_TARGET_SESSION_ATTRS | `"read-write"` | PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/static/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS)
-| [EMAIL_HOST](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host) | `""` *(empty string)*
-| [EMAIL_PORT](https://docs.djangoproject.com/en/3.1/ref/settings/#email-port) | `"587"`
-| [EMAIL_HOST_USER](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-user) | `""` *(empty string)*
-| [EMAIL_HOST_PASSWORD](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-password) | `""` *(empty string)*
-| [EMAIL_USE_TLS](https://docs.djangoproject.com/en/3.1/ref/settings/#email-use-tls) | `"True"`
-| EMAIL_USE_VERIFICATION | `"True"` | Whether to send confirmation links when adding email integrations
-| SITE_ROOT | `"http://localhost:8000"`
-| SITE_NAME | `"Mychecks"`
-| RP_ID | `None` | Enables WebAuthn support
-| MASTER_BADGE_LABEL | `"Mychecks"`
-| PING_ENDPOINT | `"http://localhost:8000/ping/"`
-| PING_EMAIL_DOMAIN | `"localhost"`
-| PING_BODY_LIMIT | 10000 | In bytes. Set to `None` to always log full request body
-| APPRISE_ENABLED | `"False"`
-| DISCORD_CLIENT_ID | `None`
-| DISCORD_CLIENT_SECRET | `None`
-| LINENOTIFY_CLIENT_ID | `None`
-| LINENOTIFY_CLIENT_SECRET | `None`
-| MATRIX_ACCESS_TOKEN | `None`
-| MATRIX_HOMESERVER | `None`
-| MATRIX_USER_ID | `None`
-| PD_VENDOR_KEY | `None`
-| PUSHBULLET_CLIENT_ID | `None`
-| PUSHBULLET_CLIENT_SECRET | `None`
-| PUSHOVER_API_TOKEN | `None`
-| PUSHOVER_EMERGENCY_EXPIRATION | `86400`
-| PUSHOVER_EMERGENCY_RETRY_DELAY | `300`
-| PUSHOVER_SUBSCRIPTION_URL | `None`
-| REMOTE_USER_HEADER | `None` | See [External Authentication](#external-authentication) for details.
-| SHELL_ENABLED | `"False"`
-| SIGNAL_CLI_ENABLED | `"False"`
-| SLACK_CLIENT_ID | `None`
-| SLACK_CLIENT_SECRET | `None`
-| TELEGRAM_BOT_NAME | `"ExampleBot"`
-| TELEGRAM_TOKEN | `None`
-| TRELLO_APP_KEY | `None`
-| TWILIO_ACCOUNT | `None`
-| TWILIO_AUTH | `None`
-| TWILIO_FROM | `None`
-| TWILIO_USE_WHATSAPP | `"False"`
-
-
-Some useful settings keys to override are:
-
-`SITE_ROOT` is used to build fully qualified URLs for pings, and for use in
-emails and notifications. Example:
-
-```python
-SITE_ROOT = "https://my-monitoring-project.com"
-```
-
-`SITE_NAME` has the default value of "Mychecks" and is used throughout
-the templates. Replace it with your own name to personalize your installation.
-Example:
-
-```python
-SITE_NAME = "My Monitoring Project"
-```
-
-`REGISTRATION_OPEN` controls whether site visitors can create new accounts.
-Set it to `False` if you are setting up a private healthchecks instance, but
-it needs to be publicly accessible (so, for example, your cloud services
-can send pings).
-
-If you close new user registration, you can still selectively invite users
-to your team account.
-
-`EMAIL_USE_VERIFICATION` enables/disables the sending of a verification
-link when an email address is added to the list of notification methods.
-Set it to `False` if you are setting up a private healthchecks instance where
-you trust your users and want to avoid the extra verification step.
-
-
-`PING_BODY_LIMIT` sets the size limit in bytes for logged ping request bodies.
-The default value is 10000 (10 kilobytes). You can remove the limit altogether by
-setting this value to `None`.
-
-## Database Configuration
-
-Database configuration is loaded from environment variables. If you
-need to use a non-standard configuration, you can override the
-database configuration in `hc/local_settings.py` like so:
-
-```python
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.postgresql',
-        'NAME':     'your-database-name-here',
-        'USER':     'your-database-user-here',
-        'PASSWORD': 'your-database-password-here',
-        'TEST': {'CHARSET': 'UTF8'},
-        'OPTIONS': {
-            ... your custom options here ...
-        }
-    }
-}
-```
+[Full list of configuration parameters](https://healthchecks.io/docs/self_hosted_configuration/).
 
 ## Accessing Administration Panel
 
-healthchecks comes with Django's administration panel where you can manually
+Healthchecks comes with Django's administration panel where you can manually
 view and modify user accounts, projects, checks, integrations etc. To access it,
 
  * if you haven't already, create a superuser account: `./manage.py createsuperuser`
@@ -230,16 +106,15 @@ view and modify user accounts, projects, checks, integrations etc. To access it,
 
 ## Sending Emails
 
-healthchecks must be able to send email messages, so it can send out login
-links and alerts to users. Environment variables can be used to configure
-SMTP settings, or your may put your SMTP server configuration in
-`hc/local_settings.py` like so:
+Healthchecks must be able to send email messages, so it can send out login
+links and alerts to users. Specify your SMTP credentials using the following
+environment variables:
 
 ```python
 EMAIL_HOST = "your-smtp-server-here.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "username"
-EMAIL_HOST_PASSWORD = "password"
+EMAIL_HOST_USER = "smtp-username"
+EMAIL_HOST_PASSWORD = "smtp-password"
 EMAIL_USE_TLS = True
 ```
 
@@ -248,7 +123,7 @@ For more information, have a look at Django documentation,
 
 ## Receiving Emails
 
-healthchecks comes with a `smtpd` management command, which starts up a
+Healthchecks comes with a `smtpd` management command, which starts up a
 SMTP listener service. With the command running, you can ping your
 checks by sending email messages
 to `your-uuid-here@my-monitoring-project.com` email addresses.
@@ -280,7 +155,7 @@ manager like [supervisor](http://supervisord.org/) or systemd.
 
 ## Database Cleanup
 
-With time and use the healthchecks database will grow in size. You may
+With time and use the Healthchecks database will grow in size. You may
 decide to prune old data: inactive user accounts, old checks not assigned
 to users, records of outgoing email messages and records of received pings.
 There are separate Django management commands for each task:
@@ -346,7 +221,7 @@ from the `django-sslserver` package.
 
 ## External Authentication
 
-HealthChecks supports external authentication by means of HTTP headers set by
+Healthchecks supports external authentication by means of HTTP headers set by
 reverse proxies or the WSGI server. This allows you to integrate it into your
 existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy.
 When this option is enabled, **healtchecks will trust the header's value implicitly**,
