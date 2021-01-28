@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Change Zulip onboarding, ask for the zuliprc file (#202)
 - Add a section in Docs about running self-hosted instances
 - Add experimental Dockerfile and docker-compose.yml
+- Add rate limiting for Pushover notifications (6 notifications / user / minute)
 
 ## Bug Fixes
 - Fix unwanted HTML escaping in SMS and WhatsApp notifications

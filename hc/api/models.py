@@ -932,6 +932,13 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 6, 60)
 
     @staticmethod
+    def authorize_pushover(user_key):
+        salted_encoded = (user_key + settings.SECRET_KEY).encode()
+        value = "po-%s" % hashlib.sha1(salted_encoded).hexdigest()
+        # 6 messages for a single user key per minute:
+        return TokenBucket.authorize(value, 6, 60)
+
+    @staticmethod
     def authorize_sudo_code(user):
         value = "sudo-%d" % user.id
 

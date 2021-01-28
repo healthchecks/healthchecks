@@ -358,19 +358,23 @@ class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
 
     def notify(self, check):
-        others = self.checks().filter(status="down").exclude(code=check.code)
-
-        # list() executes the query, to avoid DB access while
-        # rendering a template
-        ctx = {"check": check, "down_checks": list(others)}
-        text = tmpl("pushover_message.html", **ctx)
-        title = tmpl("pushover_title.html", **ctx)
-
         pieces = self.channel.value.split("|")
         user_key, prio = pieces[0], pieces[1]
         # The third element, if present, is the priority for "up" events
         if len(pieces) == 3 and check.status == "up":
             prio = pieces[2]
+
+        from hc.api.models import TokenBucket
+
+        if not TokenBucket.authorize_pushover(user_key):
+            return "Rate limit exceeded"
+
+        others = self.checks().filter(status="down").exclude(code=check.code)
+        # list() executes the query, to avoid DB access while
+        # rendering a template
+        ctx = {"check": check, "down_checks": list(others)}
+        text = tmpl("pushover_message.html", **ctx)
+        title = tmpl("pushover_title.html", **ctx)
 
         payload = {
             "token": settings.PUSHOVER_API_TOKEN,
