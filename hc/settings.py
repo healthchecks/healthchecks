@@ -169,14 +169,7 @@ STATICFILES_FINDERS = (
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_HASHING_METHOD = "content"
 
-# WebAuthn
-RP_ID = os.getenv("RP_ID")
-
-# Discord integration
-DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
-DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
-
-# Email integration
+# SMTP credentials for sending email
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")
 EMAIL_PORT = envint("EMAIL_PORT", "587")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
@@ -184,9 +177,30 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = envbool("EMAIL_USE_TLS", "True")
 EMAIL_USE_VERIFICATION = envbool("EMAIL_USE_VERIFICATION", "True")
 
-# Slack integration
-SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID")
-SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET")
+# WebAuthn
+RP_ID = os.getenv("RP_ID")
+
+# Integrations
+
+# Apprise
+APPRISE_ENABLED = envbool("APPRISE_ENABLED", "False")
+
+# Discord integration
+DISCORD_CLIENT_ID = os.getenv("DISCORD_CLIENT_ID")
+DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
+
+
+# LINE Notify
+LINENOTIFY_CLIENT_ID = os.getenv("LINENOTIFY_CLIENT_ID")
+LINENOTIFY_CLIENT_SECRET = os.getenv("LINENOTIFY_CLIENT_SECRET")
+
+# Matrix
+MATRIX_HOMESERVER = os.getenv("MATRIX_HOMESERVER")
+MATRIX_USER_ID = os.getenv("MATRIX_USER_ID")
+MATRIX_ACCESS_TOKEN = os.getenv("MATRIX_ACCESS_TOKEN")
+
+# PagerDuty
+PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 
 # Pushover integration
 PUSHOVER_API_TOKEN = os.getenv("PUSHOVER_API_TOKEN")
@@ -198,6 +212,16 @@ PUSHOVER_EMERGENCY_EXPIRATION = int(os.getenv("PUSHOVER_EMERGENCY_EXPIRATION", "
 PUSHBULLET_CLIENT_ID = os.getenv("PUSHBULLET_CLIENT_ID")
 PUSHBULLET_CLIENT_SECRET = os.getenv("PUSHBULLET_CLIENT_SECRET")
 
+# Local shell commands
+SHELL_ENABLED = envbool("SHELL_ENABLED", "False")
+
+# Signal
+SIGNAL_CLI_ENABLED = envbool("SIGNAL_CLI_ENABLED", "False")
+
+# Slack integration
+SLACK_CLIENT_ID = os.getenv("SLACK_CLIENT_ID")
+SLACK_CLIENT_SECRET = os.getenv("SLACK_CLIENT_SECRET")
+
 # Telegram integration -- override in local_settings.py
 TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "ExampleBot")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -208,29 +232,9 @@ TWILIO_AUTH = os.getenv("TWILIO_AUTH")
 TWILIO_FROM = os.getenv("TWILIO_FROM")
 TWILIO_USE_WHATSAPP = envbool("TWILIO_USE_WHATSAPP", "False")
 
-# PagerDuty
-PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
-
 # Trello
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 
-# Matrix
-MATRIX_HOMESERVER = os.getenv("MATRIX_HOMESERVER")
-MATRIX_USER_ID = os.getenv("MATRIX_USER_ID")
-MATRIX_ACCESS_TOKEN = os.getenv("MATRIX_ACCESS_TOKEN")
-
-# Apprise
-APPRISE_ENABLED = envbool("APPRISE_ENABLED", "False")
-
-# Local shell commands
-SHELL_ENABLED = envbool("SHELL_ENABLED", "False")
-
-# LINE Notify
-LINENOTIFY_CLIENT_ID = os.getenv("LINENOTIFY_CLIENT_ID")
-LINENOTIFY_CLIENT_SECRET = os.getenv("LINENOTIFY_CLIENT_SECRET")
-
-# Signal
-SIGNAL_CLI_ENABLED = envbool("SIGNAL_CLI_ENABLED", "False")
-
+# Read additional configuration from hc/local_settings.py if it exists
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
