@@ -370,9 +370,10 @@ from the `django-sslserver` package.
 
 ## `SECRET_KEY` {: #SECRET_KEY }
 
-Default: `""` (empty string)
+Default: `---`
 
-A secret key used for cryptographic signing.
+A secret key used for cryptographic signing, and should be set to a unique,
+unpredictable value.
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#secret-key).

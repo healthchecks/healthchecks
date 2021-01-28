@@ -230,8 +230,9 @@ if your site runs on <code>https://my-hc.example.org</code>, set <code>RP_ID</co
 locally with a self-signed certificate, you can use the <code>runsslserver</code> command
 from the <code>django-sslserver</code> package.</p>
 <h2 id="SECRET_KEY"><code>SECRET_KEY</code></h2>
-<p>Default: <code>""</code> (empty string)</p>
-<p>A secret key used for cryptographic signing.</p>
+<p>Default: <code>---</code></p>
+<p>A secret key used for cryptographic signing, and should be set to a unique,
+unpredictable value.</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/3.1/ref/settings/#secret-key">Django documentation</a>.</p>
 <h2 id="SHELL_ENABLED"><code>SHELL_ENABLED</code></h2>

@@ -70,6 +70,15 @@ def debug_warning():
         """
         )
 
+    if settings.SECRET_KEY == "---":
+        return mark_safe(
+            """
+            <div id="debug-warning">
+            Running with an insecure SECRET_KEY value, do not use in production.
+            </div>
+        """
+        )
+
     return ""
 
 
