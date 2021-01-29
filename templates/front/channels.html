@@ -276,6 +276,7 @@
         </li>
         {% endif %}
 
+        {% if enable_msteams %}
         <li>
             <img src="{% static 'img/integrations/msteams.png' %}"
                 class="icon" alt="Microsoft Teams" />
@@ -284,6 +285,7 @@
             <p>Chat and collaboration platform for Microsoft Office 365 customers.</p>
             <a href="{% url 'hc-add-msteams' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         <li>
             <img src="{% static 'img/integrations/opsgenie.png' %}"

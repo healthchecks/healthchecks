@@ -296,6 +296,7 @@ def index(request):
         "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
+        "enable_msteams": settings.MSTEAMS_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -765,6 +766,7 @@ def channels(request, code):
         "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
+        "enable_msteams": settings.MSTEAMS_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -1783,6 +1785,7 @@ def trello_settings(request):
     return render(request, "integrations/trello_settings.html", ctx)
 
 
+@require_setting("MSTEAMS_ENABLED")
 @login_required
 def add_msteams(request, code):
     project = _get_rw_project_for_user(request, code)

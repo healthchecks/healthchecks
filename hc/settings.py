@@ -202,6 +202,9 @@ MATRIX_ACCESS_TOKEN = os.getenv("MATRIX_ACCESS_TOKEN")
 # Mattermost
 MATTERMOST_ENABLED = envbool("MATTERMOST_ENABLED", "True")
 
+# MS Teams
+MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
+
 # PagerDuty
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 

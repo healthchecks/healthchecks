@@ -610,6 +610,9 @@ class MsTeams(HttpTransport):
         return s
 
     def notify(self, check):
+        if not settings.MSTEAMS_ENABLED:
+            return "MS Teams notifications are not enabled."
+
         text = tmpl("msteams_message.json", check=check)
         payload = json.loads(text)
 

@@ -236,6 +236,12 @@ Default: `True`
 
 A boolean that turns on/off the Mattermost integration. Enabled by default.
 
+## `MSTEAMS_ENABLED` {: #MSTEAMS_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the MS Teams integration. Enabled by default.
+
 ## `PD_VENDOR_KEY` {: #PD_VENDOR_KEY }
 
 Default: `None`
