@@ -248,6 +248,12 @@ Default: `True`
 
 A boolean that turns on/off the Opsgenie integration. Enabled by default.
 
+## `PAGERTREE_ENABLED` {: #PAGERTREE_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the PagerTree integration. Enabled by default.
+
 ## `PD_ENABLED` {: #PD_ENABLED }
 
 Default: `True`

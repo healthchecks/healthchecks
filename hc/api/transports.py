@@ -336,6 +336,9 @@ class PagerDuty(HttpTransport):
 
 class PagerTree(HttpTransport):
     def notify(self, check):
+        if not settings.PAGERTREE_ENABLED:
+            return "PagerTree notifications are not enabled."
+
         url = self.channel.value
         headers = {"Conent-Type": "application/json"}
         payload = {

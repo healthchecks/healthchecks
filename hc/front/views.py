@@ -298,6 +298,7 @@ def index(request):
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
+        "enable_pagertree": settings.PAGERTREE_ENABLED is True,
         "enable_pd": settings.PD_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
@@ -770,6 +771,7 @@ def channels(request, code):
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
+        "enable_pagertree": settings.PAGERTREE_ENABLED is True,
         "enable_pd": settings.PD_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
@@ -1106,6 +1108,7 @@ def add_pdc_complete(request, code, state):
     return redirect("hc-channels", project.code)
 
 
+@require_setting("PAGERTREE_ENABLED")
 @login_required
 def add_pagertree(request, code):
     project = _get_rw_project_for_user(request, code)

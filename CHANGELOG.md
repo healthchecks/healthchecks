@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Add the MSTEAMS_ENABLED setting (#471)
 - Add the OPSGENIE_ENABLED setting (#471)
 - Add the PD_ENABLED setting (#471)
+- Add the PAGERTREE_ENABLED setting (#471)
 
 ## Bug Fixes
 - Fix unwanted HTML escaping in SMS and WhatsApp notifications

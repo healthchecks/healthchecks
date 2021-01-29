@@ -314,6 +314,7 @@
         </li>
         {% endif %}
 
+        {% if enable_pagertree %}
         <li>
             <img src="{% static 'img/integrations/pagertree.png' %}"
                 class="icon" alt="PagerTree icon" />
@@ -322,6 +323,7 @@
             <p>DevOps Incident Management - On-Call Schedules, Alerts, &amp; Notifications.</p>
             <a href="{% url 'hc-add-pagertree' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_call %}
         <li>

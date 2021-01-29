@@ -208,6 +208,9 @@ MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
 # Opsgenie
 OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "True")
 
+# PagerTree
+PAGERTREE_ENABLED = envbool("PAGERTREE_ENABLED", "True")
+
 # PagerDuty
 PD_ENABLED = envbool("PD_ENABLED", "True")
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
