@@ -614,7 +614,8 @@
         </div>
         {% endif %}
 
-	   <div class="col-md-2 col-sm-4 col-xs-6">
+	   {% if enable_spike %}
+       <div class="col-md-2 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="Spike.sh icon" />
                 <h3>
@@ -623,6 +624,7 @@
                 </h3>
             </div>
         </div>
+        {% endif %}
 
         {% if enable_telegram %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">

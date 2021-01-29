@@ -668,6 +668,9 @@ class Zulip(HttpTransport):
 
 class Spike(HttpTransport):
     def notify(self, check):
+        if not settings.SPIKE_ENABLED:
+            return "Spike notifications are not enabled."
+
         url = self.channel.value
         headers = {"Conent-Type": "application/json"}
         payload = {

@@ -402,6 +402,7 @@
         </li>
         {% endif %}
 
+        {% if enable_spike %}
         <li>
             <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="Spike.sh icon" />
 
@@ -410,6 +411,7 @@
 
                 <a href="{% url 'hc-add-spike' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_telegram %}
         <li>

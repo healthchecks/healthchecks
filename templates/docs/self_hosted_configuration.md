@@ -492,6 +492,12 @@ Default: `True`
 
 A boolean that turns on/off the Slack integration. Enabled by default.
 
+## `SPIKE_ENABLED` {: #SPIKE_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Spike.sh integration. Enabled by default.
+
 ## `TELEGRAM_BOT_NAME` {: #TELEGRAM_BOT_NAME }
 
 Default: `ExampleBot`

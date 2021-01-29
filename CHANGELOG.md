@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - Add the PD_ENABLED setting (#471)
 - Add the PAGERTREE_ENABLED setting (#471)
 - Add the PROMETHEUS_ENABLED setting (#471)
+- Add the SPIKE_ENABLED setting (#471)
 
 ## Bug Fixes
 - Fix unwanted HTML escaping in SMS and WhatsApp notifications

@@ -309,6 +309,7 @@ def index(request):
         "enable_slack": settings.SLACK_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_spike": settings.SPIKE_ENABLED is True,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
@@ -783,6 +784,7 @@ def channels(request, code):
         "enable_slack": settings.SLACK_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
+        "enable_spike": settings.SPIKE_ENABLED is True,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
         "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
@@ -1875,6 +1877,7 @@ def metrics(request, code, key):
     return HttpResponse(output(checks), content_type="text/plain")
 
 
+@require_setting("SPIKE_ENABLED")
 @login_required
 def add_spike(request, code):
     project = _get_rw_project_for_user(request, code)
