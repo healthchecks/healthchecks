@@ -304,6 +304,7 @@ def index(request):
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "registration_open": settings.REGISTRATION_OPEN,
     }
@@ -770,6 +771,7 @@ def channels(request, code):
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "use_payments": settings.USE_PAYMENTS,
     }
@@ -931,6 +933,7 @@ def add_email(request, code):
     return render(request, "integrations/add_email.html", ctx)
 
 
+@require_setting("WEBHOOKS_ENABLED")
 @login_required
 def add_webhook(request, code):
     project = _get_rw_project_for_user(request, code)

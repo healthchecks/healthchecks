@@ -381,6 +381,7 @@
             </div>
         </div>
 
+        {% if enable_webhooks %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/webhook.png' %}" class="icon" alt="" />
@@ -390,6 +391,7 @@
                 </h3>
             </div>
         </div>
+        {% endif %}
 
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             {% if enable_slack_btn %}

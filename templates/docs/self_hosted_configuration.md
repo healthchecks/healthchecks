@@ -509,3 +509,9 @@ Default: `False`
 Default: `False`
 
 A boolean that turns on/off billing features.
+
+## `WEBHOOKS_ENABLED` {: #WEBHOOKS_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Webhooks integration. Enabled by default.

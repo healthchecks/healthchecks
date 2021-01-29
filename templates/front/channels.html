@@ -207,6 +207,7 @@
             <a href="{% url 'hc-add-email' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
+        {% if enable_webhooks %}
         <li>
             <img src="{% static 'img/integrations/webhook.png' %}"
                 class="icon" alt="Webhook icon" />
@@ -215,6 +216,7 @@
             <p>Receive an HTTP callback when a check goes down.</p>
             <a href="{% url 'hc-add-webhook' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_apprise %}
         <li>

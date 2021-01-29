@@ -235,6 +235,9 @@ TWILIO_USE_WHATSAPP = envbool("TWILIO_USE_WHATSAPP", "False")
 # Trello
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 
+# Webhooks
+WEBHOOKS_ENABLED = envbool("WEBHOOKS_ENABLED", "True")
+
 # Read additional configuration from hc/local_settings.py if it exists
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *

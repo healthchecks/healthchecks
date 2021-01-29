@@ -232,6 +232,9 @@ class Webhook(HttpTransport):
         return False
 
     def notify(self, check):
+        if not settings.WEBHOOKS_ENABLED:
+            return "Webhook notifications are not enabled."
+
         spec = self.channel.webhook_spec(check.status)
         if not spec["url"]:
             return "Empty webhook URL"
