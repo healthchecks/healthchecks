@@ -242,6 +242,12 @@ Default: `True`
 
 A boolean that turns on/off the MS Teams integration. Enabled by default.
 
+## `OPSGENIE_ENABLED` {: #OPSGENIE_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Opsgenie integration. Enabled by default.
+
 ## `PD_VENDOR_KEY` {: #PD_VENDOR_KEY }
 
 Default: `None`

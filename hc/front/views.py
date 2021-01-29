@@ -297,6 +297,7 @@ def index(request):
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
+        "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -767,6 +768,7 @@ def channels(request, code):
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
+        "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -1432,12 +1434,13 @@ def add_pushover(request, code):
     return render(request, "integrations/add_pushover.html", ctx)
 
 
+@require_setting("OPSGENIE_ENABLED")
 @login_required
 def add_opsgenie(request, code):
     project = _get_rw_project_for_user(request, code)
 
     if request.method == "POST":
-        form = forms.AddOpsGenieForm(request.POST)
+        form = forms.AddOpsgenieForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="opsgenie")
             v = {"region": form.cleaned_data["region"], "key": form.cleaned_data["key"]}
@@ -1447,7 +1450,7 @@ def add_opsgenie(request, code):
             channel.assign_all_checks()
             return redirect("hc-channels", project.code)
     else:
-        form = forms.AddOpsGenieForm()
+        form = forms.AddOpsgenieForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_opsgenie.html", ctx)

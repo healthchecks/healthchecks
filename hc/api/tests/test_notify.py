@@ -80,58 +80,6 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.requests.request")
-    def test_opsgenie_with_legacy_value(self, mock_post):
-        self._setup_data("opsgenie", "123")
-        mock_post.return_value.status_code = 202
-
-        self.channel.notify(self.check)
-        n = Notification.objects.first()
-        self.assertEqual(n.error, "")
-
-        self.assertEqual(mock_post.call_count, 1)
-        args, kwargs = mock_post.call_args
-        self.assertIn("api.opsgenie.com", args[1])
-        payload = kwargs["json"]
-        self.assertIn("DOWN", payload["message"])
-
-    @patch("hc.api.transports.requests.request")
-    def test_opsgenie_up(self, mock_post):
-        self._setup_data("opsgenie", "123", status="up")
-        mock_post.return_value.status_code = 202
-
-        self.channel.notify(self.check)
-        n = Notification.objects.first()
-        self.assertEqual(n.error, "")
-
-        self.assertEqual(mock_post.call_count, 1)
-        args, kwargs = mock_post.call_args
-        method, url = args
-        self.assertTrue(str(self.check.code) in url)
-
-    @patch("hc.api.transports.requests.request")
-    def test_opsgenie_with_json_value(self, mock_post):
-        self._setup_data("opsgenie", json.dumps({"key": "456", "region": "eu"}))
-        mock_post.return_value.status_code = 202
-
-        self.channel.notify(self.check)
-        n = Notification.objects.first()
-        self.assertEqual(n.error, "")
-
-        self.assertEqual(mock_post.call_count, 1)
-        args, kwargs = mock_post.call_args
-        self.assertIn("api.eu.opsgenie.com", args[1])
-
-    @patch("hc.api.transports.requests.request")
-    def test_opsgenie_returns_error(self, mock_post):
-        self._setup_data("opsgenie", "123")
-        mock_post.return_value.status_code = 403
-        mock_post.return_value.json.return_value = {"message": "Nice try"}
-
-        self.channel.notify(self.check)
-        n = Notification.objects.first()
-        self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
-
-    @patch("hc.api.transports.requests.request")
     def test_victorops(self, mock_post):
         self._setup_data("victorops", "123")
         mock_post.return_value.status_code = 200

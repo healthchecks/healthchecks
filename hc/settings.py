@@ -205,6 +205,9 @@ MATTERMOST_ENABLED = envbool("MATTERMOST_ENABLED", "True")
 # MS Teams
 MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
 
+# Opsgenie
+OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "True")
+
 # PagerDuty
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 

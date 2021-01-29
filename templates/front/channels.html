@@ -287,14 +287,16 @@
         </li>
         {% endif %}
 
+        {% if enable_opsgenie %}
         <li>
             <img src="{% static 'img/integrations/opsgenie.png' %}"
-                class="icon" alt="OpsGenie icon" />
+                class="icon" alt="Opsgenie icon" />
 
-            <h2>OpsGenie</h2>
+            <h2>Opsgenie</h2>
             <p> Alerting &amp; Incident Management Solution for Dev &amp; Ops.</p>
             <a href="{% url 'hc-add-opsgenie' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"

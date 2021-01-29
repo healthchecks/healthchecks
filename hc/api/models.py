@@ -36,7 +36,7 @@ CHANNEL_KINDS = (
     ("pagerteam", "Pager Team"),
     ("po", "Pushover"),
     ("pushbullet", "Pushbullet"),
-    ("opsgenie", "OpsGenie"),
+    ("opsgenie", "Opsgenie"),
     ("victorops", "VictorOps"),
     ("discord", "Discord"),
     ("telegram", "Telegram"),
@@ -446,7 +446,7 @@ class Channel(models.Model):
         elif self.kind == "po":
             return transports.Pushover(self)
         elif self.kind == "opsgenie":
-            return transports.OpsGenie(self)
+            return transports.Opsgenie(self)
         elif self.kind == "discord":
             return transports.Discord(self)
         elif self.kind == "telegram":

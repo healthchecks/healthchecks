@@ -279,7 +279,7 @@ class HipChat(HttpTransport):
         return True
 
 
-class OpsGenie(HttpTransport):
+class Opsgenie(HttpTransport):
     @classmethod
     def get_error(cls, response):
         try:
@@ -288,6 +288,9 @@ class OpsGenie(HttpTransport):
             pass
 
     def notify(self, check):
+        if not settings.OPSGENIE_ENABLED:
+            return "Opsgenie notifications are not enabled."
+
         headers = {
             "Conent-Type": "application/json",
             "Authorization": "GenieKey %s" % self.channel.opsgenie_key,

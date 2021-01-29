@@ -99,7 +99,7 @@ class CronForm(forms.Form):
     grace = forms.IntegerField(min_value=1, max_value=43200)
 
 
-class AddOpsGenieForm(forms.Form):
+class AddOpsgenieForm(forms.Form):
     error_css_class = "has-error"
     region = forms.ChoiceField(initial="us", choices=(("us", "US"), ("eu", "EU")))
     key = forms.CharField(max_length=40)
