@@ -230,6 +230,12 @@ Default: `None`
 
 The Matrix bot's user identifier, required by the Matrix integration.
 
+## `MATTERMOST_ENABLED` {: #MATTERMOST_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Mattermost integration. Enabled by default.
+
 ## `PD_VENDOR_KEY` {: #PD_VENDOR_KEY }
 
 Default: `None`

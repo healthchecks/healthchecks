@@ -295,6 +295,7 @@ def index(request):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -763,6 +764,7 @@ def channels(request, code):
         "enable_discord": settings.DISCORD_CLIENT_ID is not None,
         "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
         "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
+        "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -1210,6 +1212,7 @@ def add_slack_complete(request):
     return redirect("hc-channels", project.code)
 
 
+@require_setting("MATTERMOST_ENABLED")
 @login_required
 def add_mattermost(request, code):
     project = _get_rw_project_for_user(request, code)

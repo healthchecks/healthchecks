@@ -263,8 +263,11 @@ class Webhook(HttpTransport):
 
 class Slack(HttpTransport):
     def notify(self, check):
-        if not settings.SLACK_ENABLED:
+        if self.channel.kind == "slack" and not settings.SLACK_ENABLED:
             return "Slack notifications are not enabled."
+
+        if self.channel.kind == "mattermost" and not settings.MATTERMOST_ENABLED:
+            return "Mattermost notifications are not enabled."
 
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
