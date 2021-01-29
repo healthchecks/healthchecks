@@ -263,6 +263,9 @@ class Webhook(HttpTransport):
 
 class Slack(HttpTransport):
     def notify(self, check):
+        if not settings.SLACK_ENABLED:
+            return "Slack notifications are not enabled."
+
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
         return self.post(self.channel.slack_webhook_url, json=payload)

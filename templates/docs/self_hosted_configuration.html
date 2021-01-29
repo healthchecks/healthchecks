@@ -267,10 +267,14 @@ its web UI and documentation.</p>
 it needs to construct absolute URLs.</p>
 <h2 id="SLACK_CLIENT_ID"><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
-<p>The Slack Client ID, required by the Slack integration.</p>
-<p>Go to <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>
-to create a <em>Slack app</em>, and look up its <em>Client ID</em> and <em>Client Secret</em>.</p>
-<p>When setting up the Slack app, make sure to:</p>
+<p>The Slack Client ID, used by the Slack integration.</p>
+<p>The Slack integration can work with or without the Slack Client ID. If
+the Slack Client ID is not set, in the "Integrations - Add Slack" page,
+Healthchecks will ask the user to provide a webhook URL for posting notifications.</p>
+<p>If the Slack Client <em>is</em> set, Healthchecks will use the OAuth2 flow
+to get the webhook URL from Slack. The OAuth2 flow is more user-friendly.
+To set it up, go to <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>
+and create a <em>Slack app</em>. When setting up the Slack app, make sure to:</p>
 <ul>
 <li>Add the <a href="https://api.slack.com/scopes/incoming-webhook">incoming-webhook</a>
   scope to the Bot Token Scopes.</li>
@@ -280,8 +284,11 @@ to create a <em>Slack app</em>, and look up its <em>Client ID</em> and <em>Clien
 </ul>
 <h2 id="SLACK_CLIENT_SECRET"><code>SLACK_CLIENT_SECRET</code></h2>
 <p>Default: <code>None</code></p>
-<p>The Slack Client Secret, required by the Slack integration.
+<p>The Slack Client Secret, required if <code>SLACK_CLIENT_ID</code> is set.
 Look it up at <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>.</p>
+<h2 id="SLACK_ENABLED"><code>SLACK_ENABLED</code></h2>
+<p>Default: <code>True</code></p>
+<p>A boolean that turns on/off the Slack integration. Enabled by default.</p>
 <h2 id="TELEGRAM_BOT_NAME"><code>TELEGRAM_BOT_NAME</code></h2>
 <p>Default: <code>ExampleBot</code></p>
 <p>The <a href="https://telegram.org/">Telegram</a> bot name, required by the Telegram integration.</p>

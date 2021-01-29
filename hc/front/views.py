@@ -300,6 +300,7 @@ def index(request):
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_signal": settings.SIGNAL_CLI_ENABLED is True,
+        "enable_slack": settings.SLACK_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
@@ -767,6 +768,7 @@ def channels(request, code):
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_signal": settings.SIGNAL_CLI_ENABLED is True,
+        "enable_slack": settings.SLACK_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
@@ -1112,6 +1114,7 @@ def add_pagertree(request, code):
     return render(request, "integrations/add_pagertree.html", ctx)
 
 
+@require_setting("SLACK_ENABLED")
 @login_required
 def add_slack(request, code):
     project = _get_rw_project_for_user(request, code)
@@ -1136,12 +1139,14 @@ def add_slack(request, code):
     return render(request, "integrations/add_slack.html", ctx)
 
 
+@require_setting("SLACK_ENABLED")
 @require_setting("SLACK_CLIENT_ID")
 def slack_help(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_slack_btn.html", ctx)
 
 
+@require_setting("SLACK_ENABLED")
 @require_setting("SLACK_CLIENT_ID")
 @login_required
 def add_slack_btn(request, code):
@@ -1166,6 +1171,7 @@ def add_slack_btn(request, code):
     return render(request, "integrations/add_slack_btn.html", ctx)
 
 
+@require_setting("SLACK_ENABLED")
 @require_setting("SLACK_CLIENT_ID")
 @login_required
 def add_slack_complete(request):

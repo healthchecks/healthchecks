@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Add experimental Dockerfile and docker-compose.yml
 - Add rate limiting for Pushover notifications (6 notifications / user / minute)
 - Add the WEBHOOKS_ENABLED setting (#471)
+- Add the SLACK_ENABLED setting (#471)
 
 ## Bug Fixes
 - Fix unwanted HTML escaping in SMS and WhatsApp notifications

@@ -427,12 +427,16 @@ it needs to construct absolute URLs.
 
 Default: `None`
 
-The Slack Client ID, required by the Slack integration.
+The Slack Client ID, used by the Slack integration.
 
-Go to [https://api.slack.com/apps/](https://api.slack.com/apps/)
-to create a _Slack app_, and look up its _Client ID_ and _Client Secret_.
+The Slack integration can work with or without the Slack Client ID. If
+the Slack Client ID is not set, in the "Integrations - Add Slack" page,
+Healthchecks will ask the user to provide a webhook URL for posting notifications.
 
-When setting up the Slack app, make sure to:
+If the Slack Client _is_ set, Healthchecks will use the OAuth2 flow
+to get the webhook URL from Slack. The OAuth2 flow is more user-friendly.
+To set it up, go to [https://api.slack.com/apps/](https://api.slack.com/apps/)
+and create a _Slack app_. When setting up the Slack app, make sure to:
 
 * Add the [incoming-webhook](https://api.slack.com/scopes/incoming-webhook)
   scope to the Bot Token Scopes.
@@ -444,8 +448,14 @@ When setting up the Slack app, make sure to:
 
 Default: `None`
 
-The Slack Client Secret, required by the Slack integration.
+The Slack Client Secret. Required if `SLACK_CLIENT_ID` is set.
 Look it up at [https://api.slack.com/apps/](https://api.slack.com/apps/).
+
+## `SLACK_ENABLED` {: #SLACK_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Slack integration. Enabled by default.
 
 ## `TELEGRAM_BOT_NAME` {: #TELEGRAM_BOT_NAME }
 

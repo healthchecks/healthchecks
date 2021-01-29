@@ -34,3 +34,9 @@ class AddSlackBtnTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
+
+    @override_settings(SLACK_ENABLED=False)
+    def test_it_handles_disabled_integration(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)

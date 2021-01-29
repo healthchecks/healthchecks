@@ -186,6 +186,7 @@
     {% if rw %}
     <h1 class="ai-title">Add More</h1>
     <ul class="add-integration">
+        {% if enable_slack %}
         <li>
             <img src="{% static 'img/integrations/slack.png' %}"
                 class="icon" alt="Slack icon" />
@@ -198,6 +199,8 @@
             <a href="{% url 'hc-add-slack' project.code %}" class="btn btn-primary">Add Integration</a>
             {% endif %}
         </li>
+        {% endif %}
+
         <li>
             <img src="{% static 'img/integrations/email.png' %}"
                 class="icon" alt="Email icon" />
