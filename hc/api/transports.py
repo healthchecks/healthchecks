@@ -318,6 +318,9 @@ class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
     def notify(self, check):
+        if not settings.PD_ENABLED:
+            return "PagerDuty notifications are not enabled."
+
         description = tmpl("pd_description.html", check=check)
         payload = {
             "service_key": self.channel.pd_service_key,

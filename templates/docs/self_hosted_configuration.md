@@ -248,12 +248,17 @@ Default: `True`
 
 A boolean that turns on/off the Opsgenie integration. Enabled by default.
 
+## `PD_ENABLED` {: #PD_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the PagerDuty integration. Enabled by default.
+
 ## `PD_VENDOR_KEY` {: #PD_VENDOR_KEY }
 
 Default: `None`
 
-[PagerDuty](https://www.pagerduty.com/) vendor key,
-required by the PagerDuty integration.
+[PagerDuty](https://www.pagerduty.com/) vendor key, used by the PagerDuty integration.
 
 ## `PING_BODY_LIMIT` {: #PING_BODY_LIMIT }
 

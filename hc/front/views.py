@@ -298,6 +298,7 @@ def index(request):
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
+        "enable_pd": settings.PD_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -769,6 +770,7 @@ def channels(request, code):
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
+        "enable_pd": settings.PD_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -1027,6 +1029,7 @@ def add_shell(request, code):
     return render(request, "integrations/add_shell.html", ctx)
 
 
+@require_setting("PD_ENABLED")
 @login_required
 def add_pd(request, code):
     project = _get_rw_project_for_user(request, code)
@@ -1047,12 +1050,14 @@ def add_pd(request, code):
     return render(request, "integrations/add_pd.html", ctx)
 
 
+@require_setting("PD_ENABLED")
 @require_setting("PD_VENDOR_KEY")
 def pdc_help(request):
     ctx = {"page": "channels"}
     return render(request, "integrations/add_pdc.html", ctx)
 
 
+@require_setting("PD_ENABLED")
 @require_setting("PD_VENDOR_KEY")
 @login_required
 def add_pdc(request, code):
@@ -1071,6 +1076,7 @@ def add_pdc(request, code):
     return render(request, "integrations/add_pdc.html", ctx)
 
 
+@require_setting("PD_ENABLED")
 @require_setting("PD_VENDOR_KEY")
 @login_required
 def add_pdc_complete(request, code, state):

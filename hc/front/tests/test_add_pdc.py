@@ -31,6 +31,13 @@ class AddPdConnectTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
+    @override_settings(PD_ENABLED=False)
+    def test_it_requires_pd_enabled(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
+
     def test_it_requires_rw_access(self):
         self.bobs_membership.rw = False
         self.bobs_membership.save()

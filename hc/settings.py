@@ -209,6 +209,7 @@ MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
 OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "True")
 
 # PagerDuty
+PD_ENABLED = envbool("PD_ENABLED", "True")
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 
 # Pushover integration

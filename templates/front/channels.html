@@ -298,6 +298,7 @@
         </li>
         {% endif %}
 
+        {% if enable_pd %}
         <li>
             <img src="{% static 'img/integrations/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />
@@ -311,6 +312,7 @@
                 <a href="{% url 'hc-add-pd' project.code %}" class="btn btn-primary">Add Integration</a>
             {% endif %}
         </li>
+        {% endif %}
 
         <li>
             <img src="{% static 'img/integrations/pagertree.png' %}"
