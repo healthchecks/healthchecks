@@ -300,6 +300,12 @@ PING_ENDPOINT=https://ping.my-hc.example.org
 In this example, Healthchecks would generate ping URLs similar
 to `https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86`.
 
+## `PROMETHEUS_ENABLED` {: #PROMETHEUS_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Prometheus integration. Enabled by default.
+
 ## `PUSHBULLET_CLIENT_ID` {: #PUSHBULLET_CLIENT_ID }
 
 Default: `None`

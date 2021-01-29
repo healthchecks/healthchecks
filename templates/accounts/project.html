@@ -92,9 +92,11 @@
                         <p>Related links:</p>
                         <ul>
                             <li><a href="{% url 'hc-serve-doc' 'api' %}">API documentation</a></li>
+                            {% if enable_prometheus %}
                             <li>
                                 <a href="{% url 'hc-metrics' project.code project.api_key_readonly %}">Prometheus metrics endpoint</a>
                             </li>
+                            {% endif %}
                             <li>
                                 <a href="{{ project.dashboard_url }}">Read-only dashboard</a>
                                 (<a href="https://github.com/healthchecks/dashboard/#security">security considerations</a>)

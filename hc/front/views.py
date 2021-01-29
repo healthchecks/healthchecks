@@ -301,6 +301,7 @@ def index(request):
         "enable_pagertree": settings.PAGERTREE_ENABLED is True,
         "enable_pd": settings.PD_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
+        "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
@@ -774,6 +775,7 @@ def channels(request, code):
         "enable_pagertree": settings.PAGERTREE_ENABLED is True,
         "enable_pd": settings.PD_ENABLED is True,
         "enable_pdc": settings.PD_VENDOR_KEY is not None,
+        "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
@@ -1818,6 +1820,7 @@ def add_msteams(request, code):
     return render(request, "integrations/add_msteams.html", ctx)
 
 
+@require_setting("PROMETHEUS_ENABLED")
 @login_required
 def add_prometheus(request, code):
     project, rw = _get_project_for_user(request, code)
@@ -1825,6 +1828,7 @@ def add_prometheus(request, code):
     return render(request, "integrations/add_prometheus.html", ctx)
 
 
+@require_setting("PROMETHEUS_ENABLED")
 def metrics(request, code, key):
     if len(key) != 32:
         return HttpResponseBadRequest()

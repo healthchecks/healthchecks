@@ -336,6 +336,7 @@
         </li>
         {% endif %}
 
+        {% if enable_prometheus %}
         <li>
             <img src="{% static 'img/integrations/prometheus.png' %}"
                 class="icon" alt="Prometheus icon" />
@@ -344,6 +345,7 @@
             <p>Export check and tag status values to Prometheus.</p>
             <a href="{% url 'hc-add-prometheus' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         {% if enable_pushbullet %}
         <li>

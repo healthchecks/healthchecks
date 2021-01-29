@@ -291,6 +291,7 @@ def project(request, code):
         "project": project,
         "is_owner": is_owner,
         "show_api_keys": "show_api_keys" in request.GET,
+        "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
     }
 
     if request.method == "POST":

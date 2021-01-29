@@ -1,3 +1,4 @@
+from django.test.utils import override_settings
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -41,3 +42,8 @@ class MetricsTestCase(BaseTestCase):
         url = "/projects/%s/checks/metrics/%s" % (self.project.code, "X" * 32)
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
+
+    @override_settings(PROMETHEUS_ENABLED=False)
+    def test_it_requires_prometheus_enabled(self):
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)

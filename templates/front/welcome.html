@@ -542,6 +542,7 @@
         </div>
         {% endif %}
 
+        {% if enable_prometheus %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="{% url 'hc-serve-doc' 'configuring_prometheus' %}" class="integration">
                 <img src="{% static 'img/integrations/prometheus.png' %}" class="icon" alt="" />
@@ -551,6 +552,7 @@
                 </h3>
             </a>
         </div>
+        {% endif %}
 
         {% if enable_pushbullet %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">

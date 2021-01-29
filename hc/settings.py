@@ -2,7 +2,7 @@
 Django settings for healthchecks project.
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/2.1/ref/settings
+https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
@@ -214,6 +214,9 @@ PAGERTREE_ENABLED = envbool("PAGERTREE_ENABLED", "True")
 # PagerDuty
 PD_ENABLED = envbool("PD_ENABLED", "True")
 PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
+
+# Prometheus
+PROMETHEUS_ENABLED = envbool("PROMETHEUS_ENABLED", "True")
 
 # Pushover integration
 PUSHOVER_API_TOKEN = os.getenv("PUSHOVER_API_TOKEN")
