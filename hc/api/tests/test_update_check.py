@@ -255,7 +255,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.schedule = "5 * * * *"
         self.check.save()
 
-        samples = ["* invalid *", "1,2 3,* * * *", "0 0 31 2 *"]
+        samples = ["* invalid *", "1,2 61 * * *", "0 0 31 2 *"]
         for sample in samples:
             r = self.post(self.check.code, {"api_key": "X" * 32, "schedule": sample})
             self.assertEqual(r.status_code, 400, "Did not reject '%s'" % sample)
