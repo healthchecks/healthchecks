@@ -561,6 +561,13 @@ Default: `False`
 
 A boolean that turns on/off billing features.
 
+## `VICTOROPS_ENABLED` {: #VICTOROPS_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Splunk On-Call (VictorOps) integration.
+Enabled by default.
+
 ## `WEBHOOKS_ENABLED` {: #WEBHOOKS_ENABLED }
 
 Default: `True`

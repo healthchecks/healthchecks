@@ -255,6 +255,9 @@ TWILIO_USE_WHATSAPP = envbool("TWILIO_USE_WHATSAPP", "False")
 # Trello
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 
+# VictorOps
+VICTOROPS_ENABLED = envbool("VICTOROPS_ENABLED", "True")
+
 # Webhooks
 WEBHOOKS_ENABLED = envbool("WEBHOOKS_ENABLED", "True")
 

@@ -312,6 +312,7 @@ def index(request):
         "enable_spike": settings.SPIKE_ENABLED is True,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_victorops": settings.VICTOROPS_ENABLED is True,
         "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "registration_open": settings.REGISTRATION_OPEN,
@@ -787,6 +788,7 @@ def channels(request, code):
         "enable_spike": settings.SPIKE_ENABLED is True,
         "enable_telegram": settings.TELEGRAM_TOKEN is not None,
         "enable_trello": settings.TRELLO_APP_KEY is not None,
+        "enable_victorops": settings.VICTOROPS_ENABLED is True,
         "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "use_payments": settings.USE_PAYMENTS,
@@ -1469,6 +1471,7 @@ def add_opsgenie(request, code):
     return render(request, "integrations/add_opsgenie.html", ctx)
 
 
+@require_setting("VICTOROPS_ENABLED")
 @login_required
 def add_victorops(request, code):
     project = _get_rw_project_for_user(request, code)

@@ -413,6 +413,9 @@ class Pushover(HttpTransport):
 
 class VictorOps(HttpTransport):
     def notify(self, check):
+        if not settings.VICTOROPS_ENABLED:
+            return "VictorOps notifications are not enabled."
+
         description = tmpl("victorops_description.html", check=check)
         mtype = "CRITICAL" if check.status == "down" else "RECOVERY"
         payload = {
