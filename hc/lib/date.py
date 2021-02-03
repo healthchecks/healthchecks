@@ -71,7 +71,7 @@ def format_approx_duration(td):
     return ""
 
 
-def month_boundaries(months=3):
+def month_boundaries(months=2):
     result = []
 
     now = timezone.now()

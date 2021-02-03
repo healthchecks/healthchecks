@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.utils import timezone
 from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
+
+CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
+MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class CheckModelTestCase(BaseTestCase):
@@ -162,29 +165,45 @@ class CheckModelTestCase(BaseTestCase):
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
 
+    @patch("hc.api.models.timezone.now", MOCK_NOW)
     def test_downtimes_handles_no_flips(self):
-        check = Check.objects.create(project=self.project)
-        r = check.downtimes(10)
-        self.assertEqual(len(r), 10)
-        for dt, downtime, outages in r:
-            self.assertEqual(downtime.total_seconds(), 0)
-            self.assertEqual(outages, 0)
+        check = Check(project=self.project)
+        check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
 
+        nov, dec, jan = check.downtimes(3)
+
+        # Nov. 2019
+        self.assertEqual(nov[0].strftime("%m-%Y"), "11-2019")
+        self.assertEqual(nov[1], timedelta())
+        self.assertEqual(nov[2], 0)
+
+        # Dec. 2019
+        self.assertEqual(dec[0].strftime("%m-%Y"), "12-2019")
+        self.assertEqual(dec[1], timedelta())
+        self.assertEqual(dec[2], 0)
+
+        # Jan. 2020
+        self.assertEqual(jan[0].strftime("%m-%Y"), "01-2020")
+        self.assertEqual(jan[1], timedelta())
+        self.assertEqual(jan[2], 0)
+
+    @patch("hc.api.models.timezone.now", MOCK_NOW)
     def test_downtimes_handles_currently_down_check(self):
-        check = Check.objects.create(project=self.project, status="down")
+        check = Check(project=self.project, status="down")
+        check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
 
         r = check.downtimes(10)
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
             self.assertEqual(outages, 1)
 
-    @patch("hc.api.models.timezone.now")
-    def test_downtimes_handles_flip_one_day_ago(self, mock_now):
-        mock_now.return_value = datetime(2019, 7, 19, tzinfo=timezone.utc)
-
+    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    def test_downtimes_handles_flip_one_day_ago(self):
         check = Check.objects.create(project=self.project, status="down")
+        check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
+
         flip = Flip(owner=check)
-        flip.created = datetime(2019, 7, 18, tzinfo=timezone.utc)
+        flip.created = datetime(2020, 1, 14, tzinfo=timezone.utc)
         flip.old_status = "up"
         flip.new_status = "down"
         flip.save()
@@ -192,20 +211,20 @@ class CheckModelTestCase(BaseTestCase):
         r = check.downtimes(10)
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
-            if dt.month == 7:
+            if dt.month == 1:
                 self.assertEqual(downtime.total_seconds(), 86400)
                 self.assertEqual(outages, 1)
             else:
                 self.assertEqual(downtime.total_seconds(), 0)
                 self.assertEqual(outages, 0)
 
-    @patch("hc.api.models.timezone.now")
-    def test_downtimes_handles_flip_two_months_ago(self, mock_now):
-        mock_now.return_value = datetime(2019, 7, 19, tzinfo=timezone.utc)
-
+    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    def test_downtimes_handles_flip_two_months_ago(self):
         check = Check.objects.create(project=self.project, status="down")
+        check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
+
         flip = Flip(owner=check)
-        flip.created = datetime(2019, 5, 19, tzinfo=timezone.utc)
+        flip.created = datetime(2019, 11, 15, tzinfo=timezone.utc)
         flip.old_status = "up"
         flip.new_status = "down"
         flip.save()
@@ -213,13 +232,32 @@ class CheckModelTestCase(BaseTestCase):
         r = check.downtimes(10)
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
-            if dt.month == 7:
+            if dt.month == 11:
                 self.assertEqual(outages, 1)
-            elif dt.month == 6:
-                self.assertEqual(downtime.total_seconds(), 30 * 86400)
+            elif dt.month == 12:
+                self.assertEqual(downtime.total_seconds(), 31 * 86400)
                 self.assertEqual(outages, 1)
-            elif dt.month == 5:
+            elif dt.month == 1:
                 self.assertEqual(outages, 1)
             else:
                 self.assertEqual(downtime.total_seconds(), 0)
                 self.assertEqual(outages, 0)
+
+    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    def test_downtimes_handles_months_when_check_did_not_exist(self):
+        check = Check(project=self.project)
+        check.created = datetime(2020, 1, 1, tzinfo=timezone.utc)
+
+        nov, dec, jan = check.downtimes(3)
+
+        # Nov. 2019
+        self.assertIsNone(nov[1])
+        self.assertIsNone(nov[2])
+
+        # Dec. 2019
+        self.assertIsNone(dec[1])
+        self.assertIsNone(dec[2])
+
+        # Jan. 2020
+        self.assertEqual(jan[1], timedelta())
+        self.assertEqual(jan[2], 0)

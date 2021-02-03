@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.20.0 - Unreleased
+
+## Bug Fixes
+- Fix downtime summary to handle months when the check didn't exist yet (#472)
+
 ## v1.19.0 - 2021-02-03
 
 ## Improvements
