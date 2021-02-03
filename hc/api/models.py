@@ -37,7 +37,7 @@ CHANNEL_KINDS = (
     ("po", "Pushover"),
     ("pushbullet", "Pushbullet"),
     ("opsgenie", "Opsgenie"),
-    ("victorops", "VictorOps"),
+    ("victorops", "Splunk On-Call"),
     ("discord", "Discord"),
     ("telegram", "Telegram"),
     ("sms", "SMS"),
