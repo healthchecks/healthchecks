@@ -657,6 +657,9 @@ class Zulip(HttpTransport):
             pass
 
     def notify(self, check):
+        if not settings.ZULIP_ENABLED:
+            return "Zulip notifications are not enabled."
+
         url = self.channel.zulip_site + "/api/v1/messages"
         auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
         data = {

@@ -315,6 +315,7 @@ def index(request):
         "enable_victorops": settings.VICTOROPS_ENABLED is True,
         "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
+        "enable_zulip": settings.ZULIP_ENABLED is True,
         "registration_open": settings.REGISTRATION_OPEN,
     }
 
@@ -791,6 +792,7 @@ def channels(request, code):
         "enable_victorops": settings.VICTOROPS_ENABLED is True,
         "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
+        "enable_zulip": settings.ZULIP_ENABLED is True,
         "use_payments": settings.USE_PAYMENTS,
     }
 
@@ -1492,6 +1494,7 @@ def add_victorops(request, code):
     return render(request, "integrations/add_victorops.html", ctx)
 
 
+@require_setting("ZULIP_ENABLED")
 @login_required
 def add_zulip(request, code):
     project = _get_rw_project_for_user(request, code)

@@ -457,6 +457,7 @@
         </li>
         {% endif %}
 
+        {% if enable_zulip %}
         <li>
             <img src="{% static 'img/integrations/zulip.png' %}"
                 class="icon" alt="Zulip icon" />
@@ -465,6 +466,7 @@
             <p>Open-source group chat.</p>
             <a href="{% url 'hc-add-zulip' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
+        {% endif %}
 
         <li class="link-to-github">
             <img src="{% static 'img/integrations/missing.png' %}"

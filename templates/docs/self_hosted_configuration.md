@@ -573,3 +573,9 @@ Enabled by default.
 Default: `True`
 
 A boolean that turns on/off the Webhooks integration. Enabled by default.
+
+## `ZULIP_ENABLED` {: #ZULIP_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Zulip integration. Enabled by default.

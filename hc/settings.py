@@ -261,6 +261,9 @@ VICTOROPS_ENABLED = envbool("VICTOROPS_ENABLED", "True")
 # Webhooks
 WEBHOOKS_ENABLED = envbool("WEBHOOKS_ENABLED", "True")
 
+# Zulip
+ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
+
 # Read additional configuration from hc/local_settings.py if it exists
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
     from .local_settings import *
