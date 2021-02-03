@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}VictorOps Integration for {{ site_name }}{% endblock %}
+{% block title %}Splunk On-Call Integration for {{ site_name }}{% endblock %}
 
 
 {% block content %}
 <div class="row">
 <div class="col-sm-12">
-    <h1>VictorOps</h1>
+    <h1>Splunk On-Call (VictorOps)</h1>
 
-    <p><a href="https://victorops.com/">VictorOps</a> is
-    another incident management system similar to PagerDuty.
-    If you use or plan on using VictorOps, you can can integrate it
-    with your {{ site_name }} account in few simple steps.</p>
+    <p>
+    <a href="https://www.splunk.com/en_us/software/splunk-on-call.html">Splunk On-Call</a>
+    is a collaboration and incident management platform for on-call DevOps teams.
+    You can integrate it with your {{ site_name }} account in a few
+    simple steps.</p>
 
     <h2>Setup Guide</h2>
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                Log into your VictorOps account,
-                go to <strong>Settings > Schedules</strong>,
-                and find or create the Team Schedule you
-                would like to use for {{ site_name }} alerts.
+                Log into your Splunk On-Call account,
+                go to <strong>Integrations</strong>,
+                and look up the REST integration.
             </p>
         </div>
         <div class="col-sm-6">
@@ -36,10 +36,14 @@
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                Go to <strong>Settings &gt; Integrations</strong> and scroll
-                to the bottom of the page. Choose an existing
-                <strong>Routing Key</strong> or
-                add a new one, and make note of it.
+                Enable the integration, and copy
+                the displayed <strong>Service API Endpoint</strong>.
+                Paste it in the form below. Be sure to replace
+                the <strong>$routing_key</strong> section with the
+                actual routing key you intend to use.
+            </p>
+            <p>
+                Save the integration, and it's done!
             </p>
         </div>
         <div class="col-sm-6">
@@ -49,38 +53,13 @@
                 src="{% static 'img/integrations/setup_victorops_2.png' %}">
         </div>
     </div>
-    <div class="row ai-step">
-        <div class="col-sm-6">
-            <span class="step-no"></span>
-            In the right hand side of
-            <strong>Settings &gt; Integrations</strong> page,
-            select <strong>REST Endpoint</strong>, and click on
-            <strong>Enable Integration</strong>.
-        </div>
-        <div class="col-sm-6">
-            <img
-                class="ai-guide-screenshot"
-                alt="Screenshot"
-                src="{% static 'img/integrations/setup_victorops_3.png' %}">
-        </div>
-    </div>
-
-    <div class="row ai-step">
-        <div class="col-sm-6">
-            <span class="step-no"></span>
-            <p>Paste the <strong>Post URL</strong> from step 3 in the field
-            below, being careful to replace <strong>$routing_key</strong>
-            with your actual Routing Key from step 2. Save the integration,
-            and it's done!</p>
-        </div>
-    </div>
 
     <h2>Integration Settings</h2>
 
     <form method="post" class="form-horizontal">
         {% csrf_token %}
         <div class="form-group {{ form.value.css_classes }}">
-            <label for="post-url" class="col-sm-2 control-label">Post URL</label>
+            <label for="post-url" class="col-sm-2 control-label">Service API Endpoint</label>
             <div class="col-sm-10">
                 <input
                     id="post-url"

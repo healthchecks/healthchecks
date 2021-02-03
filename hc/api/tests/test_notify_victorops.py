@@ -41,4 +41,4 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
-        self.assertEqual(n.error, "VictorOps notifications are not enabled.")
+        self.assertEqual(n.error, "Splunk On-Call notifications are not enabled.")

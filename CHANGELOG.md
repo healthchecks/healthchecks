@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v1.20.0 - Unreleased
 
+## Improvements
+- Rename VictorOps -> Splunk On-Call
+
 ## Bug Fixes
 - Fix downtime summary to handle months when the check didn't exist yet (#472)
 
