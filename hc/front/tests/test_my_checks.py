@@ -55,7 +55,7 @@ class MyChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "icon-up")
+        self.assertContains(r, "ic-up")
 
     def test_it_shows_red_check(self):
         self.check.last_ping = timezone.now() - td(days=3)
@@ -64,7 +64,7 @@ class MyChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "icon-down")
+        self.assertContains(r, "ic-down")
 
     def test_it_shows_amber_check(self):
         self.check.last_ping = timezone.now() - td(days=1, minutes=30)
@@ -73,7 +73,7 @@ class MyChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "icon-grace")
+        self.assertContains(r, "ic-grace")
 
     def test_it_hides_add_check_button(self):
         self.profile.check_limit = 0

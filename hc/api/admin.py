@@ -199,7 +199,7 @@ class ChannelsAdmin(admin.ModelAdmin):
         if obj.kind == "email" and not obj.email_verified:
             note = " (not verified)"
 
-        return f'<span class="icon-{ obj.kind }"></span> &nbsp; {obj.kind}{note}'
+        return f'<span class="ic-{ obj.kind }"></span> &nbsp; {obj.kind}{note}'
 
     def ok(self, obj):
         return False if obj.last_error else True

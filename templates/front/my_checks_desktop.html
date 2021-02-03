@@ -9,11 +9,11 @@
         <th class="th-name">
             {% if sort == "name" %}
             <a href="?sort=-name" data-toggle="tooltip" class="sort-name">
-                Name<span class="icon-asc"></span>
+                Name<span class="ic-asc"></span>
             </a>
             {% elif sort == "-name" %}
             <a href="?sort=created" data-toggle="tooltip" class="sort-name">
-                Name<span class="icon-desc"></span>
+                Name<span class="ic-desc"></span>
             </a>
             {% else %}
             <a href="?sort=name" data-toggle="tooltip" class="default sort-name">
@@ -33,11 +33,11 @@
         <th class="th-last-ping hidden-xs">
             {% if sort == "last_ping" %}
             <a href="?sort=created" data-toggle="tooltip" class="sort-last-ping">
-                Last Ping<span class="icon-desc"></span>
+                Last Ping<span class="ic-desc"></span>
             </a>
             {% elif sort == "-last_ping" %}
             <a href="?sort=last_ping" data-toggle="tooltip" class="sort-last-ping">
-                Last Ping<span class="icon-asc"></span>
+                Last Ping<span class="ic-asc"></span>
             </a>
             {% else %}
             <a href="?sort=-last_ping" data-toggle="tooltip" class="default sort-last-ping">
@@ -60,7 +60,7 @@
         {% if check in hidden_checks %}style="display: none"{% endif %}>
 
         <td class="indicator-cell">
-            <span class="status icon-{{ check.get_status }}" data-toggle="tooltip"></span>
+            <span class="status ic-{{ check.get_status }}" data-toggle="tooltip"></span>
             <div class="spinner {% if check.last_start %}started{% endif %}">
                 <div class="d1"></div>
                 <div class="d2"></div>
@@ -93,7 +93,7 @@
                 <div class="integrations">
                 {% spaceless %}
                 {% for channel in channels %}
-                    <span class="icon-{{ channel.kind }}{% if channel in check.channel_set.all %}{% else %} off{% endif %}"></span>
+                    <span class="ic-{{ channel.kind }}{% if channel in check.channel_set.all %}{% else %} off{% endif %}"></span>
                 {% endfor %}
                 {% endspaceless %}
                 </div>
@@ -128,12 +128,12 @@
         <td class="actions">
             {% if rw %}
             <button class="btn btn-default pause" type="button">
-                <span class="icon-paused" />
+                <span class="ic-paused" />
             </button>
             {% endif %}
 
             <button title="Show Details" class="btn btn-default show-log" type="button">
-                <span class="icon-dots" />
+                <span class="ic-dots" />
             </button>
         </td>
     </tr>

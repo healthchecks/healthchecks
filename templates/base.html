@@ -106,7 +106,7 @@
                     <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
                         <a href="{% url 'hc-channels' project.code %}">
                             {% trans "Integrations" %}
-                            {% if b %}<span class="icon-grace"></span>{% endif %}
+                            {% if b %}<span class="ic-grace"></span>{% endif %}
                         </a>
                     </li>
                     {% endwith %}

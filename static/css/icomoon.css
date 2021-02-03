@@ -1,15 +1,14 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?y9u69e');
-  src:  url('../fonts/icomoon.eot?y9u69e#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?y9u69e') format('truetype'),
-    url('../fonts/icomoon.woff?y9u69e') format('woff'),
-    url('../fonts/icomoon.svg?y9u69e#icomoon') format('svg');
+  src:
+    url('../fonts/icomoon.ttf?ed2ba') format('truetype'),
+    url('../fonts/icomoon.woff?ed2ba') format('woff'),
+    url('../fonts/icomoon.svg?ed2ba#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+[class^="ic-"], [class*=" ic-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: never;
@@ -24,147 +23,147 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-signal:before {
+.ic-signal:before {
   content: "\e91c";
   color: #2592e9;
 }
-.icon-linenotify:before {
+.ic-linenotify:before {
   content: "\e91b";
   color: #00c300;
 }
-.icon-call:before {
+.ic-call:before {
   content: "\e91a";
   color: #e81a34;
 }
-.icon-spike:before {
+.ic-spike:before {
   content: "\e919";
   color: #007bff;
 }
-.icon-zulip:before {
+.ic-zulip:before {
   content: "\e918";
   color: #1e9459;
 }
-.icon-pd:before {
+.ic-pd:before {
   content: "\e90b";
   color: #04ac38;
 }
-.icon-shell:before {
+.ic-shell:before {
   content: "\e917";
 }
-.icon-msteams:before {
+.ic-msteams:before {
   content: "\e916";
   color: #4e56be;
 }
-.icon-opsgenie:before {
+.ic-opsgenie:before {
   content: "\e910";
   color: #2684ff;
 }
-.icon-mattermost:before {
+.ic-mattermost:before {
   content: "\e907";
   color: #045acc;
 }
-.icon-pagerteam:before {
+.ic-pagerteam:before {
   content: "\e914";
   color: #cd2a00;
 }
-.icon-apprise:before {
+.ic-apprise:before {
   content: "\e915";
   color: #236b6b;
 }
-.icon-matrix:before {
+.ic-matrix:before {
   content: "\e900";
 }
-.icon-started:before {
+.ic-started:before {
   content: "\e038";
 }
-.icon-pagertree:before {
+.ic-pagertree:before {
   content: "\e90d";
   color: #33ade2;
 }
-.icon-po:before {
+.ic-po:before {
   content: "\e90e";
   color: #249df1;
 }
-.icon-victorops:before {
+.ic-victorops:before {
   content: "\e90f";
   color: #f9af4a;
 }
-.icon-email:before {
+.ic-email:before {
   content: "\e90a";
   color: #4f5d73;
 }
-.icon-webhook:before {
+.ic-webhook:before {
   content: "\e908";
   color: #c73a63;
 }
-.icon-sms:before {
+.ic-sms:before {
   content: "\e904";
   color: #95c144;
 }
-.icon-pushbullet:before {
+.ic-pushbullet:before {
   content: "\e909";
   color: #67bf79;
 }
-.icon-discord:before {
+.ic-discord:before {
   content: "\e90c";
   color: #7289da;
 }
-.icon-hipchat:before {
+.ic-hipchat:before {
   content: "\e901";
   color: #0052cc;
 }
-.icon-slack:before {
+.ic-slack:before {
   content: "\e905";
   color: #56b68b;
 }
-.icon-telegram:before {
+.ic-telegram:before {
   content: "\e906";
   color: #2ca5e0;
 }
-.icon-trello:before {
+.ic-trello:before {
   content: "\e911";
   color: #0079bf;
 }
-.icon-whatsapp:before {
+.ic-whatsapp:before {
   content: "\e902";
   color: #25d366;
 }
-.icon-clippy:before {
+.ic-clippy:before {
   content: "\e903";
 }
-.icon-cancel:before {
+.ic-cancel:before {
   content: "\e5c9";
 }
-.icon-up:before, .icon-new:before, .icon-ok:before {
+.ic-up:before, .ic-new:before, .ic-ok:before {
   content: "\e86c";
 }
-.icon-grace:before {
+.ic-grace:before {
   content: "\e000";
 }
-.icon-missing:before {
+.ic-missing:before {
   content: "\e001";
 }
-.icon-desc:before {
+.ic-desc:before {
   content: "\e313";
 }
-.icon-asc:before {
+.ic-asc:before {
   content: "\e316";
 }
-.icon-dots:before {
+.ic-dots:before {
   content: "\e5d3";
 }
-.icon-down:before {
+.ic-down:before {
   content: "\e7f7";
 }
-.icon-paused:before {
+.ic-paused:before {
   content: "\e7f6";
 }
-.icon-settings:before {
+.ic-settings:before {
   content: "\e912";
 }
-.icon-delete:before {
+.ic-delete:before {
   content: "\e913";
 }
-.icon-timer:before {
+.ic-timer:before {
   content: "\e425";
 }

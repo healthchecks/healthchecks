@@ -99,10 +99,10 @@ body {
     width: 24px;
 }
 
-.status.icon-up, .status.icon-started { color: #5cb85c; }
-.status.icon-new, .status.icon-paused { color: #CCC; }
-.status.icon-grace { color: #f0ad4e; }
-.status.icon-down { color: #d9534f; }
+.status.ic-up, .status.ic-started { color: #5cb85c; }
+.status.ic-new, .status.ic-paused { color: #CCC; }
+.status.ic-grace { color: #f0ad4e; }
+.status.ic-down { color: #d9534f; }
 
 .label.label-start {
     background-color: #FFF;

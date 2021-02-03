@@ -119,5 +119,5 @@ class ChannelsTestCase(BaseTestCase):
         r = self.client.get(self.channels_url)
 
         self.assertNotContains(r, "Add Integration", status_code=200)
-        self.assertNotContains(r, "icon-delete")
+        self.assertNotContains(r, "ic-delete")
         self.assertNotContains(r, "edit_webhook")

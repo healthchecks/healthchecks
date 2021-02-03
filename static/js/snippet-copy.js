@@ -5,7 +5,7 @@ $(function() {
     }
 
     var markup = '<button class="btn btn-default hidden-sm">' +
-                 '<span class="icon-clippy"></span>' +
+                 '<span class="ic-clippy"></span>' +
                  '</button>';
 
 

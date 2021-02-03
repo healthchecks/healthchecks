@@ -110,7 +110,7 @@
 
                     {% else %}
                         <form method="post">
-                        <span class="icon-ok"></span>
+                        <span class="ic-ok"></span>
                         API access is enabled.
                             {% csrf_token %}
 
@@ -123,7 +123,7 @@
                         </form>
                     {% endif %}
                 {% else %}
-                    <span class="icon-cancel"></span>
+                    <span class="ic-cancel"></span>
                     API access is disabled.
                     <form method="post">
                         {% csrf_token %}

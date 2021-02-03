@@ -85,7 +85,7 @@ $(function () {
             success: function(data) {
                 if (data.status_text != lastStatusText) {
                     lastStatusText = data.status_text;
-                    $("#log-status-icon").attr("class", "status icon-" + data.status);
+                    $("#log-status-icon").attr("class", "status ic-" + data.status);
                     $("#log-status-text").html(data.status_text);
 
                     $('#pause-btn').prop('disabled', data.status == "paused");

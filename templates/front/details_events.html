@@ -25,7 +25,7 @@
         <td class="details">
             {% if event.delta %}
             <div class="delta">
-                <span class="icon-timer"></span>
+                <span class="ic-timer"></span>
                 {{ event.delta|hms }}
             </div>
             {% endif %}
@@ -50,7 +50,7 @@
     {% if event.check_status %}
     <tr class="missing" data-dt="{{ event.created.isoformat }}">
         <td class="n-cell">
-            <span class="icon-missing"></span>
+            <span class="ic-missing"></span>
         </td>
         <td class="date"></td>
         <td class="time"></td>

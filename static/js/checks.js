@@ -165,7 +165,7 @@ $(function () {
         // Second click: update UI and pause the check
         btn.removeClass("confirm").tooltip("hide");
         var code = btn.closest("tr.checks-row").attr("id");
-        $("#" + code + " span.status").attr("class", "status icon-paused");
+        $("#" + code + " span.status").attr("class", "status ic-paused");
 
         var url = base + "/checks/" + code + "/pause/";
         var token = $('input[name=csrfmiddlewaretoken]').val();
@@ -187,9 +187,9 @@ $(function () {
         container: "body",
         title: function() {
             var cssClasses = this.getAttribute("class");
-            if (cssClasses.indexOf("icon-new") > -1)
+            if (cssClasses.indexOf("ic-new") > -1)
                 return "New. Has never received a ping.";
-            if (cssClasses.indexOf("icon-paused") > -1)
+            if (cssClasses.indexOf("ic-paused") > -1)
                 return "Monitoring paused. Ping to resume.";
 
             if (cssClasses.indexOf("sort-name") > -1)
@@ -215,7 +215,7 @@ $(function () {
                 for(var i=0, el; el=data.details[i]; i++) {
                     if (lastStatus[el.code] != el.status) {
                         lastStatus[el.code] = el.status;
-                        $("#" + el.code + " span.status").attr("class", "status icon-" + el.status);
+                        $("#" + el.code + " span.status").attr("class", "status ic-" + el.status);
                     }
 
                     if (lastStarted[el.code] != el.started) {
