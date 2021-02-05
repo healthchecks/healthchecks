@@ -3,7 +3,7 @@ croniter==1.0.6
 Django==3.1.6
 django-compressor==2.4
 fido2==0.9.1
-psycopg2==2.8.4
+psycopg2==2.8.6
 pytz==2020.5
 requests==2.25.1
 statsd==3.3.0
