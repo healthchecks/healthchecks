@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.9
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
