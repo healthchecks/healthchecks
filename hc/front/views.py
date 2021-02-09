@@ -477,11 +477,21 @@ def cron_preview(request):
         for i in range(0, 6):
             ctx["dates"].append(it.get_next(datetime))
 
-        ctx["desc"] = str(ExpressionDescriptor(schedule, use_24hour_time_format=True))
+            pass
     except UnknownTimeZoneError:
         ctx["bad_tz"] = True
     except:
         ctx["bad_schedule"] = True
+
+    if ctx["dates"]:
+        try:
+            descriptor = ExpressionDescriptor(schedule, use_24hour_time_format=True)
+            ctx["desc"] = descriptor.get_description()
+        except:
+            # We assume the schedule is valid if croniter accepts it.
+            # If cron-descriptor throws an exception, don't show the description
+            # to the user.
+            pass
 
     return render(request, "front/cron_preview.html", ctx)
 

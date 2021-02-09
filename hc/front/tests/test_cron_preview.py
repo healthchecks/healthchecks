@@ -12,8 +12,14 @@ class CronPreviewTestCase(BaseTestCase):
         self.assertContains(r, "cron-preview-title", status_code=200)
         self.assertContains(r, "“Every minute”")
 
+    def test_it_accepts_sunday_7(self):
+        payload = {"schedule": "* * * * 7", "tz": "UTC"}
+        r = self.client.post("/checks/cron_preview/", payload)
+        self.assertContains(r, "Expected Ping Dates", status_code=200)
+        self.assertNotContains(r, "Invalid cron expression", status_code=200)
+
     def test_it_rejects_invalid_cron_expression(self):
-        samples = ["", "*", "100 100 100 100 100", "* * * * * *", "1,2 3,* * * *"]
+        samples = ["", "*", "100 100 100 100 100", "* * * * * *"]
 
         for schedule in samples:
             payload = {"schedule": schedule, "tz": "UTC"}

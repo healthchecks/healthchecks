@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ## Bug Fixes
 - Fix downtime summary to handle months when the check didn't exist yet (#472)
+- Relax cron expression validation: accept all expressions that croniter accepts
 
 ## v1.19.0 - 2021-02-03
 
