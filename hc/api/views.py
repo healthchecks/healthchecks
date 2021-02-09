@@ -436,12 +436,12 @@ def badge(request, badge_key, signature, tag, fmt):
 def notification_status(request, code):
     """ Handle notification delivery status callbacks. """
 
-    notification = get_object_or_404(Notification, code=code)
-
-    td = timezone.now() - notification.created
-    if td.total_seconds() > 3600:
-        # If the webhook is called more than 1 hour after the notification, ignore it.
-        # Return HTTP 200 so the other party doesn't retry over and over again:
+    try:
+        cutoff = timezone.now() - td(hours=1)
+        notification = Notification.objects.get(code=code, created__gt=cutoff)
+    except Notification.DoesNotExist:
+        # If the notification does not exist, or is more than a hour old,
+        # return HTTP 200 so the other party doesn't retry over and over again:
         return HttpResponse()
 
     error, mark_not_verified = None, False

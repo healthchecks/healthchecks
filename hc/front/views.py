@@ -477,7 +477,6 @@ def cron_preview(request):
         for i in range(0, 6):
             ctx["dates"].append(it.get_next(datetime))
 
-            pass
     except UnknownTimeZoneError:
         ctx["bad_tz"] = True
     except:
