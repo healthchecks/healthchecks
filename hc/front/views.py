@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta as td
+import email
 import json
 import os
 import re
@@ -507,7 +508,18 @@ def ping_details(request, code, n=None):
     except Ping.DoesNotExist:
         return render(request, "front/ping_details_not_found.html")
 
-    ctx = {"check": check, "ping": ping}
+    ctx = {"check": check, "ping": ping, "plain": None, "html": None}
+
+    if ping.scheme == "email":
+        parsed = email.message_from_string(ping.body, policy=email.policy.SMTP)
+
+        plain_mime_part = parsed.get_body(("plain",))
+        if plain_mime_part:
+            ctx["plain"] = plain_mime_part.get_content()
+
+        html_mime_part = parsed.get_body(("html",))
+        if html_mime_part:
+            ctx["html"] = html_mime_part.get_content()
 
     return render(request, "front/ping_details.html", ctx)
 

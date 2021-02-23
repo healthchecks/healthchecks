@@ -1,6 +1,39 @@
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
+PLAINTEXT_EMAIL = """Content-Type: multipart/alternative; boundary=bbb
+
+--bbb
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: base64
+
+aGVsbG8gd29ybGQ=
+
+--bbb
+"""
+
+BAD_BASE64_EMAIL = """Content-Type: multipart/alternative; boundary=bbb
+
+--bbb
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: base64
+
+!!!
+
+--bbb
+"""
+
+HTML_EMAIL = """Content-Type: multipart/alternative; boundary=bbb
+
+--bbb
+Content-Type: text/html;charset=utf-8
+Content-Transfer-Encoding: base64
+
+PGI+aGVsbG88L2I+
+
+--bbb
+"""
+
 
 class PingDetailsTestCase(BaseTestCase):
     def setUp(self):
@@ -73,3 +106,39 @@ class PingDetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "(exit status 0)", status_code=200)
+
+    def test_it_decodes_plaintext_email_body(self):
+        Ping.objects.create(owner=self.check, scheme="email", body=PLAINTEXT_EMAIL)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "email-body-plain", status_code=200)
+        self.assertNotContains(r, "email-body-html")
+
+        # aGVsbG8gd29ybGQ= is base64("hello world")
+        self.assertContains(r, "aGVsbG8gd29ybGQ=")
+        self.assertContains(r, "hello world")
+
+    def test_it_handles_bad_base64_in_email_body(self):
+        Ping.objects.create(owner=self.check, scheme="email", body=BAD_BASE64_EMAIL)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "!!!", status_code=200)
+        self.assertNotContains(r, "email-body-plain")
+        self.assertNotContains(r, "email-body-html")
+
+    def test_it_decodes_html_email_body(self):
+        Ping.objects.create(owner=self.check, scheme="email", body=HTML_EMAIL)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertNotContains(r, "email-body-plain", status_code=200)
+        self.assertContains(r, "email-body-html")
+
+        # PGI+aGVsbG88L2I+ is base64("<b>hello</b>")
+        self.assertContains(r, "PGI+aGVsbG88L2I+")
+        self.assertContains(r, "&lt;b&gt;hello&lt;/b&gt;")
