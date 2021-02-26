@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Rename VictorOps -> Splunk On-Call
 - Implement email body decoding in the "Ping Details" dialog
 - Add a "Subject" field in the "Ping Details" dialog
+- Improve HTML email display in the "Ping Details" dialog
 
 ## Bug Fixes
 - Fix downtime summary to handle months when the check didn't exist yet (#472)

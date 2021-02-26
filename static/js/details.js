@@ -132,6 +132,16 @@ $(function () {
 
         $.get(this.dataset.url, function(data) {
                 $("#ping-details-body").html(data);
+
+                var htmlPre = $("#email-body-html pre");
+                if (htmlPre.length) {
+                    var opts = {USE_PROFILES: {html: true}};
+                    var clean = DOMPurify.sanitize(htmlPre.text(), opts);
+                    var blob = new Blob([clean], {type: "text/html"});
+
+                    htmlPre.remove();
+                    document.getElementById("email-body-html-iframe").src = URL.createObjectURL(blob);
+                }
             }
         );
 
