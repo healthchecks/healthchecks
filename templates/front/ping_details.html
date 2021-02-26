@@ -62,6 +62,15 @@
             </p>
         </div>
         {% endif %}
+
+        {% if subject %}
+        <div class="col-sm-12">
+            <p>
+                <strong>Subject</strong>
+                <span>{{ subject }}</span>
+            </p>
+        </div>
+        {% endif %}
     </div>
 
     {% if ping.body %}

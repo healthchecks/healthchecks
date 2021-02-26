@@ -142,3 +142,16 @@ class PingDetailsTestCase(BaseTestCase):
         # PGI+aGVsbG88L2I+ is base64("<b>hello</b>")
         self.assertContains(r, "PGI+aGVsbG88L2I+")
         self.assertContains(r, "&lt;b&gt;hello&lt;/b&gt;")
+
+    def test_it_decodes_email_subject(self):
+        Ping.objects.create(
+            owner=self.check,
+            scheme="email",
+            body="Subject: =?UTF-8?B?aGVsbG8gd29ybGQ=?=",
+        )
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        # aGVsbG8gd29ybGQ= is base64("hello world")
+        self.assertContains(r, "hello world", status_code=200)
