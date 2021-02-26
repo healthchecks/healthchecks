@@ -10,7 +10,7 @@ $(function () {
             if (htmlPre.length) {
                 var opts = {USE_PROFILES: {html: true}};
                 var clean = DOMPurify.sanitize(htmlPre.text(), opts);
-                var blob = new Blob([clean], {type: "text/html"});
+                var blob = new Blob([clean], {type: "text/html; charset=utf-8"});
 
                 htmlPre.remove();
                 document.getElementById("email-body-html-iframe").src = URL.createObjectURL(blob);
