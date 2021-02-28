@@ -24,6 +24,7 @@
     padding: 16px;
     margin: 0;
     max-height: 500px;
+    line-height: 1em;
 }
 
 #email-body-html-iframe {
