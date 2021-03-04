@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add a "Subject" field in the "Ping Details" dialog
 - Improve HTML email display in the "Ping Details" dialog
 - Add a link to check's details page in Slack notifications
+- Replace details_url with cloaked_url in email and chat notifications
 
 ## Bug Fixes
 - Fix downtime summary to handle months when the check didn't exist yet (#472)

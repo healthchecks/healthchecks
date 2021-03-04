@@ -11,9 +11,10 @@ from requests.exceptions import Timeout
 from django.test.utils import override_settings
 
 
-class NotifyTestCase(BaseTestCase):
+class NotifySlackTestCase(BaseTestCase):
     def _setup_data(self, value, status="down", email_verified=True):
         self.check = Check(project=self.project)
+        self.check.name = "Foobar"
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -39,8 +40,9 @@ class NotifyTestCase(BaseTestCase):
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "an hour ago")
 
-        uncloak_url = "/cloaked/%s/" % self.check.unique_key
-        self.assertTrue(attachment["title_link"].endswith(uncloak_url))
+        # The payload should not contain check's code
+        serialized = json.dumps(payload)
+        self.assertNotIn(str(self.check.code), serialized)
 
     @patch("hc.api.transports.requests.request")
     def test_slack_with_complex_value(self, mock_post):

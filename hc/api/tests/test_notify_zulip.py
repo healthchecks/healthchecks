@@ -13,6 +13,7 @@ from hc.test import BaseTestCase
 class NotifyTestCase(BaseTestCase):
     def _setup_data(self, value, status="down", email_verified=True):
         self.check = Check(project=self.project)
+        self.check.name = "Foobar"
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -45,6 +46,10 @@ class NotifyTestCase(BaseTestCase):
 
         payload = kwargs["data"]
         self.assertIn("DOWN", payload["topic"])
+
+        # payload should not contain check's code
+        serialized = json.dumps(payload)
+        self.assertNotIn(str(self.check.code), serialized)
 
     @patch("hc.api.transports.requests.request")
     def test_zulip_returns_error(self, mock_post):

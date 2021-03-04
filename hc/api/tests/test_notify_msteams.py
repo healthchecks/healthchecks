@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import json
+
 from datetime import timedelta as td
 from unittest.mock import patch
 
@@ -41,6 +43,10 @@ class NotifyTestCase(BaseTestCase):
         # title should have any special HTML characters escaped
         self.assertEqual(payload["summary"], "“_underscores_ & more” is DOWN.")
         self.assertEqual(payload["title"], "“_underscores_ &amp; more” is DOWN.")
+
+        # The payload should not contain check's code
+        serialized = json.dumps(payload)
+        self.assertNotIn(str(self.check.code), serialized)
 
     @patch("hc.api.transports.requests.request")
     def test_msteams_escapes_html_and_markdown_in_desc(self, mock_post):

@@ -60,6 +60,12 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertIn("112233", html)
         self.assertIn("Body Line 1<br>Body Line 2", html)
 
+        # Check's code must not be in the html
+        self.assertNotIn(str(self.check.code), html)
+
+        # Check's code must not be in the plain text body
+        self.assertNotIn(str(self.check.code), email.body)
+
     def test_it_shows_cron_schedule(self):
         self.check.kind = "cron"
         self.check.schedule = "0 18-23,0-8 * * *"

@@ -45,7 +45,7 @@
             "targets": [
                 {
                     "os": "default",
-                    "uri": "{{ check.details_url }}"
+                    "uri": "{{ check.cloaked_url }}"
                 }
             ]
         }

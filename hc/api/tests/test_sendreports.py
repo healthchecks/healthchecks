@@ -93,6 +93,11 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(self.profile.next_nag_date > now())
         self.assertEqual(len(mail.outbox), 1)
 
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        self.assertNotIn(str(self.check.code), email.body)
+        self.assertNotIn(str(self.check.code), html)
+
     def test_it_obeys_next_nag_date(self):
         self.profile.next_nag_date = now() + td(days=1)
         self.profile.save()
