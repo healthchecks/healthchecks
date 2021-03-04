@@ -118,6 +118,9 @@ class Check(models.Model):
     def details_url(self):
         return settings.SITE_ROOT + reverse("hc-details", args=[self.code])
 
+    def cloaked_url(self):
+        return settings.SITE_ROOT + reverse("hc-uncloak", args=[self.unique_key])
+
     def email(self):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 

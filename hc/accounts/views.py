@@ -41,6 +41,7 @@ POST_LOGIN_ROUTES = (
     "hc-add-pushover",
     "hc-add-telegram",
     "hc-project-settings",
+    "hc-uncloak",
 )
 
 FIDO2_SERVER = Fido2Server(PublicKeyCredentialRpEntity(settings.RP_ID, "healthchecks"))

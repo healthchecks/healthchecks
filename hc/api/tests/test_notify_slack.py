@@ -39,6 +39,9 @@ class NotifyTestCase(BaseTestCase):
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "an hour ago")
 
+        uncloak_url = "/cloaked/%s/" % self.check.unique_key
+        self.assertTrue(attachment["title_link"].endswith(uncloak_url))
+
     @patch("hc.api.transports.requests.request")
     def test_slack_with_complex_value(self, mock_post):
         v = json.dumps({"incoming_webhook": {"url": "123"}})

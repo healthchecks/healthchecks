@@ -638,6 +638,15 @@ def details(request, code):
 
 
 @login_required
+def uncloak(request, unique_key):
+    for check in request.profile.checks_from_all_projects().only("code"):
+        if check.unique_key == unique_key:
+            return redirect("hc-details", check.code)
+
+    raise Http404("not found")
+
+
+@login_required
 def transfer(request, code):
     check = _get_rw_check_for_user(request, code)
 

@@ -11,7 +11,8 @@
 
         "fallback": "The check \"{{ check.name_then_code|escapejs }}\" is {{ check.status|upper }}.",
         "mrkdwn_in": ["fields"],
-        "text": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
+        "title": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
+        "title_link": "{{ check.cloaked_url }}",
         "fields": [
             {% if check.desc %}
                 {"title": "Description",

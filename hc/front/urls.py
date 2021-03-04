@@ -92,6 +92,7 @@ urlpatterns = [
     path("tv/", views.dashboard, name="hc-dashboard"),
     path("checks/cron_preview/", views.cron_preview),
     path("checks/<uuid:code>/", include(check_urls)),
+    path("cloaked/<sha1:unique_key>/", views.uncloak, name="hc-uncloak"),
     path("integrations/", include(channel_urls)),
     path("projects/<uuid:code>/", include(project_urls)),
     path("docs/", views.serve_doc, name="hc-docs"),
