@@ -4,6 +4,7 @@ from threading import Thread
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.db.utils import OperationalError
 from hc.api.models import Check, Flip
 from statsd.defaults.env import statsd
 
@@ -109,33 +110,41 @@ class Command(BaseCommand):
         old_status = check.status
         q = Check.objects.filter(id=check.id, status=old_status)
 
-        try:
-            status = check.get_status()
-        except Exception as e:
-            # Make sure we don't trip on this check again for an hour:
-            # Otherwise sendalerts may end up in a crash loop.
-            q.update(alert_after=now + td(hours=1))
-            # Then re-raise the exception:
-            raise e
 
-        if status != "down":
-            # It is not down yet. Update alert_after
-            q.update(alert_after=check.going_down_after())
-            return True
+        counter = 0
+        while counter < 5:
+            try:
+                try:
+                    status = check.get_status()
+                except Exception as e:
+                    # Make sure we don't trip on this check again for an hour:
+                    # Otherwise sendalerts may end up in a crash loop.
+                    q.update(alert_after=now + td(hours=1))
+                    # Then re-raise the exception:
+                    raise e
 
-        # Atomically update status
-        flip_time = check.going_down_after()
-        num_updated = q.update(alert_after=None, status="down")
-        if num_updated != 1:
-            # Nothing got updated: another worker process got there first.
-            return True
+                if status != "down":
+                    # It is not down yet. Update alert_after
+                    q.update(alert_after=check.going_down_after())
+                    return True
 
-        flip = Flip(owner=check)
-        flip.created = flip_time
-        flip.old_status = old_status
-        flip.new_status = "down"
-        flip.save()
+                # Atomically update status
+                flip_time = check.going_down_after()
+                num_updated = q.update(alert_after=None, status="down")
+                if num_updated != 1:
+                    # Nothing got updated: another worker process got there first.
+                    return True
 
+                flip = Flip(owner=check)
+                flip.created = flip_time
+                flip.old_status = old_status
+                flip.new_status = "down"
+                flip.save()
+            except OperationalError:
+                counter += 1
+                time.sleep(2*counter)
+            else:
+                break
         return True
 
     def handle(self, use_threads=True, loop=True, *args, **options):
