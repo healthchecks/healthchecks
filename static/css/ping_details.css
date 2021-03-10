@@ -27,7 +27,7 @@
     line-height: 1em;
 }
 
-#email-body-html-iframe {
+#email-body-html iframe {
     border: 0;
     width: 100%;
     height: 500px;

@@ -12,8 +12,11 @@ $(function () {
                 var clean = DOMPurify.sanitize(htmlPre.text(), opts);
                 var blob = new Blob([clean], {type: "text/html; charset=utf-8"});
 
-                htmlPre.remove();
-                document.getElementById("email-body-html-iframe").src = URL.createObjectURL(blob);
+                var iframe = document.createElement("iframe");
+                iframe.sandbox = "";
+                iframe.src = URL.createObjectURL(blob);
+
+                htmlPre.replaceWith(iframe);
             }
         });
 
