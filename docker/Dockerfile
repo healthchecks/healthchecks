@@ -2,6 +2,7 @@ FROM python:3.9
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 WORKDIR /opt/healthchecks
 
 COPY requirements.txt /tmp
