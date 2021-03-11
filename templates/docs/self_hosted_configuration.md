@@ -382,6 +382,7 @@ existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy
 To enable this feature, set the `REMOTE_USER_HEADER` value to a header you wish to authenticate with. HTTP headers will be prefixed with `HTTP_` and have any dashes converted to underscores. Headers without that prefix can be set by the WSGI server itself only, which is more secure.
 
 When `REMOTE_USER_HEADER` is set, Healthchecks will:
+
  - assume the header contains user's email address
  - look up and automatically log in the user with a matching email address
  - automatically create an user account if it does not exist

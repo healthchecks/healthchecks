@@ -230,11 +230,13 @@ to your team account.</p>
 reverse proxies or the WSGI server. This allows you to integrate it into your
 existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy. When this option is enabled, <strong>Healtchecks will trust the header's value implicitly</strong>, so it is <strong>very important</strong> to ensure that attackers cannot set the value themselves (and thus impersonate any user). How to do this varies by your chosen proxy, but generally involves configuring it to strip out headers that normalize to the same name as the chosen identity header.</p>
 <p>To enable this feature, set the <code>REMOTE_USER_HEADER</code> value to a header you wish to authenticate with. HTTP headers will be prefixed with <code>HTTP_</code> and have any dashes converted to underscores. Headers without that prefix can be set by the WSGI server itself only, which is more secure.</p>
-<p>When <code>REMOTE_USER_HEADER</code> is set, Healthchecks will:
- - assume the header contains user's email address
- - look up and automatically log in the user with a matching email address
- - automatically create an user account if it does not exist
- - disable the default authentication methods (login link to email, password)</p>
+<p>When <code>REMOTE_USER_HEADER</code> is set, Healthchecks will:</p>
+<ul>
+<li>assume the header contains user's email address</li>
+<li>look up and automatically log in the user with a matching email address</li>
+<li>automatically create an user account if it does not exist</li>
+<li>disable the default authentication methods (login link to email, password)</li>
+</ul>
 <h2 id="RP_ID"><code>RP_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The <a href="https://www.w3.org/TR/webauthn-2/#relying-party-identifier">Relying Party identifier</a>,
