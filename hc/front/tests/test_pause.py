@@ -54,3 +54,14 @@ class PauseTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_clears_next_nag_date(self):
+        self.profile.nag_period = td(hours=1)
+        self.profile.next_nag_date = now() + td(minutes=30)
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url)
+
+        self.profile.refresh_from_db()
+        self.assertIsNone(self.profile.next_nag_date)

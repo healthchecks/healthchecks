@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Fix downtime summary to handle months when the check didn't exist yet (#472)
 - Relax cron expression validation: accept all expressions that croniter accepts
 - Fix sendalerts to clear Profile.next_nag_date if all checks up
+- Fix the pause action to clear Profile.next_nag_date if all checks up
 
 ## v1.19.0 - 2021-02-03
 

@@ -293,6 +293,11 @@ def pause(request, code):
     check.last_start = None
     check.alert_after = None
     check.save()
+
+    # After pausing a check we must check if all checks are up,
+    # and Profile.next_nag_date needs to be cleared out:
+    check.project.update_next_nag_dates()
+
     return JsonResponse(check.to_dict())
 
 
