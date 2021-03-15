@@ -457,9 +457,9 @@ def notifications(request):
             if profile.nag_period != form.cleaned_data["nag_period"]:
                 # Set the new nag period
                 profile.nag_period = form.cleaned_data["nag_period"]
-                # and schedule next_nag_date:
+                # and update next_nag_date:
                 if profile.nag_period:
-                    profile.next_nag_date = now() + profile.nag_period
+                    profile.update_next_nag_date()
                 else:
                     profile.next_nag_date = None
 
