@@ -101,25 +101,10 @@ class SendAlertsTestCase(BaseTestCase):
         # It should call `notify` instead of `notify_on_thread`
         self.assertTrue(mock_notify.called)
 
-    def test_it_updates_owners_next_nag_date(self):
+    def test_it_sets_next_nag_date(self):
         self.profile.nag_period = td(hours=1)
         self.profile.save()
 
-        check = Check(project=self.project, status="down")
-        check.last_ping = now() - td(days=2)
-        check.save()
-
-        flip = Flip(owner=check, created=check.last_ping)
-        flip.old_status = "up"
-        flip.new_status = "down"
-        flip.save()
-
-        notify(flip.id, Mock())
-
-        self.profile.refresh_from_db()
-        self.assertIsNotNone(self.profile.next_nag_date)
-
-    def test_it_updates_members_next_nag_date(self):
         self.bobs_profile.nag_period = td(hours=1)
         self.bobs_profile.save()
 
@@ -134,8 +119,41 @@ class SendAlertsTestCase(BaseTestCase):
 
         notify(flip.id, Mock())
 
+        # next_nag_gate should now be set for the project's owner
+        self.profile.refresh_from_db()
+        self.assertIsNotNone(self.profile.next_nag_date)
+
+        # next_nag_gate should now be set for the project's members
         self.bobs_profile.refresh_from_db()
         self.assertIsNotNone(self.bobs_profile.next_nag_date)
+
+    def test_it_clears_next_nag_date(self):
+        self.profile.nag_period = td(hours=1)
+        self.profile.next_nag_date = now() - td(minutes=30)
+        self.profile.save()
+
+        self.bobs_profile.nag_period = td(hours=1)
+        self.bobs_profile.next_nag_date = now() - td(minutes=30)
+        self.bobs_profile.save()
+
+        check = Check(project=self.project, status="up")
+        check.last_ping = now()
+        check.save()
+
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "down"
+        flip.new_status = "up"
+        flip.save()
+
+        notify(flip.id, Mock())
+
+        # next_nag_gate should now be cleared out for the project's owner
+        self.profile.refresh_from_db()
+        self.assertIsNone(self.profile.next_nag_date)
+
+        # next_nag_gate should now be cleared out for the project's members
+        self.bobs_profile.refresh_from_db()
+        self.assertIsNone(self.bobs_profile.next_nag_date)
 
     def test_it_does_not_touch_already_set_next_nag_dates(self):
         original_nag_date = now() - td(minutes=30)

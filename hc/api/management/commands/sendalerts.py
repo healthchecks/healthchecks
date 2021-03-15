@@ -23,9 +23,8 @@ def notify(flip_id, stdout):
 
     stdout.write(SENDING_TMPL % (flip.new_status, check.code))
 
-    # Set dates for followup nags
-    if flip.new_status == "down":
-        check.project.set_next_nag_date()
+    # Set or clear dates for followup nags
+    check.project.update_next_nag_dates()
 
     # Send notifications
     send_start = timezone.now()

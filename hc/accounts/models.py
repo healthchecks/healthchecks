@@ -135,8 +135,8 @@ class Profile(models.Model):
     def projects(self):
         """ Return a queryset of all projects we have access to. """
 
-        is_owner = Q(owner=self.user)
-        is_member = Q(member__user=self.user)
+        is_owner = Q(owner_id=self.user_id)
+        is_member = Q(member__user_id=self.user_id)
         q = Project.objects.filter(is_owner | is_member)
         return q.distinct().order_by("name")
 
@@ -267,6 +267,15 @@ class Profile(models.Model):
     def can_accept(self, project):
         return project.num_checks() <= self.num_checks_available()
 
+    def update_next_nag_date(self):
+        any_down = self.checks_from_all_projects().filter(status="down").exists()
+        if any_down and self.next_nag_date is None and self.nag_period:
+            self.next_nag_date = timezone.now() + self.nag_period
+            self.save(update_fields=["next_nag_date"])
+        elif not any_down and self.next_nag_date:
+            self.next_nag_date = None
+            self.save(update_fields=["next_nag_date"])
+
 
 class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -319,17 +328,15 @@ class Project(models.Model):
         user.profile.send_instant_login_link(self, redirect_url=checks_url)
         return True
 
-    def set_next_nag_date(self):
-        """ Set next_nag_date on profiles of all members of this project. """
+    def update_next_nag_dates(self):
+        """ Update next_nag_date on profiles of all members of this project. """
 
-        is_owner = Q(user=self.owner)
+        is_owner = Q(user_id=self.owner_id)
         is_member = Q(user__memberships__project=self)
-        q = Profile.objects.filter(is_owner | is_member)
-        q = q.exclude(nag_period=NO_NAG)
-        # Exclude profiles with next_nag_date already set
-        q = q.filter(next_nag_date__isnull=True)
+        q = Profile.objects.filter(is_owner | is_member).exclude(nag_period=NO_NAG)
 
-        q.update(next_nag_date=timezone.now() + models.F("nag_period"))
+        for profile in q:
+            profile.update_next_nag_date()
 
     def overall_status(self):
         status = "up"
