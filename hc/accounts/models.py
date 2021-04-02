@@ -195,6 +195,10 @@ class Profile(models.Model):
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
 
+        boundaries = month_boundaries(months=3)
+        # throw away the current month, keep two previous months
+        boundaries.pop()
+
         ctx = {
             "checks": checks,
             "sort": self.sort,
@@ -204,7 +208,7 @@ class Profile(models.Model):
             "nag": nag,
             "nag_period": self.nag_period.total_seconds(),
             "num_down": num_down,
-            "month_boundaries": month_boundaries(),
+            "month_boundaries": boundaries,
         }
 
         emails.report(self.user.email, ctx, headers)

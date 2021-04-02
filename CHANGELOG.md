@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Fix sendalerts to clear Profile.next_nag_date if all checks up
 - Fix the pause action to clear Profile.next_nag_date if all checks up
 - Fix the "Email Reports" screen to clear Profile.next_nag_date if all checks up
+- Fix the month boundary calculation in monthly reports (#497)
 
 ## v1.19.0 - 2021-02-03
 

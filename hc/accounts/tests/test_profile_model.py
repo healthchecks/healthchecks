@@ -1,12 +1,17 @@
-from datetime import timedelta as td
+from datetime import datetime, timedelta as td
+from unittest.mock import Mock, patch
 
 from django.core import mail
-from django.utils.timezone import now
+from django.utils.timezone import now, utc
 from hc.test import BaseTestCase
 from hc.api.models import Check
 
+CURRENT_TIME = datetime(2020, 1, 15, tzinfo=utc)
+MOCK_NOW = Mock(return_value=CURRENT_TIME)
+
 
 class ProfileModelTestCase(BaseTestCase):
+    @patch("hc.lib.date.timezone.now", MOCK_NOW)
     def test_it_sends_report(self):
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now()
@@ -21,6 +26,12 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertEqual(message.subject, "Monthly Report")
         self.assertIn("Test Check", message.body)
+
+        html, _ = message.alternatives[0]
+        self.assertNotIn("Jan. 2020", html)
+        self.assertIn("Dec. 2019", html)
+        self.assertIn("Nov. 2019", html)
+        self.assertNotIn("Oct. 2019", html)
 
     def test_it_skips_report_if_no_pings(self):
         check = Check(project=self.project, name="Test Check")
