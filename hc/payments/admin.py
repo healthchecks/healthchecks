@@ -42,8 +42,6 @@ class SubsAdmin(admin.ModelAdmin):
 
         return ""
 
-    profile.allow_tags = True
-
     def cancel(self, request, qs):
         for sub in qs.all():
             sub.cancel()

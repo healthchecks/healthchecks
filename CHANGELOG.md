@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## v1.20.0 - Unreleased
 
 ## Improvements
+- Django 3.2
 - Rename VictorOps -> Splunk On-Call
 - Implement email body decoding in the "Ping Details" dialog
 - Add a "Subject" field in the "Ping Details" dialog

@@ -55,6 +55,7 @@ class ChecksAdmin(admin.ModelAdmin):
 
         return s
 
+    @admin.display(description="Schedule")
     def timeout_schedule(self, obj):
         if obj.kind == "simple":
             return format_duration(obj.timeout)
@@ -63,16 +64,13 @@ class ChecksAdmin(admin.ModelAdmin):
         else:
             return "Unknown"
 
-    timeout_schedule.short_description = "Schedule"
-
+    @admin.action(description="Send Alert")
     def send_alert(self, request, qs):
         for check in qs:
             for channel in check.channel_set.all():
                 channel.notify(check)
 
         self.message_user(request, "%d alert(s) sent" % qs.count())
-
-    send_alert.short_description = "Send Alert"
 
 
 class SchemeListFilter(admin.SimpleListFilter):
@@ -201,10 +199,9 @@ class ChannelsAdmin(admin.ModelAdmin):
 
         return f'<span class="ic-{ obj.kind }"></span> &nbsp; {obj.kind}{note}'
 
+    @admin.display(boolean=True)
     def ok(self, obj):
         return False if obj.last_error else True
-
-    ok.boolean = True
 
 
 @admin.register(Notification)

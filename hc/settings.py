@@ -106,6 +106,7 @@ TEST_RUNNER = "hc.api.tests.CustomRunner"
 
 # Default database engine is SQLite. So one can just check out code,
 # install requirements.txt and do manage.py runserver and it works
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
