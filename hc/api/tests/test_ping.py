@@ -16,6 +16,7 @@ class PingTestCase(BaseTestCase):
     def test_it_works(self):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.headers["Access-Control-Allow-Origin"], "*")
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "up")

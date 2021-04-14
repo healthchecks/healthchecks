@@ -1,3 +1,4 @@
+from datetime import timedelta as td
 import json
 
 from hc.api.models import Channel, Check
@@ -7,29 +8,19 @@ from hc.test import BaseTestCase
 class CreateCheckTestCase(BaseTestCase):
     URL = "/api/v1/checks/"
 
-    def post(self, data, expected_error=None, expected_fragment=None):
+    def post(self, data, expect_fragment=None):
+        if "api_key" not in data:
+            data["api_key"] = "X" * 32
+
         r = self.client.post(self.URL, data, content_type="application/json")
-
-        if expected_error:
+        if expect_fragment:
             self.assertEqual(r.status_code, 400)
-            self.assertEqual(r.json()["error"], expected_error)
-
-        if expected_fragment:
-            self.assertEqual(r.status_code, 400)
-            self.assertIn(expected_fragment, r.json()["error"])
+            self.assertIn(expect_fragment, r.json()["error"])
 
         return r
 
     def test_it_works(self):
-        r = self.post(
-            {
-                "api_key": "X" * 32,
-                "name": "Foo",
-                "tags": "bar,baz",
-                "timeout": 3600,
-                "grace": 60,
-            }
-        )
+        r = self.post({"name": "Foo", "tags": "bar,baz", "timeout": 3600, "grace": 60})
 
         self.assertEqual(r.status_code, 201)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -59,9 +50,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertIn("POST", r["Access-Control-Allow-Methods"])
 
     def test_30_days_works(self):
-        r = self.post(
-            {"api_key": "X" * 32, "name": "Foo", "timeout": 2592000, "grace": 2592000}
-        )
+        r = self.post({"name": "Foo", "timeout": 2592000, "grace": 2592000})
 
         self.assertEqual(r.status_code, 201)
 
@@ -80,7 +69,7 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_assigns_channels(self):
         channel = Channel.objects.create(project=self.project)
 
-        r = self.post({"api_key": "X" * 32, "channels": "*"})
+        r = self.post({"channels": "*"})
 
         self.assertEqual(r.status_code, 201)
         check = Check.objects.get()
@@ -89,7 +78,7 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_sets_channel_by_name(self):
         channel = Channel.objects.create(project=self.project, name="alerts")
 
-        r = self.post({"api_key": "X" * 32, "channels": "alerts"})
+        r = self.post({"channels": "alerts"})
         self.assertEqual(r.status_code, 201)
 
         check = Check.objects.get()
@@ -100,7 +89,7 @@ class CreateCheckTestCase(BaseTestCase):
         name = "102eaa82-a274-4b15-a499-c1bb6bbcd7b6"
         channel = Channel.objects.create(project=self.project, name=name)
 
-        r = self.post({"api_key": "X" * 32, "channels": name})
+        r = self.post({"channels": name})
         self.assertEqual(r.status_code, 201)
 
         check = Check.objects.get()
@@ -108,7 +97,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(assigned_channel, channel)
 
     def test_it_handles_channel_lookup_by_name_with_no_results(self):
-        r = self.post({"api_key": "X" * 32, "channels": "abc"})
+        r = self.post({"channels": "abc"})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
 
@@ -119,7 +108,7 @@ class CreateCheckTestCase(BaseTestCase):
         Channel.objects.create(project=self.project, name="foo")
         Channel.objects.create(project=self.project, name="foo")
 
-        r = self.post({"api_key": "X" * 32, "channels": "foo"})
+        r = self.post({"channels": "foo"})
 
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "non-unique channel identifier: foo")
@@ -130,19 +119,17 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_rejects_multiple_empty_channel_names(self):
         Channel.objects.create(project=self.project, name="")
 
-        r = self.post({"api_key": "X" * 32, "channels": ","})
+        r = self.post({"channels": ","})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "empty channel identifier")
 
         # The check should not have been saved
         self.assertFalse(Check.objects.exists())
 
-    def test_it_supports_unique(self):
+    def test_it_supports_unique_name(self):
         check = Check.objects.create(project=self.project, name="Foo")
 
-        r = self.post(
-            {"api_key": "X" * 32, "name": "Foo", "tags": "bar", "unique": ["name"]}
-        )
+        r = self.post({"name": "Foo", "tags": "bar", "unique": ["name"]})
 
         # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
@@ -153,6 +140,39 @@ class CreateCheckTestCase(BaseTestCase):
         # The tags field should have a value now:
         check.refresh_from_db()
         self.assertEqual(check.tags, "bar")
+
+    def test_it_supports_unique_tags(self):
+        Check.objects.create(project=self.project, tags="foo")
+
+        r = self.post({"tags": "foo", "unique": ["tags"]})
+
+        # Expect 200 instead of 201
+        self.assertEqual(r.status_code, 200)
+
+        # And there should be only one check in the database:
+        self.assertEqual(Check.objects.count(), 1)
+
+    def test_it_supports_unique_timeout(self):
+        Check.objects.create(project=self.project, timeout=td(seconds=123))
+
+        r = self.post({"timeout": 123, "unique": ["timeout"]})
+
+        # Expect 200 instead of 201
+        self.assertEqual(r.status_code, 200)
+
+        # And there should be only one check in the database:
+        self.assertEqual(Check.objects.count(), 1)
+
+    def test_it_supports_unique_grace(self):
+        Check.objects.create(project=self.project, grace=td(seconds=123))
+
+        r = self.post({"grace": 123, "unique": ["grace"]})
+
+        # Expect 200 instead of 201
+        self.assertEqual(r.status_code, 200)
+
+        # And there should be only one check in the database:
+        self.assertEqual(Check.objects.count(), 1)
 
     def test_it_handles_missing_request_body(self):
         r = self.client.post(self.URL, content_type="application/json")
@@ -171,56 +191,32 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 401)
 
     def test_it_rejects_small_timeout(self):
-        self.post(
-            {"api_key": "X" * 32, "timeout": 0},
-            expected_fragment="timeout is too small",
-        )
+        self.post({"timeout": 0}, expect_fragment="timeout is too small")
 
     def test_it_rejects_large_timeout(self):
-        self.post(
-            {"api_key": "X" * 32, "timeout": 2592001},
-            expected_fragment="timeout is too large",
-        )
+        self.post({"timeout": 2592001}, expect_fragment="timeout is too large")
 
     def test_it_rejects_non_number_timeout(self):
-        self.post(
-            {"api_key": "X" * 32, "timeout": "oops"},
-            expected_fragment="timeout is not a number",
-        )
+        self.post({"timeout": "oops"}, expect_fragment="timeout is not a number")
 
     def test_it_rejects_non_string_name(self):
-        self.post(
-            {"api_key": "X" * 32, "name": False},
-            expected_fragment="name is not a string",
-        )
+        self.post({"name": False}, expect_fragment="name is not a string")
 
     def test_it_rejects_long_name(self):
-        self.post(
-            {"api_key": "X" * 32, "name": "01234567890" * 20},
-            expected_fragment="name is too long",
-        )
+        self.post({"name": "01234567890" * 20}, expect_fragment="name is too long")
 
     def test_unique_accepts_only_specific_values(self):
         self.post(
-            {"api_key": "X" * 32, "name": "Foo", "unique": ["status"]},
-            expected_fragment="unexpected value",
+            {"name": "Foo", "unique": ["status"]}, expect_fragment="unexpected value",
         )
 
     def test_it_rejects_bad_unique_values(self):
         self.post(
-            {"api_key": "X" * 32, "name": "Foo", "unique": "not a list"},
-            expected_fragment="not an array",
+            {"name": "Foo", "unique": "not a list"}, expect_fragment="not an array",
         )
 
     def test_it_supports_cron_syntax(self):
-        r = self.post(
-            {
-                "api_key": "X" * 32,
-                "schedule": "5 * * * *",
-                "tz": "Europe/Riga",
-                "grace": 60,
-            }
-        )
+        r = self.post({"schedule": "5 * * * *", "tz": "Europe/Riga", "grace": 60})
 
         self.assertEqual(r.status_code, 201)
 
@@ -232,32 +228,15 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertTrue("timeout" not in doc)
 
     def test_it_validates_cron_expression(self):
-        r = self.post(
-            {
-                "api_key": "X" * 32,
-                "schedule": "not-a-cron-expression",
-                "tz": "Europe/Riga",
-                "grace": 60,
-            }
-        )
-
+        r = self.post({"schedule": "bad-expression", "tz": "Europe/Riga", "grace": 60})
         self.assertEqual(r.status_code, 400)
 
     def test_it_validates_timezone(self):
-        r = self.post(
-            {
-                "api_key": "X" * 32,
-                "schedule": "* * * * *",
-                "tz": "not-a-timezone",
-                "grace": 60,
-            }
-        )
-
+        r = self.post({"schedule": "* * * * *", "tz": "not-a-timezone", "grace": 60})
         self.assertEqual(r.status_code, 400)
 
     def test_it_sets_default_timeout(self):
-        r = self.post({"api_key": "X" * 32})
-
+        r = self.post({})
         self.assertEqual(r.status_code, 201)
 
         doc = r.json()
@@ -267,7 +246,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.profile.check_limit = 0
         self.profile.save()
 
-        r = self.post({"api_key": "X" * 32})
+        r = self.post({})
         self.assertEqual(r.status_code, 403)
 
     def test_it_rejects_readonly_key(self):
@@ -278,24 +257,24 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 401)
 
     def test_it_sets_manual_resume(self):
-        r = self.post({"api_key": "X" * 32, "manual_resume": True})
+        r = self.post({"manual_resume": True})
 
         self.assertEqual(r.status_code, 201)
         check = Check.objects.get()
         self.assertTrue(check.manual_resume)
 
     def test_it_rejects_non_boolean_manual_resume(self):
-        r = self.post({"api_key": "X" * 32, "manual_resume": "surprise"})
+        r = self.post({"manual_resume": "surprise"})
 
         self.assertEqual(r.status_code, 400)
 
     def test_it_sets_methods(self):
-        r = self.post({"api_key": "X" * 32, "methods": "POST"})
+        r = self.post({"methods": "POST"})
 
         self.assertEqual(r.status_code, 201)
         check = Check.objects.get()
         self.assertEqual(check.methods, "POST")
 
     def test_it_rejects_bad_methods_value(self):
-        r = self.post({"api_key": "X" * 32, "methods": "bad-value"})
+        r = self.post({"methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
