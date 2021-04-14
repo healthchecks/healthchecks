@@ -158,8 +158,6 @@ def _update(check, spec):
     if new_channels is not None:
         check.channel_set.set(new_channels)
 
-    return check
-
 
 @validate_json()
 @authorize_read
