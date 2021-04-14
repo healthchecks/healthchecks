@@ -64,6 +64,13 @@ class GetFlipsTestCase(BaseTestCase):
         r = self.get(qs="?start=-123")
         self.assertEqual(r.status_code, 400)
 
+    def test_it_filters_by_start(self):
+        r = self.get(qs="?start=1591014300")  # 2020-06-01 12:25:00
+        self.assertEqual(r.status_code, 200)
+
+        doc = r.json()
+        self.assertEqual(doc["flips"], [])
+
     def test_it_rejects_huge_start(self):
         r = self.get(qs="?start=12345678901234567890")
         self.assertEqual(r.status_code, 400)
