@@ -1,5 +1,4 @@
 from datetime import timedelta
-from functools import cached_property
 from secrets import token_urlsafe
 from urllib.parse import quote, urlencode
 import uuid
@@ -343,18 +342,18 @@ class Project(models.Model):
         for profile in q:
             profile.update_next_nag_date()
 
-    @cached_property
     def overall_status(self):
-        status = "up"
-        for check in self.check_set.all():
-            check_status = check.get_status()
-            if status == "up" and check_status == "grace":
-                status = "grace"
+        if not hasattr(self, "_overall_status"):
+            self._overall_status = "up"
+            for check in self.check_set.all():
+                check_status = check.get_status()
+                if check_status == "grace" and self._overall_status == "up":
+                    self._overall_status = "grace"
+                elif check_status == "down":
+                    self._overall_status = "down"
+                    break
 
-            if check_status == "down":
-                status = "down"
-                break
-        return status
+        return self._overall_status
 
     def get_n_down(self):
         result = 0

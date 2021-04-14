@@ -285,7 +285,7 @@ def index(request):
         projects = list(q)
         # Primary sort key: projects with overall_status=down go first
         # Secondary sort key: project's name
-        projects.sort(key=lambda p: (p.overall_status != "down", p.name))
+        projects.sort(key=lambda p: (p.overall_status() != "down", p.name))
 
         ctx = {
             "page": "projects",
