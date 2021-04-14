@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Improve HTML email display in the "Ping Details" dialog
 - Add a link to check's details page in Slack notifications
 - Replace details_url with cloaked_url in email and chat notifications
+- In the "My Projects" page, show projects with failing checks first
 
 ## Bug Fixes
 - Fix downtime summary to handle months when the check didn't exist yet (#472)

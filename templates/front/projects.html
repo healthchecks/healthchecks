@@ -21,16 +21,14 @@
                         <h4>{{ project }}</h4>
 
                         <div>
-                            {% with project.check_set.count as n %}
-                            {{ n }} check{{ n|pluralize }},
-                            {% endwith %}
+                            {{ project.n_checks }}
+                            check{{ project.n_checks|pluralize }},
 
-                            {% with project.channel_set.count as n %}
-                            {{ n }} integration{{ n|pluralize }}
-                            {% endwith %}
+                            {{ project.n_channels }}
+                            integration{{ project.n_channels|pluralize }}
                         </div>
                         <div class="text-muted">
-                            {{ project.owner.email }}
+                            {{ project.owner_email }}
                         </div>
 
                     </div>

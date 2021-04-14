@@ -1,4 +1,5 @@
 from datetime import timedelta
+from functools import cached_property
 from secrets import token_urlsafe
 from urllib.parse import quote, urlencode
 import uuid
@@ -342,6 +343,7 @@ class Project(models.Model):
         for profile in q:
             profile.update_next_nag_date()
 
+    @cached_property
     def overall_status(self):
         status = "up"
         for check in self.check_set.all():

@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count
+from django.db.models import Count, F
 from django.http import (
     Http404,
     HttpResponse,
@@ -275,7 +275,17 @@ def switch_channel(request, code, channel_code):
 
 def index(request):
     if request.user.is_authenticated:
-        projects = list(request.profile.projects())
+        project_ids = request.profile.projects().values("id")
+
+        q = Project.objects.filter(id__in=project_ids)
+        q = q.annotate(n_checks=Count("check", distinct=True))
+        q = q.annotate(n_channels=Count("channel", distinct=True))
+        q = q.annotate(owner_email=F("owner__email"))
+
+        projects = list(q)
+        # Primary sort key: projects with overall_status=down go first
+        # Secondary sort key: project's name
+        projects.sort(key=lambda p: (p.overall_status != "down", p.name))
 
         ctx = {
             "page": "projects",
