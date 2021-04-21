@@ -7,14 +7,14 @@ from environment variables. Below is a list of variables it reads and uses:
 
 Default: `*`
 
-A list of strings representing the host/domain names that this site can serve.
-You can specify multiple domain names by separating them with commas:
+The host/domain names that this site can serve. You can specify multiple domain names
+by separating them with commas:
 
 ```ini
 ALLOWED_HOSTS=my-hc.example.org,alternative-name.example.org
 ```
 
-Aside from the comma-separated syntax, this is a standard Django setting.
+Apart from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
 [Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts).
 
