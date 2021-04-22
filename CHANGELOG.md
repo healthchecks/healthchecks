@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.20.0 - Unreleased
+## v1.20.0 - 2020-04-22
 
 ## Improvements
 - Django 3.2
