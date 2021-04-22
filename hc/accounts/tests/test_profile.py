@@ -9,6 +9,7 @@ class ProfileTestCase(BaseTestCase):
 
         r = self.client.get("/accounts/profile/")
         self.assertContains(r, "Email and Password")
+        self.assertContains(r, "Change Password")
 
     def test_leaving_works(self):
         self.client.login(username="bob@example.org", password="password")
@@ -75,3 +76,15 @@ class ProfileTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/accounts/profile/")
         self.assertContains(r, "Alices Key")
+
+    def test_it_handles_unusable_password(self):
+        self.alice.set_unusable_password()
+        self.alice.save()
+
+        # Authenticate using the ProfileBackend and a token:
+        token = self.profile.prepare_token("login")
+        self.client.login(username="alice", token=token)
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "Set Password")
+        self.assertNotContains(r, "Change Password")

@@ -65,3 +65,7 @@ span.loading {
 #my-keys th {
     border-top: 0;
 }
+
+.settings-bar {
+    line-height: 34px;
+}

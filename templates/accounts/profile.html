@@ -38,7 +38,7 @@
                 <form method="post">
                     {% csrf_token %}
                     <h2>Email and Password</h2>
-                    <p>
+                    <p class="settings-bar">
                         Your account's email address is
                         <code>{{ request.user.email }}</code>
 
@@ -47,12 +47,21 @@
                             class="btn btn-default pull-right">Change Email</a>
                     </p>
                     <p class="clearfix"></p>
-                    <p>
-                        Attach a password to your {{ site_name }} account
+                    {% if request.user.has_usable_password %}
+                    <p class="settings-bar">
+                        Password authentication is enabled.
+                        <a
+                            href="{% url 'hc-set-password' %}"
+                            class="btn btn-default pull-right">Change Password</a>
+                    </p>
+                    {% else %}
+                    <p class="settings-bar">
+                        Attach a password to your {{ site_name }} account.
                         <a
                             href="{% url 'hc-set-password' %}"
                             class="btn btn-default pull-right">Set Password</a>
                     </p>
+                    {% endif %}
                 </form>
             </div>
             {% if changed_password %}
