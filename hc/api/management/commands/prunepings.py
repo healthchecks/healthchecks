@@ -19,4 +19,4 @@ class Command(BaseCommand):
         q = q.filter(n__gt=0)
         n_pruned, _ = q.delete()
 
-        return "Done! Pruned %d pings" % n_pruned
+        return "Done! Pruned %d pings. Kept 100 most recent pings." % n_pruned
