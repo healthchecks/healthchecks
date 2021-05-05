@@ -67,9 +67,10 @@
                             <input
                                 name="subject"
                                 type="text"
+                                maxlength="100"
                                 value="{{ check.subject }}"
                                 {% if not check.subject and not check.subject_fail %}disabled{% endif %}
-                                class="input-name form-control filter-by-subject" />
+                                class="form-control filter-by-subject" />
                             <span class="help-block">
                                 Comma-separated list of keywords. If Subject contains
                                 any of the keywords, treat it as "success".
@@ -84,9 +85,10 @@
                             <input
                                 name="subject_fail"
                                 type="text"
+                                maxlength="100"
                                 value="{{ check.subject_fail }}"
                                 {% if not check.subject and not check.subject_fail %}disabled{% endif %}
-                                class="input-name form-control filter-by-subject" />
+                                class="form-control filter-by-subject" />
                             <span class="help-block">
                                 Comma-separated list of keywords. If Subject contains
                                 any of the keywords, treat it as "failure".
