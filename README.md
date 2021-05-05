@@ -167,6 +167,11 @@ There are separate Django management commands for each task:
     $ ./manage.py prunepings
     ```
 
+  Note: 100 is the default value but you can configure a different
+  limit per-user. To do that, go to the
+  Administration Panel, look up user's **Profile** and modify its
+  "Ping log limit" field.
+
 * Remove old records of sent notifications. For each check, remove
   notifications that are older than the oldest stored ping for same check.
 
