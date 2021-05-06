@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Increase "Success / Failure Keywords" field lengths to 200
+- Django 3.2.2
 
 ## v1.20.0 - 2020-04-22
 
