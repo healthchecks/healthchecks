@@ -1,0 +1,19 @@
+.docs-nav li.nav-header {
+    color: #fff;
+    font-weight: bold;
+}
+
+.page-docs code {
+    padding: 2px 4px;
+    font-size: 90%;
+    color: #333;
+    background-color: #666;
+    border-radius: 4px;
+}
+
+.page-docs pre code {
+    padding: 0;
+    font-size: 13px;
+    background-color: #fff;
+    border-radius: 0;
+}

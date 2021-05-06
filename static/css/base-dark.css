@@ -1,0 +1,36 @@
+#logo {
+    max-height: 50px;
+    margin-top: -16px;
+    background-color: #aaa;
+}
+
+#nav-sign-up span {
+    display: inline-block;
+    color: #ccc;
+    background-color: #7ab694;
+    font-weight: bold;
+    border: 1px solid #1ea65a;
+    border-radius: 5px;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.hc-dialog {
+    background: #FFF;
+    color: #000;
+    padding: 2em;
+    margin-top: 100px;
+}
+
+.hc-dialog h1 {
+    margin: 0;
+    color: #000;
+}
+
+
+#debug-warning {
+    background: #333;
+    text-align: center;
+    font-size: small;
+    padding: 2px 0;
+}

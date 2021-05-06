@@ -1,0 +1,10 @@
+#project-selector #add-project:hover .project {
+    border-color: #0091EA;
+    color: #ddd;
+}
+
+
+.project
+{
+    color: #ddd;
+}

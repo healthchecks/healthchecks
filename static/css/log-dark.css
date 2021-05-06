@@ -1,0 +1,20 @@
+#log td {
+    color: #fff;
+    position: relative;
+    border: 0;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+#log .details span.ua-body {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11.7px;
+    color: #ccc;
+}
+
+#log tr.ok:hover td {
+    background-color: #999;
+}
+
+#log .hash {
+    color: #fff;
+}

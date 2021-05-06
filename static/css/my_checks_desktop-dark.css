@@ -1,0 +1,46 @@
+#checks-table .checks-row:hover {
+    background-color: #666;
+}
+
+#checks-table a.default {
+    color: #8bc0e2;
+}
+
+#checks-table.rw tr:hover .my-checks-name,
+#checks-table.rw tr:hover .integrations,
+#checks-table.rw tr:hover .timeout-grace,
+#checks-table tr:hover .last-ping {
+    border: 1px dotted #333;
+    cursor: pointer;
+}
+
+.checks-subline {
+    color: #999;
+    white-space: nowrap;
+}
+
+.url-cell .base {
+    color: #999;
+}
+
+.my-checks-url {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11.7px;
+    position: relative;
+    line-height: 36px;
+    color: #fff;
+}
+
+#checks-table .btn {
+    border-color: transparent;
+    font-size: 20px;
+    background-color: #222;
+    color: #999;
+}
+
+#checks-table tr:hover .btn {
+    color: #333;
+    border-color: #333;
+    background: transparent;
+    opacity: 1;
+}

@@ -1,0 +1,4 @@
+#details-integrations.rw tr:hover th, #details-integrations.rw tr:hover td {
+    cursor: pointer;
+    background-color: #999;
+}

@@ -1,0 +1,30 @@
+.channels-table .unnamed {
+    font-style: italic;
+    color: #AAA;
+}
+
+
+.channels-table .channel-row:hover > td {
+    background: #666;
+    color: #fff;
+}
+
+.channel-details-mini span {
+    color: #aaa;
+}
+
+.edit-checks {
+    color: #ccc;
+}
+
+.edit-checks:hover {
+    text-decoration: none;
+    color: #3429ce;;
+}
+
+.add-integration li:hover,
+.add-integration li:hover h2 {
+    background: #666;
+    color: #fff;
+}
+
