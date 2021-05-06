@@ -67,7 +67,7 @@
                             <input
                                 name="subject"
                                 type="text"
-                                maxlength="100"
+                                maxlength="200"
                                 value="{{ check.subject }}"
                                 {% if not check.subject and not check.subject_fail %}disabled{% endif %}
                                 class="form-control filter-by-subject" />
@@ -85,7 +85,7 @@
                             <input
                                 name="subject_fail"
                                 type="text"
-                                maxlength="100"
+                                maxlength="200"
                                 value="{{ check.subject_fail }}"
                                 {% if not check.subject and not check.subject_fail %}disabled{% endif %}
                                 class="form-control filter-by-subject" />

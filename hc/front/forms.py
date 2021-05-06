@@ -64,8 +64,8 @@ class NameTagsForm(forms.Form):
 
 class FilteringRulesForm(forms.Form):
     filter_by_subject = forms.ChoiceField(choices=(("no", "no"), ("yes", "yes")))
-    subject = forms.CharField(required=False, max_length=100)
-    subject_fail = forms.CharField(required=False, max_length=100)
+    subject = forms.CharField(required=False, max_length=200)
+    subject_fail = forms.CharField(required=False, max_length=200)
     methods = forms.ChoiceField(required=False, choices=(("", "Any"), ("POST", "POST")))
     manual_resume = forms.BooleanField(required=False)
 

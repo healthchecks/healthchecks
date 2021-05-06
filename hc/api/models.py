@@ -78,8 +78,8 @@ class Check(models.Model):
     grace = models.DurationField(default=DEFAULT_GRACE)
     schedule = models.CharField(max_length=100, default="* * * * *")
     tz = models.CharField(max_length=36, default="UTC")
-    subject = models.CharField(max_length=100, blank=True)
-    subject_fail = models.CharField(max_length=100, blank=True)
+    subject = models.CharField(max_length=200, blank=True)
+    subject_fail = models.CharField(max_length=200, blank=True)
     methods = models.CharField(max_length=30, blank=True)
     manual_resume = models.BooleanField(default=False)
 

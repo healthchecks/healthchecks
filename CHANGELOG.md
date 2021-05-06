@@ -1,9 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.21.0 - Unreleased
+
+### Improvements
+- Increase "Success / Failure Keywords" field lengths to 200
+
 ## v1.20.0 - 2020-04-22
 
-## Improvements
+### Improvements
 - Django 3.2
 - Rename VictorOps -> Splunk On-Call
 - Implement email body decoding in the "Ping Details" dialog
@@ -13,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - Replace details_url with cloaked_url in email and chat notifications
 - In the "My Projects" page, show projects with failing checks first
 
-## Bug Fixes
+### Bug Fixes
 - Fix downtime summary to handle months when the check didn't exist yet (#472)
 - Relax cron expression validation: accept all expressions that croniter accepts
 - Fix sendalerts to clear Profile.next_nag_date if all checks up
@@ -23,7 +28,7 @@ All notable changes to this project will be documented in this file.
 
 ## v1.19.0 - 2021-02-03
 
-## Improvements
+### Improvements
 - Add tighter parameter checks in hc.front.views.serve_doc
 - Update OpsGenie instructions (#450)
 - Update the email notification template to include more check and last ping details
@@ -35,14 +40,14 @@ All notable changes to this project will be documented in this file.
 - Add rate limiting for Pushover notifications (6 notifications / user / minute)
 - Add support for disabling specific integration types (#471)
 
-## Bug Fixes
+### Bug Fixes
 - Fix unwanted HTML escaping in SMS and WhatsApp notifications
 - Fix a crash when adding an integration for an empty Trello account
 - Change icon CSS class prefix to 'ic-' to work around Fanboy's filter list
 
 ## v1.18.0 - 2020-12-09
 
-## Improvements
+### Improvements
 - Add a tooltip to the 'confirmation link' label (#436)
 - Update API to allow specifying channels by names (#440)
 - When saving a phone number, remove any invisible unicode characers
@@ -59,12 +64,12 @@ All notable changes to this project will be documented in this file.
 - Implement header-based authentication (#457)
 - Add a "Lost password?" link with instructions in the Sign In page
 
-## Bug Fixes
+### Bug Fixes
 - Fix db field overflow when copying a check with a long name
 
 ## v1.17.0 - 2020-10-14
 
-## Improvements
+### Improvements
 - Django 3.1
 - Handle status callbacks from Twilio, show delivery failures in Integrations
 - Removing unused /api/v1/notifications/{uuid}/bounce endpoint
@@ -74,7 +79,7 @@ All notable changes to this project will be documented in this file.
 - Read-only team members
 - API support for setting the allowed HTTP methods for making ping requests
 
-## Bug Fixes
+### Bug Fixes
 - Handle excessively long email addresses in the signup form
 - Handle excessively long email addresses in the team member invite form
 - Don't allow duplicate team memberships
