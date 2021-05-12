@@ -27,7 +27,17 @@
                     {% csrf_token %}
 
                     {% if magic_form.identity.errors %}
-                    <p class="text-danger">{{ magic_form.identity.errors|join:"" }}</p>
+                    <p class="text-danger">
+                        {% for e in magic_form.identity.errors %}
+                            {{ e }}
+                            {% if e == "Unknown email address." and registration_open %}
+                            <a
+                                href="#"
+                                data-toggle="modal"
+                                data-target="#signup-modal">Create Account?</a>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
                     {% else %}
                     <p>Enter your <strong>email address</strong>.</p>
                     {% endif %}
@@ -97,16 +107,6 @@
                 </form>
             </div>
         </div>
-
-        {% if registration_open %}
-        <div class="row">
-            <div id="login-signup-cta" class="col-sm-12 text-center">
-                Don't have an account?
-                <a href="#" data-toggle="modal" data-target="#signup-modal">Sign Up</a>
-            </div>
-        </div>
-        {% endif %}
-
     </div>
 </div>
 

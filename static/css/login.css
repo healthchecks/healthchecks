@@ -73,21 +73,6 @@
     background: #fff;
 }
 
-#login-signup-cta {
-    font-size: 18px;
-    color: #999;
-    margin-top: 40px;
-}
-
-#login-signup-cta a {
-    color: #999;
-    text-decoration: underline;
-}
-
-#login-signup-cta a:hover {
-    color:  #0091EA;
-}
-
 #login-password {
     margin-bottom: 0;
 }

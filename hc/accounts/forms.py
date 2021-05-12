@@ -59,7 +59,7 @@ class EmailLoginForm(forms.Form):
         try:
             self.user = User.objects.get(email=v)
         except User.DoesNotExist:
-            raise forms.ValidationError("Incorrect email address.")
+            raise forms.ValidationError("Unknown email address.")
 
         return v
 
