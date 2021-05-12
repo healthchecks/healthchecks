@@ -4,6 +4,6 @@ Django==3.2.2
 django-compressor==2.4
 fido2==0.9.1
 psycopg2==2.8.6
-pytz==2020.5
+pytz==2021.1
 requests==2.25.1
 statsd==3.3.0
