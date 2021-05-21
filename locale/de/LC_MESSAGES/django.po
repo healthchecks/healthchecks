@@ -1,6 +1,7 @@
 #
 # (null) <>, 2021.
 # Pēteris Caune <cuu508@gmail.com>, 2021.
+# Richard Lippmann <lippmann@findus-internet-opac.de>, 2021.
 #
 msgid ""
 msgstr ""
@@ -9,10 +10,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Gtranslator 3.36.0\n"
 "Project-Id-Version: totmann\n"
-"Language: lv\n"
-"PO-Revision-Date: 2021-05-21 11:10+0300\n"
-"Last-Translator: Pēteris Caune <cuu508@gmail.com>\n"
-"Language-Team: Latvian <contact@healthchecks.io>\n"
+"Language: de\n"
+"PO-Revision-Date: 2021-05-21 11:22+0300\n"
+"Last-Translator: Richard Lippmann <lippmann@findus-internet-opac.de>\n"
+"Richard Lippmann <cuu508@gmail.com>\n"
+"Language-Team: German <contact@healthchecks.io>\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2)\n"
 
