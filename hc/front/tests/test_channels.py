@@ -121,3 +121,23 @@ class ChannelsTestCase(BaseTestCase):
         self.assertNotContains(r, "Add Integration", status_code=200)
         self.assertNotContains(r, "ic-delete")
         self.assertNotContains(r, "edit_webhook")
+
+    def test_it_shows_down_only_note_for_sms(self):
+        channel = Channel(project=self.project, kind="sms")
+        channel.value = json.dumps({"value": "+123123123", "up": False, "down": True})
+        channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.channels_url)
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "(down only)")
+
+    def test_it_shows_up_only_note_for_sms(self):
+        channel = Channel(project=self.project, kind="sms")
+        channel.value = json.dumps({"value": "+123123123", "up": True, "down": False})
+        channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.channels_url)
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, "(up only)")

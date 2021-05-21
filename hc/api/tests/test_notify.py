@@ -141,6 +141,7 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_call_limit(self, mock_post):
         # At limit already:
+        self.profile.call_limit = 50
         self.profile.last_call_date = now()
         self.profile.calls_sent = 50
         self.profile.save()
@@ -164,11 +165,12 @@ class NotifyTestCase(BaseTestCase):
     @patch("hc.api.transports.requests.request")
     def test_call_limit_reset(self, mock_post):
         # At limit, but also into a new month
+        self.profile.call_limit = 50
         self.profile.calls_sent = 50
         self.profile.last_call_date = now() - td(days=100)
         self.profile.save()
 
-        self._setup_data("sms", "+1234567890")
+        self._setup_data("call", "+1234567890")
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)

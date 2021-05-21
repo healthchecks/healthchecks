@@ -1638,7 +1638,7 @@ def add_telegram(request):
 def add_sms(request, code):
     project = _get_rw_project_for_user(request, code)
     if request.method == "POST":
-        form = forms.PhoneNumberForm(request.POST)
+        form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="sms")
             channel.name = form.cleaned_data["label"]
@@ -1648,7 +1648,7 @@ def add_sms(request, code):
             channel.assign_all_checks()
             return redirect("hc-channels", project.code)
     else:
-        form = forms.PhoneNumberForm()
+        form = forms.PhoneUpDownForm(initial={"up": False})
 
     ctx = {
         "page": "channels",

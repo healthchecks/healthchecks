@@ -491,7 +491,10 @@ class Sms(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
 
     def is_noop(self, check):
-        return check.status != "down"
+        if check.status == "down":
+            return not self.channel.sms_notify_down
+        else:
+            return not self.channel.sms_notify_up
 
     def notify(self, check):
         profile = Profile.objects.for_user(self.channel.project.owner)

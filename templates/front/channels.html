@@ -68,6 +68,12 @@
                             {% endif %}
                         {% elif ch.kind == "sms" %}
                             SMS to <span>{{ ch.phone_number }}</span>
+                            {% if ch.sms_notify_down and not ch.sms_notify_up %}
+                                (down only)
+                            {% endif %}
+                            {% if ch.sms_notify_up and not ch.sms_notify_down %}
+                                (up only)
+                            {% endif %}
                         {% elif ch.kind == "call" %}
                             Phone call to <span>{{ ch.phone_number }}</span>
                         {% elif ch.kind == "trello" %}

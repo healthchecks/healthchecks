@@ -740,6 +740,18 @@ class Channel(models.Model):
         return doc["down"]
 
     @property
+    def sms_notify_up(self):
+        assert self.kind == "sms"
+        doc = json.loads(self.value)
+        return doc["up"]
+
+    @property
+    def sms_notify_down(self):
+        assert self.kind == "sms"
+        doc = json.loads(self.value)
+        return doc["down"]
+
+    @property
     def opsgenie_key(self):
         assert self.kind == "opsgenie"
         if not self.value.startswith("{"):

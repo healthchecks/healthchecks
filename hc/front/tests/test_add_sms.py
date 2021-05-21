@@ -24,7 +24,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertContains(r, "upgrade to a")
 
     def test_it_creates_channel(self):
-        form = {"label": "My Phone", "phone": "+1234567890"}
+        form = {"label": "My Phone", "phone": "+1234567890", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -34,6 +34,8 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.kind, "sms")
         self.assertEqual(c.phone_number, "+1234567890")
         self.assertEqual(c.name, "My Phone")
+        self.assertTrue(c.sms_notify_down)
+        self.assertFalse(c.sms_notify_up)
         self.assertEqual(c.project, self.project)
 
     def test_it_rejects_bad_number(self):
@@ -95,3 +97,17 @@ class AddSmsTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.phone_number, "+1234567890")
+
+    def test_it_obeys_up_down_flags(self):
+        form = {"label": "My Phone", "phone": "+1234567890"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertRedirects(r, self.channels_url)
+
+        c = Channel.objects.get()
+        self.assertEqual(c.kind, "sms")
+        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.name, "My Phone")
+        self.assertFalse(c.sms_notify_down)
+        self.assertFalse(c.sms_notify_up)
