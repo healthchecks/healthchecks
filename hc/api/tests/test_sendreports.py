@@ -37,7 +37,7 @@ class SendReportsTestCase(BaseTestCase):
         cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
-        found = cmd.handle_one_monthly_report()
+        found = cmd.handle_one_report()
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
@@ -53,14 +53,14 @@ class SendReportsTestCase(BaseTestCase):
         self.profile.next_report_date = now() + td(days=1)
         self.profile.save()
 
-        found = Command().handle_one_monthly_report()
+        found = Command().handle_one_report()
         self.assertFalse(found)
 
     def test_it_fills_blank_next_report_date(self):
         self.profile.next_report_date = None
         self.profile.save()
 
-        found = Command().handle_one_monthly_report()
+        found = Command().handle_one_report()
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
@@ -72,13 +72,13 @@ class SendReportsTestCase(BaseTestCase):
         self.profile.reports = "off"
         self.profile.save()
 
-        found = Command().handle_one_monthly_report()
+        found = Command().handle_one_report()
         self.assertFalse(found)
 
     def test_it_requires_pinged_checks(self):
         self.check.delete()
 
-        found = Command().handle_one_monthly_report()
+        found = Command().handle_one_report()
         self.assertTrue(found)
 
         # No email should have been sent:

@@ -29,7 +29,7 @@ class Command(BaseCommand):
             help="Keep running indefinitely in a 300 second wait loop",
         )
 
-    def handle_one_monthly_report(self):
+    def handle_one_report(self):
         report_due = Q(next_report_date__lt=timezone.now())
         report_not_scheduled = Q(next_report_date__isnull=True)
 
@@ -94,7 +94,7 @@ class Command(BaseCommand):
         self.stdout.write("sendreports is now running")
         while True:
             # Monthly reports
-            while self.handle_one_monthly_report():
+            while self.handle_one_report():
                 pass
 
             # Daily and hourly nags

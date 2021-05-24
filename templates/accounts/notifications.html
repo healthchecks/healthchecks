@@ -33,7 +33,7 @@
 
                     <input id="tz" type="hidden" name="tz" value="{{ profile.tz }}" />
 
-                    <p>Send me periodic email reports:</p>
+                    <p>Periodic email reports:</p>
                     <label class="radio-container">
                         <input
                             type="radio"
@@ -41,7 +41,7 @@
                             value="off"
                             {% if profile.reports == "off" %} checked {% endif %}>
                         <span class="radiomark"></span>
-                        Do not send me email reports
+                        Off
                     </label>
                     <label class="radio-container">
                         <input
@@ -50,7 +50,7 @@
                             value="weekly"
                             {% if profile.reports == "weekly" %} checked {% endif %}>
                         <span class="radiomark"></span>
-                        Weekly on Mondays
+                        <strong>Weekly</strong> on Mondays
                     </label>
                     <label class="radio-container">
                         <input
@@ -59,11 +59,11 @@
                             value="monthly"
                             {% if profile.reports == "monthly" %} checked {% endif %}>
                         <span class="radiomark"></span>
-                        Monthly on 1st of every month
+                        <strong>Monthly</strong> on 1st of every month
                     </label>
 
                     <br>
-                    <p>If any checks are down:</p>
+                    <p>Ongoing reminders if any checks are down:</p>
 
                     <label class="radio-container">
                         <input
@@ -81,7 +81,7 @@
                             value="86400"
                             {% if profile.nag_period.total_seconds == 86400 %} checked {% endif %}>
                         <span class="radiomark"></span>
-                        Remind me daily
+                        Remind me <strong>daily</strong>
                     </label>
                     <label class="radio-container">
                         <input
@@ -90,7 +90,7 @@
                             value="3600"
                             {% if profile.nag_period.total_seconds == 3600 %} checked {% endif %}>
                         <span class="radiomark"></span>
-                        Remind me hourly
+                        Remind me <strong>hourly</strong>
                     </label>
 
                     <br />
