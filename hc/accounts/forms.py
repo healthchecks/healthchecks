@@ -6,6 +6,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from hc.accounts.models import REPORT_CHOICES
 from hc.api.models import TokenBucket
 
 
@@ -84,7 +85,7 @@ class PasswordLoginForm(forms.Form):
 
 
 class ReportSettingsForm(forms.Form):
-    reports_allowed = forms.BooleanField(required=False)
+    reports = forms.ChoiceField(choices=REPORT_CHOICES)
     nag_period = forms.IntegerField(min_value=0, max_value=86400)
 
     def clean_nag_period(self):

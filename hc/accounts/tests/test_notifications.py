@@ -6,33 +6,37 @@ from hc.test import BaseTestCase
 
 
 class NotificationsTestCase(BaseTestCase):
-    def test_it_saves_reports_allowed_true(self):
+    def test_it_saves_reports_monthly(self):
+        self.profile.reports = "off"
         self.profile.reports_allowed = False
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"reports_allowed": "on", "nag_period": "0"}
+        form = {"reports": "monthly", "nag_period": "0"}
         r = self.client.post("/accounts/profile/notifications/", form)
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
         self.assertTrue(self.profile.reports_allowed)
+        self.assertEqual(self.profile.reports, "monthly")
         self.assertIsNotNone(self.profile.next_report_date)
 
-    def test_it_saves_reports_allowed_false(self):
+    def test_it_saves_reports_off(self):
         self.profile.reports_allowed = True
+        self.profile.reports = "monthly"
         self.profile.next_report_date = now()
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"nag_period": "0"}
+        form = {"reports": "off", "nag_period": "0"}
         r = self.client.post("/accounts/profile/notifications/", form)
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
         self.assertFalse(self.profile.reports_allowed)
+        self.assertEqual(self.profile.reports, "off")
         self.assertIsNone(self.profile.next_report_date)
 
     def test_it_sets_next_nag_date_when_setting_hourly_nag_period(self):
@@ -40,7 +44,7 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"nag_period": "3600"}
+        form = {"reports": "off", "nag_period": "3600"}
         r = self.client.post("/accounts/profile/notifications/", form)
         self.assertEqual(r.status_code, 200)
 
@@ -54,7 +58,7 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"nag_period": "3600"}
+        form = {"reports": "off", "nag_period": "3600"}
         r = self.client.post("/accounts/profile/notifications/", form)
         self.assertEqual(r.status_code, 200)
 
@@ -68,7 +72,7 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"nag_period": "1234"}
+        form = {"reports": "off", "nag_period": "1234"}
         r = self.client.post("/accounts/profile/notifications/", form)
         self.assertEqual(r.status_code, 200)
 

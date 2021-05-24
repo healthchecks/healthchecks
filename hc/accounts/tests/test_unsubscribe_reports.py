@@ -22,6 +22,7 @@ class UnsubscribeReportsTestCase(BaseTestCase):
 
         self.profile.refresh_from_db()
         self.assertFalse(self.profile.reports_allowed)
+        self.assertEqual(self.profile.reports, "off")
         self.assertIsNone(self.profile.next_report_date)
 
         self.assertEqual(self.profile.nag_period.total_seconds(), 0)

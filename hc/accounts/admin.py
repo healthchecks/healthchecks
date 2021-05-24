@@ -43,7 +43,7 @@ class ProfileFieldset(Fieldset):
     name = "User Profile"
     fields = (
         "email",
-        "reports_allowed",
+        "reports",
         "next_report_date",
         "nag_period",
         "next_nag_date",
@@ -109,7 +109,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "projects",
         "invited",
         "sms",
-        "reports_allowed",
+        "reports",
     )
     list_filter = (
         "user__date_joined",

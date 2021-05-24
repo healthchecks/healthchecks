@@ -31,14 +31,24 @@
                     {% csrf_token %}
                     <h2>Email Reports</h2>
 
-                    <p>Send me monthly emails about:</p>
-                    <label class="checkbox-container">
+                    <p>Send me periodic emails reports:</p>
+                    <label class="radio-container">
                         <input
-                            name="reports_allowed"
-                            type="checkbox"
-                            {% if profile.reports_allowed %} checked {% endif %}>
-                        <span class="checkmark"></span>
-                        The status of checks in all teams I belong to
+                            type="radio"
+                            name="reports"
+                            value="off"
+                            {% if profile.reports == "off" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Do not send me email reports
+                    </label>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="reports"
+                            value="monthly"
+                            {% if profile.reports == "monthly" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Monthly on 1st of every month
                     </label>
 
                     <br>
@@ -81,10 +91,7 @@
                         {% endif %}
                     </p>
                     <br />
-
-
                     <button
-                        name="update_reports_allowed"
                         type="submit"
                         class="btn btn-default pull-right">Save Changes</button>
                 </form>

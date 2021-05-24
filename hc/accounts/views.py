@@ -447,8 +447,9 @@ def notifications(request):
     if request.method == "POST":
         form = forms.ReportSettingsForm(request.POST)
         if form.is_valid():
-            if profile.reports_allowed != form.cleaned_data["reports_allowed"]:
-                profile.reports_allowed = form.cleaned_data["reports_allowed"]
+            if profile.reports != form.cleaned_data["reports"]:
+                profile.reports = form.cleaned_data["reports"]
+                profile.reports_allowed = profile.reports == "monthly"
                 if profile.reports_allowed:
                     profile.next_report_date = choose_next_report_date()
                 else:
@@ -542,6 +543,7 @@ def unsubscribe_reports(request, signed_username):
 
     user = User.objects.get(username=username)
     profile = Profile.objects.for_user(user)
+    profile.reports = "off"
     profile.reports_allowed = False
     profile.next_report_date = None
     profile.nag_period = td()
