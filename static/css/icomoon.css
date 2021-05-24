@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'icomoon';
   src:
-    url('../fonts/icomoon.ttf?ed2ba') format('truetype'),
-    url('../fonts/icomoon.woff?ed2ba') format('woff'),
-    url('../fonts/icomoon.svg?ed2ba#icomoon') format('svg');
+    url('../fonts/icomoon.ttf?nsf0dg') format('truetype'),
+    url('../fonts/icomoon.woff?nsf0dg') format('woff'),
+    url('../fonts/icomoon.svg?nsf0dg#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -23,6 +23,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ic-victorops:before {
+  content: "\e900";
+}
+.ic-zulip:before {
+  content: "\e90f";
+  color: #6492fe;
+}
 .ic-signal:before {
   content: "\e91c";
   color: #2592e9;
@@ -38,10 +45,6 @@
 .ic-spike:before {
   content: "\e919";
   color: #007bff;
-}
-.ic-zulip:before {
-  content: "\e918";
-  color: #1e9459;
 }
 .ic-pd:before {
   content: "\e90b";
@@ -71,7 +74,7 @@
   color: #236b6b;
 }
 .ic-matrix:before {
-  content: "\e900";
+  content: "\e901";
 }
 .ic-started:before {
   content: "\e038";
@@ -83,10 +86,6 @@
 .ic-po:before {
   content: "\e90e";
   color: #249df1;
-}
-.ic-victorops:before {
-  content: "\e90f";
-  color: #2d2d2d;
 }
 .ic-email:before {
   content: "\e90a";
@@ -109,7 +108,7 @@
   color: #7289da;
 }
 .ic-hipchat:before {
-  content: "\e901";
+  content: "\e902";
   color: #0052cc;
 }
 .ic-slack:before {
@@ -125,11 +124,11 @@
   color: #0079bf;
 }
 .ic-whatsapp:before {
-  content: "\e902";
+  content: "\e903";
   color: #25d366;
 }
 .ic-clippy:before {
-  content: "\e903";
+  content: "\e912";
 }
 .ic-cancel:before {
   content: "\e5c9";
@@ -159,10 +158,10 @@
   content: "\e7f6";
 }
 .ic-settings:before {
-  content: "\e912";
+  content: "\e913";
 }
 .ic-delete:before {
-  content: "\e913";
+  content: "\e918";
 }
 .ic-timer:before {
   content: "\e425";
