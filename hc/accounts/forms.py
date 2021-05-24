@@ -28,12 +28,13 @@ class Base64Field(forms.CharField):
             raise ValidationError(message="Cannot decode base64")
 
 
-class AvailableEmailForm(forms.Form):
+class SignupForm(forms.Form):
     # Call it "identity" instead of "email"
     # to avoid some of the dumber bots
     identity = LowercaseEmailField(
         error_messages={"required": "Please enter your email address."}
     )
+    tz = forms.CharField(required=False)
 
     def clean_identity(self):
         v = self.cleaned_data["identity"]
@@ -46,6 +47,15 @@ class AvailableEmailForm(forms.Form):
             )
 
         return v
+
+    def clean_tz(self):
+        # Declare tz as "clean" only if we can find it in pytz.all_timezones
+        if self.cleaned_data["tz"] in pytz.all_timezones:
+            return self.cleaned_data["tz"]
+
+        # Otherwise, return None, and *don't* throw a validation exception:
+        # If user's browser reports a timezone we don't recognize, we
+        # should ignore the timezone but still save the rest of the form.
 
 
 class EmailLoginForm(forms.Form):

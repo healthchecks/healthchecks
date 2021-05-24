@@ -59,7 +59,7 @@ def _allow_redirect(redirect_url):
     return match.url_name in POST_LOGIN_ROUTES
 
 
-def _make_user(email, with_project=True):
+def _make_user(email, tz=None, with_project=True):
     username = str(uuid.uuid4())[:30]
     user = User(username=username, email=email)
     user.set_unusable_password()
@@ -84,7 +84,10 @@ def _make_user(email, with_project=True):
         channel.checks.add(check)
 
     # Ensure a profile gets created
-    Profile.objects.for_user(user)
+    profile = Profile.objects.for_user(user)
+    if tz:
+        profile.tz = tz
+        profile.save()
 
     return user
 
@@ -173,10 +176,11 @@ def signup(request):
         return HttpResponseForbidden()
 
     ctx = {}
-    form = forms.AvailableEmailForm(request.POST)
+    form = forms.SignupForm(request.POST)
     if form.is_valid():
         email = form.cleaned_data["identity"]
-        user = _make_user(email)
+        tz = form.cleaned_data["tz"]
+        user = _make_user(email, tz)
         profile = Profile.objects.for_user(user)
         profile.send_instant_login_link()
         ctx["created"] = True

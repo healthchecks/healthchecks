@@ -9,8 +9,8 @@ from django.conf import settings
 
 class SignupTestCase(TestCase):
     @override_settings(USE_PAYMENTS=False)
-    def test_it_sends_link(self):
-        form = {"identity": "alice@example.org"}
+    def test_it_works(self):
+        form = {"identity": "alice@example.org", "tz": "Europe/Riga"}
 
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "Account created")
@@ -21,8 +21,10 @@ class SignupTestCase(TestCase):
 
         # A profile should have been created
         profile = Profile.objects.get()
+        self.assertEqual(profile.check_limit, 500)
         self.assertEqual(profile.sms_limit, 500)
         self.assertEqual(profile.call_limit, 500)
+        self.assertEqual(profile.tz, "Europe/Riga")
 
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
@@ -44,25 +46,25 @@ class SignupTestCase(TestCase):
         self.assertEqual(channel.project, project)
 
     @override_settings(USE_PAYMENTS=True)
-    def test_it_sets_high_limits(self):
-        form = {"identity": "alice@example.org"}
+    def test_it_sets_limits(self):
+        form = {"identity": "alice@example.org", "tz": ""}
 
         self.client.post("/accounts/signup/", form)
 
-        # A profile should have been created
         profile = Profile.objects.get()
+        self.assertEqual(profile.check_limit, 20)
         self.assertEqual(profile.sms_limit, 5)
         self.assertEqual(profile.call_limit, 0)
 
     @override_settings(REGISTRATION_OPEN=False)
     def test_it_obeys_registration_open(self):
-        form = {"identity": "dan@example.org"}
+        form = {"identity": "dan@example.org", "tz": ""}
 
         r = self.client.post("/accounts/signup/", form)
         self.assertEqual(r.status_code, 403)
 
     def test_it_ignores_case(self):
-        form = {"identity": "ALICE@EXAMPLE.ORG"}
+        form = {"identity": "ALICE@EXAMPLE.ORG", "tz": ""}
         self.client.post("/accounts/signup/", form)
 
         # There should be exactly one user:
@@ -73,19 +75,30 @@ class SignupTestCase(TestCase):
         alice = User(username="alice", email="alice@example.org")
         alice.save()
 
-        form = {"identity": "alice@example.org"}
+        form = {"identity": "alice@example.org", "tz": ""}
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "already exists")
 
     def test_it_checks_syntax(self):
-        form = {"identity": "alice at example org"}
+        form = {"identity": "alice at example org", "tz": ""}
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "Enter a valid email address")
 
     def test_it_checks_length(self):
         aaa = "a" * 300
-        form = {"identity": f"alice+{aaa}@example.org"}
+        form = {"identity": f"alice+{aaa}@example.org", "tz": ""}
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "Address is too long.")
 
         self.assertFalse(User.objects.exists())
+
+    @override_settings(USE_PAYMENTS=False)
+    def test_it_ignores_bad_tz(self):
+        form = {"identity": "alice@example.org", "tz": "Foo/Bar"}
+
+        r = self.client.post("/accounts/signup/", form)
+        self.assertContains(r, "Account created")
+        self.assertIn("auto-login", r.cookies)
+
+        profile = Profile.objects.get()
+        self.assertEqual(profile.tz, "UTC")

@@ -1,7 +1,7 @@
 import getpass
 
 from django.core.management.base import BaseCommand
-from hc.accounts.forms import AvailableEmailForm
+from hc.accounts.forms import SignupForm
 from hc.accounts.views import _make_user
 
 
@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         while not email:
             raw = input("Email address:")
-            form = AvailableEmailForm({"identity": raw})
+            form = SignupForm({"identity": raw})
             if not form.is_valid():
                 self.stderr.write("Error: " + " ".join(form.errors["identity"]))
                 continue
