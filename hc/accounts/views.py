@@ -446,8 +446,9 @@ def notifications(request):
     if request.method == "POST":
         form = forms.ReportSettingsForm(request.POST)
         if form.is_valid():
+            if form.cleaned_data["tz"]:
+                profile.tz = form.cleaned_data["tz"]
             profile.reports = form.cleaned_data["reports"]
-            profile.tz = form.cleaned_data["tz"]
             profile.next_report_date = profile.choose_next_report_date()
             profile.reports_allowed = profile.reports != "off"
 

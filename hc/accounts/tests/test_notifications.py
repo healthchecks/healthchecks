@@ -95,3 +95,25 @@ class NotificationsTestCase(BaseTestCase):
 
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.nag_period.total_seconds(), 3600)
+
+    def test_it_saves_tz(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.post(self.url, self._payload())
+        self.assertEqual(r.status_code, 200)
+
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.tz, "Europe/Riga")
+
+    def test_it_ignores_bad_tz(self):
+        self.profile.tz = "Europe/Riga"
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.post(self.url, self._payload(reports="weekly", tz="Foo/Bar"))
+        self.assertEqual(r.status_code, 200)
+
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.reports, "weekly")
+        self.assertEqual(self.profile.tz, "Europe/Riga")
