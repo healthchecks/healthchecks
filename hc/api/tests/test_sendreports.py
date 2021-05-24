@@ -64,7 +64,6 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
-        self.assertTrue(self.profile.next_report_date)
         self.assertEqual(self.profile.next_report_date.day, 1)
         self.assertEqual(len(mail.outbox), 0)
 

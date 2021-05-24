@@ -289,10 +289,10 @@ class Profile(models.Model):
         """ Calculate the target date for the next monthly/weekly report.
 
         Monthly reports should get sent on 1st of each month, between
-        9AM and 10AM in user's timezone.
+        9AM and 11AM in user's timezone.
 
         Weekly reports should get sent on Mondays, between
-        9AM and 10AM in user's timezone.
+        9AM and 11AM in user's timezone.
 
         """
 
@@ -301,7 +301,7 @@ class Profile(models.Model):
 
         tz = pytz.timezone(self.tz)
         dt = timezone.now().astimezone(tz)
-        dt = dt.replace(hour=9, minute=random.randrange(0, 60))
+        dt = dt.replace(hour=9, minute=0) + timedelta(minutes=random.randrange(0, 120))
 
         while True:
             dt += timedelta(days=1)
