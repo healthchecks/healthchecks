@@ -20,9 +20,11 @@ class SendReportsTestCase(BaseTestCase):
         self.profile.save()
 
         # Disable bob's and charlie's monthly reports so they don't interfere
+        self.bobs_profile.reports = "off"
         self.bobs_profile.reports_allowed = False
         self.bobs_profile.save()
 
+        self.charlies_profile.reports = "off"
         self.charlies_profile.reports_allowed = False
         self.charlies_profile.save()
 
@@ -66,8 +68,8 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(self.profile.next_report_date.day, 1)
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_obeys_reports_allowed_flag(self):
-        self.profile.reports_allowed = False
+    def test_it_obeys_reports_off(self):
+        self.profile.reports = "off"
         self.profile.save()
 
         found = Command().handle_one_monthly_report()

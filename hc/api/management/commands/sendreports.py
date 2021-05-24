@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.utils import timezone
 from hc.accounts.models import NO_NAG, Profile
 from hc.api.models import Check
-from hc.lib.date import choose_next_report_date
 
 
 def num_pinged_checks(profile):
@@ -19,7 +18,7 @@ class Command(BaseCommand):
     tmpl = "Sent monthly report to %s"
 
     def pause(self):
-        time.sleep(1)
+        time.sleep(3)
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -35,7 +34,7 @@ class Command(BaseCommand):
         report_not_scheduled = Q(next_report_date__isnull=True)
 
         q = Profile.objects.filter(report_due | report_not_scheduled)
-        q = q.filter(reports_allowed=True)
+        q = q.exclude(reports="off")
         profile = q.first()
 
         if profile is None:
@@ -50,10 +49,10 @@ class Command(BaseCommand):
 
         # Next report date is currently not scheduled: schedule it and move on.
         if profile.next_report_date is None:
-            qq.update(next_report_date=choose_next_report_date())
+            qq.update(next_report_date=profile.choose_next_report_date())
             return True
 
-        num_updated = qq.update(next_report_date=choose_next_report_date())
+        num_updated = qq.update(next_report_date=profile.choose_next_report_date())
         if num_updated != 1:
             # next_report_date was already updated elsewhere, skipping
             return True

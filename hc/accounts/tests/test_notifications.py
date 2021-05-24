@@ -6,6 +6,13 @@ from hc.test import BaseTestCase
 
 
 class NotificationsTestCase(BaseTestCase):
+    url = "/accounts/profile/notifications/"
+
+    def _payload(self, **kwargs):
+        result = {"reports": "monthly", "nag_period": "0", "tz": "Europe/Riga"}
+        result.update(kwargs)
+        return result
+
     def test_it_saves_reports_monthly(self):
         self.profile.reports = "off"
         self.profile.reports_allowed = False
@@ -13,14 +20,28 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"reports": "monthly", "nag_period": "0"}
-        r = self.client.post("/accounts/profile/notifications/", form)
+        r = self.client.post(self.url, self._payload())
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
         self.assertTrue(self.profile.reports_allowed)
         self.assertEqual(self.profile.reports, "monthly")
-        self.assertIsNotNone(self.profile.next_report_date)
+        self.assertEqual(self.profile.next_report_date.day, 1)
+
+    def test_it_saves_reports_weekly(self):
+        self.profile.reports = "off"
+        self.profile.reports_allowed = False
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.post(self.url, self._payload(reports="weekly"))
+        self.assertEqual(r.status_code, 200)
+
+        self.profile.refresh_from_db()
+        self.assertTrue(self.profile.reports_allowed)
+        self.assertEqual(self.profile.reports, "weekly")
+        self.assertEqual(self.profile.next_report_date.weekday(), 0)
 
     def test_it_saves_reports_off(self):
         self.profile.reports_allowed = True
@@ -30,8 +51,7 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"reports": "off", "nag_period": "0"}
-        r = self.client.post("/accounts/profile/notifications/", form)
+        r = self.client.post(self.url, self._payload(reports="off"))
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
@@ -44,8 +64,7 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"reports": "off", "nag_period": "3600"}
-        r = self.client.post("/accounts/profile/notifications/", form)
+        r = self.client.post(self.url, self._payload(nag_period="3600"))
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
@@ -58,8 +77,7 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"reports": "off", "nag_period": "3600"}
-        r = self.client.post("/accounts/profile/notifications/", form)
+        r = self.client.post(self.url, self._payload(nag_period="3600"))
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
@@ -72,8 +90,7 @@ class NotificationsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"reports": "off", "nag_period": "1234"}
-        r = self.client.post("/accounts/profile/notifications/", form)
+        r = self.client.post(self.url, self._payload(nag_period="1234"))
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()

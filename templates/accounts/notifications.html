@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load hc_extras %}
+{% load compress hc_extras static tz %}
 
 {% block title %}Account Settings - {{ site_name }}{% endblock %}
 
@@ -31,7 +31,9 @@
                     {% csrf_token %}
                     <h2>Email Reports</h2>
 
-                    <p>Send me periodic emails reports:</p>
+                    <input id="tz" type="hidden" name="tz" value="{{ profile.tz }}" />
+
+                    <p>Send me periodic email reports:</p>
                     <label class="radio-container">
                         <input
                             type="radio"
@@ -40,6 +42,15 @@
                             {% if profile.reports == "off" %} checked {% endif %}>
                         <span class="radiomark"></span>
                         Do not send me email reports
+                    </label>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="reports"
+                            value="weekly"
+                            {% if profile.reports == "weekly" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        Weekly on Mondays
                     </label>
                     <label class="radio-container">
                         <input
@@ -86,8 +97,10 @@
                     <p class="text-muted">
                         Reports will be delivered to {{ profile.user.email }}. <br />
                         {% if profile.next_report_date %}
-                            Next monthly report date is
-                            {{ profile.next_report_date.date }}.
+                        {% timezone profile.tz %}
+                            Next {{ profile.reports }} report date is
+                            {{ profile.next_report_date|date:"F j, Y" }}.
+                        {% endtimezone %}
                         {% endif %}
                     </p>
                     <br />
@@ -104,4 +117,12 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/notifications.js' %}"></script>
+{% endcompress %}
 {% endblock %}

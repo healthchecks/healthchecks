@@ -44,6 +44,7 @@ class ProfileFieldset(Fieldset):
     fields = (
         "email",
         "reports",
+        "tz",
         "next_report_date",
         "nag_period",
         "next_nag_date",

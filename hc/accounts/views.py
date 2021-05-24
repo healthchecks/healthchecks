@@ -29,7 +29,6 @@ from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.models import Credential, Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
-from hc.lib.date import choose_next_report_date
 from hc.payments.models import Subscription
 
 POST_LOGIN_ROUTES = (
@@ -447,13 +446,10 @@ def notifications(request):
     if request.method == "POST":
         form = forms.ReportSettingsForm(request.POST)
         if form.is_valid():
-            if profile.reports != form.cleaned_data["reports"]:
-                profile.reports = form.cleaned_data["reports"]
-                profile.reports_allowed = profile.reports == "monthly"
-                if profile.reports_allowed:
-                    profile.next_report_date = choose_next_report_date()
-                else:
-                    profile.next_report_date = None
+            profile.reports = form.cleaned_data["reports"]
+            profile.tz = form.cleaned_data["tz"]
+            profile.next_report_date = profile.choose_next_report_date()
+            profile.reports_allowed = profile.reports != "off"
 
             if profile.nag_period != form.cleaned_data["nag_period"]:
                 # Set the new nag period

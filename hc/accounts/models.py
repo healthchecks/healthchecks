@@ -1,4 +1,5 @@
 from datetime import timedelta
+import random
 from secrets import token_urlsafe
 from urllib.parse import quote, urlencode
 import uuid
@@ -14,7 +15,7 @@ from django.utils import timezone
 from fido2.ctap2 import AttestedCredentialData
 from hc.lib import emails
 from hc.lib.date import month_boundaries
-
+import pytz
 
 NO_NAG = timedelta()
 NAG_PERIODS = (
@@ -71,6 +72,7 @@ class Profile(models.Model):
     sort = models.CharField(max_length=20, default="created")
     deletion_notice_date = models.DateTimeField(null=True, blank=True)
     last_active_date = models.DateTimeField(null=True, blank=True)
+    tz = models.CharField(max_length=36, default="UTC")
 
     objects = ProfileManager()
 
@@ -282,6 +284,31 @@ class Profile(models.Model):
         elif not any_down and self.next_nag_date:
             self.next_nag_date = None
             self.save(update_fields=["next_nag_date"])
+
+    def choose_next_report_date(self):
+        """ Calculate the target date for the next monthly/weekly report.
+
+        Monthly reports should get sent on 1st of each month, between
+        9AM and 10AM in user's timezone.
+
+        Weekly reports should get sent on Mondays, between
+        9AM and 10AM in user's timezone.
+
+        """
+
+        if self.reports == "off":
+            return None
+
+        tz = pytz.timezone(self.tz)
+        dt = timezone.now().astimezone(tz)
+        dt = dt.replace(hour=9, minute=random.randrange(0, 60))
+
+        while True:
+            dt += timedelta(days=1)
+            if self.reports == "monthly" and dt.day == 1:
+                return dt
+            elif self.reports == "weekly" and dt.weekday() == 0:
+                return dt
 
 
 class Project(models.Model):

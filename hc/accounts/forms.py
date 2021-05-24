@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from hc.accounts.models import REPORT_CHOICES
 from hc.api.models import TokenBucket
+from hc.front.validators import TimezoneValidator
 
 
 class LowercaseEmailField(forms.EmailField):
@@ -87,6 +88,7 @@ class PasswordLoginForm(forms.Form):
 class ReportSettingsForm(forms.Form):
     reports = forms.ChoiceField(choices=REPORT_CHOICES)
     nag_period = forms.IntegerField(min_value=0, max_value=86400)
+    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
 
     def clean_nag_period(self):
         seconds = self.cleaned_data["nag_period"]
