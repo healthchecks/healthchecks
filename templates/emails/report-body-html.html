@@ -24,7 +24,8 @@ Hello,<br />
     page on {% site_name %} to set your notification preferences.
 
 {% else %}
-    This is a monthly report sent by <a href="{% site_root %}">{% site_name %}</a>.
+    This is a {{ monthly_or_weekly }} report
+    sent by <a href="{% site_root %}">{% site_name %}</a>.
 
     <br />
     {% include "emails/summary-downtimes-html.html" %}

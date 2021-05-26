@@ -33,7 +33,7 @@ class SendReportsTestCase(BaseTestCase):
         self.check.status = "down"
         self.check.save()
 
-    def test_it_sends_report(self):
+    def test_it_sends_monthly_report(self):
         cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
@@ -48,6 +48,23 @@ class SendReportsTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
+        self.assertEqual(email.subject, "Monthly Report")
+        self.assertIn("This is a monthly report", email.body)
+        self.assertIn("This is a monthly report", email.alternatives[0][0])
+
+    def test_it_sends_weekly_report(self):
+        self.profile.reports = "weekly"
+        self.profile.save()
+
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+
+        cmd.handle_one_report()
+
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, "Weekly Report")
+        self.assertIn("This is a weekly report", email.body)
+        self.assertIn("This is a weekly report", email.alternatives[0][0])
 
     def test_it_obeys_next_report_date(self):
         self.profile.next_report_date = now() + td(days=1)

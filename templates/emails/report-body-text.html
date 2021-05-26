@@ -3,7 +3,7 @@ Hello,
 
 {% if nag %}This is a {% if nag_period == 3600 %}hourly {% endif %}{% if nag_period == 86400 %}daily {% endif %}reminder sent by {% site_name %}.
 
-{% if num_down == 1%}One check is currently DOWN.{% else %}{{ num_down }} checks are currently DOWN.{% endif %}{% else %}This is a monthly report sent by {% site_name %}.{% endif %}
+{% if num_down == 1%}One check is currently DOWN.{% else %}{{ num_down }} checks are currently DOWN.{% endif %}{% else %}This is a {{ monthly_or_weekly }} report sent by {% site_name %}.{% endif %}
 
 
 {% include 'emails/summary-text.html' %}

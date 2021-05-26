@@ -214,6 +214,7 @@ class Profile(models.Model):
             "nag_period": self.nag_period.total_seconds(),
             "num_down": num_down,
             "month_boundaries": boundaries,
+            "monthly_or_weekly": self.reports,
         }
 
         emails.report(self.user.email, ctx, headers)
