@@ -32,7 +32,7 @@
   display: inline-block;
 }
 .selectize-input {
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
   padding: 6px 12px;
   display: inline-block;
   width: 100%;

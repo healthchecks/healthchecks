@@ -1,6 +1,6 @@
 .panel-success .panel-footer {
-    background: #dff0d8;
-    color: #3c763d;
+    background: var(--panel-success-bg);
+    color: var(--alert-success-color);
     font-size: small;
     text-align: center;
     border-top: 0;
@@ -8,8 +8,8 @@
 }
 
 .panel-info .panel-footer {
-    background: #d9edf7;
-    color: #31708f;
+    background: var(--alert-info-bg);
+    color: var(--alert-info-color);
     font-size: small;
     text-align: center;
     border-top: 0;
@@ -40,6 +40,7 @@ span.loading {
 
 .at-limit span {
     display: inline-block;
+    color: #333;
     background-color: #FFD54F;
     font-weight: bold;
     font-size: 12px;

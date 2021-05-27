@@ -3,13 +3,18 @@
 }
 
 .index-bleed {
-    background: #FFF;
     padding-bottom: 2em;
 }
 
 .get-started-bleed {
     background: #f2f5f2;
     padding: 3em 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .get-started-bleed {
+        background: #2c2e2c;
+    }
 }
 
 .footer-jumbo-bleed {
@@ -45,7 +50,8 @@
 }
 
 #pitch-url code {
-    background: #f5f5f5;
+    color: var(--text-color);
+    background: var(--pre-bg);
     display: inline-block;
     margin-top: 0px;
     padding: 6px 9px;
@@ -90,8 +96,8 @@
 
 #welcome-integrations .integration {
     display: block;
-    color: #333;
-    border: 1px solid #ddd;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
     border-radius: 3px;
     padding: 20px 0;
     text-align: center;
@@ -123,7 +129,7 @@
 }
 
 .page-welcome .tab-content {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-top: 0;
 }
 
@@ -133,7 +139,7 @@
 }
 
 .page-welcome .highlight:nth-child(n+2) {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--border-color);
 }
 
 .page-welcome .tab-pane pre {

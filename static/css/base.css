@@ -4,6 +4,8 @@ html {
 }
 
 body {
+    background: var(--body-bg);
+    color:  var(--text-color);
     /* Margin bottom by footer height */
     margin-bottom: 84px;
 }
@@ -15,7 +17,7 @@ body {
     /* Set the fixed height of the footer here */
     height: 84px;
     color: #AAA;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border-muted);
 }
 
 .footer ul {
@@ -46,13 +48,18 @@ body {
 
 @media (min-width: 768px) {
     .navbar-default .navbar-nav > li.active > a, .navbar-default .navbar-nav > li > a:hover {
-        border-bottom: 5px solid #eee;
+        border-bottom: 5px solid var(--border-muted);
         padding-bottom: 25px;
     }
 }
 
+.navbar-default {
+    border-color: transparent;
+    border-bottom-color:  var(--border-muted);
+}
+
 .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
-    color: #333;
+    color: var(--text-color);
     font-weight: bold;
 }
 
@@ -100,7 +107,7 @@ body {
 }
 
 .status.ic-up, .status.ic-started { color: #5cb85c; }
-.status.ic-new, .status.ic-paused { color: #CCC; }
+.status.ic-new, .status.ic-paused { color: var(--status-new-color); }
 .status.ic-grace { color: #f0ad4e; }
 .status.ic-down { color: #d9534f; }
 
@@ -142,7 +149,7 @@ pre {
 }
 
 #debug-warning {
-    background: #eeeeee;
+    background: var(--debug-warning-bg);
     text-align: center;
     font-size: small;
     padding: 2px 0;

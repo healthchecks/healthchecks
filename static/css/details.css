@@ -27,7 +27,8 @@
     display: block;
     padding: 8px;
     margin-bottom: 8px;
-    background: #f5f5f5;
+    color:  var(--text-color);
+    background: var(--pre-bg);
 }
 
 .details-block form {
@@ -75,14 +76,18 @@
 
 #details-integrations.rw tr:hover th, #details-integrations.rw tr:hover td {
     cursor: pointer;
-    background-color: #f5f5f5;
+    background-color: var(--table-bg-hover);
 }
 
 
 #details-remove-check {
     border-color: #d43f3a;
-    color: #d43f3a;
-    background: #FFF;
+    color: var(--btn-remove-color);
+    background-color: var(--btn-remove-bg);
+}
+
+#details-remove-check:hover {
+    background-color: var(--btn-remove-hover);
 }
 
 #downtimes table {
@@ -101,9 +106,9 @@
 }
 
 .alert.no-events, .alert.no-channels {
-    border: #ddd;
-    background: #F5F5F5;
-    color: #444;
+    border: var(--alert-no-data-border);
+    background: var(--alert-no-data-bg);
+    color: var(--alert-no-data-color);
     text-align: center;
     padding: 32px;
 }

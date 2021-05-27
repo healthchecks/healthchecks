@@ -1,13 +1,13 @@
 .table.badge-preview th {
     border-top: 0;
-    color: #777777;
+    color: var(--text-muted);
     font-weight: normal;
     font-size: 12px;
     padding-top: 32px;
 }
 
 #badges-json .fetch-json {
-    background: #eee;
+    background: var(--pre-bg);
     padding: 3px;
 }
 

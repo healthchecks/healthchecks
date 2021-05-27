@@ -27,7 +27,7 @@
 }
 
 #change-billing-plan-modal .plan {
-    border-color: #ddd;
+    border-color: var(--border-color);
     padding: 24px;
     position: relative;
     cursor: pointer;

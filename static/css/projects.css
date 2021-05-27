@@ -1,5 +1,5 @@
 #project-selector a {
-    color: #333;
+    color: var(--text-color);
 }
 
 #project-selector a:hover {
@@ -11,7 +11,7 @@
 }
 
 #project-selector .project {
-    border-color: #ddd;
+    border-color: var(--border-color);
     padding: 24px 24px 24px 64px;
     position: relative;
     min-height: 120px;

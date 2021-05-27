@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add support for "... is UP" SMS notifications
 - Add an option for weekly reports (in addition to monthly)
 - Implement PagerDuty Simple Install Flow
+- Implement dark mode (using prefers-color-scheme: dark)
 
 ## v1.20.0 - 2020-04-22
 

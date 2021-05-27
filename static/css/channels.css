@@ -12,7 +12,7 @@
     padding-top: 10px;
     padding-bottom: 10px;
     vertical-align: middle;
-    border-top: 1px solid #f1f1f1;
+    border-top: 1px solid var(--border-muted);
 }
 
 .channels-table .icon-cell {
@@ -36,7 +36,7 @@
 
 
 .channels-table .channel-row:hover > td {
-    background: #f5f5f5;
+    background: var(--table-bg-hover);
 }
 
 table.channels-table > tbody > tr > th {
@@ -58,7 +58,7 @@ table.channels-table > tbody > tr > th {
 }
 
 .channel-details-mini span {
-    color: #111;
+    color: var(--small-text-color);
 }
 
 .rw .channel-row:hover .edit-name,
@@ -68,7 +68,7 @@ table.channels-table > tbody > tr > th {
 }
 
 .edit-checks {
-    color: #333;
+    color: var(--text-color);
 }
 
 .edit-checks:hover {
@@ -108,7 +108,7 @@ table.channels-table > tbody > tr > th {
 }
 
 .add-integration li:hover {
-    background: #eee;
+    background: var(--table-bg-hover);
 }
 
 .add-integration .icon {

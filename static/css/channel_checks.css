@@ -2,10 +2,6 @@
     padding-left: 16px;
 }
 
-.channel-checks-table .check-all-cell {
-    background: #EEE;
-}
-
 .channel-checks-table .unnamed {
     color: #999;
     font-style: italic;

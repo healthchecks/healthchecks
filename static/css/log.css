@@ -8,10 +8,9 @@
 }
 
 #log td {
-    color: #444;
     position: relative;
     border: 0;
-    border-bottom: 1px solid #E5E5E5;
+    border-bottom: 1px solid var(--border-muted);
 }
 
 #log .date, #log .time {
@@ -50,13 +49,13 @@
 }
 
 #log tr.ok:hover td {
-    background-color: #f5f5f5;
+    background-color: var(--table-bg-hover);
 }
 
 
 #log tr.missing td {
     color: #d9534f;
-    background: #fff3f2;
+    background: var(--log-missing-bg);
 }
 
 #log td.event {

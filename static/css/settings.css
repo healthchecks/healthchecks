@@ -18,15 +18,16 @@
 #close-account, #remove-project {
     margin-left: 24px;
     border-color: #d43f3a;
-    color: #d43f3a;
+    color: var(--btn-remove-color);
+    background-color:  var(--btn-remove-bg);
 }
 
 #close-account:hover, #remove-project:hover {
-    background-color: #ffebea;
+    background-color: var(--btn-remove-hover);
 }
 
 .invite-suggestion {
-    color: #888;
+    color: var(--text-muted);
 }
 
 #suggestions-row td {
