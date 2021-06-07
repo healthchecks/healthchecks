@@ -14,10 +14,11 @@ func main() {
         Timeout: 10 * time.Second,
     }
 
-    _, err := client.Head("PING_URL")
+    resp, err := client.Head("PING_URL")
     if err != nil {
         fmt.Printf("%s", err)
     }
+    resp.Body.Close()
 }
 
 ```
