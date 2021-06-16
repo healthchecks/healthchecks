@@ -254,17 +254,28 @@ Default: `True`
 
 A boolean that turns on/off the PagerTree integration. Enabled by default.
 
+## `PD_APP_ID` {: #PD_APP_ID }
+
+Default: `None`
+
+PagerDuty application ID. If set, enables the PagerDuty
+[Simple Install Flow](https://developer.pagerduty.com/docs/app-integration-development/events-integration/).
+If `None`, Healthchecks will fall back to the even simpler flow where users manually
+copy integration keys from PagerDuty and paste them in Healthchecks.
+
+To set up:
+
+* Register a PagerDuty app at [PagerDuty](https://pagerduty.com/) › Developer Mode › My Apps
+* In the newly created app, add the "Events Integration" functionality
+* Specify a Redirect URL: `https://your-domain.com/integrations/add_pagerduty/`
+* Copy the displayed app_id value (PXXXXX) and put it in the `PD_APP_ID` environment
+  variable
+
 ## `PD_ENABLED` {: #PD_ENABLED }
 
 Default: `True`
 
 A boolean that turns on/off the PagerDuty integration. Enabled by default.
-
-## `PD_VENDOR_KEY` {: #PD_VENDOR_KEY }
-
-Default: `None`
-
-[PagerDuty](https://www.pagerduty.com/) vendor key, used by the PagerDuty integration.
 
 ## `PING_BODY_LIMIT` {: #PING_BODY_LIMIT }
 

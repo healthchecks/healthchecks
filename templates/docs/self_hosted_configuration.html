@@ -152,12 +152,23 @@ integration.</p>
 <h2 id="PAGERTREE_ENABLED"><code>PAGERTREE_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the PagerTree integration. Enabled by default.</p>
+<h2 id="PD_APP_ID"><code>PD_APP_ID</code></h2>
+<p>Default: <code>None</code></p>
+<p>PagerDuty application ID. If set, enables the PagerDuty
+<a href="https://developer.pagerduty.com/docs/app-integration-development/events-integration/">Simple Install Flow</a>.
+If <code>None</code>, Healthchecks will fall back to the even simpler flow where users manually
+copy integration keys from PagerDuty and paste them in Healthchecks.</p>
+<p>To set up:</p>
+<ul>
+<li>Register a PagerDuty app at <a href="https://pagerduty.com/">PagerDuty</a> › Developer Mode › My Apps</li>
+<li>In the newly created app, add the "Events Integration" functionality</li>
+<li>Specify a Redirect URL: <code>https://your-domain.com/integrations/add_pagerduty/</code></li>
+<li>Copy the displayed app_id value (PXXXXX) and put it in the <code>PD_APP_ID</code> environment
+  variable</li>
+</ul>
 <h2 id="PD_ENABLED"><code>PD_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the PagerDuty integration. Enabled by default.</p>
-<h2 id="PD_VENDOR_KEY"><code>PD_VENDOR_KEY</code></h2>
-<p>Default: <code>None</code></p>
-<p><a href="https://www.pagerduty.com/">PagerDuty</a> vendor key, used by the PagerDuty integration.</p>
 <h2 id="PING_BODY_LIMIT"><code>PING_BODY_LIMIT</code></h2>
 <p>Default: <code>10000</code></p>
 <p>The upper size limit in bytes for logged ping request bodies.

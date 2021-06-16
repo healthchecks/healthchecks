@@ -27,6 +27,7 @@ channel_urls = [
     path("add_pushbullet/", views.add_pushbullet_complete),
     path("add_discord/", views.add_discord_complete),
     path("add_linenotify/", views.add_linenotify_complete),
+    path("add_pagerduty/", views.add_pd_complete, name="hc-add-pd-complete"),
     path("add_pushover/", views.pushover_help, name="hc-pushover-help"),
     path("telegram/", views.telegram_help, name="hc-telegram-help"),
     path("telegram/bot/", views.telegram_bot, name="hc-telegram-webhook"),

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}PagerDuty Integration for {{ site_name }}{% endblock %}
+
+{% block description %}
+    <meta name="description" content="Use {{ site_name }} with PagerDuty: configure {{ site_name }} to create a PagerDuty incident when a check goes down, and resolve it when a check goes back up.">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>PagerDuty</h1>
+
+    <div class="jumbotron">
+        {% if request.user.is_authenticated %}
+        <p>If your team uses <a href="https://www.pagerduty.com">PagerDuty</a>,
+        you can set up {{ site_name }} to create a PagerDuty incident when
+        a check goes down, and resolve it when a check goes back up.</p>
+
+        {% if install_url %}
+        <div class="text-center">
+            <div class="text-center">
+                <a href="{{ install_url|safe }}" class="btn btn-lg btn-default">
+                    <img class="ai-icon" src="{% static 'img/integrations/pd.png' %}" alt="PagerDuty" />
+                    Connect PagerDuty
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <p>
+        {{ site_name }} is a <strong>free</strong> and
+        <a href="https://github.com/healthchecks/healthchecks">open source</a>
+        service for monitoring your cron jobs, background processes and
+        scheduled tasks. Before adding PagerDuty integration, please log into
+        {{ site_name }}:</p>
+
+        <div class="text-center">
+            <a href="{% url 'hc-login' %}"
+               class="btn btn-primary btn-lg">Sign In</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <h2>Setup Guide</h2>
+
+    {% if not connect_url %}
+        <div class="row ai-step">
+            <div class="col-sm-6">
+                <span class="step-no"></span>
+                <p>
+                    {% if request.user.is_authenticated %}
+                    Go
+                    {% else %}
+                    After logging in, go
+                    {% endif %}
+
+                    to the <strong>Integrations</strong> page,
+                    and click on <strong>Add Integration</strong> next to the
+                    PagerDuty integration.
+                </p>
+            </div>
+            <div class="col-sm-6">
+                <img
+                    class="ai-guide-screenshot"
+                    alt="Screenshot"
+                    src="{% static 'img/integrations/setup_pd_simple_0.png' %}">
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Click on "Connect PagerDuty", and you will be
+                asked to log into your PagerDuty account.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pd_simple_1.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Next, PagerDuty will let set the services
+                for this integration.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pd_simple_2.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                And that is all! You will then be redirected back to
+                "Integrations" page on {{ site_name }} and see
+                the new integration!
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_pd_simple_3.png' %}">
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

@@ -651,11 +651,18 @@ class Channel(models.Model):
         return doc["service_key"]
 
     @property
+    def pd_service_name(self):
+        assert self.kind == "pd"
+        if self.value.startswith("{"):
+            doc = json.loads(self.value)
+            return doc.get("name")
+
+    @property
     def pd_account(self):
         assert self.kind == "pd"
         if self.value.startswith("{"):
             doc = json.loads(self.value)
-            return doc["account"]
+            return doc.get("account")
 
     def latest_notification(self):
         return Notification.objects.filter(channel=self).latest()

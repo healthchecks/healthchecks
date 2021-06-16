@@ -1089,6 +1089,21 @@ def add_shell(request, code):
 def add_pd(request, code):
     project = _get_rw_project_for_user(request, code)
 
+    # Simple Install Flow
+    if settings.PD_APP_ID:
+        state = token_urlsafe()
+
+        redirect_url = settings.SITE_ROOT + reverse("hc-add-pd-complete")
+        redirect_url += "?" + urlencode({"state": state})
+
+        install_url = "https://app.pagerduty.com/install/integration?" + urlencode(
+            {"app_id": settings.PD_APP_ID, "redirect_url": redirect_url, "version": "2"}
+        )
+
+        ctx = {"page": "channels", "project": project, "install_url": install_url}
+        request.session["pagerduty"] = (state, str(project.code))
+        return render(request, "integrations/add_pd_simple.html", ctx)
+
     if request.method == "POST":
         form = forms.AddPdForm(request.POST)
         if form.is_valid():
@@ -1101,8 +1116,35 @@ def add_pd(request, code):
     else:
         form = forms.AddPdForm()
 
-    ctx = {"page": "channels", "form": form}
+    ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_pd.html", ctx)
+
+
+@require_setting("PD_ENABLED")
+@require_setting("PD_APP_ID")
+@login_required
+def add_pd_complete(request):
+    if "pagerduty" not in request.session:
+        return HttpResponseBadRequest()
+
+    state, code = request.session.pop("pagerduty")
+    if request.GET.get("state") != state:
+        return HttpResponseForbidden()
+
+    project = _get_rw_project_for_user(request, code)
+
+    doc = json.loads(request.GET["config"])
+    for item in doc["integration_keys"]:
+        channel = Channel(kind="pd", project=project)
+        channel.name = item["name"]
+        channel.value = json.dumps(
+            {"service_key": item["integration_key"], "account": doc["account"]["name"]}
+        )
+        channel.save()
+        channel.assign_all_checks()
+
+    messages.success(request, "The PagerDuty integration has been added!")
+    return redirect("hc-channels", project.code)
 
 
 @require_setting("PD_ENABLED")

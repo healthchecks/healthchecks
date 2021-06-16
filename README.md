@@ -371,6 +371,16 @@ MATRIX_USER_ID=@mychecks:matrix.org
 MATRIX_ACCESS_TOKEN=[a long string of characters returned by the login call]
 ```
 
+### PagerDuty Simple Install Flow
+
+To enable PagerDuty [Simple Install Flow](https://developer.pagerduty.com/docs/app-integration-development/events-integration/),
+
+* Register a PagerDuty app at [PagerDuty](https://pagerduty.com/) › Developer Mode › My Apps
+* In the newly created app, add the "Events Integration" functionality
+* Specify a Redirect URL: `https://your-domain.com/integrations/add_pagerduty/`
+* Copy the displayed app_id value (PXXXXX) and put it in the `PD_APP_ID` environment
+  variable
+
 ## Running in Production
 
 Here is a non-exhaustive list of pointers and things to check before launching a Healthchecks instance

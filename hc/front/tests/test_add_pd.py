@@ -3,6 +3,7 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
+@override_settings(PD_APP_ID=None)
 class AddPdTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -47,3 +48,10 @@ class AddPdTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
+
+    @override_settings(PD_APP_ID="FOOBAR")
+    def test_it_handles_pd_app_id(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "app_id=FOOBAR")
+        self.assertIn("pagerduty", self.client.session)
