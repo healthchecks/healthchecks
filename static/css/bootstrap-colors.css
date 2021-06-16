@@ -45,8 +45,8 @@
 .nav-tabs > li.active > a:focus {
     color: var(--text-color);
     background-color: transparent;
-    border-color: var(--btn-default-border);
-    border-bottom-color: transparent;
+    border-color: var(--border-color);
+    border-bottom-color: var(--body-bg);
 }
 
 .nav-pills > li.active > a,
