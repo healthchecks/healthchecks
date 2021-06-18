@@ -1,3 +1,7 @@
+a {
+    color:  var(--link-color);
+}
+
 .panel {
     background-color: var(--panel-bg);
 }
@@ -26,7 +30,7 @@
 .btn-default:focus,
 .btn-default:active,
 .btn-default.active:hover {
-    color: var(--btn-default-color);
+    color: var(--btn-active-color);
     background-color: var(--btn-active-bg);
     border-color: var(--btn-active-border);
 }
@@ -104,6 +108,10 @@ hr {
     background-color:  var(--breadcrumb-bg);
 }
 
+.breadcrumb > .active {
+    color: var(--breadcrumb-active-color);
+}
+
 .modal-header {
     border-bottom-color:  var(--border-muted);
 }
@@ -136,4 +144,12 @@ code {
     background-color: var(--input-group-addon-bg);
     border-color: var(--input-border);
     color:  var(--input-color);
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+h2 small {
+    color: var(--text-muted);
 }

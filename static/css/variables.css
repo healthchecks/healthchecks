@@ -11,9 +11,11 @@
     --body-bg: #FFF;
     --border-color: #ddd;
     --border-muted:  #eee;
+    --breadcrumb-active-color: #777;
     --breadcrumb-bg: #f5f5f5;
     --btn-active-bg: #e6e6e6;
     --btn-active-border: #adadad;
+    --btn-active-color: #333;
     --btn-default-bg: #fff;
     --btn-default-border: #ccc;
     --btn-default-color: #333;
@@ -29,6 +31,10 @@
     --input-color:  #555;
     --input-group-addon-bg: #eeeeee;
     --jumbotron-bg:  #eee;
+    --label-ign-bg: #e0e0e0;
+    --label-ign-color: #333;
+    --label-start-color: #117a3f;
+    --link-color: #0091EA;
     --log-missing-bg: #fff3f2;
     --modal-content-bg: #fff;
     --nav-pills-active-link-hover-bg: #eee;
@@ -56,7 +62,7 @@
     --tag-up-border: #ccc;
     --tag-up-color: #333;
     --text-color: #333;
-    --text-muted:  #777;
+    --text-muted:  #666;
 }
 
 
@@ -70,19 +76,21 @@ body.dark {
     --alert-success-bg: #0f2c1c;
     --alert-success-border: #2b4939;
     --alert-success-color: #ebf5ef;
-    --body-bg: #161619;
-    --border-color: #303033;
-    --border-muted: #303033;
-    --breadcrumb-bg: #25252a;
+    --body-bg: hsl(240, 6%, 10%);
+    --border-color: hsl(240, 3%, 22%);
+    --border-muted: hsl(240, 3%, 22%);
+    --breadcrumb-active-color: hsl(240, 3%, 60%);
+    --breadcrumb-bg: hsl(240, 6%, 16%);
     --btn-active-bg: #6f6f7f;
     --btn-active-border: #818191;
+    --btn-active-color: hsl(240, 3%, 98%);
     --btn-default-bg: #383840;
     --btn-default-border: #4e4e59;
-    --btn-default-color: #e0e0e2;
+    --btn-default-color: hsl(240, 3%, 88%);
     --btn-remove-bg: #202024;
     --btn-remove-color: #ff4c46;
     --btn-remove-hover: #3f1a22;
-    --channel-off-color: #464649;
+    --channel-off-color: hsl(240, 2%, 40%);
     --close-color: #fff;
     --debug-warning-bg: #60002d;
     --get-started-bg: #2c2e2c;
@@ -91,10 +99,14 @@ body.dark {
     --input-color:  #b0b0b2;
     --input-group-addon-bg: #29292c;
     --jumbotron-bg: #1f1f22;
+    --label-ign-bg: #383840;
+    --label-ign-color: #e0e0e2;
+    --label-start-color: #e0e0e2;
+    --link-color: hsl(202.8, 100%, 55%);
     --log-missing-bg: #2d1e21;
     --modal-content-bg: #1f1f22;
     --nav-pills-active-link-hover-bg: #383840;
-    --panel-bg: #25252a;
+    --panel-bg: hsl(240, 6%, 16%);
     --panel-success-bg: #165b35;
     --plan-business-border:  #90CAF9;
     --plan-business-color: #e8f2f9;
@@ -106,7 +118,7 @@ body.dark {
     --plan-supporter-color: #fff0c4;
     --pre-bg: #29292c;
     --small-text-color: #f0f0f2;
-    --status-new-color: #464649;
+    --status-new-color: hsl(240, 2%, 40%);
     --table-bg-hover: #25252a;
     --tag-bg: #303033;
     --tag-checked-bg: #fff;
@@ -118,5 +130,5 @@ body.dark {
     --tag-up-border: #303033;
     --tag-up-color: #e0e0e2;
     --text-color: #e0e0e2;
-    --text-muted: #777780;
+    --text-muted: hsl(240, 3%, 55%);
 }

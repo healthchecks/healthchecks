@@ -112,18 +112,17 @@ body {
 .status.ic-down { color: #d9534f; }
 
 .label.label-start {
-    background-color: #FFF;
-    color: #117a3f;;
+    color: var(--label-start-color);
     border: 1px solid #117a3f;
 }
 
 .label.label-ign {
-    background: #e0e0e0;
-    color: #333;
+    background: var(--label-ign-bg);
+    color: var(--label-ign-color);
 }
 
 .hc-dialog {
-    background: #FFF;
+    background-color: var(--panel-bg);
     padding: 2em;
     margin-top: 100px;
 }

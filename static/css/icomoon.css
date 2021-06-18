@@ -91,6 +91,9 @@
   content: "\e90a";
   color: #4f5d73;
 }
+body.dark .ic-email:before {
+  color: #76a6f0;
+}
 .ic-webhook:before {
   content: "\e908";
   color: #c73a63;

@@ -24,7 +24,7 @@
 }
 
 #checks-table tr:hover a.default {
-    color: #0091EA;
+    color: var(--link-color);
 }
 
 #checks-table td {
@@ -90,7 +90,7 @@ button.copy-link {
     text-align: left;
 
     font-family: "Open Sans", Arial, sans-serif;
-    color: #0091ea;
+    color: var(--link-color);
     cursor :pointer;
     transition: opacity 0.1s linear;
 }

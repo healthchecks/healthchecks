@@ -23,5 +23,5 @@ body.dark .noUi-marker {
 }
 
 body.dark .noUi-pips {
-    color: #777780;
+    color: hsl(240, 3%, 55%);
 }
