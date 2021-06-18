@@ -742,3 +742,23 @@ def login_webauthn(request):
 
     ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
     return render(request, "accounts/login_webauthn.html", ctx)
+
+
+@login_required
+def appearance(request):
+    profile = request.profile
+
+    ctx = {
+        "page": "appearance",
+        "profile": profile,
+        "status": "default",
+    }
+
+    if request.method == "POST":
+        theme = request.POST.get("theme", "")
+        if theme in ("", "dark"):
+            profile.theme = theme
+            profile.save()
+            ctx["status"] = "info"
+
+    return render(request, "accounts/appearance.html", ctx)

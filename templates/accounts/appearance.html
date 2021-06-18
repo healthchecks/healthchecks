@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load compress hc_extras static tz %}
+
+{% block title %}Account Settings - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1 class="settings-title">
+            Settings
+            <small>{{ request.user.email }}</small>
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <ul class="nav nav-pills nav-stacked">
+            <li><a href="{% url 'hc-profile' %}">Account</a></li>
+            <li class="active"><a href="{% url 'hc-appearance' %}">Appearance</a></li>
+            {% if show_pricing %}
+            <li><a href="{% url 'hc-billing' %}">Billing</a></li>
+            {% endif %}
+            <li><a href="{% url 'hc-notifications' %}">Email Reports</a></li>
+        </ul>
+    </div>
+
+    <div class="col-sm-9 col-md-6">
+        <div class="panel panel-{{ status }}">
+            <div class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Theme</h2>
+
+                    <div class="row">
+                        <div class="col-sm-6 theme">
+                            <img
+                                src="{% static 'img/theme-light.png' %}"
+                                alt="Light theme preview">
+
+                            <label class="radio-container">
+                                <input
+                                    type="radio"
+                                    name="theme"
+                                    value=""
+                                    {% if profile.theme != "dark" %} checked {% endif %}>
+                                <span class="radiomark"></span>
+                                Light
+                            </label>
+                        </div>
+                        <div class="col-sm-6 theme">
+                            <img
+                                src="{% static 'img/theme-dark.png' %}"
+                                alt="Dark theme preview">
+
+                            <label class="radio-container">
+                                <input
+                                    type="radio"
+                                    name="theme"
+                                    value="dark"
+                                    {% if profile.theme == "dark" %} checked {% endif %}>
+                                <span class="radiomark"></span>
+                                Dark
+                            </label>
+                        </div>
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-default pull-right">Save Changes</button>
+                </form>
+            </div>
+            {% if status == "info" %}
+            <div class="panel-footer">
+                Your settings have been updated!
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/appearance.js' %}"></script>
+{% endcompress %}
+{% endblock %}

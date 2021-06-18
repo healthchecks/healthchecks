@@ -13,6 +13,7 @@ urlpatterns = [
         name="hc-check-token",
     ),
     path("profile/", views.profile, name="hc-profile"),
+    path("profile/appearance/", views.appearance, name="hc-appearance"),
     path("profile/notifications/", views.notifications, name="hc-notifications"),
     path("close/", views.close, name="hc-close"),
     path(

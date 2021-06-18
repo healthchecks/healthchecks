@@ -1,0 +1,11 @@
+.theme img {
+    border: 1px solid var(--border-color);
+    padding: 4px;
+    width: 100%;
+}
+
+.theme .radio-container {
+    margin-top: 12px;
+    margin-left: 12px;
+}
+

@@ -45,6 +45,7 @@ class ProfileFieldset(Fieldset):
         "email",
         "reports",
         "tz",
+        "theme",
         "next_report_date",
         "nag_period",
         "next_nag_date",
