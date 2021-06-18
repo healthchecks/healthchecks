@@ -7,14 +7,8 @@
 }
 
 .get-started-bleed {
-    background: #f2f5f2;
+    background: var(--get-started-bg);
     padding: 3em 0;
-}
-
-@media (prefers-color-scheme: dark) {
-    .get-started-bleed {
-        background: #2c2e2c;
-    }
 }
 
 .footer-jumbo-bleed {

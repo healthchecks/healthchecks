@@ -1,29 +1,27 @@
-@media (prefers-color-scheme: dark) {
-    .noUi-background {
-        background-color: #3c3939;
-        box-shadow:  none;
-    }
+body.dark .noUi-background {
+    background-color: #3c3939;
+    box-shadow:  none;
+}
 
-    .noUi-target {
-        border-color: #515151;
-        box-shadow: none;
-    }
+body.dark .noUi-target {
+    border-color: #515151;
+    box-shadow: none;
+}
 
-    .noUi-target.noUi-connect {
-        box-shadow: none;
-    }
+body.dark .noUi-target.noUi-connect {
+    box-shadow: none;
+}
 
-    .noUi-handle {
-        background-color: #515050;
-        border-color: #605c5c;
-        box-shadow: none;
-    }
+body.dark .noUi-handle {
+    background-color: #515050;
+    border-color: #605c5c;
+    box-shadow: none;
+}
 
-    .noUi-marker {
-        background: #777;
-    }
+body.dark .noUi-marker {
+    background: #777;
+}
 
-    .noUi-pips {
-        color: #777780;
-    }
+body.dark .noUi-pips {
+    color: #777780;
 }

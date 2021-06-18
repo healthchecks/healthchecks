@@ -3,17 +3,9 @@
 }
 
 #my-checks-tags .up {
-    color: #333;
-    background-color: #fff;
-    border-color: #ccc;
-}
-
-@media (prefers-color-scheme: dark) {
-    #my-checks-tags .up {
-        color: #e0e0e2;
-        background-color: #25252a;
-        border-color: #303033;
-    }
+    color: var(--tag-up-color);
+    background-color: var(--tag-up-bg);
+    border-color: var(--tag-up-border);
 }
 
 #my-checks-tags .grace {
@@ -29,19 +21,10 @@
 }
 
 #my-checks-tags .checked {
-    box-shadow: 0 0 3px #ddd;
-    background: #333;
-    color: #eee;
-    border-color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-    #my-checks-tags .checked {
-        box-shadow: none;
-        background: #fff;
-        color: #333;
-        border-color: #ccc;
-    }
+    box-shadow: 0 0 3px var(--tag-checked-shadow);
+    background: var(--tag-checked-bg);
+    color: var(--tag-checked-color);
+    border-color: var(--tag-checked-border);
 }
 
 #search {

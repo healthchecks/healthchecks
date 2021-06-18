@@ -10,55 +10,28 @@
 
     display: inline-block;
     line-height: 0.9;
-    text-shadow: 0px 1px white, -1px 1px white, 1px 1px white, -1px 0px white;
+    text-shadow: 0px 1px var(--panel-bg), -1px 1px var(--panel-bg), 1px 1px var(--panel-bg), -1px 0px var(--panel-bg);
 }
 
 .hobbyist h1 {
-    color: #0a220c;
-    border-bottom: 3px solid #A5D6A7;
+    color: var(--plan-hobbyist-color);
+    border-bottom: 3px solid var(--plan-hobbyist-border);
 }
 
 .supporter h1 {
-    color: #1d190f;
-    border-bottom: 3px solid #FFE082;
+    color: var(--plan-supporter-color);
+    border-bottom: 3px solid var(--plan-supporter-border);
 }
 
 .business h1 {
-    color: #141c22;
-    border-bottom: 3px solid #90CAF9;
+    color: var(--plan-business-color);
+    border-bottom: 3px solid var(--plan-business-border);
 }
 
 .business-plus h1 {
-    color: #221f1e;
-    border-bottom: 3px solid #BCAAA4;
+    color: var(--plan-business-plus-color);
+    border-bottom: 3px solid var(--plan-business-plus-border);
 }
-
-@media (prefers-color-scheme: dark) {
-    .panel.plan h1 {
-        text-shadow: 0px 1px var(--panel-bg), -1px 1px var(--panel-bg), 1px 1px var(--panel-bg), -1px 0px var(--panel-bg);
-    }
-
-    .hobbyist h1 {
-        color: #e3ffe4;
-        border-bottom: 3px solid #A5D6A7;
-    }
-
-    .supporter h1 {
-        color: #fff0c4;
-        border-bottom: 3px solid #FFE082;
-    }
-
-    .business h1 {
-        color: #e8f2f9;
-        border-bottom: 3px solid #90CAF9;
-    }
-
-    .business-plus h1 {
-        color: #fff5f2;
-        border-bottom: 3px solid #BCAAA4;
-    }
-}
-
 
 .mo {
     font-size: 16px;
