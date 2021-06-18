@@ -150,6 +150,12 @@ code {
     color: var(--text-muted);
 }
 
+
+h1 small,
 h2 small {
+    color: var(--text-muted);
+}
+
+.help-block {
     color: var(--text-muted);
 }

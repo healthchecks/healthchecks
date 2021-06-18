@@ -1,3 +1,7 @@
+.theme label {
+    cursor: pointer;
+}
+
 .theme img {
     border: 1px solid var(--border-color);
     padding: 4px;

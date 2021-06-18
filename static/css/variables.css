@@ -1,4 +1,5 @@
 :root {
+    color-scheme: light;
     --alert-info-bg: #d9edf7;
     --alert-info-border: #bce8f1;
     --alert-info-color: #31708f;
@@ -62,11 +63,12 @@
     --tag-up-border: #ccc;
     --tag-up-color: #333;
     --text-color: #333;
-    --text-muted:  #666;
+    --text-muted:  #767676;
 }
 
 
 body.dark {
+    color-scheme: dark;
     --alert-info-bg: #123051;
     --alert-info-border: #163c64;
     --alert-info-color: #e0e2f5;
@@ -132,3 +134,8 @@ body.dark {
     --text-color: #e0e0e2;
     --text-muted: hsl(240, 3%, 55%);
 }
+
+
+
+
+

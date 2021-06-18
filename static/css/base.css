@@ -16,7 +16,7 @@ body {
     width: 100%;
     /* Set the fixed height of the footer here */
     height: 84px;
-    color: #AAA;
+    color: var(--text-muted);
     border-top: 1px solid var(--border-muted);
 }
 
@@ -140,7 +140,7 @@ pre {
 }
 
 .nav-pills > li > a {
-    color: #888;
+    color: var(--text-muted);
 }
 
 .jumbotron p {

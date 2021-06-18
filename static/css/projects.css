@@ -7,7 +7,7 @@
 }
 
 #project-selector a:hover .project {
-    border-color: #0091EA;
+    border-color: var(--link-color);
 }
 
 #project-selector .project {
@@ -26,7 +26,7 @@
 }
 
 #project-selector .project.selected {
-    border-color: #0091EA;
+    border-color: var(--link-color);
 }
 
 #project-selector .project .status {
@@ -45,7 +45,7 @@
 }
 
 #project-selector #add-project:hover .project {
-    border-color: #0091EA;
-    color: #333;
+    border-color: var(--link-color);
+    color: var(--text-color);
 }
 

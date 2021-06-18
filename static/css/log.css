@@ -41,7 +41,7 @@
 #log .details span.ua-body {
     font-family: "Lucida Console", Monaco, monospace;
     font-size: 11.7px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 #log tr.ok {
