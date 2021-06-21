@@ -29,9 +29,6 @@ h2.rule {
 }
 
 .page-docs code {
-    padding: 2px 4px;
-    font-size: 90%;
-    color: var(--text-color);
     background: var(--pre-bg);
     border-radius: 4px;
 }

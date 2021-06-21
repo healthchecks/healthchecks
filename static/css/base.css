@@ -4,7 +4,6 @@ html {
 }
 
 body {
-    background: var(--body-bg);
     color:  var(--text-color);
     /* Margin bottom by footer height */
     margin-bottom: 84px;
@@ -52,36 +51,17 @@ body {
         border-bottom: 5px solid var(--border-muted);
         padding-bottom: 25px;
     }
-
-    .navbar-default .navbar-nav > .open > a,
-    .navbar-default .navbar-nav > .open > a:hover {
-        color: var(--text-color);
-    }
 }
 
 @media (max-width: 767px) {
-    .navbar-default .navbar-nav > li > a,
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-        color: var(--text-color);
-    }
-
     .navbar-default .navbar-nav > li > a:hover {
-        color: var(--btn-active-color);
         border-left: 5px solid var(--border-color);
         padding-left: 10px;
     }
 
     .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover {
-        color: var(--btn-active-color);
         border-left: 5px solid var(--border-color);
         padding-left: 20px;
-    }
-
-
-    .navbar-default .navbar-nav > .open > a,
-    .navbar-default .navbar-nav > .open > a:hover,
-    .navbar-default .navbar-nav > .open > a:focus {
-        color: var(--text-muted);
     }
 }
 
@@ -91,20 +71,11 @@ body {
 }
 
 .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
-    color: var(--text-color);
     font-weight: bold;
 }
 
 .navbar-collapse {
     box-shadow: none;
-}
-
-.navbar-default .navbar-toggle {
-    border-color: var(--border-color);
-}
-
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: var(--text-muted);
 }
 
 #nav-sign-up {
@@ -136,8 +107,13 @@ body {
 }
 
 #broken-channels > a {
-    color: #a94442;
+    color: hsl(1.2, 43.8%, 46.1%);
 }
+
+#broken-channels > a:hover {
+    color: hsl(1.2, 53.8%, 56.1%);
+}
+
 
 .page-checks .container-fluid, .page-details .container-fluid {
     /* Fluid below 1320px, but max width capped to 1320px ... */

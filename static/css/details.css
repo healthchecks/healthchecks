@@ -27,7 +27,6 @@
     display: block;
     padding: 8px;
     margin-bottom: 8px;
-    color:  var(--text-color);
     background: var(--pre-bg);
 }
 

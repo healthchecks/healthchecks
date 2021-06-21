@@ -1,8 +1,5 @@
 :root {
     color-scheme: light;
-    --alert-info-bg: #d9edf7;
-    --alert-info-border: #bce8f1;
-    --alert-info-color: #31708f;
     --alert-no-data-bg: #f5f5f5;
     --alert-no-data-border: #ddd;
     --alert-no-data-color: #444;
@@ -26,6 +23,7 @@
     --channel-off-color: #ddd;
     --close-color: #000;
     --debug-warning-bg:  #eee;
+    --dropdown-bg: #fff;
     --dropdown-link-hover-bg: #f5f5f5;
     --get-started-bg: #f2f5f2;
     --input-bg-disabled: #eeeeee;
@@ -37,9 +35,10 @@
     --label-ign-color: #333;
     --label-start-color: #117a3f;
     --link-color: #0091EA;
+    --link-hover-color: #00629e;
     --log-missing-bg: #fff3f2;
     --modal-content-bg: #fff;
-    --nav-pills-active-link-hover-bg: #eee;
+    --nav-link-hover-bg: #eee;
     --panel-bg: #fff;
     --panel-success-bg: #dff0d8;
     --plan-business-border:  #90CAF9;
@@ -52,6 +51,9 @@
     --plan-supporter-color: #1d190f;
     --pre-bg: #f5f5f5;
     --small-text-color: #111;
+    --state-info-bg: #d9edf7;
+    --state-info-border: #bce8f1;
+    --state-info-color: #31708f;
     --status-new-color: #ccc;
     --table-bg-hover: #f5f5f5;
     --tag-bg: #eee;
@@ -70,9 +72,6 @@
 
 body.dark {
     color-scheme: dark;
-    --alert-info-bg: #123051;
-    --alert-info-border: #163c64;
-    --alert-info-color: #e0e2f5;
     --alert-no-data-bg: #29292c;
     --alert-no-data-border: #303033;
     --alert-no-data-color: #878790;
@@ -96,20 +95,22 @@ body.dark {
     --channel-off-color: hsl(240, 2%, 40%);
     --close-color: #fff;
     --debug-warning-bg: #60002d;
+    --dropdown-bg: hsl(240, 6%, 16%);
     --dropdown-link-hover-bg: #6f6f7f;
     --get-started-bg: #2c2e2c;
     --input-bg-disabled: #29292c;
     --input-border:  #464649;
-    --input-color:  #b0b0b2;
+    --input-color:  hsl(240, 3.3%, 88.2%);
     --input-group-addon-bg: #29292c;
     --jumbotron-bg: #1f1f22;
     --label-ign-bg: #383840;
     --label-ign-color: #e0e0e2;
     --label-start-color: #e0e0e2;
     --link-color: hsl(202.8, 100%, 55%);
+    --link-hover-color: hsl(202.8, 100%, 65%);
     --log-missing-bg: #2d1e21;
     --modal-content-bg: #1f1f22;
-    --nav-pills-active-link-hover-bg: #383840;
+    --nav-link-hover-bg: #383840;
     --panel-bg: hsl(240, 6%, 16%);
     --panel-success-bg: #165b35;
     --plan-business-border:  #90CAF9;
@@ -122,6 +123,9 @@ body.dark {
     --plan-supporter-color: #fff0c4;
     --pre-bg: #29292c;
     --small-text-color: #f0f0f2;
+    --state-info-bg: #123051;
+    --state-info-border: #163c64;
+    --state-info-color: #e0e2f5;
     --status-new-color: hsl(240, 2%, 40%);
     --table-bg-hover: #25252a;
     --tag-bg: #303033;
