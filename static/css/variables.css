@@ -26,6 +26,7 @@
     --channel-off-color: #ddd;
     --close-color: #000;
     --debug-warning-bg:  #eee;
+    --dropdown-link-hover-bg: #f5f5f5;
     --get-started-bg: #f2f5f2;
     --input-bg-disabled: #eeeeee;
     --input-border: #ccc;
@@ -95,6 +96,7 @@ body.dark {
     --channel-off-color: hsl(240, 2%, 40%);
     --close-color: #fff;
     --debug-warning-bg: #60002d;
+    --dropdown-link-hover-bg: #6f6f7f;
     --get-started-bg: #2c2e2c;
     --input-bg-disabled: #29292c;
     --input-border:  #464649;

@@ -100,12 +100,18 @@ hr {
 
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > li > a:hover {
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
     color:  var(--text-color);
 }
 
 .navbar-default .navbar-collapse {
     border-color: var(--border-color);
+}
+
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+    background-color: var(--border-color);
 }
 
 .breadcrumb {
@@ -181,6 +187,6 @@ h2 small {
 }
 
 .dropdown-menu li a:hover {
-    color: var(--btn-active-color);
-    background-color: var(--btn-active-bg);
+    color: var(--text-color);
+    background-color: var(--dropdown-link-hover-bg);
 }

@@ -47,7 +47,8 @@ body {
 }
 
 @media (min-width: 768px) {
-    .navbar-default .navbar-nav > li.active > a, .navbar-default .navbar-nav > li > a:hover {
+    .navbar-default .navbar-nav > li.active > a,
+    .navbar-default .navbar-nav > li > a:hover {
         border-bottom: 5px solid var(--border-muted);
         padding-bottom: 25px;
     }
@@ -78,7 +79,8 @@ body {
 
 
     .navbar-default .navbar-nav > .open > a,
-    .navbar-default .navbar-nav > .open > a:hover {
+    .navbar-default .navbar-nav > .open > a:hover,
+    .navbar-default .navbar-nav > .open > a:focus {
         color: var(--text-muted);
     }
 }
