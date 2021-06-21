@@ -8,8 +8,8 @@
 }
 
 .panel-info .panel-footer {
-    background: var(--alert-info-bg);
-    color: var(--alert-info-color);
+    background: var(--state-info-bg);
+    color: var(--state-info-color);
     font-size: small;
     text-align: center;
     border-top: 0;
