@@ -50,6 +50,7 @@
     --plan-supporter-border:  #FFE082;
     --plan-supporter-color: #1d190f;
     --pre-bg: #f5f5f5;
+    --selectize-tag-bg: #efefef;
     --small-text-color: #111;
     --state-info-bg: #d9edf7;
     --state-info-border: #bce8f1;
@@ -122,6 +123,7 @@ body.dark {
     --plan-supporter-border:  #FFE082;
     --plan-supporter-color: #fff0c4;
     --pre-bg: #29292c;
+    --selectize-tag-bg: #6f6f7f;
     --small-text-color: #f0f0f2;
     --state-info-bg: #123051;
     --state-info-border: #163c64;

@@ -271,7 +271,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.42857143;
-  color: #333333;
+  color: var(--text-color);
   background-color: var(--body-bg);
 }
 input,
@@ -2180,7 +2180,7 @@ select[multiple].input-lg {
   display: block;
   margin-top: 5px;
   margin-bottom: 10px;
-  color: #737373;
+  color: var(--text-muted);
 }
 @media (min-width: 768px) {
   .form-inline .form-group {

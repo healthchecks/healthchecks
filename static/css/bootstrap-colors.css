@@ -38,7 +38,3 @@
 .panel-success {
     border-color: var(--alert-success-border);
 }
-
-.help-block {
-    color: var(--text-muted);
-}

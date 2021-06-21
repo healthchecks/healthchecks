@@ -22,7 +22,7 @@
 @selectize-color-dropdown-border-top: #f0f0f0;
 @selectize-color-dropdown-item-active: #f5fafd;
 @selectize-color-dropdown-item-active-text: #495c68;
-@selectize-color-dropdown-item-create-text: rgba(red(@selectize-color-text), green(@selectize-color-text), blue(@selectize-color-text), 0.5);
+@selectize-color-dropdown-item-create-text: @selectize-color-text;
 @selectize-color-dropdown-item-create-active-text: @selectize-color-dropdown-item-active-text;
 @selectize-color-optgroup: @selectize-color-dropdown;
 @selectize-color-optgroup-text: @selectize-color-text;
@@ -157,13 +157,13 @@
 			border: @selectize-width-item-border solid @selectize-color-item-active-border;
 		}
 	}
-	.selectize-control.multi &.disabled > div {
-		&, &.active {
-			color: lighten(desaturate(@selectize-color-item-text, 100%), @selectize-lighten-disabled-item-text);
-			background: lighten(desaturate(@selectize-color-item, 100%), @selectize-lighten-disabled-item);
-			border: @selectize-width-item-border solid lighten(desaturate(@selectize-color-item-border, 100%), @selectize-lighten-disabled-item-border);
-		}
-	}
+	// .selectize-control.multi &.disabled > div {
+	// 	&, &.active {
+	// 		color: lighten(desaturate(@selectize-color-item-text, 100%), @selectize-lighten-disabled-item-text);
+	// 		background: lighten(desaturate(@selectize-color-item, 100%), @selectize-lighten-disabled-item);
+	// 		border: @selectize-width-item-border solid lighten(desaturate(@selectize-color-item-border, 100%), @selectize-lighten-disabled-item-border);
+	// 	}
+	// }
 	> input {
 		&::-ms-clear {
 			display: none;

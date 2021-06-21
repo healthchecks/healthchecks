@@ -4,7 +4,6 @@ html {
 }
 
 body {
-    color:  var(--text-color);
     /* Margin bottom by footer height */
     margin-bottom: 84px;
 }
