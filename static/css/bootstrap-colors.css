@@ -104,6 +104,10 @@ hr {
     color:  var(--text-color);
 }
 
+.navbar-default .navbar-collapse {
+    border-color: var(--border-color);
+}
+
 .breadcrumb {
     background-color:  var(--breadcrumb-bg);
 }
@@ -158,4 +162,25 @@ h2 small {
 
 .help-block {
     color: var(--text-muted);
+}
+
+.dropdown-menu {
+    background-color: var(--panel-bg);
+}
+
+.dropdown-menu .divider {
+    background-color: var(--border-muted);
+}
+
+.dropdown-header {
+    color: var(--text-muted);
+}
+
+.dropdown-menu li a {
+    color: var(--text-color);
+}
+
+.dropdown-menu li a:hover {
+    color: var(--btn-active-color);
+    background-color: var(--btn-active-bg);
 }

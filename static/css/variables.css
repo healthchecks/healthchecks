@@ -131,7 +131,7 @@ body.dark {
     --tag-up-bg: #25252a;
     --tag-up-border: #303033;
     --tag-up-color: #e0e0e2;
-    --text-color: #e0e0e2;
+    --text-color: hsl(240, 3.3%, 88.2%);
     --text-muted: hsl(240, 3%, 55%);
 }
 

@@ -217,7 +217,7 @@ table.channels-table > tbody > tr > th {
 
 .ai-guide-screenshot {
     max-width: 100%;
-    border: 6px solid #EEE;
+    border: 6px solid var(--border-color);
 }
 
 .add-integration li.link-to-github {
