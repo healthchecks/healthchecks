@@ -214,7 +214,6 @@ PAGERTREE_ENABLED = envbool("PAGERTREE_ENABLED", "True")
 
 # PagerDuty
 PD_ENABLED = envbool("PD_ENABLED", "True")
-PD_VENDOR_KEY = os.getenv("PD_VENDOR_KEY")
 PD_APP_ID = os.getenv("PD_APP_ID")
 
 # Prometheus

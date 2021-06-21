@@ -9,8 +9,8 @@ All notable changes to this project will be documented in this file.
 - Improve the handling of unknown email addresses in the Sign In form
 - Add support for "... is UP" SMS notifications
 - Add an option for weekly reports (in addition to monthly)
-- Implement PagerDuty Simple Install Flow
-- Implement dark mode (using prefers-color-scheme: dark)
+- Implement PagerDuty Simple Install Flow, remove PD Connect
+- Implement dark mode
 
 ## v1.20.0 - 2020-04-22
 

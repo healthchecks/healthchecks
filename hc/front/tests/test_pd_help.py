@@ -2,9 +2,9 @@ from django.test.utils import override_settings
 from hc.test import BaseTestCase
 
 
-@override_settings(PD_VENDOR_KEY="foo")
+@override_settings(PD_APP_ID="abc")
 class AddPdcHelpTestCase(BaseTestCase):
-    url = "/integrations/add_pdc/"
+    url = "/integrations/pagerduty/"
 
     def test_instructions_work_when_not_logged_in(self):
         r = self.client.get(self.url)
@@ -15,7 +15,7 @@ class AddPdcHelpTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "If your team uses")
 
-    @override_settings(PD_VENDOR_KEY=None)
+    @override_settings(PD_APP_ID=None)
     def test_it_requires_vendor_key(self):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)

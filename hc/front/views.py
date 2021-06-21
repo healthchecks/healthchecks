@@ -311,7 +311,7 @@ def index(request):
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
         "enable_pagertree": settings.PAGERTREE_ENABLED is True,
         "enable_pd": settings.PD_ENABLED is True,
-        "enable_pdc": settings.PD_VENDOR_KEY is not None,
+        "enable_pd_simple": settings.PD_APP_ID is not None,
         "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -822,7 +822,6 @@ def channels(request, code):
         "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
         "enable_pagertree": settings.PAGERTREE_ENABLED is True,
         "enable_pd": settings.PD_ENABLED is True,
-        "enable_pdc": settings.PD_VENDOR_KEY is not None,
         "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
@@ -1148,59 +1147,10 @@ def add_pd_complete(request):
 
 
 @require_setting("PD_ENABLED")
-@require_setting("PD_VENDOR_KEY")
-def pdc_help(request):
+@require_setting("PD_APP_ID")
+def pd_help(request):
     ctx = {"page": "channels"}
-    return render(request, "integrations/add_pdc.html", ctx)
-
-
-@require_setting("PD_ENABLED")
-@require_setting("PD_VENDOR_KEY")
-@login_required
-def add_pdc(request, code):
-    project = _get_rw_project_for_user(request, code)
-
-    state = token_urlsafe()
-    callback = settings.SITE_ROOT + reverse(
-        "hc-add-pdc-complete", args=[project.code, state]
-    )
-    connect_url = "https://connect.pagerduty.com/connect?" + urlencode(
-        {"vendor": settings.PD_VENDOR_KEY, "callback": callback}
-    )
-
-    ctx = {"page": "channels", "project": project, "connect_url": connect_url}
-    request.session["pd"] = state
-    return render(request, "integrations/add_pdc.html", ctx)
-
-
-@require_setting("PD_ENABLED")
-@require_setting("PD_VENDOR_KEY")
-@login_required
-def add_pdc_complete(request, code, state):
-    if "pd" not in request.session:
-        return HttpResponseBadRequest()
-
-    project = _get_rw_project_for_user(request, code)
-
-    session_state = request.session.pop("pd")
-    if session_state != state:
-        return HttpResponseBadRequest()
-
-    if request.GET.get("error") == "cancelled":
-        messages.warning(request, "PagerDuty setup was cancelled.")
-        return redirect("hc-channels", project.code)
-
-    channel = Channel(kind="pd", project=project)
-    channel.value = json.dumps(
-        {
-            "service_key": request.GET.get("service_key"),
-            "account": request.GET.get("account"),
-        }
-    )
-    channel.save()
-    channel.assign_all_checks()
-    messages.success(request, "The PagerDuty integration has been added!")
-    return redirect("hc-channels", project.code)
+    return render(request, "integrations/add_pd_simple.html", ctx)
 
 
 @require_setting("PAGERTREE_ENABLED")

@@ -498,8 +498,8 @@
 
         {% if enable_pd %}
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-            {% if enable_pdc %}
-            <a href="{% url 'hc-pdc-help' %}" class="integration">
+            {% if enable_pd_simple %}
+            <a href="{% url 'hc-pagerduty-help' %}" class="integration">
                 <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="" />
                 <h3>
                     PagerDuty<br>
