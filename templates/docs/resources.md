@@ -16,7 +16,7 @@ Please submit additions and corrections
 
 * [runitor](https://github.com/bdd/runitor) - A command runner with Healthchecks.io integration to keep your scripts and containers simple.
 * [SmartCronHelper](https://gitlab.science.ru.nl/bram/sch) – A cron shell wrapper. Automatically registers and pings cron jobs listed in crontab.
-* [crontask.sh](https://github.com/pforret/crontask) – bash wrapper to use in crontab. Supports pinging.
+* [crontask.sh](https://github.com/pforret/crontask) – Bash wrapper to use in crontab. Supports pinging.
 
 ## API Wrappers
 
@@ -60,9 +60,10 @@ Please submit additions and corrections
 ## Backup Software Integrations
 
 * [binarybucks/restic-tools](https://github.com/binarybucks/restic-tools) – Wrapper around restic backup, with Healthchecks.io support.
-* [borgmatic](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook) – backup software for servers and workstations, includes Healthchecks.io support.
+* [borgmatic](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook) – Backup software for servers and workstations, includes Healthchecks.io support.
 
 ## Dashboards
 
 * [healthchecks/dashboard](https://github.com/healthchecks/dashboard) – A standalone HTML page showing the status of the checks in your account.
 * [HealthTray](https://github.com/taylus/HealthTray) – Watch your healthchecks in Windows system tray.
+* [nicoandrade/healthchecks-front](https://github.com/nicoandrade/healthchecks-front) – Beautiful & free web dashboard, works great on desktop and mobile.
