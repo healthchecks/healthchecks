@@ -45,10 +45,10 @@ def _process_message(remote_addr, mailfrom, mailto, data):
         # Specify policy, the default policy does not decode encoded headers:
         parsed = email.message_from_string(data, policy=email.policy.SMTP)
         subject = parsed.get("subject", "")
-        if check.subject and _match(subject, check.subject):
-            action = "success"
-        elif check.subject_fail and _match(subject, check.subject_fail):
+        if check.subject_fail and _match(subject, check.subject_fail):
             action = "fail"
+        elif check.subject and _match(subject, check.subject):
+            action = "success"
 
     ua = "Email from %s" % mailfrom
     check.ping(remote_addr, "email", "", ua, data, action)
