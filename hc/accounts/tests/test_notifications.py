@@ -15,7 +15,6 @@ class NotificationsTestCase(BaseTestCase):
 
     def test_it_saves_reports_monthly(self):
         self.profile.reports = "off"
-        self.profile.reports_allowed = False
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -24,13 +23,11 @@ class NotificationsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
-        self.assertTrue(self.profile.reports_allowed)
         self.assertEqual(self.profile.reports, "monthly")
         self.assertEqual(self.profile.next_report_date.day, 1)
 
     def test_it_saves_reports_weekly(self):
         self.profile.reports = "off"
-        self.profile.reports_allowed = False
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -39,12 +36,10 @@ class NotificationsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
-        self.assertTrue(self.profile.reports_allowed)
         self.assertEqual(self.profile.reports, "weekly")
         self.assertEqual(self.profile.next_report_date.weekday(), 0)
 
     def test_it_saves_reports_off(self):
-        self.profile.reports_allowed = True
         self.profile.reports = "monthly"
         self.profile.next_report_date = now()
         self.profile.save()
@@ -55,7 +50,6 @@ class NotificationsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.profile.refresh_from_db()
-        self.assertFalse(self.profile.reports_allowed)
         self.assertEqual(self.profile.reports, "off")
         self.assertIsNone(self.profile.next_report_date)
 

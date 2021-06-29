@@ -454,7 +454,6 @@ def notifications(request):
                 profile.tz = form.cleaned_data["tz"]
             profile.reports = form.cleaned_data["reports"]
             profile.next_report_date = profile.choose_next_report_date()
-            profile.reports_allowed = profile.reports != "off"
 
             if profile.nag_period != form.cleaned_data["nag_period"]:
                 # Set the new nag period
@@ -545,7 +544,6 @@ def unsubscribe_reports(request, signed_username):
     user = User.objects.get(username=username)
     profile = Profile.objects.for_user(user)
     profile.reports = "off"
-    profile.reports_allowed = False
     profile.next_report_date = None
     profile.nag_period = td()
     profile.next_nag_date = None

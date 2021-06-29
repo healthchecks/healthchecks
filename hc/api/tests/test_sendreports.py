@@ -21,11 +21,9 @@ class SendReportsTestCase(BaseTestCase):
 
         # Disable bob's and charlie's monthly reports so they don't interfere
         self.bobs_profile.reports = "off"
-        self.bobs_profile.reports_allowed = False
         self.bobs_profile.save()
 
         self.charlies_profile.reports = "off"
-        self.charlies_profile.reports_allowed = False
         self.charlies_profile.save()
 
         # And it needs at least one check that has been pinged.

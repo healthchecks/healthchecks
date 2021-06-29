@@ -52,7 +52,6 @@ class ProfileManager(models.Manager):
 class Profile(models.Model):
     user = models.OneToOneField(User, models.CASCADE, blank=True, null=True)
     next_report_date = models.DateTimeField(null=True, blank=True)
-    reports_allowed = models.BooleanField(default=True)
     reports = models.CharField(max_length=10, default="monthly", choices=REPORT_CHOICES)
     nag_period = models.DurationField(default=NO_NAG, choices=NAG_PERIODS)
     next_nag_date = models.DateTimeField(null=True, blank=True)

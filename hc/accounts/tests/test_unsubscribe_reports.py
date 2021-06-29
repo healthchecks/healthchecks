@@ -21,7 +21,6 @@ class UnsubscribeReportsTestCase(BaseTestCase):
         self.assertContains(r, "Unsubscribed")
 
         self.profile.refresh_from_db()
-        self.assertFalse(self.profile.reports_allowed)
         self.assertEqual(self.profile.reports, "off")
         self.assertIsNone(self.profile.next_report_date)
 
