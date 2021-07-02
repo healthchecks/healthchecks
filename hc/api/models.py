@@ -307,7 +307,7 @@ class Check(models.Model):
         ping.exitstatus = exitstatus
         ping.save()
 
-    def downtimes(self, months=2):
+    def downtimes(self, months):
         """ Calculate the number of downtimes and downtime minutes per month.
 
         Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples.
@@ -350,6 +350,11 @@ class Check(models.Model):
                 totals[ym][2] = None
 
         return sorted(totals.values())
+
+    def past_downtimes(self):
+        """ Return downtime summary for two previous months. """
+
+        return self.downtimes(3)[:-1]
 
 
 class Ping(models.Model):

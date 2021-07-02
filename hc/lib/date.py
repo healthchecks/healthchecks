@@ -1,5 +1,4 @@
 from datetime import datetime as dt
-from random import randint
 from django.utils import timezone
 
 
@@ -71,7 +70,7 @@ def format_approx_duration(td):
     return ""
 
 
-def month_boundaries(months=2):
+def month_boundaries(months):
     result = []
 
     now = timezone.now()

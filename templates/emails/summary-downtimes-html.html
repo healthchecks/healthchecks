@@ -60,7 +60,7 @@
                 </table>
             {% endif %}
         </td>
-        {% for boundary, seconds, count in check.downtimes %}
+        {% for boundary, seconds, count in check.past_downtimes %}
         {% if count %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
                 {{ count }}&nbsp;downtime{{ count|pluralize }},

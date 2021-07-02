@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file.
 - Implement PagerDuty Simple Install Flow, remove PD Connect
 - Implement dark mode
 
+### Bug Fixes
+- Fix off-by-one-month error in monthly reports, downtime columns (#539)
+
 ## v1.20.0 - 2020-04-22
 
 ### Improvements
