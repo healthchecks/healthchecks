@@ -1,11 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.21.0 - Unreleased
+## v1.21.0 - 2020-07-02
 
 ### Improvements
 - Increase "Success / Failure Keywords" field lengths to 200
-- Django 3.2.2
+- Django 3.2.4
 - Improve the handling of unknown email addresses in the Sign In form
 - Add support for "... is UP" SMS notifications
 - Add an option for weekly reports (in addition to monthly)
