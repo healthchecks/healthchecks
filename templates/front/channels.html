@@ -30,7 +30,7 @@
         <tr class="channel-row kind-{{ ch.kind }}">
             <td class="icon-cell">
                 <img src="{% static ch.icon_path %}"
-                class="icon"
+                class="icon {{ ch.kind }}"
                 alt="{{ ch.get_kind_display }} icon" />
             </td>
             <td>
@@ -263,7 +263,7 @@
         {% if enable_matrix %}
         <li>
             <img src="{% static 'img/integrations/matrix.png' %}"
-                 class="icon" alt="Matrix icon" />
+                 class="icon matrix" alt="Matrix icon" />
 
             <h2>Matrix</h2>
             <p>Post notifications to a Matrix room.</p>
@@ -274,7 +274,7 @@
         {% if enable_mattermost %}
         <li>
             <img src="{% static 'img/integrations/mattermost.png' %}"
-                class="icon" alt="Mattermost icon" />
+                class="icon mattermost" alt="Mattermost icon" />
 
             <h2>Mattermost</h2>
             <p>High Trust Messaging for the Enterprise.</p>

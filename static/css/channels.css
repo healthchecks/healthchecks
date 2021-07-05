@@ -235,3 +235,11 @@ table.channels-table > tbody > tr > th {
 .channel-modal .modal-body {
     padding: 15px 40px;
 }
+
+body.dark .icon.mattermost {
+    filter: invert();
+}
+
+body.dark .icon.matrix {
+    filter: invert();
+}
