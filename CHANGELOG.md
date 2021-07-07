@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.22.0 - Unreleased
+
+### Improvements
+- Use multicolor channel icons for better appearance in the dark mode
+
 ## v1.21.0 - 2020-07-02
 
 ### Improvements

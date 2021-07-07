@@ -1,11 +1,12 @@
 @font-face {
   font-family: 'icomoon';
   src:
-    url('../fonts/icomoon.ttf?nsf0dg') format('truetype'),
-    url('../fonts/icomoon.woff?nsf0dg') format('woff'),
-    url('../fonts/icomoon.svg?nsf0dg#icomoon') format('svg');
+    url('../fonts/icomoon.ttf?h8x72b') format('truetype'),
+    url('../fonts/icomoon.woff?h8x72b') format('woff'),
+    url('../fonts/icomoon.svg?h8x72b#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
+  font-display: block;
 }
 
 [class^="ic-"], [class*=" ic-"] {
@@ -23,57 +24,96 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ic-call:before {
+  content: "\e91a";
+  color: rgb(255, 255, 255);
+}
+.ic-call:after {
+  content: "\e91d";
+  margin-left: -1em;
+  color: rgb(232, 26, 52);
+  opacity: 0.98;
+}
 .ic-victorops:before {
   content: "\e900";
+  color: rgb(255, 255, 255);
+}
+.ic-victorops:after {
+  content: "\e91e";
+  margin-left: -1em;
+  color: rgb(44, 45, 46);
 }
 .ic-zulip:before {
   content: "\e90f";
-  color: #6492fe;
+  color: rgb(255, 255, 255);
 }
-.ic-signal:before {
+.ic-zulip:after {
+  content: "\e91f";
+  margin-left: -1em;
+  color: rgb(100, 146, 254);
+}
+.ic-signal:after {
   content: "\e91c";
   color: #2592e9;
 }
 .ic-linenotify:before {
   content: "\e91b";
-  color: #00c300;
+  color: rgb(255, 255, 255);
 }
-.ic-call:before {
-  content: "\e91a";
-  color: #e81a34;
+.ic-linenotify:after {
+  content: "\e920";
+  margin-left: -1em;
+  color: rgb(0, 195, 0);
 }
 .ic-spike:before {
   content: "\e919";
-  color: #007bff;
+  color: rgb(255, 255, 255);
+}
+.ic-spike:after {
+  content: "\e921";
+  margin-left: -1em;
+  color: rgb(0, 123, 255);
 }
 .ic-pd:before {
   content: "\e90b";
-  color: #04ac38;
+  color: rgb(255, 255, 255);
+}
+.ic-pd:after {
+  content: "\e922";
+  margin-left: -1em;
+  color: rgb(4, 172, 56);
 }
 .ic-shell:before {
   content: "\e917";
+  color: rgb(255, 255, 255);
+}
+.ic-shell:after {
+  content: "\e923";
+  margin-left: -1em;
+  color: rgb(34, 34, 34);
 }
 .ic-msteams:before {
   content: "\e916";
-  color: #4e56be;
+  color: rgb(255, 255, 255);
 }
-.ic-opsgenie:before {
+.ic-msteams:after {
+  content: "\e924";
+  margin-left: -1.056640625em;
+  color: rgb(78, 86, 190);
+}
+.ic-opsgenie:after {
   content: "\e910";
   color: #2684ff;
 }
-.ic-mattermost:before {
+.ic-mattermost:after {
   content: "\e907";
   color: #045acc;
 }
-.ic-pagerteam:before {
-  content: "\e914";
-  color: #cd2a00;
-}
-.ic-apprise:before {
+.ic-apprise:after {
   content: "\e915";
   color: #236b6b;
 }
-.ic-matrix:before {
+.ic-matrix:after {
   content: "\e901";
 }
 .ic-started:before {
@@ -81,34 +121,61 @@
 }
 .ic-pagertree:before {
   content: "\e90d";
-  color: #33ade2;
+  color: rgb(255, 255, 255);
+}
+.ic-pagertree:after {
+  content: "\e929";
+  margin-left: -1em;
+  color: rgb(51, 173, 226);
 }
 .ic-po:before {
   content: "\e90e";
-  color: #249df1;
+  color: rgb(255, 255, 255);
+}
+.ic-po:after {
+  content: "\e92a";
+  margin-left: -1em;
+  color: rgb(36, 157, 241);
 }
 .ic-email:before {
   content: "\e90a";
-  color: #4f5d73;
+  color: rgb(255, 255, 255);
 }
-body.dark .ic-email:before {
-  color: #76a6f0;
+.ic-email:after {
+  content: "\e92b";
+  margin-left: -1em;
+  color: rgb(79, 93, 115);
 }
-.ic-webhook:before {
+.ic-webhook:after {
   content: "\e908";
   color: #c73a63;
 }
 .ic-sms:before {
   content: "\e904";
-  color: #95c144;
+  color: rgb(255, 255, 255);
+}
+.ic-sms:after {
+  content: "\e92c";
+  margin-left: -1em;
+  color: rgb(149, 193, 68);
 }
 .ic-pushbullet:before {
   content: "\e909";
-  color: #67bf79;
+  color: rgb(255, 255, 255);
+}
+.ic-pushbullet:after {
+  content: "\e92d";
+  margin-left: -1em;
+  color: rgb(103, 191, 121);
 }
 .ic-discord:before {
   content: "\e90c";
-  color: #7289da;
+  color: rgb(255, 255, 255);
+}
+.ic-discord:after {
+  content: "\e92e";
+  margin-left: -1em;
+  color: rgb(114, 137, 218);
 }
 .ic-hipchat:before {
   content: "\e902";
@@ -116,17 +183,27 @@ body.dark .ic-email:before {
 }
 .ic-slack:before {
   content: "\e905";
-  color: #56b68b;
+  color: rgb(255, 255, 255);
 }
-.ic-telegram:before {
+.ic-slack:after {
+  content: "\e92f";
+  margin-left: -1em;
+  color: rgb(86, 182, 139);
+}
+.ic-telegram:after {
   content: "\e906";
   color: #2ca5e0;
 }
 .ic-trello:before {
   content: "\e911";
-  color: #0079bf;
+  color: rgb(255, 255, 255);
 }
-.ic-whatsapp:before {
+.ic-trello:after {
+  content: "\e931";
+  margin-left: -1em;
+  color: rgb(0, 121, 191);
+}
+.ic-whatsapp:after {
   content: "\e903";
   color: #25d366;
 }
@@ -136,7 +213,13 @@ body.dark .ic-email:before {
 .ic-cancel:before {
   content: "\e5c9";
 }
-.ic-up:before, .ic-new:before, .ic-ok:before {
+.ic-up:before {
+  content: "\e86c";
+}
+.ic-new:before {
+  content: "\e86c";
+}
+.ic-ok:before {
   content: "\e86c";
 }
 .ic-grace:before {

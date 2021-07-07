@@ -21,6 +21,7 @@
     --btn-remove-color: #d43f3a;
     --btn-remove-hover: #ffebea;
     --channel-off-color: #ddd;
+    --channel-off-inside-color: #FFF;
     --close-color: #000;
     --debug-warning-bg:  #eee;
     --dropdown-bg: #fff;
@@ -93,7 +94,8 @@ body.dark {
     --btn-remove-bg: #202024;
     --btn-remove-color: #ff4c46;
     --btn-remove-hover: #3f1a22;
-    --channel-off-color: hsl(240, 2%, 40%);
+    --channel-off-color: hsl(240, 6.7%, 23.5%);
+    --channel-off-inside-color: hsl(240, 3.7%, 43.5%);
     --close-color: #fff;
     --debug-warning-bg: #60002d;
     --dropdown-bg: hsl(240, 6%, 16%);

@@ -63,6 +63,10 @@
 }
 
 #checks-table .integrations span.off:before {
+    color: var(--channel-off-inside-color);
+}
+
+#checks-table .integrations span.off:after {
     color: var(--channel-off-color);
 }
 
