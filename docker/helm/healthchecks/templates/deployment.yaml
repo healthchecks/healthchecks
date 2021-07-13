@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "healthchecks.fullname" . }}
+  labels:
+  {{- include "healthchecks.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+  {{- include "healthchecks.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+    {{- include "healthchecks.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "healthchecks.serviceAccountName" . }}
+      securityContext:
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:v{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - "bash"
+            - "-c"
+            - "while !</dev/tcp/{{ template "common.names.fullname" . }}-postgresql/5432; do sleep 1; done; {{.Values.command}}"
+          env:
+            - name: "DB"
+              value: "postgres"
+            - name: "DB_CONN_MAX_AGE"
+              value: "0"
+            - name: "DB_HOST"
+              value: "{{ template "common.names.fullname" . }}-postgresql"
+            - name: "DB_NAME"
+              value: "postgres"
+            - name: "DB_PASSWORD"
+              value: {{.Values.postgresql.postgresqlPassword | quote}}
+            - name: "DB_PORT"
+              value: {{.Values.postgresql.service.port |quote}}
+            - name: "DB_SSLMODE"
+              value: "prefer"
+            - name: "DB_TARGET_SESSION_ATTRS"
+              value: "read-write"
+            - name: "DB_USER"
+              value: {{.Values.postgresql.postgresqlUsername | quote }}
+            - name: "PING_ENDPOINT"
+              value: "{{ if .Values.ingress.tls }}https://{{ else }}http://{{ end }}{{.Values.ingress.host }}/ping/"
+            - name: "PING_EMAIL_DOMAIN"
+              value: "{{.Values.ingress.host }}"
+            - name: "SITE_ROOT"
+              value: "{{ if .Values.ingress.tls }}https://{{ else }}http://{{ end }}{{.Values.ingress.host }}"
+            - name: "SECRET_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: secret-key
+                  key: secret-key
+            {{- range $envName, $envValue := $.Values.env }}
+            - name: {{ $envName | quote }}
+              value: {{ $envValue | quote }}
+          {{- end }}
+          resources:
+      {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}

@@ -1,0 +1,122 @@
+# Default values for healthchecks.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: healthchecks/healthchecks
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+command: uwsgi /opt/healthchecks/docker/uwsgi.ini
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  annotations:
+     kubernetes.io/ingress.class: nginx
+     kubernetes.io/tls-acme: "true"
+     cert-manager.io/cluster-issuer: letsencrypt-prod
+  host: healthchecks.example.com
+  tls: true
+
+resources:
+   limits:
+     cpu: 500m
+     memory: 512Mi
+   requests:
+     cpu: 150m
+     memory: 512Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  ALLOWED_HOSTS: "*"
+  APPRISE_ENABLED: "False"
+  DEBUG: "False"
+  DEFAULT_FROM_EMAIL: healthcheck@healthchecks.example.com
+  DISCORD_CLIENT_ID:
+  DISCORD_CLIENT_SECRET:
+  EMAIL_HOST:
+  EMAIL_HOST_PASSWORD:
+  EMAIL_HOST_USER:
+  EMAIL_PORT: 587
+  EMAIL_USE_TLS: "True"
+  EMAIL_USE_VERIFICATION: "True"
+  LINENOTIFY_CLIENT_ID:
+  LINENOTIFY_CLIENT_SECRET:
+  MASTER_BADGE_LABEL: Mychecks
+  MATRIX_ACCESS_TOKEN:
+  MATRIX_HOMESERVER:
+  MATRIX_USER_ID:
+  MATTERMOST_ENABLED: "True"
+  MSTEAMS_ENABLED: "True"
+  OPSGENIE_ENABLED: "True"
+  PAGERTREE_ENABLED: "True"
+  PD_APP_ID:
+  PD_ENABLED: "True"
+  PD_VENDOR_KEY:
+  PING_BODY_LIMIT: 10000
+  PROMETHEUS_ENABLED: "True"
+  PUSHBULLET_CLIENT_ID:
+  PUSHBULLET_CLIENT_SECRET:
+  PUSHOVER_API_TOKEN:
+  PUSHOVER_EMERGENCY_EXPIRATION: 86400
+  PUSHOVER_EMERGENCY_RETRY_DELAY: 300
+  PUSHOVER_SUBSCRIPTION_URL:
+  REGISTRATION_OPEN: "False"
+  REMOTE_USER_HEADER:
+  RP_ID:
+  SHELL_ENABLED: "False"
+  SIGNAL_CLI_ENABLED: "False"
+  SITE_NAME: Mychecks
+  SLACK_CLIENT_ID:
+  SLACK_CLIENT_SECRET:
+  SLACK_ENABLED: "False"
+  SPIKE_ENABLED: "False"
+  TELEGRAM_BOT_NAME: ExampleBot
+  TELEGRAM_TOKEN:
+  TRELLO_APP_KEY:
+  TWILIO_ACCOUNT:
+  TWILIO_AUTH:
+  TWILIO_FROM:
+  TWILIO_USE_WHATSAPP: "False"
+  USE_PAYMENTS: "False"
+  VICTOROPS_ENABLED: "False"
+  WEBHOOKS_ENABLED: "True"
+  ZULIP_ENABLED: "False"
+
+postgresql:
+  postgresqlPassword: replacemerandompassword
