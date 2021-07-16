@@ -161,9 +161,14 @@
     padding: 0 50px 50px 50px;
 }
 
-#signup-modal h1 {
+#signup-modal div.title {
+    font-size: 30px;
     text-align: center;
     margin: 0 0 50px 0;
+}
+
+#signup-modal label {
+    font-weight: normal;
 }
 
 #signup-modal #link-instruction {
