@@ -4647,16 +4647,16 @@ button.list-group-item-danger.active:focus {
   border-color: var(--border-color);
 }
 .panel-default > .panel-heading {
-  color: #333333;
-  background-color: #f5f5f5;
+  color: var(--text-color);
+  background-color: var(--panel-default-heading-bg);
   border-color: var(--border-color);
 }
 .panel-default > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: var(--border-color);
 }
 .panel-default > .panel-heading .badge {
-  color: #f5f5f5;
-  background-color: #333333;
+  color: var(--panel-default-heading-bg);
+  background-color: var(--text-color);
 }
 .panel-default > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: var(--border-color);

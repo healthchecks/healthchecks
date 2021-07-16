@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Use multicolor channel icons for better appearance in the dark mode
 
+### Bug Fixes
+- Fix dark mode styling issues in Cron Syntax Cheatsheet
+
 ## v1.21.0 - 2020-07-02
 
 ### Improvements

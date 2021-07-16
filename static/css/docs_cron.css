@@ -1,7 +1,7 @@
 
 
 .cron-example th {
-    background: #f5f5f5;
+    background: var(--cheatsheet-example-bg);
 }
 
 .cron-example th div {
@@ -24,8 +24,8 @@
     bottom: 15px;
     width: 40%;
 
-    border-left: 2px dotted #ddd;
-    border-bottom: 2px dotted #ddd;
+    border-left: 2px dotted var(--cheatsheet-dotted-color);
+    border-bottom: 2px dotted var(--cheatsheet-dotted-color);
 }
 
 .desc {
@@ -33,7 +33,7 @@
     font-weight: bold;
     font-style: italic;
     font-size: 20px;
-    color: #333;
+    color: var(--text-color);
     padding: 8px;
     margin-bottom: 8px;
 }
@@ -50,5 +50,5 @@
 }
 
 .cron-example td.minor {
-    color: #999;
+    color: var(--text-muted);
 }

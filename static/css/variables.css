@@ -22,6 +22,8 @@
     --btn-remove-hover: #ffebea;
     --channel-off-color: #ddd;
     --channel-off-inside-color: #FFF;
+    --cheatsheet-example-bg: #f5f5f5;
+    --cheatsheet-dotted-color: #ccc;
     --close-color: #000;
     --debug-warning-bg:  #eee;
     --dropdown-bg: #fff;
@@ -41,6 +43,7 @@
     --modal-content-bg: #fff;
     --nav-link-hover-bg: #eee;
     --panel-bg: #fff;
+    --panel-default-heading-bg: #f5f5f5;
     --panel-success-bg: #dff0d8;
     --plan-business-border:  #90CAF9;
     --plan-business-color: #141c22;
@@ -96,6 +99,8 @@ body.dark {
     --btn-remove-hover: #3f1a22;
     --channel-off-color: hsl(240, 6.7%, 23.5%);
     --channel-off-inside-color: hsl(240, 3.7%, 43.5%);
+    --cheatsheet-example-bg: #383840;
+    --cheatsheet-dotted-color: #6f6f7f;
     --close-color: #fff;
     --debug-warning-bg: #60002d;
     --dropdown-bg: hsl(240, 6%, 16%);
@@ -115,6 +120,7 @@ body.dark {
     --modal-content-bg: #1f1f22;
     --nav-link-hover-bg: #383840;
     --panel-bg: hsl(240, 6%, 16%);
+    --panel-default-heading-bg: #383840;
     --panel-success-bg: #165b35;
     --plan-business-border:  #90CAF9;
     --plan-business-color: #e8f2f9;
