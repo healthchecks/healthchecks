@@ -245,7 +245,7 @@
                 <td>
                     {% blocktrans trimmed %}
                     Up.
-                    Time since last ping has not exceeded <strong>Period</strong>.
+                    The time since the last ping has not exceeded <strong>Period</strong>.
                     {% endblocktrans %}
                 </td>
             </tr>
@@ -256,7 +256,7 @@
                 <td>
                     {% blocktrans trimmed %}
                     Late.
-                    Time since last ping has exceeded <strong>Period</strong>,
+                    The time since the last ping has exceeded <strong>Period</strong>,
                     but has not yet exceeded <strong>Period</strong> + <strong>Grace</strong>.
                     {% endblocktrans %}
                 </td>
@@ -268,8 +268,8 @@
                 <td>
                     {% blocktrans trimmed %}
                     Down.
-                    Time since last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
-                    When check goes from "Late" to "Down", {{ site_name }}
+                    The time since the last ping has exceeded <strong>Period</strong> + <strong>Grace</strong>.
+                    When a check goes from "Late" to "Down", {{ site_name }}
                     sends you a notification.
                     {% endblocktrans %}
                 </td>
@@ -304,7 +304,7 @@
         <p>
             {% blocktrans trimmed %}
             <strong>Grace Time</strong> specifies how "late" a ping can
-            be before you will be alerted. Set it to be a little above
+            be before you are alerted. You should set it to be a little above
             the expected duration of your cron job.
             {% endblocktrans %}
         </p>
@@ -325,7 +325,7 @@
             {% blocktrans trimmed %}
             You can add a longer, free-form description to each
             check. Leave notes and pointers for yourself and
-            for your team.
+            your team.
             {% endblocktrans %}
         </p>
         <p>
@@ -356,8 +356,8 @@
         </p>
         <p>
             {% blocktrans trimmed %}
-            The badges have public, but hard-to-guess URLs.
-            You can use them in your READMEs, dashboards or status pages.
+            The badges have public but hard-to-guess URLs.
+            You can use them in your READMEs, dashboards, or status pages.
             {% endblocktrans %}
         </p>
     </div>
@@ -365,19 +365,19 @@
 
     <div id="welcome-integrations" class="row">
         <div class="col-sm-12">
-            <h1>{% trans "Integrations" %}<br>
+            <h2>{% trans "Integrations" %}<br>
                 <small>
                     {% trans "Set up multiple ways to get notified:" %}
                 </small>
-            </h1>
+            </h2>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/email.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     {% trans "Email" %}<br>
                     <small>&nbsp;</small>
-                </h3>
+                </p>
             </div>
         </div>
 
@@ -385,10 +385,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/webhook.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Webhooks<br>
                     <small>&nbsp;</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -398,18 +398,18 @@
             {% if enable_slack_btn %}
             <a href="{% url 'hc-slack-help' %}" class="integration">
                 <img src="{% static 'img/integrations/slack.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Slack<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </a>
             {% else %}
             <div class="integration">
                 <img src="{% static 'img/integrations/slack.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Slack<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
             {% endif %}
         </div>
@@ -419,10 +419,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/apprise.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Apprise<br>
                     <small>{% trans "Push Notifications" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -431,10 +431,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/discord.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Discord<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -443,7 +443,7 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/linenotify.png' %}" class="icon" alt="" />
-                <h3>LINE Notify<br><small>Chat</small></h3>
+                <p>LINE Notify<br><small>Chat</small></p>
             </div>
         </div>
         {% endif %}
@@ -452,10 +452,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/matrix.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Matrix<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -464,10 +464,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/mattermost.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Mattermost<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -476,10 +476,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/msteams.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Microsoft Teams<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -488,10 +488,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/opsgenie.png' %}" class="icon" alt="" />
-                <h3>
-                    Opsgenie<br>
+                <p>
+                    OpsGenie<br>
                     <small>{% trans "Incident Management" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -501,18 +501,18 @@
             {% if enable_pd_simple %}
             <a href="{% url 'hc-pagerduty-help' %}" class="integration">
                 <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     PagerDuty<br>
                     <small>{% trans "Incident Management" %}</small>
-                </h3>
+                </p>
             </a>
             {% else %}
             <div class="integration">
                 <img src="{% static 'img/integrations/pd.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     PagerDuty<br>
                     <small>{% trans "Incident Management" %}</small>
-                </h3>
+                </p>
             </div>
             {% endif %}
         </div>
@@ -522,10 +522,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/pagertree.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     PagerTree<br>
                     <small>{% trans "Incident Management" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -534,10 +534,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/call.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     {% trans "Phone Call" %}<br>
                     <small>&nbsp;</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -546,10 +546,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="{% url 'hc-serve-doc' 'configuring_prometheus' %}" class="integration">
                 <img src="{% static 'img/integrations/prometheus.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Prometheus<br>
                     <small>{% trans "Event Monitoring" %}</small>
-                </h3>
+                </p>
             </a>
         </div>
         {% endif %}
@@ -558,10 +558,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/pushbullet.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Pushbullet<br>
                     <small>{% trans "Push Notifications" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -570,10 +570,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="{% url 'hc-pushover-help' %}" class="integration">
                 <img src="{% static 'img/integrations/po.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Pushover<br>
                     <small>{% trans "Push Notifications" %}</small>
-                </h3>
+                </p>
             </a>
         </div>
         {% endif %}
@@ -582,10 +582,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/shell.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     {% trans "Shell Commands" %}<br>
                     <small>&nbsp;</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -594,10 +594,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/signal.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     {% trans "Signal" %}<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -606,10 +606,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/sms.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     {% trans "SMS" %}<br>
                     <small>&nbsp;</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -618,10 +618,10 @@
        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="Spike.sh icon" />
-                <h3>
+                <p>
                     Spike.sh<br>
                     <small>{% trans "Incident Management" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -630,10 +630,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <a href="{% url 'hc-telegram-help' %}" class="integration">
                 <img src="{% static 'img/integrations/telegram.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Telegram<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </a>
         </div>
         {% endif %}
@@ -642,10 +642,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/trello.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Trello<br>
                     <small>{% trans "Project Management" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -654,10 +654,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/victorops.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Splunk On-Call<br>
                     <small>{% trans "Incident Management" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -666,10 +666,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/whatsapp.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     WhatsApp<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -678,10 +678,10 @@
         <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
             <div class="integration">
                 <img src="{% static 'img/integrations/zulip.png' %}" class="icon" alt="" />
-                <h3>
+                <p>
                     Zulip<br>
                     <small>{% trans "Chat" %}</small>
-                </h3>
+                </p>
             </div>
         </div>
         {% endif %}
@@ -696,13 +696,13 @@
             </h1>
         </div>
         <div class="col-sm-6 use-cases">
-            <h2>{% trans "Cron Jobs" %}</h2>
+            <h3>{% trans "Cron Jobs" %}</h3>
             <p>
             {% blocktrans trimmed %}
                 {{ site_name }} monitoring is a great fit for cron jobs and cron-like
                 systems (systemd timers, Jenkins build jobs, Windows Scheduled Tasks,
                 wp-cron, uwsgi cron-like interface, Heroku Scheduler, ...). A failed
-                cron job often has no immediate visible consequences, and can go
+                cron job often has no immediate visible consequences and can go
                 unnoticed for a long time.
             {% endblocktrans %}
             </p>
@@ -719,13 +719,13 @@
             </ul>
         </div>
         <div class="col-sm-6 use-cases">
-            <h2>{% trans "Processes, Services, Servers" %}</h2>
+            <h3>{% trans "Processes, Services, Servers" %}</h3>
 
             <p>
                 {% blocktrans trimmed %}
-                {{ site_name }} monitoring can be used for lightweight server
-                monitoring: ensuring a particular system service, or the server as a
-                whole is alive and healthy. Write a shell script that checks for a
+                You can use {{ site_name }} for lightweight server
+                monitoring: ensuring a particular system service or the whole server
+                is alive and healthy. Write a shell script that checks for a
                 specific condition, and pings {{ site_name }} if successful. Run the
                 shell script regularly.
                 {% endblocktrans %}

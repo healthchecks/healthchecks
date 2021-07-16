@@ -83,9 +83,14 @@
     margin-bottom: 80px;
 }
 
-#welcome-integrations h1 {
+#welcome-integrations h2 {
+    font-size: 24px;
     text-align: center;
     margin-bottom: 20px;
+}
+
+#welcome-integrations h2 small {
+    font-size: 14px;
 }
 
 #welcome-integrations .integration {
@@ -109,13 +114,15 @@
     height: 48px;
 }
 
-#welcome-integrations h3 {
+#welcome-integrations p {
     font-size: 18px;
-    margin-bottom: 0;
+    margin: 20px 0 0 0;
+    line-height: 1.1;
 }
 
-#welcome-integrations h3 small {
+#welcome-integrations p small {
     font-size: 12px;
+    color: #777777;
 }
 
 .use-cases li {
