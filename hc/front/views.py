@@ -880,27 +880,25 @@ def verify_email(request, code, token):
 
 @csrf_exempt
 def unsubscribe_email(request, code, signed_token):
+    ctx = {}
+
     # Some email servers open links in emails to check for malicious content.
     # To work around this, on GET requests we serve a confirmation form.
     # If the signature is at least 5 minutes old, we also include JS code to
     # auto-submit the form.
-    ctx = {}
-    if ":" in signed_token:
-        signer = signing.TimestampSigner(salt="alerts")
-        # First, check the signature without looking at the timestamp:
-        try:
-            token = signer.unsign(signed_token)
-        except signing.BadSignature:
-            return render(request, "bad_link.html")
+    signer = signing.TimestampSigner(salt="alerts")
 
-        # Check if timestamp is older than 5 minutes:
-        try:
-            signer.unsign(signed_token, max_age=300)
-        except signing.SignatureExpired:
-            ctx["autosubmit"] = True
+    # First, check the signature without looking at the timestamp:
+    try:
+        token = signer.unsign(signed_token)
+    except signing.BadSignature:
+        return render(request, "bad_link.html")
 
-    else:
-        token = signed_token
+    # Then, check if timestamp is older than 5 minutes:
+    try:
+        signer.unsign(signed_token, max_age=300)
+    except signing.SignatureExpired:
+        ctx["autosubmit"] = True
 
     channel = get_object_or_404(Channel, code=code, kind="email")
     if channel.make_token() != token:
