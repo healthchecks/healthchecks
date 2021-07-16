@@ -82,19 +82,15 @@
             {% if request.user.is_authenticated and project %}
                 {{ project }}
                 <span class="caret"></span>
-            {% elif request.user.is_authenticated%}
-                <img
-                    id="logo"
-                    height="50"
-                    src="{% static 'img/logo.png'%}"
-                    srcset="{% static 'img/logo.png'%} 1x, {% static 'img/logo@2x.png'%} 2x"
-                    alt="{{ site_name }}">
             {% else %}
                 <img
                     id="logo"
                     height="50"
-                    src="{% static 'img/logo-full.png'%}"
-                    srcset="{% static 'img/logo-full.png'%} 1x, {% static 'img/logo-full@2x.png'%} 2x"
+                    {% if site_logo_url %}
+                    src="{{ site_logo_url }}"
+                    {% else %}
+                    src="{% static 'img/logo.png' %}"
+                    {% endif %}
                     alt="{{ site_name }}">
             {% endif %}
             </a>

@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Use multicolor channel icons for better appearance in the dark mode
+- Add SITE_LOGO_URL setting (#323)
 
 ### Bug Fixes
 - Fix dark mode styling issues in Cron Syntax Cheatsheet

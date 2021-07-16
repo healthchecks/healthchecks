@@ -287,6 +287,14 @@ notifications. Healthcecks interacts with signal-cli over DBus.</p>
   example given in the signal-cli instructions.</li>
 <li>Set the <code>SIGNAL_CLI_ENABLED</code> environment variable to <code>True</code>.</li>
 </ul>
+<h2 id="SITE_LOGO_URL"><code>SITE_LOGO_URL</code></h2>
+<p>Default: <code>None</code></p>
+<p>An URL pointing to the image you want to use as the site logo. If not set,
+Healthchecks will use a fallback image (<code>/static/img/logo.png</code>).</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">https://example.org/my-custom-logo.svg</span>
+</code></pre></div>
+
 <h2 id="SITE_NAME"><code>SITE_NAME</code></h2>
 <p>Default: <code>Mychecks</code></p>
 <p>The display name of this Healthchecks instance. Healthchecks uses it throughout

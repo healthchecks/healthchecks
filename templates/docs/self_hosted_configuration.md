@@ -456,6 +456,19 @@ To enable the Signal integration:
   example given in the signal-cli instructions.
 * Set the `SIGNAL_CLI_ENABLED` environment variable to `True`.
 
+## `SITE_LOGO_URL` {: #SITE_LOGO_URL }
+
+Default: `None`
+
+An URL pointing to the image you want to use as the site logo. If not set,
+Healthchecks will use a fallback image (`/static/img/logo.png`).
+
+Example:
+
+```ini
+SITE_LOGO_URL=https://example.org/my-custom-logo.svg
+```
+
 ## `SITE_NAME` {: #SITE_NAME }
 
 Default: `Mychecks`
