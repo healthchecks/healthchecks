@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.db.models import Count, F
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import escape
@@ -121,6 +123,7 @@ class ProfileAdmin(admin.ModelAdmin):
         NumChecksFilter,
         "theme",
     )
+    actions = ("login",)
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
@@ -159,6 +162,11 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def sms(self, obj):
         return "%d of %d" % (obj.sms_sent, obj.sms_limit)
+
+    def login(self, request, qs):
+        profile = qs.get()
+        auth_login(request, profile.user, "hc.accounts.backends.EmailBackend")
+        return redirect("hc-index")
 
 
 @admin.register(Project)
