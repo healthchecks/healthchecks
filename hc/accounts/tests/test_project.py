@@ -79,6 +79,7 @@ class ProjectTestCase(BaseTestCase):
 
         # The read-write flag should be set
         self.assertTrue(member.rw)
+        self.assertEqual(member.role, member.Role.REGULAR)
 
         # The new user should not have their own project
         self.assertFalse(member.user.project_set.exists())
@@ -98,8 +99,8 @@ class ProjectTestCase(BaseTestCase):
             project=self.project, user__email="frank@example.org"
         )
 
-        # The new user should not have their own project
         self.assertFalse(member.rw)
+        self.assertEqual(member.role, member.Role.READONLY)
 
     def test_it_adds_member_from_another_team(self):
         # With team limit at zero, we should not be able to invite any new users

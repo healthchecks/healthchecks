@@ -358,7 +358,8 @@ class Project(models.Model):
         if self.owner_id == user.id:
             return False
 
-        Member.objects.create(user=user, project=self, rw=rw)
+        role = Member.Role.REGULAR if rw else Member.Role.READONLY
+        Member.objects.create(user=user, project=self, rw=rw, role=role)
         checks_url = reverse("hc-checks", args=[self.code])
         user.profile.send_instant_login_link(self, redirect_url=checks_url)
         return True
@@ -419,10 +420,17 @@ class Project(models.Model):
 
 
 class Member(models.Model):
+    class Role(models.TextChoices):
+        READONLY = "r", "Read-only"
+        REGULAR = "w", "Member"
+
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
     project = models.ForeignKey(Project, models.CASCADE)
     transfer_request_date = models.DateTimeField(null=True, blank=True)
-    rw = models.BooleanField(default=True)
+    rw = models.BooleanField(default=True, null=True)
+    role = models.CharField(
+        max_length=1, default=Role.REGULAR, choices=Role.choices, blank=True, null=True
+    )
 
     class Meta:
         constraints = [
