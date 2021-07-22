@@ -72,10 +72,14 @@ class AddLineNotifyCompleteTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_requires_rw_access(self):
-        self.bobs_membership.rw = False
+        session = self.client.session
+        session["add_linenotify"] = ("foo", str(self.project.code))
+        session.save()
+
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
-        url = self.url + "?code=12345678&state=bar"
+        url = self.url + "?code=12345678&state=foo"
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)

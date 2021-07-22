@@ -67,7 +67,7 @@ class StatusSingleTestCase(BaseTestCase):
         self.assertIn("resume-btn", doc["status_text"])
 
     def test_resume_requires_rw_access(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.check.status = "paused"

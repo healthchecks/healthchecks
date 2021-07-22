@@ -287,7 +287,7 @@ def project(request, code):
         rw = True
     else:
         membership = get_object_or_404(Member, project=project, user=request.user)
-        rw = membership.rw
+        rw = membership.is_rw
 
     ctx = {
         "page": "project",

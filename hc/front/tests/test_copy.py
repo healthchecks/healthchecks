@@ -35,7 +35,7 @@ class CopyCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_it_requires_rw_access(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")

@@ -129,7 +129,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, """<div class="btn btn-xs grace ">foo</div>""")
 
     def test_it_hides_actions_from_readonly_users(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")

@@ -230,7 +230,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertContains(r, "bob@example.org")
 
     def test_it_checks_rw_access_when_updating_project_name(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")
@@ -240,7 +240,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_it_hides_actions_for_readonly_users(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")

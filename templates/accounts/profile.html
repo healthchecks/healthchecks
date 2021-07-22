@@ -172,13 +172,7 @@
                                     </a>
                                 </div>
                             </td>
-                            <td>
-                                {% if m.rw %}
-                                Member
-                                {% else %}
-                                Read-only
-                                {% endif %}
-                            </td>
+                            <td>{{ m.get_role_display }}</td>
                             <td>
                                 <a
                                     href="#"

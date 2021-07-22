@@ -167,13 +167,7 @@
                         {% for m in project.member_set.all %}
                         <tr>
                             <td class="email">{{ m.user.email }}</td>
-                            <td>
-                                {% if m.rw %}
-                                Member
-                                {% else %}
-                                Read-only
-                                {% endif %}
-                            </td>
+                            <td>{{ m.get_role_display}}</td>
                             <td>
                                 {% if is_owner %}
                                 <a

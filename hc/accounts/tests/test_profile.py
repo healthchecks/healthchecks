@@ -37,7 +37,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertContains(r, "Member")
 
     def test_it_shows_readonly_project_membership(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")

@@ -75,7 +75,11 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_requires_rw_access(self):
-        self.bobs_membership.rw = False
+        session = self.client.session
+        session["add_slack"] = ("foo", str(self.project.code))
+        session.save()
+
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")

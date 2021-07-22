@@ -440,6 +440,10 @@ class Member(models.Model):
     def can_accept(self):
         return self.user.profile.can_accept(self.project)
 
+    @property
+    def is_rw(self):
+        return self.role in (Member.Role.REGULAR,)
+
 
 class Credential(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)

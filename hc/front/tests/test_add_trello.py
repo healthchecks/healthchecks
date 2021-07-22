@@ -1,5 +1,3 @@
-import json
-
 from django.test.utils import override_settings
 from hc.api.models import Channel
 from hc.test import BaseTestCase
@@ -40,7 +38,7 @@ class AddTrelloTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_requires_rw_access(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")

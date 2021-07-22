@@ -96,7 +96,7 @@ def _get_check_for_user(request, code):
         return check, True
 
     membership = get_object_or_404(Member, project=check.project, user=request.user)
-    return check, membership.rw
+    return check, membership.is_rw
 
 
 def _get_rw_check_for_user(request, code):
@@ -120,7 +120,7 @@ def _get_channel_for_user(request, code):
         return channel, True
 
     membership = get_object_or_404(Member, project=channel.project, user=request.user)
-    return channel, membership.rw
+    return channel, membership.is_rw
 
 
 def _get_rw_channel_for_user(request, code):
@@ -143,7 +143,7 @@ def _get_project_for_user(request, project_code):
 
     membership = get_object_or_404(Member, project=project, user=request.user)
 
-    return project, membership.rw
+    return project, membership.is_rw
 
 
 def _get_rw_project_for_user(request, project_code):

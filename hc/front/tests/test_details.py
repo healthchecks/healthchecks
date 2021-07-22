@@ -51,7 +51,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Your new check is ready!", status_code=200)
 
     def test_it_hides_actions_from_readonly_users(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")
@@ -67,7 +67,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "details-remove-check")
 
     def test_it_hides_resume_action_from_readonly_users(self):
-        self.bobs_membership.rw = False
+        self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
         self.check.status = "paused"
