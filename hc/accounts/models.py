@@ -428,9 +428,7 @@ class Member(models.Model):
     project = models.ForeignKey(Project, models.CASCADE)
     transfer_request_date = models.DateTimeField(null=True, blank=True)
     rw = models.BooleanField(default=True, null=True)
-    role = models.CharField(
-        max_length=1, default=Role.REGULAR, choices=Role.choices, blank=True, null=True
-    )
+    role = models.CharField(max_length=1, default=Role.REGULAR, choices=Role.choices)
 
     class Meta:
         constraints = [
