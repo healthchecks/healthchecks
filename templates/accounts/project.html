@@ -169,7 +169,7 @@
                             <td class="email">{{ m.user.email }}</td>
                             <td>{{ m.get_role_display}}</td>
                             <td>
-                                {% if is_owner %}
+                                {% if is_manager and m.user != request.user %}
                                 <a
                                     href="#"
                                     data-email="{{ m.user.email }}"
@@ -179,7 +179,7 @@
                         </tr>
                         {% endfor %}
 
-                        {% if is_owner and invite_suggestions %}
+                        {% if is_manager and invite_suggestions %}
                         <tr id="suggestions-row">
                             <td colspan="3">
                                 Add Users from Other Teams
@@ -210,7 +210,7 @@
 
                 <br />
 
-                {% if is_owner %}
+                {% if is_manager %}
                 {% if project.can_invite_new_users %}
                 <a
                     href="#"
@@ -401,8 +401,19 @@
                         <label class="radio-container">
                             <input
                                 type="radio"
-                                name="rw"
-                                value="1"
+                                name="role"
+                                value="m">
+                            <span class="radiomark"></span>
+                            Manager
+                            <span class="help-block">
+                                Can invite/remove other members.
+                            </span>
+                        </label>
+                        <label class="radio-container">
+                            <input
+                                type="radio"
+                                name="role"
+                                value="w"
                                 checked>
                             <span class="radiomark"></span>
                             Team Member
@@ -410,8 +421,8 @@
                         <label class="radio-container">
                             <input
                                 type="radio"
-                                name="rw"
-                                value="">
+                                name="role"
+                                value="r">
                             <span class="radiomark"></span>
                             Read-only
                             <span class="help-block">

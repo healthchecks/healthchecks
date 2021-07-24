@@ -284,9 +284,11 @@ def project(request, code):
     is_owner = project.owner_id == request.user.id
 
     if request.user.is_superuser or is_owner:
+        is_manager = True
         rw = True
     else:
         membership = get_object_or_404(Member, project=project, user=request.user)
+        is_manager = membership.role == Member.Role.MANAGER
         rw = membership.is_rw
 
     ctx = {
@@ -294,6 +296,7 @@ def project(request, code):
         "rw": rw,
         "project": project,
         "is_owner": is_owner,
+        "is_manager": is_manager,
         "show_api_keys": "show_api_keys" in request.GET,
         "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
     }
@@ -319,7 +322,7 @@ def project(request, code):
         elif "show_api_keys" in request.POST:
             ctx["show_api_keys"] = True
         elif "invite_team_member" in request.POST:
-            if not is_owner:
+            if not is_manager:
                 return HttpResponseForbidden()
 
             form = forms.InviteTeamMemberForm(request.POST)
@@ -341,7 +344,7 @@ def project(request, code):
                 except User.DoesNotExist:
                     user = _make_user(email, with_project=False)
 
-                if project.invite(user, rw=form.cleaned_data["rw"]):
+                if project.invite(user, role=form.cleaned_data["role"]):
                     ctx["team_member_invited"] = email
                     ctx["team_status"] = "success"
                 else:
@@ -349,7 +352,7 @@ def project(request, code):
                     ctx["team_status"] = "info"
 
         elif "remove_team_member" in request.POST:
-            if not is_owner:
+            if not is_manager:
                 return HttpResponseForbidden()
 
             form = forms.RemoveTeamMemberForm(request.POST)
@@ -359,6 +362,9 @@ def project(request, code):
                 q = q.filter(memberships__project=project)
                 farewell_user = q.first()
                 if farewell_user is None:
+                    return HttpResponseBadRequest()
+
+                if farewell_user == request.user:
                     return HttpResponseBadRequest()
 
                 Member.objects.filter(project=project, user=farewell_user).delete()
@@ -428,6 +434,7 @@ def project(request, code):
                 project.save()
 
             ctx["is_owner"] = True
+            ctx["is_manager"] = True
             messages.success(request, "You are now the owner of this project!")
 
         elif "reject_transfer" in request.POST:
