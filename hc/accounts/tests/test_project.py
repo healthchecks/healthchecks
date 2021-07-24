@@ -66,7 +66,7 @@ class ProjectTestCase(BaseTestCase):
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "frank@example.org", "rw": "1"}
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "w"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
@@ -90,7 +90,7 @@ class ProjectTestCase(BaseTestCase):
     def test_it_adds_readonly_team_member(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
@@ -99,6 +99,20 @@ class ProjectTestCase(BaseTestCase):
         )
 
         self.assertEqual(member.role, member.Role.READONLY)
+
+    def test_it_adds_manager_team_member(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "m"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        member = Member.objects.get(
+            project=self.project, user__email="frank@example.org"
+        )
+
+        # The new user should have role manager
+        self.assertEqual(member.role, member.Role.MANAGER)
 
     def test_it_adds_member_from_another_team(self):
         # With team limit at zero, we should not be able to invite any new users
@@ -111,7 +125,7 @@ class ProjectTestCase(BaseTestCase):
         Member.objects.create(user=self.charlie, project=p2)
 
         self.client.login(username="alice@example.org", password="password")
-        form = {"invite_team_member": "1", "email": "charlie@example.org"}
+        form = {"invite_team_member": "1", "email": "charlie@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
@@ -125,7 +139,7 @@ class ProjectTestCase(BaseTestCase):
     def test_it_rejects_duplicate_membership(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "bob@example.org"}
+        form = {"invite_team_member": "1", "email": "bob@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertContains(r, "bob@example.org is already a member")
 
@@ -135,7 +149,7 @@ class ProjectTestCase(BaseTestCase):
     def test_it_rejects_owner_as_a_member(self):
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "alice@example.org"}
+        form = {"invite_team_member": "1", "email": "alice@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertContains(r, "alice@example.org is already a member")
 
@@ -146,7 +160,7 @@ class ProjectTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         aaa = "a" * 300
-        form = {"invite_team_member": "1", "email": f"frank+{aaa}@example.org"}
+        form = {"invite_team_member": "1", "email": f"frank+{aaa}@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
@@ -161,7 +175,7 @@ class ProjectTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertContains(r, "Too Many Requests")
 
@@ -170,7 +184,7 @@ class ProjectTestCase(BaseTestCase):
     def test_it_requires_owner_to_add_team_member(self):
         self.client.login(username="bob@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
 
@@ -180,7 +194,7 @@ class ProjectTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "frank@example.org"}
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
 
@@ -199,6 +213,19 @@ class ProjectTestCase(BaseTestCase):
         form = {"remove_team_member": "1", "email": "bob@example.org"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_rejects_manager_remove_self(self):
+        self.bobs_membership.role = "m"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+
+        form = {"remove_team_member": "1", "email": "bob@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 400)
+
+        # The number of memberships should have not decreased
+        self.assertEqual(self.project.member_set.count(), 1)
 
     def test_it_checks_membership_when_removing_team_member(self):
         self.client.login(username="charlie@example.org", password="password")

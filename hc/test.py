@@ -36,7 +36,7 @@ class BaseTestCase(TestCase):
         self.bobs_profile.save()
 
         self.bobs_membership = Member.objects.create(
-            user=self.bob, project=self.project
+            user=self.bob, project=self.project, role=Member.Role.REGULAR
         )
 
         # Charlie should have no access to Alice's stuff

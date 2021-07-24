@@ -6,7 +6,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from hc.accounts.models import REPORT_CHOICES
+from hc.accounts.models import REPORT_CHOICES, Member
 from hc.api.models import TokenBucket
 import pytz
 
@@ -136,7 +136,7 @@ class ChangeEmailForm(forms.Form):
 
 class InviteTeamMemberForm(forms.Form):
     email = LowercaseEmailField(max_length=254)
-    rw = forms.BooleanField(required=False)
+    role = forms.ChoiceField(choices=Member.Role.choices)
 
 
 class RemoveTeamMemberForm(forms.Form):

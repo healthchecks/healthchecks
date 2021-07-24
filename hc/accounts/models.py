@@ -351,14 +351,13 @@ class Project(models.Model):
         used = q.distinct().count()
         return used < self.owner_profile.team_limit
 
-    def invite(self, user, rw):
+    def invite(self, user, role):
         if Member.objects.filter(user=user, project=self).exists():
             return False
 
         if self.owner_id == user.id:
             return False
 
-        role = Member.Role.REGULAR if rw else Member.Role.READONLY
         Member.objects.create(user=user, project=self, role=role)
         checks_url = reverse("hc-checks", args=[self.code])
         user.profile.send_instant_login_link(self, redirect_url=checks_url)
@@ -423,6 +422,7 @@ class Member(models.Model):
     class Role(models.TextChoices):
         READONLY = "r", "Read-only"
         REGULAR = "w", "Member"
+        MANAGER = "m", "Manager"
 
     user = models.ForeignKey(User, models.CASCADE, related_name="memberships")
     project = models.ForeignKey(Project, models.CASCADE)
@@ -441,7 +441,7 @@ class Member(models.Model):
 
     @property
     def is_rw(self):
-        return self.role in (Member.Role.REGULAR,)
+        return self.role in (Member.Role.REGULAR, Member.Role.MANAGER)
 
 
 class Credential(models.Model):
