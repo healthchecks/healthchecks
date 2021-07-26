@@ -49,19 +49,33 @@ class ProjectTestCase(BaseTestCase):
         self.assertTrue(len(api_key) > 10)
         self.assertFalse("b'" in api_key)
 
+    def test_it_requires_rw_access_to_create_api_key(self):
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, {"create_api_keys": "1"})
+        self.assertEqual(r.status_code, 403)
+
     def test_it_revokes_api_key(self):
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 
         self.client.login(username="alice@example.org", password="password")
-
-        form = {"revoke_api_keys": "1"}
-        r = self.client.post(self.url, form)
+        r = self.client.post(self.url, {"revoke_api_keys": "1"})
         self.assertEqual(r.status_code, 200)
 
         self.project.refresh_from_db()
         self.assertEqual(self.project.api_key, "")
         self.assertEqual(self.project.api_key_readonly, "")
+
+    def test_it_requires_rw_access_to_revoke_api_key(self):
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, {"revoke_api_keys": "1"})
+        self.assertEqual(r.status_code, 403)
 
     def test_it_adds_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -160,7 +174,11 @@ class ProjectTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         aaa = "a" * 300
-        form = {"invite_team_member": "1", "email": f"frank+{aaa}@example.org", "role": "r"}
+        form = {
+            "invite_team_member": "1",
+            "email": f"frank+{aaa}@example.org",
+            "role": "r",
+        }
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
@@ -245,6 +263,15 @@ class ProjectTestCase(BaseTestCase):
         self.project.refresh_from_db()
         self.assertEqual(self.project.name, "Alpha Team")
 
+    def test_it_requires_rw_access_to_set_project_name(self):
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        form = {"set_project_name": "1", "name": "Alpha Team"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 403)
+
     def test_it_shows_invite_suggestions(self):
         p2 = Project.objects.create(owner=self.alice)
 
@@ -254,7 +281,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertContains(r, "Add Users from Other Teams")
         self.assertContains(r, "bob@example.org")
 
-    def test_it_checks_rw_access_when_updating_project_name(self):
+    def test_it_requires_rw_access_to_update_project_name(self):
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -280,9 +307,15 @@ class ProjectTestCase(BaseTestCase):
         self.project.save()
 
         self.client.login(username="alice@example.org", password="password")
-
-        form = {"show_api_keys": "1"}
-        r = self.client.post(self.url, form)
+        r = self.client.post(self.url, {"show_api_keys": "1"})
         self.assertEqual(r.status_code, 200)
 
         self.assertNotContains(r, "Prometheus metrics endpoint")
+
+    def test_it_requires_rw_access_to_show_api_key(self):
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, {"show_api_keys": "1"})
+        self.assertEqual(r.status_code, 403)

@@ -1,5 +1,6 @@
 from django.core import mail
 from django.utils.timezone import now
+from hc.accounts.models import Member
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -149,3 +150,19 @@ class TransferProjectTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"reject_transfer": "1"})
         self.assertEqual(r.status_code, 403)
+
+    def test_readonly_user_can_accept(self):
+        self.bobs_membership.transfer_request_date = now()
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        self.client.post(self.url, {"accept_transfer": "1"})
+
+        self.project.refresh_from_db()
+        # Bob should now be the owner
+        self.assertEqual(self.project.owner, self.bob)
+
+        # Alice, the previous owner, should now be a *regular* member
+        m = Member.objects.get(user=self.alice, project=self.project)
+        self.assertEqual(m.role, "w")

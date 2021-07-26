@@ -7,9 +7,11 @@ All notable changes to this project will be documented in this file.
 - Use multicolor channel icons for better appearance in the dark mode
 - Add SITE_LOGO_URL setting (#323)
 - Add admin action to log in as any user
+- Add a "Manager" role (#484)
 
 ### Bug Fixes
 - Fix dark mode styling issues in Cron Syntax Cheatsheet
+- Fix a 403 when transferring a project to a read-only team member
 
 ## v1.21.0 - 2020-07-02
 

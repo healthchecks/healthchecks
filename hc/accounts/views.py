@@ -302,10 +302,10 @@ def project(request, code):
     }
 
     if request.method == "POST":
-        if not rw:
-            return HttpResponseForbidden()
-
         if "create_api_keys" in request.POST:
+            if not rw:
+                return HttpResponseForbidden()
+
             project.set_api_keys()
             project.save()
 
@@ -313,6 +313,9 @@ def project(request, code):
             ctx["api_keys_created"] = True
             ctx["api_status"] = "success"
         elif "revoke_api_keys" in request.POST:
+            if not rw:
+                return HttpResponseForbidden()
+
             project.api_key = ""
             project.api_key_readonly = ""
             project.save()
@@ -320,6 +323,9 @@ def project(request, code):
             ctx["api_keys_revoked"] = True
             ctx["api_status"] = "info"
         elif "show_api_keys" in request.POST:
+            if not rw:
+                return HttpResponseForbidden()
+
             ctx["show_api_keys"] = True
         elif "invite_team_member" in request.POST:
             if not is_manager:
@@ -372,6 +378,9 @@ def project(request, code):
                 ctx["team_member_removed"] = form.cleaned_data["email"]
                 ctx["team_status"] = "info"
         elif "set_project_name" in request.POST:
+            if not rw:
+                return HttpResponseForbidden()
+
             form = forms.ProjectNameForm(request.POST)
             if form.is_valid():
                 project.name = form.cleaned_data["name"]
@@ -427,6 +436,9 @@ def project(request, code):
                 # 1. Reuse the existing membership, and change its user
                 tr.user = project.owner
                 tr.transfer_request_date = None
+                # The previous owner becomes a regular member
+                # (not readonly, not manager):
+                tr.role = Member.Role.REGULAR
                 tr.save()
 
                 # 2. Change project's owner
