@@ -381,11 +381,6 @@
                     <h4>Invite a Team Member</h4>
                 </div>
                 <div class="modal-body">
-                    <ul>
-                        <li>Team Members can create and manage Checks and Integrations</li>
-                        <li>Only the project owner (you) can view and edit billing settings</li>
-                    </ul>
-                    <br />
                     <div class="form-group">
                         <label for="itm-email" class="col-sm-3 control-label">Email</label>
                         <div class="col-sm-8">
@@ -407,21 +402,26 @@
                             <input
                                 type="radio"
                                 name="role"
-                                value="m">
+                                value="w"
+                                checked>
                             <span class="radiomark"></span>
-                            Manager
+                            Team Member
                             <span class="help-block">
-                                Can invite/remove other members.
+                                Can create and manage checks and integrations.
+                                Cannot access your account's billing settings.
                             </span>
                         </label>
                         <label class="radio-container">
                             <input
                                 type="radio"
                                 name="role"
-                                value="w"
-                                checked>
+                                value="m">
                             <span class="radiomark"></span>
-                            Team Member
+                            Manager
+                            <span class="help-block">
+                                Same as Team Member, plus can invite and remove
+                                other members.
+                            </span>
                         </label>
                         <label class="radio-container">
                             <input
@@ -431,8 +431,8 @@
                             <span class="radiomark"></span>
                             Read-only
                             <span class="help-block">
-                                Cannot modify checks or integrations.
-                                Cannot access project's API keys.
+                                Can view checks and integrations, but cannot
+                                modify anything. Cannot access project's API keys.
                             </span>
                         </label>
                         </div>

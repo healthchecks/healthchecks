@@ -20,7 +20,7 @@ $(function() {
 
     $(".add-to-team").click(function() {
         $("#itm-email").val(this.dataset.email);
-        $("#invite-team-member-modal form").submit();
+        $("#invite-team-member-modal").modal("show");
         return false;
     });
 
