@@ -13,8 +13,10 @@ the project's team. Each project has its separate team so you can grant access
 selectively. Inviting team members is <strong>more convenient and more
 secure</strong> than sharing a password to a single account.</p>
 <p><img alt="Team access section" src="IMG_URL/team_access.png" /></p>
-<p>The user who created the project is the <strong>owner</strong>. Any invited users
-are <strong>members</strong>. The members can:</p>
+<p>The user who created the project is listed as <strong>Owner</strong>. When you invite an user
+to the project, you can select one of the three roles for their membership:
+<strong>Team Member</strong> (what you usually want), <strong>Manager</strong> or <strong>Read-only</strong>.</p>
+<p>Team Members can:</p>
 <ul>
 <li>create, edit and remove checks</li>
 <li>create and remove integrations</li>
@@ -23,16 +25,17 @@ are <strong>members</strong>. The members can:</p>
 <li>give up their membership
 (from their <a href="../../accounts/profile/">Account Settings</a> page)</li>
 </ul>
-<p>The members <strong>can not</strong>:</p>
+<p>Team Members can not:</p>
 <ul>
 <li>invite new members into the project</li>
-<li>manage project's billing</li>
+<li>change project's owner</li>
+<li>manage project owner's billing settings</li>
 <li>remove the project</li>
 </ul>
-<h2>Read-only Access</h2>
-<p>When inviting a team member, you can mark their membership as read-only:</p>
-<p><img alt="The Access Level parameter in the Invite form" src="IMG_URL/invite_member.png" /></p>
-<p>Read-only members can:</p>
+<p><strong>Managers</strong> have the same permissions as Team Members, with one exception:
+Managers can invite new members and remove existing members from the project's team.
+Managers still can not change or remove project's owner, or manage billing.</p>
+<p><strong>Read-only</strong> members can:</p>
 <ul>
 <li>view checks, including check details and ping logs</li>
 <li>view integrations</li>
@@ -58,6 +61,9 @@ Same as with Check Limit, all projects share your account's Team Size limit.
 However, if you invite the same user (using the same email address) into multiple
 projects, it only takes up a single seat.</p>
 <h2>Projects and Monthly Reports</h2>
-<p>SITE_NAME sends monthly email reports at the start of each month. The monthly reports
-list a summary of checks from <strong>all your projects</strong>. It contains status summaries for
+<p>SITE_NAME sends periodic email reports with a summary of checks
+from <strong>all your projects</strong>. The reports contain status summaries for
 both the projects you own and the projects you are a member of.</p>
+<p>You can configure the frequency of the reports (monthly, on the 1st of every month,
+or weekly, on Mondays) or turn them off altogether in
+<a href="../../accounts/profile/notifications/">Account Settings › Email Reports</a>.</p>

@@ -21,8 +21,11 @@ secure** than sharing a password to a single account.
 
 ![Team access section](IMG_URL/team_access.png)
 
-The user who created the project is the **owner**. Any invited users
-are **members**. The members can:
+The user who created the project is listed as **Owner**. When you invite an user
+to the project, you can select one of the three roles for their membership:
+**Team Member** (what you usually want), **Manager** or **Read-only**.
+
+Team Members can:
 
 * create, edit and remove checks
 * create and remove integrations
@@ -31,19 +34,18 @@ are **members**. The members can:
 * give up their membership
 (from their [Account Settings](../../accounts/profile/) page)
 
-The members **can not**:
+Team Members can not:
 
 * invite new members into the project
-* manage project's billing
+* change project's owner
+* manage project owner's billing settings
 * remove the project
 
-## Read-only Access
+**Managers** have the same permissions as Team Members, with one exception:
+Managers can invite new members and remove existing members from the project's team.
+Managers still can not change or remove project's owner, or manage billing.
 
-When inviting a team member, you can mark their membership as read-only:
-
-![The Access Level parameter in the Invite form](IMG_URL/invite_member.png)
-
-Read-only members can:
+**Read-only** members can:
 
 * view checks, including check details and ping logs
 * view integrations
@@ -77,6 +79,10 @@ projects, it only takes up a single seat.
 
 ## Projects and Monthly Reports
 
-SITE_NAME sends monthly email reports at the start of each month. The monthly reports
-list a summary of checks from **all your projects**. It contains status summaries for
+SITE_NAME sends periodic email reports with a summary of checks
+from **all your projects**. The reports contain status summaries for
 both the projects you own and the projects you are a member of.
+
+You can configure the frequency of the reports (monthly, on the 1st of every month,
+or weekly, on Mondays) or turn them off altogether in
+[Account Settings › Email Reports](../../accounts/profile/notifications/).
