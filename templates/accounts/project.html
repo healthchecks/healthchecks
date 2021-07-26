@@ -152,7 +152,7 @@
         <div class="panel panel-{{ team_status|default:'default' }}">
             <div class="panel-body settings-block">
                 <h2>Team Access</h2>
-                {% if project.team.exists or invite_suggestions %}
+                {% if memberships or invite_suggestions %}
                     <table id="team-table" class="table">
                         <tr>
                             <th>Email</th>
@@ -164,7 +164,7 @@
                             <td>Owner</td>
                             <td></td>
                         </tr>
-                        {% for m in project.member_set.all %}
+                        {% for m in memberships %}
                         <tr>
                             <td class="email">{{ m.user.email }}</td>
                             <td>{{ m.get_role_display }}</td>
@@ -514,7 +514,7 @@
     </div>
 </div>
 
-{% if not transfer_request %}
+{% if is_owner and not transfer_request %}
 <div id="transfer-modal" class="modal">
     <div class="modal-dialog">
     <form
@@ -529,7 +529,7 @@
             </div>
             <div class="modal-body">
 
-                {% if project.team %}
+                {% if memberships %}
                 <div class="form-group">
                     <label for="update-name-input" class="col-sm-4 control-label">
                         Choose owner
@@ -540,8 +540,8 @@
                             name="email"
                             title="Select..."
                             class="form-control selectpicker">
-                            {% for user in project.team %}
-                            <option>{{ user.email }}</option>
+                            {% for m in memberships %}
+                            <option>{{ m.user.email }}</option>
                             {% endfor %}
                         </select>
                     </div>

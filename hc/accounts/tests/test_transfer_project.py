@@ -97,7 +97,8 @@ class TransferProjectTestCase(BaseTestCase):
         self.assertEqual(self.project.owner, self.bob)
 
         # Alice, the previous owner, should now be a member
-        self.assertTrue(self.project.team().filter(email="alice@example.org").exists())
+        m = Member.objects.get(project=self.project, user=self.alice)
+        self.assertEqual(m.role, Member.Role.REGULAR)
 
     def test_accept_requires_a_transfer_request(self):
         self.client.login(username="bob@example.org", password="password")

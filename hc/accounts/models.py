@@ -338,9 +338,6 @@ class Project(models.Model):
         self.api_key_readonly = token_urlsafe(nbytes=24)
         self.save()
 
-    def team(self):
-        return User.objects.filter(memberships__project=self).order_by("email")
-
     def invite_suggestions(self):
         q = User.objects.filter(memberships__project__owner_id=self.owner_id)
         q = q.exclude(memberships__project=self)

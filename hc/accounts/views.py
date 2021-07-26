@@ -457,6 +457,8 @@ def project(request, code):
             tr.transfer_request_date = None
             tr.save()
 
+    q = project.member_set.select_related("user").order_by("user__email")
+    ctx["memberships"] = list(q)
     return render(request, "accounts/project.html", ctx)
 
 
