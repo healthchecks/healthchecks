@@ -199,10 +199,23 @@ class ProjectTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_requires_owner_to_add_team_member(self):
+    def test_it_lets_manager_add_team_member(self):
+        # Bob is a manager:
+        self.bobs_membership.role = "m"
+        self.bobs_membership.save()
+
         self.client.login(username="bob@example.org", password="password")
 
-        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "r"}
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "w"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        Member.objects.get(project=self.project, user__email="frank@example.org")
+
+    def test_it_does_not_allow_regular_member_invite_team_members(self):
+        self.client.login(username="bob@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "w"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
 
@@ -216,7 +229,7 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
 
-    def test_it_removes_team_member(self):
+    def test_it_lets_owner_remove_team_member(self):
         self.client.login(username="alice@example.org", password="password")
 
         form = {"remove_team_member": "1", "email": "bob@example.org"}
@@ -225,10 +238,28 @@ class ProjectTestCase(BaseTestCase):
 
         self.assertFalse(Member.objects.exists())
 
-    def test_it_requires_owner_to_remove_team_member(self):
-        self.client.login(username="bob@example.org", password="password")
+    def test_it_lets_manager_remove_team_member(self):
+        # Bob is a manager:
+        self.bobs_membership.role = "m"
+        self.bobs_membership.save()
 
-        form = {"remove_team_member": "1", "email": "bob@example.org"}
+        # Bob will try to remove this membership:
+        Member.objects.create(user=self.charlie, project=self.project)
+
+        self.client.login(username="bob@example.org", password="password")
+        form = {"remove_team_member": "1", "email": "charlie@example.org"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        q = Member.objects.filter(user=self.charlie, project=self.project)
+        self.assertFalse(q.exists())
+
+    def test_it_does_not_allow_regular_member_remove_team_member(self):
+        # Bob will try to remove this membership:
+        Member.objects.create(user=self.charlie, project=self.project)
+
+        self.client.login(username="bob@example.org", password="password")
+        form = {"remove_team_member": "1", "email": "charlie@example.org"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
 
