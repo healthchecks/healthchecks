@@ -220,8 +220,13 @@
                 {% else %}
                 <div class="alert alert-info">
                     <strong>Team size limit reached.</strong>
+                    {% if is_owner %}
                     To invite new members by email, please
                     <a href="{% url 'hc-pricing' %}">upgrade your account!</a>
+                    {% else %}
+                    To invite new members, please ask project's owner
+                    to upgrade their account.
+                    {% endif %}
                 </div>
                 {% endif %}
                 {% endif %}
