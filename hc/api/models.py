@@ -985,9 +985,18 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 10, 3600 * 24)
 
     @staticmethod
-    def authorize_totp(user):
+    def authorize_totp_attempt(user):
         value = "totp-%d" % user.id
 
-        # 96 attempts per 24 hours
+        # 96 attempts per user per 24 hours
         # (or, on average, one attempt per 15 minutes)
         return TokenBucket.authorize(value, 96, 3600 * 24)
+
+    @staticmethod
+    def authorize_totp_code(user, code):
+        value = "totpc-%d-%s" % (user.id, code)
+
+        # A code has a validity period of 3 * 30 = 90 seconds.
+        # During that period, allow the code to only be used once,
+        # so an eavesdropping attacker cannot reuse a code.
+        return TokenBucket.authorize(value, 1, 90)

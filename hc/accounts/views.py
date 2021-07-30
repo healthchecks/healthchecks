@@ -848,11 +848,14 @@ def login_totp(request):
 
     totp = pyotp.totp.TOTP(user.profile.totp)
     if request.method == "POST":
-        if not TokenBucket.authorize_totp(user):
+        if not TokenBucket.authorize_totp_attempt(user):
             return render(request, "try_later.html")
 
         form = forms.TotpForm(totp, request.POST)
         if form.is_valid():
+            if not TokenBucket.authorize_totp_code(user, form.cleaned_data["code"]):
+                return render(request, "try_later.html")
+
             request.session.pop("2fa_user")
             auth_login(request, user, "hc.accounts.backends.EmailBackend")
             return _redirect_after_login(request)

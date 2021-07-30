@@ -175,3 +175,5 @@ class TotpForm(forms.Form):
     def clean_code(self):
         if not self.totp.verify(self.cleaned_data["code"], valid_window=1):
             raise forms.ValidationError("The code you entered was incorrect.")
+
+        return self.cleaned_data["code"]

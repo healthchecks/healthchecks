@@ -84,3 +84,14 @@ class LoginTotpTestCase(BaseTestCase):
 
         r = self.client.post(self.url, {"code": "000000"})
         self.assertContains(r, "Too Many Requests")
+
+    @patch("hc.accounts.views.pyotp.totp.TOTP")
+    def test_it_rejects_used_code(self, mock_TOTP):
+        mock_TOTP.return_value.verify.return_value = True
+
+        obj = TokenBucket(value=f"totpc-{self.alice.id}-000000")
+        obj.tokens = 0
+        obj.save()
+
+        r = self.client.post(self.url, {"code": "000000"})
+        self.assertContains(r, "Too Many Requests")
