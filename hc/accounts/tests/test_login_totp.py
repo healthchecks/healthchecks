@@ -1,6 +1,7 @@
 import time
 from unittest.mock import patch
 
+from hc.api.models import TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -75,3 +76,11 @@ class LoginTotpTestCase(BaseTestCase):
 
         r = self.client.post(self.url, {"code": "000000"})
         self.assertContains(r, "The code you entered was incorrect.")
+
+    def test_it_uses_rate_limiting(self):
+        obj = TokenBucket(value=f"totp-{self.alice.id}")
+        obj.tokens = 0
+        obj.save()
+
+        r = self.client.post(self.url, {"code": "000000"})
+        self.assertContains(r, "Too Many Requests")

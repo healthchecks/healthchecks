@@ -983,3 +983,11 @@ class TokenBucket(models.Model):
 
         # 10 sudo attempts per day
         return TokenBucket.authorize(value, 10, 3600 * 24)
+
+    @staticmethod
+    def authorize_totp(user):
+        value = "totp-%d" % user.id
+
+        # 96 attempts per 24 hours
+        # (or, on average, one attempt per 15 minutes)
+        return TokenBucket.authorize(value, 96, 3600 * 24)
