@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add SITE_LOGO_URL setting (#323)
 - Add admin action to log in as any user
 - Add a "Manager" role (#484)
+- Add support for 2FA using TOTP (#354)
 
 ### Bug Fixes
 - Fix dark mode styling issues in Cron Syntax Cheatsheet

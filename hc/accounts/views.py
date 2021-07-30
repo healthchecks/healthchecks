@@ -30,6 +30,9 @@ from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.models import Credential, Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.payments.models import Subscription
+import pyotp
+import segno
+
 
 POST_LOGIN_ROUTES = (
     "hc-checks",
@@ -107,7 +110,8 @@ def _redirect_after_login(request):
 
 
 def _check_2fa(request, user):
-    if user.credentials.exists():
+    have_keys = user.credentials.exists()
+    if have_keys or user.profile.totp:
         # We have verified user's password or token, and now must
         # verify their security key. We store the following in user's session:
         # - user.id, to look up the user in the login_webauthn view
@@ -115,7 +119,11 @@ def _check_2fa(request, user):
         # - timestamp, to limit the max time between the auth steps
         request.session["2fa_user"] = [user.id, user.email, int(time.time())]
 
-        path = reverse("hc-login-webauthn")
+        if have_keys:
+            path = reverse("hc-login-webauthn")
+        else:
+            path = reverse("hc-login-totp")
+
         redirect_url = request.GET.get("next")
         if _allow_redirect(redirect_url):
             path += "?next=%s" % redirect_url
@@ -234,14 +242,16 @@ def profile(request):
         "2fa_status": "default",
         "added_credential_name": request.session.pop("added_credential_name", ""),
         "removed_credential_name": request.session.pop("removed_credential_name", ""),
+        "enabled_totp": request.session.pop("enabled_totp", False),
+        "disabled_totp": request.session.pop("disabled_totp", False),
         "credentials": list(request.user.credentials.order_by("id")),
-        "use_2fa": settings.RP_ID,
+        "use_webauthn": settings.RP_ID,
     }
 
-    if ctx["added_credential_name"]:
+    if ctx["added_credential_name"] or ctx["enabled_totp"]:
         ctx["2fa_status"] = "success"
 
-    if ctx["removed_credential_name"]:
+    if ctx["removed_credential_name"] or ctx["disabled_totp"]:
         ctx["2fa_status"] = "info"
 
     if request.session.pop("changed_password", False):
@@ -629,12 +639,12 @@ def _get_credential_data(request, form):
 
 @login_required
 @require_sudo_mode
-def add_credential(request):
+def add_webauthn(request):
     if not settings.RP_ID:
         return HttpResponse(status=404)
 
     if request.method == "POST":
-        form = forms.AddCredentialForm(request.POST)
+        form = forms.AddWebAuthnForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
@@ -678,6 +688,51 @@ def add_credential(request):
 
 @login_required
 @require_sudo_mode
+def add_totp(request):
+    if request.profile.totp:
+        # TOTP is already configured, refuse to continue
+        return HttpResponseBadRequest()
+
+    if "totp_secret" not in request.session:
+        request.session["totp_secret"] = pyotp.random_base32()
+
+    totp = pyotp.totp.TOTP(request.session["totp_secret"])
+
+    if request.method == "POST":
+        form = forms.TotpForm(totp, request.POST)
+        if form.is_valid():
+            request.profile.totp = request.session["totp_secret"]
+            request.profile.totp_created = now()
+            request.profile.save()
+
+            request.session["enabled_totp"] = True
+            request.session.pop("totp_secret")
+            return redirect("hc-profile")
+    else:
+        form = forms.TotpForm(totp)
+
+    uri = totp.provisioning_uri(name=request.user.email, issuer_name=settings.SITE_NAME)
+    qr_data_uri = segno.make(uri).png_data_uri(scale=8)
+    ctx = {"form": form, "qr_data_uri": qr_data_uri}
+    return render(request, "accounts/add_totp.html", ctx)
+
+
+@login_required
+@require_sudo_mode
+def remove_totp(request):
+    if request.method == "POST" and "disable_totp" in request.POST:
+        request.profile.totp = None
+        request.profile.totp_created = None
+        request.profile.save()
+        request.session["disabled_totp"] = True
+        return redirect("hc-profile")
+
+    ctx = {"is_last": not request.user.credentials.exists()}
+    return render(request, "accounts/remove_totp.html", ctx)
+
+
+@login_required
+@require_sudo_mode
 def remove_credential(request, code):
     if not settings.RP_ID:
         return HttpResponse(status=404)
@@ -692,7 +747,12 @@ def remove_credential(request, code):
         credential.delete()
         return redirect("hc-profile")
 
-    ctx = {"credential": credential, "is_last": request.user.credentials.count() == 1}
+    if request.profile.totp:
+        is_last = False
+    else:
+        is_last = request.user.credentials.count() == 1
+
+    ctx = {"credential": credential, "is_last": is_last}
     return render(request, "accounts/remove_credential.html", ctx)
 
 
@@ -759,8 +819,44 @@ def login_webauthn(request):
     options, state = FIDO2_SERVER.authenticate_begin(credentials)
     request.session["state"] = state
 
-    ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
+    ctx = {
+        "options": base64.b64encode(cbor.encode(options)).decode(),
+        "offer_totp": True if user.profile.totp else False,
+    }
     return render(request, "accounts/login_webauthn.html", ctx)
+
+
+def login_totp(request):
+    # Expect an unauthenticated user
+    if request.user.is_authenticated:
+        return HttpResponseBadRequest()
+
+    if "2fa_user" not in request.session:
+        return HttpResponseBadRequest()
+
+    user_id, email, timestamp = request.session["2fa_user"]
+    if timestamp + 300 < time.time():
+        return redirect("hc-login")
+
+    try:
+        user = User.objects.get(id=user_id, email=email)
+    except User.DoesNotExist:
+        return HttpResponseBadRequest()
+
+    if not user.profile.totp:
+        return HttpResponseBadRequest()
+
+    totp = pyotp.totp.TOTP(user.profile.totp)
+    if request.method == "POST":
+        form = forms.TotpForm(totp, request.POST)
+        if form.is_valid():
+            request.session.pop("2fa_user")
+            auth_login(request, user, "hc.accounts.backends.EmailBackend")
+            return _redirect_after_login(request)
+    else:
+        form = forms.TotpForm(totp)
+
+    return render(request, "accounts/login_totp.html", {"form": form})
 
 
 @login_required

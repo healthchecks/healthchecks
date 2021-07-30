@@ -6,11 +6,11 @@ from hc.accounts.models import Credential
 
 
 @override_settings(RP_ID="testserver")
-class AddCredentialTestCase(BaseTestCase):
+class AddWebauthnTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 
-        self.url = "/accounts/two_factor/add/"
+        self.url = "/accounts/two_factor/webauthn/"
 
     def test_it_requires_sudo_mode(self):
         self.client.login(username="alice@example.org", password="password")

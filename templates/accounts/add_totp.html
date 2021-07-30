@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load compress static hc_extras %}
+
+{% block content %}
+
+<div class="row">
+<form class="col-sm-6 col-sm-offset-3" method="post">
+    <h1>Set Up Authenticator App</h1>
+
+    <p>{% site_name %} supports time-based one-time passwords (TOTP) as a
+        second authentication factor. To use this method, you will need
+        an authenticator app on your phone.
+    </p>
+
+    {% csrf_token %}
+    <div class="spacer"></div>
+    <p class="add-totp-step">
+        <strong>Step 1.</strong>
+        Scan the QR code below using your authentication app.
+    </p>
+
+    <img src="{{ qr_data_uri }}" />
+
+    <p class="add-totp-step">
+        <strong>Step 2.</strong>
+        Enter the six-digit code from your authenticator app below.
+    </p>
+
+    <div class="form-group {{ form.code.css_classes }}">
+        <input
+            type="text"
+            name="code"
+            pattern="[0-9]{6}"
+            title="six-digit code"
+            placeholder="123456"
+            class="form-control input-lg" />
+        {% if form.code.errors %}
+        <div class="help-block">
+            {{ form.code.errors|join:"" }}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group text-right">
+        <input
+            class="btn btn-primary"
+            type="submit"
+            name=""
+            value="Continue">
+    </div>
+</form>
+</div>
+{% endblock %}

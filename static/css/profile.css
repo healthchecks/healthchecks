@@ -67,6 +67,15 @@ span.loading {
     border-top: 0;
 }
 
+#my-keys .missing {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
 .settings-bar {
     line-height: 34px;
+}
+
+.add-totp-step {
+    margin-top: 32px;
 }

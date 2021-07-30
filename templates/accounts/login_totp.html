@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load compress static hc_extras %}
+
+{% block content %}
+
+<div class="row">
+<form class="col-sm-6 col-sm-offset-3" method="post">
+    <h1>Two-factor Authentication</h1>
+    {% csrf_token %}
+
+    <p>
+        Please enter the six-digit code from your authenticator app.
+    </p>
+
+    <div class="form-group {{ form.code.css_classes }}">
+        <input
+            type="text"
+            name="code"
+            pattern="[0-9]{6}"
+            title="six-digit code"
+            placeholder="123456"
+            class="form-control input-lg" />
+        {% if form.code.errors %}
+        <div class="help-block">
+            {{ form.code.errors|join:"" }}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group text-right">
+        <input
+            class="btn btn-primary"
+            type="submit"
+            name=""
+            value="Continue">
+    </div>
+</form>
+</div>
+{% endblock %}

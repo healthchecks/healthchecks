@@ -10,6 +10,7 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.get("/accounts/profile/")
         self.assertContains(r, "Email and Password")
         self.assertContains(r, "Change Password")
+        self.assertContains(r, "Set Up Authenticator App")
 
     def test_leaving_works(self):
         self.client.login(username="bob@example.org", password="password")
@@ -55,11 +56,13 @@ class ProfileTestCase(BaseTestCase):
         self.assertContains(r, "You do not have any projects. Create one!")
 
     @override_settings(RP_ID=None)
-    def test_it_hides_2fa_section_if_rp_id_not_set(self):
+    def test_it_hides_security_keys_bits_if_rp_id_not_set(self):
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/accounts/profile/")
-        self.assertNotContains(r, "Two-factor Authentication")
+        self.assertContains(r, "Two-factor Authentication")
+        self.assertNotContains(r, "Security keys")
+        self.assertNotContains(r, "Add Security Key")
 
     @override_settings(RP_ID="testserver")
     def test_it_handles_no_credentials(self):
@@ -67,7 +70,7 @@ class ProfileTestCase(BaseTestCase):
 
         r = self.client.get("/accounts/profile/")
         self.assertContains(r, "Two-factor Authentication")
-        self.assertContains(r, "Your account has no registered security keys")
+        self.assertContains(r, "Your account does not have any configured two-factor")
 
     @override_settings(RP_ID="testserver")
     def test_it_shows_security_key(self):
@@ -88,3 +91,15 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.get("/accounts/profile/")
         self.assertContains(r, "Set Password")
         self.assertNotContains(r, "Change Password")
+
+    def test_it_shows_totp(self):
+        self.profile.totp = "0" * 32
+        self.profile.totp_created = "2020-01-01T00:00:00+00:00"
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/accounts/profile/")
+        self.assertContains(r, "Enabled")
+        self.assertContains(r, "configured on Jan 1, 2020")
+        self.assertNotContains(r, "Set Up Authenticator App")

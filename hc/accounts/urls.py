@@ -4,6 +4,7 @@ from hc.accounts import views
 urlpatterns = [
     path("login/", views.login, name="hc-login"),
     path("login/two_factor/", views.login_webauthn, name="hc-login-webauthn"),
+    path("login/two_factor/totp/", views.login_totp, name="hc-login-totp"),
     path("logout/", views.logout, name="hc-logout"),
     path("signup/", views.signup, name="hc-signup"),
     path("login_link_sent/", views.login_link_sent, name="hc-login-link-sent"),
@@ -24,7 +25,9 @@ urlpatterns = [
     path("set_password/", views.set_password, name="hc-set-password"),
     path("change_email/done/", views.change_email_done, name="hc-change-email-done"),
     path("change_email/", views.change_email, name="hc-change-email"),
-    path("two_factor/add/", views.add_credential, name="hc-add-credential"),
+    path("two_factor/webauthn/", views.add_webauthn, name="hc-add-webauthn"),
+    path("two_factor/totp/", views.add_totp, name="hc-add-totp"),
+    path("two_factor/totp/remove/", views.remove_totp, name="hc-remove-totp"),
     path(
         "two_factor/<uuid:code>/remove/",
         views.remove_credential,

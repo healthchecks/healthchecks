@@ -44,6 +44,14 @@
         </div>
     </div>
 
+    {% if offer_totp %}
+    <p>
+        <a href="{% url 'hc-login-totp' %}">
+            Use the authenticator app instead?
+        </a>
+    </p>
+    {% endif %}
+
     <div id="success" class="hide">
         <div class="alert alert-success">
             <strong>Success!</strong>

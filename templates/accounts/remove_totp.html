@@ -7,20 +7,20 @@
     {% csrf_token %}
     <div class="panel panel-default">
         <div class="panel-body settings-block">
-            <h2>Remove Security Key?</h2>
+            <h2>Disable Authenticator App</h2>
             <p></p>
-            <p>You are about to remove
-            the security key <strong>{{ credential.name|default:'unnamed' }}</strong>
-            from your two-factor authentication methods.
+            <p>You are about to remove the authenticator app from your
+               {% site_name %} account.
             </p>
 
             {% if is_last %}
             <p>
-                After removing this key,
-                <strong>two-factor authentication will no longer be active</strong>
-                for your {% site_name%} account.
+                After removing the authenticator app,
+                <strong>two-factor authentication will no longer be active.</strong>
             </p>
             {% endif %}
+
+            <p>Are you sure you want to continue?</p>
 
             <div class="text-right">
                 <a
@@ -28,8 +28,8 @@
                     class="btn btn-default">Cancel</a>
                 <button
                     type="submit"
-                    name="remove_credential"
-                    class="btn btn-danger">Remove Security Key</button>
+                    name="disable_totp"
+                    class="btn btn-danger">Disable Authenticator App</button>
             </div>
         </div>
     </div>

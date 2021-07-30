@@ -72,50 +72,90 @@
             {% endif %}
         </div>
 
-        {% if use_2fa %}
         <div class="panel panel-{{ 2fa_status }}">
             <div class="panel-body settings-block">
                 <form method="post">
                     {% csrf_token %}
                     <h2>Two-factor Authentication</h2>
-                    {% if credentials %}
 
                     <table id="my-keys" class="table">
+                        {% if use_webauthn %}
                         <tr>
                             <th>Security keys</th>
                         </tr>
                         {% for credential in credentials %}
                         <tr>
                             <td>
-                                <strong>{{ credential.name|default:"unnamed" }}</strong>
+                                {{ credential.name|default:"unnamed" }}
+                                <span class="text-muted">
                                 – registered on {{ credential.created|date:"M j, Y" }}
+                                </span>
                             </td>
                             <td class="text-right">
                                 <a href="{% url 'hc-remove-credential' credential.code  %}">Remove</a>
                             </td>
                         </tr>
+                        {% empty %}
+                        <tr>
+                            <td class="missing" colspan="2">No registered security keys</td>
+                        </tr>
                         {% endfor %}
+                        {% endif %}
+
+                        <tr>
+                            <th>Authenticator app</th>
+                        </tr>
+                        {% if profile.totp %}
+                        <tr>
+                            <td>
+                                Enabled
+                                <span class="text-muted">
+                                – configured on {{ profile.totp_created|date:"M j, Y" }}
+                                </span>
+                            </td>
+                            <td class="text-right">
+                                <a href="{% url 'hc-remove-totp' %}">Remove</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td class="missing" colspan="2">Not configured</td>
+                        </tr>
+                        {% endif %}
                     </table>
 
                     {% if credentials|length == 1 %}
                     <p class="alert alert-info">
-                        <strong>Tip: add a second key!</strong>
+                        <strong>Tip: add a second security key!</strong>
                         It is a good practice to register at least two security keys
                         and store them separately.
                     </p>
                     {% endif %}
 
-                    {% else %}
-                    <p>
-                        Two-factor authentication is not enabled yet.<br />
-                        Your account has no registered security keys.
+                    {% if not credentials and not profile.totp %}
+                    <p class="alert alert-info">
+                    Two-factor authentication is currently <strong>inactive</strong>.
+                    Your account does not have any configured two-factor authentication
+                    methods.
                     </p>
                     {% endif %}
-                    <a
-                        href="{% url 'hc-add-credential' %}"
-                        class="btn btn-default pull-right">
-                        Register New Security Key
-                    </a>
+
+                    <div class="pull-right">
+                        {% if not profile.totp %}
+                        <a
+                            href="{% url 'hc-add-totp' %}"
+                            class="btn btn-default">
+                            Set Up Authenticator App
+                        </a>
+                        {% endif %}
+                        {% if use_webauthn %}
+                        <a
+                            href="{% url 'hc-add-webauthn' %}"
+                            class="btn btn-default">
+                            Add Security Key
+                        </a>
+                        {% endif %}
+                    </div>
                 </form>
             </div>
 
@@ -130,8 +170,19 @@
                 Removed security key <strong>{{ removed_credential_name }}</strong>.
             </div>
             {% endif %}
+
+            {% if enabled_totp %}
+            <div class="panel-footer">
+                Successfully set up the Authenticator app.
+            </div>
+            {% endif %}
+
+            {% if disabled_totp %}
+            <div class="panel-footer">
+                Disabled the authenticator app.
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
 
         <div class="panel panel-{{ my_projects_status }}">
             <div class="panel-body settings-block">

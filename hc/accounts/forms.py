@@ -151,7 +151,7 @@ class TransferForm(forms.Form):
     email = LowercaseEmailField()
 
 
-class AddCredentialForm(forms.Form):
+class AddWebAuthnForm(forms.Form):
     name = forms.CharField(max_length=100)
     client_data_json = Base64Field()
     attestation_object = Base64Field()
@@ -162,3 +162,16 @@ class WebAuthnForm(forms.Form):
     client_data_json = Base64Field()
     authenticator_data = Base64Field()
     signature = Base64Field()
+
+
+class TotpForm(forms.Form):
+    error_css_class = "has-error"
+    code = forms.RegexField(regex=r"^\d{6}$")
+
+    def __init__(self, totp, post=None, files=None):
+        self.totp = totp
+        super(TotpForm, self).__init__(post, files)
+
+    def clean_code(self):
+        if not self.totp.verify(self.cleaned_data["code"], valid_window=1):
+            raise forms.ValidationError("The code you entered was incorrect.")

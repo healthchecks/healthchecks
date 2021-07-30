@@ -33,6 +33,17 @@ class RemoveCredentialTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Remove Security Key")
         self.assertContains(r, "Alices Key")
+        self.assertContains(r, "two-factor authentication will no longer be active")
+
+    def test_it_skips_warning_when_other_2fa_methods_exist(self):
+        self.profile.totp = "0" * 32
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.set_sudo_flag()
+
+        r = self.client.get(self.url)
+        self.assertNotContains(r, "two-factor authentication will no longer be active")
 
     def test_it_removes_credential(self):
         self.client.login(username="alice@example.org", password="password")

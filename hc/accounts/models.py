@@ -74,6 +74,9 @@ class Profile(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     theme = models.CharField(max_length=10, null=True, blank=True)
 
+    totp = models.CharField(max_length=32, null=True, blank=True)
+    totp_created = models.DateTimeField(null=True, blank=True)
+
     objects = ProfileManager()
 
     def __str__(self):

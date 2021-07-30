@@ -128,3 +128,20 @@ class LoginTestCase(BaseTestCase):
         # Instead, it should set 2fa_user_id in the session
         user_id, email, valid_until = self.client.session["2fa_user"]
         self.assertEqual(user_id, self.alice.id)
+
+    def test_it_redirects_to_totp_form(self):
+        self.profile.totp = "0" * 32
+        self.profile.save()
+
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
+        r = self.client.post("/accounts/login/", form)
+        self.assertRedirects(
+            r, "/accounts/login/two_factor/totp/", fetch_redirect_response=False
+        )
+
+        # It should not log the user in yet
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+        # Instead, it should set 2fa_user_id in the session
+        user_id, email, valid_until = self.client.session["2fa_user"]
+        self.assertEqual(user_id, self.alice.id)
