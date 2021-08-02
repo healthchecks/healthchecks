@@ -51,3 +51,12 @@ class UnsubscribeReportsTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertContains(r, "Please press the button below")
         self.assertContains(r, "submit()")
+
+    def test_it_handles_missing_user(self):
+        self.alice.delete()
+
+        sig = signing.TimestampSigner(salt="reports").sign("alice")
+        url = "/accounts/unsubscribe_reports/%s/" % sig
+
+        r = self.client.post(url)
+        self.assertContains(r, "Unsubscribed")

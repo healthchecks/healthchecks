@@ -555,7 +555,6 @@ def unsubscribe_reports(request, signed_username):
     # If the signature is more than 5 minutes old, we also include JS code to
     # auto-submit the form.
 
-    ctx = {}
     signer = signing.TimestampSigner(salt="reports")
     # First, check the signature without looking at the timestamp:
     try:
@@ -563,16 +562,25 @@ def unsubscribe_reports(request, signed_username):
     except signing.BadSignature:
         return render(request, "bad_link.html")
 
-    # Check if timestamp is older than 5 minutes:
     try:
-        username = signer.unsign(signed_username, max_age=300)
-    except signing.SignatureExpired:
-        ctx["autosubmit"] = True
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        # This is likely an old unsubscribe link, and the user account has already
+        # been deleted. Show the "Unsubscribed!" page nevertheless.
+        return render(request, "accounts/unsubscribed.html")
 
     if request.method != "POST":
+        # Unsign again, now with max_age set,
+        # to see if the timestamp is older than 5 minutes
+        try:
+            autosubmit = False
+            username = signer.unsign(signed_username, max_age=300)
+        except signing.SignatureExpired:
+            autosubmit = True
+
+        ctx = {"autosubmit": autosubmit}
         return render(request, "accounts/unsubscribe_submit.html", ctx)
 
-    user = User.objects.get(username=username)
     profile = Profile.objects.for_user(user)
     profile.reports = "off"
     profile.next_report_date = None
