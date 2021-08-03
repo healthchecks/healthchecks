@@ -1,5 +1,6 @@
 import smtplib
 from threading import Thread
+import time
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -9,41 +10,41 @@ from django.template.loader import render_to_string as render
 class EmailThread(Thread):
     MAX_TRIES = 3
 
-    def __init__(self, subject, text, html, to, headers):
+    def __init__(self, message):
         Thread.__init__(self)
-        self.subject = subject
-        self.text = text
-        self.html = html
-        self.to = to
-        self.headers = headers
+        self.message = message
 
     def run(self):
         for attempt in range(0, self.MAX_TRIES):
             try:
-                msg = EmailMultiAlternatives(
-                    self.subject, self.text, to=(self.to,), headers=self.headers
-                )
-
-                msg.attach_alternative(self.html, "text/html")
-                msg.send()
+                # Make sure each retry creates a new connection:
+                self.message.connection = None
+                self.message.send()
+                # No exception--great, return from the retry loop
+                return
             except smtplib.SMTPServerDisconnected as e:
                 if attempt + 1 == self.MAX_TRIES:
                     # This was the last attempt and it failed:
                     # re-raise the exception
                     raise e
-            else:
-                # There was no exception, break out of the retry loop
-                break
+
+                # Wait 1s before retrying
+                time.sleep(1)
 
 
-def send(name, to, ctx, headers={}):
+def send(name, to, ctx, headers={}, from_email=None):
     ctx["SITE_ROOT"] = settings.SITE_ROOT
 
     subject = render("emails/%s-subject.html" % name, ctx).strip()
-    text = render("emails/%s-body-text.html" % name, ctx)
+    body = render("emails/%s-body-text.html" % name, ctx)
     html = render("emails/%s-body-html.html" % name, ctx)
 
-    t = EmailThread(subject, text, html, to, headers)
+    msg = EmailMultiAlternatives(subject, body, to=(to,), headers=headers)
+    msg.attach_alternative(html, "text/html")
+    if from_email:
+        msg.from_email = from_email
+
+    t = EmailThread(msg)
     if hasattr(settings, "BLOCKING_EMAILS"):
         # In tests, we send emails synchronously
         # so we can inspect the outgoing messages
@@ -63,7 +64,7 @@ def transfer_request(to, ctx):
 
 
 def alert(to, ctx, headers={}):
-    send("alert", to, ctx, headers)
+    send("alert", to, ctx, headers=headers)
 
 
 def verify_email(to, ctx):
@@ -71,11 +72,11 @@ def verify_email(to, ctx):
 
 
 def report(to, ctx, headers={}):
-    send("report", to, ctx, headers)
+    send("report", to, ctx, headers=headers)
 
 
 def deletion_notice(to, ctx, headers={}):
-    send("deletion-notice", to, ctx, headers)
+    send("deletion-notice", to, ctx, headers=headers)
 
 
 def sms_limit(to, ctx):
