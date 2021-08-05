@@ -387,30 +387,36 @@ Here is a non-exhaustive list of pointers and things to check before launching a
 in production.
 
 * Environment variables, settings.py and local_settings.py.
-  * [DEBUG](https://docs.djangoproject.com/en/2.2/ref/settings/#debug). Make sure it is set to `False`.
-  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts). Make sure it
-    contains the correct domain name you want to use.
-  * Server Errors. When DEBUG=False, Django will not show detailed error pages, and will not print exception
-    tracebacks to standard output. To receive exception tracebacks in email,
-    review and edit the [ADMINS](https://docs.djangoproject.com/en/2.2/ref/settings/#admins) and
-    [SERVER_EMAIL](https://docs.djangoproject.com/en/2.2/ref/settings/#server-email) settings.
-    Another good option for receiving exception tracebacks is to use [Sentry](https://sentry.io/for/django/).
+  * [DEBUG](https://docs.djangoproject.com/en/2.2/ref/settings/#debug). Make sure it is
+    set to `False`.
+  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/2.2/ref/settings/#allowed-hosts).
+    Make sure it contains the correct domain name you want to use.
+  * Server Errors. When DEBUG=False, Django will not show detailed error pages, and
+    will not print exception tracebacks to standard output. To receive exception
+    tracebacks in email, review and edit the
+    [ADMINS](https://docs.djangoproject.com/en/2.2/ref/settings/#admins) and
+    [SERVER_EMAIL](https://docs.djangoproject.com/en/2.2/ref/settings/#server-email)
+    settings. Consider setting up exception logging with [Sentry](https://sentry.io/for/django/).
 * Management commands that need to be run during each deployment.
-  * This project uses [Django Compressor](https://django-compressor.readthedocs.io/en/stable/)
-    to combine the CSS and JS files. It is configured for offline compression – run the
-    `manage.py compress` command whenever files in the `/static/` directory change.
-  * This project uses Django's [staticfiles app](https://docs.djangoproject.com/en/2.2/ref/contrib/staticfiles/).
-    Run the `manage.py collectstatic` command whenever files in the `/static/`
-    directory change. This command collects all the static files inside the `static-collected` directory.
-    Configure your web server to serve files from this directory under the `/static/` prefix.
-  * Database migration should be run after each update to make sure the database schemas are up to date. You can do that with `./manage.py migrate`.
+  * `manage.py compress` – creates combined JS and CSS bundles and
+     places them in the `static-collected` directory.
+  * `manage.py collectstatic` – collects static files in the `static-collected`
+     directory.
+  * `manage.py migrate` – applies any pending database schema changes
+     and data migrations.
 * Processes that need to be running constantly.
-  * `manage.py runserver` is intended for development only. Do not use it in production,
-    instead consider using [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) or
-    [gunicorn](https://gunicorn.org/).
-  * Make sure the `manage.py sendalerts` command is running and can survive server restarts.
-    On modern linux systems, a good option is to
-    [define a systemd service](https://github.com/healthchecks/healthchecks/issues/273#issuecomment-520560304) for it.
+  * `manage.py runserver` is intended for development only.
+     **Do not use it in production**, instead consider using
+     [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) or
+     [gunicorn](https://gunicorn.org/).
+  *  `manage.py sendalerts` is the process that monitors checks and sends out
+     monitoring alerts. It must be always running, it must be started on reboot, and it
+     must be restarted if it itself crashes. On modern linux systems, a good option is
+     to [define a systemd service](https://github.com/healthchecks/healthchecks/issues/273#issuecomment-520560304)
+     for it.
+* Static files. Healthchecks serves static files on its own, no configuration
+  required. It uses the [Whitenoise library](http://whitenoise.evans.io/en/stable/index.html)
+  for this.
 * General
   * Make sure the database is secured well and is getting backed up regularly
   * Make sure the TLS certificates are secured well and are getting refreshed regularly

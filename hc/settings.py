@@ -60,6 +60,7 @@ INSTALLED_APPS = (
 
 MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -170,6 +171,13 @@ STATICFILES_FINDERS = (
 )
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_HASHING_METHOD = "content"
+
+
+def immutable_file_test(path, url):
+    return url.startswith("/static/CACHE/") or url.startswith("/static/fonts/")
+
+
+WHITENOISE_IMMUTABLE_FILE_TEST = immutable_file_test
 
 # SMTP credentials for sending email
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")

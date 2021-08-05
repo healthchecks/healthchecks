@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add admin action to log in as any user
 - Add a "Manager" role (#484)
 - Add support for 2FA using TOTP (#354)
+- Add Whitenoise (#548)
 
 ### Bug Fixes
 - Fix dark mode styling issues in Cron Syntax Cheatsheet
