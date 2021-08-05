@@ -9,6 +9,7 @@ $(function() {
     }
 
     function authenticate() {
+        $("#pick-method").addClass("hide");
         $("#waiting").removeClass("hide");
         $("#error").addClass("hide");
 
@@ -30,8 +31,6 @@ $(function() {
         });
     }
 
+    $("#use-key-btn").click(authenticate);
     $("#retry").click(authenticate);
-
-    authenticate();
-
 });

@@ -12,6 +12,27 @@
     encrypt="multipart/form-data">
     <h1>Two-factor Authentication</h1>
 
+    <div id="pick-method">
+        {% if offer_totp %}
+        <p>Please select how you want to authenticate.</p>
+        {% else %}
+        <p>
+            Please authenticate using your security key.<br />
+            When you are ready, press the button below.
+        </p>
+        {% endif %}
+
+        <button
+            id="use-key-btn"
+            type="button"
+            class="btn btn-primary">Use security key</button>
+        {% if offer_totp %}
+        <a href="{% url 'hc-login-totp' %}" class="btn btn-default">
+            Use authenticator app
+        </a>
+        {% endif %}
+    </div>
+
     {% csrf_token %}
     <input id="credential_id" type="hidden" name="credential_id">
     <input id="authenticator_data" type="hidden" name="authenticator_data">
@@ -43,14 +64,6 @@
             </button>
         </div>
     </div>
-
-    {% if offer_totp %}
-    <p>
-        <a href="{% url 'hc-login-totp' %}">
-            Use the authenticator app instead?
-        </a>
-    </p>
-    {% endif %}
 
     <div id="success" class="hide">
         <div class="alert alert-success">

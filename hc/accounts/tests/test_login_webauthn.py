@@ -21,7 +21,7 @@ class LoginWebAuthnTestCase(BaseTestCase):
     def test_it_shows_form(self):
         r = self.client.get(self.url)
         self.assertContains(r, "Waiting for security key")
-        self.assertNotContains(r, "Use the authenticator app instead?")
+        self.assertNotContains(r, "Use authenticator app")
 
         # It should put a "state" key in the session:
         self.assertIn("state", self.client.session)
@@ -31,7 +31,7 @@ class LoginWebAuthnTestCase(BaseTestCase):
         self.profile.save()
 
         r = self.client.get(self.url)
-        self.assertContains(r, "Use the authenticator app instead?")
+        self.assertContains(r, "Use authenticator app")
 
     def test_it_requires_unauthenticated_user(self):
         self.client.login(username="alice@example.org", password="password")
