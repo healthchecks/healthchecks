@@ -33,6 +33,14 @@ class LoginWebAuthnTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Use authenticator app")
 
+    def test_it_preserves_next_parameter_in_totp_url(self):
+        self.profile.totp = "0" * 32
+        self.profile.save()
+
+        url = self.url + "?next=" + self.channels_url
+        r = self.client.get(url)
+        self.assertContains(r, "/login/two_factor/totp/?next=" + self.channels_url)
+
     def test_it_requires_unauthenticated_user(self):
         self.client.login(username="alice@example.org", password="password")
 

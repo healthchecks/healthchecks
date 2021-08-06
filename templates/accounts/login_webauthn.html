@@ -13,7 +13,7 @@
     <h1>Two-factor Authentication</h1>
 
     <div id="pick-method">
-        {% if offer_totp %}
+        {% if totp_url %}
         <p>Please select how you want to authenticate.</p>
         {% else %}
         <p>
@@ -26,8 +26,8 @@
             id="use-key-btn"
             type="button"
             class="btn btn-primary">Use security key</button>
-        {% if offer_totp %}
-        <a href="{% url 'hc-login-totp' %}" class="btn btn-default">
+        {% if totp_url %}
+        <a href="{{ totp_url }}" class="btn btn-default">
             Use authenticator app
         </a>
         {% endif %}

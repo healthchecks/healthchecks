@@ -827,9 +827,17 @@ def login_webauthn(request):
     options, state = FIDO2_SERVER.authenticate_begin(credentials)
     request.session["state"] = state
 
+    totp_url = None
+    if user.profile.totp:
+        totp_url = reverse("hc-login-totp")
+
+        redirect_url = request.GET.get("next")
+        if _allow_redirect(redirect_url):
+            totp_url += "?next=%s" % redirect_url
+
     ctx = {
         "options": base64.b64encode(cbor.encode(options)).decode(),
-        "offer_totp": True if user.profile.totp else False,
+        "totp_url": totp_url,
     }
     return render(request, "accounts/login_webauthn.html", ctx)
 
