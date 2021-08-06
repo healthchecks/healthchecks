@@ -164,6 +164,9 @@ def login(request):
                 response.set_cookie("auto-login", "1", max_age=300, httponly=True)
                 return response
 
+    if request.user.is_authenticated:
+        return _redirect_after_login(request)
+
     bad_link = request.session.pop("bad_link", None)
     ctx = {
         "page": "login",
@@ -868,11 +871,15 @@ def login_totp(request):
 
     totp = pyotp.totp.TOTP(user.profile.totp)
     if request.method == "POST":
+        # To guard against brute-forcing TOTP codes, we allow
+        # 96 attempts per user per 24h.
         if not TokenBucket.authorize_totp_attempt(user):
             return render(request, "try_later.html")
 
         form = forms.TotpForm(totp, request.POST)
         if form.is_valid():
+            # We blacklist an used TOTP code for 90 seconds,
+            # so an attacker cannot reuse a stolen code.
             if not TokenBucket.authorize_totp_code(user, form.cleaned_data["code"]):
                 return render(request, "try_later.html")
 

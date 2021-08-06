@@ -11,6 +11,16 @@ class LoginTestCase(BaseTestCase):
         super().setUp()
         self.checks_url = f"/projects/{self.project.code}/checks/"
 
+    def test_it_shows_form(self):
+        r = self.client.get("/accounts/login/")
+        self.assertContains(r, "Email Me a Link")
+
+    def test_it_redirects_authenticated_get(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get("/accounts/login/")
+        self.assertRedirects(r, self.checks_url)
+
     def test_it_sends_link(self):
         form = {"identity": "alice@example.org"}
 
