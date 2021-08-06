@@ -54,6 +54,10 @@ def _allow_redirect(redirect_url):
         return False
 
     parsed = urlparse(redirect_url)
+    if parsed.netloc:
+        # Allow redirects only to relative URLs
+        return False
+
     try:
         match = resolve(parsed.path)
     except Resolver404:

@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix dark mode styling issues in Cron Syntax Cheatsheet
 - Fix a 403 when transferring a project to a read-only team member
+- Security: fix allow_redirect function to reject absolute URLs
 
 ## v1.21.0 - 2020-07-02
 

@@ -95,8 +95,14 @@ class LoginTestCase(BaseTestCase):
     def test_it_handles_bad_next_parameter(self):
         form = {"action": "login", "email": "alice@example.org", "password": "password"}
 
-        r = self.client.post("/accounts/login/?next=/evil/", form)
-        self.assertRedirects(r, self.checks_url)
+        samples = [
+            "/evil/",
+            f"https://example.org/projects/{self.project.code}/checks/",
+        ]
+
+        for sample in samples:
+            r = self.client.post("/accounts/login/?next=" + sample, form)
+            self.assertRedirects(r, self.checks_url)
 
     def test_it_handles_wrong_password(self):
         form = {
