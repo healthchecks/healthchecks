@@ -6,8 +6,15 @@
  calculates the job execution times as the time gaps between adjacent "start" and
  "complete" events.
 
-Signaling a start kicks off a separate timer: the job now **must** signal a
-success within its configured "Grace Time," or it will get marked as "down."
+## Alerting Logic
+
+SITE_NAME applies an additional alerting rule for jobs that  use the `/start` signal.
+
+If a job sends a "start" signal, but then does not send a "complete"
+signal within its configured grace time, SITE_NAME will assume the job
+has failed. It will mark the job as "down" and send out alerts.
+
+## Usage Example
 
 Below is a code example in Python:
 

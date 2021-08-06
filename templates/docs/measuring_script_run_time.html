@@ -4,8 +4,12 @@
  It will store the "start" events and display the job execution times. SITE_NAME
  calculates the job execution times as the time gaps between adjacent "start" and
  "complete" events.</p>
-<p>Signaling a start kicks off a separate timer: the job now <strong>must</strong> signal a
-success within its configured "Grace Time," or it will get marked as "down."</p>
+<h2>Alerting Logic</h2>
+<p>SITE_NAME applies an additional alerting rule for jobs that  use the <code>/start</code> signal.</p>
+<p>If a job sends a "start" signal, but then does not send a "complete"
+signal within its configured grace time, SITE_NAME will assume the job
+has failed. It will mark the job as "down" and send out alerts.</p>
+<h2>Usage Example</h2>
 <p>Below is a code example in Python:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
