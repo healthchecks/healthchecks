@@ -39,6 +39,12 @@ For the simple schedules, you can configure two parameters, Period and Grace Tim
 is late. Use this parameter to account for small, expected deviations in job
 execution times.
 
+Note: if you use the "start" signal to [measure job run times](../measuring_script_run_time/),
+then Grace Time also specifies how long the job is expected to run. Whenever SITE_NAME
+receives a "start" signal, it expects to receive a subsequent "success" signal
+within Grace Time. If the success signal does not arrive within the configured
+Grace Time, SITE_NAME will mark the check as failed and send out alerts.
+
 ## Cron Schedules
 
 Use "cron" for monitoring processes with more complex schedules. This monitoring mode
