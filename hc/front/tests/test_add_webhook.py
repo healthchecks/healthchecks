@@ -149,6 +149,19 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertContains(r, """invalid-header""")
         self.assertEqual(Channel.objects.count(), 0)
 
+    def test_it_rejects_non_latin1_in_header_name(self):
+        self.client.login(username="alice@example.org", password="password")
+        form = {
+            "method_down": "GET",
+            "url_down": "http://example.org",
+            "headers_down": "fō:bar",
+            "method_up": "GET",
+        }
+
+        r = self.client.post(self.url, form)
+        self.assertContains(r, """must not contain special characters""")
+        self.assertEqual(Channel.objects.count(), 0)
+
     def test_it_strips_headers(self):
         form = {
             "method_down": "GET",

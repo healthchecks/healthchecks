@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.23.0 - Unreleased
+
+### Bug Fixes
+- Add handling for non-latin-1 characters in webhook headers
+
 ## v1.22.0 - 2020-08-06
 
 ### Improvements

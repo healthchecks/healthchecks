@@ -342,3 +342,20 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Webhook notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_non_ascii_in_headers(self, mock_request):
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://foo.com",
+            "headers_down": {"X-Foo": "bār"},
+            "body_down": "",
+        }
+
+        self._setup_data(json.dumps(definition))
+        self.check.save()
+
+        self.channel.notify(self.check)
+        args, kwargs = mock_request.call_args
+
+        self.assertEqual(kwargs["headers"]["X-Foo"], "b&#257;r")

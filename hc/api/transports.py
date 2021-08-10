@@ -203,7 +203,7 @@ class HttpTransport(Transport):
 
 
 class Webhook(HttpTransport):
-    def prepare(self, template, check, urlencode=False):
+    def prepare(self, template, check, urlencode=False, latin1=False):
         """ Replace variables with actual values. """
 
         def safe(s):
@@ -220,7 +220,12 @@ class Webhook(HttpTransport):
         for i, tag in enumerate(check.tags_list()):
             ctx["$TAG%d" % (i + 1)] = safe(tag)
 
-        return replace(template, ctx)
+        result = replace(template, ctx)
+        if latin1:
+            # Replace non-latin-1 characters with XML character references.
+            result = result.encode("latin-1", "xmlcharrefreplace").decode()
+
+        return result
 
     def is_noop(self, check):
         if check.status == "down" and not self.channel.url_down:
@@ -242,7 +247,8 @@ class Webhook(HttpTransport):
         url = self.prepare(spec["url"], check, urlencode=True)
         headers = {}
         for key, value in spec["headers"].items():
-            headers[key] = self.prepare(value, check)
+            # Header values should contain ASCII and latin-1 only
+            headers[key] = self.prepare(value, check, latin1=True)
 
         body = spec["body"]
         if body:

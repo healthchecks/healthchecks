@@ -15,6 +15,14 @@ from hc.front.validators import (
 import requests
 
 
+def _is_latin1(s):
+    try:
+        s.encode("latin-1")
+        return True
+    except UnicodeError:
+        return False
+
+
 class HeadersField(forms.Field):
     message = """Use "Header-Name: value" pairs, one per line."""
 
@@ -34,6 +42,11 @@ class HeadersField(forms.Field):
             n, v = n.strip(), v.strip()
             if not n or not v:
                 raise ValidationError(message=self.message)
+
+            if not _is_latin1(n):
+                raise ValidationError(
+                    message="Header names must not contain special characters"
+                )
 
             headers[n] = v
 
