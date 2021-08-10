@@ -19,6 +19,22 @@
     border-color: var(--btn-active-border);
 }
 
+.open > .dropdown-toggle.btn-default,
+.open > .dropdown-toggle.btn-default:active,
+.open > .dropdown-toggle.btn-default:hover,
+.open > .dropdown-toggle.btn-default:focus {
+    color: var(--btn-active-color);
+    background-color: var(--btn-active-bg);
+    border-color: var(--btn-active-border);
+}
+
+.bootstrap-select > .dropdown-toggle.bs-placeholder,
+.bootstrap-select > .dropdown-toggle.bs-placeholder:active,
+.bootstrap-select > .dropdown-toggle.bs-placeholder:focus,
+.bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
+    color:  var(--btn-default-color);
+}
+
 .alert-info {
     background-color: var(--state-info-bg);
     border-color: var(--state-info-border);

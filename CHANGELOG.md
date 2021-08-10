@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Add handling for non-latin-1 characters in webhook headers
+- Fix dark mode bug in selectpicker widgets
 
 ## v1.22.0 - 2020-08-06
 
