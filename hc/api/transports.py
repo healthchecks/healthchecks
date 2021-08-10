@@ -223,7 +223,7 @@ class Webhook(HttpTransport):
         result = replace(template, ctx)
         if latin1:
             # Replace non-latin-1 characters with XML character references.
-            result = result.encode("latin-1", "xmlcharrefreplace").decode()
+            result = result.encode("latin-1", "xmlcharrefreplace").decode("latin-1")
 
         return result
 

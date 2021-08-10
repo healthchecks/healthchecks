@@ -359,3 +359,21 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_request.call_args
 
         self.assertEqual(kwargs["headers"]["X-Foo"], "b&#257;r")
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_handle_latin1_in_headers(self, mock_request):
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://foo.com",
+            "headers_down": {"X-Foo": "½"},
+            "body_down": "",
+        }
+
+        self._setup_data(json.dumps(definition))
+        self.check.save()
+
+        self.channel.notify(self.check)
+        args, kwargs = mock_request.call_args
+
+        self.assertEqual(kwargs["headers"]["X-Foo"], "½")
+
