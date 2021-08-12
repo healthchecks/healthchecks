@@ -25,7 +25,8 @@ from hc.lib.badges import check_signature, get_badge_svg
 
 
 class BadChannelException(Exception):
-    pass
+    def __init__(self, message):
+        self.message = message
 
 
 @csrf_exempt
@@ -195,7 +196,7 @@ def create_check(request):
     try:
         _update(check, request.json)
     except BadChannelException as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        return JsonResponse({"error": e.message}, status=400)
 
     return JsonResponse(check.to_dict(), status=201 if created else 200)
 
@@ -249,7 +250,7 @@ def update_check(request, code):
     try:
         _update(check, request.json)
     except BadChannelException as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        return JsonResponse({"error": e.message}, status=400)
 
     return JsonResponse(check.to_dict())
 
