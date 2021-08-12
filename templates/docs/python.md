@@ -27,7 +27,7 @@ except socket.error as e:
     print("Ping failed: %s" % e)
 ```
 
-You can include additional diagnostic information in the in the request body (for POST requests):
+You can include additional diagnostic information in the request body (for POST requests):
 
 ```python
 # Passing diagnostic information in the POST body:
