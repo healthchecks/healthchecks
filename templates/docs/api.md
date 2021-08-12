@@ -132,6 +132,9 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
 }
 ```
 
+The possible values for the `status` field are: `new`, `started`, `up`, `grace`, `down`,
+and `paused`.
+
 When using the read-only API key, SITE_NAME omits the following fields from responses:
 `ping_url`, `update_url`, `pause_url`, `channels`.  It adds an extra
 `unique_key` field. The `unique_key` identifier is stable across API calls, and
@@ -227,6 +230,9 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
   "tz": "UTC"
 }
 ```
+
+The possible values for the `status` field are: `new`, `started`, `up`, `grace`, `down`,
+and `paused`.
 
 ### Example Read-Only Response
 

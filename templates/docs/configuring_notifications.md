@@ -55,14 +55,14 @@ Set them up in [Account Settings › Email Reports](../../accounts/profile/notif
 
 ![Email reminder options](IMG_URL/email_reports.png)
 
-## Monthly Reports
+## Weekly and Monthly Reports
 
-SITE_NAME sends monthly email reports at the start of each month. Use them
-to make sure all checks have their expected state, and nothing has
-"fallen through the cracks."
+SITE_NAME sends periodic email reports, either monthly at the start of each month,
+or weekly every Monday. Use them to make sure all checks have their expected state,
+and nothing has "fallen through the cracks."
 
-A monthly report shows checks from all your projects.
-For each check, it lists:
+The reports list checks from all your projects, grouped by project.
+For each check, they show:
 
 * check's current status
 * the number of downtimes by month, for the last two months
@@ -70,6 +70,6 @@ For each check, it lists:
 
 ![Example monthly report](IMG_URL/monthly_report.png)
 
-You can opt-out from the monthly reports in the
+You can opt-out from receiving the the reports in the
 [Account Settings › Email Reports](../../accounts/profile/notifications/) page
 or by clicking the "Unsubscribe" link in the email report's footer.
