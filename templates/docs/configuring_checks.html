@@ -3,7 +3,7 @@
 monitor. For example, when monitoring cron jobs, you would create a separate check for
 each cron job to be monitored. SITE_NAME pricing plans are structured primarily
 around how many checks you can have in your account. You can create checks
-either in SITE_NAME web interface or by calling <a href="../api/">Management API</a>.</p>
+either in SITE_NAME web interface or via <a href="../api/">Management API</a>.</p>
 <h2>Name, Tags, Description</h2>
 <p>Describe each check using an optional name, tags, and description fields.</p>
 <p><img alt="Editing name, tags and description" src="IMG_URL/edit_name.png" /></p>
@@ -33,10 +33,11 @@ is late. Use this parameter to account for small, expected deviations in job
 execution times.</li>
 </ul>
 <p>Note: if you use the "start" signal to <a href="../measuring_script_run_time/">measure job run times</a>,
-then Grace Time also specifies how long the job is expected to run. Whenever SITE_NAME
-receives a "start" signal, it expects to receive a subsequent "success" signal
-within Grace Time. If the success signal does not arrive within the configured
-Grace Time, SITE_NAME will mark the check as failed and send out alerts.</p>
+then Grace Time also specifies the maximum allowed time gap between "start" and
+"success" signals. Whenever SITE_NAME receives a "start" signal, it expects to
+receive a subsequent "success" signal within Grace Time. If the success signal does
+not arrive within the configured Grace Time, SITE_NAME will mark the check as failed
+and send out alerts.</p>
 <h2>Cron Schedules</h2>
 <p>Use "cron" for monitoring processes with more complex schedules. This monitoring mode
 ensures that jobs run <strong>at the correct time</strong>, and not just at correct time intervals.</p>

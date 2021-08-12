@@ -3,10 +3,10 @@
  After receiving a start signal, Healthchecks.io will show the check as "Started."
  It will store the "start" events and display the job execution times. SITE_NAME
  calculates the job execution times as the time gaps between adjacent "start" and
- "complete" events.</p>
+ "success" events.</p>
 <h2>Alerting Logic</h2>
 <p>SITE_NAME applies an additional alerting rule for jobs that  use the <code>/start</code> signal.</p>
-<p>If a job sends a "start" signal, but then does not send a "complete"
+<p>If a job sends a "start" signal, but then does not send a "success"
 signal within its configured grace time, SITE_NAME will assume the job
 has failed. It will mark the job as "down" and send out alerts.</p>
 <h2>Usage Example</h2>

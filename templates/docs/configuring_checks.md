@@ -4,7 +4,7 @@ In SITE_NAME, a **Check** represents a single service you want to
 monitor. For example, when monitoring cron jobs, you would create a separate check for
 each cron job to be monitored. SITE_NAME pricing plans are structured primarily
 around how many checks you can have in your account. You can create checks
-either in SITE_NAME web interface or by calling [Management API](../api/).
+either in SITE_NAME web interface or via [Management API](../api/).
 
 ## Name, Tags, Description
 
@@ -40,10 +40,11 @@ is late. Use this parameter to account for small, expected deviations in job
 execution times.
 
 Note: if you use the "start" signal to [measure job run times](../measuring_script_run_time/),
-then Grace Time also specifies how long the job is expected to run. Whenever SITE_NAME
-receives a "start" signal, it expects to receive a subsequent "success" signal
-within Grace Time. If the success signal does not arrive within the configured
-Grace Time, SITE_NAME will mark the check as failed and send out alerts.
+then Grace Time also specifies the maximum allowed time gap between "start" and
+"success" signals. Whenever SITE_NAME receives a "start" signal, it expects to
+receive a subsequent "success" signal within Grace Time. If the success signal does
+not arrive within the configured Grace Time, SITE_NAME will mark the check as failed
+and send out alerts.
 
 ## Cron Schedules
 

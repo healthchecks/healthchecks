@@ -109,10 +109,19 @@ h2.rule {
 .page-docs dt, .page-docs dd {
     border-top: 1px solid var(--border-color);
     padding: 8px 0;
+    line-height: 1.8;
 }
 
 .rule + p code {
     font-size: 14px;
     font-weight: bold;
     padding: 2px 4px;
+}
+
+.docs-introduction dl {
+    grid-template-columns: 48px auto;
+}
+
+.docs-introduction dt {
+    text-align: center;
 }
