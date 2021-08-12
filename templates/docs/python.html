@@ -22,7 +22,7 @@ module from Python 3 standard library:</p>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ping failed: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
 </code></pre></div>
 
-<p>You can include additional diagnostic information in the in the request body (for POST requests):</p>
+<p>You can include additional diagnostic information in the request body (for POST requests):</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Passing diagnostic information in the POST body:</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;PING_URL&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s2">&quot;temperature=-7&quot;</span><span class="p">)</span>
