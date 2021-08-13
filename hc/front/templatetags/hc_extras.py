@@ -2,6 +2,7 @@ import re
 
 from django import template
 from django.conf import settings
+from django.templatetags.static import static
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
@@ -29,6 +30,22 @@ def hms(td):
 @register.simple_tag
 def site_name():
     return settings.SITE_NAME
+
+
+@register.simple_tag
+def absolute_site_logo_url():
+    """ Return absolute URL to site's logo.
+
+    Uses settings.SITE_LOGO_URL if set, uses
+    /static/img/logo.png as fallback.
+
+    """
+
+    url = settings.SITE_LOGO_URL or static("img/logo.png")
+    if url.startswith("/"):
+        url = settings.SITE_ROOT + url
+
+    return url
 
 
 @register.filter

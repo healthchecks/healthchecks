@@ -34,6 +34,7 @@ class LoginTestCase(BaseTestCase):
         self.assertEqual(message.subject, f"Log in to {settings.SITE_NAME}")
         html = message.alternatives[0][0]
         self.assertIn("http://testserver/static/img/logo.png", html)
+        self.assertIn("http://testserver/docs/", html)
 
     @override_settings(SITE_LOGO_URL="https://example.org/logo.svg")
     def test_it_uses_custom_logo(self):

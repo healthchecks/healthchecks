@@ -1,7 +1,7 @@
 {% load hc_extras humanize %}
 {
     "username": "{% site_name %}",
-    "icon_url": "{% site_root %}/static/img/logo@2x.png",
+    "icon_url": "{% absolute_site_logo_url %}",
     "attachments": [{
         {% if check.status == "up" %}
             "color": "good",

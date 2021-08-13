@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress humanize i18n static %}
+{% load compress hc_extras i18n static %}
 
 {% block description %}
     <meta name="description" content="{% blocktrans %}Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and background tasks. Receive alerts when your tasks don't run on time.{% endblocktrans %}">
@@ -7,7 +7,7 @@
 
 
 {% block head %}
-    <link rel="canonical" href="{{ site_root }}" />
+    <link rel="canonical" href="{% site_root %}" />
 {% endblock %}
 
 {% block containers %}

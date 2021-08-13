@@ -26,6 +26,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+    @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.requests.request")
     def test_slack(self, mock_post):
         self._setup_data("123")
@@ -43,6 +44,7 @@ class NotifySlackTestCase(BaseTestCase):
         # The payload should not contain check's code
         serialized = json.dumps(payload)
         self.assertNotIn(str(self.check.code), serialized)
+        self.assertIn("http://testserver/static/img/logo.png", serialized)
 
     @patch("hc.api.transports.requests.request")
     def test_slack_with_complex_value(self, mock_post):

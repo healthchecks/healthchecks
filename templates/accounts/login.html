@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load compress static %}
+{% load compress hc_extras static %}
 
 {% block title %}Sign In - {{ site_name }}{% endblock %}
 
 {% block description %}{% endblock %}
 
 {% block head %}
-    <link rel="canonical" href="{{ site_root }}{% url 'hc-login' %}" />
+    <link rel="canonical" href="{% site_root %}{% url 'hc-login' %}" />
 {% endblock %}
 
 {% block content %}
