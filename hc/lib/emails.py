@@ -3,6 +3,7 @@ from threading import Thread
 import time
 
 from django.conf import settings
+from django.templatetags.static import static
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string as render
 
@@ -33,7 +34,10 @@ class EmailThread(Thread):
 
 
 def make_message(name, to, ctx, headers={}):
-    ctx["SITE_ROOT"] = settings.SITE_ROOT
+    ctx["site_logo_url"] = settings.SITE_LOGO_URL or static("img/logo.png")
+    if ctx["site_logo_url"].startswith("/"):
+        # If it's a relative URL, prepend SITE_ROOT
+        ctx["site_logo_url"] = settings.SITE_ROOT + ctx["site_logo_url"]
 
     subject = render("emails/%s-subject.html" % name, ctx).strip()
     body = render("emails/%s-body-text.html" % name, ctx)
@@ -41,7 +45,6 @@ def make_message(name, to, ctx, headers={}):
 
     msg = EmailMultiAlternatives(subject, body, to=(to,), headers=headers)
     msg.attach_alternative(html, "text/html")
-
     return msg
 
 
