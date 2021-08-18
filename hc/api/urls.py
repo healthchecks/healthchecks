@@ -46,6 +46,7 @@ urlpatterns = [
     path("api/v1/checks/<uuid:code>/flips/", views.flips_by_uuid, name="hc-api-flips"),
     path("api/v1/checks/<sha1:unique_key>/flips/", views.flips_by_unique_key),
     path("api/v1/channels/", views.channels),
+    path("api/v1/badges/", views.badges),
     path(
         "badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>",
         views.badge,

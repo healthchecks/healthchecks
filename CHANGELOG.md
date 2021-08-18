@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v1.23.0 - Unreleased
 
+### Improvements
+- Add /api/v1/badges/ endpoint (#552)
+
 ### Bug Fixes
 - Add handling for non-latin-1 characters in webhook headers
 - Fix dark mode bug in selectpicker widgets

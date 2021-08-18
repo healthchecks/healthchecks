@@ -46,6 +46,10 @@ in your account.</p>
 <td><a href="#list-channels">Get a list of existing integrations</a></td>
 <td><code>GET SITE_ROOT/api/v1/channels/</code></td>
 </tr>
+<tr>
+<td><a href="#list-badges">Get project's badges</a></td>
+<td><code>GET SITE_ROOT/api/v1/badges/</code></td>
+</tr>
 </tbody>
 </table>
 <h2>Authentication</h2>
@@ -63,6 +67,7 @@ and read-only API keys on the <strong>Project Settings</strong> page.</p>
 <li><a href="#list-checks">Get a list of existing checks</a></li>
 <li><a href="#get-check">Get a single check</a></li>
 <li><a href="#list-flips">Get a list of check's status changes</a></li>
+<li><a href="#list-badges">Get project's badges</a></li>
 </ul>
 <p>Omits sensitive information from the API responses. See the documentation of
 individual API endpoints for details.</p>
@@ -806,5 +811,58 @@ number of returned pings depends on the account's billing plan: 100 for free acc
       <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;sms&quot;</span>
     <span class="p">}</span>
   <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 class="rule" id="list-badges">Get Project's Badges</h2>
+<p><code>GET SITE_ROOT/api/v1/badges/</code></p>
+<p>Returns a map of all tags in the project, with badge URLs for each tag.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/badges/
+</code></pre></div>
+
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+  <span class="nt">&quot;badges&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;backup&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.shields&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.shields&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;db&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.shields&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.shields&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;production&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.shields&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.shields&quot;</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;*&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.shields&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.shields&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
