@@ -158,7 +158,7 @@
                     <td>
                         <span class="value">{{ check.timeout|hc_duration }}</span>
                         <div class="subtitle">
-                            (Expected time between pings)
+                            (The expected time between pings)
                         </div>
                     </td>
                     {% elif check.kind == "cron" %}
@@ -181,7 +181,7 @@
                     <td>
                         <span class="value">{{ check.grace|hc_duration }}</span>
                         <div class="subtitle">
-                            (When a check is late, how long to wait until an alert is sent)
+                            (When a check is late, how long to wait to send an alert)
                         </div>
                     </td>
                 </tr>
@@ -235,7 +235,7 @@
         {% if rw %}
         <div class="details-block">
             <h2>Danger Zone</h2>
-            <p>Copy, Transfer, or permanently remove this check.</p>
+            <p>Copy, transfer, or permanently remove this check.</p>
 
             <div class="text-right">
                 {% if project.num_checks_available > 0 %}
