@@ -1,7 +1,3 @@
-.jumbotron {
-    background-color:  var(--jumbotron-bg);
-}
-
 .btn-default {
     color: var(--btn-default-color);
     background-color: var(--btn-default-bg);

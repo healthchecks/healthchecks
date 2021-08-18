@@ -4089,7 +4089,7 @@ a.badge:focus {
   padding-bottom: 30px;
   margin-bottom: 30px;
   color: inherit;
-  background-color: #eeeeee;
+  background-color: var(--jumbotron-bg);
 }
 .jumbotron h1,
 .jumbotron .h1 {
@@ -4099,9 +4099,6 @@ a.badge:focus {
   margin-bottom: 15px;
   font-size: 21px;
   font-weight: 200;
-}
-.jumbotron > hr {
-  border-top-color: #d5d5d5;
 }
 .container .jumbotron,
 .container-fluid .jumbotron {
