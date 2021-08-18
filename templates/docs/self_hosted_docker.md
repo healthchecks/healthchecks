@@ -5,7 +5,7 @@ you can find a sample configuration for running the project with
 [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/).
 
 **Note: The Docker configuration is a recent addition, and, for the time being,
-should be considered as highly experimental**.
+should be considered experimental**.
 
 Note: For the sake of simplicity, the sample configuration starts a single database
 node and a single web server node, both on the same host. It also does not handle SSL
