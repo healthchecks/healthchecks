@@ -171,3 +171,11 @@ class LoginTestCase(BaseTestCase):
         # Instead, it should set 2fa_user_id in the session
         user_id, email, valid_until = self.client.session["2fa_user"]
         self.assertEqual(user_id, self.alice.id)
+
+    def test_it_handles_missing_profile(self):
+        self.profile.delete()
+
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
+
+        r = self.client.post("/accounts/login/", form)
+        self.assertRedirects(r, self.checks_url)

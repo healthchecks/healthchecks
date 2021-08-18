@@ -115,7 +115,8 @@ def _redirect_after_login(request):
 
 def _check_2fa(request, user):
     have_keys = user.credentials.exists()
-    if have_keys or user.profile.totp:
+    profile = Profile.objects.for_user(user)
+    if have_keys or profile.totp:
         # We have verified user's password or token, and now must
         # verify their security key. We store the following in user's session:
         # - user.id, to look up the user in the login_webauthn view
