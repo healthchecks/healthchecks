@@ -953,7 +953,22 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/channels/
 
 `GET SITE_ROOT/api/v1/badges/`
 
-Returns a map of all tags in the project, with badge URLs for each tag.
+Returns a map of all tags in the project, with badge URLs for each tag. For each tag,
+SITE_NAME provides badges in a few different formats:
+
+* `svg`: returns the badge as a SVG document.
+* `json`: returns a JSON document which you can use to generate a custom badge
+    yourself.
+* `shields`: returns JSON in a [Shields.io compatible format](https://shields.io/endpoint).
+
+In addition, badges have 2-state and 3-state variations:
+
+* `svg`, `json`, `shields`: reports two states: "up" and "down". It
+    considers any checks in the grace period as still "up".
+* `svg3`, `json3`, `shields3`: reports three states: "up", "late", and "down".
+
+The response includes a special `*` tag: this tag reports the overal status
+of all checks in the project.
 
 ### Response Codes
 
@@ -990,13 +1005,13 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/badges/
       "shields": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.shields",
       "shields3": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.shields"
     },
-    "production": {
-      "svg": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.svg",
-      "svg3": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.svg",
-      "json": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.json",
-      "json3": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.json",
-      "shields": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.shields",
-      "shields3": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.shields"
+    "prod": {
+      "svg": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.svg",
+      "svg3": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.svg",
+      "json": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.json",
+      "json3": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.json",
+      "shields": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.shields",
+      "shields3": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.shields"
     },
     "*": {
       "svg": "SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.svg",

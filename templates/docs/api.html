@@ -816,7 +816,22 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 
 <h2 class="rule" id="list-badges">Get Project's Badges</h2>
 <p><code>GET SITE_ROOT/api/v1/badges/</code></p>
-<p>Returns a map of all tags in the project, with badge URLs for each tag.</p>
+<p>Returns a map of all tags in the project, with badge URLs for each tag. For each tag,
+SITE_NAME provides badges in a few different formats:</p>
+<ul>
+<li><code>svg</code>: returns the badge as a SVG document.</li>
+<li><code>json</code>: returns a JSON document which you can use to generate a custom badge
+    yourself.</li>
+<li><code>shields</code>: returns JSON in a <a href="https://shields.io/endpoint">Shields.io compatible format</a>.</li>
+</ul>
+<p>In addition, badges have 2-state and 3-state variations:</p>
+<ul>
+<li><code>svg</code>, <code>json</code>, <code>shields</code>: reports two states: "up" and "down". It
+    considers any checks in the grace period as still "up".</li>
+<li><code>svg3</code>, <code>json3</code>, <code>shields3</code>: reports three states: "up", "late", and "down".</li>
+</ul>
+<p>The response includes a special <code>*</code> tag: this tag reports the overal status
+of all checks in the project.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -847,13 +862,13 @@ number of returned pings depends on the account's billing plan: 100 for free acc
       <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.shields&quot;</span><span class="p">,</span>
       <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.shields&quot;</span>
     <span class="p">},</span>
-    <span class="nt">&quot;production&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/production.shields&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/production.shields&quot;</span>
+    <span class="nt">&quot;prod&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.svg&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.json&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.shields&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.shields&quot;</span>
     <span class="p">},</span>
     <span class="nt">&quot;*&quot;</span><span class="p">:</span> <span class="p">{</span>
       <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.svg&quot;</span><span class="p">,</span>
