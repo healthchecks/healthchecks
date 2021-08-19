@@ -45,7 +45,6 @@
   -webkit-box-shadow: none;
   box-shadow: none;
   -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
   border-radius: 2px;
 }
 .selectize-control.multi .selectize-input.has-items {
@@ -64,7 +63,6 @@
 }
 .selectize-input.dropdown-active {
   -webkit-border-radius: 2px 2px 0 0;
-  -moz-border-radius: 2px 2px 0 0;
   border-radius: 2px 2px 0 0;
 }
 .selectize-input > * {
@@ -135,7 +133,6 @@
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   -webkit-border-radius: 0 0 2px 2px;
-  -moz-border-radius: 0 0 2px 2px;
   border-radius: 0 0 2px 2px;
 }
 .selectize-dropdown [data-selectable] {
@@ -145,7 +142,6 @@
 .selectize-dropdown [data-selectable] .highlight {
   background: rgba(255, 237, 40, 0.4);
   -webkit-border-radius: 1px;
-  -moz-border-radius: 1px;
   border-radius: 1px;
 }
 .selectize-dropdown .option,
@@ -232,7 +228,6 @@
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.15);
   -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
   border-radius: 2px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
@@ -265,7 +260,6 @@
 }
 .selectize-input.dropdown-active {
   -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
   border-radius: 2px;
 }
 .selectize-input.dropdown-active::before {
@@ -293,7 +287,6 @@
 }
 .selectize-control.multi .selectize-input > div {
   -webkit-border-radius: 1px;
-  -moz-border-radius: 1px;
   border-radius: 1px;
 }
 .form-control.selectize-control {
@@ -304,6 +297,5 @@
   -webkit-box-shadow: none;
   box-shadow: none;
   -webkit-border-radius: 0;
-  -moz-border-radius: 0;
   border-radius: 0;
 }
