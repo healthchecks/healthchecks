@@ -953,8 +953,8 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/channels/
 
 `GET SITE_ROOT/api/v1/badges/`
 
-Returns a map of all tags in the project, with badge URLs for each tag. For each tag,
-SITE_NAME provides badges in a few different formats:
+Returns a map of all tags in the project, with badge URLs for each tag. SITE_NAME
+provides badges in a few different formats:
 
 * `svg`: returns the badge as a SVG document.
 * `json`: returns a JSON document which you can use to generate a custom badge
@@ -967,7 +967,7 @@ In addition, badges have 2-state and 3-state variations:
     considers any checks in the grace period as still "up".
 * `svg3`, `json3`, `shields3`: reports three states: "up", "late", and "down".
 
-The response includes a special `*` tag: this tag reports the overal status
+The response includes a special `*` entry: this pseudo-tag reports the overal status
 of all checks in the project.
 
 ### Response Codes

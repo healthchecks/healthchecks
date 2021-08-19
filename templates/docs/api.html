@@ -816,8 +816,8 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 
 <h2 class="rule" id="list-badges">Get Project's Badges</h2>
 <p><code>GET SITE_ROOT/api/v1/badges/</code></p>
-<p>Returns a map of all tags in the project, with badge URLs for each tag. For each tag,
-SITE_NAME provides badges in a few different formats:</p>
+<p>Returns a map of all tags in the project, with badge URLs for each tag. SITE_NAME
+provides badges in a few different formats:</p>
 <ul>
 <li><code>svg</code>: returns the badge as a SVG document.</li>
 <li><code>json</code>: returns a JSON document which you can use to generate a custom badge
@@ -830,7 +830,7 @@ SITE_NAME provides badges in a few different formats:</p>
     considers any checks in the grace period as still "up".</li>
 <li><code>svg3</code>, <code>json3</code>, <code>shields3</code>: reports three states: "up", "late", and "down".</li>
 </ul>
-<p>The response includes a special <code>*</code> tag: this tag reports the overal status
+<p>The response includes a special <code>*</code> entry: this pseudo-tag reports the overal status
 of all checks in the project.</p>
 <h3>Response Codes</h3>
 <dl>
