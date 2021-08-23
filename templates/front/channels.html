@@ -29,9 +29,7 @@
         {% with n=ch.latest_notification %}
         <tr class="channel-row kind-{{ ch.kind }}">
             <td class="icon-cell">
-                <img src="{% static ch.icon_path %}"
-                class="icon {{ ch.kind }}"
-                alt="{{ ch.get_kind_display }} icon" />
+                <img src="{% static ch.icon_path %}" alt="{{ ch.get_kind_display }}" />
             </td>
             <td>
                 <div class="edit-name" data-toggle="modal" data-target="#name-{{ ch.code }}">
