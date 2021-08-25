@@ -25,6 +25,7 @@ class EditEmailTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Get an email message when check goes up or down.")
         self.assertContains(r, "alerts@example.org")
+        self.assertContains(r, "Email Settings")
 
     def test_it_saves_changes(self):
         form = {"value": "new@example.org", "down": "true", "up": "false"}

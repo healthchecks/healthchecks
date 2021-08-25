@@ -155,13 +155,8 @@ class EmailForm(forms.Form):
         if not down and not up:
             self.add_error("down", "Please select at least one.")
 
-    def to_json(self):
-        d = {
-            "value": self.cleaned_data["value"],
-            "up": self.cleaned_data["up"],
-            "down": self.cleaned_data["down"],
-        }
-        return json.dumps(d)
+    def get_value(self):
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)
 
 
 class AddUrlForm(forms.Form):

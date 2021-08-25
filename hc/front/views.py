@@ -951,7 +951,7 @@ def remove_channel(request, code):
 
 
 @login_required
-def email_form(request, code=None, channel=None):
+def email_form(request, channel=None, code=None):
     """ Add email integration or edit an existing email integration. """
 
     is_new = channel is None
@@ -974,7 +974,7 @@ def email_form(request, code=None, channel=None):
                 else:
                     channel.email_verified = False
 
-            channel.value = form.to_json()
+            channel.value = form.get_value()
             channel.save()
 
             if is_new:
@@ -984,6 +984,8 @@ def email_form(request, code=None, channel=None):
                 channel.send_verify_link()
 
             return redirect("hc-channels", channel.project.code)
+    elif is_new:
+        form = forms.EmailForm()
     else:
         form = forms.EmailForm(
             {
@@ -998,8 +1000,9 @@ def email_form(request, code=None, channel=None):
         "project": channel.project,
         "use_verification": settings.EMAIL_USE_VERIFICATION,
         "form": form,
+        "is_new": is_new,
     }
-    return render(request, "integrations/add_email.html", ctx)
+    return render(request, "integrations/email_form.html", ctx)
 
 
 @login_required
@@ -1007,51 +1010,32 @@ def edit_channel(request, code):
     channel = _get_rw_channel_for_user(request, code)
     if channel.kind == "email":
         return email_form(request, channel=channel)
+    if channel.kind == "webhook":
+        return webhook_form(request, channel=channel)
 
     return HttpResponseBadRequest()
 
 
 @require_setting("WEBHOOKS_ENABLED")
 @login_required
-def add_webhook(request, code):
-    project = _get_rw_project_for_user(request, code)
+def webhook_form(request, channel=None, code=None):
+    is_new = channel is None
+    if is_new:
+        project = _get_rw_project_for_user(request, code)
+        channel = Channel(project=project, kind="webhook")
 
     if request.method == "POST":
         form = forms.WebhookForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=project, kind="webhook")
             channel.name = form.cleaned_data["name"]
             channel.value = form.get_value()
             channel.save()
 
             channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-
-    else:
-        form = forms.WebhookForm()
-
-    ctx = {
-        "page": "channels",
-        "project": project,
-        "form": form,
-    }
-    return render(request, "integrations/webhook_form.html", ctx)
-
-
-@login_required
-def edit_webhook(request, code):
-    channel = _get_rw_channel_for_user(request, code)
-    if channel.kind != "webhook":
-        return HttpResponseBadRequest()
-
-    if request.method == "POST":
-        form = forms.WebhookForm(request.POST)
-        if form.is_valid():
-            channel.name = form.cleaned_data["name"]
-            channel.value = form.get_value()
-            channel.save()
-
             return redirect("hc-channels", channel.project.code)
+
+    elif is_new:
+        form = forms.WebhookForm()
     else:
 
         def flatten(d):
@@ -1061,14 +1045,13 @@ def edit_webhook(request, code):
         doc["headers_down"] = flatten(doc["headers_down"])
         doc["headers_up"] = flatten(doc["headers_up"])
         doc["name"] = channel.name
-
         form = forms.WebhookForm(doc)
 
     ctx = {
         "page": "channels",
         "project": channel.project,
-        "channel": channel,
         "form": form,
+        "is_new": is_new,
     }
     return render(request, "integrations/webhook_form.html", ctx)
 

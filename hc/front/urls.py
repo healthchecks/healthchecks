@@ -39,7 +39,6 @@ channel_urls = [
     path("<uuid:code>/checks/", views.channel_checks, name="hc-channel-checks"),
     path("<uuid:code>/name/", views.update_channel_name, name="hc-channel-name"),
     path("<uuid:code>/edit/", views.edit_channel, name="hc-edit-channel"),
-    path("<uuid:code>/edit_webhook/", views.edit_webhook, name="hc-edit-webhook"),
     path("<uuid:code>/test/", views.send_test_notification, name="hc-channel-test"),
     path("<uuid:code>/remove/", views.remove_channel, name="hc-remove-channel"),
     path(
@@ -75,7 +74,7 @@ project_urls = [
     path("add_spike/", views.add_spike, name="hc-add-spike"),
     path("add_trello/", views.add_trello, name="hc-add-trello"),
     path("add_victorops/", views.add_victorops, name="hc-add-victorops"),
-    path("add_webhook/", views.add_webhook, name="hc-add-webhook"),
+    path("add_webhook/", views.webhook_form, name="hc-add-webhook"),
     path("add_whatsapp/", views.add_whatsapp, name="hc-add-whatsapp"),
     path("add_zulip/", views.add_zulip, name="hc-add-zulip"),
     path("badges/", views.badges, name="hc-badges"),

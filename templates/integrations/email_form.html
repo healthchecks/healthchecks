@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Set Up Email Notifications - {{ site_name }}{% endblock %}
+{% block title %}
+{% if is_new %}
+Set Up Email Notifications - {{ site_name }}
+{% else %}
+Email Settings - {{ site_name }}
+{% endif %}
+{% endblock %}
 
 
 {% block content %}

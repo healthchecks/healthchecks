@@ -2,10 +2,10 @@
 {% load compress humanize static hc_extras %}
 
 {% block title %}
-    {% if channel %}
-    Webhook Settings - {% site_name %}
-    {% else %}
+    {% if is_new %}
     Add Webhook Integration - {% site_name %}
+    {% else %}
+    Webhook Settings - {% site_name %}
     {% endif %}
 {% endblock %}
 

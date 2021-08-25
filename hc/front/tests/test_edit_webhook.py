@@ -24,7 +24,7 @@ class EditWebhookTestCase(BaseTestCase):
         self.channel.value = json.dumps(definition)
         self.channel.save()
 
-        self.url = "/integrations/%s/edit_webhook/" % self.channel.code
+        self.url = "/integrations/%s/edit/" % self.channel.code
 
     def test_it_shows_form(self):
         self.client.login(username="alice@example.org", password="password")
@@ -75,7 +75,7 @@ class EditWebhookTestCase(BaseTestCase):
         self.assertEqual(up_spec["headers"], {"Content-Type": "text/plain"})
 
     def test_it_requires_kind_webhook(self):
-        self.channel.kind = "email"
+        self.channel.kind = "sms"
         self.channel.value = "foo@example.org"
         self.channel.save()
 

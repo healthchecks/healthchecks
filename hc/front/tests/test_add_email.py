@@ -17,6 +17,7 @@ class AddEmailTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Get an email message")
         self.assertContains(r, "Requires confirmation")
+        self.assertContains(r, "Set Up Email Notifications")
 
     def test_it_creates_channel(self):
         form = {"value": "dan@example.org", "down": "true", "up": "true"}
