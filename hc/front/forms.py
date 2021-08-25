@@ -140,7 +140,7 @@ class AddPushoverForm(forms.Form):
         return "%s|%s|%s" % (key, prio, prio_up)
 
 
-class AddEmailForm(forms.Form):
+class EmailForm(forms.Form):
     error_css_class = "has-error"
     value = forms.EmailField(max_length=100)
     down = forms.BooleanField(required=False, initial=True)
@@ -154,6 +154,14 @@ class AddEmailForm(forms.Form):
 
         if not down and not up:
             self.add_error("down", "Please select at least one.")
+
+    def to_json(self):
+        d = {
+            "value": self.cleaned_data["value"],
+            "up": self.cleaned_data["up"],
+            "down": self.cleaned_data["down"],
+        }
+        return json.dumps(d)
 
 
 class AddUrlForm(forms.Form):

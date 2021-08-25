@@ -106,7 +106,7 @@ class AddEmailTestCase(BaseTestCase):
         # Email should *not* have been sent
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_rejects_unchecked_up_and_dwon(self):
+    def test_it_rejects_unchecked_up_and_down(self):
         form = {"value": "alice@example.org"}
 
         self.client.login(username="alice@example.org", password="password")

@@ -951,48 +951,64 @@ def remove_channel(request, code):
 
 
 @login_required
-def add_email(request, code):
-    project = _get_rw_project_for_user(request, code)
+def email_form(request, code=None, channel=None):
+    """ Add email integration or edit an existing email integration. """
+
+    is_new = channel is None
+    if is_new:
+        project = _get_rw_project_for_user(request, code)
+        channel = Channel(project=project, kind="email")
 
     if request.method == "POST":
-        form = forms.AddEmailForm(request.POST)
+        form = forms.EmailForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=project, kind="email")
-            channel.value = json.dumps(
-                {
-                    "value": form.cleaned_data["value"],
-                    "up": form.cleaned_data["up"],
-                    "down": form.cleaned_data["down"],
-                }
-            )
+            if form.cleaned_data["value"] != channel.email_value:
+                if not settings.EMAIL_USE_VERIFICATION:
+                    # In self-hosted setting, administator can set
+                    # EMAIL_USE_VERIFICATION=False to disable email verification
+                    channel.email_verified = True
+                elif form.cleaned_data["value"] == request.user.email:
+                    # If the user is adding *their own* address
+                    # we skip the verification step
+                    channel.email_verified = True
+                else:
+                    channel.email_verified = False
+
+            channel.value = form.to_json()
             channel.save()
 
-            channel.assign_all_checks()
+            if is_new:
+                channel.assign_all_checks()
 
-            is_own_email = form.cleaned_data["value"] == request.user.email
-            if is_own_email or not settings.EMAIL_USE_VERIFICATION:
-                # If user is subscribing *their own* address
-                # we can skip the verification step.
-
-                # Additionally, in self-hosted setting, administator has the
-                # option to disable the email verification step altogether.
-
-                channel.email_verified = True
-                channel.save()
-            else:
+            if not channel.email_verified:
                 channel.send_verify_link()
 
-            return redirect("hc-channels", project.code)
+            return redirect("hc-channels", channel.project.code)
     else:
-        form = forms.AddEmailForm()
+        form = forms.EmailForm(
+            {
+                "value": channel.email_value,
+                "up": channel.email_notify_up,
+                "down": channel.email_notify_down,
+            }
+        )
 
     ctx = {
         "page": "channels",
-        "project": project,
+        "project": channel.project,
         "use_verification": settings.EMAIL_USE_VERIFICATION,
         "form": form,
     }
     return render(request, "integrations/add_email.html", ctx)
+
+
+@login_required
+def edit_channel(request, code):
+    channel = _get_rw_channel_for_user(request, code)
+    if channel.kind == "email":
+        return email_form(request, channel=channel)
+
+    return HttpResponseBadRequest()
 
 
 @require_setting("WEBHOOKS_ENABLED")
