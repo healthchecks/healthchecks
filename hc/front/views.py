@@ -1031,7 +1031,9 @@ def webhook_form(request, channel=None, code=None):
             channel.value = form.get_value()
             channel.save()
 
-            channel.assign_all_checks()
+            if is_new:
+                channel.assign_all_checks()
+
             return redirect("hc-channels", channel.project.code)
 
     elif is_new:

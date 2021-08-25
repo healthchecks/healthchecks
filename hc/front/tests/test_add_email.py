@@ -3,14 +3,15 @@ import json
 from django.core import mail
 from django.test.utils import override_settings
 
-from hc.api.models import Channel
+from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
 class AddEmailTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.url = "/projects/%s/add_email/" % self.project.code
+        self.check = Check.objects.create(project=self.project)
+        self.url = f"/projects/{self.project.code}/add_email/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -40,6 +41,9 @@ class AddEmailTestCase(BaseTestCase):
         self.assertTrue(email.subject.startswith("Verify email address on"))
         # Make sure we're sending to an email address, not a JSON string:
         self.assertEqual(email.to[0], "dan@example.org")
+
+        # Make sure it calls assign_all_checks
+        self.assertEqual(c.checks.count(), 1)
 
     def test_team_access_works(self):
         form = {"value": "bob@example.org", "down": "true", "up": "true"}

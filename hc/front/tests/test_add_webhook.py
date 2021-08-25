@@ -1,12 +1,13 @@
 from django.test.utils import override_settings
-from hc.api.models import Channel
+from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
 class AddWebhookTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.url = "/projects/%s/add_webhook/" % self.project.code
+        self.check = Check.objects.create(project=self.project)
+        self.url = f"/projects/{self.project.code}/add_webhook/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -28,6 +29,9 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.name, "Call foo.com")
+
+        # Make sure it calls assign_all_checks
+        self.assertEqual(c.checks.count(), 1)
 
     def test_it_adds_two_webhook_urls_and_redirects(self):
         form = {

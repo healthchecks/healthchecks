@@ -3,13 +3,15 @@ import json
 from django.core import mail
 from django.test.utils import override_settings
 
-from hc.api.models import Channel
+from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
 class EditEmailTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
+
+        self.check = Check.objects.create(project=self.project)
 
         self.channel = Channel(project=self.project, kind="email")
         self.channel.value = json.dumps(
@@ -18,7 +20,7 @@ class EditEmailTestCase(BaseTestCase):
         self.channel.email_verified = True
         self.channel.save()
 
-        self.url = "/integrations/%s/edit/" % self.channel.code
+        self.url = f"/integrations/{self.channel.code}/edit/"
 
     def test_it_shows_form(self):
         self.client.login(username="alice@example.org", password="password")
@@ -43,6 +45,9 @@ class EditEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertTrue(email.subject.startswith("Verify email address on"))
         self.assertEqual(email.to[0], "new@example.org")
+
+        # Make sure it does not call assign_all_checks
+        self.assertFalse(self.channel.checks.exists())
 
     def test_it_skips_verification_if_email_unchanged(self):
         form = {"value": "alerts@example.org", "down": "false", "up": "true"}
