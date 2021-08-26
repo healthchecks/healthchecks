@@ -72,7 +72,7 @@
                 {% endfor %}
             </div>
         </td>
-        <td class="hidden-xs hidden-sm">
+        <td class="hidden-xs hidden-sm url">
             <span class="my-checks-url">
                 <span class="base hidden-md">{{ ping_endpoint }}</span>{{ check.code }}
             </span>
@@ -94,13 +94,12 @@
             {% endif %}
         </td>
         <td class="hidden-xs">
-            <div
+            <div class="timeout-grace"
                 data-kind="{{ check.kind }}"
                 data-timeout="{{ check.timeout.total_seconds }}"
                 data-grace="{{ check.grace.total_seconds }}"
                 data-schedule="{{ check.schedule }}"
-                data-tz="{{ check.tz }}"
-                class="timeout-grace">
+                data-tz="{{ check.tz }}">
                 {% if check.kind == "simple" %}
                     {{ check.timeout|hc_duration }}
                     <br />

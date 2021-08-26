@@ -116,7 +116,6 @@ tr:hover .copy-link {
     font-size: 11.7px;
     position: relative;
     line-height: 36px;
-    white-space: nowrap;
 }
 
 .my-checks-url .base {
@@ -128,6 +127,7 @@ tr:hover .copy-link {
     white-space: nowrap;
 }
 
+#checks-table td.url,
 #checks-table .actions {
     white-space: nowrap;
 }
