@@ -51,11 +51,6 @@ class ChannelModelTestCase(BaseTestCase):
         self.assertEqual(c.opsgenie_key, "abc")
         self.assertEqual(c.opsgenie_region, "eu")
 
-    def test_it_handles_legacy_sms_value(self):
-        c = Channel(kind="sms", value="+123123123")
-        self.assertTrue(c.sms_notify_down)
-        self.assertFalse(c.sms_notify_up)
-
     def test_it_handles_legacy_sms_json_value(self):
         c = Channel(kind="sms", value=json.dumps({"value": "+123123123"}))
         self.assertTrue(c.sms_notify_down)

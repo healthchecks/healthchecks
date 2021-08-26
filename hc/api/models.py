@@ -651,12 +651,6 @@ class Channel(models.Model):
         return self.json["service_key"]
 
     @property
-    def pd_service_name(self):
-        assert self.kind == "pd"
-        if self.value.startswith("{"):
-            return self.json.get("name")
-
-    @property
     def pd_account(self):
         assert self.kind == "pd"
         if self.value.startswith("{"):
@@ -733,17 +727,11 @@ class Channel(models.Model):
     @property
     def sms_notify_up(self):
         assert self.kind == "sms"
-        if not self.value.startswith("{"):
-            return False
-
         return self.json.get("up", False)
 
     @property
     def sms_notify_down(self):
         assert self.kind == "sms"
-        if not self.value.startswith("{"):
-            return True
-
         return self.json.get("down", True)
 
     @property
