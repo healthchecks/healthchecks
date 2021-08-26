@@ -232,6 +232,15 @@ class PhoneUpDownForm(PhoneNumberForm):
     up = forms.BooleanField(required=False, initial=True)
     down = forms.BooleanField(required=False, initial=True)
 
+    def clean(self):
+        super().clean()
+
+        down = self.cleaned_data.get("down")
+        up = self.cleaned_data.get("up")
+
+        if not down and not up:
+            self.add_error("down", "Please select at least one.")
+
     def get_json(self):
         return json.dumps(
             {

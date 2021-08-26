@@ -44,14 +44,14 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.checks.count(), 1)
 
     def test_it_rejects_bad_number(self):
-        for v in ["not a phone number address", False, 15, "+123456789A"]:
+        for v in ["not a phone number", False, 15, "+123456789A"]:
             form = {"phone": v}
             self.client.login(username="alice@example.org", password="password")
             r = self.client.post(self.url, form)
             self.assertContains(r, "Invalid phone number format.")
 
     def test_it_trims_whitespace(self):
-        form = {"phone": "   +1234567890   "}
+        form = {"phone": "   +1234567890   ", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, form)
@@ -74,7 +74,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_it_strips_invisible_formatting_characters(self):
-        form = {"label": "My Phone", "phone": "\u202c+1234567890\u202c"}
+        form = {"phone": "\u202c+1234567890\u202c", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -84,7 +84,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.phone_number, "+1234567890")
 
     def test_it_strips_hyphens(self):
-        form = {"label": "My Phone", "phone": "+123-4567890"}
+        form = {"phone": "+123-4567890", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -94,7 +94,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.phone_number, "+1234567890")
 
     def test_it_strips_spaces(self):
-        form = {"label": "My Phone", "phone": "+123 45 678 90"}
+        form = {"phone": "+123 45 678 90", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -103,16 +103,19 @@ class AddSmsTestCase(BaseTestCase):
         c = Channel.objects.get()
         self.assertEqual(c.phone_number, "+1234567890")
 
-    def test_it_obeys_up_down_flags(self):
-        form = {"label": "My Phone", "phone": "+1234567890"}
+    def test_it_handles_down_false_up_true(self):
+        form = {"phone": "+1234567890", "up": True}
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
-        self.assertRedirects(r, self.channels_url)
+        self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.kind, "sms")
-        self.assertEqual(c.phone_number, "+1234567890")
-        self.assertEqual(c.name, "My Phone")
         self.assertFalse(c.sms_notify_down)
-        self.assertFalse(c.sms_notify_up)
+        self.assertTrue(c.sms_notify_up)
+
+    def test_it_rejects_unchecked_up_and_down(self):
+        form = {"phone": "+1234567890"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "Please select at least one.")

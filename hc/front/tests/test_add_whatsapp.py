@@ -55,21 +55,6 @@ class AddWhatsAppTestCase(BaseTestCase):
         # Make sure it calls assign_all_checks
         self.assertEqual(c.checks.count(), 1)
 
-    def test_it_obeys_up_down_flags(self):
-        form = {"label": "My Phone", "phone": "+1234567890"}
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
-        self.assertRedirects(r, self.channels_url)
-
-        c = Channel.objects.get()
-        self.assertEqual(c.kind, "whatsapp")
-        self.assertEqual(c.phone_number, "+1234567890")
-        self.assertEqual(c.name, "My Phone")
-        self.assertFalse(c.whatsapp_notify_down)
-        self.assertFalse(c.whatsapp_notify_up)
-        self.assertEqual(c.project, self.project)
-
     @override_settings(TWILIO_USE_WHATSAPP=False)
     def test_it_obeys_use_whatsapp_flag(self):
         self.client.login(username="alice@example.org", password="password")
@@ -83,3 +68,20 @@ class AddWhatsAppTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_handles_down_false_up_true(self):
+        form = {"phone": "+1234567890", "up": True}
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url, form)
+
+        c = Channel.objects.get()
+        self.assertFalse(c.whatsapp_notify_down)
+        self.assertTrue(c.whatsapp_notify_up)
+
+    def test_it_rejects_unchecked_up_and_down(self):
+        form = {"phone": "+1234567890"}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertContains(r, "Please select at least one.")

@@ -47,17 +47,6 @@ class EditSignalTestCase(BaseTestCase):
         # Make sure it does not call assign_all_checks
         self.assertFalse(self.channel.checks.exists())
 
-    def test_it_obeys_up_down_flags(self):
-        form = {"label": "My Phone", "phone": "+1234567890"}
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, form)
-        self.assertRedirects(r, self.channels_url)
-
-        self.channel.refresh_from_db()
-        self.assertFalse(self.channel.signal_notify_down)
-        self.assertFalse(self.channel.signal_notify_up)
-
     @override_settings(SIGNAL_CLI_ENABLED=False)
     def test_it_handles_disabled_integration(self):
         self.client.login(username="alice@example.org", password="password")
