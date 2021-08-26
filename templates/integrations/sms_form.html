@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Add SMS Integration - {{ site_name }}{% endblock %}
+{% block title %}
+{% if is_new %}
+Add SMS Integration - {% site_name %}
+{% else %}
+SMS Settings - {% site_name %}
+{% endif %}
+{% endblock %}
 
 
 {% block content %}

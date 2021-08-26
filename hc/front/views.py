@@ -1012,6 +1012,8 @@ def edit_channel(request, code):
         return email_form(request, channel=channel)
     if channel.kind == "webhook":
         return webhook_form(request, channel=channel)
+    if channel.kind == "sms":
+        return sms_form(request, channel=channel)
 
     return HttpResponseBadRequest()
 
@@ -1626,28 +1628,42 @@ def add_telegram(request):
 
 @require_setting("TWILIO_AUTH")
 @login_required
-def add_sms(request, code):
-    project = _get_rw_project_for_user(request, code)
+def sms_form(request, channel=None, code=None):
+    is_new = channel is None
+    if is_new:
+        project = _get_rw_project_for_user(request, code)
+        channel = Channel(project=project, kind="sms")
+
     if request.method == "POST":
         form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=project, kind="sms")
             channel.name = form.cleaned_data["label"]
             channel.value = form.get_json()
             channel.save()
 
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
+            if is_new:
+                channel.assign_all_checks()
+            return redirect("hc-channels", channel.project.code)
+    elif is_new:
         form = forms.PhoneUpDownForm(initial={"up": False})
+    else:
+        form = forms.PhoneUpDownForm(
+            {
+                "label": channel.name,
+                "phone": channel.phone_number,
+                "up": channel.sms_notify_up,
+                "down": channel.sms_notify_down,
+            }
+        )
 
     ctx = {
         "page": "channels",
-        "project": project,
+        "project": channel.project,
         "form": form,
-        "profile": project.owner_profile,
+        "profile": channel.project.owner_profile,
+        "is_new": is_new,
     }
-    return render(request, "integrations/add_sms.html", ctx)
+    return render(request, "integrations/sms_form.html", ctx)
 
 
 @require_setting("TWILIO_AUTH")

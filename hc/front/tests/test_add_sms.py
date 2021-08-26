@@ -1,5 +1,5 @@
 from django.test.utils import override_settings
-from hc.api.models import Channel
+from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
@@ -7,11 +7,13 @@ from hc.test import BaseTestCase
 class AddSmsTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.url = "/projects/%s/add_sms/" % self.project.code
+        self.check = Check.objects.create(project=self.project)
+        self.url = f"/projects/{self.project.code}/add_sms/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
+        self.assertContains(r, "Add SMS Integration")
         self.assertContains(r, "Get a SMS message")
 
     @override_settings(USE_PAYMENTS=True)
@@ -37,6 +39,9 @@ class AddSmsTestCase(BaseTestCase):
         self.assertTrue(c.sms_notify_down)
         self.assertFalse(c.sms_notify_up)
         self.assertEqual(c.project, self.project)
+
+        # Make sure it calls assign_all_checks
+        self.assertEqual(c.checks.count(), 1)
 
     def test_it_rejects_bad_number(self):
         for v in ["not a phone number address", False, 15, "+123456789A"]:
