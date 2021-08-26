@@ -245,7 +245,7 @@ def status(request, code):
             {
                 "code": str(check.code),
                 "status": check.get_status(),
-                "last_ping": LAST_PING_TMPL.render(ctx),
+                "last_ping": LAST_PING_TMPL.render(ctx).strip(),
                 "started": check.last_start is not None,
             }
         )

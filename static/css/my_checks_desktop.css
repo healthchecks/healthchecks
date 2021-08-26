@@ -55,6 +55,10 @@
     padding-left: 15px;
 }
 
+#checks-table .integrations {
+    white-space: nowrap;
+}
+
 #checks-table .integrations span {
     padding: 10px 2px;
     display: inline-block;
@@ -103,21 +107,8 @@ button.copy-link:hover {
     text-decoration: underline;
 }
 
-
-
-
 tr:hover .copy-link {
     opacity: 1
-}
-
-#checks-table .url-cell,
-#checks-table .integrations-cell,
-#checks-table .timeout-cell {
-    white-space: nowrap;
-}
-
-.url-cell .base {
-    color: var(--text-muted);
 }
 
 .my-checks-url {
@@ -125,6 +116,11 @@ tr:hover .copy-link {
     font-size: 11.7px;
     position: relative;
     line-height: 36px;
+    white-space: nowrap;
+}
+
+.my-checks-url .base {
+    color: var(--text-muted);
 }
 
 .checks-subline-duration {

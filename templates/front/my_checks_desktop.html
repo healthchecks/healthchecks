@@ -52,13 +52,7 @@
         <th></th>
     </tr>
     {% for check in checks %}
-    <tr
-        id="{{ check.code }}"
-        class="checks-row"
-        data-url="{{ check.url }}"
-        data-email="{{ check.email }}"
-        {% if check in hidden_checks %}style="display: none"{% endif %}>
-
+    <tr id="{{ check.code }}" class="checks-row" {% if check in hidden_checks %}style="display: none"{% endif %}>
         <td class="indicator-cell">
             <span class="status ic-{{ check.get_status }}" data-toggle="tooltip"></span>
             <div class="spinner {% if check.last_start %}started{% endif %}">
@@ -78,17 +72,15 @@
                 {% endfor %}
             </div>
         </td>
-        <td class="url-cell hidden-xs hidden-sm">
+        <td class="hidden-xs hidden-sm">
             <span class="my-checks-url">
                 <span class="base hidden-md">{{ ping_endpoint }}</span>{{ check.code }}
             </span>
-            <button
-                class="copy-link hidden-sm"
-                data-clipboard-text="{{ check.url }}">
+            <button class="copy-link" data-clipboard-text="{{ check.url }}">
                 copy
             </button>
         </td>
-        <td class="integrations-cell hidden-xs">
+        <td class="hidden-xs">
             {% if channels|length <= 10 %}
                 <div class="integrations">
                 {% spaceless %}
@@ -101,7 +93,7 @@
                 {{ check.channel_set.all|length }} of {{ channels|length }}
             {% endif %}
         </td>
-        <td class="timeout-cell hidden-xs">
+        <td class="hidden-xs">
             <div
                 data-kind="{{ check.kind }}"
                 data-timeout="{{ check.timeout.total_seconds }}"
@@ -131,7 +123,6 @@
                 <span class="ic-paused"></span>
             </button>
             {% endif %}
-
             <button title="Show Details" class="btn btn-default show-log" type="button">
                 <span class="ic-dots"></span>
             </button>
