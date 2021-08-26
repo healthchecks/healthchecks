@@ -525,6 +525,9 @@ class Channel(models.Model):
     def icon_path(self):
         return "img/integrations/%s.png" % self.kind
 
+    def latest_notification(self):
+        return Notification.objects.filter(channel=self).latest()
+
     @property
     def json(self):
         return json.loads(self.value)
@@ -615,8 +618,7 @@ class Channel(models.Model):
     @property
     def discord_webhook_url(self):
         assert self.kind == "discord"
-        doc = json.loads(self.value)
-        url = doc["webhook"]["url"]
+        url = self.json["webhook"]["url"]
 
         # Discord migrated to discord.com,
         # and is dropping support for discordapp.com on 7 November 2020
@@ -626,28 +628,19 @@ class Channel(models.Model):
         return url
 
     @property
-    def discord_webhook_id(self):
-        assert self.kind == "discord"
-        doc = json.loads(self.value)
-        return doc["webhook"]["id"]
-
-    @property
     def telegram_id(self):
         assert self.kind == "telegram"
-        doc = json.loads(self.value)
-        return doc.get("id")
+        return self.json.get("id")
 
     @property
     def telegram_type(self):
         assert self.kind == "telegram"
-        doc = json.loads(self.value)
-        return doc.get("type")
+        return self.json.get("type")
 
     @property
     def telegram_name(self):
         assert self.kind == "telegram"
-        doc = json.loads(self.value)
-        return doc.get("name")
+        return self.json.get("name")
 
     @property
     def pd_service_key(self):
@@ -655,54 +648,43 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return self.value
 
-        doc = json.loads(self.value)
-        return doc["service_key"]
+        return self.json["service_key"]
 
     @property
     def pd_service_name(self):
         assert self.kind == "pd"
         if self.value.startswith("{"):
-            doc = json.loads(self.value)
-            return doc.get("name")
+            return self.json.get("name")
 
     @property
     def pd_account(self):
         assert self.kind == "pd"
         if self.value.startswith("{"):
-            doc = json.loads(self.value)
-            return doc.get("account")
-
-    def latest_notification(self):
-        return Notification.objects.filter(channel=self).latest()
+            return self.json.get("account")
 
     @property
     def phone_number(self):
         assert self.kind in ("call", "sms", "whatsapp", "signal")
         if self.value.startswith("{"):
-            doc = json.loads(self.value)
-            return doc["value"]
+            return self.json["value"]
+
         return self.value
 
     @property
     def trello_token(self):
         assert self.kind == "trello"
-        if self.value.startswith("{"):
-            doc = json.loads(self.value)
-            return doc["token"]
+        return self.json["token"]
 
     @property
     def trello_board_list(self):
         assert self.kind == "trello"
-        if self.value.startswith("{"):
-            doc = json.loads(self.value)
-            return doc["board_name"], doc["list_name"]
+        doc = json.loads(self.value)
+        return doc["board_name"], doc["list_name"]
 
     @property
     def trello_list_id(self):
         assert self.kind == "trello"
-        if self.value.startswith("{"):
-            doc = json.loads(self.value)
-            return doc["list_id"]
+        return self.json["list_id"]
 
     @property
     def email_value(self):
@@ -718,8 +700,7 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return True
 
-        doc = json.loads(self.value)
-        return doc.get("up")
+        return self.json.get("up")
 
     @property
     def email_notify_down(self):
@@ -727,32 +708,27 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return True
 
-        doc = json.loads(self.value)
-        return doc.get("down")
+        return self.json.get("down")
 
     @property
     def whatsapp_notify_up(self):
         assert self.kind == "whatsapp"
-        doc = json.loads(self.value)
-        return doc["up"]
+        return self.json["up"]
 
     @property
     def whatsapp_notify_down(self):
         assert self.kind == "whatsapp"
-        doc = json.loads(self.value)
-        return doc["down"]
+        return self.json["down"]
 
     @property
     def signal_notify_up(self):
         assert self.kind == "signal"
-        doc = json.loads(self.value)
-        return doc["up"]
+        return self.json["up"]
 
     @property
     def signal_notify_down(self):
         assert self.kind == "signal"
-        doc = json.loads(self.value)
-        return doc["down"]
+        return self.json["down"]
 
     @property
     def sms_notify_up(self):
@@ -760,8 +736,7 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return False
 
-        doc = json.loads(self.value)
-        return doc.get("up", False)
+        return self.json.get("up", False)
 
     @property
     def sms_notify_down(self):
@@ -769,8 +744,7 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return True
 
-        doc = json.loads(self.value)
-        return doc.get("down", True)
+        return self.json.get("down", True)
 
     @property
     def opsgenie_key(self):
@@ -778,8 +752,7 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return self.value
 
-        doc = json.loads(self.value)
-        return doc["key"]
+        return self.json["key"]
 
     @property
     def opsgenie_region(self):
@@ -787,14 +760,12 @@ class Channel(models.Model):
         if not self.value.startswith("{"):
             return "us"
 
-        doc = json.loads(self.value)
-        return doc["region"]
+        return self.json["region"]
 
     @property
     def zulip_bot_email(self):
         assert self.kind == "zulip"
-        doc = json.loads(self.value)
-        return doc["bot_email"]
+        return self.json["bot_email"]
 
     @property
     def zulip_site(self):
@@ -811,29 +782,22 @@ class Channel(models.Model):
     @property
     def zulip_api_key(self):
         assert self.kind == "zulip"
-        doc = json.loads(self.value)
-        return doc["api_key"]
+        return self.json["api_key"]
 
     @property
     def zulip_type(self):
         assert self.kind == "zulip"
-        doc = json.loads(self.value)
-        return doc["mtype"]
+        return self.json["mtype"]
 
     @property
     def zulip_to(self):
         assert self.kind == "zulip"
-        doc = json.loads(self.value)
-        return doc["to"]
+        return self.json["to"]
 
     @property
     def linenotify_token(self):
         assert self.kind == "linenotify"
-        if not self.value.startswith("{"):
-            return self.value
-
-        doc = json.loads(self.value)
-        return doc["token"]
+        return self.value
 
 
 class Notification(models.Model):
