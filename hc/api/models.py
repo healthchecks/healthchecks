@@ -416,7 +416,7 @@ class Channel(models.Model):
         return {"id": str(self.code), "name": self.name, "kind": self.kind}
 
     def is_editable(self):
-        return self.kind in ("email", "webhook", "sms")
+        return self.kind in ("email", "webhook", "sms", "signal")
 
     def assign_all_checks(self):
         checks = Check.objects.filter(project=self.project)

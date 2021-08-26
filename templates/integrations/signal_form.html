@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Add Signal Integration - {{ site_name }}{% endblock %}
+{% block title %}
+{% if is_new %}
+Add Signal Integration - {% site_name %}
+{% else %}
+Signal Settings - {% site_name %}
+{% endif %}
+{% endblock %}
 
 
 {% block content %}
