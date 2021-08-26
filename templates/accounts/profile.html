@@ -82,6 +82,7 @@
                         {% if use_webauthn %}
                         <tr>
                             <th>Security keys</th>
+                            <th></th>
                         </tr>
                         {% for credential in credentials %}
                         <tr>
@@ -104,6 +105,7 @@
 
                         <tr>
                             <th>Authenticator app</th>
+                            <th></th>
                         </tr>
                         {% if profile.totp %}
                         <tr>

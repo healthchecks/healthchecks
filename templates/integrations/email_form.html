@@ -68,7 +68,6 @@ Email Settings - {{ site_name }}
                         {% if form.up.value %} checked {% endif %}>
                     <span class="checkmark"></span>
                     A check goes <strong>up</strong>
-                    </span>
                     {% if form.down.errors %}
                     <div class="help-block">
                         {{ form.down.errors|join:"" }}
@@ -78,6 +77,7 @@ Email Settings - {{ site_name }}
                     <span class="text-muted">
                     Ticketing system integrations: untick this and avoid creating new tickets
                     when checks come back up.
+                    </span>
                     {% endif %}
                 </label>
             </div>
