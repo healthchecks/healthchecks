@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Add WhatsApp Integration - {{ site_name }}{% endblock %}
+{% block title %}
+{% if is_new %}
+Add WhatsApp Integration - {% site_name %}
+{% else %}
+WhatsApp Settings - {% site_name %}
+{% endif %}
+{% endblock %}
 
 
 {% block content %}

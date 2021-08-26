@@ -1,3 +1,5 @@
+import json
+
 from django.test.utils import override_settings
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
@@ -11,49 +13,46 @@ TEST_CREDENTIALS = {
 
 
 @override_settings(**TEST_CREDENTIALS)
-class AddWhatsAppTestCase(BaseTestCase):
+class EditWhatsAppTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
-        self.url = f"/projects/{self.project.code}/add_whatsapp/"
+
+        self.channel = Channel(project=self.project, kind="whatsapp")
+        self.channel.value = json.dumps(
+            {"value": "+12345678", "up": True, "down": True}
+        )
+        self.channel.save()
+
+        self.url = f"/integrations/{self.channel.code}/edit/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "Add WhatsApp Integration")
+        self.assertContains(r, "WhatsApp Settings")
         self.assertContains(r, "Get a WhatsApp message")
+        self.assertContains(r, "+12345678")
 
-    @override_settings(USE_PAYMENTS=True)
-    def test_it_warns_about_limits(self):
-        self.profile.sms_limit = 0
-        self.profile.save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertContains(r, "upgrade to a")
-
-    def test_it_creates_channel(self):
+    def test_it_updates_channel(self):
         form = {
             "label": "My Phone",
             "phone": "+1234567890",
             "down": "true",
-            "up": "true",
+            "up": "false",
         }
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertRedirects(r, self.channels_url)
 
-        c = Channel.objects.get()
-        self.assertEqual(c.kind, "whatsapp")
-        self.assertEqual(c.phone_number, "+1234567890")
-        self.assertEqual(c.name, "My Phone")
-        self.assertTrue(c.whatsapp_notify_down)
-        self.assertTrue(c.whatsapp_notify_up)
-        self.assertEqual(c.project, self.project)
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.phone_number, "+1234567890")
+        self.assertEqual(self.channel.name, "My Phone")
+        self.assertTrue(self.channel.whatsapp_notify_down)
+        self.assertFalse(self.channel.whatsapp_notify_up)
 
-        # Make sure it calls assign_all_checks
-        self.assertEqual(c.checks.count(), 1)
+        # Make sure it does not call assign_all_checks
+        self.assertFalse(self.channel.checks.exists())
 
     def test_it_obeys_up_down_flags(self):
         form = {"label": "My Phone", "phone": "+1234567890"}
@@ -62,13 +61,9 @@ class AddWhatsAppTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertRedirects(r, self.channels_url)
 
-        c = Channel.objects.get()
-        self.assertEqual(c.kind, "whatsapp")
-        self.assertEqual(c.phone_number, "+1234567890")
-        self.assertEqual(c.name, "My Phone")
-        self.assertFalse(c.whatsapp_notify_down)
-        self.assertFalse(c.whatsapp_notify_up)
-        self.assertEqual(c.project, self.project)
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.whatsapp_notify_down)
+        self.assertFalse(self.channel.whatsapp_notify_up)
 
     @override_settings(TWILIO_USE_WHATSAPP=False)
     def test_it_obeys_use_whatsapp_flag(self):

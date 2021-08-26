@@ -1016,6 +1016,8 @@ def edit_channel(request, code):
         return sms_form(request, channel=channel)
     if channel.kind == "signal":
         return signal_form(request, channel=channel)
+    if channel.kind == "whatsapp":
+        return whatsapp_form(request, channel=channel)
 
     return HttpResponseBadRequest()
 
@@ -1696,28 +1698,42 @@ def add_call(request, code):
 
 @require_setting("TWILIO_USE_WHATSAPP")
 @login_required
-def add_whatsapp(request, code):
-    project = _get_rw_project_for_user(request, code)
+def whatsapp_form(request, channel=None, code=None):
+    is_new = channel is None
+    if is_new:
+        project = _get_rw_project_for_user(request, code)
+        channel = Channel(project=project, kind="whatsapp")
+
     if request.method == "POST":
         form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=project, kind="whatsapp")
             channel.name = form.cleaned_data["label"]
             channel.value = form.get_json()
             channel.save()
 
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
+            if is_new:
+                channel.assign_all_checks()
+            return redirect("hc-channels", channel.project.code)
+    elif is_new:
         form = forms.PhoneUpDownForm()
+    else:
+        form = forms.PhoneUpDownForm(
+            {
+                "label": channel.name,
+                "phone": channel.phone_number,
+                "up": channel.whatsapp_notify_up,
+                "down": channel.whatsapp_notify_down,
+            }
+        )
 
     ctx = {
         "page": "channels",
-        "project": project,
+        "project": channel.project,
         "form": form,
-        "profile": project.owner_profile,
+        "profile": channel.project.owner_profile,
+        "is_new": is_new,
     }
-    return render(request, "integrations/add_whatsapp.html", ctx)
+    return render(request, "integrations/whatsapp_form.html", ctx)
 
 
 @require_setting("SIGNAL_CLI_ENABLED")

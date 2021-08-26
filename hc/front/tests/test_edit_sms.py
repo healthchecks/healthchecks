@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 
 
 @override_settings(TWILIO_ACCOUNT="foo", TWILIO_AUTH="foo", TWILIO_FROM="123")
-class AddSmsTestCase(BaseTestCase):
+class EditSmsTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.check = Check.objects.create(project=self.project)

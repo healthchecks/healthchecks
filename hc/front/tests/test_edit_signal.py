@@ -6,7 +6,7 @@ from hc.test import BaseTestCase
 
 
 @override_settings(SIGNAL_CLI_ENABLED=True)
-class AddSignalTestCase(BaseTestCase):
+class EditSignalTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
@@ -54,9 +54,9 @@ class AddSignalTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertRedirects(r, self.channels_url)
 
-        c = Channel.objects.get()
-        self.assertFalse(c.signal_notify_down)
-        self.assertFalse(c.signal_notify_up)
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.signal_notify_down)
+        self.assertFalse(self.channel.signal_notify_up)
 
     @override_settings(SIGNAL_CLI_ENABLED=False)
     def test_it_handles_disabled_integration(self):
