@@ -55,6 +55,11 @@ def ping(request, code, action="success", exitstatus=None):
     return response
 
 
+def ping_by_slug(request, ping_key, slug, action="success", exitstatus=None):
+    check = get_object_or_404(Check, slug=slug, project__ping_key=ping_key)
+    return ping(request, check.code, action, exitstatus)
+
+
 def _lookup(project, spec):
     unique_fields = spec.get("unique", [])
     if unique_fields:
@@ -108,7 +113,7 @@ def _update(check, spec):
         need_save = True
 
     if "name" in spec and check.name != spec["name"]:
-        check.name = spec["name"]
+        check.set_name_slug(spec["name"])
         need_save = True
 
     if "tags" in spec and check.tags != spec["tags"]:

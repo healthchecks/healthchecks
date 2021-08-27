@@ -89,9 +89,17 @@
                             API key (read-only): <br />
                             <pre>{{ project.api_key_readonly }}</pre>
                         </p>
-                        <p>Related links:</p>
+                        {% endif %}
+                        {% if project.ping_key %}
+                        <p>
+                            Ping key: <br />
+                            <pre>{{ project.ping_key }}</pre>
+                        </p>
+                        {% endif %}
+                        <p>See also:</p>
                         <ul>
                             <li><a href="{% url 'hc-serve-doc' 'api' %}">API documentation</a></li>
+                            {% if project.api_key_readonly %}
                             {% if enable_prometheus %}
                             <li>
                                 <a href="{% url 'hc-metrics' project.code project.api_key_readonly %}">Prometheus metrics endpoint</a>
@@ -101,8 +109,8 @@
                                 <a href="{{ project.dashboard_url }}">Read-only dashboard</a>
                                 (<a href="https://github.com/healthchecks/dashboard/#security">security considerations</a>)
                             </li>
+                            {% endif %}
                         </ul>
-                        {% endif %}
                         <button
                             data-toggle="modal"
                             data-target="#revoke-api-key-modal"

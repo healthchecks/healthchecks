@@ -33,6 +33,7 @@ urlpatterns = [
     path("ping/<uuid:code>/fail", views.ping, {"action": "fail"}, name="hc-fail"),
     path("ping/<uuid:code>/start", views.ping, {"action": "start"}, name="hc-start"),
     path("ping/<uuid:code>/<int:exitstatus>", views.ping),
+    path("ping/<slug:ping_key>/<slug:slug>", views.ping_by_slug),
     path("api/v1/checks/", views.checks),
     path("api/v1/checks/<uuid:code>", views.single, name="hc-api-single"),
     path("api/v1/checks/<sha1:unique_key>", views.get_check_by_unique_key),

@@ -22,8 +22,16 @@
             {% endif %}
         </th>
         <th class="hidden-xs hidden-sm">
-            <span class="visible-lg">Ping URL</span>
-            <span class="visible-md">Code</span>
+            <span class="visible-lg-inline">
+                Ping URL
+            </span>
+            <span class="visible-md-inline">{{ project.show_slugs|yesno:"Key/Slug,UUID" }}</span>
+            {% if rw %}
+            <small id="url-style-switcher">
+                <a href="?urls=uuid" {% if not project.show_slugs %}class="active"{% endif %}>uuid</a>
+                <a href="?urls=slug" {% if project.show_slugs %}class="active"{% endif %}>slug</a>
+            </small>
+            {% endif %}
         </th>
         <th class="th-integrations hidden-xs">Integrations</th>
         <th class="th-period hidden-xs">
@@ -73,12 +81,16 @@
             </div>
         </td>
         <td class="hidden-xs hidden-sm url">
+            {% if project.show_slugs and not check.slug %}
+            <span class="unavailable">unavailable, set name first</span>
+            {% else %}
             <span class="my-checks-url">
-                <span class="base hidden-md">{{ ping_endpoint }}</span>{{ check.code }}
+                <span class="base hidden-md">{{ ping_endpoint }}</span>{{ check.relative_url }}
             </span>
             <button class="copy-link" data-clipboard-text="{{ check.url }}">
                 copy
             </button>
+            {% endif %}
         </td>
         <td class="hidden-xs">
             {% if channels|length <= 10 %}

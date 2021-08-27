@@ -6,7 +6,7 @@
     background-color: var(--table-bg-hover);
 }
 
-.my-checks-name.unnamed {
+.my-checks-name.unnamed, .url span.unavailable {
     color: var(--text-muted);
     font-style: italic;
 }
@@ -132,7 +132,7 @@ tr:hover .copy-link {
     white-space: nowrap;
 }
 
-#checks-table .btn {
+#checks-table td .btn {
     border-color: transparent;
     background-color: transparent;
     font-size: 20px;
@@ -158,4 +158,12 @@ tr:hover .copy-link {
     background: #0091ea;
     color: #FFF;
     outline: none;
+}
+
+#url-style-switcher a {
+    color:  var(--text-muted);
+}
+
+#url-style-switcher a.active {
+    text-decoration:  underline;
 }

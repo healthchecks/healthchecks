@@ -97,6 +97,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
   "checks": [
     {
       "name": "Filesystem Backup",
+      "slug": "filesystem-backup",
       "tags": "backup fs",
       "desc": "Runs incremental backup every hour",
       "grace": 600,
@@ -114,6 +115,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
     },
     {
       "name": "Database Backup",
+      "slug": "database-backup",
       "tags": "production db",
       "desc": "Runs ~/db-backup.sh",
       "grace": 1200,
@@ -150,6 +152,7 @@ Example:
   "checks": [
     {
       "name": "Filesystem Backup",
+      "slug": "filesystem-backup",
       "tags": "backup fs",
       "desc": "Runs incremental backup every hour",
       "grace": 600,
@@ -164,6 +167,7 @@ Example:
     },
     {
       "name": "Database Backup",
+      "slug": "database-backup",
       "tags": "production db",
       "desc": "Runs ~/db-backup.sh",
       "grace": 1200,
@@ -215,6 +219,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
 ```json
 {
   "name": "Database Backup",
+  "slug": "database-backup",
   "tags": "production db",
   "desc": "Runs ~/db-backup.sh",
   "grace": 1200,
@@ -249,6 +254,7 @@ check's unique UUID.
 ```json
 {
   "name": "Database Backup",
+  "slug": "database-backup",
   "tags": "production db",
   "desc": "Runs ~/db-backup.sh",
   "grace": 1200,
@@ -456,6 +462,7 @@ curl SITE_ROOT/api/v1/checks/ \
   "last_ping": null,
   "n_pings": 0,
   "name": "Backups",
+  "slug": "backups",
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
@@ -636,6 +643,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "last_ping": null,
   "n_pings": 0,
   "name": "Backups",
+  "slug": "backups",
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
@@ -692,6 +700,7 @@ header is sometimes required by some network proxies and web servers.
   "last_ping": null,
   "n_pings": 0,
   "name": "Backups",
+  "slug": "backups",
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
@@ -744,6 +753,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "last_ping": null,
   "n_pings": 0,
   "name": "Backups",
+  "slug": "backups",
   "next_ping": null,
   "manual_resume": false,
   "methods": "",

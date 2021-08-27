@@ -174,6 +174,10 @@ def my_checks(request, code):
         request.profile.sort = request.GET["sort"]
         request.profile.save()
 
+    if request.GET.get("urls") in ("uuid", "slug") and rw:
+        project.show_slugs = request.GET["urls"] == "slug"
+        project.save()
+
     if request.session.get("last_project_id") != project.id:
         request.session["last_project_id"] = project.id
 
@@ -402,7 +406,7 @@ def update_name(request, code):
 
     form = forms.NameTagsForm(request.POST)
     if form.is_valid():
-        check.name = form.cleaned_data["name"]
+        check.set_name_slug(form.cleaned_data["name"])
         check.tags = form.cleaned_data["tags"]
         check.desc = form.cleaned_data["desc"]
         check.save()
@@ -694,7 +698,7 @@ def copy(request, code):
         new_name = check.name[:90] + "... (copy)"
 
     copied = Check(project=check.project)
-    copied.name = new_name
+    copied.set_name_slug(new_name)
     copied.desc, copied.tags = check.desc, check.tags
     copied.subject, copied.subject_fail = check.subject, check.subject_fail
     copied.methods = check.methods

@@ -11,7 +11,8 @@ class GetCheckTestCase(BaseTestCase):
 
         self.now = now().replace(microsecond=0)
 
-        self.a1 = Check(project=self.project, name="Alice 1")
+        self.a1 = Check(project=self.project)
+        self.a1.set_name_slug("Alice 1")
         self.a1.timeout = td(seconds=3600)
         self.a1.grace = td(seconds=900)
         self.a1.n_pings = 0
@@ -33,8 +34,9 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 15)
+        self.assertEqual(len(doc), 16)
 
+        self.assertEqual(doc["slug"], "alice-1")
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)
         self.assertEqual(doc["ping_url"], self.a1.url())
@@ -61,7 +63,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 15)
+        self.assertEqual(len(doc), 16)
 
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)

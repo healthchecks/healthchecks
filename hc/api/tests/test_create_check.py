@@ -28,6 +28,7 @@ class CreateCheckTestCase(BaseTestCase):
         doc = r.json()
         assert "ping_url" in doc
         self.assertEqual(doc["name"], "Foo")
+        self.assertEqual(doc["slug"], "foo")
         self.assertEqual(doc["tags"], "bar,baz")
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
@@ -38,6 +39,7 @@ class CreateCheckTestCase(BaseTestCase):
 
         check = Check.objects.get()
         self.assertEqual(check.name, "Foo")
+        self.assertEqual(check.slug, "foo")
         self.assertEqual(check.tags, "bar,baz")
         self.assertEqual(check.methods, "")
         self.assertEqual(check.timeout.total_seconds(), 3600)

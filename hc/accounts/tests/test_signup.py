@@ -39,6 +39,7 @@ class SignupTestCase(TestCase):
         # And check should be associated with the new user
         check = Check.objects.get()
         self.assertEqual(check.name, "My First Check")
+        self.assertEqual(check.slug, "my-first-check")
         self.assertEqual(check.project, project)
 
         # A channel should have been created

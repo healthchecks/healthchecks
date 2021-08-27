@@ -38,6 +38,7 @@ class UpdateCheckTestCase(BaseTestCase):
         doc = r.json()
         assert "ping_url" in doc
         self.assertEqual(doc["name"], "Foo")
+        self.assertEqual(doc["slug"], "foo")
         self.assertEqual(doc["tags"], "bar,baz")
         self.assertEqual(doc["desc"], "My description")
         self.assertEqual(doc["n_pings"], 0)

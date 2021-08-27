@@ -7,6 +7,7 @@ class CopyCheckTestCase(BaseTestCase):
         super().setUp()
         self.check = Check(project=self.project)
         self.check.name = "Foo"
+        self.check.slug = "foo"
         self.check.subject = "success-keyword"
         self.check.subject_fail = "failure-keyword"
         self.check.methods = "POST"
@@ -21,6 +22,7 @@ class CopyCheckTestCase(BaseTestCase):
         self.assertContains(r, "This is a brand new check")
 
         copy = Check.objects.get(name="Foo (copy)")
+        self.assertEqual(copy.slug, "foo-copy")
         self.assertEqual(copy.subject, "success-keyword")
         self.assertEqual(copy.subject_fail, "failure-keyword")
         self.assertEqual(copy.methods, "POST")

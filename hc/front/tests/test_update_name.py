@@ -17,6 +17,7 @@ class UpdateNameTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.name, "Alice Was Here")
+        self.assertEqual(self.check.slug, "alice-was-here")
 
     def test_team_access_works(self):
         payload = {"name": "Bob Was Here"}

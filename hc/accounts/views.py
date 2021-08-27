@@ -79,7 +79,7 @@ def _make_user(email, tz=None, with_project=True):
         project.save()
 
         check = Check(project=project)
-        check.name = "My First Check"
+        check.set_name_slug("My First Check")
         check.save()
 
         channel = Channel(project=project)
@@ -336,6 +336,7 @@ def project(request, code):
 
             project.api_key = ""
             project.api_key_readonly = ""
+            project.ping_key = None
             project.save()
 
             ctx["api_keys_revoked"] = True
