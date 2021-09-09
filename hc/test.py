@@ -17,6 +17,7 @@ class BaseTestCase(TestCase):
         self.project = Project(owner=self.alice, api_key="X" * 32)
         self.project.name = "Alices Project"
         self.project.badge_key = self.alice.username
+        self.project.ping_key = "p" * 22
         self.project.save()
 
         self.profile = Profile(user=self.alice)

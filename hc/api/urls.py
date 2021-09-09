@@ -1,6 +1,6 @@
 from urllib.parse import quote, unquote
 
-from django.urls import path, register_converter
+from django.urls import include, path, register_converter
 from hc.api import views
 
 
@@ -27,13 +27,24 @@ class SHA1Converter:
 register_converter(QuoteConverter, "quoted")
 register_converter(SHA1Converter, "sha1")
 
+uuid_urls = [
+    path("", views.ping, name="hc-ping"),
+    path("fail", views.ping, {"action": "fail"}),
+    path("start", views.ping, {"action": "start"}),
+    path("<int:exitstatus>", views.ping),
+]
+
+slug_urls = [
+    path("fail", views.ping_by_slug, {"action": "fail"}),
+    path("start", views.ping_by_slug, {"action": "start"}),
+    path("<int:exitstatus>", views.ping_by_slug),
+]
+
 urlpatterns = [
-    path("ping/<uuid:code>/", views.ping, name="hc-ping-slash"),
-    path("ping/<uuid:code>", views.ping, name="hc-ping"),
-    path("ping/<uuid:code>/fail", views.ping, {"action": "fail"}, name="hc-fail"),
-    path("ping/<uuid:code>/start", views.ping, {"action": "start"}, name="hc-start"),
-    path("ping/<uuid:code>/<int:exitstatus>", views.ping),
+    path("ping/<uuid:code>", views.ping),
+    path("ping/<uuid:code>/", include(uuid_urls)),
     path("ping/<slug:ping_key>/<slug:slug>", views.ping_by_slug),
+    path("ping/<slug:ping_key>/<slug:slug>/", include(slug_urls)),
     path("api/v1/checks/", views.checks),
     path("api/v1/checks/<uuid:code>", views.single, name="hc-api-single"),
     path("api/v1/checks/<sha1:unique_key>", views.get_check_by_unique_key),

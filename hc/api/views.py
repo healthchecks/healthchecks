@@ -31,8 +31,9 @@ class BadChannelException(Exception):
 
 @csrf_exempt
 @never_cache
-def ping(request, code, action="success", exitstatus=None):
-    check = get_object_or_404(Check, code=code)
+def ping(request, code, check=None, action="success", exitstatus=None):
+    if check is None:
+        check = get_object_or_404(Check, code=code)
 
     headers = request.META
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
@@ -55,9 +56,14 @@ def ping(request, code, action="success", exitstatus=None):
     return response
 
 
+@csrf_exempt
 def ping_by_slug(request, ping_key, slug, action="success", exitstatus=None):
-    check = get_object_or_404(Check, slug=slug, project__ping_key=ping_key)
-    return ping(request, check.code, action, exitstatus)
+    try:
+        check = get_object_or_404(Check, slug=slug, project__ping_key=ping_key)
+    except Check.MultipleObjectsReturned:
+        return HttpResponse("ambiguous slug", status=409)
+
+    return ping(request, check.code, check, action, exitstatus)
 
 
 def _lookup(project, spec):
