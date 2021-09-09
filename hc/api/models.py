@@ -115,23 +115,23 @@ class Check(models.Model):
 
         return str(self.code)
 
-    def relative_url(self):
+    def url(self):
+        """ Return check's ping url in user's preferred style.
+
+        Note: this method reads self.project. If project is not loaded already,
+        this causes a SQL query.
+
+        """
+
         if self.project_id and self.project.show_slugs:
             if not self.slug:
                 return None
 
-            key = self.project.ping_key
             # If ping_key is not set, use dummy placeholder
-            if key is None:
-                key = "{ping_key}"
-            return key + "/" + self.slug
+            key = self.project.ping_key or "{ping_key}"
+            return settings.PING_ENDPOINT + key + "/" + self.slug
 
-        return str(self.code)
-
-    def url(self):
-        s = self.relative_url()
-        if s:
-            return settings.PING_ENDPOINT + s
+        return settings.PING_ENDPOINT + str(self.code)
 
     def details_url(self):
         return settings.SITE_ROOT + reverse("hc-details", args=[self.code])

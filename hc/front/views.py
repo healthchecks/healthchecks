@@ -182,6 +182,7 @@ def my_checks(request, code):
         request.session["last_project_id"] = project.id
 
     q = Check.objects.filter(project=project)
+    q = q.select_related("project")
     checks = list(q.prefetch_related("channel_set"))
     sortchecks(checks, request.profile.sort)
 

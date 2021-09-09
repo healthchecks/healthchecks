@@ -84,12 +84,8 @@
             {% if project.show_slugs and not check.slug %}
             <span class="unavailable">unavailable, set name first</span>
             {% else %}
-            <span class="my-checks-url">
-                <span class="base hidden-md">{{ ping_endpoint }}</span>{{ check.relative_url }}
-            </span>
-            <button class="copy-link" data-clipboard-text="{{ check.url }}">
-                copy
-            </button>
+            <span class="my-checks-url">{{ check.url|format_ping_endpoint }}</span>
+            <button class="copy-link" data-clipboard-text="{{ check.url }}">copy</button>
             {% endif %}
         </td>
         <td class="hidden-xs">

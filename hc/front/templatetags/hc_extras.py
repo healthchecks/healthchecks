@@ -213,3 +213,17 @@ def guess_schedule(check):
     hours, seconds = divmod(v, 3600)
     if hours in (2, 3, 4, 6, 8, 12) and seconds == 0:
         return f"0 */{hours} * * *"
+
+
+FORMATTED_PING_ENDPOINT = (
+    f"""<span class="base hidden-md">{settings.PING_ENDPOINT}</span>"""
+)
+
+
+@register.filter
+def format_ping_endpoint(ping_url):
+    """ Wrap the ping endpoint in span tags for styling with CSS. """
+
+    assert ping_url.startswith(settings.PING_ENDPOINT)
+    tail = ping_url[len(settings.PING_ENDPOINT) :]
+    return mark_safe(FORMATTED_PING_ENDPOINT + escape(tail))
