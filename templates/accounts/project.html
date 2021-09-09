@@ -358,11 +358,14 @@
     </div>
 </div>
 
+{% if rw %}
 <form id="create-key-form" method="post">
     {% csrf_token %}
     <input id="create-key-type" type="hidden" name="create_key">
 </form>
+{% endif %}
 
+{% if rw %}
 <div id="revoke-key-modal" class="modal">
     <div class="modal-dialog">
         <form id="revoke-key-form" method="post">
@@ -394,7 +397,9 @@
         </form>
     </div>
 </div>
+{% endif %}
 
+{% if is_manager %}
 <div id="remove-team-member-modal" class="modal">
     <div class="modal-dialog">
         <form id="remove-team-member-form" method="post">
@@ -423,7 +428,9 @@
         </form>
     </div>
 </div>
+{% endif %}
 
+{% if is_manager %}
 <div id="invite-team-member-modal" class="modal">
     <div class="modal-dialog">
         <form method="post" class="form-horizontal">
@@ -506,7 +513,9 @@
         </form>
     </div>
 </div>
+{% endif %}
 
+{% if rw %}
 <div id="set-project-name-modal" class="modal">
     <div class="modal-dialog">
         <form method="post" class="form-horizontal">
@@ -541,7 +550,9 @@
         </form>
     </div>
 </div>
+{% endif %}
 
+{% if is_owner %}
 <div id="remove-project-modal" class="modal">
     <div class="modal-dialog">
         <form method="post" action="{% url 'hc-remove-project' project.code %}">
@@ -567,6 +578,7 @@
         </form>
     </div>
 </div>
+{% endif %}
 
 {% if is_owner and not transfer_request %}
 <div id="transfer-modal" class="modal">
