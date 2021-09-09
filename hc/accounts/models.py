@@ -338,18 +338,6 @@ class Project(models.Model):
     def num_checks_available(self):
         return self.owner_profile.num_checks_available()
 
-    def set_api_keys(self):
-        def pick(nbytes=24):
-            while True:
-                candidate = token_urlsafe(nbytes)
-                if candidate[0] not in "-_" and candidate[-1] not in "-_":
-                    return candidate
-
-        self.api_key = pick()
-        self.api_key_readonly = pick()
-        self.ping_key = pick(16)
-        self.save()
-
     def invite_suggestions(self):
         q = User.objects.filter(memberships__project__owner_id=self.owner_id)
         q = q.exclude(memberships__project=self)

@@ -1,6 +1,6 @@
 import base64
 from datetime import timedelta as td
-from secrets import token_bytes
+from secrets import token_bytes, token_urlsafe
 from urllib.parse import urlparse
 import time
 import uuid
@@ -137,6 +137,13 @@ def _check_2fa(request, user):
 
     auth_login(request, user)
     return _redirect_after_login(request)
+
+
+def _new_key(nbytes=24):
+    while True:
+        candidate = token_urlsafe(nbytes)
+        if candidate[0] not in "-_" and candidate[-1] not in "-_":
+            return candidate
 
 
 def login(request):
@@ -320,32 +327,40 @@ def project(request, code):
     }
 
     if request.method == "POST":
-        if "create_api_keys" in request.POST:
+        if "create_key" in request.POST:
             if not rw:
                 return HttpResponseForbidden()
 
-            project.set_api_keys()
+            if request.POST["create_key"] == "api_key":
+                project.api_key = _new_key(24)
+            elif request.POST["create_key"] == "api_key_readonly":
+                project.api_key_readonly = _new_key(24)
+            elif request.POST["create_key"] == "ping_key":
+                project.ping_key = _new_key(16)
             project.save()
 
-            ctx["show_api_keys"] = True
-            ctx["api_keys_created"] = True
+            ctx["key_created"] = True
             ctx["api_status"] = "success"
-        elif "revoke_api_keys" in request.POST:
+            ctx["show_keys"] = True
+        elif "revoke_key" in request.POST:
             if not rw:
                 return HttpResponseForbidden()
 
-            project.api_key = ""
-            project.api_key_readonly = ""
-            project.ping_key = None
+            if request.POST["revoke_key"] == "api_key":
+                project.api_key = ""
+            elif request.POST["revoke_key"] == "api_key_readonly":
+                project.api_key_readonly = ""
+            elif request.POST["revoke_key"] == "ping_key":
+                project.ping_key = None
             project.save()
 
-            ctx["api_keys_revoked"] = True
+            ctx["key_revoked"] = True
             ctx["api_status"] = "info"
-        elif "show_api_keys" in request.POST:
+        elif "show_keys" in request.POST:
             if not rw:
                 return HttpResponseForbidden()
 
-            ctx["show_api_keys"] = True
+            ctx["show_keys"] = True
         elif "invite_team_member" in request.POST:
             if not is_manager:
                 return HttpResponseForbidden()

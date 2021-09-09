@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add /api/v1/badges/ endpoint (#552)
 - Add ability to edit existing email, Signal, SMS, WhatsApp integrations
+- Add new ping URL format: /{ping_key}/{slug} (#491)
 
 ### Bug Fixes
 - Add handling for non-latin-1 characters in webhook headers

@@ -58,6 +58,7 @@
     <link rel="stylesheet" href="{% static 'css/syntax.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/welcome.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/set_password.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/project.css' %}" type="text/css">
     {% endcompress %}
 </head>
 <body class="page-{{ page }}{% if request.user.is_authenticated and request.profile.theme == 'dark' %} dark{% endif%}">

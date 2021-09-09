@@ -227,3 +227,8 @@ def format_ping_endpoint(ping_url):
     assert ping_url.startswith(settings.PING_ENDPOINT)
     tail = ping_url[len(settings.PING_ENDPOINT) :]
     return mark_safe(FORMATTED_PING_ENDPOINT + escape(tail))
+
+
+@register.filter
+def mask_key(key):
+    return key[:4] + "*" * len(key[4:])

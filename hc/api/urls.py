@@ -28,7 +28,7 @@ register_converter(QuoteConverter, "quoted")
 register_converter(SHA1Converter, "sha1")
 
 uuid_urls = [
-    path("", views.ping, name="hc-ping"),
+    path("", views.ping),
     path("fail", views.ping, {"action": "fail"}),
     path("start", views.ping, {"action": "start"}),
     path("<int:exitstatus>", views.ping),
