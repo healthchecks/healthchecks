@@ -171,7 +171,6 @@ def _update(check, spec):
         check.channel_set.set(new_channels)
 
 
-@validate_json()
 @authorize_read
 def get_checks(request):
     q = Check.objects.filter(project=request.project)
@@ -222,7 +221,7 @@ def checks(request):
 
 
 @cors("GET")
-@validate_json()
+@csrf_exempt
 @authorize
 def channels(request):
     q = Channel.objects.filter(project=request.project)
@@ -230,7 +229,6 @@ def channels(request):
     return JsonResponse({"channels": channels})
 
 
-@validate_json()
 @authorize_read
 def get_check(request, code):
     check = get_object_or_404(Check, code=code)
@@ -241,7 +239,6 @@ def get_check(request, code):
 
 @cors("GET")
 @csrf_exempt
-@validate_json()
 @authorize_read
 def get_check_by_unique_key(request, unique_key):
     checks = Check.objects.filter(project=request.project.id)
@@ -266,7 +263,6 @@ def update_check(request, code):
     return JsonResponse(check.to_dict())
 
 
-@validate_json()
 @authorize
 def delete_check(request, code):
     check = get_object_or_404(Check, code=code)
@@ -312,6 +308,7 @@ def pause(request, code):
 
 
 @cors("GET")
+@csrf_exempt
 @validate_json()
 @authorize
 def pings(request, code):
@@ -369,7 +366,6 @@ def flips(request, check):
 
 @cors("GET")
 @csrf_exempt
-@validate_json()
 @authorize_read
 def flips_by_uuid(request, code):
     check = get_object_or_404(Check, code=code)
@@ -378,7 +374,6 @@ def flips_by_uuid(request, code):
 
 @cors("GET")
 @csrf_exempt
-@validate_json()
 @authorize_read
 def flips_by_unique_key(request, unique_key):
     checks = Check.objects.filter(project=request.project.id)
@@ -389,6 +384,7 @@ def flips_by_unique_key(request, unique_key):
 
 
 @cors("GET")
+@csrf_exempt
 @authorize_read
 def badges(request):
     tags = set(["*"])

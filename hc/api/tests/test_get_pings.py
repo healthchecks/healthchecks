@@ -54,5 +54,9 @@ class GetPingsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 401)
 
     def test_it_rejects_post(self):
-        r = self.client.post(self.url, HTTP_X_API_KEY="X" * 32)
+        r = self.csrf_client.post(self.url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 405)
+
+    def test_it_handles_missing_api_key(self):
+        r = self.client.get(self.url)
+        self.assertContains(r, "missing api key", status_code=401)

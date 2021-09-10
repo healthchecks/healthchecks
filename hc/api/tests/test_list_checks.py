@@ -94,15 +94,6 @@ class ListChecksTestCase(BaseTestCase):
         for check in data["checks"]:
             self.assertNotEqual(check["name"], "Bob 1")
 
-    def test_it_accepts_api_key_from_request_body(self):
-        payload = json.dumps({"api_key": "X" * 32})
-        r = self.client.generic(
-            "GET", "/api/v1/checks/", payload, content_type="application/json"
-        )
-
-        self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "Alice")
-
     def test_it_works_with_tags_param(self):
         r = self.client.get("/api/v1/checks/?tag=a2-tag", HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 200)

@@ -73,7 +73,7 @@ def validate_json(schema=None):
     def decorator(f):
         @wraps(f)
         def wrapper(request, *args, **kwds):
-            if request.body:
+            if request.method == "POST" and request.body:
                 try:
                     request.json = json.loads(request.body.decode())
                 except ValueError:

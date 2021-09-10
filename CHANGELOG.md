@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 - Add handling for non-latin-1 characters in webhook headers
 - Fix dark mode bug in selectpicker widgets
 - Fix a crash during login when user's profile does not exist (#77)
+- Drop API support for GET, DELETE requests with a request body
+- Add missing @csrf_exempt annotations in API views
 
 ## v1.22.0 - 2020-08-06
 
