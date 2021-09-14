@@ -68,13 +68,23 @@ Each check is always in one of the following states, depicted by a status icon:
 workers, batch scripts, scheduled tasks, web services) make HTTP requests to the
 ping URL to signal a start of the execution, a success, or a failure.
 
-While the "success" signals are essential, "start" and "failure" are optional.
+SITE_NAME supports two ping URL formats:
+
+* `PING_ENDPOINT{uuid}`<br>
+The check is identified by its UUID. Check UUIDs are assigned
+automatically by SITE_NAME, and are guaranteed to be unique.
+* `PING_ENDPOINT{project-ping-key}/{name-slug}`<br>
+The check is identified by project's **Ping key** and check's
+**slug** (its name, converted to lowercase, spaces replaced with hyphens).
+
+You can append `/start`, `/fail` or `/{exitcode}` to the base ping URL to send
+"start" and "failure" signals. The "start" and "failure" signals are optional.
 You don't have to use them, but you can gain additional monitoring insights
-by using them. See [Measuring script run time](measuring_script_run_time/) and
+if you do use them. See [Measuring script run time](measuring_script_run_time/) and
 [Signaling failures](signaling_failures/) for details.
 
-You should treat ping URLs as secrets. If you make them public, anybody can send
-telemetry signals to your checks and mess with your monitoring.
+You should treat check UUIDs and project Ping keys as secrets. If you make them public,
+anybody can send telemetry signals to your checks and mess with your monitoring.
 
 ---
 
