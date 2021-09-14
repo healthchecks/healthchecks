@@ -12,7 +12,7 @@ class CreateCheckTestCase(BaseTestCase):
         if "api_key" not in data:
             data["api_key"] = "X" * 32
 
-        r = self.client.post(self.URL, data, content_type="application/json")
+        r = self.csrf_client.post(self.URL, data, content_type="application/json")
         if expect_fragment:
             self.assertEqual(r.status_code, 400)
             self.assertIn(expect_fragment, r.json()["error"])

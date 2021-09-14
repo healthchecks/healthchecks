@@ -20,7 +20,7 @@ class GetPingsTestCase(BaseTestCase):
         self.url = "/api/v1/checks/%s/pings/" % self.a1.code
 
     def get(self, api_key="X" * 32):
-        return self.client.get(self.url, HTTP_X_API_KEY=api_key)
+        return self.csrf_client.get(self.url, HTTP_X_API_KEY=api_key)
 
     def test_it_works(self):
         self.a1.ping(

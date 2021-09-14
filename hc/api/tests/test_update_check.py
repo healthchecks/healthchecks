@@ -13,7 +13,7 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def post(self, code, data):
         url = "/api/v1/checks/%s" % code
-        return self.client.post(url, data, content_type="application/json")
+        return self.csrf_client.post(url, data, content_type="application/json")
 
     def test_it_works(self):
         self.check.last_ping = now()

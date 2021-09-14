@@ -28,6 +28,7 @@ class BadgeTestCase(BaseTestCase):
     def test_it_returns_svg(self):
         r = self.client.get(self.svg_url)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
+        self.assertIn("no-cache", r["Cache-Control"])
         self.assertContains(r, "#4c1")
 
     def test_it_rejects_bad_format(self):

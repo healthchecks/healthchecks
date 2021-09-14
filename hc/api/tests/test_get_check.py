@@ -74,6 +74,10 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["channels"], str(self.c1.code))
         self.assertEqual(doc["desc"], "This is description")
 
+    def test_it_rejects_post_unique_key(self):
+        r = self.csrf_client.post(f"/api/v1/checks/{self.a1.unique_key}")
+        self.assertEqual(r.status_code, 405)
+
     def test_readonly_key_works(self):
         self.project.api_key_readonly = "R" * 32
         self.project.save()
