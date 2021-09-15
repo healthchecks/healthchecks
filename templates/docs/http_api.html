@@ -59,7 +59,7 @@ code and ignore the request.</p>
 </tr>
 <tr>
 <td><a href="#exitcode-uuid">Report script's exit status (UUID)</a></td>
-<td><code>PING_ENDPOINT&lt;uuid&gt;/&lt;exitcode&gt;</code></td>
+<td><code>PING_ENDPOINT&lt;uuid&gt;/&lt;exit-status&gt;</code></td>
 </tr>
 <tr>
 <td><a href="#success-slug">Success (slug)</a></td>
@@ -75,7 +75,7 @@ code and ignore the request.</p>
 </tr>
 <tr>
 <td><a href="#exitcode-slug">Report script's exit status (slug)</a></td>
-<td><code>PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;/&lt;exitcode&gt;</code></td>
+<td><code>PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;/&lt;exit-status&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -90,7 +90,7 @@ a continuously running process is still running and healthy).</p>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>404 Not Found</dt>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified UUID.</dd>
 </dl>
 <p><strong>Example</strong></p>
@@ -124,7 +124,7 @@ but it enables a few extra features:</p>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>404 Not Found</dt>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified UUID.</dd>
 </dl>
 <p><strong>Example</strong></p>
@@ -154,7 +154,7 @@ minimizes the delay from your monitored service failing to you receiving an aler
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>404 Not Found</dt>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified UUID.</dd>
 </dl>
 <p><strong>Example</strong></p>
@@ -185,9 +185,9 @@ interprets 0 as success and all other values as failure.</p>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>400 Bad Request</dt>
-<dd>Invalid URL format.</dd>
-<dt>404 Not Found</dt>
+<dt>400 invalid url format</dt>
+<dd>The URL does not match the expected format.</dd>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified UUID.</dd>
 </dl>
 <p><strong>Example</strong></p>
@@ -218,9 +218,9 @@ included in the URL.</p>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>404 Not Found</dt>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified ping key and slug combination.</dd>
-<dt>409 Conflict</dt>
+<dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
 <p><strong>Example</strong></p>
@@ -255,9 +255,9 @@ included in the URL.</p>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>404 Not Found</dt>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified ping key and slug combination.</dd>
-<dt>409 Conflict</dt>
+<dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
 <p><strong>Example</strong></p>
@@ -288,9 +288,9 @@ included in the URL.</p>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>404 Not Found</dt>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified ping key and slug combination.</dd>
-<dt>409 Conflict</dt>
+<dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
 <p><strong>Example</strong></p>
@@ -322,11 +322,11 @@ included in the URL.</p>
 <dl>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
-<dt>400 Bad Request</dt>
-<dd>Invalid URL format.</dd>
-<dt>404 Not Found</dt>
+<dt>400 invalid url format</dt>
+<dd>The URL does not match the expected format.</dd>
+<dt>404 not found</dt>
 <dd>Could not find a check with the specified ping key and slug combination.</dd>
-<dt>409 Conflict</dt>
+<dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
 <p><strong>Example</strong></p>

@@ -54,11 +54,11 @@ Endpoint Name                                               | Endpoint Address
 [Success (UUID)](#success-uuid)       | `PING_ENDPOINT<uuid>`
 [Start (UUID)](#start-uuid)           | `PING_ENDPOINT<uuid>/start`
 [Failure (UUID)](#fail-uuid)          | `PING_ENDPOINT<uuid>/fail`
-[Report script's exit status (UUID)](#exitcode-uuid)           | `PING_ENDPOINT<uuid>/<exitcode>`
+[Report script's exit status (UUID)](#exitcode-uuid)           | `PING_ENDPOINT<uuid>/<exit-status>`
 [Success (slug)](#success-slug)       | `PING_ENDPOINT<ping-key>/<slug>`
 [Start (slug)](#start-slug)           | `PING_ENDPOINT<ping-key>/<slug>/start`
 [Failure (slug)](#fail-slug)          | `PING_ENDPOINT<ping-key>/<slug>/fail`
-[Report script's exit status (slug)](#exitcode-slug)           | `PING_ENDPOINT<ping-key>/<slug>/<exitcode>`
+[Report script's exit status (slug)](#exitcode-slug)           | `PING_ENDPOINT<ping-key>/<slug>/<exit-status>`
 
 ## Send a "success" Signal Using UUID {: #success-uuid .rule }
 
@@ -76,7 +76,7 @@ SITE_NAME identifies the check by the UUID value included in the URL.
 200 OK
 :   The request succeeded.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified UUID.
 
 **Example**
@@ -117,7 +117,7 @@ SITE_NAME identifies the check by the UUID value included in the URL.
 200 OK
 :   The request succeeded.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified UUID.
 
 **Example**
@@ -155,7 +155,7 @@ SITE_NAME identifies the check by the UUID value included in the URL.
 200 OK
 :   The request succeeded.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified UUID.
 
 **Example**
@@ -194,10 +194,10 @@ SITE_NAME identifies the check by the UUID value included in the URL.
 200 OK
 :   The request succeeded.
 
-400 Bad Request
-:   Invalid URL format.
+400 invalid url format
+:   The URL does not match the expected format.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified UUID.
 
 **Example**
@@ -236,10 +236,10 @@ included in the URL.
 200 OK
 :   The request succeeded.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified ping key and slug combination.
 
-409 Conflict
+409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
 
 **Example**
@@ -281,10 +281,10 @@ included in the URL.
 200 OK
 :   The request succeeded.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified ping key and slug combination.
 
-409 Conflict
+409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
 
 **Example**
@@ -323,10 +323,10 @@ included in the URL.
 200 OK
 :   The request succeeded.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified ping key and slug combination.
 
-409 Conflict
+409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
 
 **Example**
@@ -366,13 +366,13 @@ included in the URL.
 200 OK
 :   The request succeeded.
 
-400 Bad Request
-:   Invalid URL format.
+400 invalid url format
+:   The URL does not match the expected format.
 
-404 Not Found
+404 not found
 :   Could not find a check with the specified ping key and slug combination.
 
-409 Conflict
+409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
 
 **Example**

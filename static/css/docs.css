@@ -104,6 +104,10 @@ h2.rule {
     grid-template-columns: 150px auto;
 }
 
+.page-docs .docs-http_api dl {
+    grid-template-columns: 220px auto;
+}
+
 .page-docs dt {
     font-weight: normal;
     font-family: "Lucida Console", Monaco, monospace;
