@@ -249,3 +249,7 @@ class PingTestCase(BaseTestCase):
         ping = Ping.objects.get()
         self.assertEqual(ping.kind, "fail")
         self.assertEqual(ping.exitstatus, 123)
+
+    def test_it_rejects_exit_status_over_255(self):
+        r = self.client.get(self.url + "/256")
+        self.assertEqual(r.status_code, 400)

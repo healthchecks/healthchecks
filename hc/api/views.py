@@ -35,6 +35,9 @@ def ping(request, code, check=None, action="success", exitstatus=None):
     if check is None:
         check = get_object_or_404(Check, code=code)
 
+    if exitstatus is not None and exitstatus > 255:
+        return HttpResponseBadRequest("invalid url format")
+
     headers = request.META
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
     remote_addr = remote_addr.split(",")[0]
