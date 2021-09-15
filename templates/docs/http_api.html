@@ -1,5 +1,5 @@
 <h1>Pinging API</h1>
-<p>With the Pinging API, you can signal <strong>success</strong>, <strong>fail</strong>, and <strong>start</strong> events from
+<p>With the Pinging API, you can signal <strong>success</strong>, <strong>start</strong>, and <strong>failure</strong> events from
 your systems.</p>
 <h2>General Notes</h2>
 <p>All ping endpoints support:</p>
@@ -14,13 +14,85 @@ If the request body looks like a UTF-8 string, SITE_NAME stores the request body
 </ul>
 <p>Successful responses will have the "200 OK" HTTP response status code and a short
 "OK" string in the response body.</p>
-<h2>Send a "success" Signal</h2>
-<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}
+<h2>UUIDs and Slugs</h2>
+<p>Each Pinging API request needs to uniquely identify a check.
+SITE_NAME supports two ways of identifying a check: by check's UUID,
+or by a combination of project's Ping Key and check's slug.</p>
+<p><strong>Check's UUID</strong> is automatically assigned when the check is created. It is
+immutable. You cannot replace the automatically assigned UUID with a manually
+chosen one. When you delete a check, you also lose its UUID and cannot get it back.</p>
+<p>You can look up UUIDs of your checks in web UI or via <a href="../api/">Management API</a> calls.</p>
+<p><strong>Check's slug</strong> is its name with the following transformations applied:</p>
+<ul>
+<li>Convert to ASCII.</li>
+<li>Convert to lowercase.</li>
+<li>Remove characters that aren't alphanumerics, underscores, hyphens, or whitespace.</li>
+<li>Replace any whitespace or repeated dashes with single dashes.</li>
+<li>Remove leading and trailing whitespace, dashes, and underscores.</li>
+</ul>
+<p>For example, if check's name is "Database Backup", its slug is <code>database-backup</code>.</p>
+<p>Check's slug <strong>can change</strong>. SITE_NAME updates check's slug whenever its name changes.</p>
+<p>Check's slug is <strong>not guaranteed to be unique</strong>. If multiple checks in the project
+have the same name, they also have the same slug. If you make a Pinging API
+request using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status
+code and ignore the request.</p>
+<h2>Endpoints</h2>
+<table>
+<thead>
+<tr>
+<th>Endpoint Name</th>
+<th>Endpoint Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#success-uuid">Success (UUID)</a></td>
+<td><code>PING_ENDPOINT&lt;uuid&gt;</code></td>
+</tr>
+<tr>
+<td><a href="#start-uuid">Start (UUID)</a></td>
+<td><code>PING_ENDPOINT&lt;uuid&gt;/start</code></td>
+</tr>
+<tr>
+<td><a href="#fail-uuid">Failure (UUID)</a></td>
+<td><code>PING_ENDPOINT&lt;uuid&gt;/fail</code></td>
+</tr>
+<tr>
+<td><a href="#exitcode-uuid">Report script's exit status (UUID)</a></td>
+<td><code>PING_ENDPOINT&lt;uuid&gt;/&lt;exitcode&gt;</code></td>
+</tr>
+<tr>
+<td><a href="#success-slug">Success (slug)</a></td>
+<td><code>PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;</code></td>
+</tr>
+<tr>
+<td><a href="#start-slug">Start (slug)</a></td>
+<td><code>PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;/start</code></td>
+</tr>
+<tr>
+<td><a href="#fail-slug">Failure (slug)</a></td>
+<td><code>PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;/fail</code></td>
+</tr>
+<tr>
+<td><a href="#exitcode-slug">Report script's exit status (slug)</a></td>
+<td><code>PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;/&lt;exitcode&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h2 class="rule" id="success-uuid">Send a "success" Signal Using UUID</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;uuid&gt;
 </code></pre></div>
 
 <p>Signals to SITE_NAME that the job has completed successfully (or,
-continuously running processes are still running and healthy). The <code>uuid</code> parameter
-is unique for each check.</p>
+a continuously running process is still running and healthy).</p>
+<p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified UUID.</dd>
+</dl>
 <p><strong>Example</strong></p>
 <div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
@@ -37,38 +109,24 @@ is unique for each check.</p>
 OK
 </code></pre></div>
 
-<h2>Send a "fail" Signal</h2>
-<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}/fail
+<h2 class="rule" id="start-uuid">Send a "start" Signal Using UUID</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;uuid&gt;/start
 </code></pre></div>
 
-<p>Signals to SITE_NAME that the job has failed. Actively signaling a failure
-minimizes the delay from your monitored service failing to you receiving an alert.</p>
-<p><strong>Example</strong></p>
-<div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/fail</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
-<span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
-</code></pre></div>
-
-<div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
-<span class="na">Server</span><span class="o">:</span> <span class="l">nginx</span>
-<span class="na">Date</span><span class="o">:</span> <span class="l">Wed, 29 Jan 2020 09:58:23 GMT</span>
-<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
-<span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
-<span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
-<span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
-
-OK
-</code></pre></div>
-
-<h2>Send a "start" Signal</h2>
-<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}/start
-</code></pre></div>
-
-<p>Sends a "job has started!" message to SITE_NAME. Sending a "start" signal is
-optional, but it enables a few extra features:</p>
+<p>Sends a "job has started!" message to SITE_NAME. Sending a "start" signal is optional,
+but it enables a few extra features:</p>
 <ul>
 <li>SITE_NAME will measure and display job execution times</li>
 <li>SITE_NAME will detect if the job runs longer than its configured grace time</li>
 </ul>
+<p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified UUID.</dd>
+</dl>
 <p><strong>Example</strong></p>
 <div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/start</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
@@ -85,15 +143,194 @@ optional, but it enables a few extra features:</p>
 OK
 </code></pre></div>
 
-<h2>Report Script's Exit Status</h2>
-<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT{uuid}/{exit-status}
+<h2 class="rule" id="fail-uuid">Send a "failure" Signal Using UUID</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;uuid&gt;/fail
+</code></pre></div>
+
+<p>Signals to SITE_NAME that the job has failed. Actively signaling a failure
+minimizes the delay from your monitored service failing to you receiving an alert.</p>
+<p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified UUID.</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/fail</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">nginx</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Wed, 29 Jan 2020 09:58:23 GMT</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
+<span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+
+OK
+</code></pre></div>
+
+<h2 class="rule" id="exitcode-uuid">Report Script's Exit Status (Using UUID)</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;uuid&gt;/&lt;exit-status&gt;
 </code></pre></div>
 
 <p>Sends a success or failure signal depending on the exit status
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
 interprets 0 as success and all other values as failure.</p>
+<p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>400 Bad Request</dt>
+<dd>Invalid URL format.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified UUID.</dd>
+</dl>
 <p><strong>Example</strong></p>
 <div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">nginx</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Wed, 29 Jan 2020 09:58:23 GMT</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
+<span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+
+OK
+</code></pre></div>
+
+<h2 class="rule" id="success-slug">Send a "success" Signal (Using Slug)</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;
+</code></pre></div>
+
+<p>Signals to SITE_NAME that the job has completed successfully (or,
+a continuously running process is still running and healthy).</p>
+<p>SITE_NAME identifies the check by project's ping key and check's slug
+included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dt>409 Conflict</dt>
+<dd>Ambiguous, the slug matched multiple checks.</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/fqOOd6-F4MMNuCEnzTU01w/database-backup</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">nginx</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Wed, 29 Jan 2020 09:58:23 GMT</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
+<span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+
+OK
+</code></pre></div>
+
+<h2 class="rule" id="start-slug">Send a "start" Signal (Using Slug)</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;/start
+</code></pre></div>
+
+<p>Sends a "job has started!" message to SITE_NAME. Sending a "start" signal is
+optional, but it enables a few extra features:</p>
+<ul>
+<li>SITE_NAME will measure and display job execution times</li>
+<li>SITE_NAME will detect if the job runs longer than its configured grace time</li>
+</ul>
+<p>SITE_NAME identifies the check by project's ping key and check's slug
+included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dt>409 Conflict</dt>
+<dd>Ambiguous, the slug matched multiple checks.</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/fqOOd6-F4MMNuCEnzTU01w/database-backup/start</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">nginx</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Wed, 29 Jan 2020 09:58:23 GMT</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
+<span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+
+OK
+</code></pre></div>
+
+<h2 class="rule" id="fail-slug">Send a "failure" Signal (Using slug)</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;ping-key/&lt;slug&gt;/fail
+</code></pre></div>
+
+<p>Signals to SITE_NAME that the job has failed. Actively signaling a failure
+minimizes the delay from your monitored service failing to you receiving an alert.</p>
+<p>SITE_NAME identifies the check by project's ping key and check's slug
+included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dt>409 Conflict</dt>
+<dd>Ambiguous, the slug matched multiple checks.</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/fqOOd6-F4MMNuCEnzTU01w/database-backup/fail</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
+<span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Server</span><span class="o">:</span> <span class="l">nginx</span>
+<span class="na">Date</span><span class="o">:</span> <span class="l">Wed, 29 Jan 2020 09:58:23 GMT</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain; charset=utf-8</span>
+<span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
+<span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
+<span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+
+OK
+</code></pre></div>
+
+<h2 class="rule" id="exitcode-slug">Report Script's Exit Status (Using Slug)</h2>
+<div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;/&lt;exit-status&gt;
+</code></pre></div>
+
+<p>Sends a success or failure signal depending on the exit status
+included in the URL. The exit status is a 0-255 integer. SITE_NAME
+interprets 0 as success and all other values as failure.</p>
+<p>SITE_NAME identifies the check by project's ping key and check's slug
+included in the URL.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>400 Bad Request</dt>
+<dd>Invalid URL format.</dd>
+<dt>404 Not Found</dt>
+<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dt>409 Conflict</dt>
+<dd>Ambiguous, the slug matched multiple checks.</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nf">GET</span> <span class="nn">/fqOOd6-F4MMNuCEnzTU01w/database-backup/1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.0</span>
 <span class="na">Host</span><span class="o">:</span> <span class="l">hc-ping.com</span>
 </code></pre></div>
 
