@@ -33,7 +33,10 @@ class BadChannelException(Exception):
 @never_cache
 def ping(request, code, check=None, action="success", exitstatus=None):
     if check is None:
-        check = get_object_or_404(Check, code=code)
+        try:
+            check = Check.objects.get(code=code)
+        except Check.DoesNotExist:
+            return HttpResponseNotFound("not found")
 
     if exitstatus is not None and exitstatus > 255:
         return HttpResponseBadRequest("invalid url format")
@@ -62,7 +65,9 @@ def ping(request, code, check=None, action="success", exitstatus=None):
 @csrf_exempt
 def ping_by_slug(request, ping_key, slug, action="success", exitstatus=None):
     try:
-        check = get_object_or_404(Check, slug=slug, project__ping_key=ping_key)
+        check = Check.objects.get(slug=slug, project__ping_key=ping_key)
+    except Check.DoesNotExist:
+        return HttpResponseNotFound("not found")
     except Check.MultipleObjectsReturned:
         return HttpResponse("ambiguous slug", status=409)
 

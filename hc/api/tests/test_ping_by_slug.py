@@ -35,6 +35,7 @@ class PingBySlugTestCase(BaseTestCase):
     def test_it_handles_missing_check(self):
         r = self.client.get(f"/ping/{self.project.ping_key}/bar")
         self.assertEqual(r.status_code, 404)
+        self.assertEqual(r.content.decode(), "not found")
 
     def test_it_never_caches(self):
         r = self.client.get(self.url)
