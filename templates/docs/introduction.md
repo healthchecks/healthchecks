@@ -70,14 +70,14 @@ ping URL to signal a start of the execution, a success, or a failure.
 
 SITE_NAME supports two ping URL formats:
 
-* `PING_ENDPOINT{uuid}`<br>
+* `PING_ENDPOINT<uuid>`<br>
 The check is identified by its UUID. Check UUIDs are assigned
 automatically by SITE_NAME, and are guaranteed to be unique.
-* `PING_ENDPOINT{project-ping-key}/{name-slug}`<br>
+* `PING_ENDPOINT<project-ping-key>/<name-slug>`<br>
 The check is identified by project's **Ping key** and check's
 **slug** (its name, converted to lowercase, spaces replaced with hyphens).
 
-You can append `/start`, `/fail` or `/{exitcode}` to the base ping URL to send
+You can append `/start`, `/fail` or `/<exitcode>` to the base ping URL to send
 "start" and "failure" signals. The "start" and "failure" signals are optional.
 You don't have to use them, but you can gain additional monitoring insights
 if you do use them. See [Measuring script run time](measuring_script_run_time/) and
@@ -85,6 +85,8 @@ if you do use them. See [Measuring script run time](measuring_script_run_time/) 
 
 You should treat check UUIDs and project Ping keys as secrets. If you make them public,
 anybody can send telemetry signals to your checks and mess with your monitoring.
+
+Read more about Ping URLs in [Pinging API](http_api/).
 
 ---
 

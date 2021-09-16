@@ -30,13 +30,15 @@ chosen one. When you delete a check, you also lose its UUID and cannot get it ba
 
 You can look up UUIDs of your checks in web UI or via [Management API](../api/) calls.
 
-**Check's slug** is its name with the following transformations applied:
+**Check's slug** is derived from check's name using Django's
+[slugify](https://docs.djangoproject.com/en/3.2/ref/utils/#django.utils.text.slugify)
+function. It applies the following transformations:
 
 * Convert to ASCII.
 * Convert to lowercase.
 * Remove characters that aren't alphanumerics, underscores, hyphens, or whitespace.
-* Replace any whitespace or repeated dashes with single dashes.
-* Remove leading and trailing whitespace, dashes, and underscores.
+* Replace any whitespace or repeated hyphens with single hyphens.
+* Remove leading and trailing whitespace, hyphens, and underscores.
 
 For example, if check's name is "Database Backup", its slug is `database-backup`.
 

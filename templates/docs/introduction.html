@@ -60,20 +60,21 @@ workers, batch scripts, scheduled tasks, web services) make HTTP requests to the
 ping URL to signal a start of the execution, a success, or a failure.</p>
 <p>SITE_NAME supports two ping URL formats:</p>
 <ul>
-<li><code>PING_ENDPOINT{uuid}</code><br>
+<li><code>PING_ENDPOINT&lt;uuid&gt;</code><br>
 The check is identified by its UUID. Check UUIDs are assigned
 automatically by SITE_NAME, and are guaranteed to be unique.</li>
-<li><code>PING_ENDPOINT{project-ping-key}/{name-slug}</code><br>
+<li><code>PING_ENDPOINT&lt;project-ping-key&gt;/&lt;name-slug&gt;</code><br>
 The check is identified by project's <strong>Ping key</strong> and check's
 <strong>slug</strong> (its name, converted to lowercase, spaces replaced with hyphens).</li>
 </ul>
-<p>You can append <code>/start</code>, <code>/fail</code> or <code>/{exitcode}</code> to the base ping URL to send
+<p>You can append <code>/start</code>, <code>/fail</code> or <code>/&lt;exitcode&gt;</code> to the base ping URL to send
 "start" and "failure" signals. The "start" and "failure" signals are optional.
 You don't have to use them, but you can gain additional monitoring insights
 if you do use them. See <a href="measuring_script_run_time/">Measuring script run time</a> and
 <a href="signaling_failures/">Signaling failures</a> for details.</p>
 <p>You should treat check UUIDs and project Ping keys as secrets. If you make them public,
 anybody can send telemetry signals to your checks and mess with your monitoring.</p>
+<p>Read more about Ping URLs in <a href="http_api/">Pinging API</a>.</p>
 <hr />
 <p><strong>Grace Time</strong> is one of the configuration parameters you can set for each check.
 It is the additional time to wait before sending an alert when a check
