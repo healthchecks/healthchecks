@@ -209,6 +209,15 @@ def my_checks(request, code):
             if search not in search_key:
                 hidden_checks.add(check)
 
+    # Figure out which checks have ambiguous ping URLs
+    seen, ambiguous = set(), set()
+    if project.show_slugs:
+        for check in checks:
+            if check.slug and check.slug in seen:
+                ambiguous.add(check.slug)
+            else:
+                seen.add(check.slug)
+
     # Do we need to show the "Last Duration" header?
     show_last_duration = False
     for check in checks:
@@ -231,6 +240,7 @@ def my_checks(request, code):
         "selected_tags": selected_tags,
         "search": search,
         "hidden_checks": hidden_checks,
+        "ambiguous": ambiguous,
         "show_last_duration": show_last_duration,
     }
 

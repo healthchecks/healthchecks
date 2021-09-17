@@ -8,15 +8,17 @@ class MyChecksTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.check = Check(project=self.project, name="Alice Was Here")
+        self.check.slug = "alice-was-here"
         self.check.save()
 
-        self.url = "/projects/%s/checks/" % self.project.code
+        self.url = f"/projects/{self.project.code}/checks/"
 
     def test_it_works(self):
         for email in ("alice@example.org", "bob@example.org"):
             self.client.login(username=email, password="password")
             r = self.client.get(self.url)
             self.assertContains(r, "Alice Was Here", status_code=200)
+            self.assertContains(r, str(self.check.code), status_code=200)
             # The pause button:
             self.assertContains(r, "btn btn-default pause", status_code=200)
 
@@ -139,3 +141,32 @@ class MyChecksTestCase(BaseTestCase):
 
         # The pause button:
         self.assertNotContains(r, "btn btn-default pause", status_code=200)
+
+    def test_it_shows_slugs(self):
+        self.project.show_slugs = True
+        self.project.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "alice-was-here")
+        self.assertNotContains(r, "(not unique)")
+
+    def test_it_shows_not_unique_note(self):
+        self.project.show_slugs = True
+        self.project.save()
+
+        dupe = Check(project=self.project, name="Alice Was Here")
+        dupe.slug = "alice-was-here"
+        dupe.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "alice-was-here")
+        self.assertContains(r, "(not unique)")
+
+    def test_it_saves_url_format_preference(self):
+        self.client.login(username="alice@example.org", password="password")
+        self.client.get(self.url + "?urls=slug")
+
+        self.project.refresh_from_db()
+        self.assertTrue(self.project.show_slugs)
