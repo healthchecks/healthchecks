@@ -1,4 +1,4 @@
-import smtplib
+from smtplib import SMTPServerDisconnected, SMTPDataError
 from threading import Thread
 import time
 
@@ -22,7 +22,7 @@ class EmailThread(Thread):
                 self.message.send()
                 # No exception--great! Return from the retry loop
                 return
-            except smtplib.SMTPServerDisconnected as e:
+            except (SMTPServerDisconnected, SMTPDataError) as e:
                 if attempt + 1 == self.MAX_TRIES:
                     # This was the last attempt and it failed:
                     # re-raise the exception
