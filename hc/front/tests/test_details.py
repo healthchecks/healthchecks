@@ -24,6 +24,7 @@ class DetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "How To Ping", status_code=200)
+        self.assertContains(r, "ping-now")
         # The page should contain timezone strings
         self.assertContains(r, "Europe/Riga")
 
@@ -153,3 +154,26 @@ class DetailsTestCase(BaseTestCase):
 
         # The summary for Dec. 2019 should be "–"
         self.assertContains(r, "<td>–</td>", html=True)
+
+    def test_it_handles_no_ping_key(self):
+        self.project.show_slugs = True
+        self.project.ping_key = None
+        self.project.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "Ping Key Required", status_code=200)
+        self.assertNotContains(r, "ping-now")
+
+    def test_it_handles_no_ping_key_for_readonly_user(self):
+        self.project.show_slugs = True
+        self.project.ping_key = None
+        self.project.save()
+
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+        self.client.login(username="bob@example.org", password="password")
+
+        r = self.client.get(self.url)
+        self.assertNotContains(r, "Ping Key Required", status_code=200)
+        self.assertNotContains(r, "ping-now")

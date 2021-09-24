@@ -142,10 +142,19 @@
                 </form>
                 {% endif %}
 
+                {% if project.show_slugs and not project.ping_key %}
+                    {% if rw %}
+                    <button
+                        data-toggle="modal"
+                        data-target="#no-ping-key-modal"
+                        class="btn btn-sm btn-default">Ping Now!</button>
+                    {% endif %}
+                {% else %}
                 <button
                     id="ping-now"
                     data-url="{{ check.url }}"
                     class="btn btn-sm btn-default">Ping Now!</button>
+                {% endif %}
             </div>
         </div>
 
@@ -316,6 +325,29 @@
 {% include "front/remove_check_modal.html" %}
 {% include "front/filtering_rules_modal.html" %}
 {% include "front/copy_modal.html" %}
+
+{% if rw and project.show_slugs and not project.ping_key %}
+<div id="no-ping-key-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Ping Key Required</h4>
+            </div>
+            <div class="modal-body">
+                <p>This project does not yet have a ping key.<br />
+                   To ping this check, please generate the
+                   ping key first.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a href="{% url 'hc-project-settings' project.code %}" class="btn btn-primary">Open Project Settings</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}
 
