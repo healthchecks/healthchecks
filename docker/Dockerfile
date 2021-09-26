@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.9-slim
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
@@ -20,4 +20,3 @@ RUN \
 USER hc
 
 CMD [ "uwsgi", "/opt/healthchecks/docker/uwsgi.ini"]
-
