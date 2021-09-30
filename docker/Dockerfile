@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.9-slim-buster
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
