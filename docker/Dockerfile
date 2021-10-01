@@ -1,16 +1,28 @@
+FROM python:3.9-slim-buster as builder
+
+COPY requirements.txt /tmp
+RUN \
+    apt update && \
+    apt install -y build-essential cargo libffi-dev libpq-dev libssl-dev python3-dev
+
+RUN pip wheel --wheel-dir /wheels -r /tmp/requirements.txt
+RUN pip wheel --wheel-dir /wheels uwsgi
+
 FROM python:3.9-slim-buster
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
-ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
 WORKDIR /opt/healthchecks
 
-RUN apt update && apt install -y libpq-dev build-essential && rm -rf /var/apt/cache
-
 COPY requirements.txt /tmp
+COPY --from=builder /wheels /wheels
+
 RUN \
-    pip install --no-cache-dir -r /tmp/requirements.txt && \
-    pip install uwsgi
+    apt update && \
+    apt install -y libpq5 && \
+    rm -rf /var/apt/cache
+
+RUN pip install --no-cache /wheels/*
 
 COPY . /opt/healthchecks/
 

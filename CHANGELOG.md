@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Add /api/v1/badges/ endpoint (#552)
 - Add ability to edit existing email, Signal, SMS, WhatsApp integrations
 - Add new ping URL format: /{ping_key}/{slug} (#491)
+- Reduce Docker image size by using slim base image and multi-stage Dockerfile
 
 ### Bug Fixes
 - Add handling for non-latin-1 characters in webhook headers
