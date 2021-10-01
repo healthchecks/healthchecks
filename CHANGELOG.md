@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add ability to edit existing email, Signal, SMS, WhatsApp integrations
 - Add new ping URL format: /{ping_key}/{slug} (#491)
 - Reduce Docker image size by using slim base image and multi-stage Dockerfile
+- Upgrade to Bootstrap 3.4.1
 
 ### Bug Fixes
 - Add handling for non-latin-1 characters in webhook headers

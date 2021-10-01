@@ -1,3 +1,5 @@
+// stylelint-disable selector-max-type, selector-max-compound-selectors, selector-max-combinators, selector-max-class, declaration-no-important, selector-no-qualifying-type
+
 //
 // Navbars
 // --------------------------------------------------
@@ -48,11 +50,11 @@
 // content for the user's viewport.
 
 .navbar-collapse {
-  overflow-x: visible;
   padding-right: @navbar-padding-horizontal;
-  padding-left:  @navbar-padding-horizontal;
+  padding-left: @navbar-padding-horizontal;
+  overflow-x: visible;
   border-top: 1px solid transparent;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1);
   &:extend(.clearfix all);
   -webkit-overflow-scrolling: touch;
 
@@ -76,14 +78,6 @@
       overflow-y: visible;
     }
 
-    // Undo the collapse side padding for navbars with containers to ensure
-    // alignment of right-aligned contents.
-    .navbar-fixed-top &,
-    .navbar-static-top &,
-    .navbar-fixed-bottom & {
-      padding-left: 0;
-      padding-right: 0;
-    }
   }
 }
 
@@ -96,11 +90,11 @@
   > .navbar-header,
   > .navbar-collapse {
     margin-right: -@navbar-padding-horizontal;
-    margin-left:  -@navbar-padding-horizontal;
+    margin-left: -@navbar-padding-horizontal;
 
     @media (min-width: @grid-float-breakpoint) {
       margin-right: 0;
-      margin-left:  0;
+      margin-left: 0;
     }
   }
 }
@@ -109,10 +103,10 @@
 
 .navbar-brand {
   float: left;
+  height: @navbar-height;
   padding: @navbar-padding-vertical @navbar-padding-horizontal;
   font-size: @font-size-large;
   line-height: @line-height-computed;
-  height: @navbar-height;
 
   &:hover,
   &:focus {
@@ -140,8 +134,8 @@
 .navbar-toggle {
   position: relative;
   float: right;
-  margin-right: @navbar-padding-horizontal;
   padding: 9px 10px;
+  margin-right: @navbar-padding-horizontal;
   .navbar-vertical-align(34px);
   background-color: transparent;
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
@@ -180,7 +174,7 @@
   margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
 
   > li > a {
-    padding-top:    10px;
+    padding-top: 10px;
     padding-bottom: 10px;
     line-height: @line-height-computed;
   }
@@ -217,7 +211,7 @@
     > li {
       float: left;
       > a {
-        padding-top:    @navbar-padding-vertical;
+        padding-top: @navbar-padding-vertical;
         padding-bottom: @navbar-padding-vertical;
       }
     }
@@ -258,8 +252,8 @@
 
   @media (min-width: @grid-float-breakpoint) {
     float: left;
-    margin-left: @navbar-padding-horizontal;
     margin-right: @navbar-padding-horizontal;
+    margin-left: @navbar-padding-horizontal;
   }
 }
 
@@ -332,33 +326,15 @@
         background-color: @navbar-default-link-disabled-bg;
       }
     }
-  }
 
-  .navbar-toggle {
-    border-color: @navbar-default-toggle-border-color;
-    &:hover,
-    &:focus {
-      background-color: @navbar-default-toggle-hover-bg;
-    }
-    .icon-bar {
-      background-color: @navbar-default-toggle-icon-bar-bg;
-    }
-  }
-
-  .navbar-collapse,
-  .navbar-form {
-    border-color: @navbar-default-border;
-  }
-
-  // Dropdown menu items
-  .navbar-nav {
+    // Dropdown menu items
     // Remove background color from open dropdown
     > .open > a {
       &,
       &:hover,
       &:focus {
-        background-color: @navbar-default-link-active-bg;
         color: @navbar-default-link-active-color;
+        background-color: @navbar-default-link-active-bg;
       }
     }
 
@@ -391,6 +367,22 @@
         }
       }
     }
+  }
+
+  .navbar-toggle {
+    border-color: @navbar-default-toggle-border-color;
+    &:hover,
+    &:focus {
+      background-color: @navbar-default-toggle-hover-bg;
+    }
+    .icon-bar {
+      background-color: @navbar-default-toggle-icon-bar-bg;
+    }
+  }
+
+  .navbar-collapse,
+  .navbar-form {
+    border-color: @navbar-default-border;
   }
 
 
