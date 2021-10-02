@@ -461,7 +461,9 @@ def badge(request, badge_key, signature, tag, fmt):
         elif status == "late":
             color = "important"
 
-        return JsonResponse({"label": label, "message": status, "color": color})
+        return JsonResponse(
+            {"schemaVersion": 1, "label": label, "message": status, "color": color}
+        )
 
     if fmt == "json":
         return JsonResponse(

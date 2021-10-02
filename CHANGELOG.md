@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - Drop API support for GET, DELETE requests with a request body
 - Add missing @csrf_exempt annotations in API views
 - Fix the ping handler to reject status codes > 255
+- Add 'schemaVersion' field in the shields.io endpoint (#566)
 
 ## v1.22.0 - 2020-08-06
 

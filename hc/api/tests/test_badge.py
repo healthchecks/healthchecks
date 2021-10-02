@@ -90,4 +90,7 @@ class BadgeTestCase(BaseTestCase):
 
     def test_it_returns_shields_json(self):
         doc = self.client.get(self.shields_url).json()
-        self.assertEqual(doc, {"label": "foo", "message": "up", "color": "success"})
+        self.assertEqual(
+            doc,
+            {"schemaVersion": 1, "label": "foo", "message": "up", "color": "success"},
+        )
