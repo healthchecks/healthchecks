@@ -641,6 +641,10 @@ def details(request, code):
     _refresh_last_active_date(request.profile)
     check, rw = _get_check_for_user(request, code)
 
+    if request.GET.get("urls") in ("uuid", "slug") and rw:
+        check.project.show_slugs = request.GET["urls"] == "slug"
+        check.project.save()
+
     channels = Channel.objects.filter(project=check.project)
     channels = list(channels.order_by("created"))
 

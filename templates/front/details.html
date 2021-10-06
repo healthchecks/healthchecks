@@ -73,17 +73,27 @@
         {% endif %}
 
         <div id="how-to-ping" class="details-block">
-            <h2>How To Ping</h2>
+            <h2>
+                How To Ping
+                {% if rw %}
+                    <div class="btn-group pull-right">
+                        <a href="?urls=uuid" class="btn btn-default btn-xs {% if not project.show_slugs %}active{% endif %}">uuid</a>
+                        <a href="?urls=slug" class="btn btn-default btn-xs {% if project.show_slugs %}active{% endif %}">slug</a>
+                </div>
+                {% endif %}
+            </h2>
             <div>
                 <p>
                     Keep this check up by making HTTP
                     {% if check.methods == "POST" %}POST{% endif %}
                     requests to this URL:
                 </p>
+                {% if check.url %}
                 <code>{{ check.url }}</code>
-                <p>
-                    Or by sending emails to this address:
-                </p>
+                {% else %}
+                <code>(unavailable, set name first)</code>
+                {% endif %}
+                <p>Ping by sending email:</p>
                 <code>{{ check.email }}</code>
 
                 <p>You can also explicitly
@@ -101,6 +111,7 @@
                     data-target="#filtering-rules-modal"
                     class="btn btn-sm btn-default">Filtering Rules&hellip;</button>
                 {% endif %}
+                {% if check.url %}
                 <button
                     data-toggle="modal"
                     data-target="#show-usage-modal"
@@ -109,6 +120,7 @@
                     data-label="Copy URL"
                     data-clipboard-text="{{ check.url }}"
                     class="btn btn-sm btn-default copy-btn">Copy URL</button>
+                {% endif %}
             </div>
         </div>
 
@@ -142,6 +154,7 @@
                 </form>
                 {% endif %}
 
+                {% if check.url %}
                 {% if project.show_slugs and not project.ping_key %}
                     {% if rw %}
                     <button
@@ -154,6 +167,7 @@
                     id="ping-now"
                     data-url="{{ check.url }}"
                     class="btn btn-sm btn-default">Ping Now!</button>
+                {% endif %}
                 {% endif %}
             </div>
         </div>

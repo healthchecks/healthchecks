@@ -177,3 +177,20 @@ class DetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertNotContains(r, "Ping Key Required", status_code=200)
         self.assertNotContains(r, "ping-now")
+
+    def test_it_handles_empty_slug(self):
+        self.project.show_slugs = True
+        self.project.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "(unavailable, set name first)", status_code=200)
+        self.assertNotContains(r, "Copy URL")
+        self.assertNotContains(r, "ping-now")
+
+    def test_it_saves_url_format_preference(self):
+        self.client.login(username="alice@example.org", password="password")
+        self.client.get(self.url + "?urls=slug")
+
+        self.project.refresh_from_db()
+        self.assertTrue(self.project.show_slugs)
