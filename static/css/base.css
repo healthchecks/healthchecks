@@ -246,3 +246,9 @@ pre {
 .nav-pills > li.active > a:focus {
     outline: 0;
 }
+
+/* no button outlines in Chrome--  */
+.btn-default.active,
+.btn-default.active.focus {
+    outline: 0;
+}
