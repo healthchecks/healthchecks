@@ -1,10 +1,12 @@
 FROM python:3.9-slim-buster as builder
 
 COPY requirements.txt /tmp
-RUN \
-    apt update && \
-    apt install -y build-essential cargo libffi-dev libpq-dev libssl-dev python3-dev
+RUN apt update && apt install -y build-essential libpq-dev
 
+RUN \
+    if [ `dpkg --print-architecture` = "armhf" ]; then \
+    printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
+    fi
 RUN pip wheel --wheel-dir /wheels -r /tmp/requirements.txt
 RUN pip wheel --wheel-dir /wheels uwsgi
 
