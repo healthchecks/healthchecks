@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.23.1 - 2020-10-13
+
+### Bug Fixes
+- Fix missing uwsgi dependencies in arm/v7 Docker image
+
 ## v1.23.0 - 2020-10-13
 
 ### Improvements

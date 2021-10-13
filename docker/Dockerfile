@@ -8,7 +8,7 @@ RUN \
     printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
     fi
 RUN pip wheel --wheel-dir /wheels -r /tmp/requirements.txt
-RUN pip wheel --wheel-dir /wheels uwsgi
+RUN rm -f /etc/pip.conf && pip wheel --wheel-dir /wheels uwsgi
 
 FROM python:3.9-slim-buster
 
