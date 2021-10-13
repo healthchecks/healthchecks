@@ -1,12 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.23.1 - 2020-10-13
+## v1.23.1 - 2021-10-13
 
 ### Bug Fixes
 - Fix missing uwsgi dependencies in arm/v7 Docker image
 
-## v1.23.0 - 2020-10-13
+## v1.23.0 - 2021-10-13
 
 ### Improvements
 - Add /api/v1/badges/ endpoint (#552)
@@ -25,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - Fix the ping handler to reject status codes > 255
 - Add 'schemaVersion' field in the shields.io endpoint (#566)
 
-## v1.22.0 - 2020-08-06
+## v1.22.0 - 2021-08-06
 
 ### Improvements
 - Use multicolor channel icons for better appearance in the dark mode
@@ -40,7 +40,7 @@ All notable changes to this project will be documented in this file.
 - Fix a 403 when transferring a project to a read-only team member
 - Security: fix allow_redirect function to reject absolute URLs
 
-## v1.21.0 - 2020-07-02
+## v1.21.0 - 2021-07-02
 
 ### Improvements
 - Increase "Success / Failure Keywords" field lengths to 200
@@ -54,7 +54,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix off-by-one-month error in monthly reports, downtime columns (#539)
 
-## v1.20.0 - 2020-04-22
+## v1.20.0 - 2021-04-22
 
 ### Improvements
 - Django 3.2
