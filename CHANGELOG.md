@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.23.0 - Unreleased
+## v1.23.0 - 2020-10-13
 
 ### Improvements
 - Add /api/v1/badges/ endpoint (#552)
