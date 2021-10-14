@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.24.0 - Unreleased
+
+### Improvements
+- Switch from croniter to cronsim (vendored in hc.lib.cronsim)
+
 ## v1.23.1 - 2021-10-13
 
 ### Bug Fixes

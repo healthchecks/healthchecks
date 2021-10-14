@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta as td
+from datetime import timedelta as td
 import email
 import json
 import os
@@ -7,7 +7,6 @@ from secrets import token_urlsafe
 from urllib.parse import urlencode
 
 from cron_descriptor import ExpressionDescriptor
-from croniter import croniter
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -50,6 +49,7 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
+from hc.lib.cronsim import CronSim
 import pytz
 from pytz.exceptions import UnknownTimeZoneError
 import requests
@@ -499,9 +499,9 @@ def cron_preview(request):
         if len(schedule.split()) != 5:
             raise ValueError()
 
-        it = croniter(schedule, now_local)
+        it = CronSim(schedule, now_local)
         for i in range(0, 6):
-            ctx["dates"].append(it.get_next(datetime))
+            ctx["dates"].append(next(it))
 
     except UnknownTimeZoneError:
         ctx["bad_tz"] = True
@@ -513,7 +513,7 @@ def cron_preview(request):
             descriptor = ExpressionDescriptor(schedule, use_24hour_time_format=True)
             ctx["desc"] = descriptor.get_description()
         except:
-            # We assume the schedule is valid if croniter accepts it.
+            # We assume the schedule is valid if cronsim accepts it.
             # If cron-descriptor throws an exception, don't show the description
             # to the user.
             pass

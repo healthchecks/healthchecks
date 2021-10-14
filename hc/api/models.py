@@ -6,7 +6,6 @@ import time
 import uuid
 from datetime import datetime, timedelta as td
 
-from croniter import croniter
 from django.conf import settings
 from django.core.signing import TimestampSigner
 from django.db import models
@@ -16,6 +15,7 @@ from django.utils.text import slugify
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
+from hc.lib.cronsim import CronSim
 from hc.lib.date import month_boundaries
 import pytz
 
@@ -166,12 +166,11 @@ class Check(models.Model):
         elif self.kind == "cron" and self.status == "up":
             # The complex case, next ping is expected based on cron schedule.
             # Don't convert to naive datetimes (and so avoid ambiguities around
-            # DST transitions). Croniter will handle the timezone-aware datetimes.
+            # DST transitions). cronsim will handle the timezone-aware datetimes.
 
             zone = pytz.timezone(self.tz)
             last_local = timezone.localtime(self.last_ping, zone)
-            it = croniter(self.schedule, last_local)
-            result = it.next(datetime)
+            result = next(CronSim(self.schedule, last_local))
 
         if with_started and self.last_start and self.status != "down":
             result = min(result, self.last_start)

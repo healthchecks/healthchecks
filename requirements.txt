@@ -1,5 +1,4 @@
 cron-descriptor==1.2.24
-croniter==1.0.8
 Django==3.2.8
 django-compressor==2.4
 fido2==0.9.1

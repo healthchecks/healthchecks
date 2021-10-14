@@ -1,5 +1,7 @@
-from croniter import croniter
+from datetime import datetime
+
 from django.core.exceptions import ValidationError
+from hc.lib.cronsim import CronSim
 from urllib.parse import urlparse
 from pytz import all_timezones
 
@@ -25,10 +27,10 @@ class CronExpressionValidator(object):
             raise ValidationError(message=self.message)
 
         try:
-            # Does croniter accept the schedule?
-            it = croniter(value)
+            # Does cronsim accept the schedule?
+            it = CronSim(value, datetime(2000, 1, 1))
             # Can it calculate the next datetime?
-            it.next()
+            next(it)
         except:
             raise ValidationError(message=self.message)
 

@@ -4,7 +4,9 @@ Supports only a tiny subset of jsonschema.
 
 """
 
-from croniter import croniter
+from datetime import datetime
+
+from hc.lib.cronsim import CronSim
 from pytz import all_timezones
 
 
@@ -26,10 +28,10 @@ def validate(obj, schema, obj_name="value"):
                 if len(obj.split()) != 5:
                     raise ValueError()
 
-                # Does croniter accept the schedule?
-                it = croniter(obj)
+                # Does cronsim accept the schedule?
+                it = CronSim(obj, datetime(2000, 1, 1))
                 # Can it calculate the next datetime?
-                it.next()
+                next(it)
             except:
                 raise ValidationError("%s is not a valid cron expression" % obj_name)
         if schema.get("format") == "timezone" and obj not in all_timezones:
