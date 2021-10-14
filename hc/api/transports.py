@@ -257,8 +257,7 @@ class Webhook(HttpTransport):
             body = self.prepare(body, check).encode()
 
         # When sending a test notification, don't retry on failures.
-        # use_retries = False if getattr(check, "is_test") else True
-        use_retries = True
+        use_retries = False if getattr(check, "is_test") else True
 
         if spec["method"] == "GET":
             return self.get(url, use_retries=use_retries, headers=headers)
