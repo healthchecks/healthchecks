@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Switch from croniter to cronsim (vendored in hc.lib.cronsim)
+- Change outgoing webhook timeout to 10s, but cap the total time to 20s
 
 ## v1.23.1 - 2021-10-13
 

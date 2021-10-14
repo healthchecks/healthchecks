@@ -1,4 +1,5 @@
 import os
+import time
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -154,7 +155,7 @@ class HttpTransport(Transport):
     def _request(cls, method, url, **kwargs):
         try:
             options = dict(kwargs)
-            options["timeout"] = 5
+            options["timeout"] = 10
             if "headers" not in options:
                 options["headers"] = {}
             if "User-Agent" not in options["headers"]:
@@ -175,31 +176,28 @@ class HttpTransport(Transport):
             return "Connection failed"
 
     @classmethod
-    def get(cls, url, num_tries=3, **kwargs):
-        for x in range(0, num_tries):
-            error = cls._request("get", url, **kwargs)
-            if error is None:
-                break
+    def _request_with_retries(cls, method, url, use_retries=True, **kwargs):
+        start = time.time()
+        error = cls._request(method, url, **kwargs)
+        if error and use_retries:
+            for i in range(0, 2):
+                error = cls._request(method, url, **kwargs)
+                if error is None or time.time() - start > 10:
+                    break
 
         return error
 
     @classmethod
-    def post(cls, url, num_tries=3, **kwargs):
-        for x in range(0, num_tries):
-            error = cls._request("post", url, **kwargs)
-            if error is None:
-                break
-
-        return error
+    def get(cls, url, **kwargs):
+        return cls._request_with_retries("get", url, **kwargs)
 
     @classmethod
-    def put(cls, url, num_tries=3, **kwargs):
-        for x in range(0, num_tries):
-            error = cls._request("put", url, **kwargs)
-            if error is None:
-                break
+    def post(cls, url, **kwargs):
+        return cls._request_with_retries("post", url, **kwargs)
 
-        return error
+    @classmethod
+    def put(cls, url, **kwargs):
+        return cls._request_with_retries("put", url, **kwargs)
 
 
 class Webhook(HttpTransport):
@@ -254,17 +252,15 @@ class Webhook(HttpTransport):
         if body:
             body = self.prepare(body, check).encode()
 
-        num_tries = 3
-        if getattr(check, "is_test"):
-            # When sending a test notification, don't retry on failures.
-            num_tries = 1
+        # When sending a test notification, don't retry on failures.
+        use_retries = False if getattr(check, "is_test") else True
 
         if spec["method"] == "GET":
-            return self.get(url, num_tries=num_tries, headers=headers)
+            return self.get(url, use_retries=use_retries, headers=headers)
         elif spec["method"] == "POST":
-            return self.post(url, num_tries=num_tries, data=body, headers=headers)
+            return self.post(url, use_retries=use_retries, data=body, headers=headers)
         elif spec["method"] == "PUT":
-            return self.put(url, num_tries=num_tries, data=body, headers=headers)
+            return self.put(url, use_retries=use_retries, data=body, headers=headers)
 
 
 class Slack(HttpTransport):
