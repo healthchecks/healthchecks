@@ -179,11 +179,15 @@ class HttpTransport(Transport):
     def _request_with_retries(cls, method, url, use_retries=True, **kwargs):
         start = time.time()
         error = cls._request(method, url, **kwargs)
+
+        # 2nd try
         if error and use_retries:
-            for i in range(0, 2):
-                error = cls._request(method, url, **kwargs)
-                if error is None or time.time() - start > 10:
-                    break
+            error = cls._request(method, url, **kwargs)
+
+        # 3rd try. Only do the 3rd try if we have spent 10s or less in first two
+        # tries. Otherwise we risk overshooting the 20s total time budget.
+        if error and use_retries and time.time() - start < 10:
+            error = cls._request(method, url, **kwargs)
 
         return error
 
@@ -253,7 +257,8 @@ class Webhook(HttpTransport):
             body = self.prepare(body, check).encode()
 
         # When sending a test notification, don't retry on failures.
-        use_retries = False if getattr(check, "is_test") else True
+        # use_retries = False if getattr(check, "is_test") else True
+        use_retries = True
 
         if spec["method"] == "GET":
             return self.get(url, use_retries=use_retries, headers=headers)
