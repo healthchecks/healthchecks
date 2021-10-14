@@ -152,7 +152,7 @@ $(function () {
                 }
 
                 $("#cron-preview" ).html(data);
-                var haveError = $("#invalid-arguments").size() > 0;
+                var haveError = $("#invalid-arguments").length > 0;
                 $("#update-cron-submit").prop("disabled", haveError);
             }
         });
