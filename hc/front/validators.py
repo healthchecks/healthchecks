@@ -1,7 +1,7 @@
 from datetime import datetime
 
+from cronsim import CronSim
 from django.core.exceptions import ValidationError
-from hc.lib.cronsim import CronSim
 from urllib.parse import urlparse
 from pytz import all_timezones
 

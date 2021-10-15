@@ -7,6 +7,7 @@ from secrets import token_urlsafe
 from urllib.parse import urlencode
 
 from cron_descriptor import ExpressionDescriptor
+from cronsim import CronSim
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -49,7 +50,6 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
-from hc.lib.cronsim import CronSim
 import pytz
 from pytz.exceptions import UnknownTimeZoneError
 import requests

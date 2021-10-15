@@ -6,7 +6,7 @@ Supports only a tiny subset of jsonschema.
 
 from datetime import datetime
 
-from hc.lib.cronsim import CronSim
+from cronsim import CronSim
 from pytz import all_timezones
 
 

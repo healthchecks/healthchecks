@@ -6,6 +6,7 @@ import time
 import uuid
 from datetime import datetime, timedelta as td
 
+from cronsim import CronSim
 from django.conf import settings
 from django.core.signing import TimestampSigner
 from django.db import models
@@ -15,7 +16,6 @@ from django.utils.text import slugify
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
-from hc.lib.cronsim import CronSim
 from hc.lib.date import month_boundaries
 import pytz
 
