@@ -7,7 +7,7 @@ from secrets import token_urlsafe
 from urllib.parse import urlencode
 
 from cron_descriptor import ExpressionDescriptor
-from cronsim import CronSim
+from cronsim.cronsim import CronSim, CronSimError
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -496,16 +496,13 @@ def cron_preview(request):
         zone = pytz.timezone(tz)
         now_local = timezone.localtime(timezone.now(), zone)
 
-        if len(schedule.split()) != 5:
-            raise ValueError()
-
         it = CronSim(schedule, now_local)
         for i in range(0, 6):
             ctx["dates"].append(next(it))
 
     except UnknownTimeZoneError:
         ctx["bad_tz"] = True
-    except:
+    except CronSimError:
         ctx["bad_schedule"] = True
 
     if ctx["dates"]:
