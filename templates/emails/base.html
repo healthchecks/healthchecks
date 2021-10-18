@@ -40,17 +40,6 @@
           margin: 0 auto !important;
         }
 
-        /* USE THESE CLASSES TO HIDE CONTENT ON MOBILE */
-        .mobile-hide {
-          display: none !important;
-        }
-
-        .img-max {
-          max-width: 100% !important;
-          width: 100% !important;
-          height: auto !important;
-        }
-
         /* FULL-WIDTH TABLES */
         .responsive-table {
           width: 100% !important;
@@ -59,15 +48,6 @@
         /* UTILITY CLASSES FOR ADJUSTING PADDING ON MOBILE */
         .padding {
           padding: 10px 5% 15px 5% !important;
-        }
-
-        .padding-meta {
-          padding: 30px 5% 0px 5% !important;
-          text-align: center;
-        }
-
-        .no-padding {
-          padding: 0 !important;
         }
 
         .section-padding {
@@ -126,45 +106,38 @@
             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" class="responsive-table">
                 <tr>
                     <td>
-                        <!-- HERO IMAGE -->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td>
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <td style="padding: 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding">
+                                {% block content %}{% endblock %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                {% if button_text %}
+                <tr>
+                    <td align="center">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="center" style="padding-top: 25px; padding-bottom: 15px;" class="padding">
+                                    <table border="0" cellspacing="0" cellpadding="0" class="mobile-button-container">
                                         <tr>
-                                            <td style="padding: 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding">
-                                            {% block content %}{% endblock %}
-                                            </td>
+                                            <td align="center" style="border-radius: 3px;" bgcolor="#22BC66"><a href="{{ button_url }}" target="_blank" style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; border-radius: 3px; padding: 15px 25px; border: 1px solid #22BC66; display: inline-block;" class="mobile-button">{{ button_text }}</a></td>
                                         </tr>
                                     </table>
                                 </td>
                             </tr>
-                            {% if button_text %}
+                        </table>
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
-                                <td align="center">
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                        <tr>
-                                            <td align="center" style="padding-top: 25px; padding-bottom: 15px;" class="padding">
-                                                <table border="0" cellspacing="0" cellpadding="0" class="mobile-button-container">
-                                                    <tr>
-                                                        <td align="center" style="border-radius: 3px;" bgcolor="#22BC66"><a href="{{ button_url }}" target="_blank" style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; border-radius: 3px; padding: 15px 25px; border: 1px solid #22BC66; display: inline-block;" class="mobile-button">{{ button_text }}</a></td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                            {% endif %}
-                            <tr>
-                                <td>
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                        <tr>
-                                            <td style="padding: 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding">
-                                            {% block content_more %}{% endblock %}
-                                            </td>
-                                        </tr>
-                                    </table>
+                                <td style="padding: 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding">
+                                {% block content_more %}{% endblock %}
                                 </td>
                             </tr>
                         </table>
