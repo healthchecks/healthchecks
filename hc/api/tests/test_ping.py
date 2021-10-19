@@ -254,3 +254,12 @@ class PingTestCase(BaseTestCase):
     def test_it_rejects_exit_status_over_255(self):
         r = self.client.get(self.url + "/256")
         self.assertEqual(r.status_code, 400)
+
+    def test_it_handles_bad_unicode(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+        r = csrf_client.post(self.url, b"Hello \xe9 World", content_type="text/plain")
+        self.assertEqual(r.status_code, 200)
+
+        ping = Ping.objects.get()
+        self.assertEqual(ping.method, "POST")
+        self.assertEqual(ping.body, "Hello � World")
