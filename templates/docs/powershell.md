@@ -25,5 +25,5 @@ using the "-command" argument:
 
 ```bat
 # Without an underlying script, passing the command to PowerShell directly:
-powershell.exe -command &{Invoke-RestMethod PING_URL}
+powershell.exe -Command "&{Invoke-RestMethod PING_URL}"
 ```
