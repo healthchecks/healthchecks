@@ -61,12 +61,12 @@ def authorize_read(f):
     return wrapper
 
 
-def validate_json(schema=None):
+def validate_json(schema={"type": "object"}):
     """ Parse request json and validate it against `schema`.
 
     Put the parsed result in `request.json`.
-    If schema is None then only parse and don't validate.
-    Supports  a limited subset of JSON schema spec.
+    If schema is None then only parse and check if the root
+    element is a dict. Supports  a limited subset of JSON schema spec.
 
     """
 
@@ -81,11 +81,10 @@ def validate_json(schema=None):
             else:
                 request.json = {}
 
-            if schema:
-                try:
-                    validate(request.json, schema)
-                except ValidationError as e:
-                    return error("json validation error: %s" % e)
+            try:
+                validate(request.json, schema)
+            except ValidationError as e:
+                return error("json validation error: %s" % e)
 
             return f(request, *args, **kwds)
 

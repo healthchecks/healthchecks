@@ -94,3 +94,10 @@ class PauseTestCase(BaseTestCase):
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.next_nag_date)
+
+    def test_it_rejects_non_dict_post_body(self):
+        r = self.csrf_client.post(self.url, "123", content_type="application/json")
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(
+            r.json()["error"], "json validation error: value is not an object"
+        )

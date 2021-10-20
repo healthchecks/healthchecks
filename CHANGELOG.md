@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix hc.api.views.ping to handle non-utf8 data in request body (#574)
+- Fix a crash when hc.api.views.pause receives a single integer in request body
 
 ## v1.23.1 - 2021-10-13
 
