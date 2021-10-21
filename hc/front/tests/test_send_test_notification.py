@@ -31,6 +31,10 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertTrue("X-Status-Url" in email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
 
+        # It should update self.channel.last_notify
+        self.channel.refresh_from_db()
+        self.assertIsNotNone(self.channel.last_notify)
+
         # It should create a notification
         n = Notification.objects.get()
         self.assertEqual(n.channel, self.channel)

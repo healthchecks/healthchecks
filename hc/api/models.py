@@ -412,6 +412,7 @@ class Channel(models.Model):
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
     value = models.TextField(blank=True)
     email_verified = models.BooleanField(default=False)
+    last_notify = models.DateTimeField(null=True, blank=True)
     last_error = models.CharField(max_length=200, blank=True)
     checks = models.ManyToManyField(Check)
 
@@ -540,7 +541,9 @@ class Channel(models.Model):
 
         error = self.transport.notify(check) or ""
         Notification.objects.filter(id=n.id).update(error=error)
-        Channel.objects.filter(id=self.id).update(last_error=error)
+        Channel.objects.filter(id=self.id).update(
+            last_notify=timezone.now(), last_error=error
+        )
 
         return error
 
