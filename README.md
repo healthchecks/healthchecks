@@ -155,29 +155,17 @@ manager like [supervisor](http://supervisord.org/) or systemd.
 
 ## Database Cleanup
 
-With time and use the Healthchecks database will grow in size. You may
-decide to prune old data: inactive user accounts, old checks not assigned
-to users, records of outgoing email messages and records of received pings.
-There are separate Django management commands for each task:
+Healthchecks deletes old entries from `api_ping` and `api_notification`
+tables automatically. By default, Healthchecks keeps the 100 most recent
+pings for every check. You can set the limit higher to keep a longer history:
+go to the Administration Panel, look up user's **Profile** and modify its
+"Ping log limit" field.
 
-* Remove old records from `api_ping` table. For each check, keep 100 most
-  recent pings:
+For each check, Healthchecks removes notifications that are older than the
+oldest stored ping for same check.
 
-    ```
-    $ ./manage.py prunepings
-    ```
-
-  Note: 100 is the default value but you can configure a different
-  limit per-user. To do that, go to the
-  Administration Panel, look up user's **Profile** and modify its
-  "Ping log limit" field.
-
-* Remove old records of sent notifications. For each check, remove
-  notifications that are older than the oldest stored ping for same check.
-
-    ```
-    $ ./manage.py prunenotifications
-    ```
+Healthchecks also provides management commands for cleaning up
+`auth_user`, `api_tokenbucket` and `api_flip` tables.
 
 * Remove user accounts that match either of these conditions:
   * Account was created more than 6 months ago, and user has never logged in.

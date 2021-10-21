@@ -329,6 +329,22 @@ class Check(models.Model):
         ping.exitstatus = exitstatus
         ping.save()
 
+        # Every 100 received pings, prune old pings and notifications:
+        if self.n_pings % 100 == 0:
+            self.prune()
+
+    def prune(self):
+        """ Remove old pings and notifications. """
+
+        limit = self.project.owner_profile.ping_log_limit
+        self.ping_set.filter(n__lte=self.n_pings - limit).delete()
+
+        try:
+            ping = self.ping_set.earliest("id")
+            self.notification_set.filter(created__lt=ping.created).delete()
+        except Ping.DoesNotExist:
+            pass
+
     def downtimes(self, months):
         """ Calculate the number of downtimes and downtime minutes per month.
 

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Switch from croniter to cronsim (vendored in hc.lib.cronsim)
 - Change outgoing webhook timeout to 10s, but cap the total time to 20s
+- Implement automatic `api_ping` and `api_notification` pruning (#556)
 
 ### Bug Fixes
 - Fix hc.api.views.ping to handle non-utf8 data in request body (#574)
