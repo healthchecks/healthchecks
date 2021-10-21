@@ -13,7 +13,7 @@ class Command(BaseCommand):
             q = Channel.objects.filter(id=channel.id)
 
             try:
-                n = channel.latest_notification()
+                n = Notification.objects.filter(channel=channel).latest()
                 q.update(last_notify=n.created, last_error=n.error)
                 total += 1
             except Notification.DoesNotExist:

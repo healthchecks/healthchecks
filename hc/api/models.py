@@ -550,9 +550,6 @@ class Channel(models.Model):
     def icon_path(self):
         return "img/integrations/%s.png" % self.kind
 
-    def latest_notification(self):
-        return Notification.objects.filter(channel=self).latest()
-
     @property
     def json(self):
         return json.loads(self.value)

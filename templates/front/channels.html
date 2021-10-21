@@ -26,7 +26,6 @@
             <th></th>
         </tr>
         {% for ch in channels %}
-        {% with n=ch.latest_notification %}
         <tr class="channel-row kind-{{ ch.kind }}">
             <td class="icon-cell">
                 <img src="{% static ch.icon_path %}" alt="{{ ch.get_kind_display }}" />
@@ -125,13 +124,13 @@
                 {% endif %}
             </td>
             <td>
-                {% if n %}
-                    {% if n.error %}
-                    <span class="text-danger" data-toggle="tooltip" title="{{ n.error }}">
-                        <strong>Failed</strong>, {{ n.created|naturaltime }}
+                {% if ch.last_notify %}
+                    {% if ch.last_error %}
+                    <span class="text-danger" data-toggle="tooltip" title="{{ ch.last_error }}">
+                        <strong>Failed</strong>, {{ ch.last_notify|naturaltime }}
                     </span>
                     {% else %}
-                    Delivered, {{ n.created|naturaltime }}
+                    Delivered, {{ ch.last_notify|naturaltime }}
                     {% endif %}
                 {% else %}
                 Never
@@ -168,7 +167,6 @@
                 {% endif %}
             </td>
         </tr>
-        {% endwith %}
         {% endfor %}
     </table>
     {% else %}
