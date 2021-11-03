@@ -320,7 +320,7 @@ class ProjectTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/projects/%s/settings/" % p2.code)
-        self.assertContains(r, "Add Users from Other Teams")
+        self.assertContains(r, "Add Users from Other Projects")
         self.assertContains(r, "bob@example.org")
 
     def test_it_requires_rw_access_to_update_project_name(self):
