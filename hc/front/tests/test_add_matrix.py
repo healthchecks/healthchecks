@@ -20,6 +20,7 @@ class AddMatrixTestCase(BaseTestCase):
 
     @patch("hc.front.forms.requests.post")
     def test_it_works(self, mock_post):
+        mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = {"room_id": "fake-room-id"}
 
         form = {"alias": "!foo:example.org"}
@@ -47,6 +48,17 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
 
         self.assertContains(r, "Matrix server returned status code 429")
+        self.assertFalse(Channel.objects.exists())
+
+    @patch("hc.front.forms.requests.post")
+    def test_it_handles_502(self, mock_post):
+        mock_post.return_value.status_code = 502
+
+        form = {"alias": "!foo:example.org"}
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+
+        self.assertContains(r, "Matrix server returned status code 502")
         self.assertFalse(Channel.objects.exists())
 
     def test_it_requires_rw_access(self):

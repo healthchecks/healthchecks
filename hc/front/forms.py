@@ -272,6 +272,11 @@ class AddMatrixForm(forms.Form):
                 "Matrix server returned status code 429 (Too Many Requests), "
                 "please try again later."
             )
+        if r.status_code == 502:
+            raise forms.ValidationError(
+                "Matrix server returned status code 502 (Bad Gateway), "
+                "please try again later."
+            )
 
         doc = r.json()
         if "error" in doc:
