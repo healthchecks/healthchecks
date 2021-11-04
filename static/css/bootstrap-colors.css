@@ -32,6 +32,10 @@
     color:  var(--btn-default-color);
 }
 
+.bootstrap-select .no-results {
+    background:  var(--panel-bg);
+}
+
 .alert-info {
     background-color: var(--state-info-bg);
     border-color: var(--state-info-border);
