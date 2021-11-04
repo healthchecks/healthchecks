@@ -321,3 +321,16 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_rejects_bad_methods_value(self):
         r = self.post(self.check.code, {"api_key": "X" * 32, "methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
+
+    def test_it_accepts_60_days_timeout(self):
+        payload = {"api_key": "X" * 32, "timeout": 60 * 24 * 3600}
+        r = self.post(self.check.code, payload)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.timeout.total_seconds(), 60 * 24 * 3600)
+
+    def test_it_rejects_out_of_range_timeout(self):
+        payload = {"api_key": "X" * 32, "timeout": 500 * 24 * 3600}
+        r = self.post(self.check.code, payload)
+        self.assertEqual(r.status_code, 400)

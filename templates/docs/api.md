@@ -306,20 +306,20 @@ desc
 timeout
 :   number, optional, default value: {{ default_timeout }}.
 
-    A number of seconds, the expected period of this check.
+    The expected period of this check in seconds.
 
-    Minimum: 60 (one minute), maximum: 2592000 (30 days).
+    Minimum: 60 (one minute), maximum: 31536000 (365 days).
 
     Example for a 5-minute timeout:
 
-    <pre>{"kind": "simple", "timeout": 300}</pre>
+    <pre>{"timeout": 300}</pre>
 
 grace
 :   number, optional, default value: {{ default_grace }}.
 
-    A number of seconds, the grace period for this check.
+    The grace period for this check in seconds.
 
-    Minimum: 60 (one minute), maximum: 2592000 (30 days).
+    Minimum: 60 (one minute), maximum: 31536000 (365 days).
 
 schedule
 :   string, optional, default value: "`* * * * *`".
@@ -506,20 +506,20 @@ desc
 timeout
 :   number, optional.
 
-    A number of seconds, the expected period of this check.
+    The expected period of this check in seconds.
 
-    Minimum: 60 (one minute), maximum: 2592000 (30 days).
+    Minimum: 60 (one minute), maximum: 31536000 (365 days).
 
     Example for a 5-minute timeout:
 
-    <pre>{"kind": "simple", "timeout": 300}</pre>
+    <pre>{"timeout": 300}</pre>
 
 grace
 :   number, optional.
 
-    A number of seconds, the grace period for this check.
+    The grace period for this check in seconds.
 
-    Minimum: 60 (one minute), maximum: 2592000 (30 days).
+    Minimum: 60 (one minute), maximum: 31536000 (365 days).
 
 schedule
 :   string, optional.

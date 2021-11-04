@@ -96,8 +96,8 @@ class FilteringRulesForm(forms.Form):
 
 
 class TimeoutForm(forms.Form):
-    timeout = forms.IntegerField(min_value=60, max_value=2592000)
-    grace = forms.IntegerField(min_value=60, max_value=2592000)
+    timeout = forms.IntegerField(min_value=60, max_value=31536000)
+    grace = forms.IntegerField(min_value=60, max_value=31536000)
 
     def clean_timeout(self):
         return td(seconds=self.cleaned_data["timeout"])

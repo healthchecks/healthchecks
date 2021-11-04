@@ -34,7 +34,7 @@
 
 @media (min-width: 992px) {
     #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog  {
-        width: 800px;
+        width: 850px;
     }
     #update-name-modal .modal-dialog  {
         width: 650px;
@@ -46,24 +46,37 @@
     padding-top: 35px;
 }
 
-.update-timeout-info {
-    line-height: 22px;
+.interval-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
 }
 
-.update-timeout-label {
-    position: relative;
-    right: 3px;
-    display: inline-block;
+.interval-controls label {
+    font-weight: normal;
+    padding-right: 16px;
+    width: 120px;
     text-align: right;
-    width: 100px;
 }
 
-.update-timeout-value {
-    font-size: 22px;
-    display: inline-block;
+.interval-controls input {
     width: 100px;
-    text-align: left;
-    white-space: nowrap;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.interval-controls input::-webkit-outer-spin-button,
+.interval-controls input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.interval-controls select.form-control {
+    width: auto;
+    padding-left: 8px;
+    margin-left: 8px;
+    /* Fix dropdown background in Chrome & dark mode */
+    background: var(--panel-bg);
 }
 
 .kind-simple, .kind-cron {

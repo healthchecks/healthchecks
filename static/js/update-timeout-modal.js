@@ -1,5 +1,9 @@
 $(function () {
     var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
+    var period = document.getElementById("period-value");
+    var periodUnit = document.getElementById("period-unit");
+    var grace = document.getElementById("grace-value");
+    var graceUnit = document.getElementById("grace-unit");
 
     $(".rw .timeout-grace").click(function() {
         var code = $(this).closest("tr.checks-row").attr("id");
@@ -12,9 +16,19 @@ $(function () {
         $("#update-timeout-form").attr("action", url);
         $("#update-cron-form").attr("action", url);
 
-        // Simple
+        // Simple, period
+        var parsed = secsToUnits(this.dataset.timeout);
+        period.value = parsed.value;
+        periodUnit.value = parsed.unit;
         periodSlider.noUiSlider.set(this.dataset.timeout);
+        $("#update-timeout-timeout").val(this.dataset.timeout);
+
+        // Simple, grace
+        var parsed = secsToUnits(this.dataset.grace);
+        grace.value = parsed.value;
+        graceUnit.value = parsed.unit;
         graceSlider.noUiSlider.set(this.dataset.grace);
+        $("#update-timeout-grace").val(this.dataset.grace);
 
         // Cron
         currentPreviewHash = "";
@@ -30,35 +44,27 @@ $(function () {
         return false;
     });
 
-    var MINUTE = {name: "minute", nsecs: 60};
-    var HOUR = {name: "hour", nsecs: MINUTE.nsecs * 60};
-    var DAY = {name: "day", nsecs: HOUR.nsecs * 24};
-    var WEEK = {name: "week", nsecs: DAY.nsecs * 7};
-    var UNITS = [WEEK, DAY, HOUR, MINUTE];
-
-    var secsToText = function(total) {
-        var remainingSeconds = Math.floor(total);
-        var result = "";
-        for (var i=0, unit; unit=UNITS[i]; i++) {
-            if (unit === WEEK && remainingSeconds % unit.nsecs != 0) {
-                // Say "8 days" instead of "1 week 1 day"
-                continue
-            }
-
-            var count = Math.floor(remainingSeconds / unit.nsecs);
-            remainingSeconds = remainingSeconds % unit.nsecs;
-
-            if (count == 1) {
-                result += "1 " + unit.name + " ";
-            }
-
-            if (count > 1) {
-                result += count + " " + unit.name + "s ";
-            }
+    var secsToUnits = function(secs) {
+        if (secs % 86400 == 0) {
+            return {value: secs / 86400, unit: 86400}
+        }
+        if (secs % 3600 == 0) {
+            return {value: secs / 3600, unit: 3600}
         }
 
-        return result;
-    };
+        return {value: Math.round(secs / 60), unit: 60}
+    }
+
+    var pipLabels = {
+        60: "1 minute",
+        1800: "30 minutes",
+        3600: "1 hour",
+        43200: "12 hours",
+        86400: "1 day",
+        604800: "1 week",
+        2592000: "30 days",
+        31536000: "365 days"
+    }
 
     var periodSlider = document.getElementById("period-slider");
     noUiSlider.create(periodSlider, {
@@ -66,27 +72,43 @@ $(function () {
         connect: "lower",
         range: {
             'min': [60, 60],
-            '33%': [3600, 3600],
-            '66%': [86400, 86400],
-            '83%': [604800, 604800],
-            'max': 2592000,
+            '30%': [3600, 3600],
+            '60%': [86400, 86400],
+            '75%': [604800, 86400],
+            '90%': [2592000, 2592000],
+            'max': 31536000
         },
         pips: {
             mode: 'values',
-            values: [60, 1800, 3600, 43200, 86400, 604800, 2592000],
+            values: [60, 1800, 3600, 43200, 86400, 604800, 2592000, 31536000],
             density: 4,
             format: {
-                to: secsToText,
+                to: function(v) { return pipLabels[v] },
                 from: function() {}
             }
         }
     });
 
-    periodSlider.noUiSlider.on("update", function(a, b, value) {
+    // Update inputs and the hidden field when user slides the period slider
+    periodSlider.noUiSlider.on("slide", function(a, b, value) {
         var rounded = Math.round(value);
-        $("#period-slider-value").text(secsToText(rounded));
         $("#update-timeout-timeout").val(rounded);
+
+        var parsed = secsToUnits(rounded);
+        period.value = parsed.value;
+        periodUnit.value = parsed.unit;
     });
+
+    // Update the slider and the hidden field when user changes period inputs
+    $(".period-input").on("keyup change", function() {
+        var secs = Math.round(period.value * periodUnit.value);
+        period.setCustomValidity(secs <= 31536000 ? "" : "Must not exceed 365 days");
+
+        if (secs >= 60) {
+            periodSlider.noUiSlider.set(secs);
+            $("#update-timeout-timeout").val(secs);
+        }
+    })
 
     var graceSlider = document.getElementById("grace-slider");
     noUiSlider.create(graceSlider, {
@@ -94,26 +116,42 @@ $(function () {
         connect: "lower",
         range: {
             'min': [60, 60],
-            '33%': [3600, 3600],
-            '66%': [86400, 86400],
-            '83%': [604800, 604800],
-            'max': 2592000,
+            '30%': [3600, 3600],
+            '60%': [86400, 86400],
+            '75%': [604800, 86400],
+            '90%': [2592000, 2592000],
+            'max': 31536000
         },
         pips: {
             mode: 'values',
-            values: [60, 1800, 3600, 43200, 86400, 604800, 2592000],
+            values: [60, 1800, 3600, 43200, 86400, 604800, 2592000, 31536000],
             density: 4,
             format: {
-                to: secsToText,
+                to: function(v) { return pipLabels[v] },
                 from: function() {}
             }
         }
     });
 
-    graceSlider.noUiSlider.on("update", function(a, b, value) {
+    // Update inputs and the hidden field when user slides the grace slider
+    graceSlider.noUiSlider.on("slide", function(a, b, value) {
         var rounded = Math.round(value);
-        $("#grace-slider-value").text(secsToText(rounded));
         $("#update-timeout-grace").val(rounded);
+
+        var parsed = secsToUnits(rounded);
+        grace.value = parsed.value;
+        graceUnit.value = parsed.unit;
+    });
+
+    // Update the slider and the hidden field when user changes grace inputs
+    $(".grace-input").on("keyup change", function() {
+        var secs = Math.round(grace.value * graceUnit.value);
+        grace.setCustomValidity(secs <= 31536000 ? "" : "Must not exceed 365 days");
+
+        if (secs >= 60) {
+            graceSlider.noUiSlider.set(secs);
+            $("#update-timeout-grace").val(secs);
+        }
     });
 
     function showSimple() {

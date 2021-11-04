@@ -302,16 +302,16 @@ Example:</p>
 <dt>timeout</dt>
 <dd>
 <p>number, optional, default value: {{ default_timeout }}.</p>
-<p>A number of seconds, the expected period of this check.</p>
-<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+<p>The expected period of this check in seconds.</p>
+<p>Minimum: 60 (one minute), maximum: 31536000 (365 days).</p>
 <p>Example for a 5-minute timeout:</p>
-<p><pre>{"kind": "simple", "timeout": 300}</pre></p>
+<p><pre>{"timeout": 300}</pre></p>
 </dd>
 <dt>grace</dt>
 <dd>
 <p>number, optional, default value: {{ default_grace }}.</p>
-<p>A number of seconds, the grace period for this check.</p>
-<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+<p>The grace period for this check in seconds.</p>
+<p>Minimum: 60 (one minute), maximum: 31536000 (365 days).</p>
 </dd>
 <dt>schedule</dt>
 <dd>
@@ -461,16 +461,16 @@ parameter, SITE_NAME will leave its value unchanged.</p>
 <dt>timeout</dt>
 <dd>
 <p>number, optional.</p>
-<p>A number of seconds, the expected period of this check.</p>
-<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+<p>The expected period of this check in seconds.</p>
+<p>Minimum: 60 (one minute), maximum: 31536000 (365 days).</p>
 <p>Example for a 5-minute timeout:</p>
-<p><pre>{"kind": "simple", "timeout": 300}</pre></p>
+<p><pre>{"timeout": 300}</pre></p>
 </dd>
 <dt>grace</dt>
 <dd>
 <p>number, optional.</p>
-<p>A number of seconds, the grace period for this check.</p>
-<p>Minimum: 60 (one minute), maximum: 2592000 (30 days).</p>
+<p>The grace period for this check in seconds.</p>
+<p>Minimum: 60 (one minute), maximum: 31536000 (365 days).</p>
 </dd>
 <dt>schedule</dt>
 <dd>
