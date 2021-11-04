@@ -196,7 +196,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.post({"timeout": 0}, expect_fragment="timeout is too small")
 
     def test_it_rejects_large_timeout(self):
-        self.post({"timeout": 2592001}, expect_fragment="timeout is too large")
+        self.post({"timeout": 31536001}, expect_fragment="timeout is too large")
 
     def test_it_rejects_non_number_timeout(self):
         self.post({"timeout": "oops"}, expect_fragment="timeout is not a number")
