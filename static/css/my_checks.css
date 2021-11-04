@@ -145,7 +145,7 @@
 }
 
 #period-slider {
-    margin: 20px 50px 80px 50px;
+    margin: 20px 50px 90px 50px;
 }
 
 #period-slider.noUi-connect {
@@ -175,6 +175,15 @@
 
 .update-timeout-terms span {
     font-weight: bold;
+}
+
+#update-timeout-grace-cron {
+    -moz-appearance: textfield;
+}
+
+#update-timeout-grace-cron::-webkit-outer-spin-button,
+#update-timeout-grace-cron::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
 
 .label-tag {
