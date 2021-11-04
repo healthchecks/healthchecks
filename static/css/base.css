@@ -248,7 +248,12 @@ pre {
 }
 
 /* no button outlines in Chrome--  */
-.btn-default.active,
-.btn-default.active.focus {
+
+.btn.focus,
+.btn:focus,
+.btn.active,
+.btn.active:focus,
+.btn:active.focus,
+.btn:active:focus {
     outline: 0;
 }
