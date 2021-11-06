@@ -4,15 +4,15 @@
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
 
-![Screenshot of Welcome page](/static/img/welcome.png?raw=true "Welcome Page")
-
 ![Screenshot of My Checks page](/static/img/my_checks.png?raw=true "My Checks Page")
 
 ![Screenshot of Period/Grace dialog](/static/img/period_grace.png?raw=true "Period/Grace Dialog")
 
 ![Screenshot of Cron dialog](/static/img/cron.png?raw=true "Cron Dialog")
 
-![Screenshot of Integrations page](/static/img/channels.png?raw=true "Integrations Page")
+![Screenshot of Check Details page](/static/img/check_details.png?raw=true "My Checks Page")
+
+![Screenshot of Badges page](/static/img/badges.png?raw=true "Integrations Page")
 
 Healthchecks is a cron job monitoring service. It listens for HTTP requests
 and email messages ("pings") from your cron jobs and scheduled tasks ("checks").
