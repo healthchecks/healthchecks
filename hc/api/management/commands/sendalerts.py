@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+import signal
 import time
 from threading import Thread
 
@@ -137,20 +138,26 @@ class Command(BaseCommand):
 
         return True
 
-    def handle(self, use_threads=True, loop=True, *args, **options):
-        self.stdout.write("sendalerts is now running\n")
+    def on_sigterm(self, *args):
+        self.stdout.write("received SIGTERM, finishing...\n")
+        self.sigterm = True
 
+    def handle(self, use_threads=True, loop=True, *args, **options):
+        self.sigterm = False
+        signal.signal(signal.SIGTERM, self.on_sigterm)
+
+        self.stdout.write("sendalerts is now running\n")
         i, sent = 0, 0
         while True:
             # Create flips for any checks going down
-            while self.handle_going_down():
+            while self.handle_going_down() and not self.sigterm:
                 pass
 
             # Process the unprocessed flips
-            while self.process_one_flip(use_threads):
+            while self.process_one_flip(use_threads) and not self.sigterm:
                 sent += 1
 
-            if not loop:
+            if not loop or self.sigterm:
                 break
 
             time.sleep(2)

@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Implement automatic `api_ping` and `api_notification` pruning (#556)
 - Update Dockerfile to install apprise (#581)
 - Improve period and grace controls, allow up to 365 day periods (#281)
+- Add SIGTERM handling in sendalerts
 
 ### Bug Fixes
 - Fix hc.api.views.ping to handle non-utf8 data in request body (#574)
