@@ -1,3 +1,4 @@
+import signal
 import time
 
 from django.core.management.base import BaseCommand
@@ -90,22 +91,35 @@ class Command(BaseCommand):
 
         return True
 
-    def handle(self, *args, **options):
+    def on_sigterm(self, *args):
+        self.stdout.write("Received SIGTERM, finishing...\n")
+        self.sigterm = True
+
+    def handle(self, loop=False, *args, **options):
+        self.sigterm = False
+        signal.signal(signal.SIGTERM, self.on_sigterm)
+
         self.stdout.write("sendreports is now running")
-        while True:
+        while not self.sigterm:
             # Monthly reports
-            while self.handle_one_report():
+            while not self.sigterm and self.handle_one_report():
                 pass
 
             # Daily and hourly nags
-            while self.handle_one_nag():
+            while not self.sigterm and self.handle_one_nag():
                 pass
 
-            if not options["loop"]:
+            if not loop:
                 break
 
+            # Sleep for 60 seconds before looking for more work
+            for i in range(0, 60):
+                if not self.sigterm:
+                    time.sleep(1)
+
+            # Print "-- MARK --" approx. every minute so the logs
+            # have evidence sendreports is still running:
             formatted = timezone.now().isoformat()
             self.stdout.write("-- MARK %s --" % formatted)
 
-            # Sleep for 1 minute before looking for more work
-            time.sleep(60)
+        return "Done."

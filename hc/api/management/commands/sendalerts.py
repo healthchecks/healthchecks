@@ -139,7 +139,7 @@ class Command(BaseCommand):
         return True
 
     def on_sigterm(self, *args):
-        self.stdout.write("received SIGTERM, finishing...\n")
+        self.stdout.write("Received SIGTERM, finishing...\n")
         self.sigterm = True
 
     def handle(self, use_threads=True, loop=True, *args, **options):
@@ -148,22 +148,27 @@ class Command(BaseCommand):
 
         self.stdout.write("sendalerts is now running\n")
         i, sent = 0, 0
-        while True:
+        while not self.sigterm:
             # Create flips for any checks going down
-            while self.handle_going_down() and not self.sigterm:
+            while not self.sigterm and self.handle_going_down():
                 pass
 
             # Process the unprocessed flips
-            while self.process_one_flip(use_threads) and not self.sigterm:
+            while not self.sigterm and self.process_one_flip(use_threads):
                 sent += 1
 
-            if not loop or self.sigterm:
+            if not loop:
                 break
 
-            time.sleep(2)
-            i += 1
+            # Sleep for 2 seconds before looking for more work
+            if not self.sigterm:
+                i += 2
+                time.sleep(2)
+
+            # Print "-- MARK --" approx. every minute so the logs
+            # have evidence sendalerts is still running:
             if i % 60 == 0:
                 timestamp = timezone.now().isoformat()
                 self.stdout.write("-- MARK %s --\n" % timestamp)
 
-        return "Sent %d alert(s)" % sent
+        return f"Sent {sent} alert(s)."
