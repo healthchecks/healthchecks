@@ -1,7 +1,7 @@
 FROM python:3.9-slim-buster as builder
 
 COPY requirements.txt /tmp
-RUN apt update && apt install -y build-essential libpq-dev
+RUN apt update && apt install -y build-essential libffi-dev libpq-dev
 
 RUN \
     if [ `dpkg --print-architecture` = "armhf" ]; then \
