@@ -1,0 +1,28 @@
+#signup-modal .modal-header {
+    border-bottom: 0;
+}
+
+#signup-modal .modal-body {
+    padding: 0 50px 50px 50px;
+}
+
+#signup-modal div.title {
+    font-size: 30px;
+    text-align: center;
+    margin: 0 0 50px 0;
+}
+
+#signup-modal label {
+    font-weight: normal;
+}
+
+#signup-modal #link-instruction {
+    text-align: center;
+}
+
+#signup-result {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 18px;
+    display: none;
+}

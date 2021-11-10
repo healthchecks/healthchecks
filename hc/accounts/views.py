@@ -631,7 +631,7 @@ def close(request):
             user.delete()
 
             request.session.flush()
-            return redirect("hc-index")
+            return redirect("hc-login")
 
     ctx = {}
     if "confirmation" in request.POST:

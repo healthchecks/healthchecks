@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 ## v1.24.0 - Unreleased
 
 ### Improvements
-- Switch from croniter to cronsim (vendored in hc.lib.cronsim)
+- Switch from croniter to cronsim
 - Change outgoing webhook timeout to 10s, but cap the total time to 20s
 - Implement automatic `api_ping` and `api_notification` pruning (#556)
 - Update Dockerfile to install apprise (#581)
 - Improve period and grace controls, allow up to 365 day periods (#281)
 - Add SIGTERM handling in sendalerts and sendreports
+- Remove the "welcome" landing page, direct users to the sign in form instead
 
 ### Bug Fixes
 - Fix hc.api.views.ping to handle non-utf8 data in request body (#574)

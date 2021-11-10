@@ -34,7 +34,7 @@ class CloseAccountTestCase(BaseTestCase):
 
         payload = {"confirmation": "alice@example.org"}
         r = self.client.post("/accounts/close/", payload)
-        self.assertRedirects(r, "/")
+        self.assertRedirects(r, "/accounts/login/")
 
         # Alice should be gone
         alices = User.objects.filter(username="alice")
@@ -68,7 +68,7 @@ class CloseAccountTestCase(BaseTestCase):
 
         payload = {"confirmation": "bob@example.org"}
         r = self.client.post("/accounts/close/", payload)
-        self.assertRedirects(r, "/")
+        self.assertRedirects(r, "/accounts/login/")
 
         # Alice should be still present
         self.alice.refresh_from_db()

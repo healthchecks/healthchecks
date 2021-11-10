@@ -310,42 +310,7 @@ def index(request):
 
         return render(request, "front/projects.html", ctx)
 
-    check = Check()
-
-    ctx = {
-        "page": "welcome",
-        "check": check,
-        "ping_url": check.url(),
-        "enable_apprise": settings.APPRISE_ENABLED is True,
-        "enable_call": settings.TWILIO_AUTH is not None,
-        "enable_discord": settings.DISCORD_CLIENT_ID is not None,
-        "enable_linenotify": settings.LINENOTIFY_CLIENT_ID is not None,
-        "enable_matrix": settings.MATRIX_ACCESS_TOKEN is not None,
-        "enable_mattermost": settings.MATTERMOST_ENABLED is True,
-        "enable_msteams": settings.MSTEAMS_ENABLED is True,
-        "enable_opsgenie": settings.OPSGENIE_ENABLED is True,
-        "enable_pagertree": settings.PAGERTREE_ENABLED is True,
-        "enable_pd": settings.PD_ENABLED is True,
-        "enable_pd_simple": settings.PD_APP_ID is not None,
-        "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
-        "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
-        "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
-        "enable_shell": settings.SHELL_ENABLED is True,
-        "enable_signal": settings.SIGNAL_CLI_ENABLED is True,
-        "enable_slack": settings.SLACK_ENABLED is True,
-        "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
-        "enable_sms": settings.TWILIO_AUTH is not None,
-        "enable_spike": settings.SPIKE_ENABLED is True,
-        "enable_telegram": settings.TELEGRAM_TOKEN is not None,
-        "enable_trello": settings.TRELLO_APP_KEY is not None,
-        "enable_victorops": settings.VICTOROPS_ENABLED is True,
-        "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
-        "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
-        "enable_zulip": settings.ZULIP_ENABLED is True,
-        "registration_open": settings.REGISTRATION_OPEN,
-    }
-
-    return render(request, "front/welcome.html", ctx)
+    return redirect("hc-login")
 
 
 def dashboard(request):
