@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.24.0 - Unreleased
+## v1.24.0 - 2021-11-10
 
 ### Improvements
 - Switch from croniter to cronsim
