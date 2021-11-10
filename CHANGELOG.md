@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.24.1 - 2021-11-10
+
+### Bug Fixes
+- Fix Dockerfile for arm/v7 - install all dependencies from piwheels
+
 ## v1.24.0 - 2021-11-10
 
 ### Improvements
