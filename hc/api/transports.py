@@ -419,6 +419,8 @@ class Pushover(HttpTransport):
             "html": 1,
             "priority": int(prio),
             "tags": check.unique_key,
+            "url": check.cloaked_url(),
+            "url_title": f"View on {settings.SITE_NAME}",
         }
 
         # Emergency notification
