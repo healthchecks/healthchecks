@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.25.0 - Unreleased
+
+### Improvements
+- Implement Pushover emergency alert cancellation when check goes up
+
 ## v1.24.1 - 2021-11-10
 
 ### Bug Fixes

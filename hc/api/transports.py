@@ -380,18 +380,28 @@ class Pushbullet(HttpTransport):
 
 class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
+    CANCEL_TMPL = "https://api.pushover.net/1/receipts/cancel_by_tag/%s.json"
 
     def notify(self, check):
         pieces = self.channel.value.split("|")
-        user_key, prio = pieces[0], pieces[1]
+        user_key, down_prio = pieces[0], pieces[1]
+
         # The third element, if present, is the priority for "up" events
-        if len(pieces) == 3 and check.status == "up":
-            prio = pieces[2]
+        up_prio = down_prio
+        if len(pieces) == 3:
+            up_prio = pieces[2]
 
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_pushover(user_key):
             return "Rate limit exceeded"
+
+        # If down events have the emergency priority,
+        # send a cancel call first
+        if check.status == "up" and down_prio == "2":
+            url = self.CANCEL_TMPL % check.unique_key
+            payload = {"token": settings.PUSHOVER_API_TOKEN}
+            self.post(url, data=payload)
 
         others = self.checks().filter(status="down").exclude(code=check.code)
         # list() executes the query, to avoid DB access while
@@ -399,6 +409,7 @@ class Pushover(HttpTransport):
         ctx = {"check": check, "down_checks": list(others)}
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)
+        prio = up_prio if check.status == "up" else down_prio
 
         payload = {
             "token": settings.PUSHOVER_API_TOKEN,
@@ -407,6 +418,7 @@ class Pushover(HttpTransport):
             "title": title,
             "html": 1,
             "priority": int(prio),
+            "tags": check.unique_key,
         }
 
         # Emergency notification
