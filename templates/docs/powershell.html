@@ -1,21 +1,25 @@
 <h1>PowerShell</h1>
-<p>You can use <a href="https://msdn.microsoft.com/en-us/powershell/mt173057.aspx">PowerShell</a>
+<p>You can use <a href="https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.2">PowerShell</a>
  and Windows Task Scheduler to automate various tasks on a Windows system.
  From within a PowerShell script, it is also easy to ping SITE_NAME.</p>
 <p>Here is a simple PowerShell script that pings SITE_NAME. When scheduled to
-run with Task Scheduler, it will essentially just send regular "I'm alive" messages.
+run with Task Scheduler, it will send regular "I'm alive" messages.
 Of course, you can extend it to do more things.</p>
-<div class="highlight"><pre><span></span><code><span class="c"># inside a PowerShell script:</span>
+<div class="highlight"><pre><span></span><code><span class="c"># Save this in a file with a .ps1 extension, e.g. C:\Scripts\healthchecks.ps1</span>
+<span class="c"># The command to run it:</span>
+<span class="c">#     powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1</span>
+<span class="c">#</span>
 <span class="nb">Invoke-RestMethod</span> <span class="n">PING_URL</span>
 </code></pre></div>
 
-<p>Save the above to e.g., <code>C:\Scripts\healthchecks.ps1</code>.
-Then use the following command in a Scheduled Task to run the script:</p>
-<div class="highlight"><pre><span></span><code>powershell.exe -ExecutionPolicy bypass -File C:\Scripts\healthchecks.ps1
+<p>You can send additional diagnostic information in HTTP POST requests:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="n">PING_URL</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Body</span> <span class="s2">&quot;temperature=-7&quot;</span>
 </code></pre></div>
 
-<p>In simple cases, you can also pass the script to PowerShell directly,
-using the "-command" argument:</p>
-<div class="highlight"><pre><span></span><code># Without an underlying script, passing the command to PowerShell directly:
+<p>For other parameters you can use in the <code>Invoke-RestMethod</code> cmdlet,
+see the official <a href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-restmethod?view=powershell-7.2">Invoke-RestMethod documentation</a>.</p>
+<p>As an alternative to putting the script in a .ps1 file, you can also pass it
+to PowerShell directly, using the "-Command" argument:</p>
+<div class="highlight"><pre><span></span><code># Pass the command to PowerShell directly:
 powershell.exe -Command <span class="s2">&quot;&amp;{Invoke-RestMethod PING_URL}&quot;</span>
 </code></pre></div>
