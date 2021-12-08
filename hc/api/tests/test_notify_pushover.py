@@ -38,6 +38,10 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         payload = kwargs["data"]
         self.assertIn("DOWN", payload["title"])
+        self.assertIn(self.check.cloaked_url(), payload["message"])
+        # Only one check in the project, so there should be no note about
+        # other checks:
+        self.assertNotIn("All the other checks are up.", payload["message"])
         self.assertEqual(payload["tags"], self.check.unique_key)
 
     @patch("hc.api.transports.requests.request")
@@ -86,3 +90,58 @@ class NotifyPushoverTestCase(BaseTestCase):
         up_args, up_kwargs = mock_post.call_args_list[1]
         payload = up_kwargs["data"]
         self.assertIn("UP", payload["title"])
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_shows_all_other_checks_up_note(self, mock_post):
+        self._setup_data("123|0")
+        mock_post.return_value.status_code = 200
+
+        other = Check(project=self.project)
+        other.name = "Foobar"
+        other.status = "up"
+        other.last_ping = now() - td(minutes=61)
+        other.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertIn("All the other checks are up.", payload["message"])
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_lists_other_down_checks(self, mock_post):
+        self._setup_data("123|0")
+        mock_post.return_value.status_code = 200
+
+        other = Check(project=self.project)
+        other.name = "Foobar"
+        other.status = "down"
+        other.last_ping = now() - td(minutes=61)
+        other.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertIn("The following checks are also down", payload["message"])
+        self.assertIn("Foobar", payload["message"])
+        self.assertIn(other.cloaked_url(), payload["message"])
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_show_more_than_10_other_checks(self, mock_post):
+        self._setup_data("123|0")
+        mock_post.return_value.status_code = 200
+
+        for i in range(0, 11):
+            other = Check(project=self.project)
+            other.name = f"Foobar #{i}"
+            other.status = "down"
+            other.last_ping = now() - td(minutes=61)
+            other.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertNotIn("Foobar", payload["message"])
+        self.assertIn("11 other checks are also down.", payload["message"])

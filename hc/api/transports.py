@@ -61,13 +61,22 @@ class Transport(object):
         return False
 
     def down_checks(self, check):
-        """ Return a sorted list of other checks in the same project that are down. """
+        """ Return a sorted list of other checks in the same project that are down.
+
+        If there are no other hecks in the project, return None instead of empty list.
+        Templates can check for None to decide whether to show or not show the
+        "All other checks are up" note.
+
+        """
 
         siblings = self.channel.project.check_set.exclude(id=check.id)
-        siblings = list(siblings.filter(status="down"))
-        sortchecks(siblings, "name")
+        if not siblings.exists():
+            return None
 
-        return siblings
+        down_siblings = list(siblings.filter(status="down"))
+        sortchecks(down_siblings, "name")
+
+        return down_siblings
 
 
 class Email(Transport):

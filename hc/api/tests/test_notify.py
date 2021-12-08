@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from django.core import mail
 from django.utils.timezone import now
-from hc.api.models import Channel, Check, Notification, TokenBucket
+from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 from django.test.utils import override_settings
 
@@ -83,39 +83,6 @@ class NotifyTestCase(BaseTestCase):
         _, kwargs = mock_post.call_args
         self.assertEqual(kwargs["json"]["type"], "note")
         self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
-
-    @patch("hc.api.transports.requests.request")
-    def test_telegram(self, mock_post):
-        v = json.dumps({"id": 123})
-        self._setup_data("telegram", v)
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
-
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
-        self.assertEqual(payload["chat_id"], 123)
-        self.assertTrue("The check" in payload["text"])
-
-    @patch("hc.api.transports.requests.request")
-    def test_telegram_returns_error(self, mock_post):
-        self._setup_data("telegram", json.dumps({"id": 123}))
-        mock_post.return_value.status_code = 400
-        mock_post.return_value.json.return_value = {"description": "Hi"}
-
-        self.channel.notify(self.check)
-        n = Notification.objects.first()
-        self.assertEqual(n.error, 'Received status code 400 with a message: "Hi"')
-
-    def test_telegram_obeys_rate_limit(self):
-        self._setup_data("telegram", json.dumps({"id": 123}))
-
-        TokenBucket.objects.create(value="tg-123", tokens=0)
-
-        self.channel.notify(self.check)
-        n = Notification.objects.first()
-        self.assertEqual(n.error, "Rate limit exceeded")
 
     @patch("hc.api.transports.requests.request")
     def test_call(self, mock_post):
