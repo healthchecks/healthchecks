@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Implement Pushover emergency alert cancellation when check goes up
 
+### Bug Fixes
+- Fix report templates to not show the "started" status (show UP or DOWN instead)
+
 ## v1.24.1 - 2021-11-10
 
 ### Bug Fixes

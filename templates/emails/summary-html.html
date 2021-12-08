@@ -14,7 +14,7 @@
         <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
             <table cellpadding="0" cellspacing="0">
                 <tr>
-                {% with check.get_status_with_started as status %}
+                {% with check.get_status as status %}
                     {% if status == "new" %}
                         <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;">NEW</td>
                     {% elif status == "paused" %}
@@ -23,8 +23,6 @@
                         <td style="background: #f0ad4e; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">LATE</td>
                     {% elif status == "up" %}
                         <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">UP</td>
-                    {% elif status == "started" %}
-                        <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">STARTED</td>
                     {% elif status == "down" %}
                         <td style="background: #d9534f; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">DOWN</td>
                     {% endif %}

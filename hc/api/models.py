@@ -215,9 +215,6 @@ class Check(models.Model):
 
         return "up"
 
-    def get_status_with_started(self):
-        return self.get_status(with_started=True)
-
     def assign_all_channels(self):
         channels = Channel.objects.filter(project=self.project)
         self.channel_set.set(channels)
