@@ -1,6 +1,12 @@
 {% load humanize %}
 {% if check.status == "down" %}
-🔴 The check "{{ check.name_then_code }}" is <b>DOWN</b>. Last ping was {{ check.last_ping|naturaltime }}.
+🔴 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b>. Last ping was {{ check.last_ping|naturaltime }}.
 {% else %}
-🟢 The check "{{ check.name_then_code }}" is now <b>UP</b>.
+🟢 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>.
+{% endif %}{% if down_checks %}
+The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:
+{% for c in down_checks %}- <a href="{{ c.cloaked_url }}">{{ c.name_then_code }}</a> (last ping: {{ c.last_ping|naturaltime }})
+{% endfor %}
+{% else %}
+All the other checks are up.
 {% endif %}

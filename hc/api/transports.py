@@ -10,6 +10,7 @@ import requests
 from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
+from hc.front.templatetags.hc_extras import sortchecks
 from hc.lib import emails
 from hc.lib.string import replace
 
@@ -59,8 +60,14 @@ class Transport(object):
 
         return False
 
-    def checks(self):
-        return self.channel.project.check_set.order_by("created")
+    def down_checks(self, check):
+        """ Return a sorted list of other checks in the same project that are down. """
+
+        siblings = self.channel.project.check_set.exclude(id=check.id)
+        siblings = list(siblings.filter(status="down"))
+        sortchecks(siblings, "name")
+
+        return siblings
 
 
 class Email(Transport):
@@ -403,10 +410,7 @@ class Pushover(HttpTransport):
             payload = {"token": settings.PUSHOVER_API_TOKEN}
             self.post(url, data=payload)
 
-        others = self.checks().filter(status="down").exclude(code=check.code)
-        # list() executes the query, to avoid DB access while
-        # rendering a template
-        ctx = {"check": check, "down_checks": list(others)}
+        ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)
         prio = up_prio if check.status == "up" else down_prio
@@ -419,8 +423,6 @@ class Pushover(HttpTransport):
             "html": 1,
             "priority": int(prio),
             "tags": check.unique_key,
-            "url": check.cloaked_url(),
-            "url_title": f"View on {settings.SITE_NAME}",
         }
 
         # Emergency notification
@@ -503,7 +505,8 @@ class Telegram(HttpTransport):
         if not TokenBucket.authorize_telegram(self.channel.telegram_id):
             return "Rate limit exceeded"
 
-        text = tmpl("telegram_message.html", check=check)
+        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        text = tmpl("telegram_message.html", **ctx)
         return self.send(self.channel.telegram_id, text)
 
 
