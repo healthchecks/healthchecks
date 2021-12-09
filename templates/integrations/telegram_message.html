@@ -1,12 +1,23 @@
-{% load humanize %}
+{% load humanize linemode %}{% linemode %}
 {% if check.status == "down" %}
-🔴 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b>. Last ping was {{ check.last_ping|naturaltime }}.
+    {% line %}🔴 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b>. Last ping was {{ check.last_ping|naturaltime }}.{% endline %}
 {% else %}
-🟢 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>.
-{% endif %}{% if down_checks is not None %}{% if down_checks %}{% if down_checks|length > 10 %}
-{{ down_checks|length }} other checks are {% if check.status == "down" %}also{% else %}still{% endif %} down.
-{% else %}
-The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:
-{% for c in down_checks %}- <a href="{{ c.cloaked_url }}">{{ c.name_then_code }}</a> (last ping: {{ c.last_ping|naturaltime }})
-{% endfor %}{% endif %}{% else %}
-All the other checks are up.{% endif %}{% endif %}
+    {% line %}🟢 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>.{% endline %}
+{% endif %}
+
+{% if down_checks is not None %}
+    {% line %}{% endline %}
+    {% if down_checks %}
+        {% if down_checks|length > 10 %}
+            {% line %}{{ down_checks|length }} other checks are {% if check.status == "down" %}also{% else %}still{% endif %} down.{% endline %}
+        {% else %}
+            {% line %}The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:{% endline %}
+            {% for c in down_checks %}
+                {% line %}- <a href="{{ c.cloaked_url }}">{{ c.name_then_code }}</a> (last ping: {{ c.last_ping|naturaltime }}){% endline %}
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        {% line %}All the other checks are up.{% endline %}
+    {% endif %}
+{% endif %}
+{% endlinemode%}
