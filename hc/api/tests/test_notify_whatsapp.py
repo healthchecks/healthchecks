@@ -10,26 +10,24 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 
 
-class NotifyTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down"):
+class NotifyWhatsAppTestCase(BaseTestCase):
+    def _setup_data(self, notify_up=True, notify_down=True):
         self.check = Check(project=self.project)
-        self.check.status = status
+        self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
+        definition = {"value": "+1234567890", "up": notify_up, "down": notify_down}
+
         self.channel = Channel(project=self.project, kind="whatsapp")
-        self.channel.value = value
+        self.channel.value = json.dumps(definition)
         self.channel.save()
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
     def test_it_works(self, mock_post):
-        definition = {"value": "+1234567890", "up": True, "down": True}
-
-        self._setup_data(json.dumps(definition))
-        self.check.last_ping = now() - td(hours=2)
-
         mock_post.return_value.status_code = 200
+        self._setup_data()
 
         self.channel.notify(self.check)
 
@@ -47,9 +45,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_it_obeys_up_down_flags(self, mock_post):
-        definition = {"value": "+1234567890", "up": True, "down": False}
-
-        self._setup_data(json.dumps(definition))
+        self._setup_data(notify_down=False)
         self.check.last_ping = now() - td(hours=2)
 
         self.channel.notify(self.check)
@@ -64,8 +60,7 @@ class NotifyTestCase(BaseTestCase):
         self.profile.sms_sent = 50
         self.profile.save()
 
-        definition = {"value": "+1234567890", "up": True, "down": True}
-        self._setup_data(json.dumps(definition))
+        self._setup_data()
 
         self.channel.notify(self.check)
         self.assertFalse(mock_post.called)
@@ -82,9 +77,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_it_does_not_escape_special_characters(self, mock_post):
-        definition = {"value": "+1234567890", "up": True, "down": True}
-
-        self._setup_data(json.dumps(definition))
+        self._setup_data()
         self.check.name = "Foo > Bar & Co"
 
         mock_post.return_value.status_code = 200

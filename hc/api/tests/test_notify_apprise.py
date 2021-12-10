@@ -16,25 +16,24 @@ except ImportError:
 
 
 @skipIf(apprise is None, "apprise not installed")
-class NotifyTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+class NotifyAppriseTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+
         self.check = Check(project=self.project)
-        self.check.status = status
+        self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "apprise"
-        self.channel.value = value
-        self.channel.email_verified = email_verified
+        self.channel.value = "123"
         self.channel.save()
         self.channel.checks.add(self.check)
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
     def test_apprise_enabled(self, mock_apprise):
-        self._setup_data("123")
-
         mock_aobj = Mock()
         mock_aobj.add.return_value = True
         mock_aobj.notify.return_value = True
@@ -48,11 +47,7 @@ class NotifyTestCase(BaseTestCase):
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=False)
     def test_apprise_disabled(self, mock_apprise):
-        self._setup_data("123")
-
-        mock_aobj = Mock()
-        mock_aobj.add.return_value = True
-        mock_aobj.notify.return_value = True
-        mock_apprise.return_value = mock_aobj
         self.channel.notify(self.check)
-        self.assertEqual(Notification.objects.count(), 1)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Apprise is disabled and/or not installed")

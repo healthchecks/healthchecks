@@ -9,7 +9,7 @@ from hc.test import BaseTestCase
 from django.test.utils import override_settings
 
 
-class NotifyTestCase(BaseTestCase):
+class NotifySpikeTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 

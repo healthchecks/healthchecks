@@ -10,37 +10,37 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 
 
-class NotifyTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+class NotifyZulipTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+
         self.check = Check(project=self.project)
         self.check.name = "Foobar"
-        self.check.status = status
+        self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
-        self.channel = Channel(project=self.project)
-        self.channel.kind = "zulip"
-        self.channel.value = value
-        self.channel.email_verified = email_verified
-        self.channel.save()
-        self.channel.checks.add(self.check)
-
-    @patch("hc.api.transports.requests.request")
-    def test_zulip(self, mock_post):
         definition = {
             "bot_email": "bot@example.org",
             "api_key": "fake-key",
             "mtype": "stream",
             "to": "general",
         }
-        self._setup_data(json.dumps(definition))
+
+        self.channel = Channel(project=self.project)
+        self.channel.kind = "zulip"
+        self.channel.value = json.dumps(definition)
+        self.channel.save()
+        self.channel.checks.add(self.check)
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
-
         method, url = args
         self.assertEqual(url, "https://example.org/api/v1/messages")
 
@@ -53,13 +53,6 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_zulip_returns_error(self, mock_post):
-        definition = {
-            "bot_email": "bot@example.org",
-            "api_key": "fake-key",
-            "mtype": "stream",
-            "to": "general",
-        }
-        self._setup_data(json.dumps(definition))
         mock_post.return_value.status_code = 403
         mock_post.return_value.json.return_value = {"msg": "Nice try"}
 
@@ -70,6 +63,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_zulip_uses_site_parameter(self, mock_post):
+        mock_post.return_value.status_code = 200
         definition = {
             "bot_email": "bot@example.org",
             "site": "https://custom.example.org",
@@ -77,8 +71,7 @@ class NotifyTestCase(BaseTestCase):
             "mtype": "stream",
             "to": "general",
         }
-        self._setup_data(json.dumps(definition))
-        mock_post.return_value.status_code = 200
+        self.channel.value = json.dumps(definition)
 
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
@@ -93,14 +86,6 @@ class NotifyTestCase(BaseTestCase):
 
     @override_settings(ZULIP_ENABLED=False)
     def test_it_requires_zulip_enabled(self):
-        definition = {
-            "bot_email": "bot@example.org",
-            "api_key": "fake-key",
-            "mtype": "stream",
-            "to": "general",
-        }
-        self._setup_data(json.dumps(definition))
-
         self.channel.notify(self.check)
 
         n = Notification.objects.get()

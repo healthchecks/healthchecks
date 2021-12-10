@@ -10,7 +10,7 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 
 
-class NotifyTestCase(BaseTestCase):
+class NotifyOpsGenieTestCase(BaseTestCase):
     def _setup_data(self, value, status="down", email_verified=True):
         self.check = Check(project=self.project)
         self.check.status = status

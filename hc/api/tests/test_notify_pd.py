@@ -10,7 +10,7 @@ from hc.test import BaseTestCase
 from django.test.utils import override_settings
 
 
-class NotifyTestCase(BaseTestCase):
+class NotifyPdTestCase(BaseTestCase):
     def _setup_data(self, value, status="down", email_verified=True):
         self.check = Check(project=self.project)
         self.check.status = status

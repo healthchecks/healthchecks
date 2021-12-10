@@ -11,23 +11,23 @@ from hc.test import BaseTestCase
 from django.test.utils import override_settings
 
 
-class NotifyTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+class NotifyMsTeamsTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+
         self.check = Check(project=self.project)
-        self.check.status = status
+        self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "msteams"
-        self.channel.value = value
-        self.channel.email_verified = email_verified
+        self.channel.value = "http://example.com/webhook"
         self.channel.save()
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
     def test_msteams(self, mock_post):
-        self._setup_data("http://example.com/webhook")
         mock_post.return_value.status_code = 200
 
         self.check.name = "_underscores_ & more"
@@ -50,7 +50,6 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_msteams_escapes_html_and_markdown_in_desc(self, mock_post):
-        self._setup_data("http://example.com/webhook")
         mock_post.return_value.status_code = 200
 
         self.check.desc = """
@@ -70,7 +69,6 @@ class NotifyTestCase(BaseTestCase):
 
     @override_settings(MSTEAMS_ENABLED=False)
     def test_it_requires_msteams_enabled(self):
-        self._setup_data("http://example.com/webhook")
         self.channel.notify(self.check)
 
         n = Notification.objects.get()

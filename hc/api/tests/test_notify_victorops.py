@@ -9,23 +9,23 @@ from hc.test import BaseTestCase
 from django.test.utils import override_settings
 
 
-class NotifyTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+class NotifyVictorOpsTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+
         self.check = Check(project=self.project)
-        self.check.status = status
+        self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "victorops"
-        self.channel.value = value
-        self.channel.email_verified = email_verified
+        self.channel.value = "123"
         self.channel.save()
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
     def test_victorops(self, mock_post):
-        self._setup_data("123")
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -37,7 +37,6 @@ class NotifyTestCase(BaseTestCase):
 
     @override_settings(VICTOROPS_ENABLED=False)
     def test_it_requires_victorops_enabled(self):
-        self._setup_data("123")
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
