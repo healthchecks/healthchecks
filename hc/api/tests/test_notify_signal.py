@@ -41,6 +41,10 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("is DOWN", message)
         self.assertEqual(recipients, ["+123456789"])
 
+        # Only one check in the project, so there should be no note about
+        # other checks:
+        self.assertNotIn("All the other checks are up.", message)
+
     @patch("hc.api.transports.dbus")
     def test_it_obeys_down_flag(self, mock_bus):
         payload = {"value": "+123456789", "up": True, "down": False}
@@ -88,3 +92,48 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "Rate limit exceeded")
 
         self.assertFalse(mock_bus.SysemBus.called)
+
+    @patch("hc.api.transports.dbus")
+    def test_it_shows_all_other_checks_up_note(self, mock_bus):
+        other = Check(project=self.project)
+        other.name = "Foobar"
+        other.status = "up"
+        other.last_ping = now() - td(minutes=61)
+        other.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_bus.SystemBus.return_value.call_blocking.call_args
+        message, attachments, recipients = args[-1]
+        self.assertIn("All the other checks are up.", message)
+
+    @patch("hc.api.transports.dbus")
+    def test_it_lists_other_down_checks(self, mock_bus):
+        other = Check(project=self.project)
+        other.name = "Foobar"
+        other.status = "down"
+        other.last_ping = now() - td(minutes=61)
+        other.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_bus.SystemBus.return_value.call_blocking.call_args
+        message, attachments, recipients = args[-1]
+        self.assertIn("The following checks are also down", message)
+        self.assertIn("Foobar", message)
+
+    @patch("hc.api.transports.dbus")
+    def test_it_does_not_show_more_than_10_other_checks(self, mock_bus):
+        for i in range(0, 11):
+            other = Check(project=self.project)
+            other.name = f"Foobar #{i}"
+            other.status = "down"
+            other.last_ping = now() - td(minutes=61)
+            other.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_bus.SystemBus.return_value.call_blocking.call_args
+        message, attachments, recipients = args[-1]
+        self.assertNotIn("Foobar", message)
+        self.assertIn("11 other checks are also down.", message)

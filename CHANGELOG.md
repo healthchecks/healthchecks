@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Implement Pushover emergency alert cancellation when check goes up
 - Add "The following checks are also down" section in Telegram notifications
+- Add "The following checks are also down" section in Signal notifications
 
 ### Bug Fixes
 - Fix report templates to not show the "started" status (show UP or DOWN instead)

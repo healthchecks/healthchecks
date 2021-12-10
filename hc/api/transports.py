@@ -757,7 +757,8 @@ class Signal(Transport):
         if not TokenBucket.authorize_signal(self.channel.phone_number):
             return "Rate limit exceeded"
 
-        text = tmpl("signal_message.html", check=check, site_name=settings.SITE_NAME)
+        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        text = tmpl("signal_message.html", **ctx)
 
         try:
             dbus.SystemBus().call_blocking(
