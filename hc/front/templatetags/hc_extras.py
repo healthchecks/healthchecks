@@ -153,7 +153,7 @@ def down_title(check):
 
 @register.filter
 def break_underscore(s):
-    """ Add non-breaking-space characters after underscores. """
+    """ Add zero-width-space characters after underscores. """
 
     if len(s) > 30:
         s = s.replace("_", "_\u200b")
