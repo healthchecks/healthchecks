@@ -50,7 +50,7 @@
                 </p>
                 <pre>
 - job_name: 'healthchecks-{{ project|slugify }}'
-  scheme: {% site_scheme %}
+  scheme: {{ site_scheme }}
   metrics_path: /projects/{{ project.code }}/metrics/<strong>YOUR-READ-ONLY-API-KEY</strong>
   static_configs:
   - targets: ['{% site_hostname %}']</pre>

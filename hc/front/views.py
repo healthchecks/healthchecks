@@ -4,7 +4,7 @@ import json
 import os
 import re
 from secrets import token_urlsafe
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 from cron_descriptor import ExpressionDescriptor
 from cronsim.cronsim import CronSim, CronSimError
@@ -46,7 +46,6 @@ from hc.front.templatetags.hc_extras import (
     down_title,
     sortchecks,
     site_hostname,
-    site_scheme,
 )
 from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
@@ -336,7 +335,7 @@ def serve_doc(request, doc="introduction"):
             "SITE_NAME": settings.SITE_NAME,
             "SITE_ROOT": settings.SITE_ROOT,
             "SITE_HOSTNAME": site_hostname(),
-            "SITE_SCHEME": site_scheme(),
+            "SITE_SCHEME": urlparse(settings.SITE_ROOT).scheme,
             "PING_ENDPOINT": settings.PING_ENDPOINT,
             "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
             "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
@@ -1896,7 +1895,11 @@ def add_msteams(request, code):
 @login_required
 def add_prometheus(request, code):
     project, rw = _get_project_for_user(request, code)
-    ctx = {"page": "channels", "project": project}
+    ctx = {
+        "page": "channels",
+        "project": project,
+        "site_scheme": urlparse(settings.SITE_ROOT).scheme,
+    }
     return render(request, "integrations/add_prometheus.html", ctx)
 
 
