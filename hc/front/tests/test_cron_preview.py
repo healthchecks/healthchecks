@@ -1,8 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import patch
 
 from hc.test import BaseTestCase
-import pytz
 
 
 class CronPreviewTestCase(BaseTestCase):
@@ -47,7 +46,7 @@ class CronPreviewTestCase(BaseTestCase):
         # At that time, the clock is turned back one hour.
         # So, on that date,  3AM happens *twice* and saying
         # "3AM on October 28" is ambiguous.
-        mock_now.return_value = datetime(2018, 10, 26, tzinfo=pytz.UTC)
+        mock_now.return_value = datetime(2018, 10, 26, tzinfo=timezone.utc)
 
         # This schedule will hit the ambiguous date. Cron preview must
         # be able to handle this:
