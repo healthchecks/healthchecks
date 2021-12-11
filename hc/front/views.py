@@ -51,7 +51,6 @@ from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 import pytz
-from pytz.exceptions import UnknownTimeZoneError
 import requests
 
 
