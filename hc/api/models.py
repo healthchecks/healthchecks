@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.signing import TimestampSigner
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
+from django.utils.timezone import localtime, now
 from django.utils.text import slugify
 from hc.accounts.models import Project
 from hc.api import transports
@@ -169,7 +169,7 @@ class Check(models.Model):
             # DST transitions). cronsim will handle the timezone-aware datetimes.
 
             zone = pytz.timezone(self.tz)
-            last_local = timezone.localtime(self.last_ping, zone)
+            last_local = localtime(self.last_ping, zone)
             result = next(CronSim(self.schedule, last_local))
 
         if with_started and self.last_start and self.status != "down":
@@ -193,10 +193,10 @@ class Check(models.Model):
     def get_status(self, with_started=False):
         """ Return current status for display. """
 
-        now = timezone.now()
+        frozen_now = now()
 
         if self.last_start:
-            if now >= self.last_start + self.grace:
+            if frozen_now >= self.last_start + self.grace:
                 return "down"
             elif with_started:
                 return "started"
@@ -206,10 +206,10 @@ class Check(models.Model):
 
         grace_start = self.get_grace_start(with_started=with_started)
         grace_end = grace_start + self.grace
-        if now >= grace_end:
+        if frozen_now >= grace_end:
             return "down"
 
-        if now >= grace_start:
+        if frozen_now >= grace_start:
             return "grace"
 
         return "up"
@@ -276,18 +276,18 @@ class Check(models.Model):
         return result
 
     def ping(self, remote_addr, scheme, method, ua, body, action, exitstatus=None):
-        now = timezone.now()
+        frozen_now = now()
 
         if self.status == "paused" and self.manual_resume:
             action = "ign"
 
         if action == "start":
-            self.last_start = now
+            self.last_start = frozen_now
             # Don't update "last_ping" field.
         elif action == "ign":
             pass
         else:
-            self.last_ping = now
+            self.last_ping = frozen_now
             if self.last_start:
                 self.last_duration = self.last_ping - self.last_start
                 self.last_start = None
@@ -312,7 +312,7 @@ class Check(models.Model):
 
         ping = Ping(owner=self)
         ping.n = self.n_pings
-        ping.created = now
+        ping.created = frozen_now
         if action in ("start", "fail", "ign"):
             ping.kind = action
 
@@ -366,7 +366,7 @@ class Check(models.Model):
 
         # Iterate through flips and month boundaries in reverse order,
         # and for each "down" event increase the counters in `totals`.
-        dt, status = timezone.now(), self.status
+        dt, status = now(), self.status
         for prev_dt, prev_status in sorted(events, reverse=True):
             if status == "down":
                 delta = dt - prev_dt
@@ -395,7 +395,7 @@ class Ping(models.Model):
     id = models.BigAutoField(primary_key=True)
     n = models.IntegerField(null=True)
     owner = models.ForeignKey(Check, models.CASCADE)
-    created = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(default=now)
     kind = models.CharField(max_length=6, blank=True, null=True)
     scheme = models.CharField(max_length=10, default="http")
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
@@ -553,9 +553,7 @@ class Channel(models.Model):
 
         error = self.transport.notify(check) or ""
         Notification.objects.filter(id=n.id).update(error=error)
-        Channel.objects.filter(id=self.id).update(
-            last_notify=timezone.now(), last_error=error
-        )
+        Channel.objects.filter(id=self.id).update(last_notify=now(), last_error=error)
 
         return error
 
@@ -890,16 +888,16 @@ class Flip(models.Model):
 class TokenBucket(models.Model):
     value = models.CharField(max_length=80, unique=True)
     tokens = models.FloatField(default=1.0)
-    updated = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(default=now)
 
     @staticmethod
     def authorize(value, capacity, refill_time_secs):
-        now = timezone.now()
+        frozen_now = now()
         obj, created = TokenBucket.objects.get_or_create(value=value)
 
         if not created:
             # Top up the bucket:
-            delta_secs = (now - obj.updated).total_seconds()
+            delta_secs = (frozen_now - obj.updated).total_seconds()
             obj.tokens = min(1.0, obj.tokens + delta_secs / refill_time_secs)
 
         obj.tokens -= 1.0 / capacity
@@ -910,7 +908,7 @@ class TokenBucket(models.Model):
         # Race condition: two concurrent authorize calls can overwrite each
         # other's changes. It's OK to be a little inexact here for the sake
         # of simplicity.
-        obj.updated = now
+        obj.updated = frozen_now
         obj.save()
 
         return True

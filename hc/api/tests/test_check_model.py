@@ -46,17 +46,17 @@ class CheckModelTestCase(BaseTestCase):
         check.status = "up"
         check.last_ping = dt
 
-        with patch("hc.api.models.timezone.now") as mock_now:
+        with patch("hc.api.models.now") as mock_now:
             # 23:59pm
             mock_now.return_value = dt + td(hours=23, minutes=59)
             self.assertEqual(check.get_status(), "up")
 
-        with patch("hc.api.models.timezone.now") as mock_now:
+        with patch("hc.api.models.now") as mock_now:
             # 00:00am
             mock_now.return_value = dt + td(days=1)
             self.assertEqual(check.get_status(), "grace")
 
-        with patch("hc.api.models.timezone.now") as mock_now:
+        with patch("hc.api.models.now") as mock_now:
             # 1:30am
             mock_now.return_value = dt + td(days=1, minutes=60)
             self.assertEqual(check.get_status(), "down")
@@ -72,17 +72,17 @@ class CheckModelTestCase(BaseTestCase):
         check.last_ping = dt
         check.tz = "Australia/Brisbane"  # UTC+10
 
-        with patch("hc.api.models.timezone.now") as mock_now:
+        with patch("hc.api.models.now") as mock_now:
             # 10:30am
             mock_now.return_value = dt + td(hours=23, minutes=59)
             self.assertEqual(check.get_status(), "up")
 
-        with patch("hc.api.models.timezone.now") as mock_now:
+        with patch("hc.api.models.now") as mock_now:
             # 10:30am
             mock_now.return_value = dt + td(days=1)
             self.assertEqual(check.get_status(), "grace")
 
-        with patch("hc.api.models.timezone.now") as mock_now:
+        with patch("hc.api.models.now") as mock_now:
             # 11:30am
             mock_now.return_value = dt + td(days=1, minutes=60)
             self.assertEqual(check.get_status(), "down")
@@ -171,7 +171,8 @@ class CheckModelTestCase(BaseTestCase):
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
 
-    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    @patch("hc.api.models.now", MOCK_NOW)
+    @patch("hc.lib.date.timezone.now", MOCK_NOW)
     def test_downtimes_handles_no_flips(self):
         check = Check(project=self.project)
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -193,7 +194,8 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(jan[1], td())
         self.assertEqual(jan[2], 0)
 
-    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    @patch("hc.api.models.now", MOCK_NOW)
+    @patch("hc.lib.date.timezone.now", MOCK_NOW)
     def test_downtimes_handles_currently_down_check(self):
         check = Check(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -203,7 +205,8 @@ class CheckModelTestCase(BaseTestCase):
         for dt, downtime, outages in r:
             self.assertEqual(outages, 1)
 
-    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    @patch("hc.api.models.now", MOCK_NOW)
+    @patch("hc.lib.date.timezone.now", MOCK_NOW)
     def test_downtimes_handles_flip_one_day_ago(self):
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -224,7 +227,8 @@ class CheckModelTestCase(BaseTestCase):
                 self.assertEqual(downtime.total_seconds(), 0)
                 self.assertEqual(outages, 0)
 
-    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    @patch("hc.api.models.now", MOCK_NOW)
+    @patch("hc.lib.date.timezone.now", MOCK_NOW)
     def test_downtimes_handles_flip_two_months_ago(self):
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -249,7 +253,8 @@ class CheckModelTestCase(BaseTestCase):
                 self.assertEqual(downtime.total_seconds(), 0)
                 self.assertEqual(outages, 0)
 
-    @patch("hc.api.models.timezone.now", MOCK_NOW)
+    @patch("hc.api.models.now", MOCK_NOW)
+    @patch("hc.lib.date.timezone.now", MOCK_NOW)
     def test_downtimes_handles_months_when_check_did_not_exist(self):
         check = Check(project=self.project)
         check.created = datetime(2020, 1, 1, tzinfo=timezone.utc)
