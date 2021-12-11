@@ -46,17 +46,20 @@ class CheckModelTestCase(BaseTestCase):
         check.status = "up"
         check.last_ping = dt
 
-        # 23:59pm
-        now = dt + td(hours=23, minutes=59)
-        self.assertEqual(check.get_status(now), "up")
+        with patch("hc.api.models.timezone.now") as mock_now:
+            # 23:59pm
+            mock_now.return_value = dt + td(hours=23, minutes=59)
+            self.assertEqual(check.get_status(), "up")
 
-        # 00:00am
-        now = dt + td(days=1)
-        self.assertEqual(check.get_status(now), "grace")
+        with patch("hc.api.models.timezone.now") as mock_now:
+            # 00:00am
+            mock_now.return_value = dt + td(days=1)
+            self.assertEqual(check.get_status(), "grace")
 
-        # 1:30am
-        now = dt + td(days=1, minutes=60)
-        self.assertEqual(check.get_status(now), "down")
+        with patch("hc.api.models.timezone.now") as mock_now:
+            # 1:30am
+            mock_now.return_value = dt + td(days=1, minutes=60)
+            self.assertEqual(check.get_status(), "down")
 
     def test_status_works_with_timezone(self):
         dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
@@ -69,17 +72,20 @@ class CheckModelTestCase(BaseTestCase):
         check.last_ping = dt
         check.tz = "Australia/Brisbane"  # UTC+10
 
-        # 10:30am
-        now = dt + td(hours=23, minutes=59)
-        self.assertEqual(check.get_status(now), "up")
+        with patch("hc.api.models.timezone.now") as mock_now:
+            # 10:30am
+            mock_now.return_value = dt + td(hours=23, minutes=59)
+            self.assertEqual(check.get_status(), "up")
 
-        # 10:30am
-        now = dt + td(days=1)
-        self.assertEqual(check.get_status(now), "grace")
+        with patch("hc.api.models.timezone.now") as mock_now:
+            # 10:30am
+            mock_now.return_value = dt + td(days=1)
+            self.assertEqual(check.get_status(), "grace")
 
-        # 11:30am
-        now = dt + td(days=1, minutes=60)
-        self.assertEqual(check.get_status(now), "down")
+        with patch("hc.api.models.timezone.now") as mock_now:
+            # 11:30am
+            mock_now.return_value = dt + td(days=1, minutes=60)
+            self.assertEqual(check.get_status(), "down")
 
     def test_get_status_handles_past_grace(self):
         check = Check()

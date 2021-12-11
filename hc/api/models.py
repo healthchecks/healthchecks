@@ -190,11 +190,10 @@ class Check(models.Model):
         if grace_start is not None:
             return grace_start + self.grace
 
-    def get_status(self, now=None, with_started=False):
+    def get_status(self, with_started=False):
         """ Return current status for display. """
 
-        if now is None:
-            now = timezone.now()
+        now = timezone.now()
 
         if self.last_start:
             if now >= self.last_start + self.grace:
