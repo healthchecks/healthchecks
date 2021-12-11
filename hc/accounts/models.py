@@ -11,7 +11,7 @@ from django.core.signing import TimestampSigner
 from django.db import models
 from django.db.models import Count, Q
 from django.urls import reverse
-from django.utils import timezone
+from django.utils.timezone import now
 from fido2.ctap2 import AttestedCredentialData
 from hc.lib import emails
 from hc.lib.date import month_boundaries
@@ -178,7 +178,7 @@ class Profile(models.Model):
         result = checks.aggregate(models.Max("last_ping"))
         last_ping = result["last_ping__max"]
 
-        six_months_ago = timezone.now() - timedelta(days=180)
+        six_months_ago = now() - timedelta(days=180)
         if last_ping is None or last_ping < six_months_ago:
             return False
 
@@ -210,7 +210,7 @@ class Profile(models.Model):
         ctx = {
             "checks": checks,
             "sort": self.sort,
-            "now": timezone.now(),
+            "now": now(),
             "unsub_link": unsub_url,
             "notifications_url": self.notifications_url(),
             "nag": nag,
@@ -229,7 +229,7 @@ class Profile(models.Model):
             return 0
 
         # If last sent date is not from this month, we've sent 0 this month.
-        if month(timezone.now()) > month(self.last_sms_date):
+        if month(now()) > month(self.last_sms_date):
             return 0
 
         return self.sms_sent
@@ -242,7 +242,7 @@ class Profile(models.Model):
             return False
 
         self.sms_sent = sent_this_month + 1
-        self.last_sms_date = timezone.now()
+        self.last_sms_date = now()
         self.save()
         return True
 
@@ -252,7 +252,7 @@ class Profile(models.Model):
             return 0
 
         # If last sent date is not from this month, we've made 0 calls this month.
-        if month(timezone.now()) > month(self.last_call_date):
+        if month(now()) > month(self.last_call_date):
             return 0
 
         return self.calls_sent
@@ -265,7 +265,7 @@ class Profile(models.Model):
             return False
 
         self.calls_sent = sent_this_month + 1
-        self.last_call_date = timezone.now()
+        self.last_call_date = now()
         self.save()
         return True
 
@@ -283,7 +283,7 @@ class Profile(models.Model):
     def update_next_nag_date(self):
         any_down = self.checks_from_all_projects().filter(status="down").exists()
         if any_down and self.next_nag_date is None and self.nag_period:
-            self.next_nag_date = timezone.now() + self.nag_period
+            self.next_nag_date = now() + self.nag_period
             self.save(update_fields=["next_nag_date"])
         elif not any_down and self.next_nag_date:
             self.next_nag_date = None
@@ -304,7 +304,7 @@ class Profile(models.Model):
             return None
 
         tz = pytz.timezone(self.tz)
-        dt = timezone.now().astimezone(tz)
+        dt = now().astimezone(tz)
         dt = dt.replace(hour=9, minute=0) + timedelta(minutes=random.randrange(0, 120))
 
         while True:
