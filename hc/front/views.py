@@ -49,6 +49,7 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
+from hc.lib.tz import all_timezones
 import pytz
 from pytz.exceptions import UnknownTimeZoneError
 import requests
@@ -231,7 +232,7 @@ def my_checks(request, code):
         "num_down": num_down,
         "tags": pairs,
         "ping_endpoint": settings.PING_ENDPOINT,
-        "timezones": pytz.all_timezones,
+        "timezones": all_timezones,
         "project": project,
         "num_available": project.num_checks_available(),
         "sort": request.profile.sort,
@@ -455,16 +456,16 @@ def cron_preview(request):
     tz = request.POST.get("tz")
     ctx = {"tz": tz, "dates": []}
 
-    try:
-        zone = pytz.timezone(tz)
-        now_local = localtime(now(), zone)
+    if tz not in all_timezones:
+        ctx["bad_tz"] = True
+        return render(request, "front/cron_preview.html", ctx)
 
+    zone = pytz.timezone(tz)
+    now_local = localtime(now(), zone)
+    try:
         it = CronSim(schedule, now_local)
         for i in range(0, 6):
             ctx["dates"].append(next(it))
-
-    except UnknownTimeZoneError:
-        ctx["bad_tz"] = True
     except CronSimError:
         ctx["bad_schedule"] = True
 
@@ -620,7 +621,7 @@ def details(request, code):
         "rw": rw,
         "channels": channels,
         "enabled_channels": list(check.channel_set.all()),
-        "timezones": pytz.all_timezones,
+        "timezones": all_timezones,
         "downtimes": check.downtimes(months=3),
         "is_new": "new" in request.GET,
         "is_copied": "copied" in request.GET,

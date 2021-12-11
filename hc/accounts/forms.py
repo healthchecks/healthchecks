@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from hc.accounts.models import REPORT_CHOICES, Member
 from hc.api.models import TokenBucket
-import pytz
+from hc.lib.tz import all_timezones
 
 
 class LowercaseEmailField(forms.EmailField):
@@ -49,8 +49,8 @@ class SignupForm(forms.Form):
         return v
 
     def clean_tz(self):
-        # Declare tz as "clean" only if we can find it in pytz.all_timezones
-        if self.cleaned_data["tz"] in pytz.all_timezones:
+        # Declare tz as "clean" only if we can find it in hc.lib.tz.all_timezones
+        if self.cleaned_data["tz"] in all_timezones:
             return self.cleaned_data["tz"]
 
         # Otherwise, return None, and *don't* throw a validation exception:
@@ -109,8 +109,8 @@ class ReportSettingsForm(forms.Form):
         return td(seconds=seconds)
 
     def clean_tz(self):
-        # Declare tz as "clean" only if we can find it in pytz.all_timezones
-        if self.cleaned_data["tz"] in pytz.all_timezones:
+        # Declare tz as "clean" only if we can find it in hc.lib.tz.all_timezones
+        if self.cleaned_data["tz"] in all_timezones:
             return self.cleaned_data["tz"]
 
         # Otherwise, return None, and *don't* throw a validation exception:

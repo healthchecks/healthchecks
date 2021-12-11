@@ -3,7 +3,8 @@ from datetime import datetime
 from cronsim import CronSim
 from django.core.exceptions import ValidationError
 from urllib.parse import urlparse
-from pytz import all_timezones
+
+from hc.lib.tz import all_timezones
 
 
 class WebhookValidator(object):

@@ -7,7 +7,7 @@ Supports only a tiny subset of jsonschema.
 from datetime import datetime
 
 from cronsim import CronSim
-from pytz import all_timezones
+from hc.lib.tz import all_timezones
 
 
 class ValidationError(Exception):
