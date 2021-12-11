@@ -40,7 +40,7 @@ class CronPreviewTestCase(BaseTestCase):
         r = self.client.get("/checks/cron_preview/", {})
         self.assertEqual(r.status_code, 405)
 
-    @patch("hc.front.views.timezone.now")
+    @patch("hc.front.views.now")
     def test_it_handles_dst_transition(self, mock_now):
         # Consider year 2018, Riga, Latvia:
         # The daylight-saving-time ends at 4AM on October 28.

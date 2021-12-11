@@ -24,7 +24,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template, render_to_string
 from django.urls import reverse
-from django.utils import timezone
+from django.utils.timezone import localtime, now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.accounts.models import Project, Member
@@ -158,9 +158,8 @@ def _get_rw_project_for_user(request, project_code):
 def _refresh_last_active_date(profile):
     """ Update last_active_date if it is more than a day old. """
 
-    now = timezone.now()
-    if profile.last_active_date is None or (now - profile.last_active_date).days > 0:
-        profile.last_active_date = now
+    if profile.last_active_date is None or (now() - profile.last_active_date).days > 0:
+        profile.last_active_date = now()
         profile.save()
 
 
@@ -433,7 +432,7 @@ def update_timeout(request, code):
         check.grace = td(minutes=form.cleaned_data["grace"])
 
     check.alert_after = check.going_down_after()
-    if check.status == "up" and check.alert_after < timezone.now():
+    if check.status == "up" and check.alert_after < now():
         # Checks can flip from "up" to "down" state as a result of changing check's
         # schedule.  We don't want to send notifications when changing schedule
         # interactively in the web UI. So we update the `alert_after` and `status`
@@ -458,7 +457,7 @@ def cron_preview(request):
 
     try:
         zone = pytz.timezone(tz)
-        now_local = timezone.localtime(timezone.now(), zone)
+        now_local = localtime(now(), zone)
 
         it = CronSim(schedule, now_local)
         for i in range(0, 6):
@@ -897,7 +896,7 @@ def send_test_notification(request, code):
     channel, rw = _get_channel_for_user(request, code)
 
     dummy = Check(name="TEST", status="down", project=channel.project)
-    dummy.last_ping = timezone.now() - td(days=1)
+    dummy.last_ping = now() - td(days=1)
     dummy.n_pings = 42
 
     if channel.kind == "webhook" and not channel.url_down:
