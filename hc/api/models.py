@@ -4,7 +4,7 @@ import hashlib
 import json
 import time
 import uuid
-from datetime import datetime, timedelta as td
+from datetime import datetime, timedelta as td, timezone
 
 from cronsim import CronSim
 from django.conf import settings
@@ -22,7 +22,7 @@ import pytz
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
 DEFAULT_GRACE = td(hours=1)
-NEVER = datetime(3000, 1, 1, tzinfo=pytz.UTC)
+NEVER = datetime(3000, 1, 1, tzinfo=timezone.utc)
 CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
 # max time between start and ping where we will consider both events related:
 MAX_DELTA = td(hours=24)
@@ -158,7 +158,7 @@ class Check(models.Model):
         """
 
         # NEVER is a constant sentinel value (year 3000).
-        # Using None instead would make the logic clunky.
+        # Using None instead would make the min() logic clunky.
         result = NEVER
 
         if self.kind == "simple" and self.status == "up":

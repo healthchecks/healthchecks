@@ -1,8 +1,7 @@
-from datetime import datetime as dt
+from datetime import datetime as dt, timezone
 
 from django import forms
 from django.core.exceptions import ValidationError
-import pytz
 
 
 class TimestampField(forms.Field):
@@ -19,7 +18,7 @@ class TimestampField(forms.Field):
         if value_int < 0 or value_int > 10000000000:
             raise ValidationError(message="Out of bounds")
 
-        return dt.fromtimestamp(value_int, pytz.UTC)
+        return dt.fromtimestamp(value_int, timezone.utc)
 
 
 class FlipsFiltersForm(forms.Form):
