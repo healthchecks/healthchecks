@@ -19,8 +19,10 @@
             {{ site_name }} will send notifications to
             {% if chat_type == "private" %}
                 a Telegram user
+            {% elif chat_type == "channel" %}
+                a Telegram channel
             {% else %}
-                a Telegram chat
+                a Telegram group
             {% endif %}
             named <strong>{{ chat_name }}</strong>.
         </p>
@@ -53,22 +55,28 @@
     {% else %}
     <p>If your team uses <a href="https://telegram.org/">Telegram</a>,
     you can set up {{ site_name }} to post status updates directly to an
-    appropriate Telegram chat or user.</p>
+    appropriate Telegram user, chat or channel.</p>
 
     <h2>Setup Guide</h2>
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                From your Telegram client, invite
-                <strong><a href="https://t.me/{{ bot_name }}">{{ bot_name }}</a></strong>
-                to a group. It will get added as a member with no access to group
-                messages.
+                <strong>Groups:</strong> If you want notifications sent to a group, start by inviting
+                <a href="https://t.me/{{ bot_name }}">{{ bot_name }}</a>
+                to the group. The bot will get added as a member with no access to
+                group messages.
             </p>
             <p>
-                Alternatively, if you want notifications sent to yourself
-                directly, start a conversation with
-                <strong>{{ bot_name }}</strong>.
+                <strong>Direct messages:</strong> If you want notifications sent to yourself directly,
+                start a conversation with
+                <a href="https://t.me/{{ bot_name }}">{{ bot_name }}</a>.
+            </p>
+            <p>
+                <strong>Channels:</strong> If you want notifications sent to a Telegram channel,
+                add <a href="https://t.me/{{ bot_name }}">{{ bot_name }}</a>
+                to the channel's Administrators. Enable the "Post Messages" admin
+                right, and disable all other admin rights.
             </p>
         </div>
         <div class="col-sm-6">

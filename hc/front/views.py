@@ -1541,6 +1541,12 @@ def add_zulip(request, code):
 def telegram_bot(request):
     try:
         doc = json.loads(request.body.decode())
+        if "channel_post" in doc:
+            # Telegram's "channel_post" key uses the same structure as "message".
+            # To keep the JSON schema and the view logic simple, if the payload
+            # contains "channel_post", copy it to "message", and proceed as usual.
+            doc["message"] = doc["channel_post"]
+
         jsonschema.validate(doc, telegram_callback)
     except ValueError:
         return HttpResponseBadRequest()

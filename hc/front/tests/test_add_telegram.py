@@ -53,10 +53,25 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertFalse(Channel.objects.exists())
 
     @patch("hc.api.transports.requests.request")
-    def test_it_sends_invite(self, mock_get):
+    def test_bot_sends_invite(self, mock_get):
         data = {
             "message": {
                 "chat": {"id": 123, "title": "My Group", "type": "group"},
+                "text": "/start",
+            }
+        }
+        r = self.client.post(
+            "/integrations/telegram/bot/", data, content_type="application/json"
+        )
+
+        self.assertEqual(r.status_code, 200)
+        self.assertTrue(mock_get.called)
+
+    @patch("hc.api.transports.requests.request")
+    def test_bot_handles_channel_post(self, mock_get):
+        data = {
+            "channel_post": {
+                "chat": {"id": 123, "title": "My Group", "type": "channel"},
                 "text": "/start",
             }
         }

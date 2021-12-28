@@ -62,6 +62,8 @@
                                 chat <span>{{ ch.telegram_name }}</span>
                             {% elif ch.telegram_type == "private" %}
                                 user <span>{{ ch.telegram_name }}</span>
+                            {% elif ch.telegram_type == "channel" %}
+                                channel <span>{{ ch.telegram_name }}</span>
                             {% endif %}
                         {% elif ch.kind == "sms" %}
                             SMS to <span>{{ ch.phone_number }}</span>

@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
         form = {
             "url": settings.SITE_ROOT + reverse("hc-telegram-webhook"),
-            "allowed_updates": ["message"],
+            "allowed_updates": ["message", "channel_post"],
         }
 
         url = SETWEBHOOK_TMPL % settings.TELEGRAM_TOKEN
