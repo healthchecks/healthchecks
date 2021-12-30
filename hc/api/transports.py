@@ -1,18 +1,20 @@
 import os
+import json
 import time
 
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import escape
-import json
 import requests
 from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
+from hc.api.schemas import telegram_migration
 from hc.front.templatetags.hc_extras import sortchecks
-from hc.lib import emails
+from hc.lib import emails, jsonschema
 from hc.lib.string import replace
+
 
 try:
     import apprise
@@ -163,27 +165,28 @@ class Shell(Transport):
 class HttpTransport(Transport):
     @classmethod
     def get_error(cls, response):
-        # Override in subclasses: look for a specific error message in the
-        # response and return it.
-        return None
+        # Subclasses can override this method and return a more specific message.
+        return f"Received status code {response.status_code}"
+
+    @classmethod
+    def is_retryable(cls, error):
+        # Subclasses can override this method and return False in cases when retrying
+        # would be pointless (e.g. because the we got a "Permission Denied" response)
+        return True
 
     @classmethod
     def _request(cls, method, url, **kwargs):
-        try:
-            options = dict(kwargs)
-            options["timeout"] = 10
-            if "headers" not in options:
-                options["headers"] = {}
-            if "User-Agent" not in options["headers"]:
-                options["headers"]["User-Agent"] = "healthchecks.io"
+        options = dict(kwargs)
+        options["timeout"] = 10
+        if "headers" not in options:
+            options["headers"] = {}
+        if "User-Agent" not in options["headers"]:
+            options["headers"]["User-Agent"] = "healthchecks.io"
 
+        try:
             r = requests.request(method, url, **options)
             if r.status_code not in (200, 201, 202, 204):
-                m = cls.get_error(r)
-                if m:
-                    return f'Received status code {r.status_code} with a message: "{m}"'
-
-                return f"Received status code {r.status_code}"
+                return cls.get_error(r)
 
         except requests.exceptions.Timeout:
             # Well, we tried
@@ -197,13 +200,15 @@ class HttpTransport(Transport):
         error = cls._request(method, url, **kwargs)
 
         # 2nd try
-        if error and use_retries:
+        if error and cls.is_retryable(error) and use_retries:
             error = cls._request(method, url, **kwargs)
 
-        # 3rd try. Only do the 3rd try if we have spent 10s or less in first two
-        # tries. Otherwise we risk overshooting the 20s total time budget.
-        if error and use_retries and time.time() - start < 10:
-            error = cls._request(method, url, **kwargs)
+        # 3rd try.
+        if error and cls.is_retryable(error) and use_retries:
+            # Only do the 3rd try if we have spent 10s or less in first two
+            # tries. Otherwise we risk overshooting the 20s total time budget.
+            if time.time() - start < 10:
+                error = cls._request(method, url, **kwargs)
 
         return error
 
@@ -304,10 +309,16 @@ class HipChat(HttpTransport):
 class Opsgenie(HttpTransport):
     @classmethod
     def get_error(cls, response):
+        result = f"Received status code {response.status_code}"
+
         try:
-            return response.json().get("message")
+            message = response.json().get("message")
+            if isinstance(message, str):
+                result += f' with a message: "{message}"'
         except ValueError:
             pass
+
+        return result
 
     def notify(self, check):
         if not settings.OPSGENIE_ENABLED:
@@ -495,10 +506,33 @@ class Telegram(HttpTransport):
 
     @classmethod
     def get_error(cls, response):
+        result = f"Received status code {response.status_code}"
+
         try:
-            return response.json().get("description")
+            doc = response.json()
         except ValueError:
+            return result
+
+        try:
+            # If the error payload contains the migrate_to_chat_id field,
+            # prepare a special error message, that the
+            # `handle_supergroup_migration` will later recognize.
+            jsonschema.validate(doc, telegram_migration)
+            chat_id = doc["parameters"]["migrate_to_chat_id"]
+            return f"migrate_to_chat_id: {chat_id}"
+        except jsonschema.ValidationError:
             pass
+
+        description = doc.get("description")
+        if isinstance(description, str):
+            result += f' with a message: "{description}"'
+
+        return result
+
+    @classmethod
+    def is_retryable(cls, error):
+        # No point retrying if Telegram wants us to use a different chat_id
+        return False if error.startswith("migrate_to_chat_id:") else True
 
     @classmethod
     def send(cls, chat_id, text):
@@ -508,6 +542,24 @@ class Telegram(HttpTransport):
             cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"}
         )
 
+    def handle_supergroup_migration(self, error):
+        """Update channel's chat_id if the error message contains a new chat_id.
+
+        Return True if the chat id was updated, False otherwise.
+
+        """
+
+        if error.startswith("migrate_to_chat_id:"):
+            _, chat_id_str = error.split(":")
+
+            doc = self.channel.json
+            doc["id"] = int(chat_id_str)
+            self.channel.value = json.dumps(doc)
+            self.channel.save()
+            return True
+
+        return False
+
     def notify(self, check):
         from hc.api.models import TokenBucket
 
@@ -516,7 +568,13 @@ class Telegram(HttpTransport):
 
         ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("telegram_message.html", **ctx)
-        return self.send(self.channel.telegram_id, text)
+
+        error = self.send(self.channel.telegram_id, text)
+        if error and self.handle_supergroup_migration(error):
+            # Performed supergroup migration, now let's try sending again:
+            error = self.send(self.channel.telegram_id, text)
+
+        return error
 
 
 class Sms(HttpTransport):
@@ -686,10 +744,16 @@ class MsTeams(HttpTransport):
 class Zulip(HttpTransport):
     @classmethod
     def get_error(cls, response):
+        result = f"Received status code {response.status_code}"
+
         try:
-            return response.json().get("msg")
+            message = response.json().get("msg")
+            if isinstance(message, str):
+                result += f' with a message: "{message}"'
         except ValueError:
             pass
+
+        return result
 
     def notify(self, check):
         if not settings.ZULIP_ENABLED:

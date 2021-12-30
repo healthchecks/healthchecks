@@ -17,3 +17,16 @@ check = {
         },
     },
 }
+
+telegram_migration = {
+    "type": "object",
+    "properties": {
+        "description": {"type": "string"},
+        "parameters": {
+            "type": "object",
+            "properties": {"migrate_to_chat_id": {"type": "number"}},
+            "required": ["migrate_to_chat_id"],
+        },
+    },
+    "required": ["description", "parameters"],
+}

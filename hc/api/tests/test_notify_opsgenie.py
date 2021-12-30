@@ -2,7 +2,7 @@
 
 from datetime import timedelta as td
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -30,7 +30,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         mock_post.return_value.status_code = 202
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
         self.assertEqual(mock_post.call_count, 1)
@@ -45,7 +45,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         mock_post.return_value.status_code = 202
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
         self.assertEqual(mock_post.call_count, 1)
@@ -59,7 +59,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         mock_post.return_value.status_code = 202
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
         self.assertEqual(mock_post.call_count, 1)
@@ -73,8 +73,18 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         mock_post.return_value.json.return_value = {"message": "Nice try"}
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_non_json_error_response(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 403
+        mock_post.return_value.json = Mock(side_effect=ValueError)
+
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 403")
 
     @override_settings(OPSGENIE_ENABLED=False)
     def test_it_requires_opsgenie_enabled(self):

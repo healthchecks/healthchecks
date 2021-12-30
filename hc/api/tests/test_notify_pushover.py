@@ -70,7 +70,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         obj.save()
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
 
     @patch("hc.api.transports.requests.request")

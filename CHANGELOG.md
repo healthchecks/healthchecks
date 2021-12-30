@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add "The following checks are also down" section in Signal notifications
 - Upgrade to django-compressor 3.0
 - Add support for Telegram channels (#592)
+- Implement Telegram group to supergroup migration (#132)
 
 ### Bug Fixes
 - Fix report templates to not show the "started" status (show UP or DOWN instead)

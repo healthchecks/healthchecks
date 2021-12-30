@@ -2,7 +2,7 @@
 
 from datetime import timedelta as td
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification, TokenBucket
@@ -42,19 +42,49 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", payload["text"])
 
     @patch("hc.api.transports.requests.request")
-    def test_telegram_returns_error(self, mock_post):
+    def test_it_returns_error(self, mock_post):
         mock_post.return_value.status_code = 400
         mock_post.return_value.json.return_value = {"description": "Hi"}
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 400 with a message: "Hi"')
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_non_json_error(self, mock_post):
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.json = Mock(side_effect=ValueError)
+
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 400")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_group_supergroup_migration(self, mock_post):
+        error_response = Mock(status_code=400)
+        error_response.json.return_value = {
+            "description": "Hello",
+            "parameters": {"migrate_to_chat_id": -234},
+        }
+
+        mock_post.side_effect = [error_response, Mock(status_code=200)]
+
+        self.channel.notify(self.check)
+        self.assertEqual(mock_post.call_count, 2)
+
+        # The chat id should have been updated
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.telegram_id, -234)
+
+        # There should be no logged error
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
 
     def test_telegram_obeys_rate_limit(self):
         TokenBucket.objects.create(value="tg-123", tokens=0)
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
 
     @patch("hc.api.transports.requests.request")

@@ -88,7 +88,7 @@ class NotifySignalTestCase(BaseTestCase):
         obj.save()
 
         self.channel.notify(self.check)
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
 
         self.assertFalse(mock_bus.SysemBus.called)

@@ -2,7 +2,7 @@
 
 from datetime import timedelta as td
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -52,17 +52,26 @@ class NotifyZulipTestCase(BaseTestCase):
         self.assertNotIn(str(self.check.code), serialized)
 
     @patch("hc.api.transports.requests.request")
-    def test_zulip_returns_error(self, mock_post):
+    def test_it_returns_error(self, mock_post):
         mock_post.return_value.status_code = 403
         mock_post.return_value.json.return_value = {"msg": "Nice try"}
 
         self.channel.notify(self.check)
 
-        n = Notification.objects.first()
+        n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
 
     @patch("hc.api.transports.requests.request")
-    def test_zulip_uses_site_parameter(self, mock_post):
+    def test_it_handles_non_json_error_response(self, mock_post):
+        mock_post.return_value.status_code = 403
+        mock_post.return_value.json = Mock(side_effect=ValueError)
+
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 403")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_uses_site_parameter(self, mock_post):
         mock_post.return_value.status_code = 200
         definition = {
             "bot_email": "bot@example.org",

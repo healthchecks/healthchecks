@@ -59,7 +59,7 @@
                         {% elif ch.kind == "telegram" %}
                             Telegram
                             {% if ch.telegram_type == "group" %}
-                                chat <span>{{ ch.telegram_name }}</span>
+                                group <span>{{ ch.telegram_name }}</span>
                             {% elif ch.telegram_type == "private" %}
                                 user <span>{{ ch.telegram_name }}</span>
                             {% elif ch.telegram_type == "channel" %}

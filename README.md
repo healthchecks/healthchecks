@@ -307,7 +307,9 @@ To enable the Signal integration:
 
 * Create a Telegram bot by talking to the
 [BotFather](https://core.telegram.org/bots#6-botfather). Set the bot's name,
-description, user picture, and add a "/start" command.
+description, user picture, and add a "/start" command. To avoid user confusion,
+please do not use the Healthchecks.io logo as your bot's user picture, use
+your own logo.
 * After creating the bot you will have the bot's name and token. Put them
 in `TELEGRAM_BOT_NAME` and `TELEGRAM_TOKEN` environment variables.
 * Run `settelegramwebhook` management command. This command tells Telegram
@@ -319,7 +321,7 @@ where to forward channel messages by invoking Telegram's
     Done, Telegram's webhook set to: https://my-monitoring-project.com/integrations/telegram/bot/
     ```
 
-For this to work, your `SITE_ROOT` needs to be correct and use "https://"
+For this to work, your `SITE_ROOT` must be correct and must use the "https://"
 scheme.
 
 ### Apprise
