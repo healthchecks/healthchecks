@@ -59,7 +59,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(args[1], "123")
 
     @patch("hc.api.transports.requests.request")
-    def test_slack_handles_500(self, mock_post):
+    def test_it_handles_500(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 500
 
@@ -69,13 +69,15 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 500")
 
     @patch("hc.api.transports.requests.request", side_effect=Timeout)
-    def test_slack_handles_timeout(self, mock_post):
+    def test_it_handles_timeout(self, mock_post):
         self._setup_data("123")
 
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
+        # Expect 1 try and 2 retries:
+        self.assertEqual(mock_post.call_count, 3)
 
     @patch("hc.api.transports.requests.request")
     def test_slack_with_tabs_in_schedule(self, mock_post):
@@ -96,3 +98,14 @@ class NotifySlackTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Slack notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_retry_404(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 404
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 404")
+        self.assertEqual(mock_post.call_count, 1)

@@ -1,5 +1,5 @@
-import os
 import json
+import os
 import time
 
 from django.conf import settings
@@ -289,6 +289,19 @@ class Webhook(HttpTransport):
 
 
 class Slack(HttpTransport):
+    @classmethod
+    def get_error(cls, response):
+        return f"Received status code {response.status_code}"
+
+    @classmethod
+    def is_retryable(cls, error):
+        if error == "Received status code 404":
+            # Immediately retrying the same payload will not work.
+            # https://api.slack.com/messaging/webhooks#handling_errors
+            return False
+
+        return True
+
     def notify(self, check):
         if self.channel.kind == "slack" and not settings.SLACK_ENABLED:
             return "Slack notifications are not enabled."
