@@ -135,13 +135,8 @@ server restarts.</p>
 <h2>Database Cleanup</h2>
 <p>With time and use the Healthchecks database will grow in size. You may
 decide to prune old data: inactive user accounts, old checks not assigned
-to users, old records of outgoing email messages and old records of received pings.
-There are separate Django management commands for each task:</p>
-<p>Remove old records from the <code>api_ping</code> table. For each check, keep 100 most
-recent pings:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py prunepings
-</code></pre></div>
-
+to users, old records of outgoing email messages. There are separate Django management
+commands for each task:</p>
 <p>Remove old records of sent notifications. For each check, remove notifications that
 are older than the oldest stored ping for the corresponding check.</p>
 <div class="highlight"><pre><span></span><code>$ ./manage.py prunenotifications
