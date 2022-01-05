@@ -24,7 +24,7 @@ team management features: projects, team members, read-only access.
 
 The building blocks are:
 
-* Python 3.6+
+* Python 3.7+
 * Django 3
 * PostgreSQL or MySQL
 
