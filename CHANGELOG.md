@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix report templates to not show the "started" status (show UP or DOWN instead)
+- Update Dockerfile to avoid running "pip wheel" more than once (#594)
 
 ## v1.24.1 - 2021-11-10
 
