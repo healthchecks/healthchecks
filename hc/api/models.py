@@ -11,13 +11,18 @@ from django.conf import settings
 from django.core.signing import TimestampSigner
 from django.db import models
 from django.urls import reverse
-from django.utils.timezone import localtime, now
+from django.utils.timezone import now
 from django.utils.text import slugify
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries
-import pytz
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
+
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -167,9 +172,7 @@ class Check(models.Model):
             # The complex case, next ping is expected based on cron schedule.
             # Don't convert to naive datetimes (and so avoid ambiguities around
             # DST transitions). cronsim will handle the timezone-aware datetimes.
-
-            zone = pytz.timezone(self.tz)
-            last_local = localtime(self.last_ping, zone)
+            last_local = self.last_ping.astimezone(ZoneInfo(self.tz))
             result = next(CronSim(self.schedule, last_local))
 
         if with_started and self.last_start and self.status != "down":

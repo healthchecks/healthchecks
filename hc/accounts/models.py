@@ -15,7 +15,12 @@ from django.utils.timezone import now
 from fido2.ctap2 import AttestedCredentialData
 from hc.lib import emails
 from hc.lib.date import month_boundaries
-import pytz
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
+
 
 NO_NAG = timedelta()
 NAG_PERIODS = (
@@ -303,8 +308,7 @@ class Profile(models.Model):
         if self.reports == "off":
             return None
 
-        tz = pytz.timezone(self.tz)
-        dt = now().astimezone(tz)
+        dt = now().astimezone(ZoneInfo(self.tz))
         dt = dt.replace(hour=9, minute=0) + timedelta(minutes=random.randrange(0, 120))
 
         while True:

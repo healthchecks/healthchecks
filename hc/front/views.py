@@ -24,7 +24,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template, render_to_string
 from django.urls import reverse
-from django.utils.timezone import localtime, now
+from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.accounts.models import Project, Member
@@ -50,8 +50,12 @@ from hc.front.templatetags.hc_extras import (
 from hc.lib import jsonschema
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
-import pytz
 import requests
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo
 
 
 VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
@@ -459,8 +463,7 @@ def cron_preview(request):
         ctx["bad_tz"] = True
         return render(request, "front/cron_preview.html", ctx)
 
-    zone = pytz.timezone(tz)
-    now_local = localtime(now(), zone)
+    now_local = now().astimezone(ZoneInfo(tz))
     try:
         it = CronSim(schedule, now_local)
         for i in range(0, 6):
