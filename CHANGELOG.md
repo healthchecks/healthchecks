@@ -13,8 +13,8 @@ All notable changes to this project will be documented in this file.
 - Update the Slack integration to not retry when Slack returns 404
 - Refactor transport classes to raise exceptions on delivery problems
 - Add Channel.disabled field, for disabling integrations on permanent errors
-- Bump the minimal Python version from 3.6 (EOL) to 3.7
 - Upgrade to Django 4
+- Bump the min. Python version from 3.6 to 3.8 (as required by Django 4)
 
 ### Bug Fixes
 - Fix report templates to not show the "started" status (show UP or DOWN instead)
