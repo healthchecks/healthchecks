@@ -424,6 +424,7 @@ class Channel(models.Model):
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
     value = models.TextField(blank=True)
     email_verified = models.BooleanField(default=False)
+    disabled = models.BooleanField(null=True)
     last_notify = models.DateTimeField(null=True, blank=True)
     last_error = models.CharField(max_length=200, blank=True)
     checks = models.ManyToManyField(Check)
@@ -551,9 +552,17 @@ class Channel(models.Model):
         check.is_test = is_test
         check.status_url = n.status_url()
 
-        error = self.transport.notify(check) or ""
+        error, disabled = "", self.disabled
+        try:
+            self.transport.notify(check)
+        except transports.TransportError as e:
+            disabled = True if e.permanent else disabled
+            error = e.message
+
         Notification.objects.filter(id=n.id).update(error=error)
-        Channel.objects.filter(id=self.id).update(last_notify=now(), last_error=error)
+        Channel.objects.filter(id=self.id).update(
+            last_notify=now(), last_error=error, disabled=disabled
+        )
 
         return error
 
@@ -876,7 +885,7 @@ class Flip(models.Model):
         if self.new_status not in ("up", "down"):
             raise NotImplementedError("Unexpected status: %s" % self.status)
 
-        for channel in self.owner.channel_set.all():
+        for channel in self.owner.channel_set.exclude(disabled=True):
             start = time.time()
             error = channel.notify(self.owner)
             if error == "no-op":

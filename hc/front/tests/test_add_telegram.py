@@ -53,7 +53,9 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertFalse(Channel.objects.exists())
 
     @patch("hc.api.transports.requests.request")
-    def test_bot_sends_invite(self, mock_get):
+    def test_bot_sends_invite(self, mock_request):
+        mock_request.return_value.status_code = 200
+
         data = {
             "message": {
                 "chat": {"id": 123, "title": "My Group", "type": "group"},
@@ -65,10 +67,12 @@ class AddTelegramTestCase(BaseTestCase):
         )
 
         self.assertEqual(r.status_code, 200)
-        self.assertTrue(mock_get.called)
+        self.assertTrue(mock_request.called)
 
     @patch("hc.api.transports.requests.request")
-    def test_bot_handles_channel_post(self, mock_get):
+    def test_bot_handles_channel_post(self, mock_request):
+        mock_request.return_value.status_code = 200
+
         data = {
             "channel_post": {
                 "chat": {"id": 123, "title": "My Group", "type": "channel"},
@@ -80,7 +84,7 @@ class AddTelegramTestCase(BaseTestCase):
         )
 
         self.assertEqual(r.status_code, 200)
-        self.assertTrue(mock_get.called)
+        self.assertTrue(mock_request.called)
 
     @patch("hc.api.transports.requests.request")
     def test_bot_handles_bad_message(self, mock_get):

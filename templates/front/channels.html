@@ -117,7 +117,9 @@
                 </div>
             </td>
             <td>
-                {% if ch.kind == "email" and not ch.email_verified %}
+                {% if ch.disabled %}
+                    <span class="label label-danger">Disabled</span>
+                {% elif ch.kind == "email" and not ch.email_verified %}
                     <span class="label label-default">Unconfirmed</span>
                 {% elif ch.kind == "hipchat" or ch.kind == "pagerteam" %}
                     Retired

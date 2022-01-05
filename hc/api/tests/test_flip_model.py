@@ -53,3 +53,10 @@ class FlipModelTestCase(BaseTestCase):
 
         results = list(self.flip.send_alerts())
         self.assertEqual(results, [])
+
+    def test_it_skips_disabled_channels(self):
+        self.channel.disabled = True
+        self.channel.save()
+
+        results = list(self.flip.send_alerts())
+        self.assertEqual(results, [])

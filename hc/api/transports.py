@@ -37,15 +37,21 @@ def tmpl(template_name, **ctx):
     return render_to_string(template_path, ctx).strip().replace("\xa0", " ")
 
 
+class TransportError(Exception):
+    def __init__(self, message, permanent=False):
+        self.message = message
+        self.permanent = permanent
+
+
 class Transport(object):
     def __init__(self, channel):
         self.channel = channel
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         """ Send notification about current status of the check.
 
-        This method returns None on success, and error message
-        on error.
+        This method raises TransportError on error, and returns None
+        on success.
 
         """
 
@@ -82,9 +88,9 @@ class Transport(object):
 
 
 class Email(Transport):
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not self.channel.email_verified:
-            return "Email not verified"
+            raise TransportError("Email not verified")
 
         unsub_link = self.channel.get_unsub_link()
 
@@ -148,7 +154,7 @@ class Shell(Transport):
 
     def notify(self, check):
         if not settings.SHELL_ENABLED:
-            return "Shell commands are not enabled"
+            raise TransportError("Shell commands are not enabled")
 
         if check.status == "up":
             cmd = self.channel.cmd_up
@@ -159,23 +165,17 @@ class Shell(Transport):
         code = os.system(cmd)
 
         if code != 0:
-            return "Command returned exit code %d" % code
+            raise TransportError("Command returned exit code %d" % code)
 
 
 class HttpTransport(Transport):
     @classmethod
-    def get_error(cls, response):
-        # Subclasses can override this method and return a more specific message.
-        return f"Received status code {response.status_code}"
+    def raise_for_response(cls, response):
+        # Subclasses can override this method to produce a more specific message.
+        raise TransportError(f"Received status code {response.status_code}")
 
     @classmethod
-    def is_retryable(cls, error):
-        # Subclasses can override this method and return False in cases when retrying
-        # would be pointless (e.g. because the we got a "Permission Denied" response)
-        return True
-
-    @classmethod
-    def _request(cls, method, url, **kwargs):
+    def _request(cls, method, url, **kwargs) -> None:
         options = dict(kwargs)
         options["timeout"] = 10
         if "headers" not in options:
@@ -186,43 +186,42 @@ class HttpTransport(Transport):
         try:
             r = requests.request(method, url, **options)
             if r.status_code not in (200, 201, 202, 204):
-                return cls.get_error(r)
+                cls.raise_for_response(r)
 
         except requests.exceptions.Timeout:
             # Well, we tried
-            return "Connection timed out"
+            raise TransportError("Connection timed out")
         except requests.exceptions.ConnectionError:
-            return "Connection failed"
+            raise TransportError("Connection failed")
 
     @classmethod
-    def _request_with_retries(cls, method, url, use_retries=True, **kwargs):
+    def _request_with_retries(cls, method, url, use_retries=True, **kwargs) -> None:
         start = time.time()
-        error = cls._request(method, url, **kwargs)
 
-        # 2nd try
-        if error and cls.is_retryable(error) and use_retries:
-            error = cls._request(method, url, **kwargs)
+        tries_left = 3 if use_retries else 1
+        while True:
+            try:
+                return cls._request(method, url, **kwargs)
+            except TransportError as e:
+                tries_left = 0 if e.permanent else tries_left - 1
 
-        # 3rd try.
-        if error and cls.is_retryable(error) and use_retries:
-            # Only do the 3rd try if we have spent 10s or less in first two
-            # tries. Otherwise we risk overshooting the 20s total time budget.
-            if time.time() - start < 10:
-                error = cls._request(method, url, **kwargs)
-
-        return error
+                # If we have no tries left *or* have already used more than
+                # 15 seconds of time then abort the retry loop by re-raising
+                # the exception:
+                if tries_left == 0 or time.time() - start > 15:
+                    raise e
 
     @classmethod
     def get(cls, url, **kwargs):
-        return cls._request_with_retries("get", url, **kwargs)
+        cls._request_with_retries("get", url, **kwargs)
 
     @classmethod
     def post(cls, url, **kwargs):
-        return cls._request_with_retries("post", url, **kwargs)
+        cls._request_with_retries("post", url, **kwargs)
 
     @classmethod
     def put(cls, url, **kwargs):
-        return cls._request_with_retries("put", url, **kwargs)
+        cls._request_with_retries("put", url, **kwargs)
 
 
 class Webhook(HttpTransport):
@@ -261,11 +260,11 @@ class Webhook(HttpTransport):
 
     def notify(self, check):
         if not settings.WEBHOOKS_ENABLED:
-            return "Webhook notifications are not enabled."
+            raise TransportError("Webhook notifications are not enabled.")
 
         spec = self.channel.webhook_spec(check.status)
         if not spec["url"]:
-            return "Empty webhook URL"
+            raise TransportError("Empty webhook URL")
 
         url = self.prepare(spec["url"], check, urlencode=True)
         headers = {}
@@ -281,37 +280,32 @@ class Webhook(HttpTransport):
         use_retries = False if getattr(check, "is_test") else True
 
         if spec["method"] == "GET":
-            return self.get(url, use_retries=use_retries, headers=headers)
+            self.get(url, use_retries=use_retries, headers=headers)
         elif spec["method"] == "POST":
-            return self.post(url, use_retries=use_retries, data=body, headers=headers)
+            self.post(url, use_retries=use_retries, data=body, headers=headers)
         elif spec["method"] == "PUT":
-            return self.put(url, use_retries=use_retries, data=body, headers=headers)
+            self.put(url, use_retries=use_retries, data=body, headers=headers)
 
 
 class Slack(HttpTransport):
     @classmethod
-    def get_error(cls, response):
-        return f"Received status code {response.status_code}"
+    def raise_for_response(cls, response):
+        message = f"Received status code {response.status_code}"
+        # If Slack returns 404, this endpoint is unlikely to ever work again
+        # https://api.slack.com/messaging/webhooks#handling_errors
+        permanent = response.status_code == 404
+        raise TransportError(message, permanent=permanent)
 
-    @classmethod
-    def is_retryable(cls, error):
-        if error == "Received status code 404":
-            # Immediately retrying the same payload will not work.
-            # https://api.slack.com/messaging/webhooks#handling_errors
-            return False
-
-        return True
-
-    def notify(self, check):
+    def notify(self, check) -> None:
         if self.channel.kind == "slack" and not settings.SLACK_ENABLED:
-            return "Slack notifications are not enabled."
+            raise TransportError("Slack notifications are not enabled.")
 
         if self.channel.kind == "mattermost" and not settings.MATTERMOST_ENABLED:
-            return "Mattermost notifications are not enabled."
+            raise TransportError("Mattermost notifications are not enabled.")
 
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
-        return self.post(self.channel.slack_webhook_url, json=payload)
+        self.post(self.channel.slack_webhook_url, json=payload)
 
 
 class HipChat(HttpTransport):
@@ -321,21 +315,20 @@ class HipChat(HttpTransport):
 
 class Opsgenie(HttpTransport):
     @classmethod
-    def get_error(cls, response):
-        result = f"Received status code {response.status_code}"
-
+    def raise_for_response(cls, response):
+        message = f"Received status code {response.status_code}"
         try:
-            message = response.json().get("message")
-            if isinstance(message, str):
-                result += f' with a message: "{message}"'
+            details = response.json().get("message")
+            if isinstance(details, str):
+                message += f' with a message: "{details}"'
         except ValueError:
             pass
 
-        return result
+        raise TransportError(message)
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.OPSGENIE_ENABLED:
-            return "Opsgenie notifications are not enabled."
+            raise TransportError("Opsgenie notifications are not enabled.")
 
         headers = {
             "Conent-Type": "application/json",
@@ -357,15 +350,15 @@ class Opsgenie(HttpTransport):
         if check.status == "up":
             url += "/%s/close?identifierType=alias" % check.code
 
-        return self.post(url, json=payload, headers=headers)
+        self.post(url, json=payload, headers=headers)
 
 
 class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.PD_ENABLED:
-            return "PagerDuty notifications are not enabled."
+            raise TransportError("PagerDuty notifications are not enabled.")
 
         description = tmpl("pd_description.html", check=check)
         payload = {
@@ -377,13 +370,13 @@ class PagerDuty(HttpTransport):
             "client_url": check.details_url(),
         }
 
-        return self.post(self.URL, json=payload)
+        self.post(self.URL, json=payload)
 
 
 class PagerTree(HttpTransport):
     def notify(self, check):
         if not settings.PAGERTREE_ENABLED:
-            return "PagerTree notifications are not enabled."
+            raise TransportError("PagerTree notifications are not enabled.")
 
         url = self.channel.value
         headers = {"Conent-Type": "application/json"}
@@ -397,7 +390,7 @@ class PagerTree(HttpTransport):
             "tags": ",".join(check.tags_list()),
         }
 
-        return self.post(url, json=payload, headers=headers)
+        self.post(url, json=payload, headers=headers)
 
 
 class PagerTeam(HttpTransport):
@@ -406,7 +399,7 @@ class PagerTeam(HttpTransport):
 
 
 class Pushbullet(HttpTransport):
-    def notify(self, check):
+    def notify(self, check) -> None:
         text = tmpl("pushbullet_message.html", check=check)
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
@@ -414,15 +407,14 @@ class Pushbullet(HttpTransport):
             "Conent-Type": "application/json",
         }
         payload = {"type": "note", "title": settings.SITE_NAME, "body": text}
-
-        return self.post(url, json=payload, headers=headers)
+        self.post(url, json=payload, headers=headers)
 
 
 class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
     CANCEL_TMPL = "https://api.pushover.net/1/receipts/cancel_by_tag/%s.json"
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         pieces = self.channel.value.split("|")
         user_key, down_prio = pieces[0], pieces[1]
 
@@ -434,14 +426,14 @@ class Pushover(HttpTransport):
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_pushover(user_key):
-            return "Rate limit exceeded"
+            raise TransportError("Rate limit exceeded")
 
         # If down events have the emergency priority,
         # send a cancel call first
         if check.status == "up" and down_prio == "2":
             url = self.CANCEL_TMPL % check.unique_key
-            payload = {"token": settings.PUSHOVER_API_TOKEN}
-            self.post(url, data=payload)
+            cancel_payload = {"token": settings.PUSHOVER_API_TOKEN}
+            self.post(url, data=cancel_payload)
 
         ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("pushover_message.html", **ctx)
@@ -463,13 +455,13 @@ class Pushover(HttpTransport):
             payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
             payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
-        return self.post(self.URL, data=payload)
+        self.post(self.URL, data=payload)
 
 
 class VictorOps(HttpTransport):
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.VICTOROPS_ENABLED:
-            return "Splunk On-Call notifications are not enabled."
+            raise TransportError("Splunk On-Call notifications are not enabled.")
 
         description = tmpl("victorops_description.html", check=check)
         mtype = "CRITICAL" if check.status == "down" else "RECOVERY"
@@ -481,7 +473,7 @@ class VictorOps(HttpTransport):
             "monitoring_tool": settings.SITE_NAME,
         }
 
-        return self.post(self.channel.value, json=payload)
+        self.post(self.channel.value, json=payload)
 
 
 class Matrix(HttpTransport):
@@ -493,7 +485,7 @@ class Matrix(HttpTransport):
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
         return url
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         plain = tmpl("matrix_description.html", check=check)
         formatted = tmpl("matrix_description_formatted.html", check=check)
         payload = {
@@ -503,91 +495,74 @@ class Matrix(HttpTransport):
             "formatted_body": formatted,
         }
 
-        return self.post(self.get_url(), json=payload)
+        self.post(self.get_url(), json=payload)
 
 
 class Discord(HttpTransport):
-    def notify(self, check):
+    def notify(self, check) -> None:
         text = tmpl("slack_message.json", check=check)
         payload = json.loads(text)
         url = self.channel.discord_webhook_url + "/slack"
-        return self.post(url, json=payload)
+        self.post(url, json=payload)
+
+
+class MigrationRequiredError(TransportError):
+    def __init__(self, message, new_chat_id: int):
+        super().__init__(message, permanent=True)
+        self.new_chat_id = new_chat_id
 
 
 class Telegram(HttpTransport):
     SM = "https://api.telegram.org/bot%s/sendMessage" % settings.TELEGRAM_TOKEN
 
     @classmethod
-    def get_error(cls, response):
-        result = f"Received status code {response.status_code}"
-
+    def raise_for_response(cls, response):
+        message = f"Received status code {response.status_code}"
         try:
             doc = response.json()
         except ValueError:
-            return result
-
-        try:
-            # If the error payload contains the migrate_to_chat_id field,
-            # prepare a special error message, that the
-            # `handle_supergroup_migration` will later recognize.
-            jsonschema.validate(doc, telegram_migration)
-            chat_id = doc["parameters"]["migrate_to_chat_id"]
-            return f"migrate_to_chat_id: {chat_id}"
-        except jsonschema.ValidationError:
-            pass
+            raise TransportError(message)
 
         description = doc.get("description")
         if isinstance(description, str):
-            result += f' with a message: "{description}"'
+            message += f' with a message: "{description}"'
 
-        return result
+        try:
+            # If the error payload contains the migrate_to_chat_id field,
+            # raise MigrationRequiredError, and include the new chat_id.
+            jsonschema.validate(doc, telegram_migration)
+            chat_id = doc["parameters"]["migrate_to_chat_id"]
+            raise MigrationRequiredError(message, chat_id)
+        except jsonschema.ValidationError:
+            pass
 
-    @classmethod
-    def is_retryable(cls, error):
-        # No point retrying if Telegram wants us to use a different chat_id
-        return False if error.startswith("migrate_to_chat_id:") else True
+        raise TransportError(message)
 
     @classmethod
     def send(cls, chat_id, text):
         # Telegram.send is a separate method because it is also used in
         # hc.front.views.telegram_bot to send invite links.
-        return cls.post(
-            cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"}
-        )
+        cls.post(cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"})
 
-    def handle_supergroup_migration(self, error):
-        """Update channel's chat_id if the error message contains a new chat_id.
-
-        Return True if the chat id was updated, False otherwise.
-
-        """
-
-        if error.startswith("migrate_to_chat_id:"):
-            _, chat_id_str = error.split(":")
-
-            doc = self.channel.json
-            doc["id"] = int(chat_id_str)
-            self.channel.value = json.dumps(doc)
-            self.channel.save()
-            return True
-
-        return False
-
-    def notify(self, check):
+    def notify(self, check) -> None:
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_telegram(self.channel.telegram_id):
-            return "Rate limit exceeded"
+            raise TransportError("Rate limit exceeded")
 
         ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("telegram_message.html", **ctx)
 
-        error = self.send(self.channel.telegram_id, text)
-        if error and self.handle_supergroup_migration(error):
-            # Performed supergroup migration, now let's try sending again:
-            error = self.send(self.channel.telegram_id, text)
+        try:
+            self.send(self.channel.telegram_id, text)
+        except MigrationRequiredError as e:
+            doc = self.channel.json
+            doc["id"] = e.new_chat_id
+            self.channel.value = json.dumps(doc)
+            self.channel.save()
 
-        return error
+            # Performed supergroup migration, now let's try sending again:
+            self.send(self.channel.telegram_id, text)
 
 
 class Sms(HttpTransport):
@@ -599,11 +574,11 @@ class Sms(HttpTransport):
         else:
             return not self.channel.sms_notify_up
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("SMS")
-            return "Monthly SMS limit exceeded"
+            raise TransportError("Monthly SMS limit exceeded")
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
@@ -616,7 +591,7 @@ class Sms(HttpTransport):
             "StatusCallback": check.status_url,
         }
 
-        return self.post(url, data=data, auth=auth)
+        self.post(url, data=data, auth=auth)
 
 
 class Call(HttpTransport):
@@ -625,11 +600,11 @@ class Call(HttpTransport):
     def is_noop(self, check):
         return check.status != "down"
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_call():
             profile.send_call_limit_notice()
-            return "Monthly phone call limit exceeded"
+            raise TransportError("Monthly phone call limit exceeded")
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
@@ -642,7 +617,7 @@ class Call(HttpTransport):
             "StatusCallback": check.status_url,
         }
 
-        return self.post(url, data=data, auth=auth)
+        self.post(url, data=data, auth=auth)
 
 
 class WhatsApp(HttpTransport):
@@ -654,11 +629,11 @@ class WhatsApp(HttpTransport):
         else:
             return not self.channel.whatsapp_notify_up
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("WhatsApp")
-            return "Monthly message limit exceeded"
+            raise TransportError("Monthly message limit exceeded")
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
@@ -671,7 +646,7 @@ class WhatsApp(HttpTransport):
             "StatusCallback": check.status_url,
         }
 
-        return self.post(url, data=data, auth=auth)
+        self.post(url, data=data, auth=auth)
 
 
 class Trello(HttpTransport):
@@ -680,7 +655,7 @@ class Trello(HttpTransport):
     def is_noop(self, check):
         return check.status != "down"
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         params = {
             "idList": self.channel.trello_list_id,
             "name": tmpl("trello_name.html", check=check),
@@ -689,15 +664,15 @@ class Trello(HttpTransport):
             "token": self.channel.trello_token,
         }
 
-        return self.post(self.URL, params=params)
+        self.post(self.URL, params=params)
 
 
 class Apprise(HttpTransport):
-    def notify(self, check):
+    def notify(self, check) -> None:
 
         if not settings.APPRISE_ENABLED:
             # Not supported and/or enabled
-            return "Apprise is disabled and/or not installed"
+            raise TransportError("Apprise is disabled and/or not installed")
 
         a = apprise.Apprise()
         title = tmpl("apprise_title.html", check=check)
@@ -711,11 +686,8 @@ class Apprise(HttpTransport):
             else apprise.NotifyType.FAILURE
         )
 
-        return (
-            "Failed"
-            if not a.notify(body=body, title=title, notify_type=notify_type)
-            else None
-        )
+        if not a.notify(body=body, title=title, notify_type=notify_type):
+            raise TransportError("Failed")
 
 
 class MsTeams(HttpTransport):
@@ -727,9 +699,9 @@ class MsTeams(HttpTransport):
             s = s.replace(c, "\\" + c)
         return s
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.MSTEAMS_ENABLED:
-            return "MS Teams notifications are not enabled."
+            raise TransportError("MS Teams notifications are not enabled.")
 
         text = tmpl("msteams_message.json", check=check)
         payload = json.loads(text)
@@ -751,26 +723,25 @@ class MsTeams(HttpTransport):
         # so we run escape() and then additionally escape Markdown:
         payload["sections"][0]["text"] = self.escape_md(check.desc)
 
-        return self.post(self.channel.value, json=payload)
+        self.post(self.channel.value, json=payload)
 
 
 class Zulip(HttpTransport):
     @classmethod
-    def get_error(cls, response):
-        result = f"Received status code {response.status_code}"
-
+    def raise_for_response(cls, response):
+        message = f"Received status code {response.status_code}"
         try:
-            message = response.json().get("msg")
-            if isinstance(message, str):
-                result += f' with a message: "{message}"'
+            details = response.json().get("msg")
+            if isinstance(details, str):
+                message += f' with a message: "{details}"'
         except ValueError:
             pass
 
-        return result
+        raise TransportError(message)
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.ZULIP_ENABLED:
-            return "Zulip notifications are not enabled."
+            raise TransportError("Zulip notifications are not enabled.")
 
         url = self.channel.zulip_site + "/api/v1/messages"
         auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
@@ -781,13 +752,13 @@ class Zulip(HttpTransport):
             "content": tmpl("zulip_content.html", check=check),
         }
 
-        return self.post(url, data=data, auth=auth)
+        self.post(url, data=data, auth=auth)
 
 
 class Spike(HttpTransport):
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.SPIKE_ENABLED:
-            return "Spike notifications are not enabled."
+            raise TransportError("Spike notifications are not enabled.")
 
         url = self.channel.value
         headers = {"Conent-Type": "application/json"}
@@ -798,19 +769,19 @@ class Spike(HttpTransport):
             "status": check.status,
         }
 
-        return self.post(url, json=payload, headers=headers)
+        self.post(url, json=payload, headers=headers)
 
 
 class LineNotify(HttpTransport):
     URL = "https://notify-api.line.me/api/notify"
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Bearer %s" % self.channel.linenotify_token,
         }
         payload = {"message": tmpl("linenotify_message.html", check=check)}
-        return self.post(self.URL, headers=headers, params=payload)
+        self.post(self.URL, headers=headers, params=payload)
 
 
 class Signal(Transport):
@@ -825,14 +796,14 @@ class Signal(Transport):
         signal_object = bus.get_object("org.asamk.Signal", "/org/asamk/Signal")
         return dbus.Interface(signal_object, "org.asamk.Signal")
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.SIGNAL_CLI_ENABLED:
-            return "Signal notifications are not enabled"
+            raise TransportError("Signal notifications are not enabled")
 
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_signal(self.channel.phone_number):
-            return "Rate limit exceeded"
+            raise TransportError("Rate limit exceeded")
 
         ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("signal_message.html", **ctx)
@@ -849,6 +820,6 @@ class Signal(Transport):
             )
         except dbus.exceptions.DBusException as e:
             if "NotFoundException" in str(e):
-                return "Recipient not found"
+                raise TransportError("Recipient not found")
 
-            return "signal-cli call failed"
+            raise TransportError("signal-cli call failed")

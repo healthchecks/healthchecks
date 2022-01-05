@@ -141,3 +141,13 @@ class ChannelsTestCase(BaseTestCase):
         r = self.client.get(self.channels_url)
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "(up only)")
+
+    def test_it_shows_disabled_note(self):
+        ch = Channel(kind="slack", project=self.project)
+        ch.value = "https://example.org"
+        ch.disabled = True
+        ch.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.channels_url)
+        self.assertContains(r, "label-danger", status_code=200)
