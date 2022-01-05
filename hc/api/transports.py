@@ -556,12 +556,8 @@ class Telegram(HttpTransport):
         try:
             self.send(self.channel.telegram_id, text)
         except MigrationRequiredError as e:
-            doc = self.channel.json
-            doc["id"] = e.new_chat_id
-            self.channel.value = json.dumps(doc)
-            self.channel.save()
-
-            # Performed supergroup migration, now let's try sending again:
+            # Save the new chat_id, then try sending again:
+            self.channel.update_telegram_id(e.new_chat_id)
             self.send(self.channel.telegram_id, text)
 
 

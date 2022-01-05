@@ -683,6 +683,12 @@ class Channel(models.Model):
         assert self.kind == "telegram"
         return self.json.get("name")
 
+    def update_telegram_id(self, new_chat_id) -> None:
+        doc = self.json
+        doc["id"] = new_chat_id
+        self.value = json.dumps(doc)
+        self.save()
+
     @property
     def pd_service_key(self):
         assert self.kind == "pd"
