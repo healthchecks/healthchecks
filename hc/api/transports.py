@@ -30,7 +30,7 @@ except ImportError:
     settings.SIGNAL_CLI_ENABLED = False
 
 
-def tmpl(template_name, **ctx):
+def tmpl(template_name, **ctx) -> str:
     template_path = "integrations/%s" % template_name
     # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
     # and cost twice the money.
@@ -38,7 +38,7 @@ def tmpl(template_name, **ctx):
 
 
 class TransportError(Exception):
-    def __init__(self, message, permanent=False):
+    def __init__(self, message, permanent=False) -> None:
         self.message = message
         self.permanent = permanent
 
@@ -57,7 +57,7 @@ class Transport(object):
 
         raise NotImplementedError()
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         """ Return True if transport will ignore check's current status.
 
         This method is overridden in Webhook subclass where the user can
@@ -119,7 +119,7 @@ class Email(Transport):
 
         emails.alert(self.channel.email_value, ctx, headers)
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         if check.status == "down":
             return not self.channel.email_notify_down
         else:
@@ -127,7 +127,7 @@ class Email(Transport):
 
 
 class Shell(Transport):
-    def prepare(self, template, check):
+    def prepare(self, template: str, check) -> str:
         """ Replace placeholders with actual values. """
 
         ctx = {
@@ -143,7 +143,7 @@ class Shell(Transport):
 
         return replace(template, ctx)
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         if check.status == "down" and not self.channel.cmd_down:
             return True
 
@@ -152,7 +152,7 @@ class Shell(Transport):
 
         return False
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.SHELL_ENABLED:
             raise TransportError("Shell commands are not enabled")
 
@@ -212,23 +212,23 @@ class HttpTransport(Transport):
                     raise e
 
     @classmethod
-    def get(cls, url, **kwargs):
+    def get(cls, url, **kwargs) -> None:
         cls._request_with_retries("get", url, **kwargs)
 
     @classmethod
-    def post(cls, url, **kwargs):
+    def post(cls, url, **kwargs) -> None:
         cls._request_with_retries("post", url, **kwargs)
 
     @classmethod
-    def put(cls, url, **kwargs):
+    def put(cls, url, **kwargs) -> None:
         cls._request_with_retries("put", url, **kwargs)
 
 
 class Webhook(HttpTransport):
-    def prepare(self, template, check, urlencode=False, latin1=False):
+    def prepare(self, template: str, check, urlencode=False, latin1=False) -> str:
         """ Replace variables with actual values. """
 
-        def safe(s):
+        def safe(s: str) -> str:
             return quote(s) if urlencode else s
 
         ctx = {
@@ -249,7 +249,7 @@ class Webhook(HttpTransport):
 
         return result
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         if check.status == "down" and not self.channel.url_down:
             return True
 
@@ -258,7 +258,7 @@ class Webhook(HttpTransport):
 
         return False
 
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.WEBHOOKS_ENABLED:
             raise TransportError("Webhook notifications are not enabled.")
 
@@ -309,7 +309,7 @@ class Slack(HttpTransport):
 
 
 class HipChat(HttpTransport):
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         return True
 
 
@@ -374,7 +374,7 @@ class PagerDuty(HttpTransport):
 
 
 class PagerTree(HttpTransport):
-    def notify(self, check):
+    def notify(self, check) -> None:
         if not settings.PAGERTREE_ENABLED:
             raise TransportError("PagerTree notifications are not enabled.")
 
@@ -394,7 +394,7 @@ class PagerTree(HttpTransport):
 
 
 class PagerTeam(HttpTransport):
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         return True
 
 
@@ -568,7 +568,7 @@ class Telegram(HttpTransport):
 class Sms(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         if check.status == "down":
             return not self.channel.sms_notify_down
         else:
@@ -597,7 +597,7 @@ class Sms(HttpTransport):
 class Call(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Calls.json"
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         return check.status != "down"
 
     def notify(self, check) -> None:
@@ -623,7 +623,7 @@ class Call(HttpTransport):
 class WhatsApp(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         if check.status == "down":
             return not self.channel.whatsapp_notify_down
         else:
@@ -652,7 +652,7 @@ class WhatsApp(HttpTransport):
 class Trello(HttpTransport):
     URL = "https://api.trello.com/1/cards"
 
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         return check.status != "down"
 
     def notify(self, check) -> None:
@@ -785,7 +785,7 @@ class LineNotify(HttpTransport):
 
 
 class Signal(Transport):
-    def is_noop(self, check):
+    def is_noop(self, check) -> bool:
         if check.status == "down":
             return not self.channel.signal_notify_down
         else:
