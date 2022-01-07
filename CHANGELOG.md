@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v1.26.0 - Unreleased
+
+### Improvements
+- Update Telegram integration to treat "group chat was deleted" as permanent error
+
+
 ## v1.25.0 - 2022-01-07
 
 ### Improvements

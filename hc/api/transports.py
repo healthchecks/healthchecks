@@ -523,20 +523,24 @@ class Telegram(HttpTransport):
         except ValueError:
             raise TransportError(message)
 
-        description = doc.get("description")
-        if isinstance(description, str):
-            message += f' with a message: "{description}"'
-
+        # If the error payload contains the migrate_to_chat_id field,
+        # raise MigrationRequiredError, with the new chat_id included
         try:
-            # If the error payload contains the migrate_to_chat_id field,
-            # raise MigrationRequiredError, and include the new chat_id.
             jsonschema.validate(doc, telegram_migration)
+            description = doc["description"]
             chat_id = doc["parameters"]["migrate_to_chat_id"]
-            raise MigrationRequiredError(message, chat_id)
+            raise MigrationRequiredError(description, chat_id)
         except jsonschema.ValidationError:
             pass
 
-        raise TransportError(message)
+        permanent = False
+        description = doc.get("description")
+        if isinstance(description, str):
+            message += f' with a message: "{description}"'
+            if description == "Forbidden: the group chat was deleted":
+                permanent = True
+
+        raise TransportError(message, permanent=permanent)
 
     @classmethod
     def send(cls, chat_id, text):

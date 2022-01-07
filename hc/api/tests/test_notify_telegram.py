@@ -138,3 +138,14 @@ class NotifyTelegramTestCase(BaseTestCase):
         payload = kwargs["json"]
         self.assertNotIn("Foobar", payload["text"])
         self.assertIn("11 other checks are also down.", payload["text"])
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_disables_channel_on_403_group_deleted(self, mock_post):
+        mock_post.return_value.status_code = 403
+        mock_post.return_value.json.return_value = {
+            "description": "Forbidden: the group chat was deleted"
+        }
+
+        self.channel.notify(self.check)
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
