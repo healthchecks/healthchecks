@@ -172,7 +172,7 @@ class ChannelsAdmin(admin.ModelAdmin):
     class Media:
         css = {"all": ("css/admin/channels.css",)}
 
-    search_fields = ["value", "project__owner__email"]
+    search_fields = ["value", "project__owner__email", "name"]
     list_display = ("id", "transport", "name", "project_", "value", "ok")
     list_filter = ("kind",)
     raw_id_fields = ("project", "checks")
