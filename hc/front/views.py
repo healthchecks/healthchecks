@@ -329,7 +329,8 @@ def serve_doc(request, doc="introduction"):
     if not os.path.exists(path):
         raise Http404("not found")
 
-    content = open(path, "r", encoding="utf-8").read()
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
 
     if not doc.startswith("self_hosted"):
         replaces = {
