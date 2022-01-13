@@ -945,7 +945,9 @@ def email_form(request, channel=None, code=None):
     if request.method == "POST":
         form = forms.EmailForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data["value"] != channel.email_value:
+            if channel.disabled or form.cleaned_data["value"] != channel.email_value:
+                channel.disabled = False
+
                 if not settings.EMAIL_USE_VERIFICATION:
                     # In self-hosted setting, administator can set
                     # EMAIL_USE_VERIFICATION=False to disable email verification

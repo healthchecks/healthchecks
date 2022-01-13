@@ -151,3 +151,13 @@ class ChannelsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.channels_url)
         self.assertContains(r, "label-danger", status_code=200)
+
+    def test_it_shows_fix_button_for_disabled_email(self):
+        ch = Channel(kind="email", project=self.project)
+        ch.value = "bob@example.org"
+        ch.disabled = True
+        ch.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.channels_url)
+        self.assertContains(r, "Fix&hellip;", status_code=200)

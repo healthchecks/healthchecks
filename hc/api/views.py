@@ -487,12 +487,12 @@ def notification_status(request, code):
         # return HTTP 200 so the other party doesn't retry over and over again:
         return HttpResponse()
 
-    error, mark_not_verified = None, False
+    error, mark_disabled = None, False
 
-    # Look for "error" and "mark_not_verified" keys:
+    # Look for "error" and "mark_disabled" keys:
     if request.POST.get("error"):
         error = request.POST["error"][:200]
-        mark_not_verified = request.POST.get("mark_not_verified")
+        mark_disabled = request.POST.get("mark_disabled")
 
     # Handle "MessageStatus" key from Twilio
     if request.POST.get("MessageStatus") in ("failed", "undelivered"):
@@ -509,8 +509,8 @@ def notification_status(request, code):
 
         channel_q = Channel.objects.filter(id=notification.channel_id)
         channel_q.update(last_error=error)
-        if mark_not_verified:
-            channel_q.update(email_verified=False)
+        if mark_disabled:
+            channel_q.update(disabled=True)
 
     return HttpResponse()
 

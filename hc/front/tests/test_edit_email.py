@@ -106,6 +106,23 @@ class EditEmailTestCase(BaseTestCase):
         # Email should *not* have been sent
         self.assertEqual(len(mail.outbox), 0)
 
+    def test_it_resets_disabled_flag(self):
+        self.channel.disabled = True
+        self.channel.save()
+
+        form = {"value": "alice-fixed@example.org", "down": "true", "up": "true"}
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+        self.assertRedirects(r, self.channels_url)
+
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.disabled)
+        self.assertFalse(self.channel.email_verified)
+
+        # It should send a verification link
+        email = mail.outbox[0]
+        self.assertTrue(email.subject.startswith("Verify email address on"))
+
     def test_it_requires_rw_access(self):
         self.bobs_membership.role = "r"
         self.bobs_membership.save()

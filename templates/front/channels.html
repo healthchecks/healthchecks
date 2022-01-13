@@ -148,7 +148,9 @@
             </td>
             <td class="actions">
                 {% if ch.is_editable and rw %}
-                <a class="btn btn-sm btn-default" href="{% url 'hc-edit-channel' ch.code %}">Edit</a>
+                <a class="btn btn-sm btn-default" href="{% url 'hc-edit-channel' ch.code %}">
+                    {% if ch.kind == "email" and ch.disabled %}Fix&hellip;{% else %}Edit{% endif %}
+                </a>
                 {% endif %}
                 <form action="{% url 'hc-channel-test' ch.code %}" method="post">
                     {% csrf_token %}

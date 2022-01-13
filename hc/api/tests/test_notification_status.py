@@ -84,15 +84,16 @@ class NotificationStatusTestCase(BaseTestCase):
         self.assertEqual(self.channel.last_error, "Something went wrong.")
         self.assertTrue(self.channel.email_verified)
 
-    def test_it_handles_mark_not_verified_key(self):
-        payload = {"error": "Received complaint.", "mark_not_verified": "1"}
+    def test_it_handles_mark_disabled_key(self):
+        payload = {"error": "Received complaint.", "mark_disabled": "1"}
 
         r = self.csrf_client.post(self.url, payload)
         self.assertEqual(r.status_code, 200)
 
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Received complaint.")
-        self.assertFalse(self.channel.email_verified)
+        self.assertTrue(self.channel.email_verified)
+        self.assertTrue(self.channel.disabled)
 
     def test_it_handles_twilio_call_status_failed(self):
         r = self.csrf_client.post(self.url, {"CallStatus": "failed"})
