@@ -275,7 +275,7 @@ WEBHOOKS_ENABLED = envbool("WEBHOOKS_ENABLED", "True")
 ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
 
 # CSRF_TRUSTED_ORIGINS is useful for setups with reverse proxy configurations with https hosts
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "[]").split(",")
+CSRF_TRUSTED_ORIGINS = list(filter(None,os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")))
 
 # Read additional configuration from hc/local_settings.py if it exists
 if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
