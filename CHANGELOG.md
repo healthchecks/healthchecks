@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Update Telegram integration to treat "group chat was deleted" as permanent error
 - Update email bounce handler to mark email channels as disabled (#446)
+- Update Signal integration to use JSON RPC over UNIX socket
 
 ## v1.25.0 - 2022-01-07
 

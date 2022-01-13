@@ -809,7 +809,7 @@ def channels(request, code):
         "enable_pushbullet": settings.PUSHBULLET_CLIENT_ID is not None,
         "enable_pushover": settings.PUSHOVER_API_TOKEN is not None,
         "enable_shell": settings.SHELL_ENABLED is True,
-        "enable_signal": settings.SIGNAL_CLI_ENABLED is True,
+        "enable_signal": settings.SIGNAL_CLI_SOCKET is not None,
         "enable_slack": settings.SLACK_ENABLED is True,
         "enable_slack_btn": settings.SLACK_CLIENT_ID is not None,
         "enable_sms": settings.TWILIO_AUTH is not None,
@@ -916,7 +916,7 @@ def send_test_notification(request, code):
     error = channel.notify(dummy, is_test=True)
 
     if error:
-        messages.warning(request, "Could not send a test notification. %s" % error)
+        messages.warning(request, "Could not send a test notification. %s." % error)
     else:
         messages.success(request, "Test notification sent!")
 
@@ -1727,7 +1727,7 @@ def whatsapp_form(request, channel=None, code=None):
     return render(request, "integrations/whatsapp_form.html", ctx)
 
 
-@require_setting("SIGNAL_CLI_ENABLED")
+@require_setting("SIGNAL_CLI_SOCKET")
 @login_required
 def signal_form(request, channel=None, code=None):
     is_new = channel is None

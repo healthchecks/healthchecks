@@ -293,14 +293,15 @@ To enable the Pushover integration, you will need to:
 ### Signal
 
 Healthchecks uses [signal-cli](https://github.com/AsamK/signal-cli) to send Signal
-notifications. Healthcecks interacts with signal-cli over DBus.
+notifications. Healthcecks interacts with signal-cli over UNIX socket (requires
+signal-cli 0.10.0 or later).
 
 To enable the Signal integration:
 
-* Set up and configure signal-cli to listen on DBus system bus ([instructions](https://github.com/AsamK/signal-cli/wiki/DBus-service)).
-  Make sure you can send test messages from command line, using the `dbus-send`
-  example given in the signal-cli instructions.
-* Set the `SIGNAL_CLI_ENABLED` environment variable to `True`.
+* Set up and configure signal-cli to expose JSON RPC on an UNIX socket
+  ([instructions](https://github.com/AsamK/signal-cli/wiki/JSON-RPC-service)).
+  Example: `signal-cli -a +xxxxxx daemon --socket /tmp/signal-cli-socket`
+* Put the socket's location in the `SIGNAL_CLI_SOCKET` environment variable.
 
 
 ### Telegram

@@ -1,6 +1,8 @@
 import json
 import os
+import socket
 import time
+import uuid
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -21,13 +23,6 @@ try:
 except ImportError:
     # Enforce
     settings.APPRISE_ENABLED = False
-
-try:
-    import dbus
-except ImportError:
-    # Enforce
-    dbus = None
-    settings.SIGNAL_CLI_ENABLED = False
 
 
 def tmpl(template_name, **ctx) -> str:
@@ -791,13 +786,8 @@ class Signal(Transport):
         else:
             return not self.channel.signal_notify_up
 
-    def get_service(self):
-        bus = dbus.SystemBus()
-        signal_object = bus.get_object("org.asamk.Signal", "/org/asamk/Signal")
-        return dbus.Interface(signal_object, "org.asamk.Signal")
-
     def notify(self, check) -> None:
-        if not settings.SIGNAL_CLI_ENABLED:
+        if not settings.SIGNAL_CLI_SOCKET:
             raise TransportError("Signal notifications are not enabled")
 
         from hc.api.models import TokenBucket
@@ -808,18 +798,36 @@ class Signal(Transport):
         ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("signal_message.html", **ctx)
 
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "send",
+            "params": {"recipient": [self.channel.phone_number], "message": text},
+            "id": str(uuid.uuid4()),
+        }
+
+        payload_str = json.dumps(payload) + "\n"
+
+        reply_str = ""
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+            s.settimeout(15)
+            try:
+                s.connect(settings.SIGNAL_CLI_SOCKET)
+                s.sendall(payload_str.encode())
+
+                while not reply_str.endswith("\n"):
+                    reply_str += s.recv(1024).decode()
+            except OSError as e:
+                raise TransportError("signal-cli call failed (%s)" % e)
+
         try:
-            dbus.SystemBus().call_blocking(
-                "org.asamk.Signal",
-                "/org/asamk/Signal",
-                "org.asamk.Signal",
-                "sendMessage",
-                "sasas",
-                (text, [], [self.channel.phone_number]),
-                timeout=30,
-            )
-        except dbus.exceptions.DBusException as e:
-            if "NotFoundException" in str(e):
+            reply = json.loads(reply_str)
+        except ValueError:
+            raise TransportError("signal-cli call failed (unexpected response)")
+
+        if "error" in reply:
+            message = reply["error"].get("message", "")
+            if "UnregisteredUserException" in message:
                 raise TransportError("Recipient not found")
 
-            raise TransportError("signal-cli call failed")
+            code = reply["error"].get("code")
+            raise TransportError("signal-cli call failed (%s)" % code)

@@ -274,18 +274,18 @@ the <code>SHELL_ENABLED</code> environment variable to <code>True</code>.</p>
 <p>Note: be careful when using "Shell Commands" integration, and only enable it when
 you fully trust the users of your Healthchecks instance. The commands will be executed
 by the <code>manage.py sendalerts</code> process, and will run with its system permissions.</p>
-<h2 id="SIGNAL_CLI_ENABLED"><code>SIGNAL_CLI_ENABLED</code></h2>
-<p>Default: <code>False</code></p>
-<p>A boolean that turns on/off the <a href="https://signal.org/">Signal</a> integration.</p>
+<h2 id="SIGNAL_CLI_SOCKET"><code>SIGNAL_CLI_SOCKET</code></h2>
+<p>Default: <code>None</code></p>
+<p>The path to the signal-cli UNIX socket.</p>
 <p>Healthchecks uses <a href="https://github.com/AsamK/signal-cli">signal-cli</a> to send Signal
-notifications. Healthcecks interacts with signal-cli over DBus.</p>
+notifications. Healthcecks interacts with signal-cli over UNIX socket (requires
+signal-cli 0.10.0 or later).</p>
 <p>To enable the Signal integration:</p>
 <ul>
-<li>Set up and configure signal-cli to listen on DBus system bus
-  (<a href="https://github.com/AsamK/signal-cli/wiki/DBus-service">instructions</a>).
-  Make sure you can send test messages from command line, using the <code>dbus-send</code>
-  example given in the signal-cli instructions.</li>
-<li>Set the <code>SIGNAL_CLI_ENABLED</code> environment variable to <code>True</code>.</li>
+<li>Set up and configure signal-cli to expose JSON RPC on an UNIX socket
+  (<a href="https://github.com/AsamK/signal-cli/wiki/JSON-RPC-service">instructions</a>).
+  Example: <code>signal-cli -a +xxxxxx daemon --socket /tmp/signal-cli-socket</code></li>
+<li>Put the socket's location in the <code>SIGNAL_CLI_SOCKET</code> environment variable.</li>
 </ul>
 <h2 id="SITE_LOGO_URL"><code>SITE_LOGO_URL</code></h2>
 <p>Default: <code>None</code></p>

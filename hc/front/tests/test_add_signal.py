@@ -3,7 +3,7 @@ from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
-@override_settings(SIGNAL_CLI_ENABLED=True)
+@override_settings(SIGNAL_CLI_SOCKET="/tmp/dummy-signal-cli-socket")
 class AddSignalTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -39,7 +39,7 @@ class AddSignalTestCase(BaseTestCase):
         # Make sure it calls assign_all_checks
         self.assertEqual(c.checks.count(), 1)
 
-    @override_settings(SIGNAL_CLI_ENABLED=False)
+    @override_settings(SIGNAL_CLI_SOCKET=None)
     def test_it_handles_disabled_integration(self):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
