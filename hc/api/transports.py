@@ -786,6 +786,69 @@ class Signal(Transport):
         else:
             return not self.channel.signal_notify_up
 
+    def send(self, recipient, message):
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "send",
+            "params": {"recipient": [recipient], "message": message},
+            "id": str(uuid.uuid4()),
+        }
+
+        payload_bytes = (json.dumps(payload) + "\n").encode()
+        for reply_bytes in self._read_replies(payload_bytes):
+            try:
+                reply = json.loads(reply_bytes.decode())
+            except ValueError:
+                raise TransportError("signal-cli call failed (unexpected response)")
+
+            if reply["id"] == payload["id"]:
+                if "error" not in reply:
+                    # success!
+                    break
+
+                message = reply["error"].get("message", "")
+                if "UnregisteredUserException" in message:
+                    raise TransportError("Recipient not found")
+
+                code = reply["error"].get("code")
+                raise TransportError("signal-cli call failed (%s)" % code)
+
+    def _read_replies(self, payload_bytes):
+        """Send a request to signal-cli over UNIX socket. Read and yield replies.
+
+        This method:
+        * opens UNIX socket
+        * sends the request data (JSON RPC data encoded as bytes)
+        * reads newline-terminated responses and yields them
+
+        Individual sendall and recv operations have a timeout of 15 seconds.
+        This method also keeps track of total time spent in the method, and raises
+        an exception when the total time exceeds 15 seconds.
+
+        """
+
+        start = time.time()
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+            s.settimeout(15)
+            try:
+                s.connect(settings.SIGNAL_CLI_SOCKET)
+                s.sendall(payload_bytes)
+                s.shutdown(socket.SHUT_WR)  # we are done sending
+
+                buffer = []
+                while True:
+                    ch = s.recv(1)
+                    buffer.append(ch)
+                    if ch in (b"\n", b""):
+                        yield b"".join(buffer)
+                        buffer = []
+
+                    if time.time() - start > 15:
+                        raise TransportError("signal-cli call timed out")
+
+            except OSError as e:
+                raise TransportError("signal-cli call failed (%s)" % e)
+
     def notify(self, check) -> None:
         if not settings.SIGNAL_CLI_SOCKET:
             raise TransportError("Signal notifications are not enabled")
@@ -797,37 +860,4 @@ class Signal(Transport):
 
         ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("signal_message.html", **ctx)
-
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "send",
-            "params": {"recipient": [self.channel.phone_number], "message": text},
-            "id": str(uuid.uuid4()),
-        }
-
-        payload_str = json.dumps(payload) + "\n"
-
-        reply_str = ""
-        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
-            s.settimeout(15)
-            try:
-                s.connect(settings.SIGNAL_CLI_SOCKET)
-                s.sendall(payload_str.encode())
-
-                while not reply_str.endswith("\n"):
-                    reply_str += s.recv(1024).decode()
-            except OSError as e:
-                raise TransportError("signal-cli call failed (%s)" % e)
-
-        try:
-            reply = json.loads(reply_str)
-        except ValueError:
-            raise TransportError("signal-cli call failed (unexpected response)")
-
-        if "error" in reply:
-            message = reply["error"].get("message", "")
-            if "UnregisteredUserException" in message:
-                raise TransportError("Recipient not found")
-
-            code = reply["error"].get("code")
-            raise TransportError("signal-cli call failed (%s)" % code)
+        self.send(self.channel.phone_number, text)

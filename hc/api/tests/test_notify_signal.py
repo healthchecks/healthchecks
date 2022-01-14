@@ -2,7 +2,7 @@
 
 from datetime import timedelta as td
 import json
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from django.utils.timezone import now
 from django.test.utils import override_settings
@@ -10,17 +10,49 @@ from hc.api.models import Channel, Check, Notification, TokenBucket
 from hc.test import BaseTestCase
 
 
-def setup_mock(socket, reply):
-    # A mock of socket.socket object (the one with connect, send, recv etc. methods)
-    socketobj = Mock()
-    socketobj.recv.return_value = reply.encode()
+class MockSocket(object):
+    def __init__(self, response_tmpl, side_effect=None):
+        self.response_tmpl = response_tmpl
+        self.side_effect = side_effect
+        self.req = None
+        self.outbox = b""
+
+    def settimeout(self, seconds):
+        pass
+
+    def connect(self, socket_path):
+        pass
+
+    def shutdown(self, flags):
+        pass
+
+    def sendall(self, data):
+        if self.side_effect:
+            raise self.side_effect
+
+        self.req = json.loads(data.decode())
+        self.response_tmpl["id"] = self.req["id"]
+
+        message = json.dumps(self.response_tmpl) + "\n"
+        self.outbox += message.encode()
+
+    def recv(self, nbytes):
+        if not self.outbox:
+            return b""
+
+        head, self.outbox = self.outbox[0:1], self.outbox[1:]
+        return head
+
+
+def setup_mock(socket, response_tmpl, side_effect=None):
+    # A mock of socket.socket object
+    socketobj = MockSocket(response_tmpl, side_effect)
 
     # The transport uses socket.socket() as a context manager,
     # so we replace the __enter__ method:
     socket.return_value.__enter__.return_value = socketobj
 
-    # A convenience method for grabbing data passed to sendall
-    socket.payload = lambda: socketobj.sendall.call_args[0][0].decode()
+    return socketobj
 
 
 @override_settings(SIGNAL_CLI_SOCKET="/tmp/socket")
@@ -43,19 +75,20 @@ class NotifySignalTestCase(BaseTestCase):
 
     @patch("hc.api.transports.socket.socket")
     def test_it_works(self, socket):
-        setup_mock(socket, "{}\n")
+        socketobj = setup_mock(socket, {})
 
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
-        self.assertIn("is DOWN", socket.payload())
-        self.assertIn("+123456789", socket.payload())
+        params = socketobj.req["params"]
+        self.assertIn("is DOWN", params["message"])
+        self.assertIn("+123456789", params["recipient"])
 
         # Only one check in the project, so there should be no note about
         # other checks:
-        self.assertNotIn("All the other checks are up.", socket.payload())
+        self.assertNotIn("All the other checks are up.", params["message"])
 
     @patch("hc.api.transports.socket.socket")
     def test_it_obeys_down_flag(self, socket):
@@ -82,14 +115,14 @@ class NotifySignalTestCase(BaseTestCase):
 
     @patch("hc.api.transports.socket.socket")
     def test_it_does_not_escape_special_characters(self, socket):
-        setup_mock(socket, "{}\n")
+        socketobj = setup_mock(socket, {})
 
         self.check.name = "Foo & Bar"
         self.check.save()
 
         self.channel.notify(self.check)
 
-        self.assertIn("Foo & Bar", socket.payload())
+        self.assertIn("Foo & Bar", socketobj.req["params"]["message"])
 
     @override_settings(SECRET_KEY="test-secret")
     @patch("hc.api.transports.socket.socket")
@@ -107,7 +140,7 @@ class NotifySignalTestCase(BaseTestCase):
 
     @patch("hc.api.transports.socket.socket")
     def test_it_shows_all_other_checks_up_note(self, socket):
-        setup_mock(socket, "{}\n")
+        socketobj = setup_mock(socket, {})
 
         other = Check(project=self.project)
         other.name = "Foobar"
@@ -117,11 +150,12 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        self.assertIn("All the other checks are up.", socket.payload())
+        message = socketobj.req["params"]["message"]
+        self.assertIn("All the other checks are up.", message)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_lists_other_down_checks(self, socket):
-        setup_mock(socket, "{}\n")
+        socketobj = setup_mock(socket, {})
 
         other = Check(project=self.project)
         other.name = "Foobar"
@@ -131,12 +165,13 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        self.assertIn("The following checks are also down", socket.payload())
-        self.assertIn("Foobar", socket.payload())
+        message = socketobj.req["params"]["message"]
+        self.assertIn("The following checks are also down", message)
+        self.assertIn("Foobar", message)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_does_not_show_more_than_10_other_checks(self, socket):
-        setup_mock(socket, "{}\n")
+        socketobj = setup_mock(socket, {})
 
         for i in range(0, 11):
             other = Check(project=self.project)
@@ -147,12 +182,13 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        self.assertNotIn("Foobar", socket.payload())
-        self.assertIn("11 other checks are also down.", socket.payload())
+        message = socketobj.req["params"]["message"]
+        self.assertNotIn("Foobar", message)
+        self.assertIn("11 other checks are also down.", message)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_unregistered_user(self, socket):
-        setup_mock(socket, '{"error":{"message": "UnregisteredUserException"}}\n')
+        setup_mock(socket, {"error": {"message": "UnregisteredUserException"}})
 
         self.channel.notify(self.check)
 
@@ -161,7 +197,7 @@ class NotifySignalTestCase(BaseTestCase):
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_error_code(self, socket):
-        setup_mock(socket, '{"error":{"code": 123}}\n')
+        setup_mock(socket, {"error": {"code": 123}})
 
         self.channel.notify(self.check)
 
@@ -170,9 +206,24 @@ class NotifySignalTestCase(BaseTestCase):
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_oserror(self, socket):
-        socket.return_value.__enter__.return_value.sendall.side_effect = OSError("oops")
+        setup_mock(socket, {}, side_effect=OSError("oops"))
 
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "signal-cli call failed (oops)")
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_checks_jsonrpc_id(self, socket):
+        socketobj = setup_mock(socket, {})
+        # Add a message with an unexpected id in the outbox.
+        # The socket reader should skip over it.
+        socketobj.outbox += b'{"id": "surprise"}\n'
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+        # outbox should be empty now
+        self.assertEqual(socketobj.outbox, b"")
