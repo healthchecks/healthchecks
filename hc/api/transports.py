@@ -801,7 +801,7 @@ class Signal(Transport):
             except ValueError:
                 raise TransportError("signal-cli call failed (unexpected response)")
 
-            if reply["id"] == payload["id"]:
+            if reply.get("id") == payload["id"]:
                 if "error" not in reply:
                     # success!
                     break
