@@ -5,9 +5,8 @@ you can find a sample configuration for running the project with
 <p><strong>Note: The Docker configuration is a recent addition, and, for the time being,
 should be considered experimental</strong>.</p>
 <p>Note: For the sake of simplicity, the sample configuration starts a single database
-node and a single web server node, both on the same host. It also does not handle SSL
-termination. If you plan to expose it to the public internet, make sure you put a
-SSL-terminating load balancer or reverse proxy in front of it.</p>
+node and a single web server node, both on the same host. It does not handle TLS
+termination.</p>
 <h2>Getting Started</h2>
 <ul>
 <li>Grab the Healthchecks source code
@@ -38,4 +37,14 @@ $ docker-compose up
 <p>Open <a href="http://localhost:8000">http://localhost:8000</a> in your browser and log in with
   the credentials from the previous step.</p>
 </li>
+</ul>
+<h2>TLS Termination</h2>
+<p>If you plan to expose your Healthchecks instance to the public internet, make sure you
+put a TLS-terminating reverse proxy in front of it.</p>
+<p><strong>Important:</strong> This Dockerfile uses UWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
+header to determine if a request is secure or not. Make sure your TLS-terminating
+reverse proxy:</p>
+<ul>
+<li>strips the X-Forwarded-Proto header from all incoming requests</li>
+<li>sets the X-Forwarded-Proto header to "https" only for requests that come via HTTPS</li>
 </ul>

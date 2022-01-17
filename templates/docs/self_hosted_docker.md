@@ -8,9 +8,8 @@ you can find a sample configuration for running the project with
 should be considered experimental**.
 
 Note: For the sake of simplicity, the sample configuration starts a single database
-node and a single web server node, both on the same host. It also does not handle SSL
-termination. If you plan to expose it to the public internet, make sure you put a
-SSL-terminating load balancer or reverse proxy in front of it.
+node and a single web server node, both on the same host. It does not handle TLS
+termination.
 
 ## Getting Started
 
@@ -34,3 +33,15 @@ SSL-terminating load balancer or reverse proxy in front of it.
 
 * Open [http://localhost:8000](http://localhost:8000) in your browser and log in with
   the credentials from the previous step.
+
+## TLS Termination
+
+If you plan to expose your Healthchecks instance to the public internet, make sure you
+put a TLS-terminating reverse proxy in front of it.
+
+**Important:** This Dockerfile uses UWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
+header to determine if a request is secure or not. Make sure your TLS-terminating
+reverse proxy:
+
+* strips the X-Forwarded-Proto header from all incoming requests
+* sets the X-Forwarded-Proto header to "https" only for requests that come via HTTPS
