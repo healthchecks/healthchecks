@@ -550,14 +550,9 @@ class Channel(models.Model):
         n.error = "Sending"
         n.save()
 
-        # These are not database fields. It is just a convenient way to pass
-        # status_url and the is_test flag to transport classes.
-        check.is_test = is_test
-        check.status_url = n.status_url()
-
         error, disabled = "", self.disabled
         try:
-            self.transport.notify(check)
+            self.transport.notify(check, notification=n)
         except transports.TransportError as e:
             disabled = True if e.permanent else disabled
             error = e.message

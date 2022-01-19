@@ -45,7 +45,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
-        self.assertTrue("X-Status-Url" in email.extra_headers)
+        self.assertEqual(email.extra_headers["X-Status-Url"], n.status_url())
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
 
