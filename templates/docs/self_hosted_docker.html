@@ -45,6 +45,10 @@ put a TLS-terminating reverse proxy in front of it.</p>
 header to determine if a request is secure or not. Make sure your TLS-terminating
 reverse proxy:</p>
 <ul>
-<li>strips the X-Forwarded-Proto header from all incoming requests</li>
-<li>sets the X-Forwarded-Proto header to "https" only for requests that come via HTTPS</li>
+<li>Discards the X-Forwarded-Proto header sent by the end user.</li>
+<li>Sets the X-Forwarded-Proto header value to match the protocol of the original request
+  ("http" or "https").</li>
 </ul>
+<p>For example, in NGINX you can use the <code>$scheme</code> variable like so:</p>
+<div class="highlight"><pre><span></span><code>proxy_set_header X-Forwarded-Proto $scheme;
+</code></pre></div>
