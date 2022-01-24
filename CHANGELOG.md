@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Update Telegram integration to treat "group chat was deleted" as permanent error
 - Update email bounce handler to mark email channels as disabled (#446)
 - Update Signal integration to use JSON RPC over UNIX socket
+- Update the "Add TOTP" form to display plaintext TOTP secret (#602)
 
 ## v1.25.0 - 2022-01-07
 

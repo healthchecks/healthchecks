@@ -16,9 +16,11 @@
     <div class="spacer"></div>
     <p class="add-totp-step">
         <strong>Step 1.</strong>
-        Scan the QR code below using your authentication app.
+        Scan the QR code below using your authentication app, or enter
+        the secret key manually.
     </p>
 
+    <p>Secret key: <code class="totp-secret">{{ secret }}</code></p>
     <img src="{{ qr_data_uri }}" />
 
     <p class="add-totp-step">

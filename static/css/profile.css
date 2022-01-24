@@ -79,3 +79,9 @@ span.loading {
 .add-totp-step {
     margin-top: 32px;
 }
+
+code.totp-secret {
+    display: block;
+    padding: 4px 0;
+    font-size: 18px;
+}

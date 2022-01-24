@@ -745,7 +745,11 @@ def add_totp(request):
 
     uri = totp.provisioning_uri(name=request.user.email, issuer_name=settings.SITE_NAME)
     qr_data_uri = segno.make(uri).png_data_uri(scale=8)
-    ctx = {"form": form, "qr_data_uri": qr_data_uri}
+    ctx = {
+        "form": form,
+        "qr_data_uri": qr_data_uri,
+        "secret": request.session["totp_secret"],
+    }
     return render(request, "accounts/add_totp.html", ctx)
 
 
