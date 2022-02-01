@@ -13,6 +13,17 @@
     text-shadow: 0px 1px var(--panel-bg), -1px 1px var(--panel-bg), 1px 1px var(--panel-bg), -1px 0px var(--panel-bg);
 }
 
+.panel.plan ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.panel.plan li {
+    border-top: 1px solid var(--border-color);
+    padding: 10px 8px;
+}
+
 .hobbyist h1 {
     color: var(--plan-hobbyist-color);
     border-bottom: 3px solid var(--plan-hobbyist-border);
@@ -54,15 +65,6 @@
     border-color: #22bc66;
 }
 
-.plan .list-group-item {
-    padding: 10px 8px;
-}
-
-.plan .list-group-item:last-child {
-    border-bottom: 0;
-
-}
-
 .error-message {
     font-family: monospace;
 }
@@ -88,11 +90,12 @@
 
 #plans .panel-footer {
     background: transparent;
+    border-top: 0;
 }
 
 #annual-note {
     margin: 10px 0;
-    color: #AAA;
+    color: var(--text-muted);
 }
 
 .page-pricing span[data-help] {
