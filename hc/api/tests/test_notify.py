@@ -73,18 +73,6 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(url, "https://discord.com/foo/slack")
 
     @patch("hc.api.transports.requests.request")
-    def test_pushbullet(self, mock_post):
-        self._setup_data("pushbullet", "fake-token")
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
-
-        _, kwargs = mock_post.call_args
-        self.assertEqual(kwargs["json"]["type"], "note")
-        self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
-
-    @patch("hc.api.transports.requests.request")
     def test_call(self, mock_post):
         self.profile.call_limit = 1
         self.profile.save()

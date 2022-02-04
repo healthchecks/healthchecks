@@ -11,8 +11,9 @@ All notable changes to this project will be documented in this file.
 - Improve PagerDuty notifications
 
 ### Bug Fixes
-- Disable HTML escaping in Pushover notification titles (#606)
-- Disable HTML escaping in Spike.sh notifications
+- Disable special character escaping in Pushover notification titles (#606)
+- Disable special character escaping in Spike.sh notifications
+- Disable special character escaping in Pushbullet notifications
 
 ## v1.25.0 - 2022-01-07
 
