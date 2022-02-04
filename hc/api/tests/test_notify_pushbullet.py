@@ -9,23 +9,23 @@ from hc.test import BaseTestCase
 
 
 class NotifyPushbulletTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+    def setUp(self):
+        super().setUp()
+
         self.check = Check(project=self.project)
         self.check.name = "Foo"
-        self.check.status = status
+        self.check.status = "up"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "pushbullet"
-        self.channel.value = value
-        self.channel.email_verified = email_verified
+        self.channel.value = "fake-token"
         self.channel.save()
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
     def test_it_works(self, mock_post):
-        self._setup_data("fake-token", status="up")
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -40,10 +40,9 @@ class NotifyPushbulletTestCase(BaseTestCase):
 
     @patch("hc.api.transports.requests.request")
     def test_it_escapes_body(self, mock_post):
-        self._setup_data("fake-token", status="up")
+        mock_post.return_value.status_code = 200
         self.check.name = "Foo & Bar"
         self.check.save()
-        mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
 
