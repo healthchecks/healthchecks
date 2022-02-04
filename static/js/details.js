@@ -109,7 +109,7 @@ $(function () {
     }, true);
 
     // Copy to clipboard
-    var clipboard = new Clipboard('button.copy-btn');
+    var clipboard = new ClipboardJS('button.copy-btn');
     $("button.copy-btn").mouseout(function(e) {
         setTimeout(function() {
             e.target.textContent = e.target.dataset.label;

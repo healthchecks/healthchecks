@@ -263,7 +263,7 @@ $(function () {
     }
 
     // Copy to clipboard
-    var clipboard = new Clipboard('button.copy-link');
+    var clipboard = new ClipboardJS('button.copy-link');
     $("button.copy-link").mouseout(function(e) {
         setTimeout(function() {
             e.target.textContent = "copy";

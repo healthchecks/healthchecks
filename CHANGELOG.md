@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix unwanted special character escaping in notification messages (#606)
+- Fix JS error after copying a code snippet
 
 ## v1.25.0 - 2022-01-07
 
