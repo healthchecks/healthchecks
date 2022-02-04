@@ -46,3 +46,16 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertIn("Full Details", params["desc"])
         self.assertEqual(params["key"], "fake-trello-app-key")
         self.assertEqual(params["token"], "fake-token")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_escape_name(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.check.name = "Foo & Bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        params = kwargs["params"]
+        self.assertEqual(params["name"], "Down: Foo & Bar")
