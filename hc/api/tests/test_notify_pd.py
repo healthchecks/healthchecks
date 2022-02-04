@@ -13,6 +13,8 @@ from django.test.utils import override_settings
 class NotifyPdTestCase(BaseTestCase):
     def _setup_data(self, value, status="down", email_verified=True):
         self.check = Check(project=self.project)
+        self.check.name = "Foo"
+        self.check.desc = "Description goes here"
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -25,7 +27,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
-    def test_pd(self, mock_post):
+    def test_it_works(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -34,6 +36,8 @@ class NotifyPdTestCase(BaseTestCase):
 
         args, kwargs = mock_post.call_args
         payload = kwargs["json"]
+        self.assertEqual(payload["description"], "Foo is DOWN")
+        self.assertEqual(payload["details"]["Description"], "Description goes here")
         self.assertEqual(payload["event_type"], "trigger")
         self.assertEqual(payload["service_key"], "123")
 
@@ -57,3 +61,17 @@ class NotifyPdTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "PagerDuty notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_escape_description(self, mock_post):
+        self._setup_data("123")
+        self.check.name = "Foo & Bar"
+        self.check.save()
+
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(payload["description"], "Foo & Bar is DOWN")

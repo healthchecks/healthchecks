@@ -42,3 +42,18 @@ class NotifySpikeTestCase(BaseTestCase):
         self.channel.notify(self.check)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Spike notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_escape(self, mock_post):
+        self.check.name = "Foo & Bar"
+        self.check.status = "up"
+        self.check.save()
+
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(payload["title"], "Foo & Bar is UP")
+        self.assertEqual(payload["message"], "Foo & Bar is UP.")

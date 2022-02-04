@@ -14,6 +14,7 @@ API = "https://api.pushover.net/1"
 class NotifyPushoverTestCase(BaseTestCase):
     def _setup_data(self, value, status="down", email_verified=True):
         self.check = Check(project=self.project)
+        self.check.name = "Foo"
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -37,7 +38,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(args[1], API + "/messages.json")
 
         payload = kwargs["data"]
-        self.assertIn("DOWN", payload["title"])
+        self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(self.check.cloaked_url(), payload["message"])
         # Only one check in the project, so there should be no note about
         # other checks:
@@ -145,3 +146,16 @@ class NotifyPushoverTestCase(BaseTestCase):
         payload = kwargs["data"]
         self.assertNotIn("Foobar", payload["message"])
         self.assertIn("11 other checks are also down.", payload["message"])
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_escape_title(self, mock_post):
+        self._setup_data("123|0")
+        self.check.name = "Foo & Bar"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertEqual(payload["title"], "Foo & Bar is DOWN")
