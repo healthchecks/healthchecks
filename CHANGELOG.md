@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Disable HTML escaping in Pushover notification titles (#606)
+- Disable HTML escaping in Spike.sh notifications
 
 ## v1.25.0 - 2022-01-07
 
