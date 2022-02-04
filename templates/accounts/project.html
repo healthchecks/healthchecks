@@ -257,7 +257,7 @@
                 <br />
 
                 {% if is_manager %}
-                {% if project.can_invite_new_users %}
+                {% if can_invite_new_users %}
                 <a
                     href="#"
                     class="btn btn-primary pull-right"
@@ -445,6 +445,7 @@
                     <div class="form-group">
                         <label for="itm-email" class="col-sm-3 control-label">Email</label>
                         <div class="col-sm-8">
+                            {% if can_invite_new_users %}
                             <input
                                 type="email"
                                 class="form-control"
@@ -452,6 +453,10 @@
                                 name="email"
                                 maxlength="254"
                                 placeholder="friend@example.org">
+                            {% else %}
+                            <p id="itm-email-display" class="form-control-static"></p>
+                            <input type="hidden" id="itm-email" name="email">
+                            {% endif %}
                         </div>
                     </div>
 

@@ -493,6 +493,7 @@ def project(request, code):
 
     q = project.member_set.select_related("user").order_by("user__email")
     ctx["memberships"] = list(q)
+    ctx["can_invite_new_users"] = project.can_invite_new_users()
     return render(request, "accounts/project.html", ctx)
 
 

@@ -18,6 +18,7 @@ $(function() {
 
     $(".add-to-team").click(function() {
         $("#itm-email").val(this.dataset.email);
+        $("#itm-email-display").text(this.dataset.email);
         $("#invite-team-member-modal").modal("show");
         return false;
     });
