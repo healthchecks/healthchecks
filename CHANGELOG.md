@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Update email bounce handler to mark email channels as disabled (#446)
 - Update Signal integration to use JSON RPC over UNIX socket
 - Update the "Add TOTP" form to display plaintext TOTP secret (#602)
+- Improve PagerDuty notifications
 
 ### Bug Fixes
 - Disable HTML escaping in Pushover notification titles (#606)

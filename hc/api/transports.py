@@ -15,6 +15,7 @@ from hc.accounts.models import Profile
 from hc.api.schemas import telegram_migration
 from hc.front.templatetags.hc_extras import sortchecks
 from hc.lib import emails, jsonschema
+from hc.lib.date import format_duration
 from hc.lib.string import replace
 
 
@@ -359,6 +360,20 @@ class PagerDuty(HttpTransport):
         if not settings.PD_ENABLED:
             raise TransportError("PagerDuty notifications are not enabled.")
 
+        details = {
+            "Project": check.project.name,
+            "Total pings": check.n_pings,
+            "Last ping": tmpl("pd_last_ping.html", check=check),
+        }
+        if check.desc:
+            details["Description"] = check.desc
+        if check.tags:
+            details["Tags"] = ", ".join(check.tags_list())
+        if check.kind == "simple":
+            details["Period"] = format_duration(check.timeout)
+        if check.kind == "cron":
+            details["Schedule"] = check.schedule
+
         description = tmpl("pd_description.html", check=check)
         payload = {
             "service_key": self.channel.pd_service_key,
@@ -367,6 +382,7 @@ class PagerDuty(HttpTransport):
             "description": description,
             "client": settings.SITE_NAME,
             "client_url": check.details_url(),
+            "details": details,
         }
 
         self.post(self.URL, json=payload)
