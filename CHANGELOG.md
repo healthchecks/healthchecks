@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - Update Signal integration to use JSON RPC over UNIX socket
 - Update the "Add TOTP" form to display plaintext TOTP secret (#602)
 
+### Bug Fixes
+- Disable HTML escaping in Pushover notification titles (#606)
+
 ## v1.25.0 - 2022-01-07
 
 ### Improvements
