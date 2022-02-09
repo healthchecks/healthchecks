@@ -25,7 +25,7 @@ class NotifyPagertreeTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
-    def test_pagertree(self, mock_post):
+    def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -41,3 +41,16 @@ class NotifyPagertreeTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "PagerTree notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_escape_title(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.check.name = "Foo & Bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(payload["title"], "Foo & Bar is DOWN")
