@@ -25,7 +25,7 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
-    def test_victorops(self, mock_post):
+    def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -41,3 +41,19 @@ class NotifyVictorOpsTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Splunk On-Call notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_escape_description(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.check.name = "Foo & Bar"
+        self.check.status = "up"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertEqual(
+            payload["state_message"], "Foo & Bar received a ping and is now UP"
+        )
