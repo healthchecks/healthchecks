@@ -45,7 +45,7 @@ class NotifyZulipTestCase(BaseTestCase):
         self.assertEqual(url, "https://example.org/api/v1/messages")
 
         payload = kwargs["data"]
-        self.assertIn("DOWN", payload["topic"])
+        self.assertEqual(payload["topic"], "Foobar is DOWN")
 
         # payload should not contain check's code
         serialized = json.dumps(payload)
@@ -99,3 +99,16 @@ class NotifyZulipTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Zulip notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_escape_topic(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.check.name = "Foo & Bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertEqual(payload["topic"], "Foo & Bar is DOWN")
