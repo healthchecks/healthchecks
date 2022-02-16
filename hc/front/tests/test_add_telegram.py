@@ -9,6 +9,7 @@ from hc.test import BaseTestCase
 @override_settings(TELEGRAM_TOKEN="fake-token")
 class AddTelegramTestCase(BaseTestCase):
     url = "/integrations/add_telegram/"
+    bot_url = "/integrations/telegram/bot/"
 
     def test_instructions_work(self):
         self.client.login(username="alice@example.org", password="password")
@@ -62,10 +63,7 @@ class AddTelegramTestCase(BaseTestCase):
                 "text": "/start",
             }
         }
-        r = self.client.post(
-            "/integrations/telegram/bot/", data, content_type="application/json"
-        )
-
+        r = self.client.post(self.bot_url, data, content_type="application/json")
         self.assertEqual(r.status_code, 200)
         self.assertTrue(mock_request.called)
 
@@ -79,10 +77,7 @@ class AddTelegramTestCase(BaseTestCase):
                 "text": "/start",
             }
         }
-        r = self.client.post(
-            "/integrations/telegram/bot/", data, content_type="application/json"
-        )
-
+        r = self.client.post(self.bot_url, data, content_type="application/json")
         self.assertEqual(r.status_code, 200)
         self.assertTrue(mock_request.called)
 
@@ -99,9 +94,7 @@ class AddTelegramTestCase(BaseTestCase):
         )
 
         for sample in samples:
-            r = self.client.post(
-                "/integrations/telegram/bot/", sample, content_type="application/json"
-            )
+            r = self.client.post(self.bot_url, sample, content_type="application/json")
 
             if sample == "":
                 # Bad JSON payload
@@ -109,6 +102,21 @@ class AddTelegramTestCase(BaseTestCase):
             else:
                 # JSON decodes but message structure not recognized
                 self.assertEqual(r.status_code, 200)
+
+    @patch("hc.api.transports.requests.request")
+    def test_bot_handles_send_failure(self, mock_request):
+        mock_request.return_value.status_code = 403
+
+        data = {
+            "message": {
+                "chat": {"id": 123, "title": "My Group", "type": "group"},
+                "text": "/start",
+            }
+        }
+        r = self.client.post(self.bot_url, data, content_type="application/json")
+
+        self.assertEqual(r.status_code, 200)
+        self.assertTrue(mock_request.called)
 
     def test_it_requires_rw_access(self):
         self.bobs_membership.role = "r"

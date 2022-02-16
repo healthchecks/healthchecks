@@ -37,7 +37,7 @@ from hc.api.models import (
     Ping,
     Notification,
 )
-from hc.api.transports import Telegram
+from hc.api.transports import Telegram, TransportError
 from hc.front.decorators import require_setting
 from hc.front import forms
 from hc.front.schemas import telegram_callback
@@ -1572,7 +1572,13 @@ def telegram_bot(request):
         {"qs": signing.dumps((chat["id"], chat["type"], name))},
     )
 
-    Telegram.send(chat["id"], invite)
+    try:
+        Telegram.send(chat["id"], invite)
+    except TransportError:
+        # Swallow the error and return HTTP 200 OK, otherwise Telegram will
+        # hit the webhook again and again.
+        pass
+
     return HttpResponse()
 
 

@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Fix unwanted special character escaping in notification messages (#606)
 - Fix JS error after copying a code snippet
 - Make email non-editable in the "Invite Member" dialog when team limit reached
+- Fix Telegram bot to handle TransportError exceptions
 
 ## v1.25.0 - 2022-01-07
 
