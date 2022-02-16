@@ -283,7 +283,7 @@ Default: `10000`
 
 The upper size limit in bytes for logged ping request bodies.
 The default value is 10000 (10 kilobytes). You can adjust the limit or you can remove
-the it altogether by setting this value to `None`.
+it altogether by setting this value to `None`.
 
 ## `PING_EMAIL_DOMAIN` {: #PING_EMAIL_DOMAIN }
 
