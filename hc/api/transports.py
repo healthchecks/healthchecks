@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import socket
 import time
@@ -873,7 +874,12 @@ class Signal(Transport):
                         raise TransportError("signal-cli call timed out")
 
             except OSError as e:
-                raise TransportError("signal-cli call failed (%s)" % e)
+                msg = "signal-cli call failed (%s)" % e
+                # Log the exception, so any configured logging handlers can pick it up
+                logging.getLogger(__name__).exception(msg)
+
+                # And then report it the same as other errors
+                raise TransportError(msg)
 
     def notify(self, check, notification=None) -> None:
         if not settings.SIGNAL_CLI_SOCKET:

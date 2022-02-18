@@ -1,3 +1,4 @@
+import logging
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 

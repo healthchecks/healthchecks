@@ -2,6 +2,7 @@
 
 from datetime import timedelta as td
 import json
+import logging
 from unittest.mock import patch
 
 from django.utils.timezone import now
@@ -205,7 +206,9 @@ class NotifySignalTestCase(BaseTestCase):
     def test_it_handles_oserror(self, socket):
         setup_mock(socket, {}, side_effect=OSError("oops"))
 
+        logging.disable(logging.CRITICAL)
         self.channel.notify(self.check)
+        logging.disable(logging.NOTSET)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "signal-cli call failed (oops)")
