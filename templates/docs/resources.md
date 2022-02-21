@@ -29,7 +29,6 @@ Please submit additions and corrections
 
 * [pauldenver/healthchecks-io-client](https://github.com/pauldenver/healthchecks-io-client) – Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.
 * [jwulf/healthchecks.io](https://github.com/jwulf/healthchecks.io) – Supports pinging.
-* [MyPropertyOffice/node-hchk](https://github.com/MyPropertyOffice/node-hchk) –  Supports listing, creating, updating, deleting, pausing and pinging checks. Supports listing integrations.
 
 ### PHP
 
