@@ -204,7 +204,6 @@ class Profile(models.Model):
 
         headers = {
             "List-Unsubscribe": "<%s>" % unsub_url,
-            "X-Bounce-Url": unsub_url,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
 
