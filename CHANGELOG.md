@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Fix JS error after copying a code snippet
 - Make email non-editable in the "Invite Member" dialog when team limit reached
 - Fix Telegram bot to handle TransportError exceptions
+- Fix Signal integration to handle UNREGISTERED_FAILURE errors
 
 ## v1.25.0 - 2022-01-07
 

@@ -833,8 +833,13 @@ class Signal(Transport):
                     # success!
                     break
 
+                # signal-cli 0.10.0
                 message = reply["error"].get("message", "")
                 if "UnregisteredUserException" in message:
+                    raise TransportError("Recipient not found")
+
+                # signal-cli >= 0.10.2
+                if "UNREGISTERED_FAILURE" in json.dumps(reply["error"]):
                     raise TransportError("Recipient not found")
 
                 code = reply["error"].get("code")

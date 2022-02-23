@@ -194,6 +194,31 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "Recipient not found")
 
     @patch("hc.api.transports.socket.socket")
+    def test_it_handles_unregistered_user_2(self, socket):
+        msg = {
+            "error": {
+                "code": -1,
+                "message": "Failed to send message",
+                "data": {
+                    "response": {
+                        "results": [
+                            {
+                                "recipientAddress": {"number": "+123"},
+                                "type": "UNREGISTERED_FAILURE",
+                            }
+                        ],
+                    }
+                },
+            },
+        }
+        setup_mock(socket, msg)
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Recipient not found")
+
+    @patch("hc.api.transports.socket.socket")
     def test_it_handles_error_code(self, socket):
         setup_mock(socket, {"error": {"code": 123}})
 
