@@ -26,11 +26,6 @@ def _process_message(remote_addr, mailfrom, mailto, data):
     to_parts = mailto.split("@")
     code = to_parts[0]
 
-    try:
-        data = data.decode()
-    except UnicodeError:
-        data = "[binary data]"
-
     if not RE_UUID.match(code):
         return f"Not an UUID: {code}"
 
@@ -43,7 +38,8 @@ def _process_message(remote_addr, mailfrom, mailto, data):
     if check.subject or check.subject_fail:
         action = "ign"
         # Specify policy, the default policy does not decode encoded headers:
-        parsed = email.message_from_string(data, policy=email.policy.SMTP)
+        data_str = data.decode(errors="replace")
+        parsed = email.message_from_string(data_str, policy=email.policy.SMTP)
         subject = parsed.get("subject", "")
         if check.subject_fail and _match(subject, check.subject_fail):
             action = "fail"

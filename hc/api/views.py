@@ -47,7 +47,6 @@ def ping(request, code, check=None, action="success", exitstatus=None):
     scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")
-    body = request.body.decode(errors="replace")
 
     if exitstatus is not None and exitstatus > 0:
         action = "fail"
@@ -55,7 +54,7 @@ def ping(request, code, check=None, action="success", exitstatus=None):
     if check.methods == "POST" and method != "POST":
         action = "ign"
 
-    check.ping(remote_addr, scheme, method, ua, body, action, exitstatus)
+    check.ping(remote_addr, scheme, method, ua, request.body, action, exitstatus)
 
     response = HttpResponse("OK")
     response["Access-Control-Allow-Origin"] = "*"

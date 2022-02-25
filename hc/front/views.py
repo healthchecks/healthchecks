@@ -500,7 +500,7 @@ def ping_details(request, code, n=None):
     ctx = {"check": check, "ping": ping, "plain": None, "html": None}
 
     if ping.scheme == "email":
-        parsed = email.message_from_string(ping.body, policy=email.policy.SMTP)
+        parsed = email.message_from_string(ping.get_body(), policy=email.policy.SMTP)
         ctx["subject"] = parsed.get("subject", "")
 
         plain_mime_part = parsed.get_body(("plain",))

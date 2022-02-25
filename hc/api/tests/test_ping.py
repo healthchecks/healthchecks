@@ -56,7 +56,7 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
-        self.assertEqual(ping.body, "hello world")
+        self.assertEqual(bytes(ping.body_raw), b"hello world")
 
     def test_head_works(self):
         csrf_client = Client(enforce_csrf_checks=True)
@@ -205,14 +205,14 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
-        self.assertEqual(ping.body, "hello")
+        self.assertEqual(bytes(ping.body_raw), b"hello")
 
     @override_settings(PING_BODY_LIMIT=None)
     def test_it_allows_unlimited_body(self):
         self.client.post(self.url, "A" * 20000, content_type="text/plain")
 
         ping = Ping.objects.get()
-        self.assertEqual(len(ping.body), 20000)
+        self.assertEqual(len(ping.body_raw), 20000)
 
     def test_it_handles_manual_resume_flag(self):
         self.check.status = "paused"
@@ -255,11 +255,11 @@ class PingTestCase(BaseTestCase):
         r = self.client.get(self.url + "/256")
         self.assertEqual(r.status_code, 400)
 
-    def test_it_handles_bad_unicode(self):
+    def test_it_accepts_bad_unicode(self):
         csrf_client = Client(enforce_csrf_checks=True)
         r = csrf_client.post(self.url, b"Hello \xe9 World", content_type="text/plain")
         self.assertEqual(r.status_code, 200)
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
-        self.assertEqual(ping.body, "Hello � World")
+        self.assertEqual(bytes(ping.body_raw), b"Hello \xe9 World")

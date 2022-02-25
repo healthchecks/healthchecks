@@ -24,7 +24,7 @@ class PingBySlugTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
-        self.assertEqual(ping.body, "hello world")
+        self.assertEqual(bytes(ping.body_raw), b"hello world")
 
     def test_head_works(self):
         csrf_client = Client(enforce_csrf_checks=True)

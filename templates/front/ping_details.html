@@ -73,7 +73,7 @@
         {% endif %}
     </div>
 
-    {% if ping.body %}
+    {% if ping.has_body %}
         <h4>Request Body</h4>
 
         {% if plain or html %}
@@ -94,7 +94,7 @@
         </ul>
         <div class="tab-content">
             <div id="email-body-raw" class="tab-pane active">
-                <pre>{{ ping.body }}</pre>
+                <pre>{{ ping.get_body }}</pre>
             </div>
 
             {% if plain %}
@@ -110,7 +110,7 @@
             {% endif %}
         </div>
         {% else %}
-        <pre>{{ ping.body }}</pre>
+        <pre>{{ ping.get_body }}</pre>
         {% endif %}
     {% endif %}
 </div>

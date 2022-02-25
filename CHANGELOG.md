@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Update Signal integration to use JSON RPC over UNIX socket
 - Update the "Add TOTP" form to display plaintext TOTP secret (#602)
 - Improve PagerDuty notifications
+- Add Ping.body_raw field for storing body as bytes
 
 ### Bug Fixes
 - Fix unwanted special character escaping in notification messages (#606)

@@ -309,7 +309,7 @@ class Check(models.Model):
 
         self.alert_after = self.going_down_after()
         self.n_pings = models.F("n_pings") + 1
-        self.has_confirmation_link = "confirm" in str(body).lower()
+        self.has_confirmation_link = "confirm" in body.decode(errors="replace").lower()
         self.save()
         self.refresh_from_db()
 
@@ -324,7 +324,7 @@ class Check(models.Model):
         ping.method = method
         # If User-Agent is longer than 200 characters, truncate it:
         ping.ua = ua[:200]
-        ping.body = body[: settings.PING_BODY_LIMIT]
+        ping.body_raw = body[: settings.PING_BODY_LIMIT]
         ping.exitstatus = exitstatus
         ping.save()
 
@@ -405,6 +405,7 @@ class Ping(models.Model):
     method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
     body = models.TextField(blank=True, null=True)
+    body_raw = models.BinaryField(null=True)
     exitstatus = models.SmallIntegerField(null=True)
 
     def to_dict(self):
@@ -417,6 +418,18 @@ class Ping(models.Model):
             "method": self.method,
             "ua": self.ua,
         }
+
+    def has_body(self):
+        if self.body or self.body_raw:
+            return True
+
+        return False
+
+    def get_body(self):
+        if self.body:
+            return self.body
+        if self.body_raw:
+            return bytes(self.body_raw).decode(errors="replace")
 
 
 class Channel(models.Model):

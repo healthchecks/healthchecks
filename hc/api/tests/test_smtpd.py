@@ -24,7 +24,7 @@ class SmtpdTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.scheme, "email")
         self.assertEqual(ping.ua, "Email from foo@example.org")
-        self.assertEqual(ping.body, "hello world")
+        self.assertEqual(bytes(ping.body_raw), b"hello world")
         self.assertEqual(ping.kind, None)
 
     def test_it_handles_subject_filter_match(self):
@@ -104,7 +104,8 @@ class SmtpdTestCase(BaseTestCase):
         self.check.subject_fail = "FAIL"
         self.check.save()
 
-        body = PAYLOAD_TMPL % "[SUCCESS] 1 Backup completed, [FAIL] 1 Backup did not complete"
+        subject = "[SUCCESS] 1 Backup completed, [FAIL] 1 Backup did not complete"
+        body = PAYLOAD_TMPL % subject
         _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
 
         ping = Ping.objects.latest("id")

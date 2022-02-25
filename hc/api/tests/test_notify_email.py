@@ -24,7 +24,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.ping = Ping(owner=self.check)
         self.ping.remote_addr = "1.2.3.4"
-        self.ping.body = "Body Line 1\nBody Line 2"
+        self.ping.body_raw = b"Body Line 1\nBody Line 2"
         self.ping.save()
 
         self.channel = Channel(project=self.project)
@@ -34,7 +34,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    def test_email(self):
+    def test_it_works(self):
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
@@ -65,6 +65,17 @@ class NotifyEmailTestCase(BaseTestCase):
 
         # Check's code must not be in the plain text body
         self.assertNotIn(str(self.check.code), email.body)
+
+    def test_it_displays_body(self):
+        self.ping.body = "Body Line 1\nBody Line 2"
+        self.ping.body_raw = None
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        self.assertIn("Line 1<br>Line2", html)
 
     def test_it_shows_cron_schedule(self):
         self.check.kind = "cron"
