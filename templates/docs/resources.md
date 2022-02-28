@@ -17,6 +17,7 @@ Please submit additions and corrections
 * [runitor](https://github.com/bdd/runitor) - A command runner with Healthchecks.io integration to keep your scripts and containers simple.
 * [SmartCronHelper](https://gitlab.science.ru.nl/bram/sch) – A cron shell wrapper. Automatically registers and pings cron jobs listed in crontab.
 * [crontask.sh](https://github.com/pforret/crontask) – Bash wrapper to use in crontab. Supports pinging.
+* [task-mon](https://github.com/dimo414/task-mon) – A small binary for notifying Healthchecks.io when a command runs, written in Rust.
 
 ## API Wrappers
 
