@@ -75,7 +75,7 @@
                 {% if event.scheme == "email" %}
                     {{ event.ua }}
                     <span class="ua-body">
-                        {% if event.has_body %}
+                        {% if event.body or event.body_raw %}
                             -  {{ event.get_body|truncatechars:150 }}
                         {% endif %}
                     </span>
@@ -89,8 +89,10 @@
                         {% if event.ua %}
                         - {{ event.ua }}
                         {% endif %}
-                        {% if event.has_body %}
+                        {% if event.body or event.body_raw %}
                         -  {{ event.get_body|truncatechars:150 }}
+                        {% elif event.object_size %}
+                        - {{ event.object_size }} byte body
                         {% endif %}
                     </span>
                 {% endif %}

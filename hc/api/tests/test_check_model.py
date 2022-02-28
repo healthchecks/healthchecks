@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta as td
 from unittest.mock import Mock, patch
 
+from django.test.utils import override_settings
 from django.utils import timezone
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
@@ -273,6 +274,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(jan[1], td())
         self.assertEqual(jan[2], 0)
 
+    @override_settings(S3_BUCKET=None)
     def test_it_prunes(self):
         check = Check.objects.create(project=self.project, n_pings=101)
         Ping.objects.create(owner=check, n=101)
@@ -291,3 +293,16 @@ class CheckModelTestCase(BaseTestCase):
         self.assertFalse(Ping.objects.filter(n=1).exists())
 
         self.assertEqual(Notification.objects.count(), 0)
+
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.remove_objects")
+    def test_it_prunes_object_storage(self, remove_objects):
+        check = Check.objects.create(project=self.project, n_pings=101)
+        Ping.objects.create(owner=check, n=101)
+        Ping.objects.create(owner=check, n=1, object_size=1000)
+
+        check.prune()
+        args, kwargs = remove_objects.call_args
+        code, upto_n = args
+        self.assertEqual(code, check.code)
+        self.assertEqual(upto_n, 1)

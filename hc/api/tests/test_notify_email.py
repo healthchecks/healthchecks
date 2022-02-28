@@ -2,8 +2,10 @@
 
 from datetime import timedelta as td
 import json
+from unittest.mock import patch
 
 from django.core import mail
+from django.test.utils import override_settings
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
@@ -23,6 +25,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.check.save()
 
         self.ping = Ping(owner=self.check)
+        self.ping.n = 1
         self.ping.remote_addr = "1.2.3.4"
         self.ping.body_raw = b"Body Line 1\nBody Line 2"
         self.ping.save()
@@ -76,6 +79,26 @@ class NotifyEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         html = email.alternatives[0][0]
         self.assertIn("Line 1<br>Line2", html)
+
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.get_object")
+    def test_it_loads_body_from_object_storage(self, get_object):
+        get_object.return_value = b"Body Line 1\nBody Line 2"
+
+        self.ping.object_size = 1000
+        self.ping.body_raw = None
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        self.assertIn("Line 1<br>Line2", html)
+
+        args, kwargs = get_object.call_args
+        code, n = args
+        self.assertEqual(code, self.check.code)
+        self.assertEqual(n, 1)
 
     def test_it_shows_cron_schedule(self):
         self.check.kind = "cron"

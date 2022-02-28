@@ -160,7 +160,7 @@ class PingsAdmin(admin.ModelAdmin):
     search_fields = ("owner__name", "owner__code")
     readonly_fields = ("owner",)
     list_select_related = ("owner",)
-    list_display = ("id", "created", "owner", "scheme", "method", "ua")
+    list_display = ("id", "created", "owner", "scheme", "method", "object_size", "ua")
     list_filter = ("created", SchemeListFilter, MethodListFilter, KindListFilter)
 
     paginator = LargeTablePaginator

@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+from django.test.utils import override_settings
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
@@ -173,3 +176,34 @@ class PingDetailsTestCase(BaseTestCase):
 
         # aGVsbG8gd29ybGQ= is base64("hello world")
         self.assertContains(r, "hello world", status_code=200)
+
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.get_object")
+    def test_it_loads_body_from_object_storage(self, get_object):
+        Ping.objects.create(owner=self.check, n=1, object_size=1000)
+        get_object.return_value = b"dummy body from object storage"
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "dummy body from object storage", status_code=200)
+
+        args, kwargs = get_object.call_args
+        code, n = args
+        self.assertEqual(code, self.check.code)
+        self.assertEqual(n, 1)
+
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.get_object")
+    def test_it_decodes_plaintext_email_body_from_object_storage(self, get_object):
+        Ping.objects.create(owner=self.check, n=1, scheme="email", object_size=1000)
+        get_object.return_value = PLAINTEXT_EMAIL
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "email-body-plain", status_code=200)
+        self.assertNotContains(r, "email-body-html")
+
+        # aGVsbG8gd29ybGQ= is base64("hello world")
+        self.assertContains(r, "aGVsbG8gd29ybGQ=")
+        self.assertContains(r, "hello world")

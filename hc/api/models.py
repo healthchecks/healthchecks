@@ -17,6 +17,7 @@ from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries
+from hc.lib.s3 import get_object, put_object, remove_objects
 
 try:
     from zoneinfo import ZoneInfo
@@ -324,7 +325,11 @@ class Check(models.Model):
         ping.method = method
         # If User-Agent is longer than 200 characters, truncate it:
         ping.ua = ua[:200]
-        ping.body_raw = body[: settings.PING_BODY_LIMIT]
+        if len(body) > 100 and settings.S3_BUCKET:
+            ping.object_size = len(body)
+            put_object(self.code, ping.n, body)
+        else:
+            ping.body_raw = body
         ping.exitstatus = exitstatus
         ping.save()
 
@@ -335,8 +340,14 @@ class Check(models.Model):
     def prune(self):
         """ Remove old pings and notifications. """
 
-        limit = self.project.owner_profile.ping_log_limit
-        self.ping_set.filter(n__lte=self.n_pings - limit).delete()
+        threshold = self.n_pings - self.project.owner_profile.ping_log_limit
+
+        # Remove ping bodies from object storage
+        if settings.S3_BUCKET:
+            remove_objects(self.code, threshold)
+
+        # Remove ping objects from db
+        self.ping_set.filter(n__lte=threshold).delete()
 
         try:
             ping = self.ping_set.earliest("id")
@@ -406,6 +417,7 @@ class Ping(models.Model):
     ua = models.CharField(max_length=200, blank=True)
     body = models.TextField(blank=True, null=True)
     body_raw = models.BinaryField(null=True)
+    object_size = models.IntegerField(null=True)
     exitstatus = models.SmallIntegerField(null=True)
 
     def to_dict(self):
@@ -420,7 +432,7 @@ class Ping(models.Model):
         }
 
     def has_body(self):
-        if self.body or self.body_raw:
+        if self.body or self.body_raw or self.object_size:
             return True
 
         return False
@@ -428,6 +440,8 @@ class Ping(models.Model):
     def get_body(self):
         if self.body:
             return self.body
+        if self.object_size:
+            return get_object(self.owner.code, self.n).decode(errors="replace")
         if self.body_raw:
             return bytes(self.body_raw).decode(errors="replace")
 

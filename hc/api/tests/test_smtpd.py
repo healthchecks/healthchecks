@@ -1,3 +1,4 @@
+from django.test.utils import override_settings
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 from hc.api.management.commands.smtpd import _process_message
@@ -12,6 +13,7 @@ Subject: %s
 """.strip()
 
 
+@override_settings(S3_BUCKET=None)
 class SmtpdTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()

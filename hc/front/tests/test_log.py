@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 
 from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
@@ -34,6 +35,18 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Browser's time zone", status_code=200)
         self.assertContains(r, "hello world")
+
+    @patch("hc.api.models.get_object")
+    def test_it_does_not_load_bodies_from_object_storage(self, get_object):
+        self.ping.body_raw = None
+        self.ping.object_size = 1234
+        self.ping.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "1234 byte body")
+
+        self.assertFalse(get_object.called)
 
     def test_it_displays_email(self):
         self.ping.scheme = "email"

@@ -1,4 +1,5 @@
 from datetime import timedelta as td
+from unittest.mock import patch
 
 from django.test import Client
 from django.test.utils import override_settings
@@ -7,6 +8,7 @@ from hc.api.models import Check, Flip, Ping
 from hc.test import BaseTestCase
 
 
+@override_settings(S3_BUCKET=None)
 class PingTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
@@ -263,3 +265,19 @@ class PingTestCase(BaseTestCase):
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
         self.assertEqual(bytes(ping.body_raw), b"Hello \xe9 World")
+
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.put_object")
+    def test_it_uploads_body_to_s3(self, put_object):
+        r = self.client.post(self.url, b"a" * 101, content_type="text/plain")
+        self.assertEqual(r.status_code, 200)
+
+        ping = Ping.objects.get()
+        self.assertEqual(ping.method, "POST")
+        self.assertEqual(ping.object_size, 101)
+
+        args, kwargs = put_object.call_args
+        code, n, data = args
+        self.assertEqual(code, self.check.code)
+        self.assertEqual(n, 1)
+        self.assertEqual(data, b"a" * 101)

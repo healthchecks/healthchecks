@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Update the "Add TOTP" form to display plaintext TOTP secret (#602)
 - Improve PagerDuty notifications
 - Add Ping.body_raw field for storing body as bytes
+- Add support for storing ping bodies in S3-compatible object storage (#609)
 
 ### Bug Fixes
 - Fix unwanted special character escaping in notification messages (#606)
