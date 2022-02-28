@@ -2,11 +2,19 @@ from io import BytesIO
 from threading import Thread
 
 from django.conf import settings
-from minio import Minio
-from minio.deleteobjects import DeleteObject
+
+try:
+    from minio import Minio
+    from minio.deleteobjects import DeleteObject
+except ImportError:
+    # Enforce
+    settings.S3_BUCKET = None
 
 
 def client():
+    if not settings.S3_BUCKET:
+        raise Exception("Object storage is not configured")
+
     return Minio(
         settings.S3_ENDPOINT,
         settings.S3_ACCESS_KEY,
