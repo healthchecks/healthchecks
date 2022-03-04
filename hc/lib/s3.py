@@ -11,21 +11,22 @@ except ImportError:
     # Enforce
     settings.S3_BUCKET = None
 
-
+_client = None
 def client():
     if not settings.S3_BUCKET:
         raise Exception("Object storage is not configured")
 
-    http_client = PoolManager(retries=False, timeout=10)
+    global _client
+    if _client is None:
+        _client = Minio(
+            settings.S3_ENDPOINT,
+            settings.S3_ACCESS_KEY,
+            settings.S3_SECRET_KEY,
+            region=settings.S3_REGION,
+            http_client=PoolManager(timeout=settings.S3_TIMEOUT),
+        )
 
-    return Minio(
-        settings.S3_ENDPOINT,
-        settings.S3_ACCESS_KEY,
-        settings.S3_SECRET_KEY,
-        region=settings.S3_REGION,
-        http_client=http_client,
-    )
-
+    return _client
 
 ASCII_J = ord("j")
 ASCII_Z = ord("z")
@@ -59,7 +60,6 @@ def enc(n):
 
 def get_object(code, n):
     key = "%s/%s" % (code, enc(n))
-
     response = None
     try:
         response = client().get_object(settings.S3_BUCKET, key)
@@ -76,22 +76,28 @@ def get_object(code, n):
 
 def put_object(code, n, data):
     key = "%s/%s" % (code, enc(n))
-    client().put_object(settings.S3_BUCKET, key, BytesIO(data), len(data))
+    while True:
+        try:
+            client().put_object(settings.S3_BUCKET, key, BytesIO(data), len(data))
+            break
+        except S3Error as e:
+            if e.code != "InternalError":
+                raise e
 
+            print("InternalError, retrying...")
 
 def _remove_objects(code, upto_n):
-    c = client()
     prefix = "%s/" % code
     start_after = prefix + enc(upto_n + 1)
-    q = c.list_objects(settings.S3_BUCKET, prefix, start_after=start_after)
+    q = client().list_objects(settings.S3_BUCKET, prefix, start_after=start_after)
     delete_objs = [DeleteObject(obj.object_name) for obj in q]
     if delete_objs:
-        errors = c.remove_objects(settings.S3_BUCKET, delete_objs)
+        errors = client().remove_objects(settings.S3_BUCKET, delete_objs)
         for e in errors:
             print("remove_objects error: ", e)
 
 
-def remove_objects(check_code, upto_n, block=False):
+def remove_objects(check_code, upto_n):
     """Removes keys with n values below or equal to `upto_n`.
 
     The S3 API calls can take seconds to complete,
@@ -99,7 +105,4 @@ def remove_objects(check_code, upto_n, block=False):
 
     """
 
-    if block:
-        _remove_objects(check_code, upto_n)
-    else:
-        Thread(target=_remove_objects, args=(check_code, upto_n)).start()
+    Thread(target=_remove_objects, args=(check_code, upto_n)).start()
