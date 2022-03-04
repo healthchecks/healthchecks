@@ -12,6 +12,8 @@ except ImportError:
     settings.S3_BUCKET = None
 
 _client = None
+
+
 def client():
     if not settings.S3_BUCKET:
         raise Exception("Object storage is not configured")
@@ -27,6 +29,7 @@ def client():
         )
 
     return _client
+
 
 ASCII_J = ord("j")
 ASCII_Z = ord("z")
@@ -64,8 +67,6 @@ def get_object(code, n):
     try:
         response = client().get_object(settings.S3_BUCKET, key)
         return response.read()
-        response.close()
-        response.release_conn()
     except S3Error:
         return None
     finally:
@@ -85,6 +86,7 @@ def put_object(code, n, data):
                 raise e
 
             print("InternalError, retrying...")
+
 
 def _remove_objects(code, upto_n):
     prefix = "%s/" % code
