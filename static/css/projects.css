@@ -6,7 +6,8 @@
     text-decoration: none;
 }
 
-#project-selector a:hover .project {
+#project-selector a:hover .project,
+#project-selector .project.selected {
     border-color: var(--link-color);
 }
 
@@ -23,10 +24,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-#project-selector .project.selected {
-    border-color: var(--link-color);
 }
 
 #project-selector .project .status {

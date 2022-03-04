@@ -122,11 +122,6 @@ tr:hover .copy-link {
     color: var(--text-muted);
 }
 
-.checks-subline-duration {
-    color: var(--text-muted);
-    white-space: nowrap;
-}
-
 #checks-table td.url,
 #checks-table .actions {
     white-space: nowrap;
