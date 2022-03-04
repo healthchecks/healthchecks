@@ -6,6 +6,7 @@ from django.conf import settings
 try:
     from minio import Minio, S3Error
     from minio.deleteobjects import DeleteObject
+    from urllib3 import PoolManager
 except ImportError:
     # Enforce
     settings.S3_BUCKET = None
@@ -15,11 +16,14 @@ def client():
     if not settings.S3_BUCKET:
         raise Exception("Object storage is not configured")
 
+    http_client = PoolManager(retries=False, timeout=10)
+
     return Minio(
         settings.S3_ENDPOINT,
         settings.S3_ACCESS_KEY,
         settings.S3_SECRET_KEY,
         region=settings.S3_REGION,
+        http_client=http_client,
     )
 
 
