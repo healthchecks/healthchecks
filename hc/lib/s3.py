@@ -4,7 +4,7 @@ from threading import Thread
 from django.conf import settings
 
 try:
-    from minio import Minio
+    from minio import Minio, S3Error
     from minio.deleteobjects import DeleteObject
 except ImportError:
     # Enforce
@@ -56,14 +56,18 @@ def enc(n):
 def get_object(code, n):
     key = "%s/%s" % (code, enc(n))
 
+    response = None
     try:
         response = client().get_object(settings.S3_BUCKET, key)
-        data = response.read()
-    finally:
+        return response.read()
         response.close()
         response.release_conn()
-
-    return data
+    except S3Error:
+        return None
+    finally:
+        if response:
+            response.close()
+            response.release_conn()
 
 
 def put_object(code, n, data):

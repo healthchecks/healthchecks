@@ -210,3 +210,13 @@ class PingDetailsTestCase(BaseTestCase):
         # aGVsbG8gd29ybGQ= is base64("hello world")
         self.assertContains(r, "aGVsbG8gd29ybGQ=")
         self.assertContains(r, "hello world")
+
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.get_object")
+    def test_it_handles_missing_object(self, get_object):
+        Ping.objects.create(owner=self.check, n=1, object_size=1000)
+        get_object.return_value = None
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "please check back later", status_code=200)

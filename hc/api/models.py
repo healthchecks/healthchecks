@@ -441,7 +441,9 @@ class Ping(models.Model):
         if self.body:
             return self.body
         if self.object_size:
-            return get_object(self.owner.code, self.n).decode(errors="replace")
+            body_raw = get_object(self.owner.code, self.n)
+            if body_raw:
+                return body_raw.decode(errors="replace")
         if self.body_raw:
             return bytes(self.body_raw).decode(errors="replace")
 
