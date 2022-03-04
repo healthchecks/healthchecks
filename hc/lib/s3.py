@@ -91,7 +91,7 @@ def _remove_objects(code, upto_n):
             print("remove_objects error: ", e)
 
 
-def remove_objects(check_code, upto_n):
+def remove_objects(check_code, upto_n, block=False):
     """Removes keys with n values below or equal to `upto_n`.
 
     The S3 API calls can take seconds to complete,
@@ -99,4 +99,7 @@ def remove_objects(check_code, upto_n):
 
     """
 
-    Thread(target=_remove_objects, args=(check_code, upto_n)).start()
+    if block:
+        _remove_objects(check_code, upto_n)
+    else:
+        Thread(target=_remove_objects, args=(check_code, upto_n)).start()
