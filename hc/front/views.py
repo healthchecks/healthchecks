@@ -497,10 +497,11 @@ def ping_details(request, code, n=None):
     except Ping.DoesNotExist:
         return render(request, "front/ping_details_not_found.html")
 
-    ctx = {"check": check, "ping": ping, "plain": None, "html": None}
+    body = ping.get_body()
+    ctx = {"check": check, "ping": ping, "plain": None, "html": None, "body": body}
 
     if ping.scheme == "email":
-        parsed = email.message_from_string(ping.get_body(), policy=email.policy.SMTP)
+        parsed = email.message_from_string(body, policy=email.policy.SMTP)
         ctx["subject"] = parsed.get("subject", "")
 
         plain_mime_part = parsed.get_body(("plain",))

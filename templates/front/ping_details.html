@@ -94,7 +94,7 @@
         </ul>
         <div class="tab-content">
             <div id="email-body-raw" class="tab-pane active">
-                <pre>{{ ping.get_body }}</pre>
+                <pre>{{ body }}</pre>
             </div>
 
             {% if plain %}
@@ -110,7 +110,7 @@
             {% endif %}
         </div>
         {% else %}
-        <pre>{{ ping.get_body }}</pre>
+        <pre>{{ body }}</pre>
         {% endif %}
     {% endif %}
 </div>

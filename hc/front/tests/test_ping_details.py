@@ -201,6 +201,9 @@ class PingDetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
 
+        # It should call get_object only once
+        self.assertEqual(get_object.call_count, 1)
+
         self.assertContains(r, "email-body-plain", status_code=200)
         self.assertNotContains(r, "email-body-html")
 
