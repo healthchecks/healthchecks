@@ -7,7 +7,7 @@ RUN \
     if [ `dpkg --print-architecture` = "armhf" ]; then \
     printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
     fi
-RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient -r /tmp/requirements.txt
+RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient -r /tmp/requirements.txt --no-binary uwsgi
 
 FROM python:3.9-slim-buster
 
