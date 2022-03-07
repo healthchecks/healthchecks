@@ -1,13 +1,13 @@
 FROM python:3.9-slim-buster as builder
 
 COPY requirements.txt /tmp
-RUN apt update && apt install -y build-essential libpq-dev
+RUN apt update && apt install -y build-essential libpq-dev libmariadb-dev
 
 RUN \
     if [ `dpkg --print-architecture` = "armhf" ]; then \
     printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
     fi
-RUN pip wheel --wheel-dir /wheels apprise uwsgi -r /tmp/requirements.txt
+RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient -r /tmp/requirements.txt
 
 FROM python:3.9-slim-buster
 
@@ -20,7 +20,7 @@ COPY --from=builder /wheels /wheels
 
 RUN \
     apt update && \
-    apt install -y libpq5 && \
+    apt install -y libpq5 libmariadb3 && \
     rm -rf /var/apt/cache
 
 RUN pip install --no-cache /wheels/*
