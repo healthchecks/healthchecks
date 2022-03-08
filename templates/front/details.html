@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress humanize static hc_extras %}
+{% load compress humanize l10n static hc_extras %}
 
 {% block title %}{{ check|down_title }}{% endblock %}
 
@@ -217,8 +217,8 @@
                     data-code="{{ check.code }}"
                     data-status-url="{% url 'hc-status-single' check.code %}"
                     data-kind="{{ check.kind }}"
-                    data-timeout="{{ check.timeout.total_seconds }}"
-                    data-grace="{{ check.grace.total_seconds }}"
+                    data-timeout="{{ check.timeout.total_seconds|unlocalize }}"
+                    data-grace="{{ check.grace.total_seconds|unlocalize }}"
                     data-schedule="{{ check.schedule }}"
                     data-tz="{{ check.tz }}">
                     Change Schedule&hellip;</button>
