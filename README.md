@@ -195,6 +195,19 @@ Healthchecks also provides management commands for cleaning up
     $ ./manage.py pruneflips
     ```
 
+* Remove old objects from external object storage. When an user removes
+  a check, removes a project, or closes their account, Healthchecks
+  does not remove the associated objects from the external object
+  storage on the fly. Instead, you should run `pruneobjects` occasionally
+  (for example, once a month). This command first takes an inventory
+  of all checks in the database, and then iterates over top-level
+  keys in the object storage bucket, and deletes any that don't also
+  exist in the database.
+
+    ```
+    $ ./manage.py pruneobjects
+    ```
+
 When you first try these commands on your data, it is a good idea to
 test them on a copy of your database, not on the live database right away.
 In a production setup, you should also have regular, automated database
@@ -233,6 +246,28 @@ When `REMOTE_USER_HEADER` is set, Healthchecks will:
  - look up and automatically log in the user with a matching email address
  - automatically create an user account if it does not exist
  - disable the default authentication methods (login link to email, password)
+
+## External Object Storage
+
+Healthchecks can optionally store large ping bodies in S3-compatible object
+storage. To enable this feature, you will need to:
+
+* ensure you have the [MinIO Python library](https://docs.min.io/docs/python-client-quickstart-guide.html) installed:
+```bash
+pip install minio
+```
+* configure the credentials for accessing object storage: `S3_ACCESS_KEY`,
+  `S3_SECRET_KEY`, `S3_ENDPOINT`, `S3_REGION` and `S3_BUCKET`.
+
+Healthchecks will use external object storage for storing any request bodies that
+exceed 100 bytes. If the size of a request body is 100 bytes or below, Healthchecks
+will still store it in the database.
+
+Healthchecks automatically removes old stored ping bodies from object
+storage while uploading new data. However, Healthchecks does not automatically
+clean up data when you delete checks, projects or entire user accounts.
+Use the `pruneobjects` management command to remove data for checks that don't
+exist any more.
 
 ## Integrations
 
