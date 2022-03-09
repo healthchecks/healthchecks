@@ -298,10 +298,22 @@ class Slack(HttpTransport):
         raise TransportError(message, permanent=permanent)
 
     def notify(self, check, notification=None) -> None:
-        if self.channel.kind == "slack" and not settings.SLACK_ENABLED:
+        if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
 
-        if self.channel.kind == "mattermost" and not settings.MATTERMOST_ENABLED:
+        text = tmpl("slack_message.json", check=check)
+        payload = json.loads(text)
+        self.post(self.channel.slack_webhook_url, json=payload)
+
+
+class Mattermost(HttpTransport):
+    @classmethod
+    def raise_for_response(cls, response):
+        message = f"Received status code {response.status_code}"
+        raise TransportError(message)
+
+    def notify(self, check, notification=None) -> None:
+        if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
 
         text = tmpl("slack_message.json", check=check)

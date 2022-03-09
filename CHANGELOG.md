@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Fix Telegram bot to handle TransportError exceptions
 - Fix Signal integration to handle UNREGISTERED_FAILURE errors
 - Fix unwanted localization of period and grace values in data- attributes (#617)
+- Fix Mattermost integration to treat 404 as a transient error (#613)
 
 ## v1.25.0 - 2022-01-07
 

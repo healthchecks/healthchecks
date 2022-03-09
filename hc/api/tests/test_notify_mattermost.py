@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from datetime import timedelta as td
+from unittest.mock import patch
 
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification
@@ -29,3 +30,11 @@ class NotifyMattermostTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Mattermost notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_does_not_disable_channel_on_404(self, mock_post):
+        mock_post.return_value.status_code = 404
+
+        self.channel.notify(self.check)
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.disabled)

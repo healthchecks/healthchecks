@@ -514,8 +514,10 @@ class Channel(models.Model):
             return transports.Email(self)
         elif self.kind == "webhook":
             return transports.Webhook(self)
-        elif self.kind in ("slack", "mattermost"):
+        elif self.kind == "slack":
             return transports.Slack(self)
+        elif self.kind == "mattermost":
+            return transports.Mattermost(self)
         elif self.kind == "hipchat":
             return transports.HipChat(self)
         elif self.kind == "pd":
