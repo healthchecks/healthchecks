@@ -194,3 +194,14 @@ class DetailsTestCase(BaseTestCase):
 
         self.project.refresh_from_db()
         self.assertTrue(self.project.show_slugs)
+
+    def test_it_outputs_period_grace_as_integers(self):
+        self.check.timeout = td(seconds=123)
+        self.check.grace = td(seconds=456)
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, 'data-timeout="123"')
+        self.assertContains(r, 'data-grace="456"')

@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - Make email non-editable in the "Invite Member" dialog when team limit reached
 - Fix Telegram bot to handle TransportError exceptions
 - Fix Signal integration to handle UNREGISTERED_FAILURE errors
+- Fix unwanted localization of period and grace values in data- attributes (#617)
 
 ## v1.25.0 - 2022-01-07
 

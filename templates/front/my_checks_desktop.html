@@ -107,8 +107,8 @@
         <td class="hidden-xs">
             <div class="timeout-grace"
                 data-kind="{{ check.kind }}"
-                data-timeout="{{ check.timeout.total_seconds }}"
-                data-grace="{{ check.grace.total_seconds }}"
+                data-timeout="{{ check.timeout.total_seconds|floatformat:'0' }}"
+                data-grace="{{ check.grace.total_seconds|floatformat:'0' }}"
                 data-schedule="{{ check.schedule }}"
                 data-tz="{{ check.tz }}">
                 {% if check.kind == "simple" %}

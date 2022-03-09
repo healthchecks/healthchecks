@@ -217,8 +217,8 @@
                     data-code="{{ check.code }}"
                     data-status-url="{% url 'hc-status-single' check.code %}"
                     data-kind="{{ check.kind }}"
-                    data-timeout="{{ check.timeout.total_seconds }}"
-                    data-grace="{{ check.grace.total_seconds }}"
+                    data-timeout="{{ check.timeout.total_seconds|floatformat:'0' }}"
+                    data-grace="{{ check.grace.total_seconds|floatformat:'0' }}"
                     data-schedule="{{ check.schedule }}"
                     data-tz="{{ check.tz }}">
                     Change Schedule&hellip;</button>
