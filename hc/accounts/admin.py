@@ -212,7 +212,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class HcUserAdmin(UserAdmin):
-    actions = ["send_report", "send_nag"]
+    actions = ["send_report", "send_nag", "deactivate"]
     list_display = (
         "id",
         "email",
@@ -249,6 +249,14 @@ class HcUserAdmin(UserAdmin):
             user.profile.send_report(nag=True)
 
         self.message_user(request, "%d email(s) sent" % qs.count())
+
+    def deactivate(self, request, qs):
+        for user in qs:
+            user.is_active = False
+            user.set_unusable_password()
+            user.save()
+
+        self.message_user(request, "%d user(s) deactivated" % qs.count())
 
 
 admin.site.unregister(User)
