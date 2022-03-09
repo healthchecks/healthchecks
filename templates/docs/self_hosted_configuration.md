@@ -421,7 +421,7 @@ Default: `None`
 
 Access key of an account in S3 service.
 
-Healthchecks can optionally uplod ping request body data to S3-compatible object
+Healthchecks can optionally upload ping request body data to S3-compatible object
 storage instead of storing it in the database. To use this feature, provide valid
 credentials to a S3-compatible service by setting the following environment variables:
 
