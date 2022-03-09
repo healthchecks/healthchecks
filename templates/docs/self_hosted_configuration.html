@@ -259,6 +259,34 @@ if your site runs on <code>https://my-hc.example.org</code>, set <code>RP_ID</co
 <p>Note that WebAuthn requires HTTPS, even if running on localhost. To test WebAuthn
 locally with a self-signed certificate, you can use the <code>runsslserver</code> command
 from the <code>django-sslserver</code> package.</p>
+<h2 id="S3_ACCESS_KEY"><code>S3_ACCESS_KEY</code></h2>
+<p>Default: <code>None</code></p>
+<p>Access key of an account in S3 service.</p>
+<p>Healthchecks can optionally uplod ping request body data to S3-compatible object
+storage instead of storing it in the database. To use this feature, provide valid
+credentials to a S3-compatible service by setting the following environment variables:</p>
+<ul>
+<li><code>S3_ACCESS_KEY</code> (example: <code>AKIAFIXMEFIXME</code>)</li>
+<li><code>S3_BUCKET</code> (example: <code>my-bucket</code>)</li>
+<li><code>S3_ENDPOINT</code> (example: <code>s3.eu-central-1.amazonaws.com</code>)</li>
+<li><code>S3_REGION</code> (example: <code>eu-central-1</code>)</li>
+<li><code>S3_SECRET_KEY</code></li>
+</ul>
+<h2 id="S3_BUCKET"><code>S3_BUCKET</code></h2>
+<p>Default: <code>None</code></p>
+<p>Name of the bucket in S3 service for storing ping request body data.</p>
+<h2 id="S3_ENDPOINT"><code>S3_ENDPOINT</code></h2>
+<p>Default: <code>None</code></p>
+<p>URL to the S3-compatible service.</p>
+<h2 id="S3_REGION"><code>S3_REGION</code></h2>
+<p>Default: <code>None</code></p>
+<p>Region name of buckets in S3 service.</p>
+<h2 id="S3_SECRET_KEY"><code>S3_SECRET_KEY</code></h2>
+<p>Default: <code>None</code></p>
+<p>Secret key of an account in S3 service.</p>
+<h2 id="S3_TIMEOUT"><code>S3_TIMEOUT</code></h2>
+<p>Default: <code>60</code></p>
+<p>Timeout for each individual S3 operatio, in seconds.</p>
 <h2 id="SECRET_KEY"><code>SECRET_KEY</code></h2>
 <p>Default: <code>---</code></p>
 <p>A secret key used for cryptographic signing, and should be set to a unique,

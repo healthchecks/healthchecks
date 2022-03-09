@@ -415,6 +415,52 @@ Note that WebAuthn requires HTTPS, even if running on localhost. To test WebAuth
 locally with a self-signed certificate, you can use the `runsslserver` command
 from the `django-sslserver` package.
 
+## `S3_ACCESS_KEY` {: #S3_ACCESS_KEY }
+
+Default: `None`
+
+Access key of an account in S3 service.
+
+Healthchecks can optionally uplod ping request body data to S3-compatible object
+storage instead of storing it in the database. To use this feature, provide valid
+credentials to a S3-compatible service by setting the following environment variables:
+
+* `S3_ACCESS_KEY` (example: `AKIAFIXMEFIXME`)
+* `S3_BUCKET` (example: `my-bucket`)
+* `S3_ENDPOINT` (example: `s3.eu-central-1.amazonaws.com`)
+* `S3_REGION` (example: `eu-central-1`)
+* `S3_SECRET_KEY`
+
+## `S3_BUCKET` {: #S3_BUCKET }
+
+Default: `None`
+
+Name of the bucket in S3 service for storing ping request body data.
+
+## `S3_ENDPOINT` {: #S3_ENDPOINT }
+
+Default: `None`
+
+URL to the S3-compatible service.
+
+## `S3_REGION` {: #S3_REGION }
+
+Default: `None`
+
+Region name of buckets in S3 service.
+
+## `S3_SECRET_KEY` {: #S3_SECRET_KEY }
+
+Default: `None`
+
+Secret key of an account in S3 service.
+
+## `S3_TIMEOUT` {: #S3_TIMEOUT }
+
+Default: `60`
+
+Timeout for each individual S3 operatio, in seconds.
+
 ## `SECRET_KEY` {: #SECRET_KEY }
 
 Default: `---`
