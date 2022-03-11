@@ -89,6 +89,9 @@ def put_object(code, n, data):
 
 
 def _remove_objects(code, upto_n):
+    if upto_n <= 0:
+        return
+
     prefix = "%s/" % code
     start_after = prefix + enc(upto_n + 1)
     q = client().list_objects(settings.S3_BUCKET, prefix, start_after=start_after)
