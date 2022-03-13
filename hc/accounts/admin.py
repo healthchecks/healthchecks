@@ -79,12 +79,12 @@ class NumChecksFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ("10", "more than 10"),
-            ("20", "more than 20"),
-            ("50", "more than 50"),
-            ("100", "more than 100"),
-            ("500", "more than 500"),
-            ("1000", "more than 1000"),
+            ("10", "10 or more"),
+            ("20", "20 or more"),
+            ("50", "50 or more"),
+            ("100", "100 or more"),
+            ("500", "500 or more"),
+            ("1000", "1000 or more"),
         )
 
     def queryset(self, request, queryset):
@@ -92,7 +92,7 @@ class NumChecksFilter(admin.SimpleListFilter):
             return
 
         value = int(self.value())
-        return queryset.filter(num_checks__gt=value)
+        return queryset.filter(num_checks__gte=value)
 
 
 @admin.register(Profile)
@@ -219,6 +219,7 @@ class HcUserAdmin(UserAdmin):
         "usage",
         "date_joined",
         "last_login",
+        "last_active",
         "is_staff",
     )
 
@@ -231,8 +232,12 @@ class HcUserAdmin(UserAdmin):
         qs = super().get_queryset(request)
         qs = qs.annotate(num_checks=Count("project__check", distinct=True))
         qs = qs.annotate(num_channels=Count("project__channel", distinct=True))
+        qs = qs.annotate(last_active_date=F("profile__last_active_date"))
 
         return qs
+
+    def last_active(self, user):
+        return user.last_active_date
 
     @mark_safe
     def usage(self, user):
