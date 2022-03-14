@@ -220,3 +220,10 @@ class PingDetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "please check back later", status_code=200)
+
+    def test_it_handles_missing_s3_credentials(self):
+        Ping.objects.create(owner=self.check, n=1, object_size=1000)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "please check back later", status_code=200)

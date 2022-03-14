@@ -62,6 +62,9 @@ def enc(n):
 
 
 def get_object(code, n):
+    if not settings.S3_BUCKET:
+        return None
+
     key = "%s/%s" % (code, enc(n))
     response = None
     try:
