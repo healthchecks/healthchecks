@@ -118,6 +118,9 @@
             {% else %}
             <pre>{{ body }}</pre>
             {% endif %}
+            <p class="download">
+                <a href="{% url 'hc-ping-body' check.code ping.n %}">Download Original</a>
+            </p>
         {% endif %}
     {% endif %}
 </div>

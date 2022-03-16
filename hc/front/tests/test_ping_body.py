@@ -1,0 +1,44 @@
+from unittest.mock import patch
+
+from django.test.utils import override_settings
+from hc.api.models import Check, Ping
+from hc.test import BaseTestCase
+
+
+class PingBodyTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.check = Check.objects.create(project=self.project)
+        self.ping = Ping.objects.create(owner=self.check, n=1, body_raw=b"this is body")
+        self.url = "/checks/%s/pings/%d/body/" % (self.check.code, self.ping.n)
+
+    def test_it_works(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.content, b"this is body")
+
+    def test_it_requires_logged_in_user(self):
+        r = self.client.get(self.url)
+        self.assertRedirects(r, "/accounts/login/?next=" + self.url)
+
+    def test_it_handles_missing_ping(self):
+        self.ping.delete()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
+
+    def test_it_handles_missing_body(self):
+        self.ping.body_raw = None
+        self.ping.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
+
+    def test_it_allows_cross_team_access(self):
+        Ping.objects.create(owner=self.check, body="this is body")
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)

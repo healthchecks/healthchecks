@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Improve PagerDuty notifications
 - Add Ping.body_raw field for storing body as bytes
 - Add support for storing ping bodies in S3-compatible object storage (#609)
+- Add a "Download Original" link in the "Ping Details" dialog
 
 ### Bug Fixes
 - Fix unwanted special character escaping in notification messages (#606)

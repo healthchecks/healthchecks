@@ -45,34 +45,34 @@ class PingDetailsTestCase(BaseTestCase):
         self.url = "/checks/%s/last_ping/" % self.check.code
 
     def test_it_works(self):
-        Ping.objects.create(owner=self.check, body_raw=b"this is body")
+        Ping.objects.create(owner=self.check, n=1, body_raw=b"this is body")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "this is body", status_code=200)
 
     def test_it_displays_body(self):
-        Ping.objects.create(owner=self.check, body="this is body")
+        Ping.objects.create(owner=self.check, n=1, body="this is body")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "this is body", status_code=200)
 
     def test_it_requires_logged_in_user(self):
-        Ping.objects.create(owner=self.check, body="this is body")
+        Ping.objects.create(owner=self.check, n=1, body="this is body")
 
         r = self.client.get(self.url)
         self.assertRedirects(r, "/accounts/login/?next=" + self.url)
 
     def test_it_shows_fail(self):
-        Ping.objects.create(owner=self.check, kind="fail")
+        Ping.objects.create(owner=self.check, n=1, kind="fail")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "/fail", status_code=200)
 
     def test_it_shows_start(self):
-        Ping.objects.create(owner=self.check, kind="start")
+        Ping.objects.create(owner=self.check, n=1, kind="start")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
@@ -92,7 +92,7 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "bar-456", status_code=200)
 
     def test_it_allows_cross_team_access(self):
-        Ping.objects.create(owner=self.check, body="this is body")
+        Ping.objects.create(owner=self.check, n=1, body="this is body")
 
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
@@ -104,21 +104,23 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "No additional information is", status_code=200)
 
     def test_it_shows_nonzero_exitstatus(self):
-        Ping.objects.create(owner=self.check, kind="fail", exitstatus=42)
+        Ping.objects.create(owner=self.check, n=1, kind="fail", exitstatus=42)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "(failure, exit status 42)", status_code=200)
 
     def test_it_shows_zero_exitstatus(self):
-        Ping.objects.create(owner=self.check, exitstatus=0)
+        Ping.objects.create(owner=self.check, n=1, exitstatus=0)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "(exit status 0)", status_code=200)
 
     def test_it_decodes_plaintext_email_body(self):
-        Ping.objects.create(owner=self.check, scheme="email", body_raw=PLAINTEXT_EMAIL)
+        Ping.objects.create(
+            owner=self.check, n=1, scheme="email", body_raw=PLAINTEXT_EMAIL
+        )
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
@@ -132,7 +134,7 @@ class PingDetailsTestCase(BaseTestCase):
 
     def test_it_decodes_plaintext_email_body_str(self):
         body = PLAINTEXT_EMAIL.decode()
-        Ping.objects.create(owner=self.check, scheme="email", body=body)
+        Ping.objects.create(owner=self.check, n=1, scheme="email", body=body)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
@@ -142,7 +144,9 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "hello world")
 
     def test_it_handles_bad_base64_in_email_body(self):
-        Ping.objects.create(owner=self.check, scheme="email", body_raw=BAD_BASE64_EMAIL)
+        Ping.objects.create(
+            owner=self.check, n=1, scheme="email", body_raw=BAD_BASE64_EMAIL
+        )
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
@@ -152,7 +156,7 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "email-body-html")
 
     def test_it_decodes_html_email_body(self):
-        Ping.objects.create(owner=self.check, scheme="email", body_raw=HTML_EMAIL)
+        Ping.objects.create(owner=self.check, n=1, scheme="email", body_raw=HTML_EMAIL)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
@@ -167,6 +171,7 @@ class PingDetailsTestCase(BaseTestCase):
     def test_it_decodes_email_subject(self):
         Ping.objects.create(
             owner=self.check,
+            n=1,
             scheme="email",
             body="Subject: =?UTF-8?B?aGVsbG8gd29ybGQ=?=",
         )

@@ -515,6 +515,21 @@ def ping_details(request, code, n=None):
     return render(request, "front/ping_details.html", ctx)
 
 
+@login_required
+def ping_body(request, code, n):
+    check, rw = _get_check_for_user(request, code)
+    ping = get_object_or_404(Ping, owner=check, n=n)
+
+    body = ping.get_body()
+    if not body:
+        raise Http404("not found")
+
+    response = HttpResponse(body, content_type="application/octet-stream")
+    filename = "%s-%s" % (check.code, ping.n)
+    response["Content-Disposition"] = 'attachment; filename="%s"' % filename
+    return response
+
+
 @require_POST
 @login_required
 def pause(request, code):

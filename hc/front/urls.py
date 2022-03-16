@@ -21,6 +21,7 @@ check_urls = [
         name="hc-switch-channel",
     ),
     path("pings/<int:n>/", views.ping_details, name="hc-ping-details"),
+    path("pings/<int:n>/body/", views.ping_body, name="hc-ping-body"),
 ]
 
 channel_urls = [

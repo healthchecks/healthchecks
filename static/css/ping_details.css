@@ -51,3 +51,7 @@
 #ping-details-body .loading .spinner.started {
     animation: fadeIn 1s ease-in;
 }
+
+#ping-details-body .download {
+    margin: 10px 0 0 0;
+}
