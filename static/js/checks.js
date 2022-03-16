@@ -51,27 +51,9 @@ $(function () {
         if (this.innerText == "Never") {
             return false;
         }
-
-        $("#ping-details-body").text("Updating...");
-        $('#ping-details-modal').modal("show");
-
         var code = $(this).closest("tr.checks-row").attr("id");
         var lastPingUrl = base + "/checks/" + code + "/last_ping/";
-        $.get(lastPingUrl, function(data) {
-            $("#ping-details-body" ).html(data);
-            var htmlPre = $("#email-body-html pre");
-            if (htmlPre.length) {
-                var opts = {USE_PROFILES: {html: true}};
-                var clean = DOMPurify.sanitize(htmlPre.text(), opts);
-                var blob = new Blob([clean], {type: "text/html; charset=utf-8"});
-
-                var iframe = document.createElement("iframe");
-                iframe.sandbox = "";
-                iframe.src = URL.createObjectURL(blob);
-
-                htmlPre.replaceWith(iframe);
-            }
-        });
+        loadPingDetails(lastPingUrl);
 
         var logUrl = base + "/checks/" + code + "/log/";
         $("#ping-details-log").attr("href", logUrl);
