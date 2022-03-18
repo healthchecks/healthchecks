@@ -4,7 +4,7 @@ COPY requirements.txt /tmp
 RUN apt update && apt install -y build-essential libpq-dev libmariadb-dev libffi-dev libssl-dev rustc
 RUN \
     pip install --upgrade pip && \
-    pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient -r /tmp/requirements.txt
+    pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
 RUN rm -rf /opt/healthchecks/.git
