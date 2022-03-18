@@ -1,7 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v1.26.0 - Unreleased
+## v2.0 - 2022-03-18
+
+This release contains a backwards-incompatible change to the Signal integration
+(hence the major version number bump). Healthchecks uses signal-cli to deliver
+Signal notifications. In the past versions, Healthchecks interfaced with
+signal-cli over DBus. Starting from this version, Healthchecks interfaces
+with signal-cli using JSON RPC. Please see README for details on how to set
+this up.
 
 ### Improvements
 - Update Telegram integration to treat "group chat was deleted" as permanent error
