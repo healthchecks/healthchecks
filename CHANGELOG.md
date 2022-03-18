@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.0.1 - 2022-03-18
+
+### Bug Fixes
+- Fix the GHA workflow for building arm/v7 docker image
+
 ## v2.0 - 2022-03-18
 
 This release contains a backwards-incompatible change to the Signal integration
