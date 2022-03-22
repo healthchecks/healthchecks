@@ -1,6 +1,7 @@
 {% load humanize %}
 {% if check.status == "down" %}
-    <b>{{ check.name_then_code }}</b> is <b>DOWN</b>. Last ping was {{ check.last_ping|naturaltime }}.
+    [🔴 DOWN] - <b>{{ check.name_then_code }}</b><br>
+Last ping was {{ check.last_ping|naturaltime }}.<br><br>
 {% else %}
-    <b>{{ check.name_then_code }}</b> is now <b>UP</b>.
+    [🟢 UP] - <b>{{ check.name_then_code }}</b><br><br>
 {% endif %}
