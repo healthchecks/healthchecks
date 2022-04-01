@@ -48,12 +48,12 @@
             {% endif %}
         {% else %}
             <div class="alert alert-info">
-                <strong>Time to upgrade!</strong>
-                To add more checks in this project, please
+                <strong>There are more things to monitor.</strong>
+                To add more checks, please
                 {% if request.user == project.owner %}
-                <a href="{% url 'hc-billing' %}">upgrade your account!</a>
+                <a href="{% url 'hc-billing' %}">upgrade your account</a>.
                 {% else %}
-                ask <strong>{{ project.owner.email }}</strong> to upgrade their account!
+                ask <strong>{{ project.owner.email }}</strong> to upgrade their account.
                 {% endif %}
             </div>
         {% endif %}
