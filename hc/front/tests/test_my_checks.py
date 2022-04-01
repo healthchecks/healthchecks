@@ -84,7 +84,7 @@ class MyChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "Check limit reached", status_code=200)
+        self.assertContains(r, "Time to upgrade", status_code=200)
 
     def test_it_saves_sort_field(self):
         self.client.login(username="alice@example.org", password="password")

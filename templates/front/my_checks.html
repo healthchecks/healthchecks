@@ -48,7 +48,7 @@
             {% endif %}
         {% else %}
             <div class="alert alert-info">
-                <strong>Check limit reached.</strong>
+                <strong>Time to upgrade!</strong>
                 To add more checks in this project, please
                 {% if request.user == project.owner %}
                 <a href="{% url 'hc-billing' %}">upgrade your account!</a>
