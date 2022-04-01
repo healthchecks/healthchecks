@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.1 - Unreleased
+
+### Bug Fixes
+- Fix unwanted localization in badge SVG generation (#629)
+
 ## v2.0.1 - 2022-03-18
 
 ### Bug Fixes

@@ -84,11 +84,11 @@ def get_badge_svg(tag, status):
     w1 = get_width(tag) + 10
     w2 = get_width(status) + 10
     ctx = {
-        "width": w1 + w2,
-        "tag_width": w1,
-        "status_width": w2,
-        "tag_center_x": w1 / 2,
-        "status_center_x": w1 + w2 / 2,
+        "width": str(w1 + w2),
+        "tag_width": str(w1),
+        "status_width": str(w2),
+        "tag_center_x": str(w1 / 2),
+        "status_center_x": str(w1 + w2 / 2),
         "tag": tag,
         "status": status,
         "color": COLORS[status],
