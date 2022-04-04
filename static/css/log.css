@@ -11,9 +11,6 @@
     position: relative;
     border: 0;
     border-bottom: 1px solid var(--border-muted);
-}
-
-#log .date, #log .time {
     white-space: nowrap;
 }
 
@@ -38,7 +35,7 @@
     text-overflow: ellipsis;
 }
 
-#log .details span.ua-body {
+#log .details code {
     font-family: "Lucida Console", Monaco, monospace;
     font-size: 11.7px;
     color: var(--text-muted);
@@ -63,11 +60,14 @@
 }
 
 #log td:first-child {
-    font-family: "Lucida Console", Monaco, monospace;
     text-align: right;
 }
 
-#log td:first-child::before {
+#log tr.ok td:first-child {
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+#log tr.ok td:first-child::before {
     content:  "#";
     color: #aaa;
 }
