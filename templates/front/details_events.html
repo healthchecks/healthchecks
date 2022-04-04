@@ -3,10 +3,8 @@
     <table class="table" id="log">
     {% for event in events %}
     {% if event.n %}
-    <tr class="ok" data-dt="{{ event.created.isoformat }}" data-url="{% url 'hc-ping-details' check.code event.n  %}">
-        <td class="n-cell">
-            <span class="hash">#</span>{{ event.n }}
-        </td>
+    <tr class="ok" data-dt="{{ event.created|isoformat }}" data-url="{% url 'hc-ping-details' check.code event.n  %}">
+        <td>{{ event.n }}</td>
         <td class="date"></td>
         <td class="time"></td>
         <td class="event">
@@ -33,8 +31,7 @@
             {% if event.scheme == "email" %}
                 {{ event.ua }}
             {% else %}
-                {{ event.scheme|upper }}
-                {{ event.method }}
+                {{ event.scheme|upper }} {{ event.method }}
                 {% if event.remote_addr %}
                 from {{ event.remote_addr }}
                 {% endif %}

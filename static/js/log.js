@@ -1,6 +1,8 @@
 $(function () {
     $("#log tr.ok").on("click", function() {
-        loadPingDetails(this.dataset.url);
+        var n = $("td", this).first().text();
+        var tmpl = $("#log").data("url").slice(0, -2);
+        loadPingDetails(tmpl + n + "/");
         return false;
     });
 

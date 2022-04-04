@@ -52,7 +52,6 @@
     background-color: var(--table-bg-hover);
 }
 
-
 #log tr.missing td {
     color: #d9534f;
     background: var(--log-missing-bg);
@@ -63,12 +62,13 @@
     width: 1%;
 }
 
-#log .n-cell {
-    font-family: monospace;
+#log td:first-child {
+    font-family: "Lucida Console", Monaco, monospace;
     text-align: right;
 }
 
-#log .hash {
+#log td:first-child::before {
+    content:  "#";
     color: #aaa;
 }
 

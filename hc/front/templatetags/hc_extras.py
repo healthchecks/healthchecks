@@ -179,6 +179,11 @@ def now_isoformat():
 
 
 @register.filter
+def isoformat(td):
+    return td.replace(microsecond=0).isoformat()
+
+
+@register.filter
 def guess_schedule(check):
     if check.kind == "cron":
         return check.schedule
