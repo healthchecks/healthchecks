@@ -41,15 +41,12 @@
             {% endif %}
         </td>
     </tr>
-    {% endif %}
-    {% if event.check_status %}
+    {% elif event.check_status %}
     <tr class="missing" data-dt="{{ event.created.isoformat }}">
         <td><span class="ic-missing"></span></td>
-        <td class="date"></td>
-        <td class="time"></td>
-        <td class="alert-info" colspan="2">
-            {% include "front/event_summary.html" %}
-        </td>
+        <td></td>
+        <td></td>
+        <td class="alert-info" colspan="2">{% include "front/event_summary.html" %}</td>
     </tr>
     {% endif %}
     {% endfor %}

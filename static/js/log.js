@@ -8,7 +8,7 @@ $(function () {
 
     function switchDateFormat(format) {
         document.querySelectorAll("#log tr").forEach(function(row) {
-            var dt = moment(row.getAttribute("data-dt"));
+            var dt = moment(row.dataset.dt);
             format == "local" ? dt.local() : dt.tz(format);
 
             row.children[1].textContent = dt.format("MMM D");
@@ -17,7 +17,7 @@ $(function () {
     }
 
     $("#format-switcher").click(function(ev) {
-        var format = ev.target.getAttribute("data-format");
+        var format = ev.target.dataset.format;
         switchDateFormat(format);
     });
 

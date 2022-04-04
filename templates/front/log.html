@@ -64,16 +64,11 @@
             <td class="details">
                 {% if event.delta %}
                 <div class="delta">
-                    <span class="ic-timer"></span>
-                    {{ event.delta|hms }}
+                    <span class="ic-timer"></span> {{ event.delta|hms }}
                 </div>
                 {% endif %}
-
                 {% if event.scheme == "email" %}
                     {{ event.ua }}
-                    {% if event.body or event.body_raw %}
-                    <code> -  {{ event.get_body|truncatechars:150 }}</code>
-                    {% endif %}
                 {% else %}
                     {{ event.scheme|upper }} {{ event.method }}
                     {% if event.remote_addr %} from {{ event.remote_addr }}{% endif %}
@@ -88,21 +83,17 @@
                 {% endif %}
             </td>
         </tr>
-        {% endif %}
-        {% if event.check_status %}
-        <tr class="missing" data-dt="{{ event.created.isoformat }}">
-            <td class="n-cell">
-                <span class="ic-missing"></span>
-            </td>
-            <td class="date"></td>
-            <td class="time"></td>
-            <td class="alert-info" colspan="2">
-                {% include "front/event_summary.html" %}
-            </td>
+        {% elif event.check_status %}
+        <tr class="missing" data-dt="{{ event.created|isoformat }}">
+            <td><span class="ic-missing"></span></td>
+            <td></td>
+            <td></td>
+            <td class="alert-info" colspan="2">{% include "front/event_summary.html" %}</td>
         </tr>
         {% endif %}
         {% endfor %}
     </table>
+    </div>
 
     {% if show_limit_notice and limit < 1000 %}
     <p class="alert alert-info">
@@ -114,7 +105,6 @@
     </p>
     {% endif %}
 
-    </div>
     {% else %}
         <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
     {% endif %}
