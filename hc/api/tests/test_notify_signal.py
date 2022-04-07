@@ -5,6 +5,7 @@ import json
 import logging
 from unittest.mock import patch
 
+from django.core import mail
 from django.utils.timezone import now
 from django.test.utils import override_settings
 from hc.api.models import Channel, Check, Notification, TokenBucket
@@ -194,7 +195,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "Recipient not found")
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_unregistered_user_2(self, socket):
+    def test_it_handles_unregistered_failure(self, socket):
         msg = {
             "error": {
                 "code": -1,
@@ -203,7 +204,7 @@ class NotifySignalTestCase(BaseTestCase):
                     "response": {
                         "results": [
                             {
-                                "recipientAddress": {"number": "+123"},
+                                "recipientAddress": {"number": "+123456789"},
                                 "type": "UNREGISTERED_FAILURE",
                             }
                         ],
@@ -252,3 +253,34 @@ class NotifySignalTestCase(BaseTestCase):
 
         # outbox should be empty now
         self.assertEqual(socketobj.outbox, b"")
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_captcha_challenge(self, socket):
+        msg = {
+            "error": {
+                "code": -1,
+                "message": "Failed to send message",
+                "data": {
+                    "response": {
+                        "results": [
+                            {
+                                "recipientAddress": {"number": "+123456789"},
+                                "type": "NETWORK_FAILURE",
+                                "token": "fddc87d7-572a-4559-9081-b41e3bc25254",
+                            }
+                        ],
+                    }
+                },
+            },
+        }
+        setup_mock(socket, msg)
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "CAPTCHA proof required")
+
+        # It should notify ADMINS
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, "[Django] Signal CAPTCHA proof required")

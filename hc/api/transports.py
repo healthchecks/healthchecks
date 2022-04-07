@@ -6,6 +6,7 @@ import time
 import uuid
 
 from django.conf import settings
+from django.core.mail import mail_admins
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import escape
@@ -32,6 +33,24 @@ def tmpl(template_name, **ctx) -> str:
     # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
     # and cost twice the money.
     return render_to_string(template_path, ctx).strip().replace("\xa0", " ")
+
+
+def get_nested(obj, path, default=None):
+    """ Retrieve a field from nested dictionaries.
+
+    Example:
+
+    >>> get_nested({"foo": {"bar": "baz"}}, "foo.bar")
+    'baz'
+
+    """
+
+    needle = obj
+    for key in path.split("."):
+        if key not in needle:
+            return default
+        needle = needle[key]
+    return needle
 
 
 class TransportError(Exception):
@@ -851,8 +870,17 @@ class Signal(Transport):
                     raise TransportError("Recipient not found")
 
                 # signal-cli >= 0.10.2
-                if "UNREGISTERED_FAILURE" in json.dumps(reply["error"]):
-                    raise TransportError("Recipient not found")
+                for result in get_nested(reply, "error.data.response.results", []):
+                    if get_nested(result, "recipientAddress.number") != recipient:
+                        continue
+
+                    if result.get("type") == "UNREGISTERED_FAILURE":
+                        raise TransportError("Recipient not found")
+
+                    if result.get("type") == "NETWORK_FAILURE" and "token" in result:
+                        message = "Challenge token: %s" % result["token"]
+                        mail_admins("Signal CAPTCHA proof required", message)
+                        raise TransportError("CAPTCHA proof required")
 
                 code = reply["error"].get("code")
                 raise TransportError("signal-cli call failed (%s)" % code)
