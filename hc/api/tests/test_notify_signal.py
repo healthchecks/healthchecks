@@ -254,6 +254,7 @@ class NotifySignalTestCase(BaseTestCase):
         # outbox should be empty now
         self.assertEqual(socketobj.outbox, b"")
 
+    @override_settings(ADMINS=[("Admin", "admin@example.org")])
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_captcha_challenge(self, socket):
         msg = {
@@ -283,4 +284,5 @@ class NotifySignalTestCase(BaseTestCase):
         # It should notify ADMINS
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
+        self.assertEqual(email.to[0], "admin@example.org")
         self.assertEqual(email.subject, "[Django] Signal CAPTCHA proof required")
