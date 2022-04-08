@@ -196,8 +196,7 @@ class HttpTransport(Transport):
     def _request(cls, method, url, **kwargs) -> None:
         options = dict(kwargs)
         options["timeout"] = 10
-        if "headers" not in options:
-            options["headers"] = {}
+        options.setdefault("headers", {})
         if "User-Agent" not in options["headers"]:
             options["headers"]["User-Agent"] = "healthchecks.io"
 
