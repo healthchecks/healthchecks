@@ -725,6 +725,7 @@ def status_single(request, code):
         "status_text": STATUS_TEXT_TMPL.render({"check": check, "rw": rw}),
         "title": down_title(check),
         "updated": updated,
+        "started": check.last_start is not None,
     }
 
     if updated != request.GET.get("u"):

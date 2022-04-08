@@ -1,5 +1,5 @@
 {% load hc_extras %}
-<table class="table">
+<table id="downtimes" class="table">
     {% for boundary, down_timedelta, count in downtimes reversed %}
     <tr>
         <th>{{ boundary|date:"N Y"}}</th>

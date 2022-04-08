@@ -151,3 +151,13 @@ ul.crosses li:before {
 #filtering-rules-modal hr {
     margin: 0;
 }
+
+#current-status-indicator {
+    float: left;
+    width: 50px;
+    text-align: center;
+}
+#current-status-content {
+    margin-left: 50px;
+    padding-top: 6px;
+}

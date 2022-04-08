@@ -126,22 +126,18 @@
 
         <div class="details-block">
             <h2>Current Status</h2>
-            <table>
-                <tr>
-                    <td>
-                        <span id="log-status-icon" class="status ic-{{ check.get_status }}"></span>
-                    </td>
-                    <td >
-                        <p id="log-status-text">{% include "front/log_status_text.html" %}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td id="downtimes">
-                        {% include "front/details_downtimes.html" %}
-                    </td>
-                </tr>
-            </table>
+            <div id="current-status-indicator">
+                <span id="current-status-icon" class="status ic-{{ check.get_status }}"></span>
+                <div id="current-status-spinner" class="spinner {% if check.last_start %}started{% endif %}">
+                    <div class="d1"></div>
+                    <div class="d2"></div>
+                    <div class="d3"></div>
+                </div>
+            </div>
+            <div id="current-status-content">
+                <p id="current-status-text">{% include "front/log_status_text.html" %}</p>
+                {% include "front/details_downtimes.html" %}
+            </div>
             <div class="text-right">
                 {% if rw %}
                 <form action="{% url 'hc-pause' check.code %}" method="post">

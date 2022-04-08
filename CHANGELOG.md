@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add logic to alert ADMINS when Signal transport hits a CAPTCHA challenge
+- Implement the "started" progress spinner in the details pages
 
 ### Bug Fixes
 - Fix unwanted localization in badge SVG generation (#629)
