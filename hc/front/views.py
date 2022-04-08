@@ -1963,11 +1963,11 @@ def metrics(request, code, key):
             yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
 
         yield "\n"
-        yield "# HELP hc_check_started Whether the check is currently started in progress (1 for yes, 0 for no).\n"
+        yield "# HELP hc_check_started Whether the check is currently started (1 for yes, 0 for no).\n"
         yield "# TYPE hc_check_started gauge\n"
         TMPL = """hc_check_started{name="%s", tags="%s", unique_key="%s"} %d\n"""
         for check in checks:
-            value = 1 if check.get_status(with_started=True) == "started" else 0
+            value = 1 if check.last_start is not None else 0
             yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
 
         tags_statuses, num_down = _tags_statuses(checks)

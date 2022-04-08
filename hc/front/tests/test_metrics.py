@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from django.test.utils import override_settings
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -19,9 +20,13 @@ class MetricsTestCase(BaseTestCase):
     def test_it_works(self):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, 'name="Alice Was Here"')
-        self.assertContains(r, 'tags="foo"')
-        self.assertContains(r, 'tag="foo"')
+
+        alice_spec = '{name="Alice Was Here", tags="foo", unique_key="%s"}'
+        alice_spec = alice_spec % self.check.unique_key
+
+        self.assertContains(r, f"hc_check_up{alice_spec} 1")
+        self.assertContains(r, f"hc_check_started{alice_spec} 0")
+        self.assertContains(r, 'hc_tag_up{tag="foo"} 1')
         self.assertContains(r, "hc_checks_total 1")
 
     def test_it_escapes_newline(self):
@@ -47,3 +52,16 @@ class MetricsTestCase(BaseTestCase):
     def test_it_requires_prometheus_enabled(self):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
+
+    def test_it_reports_hc_check_started(self):
+        self.check.last_start = now()
+        self.check.save()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+
+        alice_spec = '{name="Alice Was Here", tags="foo", unique_key="%s"}'
+        alice_spec = alice_spec % self.check.unique_key
+
+        self.assertContains(r, f"hc_check_up{alice_spec} 1")
+        self.assertContains(r, f"hc_check_started{alice_spec} 1")
