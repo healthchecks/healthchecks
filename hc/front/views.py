@@ -5,6 +5,7 @@ import os
 import re
 from secrets import token_urlsafe
 from urllib.parse import urlencode, urlparse
+import uuid
 
 from cron_descriptor import ExpressionDescriptor
 from cronsim.cronsim import CronSim, CronSimError
@@ -37,7 +38,7 @@ from hc.api.models import (
     Ping,
     Notification,
 )
-from hc.api.transports import Telegram, TransportError
+from hc.api.transports import Signal, Telegram, TransportError
 from hc.front.decorators import require_setting
 from hc.front import forms
 from hc.front.schemas import telegram_callback
@@ -2087,6 +2088,35 @@ def add_linenotify_complete(request):
     messages.success(request, "The LINE Notify integration has been added!")
 
     return redirect("hc-channels", project.code)
+
+
+def signal_captcha(request, challenge):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden()
+
+    ctx = {"challenge": challenge}
+    if request.method == "POST":
+        captcha = request.POST.get("captcha")
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "submitRateLimitChallenge",
+            "params": {"challenge": str(challenge), "captcha": captcha},
+            "id": str(uuid.uuid4()),
+        }
+
+        payload_bytes = (json.dumps(payload) + "\n").encode()
+        for reply_bytes in Signal(None)._read_replies(payload_bytes):
+            try:
+                reply = json.loads(reply_bytes.decode())
+            except ValueError:
+                ctx["result"] = "submitRateLimitChallenge failed"
+                break
+
+            if reply.get("id") == payload["id"]:
+                ctx["result"] = reply_bytes.decode()
+                break
+
+    return render(request, "front/signal_captcha.html", ctx)
 
 
 # Forks: add custom views after this line

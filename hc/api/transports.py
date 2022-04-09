@@ -877,8 +877,7 @@ class Signal(Transport):
                         raise TransportError("Recipient not found")
 
                     if result.get("type") == "NETWORK_FAILURE" and "token" in result:
-                        message = "Challenge token: %s" % result["token"]
-                        mail_admins("Signal CAPTCHA proof required", message)
+                        self.channel.send_signal_captcha_alert(result["token"])
                         raise TransportError("CAPTCHA proof required")
 
                 code = reply["error"].get("code")

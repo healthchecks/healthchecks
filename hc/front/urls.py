@@ -98,4 +98,9 @@ urlpatterns = [
     path("docs/", views.serve_doc, name="hc-docs"),
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
     path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
+    path(
+        "signal_captcha/<uuid:challenge>/",
+        views.signal_captcha,
+        name="hc-signal-captcha",
+    ),
 ]

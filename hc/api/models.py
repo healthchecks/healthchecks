@@ -8,6 +8,7 @@ from datetime import datetime, timedelta as td, timezone
 
 from cronsim import CronSim
 from django.conf import settings
+from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
 from django.db import models
 from django.urls import reverse
@@ -507,6 +508,16 @@ class Channel(models.Model):
         args = [self.code, signed_token]
         verify_link = reverse("hc-unsubscribe-alerts", args=args)
         return settings.SITE_ROOT + verify_link
+
+    def send_signal_captcha_alert(self, challenge):
+        subject = "Signal CAPTCHA proof required"
+        message = f"Challenge token: {challenge}"
+        url = settings.SITE_ROOT + reverse("hc-signal-captcha", args=[challenge])
+        html_message = f"""
+            Challenge: <code>{challenge}</code><br>
+            <a href="{url}">Solve CAPTCHA here</a>
+        """
+        mail_admins(subject, message, html_message=html_message)
 
     @property
     def transport(self):
