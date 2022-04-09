@@ -223,25 +223,18 @@ class ChannelsAdmin(admin.ModelAdmin):
 class NotificationsAdmin(admin.ModelAdmin):
     search_fields = ["owner__name", "owner__code", "channel__value", "error", "code"]
     readonly_fields = ("owner", "code")
-    list_select_related = ("channel",)
+    list_select_related = ("channel", "owner")
     list_display = (
         "id",
         "created",
         "check_status",
-        "project",
+        "formatted_owner",
         "channel_kind",
         "channel_value",
         "error",
     )
     list_filter = ("created", "check_status", "channel__kind")
     raw_id_fields = ("channel",)
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        qs = qs.annotate(project_code=F("channel__project__code"))
-        qs = qs.annotate(project_name=F("channel__project__name"))
-        qs = qs.annotate(email=F("channel__project__owner__email"))
-        return qs
 
     def channel_kind(self, obj):
         return obj.channel.kind
@@ -252,12 +245,13 @@ class NotificationsAdmin(admin.ModelAdmin):
 
         return obj.channel.value
 
+    @admin.display(description="Owner")
     @mark_safe
-    def project(self, obj):
-        url = reverse("hc-checks", args=[obj.project_code])
-        name = escape(obj.project_name or "Default")
-        email = escape(obj.email)
-        return f"{email} &rsaquo; <a href='{url}'>{name}</a>"
+    def formatted_owner(self, obj):
+        if obj.owner:
+            url = reverse("hc-details", args=[obj.owner.code])
+            name = escape(obj.owner.name_then_code())
+            return f"<a href='{url}'>{name}</a>"
 
 
 @admin.register(Flip)
