@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Add logic to alert ADMINS when Signal transport hits a CAPTCHA challenge
 - Implement the "started" progress spinner in the details pages
 - Add "hc_check_started" metric in the Prometheus metrics endpoint (#630)
+- Add an experimental UI for submitting Signal rate limit challenges
 
 ### Bug Fixes
 - Fix unwanted localization in badge SVG generation (#629)

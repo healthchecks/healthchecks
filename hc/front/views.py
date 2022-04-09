@@ -2090,6 +2090,7 @@ def add_linenotify_complete(request):
     return redirect("hc-channels", project.code)
 
 
+@login_required
 def signal_captcha(request, challenge):
     if not request.user.is_superuser:
         return HttpResponseForbidden()
