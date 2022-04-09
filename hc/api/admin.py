@@ -221,15 +221,18 @@ class ChannelsAdmin(admin.ModelAdmin):
 
 @admin.register(Notification)
 class NotificationsAdmin(admin.ModelAdmin):
+    class Media:
+        css = {"all": ("css/admin/notifications.css",)}
+
     search_fields = ["owner__name", "owner__code", "channel__value", "error", "code"]
     readonly_fields = ("owner", "code")
     list_select_related = ("channel", "owner")
     list_display = (
         "id",
         "created",
+        "channel_kind",
         "check_status",
         "formatted_owner",
-        "channel_kind",
         "channel_value",
         "error",
     )
@@ -239,11 +242,9 @@ class NotificationsAdmin(admin.ModelAdmin):
     def channel_kind(self, obj):
         return obj.channel.kind
 
+    @mark_safe
     def channel_value(self, obj):
-        if len(obj.channel.value) > 100:
-            return "%s…" % obj.channel.value[:100]
-
-        return obj.channel.value
+        return "<div>%s</div>" % escape(obj.channel.value)
 
     @admin.display(description="Owner")
     @mark_safe
@@ -251,7 +252,7 @@ class NotificationsAdmin(admin.ModelAdmin):
         if obj.owner:
             url = reverse("hc-details", args=[obj.owner.code])
             name = escape(obj.owner.name_then_code())
-            return f"<a href='{url}'>{name}</a>"
+            return f"<div><a href='{url}'>{name}</a></div>"
 
 
 @admin.register(Flip)
