@@ -173,7 +173,15 @@ class ChannelsAdmin(admin.ModelAdmin):
         css = {"all": ("css/admin/channels.css",)}
 
     search_fields = ["value", "project__owner__email", "name"]
-    list_display = ("id", "transport", "name", "project_", "value", "ok")
+    list_display = (
+        "id",
+        "transport",
+        "name",
+        "project_",
+        "created",
+        "chopped_value",
+        "ok",
+    )
     list_filter = ("kind",)
     raw_id_fields = ("project", "checks")
 
@@ -199,6 +207,13 @@ class ChannelsAdmin(admin.ModelAdmin):
 
         return f'<span class="ic-{ obj.kind }"></span> &nbsp; {obj.kind}{note}'
 
+    @admin.display(description="Value")
+    def chopped_value(self, obj):
+        if len(obj.value) > 100:
+            return "%s…" % obj.value[:100]
+
+        return obj.value
+
     @admin.display(boolean=True)
     def ok(self, obj):
         return False if obj.last_error else True
@@ -208,12 +223,12 @@ class ChannelsAdmin(admin.ModelAdmin):
 class NotificationsAdmin(admin.ModelAdmin):
     search_fields = ["owner__name", "owner__code", "channel__value", "error", "code"]
     readonly_fields = ("owner", "code")
-    list_select_related = ("owner", "channel")
+    list_select_related = ("channel",)
     list_display = (
         "id",
         "created",
         "check_status",
-        "owner",
+        "project",
         "channel_kind",
         "channel_value",
         "error",
@@ -221,11 +236,28 @@ class NotificationsAdmin(admin.ModelAdmin):
     list_filter = ("created", "check_status", "channel__kind")
     raw_id_fields = ("channel",)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(project_code=F("channel__project__code"))
+        qs = qs.annotate(project_name=F("channel__project__name"))
+        qs = qs.annotate(email=F("channel__project__owner__email"))
+        return qs
+
     def channel_kind(self, obj):
         return obj.channel.kind
 
     def channel_value(self, obj):
+        if len(obj.channel.value) > 100:
+            return "%s…" % obj.channel.value[:100]
+
         return obj.channel.value
+
+    @mark_safe
+    def project(self, obj):
+        url = reverse("hc-checks", args=[obj.project_code])
+        name = escape(obj.project_name or "Default")
+        email = escape(obj.email)
+        return f"{email} &rsaquo; <a href='{url}'>{name}</a>"
 
 
 @admin.register(Flip)
