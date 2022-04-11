@@ -510,7 +510,7 @@ class Channel(models.Model):
         verify_link = reverse("hc-unsubscribe-alerts", args=args)
         return settings.SITE_ROOT + verify_link
 
-    def send_signal_captcha_alert(self, challenge, message):
+    def send_signal_captcha_alert(self, challenge, raw):
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()
@@ -520,7 +520,7 @@ class Channel(models.Model):
             Challenge: <code>{challenge}</code><br>
             <a href="{url}">Solve CAPTCHA here</a><br>
             Message from Signal:<br>
-            <pre>{message}</pre>
+            <pre>{raw}</pre>
         """
         mail_admins(subject, message, html_message=html_message)
 
