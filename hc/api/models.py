@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import socket
 import time
 import uuid
 from datetime import datetime, timedelta as td, timezone
@@ -509,13 +510,17 @@ class Channel(models.Model):
         verify_link = reverse("hc-unsubscribe-alerts", args=args)
         return settings.SITE_ROOT + verify_link
 
-    def send_signal_captcha_alert(self, challenge):
+    def send_signal_captcha_alert(self, challenge, message):
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
+        hostname = socket.gethostname()
         url = settings.SITE_ROOT + reverse("hc-signal-captcha", args=[challenge])
         html_message = f"""
+            Hostname: {hostname}<br>
             Challenge: <code>{challenge}</code><br>
-            <a href="{url}">Solve CAPTCHA here</a>
+            <a href="{url}">Solve CAPTCHA here</a><br>
+            Message from Signal:<br>
+            <pre>{message}</pre>
         """
         mail_admins(subject, message, html_message=html_message)
 
