@@ -514,11 +514,9 @@ class Channel(models.Model):
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()
-        url = settings.SITE_ROOT + reverse("hc-signal-captcha", args=[challenge])
         html_message = f"""
-            Hostname: {hostname}<br>
-            Challenge: <code>{challenge}</code><br>
-            <a href="{url}">Solve CAPTCHA here</a><br>
+            On host <b>{hostname}</b>, run:<br>
+            <pre>manage.py submitchallenge {challenge} CAPTCHA-SOLUTION-HERE</pre><br>
             Message from Signal:<br>
             <pre>{raw}</pre>
         """
