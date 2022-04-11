@@ -6,7 +6,6 @@ import time
 import uuid
 
 from django.conf import settings
-from django.core.mail import mail_admins
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import escape
