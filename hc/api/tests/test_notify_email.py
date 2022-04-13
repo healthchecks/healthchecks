@@ -189,3 +189,18 @@ class NotifyEmailTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.subject, "DOWN | Foo & Bar")
+
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.get_object")
+    def test_it_handles_pending_body(self, get_object):
+        get_object.return_value = None
+
+        self.ping.object_size = 1000
+        self.ping.body_raw = None
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        self.assertIn("The request body data is being processed", html)
