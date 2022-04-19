@@ -98,16 +98,14 @@
 
 {% if ping and ping.has_body %}
 <p><b>Last Ping Body</b></p>
-{% with ping.get_body as body %}
 {% if body is None %}
 <p>
     The request body data is being processed and will be available for viewing shortly.
     Please <a href="{{ check.cloaked_url }}">view it on the website</a>.
 </p>
 {% else %}
-<pre style="font-family: monospace; line-height: 1em;">{{ ping.get_body|slice:":10000"|linebreaksbr }}{% if ping.get_body|length > 10000 %} [truncated]{% endif %}</pre>
+<pre style="font-family: monospace; line-height: 1em;">{{ body|slice:":10000"|linebreaksbr }}{% if body|length > 10000 %} [truncated]{% endif %}</pre>
 {% endif %}
-{% endwith %}
 {% endif %}
 
 {% if projects %}

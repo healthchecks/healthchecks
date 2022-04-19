@@ -127,9 +127,20 @@ class Email(Transport):
         except Profile.DoesNotExist:
             projects = None
 
+        ping = check.ping_set.order_by("created").last()
+        body = None
+        if ping and ping.has_body():
+            body = ping.get_body()
+            if body is None and ping.object_size:
+                # Body is not uploaded to object storage yet.
+                # Wait 5 seconds, then fetch the body again.
+                time.sleep(5)
+                body = ping.get_body()
+
         ctx = {
             "check": check,
-            "ping": check.ping_set.order_by("created").last(),
+            "ping": ping,
+            "body": body,
             "projects": projects,
             "unsub_link": unsub_link,
         }
