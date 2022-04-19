@@ -199,7 +199,8 @@ class NotifyEmailTestCase(BaseTestCase):
         self.ping.body_raw = None
         self.ping.save()
 
-        self.channel.notify(self.check)
+        with patch("hc.api.transports.time.sleep"):
+            self.channel.notify(self.check)
 
         email = mail.outbox[0]
         html = email.alternatives[0][0]
