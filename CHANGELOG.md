@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Fix unwanted localization in badge SVG generation (#629)
 - Update email template to handle not yet uploaded ping bodies
 - Add small delay in transports.Email.notify to allow ping body to upload
+- Fix prunenotifications to handle checks with missing pings (#636)
 
 ## v2.0.1 - 2022-03-18
 
