@@ -12,7 +12,7 @@ termination.
 
 ## Getting Started
 
-* Add your configuration in the `/docker/.env` file.
+* Copy `/docker/.env.example` to `/docker/.env` and add your configuration in it.
   As a minimum, set the following fields:
     * `DEFAULT_FROM_EMAIL` – the "From:" address for outbound emails
     * `EMAIL_HOST` – the SMTP server
