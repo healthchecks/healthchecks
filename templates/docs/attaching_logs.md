@@ -3,9 +3,8 @@
 SITE_NAME ping endpoints accept HTTP HEAD, GET and POST request methods.
 
 When using HTTP POST, **you can include an arbitrary payload in the request body**.
-If the request body looks like a UTF-8 string, SITE_NAME will log the
-first 10 kilobytes (10 000 bytes) of the request body, so that you can inspect
-it later.
+SITE_NAME will log the first 10 kilobytes (10 000 bytes) of the request body, so that
+you can inspect it later.
 
 ## Logging Command Output
 
