@@ -112,47 +112,47 @@ specified value.</p>
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Filesystem Backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;filesystem-backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;backup fs&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs incremental backup every hour&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
-      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;up&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-24T14:02:03+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-24T15:02:03+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-      <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;database-backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;production db&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">,</span>
-      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-      <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-      <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;tz&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span>
-    <span class="p">}</span>
-  <span class="p">]</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;checks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Filesystem Backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;filesystem-backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backup fs&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Runs incremental backup every hour&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T14:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T15:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;database-backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;production db&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <p>The possible values for the <code>status</code> field are: <code>new</code>, <code>started</code>, <code>up</code>, <code>grace</code>, <code>down</code>,
@@ -163,41 +163,41 @@ and <code>paused</code>.</p>
 you can use it in the <a href="#get-check">Get a single check</a>
 and <a href="#list-flips">Get a list of check's status changes</a> API calls.</p>
 <p>Example:</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;checks&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Filesystem Backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;filesystem-backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;backup fs&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs incremental backup every hour&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
-      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;up&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-24T14:02:03+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-24T15:02:03+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-      <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;unique_key&quot;</span><span class="p">:</span> <span class="s2">&quot;a6c7b0a8a66bed0df66abfdab3c77736861703ee&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;database-backup&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;production db&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">,</span>
-      <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-      <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-      <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-      <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;unique_key&quot;</span><span class="p">:</span> <span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;tz&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span>
-    <span class="p">}</span>
-  <span class="p">]</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;checks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Filesystem Backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;filesystem-backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backup fs&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Runs incremental backup every hour&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T14:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T15:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a6c7b0a8a66bed0df66abfdab3c77736861703ee&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;database-backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;production db&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="get-check">Get a Single Check</h2>
@@ -222,25 +222,25 @@ using the read-only API key) as an identifier.</p>
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;database-backup&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;production db&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">,</span>
-  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tz&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;database-backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;production db&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <p>The possible values for the <code>status</code> field are: <code>new</code>, <code>started</code>, <code>up</code>, <code>grace</code>, <code>down</code>,
@@ -252,22 +252,22 @@ and <code>paused</code>.</p>
 <p>Note: although API omits the <code>ping_url</code>, <code>update_url</code>, and <code>pause_url</code> in read-only
 API responses, the client can easily construct these URLs themselves <em>if</em> they know the
 check's unique UUID.</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;database-backup&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;production db&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">,</span>
-  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;down&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;unique_key&quot;</span><span class="p">:</span> <span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;schedule&quot;</span><span class="p">:</span> <span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tz&quot;</span><span class="p">:</span> <span class="s2">&quot;UTC&quot;</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Database Backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;database-backup&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;production db&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Runs ~/db-backup.sh&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="create-check">Create a Check</h2>
@@ -415,24 +415,24 @@ the limit is 20 checks per account.</dd>
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
-  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
-  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="update-check">Update an Existing Check</h2>
@@ -558,24 +558,24 @@ field values.</dd>
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
-  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
-  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="pause-check">Pause Monitoring of a Check</h2>
@@ -603,24 +603,24 @@ state. You can resume monitoring of the check by pinging it.</p>
 even though the request body is empty. For HTTP POST requests, the <code>Content-Length</code>
 header is sometimes required by some network proxies and web servers.</p>
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
-  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;paused&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
-  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;paused&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="delete-check">Delete Check</h2>
@@ -645,24 +645,24 @@ check that was just deleted.</p>
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;grace&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
-  <span class="nt">&quot;last_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;n_pings&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;slug&quot;</span><span class="p">:</span> <span class="s2">&quot;backups&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;next_ping&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-  <span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;pause_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;ping_url&quot;</span><span class="p">:</span> <span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;tags&quot;</span><span class="p">:</span> <span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-  <span class="nt">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">3600</span><span class="p">,</span>
-  <span class="nt">&quot;update_url&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="list-pings">Get a list of check's logged pings</h2>
@@ -688,48 +688,48 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;pings&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:51:06.113073+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;duration&quot;</span><span class="p">:</span> <span class="mf">2.896736</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:51:03.216337+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:50:59.633577+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;duration&quot;</span><span class="p">:</span> <span class="mf">2.997976</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-06-09T14:50:56.635601+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-      <span class="nt">&quot;scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;ua&quot;</span><span class="p">:</span> <span class="s2">&quot;curl/7.68.0&quot;</span>
-    <span class="p">}</span>
-  <span class="p">]</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-09T14:51:06.113073+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;scheme&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.896736</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;start&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-09T14:51:03.216337+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;scheme&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-09T14:50:59.633577+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;scheme&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.997976</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;start&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-06-09T14:50:56.635601+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;n&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;scheme&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="list-flips">Get a list of check's status changes</h2>
@@ -777,20 +777,20 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:18:23+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="mi">1</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:17:15+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="mi">0</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-03-23T10:16:18+00:00&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;up&quot;</span><span class="p">:</span> <span class="mi">1</span>
-    <span class="p">}</span>
-<span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:18:23+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;up&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:17:15+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;up&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:16:18+00:00&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;up&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">]</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="list-channels">Get a List of Existing Integrations</h2>
@@ -808,20 +808,20 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;channels&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;4ec5a071-2d08-4baa-898a-eb4eb3cd6941&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;My Work Email&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;email&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;746a083e-f542-4554-be1a-707ce16d3acc&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;My Phone&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;kind&quot;</span><span class="p">:</span> <span class="s2">&quot;sms&quot;</span>
-    <span class="p">}</span>
-  <span class="p">]</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;4ec5a071-2d08-4baa-898a-eb4eb3cd6941&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Work Email&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;email&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;746a083e-f542-4554-be1a-707ce16d3acc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;My Phone&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sms&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">]</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="list-badges">Get Project's Badges</h2>
@@ -854,40 +854,40 @@ of all checks in the project.</p>
 </code></pre></div>
 
 <h3>Example Response</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-  <span class="nt">&quot;badges&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;backup&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.shields&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.shields&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;db&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.shields&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.shields&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;prod&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.shields&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.shields&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;*&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="nt">&quot;svg&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;svg3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.svg&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;json3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.json&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.shields&quot;</span><span class="p">,</span>
-      <span class="nt">&quot;shields3&quot;</span><span class="p">:</span> <span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.shields&quot;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;badges&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;backup&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M-2/backup.shields&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/LOegDs5M/backup.shields&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;db&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm-2/db.shields&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/99MuQaKm/db.shields&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;prod&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8-2/prod.shields&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/1TEhqie8/prod.shields&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">},</span><span class="w"></span>
+<span class="w">    </span><span class="nt">&quot;*&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;svg3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.svg&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;json3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.json&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe-2.shields&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;shields3&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/badge/67541b37-8b9c-4d17-b952-690eae/9X7kcZoe.shields&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </code></pre></div>

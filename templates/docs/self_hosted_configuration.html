@@ -5,7 +5,7 @@ from environment variables. Below is a list of variables it reads and uses:</p>
 <p>Default: <code>*</code></p>
 <p>The host/domain names that this site can serve. You can specify multiple domain names
 by separating them with commas:</p>
-<div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">my-hc.example.org,alternative-name.example.org</span>
+<div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">my-hc.example.org,alternative-name.example.org</span><span class="w"></span>
 </code></pre></div>
 
 <p>Apart from the comma-separated syntax, this is a standard Django setting.
@@ -129,9 +129,9 @@ integration.</p>
   using curl in command shell.</li>
 <li>Set the <code>MATRIX_</code> environment variables. Example:</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="na">MATRIX_ACCESS_TOKEN</span><span class="o">=</span><span class="s">[a long string of characters returned by the login call]</span>
-<span class="na">MATRIX_HOMESERVER</span><span class="o">=</span><span class="s">https://matrix.org</span>
-<span class="na">MATRIX_USER_ID</span><span class="o">=</span><span class="s">@mychecks:matrix.org</span>
+<div class="highlight"><pre><span></span><code><span class="na">MATRIX_ACCESS_TOKEN</span><span class="o">=</span><span class="s">[a long string of characters returned by the login call]</span><span class="w"></span>
+<span class="na">MATRIX_HOMESERVER</span><span class="o">=</span><span class="s">https://matrix.org</span><span class="w"></span>
+<span class="na">MATRIX_USER_ID</span><span class="o">=</span><span class="s">@mychecks:matrix.org</span><span class="w"></span>
 </code></pre></div>
 
 <h2 id="MATRIX_HOMESERVER"><code>MATRIX_HOMESERVER</code></h2>
@@ -177,7 +177,7 @@ it altogether by setting this value to <code>None</code>.</p>
 <h2 id="PING_EMAIL_DOMAIN"><code>PING_EMAIL_DOMAIN</code></h2>
 <p>Default: <code>localhost</code></p>
 <p>The domain to use for generating ping email addresses. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">PING_EMAIL_DOMAIN</span><span class="o">=</span><span class="s">ping.my-hc.example.org</span>
+<div class="highlight"><pre><span></span><code><span class="na">PING_EMAIL_DOMAIN</span><span class="o">=</span><span class="s">ping.my-hc.example.org</span><span class="w"></span>
 </code></pre></div>
 
 <p>In this example, Healthchecks would generate ping email addresses similar
@@ -185,7 +185,7 @@ to <code>3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org</code>.</p>
 <h2 id="PING_ENDPOINT"><code>PING_ENDPOINT</code></h2>
 <p>Default: <code>SITE_ROOT</code> + <code>/ping/</code></p>
 <p>The base URL to use for generating ping URLs. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">PING_ENDPOINT</span><span class="o">=</span><span class="s">https://ping.my-hc.example.org</span>
+<div class="highlight"><pre><span></span><code><span class="na">PING_ENDPOINT</span><span class="o">=</span><span class="s">https://ping.my-hc.example.org</span><span class="w"></span>
 </code></pre></div>
 
 <p>In this example, Healthchecks would generate ping URLs similar
@@ -320,7 +320,7 @@ signal-cli 0.10.0 or later).</p>
 <p>An URL pointing to the image you want to use as the site logo. If not set,
 Healthchecks will use a fallback image (<code>/static/img/logo.png</code>).</p>
 <p>Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">https://example.org/my-custom-logo.svg</span>
+<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">https://example.org/my-custom-logo.svg</span><span class="w"></span>
 </code></pre></div>
 
 <h2 id="SITE_NAME"><code>SITE_NAME</code></h2>

@@ -7,12 +7,12 @@ the Prometheus endpoint:</p>
 <p><img alt="Project's API Keys" src="IMG_URL/prometheus_endpoint.png" /></p>
 <h2>Update the prometheus.yml</h2>
 <p>You can copy the Prometheus endpoint URL and add it to the Prometheus configuration:</p>
-<div class="highlight"><pre><span></span><code>  <span class="p p-Indicator">-</span> <span class="nt">job_name</span><span class="p">:</span> <span class="s">&quot;healthchecks&quot;</span>
-    <span class="nt">scrape_interval</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">60s</span>
-    <span class="nt">scheme</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SITE_SCHEME</span>
-    <span class="nt">metrics_path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/projects/45sd78-eeee-dddd-8888-b25a9887ecfd/metrics/NXyGzks4s8xcF1J-wzoaioyoqXIANGD0</span>
-    <span class="nt">static_configs</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">targets</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">&quot;SITE_HOSTNAME&quot;</span><span class="p p-Indicator">]</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;healthchecks&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span><span class="w"></span>
+<span class="w">    </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SITE_SCHEME</span><span class="w"></span>
+<span class="w">    </span><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/projects/45sd78-eeee-dddd-8888-b25a9887ecfd/metrics/NXyGzks4s8xcF1J-wzoaioyoqXIANGD0</span><span class="w"></span>
+<span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;SITE_HOSTNAME&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 </code></pre></div>
 
 <p>Notice how we split up the URL and paste in the scheme, domain, and path separately.</p>
