@@ -7,7 +7,7 @@ try
 {
     using (var client = new System.Net.Http.HttpClient())
     {
-        client.Timeout = System.TimeSpan.FromMilliseconds(10);
+        client.Timeout = System.TimeSpan.FromSeconds(10);
         client.GetAsync("PING_URL").Wait();
     }
 }
