@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add "hc_check_started" metric in the Prometheus metrics endpoint (#630)
 - Add a management command for submitting Signal rate limit challenges
 - Upgrade to django-compressor 4.0
+- Update the C# snippet
 
 ### Bug Fixes
 - Fix unwanted localization in badge SVG generation (#629)

@@ -3,8 +3,16 @@
 Below is an example of making an HTTP request to SITE_NAME from C#.
 
 ```csharp
-using (var client = new System.Net.WebClient())
+try
 {
-       client.DownloadString("PING_URL");
+    using (var client = new System.Net.Http.HttpClient())
+    {
+        client.Timeout = System.TimeSpan.FromMilliseconds(10);
+        client.GetAsync("PING_URL").Wait();
+    }
+}
+catch (System.Exception ex)
+{
+    System.Console.WriteLine($"Ping failed: {ex.Message}");
 }
 ```
