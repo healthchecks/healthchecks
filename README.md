@@ -8,7 +8,7 @@
 
 ![Screenshot of Period/Grace dialog](/static/img/period_grace@2x.png?raw=true "Period/Grace Dialog")
 
-![Screenshot of Cron dialog](/static/img/cron.png@2x?raw=true "Cron Dialog")
+![Screenshot of Cron dialog](/static/img/cron%402x.png?raw=true "Cron Dialog")
 
 ![Screenshot of Check Details page](/static/img/check_details@2x.png?raw=true "My Checks Page")
 
