@@ -87,6 +87,13 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Test notification sent!")
 
+        mock_get.assert_called_with(
+            "get",
+            "http://example-url",
+            headers={"User-Agent": "healthchecks.io"},
+            timeout=10,
+        )
+
     def test_it_handles_webhooks_with_no_urls(self):
         self.channel.kind = "webhook"
         self.channel.value = json.dumps(
@@ -112,3 +119,20 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
         self.assertEqual(r.status_code, 404)
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_up_only_sms_channel(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.channel.kind = "sms"
+        self.channel.value = json.dumps({"value": "+123", "up": True, "down": False})
+        self.channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, {}, follow=True)
+        self.assertRedirects(r, self.channels_url)
+        self.assertContains(r, "Test notification sent!")
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertIn("is UP", payload["Body"])

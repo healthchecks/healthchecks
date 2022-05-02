@@ -87,7 +87,7 @@ def _tags_statuses(checks):
 
 
 def _get_check_for_user(request, code):
-    """ Return specified check if current user has access to it. """
+    """Return specified check if current user has access to it."""
 
     assert request.user.is_authenticated
 
@@ -111,7 +111,7 @@ def _get_rw_check_for_user(request, code):
 
 
 def _get_channel_for_user(request, code):
-    """ Return specified channel if current user has access to it. """
+    """Return specified channel if current user has access to it."""
 
     assert request.user.is_authenticated
 
@@ -135,7 +135,7 @@ def _get_rw_channel_for_user(request, code):
 
 
 def _get_project_for_user(request, project_code):
-    """ Check access, return (project, rw) tuple. """
+    """Check access, return (project, rw) tuple."""
 
     project = get_object_or_404(Project, code=project_code)
     if request.user.is_superuser:
@@ -150,7 +150,7 @@ def _get_project_for_user(request, project_code):
 
 
 def _get_rw_project_for_user(request, project_code):
-    """ Check access, return (project, rw) tuple. """
+    """Check access, return (project, rw) tuple."""
 
     project, rw = _get_project_for_user(request, project_code)
     if not rw:
@@ -160,7 +160,7 @@ def _get_rw_project_for_user(request, project_code):
 
 
 def _refresh_last_active_date(profile):
-    """ Update last_active_date if it is more than a day old. """
+    """Update last_active_date if it is more than a day old."""
 
     if profile.last_active_date is None or (now() - profile.last_active_date).days > 0:
         profile.last_active_date = now()
@@ -920,17 +920,16 @@ def send_test_notification(request, code):
     dummy.last_ping = now() - td(days=1)
     dummy.n_pings = 42
 
-    if channel.kind == "webhook" and not channel.url_down:
-        if channel.url_up:
-            # If we don't have url_down, but do have have url_up then
-            # send "TEST is UP" notification instead:
-            dummy.status = "up"
-
     # Delete all older test notifications for this channel
     Notification.objects.filter(channel=channel, owner=None).delete()
 
     # Send the test notification
     error = channel.notify(dummy, is_test=True)
+
+    if error == "no-op":
+        # This channel may be configured to send "up" notifications only.
+        dummy.status = "up"
+        error = channel.notify(dummy, is_test=True)
 
     if error:
         messages.warning(request, "Could not send a test notification. %s." % error)
@@ -952,7 +951,7 @@ def remove_channel(request, code):
 
 @login_required
 def email_form(request, channel=None, code=None):
-    """ Add email integration or edit an existing email integration. """
+    """Add email integration or edit an existing email integration."""
 
     is_new = channel is None
     if is_new:

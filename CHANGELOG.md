@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Update email template to handle not yet uploaded ping bodies
 - Add small delay in transports.Email.notify to allow ping body to upload
 - Fix prunenotifications to handle checks with missing pings (#636)
+- Fix "Send Test Notification" for integrations that only send "up" notifications
 
 ## v2.0.1 - 2022-03-18
 
