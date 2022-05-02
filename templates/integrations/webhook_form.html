@@ -22,6 +22,15 @@
             header values
             <a href="#" data-toggle="modal" data-target="#reference-modal">(available placeholders)</a>.
         </p>
+        <p>
+            Webhook retry policy:
+            {% site_name %} retries failed webhook calls up to 2 additional times.
+            {% site_name %} considers a HTTP request failed if:
+        </p>
+        <ul>
+            <li>The destination server does not return a complete response within 10 seconds.</li>
+            <li>The HTTP response status code is not one of: 200, 201, 202 or 204.</li>
+        </ul>
 
         <form id="add-webhook-form" method="post">
         {% csrf_token %}
