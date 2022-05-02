@@ -33,7 +33,7 @@ DEFAULT_GRACE = td(hours=1)
 NEVER = datetime(3000, 1, 1, tzinfo=timezone.utc)
 CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
 # max time between start and ping where we will consider both events related:
-MAX_DELTA = td(hours=24)
+MAX_DELTA = td(hours=72)
 
 CHANNEL_KINDS = (
     ("email", "Email"),
@@ -69,7 +69,7 @@ PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"
 
 
 def isostring(dt):
-    """Convert the datetime to ISO 8601 format with no microseconds. """
+    """Convert the datetime to ISO 8601 format with no microseconds."""
 
     if dt:
         return dt.replace(microsecond=0).isoformat()
@@ -124,7 +124,7 @@ class Check(models.Model):
         return str(self.code)
 
     def url(self):
-        """ Return check's ping url in user's preferred style.
+        """Return check's ping url in user's preferred style.
 
         Note: this method reads self.project. If project is not loaded already,
         this causes a SQL query.
@@ -159,7 +159,7 @@ class Check(models.Model):
         self.slug = slugify(name)
 
     def get_grace_start(self, with_started=True):
-        """ Return the datetime when the grace period starts.
+        """Return the datetime when the grace period starts.
 
         If the check is currently new, paused or down, return None.
 
@@ -185,7 +185,7 @@ class Check(models.Model):
             return result
 
     def going_down_after(self):
-        """ Return the datetime when the check goes down.
+        """Return the datetime when the check goes down.
 
         If the check is new or paused, and not currently running, return None.
         If the check is already down, also return None.
@@ -197,7 +197,7 @@ class Check(models.Model):
             return grace_start + self.grace
 
     def get_status(self, with_started=False):
-        """ Return current status for display. """
+        """Return current status for display."""
 
         frozen_now = now()
 
@@ -231,7 +231,7 @@ class Check(models.Model):
         return tag_set.issubset(self.tags_list())
 
     def channels_str(self):
-        """ Return a comma-separated string of assigned channel codes. """
+        """Return a comma-separated string of assigned channel codes."""
 
         # self.channel_set may already be prefetched.
         # Sort in python to make sure we do't run additional queries
@@ -340,7 +340,7 @@ class Check(models.Model):
             self.prune()
 
     def prune(self):
-        """ Remove old pings and notifications. """
+        """Remove old pings and notifications."""
 
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
 
@@ -358,7 +358,7 @@ class Check(models.Model):
             pass
 
     def downtimes(self, months):
-        """ Calculate the number of downtimes and downtime minutes per month.
+        """Calculate the number of downtimes and downtime minutes per month.
 
         Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples.
 
@@ -402,7 +402,7 @@ class Check(models.Model):
         return sorted(totals.values())
 
     def past_downtimes(self):
-        """ Return downtime summary for two previous months. """
+        """Return downtime summary for two previous months."""
 
         return self.downtimes(3)[:-1]
 

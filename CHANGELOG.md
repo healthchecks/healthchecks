@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add a management command for submitting Signal rate limit challenges
 - Upgrade to django-compressor 4.0
 - Update the C# snippet
+- Increase max displayed duration from 24h to 72h (#644)
 
 ### Bug Fixes
 - Fix unwanted localization in badge SVG generation (#629)
