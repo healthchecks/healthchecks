@@ -33,7 +33,7 @@ REPORT_CHOICES = (("off", "Off"), ("weekly", "Weekly"), ("monthly", "Monthly"))
 
 
 def month(dt):
-    """ For a given datetime, return the matching first-day-of-month date. """
+    """For a given datetime, return the matching first-day-of-month date."""
     return dt.date().replace(day=1)
 
 
@@ -45,10 +45,10 @@ class ProfileManager(models.Manager):
             profile = Profile(user=user)
             if not settings.USE_PAYMENTS:
                 # If not using payments, set high limits
-                profile.check_limit = 500
-                profile.sms_limit = 500
-                profile.call_limit = 500
-                profile.team_limit = 500
+                profile.check_limit = 10000
+                profile.sms_limit = 10000
+                profile.call_limit = 10000
+                profile.team_limit = 10000
 
             profile.save()
             return profile
@@ -146,7 +146,7 @@ class Profile(models.Model):
         emails.call_limit(self.user.email, ctx)
 
     def projects(self):
-        """ Return a queryset of all projects we have access to. """
+        """Return a queryset of all projects we have access to."""
 
         is_owner = Q(owner_id=self.user_id)
         is_member = Q(member__user_id=self.user_id)
@@ -154,7 +154,7 @@ class Profile(models.Model):
         return q.distinct().order_by("name")
 
     def annotated_projects(self):
-        """ Return all projects, annotated with 'n_down'. """
+        """Return all projects, annotated with 'n_down'."""
 
         # Subquery for getting project ids
         project_ids = self.projects().values("id")
@@ -168,7 +168,7 @@ class Profile(models.Model):
         return q.order_by("name")
 
     def checks_from_all_projects(self):
-        """ Return a queryset of checks from projects we have access to. """
+        """Return a queryset of checks from projects we have access to."""
 
         project_ids = self.projects().values("id")
 
@@ -239,7 +239,7 @@ class Profile(models.Model):
         return self.sms_sent
 
     def authorize_sms(self):
-        """ If monthly limit not exceeded, increase counter and return True """
+        """If monthly limit not exceeded, increase counter and return True"""
 
         sent_this_month = self.sms_sent_this_month()
         if sent_this_month >= self.sms_limit:
@@ -262,7 +262,7 @@ class Profile(models.Model):
         return self.calls_sent
 
     def authorize_call(self):
-        """ If monthly limit not exceeded, increase counter and return True """
+        """If monthly limit not exceeded, increase counter and return True"""
 
         sent_this_month = self.calls_sent_this_month()
         if sent_this_month >= self.call_limit:
@@ -294,7 +294,7 @@ class Profile(models.Model):
             self.save(update_fields=["next_nag_date"])
 
     def choose_next_report_date(self):
-        """ Calculate the target date for the next monthly/weekly report.
+        """Calculate the target date for the next monthly/weekly report.
 
         Monthly reports should get sent on 1st of each month, between
         9AM and 11AM in user's timezone.
@@ -364,7 +364,7 @@ class Project(models.Model):
         return True
 
     def update_next_nag_dates(self):
-        """ Update next_nag_date on profiles of all members of this project. """
+        """Update next_nag_date on profiles of all members of this project."""
 
         is_owner = Q(user_id=self.owner_id)
         is_member = Q(user__memberships__project=self)
