@@ -21,9 +21,9 @@ class SignupTestCase(TestCase):
 
         # A profile should have been created
         profile = Profile.objects.get()
-        self.assertEqual(profile.check_limit, 500)
-        self.assertEqual(profile.sms_limit, 500)
-        self.assertEqual(profile.call_limit, 500)
+        self.assertEqual(profile.check_limit, 10000)
+        self.assertEqual(profile.sms_limit, 10000)
+        self.assertEqual(profile.call_limit, 10000)
         self.assertEqual(profile.tz, "Europe/Riga")
 
         # And email sent
