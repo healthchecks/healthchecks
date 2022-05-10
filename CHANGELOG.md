@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.1 - Unreleased
+## v2.1 - 2022-05-10
 
 ### Improvements
 - Add logic to alert ADMINS when Signal transport hits a CAPTCHA challenge
