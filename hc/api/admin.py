@@ -15,6 +15,7 @@ class ChecksAdmin(admin.ModelAdmin):
         css = {"all": ("css/admin/checks.css",)}
 
     search_fields = ["name", "code", "project__owner__email"]
+    readonly_fields = ("code",)
     raw_id_fields = ("project",)
     list_display = (
         "id",
@@ -116,7 +117,7 @@ class KindListFilter(admin.SimpleListFilter):
 
 # Adapted from: https://djangosnippets.org/snippets/2593/
 class LargeTablePaginator(Paginator):
-    """ Overrides the count method to get an estimate instead of actual count
+    """Overrides the count method to get an estimate instead of actual count
     when not filtered
     """
 
@@ -172,7 +173,8 @@ class ChannelsAdmin(admin.ModelAdmin):
     class Media:
         css = {"all": ("css/admin/channels.css",)}
 
-    search_fields = ["value", "project__owner__email", "name"]
+    search_fields = ["value", "project__owner__email", "name", "code"]
+    readonly_fields = ("code",)
     list_display = (
         "id",
         "transport",
