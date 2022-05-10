@@ -342,6 +342,7 @@ def serve_doc(request, doc="introduction"):
             "SITE_SCHEME": urlparse(settings.SITE_ROOT).scheme,
             "PING_ENDPOINT": settings.PING_ENDPOINT,
             "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
+            "PING_BODY_LIMIT": str(settings.PING_BODY_LIMIT or 100),
             "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
         }
 

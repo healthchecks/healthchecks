@@ -73,6 +73,13 @@ a continuously running process is still running and healthy).
 
 SITE_NAME identifies the check by the UUID value included in the URL.
 
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
+
 ### Response Codes
 
 200 OK
@@ -96,6 +103,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```
@@ -113,6 +121,13 @@ but it enables a few extra features:
 * SITE_NAME will detect if the job runs longer than its configured grace time
 
 SITE_NAME identifies the check by the UUID value included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
 
 ### Response Codes
 
@@ -137,6 +152,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```
@@ -151,6 +167,13 @@ Signals to SITE_NAME that the job has failed. Actively signaling a failure
 minimizes the delay from your monitored service failing to you receiving an alert.
 
 SITE_NAME identifies the check by the UUID value included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
 
 ### Response Codes
 
@@ -175,6 +198,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```
@@ -190,6 +214,13 @@ included in the URL. The exit status is a 0-255 integer. SITE_NAME
 interprets 0 as success and all other values as failure.
 
 SITE_NAME identifies the check by the UUID value included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
 
 ### Response Codes
 
@@ -217,6 +248,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```
@@ -232,6 +264,13 @@ a continuously running process is still running and healthy).
 
 SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
 
 ### Response Codes
 
@@ -259,6 +298,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```
@@ -277,6 +317,13 @@ optional, but it enables a few extra features:
 
 SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
 
 ### Response Codes
 
@@ -304,6 +351,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```
@@ -319,6 +367,13 @@ minimizes the delay from your monitored service failing to you receiving an aler
 
 SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
 
 ### Response Codes
 
@@ -346,6 +401,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```
@@ -362,6 +418,13 @@ interprets 0 as success and all other values as failure.
 
 SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
 
 ### Response Codes
 
@@ -392,6 +455,7 @@ Content-Type: text/plain; charset=utf-8
 Content-Length: 2
 Connection: close
 Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
 
 OK
 ```

@@ -88,6 +88,12 @@ code and ignore the request.</p>
 <p>Signals to SITE_NAME that the job has completed successfully (or,
 a continuously running process is still running and healthy).</p>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -107,6 +113,7 @@ a continuously running process is still running and healthy).</p>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>
@@ -122,6 +129,12 @@ but it enables a few extra features:</p>
 <li>SITE_NAME will detect if the job runs longer than its configured grace time</li>
 </ul>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -141,6 +154,7 @@ but it enables a few extra features:</p>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>
@@ -152,6 +166,12 @@ OK
 <p>Signals to SITE_NAME that the job has failed. Actively signaling a failure
 minimizes the delay from your monitored service failing to you receiving an alert.</p>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -171,6 +191,7 @@ minimizes the delay from your monitored service failing to you receiving an aler
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>
@@ -183,6 +204,12 @@ OK
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
 interprets 0 as success and all other values as failure.</p>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -204,6 +231,7 @@ interprets 0 as success and all other values as failure.</p>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>
@@ -216,6 +244,12 @@ OK
 a continuously running process is still running and healthy).</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -237,6 +271,7 @@ included in the URL.</p>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>
@@ -253,6 +288,12 @@ optional, but it enables a few extra features:</p>
 </ul>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -274,6 +315,7 @@ included in the URL.</p>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>
@@ -286,6 +328,12 @@ OK
 minimizes the delay from your monitored service failing to you receiving an alert.</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -307,6 +355,7 @@ included in the URL.</p>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>
@@ -320,6 +369,12 @@ included in the URL. The exit status is a 0-255 integer. SITE_NAME
 interprets 0 as success and all other values as failure.</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.</p>
+<p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -343,6 +398,7 @@ included in the URL.</p>
 <span class="na">Content-Length</span><span class="o">:</span> <span class="l">2</span>
 <span class="na">Connection</span><span class="o">:</span> <span class="l">close</span>
 <span class="na">Access-Control-Allow-Origin</span><span class="o">:</span> <span class="l">*</span>
+<span class="na">Ping-Body-Limit</span><span class="o">:</span> <span class="l">PING_BODY_LIMIT</span>
 
 OK
 </code></pre></div>

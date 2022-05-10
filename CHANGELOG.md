@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to django-compressor 4.0
 - Update the C# snippet
 - Increase max displayed duration from 24h to 72h (#644)
+- Add "Ping-Body-Limit" response header in ping API responses
 
 ### Bug Fixes
 - Fix unwanted localization in badge SVG generation (#629)

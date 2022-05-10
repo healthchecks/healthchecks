@@ -15,10 +15,12 @@ class PingTestCase(BaseTestCase):
         self.check = Check.objects.create(project=self.project)
         self.url = f"/ping/{self.check.code}"
 
+    @override_settings(PING_BODY_LIMIT=10000)
     def test_it_works(self):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.headers["Access-Control-Allow-Origin"], "*")
+        self.assertEqual(r.headers["Ping-Body-Limit"], "10000")
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "up")
@@ -112,7 +114,11 @@ class PingTestCase(BaseTestCase):
 
     def test_it_reads_first_forwarded_ip(self):
         ip = "1.1.1.1, 2.2.2.2"
-        r = self.client.get(self.url, HTTP_X_FORWARDED_FOR=ip, REMOTE_ADDR="3.3.3.3",)
+        r = self.client.get(
+            self.url,
+            HTTP_X_FORWARDED_FOR=ip,
+            REMOTE_ADDR="3.3.3.3",
+        )
         ping = Ping.objects.get()
         self.assertEqual(r.status_code, 200)
         self.assertEqual(ping.remote_addr, "1.1.1.1")
@@ -203,7 +209,8 @@ class PingTestCase(BaseTestCase):
 
     @override_settings(PING_BODY_LIMIT=5)
     def test_it_chops_long_body(self):
-        self.client.post(self.url, "hello world", content_type="text/plain")
+        r = self.client.post(self.url, "hello world", content_type="text/plain")
+        self.assertEqual(r.headers["Ping-Body-Limit"], "5")
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
@@ -211,7 +218,8 @@ class PingTestCase(BaseTestCase):
 
     @override_settings(PING_BODY_LIMIT=None)
     def test_it_allows_unlimited_body(self):
-        self.client.post(self.url, "A" * 20000, content_type="text/plain")
+        r = self.client.post(self.url, "A" * 20000, content_type="text/plain")
+        self.assertNotIn("Ping-Body-Limit", r.headers)
 
         ping = Ping.objects.get()
         self.assertEqual(len(ping.body_raw), 20000)

@@ -58,6 +58,8 @@ def ping(request, code, check=None, action="success", exitstatus=None):
     check.ping(remote_addr, scheme, method, ua, body, action, exitstatus)
 
     response = HttpResponse("OK")
+    if settings.PING_BODY_LIMIT is not None:
+        response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
     response["Access-Control-Allow-Origin"] = "*"
     return response
 
@@ -477,7 +479,7 @@ def badge(request, badge_key, signature, tag, fmt):
 @csrf_exempt
 @require_POST
 def notification_status(request, code):
-    """ Handle notification delivery status callbacks. """
+    """Handle notification delivery status callbacks."""
 
     try:
         cutoff = timezone.now() - td(hours=1)
