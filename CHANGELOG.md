@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## V2.2 - Unreleased
+
+### Bug Fixes
+- Update hc.front.views.channels to handle empty strings in settings (#635)
+
 ## v2.1 - 2022-05-10
 
 ### Improvements
