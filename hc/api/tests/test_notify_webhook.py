@@ -7,7 +7,7 @@ from unittest.mock import patch
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
-from requests.exceptions import ConnectionError, Timeout
+from requests.exceptions import ConnectionError, ContentDecodingError, Timeout
 from django.test.utils import override_settings
 
 
@@ -82,6 +82,23 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection failed")
+
+    @patch("hc.api.transports.requests.request", side_effect=ContentDecodingError)
+    def test_webhooks_handle_content_decoding_error(self, mock_get):
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+        self._setup_data(json.dumps(definition))
+        self.channel.notify(self.check)
+
+        # The transport should have retried 3 times
+        self.assertEqual(mock_get.call_count, 3)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Failed to decode response")
 
     @patch("hc.api.transports.requests.request")
     def test_webhooks_handle_500(self, mock_get):

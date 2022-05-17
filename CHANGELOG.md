@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Update hc.front.views.channels to handle empty strings in settings (#635)
+- Add logic to handle ContentDecodingError exceptions
 
 ## v2.1 - 2022-05-10
 

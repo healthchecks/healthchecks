@@ -35,7 +35,7 @@ def tmpl(template_name, **ctx) -> str:
 
 
 def get_nested(obj, path, default=None):
-    """ Retrieve a field from nested dictionaries.
+    """Retrieve a field from nested dictionaries.
 
     Example:
 
@@ -63,7 +63,7 @@ class Transport(object):
         self.channel = channel
 
     def notify(self, check, notification=None) -> None:
-        """ Send notification about current status of the check.
+        """Send notification about current status of the check.
 
         This method raises TransportError on error, and returns None
         on success.
@@ -73,7 +73,7 @@ class Transport(object):
         raise NotImplementedError()
 
     def is_noop(self, check) -> bool:
-        """ Return True if transport will ignore check's current status.
+        """Return True if transport will ignore check's current status.
 
         This method is overridden in Webhook subclass where the user can
         configure webhook urls for "up" and "down" events, and both are
@@ -84,7 +84,7 @@ class Transport(object):
         return False
 
     def down_checks(self, check):
-        """ Return a sorted list of other checks in the same project that are down.
+        """Return a sorted list of other checks in the same project that are down.
 
         If there are no other hecks in the project, return None instead of empty list.
         Templates can check for None to decide whether to show or not show the
@@ -156,7 +156,7 @@ class Email(Transport):
 
 class Shell(Transport):
     def prepare(self, template: str, check) -> str:
-        """ Replace placeholders with actual values. """
+        """Replace placeholders with actual values."""
 
         ctx = {
             "$CODE": str(check.code),
@@ -220,6 +220,8 @@ class HttpTransport(Transport):
             raise TransportError("Connection timed out")
         except requests.exceptions.ConnectionError:
             raise TransportError("Connection failed")
+        except requests.exceptions.ContentDecodingError:
+            raise TransportError("Failed to decode response")
 
     @classmethod
     def _request_with_retries(cls, method, url, use_retries=True, **kwargs) -> None:
@@ -253,7 +255,7 @@ class HttpTransport(Transport):
 
 class Webhook(HttpTransport):
     def prepare(self, template: str, check, urlencode=False, latin1=False) -> str:
-        """ Replace variables with actual values. """
+        """Replace variables with actual values."""
 
         def safe(s: str) -> str:
             return quote(s) if urlencode else s
