@@ -82,7 +82,7 @@ class Check(models.Model):
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     desc = models.TextField(blank=True)
     project = models.ForeignKey(Project, models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=now)
     kind = models.CharField(max_length=10, default="simple", choices=CHECK_KINDS)
     timeout = models.DurationField(default=DEFAULT_TIMEOUT)
     grace = models.DurationField(default=DEFAULT_GRACE)
@@ -454,7 +454,7 @@ class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     project = models.ForeignKey(Project, models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=now)
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
     value = models.TextField(blank=True)
     email_verified = models.BooleanField(default=False)
@@ -883,7 +883,7 @@ class Notification(models.Model):
     owner = models.ForeignKey(Check, models.CASCADE, null=True)
     check_status = models.CharField(max_length=6)
     channel = models.ForeignKey(Channel, models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=now)
     error = models.CharField(max_length=200, blank=True)
 
     class Meta:

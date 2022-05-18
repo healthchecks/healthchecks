@@ -283,7 +283,6 @@ class CheckModelTestCase(BaseTestCase):
         n = Notification(owner=check)
         n.channel = Channel.objects.create(project=self.project, kind="email")
         n.check_status = "down"
-        n.save()
         n.created = check.created - td(minutes=10)
         n.save()
 
