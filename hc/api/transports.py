@@ -127,7 +127,11 @@ class Email(Transport):
         except Profile.DoesNotExist:
             projects = None
 
-        ping = check.ping_set.order_by("created").last()
+        ping = None
+        # Look up the last ping only if the Check instance has pk
+        if check.pk:
+            ping = check.ping_set.order_by("created").last()
+
         body = None
         if ping and ping.has_body():
             body = ping.get_body()

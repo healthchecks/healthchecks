@@ -177,6 +177,7 @@ class CheckModelTestCase(BaseTestCase):
     def test_downtimes_handles_no_flips(self):
         check = Check(project=self.project)
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
+        check.save()
 
         nov, dec, jan = check.downtimes(3)
 
@@ -200,6 +201,7 @@ class CheckModelTestCase(BaseTestCase):
     def test_downtimes_handles_currently_down_check(self):
         check = Check(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
+        check.save()
 
         r = check.downtimes(10)
         self.assertEqual(len(r), 10)
@@ -259,6 +261,7 @@ class CheckModelTestCase(BaseTestCase):
     def test_downtimes_handles_months_when_check_did_not_exist(self):
         check = Check(project=self.project)
         check.created = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        check.save()
 
         nov, dec, jan = check.downtimes(3)
 
