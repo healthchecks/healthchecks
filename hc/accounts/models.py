@@ -118,6 +118,21 @@ class Profile(models.Model):
         }
         emails.login(self.user.email, ctx)
 
+    def send_change_email_link(self, new_email):
+        payload = {
+            "u": self.user.username,
+            "t": self.prepare_token("login"),
+            "e": new_email,
+        }
+        signed_payload = TimestampSigner().sign_object(payload)
+        path = reverse("hc-change-email-verify", args=[signed_payload])
+
+        ctx = {
+            "button_text": "Sign In",
+            "button_url": settings.SITE_ROOT + path,
+        }
+        emails.login(new_email, ctx)
+
     def send_transfer_request(self, project):
         token = self.prepare_token("login")
         settings_path = reverse("hc-project-settings", args=[project.code])

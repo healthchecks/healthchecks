@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## V2.2 - Unreleased
 
+### Improvements
+- Add address verification step in the "Change Email" flow
+
 ### Bug Fixes
 - Update hc.front.views.channels to handle empty strings in settings (#635)
 - Add logic to handle ContentDecodingError exceptions

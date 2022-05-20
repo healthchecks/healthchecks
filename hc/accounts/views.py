@@ -1,7 +1,7 @@
 import base64
 from datetime import timedelta as td
 from secrets import token_bytes, token_urlsafe
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 import time
 import uuid
 
@@ -13,7 +13,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core import signing
+from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
@@ -100,7 +100,7 @@ def _make_user(email, tz=None, with_project=True):
 
 
 def _redirect_after_login(request):
-    """ Redirect to the URL indicated in ?next= query parameter. """
+    """Redirect to the URL indicated in ?next= query parameter."""
 
     redirect_url = request.GET.get("next")
     if _allow_redirect(redirect_url):
@@ -167,7 +167,7 @@ def login(request):
                 profile.send_instant_login_link(redirect_url=redirect_url)
                 response = redirect("hc-login-link-sent")
 
-                # check_token_submit looks for this cookie to decide if
+                # check_token looks for this cookie to decide if
                 # it needs to do the extra POST step.
                 response.set_cookie("auto-login", "1", max_age=300, httponly=True)
                 return response
@@ -221,10 +221,9 @@ def login_link_sent(request):
     return render(request, "accounts/login_link_sent.html")
 
 
-def check_token(request, username, token):
-    if request.user.is_authenticated and request.user.username == username:
-        # User is already logged in
-        return _redirect_after_login(request)
+def check_token(request, username, token, new_email=None):
+    if request.user.is_authenticated:
+        auth_logout(request)
 
     # Some email servers open links in emails to check for malicious content.
     # To work around this, we sign user in if the method is POST
@@ -232,18 +231,22 @@ def check_token(request, username, token):
     #
     # If the method is GET and the auto-login cookie isn't present, we serve
     # a HTML form with a submit button.
+    if request.method != "POST" and "auto-login" not in request.COOKIES:
+        return render(request, "accounts/check_token_submit.html")
 
-    if request.method == "POST" or "auto-login" in request.COOKIES:
-        user = authenticate(username=username, token=token)
-        if user is not None and user.is_active:
-            user.profile.token = ""
-            user.profile.save()
-            return _check_2fa(request, user)
+    user = authenticate(username=username, token=token)
+    if user is not None and user.is_active:
+        if new_email:
+            user.email = new_email
+            user.set_unusable_password()
+            user.save()
 
-        request.session["bad_link"] = True
-        return redirect("hc-login")
+        user.profile.token = ""
+        user.profile.save()
+        return _check_2fa(request, user)
 
-    return render(request, "accounts/check_token_submit.html")
+    request.session["bad_link"] = True
+    return redirect("hc-login")
 
 
 @login_required
@@ -552,25 +555,40 @@ def set_password(request):
 @login_required
 @require_sudo_mode
 def change_email(request):
+    if "sent" in request.session:
+        ctx = {"email": request.session.pop("sent")}
+        return render(request, "accounts/change_email_instructions.html", ctx)
+
     if request.method == "POST":
         form = forms.ChangeEmailForm(request.POST)
         if form.is_valid():
-            request.user.email = form.cleaned_data["email"]
-            request.user.set_unusable_password()
-            request.user.save()
+            # The user has entered a valid-looking new email address.
+            # Send a special login link to the new address. When the user
+            # clicks the special login link, hc.accounts.views.change_email_verify
+            # unpacks the payload, and passes it to hc.accounts.views.check_token,
+            # which finally updates user's email address.
+            email = form.cleaned_data["email"]
+            request.profile.send_change_email_link(email)
+            request.session["sent"] = email
 
-            request.profile.token = ""
-            request.profile.save()
-
-            return redirect("hc-change-email-done")
+            response = redirect(reverse("hc-change-email"))
+            # check_token looks for this cookie to decide if
+            # it needs to do the extra POST step.
+            response.set_cookie("auto-login", "1", max_age=900, httponly=True)
+            return response
     else:
         form = forms.ChangeEmailForm()
 
     return render(request, "accounts/change_email.html", {"form": form})
 
 
-def change_email_done(request):
-    return render(request, "accounts/change_email_done.html")
+def change_email_verify(request, signed_payload):
+    try:
+        payload = TimestampSigner().unsign_object(signed_payload, max_age=900)
+    except BadSignature:
+        return render(request, "bad_link.html")
+
+    return check_token(request, payload["u"], payload["t"], payload["e"])
 
 
 @csrf_exempt
@@ -580,11 +598,11 @@ def unsubscribe_reports(request, signed_username):
     # If the signature is more than 5 minutes old, we also include JS code to
     # auto-submit the form.
 
-    signer = signing.TimestampSigner(salt="reports")
+    signer = TimestampSigner(salt="reports")
     # First, check the signature without looking at the timestamp:
     try:
         username = signer.unsign(signed_username)
-    except signing.BadSignature:
+    except BadSignature:
         return render(request, "bad_link.html")
 
     try:
@@ -600,7 +618,7 @@ def unsubscribe_reports(request, signed_username):
         try:
             autosubmit = False
             username = signer.unsign(signed_username, max_age=300)
-        except signing.SignatureExpired:
+        except SignatureExpired:
             autosubmit = True
 
         ctx = {"autosubmit": autosubmit}
@@ -650,7 +668,7 @@ def remove_project(request, code):
 
 
 def _get_credential_data(request, form):
-    """ Complete WebAuthn registration, return binary credential data.
+    """Complete WebAuthn registration, return binary credential data.
 
     This function is an interface to the fido2 library. It is separated
     out so that we don't need to mock ClientData, AttestationObject,
@@ -794,7 +812,7 @@ def remove_credential(request, code):
 
 
 def _check_credential(request, form, credentials):
-    """ Complete WebAuthn authentication, return True on success.
+    """Complete WebAuthn authentication, return True on success.
 
     This function is an interface to the fido2 library. It is separated
     out so that we don't need to mock ClientData, AuthenticatorData,
@@ -859,7 +877,6 @@ def login_webauthn(request):
     totp_url = None
     if user.profile.totp:
         totp_url = reverse("hc-login-totp")
-
         redirect_url = request.GET.get("next")
         if _allow_redirect(redirect_url):
             totp_url += "?next=%s" % redirect_url

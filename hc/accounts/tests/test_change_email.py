@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.core import mail
+from django.test.utils import override_settings
 from hc.test import BaseTestCase
 
 
@@ -15,21 +18,27 @@ class ChangeEmailTestCase(BaseTestCase):
         r = self.client.get("/accounts/change_email/")
         self.assertContains(r, "Change Account's Email Address")
 
-    def test_it_updates_email(self):
+    @override_settings(SITE_ROOT="http://testserver")
+    def test_it_sends_link(self):
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
         payload = {"email": "alice2@example.org"}
         r = self.client.post("/accounts/change_email/", payload, follow=True)
-        self.assertRedirects(r, "/accounts/change_email/done/")
-        self.assertContains(r, "Email Address Updated")
+        self.assertRedirects(r, "/accounts/change_email/")
+        self.assertContains(r, "One Last Step")
 
+        # The email addess should have not changed yet
         self.alice.refresh_from_db()
-        self.assertEqual(self.alice.email, "alice2@example.org")
-        self.assertFalse(self.alice.has_usable_password())
+        self.assertEqual(self.alice.email, "alice@example.org")
+        self.assertTrue(self.alice.has_usable_password())
 
-        # The user should have been logged out:
-        self.assertNotIn("_auth_user_id", self.client.session)
+        # And email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+        message = mail.outbox[0]
+        self.assertEqual(message.subject, f"Log in to {settings.SITE_NAME}")
+        html = message.alternatives[0][0]
+        self.assertIn("http://testserver/accounts/change_email/", html)
 
     def test_it_requires_unique_email(self):
         self.client.login(username="alice@example.org", password="password")

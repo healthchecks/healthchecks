@@ -23,8 +23,12 @@ urlpatterns = [
         name="hc-unsubscribe-reports",
     ),
     path("set_password/", views.set_password, name="hc-set-password"),
-    path("change_email/done/", views.change_email_done, name="hc-change-email-done"),
     path("change_email/", views.change_email, name="hc-change-email"),
+    path(
+        "change_email/<str:signed_payload>/",
+        views.change_email_verify,
+        name="hc-change-email-verify",
+    ),
     path("two_factor/webauthn/", views.add_webauthn, name="hc-add-webauthn"),
     path("two_factor/totp/", views.add_totp, name="hc-add-totp"),
     path("two_factor/totp/remove/", views.remove_totp, name="hc-remove-totp"),
