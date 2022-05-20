@@ -24,6 +24,11 @@ class CheckTokenTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.token, "")
 
+    def test_it_handles_get_with_cookie(self):
+        self.client.cookies["auto-login"] = "1"
+        r = self.client.get("/accounts/check_token/alice/secret-token/")
+        self.assertRedirects(r, self.checks_url)
+
     def test_it_redirects_already_logged_in(self):
         # Login
         self.client.login(username="alice@example.org", password="password")
