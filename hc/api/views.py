@@ -503,7 +503,7 @@ def notification_status(request, code):
 
     # Handle "CallStatus" key from Twilio
     if request.POST.get("CallStatus") == "failed":
-        error = f"Delivery failed (status=failed)."
+        error = "Delivery failed (status=failed)."
 
     if error:
         notification.error = error

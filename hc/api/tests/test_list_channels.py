@@ -1,5 +1,3 @@
-import json
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 

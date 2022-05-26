@@ -11,7 +11,7 @@ class SudoModeTestCase(BaseTestCase):
         super().setUp()
 
         self.c = Credential.objects.create(user=self.alice, name="Alices Key")
-        self.url = f"/accounts/set_password/"
+        self.url = "/accounts/set_password/"
 
     def test_it_sends_code(self):
         self.client.login(username="alice@example.org", password="password")

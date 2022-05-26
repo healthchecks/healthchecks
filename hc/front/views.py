@@ -37,7 +37,7 @@ from hc.api.models import (
     Ping,
     Notification,
 )
-from hc.api.transports import Signal, Telegram, TransportError
+from hc.api.transports import Telegram, TransportError
 from hc.front.decorators import require_setting
 from hc.front import forms
 from hc.front.schemas import telegram_callback

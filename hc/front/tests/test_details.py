@@ -106,7 +106,7 @@ class DetailsTestCase(BaseTestCase):
         self.check.save()
 
         r = self.client.get(self.url)
-        self.assertContains(r, f"* * * * * /your/command.sh")
+        self.assertContains(r, "* * * * * /your/command.sh")
         self.assertContains(r, 'FIXME: replace "* * * * *"')
 
     @patch("hc.lib.date.timezone.now")

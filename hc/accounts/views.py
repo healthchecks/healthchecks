@@ -1,7 +1,7 @@
 import base64
 from datetime import timedelta as td
 from secrets import token_bytes, token_urlsafe
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlparse
 import time
 import uuid
 

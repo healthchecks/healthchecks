@@ -1,6 +1,3 @@
-from unittest.mock import patch
-
-from django.test.utils import override_settings
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
