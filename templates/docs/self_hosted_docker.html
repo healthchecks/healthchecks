@@ -2,8 +2,6 @@
 <p>In the Healthchecks source code, <a href="https://github.com/healthchecks/healthchecks/tree/master/docker">/docker/ directory</a>,
 you can find a sample configuration for running the project with
 <a href="https://www.docker.com">Docker</a> and <a href="https://docs.docker.com/compose/">Docker Compose</a>.</p>
-<p><strong>Note: The Docker configuration is a recent addition, and, for the time being,
-should be considered experimental</strong>.</p>
 <p>Note: For the sake of simplicity, the sample configuration starts a single database
 node and a single web server node, both on the same host. It does not handle TLS
 termination.</p>
@@ -38,6 +36,14 @@ $ docker-compose up
   the credentials from the previous step.</p>
 </li>
 </ul>
+<h2>uWSGI Configuration</h2>
+<p>The reference Dockerfile uses <a href="https://uwsgi-docs.readthedocs.io/en/latest/">uWSGI</a>
+as the WSGI server. You can configure uWSGI by setting <code>UWSGI_...</code> environment
+variables in <code>docker/.env</code>. For example, to disable HTTP request logging, set:</p>
+<div class="highlight"><pre><span></span><code>UWSGI_DISABLE_LOGGING=1
+</code></pre></div>
+
+<p>Read more about configuring uWSGI in <a href="https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables">uWSGI documentation</a>.</p>
 <h2>TLS Termination</h2>
 <p>If you plan to expose your Healthchecks instance to the public internet, make sure you
 put a TLS-terminating reverse proxy in front of it.</p>

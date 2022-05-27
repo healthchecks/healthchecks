@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Add address verification step in the "Change Email" flow
 - Reduce logging output from sendalerts and sendreports management commands (#656)
 - Add Ctrl+C handler in sendalerts and sendreports management commands
+- Add notes in docs about configuring uWSGI via UWSGI_ env vars (#656)
 
 ### Bug Fixes
 - Update hc.front.views.channels to handle empty strings in settings (#635)
