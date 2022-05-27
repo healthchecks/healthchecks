@@ -73,7 +73,7 @@ class Command(BaseCommand):
         )
 
     def process_one_flip(self, use_threads=True):
-        """ Find unprocessed flip, send notifications.  """
+        """Find unprocessed flip, send notifications."""
 
         # Order by processed, otherwise Django will automatically order by id
         # and make the query less efficient
@@ -96,7 +96,7 @@ class Command(BaseCommand):
         return True
 
     def handle_going_down(self):
-        """ Process a single check going down.  """
+        """Process a single check going down."""
 
         now = timezone.now()
 
@@ -138,37 +138,32 @@ class Command(BaseCommand):
 
         return True
 
-    def on_sigterm(self, *args):
-        self.stdout.write("Received SIGTERM, finishing...\n")
-        self.sigterm = True
+    def on_signal(self, signum, frame):
+        desc = signal.strsignal(signum)
+        self.stdout.write(f"{desc}, finishing...\n")
+        self.shutdown = True
 
     def handle(self, use_threads=True, loop=True, *args, **options):
-        self.sigterm = False
-        signal.signal(signal.SIGTERM, self.on_sigterm)
+        self.shutdown = False
+        signal.signal(signal.SIGTERM, self.on_signal)
+        signal.signal(signal.SIGINT, self.on_signal)
 
         self.stdout.write("sendalerts is now running\n")
-        i, sent = 0, 0
-        while not self.sigterm:
+        sent = 0
+        while not self.shutdown:
             # Create flips for any checks going down
-            while not self.sigterm and self.handle_going_down():
+            while not self.shutdown and self.handle_going_down():
                 pass
 
             # Process the unprocessed flips
-            while not self.sigterm and self.process_one_flip(use_threads):
+            while not self.shutdown and self.process_one_flip(use_threads):
                 sent += 1
 
             if not loop:
                 break
 
             # Sleep for 2 seconds before looking for more work
-            if not self.sigterm:
-                i += 2
+            if not self.shutdown:
                 time.sleep(2)
-
-            # Print "-- MARK --" approx. every minute so the logs
-            # have evidence sendalerts is still running:
-            if i % 60 == 0:
-                timestamp = timezone.now().isoformat()
-                self.stdout.write("-- MARK %s --\n" % timestamp)
 
         return f"Sent {sent} alert(s)."

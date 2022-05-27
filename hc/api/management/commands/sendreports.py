@@ -91,22 +91,24 @@ class Command(BaseCommand):
 
         return True
 
-    def on_sigterm(self, *args):
-        self.stdout.write("Received SIGTERM, finishing...\n")
-        self.sigterm = True
+    def on_signal(self, signum, frame):
+        desc = signal.strsignal(signum)
+        self.stdout.write(f"{desc}, finishing...\n")
+        self.shutdown = True
 
     def handle(self, loop=False, *args, **options):
-        self.sigterm = False
-        signal.signal(signal.SIGTERM, self.on_sigterm)
+        self.shutdown = False
+        signal.signal(signal.SIGTERM, self.on_signal)
+        signal.signal(signal.SIGINT, self.on_signal)
 
         self.stdout.write("sendreports is now running")
-        while not self.sigterm:
+        while not self.shutdown:
             # Monthly reports
-            while not self.sigterm and self.handle_one_report():
+            while not self.shutdown and self.handle_one_report():
                 pass
 
             # Daily and hourly nags
-            while not self.sigterm and self.handle_one_nag():
+            while not self.shutdown and self.handle_one_nag():
                 pass
 
             if not loop:
@@ -114,12 +116,7 @@ class Command(BaseCommand):
 
             # Sleep for 60 seconds before looking for more work
             for i in range(0, 60):
-                if not self.sigterm:
+                if not self.shutdown:
                     time.sleep(1)
-
-            # Print "-- MARK --" approx. every minute so the logs
-            # have evidence sendreports is still running:
-            formatted = timezone.now().isoformat()
-            self.stdout.write("-- MARK %s --" % formatted)
 
         return "Done."

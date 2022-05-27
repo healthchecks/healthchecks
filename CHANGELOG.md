@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add address verification step in the "Change Email" flow
+- Reduce logging output from sendalerts and sendreports management commands (#656)
+- Add Ctrl+C handler in sendalerts and sendreports management commands
 
 ### Bug Fixes
 - Update hc.front.views.channels to handle empty strings in settings (#635)
