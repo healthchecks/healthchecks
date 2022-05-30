@@ -274,7 +274,7 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(ping.method, "POST")
         self.assertEqual(bytes(ping.body_raw), b"Hello \xe9 World")
 
-    @override_settings(S3_BUCKET="test-bucket")
+    @override_settings(S3_BUCKET="test-bucket", PING_BODY_LIMIT=None)
     @patch("hc.api.models.put_object")
     def test_it_uploads_body_to_s3(self, put_object):
         r = self.client.post(self.url, b"a" * 101, content_type="text/plain")
