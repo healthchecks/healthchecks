@@ -31,26 +31,30 @@ class UpdateChannelTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
     def test_it_checks_channel_user(self):
-        payload = {"channel": self.channel.code}
+        charlies_project = Project.objects.create(owner=self.charlie)
+        url = f"/projects/{charlies_project.code}/integrations/"
 
+        payload = {"channel": self.channel.code}
         self.client.login(username="charlie@example.org", password="password")
-        r = self.client.post(self.channels_url, data=payload)
+        r = self.client.post(url, data=payload)
 
         # self.channel does not belong to charlie, this should fail--
-        self.assertEqual(r.status_code, 404)
+        self.assertEqual(r.status_code, 403)
 
     def test_it_checks_check_owner(self):
         charlies_project = Project.objects.create(owner=self.charlie)
+        url = f"/projects/{charlies_project.code}/integrations/"
+
         charlies_channel = Channel(project=charlies_project, kind="email")
         charlies_channel.email = "charlie@example.org"
         charlies_channel.save()
 
         payload = {"channel": charlies_channel.code, "check-%s" % self.check.code: True}
         self.client.login(username="charlie@example.org", password="password")
-        r = self.client.post(self.channels_url, data=payload)
+        r = self.client.post(url, data=payload)
 
-        # mc belongs to charlie but self.check does not--
-        self.assertEqual(r.status_code, 404)
+        # charlies_channel belongs to charlie but self.check does not--
+        self.assertEqual(r.status_code, 403)
 
     def test_it_handles_missing_channel(self):
         # Correct UUID but there is no channel for it:

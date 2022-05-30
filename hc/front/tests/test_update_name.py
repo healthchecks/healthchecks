@@ -7,8 +7,8 @@ class UpdateNameTestCase(BaseTestCase):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
 
-        self.url = "/checks/%s/name/" % self.check.code
-        self.redirect_url = "/projects/%s/checks/" % self.project.code
+        self.url = f"/checks/{self.check.code}/name/"
+        self.redirect_url = f"/projects/{self.project.code}/checks/"
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
@@ -18,6 +18,15 @@ class UpdateNameTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.name, "Alice Was Here")
         self.assertEqual(self.check.slug, "alice-was-here")
+
+    def test_it_redirects_to_details(self):
+        details_url = f"/checks/{self.check.code}/details/"
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, data={"name": "Hey"}, HTTP_REFERER=details_url)
+        self.assertRedirects(r, details_url)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.name, "Hey")
 
     def test_team_access_works(self):
         payload = {"name": "Bob Was Here"}

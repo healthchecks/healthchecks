@@ -12,10 +12,7 @@ class SwitchChannelTestCase(BaseTestCase):
         self.channel.value = "alice@example.org"
         self.channel.save()
 
-        self.url = "/checks/%s/channels/%s/enabled" % (
-            self.check.code,
-            self.channel.code,
-        )
+        self.url = f"/checks/{self.check.code}/channels/{self.channel.code}/enabled"
 
     def test_it_enables(self):
         self.client.login(username="alice@example.org", password="password")
@@ -41,7 +38,7 @@ class SwitchChannelTestCase(BaseTestCase):
         cc = Check.objects.create(project=charlies_project)
 
         # Charlie will try to assign Alice's channel to his check:
-        self.url = "/checks/%s/channels/%s/enabled" % (cc.code, self.channel.code)
+        self.url = f"/checks/{cc.code}/channels/{self.channel.code}/enabled"
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, {"state": "on"})

@@ -18,7 +18,7 @@ class DetailsTestCase(BaseTestCase):
         ping.created = "2000-01-01T00:00:00+00:00"
         ping.save()
 
-        self.url = "/checks/%s/details/" % self.check.code
+        self.url = f"/checks/{self.check.code}/details/"
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
@@ -27,6 +27,16 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "ping-now")
         # The page should contain timezone strings
         self.assertContains(r, "Europe/Riga")
+
+    def test_it_suggests_tags_from_other_checks(self):
+        self.check.tags = "foo bar"
+        self.check.save()
+
+        Check.objects.create(project=self.project, tags="baz")
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "bar baz foo", status_code=200)
 
     def test_it_checks_ownership(self):
         self.client.login(username="charlie@example.org", password="password")
