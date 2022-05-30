@@ -105,12 +105,10 @@ class Profile(models.Model):
         return TimestampSigner().sign(token)
 
     def check_token(self, token):
-        # If the token contains ":" then unsign it first
-        if ":" in token:
-            try:
-                token = TimestampSigner().unsign(token, max_age=3600)
-            except BadSignature:
-                return False
+        try:
+            token = TimestampSigner().unsign(token, max_age=3600)
+        except BadSignature:
+            return False
 
         return "login" in self.token and check_password(token, self.token)
 
