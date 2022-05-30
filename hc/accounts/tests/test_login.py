@@ -81,7 +81,7 @@ class LoginTestCase(BaseTestCase):
         self.assertRedirects(r, "/accounts/login_link_sent/")
 
         self.profile.refresh_from_db()
-        self.assertIn("login", self.profile.token)
+        self.assertTrue(self.profile.token)
 
     def test_it_handles_password(self):
         form = {"action": "login", "email": "alice@example.org", "password": "password"}

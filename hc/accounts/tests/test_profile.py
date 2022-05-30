@@ -85,7 +85,7 @@ class ProfileTestCase(BaseTestCase):
         self.alice.save()
 
         # Authenticate using the ProfileBackend and a token:
-        token = self.profile.prepare_token("login")
+        token = self.profile.prepare_token()
         self.client.login(username="alice", token=token)
 
         r = self.client.get("/accounts/profile/")

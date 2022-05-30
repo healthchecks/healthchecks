@@ -23,7 +23,7 @@ class ProfileBackend(BasicBackend):
         except Profile.DoesNotExist:
             return None
 
-        if not profile.check_token(token, "login"):
+        if not profile.check_token(token):
             return None
 
         return profile.user

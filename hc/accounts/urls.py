@@ -9,7 +9,7 @@ urlpatterns = [
     path("signup/", views.signup, name="hc-signup"),
     path("login_link_sent/", views.login_link_sent, name="hc-login-link-sent"),
     path(
-        "check_token/<slug:username>/<slug:token>/",
+        "check_token/<slug:username>/<str:token>/",
         views.check_token,
         name="hc-check-token",
     ),

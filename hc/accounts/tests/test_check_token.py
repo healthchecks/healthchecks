@@ -1,3 +1,4 @@
+from django.core.signing import TimestampSigner
 from django.contrib.auth.hashers import make_password
 from hc.accounts.models import Credential
 from hc.test import BaseTestCase
@@ -9,14 +10,16 @@ class CheckTokenTestCase(BaseTestCase):
         self.profile.token = make_password("secret-token", "login")
         self.profile.save()
 
+        signed_token = TimestampSigner().sign("secret-token")
+        self.url = f"/accounts/check_token/alice/{signed_token}/"
         self.checks_url = "/projects/%s/checks/" % self.project.code
 
     def test_it_shows_form(self):
-        r = self.client.get("/accounts/check_token/alice/secret-token/")
+        r = self.client.get(self.url)
         self.assertContains(r, "You are about to log in")
 
     def test_it_redirects(self):
-        r = self.client.post("/accounts/check_token/alice/secret-token/")
+        r = self.client.post(self.url)
 
         self.assertRedirects(r, self.checks_url)
 
@@ -26,7 +29,7 @@ class CheckTokenTestCase(BaseTestCase):
 
     def test_it_handles_get_with_cookie(self):
         self.client.cookies["auto-login"] = "1"
-        r = self.client.get("/accounts/check_token/alice/secret-token/")
+        r = self.client.get(self.url)
         self.assertRedirects(r, self.checks_url)
 
     def test_it_redirects_already_logged_in(self):
@@ -34,7 +37,7 @@ class CheckTokenTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
 
         # Login again, when already authenticated
-        r = self.client.post("/accounts/check_token/alice/secret-token/")
+        r = self.client.post(self.url)
 
         self.assertRedirects(r, self.checks_url)
 
@@ -46,19 +49,19 @@ class CheckTokenTestCase(BaseTestCase):
         self.assertContains(r, "incorrect or expired")
 
     def test_it_handles_next_parameter(self):
-        url = "/accounts/check_token/alice/secret-token/?next=" + self.channels_url
+        url = self.url + "?next=" + self.channels_url
         r = self.client.post(url)
         self.assertRedirects(r, self.channels_url)
 
     def test_it_ignores_bad_next_parameter(self):
-        url = "/accounts/check_token/alice/secret-token/?next=/evil/"
+        url = self.url + "?next=/evil/"
         r = self.client.post(url)
         self.assertRedirects(r, self.checks_url)
 
     def test_it_redirects_to_webauthn_form(self):
         Credential.objects.create(user=self.alice, name="Alices Key")
 
-        r = self.client.post("/accounts/check_token/alice/secret-token/")
+        r = self.client.post(self.url)
         self.assertRedirects(
             r, "/accounts/login/two_factor/", fetch_redirect_response=False
         )

@@ -7,7 +7,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
-from django.core.signing import TimestampSigner
+from django.core.signing import TimestampSigner, BadSignature
 from django.db import models
 from django.db.models import Count, Q
 from django.urls import reverse
@@ -96,17 +96,26 @@ class Profile(models.Model):
         path = reverse("hc-unsubscribe-reports", args=[signed_username])
         return settings.SITE_ROOT + path
 
-    def prepare_token(self, salt):
+    def prepare_token(self):
         token = token_urlsafe(24)
-        self.token = make_password(token, salt)
+        # Store a hashed transformation of the login token
+        self.token = make_password(token, "login")
         self.save()
-        return token
+        # Sign the token so we can check its age later
+        return TimestampSigner().sign(token)
 
-    def check_token(self, token, salt):
-        return salt in self.token and check_password(token, self.token)
+    def check_token(self, token):
+        # If the token contains ":" then unsign it first
+        if ":" in token:
+            try:
+                token = TimestampSigner().unsign(token, max_age=3600)
+            except BadSignature:
+                return False
+
+        return "login" in self.token and check_password(token, self.token)
 
     def send_instant_login_link(self, inviting_project=None, redirect_url=None):
-        token = self.prepare_token("login")
+        token = self.prepare_token()
         path = reverse("hc-check-token", args=[self.user.username, token])
         if redirect_url:
             path += "?next=%s" % redirect_url
@@ -121,7 +130,7 @@ class Profile(models.Model):
     def send_change_email_link(self, new_email):
         payload = {
             "u": self.user.username,
-            "t": self.prepare_token("login"),
+            "t": self.prepare_token(),
             "e": new_email,
         }
         signed_payload = TimestampSigner().sign_object(payload)
@@ -134,7 +143,7 @@ class Profile(models.Model):
         emails.login(new_email, ctx)
 
     def send_transfer_request(self, project):
-        token = self.prepare_token("login")
+        token = self.prepare_token()
         settings_path = reverse("hc-project-settings", args=[project.code])
         path = reverse("hc-check-token", args=[self.user.username, token])
         path += "?next=%s" % settings_path

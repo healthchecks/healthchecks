@@ -16,7 +16,7 @@ class ChangeEmailVerifyTestCase(BaseTestCase):
     def _url(self, expired=False):
         payload = {
             "u": self.alice.username,
-            "t": "secret-token",
+            "t": TimestampSigner().sign("secret-token"),
             "e": "alice+new@example.org",
         }
 
