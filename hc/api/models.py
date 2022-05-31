@@ -97,7 +97,6 @@ class Check(models.Model):
     last_ping = models.DateTimeField(null=True, blank=True)
     last_start = models.DateTimeField(null=True, blank=True)
     last_duration = models.DurationField(null=True, blank=True)
-    last_ping_was_fail = models.BooleanField(default=False)
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
