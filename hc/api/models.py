@@ -252,6 +252,7 @@ class Check(models.Model):
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
             "status": self.get_status(with_started=True),
+            "last_start": self.last_start,
             "last_ping": isostring(self.last_ping),
             "next_ping": isostring(self.get_grace_start()),
             "manual_resume": self.manual_resume,
