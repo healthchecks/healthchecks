@@ -57,6 +57,7 @@ project_urls = [
     path("add_call/", views.add_call, name="hc-add-call"),
     path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.email_form, name="hc-add-email"),
+    path("add_gotify/", views.add_gotify, name="hc-add-gotify"),
     path("add_linenotify/", views.add_linenotify, name="hc-add-linenotify"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),
     path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),
@@ -81,8 +82,15 @@ project_urls = [
     path("badges/", views.badges, name="hc-badges"),
     path("checks/", views.my_checks, name="hc-checks"),
     path("checks/add/", views.add_check, name="hc-add-check"),
-    path("checks/metrics/<slug:key>", views.metrics,),
-    path("metrics/<slug:key>", views.metrics, name="hc-metrics",),
+    path(
+        "checks/metrics/<slug:key>",
+        views.metrics,
+    ),
+    path(
+        "metrics/<slug:key>",
+        views.metrics,
+        name="hc-metrics",
+    ),
     path("checks/status/", views.status, name="hc-status"),
     path("integrations/", views.channels, name="hc-channels"),
 ]

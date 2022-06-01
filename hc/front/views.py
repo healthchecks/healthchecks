@@ -2089,4 +2089,24 @@ def add_linenotify_complete(request):
     return redirect("hc-channels", project.code)
 
 
+@login_required
+def add_gotify(request, code):
+    project = _get_rw_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddGotifyForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="gotify")
+            channel.value = form.get_value()
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels", project.code)
+    else:
+        form = forms.AddGotifyForm()
+
+    ctx = {"page": "channels", "project": project, "form": form}
+    return render(request, "integrations/add_gotify.html", ctx)
+
+
 # Forks: add custom views after this line

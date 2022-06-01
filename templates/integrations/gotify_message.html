@@ -1,0 +1,23 @@
+{% load humanize linemode %}{% linemode %}
+{% if check.status == "down" %}
+    {% line %}🔴 The check [{{ check.name_then_code }}]({{ check.cloaked_url }}) is **DOWN**. Last ping was {{ check.last_ping|naturaltime }}.{% endline %}
+{% else %}
+    {% line %}🟢 The check [{{ check.name_then_code }}]({{ check.cloaked_url }}) is now **UP**.{% endline %}
+{% endif %}
+
+{% if down_checks is not None %}
+    {% line %}{% endline %}
+    {% if down_checks %}
+        {% if down_checks|length > 10 %}
+            {% line %}{{ down_checks|length }} other checks are {% if check.status == "down" %}also{% else %}still{% endif %} down.{% endline %}
+        {% else %}
+            {% line %}The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:{% endline %}
+            {% for c in down_checks %}
+                {% line %}- [{{ c.name_then_code }}]({{ c.cloaked_url }}) (last ping: {{ c.last_ping|naturaltime }}){% endline %}
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        {% line %}All the other checks are up.{% endline %}
+    {% endif %}
+{% endif %}
+{% endlinemode %}

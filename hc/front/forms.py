@@ -320,3 +320,12 @@ class AddTrelloForm(forms.Form):
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
+class AddGotifyForm(forms.Form):
+    error_css_class = "has-error"
+    token = forms.CharField(max_length=50)
+    url = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+
+    def get_value(self):
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)

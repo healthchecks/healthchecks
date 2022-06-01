@@ -3,6 +3,7 @@ import logging
 import os
 import socket
 import time
+from urllib.parse import quote, urlencode, urljoin
 import uuid
 
 from django.conf import settings
@@ -10,7 +11,6 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import escape
 import requests
-from urllib.parse import quote, urlencode
 
 from hc.accounts.models import Profile
 from hc.api.schemas import telegram_migration
@@ -953,3 +953,20 @@ class Signal(Transport):
         ctx = {"check": check, "down_checks": self.down_checks(check)}
         text = tmpl("signal_message.html", **ctx)
         self.send(self.channel.phone_number, text)
+
+
+class Gotify(HttpTransport):
+    def notify(self, check, notification=None) -> None:
+        url = urljoin(self.channel.gotify_url, "/message")
+        url += "?" + urlencode({"token": self.channel.gotify_token})
+
+        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        payload = {
+            "title": tmpl("gotify_title.html", **ctx),
+            "message": tmpl("gotify_message.html", **ctx),
+            "extras": {
+                "client::display": {"contentType": "text/markdown"},
+            },
+        }
+
+        self.post(url, json=payload)

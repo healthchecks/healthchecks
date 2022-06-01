@@ -248,6 +248,13 @@
         </li>
         {% endif %}
 
+        <li>
+            <img src="{% static 'img/integrations/gotify.png' %}" class="icon" alt="Gotify icon" />
+            <h2>Gotify</h2>
+            <p> Self-hosted push notification service.</p>
+            <a href="{% url 'hc-add-gotify' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
         {% if enable_linenotify %}
         <li>
             <img src="{% static 'img/integrations/linenotify.png' %}"

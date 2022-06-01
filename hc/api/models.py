@@ -63,6 +63,7 @@ CHANNEL_KINDS = (
     ("call", "Phone Call"),
     ("linenotify", "LINE Notify"),
     ("signal", "Signal"),
+    ("gotify", "Gotify"),
 )
 
 PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
@@ -575,6 +576,8 @@ class Channel(models.Model):
             return transports.LineNotify(self)
         elif self.kind == "signal":
             return transports.Signal(self)
+        elif self.kind == "gotify":
+            return transports.Gotify(self)
         else:
             raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
@@ -875,6 +878,18 @@ class Channel(models.Model):
     def linenotify_token(self):
         assert self.kind == "linenotify"
         return self.value
+
+    @property
+    def gotify_url(self):
+        assert self.kind == "gotify"
+        doc = json.loads(self.value)
+        return doc["url"]
+
+    @property
+    def gotify_token(self):
+        assert self.kind == "gotify"
+        doc = json.loads(self.value)
+        return doc["token"]
 
 
 class Notification(models.Model):
