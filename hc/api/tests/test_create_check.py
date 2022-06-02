@@ -280,3 +280,15 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_rejects_bad_methods_value(self):
         r = self.post({"methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
+        
+    def test_it_sets_subject(self):
+        r = self.post({"subject": "SUCCESS,COMPLETE"})
+        self.assertEqual(r.status_code, 201)
+        check = Check.objects.get()
+        self.assertEqual(check.subject, "SUCCESS,COMPLETE")
+
+    def test_it_sets_subject_fail(self):
+        r = self.post({"subject_fail": "FAILED,FAILURE"})
+        self.assertEqual(r.status_code, 201)
+        check = Check.objects.get()
+        self.assertEqual(check.subject_fail, "FAILED,FAILURE")
