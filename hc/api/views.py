@@ -171,6 +171,14 @@ def _update(check, spec):
         check.tz = spec["tz"]
         need_save = True
 
+    if "subject" in spec:
+        check.subject = spec["subject"]
+        need_save = True
+
+    if "subject_fail" in spec:
+        check.subject_fail = spec["subject_fail"]
+        need_save = True
+
     if need_save:
         check.alert_after = check.going_down_after()
         check.save()

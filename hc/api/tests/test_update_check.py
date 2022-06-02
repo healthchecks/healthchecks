@@ -322,6 +322,20 @@ class UpdateCheckTestCase(BaseTestCase):
         r = self.post(self.check.code, {"api_key": "X" * 32, "methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
 
+    def test_it_sets_subject(self):
+        r = self.post(self.check.code, {"api_key": "X" * 32, "subject": "SUCCESS,COMPLETE"})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.subject, "SUCCESS,COMPLETE")
+
+    def test_it_sets_subject_fail(self):
+        r = self.post(self.check.code, {"api_key": "X" * 32, "subject_fail": "FAILED,FAILURE"})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.subject_fail, "FAILED,FAILURE")
+
     def test_it_accepts_60_days_timeout(self):
         payload = {"api_key": "X" * 32, "timeout": 60 * 24 * 3600}
         r = self.post(self.check.code, payload)

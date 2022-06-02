@@ -367,6 +367,16 @@ methods
 
     <pre>{"methods": "POST"}</pre>
 
+subject
+:   string, optional, default value: "".
+
+    A comma-seperated list of keywords that indicate success if one is found in the subject of an email ping.
+    
+subject_fail
+:   string, optional, default value: "".
+
+    A comma-seperated list of keywords that indicate failure if one is found in the subject of an email ping.
+
 channels
 :   string, optional
 
@@ -566,6 +576,14 @@ methods
     Example:
 
     <pre>{"methods": "POST"}</pre>
+
+subject
+:   string, optional, default value: "".
+    A comma-seperated list of keywords that indicate success if one is found in the subject of an email ping.
+
+subject_fail
+:   string, optional, default value: "".
+    A comma-seperated list of keywords that indicate failure if one is found in the subject of an email ping.
 
 channels
 :   string, optional.
