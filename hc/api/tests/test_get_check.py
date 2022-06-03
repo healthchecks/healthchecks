@@ -19,6 +19,8 @@ class GetCheckTestCase(BaseTestCase):
         self.a1.status = "new"
         self.a1.tags = "a1-tag a1-additional-tag"
         self.a1.desc = "This is description"
+        self.a1.subject = "SUCCESS"
+        self.a1.subject_fail = "ERROR"
         self.a1.save()
 
         self.c1 = Channel.objects.create(project=self.project)
@@ -34,7 +36,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 16)
+        self.assertEqual(len(doc), 18)
 
         self.assertEqual(doc["slug"], "alice-1")
         self.assertEqual(doc["timeout"], 3600)
@@ -47,6 +49,8 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["desc"], "This is description")
         self.assertFalse(doc["manual_resume"])
         self.assertEqual(doc["methods"], "")
+        self.assertEqual(doc["subject"], "SUCCESS")
+        self.assertEqual(doc["subject_fail"], "ERROR")
 
     def test_it_handles_invalid_uuid(self):
         r = self.get("not-an-uuid")
@@ -63,7 +67,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 16)
+        self.assertEqual(len(doc), 18)
 
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)

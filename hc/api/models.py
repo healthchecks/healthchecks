@@ -257,6 +257,8 @@ class Check(models.Model):
             "next_ping": isostring(self.get_grace_start()),
             "manual_resume": self.manual_resume,
             "methods": self.methods,
+            "subject": self.subject,
+            "subject_fail": self.subject_fail,
         }
 
         if self.last_duration:

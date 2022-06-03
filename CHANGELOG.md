@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add notes in docs about configuring uWSGI via UWSGI_ env vars (#656)
 - Implement login link expiration (login links will now expire in 1 hour)
 - Add Gotify integration (#270)
+- Add API support for reading/writing the subject and subject_fail fields (#659)
 
 ### Bug Fixes
 - Update hc.front.views.channels to handle empty strings in settings (#635)

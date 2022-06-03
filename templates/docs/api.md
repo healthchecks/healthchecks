@@ -107,6 +107,8 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
       "methods": "",
+      "subject": "SUCCESS",
+      "subject_fail": "ERROR",
       "ping_url": "PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712",
       "update_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712",
       "pause_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause",
@@ -125,6 +127,8 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "next_ping": null,
       "manual_resume": false,
       "methods": "",
+      "subject": "",
+      "subject_fail": "",
       "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
       "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
       "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -162,6 +166,8 @@ Example:
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
       "methods": "",
+      "subject": "SUCCESS",
+      "subject_fail": "ERROR",
       "unique_key": "a6c7b0a8a66bed0df66abfdab3c77736861703ee",
       "timeout": 3600
     },
@@ -177,6 +183,8 @@ Example:
       "next_ping": null,
       "manual_resume": false,
       "methods": "",
+      "subject": "",
+      "subject_fail": "",
       "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
       "schedule": "15 5 * * *",
       "tz": "UTC"
@@ -229,6 +237,8 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "SUCCESS",
+  "subject_fail": "ERROR",
   "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
   "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
   "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -264,6 +274,8 @@ check's unique UUID.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "SUCCESS",
+  "subject_fail": "ERROR",
   "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
   "schedule": "15 5 * * *",
   "tz": "UTC"
@@ -370,12 +382,36 @@ methods
 subject
 :   string, optional, default value: "".
 
-    A comma-seperated list of keywords that indicate success if one is found in the subject of an email ping.
-    
+    Specifies the keywords for classifying inbound email messages as "Success" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Success".
+
+    Set this field to "" (an empty string) to consider all inbound email messages as
+    "Success" (unless they match any keywords listed in `subject_fail` and are thus
+    classified as "Failure").
+
+    Example:
+
+    <pre>SUCCESS,COMPLETED</pre>
+
+    In this example, the email counts as success if the Subject line contains either
+    the word "SUCCESS" or the word "COMPLETED".
+
 subject_fail
 :   string, optional, default value: "".
 
-    A comma-seperated list of keywords that indicate failure if one is found in the subject of an email ping.
+    Specifies the keywords for classifying inbound email messages as "Failure" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Failure".
+
+    Set this field to "" (an empty string) to perform no "Failure" classification.
+
+    Example:
+
+    <pre>FAILED,ERROR</pre>
+
+    In this example, the email counts as failure if the Subject line contains either
+    the word "FAILED" or the word "ERROR".
 
 channels
 :   string, optional
@@ -476,6 +512,8 @@ curl SITE_ROOT/api/v1/checks/ \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -579,11 +617,37 @@ methods
 
 subject
 :   string, optional, default value: "".
-    A comma-seperated list of keywords that indicate success if one is found in the subject of an email ping.
+
+    Specifies the keywords for classifying inbound email messages as "Success" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Success".
+
+    Set this field to "" (an empty string) to consider all inbound email messages as
+    "Success" (unless they match any keywords listed in `subject_fail` and are thus
+    classified as "Failure").
+
+    Example:
+
+    <pre>SUCCESS,COMPLETED</pre>
+
+    In this example, the email counts as success if the Subject line contains either
+    the word "SUCCESS" or the word "COMPLETED".
 
 subject_fail
 :   string, optional, default value: "".
-    A comma-seperated list of keywords that indicate failure if one is found in the subject of an email ping.
+
+    Specifies the keywords for classifying inbound email messages as "Failure" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Failure".
+
+    Set this field to "" (an empty string) to perform no "Failure" classification.
+
+    Example:
+
+    <pre>FAILED,ERROR</pre>
+
+    In this example, the email counts as failure if the Subject line contains either
+    the word "FAILED" or the word "ERROR".
 
 channels
 :   string, optional.
@@ -665,6 +729,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -722,6 +788,8 @@ header is sometimes required by some network proxies and web servers.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "paused",
@@ -775,6 +843,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
