@@ -209,12 +209,14 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_unique_accepts_only_specific_values(self):
         self.post(
-            {"name": "Foo", "unique": ["status"]}, expect_fragment="unexpected value",
+            {"name": "Foo", "unique": ["status"]},
+            expect_fragment="unexpected value",
         )
 
     def test_it_rejects_bad_unique_values(self):
         self.post(
-            {"name": "Foo", "unique": "not a list"}, expect_fragment="not an array",
+            {"name": "Foo", "unique": "not a list"},
+            expect_fragment="not an array",
         )
 
     def test_it_supports_cron_syntax(self):
@@ -280,7 +282,7 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_rejects_bad_methods_value(self):
         r = self.post({"methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
-        
+
     def test_it_sets_subject(self):
         r = self.post({"subject": "SUCCESS,COMPLETE"})
         self.assertEqual(r.status_code, 201)
@@ -292,3 +294,10 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 201)
         check = Check.objects.get()
         self.assertEqual(check.subject_fail, "FAILED,FAILURE")
+
+    def test_it_rejects_non_string_subject(self):
+        self.post({"subject": False}, expect_fragment="subject is not a string")
+
+    def test_it_rejects_non_string_subject_fail(self):
+        msg = "subject_fail is not a string"
+        self.post({"subject_fail": False}, expect_fragment=msg)

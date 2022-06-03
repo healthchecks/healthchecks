@@ -11,6 +11,8 @@ check = {
         "channels": {"type": "string"},
         "manual_resume": {"type": "boolean"},
         "methods": {"enum": ["", "POST"]},
+        "subject": {"type": "string", "maxLength": 200},
+        "subject_fail": {"type": "string", "maxLength": 200},
         "unique": {
             "type": "array",
             "items": {"enum": ["name", "tags", "timeout", "grace"]},
