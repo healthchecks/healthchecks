@@ -1,13 +1,110 @@
-{% load hc_extras %}
-The check "{{ check.name_then_code }}" has gone {{ check.status }}.
+{% load hc_extras humanize %}
+
+Dear User,
+
+the check "{{ check.name_then_code }}" has gone {{ check.status }}.
+
 {% if check.status == "down" and check.desc %}
+
 Additional notes:
+-----------------
 {{ check.desc }}
 {% endif %}
-More information:
+For more information visit:
 {{ check.cloaked_url }}
+
+
+************************
+* DETAILS:             *
+************************
+
+Project name:
+-------------
+{% if check.project.name %}{{ check.project.name }}
+{% else %}
+(No project name)
+{% endif %}
+
+Tag lists:
+----------
+{% if check.tags_list %}
+{% for tag in check.tags_list %}
+{{ tag }}
+{% endfor %}
+{% else %}
+(No tags)
+{% endif %}
+
+Period:
+-------
+{% if check.kind == "simple" %}
+{{ check.timeout|hc_duration }}
+{% endif %}
+
+Schedule:
+---------
+{% if check.kind == "cron" %}
+{{ check.schedule }}
+{% else %}
+(No cron)
+{% endif %}
+
+Total Pings:
+------------
+{{ check.n_pings }} ({% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %})
+{% if ping %}
+
+Last Ping:
+----------
+{{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}
+
+Last Ping Type
+--------------
+{% if ping.exitstatus > 0 %}
+Exit status: {{ ping.exitstatus }}
+{% elif ping.exitstatus == 0 %}
+Exit status 0
+{% elif ping.kind == "fail" %}
+Failure
+{% elif ping.kind == "start" %}
+Started
+{% elif ping.kind == "ign" %}
+Ignored
+{% else %}
+Success
+{% endif %}
+{% endif %}
+{% if ping and ping.has_body %}
+
+Last Ping Body:
+---------------
+{% if body is None %}
+The request body data is being processed and will be available for viewing shortly.
+Please visit {{ check.cloaked_url }}" and view it on the website.
+{% else %}
+{{ body|slice:":10000"|linebreaksbr }}{% if body|length > 10000 %} [truncated]{% endif %}
+{% endif %}
+{% endif %}
+{% if projects %}
+
+Projects Overview:
+------------------
+{% for project in projects %}
+{{ project }} ({{ project.checks_url }})
+{% with project.get_n_down as n_down %}
+{% if n_down %}
+{{ n_down }} check{{ n_down|pluralize }} down
+{% else %}
+OK, all checks up
+{% endif %}
+{% endwith %}
+{% endfor %}
+{% endif %}
+
+-
+{% site_name %}
+Unsubscribe: {{ unsub_link }}
 
 --
 Regards,
 {% site_name %}
-
