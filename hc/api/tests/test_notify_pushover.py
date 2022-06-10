@@ -159,3 +159,19 @@ class NotifyPushoverTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertEqual(payload["title"], "Foo & Bar is DOWN")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_disabled_priority(self, mock_post):
+        self._setup_data("123|-3")
+
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 0)
+        self.assertFalse(mock_post.called)
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_disabled_up_priority(self, mock_post):
+        self._setup_data("123|0|-3", status="up")
+
+        self.channel.notify(self.check)
+        self.assertEqual(Notification.objects.count(), 0)
+        self.assertFalse(mock_post.called)

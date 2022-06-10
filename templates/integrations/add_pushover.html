@@ -26,6 +26,11 @@
             <div class="col-sm-8">
                 <select name="po_priority" class="selectpicker form-control">
                     <option
+                        value="-3"
+                        data-content="Disabled. <span class='help'>Does not notify about Down events.</span>">
+                        Disabled
+                    </option>
+                    <option
                         value="-2"
                         data-content="Lowest Priority. <span class='help'>Generates no notification on your device.</span>">
                         Lowest Priority
@@ -56,6 +61,11 @@
             <label class="col-sm-3 control-label">Priority for "up" events</label>
             <div class="col-sm-8">
                 <select name="po_priority_up" class="selectpicker form-control">
+                    <option
+                        value="-3"
+                        data-content="Disabled. <span class='help'>Does not notify about Up events.</span>">
+                        Disabled
+                    </option>
                     <option
                         value="-2"
                         data-content="Lowest Priority. <span class='help'>Generates no notification on your device.</span>">

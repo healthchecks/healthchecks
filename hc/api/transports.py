@@ -476,6 +476,16 @@ class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
     CANCEL_TMPL = "https://api.pushover.net/1/receipts/cancel_by_tag/%s.json"
 
+    def is_noop(self, check) -> bool:
+        pieces = self.channel.value.split("|")
+        _, prio = pieces[0], pieces[1]
+
+        # The third element, if present, is the priority for "up" events
+        if check.status == "up" and len(pieces) == 3:
+            prio = pieces[2]
+
+        return int(prio) == -3
+
     def notify(self, check, notification=None) -> None:
         pieces = self.channel.value.split("|")
         user_key, down_prio = pieces[0], pieces[1]

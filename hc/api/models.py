@@ -66,7 +66,14 @@ CHANNEL_KINDS = (
     ("gotify", "Gotify"),
 )
 
-PO_PRIORITIES = {-2: "lowest", -1: "low", 0: "normal", 1: "high", 2: "emergency"}
+PO_PRIORITIES = {
+    -3: "disabled",
+    -2: "lowest",
+    -1: "low",
+    0: "normal",
+    1: "high",
+    2: "emergency",
+}
 
 
 def isostring(dt):

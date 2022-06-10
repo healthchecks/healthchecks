@@ -119,6 +119,7 @@ class AddOpsgenieForm(forms.Form):
 
 
 PRIO_CHOICES = [
+    ("-3", "Disabled"),
     ("-2", "Lowest Priority"),
     ("-1", "Low Priority"),
     ("0", "Normal Priority"),

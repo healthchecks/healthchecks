@@ -47,6 +47,21 @@ class AddPushoverTestCase(BaseTestCase):
         self.assertEqual(channel.value, "a|0|-1")
         self.assertEqual(channel.project, self.project)
 
+    def test_it_handles_prio_disabled(self):
+        self.client.login(username="alice@example.org", password="password")
+
+        session = self.client.session
+        session["pushover"] = "foo"
+        session.save()
+
+        params = "?pushover_user_key=a&state=foo&prio=-3&prio_up=-3"
+        r = self.client.get(self.url + params, follow=True)
+        self.assertRedirects(r, self.channels_url)
+
+        channel = Channel.objects.get()
+        self.assertEqual(channel.value, "a|-3|-3")
+        self.assertEqual(channel.project, self.project)
+
     def test_it_validates_priority(self):
         self.client.login(username="alice@example.org", password="password")
 
