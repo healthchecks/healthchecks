@@ -1,12 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## V2.3 - Unreleased
+## v2.2.1- 2022-06-13
 
 ### Improvements
 - Improve the text version of the alert email template
+- Fix the version number displayed in the footer
 
-## V2.2 - 2022-06-13
+## v2.2 - 2022-06-13
 
 ### Improvements
 - Add address verification step in the "Change Email" flow
