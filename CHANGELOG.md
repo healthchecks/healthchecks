@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## V2.2 - Unreleased
+## V2.2 - 2022-06-13
 
 ### Improvements
 - Add address verification step in the "Change Email" flow
