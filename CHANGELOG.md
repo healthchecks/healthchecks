@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Improve the text version of the alert email template
+
+### Bug Fixes
 - Fix the version number displayed in the footer
 
 ## v2.2 - 2022-06-13
