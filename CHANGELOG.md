@@ -1,7 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.2.1- 2022-06-13
+## v2.3 - Unreleased
+
+### Improvements
+- Update Dockerfile to start SMTP listener (#668)
+
+## v2.2.1 - 2022-06-13
 
 ### Improvements
 - Improve the text version of the alert email template

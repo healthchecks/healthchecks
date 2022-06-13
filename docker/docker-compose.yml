@@ -17,7 +17,9 @@ services:
     env_file:
         - .env
     ports:
-        - 8000:8000
+        - "8000:8000"
+        # Uncomment to enable SMTP on port 25 for incoming email
+        # - "25:25"
     depends_on:
         - db
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uwsgi /opt/healthchecks/docker/uwsgi.ini'
