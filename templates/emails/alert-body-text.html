@@ -1,13 +1,83 @@
-{% load hc_extras %}
-The check "{{ check.name_then_code }}" has gone {{ check.status }}.
-{% if check.status == "down" and check.desc %}
-Additional notes:
-{{ check.desc }}
+{% load hc_extras humanize linemode %}{% linemode %}
+
+{% line %}The check "{{ check.name_then_code|safe }}" has gone {{ check.status }}.{% endline %}
+{% line %}{% endline %}
+
+{% line %}View on {% site_name %}:{% endline %}
+{% line %}{{ check.cloaked_url }}{% endline %}
+{% line %}{% endline %}
+
+{% line %}Details:{% endline %}
+{% line %}--------{% endline %}
+
+{% if check.project.name %}
+    {% line %}Project: {{ check.project.name|safe }}{% endline %}
 {% endif %}
-More information:
-{{ check.cloaked_url }}
 
---
-Regards,
-{% site_name %}
+{% if check.tags %}
+    {% line %}Tags: {{ check.tags|safe }}{% endline %}
+{% endif %}
 
+{% if check.kind == "simple" %}
+    {% line %}Period: {{ check.timeout|hc_duration }}{% endline %}
+{% endif %}
+
+{% if check.kind == "cron" %}
+    {% line %}Schedule: {{ check.schedule }}{% endline %}
+{% endif %}
+
+{% line %}Total pings: {{ check.n_pings }} {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}{% endline %}
+
+{% if ping %}
+    {% line %}Last ping: {{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}{% endline %}
+
+    {% if ping.exitstatus >= 0 %}
+        {% line %}Last ping type: Exit status {{ ping.exitstatus }}{% endline %}
+    {% elif ping.kind == "fail" %}
+        {% line %}Last ping type: Failure{% endline %}
+    {% elif ping.kind == "start" %}
+        {% line %}Last ping type: Started{% endline %}
+    {% elif ping.kind == "ign" %}
+        {% line %}Last ping type: Ignored{% endline %}
+    {% else %}
+        {% line %}Last ping type: Success{% endline %}
+    {% endif %}
+
+    {% if ping.has_body %}
+        {% line %}{% endline %}
+        {% line %}Last Ping Body:{% endline %}
+        {% line %}---------------{% endline %}
+        {% if body is None %}
+            {% line %}The request body data is being processed and will be available for viewing shortly.{% endline %}
+            {% line %}Please view it on the website.{% endline %}
+        {% else %}
+            {% line %}{{ body|safe|slice:":10000"|wordwrap:80 }}{% endline %}
+            {% if body|length > 10000 %}
+                {% line %}[truncated]{% endline %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+{% if projects %}
+    {% line %}{% endline %}
+    {% line %}Projects Overview:{% endline %}
+    {% line %}------------------{% endline %}
+
+    {% for project in projects %}
+        {% with project.get_n_down as n_down %}
+            {{ project }} ({{ project.checks_url }})
+            {% if n_down %}
+                {% line %}* {{ project|safe }}: {{ n_down }} check{{ n_down|pluralize }} down{% endline %}
+            {% else %}
+                {% line %}* {{ project|safe }}: OK, all checks up{% endline %}
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+{% endif %}
+
+{% line %}{% endline %}
+{% line %}--{% endline %}
+{% line %}Unsubscribe: {{ unsub_link }}{% endline %}
+{% line %}Regards, {% site_name %}{% endline %}
+{% endlinemode %}

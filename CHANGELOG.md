@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## V2.3 - Unreleased
+
+### Improvements
+- Improve the text version of the alert email template
+
 ## V2.2 - 2022-06-13
 
 ### Improvements
