@@ -80,8 +80,9 @@ class Listener(SMTPServer):
         # get a new db connection in case the old one has timed out:
         connections.close_all()
 
-        result = _process_message(peer[0], mailfrom, rcpttos[0], data)
-        self.stdout.write(result)
+        for rcptto in rcpttos:
+            result = _process_message(peer[0], mailfrom, rcptto, data)
+            self.stdout.write(result)
 
 
 class Command(BaseCommand):
