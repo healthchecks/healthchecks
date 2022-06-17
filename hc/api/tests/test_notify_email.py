@@ -53,14 +53,37 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
 
         html = email.alternatives[0][0]
+        # Name
+        self.assertIn("Daily Backup", email.body)
         self.assertIn("Daily Backup", html)
+
+        # Description
+        self.assertIn("Line 1\nLine2", email.body)
         self.assertIn("Line 1<br>Line2", html)
+
+        # Project
+        self.assertIn("Alices Project", email.body)
         self.assertIn("Alices Project", html)
+
+        # Tags
+        self.assertIn("foo bar", email.body)
         self.assertIn("foo</code>", html)
         self.assertIn("bar</code>", html)
+
+        # Period
+        self.assertIn("1 day", email.body)
         self.assertIn("1 day", html)
+
+        # Source IP
+        self.assertIn("from 1.2.3.4", email.body)
         self.assertIn("from 1.2.3.4", html)
+
+        # Total pings
+        self.assertIn("112233", email.body)
         self.assertIn("112233", html)
+
+        # Last ping body
+        self.assertIn("Body Line 1\nBody Line 2", email.body)
         self.assertIn("Body Line 1<br>Body Line 2", html)
 
         # Check's code must not be in the html
@@ -68,17 +91,6 @@ class NotifyEmailTestCase(BaseTestCase):
 
         # Check's code must not be in the plain text body
         self.assertNotIn(str(self.check.code), email.body)
-
-    def test_it_displays_body(self):
-        self.ping.body = "Body Line 1\nBody Line 2"
-        self.ping.body_raw = None
-        self.ping.save()
-
-        self.channel.notify(self.check)
-
-        email = mail.outbox[0]
-        html = email.alternatives[0][0]
-        self.assertIn("Line 1<br>Line2", html)
 
     @override_settings(S3_BUCKET="test-bucket")
     @patch("hc.api.models.get_object")
@@ -110,6 +122,7 @@ class NotifyEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         html = email.alternatives[0][0]
 
+        self.assertIn("0 18-23,0-8 * * *", email.body)
         self.assertIn("<code>0 18-23,0-8 * * *</code>", html)
 
     def test_it_truncates_long_body(self):
@@ -121,6 +134,7 @@ class NotifyEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         html = email.alternatives[0][0]
 
+        self.assertIn("[truncated]", email.body)
         self.assertIn("[truncated]", html)
         self.assertNotIn("the rest gets cut off", html)
 
@@ -145,6 +159,8 @@ class NotifyEmailTestCase(BaseTestCase):
 
         html = email.alternatives[0][0]
         self.assertIn("Daily Backup", html)
+
+        self.assertNotIn("Projects Overview", email.body)
         self.assertNotIn("Projects Overview", html)
 
     def test_email_transport_handles_json_value(self):
@@ -204,4 +220,6 @@ class NotifyEmailTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         html = email.alternatives[0][0]
+
+        self.assertIn("The request body data is being processed", email.body)
         self.assertIn("The request body data is being processed", html)

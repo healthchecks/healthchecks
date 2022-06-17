@@ -5,8 +5,15 @@
 
 {% line %}View on {% site_name %}:{% endline %}
 {% line %}{{ check.cloaked_url }}{% endline %}
-{% line %}{% endline %}
 
+{% if check.desc %}
+{% line %}{% endline %}
+{% line %}Description:{% endline %}
+{% line %}------------{% endline %}
+{% line %}{{ check.desc|safe}}{% endline %}
+{% endif %}
+
+{% line %}{% endline %}
 {% line %}Details:{% endline %}
 {% line %}--------{% endline %}
 
