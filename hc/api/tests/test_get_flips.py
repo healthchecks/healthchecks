@@ -26,7 +26,7 @@ class GetFlipsTestCase(BaseTestCase):
             new_status="up",
         )
 
-        self.url = "/api/v1/checks/%s/flips/" % self.a1.code
+        self.url = f"/api/v1/checks/{self.a1.code}/flips/"
 
     def get(self, api_key="X" * 32, qs=""):
         return self.client.get(self.url + qs, HTTP_X_API_KEY=api_key)
@@ -44,6 +44,14 @@ class GetFlipsTestCase(BaseTestCase):
         # Microseconds (123000) should be stripped out
         self.assertEqual(flip["timestamp"], "2020-06-01T12:24:32+00:00")
         self.assertEqual(flip["up"], 1)
+
+    def test_it_works_with_unique_key(self):
+        url = f"/api/v1/checks/{self.a1.unique_key}/flips/"
+        r = self.client.get(url, HTTP_X_API_KEY="X" * 32)
+        self.assertEqual(r.status_code, 200)
+
+        doc = r.json()
+        self.assertEqual(len(doc["flips"]), 1)
 
     def test_readonly_key_is_allowed(self):
         self.project.api_key_readonly = "R" * 32
@@ -67,9 +75,12 @@ class GetFlipsTestCase(BaseTestCase):
     def test_it_filters_by_start(self):
         r = self.get(qs="?start=1591014300")  # 2020-06-01 12:25:00
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.json(), {"flips": []})
 
-        doc = r.json()
-        self.assertEqual(doc["flips"], [])
+    def test_it_filters_by_end(self):
+        r = self.get(qs="?end=1591014180")  # 2020-06-01 12:23:00
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.json(), {"flips": []})
 
     def test_it_rejects_huge_start(self):
         r = self.get(qs="?start=12345678901234567890")

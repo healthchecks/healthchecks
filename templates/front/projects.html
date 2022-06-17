@@ -17,15 +17,10 @@
                 <div class="col-sm-6 col-md-4">
                     <div class="panel project {% if project.id == last_project_id %}selected{% endif %}">
                         <div class="status ic-{{ project.overall_status }}"></div>
-
                         <h4>{{ project }}</h4>
-
                         <div>
-                            {{ project.n_checks }}
-                            check{{ project.n_checks|pluralize }},
-
-                            {{ project.n_channels }}
-                            integration{{ project.n_channels|pluralize }}
+                            {{ project.n_checks }} check{{ project.n_checks|pluralize }},
+                            {{ project.n_channels }} integration{{ project.n_channels|pluralize }}
                         </div>
                         <div class="text-muted">
                             {{ project.owner_email }}
