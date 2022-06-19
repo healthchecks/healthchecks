@@ -68,82 +68,48 @@ class LoginWebAuthnTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 500)
 
-    @patch("hc.accounts.views._check_credential")
-    def test_it_logs_in(self, mock_check_credential):
-        mock_check_credential.return_value = True
+    @patch("hc.accounts.views.GetHelper.verify")
+    def test_it_logs_in(self, mock_verify):
+        mock_verify.return_value = True
 
         session = self.client.session
         session["state"] = "dummy-state"
         session.save()
 
-        payload = {
-            "name": "My New Key",
-            "credential_id": "e30=",
-            "client_data_json": "e30=",
-            "authenticator_data": "e30=",
-            "signature": "e30=",
-        }
-
-        r = self.client.post(self.url, payload)
+        r = self.client.post(self.url, {"response": "dummy response"})
         self.assertRedirects(r, self.checks_url)
 
         self.assertNotIn("state", self.client.session)
         self.assertNotIn("2fa_user_id", self.client.session)
 
-    @patch("hc.accounts.views._check_credential")
-    def test_it_redirects_after_login(self, mock_check_credential):
-        mock_check_credential.return_value = True
+    @patch("hc.accounts.views.GetHelper.verify")
+    def test_it_redirects_after_login(self, mock_verify):
+        mock_verify.return_value = True
 
         session = self.client.session
         session["state"] = "dummy-state"
         session.save()
-
-        payload = {
-            "name": "My New Key",
-            "credential_id": "e30=",
-            "client_data_json": "e30=",
-            "authenticator_data": "e30=",
-            "signature": "e30=",
-        }
 
         url = self.url + "?next=" + self.channels_url
-        r = self.client.post(url, payload)
+        r = self.client.post(url, {"response": "dummy response"})
         self.assertRedirects(r, self.channels_url)
 
-    @patch("hc.accounts.views._check_credential")
-    def test_it_handles_bad_base64(self, mock_check_credential):
-        mock_check_credential.return_value = None
+    def test_it_handles_bad_json(self):
 
         session = self.client.session
         session["state"] = "dummy-state"
         session.save()
 
-        payload = {
-            "name": "My New Key",
-            "credential_id": "this is not base64 data",
-            "client_data_json": "e30=",
-            "authenticator_data": "e30=",
-            "signature": "e30=",
-        }
-
-        r = self.client.post(self.url, payload)
+        r = self.client.post(self.url, {"response": "this is not json"})
         self.assertEqual(r.status_code, 400)
 
-    @patch("hc.accounts.views._check_credential")
-    def test_it_handles_authentication_failure(self, mock_check_credential):
-        mock_check_credential.return_value = None
+    @patch("hc.accounts.views.GetHelper.verify")
+    def test_it_handles_authentication_failure(self, mock_verify):
+        mock_verify.return_value = False
 
         session = self.client.session
         session["state"] = "dummy-state"
         session.save()
 
-        payload = {
-            "name": "My New Key",
-            "credential_id": "e30=",
-            "client_data_json": "e30=",
-            "authenticator_data": "e30=",
-            "signature": "e30=",
-        }
-
-        r = self.client.post(self.url, payload)
+        r = self.client.post(self.url, {"response": "this is not json"})
         self.assertEqual(r.status_code, 400)

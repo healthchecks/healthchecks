@@ -36,19 +36,18 @@ class AddWebauthnTestCase(BaseTestCase):
         # It should put a "state" key in the session:
         self.assertIn("state", self.client.session)
 
-    @patch("hc.accounts.views._get_credential_data")
-    def test_it_adds_credential(self, mock_get_credential_data):
-        mock_get_credential_data.return_value = b"dummy-credential-data"
+    @patch("hc.accounts.views.CreateHelper.verify")
+    def test_it_adds_credential(self, mock_verify):
+        mock_verify.return_value = b"dummy-credential-data"
 
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
-        payload = {
-            "name": "My New Key",
-            "client_data_json": "e30=",
-            "attestation_object": "e30=",
-        }
+        session = self.client.session
+        session["state"] = "dummy state"
+        session.save()
 
+        payload = {"name": "My New Key", "response": "dummy response"}
         r = self.client.post(self.url, payload, follow=True)
         self.assertRedirects(r, "/accounts/profile/")
         self.assertContains(r, "Added security key <strong>My New Key</strong>")
@@ -56,43 +55,33 @@ class AddWebauthnTestCase(BaseTestCase):
         c = Credential.objects.get()
         self.assertEqual(c.name, "My New Key")
 
-    def test_it_rejects_bad_base64(self):
+        # state should have been removed from the session
+        self.assertNotIn("state", self.client.session)
+
+    def test_it_handles_bad_response_json(self):
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
-        payload = {
-            "name": "My New Key",
-            "client_data_json": "not valid base64",
-            "attestation_object": "not valid base64",
-        }
+        session = self.client.session
+        session["state"] = "dummy state"
+        session.save()
 
+        payload = {"name": "My New Key", "response": "this is not json"}
         r = self.client.post(self.url, payload)
         self.assertEqual(r.status_code, 400)
 
-    def test_it_requires_client_data_json(self):
-        self.client.login(username="alice@example.org", password="password")
-        self.set_sudo_flag()
-
-        payload = {
-            "name": "My New Key",
-            "attestation_object": "e30=",
-        }
-
-        r = self.client.post(self.url, payload)
-        self.assertEqual(r.status_code, 400)
-
-    @patch("hc.accounts.views._get_credential_data")
-    def test_it_handles_authentication_failure(self, mock_get_credential_data):
-        mock_get_credential_data.return_value = None
+    @patch("hc.accounts.views.CreateHelper.verify")
+    def test_it_handles_verification_failure(self, mock_verify):
+        mock_verify.return_value = None
 
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
-        payload = {
-            "name": "My New Key",
-            "client_data_json": "e30=",
-            "attestation_object": "e30=",
-        }
+        session = self.client.session
+        session["state"] = "dummy state"
+        session.save()
+
+        payload = {"name": "My New Key", "response": "dummy response"}
 
         r = self.client.post(self.url, payload, follow=True)
         self.assertEqual(r.status_code, 400)

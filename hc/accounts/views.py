@@ -684,6 +684,7 @@ def add_webauthn(request):
         c.data = credential_bytes
         c.save()
 
+        request.session.pop("state")
         request.session["added_credential_name"] = c.name
         return redirect("hc-profile")
 

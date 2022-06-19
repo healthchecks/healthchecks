@@ -63,8 +63,8 @@ class CreateHelper(object):
         return bytes_to_b64(options), state
 
     def verify(self, state, response_json):
-        doc = json.loads(response_json, object_hook=json_decode_hook)
         try:
+            doc = json.loads(response_json, object_hook=json_decode_hook)
             auth_data = self.server.register_complete(
                 state,
                 doc["response"]["clientDataJSON"],
@@ -85,8 +85,8 @@ class GetHelper(object):
         return bytes_to_b64(options), state
 
     def verify(self, state, response_json):
-        doc = json.loads(response_json, object_hook=json_decode_hook)
         try:
+            doc = json.loads(response_json, object_hook=json_decode_hook)
             self.server.authenticate_complete(
                 state,
                 self.credentials,
