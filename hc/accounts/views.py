@@ -1,6 +1,5 @@
-import base64
 from datetime import timedelta as td
-from secrets import token_bytes, token_urlsafe
+from secrets import token_urlsafe
 from urllib.parse import urlparse
 import time
 import uuid
@@ -20,16 +19,12 @@ from django.utils.timezone import now
 from django.urls import resolve, reverse, Resolver404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from fido2.ctap2 import AttestationObject, AuthenticatorData
-from fido2.client import ClientData
-from fido2.server import Fido2Server
-from fido2.webauthn import PublicKeyCredentialRpEntity
-from fido2 import cbor
 from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.models import Credential, Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.payments.models import Subscription
+from hc.lib.webauthn import Server
 import pyotp
 import segno
 
@@ -46,7 +41,7 @@ POST_LOGIN_ROUTES = (
     "hc-uncloak",
 )
 
-FIDO2_SERVER = Fido2Server(PublicKeyCredentialRpEntity(settings.RP_ID, "healthchecks"))
+WEBAUTHN = Server(settings.RP_ID, "healthchecks")
 
 
 def _allow_redirect(redirect_url):
@@ -667,27 +662,6 @@ def remove_project(request, code):
     return redirect("hc-index")
 
 
-def _get_credential_data(request, form):
-    """Complete WebAuthn registration, return binary credential data.
-
-    This function is an interface to the fido2 library. It is separated
-    out so that we don't need to mock ClientData, AttestationObject,
-    register_complete separately in tests.
-
-    """
-
-    try:
-        auth_data = FIDO2_SERVER.register_complete(
-            request.session["state"],
-            ClientData(form.cleaned_data["client_data_json"]),
-            AttestationObject(form.cleaned_data["attestation_object"]),
-        )
-    except ValueError:
-        return None
-
-    return auth_data.credential_data
-
-
 @login_required
 @require_sudo_mode
 def add_webauthn(request):
@@ -699,42 +673,25 @@ def add_webauthn(request):
         if not form.is_valid():
             return HttpResponseBadRequest()
 
-        credential_data = _get_credential_data(request, form)
-        if not credential_data:
+        try:
+            auth_data = WEBAUTHN.register_complete(
+                request.session["state"], form.cleaned_data["response"]
+            )
+        except ValueError as e:
             return HttpResponseBadRequest()
 
         c = Credential(user=request.user)
         c.name = form.cleaned_data["name"]
-        c.data = credential_data
+        c.data = auth_data.credential_data
         c.save()
 
         request.session["added_credential_name"] = c.name
         return redirect("hc-profile")
 
     credentials = [c.unpack() for c in request.user.credentials.all()]
-    # User handle is used in a username-less authentication, to map a credential
-    # received from browser with an user account in the database.
-    # Since we only use security keys as a second factor,
-    # the user handle is not of much use to us.
-    #
-    # The user handle:
-    #  - must not be blank,
-    #  - must not be a constant value,
-    #  - must not contain personally identifiable information.
-    # So we use random bytes, and don't store them on our end:
-    options, state = FIDO2_SERVER.register_begin(
-        {
-            "id": token_bytes(16),
-            "name": request.user.email,
-            "displayName": request.user.email,
-        },
-        credentials,
-    )
-
+    options, state = WEBAUTHN.register_begin(request.user.email, credentials)
     request.session["state"] = state
-
-    ctx = {"options": base64.b64encode(cbor.encode(options)).decode()}
-    return render(request, "accounts/add_credential.html", ctx)
+    return render(request, "accounts/add_credential.html", {"options": options})
 
 
 @login_required
@@ -811,30 +768,6 @@ def remove_credential(request, code):
     return render(request, "accounts/remove_credential.html", ctx)
 
 
-def _check_credential(request, form, credentials):
-    """Complete WebAuthn authentication, return True on success.
-
-    This function is an interface to the fido2 library. It is separated
-    out so that we don't need to mock ClientData, AuthenticatorData,
-    authenticate_complete separately in tests.
-
-    """
-
-    try:
-        FIDO2_SERVER.authenticate_complete(
-            request.session["state"],
-            credentials,
-            form.cleaned_data["credential_id"],
-            ClientData(form.cleaned_data["client_data_json"]),
-            AuthenticatorData(form.cleaned_data["authenticator_data"]),
-            form.cleaned_data["signature"],
-        )
-    except ValueError:
-        return False
-
-    return True
-
-
 def login_webauthn(request):
     # We require RP_ID. Fail predicably if it is not set:
     if not settings.RP_ID:
@@ -863,7 +796,13 @@ def login_webauthn(request):
         if not form.is_valid():
             return HttpResponseBadRequest()
 
-        if not _check_credential(request, form, credentials):
+        try:
+            WEBAUTHN.authenticate_complete(
+                request.session["state"],
+                credentials,
+                form.cleaned_data["response"],
+            )
+        except ValueError as e:
             return HttpResponseBadRequest()
 
         request.session.pop("state")
@@ -871,7 +810,7 @@ def login_webauthn(request):
         auth_login(request, user, "hc.accounts.backends.EmailBackend")
         return _redirect_after_login(request)
 
-    options, state = FIDO2_SERVER.authenticate_begin(credentials)
+    options, state = WEBAUTHN.authenticate_begin(credentials)
     request.session["state"] = state
 
     totp_url = None
@@ -882,7 +821,7 @@ def login_webauthn(request):
             totp_url += "?next=%s" % redirect_url
 
     ctx = {
-        "options": base64.b64encode(cbor.encode(options)).decode(),
+        "options": options,
         "totp_url": totp_url,
     }
     return render(request, "accounts/login_webauthn.html", ctx)

@@ -7,7 +7,6 @@
 <form
     id="login-tfa-form"
     class="col-sm-6 col-sm-offset-3"
-    data-options="{{ options }}"
     method="post"
     encrypt="multipart/form-data">
     <h1>Two-factor Authentication</h1>
@@ -34,10 +33,7 @@
     </div>
 
     {% csrf_token %}
-    <input id="credential_id" type="hidden" name="credential_id">
-    <input id="authenticator_data" type="hidden" name="authenticator_data">
-    <input id="client_data_json" type="hidden" name="client_data_json">
-    <input id="signature" type="hidden" name="signature">
+    <input id="response" type="hidden" name="response">
 
     <div id="waiting" class="hide">
         <h2>Waiting for security key</h2>
@@ -73,13 +69,16 @@
     </div>
 </form>
 </div>
+
+{{ options|json_script:"options" }}
+
 {% endblock %}
 
 {% block scripts %}
 {% compress js %}
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
-<script src="{% static 'js/cbor.js' %}"></script>
+<script src="{% static 'js/webauthn-json.browser-global.js' %}"></script>
 <script src="{% static 'js/login_tfa.js' %}"></script>
 {% endcompress %}
 {% endblock %}

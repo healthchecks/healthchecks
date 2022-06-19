@@ -1,9 +1,6 @@
-import base64
-import binascii
 from datetime import timedelta as td
 
 from django import forms
-from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from hc.accounts.models import REPORT_CHOICES, Member
@@ -15,17 +12,6 @@ class LowercaseEmailField(forms.EmailField):
     def clean(self, value):
         value = super(LowercaseEmailField, self).clean(value)
         return value.lower()
-
-
-class Base64Field(forms.CharField):
-    def to_python(self, value):
-        if value is None:
-            return None
-
-        try:
-            return base64.b64decode(value.encode())
-        except binascii.Error:
-            raise ValidationError(message="Cannot decode base64")
 
 
 class SignupForm(forms.Form):
@@ -153,15 +139,11 @@ class TransferForm(forms.Form):
 
 class AddWebAuthnForm(forms.Form):
     name = forms.CharField(max_length=100)
-    client_data_json = Base64Field()
-    attestation_object = Base64Field()
+    response = forms.CharField()
 
 
 class WebAuthnForm(forms.Form):
-    credential_id = Base64Field()
-    client_data_json = Base64Field()
-    authenticator_data = Base64Field()
-    signature = Base64Field()
+    response = forms.CharField()
 
 
 class TotpForm(forms.Form):
