@@ -24,7 +24,7 @@ from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.models import Credential, Profile, Project, Member
 from hc.api.models import Channel, Check, TokenBucket
 from hc.payments.models import Subscription
-from hc.lib.webauthn import Server
+from hc.lib.webauthn import CreateHelper, GetHelper
 import pyotp
 import segno
 
@@ -40,8 +40,6 @@ POST_LOGIN_ROUTES = (
     "hc-project-settings",
     "hc-uncloak",
 )
-
-WEBAUTHN = Server(settings.RP_ID, "healthchecks")
 
 
 def _allow_redirect(redirect_url):
@@ -668,29 +666,28 @@ def add_webauthn(request):
     if not settings.RP_ID:
         return HttpResponse(status=404)
 
+    credentials = request.user.credentials.values_list("data", flat=True)
+    helper = CreateHelper(settings.RP_ID, credentials)
+
     if request.method == "POST":
         form = forms.AddWebAuthnForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
-        try:
-            auth_data = WEBAUTHN.register_complete(
-                request.session["state"], form.cleaned_data["response"]
-            )
-        except ValueError as e:
+        state = request.session["state"]
+        credential_bytes = helper.verify(state, form.cleaned_data["response"])
+        if credential_bytes is None:
             return HttpResponseBadRequest()
 
         c = Credential(user=request.user)
         c.name = form.cleaned_data["name"]
-        c.data = auth_data.credential_data
+        c.data = credential_bytes
         c.save()
 
         request.session["added_credential_name"] = c.name
         return redirect("hc-profile")
 
-    credentials = [c.unpack() for c in request.user.credentials.all()]
-    options, state = WEBAUTHN.register_begin(request.user.email, credentials)
-    request.session["state"] = state
+    options, request.session["state"] = helper.prepare(request.user.email)
     return render(request, "accounts/add_credential.html", {"options": options})
 
 
@@ -789,20 +786,15 @@ def login_webauthn(request):
     except User.DoesNotExist:
         return HttpResponseBadRequest()
 
-    credentials = [c.unpack() for c in user.credentials.all()]
+    credentials = user.credentials.values_list("data", flat=True)
+    helper = GetHelper(settings.RP_ID, credentials)
 
     if request.method == "POST":
         form = forms.WebAuthnForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
 
-        try:
-            WEBAUTHN.authenticate_complete(
-                request.session["state"],
-                credentials,
-                form.cleaned_data["response"],
-            )
-        except ValueError as e:
+        if not helper.verify(request.session["state"], form.cleaned_data["response"]):
             return HttpResponseBadRequest()
 
         request.session.pop("state")
@@ -810,8 +802,7 @@ def login_webauthn(request):
         auth_login(request, user, "hc.accounts.backends.EmailBackend")
         return _redirect_after_login(request)
 
-    options, state = WEBAUTHN.authenticate_begin(credentials)
-    request.session["state"] = state
+    options, request.session["state"] = helper.prepare()
 
     totp_url = None
     if user.profile.totp:

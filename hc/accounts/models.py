@@ -12,7 +12,6 @@ from django.db import models
 from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils.timezone import now
-from fido2.ctap2 import AttestedCredentialData
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 
@@ -472,7 +471,3 @@ class Credential(models.Model):
     user = models.ForeignKey(User, models.CASCADE, related_name="credentials")
     created = models.DateTimeField(auto_now_add=True)
     data = models.BinaryField()
-
-    def unpack(self):
-        unpacked, remaining_data = AttestedCredentialData.unpack_from(self.data)
-        return unpacked

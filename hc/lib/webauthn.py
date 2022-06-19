@@ -2,10 +2,9 @@ import json
 from secrets import token_bytes
 
 from fido2.client import ClientData
-from fido2.ctap2 import AttestationObject, AuthenticatorData
+from fido2.ctap2 import AttestationObject, AttestedCredentialData, AuthenticatorData
 from fido2.server import Fido2Server
 from fido2.utils import websafe_encode, websafe_decode
-from fido2.webauthn import PublicKeyCredentialRpEntity
 
 
 def bytes_to_b64(obj):
@@ -39,11 +38,12 @@ def json_decode_hook(d):
     return d
 
 
-class Server(object):
-    def __init__(self, id, name):
-        self.server = Fido2Server(PublicKeyCredentialRpEntity(id, name))
+class CreateHelper(object):
+    def __init__(self, rp_id, credentials):
+        self.server = Fido2Server({"id": rp_id, "name": "healthchecks"})
+        self.credentials = [AttestedCredentialData(blob) for blob in credentials]
 
-    def register_begin(self, email, credentials):
+    def prepare(self, email):
         # User handle is used in a username-less authentication, to map a credential
         # received from browser with an user account in the database.
         # Since we only use security keys as a second factor,
@@ -59,28 +59,42 @@ class Server(object):
             "name": email,
             "displayName": email,
         }
-        options, state = self.server.register_begin(user, credentials)
+        options, state = self.server.register_begin(user, self.credentials)
         return bytes_to_b64(options), state
 
-    def register_complete(self, state, response_json):
+    def verify(self, state, response_json):
         doc = json.loads(response_json, object_hook=json_decode_hook)
-        return self.server.register_complete(
-            state,
-            doc["response"]["clientDataJSON"],
-            doc["response"]["attestationObject"],
-        )
+        try:
+            auth_data = self.server.register_complete(
+                state,
+                doc["response"]["clientDataJSON"],
+                doc["response"]["attestationObject"],
+            )
+            return auth_data.credential_data
+        except ValueError:
+            return None
 
-    def authenticate_begin(self, credentials):
-        options, state = self.server.authenticate_begin(credentials)
+
+class GetHelper(object):
+    def __init__(self, rp_id, credentials):
+        self.server = Fido2Server({"id": rp_id, "name": "healthchecks"})
+        self.credentials = [AttestedCredentialData(blob) for blob in credentials]
+
+    def prepare(self):
+        options, state = self.server.authenticate_begin(self.credentials)
         return bytes_to_b64(options), state
 
-    def authenticate_complete(self, state, credentials, response_json):
+    def verify(self, state, response_json):
         doc = json.loads(response_json, object_hook=json_decode_hook)
-        return self.server.authenticate_complete(
-            state,
-            credentials,
-            doc["rawId"],
-            doc["response"]["clientDataJSON"],
-            doc["response"]["authenticatorData"],
-            doc["response"]["signature"],
-        )
+        try:
+            self.server.authenticate_complete(
+                state,
+                self.credentials,
+                doc["rawId"],
+                doc["response"]["clientDataJSON"],
+                doc["response"]["authenticatorData"],
+                doc["response"]["signature"],
+            )
+            return True
+        except ValueError:
+            return False
