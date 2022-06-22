@@ -273,6 +273,7 @@ class CredentialAdmin(admin.ModelAdmin):
     list_display = ("id", "created", "email", "name")
     search_fields = ["id", "code", "name", "user__email"]
     list_filter = ["created"]
+    readonly_fields = ("user",)
 
     def email(self, obj):
         return obj.user.email
