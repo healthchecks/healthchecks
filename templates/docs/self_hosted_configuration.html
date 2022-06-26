@@ -21,7 +21,7 @@ integration.</p>
 
 <h2 id="DB"><code>DB</code></h2>
 <p>Default: <code>sqlite</code></p>
-<p>The database enginge to use. Possible values: <code>sqlite</code>, <code>postgres</code>, <code>mysql</code>.</p>
+<p>The database engine to use. Possible values: <code>sqlite</code>, <code>postgres</code>, <code>mysql</code>.</p>
 <h2 id="DB_CONN_MAX_AGE"><code>DB_CONN_MAX_AGE</code></h2>
 <p>Default: <code>0</code></p>
 <p>This is a standard Django setting, read more in
@@ -104,9 +104,9 @@ integration.</p>
 <h2 id="EMAIL_USE_VERIFICATION"><code>EMAIL_USE_VERIFICATION</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off a verification step when adding an email integration.</p>
-<p>If enabled, whenever an user adds an email integration, Healthchecks emails a
+<p>If enabled, whenever a user adds an email integration, Healthchecks emails a
 verification link to the new address. The new integration becomes active only
-after user clicks the verification link.</p>
+after the user clicks the verification link.</p>
 <p>If you are setting up a private healthchecks instance where
 you trust your users, you can opt to disable the verification step. In that case,
 set <code>EMAIL_USE_VERIFICATION</code> to <code>False</code>.</p>
@@ -126,7 +126,7 @@ integration.</p>
 <li>Register a bot user (for posting notifications) in your preferred Matrix homeserver.</li>
 <li>Use the <a href="https://www.matrix.org/docs/guides/client-server-api#login">Login API call</a>
   to retrieve bot user's access token. You can run it as shown in the documentation,
-  using curl in command shell.</li>
+  using curl in the command shell.</li>
 <li>Set the <code>MATRIX_</code> environment variables. Example:</li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="na">MATRIX_ACCESS_TOKEN</span><span class="o">=</span><span class="s">[a long string of characters returned by the login call]</span><span class="w"></span>
@@ -232,7 +232,7 @@ to <code>https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86</co
 </ul>
 <h2 id="PUSHOVER_EMERGENCY_EXPIRATION"><code>PUSHOVER_EMERGENCY_EXPIRATION</code></h2>
 <p>Default: <code>86400</code> (24 hours)</p>
-<p>Specifies how many seconds an emergency Pushoover notification
+<p>Specifies how many seconds an emergency Pushover notification
 will continue to be retried for.</p>
 <p>More information in <a href="https://pushover.net/api#priority">Pushover API documentation</a>.</p>
 <h2 id="PUSHOVER_EMERGENCY_RETRY_DELAY"><code>PUSHOVER_EMERGENCY_RETRY_DELAY</code></h2>
@@ -260,9 +260,9 @@ existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy
 <p>To enable this feature, set the <code>REMOTE_USER_HEADER</code> value to a header you wish to authenticate with. HTTP headers will be prefixed with <code>HTTP_</code> and have any dashes converted to underscores. Headers without that prefix can be set by the WSGI server itself only, which is more secure.</p>
 <p>When <code>REMOTE_USER_HEADER</code> is set, Healthchecks will:</p>
 <ul>
-<li>assume the header contains user's email address</li>
+<li>assume the header contains the user's email address</li>
 <li>look up and automatically log in the user with a matching email address</li>
-<li>automatically create an user account if it does not exist</li>
+<li>automatically create a user account if it does not exist</li>
 <li>disable the default authentication methods (login link to email, password)</li>
 </ul>
 <h2 id="RP_ID"><code>RP_ID</code></h2>
@@ -281,7 +281,7 @@ from the <code>django-sslserver</code> package.</p>
 <p>Access key of an account in S3 service.</p>
 <p>Healthchecks can optionally upload ping request body data to S3-compatible object
 storage instead of storing it in the database. To use this feature, provide valid
-credentials to a S3-compatible service by setting the following environment variables:</p>
+credentials to an S3-compatible service by setting the following environment variables:</p>
 <ul>
 <li><code>S3_ACCESS_KEY</code> (example: <code>AKIAFIXMEFIXME</code>)</li>
 <li><code>S3_BUCKET</code> (example: <code>my-bucket</code>)</li>
@@ -300,13 +300,13 @@ credentials to a S3-compatible service by setting the following environment vari
 <p>Region name of buckets in S3 service.</p>
 <h2 id="S3_SECRET_KEY"><code>S3_SECRET_KEY</code></h2>
 <p>Default: <code>None</code></p>
-<p>Secret key of an account in S3 service.</p>
+<p>The secret key of an account in S3 service.</p>
 <h2 id="S3_TIMEOUT"><code>S3_TIMEOUT</code></h2>
 <p>Default: <code>60</code></p>
-<p>Timeout for each individual S3 operatio, in seconds.</p>
+<p>Timeout for individual S3 operations, in seconds.</p>
 <h2 id="SECRET_KEY"><code>SECRET_KEY</code></h2>
 <p>Default: <code>---</code></p>
-<p>A secret key used for cryptographic signing, and should be set to a unique,
+<p>A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/3.1/ref/settings/#secret-key">Django documentation</a>.</p>
@@ -314,7 +314,7 @@ unpredictable value.</p>
 <p>Default: <code>False</code></p>
 <p>A boolean that turns on/off the "Shell Commands" integration.</p>
 <p>The "Shell Commands" integration runs user-defined local shell commands when checks
-go up or down. This integration is disabled by default, and can be enabled by setting
+go up or down. This integration is disabled by default and can be enabled by setting
 the <code>SHELL_ENABLED</code> environment variable to <code>True</code>.</p>
 <p>Note: be careful when using "Shell Commands" integration, and only enable it when
 you fully trust the users of your Healthchecks instance. The commands will be executed
@@ -393,7 +393,7 @@ where to forward channel messages by invoking Telegram's
 Done, Telegram<span class="err">&#39;</span>s webhook <span class="nb">set</span> to: https://my-monitoring-project.com/integrations/telegram/bot/
 </code></pre></div>
 
-<p>For this to work, your <code>SITE_ROOT</code> must be publicy accessible and use the "https://"
+<p>For this to work, your <code>SITE_ROOT</code> must be publicly accessible and use the "https://"
 scheme.</p>
 <h2 id="TELEGRAM_TOKEN"><code>TELEGRAM_TOKEN</code></h2>
 <p>Default: <code>None</code></p>
@@ -406,12 +406,21 @@ scheme.</p>
 <code>TRELLO_APP_KEY</code> environment variable.</p>
 <h2 id="TWILIO_ACCOUNT"><code>TWILIO_ACCOUNT</code></h2>
 <p>Default: <code>None</code></p>
+<p>Twilio Account SID, required by the SMS, Call, and WhatsApp integrations.</p>
 <h2 id="TWILIO_AUTH"><code>TWILIO_AUTH</code></h2>
 <p>Default: <code>None</code></p>
+<p>Twilio Auth token, required by the SMS, Call, and WhatsApp integrations.</p>
 <h2 id="TWILIO_FROM"><code>TWILIO_FROM</code></h2>
 <p>Default: <code>None</code></p>
+<p>The Twilio phone number to use as the sender for SMS and WhatsApp notifications,
+and as the caller for Call integrations.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="na">TWILIO_FROM</span><span class="o">=</span><span class="s">+15017122661</span><span class="w"></span>
+</code></pre></div>
+
 <h2 id="TWILIO_USE_WHATSAPP"><code>TWILIO_USE_WHATSAPP</code></h2>
 <p>Default: <code>False</code></p>
+<p>A boolean that turns on/off the WhatsApp integration.</p>
 <h2 id="USE_PAYMENTS"><code>USE_PAYMENTS</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that turns on/off billing features.</p>

@@ -35,7 +35,7 @@ pip install apprise
 
 Default: `sqlite`
 
-The database enginge to use. Possible values: `sqlite`, `postgres`, `mysql`.
+The database engine to use. Possible values: `sqlite`, `postgres`, `mysql`.
 
 ## `DB_CONN_MAX_AGE` {: #DB_CONN_MAX_AGE }
 
@@ -175,9 +175,9 @@ Default: `True`
 
 A boolean that turns on/off a verification step when adding an email integration.
 
-If enabled, whenever an user adds an email integration, Healthchecks emails a
+If enabled, whenever a user adds an email integration, Healthchecks emails a
 verification link to the new address. The new integration becomes active only
-after user clicks the verification link.
+after the user clicks the verification link.
 
 If you are setting up a private healthchecks instance where
 you trust your users, you can opt to disable the verification step. In that case,
@@ -209,7 +209,7 @@ To set up the Matrix integration:
 * Register a bot user (for posting notifications) in your preferred Matrix homeserver.
 * Use the [Login API call](https://www.matrix.org/docs/guides/client-server-api#login)
   to retrieve bot user's access token. You can run it as shown in the documentation,
-  using curl in command shell.
+  using curl in the command shell.
 * Set the `MATRIX_` environment variables. Example:
 
 ```ini
@@ -368,7 +368,7 @@ To enable the Pushover integration:
 
 Default: `86400` (24 hours)
 
-Specifies how many seconds an emergency Pushoover notification
+Specifies how many seconds an emergency Pushover notification
 will continue to be retried for.
 
 More information in [Pushover API documentation](https://pushover.net/api#priority).
@@ -414,9 +414,9 @@ To enable this feature, set the `REMOTE_USER_HEADER` value to a header you wish 
 
 When `REMOTE_USER_HEADER` is set, Healthchecks will:
 
- - assume the header contains user's email address
+ - assume the header contains the user's email address
  - look up and automatically log in the user with a matching email address
- - automatically create an user account if it does not exist
+ - automatically create a user account if it does not exist
  - disable the default authentication methods (login link to email, password)
 
 ## `RP_ID` {: #RP_ID }
@@ -443,7 +443,7 @@ Access key of an account in S3 service.
 
 Healthchecks can optionally upload ping request body data to S3-compatible object
 storage instead of storing it in the database. To use this feature, provide valid
-credentials to a S3-compatible service by setting the following environment variables:
+credentials to an S3-compatible service by setting the following environment variables:
 
 * `S3_ACCESS_KEY` (example: `AKIAFIXMEFIXME`)
 * `S3_BUCKET` (example: `my-bucket`)
@@ -473,19 +473,19 @@ Region name of buckets in S3 service.
 
 Default: `None`
 
-Secret key of an account in S3 service.
+The secret key of an account in S3 service.
 
 ## `S3_TIMEOUT` {: #S3_TIMEOUT }
 
 Default: `60`
 
-Timeout for each individual S3 operatio, in seconds.
+Timeout for individual S3 operations, in seconds.
 
 ## `SECRET_KEY` {: #SECRET_KEY }
 
 Default: `---`
 
-A secret key used for cryptographic signing, and should be set to a unique,
+A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.
 
 This is a standard Django setting, read more in
@@ -498,7 +498,7 @@ Default: `False`
 A boolean that turns on/off the "Shell Commands" integration.
 
 The "Shell Commands" integration runs user-defined local shell commands when checks
-go up or down. This integration is disabled by default, and can be enabled by setting
+go up or down. This integration is disabled by default and can be enabled by setting
 the `SHELL_ENABLED` environment variable to `True`.
 
 Note: be careful when using "Shell Commands" integration, and only enable it when
@@ -611,7 +611,7 @@ $ ./manage.py settelegramwebhook
 Done, Telegram's webhook set to: https://my-monitoring-project.com/integrations/telegram/bot/
 ```
 
-For this to work, your `SITE_ROOT` must be publicy accessible and use the "https://"
+For this to work, your `SITE_ROOT` must be publicly accessible and use the "https://"
 scheme.
 
 ## `TELEGRAM_TOKEN` {: #TELEGRAM_TOKEN }
@@ -634,17 +634,32 @@ To set up the Trello integration, get a developer API key from
 
 Default: `None`
 
+Twilio Account SID, required by the SMS, Call, and WhatsApp integrations.
+
 ## `TWILIO_AUTH` {: #TWILIO_AUTH }
 
 Default: `None`
+
+Twilio Auth token, required by the SMS, Call, and WhatsApp integrations.
 
 ## `TWILIO_FROM` {: #TWILIO_FROM }
 
 Default: `None`
 
+The Twilio phone number to use as the sender for SMS and WhatsApp notifications,
+and as the caller for Call integrations.
+
+Example:
+
+```ini
+TWILIO_FROM=+15017122661
+```
+
 ## `TWILIO_USE_WHATSAPP` {: #TWILIO_USE_WHATSAPP }
 
 Default: `False`
+
+A boolean that turns on/off the WhatsApp integration.
 
 ## `USE_PAYMENTS` {: #USE_PAYMENTS }
 
