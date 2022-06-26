@@ -1,5 +1,5 @@
 function loadPingDetails(url) {
-    $("#ping-details-body").html("<div class='loading'><div class='spinner'><div class='d1'></div><div class='d2'></div><div class='d3'></div></div></div>");
+    $("#ping-details-body").html("<div class='loading'><div class='spinner'><div></div><div></div><div></div></div></div>");
     $('#ping-details-modal').modal("show");
     $("#ping-details-body .spinner").addClass("started");
 
