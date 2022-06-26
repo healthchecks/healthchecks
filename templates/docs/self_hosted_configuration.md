@@ -321,9 +321,29 @@ A boolean that turns on/off the Prometheus integration. Enabled by default.
 
 Default: `None`
 
+The Pushbullet Client ID, required by the Pushbullet integration.
+
+To set up the Pushbullet integration:
+
+* Add a new OAuth client at
+  [https://www.pushbullet.com/#settings/clients](https://www.pushbullet.com/#settings/clients)
+* Add a `redirect_uri` to your OAuth client. The URI format is
+  `SITE_ROOT/integrations/add_pushbullet/`. For example, if `your SITE_ROOT`
+  is `https://my-hc.example.org` then the `redirect_uri` would be
+  `https://my-hc.example.org/integrations/add_pushbullet/`
+* Look up your OAuth client's `client_id` and `client_secret` values. Put them
+  in the `PUSHBULLET_CLIENT_ID` and `PUSHBULLET_CLIENT_SECRET` environment
+  variables.
+
+Read more about setting up a Pushbullet OAuth client in the
+[Pushbullet OAuth2 guide](https://docs.pushbullet.com/#oauth2).
+
 ## `PUSHBULLET_CLIENT_SECRET` {: #PUSHBULLET_CLIENT_SECRET }
 
 Default: `None`
+
+The Pushbullet Client Secret, required by the Pushbullet integration. Look it up at
+[https://www.pushbullet.com/#settings/clients](https://www.pushbullet.com/#settings/clients).
 
 ## `PUSHOVER_API_TOKEN` {: #PUSHOVER_API_TOKEN }
 

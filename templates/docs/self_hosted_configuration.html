@@ -195,8 +195,25 @@ to <code>https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86</co
 <p>A boolean that turns on/off the Prometheus integration. Enabled by default.</p>
 <h2 id="PUSHBULLET_CLIENT_ID"><code>PUSHBULLET_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
+<p>The Pushbullet Client ID, required by the Pushbullet integration.</p>
+<p>To set up the Pushbullet integration:</p>
+<ul>
+<li>Add a new OAuth client at
+  <a href="https://www.pushbullet.com/#settings/clients">https://www.pushbullet.com/#settings/clients</a></li>
+<li>Add a <code>redirect_uri</code> to your OAuth client. The URI format is
+  <code>SITE_ROOT/integrations/add_pushbullet/</code>. For example, if <code>your SITE_ROOT</code>
+  is <code>https://my-hc.example.org</code> then the <code>redirect_uri</code> would be
+  <code>https://my-hc.example.org/integrations/add_pushbullet/</code></li>
+<li>Look up your OAuth client's <code>client_id</code> and <code>client_secret</code> values. Put them
+  in the <code>PUSHBULLET_CLIENT_ID</code> and <code>PUSHBULLET_CLIENT_SECRET</code> environment
+  variables.</li>
+</ul>
+<p>Read more about setting up a Pushbullet OAuth client in the
+<a href="https://docs.pushbullet.com/#oauth2">Pushbullet OAuth2 guide</a>.</p>
 <h2 id="PUSHBULLET_CLIENT_SECRET"><code>PUSHBULLET_CLIENT_SECRET</code></h2>
 <p>Default: <code>None</code></p>
+<p>The Pushbullet Client Secret, required by the Pushbullet integration. Look it up at
+<a href="https://www.pushbullet.com/#settings/clients">https://www.pushbullet.com/#settings/clients</a>.</p>
 <h2 id="PUSHOVER_API_TOKEN"><code>PUSHOVER_API_TOKEN</code></h2>
 <p>Default: <code>None</code></p>
 <p>The <a href="https://pushover.net/">Pushover</a> API token, required by the Pushover integration.</p>
