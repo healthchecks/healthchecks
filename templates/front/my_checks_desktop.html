@@ -121,9 +121,7 @@
             </div>
         </td>
         <td class="hidden-xs">
-            <div id="lpd-{{ check.code }}" class="last-ping">
-                {% include "front/last_ping_cell.html" with check=check %}
-            </div>
+            <div class="last-ping">{% include "front/last_ping_cell.html" with check=check %}</div>
         </td>
         <td class="actions">
             {% if rw %}
