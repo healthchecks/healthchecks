@@ -35,12 +35,13 @@
 
 {% if rw %}
 <div id="my-checks-bottom-actions" class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-12 text-center">
         {% if num_available > 0 %}
-            <form method="post" action="{% url 'hc-add-check' project.code %}" class="text-center">
-                {% csrf_token %}
-                <input type="submit" class="btn btn-primary btn-lg" value="Add Check">
-            </form>
+            <button
+                class="btn btn-primary btn-lg"
+                data-toggle="modal"
+                data-target="#add-check-modal"
+                value="Add Check">Add Check</button>
             {% if num_available <= 10 %}
             <div class="add-check-note">
                 ({{ checks|length }} in use, {{ num_available }} available)
@@ -63,6 +64,7 @@
 
 {% include "front/update_name_modal.html" %}
 {% include "front/update_timeout_modal.html" %}
+{% include "front/add_check_modal.html" %}
 
 <div id="ping-details-modal" class="modal">
     <div class="modal-dialog">
@@ -101,5 +103,6 @@
 <script src="{% static 'js/adaptive-setinterval.js' %}"></script>
 <script src="{% static 'js/ping_details.js' %}"></script>
 <script src="{% static 'js/checks.js' %}"></script>
+<script src="{% static 'js/add-check-modal.js' %}"></script>
 {% endcompress %}
 {% endblock %}

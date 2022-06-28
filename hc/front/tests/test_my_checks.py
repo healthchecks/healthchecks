@@ -138,7 +138,7 @@ class MyChecksTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
 
-        self.assertNotContains(r, "Add Check", status_code=200)
+        self.assertNotContains(r, 'data-target="#add-check-modal"', status_code=200)
 
         # The pause button:
         self.assertNotContains(r, "btn btn-default pause", status_code=200)

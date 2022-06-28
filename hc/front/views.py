@@ -370,13 +370,24 @@ def add_check(request, code):
     if project.num_checks_available() <= 0:
         return HttpResponseBadRequest()
 
+    form = forms.AddCheckForm(request.POST)
+    if not form.is_valid():
+        return HttpResponseBadRequest()
+
     check = Check(project=project)
+    check.set_name_slug(form.cleaned_data["name"])
+    check.tags = form.cleaned_data["tags"]
+    check.kind = form.cleaned_data["kind"]
+    check.timeout = form.cleaned_data["timeout"]
+    check.schedule = form.cleaned_data["schedule"]
+    check.tz = form.cleaned_data["tz"]
+    check.grace = form.cleaned_data["grace"]
     check.save()
 
     check.assign_all_channels()
 
-    url = reverse("hc-details", args=[check.code])
-    return redirect(url + "?new")
+    url = reverse("hc-checks", args=[project.code])
+    return redirect(url)
 
 
 @require_POST
@@ -484,6 +495,17 @@ def cron_preview(request):
             pass
 
     return render(request, "front/cron_preview.html", ctx)
+
+
+def validate_schedule(request):
+    schedule = request.GET.get("schedule", "")
+    result = True
+    try:
+        CronSim(schedule, now())
+    except CronSimError:
+        result = False
+
+    return JsonResponse({"result": result})
 
 
 @login_required
@@ -643,7 +665,6 @@ def details(request, code):
         "enabled_channels": list(check.channel_set.all()),
         "timezones": all_timezones,
         "downtimes": check.downtimes(months=3),
-        "is_new": "new" in request.GET,
         "is_copied": "copied" in request.GET,
         "all_tags": " ".join(sorted(all_tags)),
     }

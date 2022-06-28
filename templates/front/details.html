@@ -7,18 +7,6 @@
 {% block content %}
 
 <div class="row">
-    {% if is_new %}
-    <div class="col-sm-12">
-        <p id="new-check-alert" class="alert alert-success">
-            <strong>Your new check is ready!</strong>
-            You can now
-            <a data-target="edit-name" href="#" >give it a name</a>
-            or
-            <a data-target="edit-timeout" href="#" >set its schedule</a>.
-        </p>
-    </div>
-    {% endif %}
-
     {% if is_copied %}
     <div class="col-sm-12">
         <p id="new-check-alert" class="alert alert-success">

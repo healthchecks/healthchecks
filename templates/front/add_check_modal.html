@@ -1,0 +1,149 @@
+<div id="add-check-modal" class="modal simple">
+    <div class="modal-dialog">
+        <form class="form-horizontal" method="post" action="{% url 'hc-add-check' project.code %}">
+            {% csrf_token %}
+            <input type="hidden" name="timeout" value="86400" />
+            <input type="hidden" name="grace" value="3600" />
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Add Check</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="add-check-name" class="col-sm-3 control-label">
+                            Name
+                        </label>
+                        <div class="col-sm-9">
+                            <input
+                                id="add-check-name"
+                                name="name"
+                                type="text"
+                                maxlength="100"
+                                class="form-control" />
+                            <span class="help-block">
+                                Give this check a human-friendly name.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-check-tags" class="col-sm-3 control-label">
+                            Tags
+                        </label>
+                        <div class="col-sm-9">
+                            <input
+                                id="add-check-tags"
+                                name="tags"
+                                type="text"
+                                maxlength="500"
+                                data-all-tags="{{ all_tags }}" />
+                            <span class="help-block">
+                                Separate multiple tags with spaces.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            Schedule
+                        </label>
+                        <div class="col-sm-9">
+                            <label class="radio-container">
+                                <input type="radio" name="kind" value="simple" checked>
+                                <span class="radiomark"></span>
+                                Simple
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="kind" value="cron">
+                                <span class="radiomark"></span>
+                                Cron
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group create-simple-extra">
+                        <label for="add-check-period" class="col-sm-3 control-label">
+                            Period
+                        </label>
+                        <div class="col-sm-9">
+                            <input
+                                id="add-check-period"
+                                type="number"
+                                min="1"
+                                class="form-control period-input"
+                                value="1" />
+                            <select id="add-check-period-unit" class="form-control period-input">
+                                <option value="60">minutes</option>
+                                <option value="3600">hours</option>
+                                <option value="86400" selected>days</option>
+                            </select>
+                            <span class="help-block">
+                                The expected time between pings.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group create-cron-extra">
+                        <label for="add-check-schedule" class="col-sm-3 control-label">
+                            Cron Expression
+                        </label>
+                        <div class="col-sm-9">
+                            <input
+                                id="add-check-schedule"
+                                name="schedule"
+                                type="text"
+                                maxlength="100"
+                                value="* * * * *"
+                                class="form-control" />
+                            <span class="help-block">
+                                <code>m h dom mon dow</code>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group create-cron-extra">
+                        <label for="add-check-tz" class="col-sm-3 control-label">
+                            Time Zone
+                        </label>
+                        <div class="col-sm-9">
+                            <select id="add-check-tz" name="tz" class="form-control">
+                                <option>UTC</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-check-grace" class="col-sm-3 control-label">
+                            Grace Time
+                        </label>
+                        <div class="col-sm-9">
+                            <input
+                                id="add-check-grace"
+                                type="number"
+                                min="1"
+                                class="form-control grace-input"
+                                value="1" />
+                            <select id="add-check-grace-unit" class="form-control grace-input">
+                                <option value="60">minutes</option>
+                                <option value="3600" selected>hours</option>
+                                <option value="86400">days</option>
+                            </select>
+                            <span class="help-block">
+                                When a check is late, or has received a "start" signal, how long to wait to send an alert.
+                            </span>
+                        </div>
+                    </div>
+                </div> <!-- modal-body -->
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="add-check-submit" type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script id="all-timezones" type="data">{{ timezones|join:"," }}</script>

@@ -100,7 +100,7 @@ $(function () {
     });
 
     // Update the slider and the hidden field when user changes period inputs
-    $(".period-input").on("keyup change", function() {
+    $("#update-timeout-modal .period-input").on("keyup change", function() {
         var secs = Math.round(period.value * periodUnit.value);
         period.setCustomValidity(secs <= 31536000 ? "" : "Must not exceed 365 days");
 
@@ -144,7 +144,7 @@ $(function () {
     });
 
     // Update the slider and the hidden field when user changes grace inputs
-    $(".grace-input").on("keyup change", function() {
+    $("#update-timeout-modal .grace-input").on("keyup change", function() {
         var secs = Math.round(grace.value * graceUnit.value);
         grace.setCustomValidity(secs <= 31536000 ? "" : "Must not exceed 365 days");
 

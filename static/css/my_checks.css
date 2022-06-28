@@ -32,16 +32,6 @@
     border-radius: 16px;
 }
 
-@media (min-width: 992px) {
-    #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog  {
-        width: 850px;
-    }
-    #update-name-modal .modal-dialog  {
-        width: 650px;
-    }
-}
-
-
 #update-timeout-form .modal-body {
     padding-top: 35px;
 }
@@ -63,12 +53,6 @@
 .interval-controls input {
     width: 100px;
     text-align: center;
-    -moz-appearance: textfield;
-}
-
-.interval-controls input::-webkit-outer-spin-button,
-.interval-controls input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
 }
 
 .interval-controls select.form-control {
@@ -177,15 +161,6 @@
     font-weight: bold;
 }
 
-#update-timeout-grace-cron {
-    -moz-appearance: textfield;
-}
-
-#update-timeout-grace-cron::-webkit-outer-spin-button,
-#update-timeout-grace-cron::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
-
 .label-tag {
     background-color: var(--tag-bg);
     color: var(--tag-color);
@@ -234,4 +209,37 @@
 
 #my-checks-bottom-actions {
     margin-bottom: 20px;
+}
+
+#add-check-modal .modal-body {
+    padding: 15px 40px;
+}
+
+.simple .create-cron-extra {
+    display: none;
+}
+
+.cron .create-simple-extra {
+    display: none;
+}
+
+#add-check-period,
+#add-check-grace,
+#add-check-period-unit,
+#add-check-grace-unit {
+    width: 100px;
+    display: inline-block;
+}
+
+
+@media (min-width: 992px) {
+    #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog  {
+        width: 850px;
+    }
+    #update-name-modal .modal-dialog  {
+        width: 650px;
+    }
+    #add-check-modal .modal-dialog  {
+        width: 650px;
+    }
 }

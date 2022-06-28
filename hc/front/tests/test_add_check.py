@@ -9,19 +9,80 @@ class AddCheckTestCase(BaseTestCase):
         self.url = "/projects/%s/checks/add/" % self.project.code
         self.redirect_url = "/projects/%s/checks/" % self.project.code
 
+    def _payload(self, **kwargs):
+        payload = {
+            "name": "Test",
+            "tags": "foo bar",
+            "kind": "simple",
+            "timeout": "120",
+            "grace": "60",
+            "schedule": "* * * * *",
+            "tz": "Europe/Riga",
+        }
+        payload.update(kwargs)
+        return payload
+
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url)
+        r = self.client.post(self.url, self._payload())
 
         check = Check.objects.get()
         self.assertEqual(check.project, self.project)
+        self.assertEqual(check.name, "Test")
+        self.assertEqual(check.slug, "test")
+        self.assertEqual(check.tags, "foo bar")
+        self.assertEqual(check.kind, "simple")
+        self.assertEqual(check.timeout.total_seconds(), 120)
+        self.assertEqual(check.grace.total_seconds(), 60)
+        self.assertEqual(check.schedule, "* * * * *")
+        self.assertEqual(check.tz, "Europe/Riga")
 
-        redirect_url = "/checks/%s/details/?new" % check.code
-        self.assertRedirects(r, redirect_url)
+        self.assertRedirects(r, self.redirect_url)
+
+    def test_it_saves_cron_schedule(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, self._payload(kind="cron"))
+
+        check = Check.objects.get()
+        self.assertEqual(check.project, self.project)
+        self.assertEqual(check.kind, "cron")
+
+        self.assertRedirects(r, self.redirect_url)
+
+    def test_it_sanitizes_tags(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, self._payload(tags="   foo  bar "))
+
+        check = Check.objects.get()
+        self.assertEqual(check.project, self.project)
+        self.assertEqual(check.tags, "foo bar")
+
+        self.assertRedirects(r, self.redirect_url)
+
+    def test_it_validates_kind(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, self._payload(kind="surprise"))
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_validates_timeout(self):
+        self.client.login(username="alice@example.org", password="password")
+        for timeout in ["1", "31536001", "a"]:
+            r = self.client.post(self.url, self._payload(timeout=timeout))
+            self.assertEqual(r.status_code, 400)
+
+    def test_it_validates_cron_expression(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, self._payload(schedule="* * *"))
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_validates_tz(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, self._payload(tz="Etc/Surprise"))
+        self.assertEqual(r.status_code, 400)
 
     def test_team_access_works(self):
         self.client.login(username="bob@example.org", password="password")
-        self.client.post(self.url)
+        self.client.post(self.url, self._payload())
 
         check = Check.objects.get()
         # Added by bob, but should belong to alice (bob has team access)
@@ -37,7 +98,7 @@ class AddCheckTestCase(BaseTestCase):
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")
-        r = self.client.post(self.url)
+        r = self.client.post(self.url, self._payload())
         self.assertEqual(r.status_code, 403)
 
     def test_it_obeys_check_limit(self):
@@ -45,5 +106,5 @@ class AddCheckTestCase(BaseTestCase):
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url)
+        r = self.client.post(self.url, self._payload())
         self.assertEqual(r.status_code, 400)

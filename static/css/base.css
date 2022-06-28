@@ -257,3 +257,13 @@ pre {
 .btn:active:focus {
     outline: 0;
 }
+
+/* no up/down buttons for number fields */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}

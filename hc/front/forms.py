@@ -75,6 +75,20 @@ class NameTagsForm(forms.Form):
         return " ".join(result)
 
 
+class AddCheckForm(NameTagsForm):
+    kind = forms.ChoiceField(choices=(("simple", "simple"), ("cron", "cron")))
+    timeout = forms.IntegerField(min_value=60, max_value=31536000)
+    schedule = forms.CharField(max_length=100, validators=[CronExpressionValidator()])
+    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
+    grace = forms.IntegerField(min_value=60, max_value=31536000)
+
+    def clean_timeout(self):
+        return td(seconds=self.cleaned_data["timeout"])
+
+    def clean_grace(self):
+        return td(seconds=self.cleaned_data["grace"])
+
+
 class FilteringRulesForm(forms.Form):
     filter_by_subject = forms.ChoiceField(choices=(("no", "no"), ("yes", "yes")))
     subject = forms.CharField(required=False, max_length=200)
