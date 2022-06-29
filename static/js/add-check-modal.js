@@ -1,7 +1,6 @@
 $(function () {
     var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
     var modal = $("#add-check-modal");
-    var timezones = document.getElementById("all-timezones").textContent;
     var period = document.getElementById("add-check-period");
     var periodUnit = document.getElementById("add-check-period-unit");
     var scheduleField = document.getElementById("add-check-schedule");
@@ -24,13 +23,6 @@ $(function () {
         options: $("#my-checks-tags div").map(divToOption).get()
     });
 
-    $("#add-check-tz").selectize({
-        labelField: "value",
-        searchField: ["value"],
-        options: timezones.split(",").map(tz => {return {value: tz}})
-    });
-
-
     function updateScheduleExtras() {
         var kind = $('#add-check-modal input[name=kind]:checked').val();
         modal.removeClass("cron").removeClass("simple").addClass(kind);
@@ -46,6 +38,7 @@ $(function () {
     modal.on("shown.bs.modal", function() {
         updateScheduleExtras();
         validateSchedule();
+        $("#add-check-tz")[0].selectize.setValue("UTC", true);
         $("#add-check-name").focus();
     });
 

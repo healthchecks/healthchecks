@@ -86,15 +86,7 @@
                             <div class="form-group">
                                 <label for="tz">Server's Time Zone</label>
                                 <br />
-                                <select
-                                    id="tz"
-                                    name="tz"
-                                    class="selectpicker form-control"
-                                    data-live-search="true">
-                                    <option>UTC</option>
-                                    {% for tz in timezones %}
-                                    <option>{{ tz }}</option>{% endfor %}
-                                </select>
+                                <select id="tz" name="tz" class="form-control"></select>
                             </div>
                         </div>
                         <div class="col-md-4">

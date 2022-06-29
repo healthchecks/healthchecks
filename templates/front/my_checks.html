@@ -91,6 +91,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script id="all-timezones" type="data">UTC,{{ timezones|join:"," }}</script>
 {% compress js %}
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -104,5 +105,6 @@
 <script src="{% static 'js/ping_details.js' %}"></script>
 <script src="{% static 'js/checks.js' %}"></script>
 <script src="{% static 'js/add-check-modal.js' %}"></script>
+<script src="{% static 'js/initialize-timezone-selects.js' %}"></script>
 {% endcompress %}
 {% endblock %}

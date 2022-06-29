@@ -34,7 +34,7 @@ $(function () {
         currentPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(this.dataset.schedule);
-        $("#tz").selectpicker("val", this.dataset.tz);
+        $("#tz")[0].selectize.setValue(this.dataset.tz, true);
         var minutes = parseInt(this.dataset.grace / 60);
         $("#update-timeout-grace-cron").val(minutes);
         updateCronPreview();
