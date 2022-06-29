@@ -15,6 +15,7 @@ $(function () {
     $("#add-check-tags").selectize({
         create: true,
         createOnBlur: true,
+        selectOnTab: false,
         delimiter: " ",
         labelField: "value",
         searchField: ["value"],
@@ -26,7 +27,6 @@ $(function () {
     $("#add-check-tz").selectize({
         labelField: "value",
         searchField: ["value"],
-        selectOnTab: true,
         options: timezones.split(",").map(tz => {return {value: tz}})
     });
 

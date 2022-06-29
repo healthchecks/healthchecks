@@ -18,6 +18,7 @@ $(function () {
     $("#update-tags-input").selectize({
         create: true,
         createOnBlur: true,
+        selectOnTab: false,
         delimiter: " ",
         labelField: "value",
         searchField: ["value"],
