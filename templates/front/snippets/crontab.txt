@@ -1,2 +1,0 @@
-# m h dom mon dow command
-  8 6 *   *   *   /home/user/backup.sh && curl -fsS -m 10 --retry 5 -o /dev/null PING_URL

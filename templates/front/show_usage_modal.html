@@ -93,10 +93,12 @@
                     </div>
                     <div class="tab-pane" id="email">
                         <p>
-                        As an alternative to HTTP/HTTPS requests,
-                        you can "ping" this check by sending an
-                        email message to
-                        <code class="em">{{ check.email }}</code>
+                            Signal success or failure by sending an
+                            email message to <a href="mailto:{{ check.email }}">{{ check.email }}</a>.
+                        </p>
+                        <p>
+                            <a href="{% url 'hc-serve-doc' 'email' %}">Read more</a>
+                            about pinging via email.
                         </p>
                     </div>
                     {% endwith %}
