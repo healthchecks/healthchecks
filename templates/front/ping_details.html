@@ -1,6 +1,8 @@
 <div class="modal-body">
     <h3>Ping #{{ ping.n }}
-        {% if ping.exitstatus > 0 %}
+        {% if ping.kind == "ign" %}
+        <span class="text-muted">(ignored)</span>
+        {% elif ping.exitstatus > 0 %}
         <span class="text-danger">(failure, exit status {{ ping.exitstatus }})</span>
         {% elif ping.exitstatus == 0 %}
         <span class="text-success">(exit status 0)</span>
@@ -8,8 +10,6 @@
         <span class="text-danger">(received via the <code>/fail</code> endpoint)</span>
         {% elif ping.kind == "start" %}
         <span class="text-success">(received via the <code>/start</code> endpoint)</span>
-        {% elif ping.kind == "ign" %}
-        <span class="text-muted">(ignored)</span>
         {% endif %}
     </h3>
 

@@ -223,3 +223,15 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.assertIn("The request body data is being processed", email.body)
         self.assertIn("The request body data is being processed", html)
+
+    def test_it_shows_ignored_nonzero_exitstatus(self):
+        self.ping.kind = "ign"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        self.assertIn("Ignored", email.body)
+        self.assertIn("Ignored", html)

@@ -38,14 +38,14 @@
 {% if ping %}
     {% line %}Last ping: {{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}{% endline %}
 
-    {% if ping.exitstatus >= 0 %}
+    {% if ping.kind == "ign" %}
+        {% line %}Last ping type: Ignored{% endline %}
+    {% elif ping.exitstatus >= 0 %}
         {% line %}Last ping type: Exit status {{ ping.exitstatus }}{% endline %}
     {% elif ping.kind == "fail" %}
         {% line %}Last ping type: Failure{% endline %}
     {% elif ping.kind == "start" %}
         {% line %}Last ping type: Started{% endline %}
-    {% elif ping.kind == "ign" %}
-        {% line %}Last ping type: Ignored{% endline %}
     {% else %}
         {% line %}Last ping type: Success{% endline %}
     {% endif %}

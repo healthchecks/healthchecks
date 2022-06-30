@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Implement the "Add Check" dialog
 - Include last ping type in Slack, Mattermost, Discord notifications
 
+### Bug Fixes
+- Fix the display of ignored pings with non-zero exit status
+
 ## v2.2.1 - 2022-06-13
 
 ### Improvements

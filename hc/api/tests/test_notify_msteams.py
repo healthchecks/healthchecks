@@ -97,7 +97,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(facts["Last Ping:"], "Failure, an hour ago")
 
     @patch("hc.api.transports.requests.request")
-    def test_it_handles_last_ping_ign_nonzero_exitstatus(self, mock_post):
+    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "ign"

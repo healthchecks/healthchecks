@@ -232,3 +232,10 @@ class PingDetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "please check back later", status_code=200)
+
+    def test_it_shows_ignored_nonzero_exitstatus(self):
+        Ping.objects.create(owner=self.check, n=1, kind="ign", exitstatus=42)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "(ignored)", status_code=200)

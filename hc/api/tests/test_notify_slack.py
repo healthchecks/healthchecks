@@ -144,7 +144,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.requests.request")
-    def test_it_handles_last_ping_ign_nonzero_exitstatus(self, mock_post):
+    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 

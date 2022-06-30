@@ -127,3 +127,12 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
+
+    def test_it_shows_ignored_nonzero_exitstatus(self):
+        self.ping.kind = "ign"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "Ignored", status_code=200)

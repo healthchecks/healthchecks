@@ -49,14 +49,14 @@
             <td></td>
             <td></td>
             <td class="event">
-                {% if event.exitstatus %}
+                {% if event.kind == "ign" %}
+                <span class="label label-ign">Ignored</span>
+                {% elif event.exitstatus %}
                 <span class="label label-danger">Status {{ event.exitstatus }}</span>
                 {% elif event.kind == "fail" %}
                 <span class="label label-danger">Failure</span>
                 {% elif event.kind == "start" %}
                 <span class="label label-start">Started</span>
-                {% elif event.kind == "ign" %}
-                <span class="label label-ign">Ignored</span>
                 {% else %}
                 <span class="label label-success">OK</span>
                 {% endif %}

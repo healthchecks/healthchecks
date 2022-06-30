@@ -66,7 +66,11 @@
         </td>
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
             <b>Last Ping Type</b><br>
-            {% if ping.exitstatus > 0 %}
+            {% if ping.kind == "ign" %}
+            <span style="background-color: #eeeeee; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Ignored
+            </span>
+            {% elif ping.exitstatus > 0 %}
             <span style="background-color: #f2dede; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
                 Exit status {{ ping.exitstatus }}
             </span>
@@ -81,10 +85,6 @@
             {% elif ping.kind == "start" %}
             <span style="background-color: #dff0d8; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
                 Started
-            </span>
-            {% elif ping.kind == "ign" %}
-            <span style="background-color: #eeeeee; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
-                Ignored
             </span>
             {% else %}
             <span style="background-color: #dff0d8; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">

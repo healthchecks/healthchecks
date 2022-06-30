@@ -81,3 +81,16 @@ class StatusSingleTestCase(BaseTestCase):
         self.assertEqual(doc["status"], "paused")
         self.assertIn("will ignore pings until resumed", doc["status_text"])
         self.assertNotIn("resume-btn", doc["status_text"])
+
+    def test_it_shows_ignored_nonzero_exitstatus(self):
+        p = Ping(owner=self.check)
+        p.n = 1
+        p.kind = "ign"
+        p.exitstatus = 123
+        p.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        doc = r.json()
+
+        self.assertTrue("Ignored" in doc["events"])
