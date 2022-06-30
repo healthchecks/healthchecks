@@ -42,37 +42,6 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.requests.request")
-    def test_discord(self, mock_post):
-        v = json.dumps({"webhook": {"url": "123"}})
-        self._setup_data("discord", v)
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
-
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
-        attachment = payload["attachments"][0]
-        fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Last Ping"], "an hour ago")
-
-    @patch("hc.api.transports.requests.request")
-    def test_discord_rewrites_discordapp_com(self, mock_post):
-        v = json.dumps({"webhook": {"url": "https://discordapp.com/foo"}})
-        self._setup_data("discord", v)
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
-
-        args, kwargs = mock_post.call_args
-        url = args[1]
-
-        # discordapp.com is deprecated. For existing webhook URLs, wwe should
-        # rewrite discordapp.com to discord.com:
-        self.assertEqual(url, "https://discord.com/foo/slack")
-
-    @patch("hc.api.transports.requests.request")
     def test_call(self, mock_post):
         self.profile.call_limit = 1
         self.profile.save()

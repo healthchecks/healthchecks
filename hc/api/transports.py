@@ -101,6 +101,12 @@ class Transport(object):
 
         return down_siblings
 
+    def last_ping(self, check):
+        """Return the last Ping object for this check."""
+
+        if check.pk:
+            return check.ping_set.order_by("created").last()
+
 
 class Email(Transport):
     def notify(self, check, notification=None) -> None:
@@ -127,11 +133,7 @@ class Email(Transport):
         except Profile.DoesNotExist:
             projects = None
 
-        ping = None
-        # Look up the last ping only if the Check instance has pk
-        if check.pk:
-            ping = check.ping_set.order_by("created").last()
-
+        ping = self.last_ping(check)
         body = None
         if ping and ping.has_body():
             body = ping.get_body()
@@ -335,7 +337,7 @@ class Slack(HttpTransport):
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
 
-        text = tmpl("slack_message.json", check=check)
+        text = tmpl("slack_message.json", check=check, ping=self.last_ping(check))
         payload = json.loads(text)
         self.post(self.channel.slack_webhook_url, json=payload)
 
@@ -350,7 +352,7 @@ class Mattermost(HttpTransport):
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
 
-        text = tmpl("slack_message.json", check=check)
+        text = tmpl("slack_message.json", check=check, ping=self.last_ping(check))
         payload = json.loads(text)
         self.post(self.channel.slack_webhook_url, json=payload)
 
@@ -572,7 +574,7 @@ class Matrix(HttpTransport):
 
 class Discord(HttpTransport):
     def notify(self, check, notification=None) -> None:
-        text = tmpl("slack_message.json", check=check)
+        text = tmpl("slack_message.json", check=check, ping=self.last_ping(check))
         payload = json.loads(text)
         url = self.channel.discord_webhook_url + "/slack"
         self.post(url, json=payload)

@@ -47,14 +47,19 @@
             {% endif %}
 
             {"title": "Last Ping",
-             {% if check.last_ping %}
-               "value": "{{ check.last_ping|naturaltime }}",
-             {% else %}
-                "value": "Never",
-             {% endif %}
+            {% if ping is None %}
+             "value": "Never",
+            {% elif ping.kind == "fail" or ping.exitstatus > 0 %}
+             "value": "Failure, {{ check.last_ping|naturaltime }}",
+            {% elif ping.kind == "start" %}
+             "value": "Start, {{ check.last_ping|naturaltime }}",
+            {% elif ping.kind == "ign" %}
+             "value": "Ignored, {{ check.last_ping|naturaltime }}",
+            {% else %}
+             "value": "Success, {{ check.last_ping|naturaltime }}",
+            {% endif %}
              "short": true
             },
-
 
             {"title": "Total Pings",
              "value": "{{ check.n_pings }}",

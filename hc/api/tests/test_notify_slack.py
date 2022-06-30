@@ -5,7 +5,7 @@ import json
 from unittest.mock import patch
 
 from django.utils.timezone import now
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
 from requests.exceptions import Timeout
 from django.test.utils import override_settings
@@ -19,6 +19,10 @@ class NotifySlackTestCase(BaseTestCase):
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=61)
+        self.ping.save()
+
         self.channel = Channel(project=self.project)
         self.channel.kind = "slack"
         self.channel.value = value
@@ -28,18 +32,20 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.requests.request")
-    def test_slack(self, mock_post):
-        self._setup_data("123")
+    def test_it_works(self, mock_post):
+        self._setup_data("https://example.org")
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
         args, kwargs = mock_post.call_args
+        self.assertEqual(args[1], "https://example.org")
+
         payload = kwargs["json"]
         attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Last Ping"], "an hour ago")
+        self.assertEqual(fields["Last Ping"], "Success, an hour ago")
 
         # The payload should not contain check's code
         serialized = json.dumps(payload)
@@ -118,3 +124,20 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_last_ping_fail(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "fail"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Last Ping"], "Failure, an hour ago")

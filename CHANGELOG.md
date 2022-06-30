@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Update Dockerfile to start SMTP listener (#668)
 - Implement the "Add Check" dialog
+- Include last ping type in Slack, Mattermost, Discord notifications
 
 ## v2.2.1 - 2022-06-13
 
