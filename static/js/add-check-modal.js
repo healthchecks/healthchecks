@@ -33,6 +33,7 @@ $(function () {
         }
     }
 
+    // Show and hide fields when user clicks simple/cron radio buttons
     $("#add-check-modal input[type=radio][name=kind]").change(updateScheduleExtras);
 
     modal.on("shown.bs.modal", function() {
@@ -66,16 +67,15 @@ $(function () {
     function validateSchedule() {
         var schedule = scheduleField.value;
 
-        // Don't preview if the schedule has not changed
+        // Return early if the schedule has not changed
         if (schedule == currentSchedule)
             return;
 
         currentSchedule = schedule;
         var token = $('input[name=csrfmiddlewaretoken]').val();
         $.getJSON(base + "/checks/validate_schedule/", {schedule: schedule}, function(data) {
-            if (schedule != currentSchedule) {
+            if (schedule != currentSchedule)
                 return;  // ignore stale results
-            }
 
             scheduleField.setCustomValidity(data.result ? "" : "Please enter a valid cron expression");
         });
