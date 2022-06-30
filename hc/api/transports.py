@@ -783,7 +783,7 @@ class MsTeams(HttpTransport):
         if not settings.MSTEAMS_ENABLED:
             raise TransportError("MS Teams notifications are not enabled.")
 
-        text = tmpl("msteams_message.json", check=check)
+        text = tmpl("msteams_message.json", check=check, ping=self.last_ping(check))
         payload = json.loads(text)
 
         # MS Teams escapes HTML special characters in the summary field.

@@ -141,3 +141,21 @@ class NotifySlackTestCase(BaseTestCase):
         attachment = kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Failure, an hour ago")
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_last_ping_ign_nonzero_exitstatus(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "ign"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Last Ping"], "Ignored, an hour ago")

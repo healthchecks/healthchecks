@@ -49,14 +49,14 @@
             {"title": "Last Ping",
             {% if ping is None %}
              "value": "Never",
-            {% elif ping.kind == "fail" or ping.exitstatus > 0 %}
-             "value": "Failure, {{ check.last_ping|naturaltime }}",
-            {% elif ping.kind == "start" %}
-             "value": "Start, {{ check.last_ping|naturaltime }}",
             {% elif ping.kind == "ign" %}
-             "value": "Ignored, {{ check.last_ping|naturaltime }}",
+             "value": "Ignored, {{ ping.created|naturaltime }}",
+            {% elif ping.kind == "fail" or ping.exitstatus > 0 %}
+             "value": "Failure, {{ ping.created|naturaltime }}",
+            {% elif ping.kind == "start" %}
+             "value": "Start, {{ ping.created|naturaltime }}",
             {% else %}
-             "value": "Success, {{ check.last_ping|naturaltime }}",
+             "value": "Success, {{ ping.created|naturaltime }}",
             {% endif %}
              "short": true
             },

@@ -6,7 +6,7 @@ from datetime import timedelta as td
 from unittest.mock import patch
 
 from django.utils.timezone import now
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
 from django.test.utils import override_settings
 
@@ -20,6 +20,10 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=61)
+        self.ping.save()
+
         self.channel = Channel(project=self.project)
         self.channel.kind = "msteams"
         self.channel.value = "http://example.com/webhook"
@@ -27,7 +31,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.requests.request")
-    def test_msteams(self, mock_post):
+    def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
         self.check.name = "_underscores_ & more"
@@ -43,6 +47,9 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         # title should have any special HTML characters escaped
         self.assertEqual(payload["summary"], "“_underscores_ & more” is DOWN.")
         self.assertEqual(payload["title"], "“_underscores_ &amp; more” is DOWN.")
+
+        facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
+        self.assertEqual(facts["Last Ping:"], "Success, an hour ago")
 
         # The payload should not contain check's code
         serialized = json.dumps(payload)
@@ -73,3 +80,34 @@ class NotifyMsTeamsTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "MS Teams notifications are not enabled.")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_last_ping_fail(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "fail"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
+        self.assertEqual(facts["Last Ping:"], "Failure, an hour ago")
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_last_ping_ign_nonzero_exitstatus(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "ign"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
+        self.assertEqual(facts["Last Ping:"], "Ignored, an hour ago")
