@@ -909,6 +909,13 @@ class Signal(Transport):
                         self.channel.send_signal_captcha_alert(result["token"], raw)
                         raise TransportError("CAPTCHA proof required")
 
+                    # signal-cli >= 0.10.5 use type=RATE_LIMIT_FAILURE for
+                    # CAPTCHA challenges
+                    if result.get("type") == "RATE_LIMIT_FAILURE" and "token" in result:
+                        raw = reply_bytes.decode()
+                        self.channel.send_signal_captcha_alert(result["token"], raw)
+                        raise TransportError("CAPTCHA proof required")
+
                 code = reply["error"].get("code")
                 raise TransportError("signal-cli call failed (%s)" % code)
 
