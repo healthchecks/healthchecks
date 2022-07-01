@@ -80,15 +80,18 @@ def get_object(code, n):
 
 def put_object(code, n, data):
     key = "%s/%s" % (code, enc(n))
+    retries = 10
     while True:
         try:
             client().put_object(settings.S3_BUCKET, key, BytesIO(data), len(data))
             break
         except S3Error as e:
-            if e.code != "InternalError":
-                raise e
+            if e.code == "InternalError" and retries > 0:
+                retries -= 1
+                print("InternalError, retrying (retries=%d)..." % retries)
+                continue
 
-            print("InternalError, retrying...")
+            raise e
 
 
 def _remove_objects(code, upto_n):
