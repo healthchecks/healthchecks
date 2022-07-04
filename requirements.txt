@@ -1,4 +1,4 @@
-cron-descriptor==1.2.24
+cron-descriptor==1.2.30
 cronsim==2.1
 Django==4.0.5
 django-compressor==4.0
