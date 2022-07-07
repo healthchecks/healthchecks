@@ -13,6 +13,7 @@
 
 #checks-table .indicator-cell {
     text-align: center;
+    margin: 0 auto;
 }
 
 #checks-table th {

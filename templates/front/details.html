@@ -116,11 +116,7 @@
             <h2>Current Status</h2>
             <div id="current-status-indicator">
                 <span id="current-status-icon" class="status ic-{{ check.get_status }}"></span>
-                <div id="current-status-spinner" class="spinner {% if check.last_start %}started{% endif %}">
-                    <div class="d1"></div>
-                    <div class="d2"></div>
-                    <div class="d3"></div>
-                </div>
+                <div id="current-status-spinner" class="spinner {% if check.last_start %}started{% endif %}"></div>
             </div>
             <div id="current-status-content">
                 <p id="current-status-text">{% include "front/log_status_text.html" %}</p>

@@ -58,7 +58,7 @@ Each check is always in one of the following states, depicted by a status icon:
     not yet ready, you can pause monitoring of the corresponding check temporarily to
     avoid unwanted alerts about a known issue.
 
-<span class="status ic-up"></span><div class="spinner started"><div class="d1"></div><div class="d2"></div><div class="d3"></div></div>
+<span class="status ic-up"></span><div class="spinner started"></div>
 :   Additionally, if the most recent received signal is a "start" signal,
     this will be indicated by three animated dots under check's status icon.
 

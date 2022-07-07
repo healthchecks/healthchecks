@@ -63,9 +63,7 @@
     <tr id="{{ check.code }}" class="checks-row" {% if check in hidden_checks %}style="display: none"{% endif %}>
         <td class="indicator-cell">
             <span class="status ic-{{ check.get_status }}" data-toggle="tooltip"></span>
-            <div class="spinner {% if check.last_start %}started{% endif %}">
-                <div></div><div></div><div></div>
-            </div>
+            <div class="spinner {% if check.last_start %}started{% endif %}"></div>
         </td>
         <td>
             <div data-name="{{ check.name }}"
