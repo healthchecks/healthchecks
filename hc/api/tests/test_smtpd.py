@@ -12,6 +12,28 @@ Subject: %s
 ...
 """.strip()
 
+HTML_PAYLOAD_TMPL = """
+From: "User Name" <username@gmail.com>
+To: "John Smith" <john@example.com>
+Subject: %s
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ=="
+
+--=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+Plain text here
+
+--=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ==
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+%s
+
+--=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ==--
+""".strip()
+
 
 @override_settings(S3_BUCKET=None)
 class SmtpdTestCase(BaseTestCase):
@@ -30,7 +52,8 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, None)
 
     def test_it_handles_subject_filter_match(self):
-        self.check.subject = "SUCCESS"
+        self.check.filter_subject = True
+        self.check.success_kw = "SUCCESS"
         self.check.save()
 
         body = PAYLOAD_TMPL % "[SUCCESS] Backup completed"
@@ -41,8 +64,43 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, None)
 
+    def test_it_handles_body_filter_match(self):
+        self.check.filter_body = True
+        self.check.success_kw = "SUCCESS"
+        self.check.save()
+
+        body = PAYLOAD_TMPL % "Subject goes here"
+        body += "\nBody goes here, SUCCESS.\n"
+        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.kind, None)
+
+    def test_it_handles_html_body_filter_match(self):
+        self.check.filter_body = True
+        self.check.success_kw = "SUCCESS"
+        self.check.save()
+
+        body = HTML_PAYLOAD_TMPL % ("Subject", "<b>S</b>UCCESS")
+        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.kind, None)
+
+    def test_it_handles_body_filter_miss(self):
+        self.check.filter_body = True
+        self.check.success_kw = "SUCCESS"
+        self.check.save()
+
+        body = PAYLOAD_TMPL % "Subject goes here"
+        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.kind, "ign")
+
     def test_it_handles_subject_filter_miss(self):
-        self.check.subject = "SUCCESS"
+        self.check.filter_subject = True
+        self.check.success_kw = "SUCCESS"
         self.check.save()
 
         body = PAYLOAD_TMPL % "[FAIL] Backup did not complete"
@@ -54,7 +112,8 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, "ign")
 
     def test_it_handles_subject_fail_filter_match(self):
-        self.check.subject_fail = "FAIL"
+        self.check.filter_subject = True
+        self.check.failure_kw = "FAIL"
         self.check.save()
 
         body = PAYLOAD_TMPL % "[FAIL] Backup did not complete"
@@ -66,7 +125,8 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, "fail")
 
     def test_it_handles_subject_fail_filter_miss(self):
-        self.check.subject_fail = "FAIL"
+        self.check.filter_subject = True
+        self.check.failure_kw = "FAIL"
         self.check.save()
 
         body = PAYLOAD_TMPL % "[SUCCESS] Backup completed"
@@ -78,7 +138,8 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, "ign")
 
     def test_it_handles_multiple_subject_keywords(self):
-        self.check.subject = "SUCCESS, OK"
+        self.check.filter_subject = True
+        self.check.success_kw = "SUCCESS, OK"
         self.check.save()
 
         body = PAYLOAD_TMPL % "[OK] Backup completed"
@@ -90,7 +151,8 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, None)
 
     def test_it_handles_multiple_subject_fail_keywords(self):
-        self.check.subject_fail = "FAIL, WARNING"
+        self.check.filter_subject = True
+        self.check.failure_kw = "FAIL, WARNING"
         self.check.save()
 
         body = PAYLOAD_TMPL % "[WARNING] Backup did not complete"
@@ -102,8 +164,9 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, "fail")
 
     def test_it_handles_subject_fail_before_success(self):
-        self.check.subject = "SUCCESS"
-        self.check.subject_fail = "FAIL"
+        self.check.filter_subject = True
+        self.check.success_kw = "SUCCESS"
+        self.check.failure_kw = "FAIL"
         self.check.save()
 
         subject = "[SUCCESS] 1 Backup completed, [FAIL] 1 Backup did not complete"

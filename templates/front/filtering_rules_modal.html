@@ -39,59 +39,61 @@
 
                 <div class="modal-body">
                     <h2>Inbound Emails</h2>
-                    <label class="radio-container">
+                    <label class="checkbox-container">
                         <input
-                            type="radio"
-                            name="filter_by_subject"
-                            value="no"
-                            {% if not check.subject and not check.subject_fail %}checked{% endif %} />
-                        <span class="radiomark"></span>
-                        No filtering. Treat all emails as "success"
-                    </label>
-                    <label class="radio-container">
-                        <input
-                            type="radio"
-                            name="filter_by_subject"
-                            value="yes"
-                            {% if check.subject or check.subject_fail %}checked{% endif %} />
-                        <span class="radiomark"></span>
-                        Filter by keywords in the Subject line:
+                            type="checkbox"
+                            class="filter-toggle"
+                            name="filter_subject"
+                            {% if check.filter_subject %}checked{% endif %} />
+                        <span class="checkmark"></span>
+                        Filter by keywords in the Subject line
                     </label>
 
+                    <label class="checkbox-container">
+                        <input
+                            type="checkbox"
+                            class="filter-toggle"
+                            name="filter_body"
+                            {% if check.filter_body %}checked{% endif %} />
+                        <span class="checkmark"></span>
+                        Filter by keywords in the message body
+                    </label>
 
                     <div class="form-group">
-                        <label for="update-name-input" class="col-sm-4 control-label">
+                        <label for="success_kw" class="col-sm-4 control-label">
                             Success Keywords
                         </label>
                         <div class="col-sm-7">
                             <input
-                                name="subject"
+                                id="success_kw"
+                                name="success_kw"
                                 type="text"
                                 maxlength="200"
-                                value="{{ check.subject }}"
-                                {% if not check.subject and not check.subject_fail %}disabled{% endif %}
-                                class="form-control filter-by-subject" />
+                                value="{{ check.success_kw }}"
+                                {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
+                                class="form-control filter-kw" />
                             <span class="help-block">
-                                Comma-separated list of keywords. If Subject contains
-                                any of the keywords, treat it as "success".
+                                Comma-separated list of keywords. If subject or body
+                                contains any of the keywords, classify the email as "success".
                             </span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="update-name-input" class="col-sm-4 control-label">
+                        <label for="failure_kw" class="col-sm-4 control-label">
                             Failure Keywords
                         </label>
                         <div class="col-sm-7">
                             <input
-                                name="subject_fail"
+                                id="failure_kw"
+                                name="failure_kw"
                                 type="text"
                                 maxlength="200"
-                                value="{{ check.subject_fail }}"
-                                {% if not check.subject and not check.subject_fail %}disabled{% endif %}
-                                class="form-control filter-by-subject" />
+                                value="{{ check.failure_kw }}"
+                                {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
+                                class="form-control filter-kw" />
                             <span class="help-block">
-                                Comma-separated list of keywords. If Subject contains
-                                any of the keywords, treat it as "failure".
+                                Comma-separated list of keywords. If subject or body
+                                contains any of the keywords, classify the email as "failure".
                             </span>
                         </div>
                     </div>

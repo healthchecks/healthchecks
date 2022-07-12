@@ -90,9 +90,10 @@ class AddCheckForm(NameTagsForm):
 
 
 class FilteringRulesForm(forms.Form):
-    filter_by_subject = forms.ChoiceField(choices=(("no", "no"), ("yes", "yes")))
-    subject = forms.CharField(required=False, max_length=200)
-    subject_fail = forms.CharField(required=False, max_length=200)
+    filter_subject = forms.BooleanField(required=False)
+    filter_body = forms.BooleanField(required=False)
+    success_kw = forms.CharField(required=False, max_length=200)
+    failure_kw = forms.CharField(required=False, max_length=200)
     methods = forms.ChoiceField(required=False, choices=(("", "Any"), ("POST", "POST")))
     manual_resume = forms.BooleanField(required=False)
 

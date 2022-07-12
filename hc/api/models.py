@@ -98,6 +98,10 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     subject = models.CharField(max_length=200, blank=True)
     subject_fail = models.CharField(max_length=200, blank=True)
+    filter_subject = models.BooleanField(null=True)
+    filter_body = models.BooleanField(null=True)
+    success_kw = models.CharField(max_length=200, blank=True, null=True)
+    failure_kw = models.CharField(max_length=200, blank=True, null=True)
     methods = models.CharField(max_length=30, blank=True)
     manual_resume = models.BooleanField(default=False)
 

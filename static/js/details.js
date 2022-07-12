@@ -182,9 +182,9 @@ $(function () {
 
 
     // Enable/disable fields in the "Filtering Rules" modal
-    $("input[type=radio][name=filter_by_subject]").on("change", function() {
-        var enableInputs = this.value == "yes";
-        $(".filter-by-subject").prop("disabled", !enableInputs);
+    $("input.filter-toggle").on("change", function() {
+        var enableInputs = $("input.filter-toggle:checked").length > 0;
+        $(".filter-kw").prop("disabled", !enableInputs);
     });
 
 });

@@ -12,8 +12,10 @@ class FilteringRulesTestCase(BaseTestCase):
 
     def test_it_works(self):
         payload = {
-            "subject": "SUCCESS",
-            "subject_fail": "ERROR",
+            "filter_subject": "on",
+            "filter_body": "on",
+            "success_kw": "SUCCESS",
+            "failure_kw": "ERROR",
             "methods": "POST",
             "manual_resume": "1",
             "filter_by_subject": "yes",
@@ -24,8 +26,10 @@ class FilteringRulesTestCase(BaseTestCase):
         self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
-        self.assertEqual(self.check.subject, "SUCCESS")
-        self.assertEqual(self.check.subject_fail, "ERROR")
+        self.assertTrue(self.check.filter_subject)
+        self.assertTrue(self.check.filter_body)
+        self.assertEqual(self.check.success_kw, "SUCCESS")
+        self.assertEqual(self.check.failure_kw, "ERROR")
         self.assertEqual(self.check.methods, "POST")
         self.assertTrue(self.check.manual_resume)
 
@@ -33,7 +37,7 @@ class FilteringRulesTestCase(BaseTestCase):
         self.check.method = "POST"
         self.check.save()
 
-        payload = {"subject": "SUCCESS", "methods": "", "filter_by_subject": "yes"}
+        payload = {"methods": "", "filter_by_subject": "yes"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
@@ -42,25 +46,22 @@ class FilteringRulesTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.methods, "")
 
-    def test_it_clears_subject(self):
-        self.check.subject = "SUCCESS"
-        self.check.subject_fail = "ERROR"
+    def test_it_clears_filtering_fields(self):
+        self.check.filter_subject = True
+        self.check.filter_body = True
+        self.check.success_kw = "SUCCESS"
+        self.check.failure_kw = "ERROR"
         self.check.save()
 
-        payload = {
-            "methods": "",
-            "filter_by_subject": "no",
-            "subject": "foo",
-            "subject_fail": "bar",
-        }
-
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, data=payload)
+        r = self.client.post(self.url, data={"methods": ""})
         self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
-        self.assertEqual(self.check.subject, "")
-        self.assertEqual(self.check.subject_fail, "")
+        self.assertFalse(self.check.filter_subject)
+        self.assertFalse(self.check.filter_body)
+        self.assertEqual(self.check.success_kw, "")
+        self.assertEqual(self.check.failure_kw, "")
 
     def test_it_clears_manual_resume_flag(self):
         self.check.manual_resume = True

@@ -415,8 +415,11 @@ def filtering_rules(request, code):
 
     form = forms.FilteringRulesForm(request.POST)
     if form.is_valid():
-        check.subject = form.cleaned_data["subject"]
-        check.subject_fail = form.cleaned_data["subject_fail"]
+        check.filter_subject = form.cleaned_data["filter_subject"]
+        check.filter_body = form.cleaned_data["filter_body"]
+        check.success_kw = form.cleaned_data["success_kw"]
+        check.failure_kw = form.cleaned_data["failure_kw"]
+
         check.methods = form.cleaned_data["methods"]
         check.manual_resume = form.cleaned_data["manual_resume"]
         check.save()
