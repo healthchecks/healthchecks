@@ -69,7 +69,7 @@
                                 name="success_kw"
                                 type="text"
                                 maxlength="200"
-                                value="{{ check.success_kw|default:'' }}"
+                                value="{{ check.success_kw }}"
                                 {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
                                 class="form-control filter-kw" />
                             <span class="help-block">
@@ -88,7 +88,7 @@
                                 name="failure_kw"
                                 type="text"
                                 maxlength="200"
-                                value="{{ check.failure_kw|default:'' }}"
+                                value="{{ check.failure_kw }}"
                                 {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
                                 class="form-control filter-kw" />
                             <span class="help-block">
