@@ -180,7 +180,10 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_bad_channel_code(self):
         payload = {"api_key": "X" * 32, "channels": "abc", "name": "New Name"}
-        r = self.post(self.check.code, payload,)
+        r = self.post(
+            self.check.code,
+            payload,
+        )
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
 
@@ -322,19 +325,36 @@ class UpdateCheckTestCase(BaseTestCase):
         r = self.post(self.check.code, {"api_key": "X" * 32, "methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
 
-    def test_it_sets_subject(self):
-        r = self.post(self.check.code, {"api_key": "X" * 32, "subject": "SUCCESS,COMPLETE"})
+    def test_it_sets_success_kw(self):
+        r = self.post(
+            self.check.code, {"api_key": "X" * 32, "subject": "SUCCESS,COMPLETE"}
+        )
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
-        self.assertEqual(self.check.subject, "SUCCESS,COMPLETE")
+        self.assertTrue(self.check.filter_subject)
+        self.assertEqual(self.check.success_kw, "SUCCESS,COMPLETE")
 
-    def test_it_sets_subject_fail(self):
-        r = self.post(self.check.code, {"api_key": "X" * 32, "subject_fail": "FAILED,FAILURE"})
+    def test_it_sets_failure_kw(self):
+        payload = {"api_key": "X" * 32, "subject_fail": "FAILED,FAILURE"}
+        r = self.post(self.check.code, payload)
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
-        self.assertEqual(self.check.subject_fail, "FAILED,FAILURE")
+        self.assertTrue(self.check.filter_subject)
+        self.assertEqual(self.check.failure_kw, "FAILED,FAILURE")
+
+    def test_it_unsets_filter_subject_flag(self):
+        self.check.filter_subject = True
+        self.check.success_kw = "SUCCESS"
+        self.check.save()
+
+        r = self.post(self.check.code, {"api_key": "X" * 32, "subject": ""})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertFalse(self.check.filter_subject)
+        self.assertEqual(self.check.success_kw, "")
 
     def test_it_accepts_60_days_timeout(self):
         payload = {"api_key": "X" * 32, "timeout": 60 * 24 * 3600}

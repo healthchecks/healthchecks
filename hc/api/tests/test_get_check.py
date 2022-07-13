@@ -19,8 +19,9 @@ class GetCheckTestCase(BaseTestCase):
         self.a1.status = "new"
         self.a1.tags = "a1-tag a1-additional-tag"
         self.a1.desc = "This is description"
-        self.a1.subject = "SUCCESS"
-        self.a1.subject_fail = "ERROR"
+        self.a1.filter_subject = True
+        self.a1.success_kw = "SUCCESS"
+        self.a1.failure_kw = "ERROR"
         self.a1.save()
 
         self.c1 = Channel.objects.create(project=self.project)

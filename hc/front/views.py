@@ -720,7 +720,12 @@ def copy(request, code):
     copied = Check(project=check.project)
     copied.set_name_slug(new_name)
     copied.desc, copied.tags = check.desc, check.tags
-    copied.subject, copied.subject_fail = check.subject, check.subject_fail
+
+    copied.filter_subject = check.filter_subject
+    copied.filter_body = check.filter_body
+    copied.success_kw = check.success_kw
+    copied.failure_kw = check.failure_kw
+
     copied.methods = check.methods
     copied.manual_resume = check.manual_resume
 

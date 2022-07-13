@@ -283,17 +283,19 @@ class CreateCheckTestCase(BaseTestCase):
         r = self.post({"methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
 
-    def test_it_sets_subject(self):
+    def test_it_sets_success_kw(self):
         r = self.post({"subject": "SUCCESS,COMPLETE"})
         self.assertEqual(r.status_code, 201)
         check = Check.objects.get()
-        self.assertEqual(check.subject, "SUCCESS,COMPLETE")
+        self.assertTrue(check.filter_subject)
+        self.assertEqual(check.success_kw, "SUCCESS,COMPLETE")
 
-    def test_it_sets_subject_fail(self):
+    def test_it_sets_failure_kw(self):
         r = self.post({"subject_fail": "FAILED,FAILURE"})
         self.assertEqual(r.status_code, 201)
         check = Check.objects.get()
-        self.assertEqual(check.subject_fail, "FAILED,FAILURE")
+        self.assertTrue(check.filter_subject)
+        self.assertEqual(check.failure_kw, "FAILED,FAILURE")
 
     def test_it_rejects_non_string_subject(self):
         self.post({"subject": False}, expect_fragment="subject is not a string")

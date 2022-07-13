@@ -8,8 +8,10 @@ class CopyCheckTestCase(BaseTestCase):
         self.check = Check(project=self.project)
         self.check.name = "Foo"
         self.check.slug = "foo"
-        self.check.subject = "success-keyword"
-        self.check.subject_fail = "failure-keyword"
+        self.check.filter_subject = True
+        self.check.filter_body = True
+        self.check.success_kw = "success-keyword"
+        self.check.failure_kw = "failure-keyword"
         self.check.methods = "POST"
         self.check.manual_resume = True
         self.check.save()
@@ -23,8 +25,10 @@ class CopyCheckTestCase(BaseTestCase):
 
         copy = Check.objects.get(name="Foo (copy)")
         self.assertEqual(copy.slug, "foo-copy")
-        self.assertEqual(copy.subject, "success-keyword")
-        self.assertEqual(copy.subject_fail, "failure-keyword")
+        self.assertTrue(copy.filter_subject)
+        self.assertTrue(copy.filter_body)
+        self.assertEqual(copy.success_kw, "success-keyword")
+        self.assertEqual(copy.failure_kw, "failure-keyword")
         self.assertEqual(copy.methods, "POST")
         self.assertTrue(copy.manual_resume)
 

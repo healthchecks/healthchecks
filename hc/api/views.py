@@ -172,11 +172,13 @@ def _update(check, spec):
         need_save = True
 
     if "subject" in spec:
-        check.subject = spec["subject"]
+        check.success_kw = spec["subject"]
+        check.filter_subject = bool(check.success_kw or check.failure_kw)
         need_save = True
 
     if "subject_fail" in spec:
-        check.subject_fail = spec["subject_fail"]
+        check.failure_kw = spec["subject_fail"]
+        check.filter_subject = bool(check.success_kw or check.failure_kw)
         need_save = True
 
     if need_save:

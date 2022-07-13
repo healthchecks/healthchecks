@@ -51,7 +51,7 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(bytes(ping.body_raw), b"hello world")
         self.assertEqual(ping.kind, None)
 
-    def test_it_handles_subject_filter_match(self):
+    def test_it_handles_success_filter_match(self):
         self.check.filter_subject = True
         self.check.success_kw = "SUCCESS"
         self.check.save()
@@ -64,7 +64,7 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, None)
 
-    def test_it_handles_body_filter_match(self):
+    def test_it_handles_success_filter_match_in_body(self):
         self.check.filter_body = True
         self.check.success_kw = "SUCCESS"
         self.check.save()
@@ -76,7 +76,7 @@ class SmtpdTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.kind, None)
 
-    def test_it_handles_html_body_filter_match(self):
+    def test_it_handles_success_body_filter_match_in_html_body(self):
         self.check.filter_body = True
         self.check.success_kw = "SUCCESS"
         self.check.save()
@@ -87,7 +87,7 @@ class SmtpdTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.kind, None)
 
-    def test_it_handles_body_filter_miss(self):
+    def test_it_handles_success_filter_miss(self):
         self.check.filter_body = True
         self.check.success_kw = "SUCCESS"
         self.check.save()
@@ -98,20 +98,7 @@ class SmtpdTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.kind, "ign")
 
-    def test_it_handles_subject_filter_miss(self):
-        self.check.filter_subject = True
-        self.check.success_kw = "SUCCESS"
-        self.check.save()
-
-        body = PAYLOAD_TMPL % "[FAIL] Backup did not complete"
-        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
-
-        ping = Ping.objects.latest("id")
-        self.assertEqual(ping.scheme, "email")
-        self.assertEqual(ping.ua, "Email from foo@example.org")
-        self.assertEqual(ping.kind, "ign")
-
-    def test_it_handles_subject_fail_filter_match(self):
+    def test_it_handles_failure_filter_match(self):
         self.check.filter_subject = True
         self.check.failure_kw = "FAIL"
         self.check.save()
@@ -124,7 +111,7 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, "fail")
 
-    def test_it_handles_subject_fail_filter_miss(self):
+    def test_it_handles_failure_filter_miss(self):
         self.check.filter_subject = True
         self.check.failure_kw = "FAIL"
         self.check.save()
@@ -137,7 +124,7 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, "ign")
 
-    def test_it_handles_multiple_subject_keywords(self):
+    def test_it_handles_multiple_success_keywords(self):
         self.check.filter_subject = True
         self.check.success_kw = "SUCCESS, OK"
         self.check.save()
@@ -150,7 +137,7 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, None)
 
-    def test_it_handles_multiple_subject_fail_keywords(self):
+    def test_it_handles_multiple_failure_keywords(self):
         self.check.filter_subject = True
         self.check.failure_kw = "FAIL, WARNING"
         self.check.save()
@@ -163,7 +150,7 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, "fail")
 
-    def test_it_handles_subject_fail_before_success(self):
+    def test_it_handles_failure_before_success(self):
         self.check.filter_subject = True
         self.check.success_kw = "SUCCESS"
         self.check.failure_kw = "FAIL"

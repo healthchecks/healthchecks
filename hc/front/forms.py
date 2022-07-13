@@ -97,18 +97,6 @@ class FilteringRulesForm(forms.Form):
     methods = forms.ChoiceField(required=False, choices=(("", "Any"), ("POST", "POST")))
     manual_resume = forms.BooleanField(required=False)
 
-    def clean_subject(self):
-        if self.cleaned_data["filter_by_subject"] == "yes":
-            return self.cleaned_data["subject"]
-
-        return ""
-
-    def clean_subject_fail(self):
-        if self.cleaned_data["filter_by_subject"] == "yes":
-            return self.cleaned_data["subject_fail"]
-
-        return ""
-
 
 class TimeoutForm(forms.Form):
     timeout = forms.IntegerField(min_value=60, max_value=31536000)

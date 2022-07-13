@@ -18,7 +18,6 @@ class FilteringRulesTestCase(BaseTestCase):
             "failure_kw": "ERROR",
             "methods": "POST",
             "manual_resume": "1",
-            "filter_by_subject": "yes",
         }
 
         self.client.login(username="alice@example.org", password="password")
@@ -79,11 +78,12 @@ class FilteringRulesTestCase(BaseTestCase):
         self.bobs_membership.save()
 
         payload = {
-            "subject": "SUCCESS",
-            "subject_fail": "ERROR",
+            "filter_subject": "on",
+            "filter_body": "on",
+            "success_kw": "SUCCESS",
+            "failure_kw": "ERROR",
             "methods": "POST",
             "manual_resume": "1",
-            "filter_by_subject": "yes",
         }
 
         self.client.login(username="bob@example.org", password="password")
