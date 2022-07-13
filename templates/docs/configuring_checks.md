@@ -79,6 +79,9 @@ signal. Likewise, if it contains any of the keywords listed in **Failure Keyword
 SITE_NAME will treat it as an explicit failure signal.
 For example, this is useful if your backup software sends an email after each backup
 run with a different subject line depending on success or failure.
+* **Filter by keywords in the message body**. Same as the previous option, but
+looks for the keywords in email message body. Supports both plain text and HTML
+email messages.
 * **Pinging a Paused Check**. Normally, when you ping a paused check, it leaves the
 paused state and goes into the "up" state (or the "down" state
 in case of [a failure signal](../signaling_failures/)).
