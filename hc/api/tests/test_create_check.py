@@ -20,7 +20,19 @@ class CreateCheckTestCase(BaseTestCase):
         return r
 
     def test_it_works(self):
-        r = self.post({"name": "Foo", "tags": "bar,baz", "timeout": 3600, "grace": 60})
+        r = self.post(
+            {
+                "name": "Foo",
+                "tags": "bar,baz",
+                "desc": "description goes here",
+                "timeout": 3600,
+                "grace": 60,
+                "success_kw": "SUCCESS",
+                "failure_kw": "FAILURE",
+                "filter_subject": True,
+                "filter_body": True,
+            }
+        )
 
         self.assertEqual(r.status_code, 201)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -30,9 +42,14 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(doc["name"], "Foo")
         self.assertEqual(doc["slug"], "foo")
         self.assertEqual(doc["tags"], "bar,baz")
+        self.assertEqual(doc["desc"], "description goes here")
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
         self.assertEqual(doc["methods"], "")
+        self.assertEqual(doc["success_kw"], "SUCCESS")
+        self.assertEqual(doc["failure_kw"], "FAILURE")
+        self.assertTrue(doc["filter_subject"])
+        self.assertTrue(doc["filter_body"])
 
         self.assertTrue("schedule" not in doc)
         self.assertTrue("tz" not in doc)
@@ -41,7 +58,12 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.name, "Foo")
         self.assertEqual(check.slug, "foo")
         self.assertEqual(check.tags, "bar,baz")
+        self.assertEqual(check.desc, "description goes here")
         self.assertEqual(check.methods, "")
+        self.assertEqual(check.success_kw, "SUCCESS")
+        self.assertEqual(check.failure_kw, "FAILURE")
+        self.assertTrue(check.filter_subject)
+        self.assertTrue(check.filter_body)
         self.assertEqual(check.timeout.total_seconds(), 3600)
         self.assertEqual(check.grace.total_seconds(), 60)
         self.assertEqual(check.project, self.project)

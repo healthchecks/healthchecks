@@ -368,3 +368,12 @@ class UpdateCheckTestCase(BaseTestCase):
         payload = {"api_key": "X" * 32, "timeout": 500 * 24 * 3600}
         r = self.post(self.check.code, payload)
         self.assertEqual(r.status_code, 400)
+
+    def test_it_prioritizes_filter_subject_field(self):
+        payload = {"api_key": "X" * 32, "subject": "SUCCESS", "filter_subject": False}
+        r = self.post(self.check.code, payload)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertFalse(self.check.filter_subject)
+        self.assertEqual(self.check.success_kw, "SUCCESS")

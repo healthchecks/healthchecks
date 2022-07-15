@@ -268,6 +268,10 @@ class Check(models.Model):
             "methods": self.methods,
             "subject": self.success_kw if self.filter_subject else "",
             "subject_fail": self.failure_kw if self.filter_subject else "",
+            "success_kw": self.success_kw,
+            "failure_kw": self.failure_kw,
+            "filter_subject": self.filter_subject,
+            "filter_body": self.filter_body,
         }
 
         if self.last_duration:

@@ -13,6 +13,10 @@ check = {
         "methods": {"enum": ["", "POST"]},
         "subject": {"type": "string", "maxLength": 200},
         "subject_fail": {"type": "string", "maxLength": 200},
+        "success_kw": {"type": "string", "maxLength": 200},
+        "failure_kw": {"type": "string", "maxLength": 200},
+        "filter_subject": {"type": "boolean"},
+        "filter_body": {"type": "boolean"},
         "unique": {
             "type": "array",
             "items": {"enum": ["name", "tags", "timeout", "grace"]},

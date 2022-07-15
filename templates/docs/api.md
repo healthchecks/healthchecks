@@ -107,8 +107,10 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
       "methods": "",
-      "subject": "SUCCESS",
-      "subject_fail": "ERROR",
+      "success_kw": "SUCCESS",
+      "failure_kw": "ERROR",
+      "filter_subject": true,
+      "filter_body": false,
       "ping_url": "PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712",
       "update_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712",
       "pause_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause",
@@ -127,8 +129,10 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "next_ping": null,
       "manual_resume": false,
       "methods": "",
-      "subject": "",
-      "subject_fail": "",
+      "success_kw": "",
+      "failure_kw": "",
+      "filter_subject": false,
+      "filter_body": false,
       "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
       "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
       "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -166,8 +170,10 @@ Example:
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
       "methods": "",
-      "subject": "SUCCESS",
-      "subject_fail": "ERROR",
+      "success_kw": "SUCCESS",
+      "failure_kw": "ERROR",
+      "filter_subject": true,
+      "filter_body": false,
       "unique_key": "a6c7b0a8a66bed0df66abfdab3c77736861703ee",
       "timeout": 3600
     },
@@ -183,8 +189,10 @@ Example:
       "next_ping": null,
       "manual_resume": false,
       "methods": "",
-      "subject": "",
-      "subject_fail": "",
+      "success_kw": "",
+      "failure_kw": "",
+      "filter_subject": false,
+      "filter_body": false,
       "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
       "schedule": "15 5 * * *",
       "tz": "UTC"
@@ -237,8 +245,10 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
-  "subject": "SUCCESS",
-  "subject_fail": "ERROR",
+  "success_kw": "SUCCESS",
+  "failure_kw": "ERROR",
+  "filter_subject": true,
+  "filter_body": false,
   "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
   "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
   "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -274,8 +284,10 @@ check's unique UUID.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
-  "subject": "SUCCESS",
-  "subject_fail": "ERROR",
+  "success_kw": "SUCCESS",
+  "failure_kw": "ERROR",
+  "filter_subject": true,
+  "filter_body": false,
   "unique_key": "124f983e0e3dcaeba921cfcef46efd084576e783",
   "schedule": "15 5 * * *",
   "tz": "UTC"
@@ -379,40 +391,6 @@ methods
 
     <pre>{"methods": "POST"}</pre>
 
-subject
-:   string, optional, default value: "".
-
-    Specifies the keywords for classifying inbound email messages as "Success" signals.
-    Separate multiple keywords using commas. If any of the keywords is found in
-    an email message's Subject line, the email message will count as "Success".
-
-    Set this field to "" (an empty string) to consider all inbound email messages as
-    "Success" (unless they match any keywords listed in `subject_fail` and are thus
-    classified as "Failure").
-
-    Example:
-
-    <pre>SUCCESS,COMPLETED</pre>
-
-    In this example, the email counts as success if the Subject line contains either
-    the word "SUCCESS" or the word "COMPLETED".
-
-subject_fail
-:   string, optional, default value: "".
-
-    Specifies the keywords for classifying inbound email messages as "Failure" signals.
-    Separate multiple keywords using commas. If any of the keywords is found in
-    an email message's Subject line, the email message will count as "Failure".
-
-    Set this field to "" (an empty string) to perform no "Failure" classification.
-
-    Example:
-
-    <pre>FAILED,ERROR</pre>
-
-    In this example, the email counts as failure if the Subject line contains either
-    the word "FAILED" or the word "ERROR".
-
 channels
 :   string, optional
 
@@ -464,6 +442,94 @@ unique
     In this example, if a check named "Backups" exists, it will be returned.
     Otherwise, a new check will be created and returned.
 
+success_kw
+:   string, optional, default value: "".
+
+    Specifies the keywords for classifying inbound email messages as "Success" signals.
+    Separate multiple keywords using commas.
+
+    Use this field in combination with the `filter_subject` and `filter_body` fields.
+    Setting `filter_subject` to `true` enables filtering on the email subject line,
+    `filter_body` enables filtering on the entire email body. SITE_NAME supports both
+    plain text and HTML email messages.
+
+    Example:
+
+    <pre>{"filter_subject": true, "success_kw": "SUCCESS,COMPLETED"}</pre>
+
+    In this example, the email counts as success if the Subject line contains either
+    the word "SUCCESS" or the word "COMPLETED".
+
+failure_kw
+:   string, optional, default value: "".
+
+    Specifies the keywords for classifying inbound email messages as "Failure" signals.
+    Separate multiple keywords using commas.
+
+    Use this field in combination with the `filter_subject` and `filter_body` fields.
+    Setting `filter_subject` to `true` enables filtering on the email subject line,
+    `filter_body` enables filtering on the entire email body. SITE_NAME supports both
+    plain text and HTML email messages.
+
+    Example:
+
+    <pre>{"filter_subject": true, "failure_kw": "FAILED, ERROR"}</pre>
+
+    In this example, the email counts as failure if the Subject line contains either
+    the word "FAILED" or the word "ERROR".
+
+filter_subject
+:   boolean, optional, default value: false.
+
+    Enables filtering of inbound email messages by looking for keywords in their
+    subject lines. See also the `success_kw` and `failure_kw` fields.
+
+filter_body
+:   boolean, optional, default value: false.
+
+    Enables filtering of inbound email messages by looking for keywords in their
+    message body. See also the `success_kw` and `failure_kw` fields.
+
+subject
+:   string, optional, default value: "".
+
+    **Deprecated**. Use the `success_kw`, `filter_subject` and `filter_body` fields
+    instead.
+
+    Specifies the keywords for classifying inbound email messages as "Success" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Success".
+
+    Set this field to "" (an empty string) to consider all inbound email messages as
+    "Success" (unless they match any keywords listed in `subject_fail` and are thus
+    classified as "Failure").
+
+    Example:
+
+    <pre>SUCCESS,COMPLETED</pre>
+
+    In this example, the email counts as success if the Subject line contains either
+    the word "SUCCESS" or the word "COMPLETED".
+
+subject_fail
+:   string, optional, default value: "".
+
+    **Deprecated**. Use the `failure_kw`, `filter_subject` and `filter_body` fields
+    instead.
+
+    Specifies the keywords for classifying inbound email messages as "Failure" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Failure".
+
+    Set this field to "" (an empty string) to perform no "Failure" classification.
+
+    Example:
+
+    <pre>FAILED,ERROR</pre>
+
+    In this example, the email counts as failure if the Subject line contains either
+    the word "FAILED" or the word "ERROR".
+
 ### Response Codes
 
 201 Created
@@ -512,8 +578,10 @@ curl SITE_ROOT/api/v1/checks/ \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
-  "subject": "",
-  "subject_fail": "",
+  "success_kw": "",
+  "failure_kw": "",
+  "filter_subject": false,
+  "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -615,40 +683,6 @@ methods
 
     <pre>{"methods": "POST"}</pre>
 
-subject
-:   string, optional, default value: "".
-
-    Specifies the keywords for classifying inbound email messages as "Success" signals.
-    Separate multiple keywords using commas. If any of the keywords is found in
-    an email message's Subject line, the email message will count as "Success".
-
-    Set this field to "" (an empty string) to consider all inbound email messages as
-    "Success" (unless they match any keywords listed in `subject_fail` and are thus
-    classified as "Failure").
-
-    Example:
-
-    <pre>SUCCESS,COMPLETED</pre>
-
-    In this example, the email counts as success if the Subject line contains either
-    the word "SUCCESS" or the word "COMPLETED".
-
-subject_fail
-:   string, optional, default value: "".
-
-    Specifies the keywords for classifying inbound email messages as "Failure" signals.
-    Separate multiple keywords using commas. If any of the keywords is found in
-    an email message's Subject line, the email message will count as "Failure".
-
-    Set this field to "" (an empty string) to perform no "Failure" classification.
-
-    Example:
-
-    <pre>FAILED,ERROR</pre>
-
-    In this example, the email counts as failure if the Subject line contains either
-    the word "FAILED" or the word "ERROR".
-
 channels
 :   string, optional.
 
@@ -680,6 +714,93 @@ channels
 
     <pre>{"channels": "Email to Alice,SMS to Alice"}</pre>
 
+success_kw
+:   string, optional, default value: "".
+
+    Specifies the keywords for classifying inbound email messages as "Success" signals.
+    Separate multiple keywords using commas.
+
+    Use this field in combination with the `filter_subject` and `filter_body` fields.
+    Setting `filter_subject` to `true` enables filtering on the email subject line,
+    `filter_body` enables filtering on the entire email body. SITE_NAME supports both
+    plain text and HTML email messages.
+
+    Example:
+
+    <pre>{"filter_subject": true, "success_kw": "SUCCESS,COMPLETED"}</pre>
+
+    In this example, the email counts as success if the Subject line contains either
+    the word "SUCCESS" or the word "COMPLETED".
+
+failure_kw
+:   string, optional, default value: "".
+
+    Specifies the keywords for classifying inbound email messages as "Failure" signals.
+    Separate multiple keywords using commas.
+
+    Use this field in combination with the `filter_subject` and `filter_body` fields.
+    Setting `filter_subject` to `true` enables filtering on the email subject line,
+    `filter_body` enables filtering on the entire email body. SITE_NAME supports both
+    plain text and HTML email messages.
+
+    Example:
+
+    <pre>{"filter_subject": true, "failure_kw": "FAILED, ERROR"}</pre>
+
+    In this example, the email counts as failure if the Subject line contains either
+    the word "FAILED" or the word "ERROR".
+
+filter_subject
+:   boolean, optional, default value: false.
+
+    Enables filtering of inbound email messages by looking for keywords in their
+    subject lines. See also the `success_kw` and `failure_kw` fields.
+
+filter_body
+:   boolean, optional, default value: false.
+
+    Enables filtering of inbound email messages by looking for keywords in their
+    message body. See also the `success_kw` and `failure_kw` fields.
+
+subject
+:   string, optional, default value: "".
+
+    **Deprecated**. Use the `success_kw`, `filter_subject` and `filter_body` fields
+    instead.
+
+    Specifies the keywords for classifying inbound email messages as "Success" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Success".
+
+    Set this field to "" (an empty string) to consider all inbound email messages as
+    "Success" (unless they match any keywords listed in `subject_fail` and are thus
+    classified as "Failure").
+
+    Example:
+
+    <pre>SUCCESS,COMPLETED</pre>
+
+    In this example, the email counts as success if the Subject line contains either
+    the word "SUCCESS" or the word "COMPLETED".
+
+subject_fail
+:   string, optional, default value: "".
+
+    **Deprecated**. Use the `failure_kw`, `filter_subject` and `filter_body` fields
+    instead.
+
+    Specifies the keywords for classifying inbound email messages as "Failure" signals.
+    Separate multiple keywords using commas. If any of the keywords is found in
+    an email message's Subject line, the email message will count as "Failure".
+
+    Set this field to "" (an empty string) to perform no "Failure" classification.
+
+    Example:
+
+    <pre>FAILED,ERROR</pre>
+
+    In this example, the email counts as failure if the Subject line contains either
+    the word "FAILED" or the word "ERROR".
 
 ### Response Codes
 
@@ -729,8 +850,10 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
-  "subject": "",
-  "subject_fail": "",
+  "success_kw": "",
+  "failure_kw": "",
+  "filter_subject": false,
+  "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
@@ -788,8 +911,10 @@ header is sometimes required by some network proxies and web servers.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
-  "subject": "",
-  "subject_fail": "",
+  "success_kw": "",
+  "failure_kw": "",
+  "filter_subject": false,
+  "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "paused",
@@ -843,8 +968,10 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
-  "subject": "",
-  "subject_fail": "",
+  "success_kw": "",
+  "failure_kw": "",
+  "filter_subject": false,
+  "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",

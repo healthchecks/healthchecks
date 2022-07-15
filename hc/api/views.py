@@ -132,22 +132,6 @@ def _update(check, spec):
         check.set_name_slug(spec["name"])
         need_save = True
 
-    if "tags" in spec and check.tags != spec["tags"]:
-        check.tags = spec["tags"]
-        need_save = True
-
-    if "desc" in spec and check.desc != spec["desc"]:
-        check.desc = spec["desc"]
-        need_save = True
-
-    if "manual_resume" in spec and check.manual_resume != spec["manual_resume"]:
-        check.manual_resume = spec["manual_resume"]
-        need_save = True
-
-    if "methods" in spec and check.methods != spec["methods"]:
-        check.methods = spec["methods"]
-        need_save = True
-
     if "timeout" in spec and "schedule" not in spec:
         new_timeout = td(seconds=spec["timeout"])
         if check.kind != "simple" or check.timeout != new_timeout:
@@ -167,10 +151,6 @@ def _update(check, spec):
             check.schedule = spec["schedule"]
             need_save = True
 
-    if "tz" in spec and check.tz != spec["tz"]:
-        check.tz = spec["tz"]
-        need_save = True
-
     if "subject" in spec:
         check.success_kw = spec["subject"]
         check.filter_subject = bool(check.success_kw or check.failure_kw)
@@ -180,6 +160,21 @@ def _update(check, spec):
         check.failure_kw = spec["subject_fail"]
         check.filter_subject = bool(check.success_kw or check.failure_kw)
         need_save = True
+
+    for key in (
+        "tags",
+        "desc",
+        "manual_resume",
+        "methods",
+        "tz",
+        "success_kw",
+        "failure_kw",
+        "filter_subject",
+        "filter_body",
+    ):
+        if key in spec and getattr(check, key) != spec[key]:
+            setattr(check, key, spec[key])
+            need_save = True
 
     if need_save:
         check.alert_after = check.going_down_after()
