@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Include last ping type in Slack, Mattermost, Discord notifications
 - Upgrade to cron-descriptor 1.2.30
 - Add "Filter by keywords in the message body" feature (#653)
+- Upgrade to HiDPI screenshots in the documentation
 
 ### Bug Fixes
 - Fix the display of ignored pings with non-zero exit status
