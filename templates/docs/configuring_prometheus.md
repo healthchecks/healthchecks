@@ -4,7 +4,7 @@ SITE_NAME supports exporting metrics and check statuses to
 [Prometheus](https://prometheus.io/), for use with [Grafana](https://grafana.com/).
 
 You can generate the metrics export endpoint by going to your project settings
-and clicking "Create API Keys." You will then see the link to
+and **creating a read-only API key**. You will then see the link to
 the Prometheus endpoint:
 
 ![Project's API Keys](IMG_URL/prometheus_endpoint.png)

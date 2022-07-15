@@ -15,7 +15,7 @@ Describe each check using an optional name, tags, and description fields.
 * **Name**: names are optional, but it is a good idea to set them.
 Good naming becomes especially important as you add more checks to the
 account. SITE_NAME will display check names in the web interface, in email reports,
-and notifications.
+and in notifications.
 * **Tags**: a space-separated list of optional labels. Use tags to organize and group
 checks within a project. You can tag checks by the environment
 (`prod`, `staging`, `dev`, etc.) or by role (`www`, `db`, `worker`, etc.) or using
@@ -80,7 +80,7 @@ SITE_NAME will treat it as an explicit failure signal.
 For example, this is useful if your backup software sends an email after each backup
 run with a different subject line depending on success or failure.
 * **Filter by keywords in the message body**. Same as the previous option, but
-looks for the keywords in email message body. Supports both plain text and HTML
+looks for the keywords in the email message body. Supports both plain text and HTML
 email messages.
 * **Pinging a Paused Check**. Normally, when you ping a paused check, it leaves the
 paused state and goes into the "up" state (or the "down" state

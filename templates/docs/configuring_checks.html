@@ -11,7 +11,7 @@ either in SITE_NAME web interface or via <a href="../api/">Management API</a>.</
 <li><strong>Name</strong>: names are optional, but it is a good idea to set them.
 Good naming becomes especially important as you add more checks to the
 account. SITE_NAME will display check names in the web interface, in email reports,
-and notifications.</li>
+and in notifications.</li>
 <li><strong>Tags</strong>: a space-separated list of optional labels. Use tags to organize and group
 checks within a project. You can tag checks by the environment
 (<code>prod</code>, <code>staging</code>, <code>dev</code>, etc.) or by role (<code>www</code>, <code>db</code>, <code>worker</code>, etc.) or using
@@ -67,7 +67,7 @@ SITE_NAME will treat it as an explicit failure signal.
 For example, this is useful if your backup software sends an email after each backup
 run with a different subject line depending on success or failure.</li>
 <li><strong>Filter by keywords in the message body</strong>. Same as the previous option, but
-looks for the keywords in email message body. Supports both plain text and HTML
+looks for the keywords in the email message body. Supports both plain text and HTML
 email messages.</li>
 <li><strong>Pinging a Paused Check</strong>. Normally, when you ping a paused check, it leaves the
 paused state and goes into the "up" state (or the "down" state
