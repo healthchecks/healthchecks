@@ -204,8 +204,8 @@
                     <tr>
                         <th><code>$NOW</code></th>
                         <td>
-                            Current UTC time in ISO8601 format.<br />
-                            Example: "{% now_isoformat %}"
+                            Current UTC time in ISO8601 format. Example:
+                            "{% now_isoformat %}"
                         </td>
                     </tr>
                     <tr>
@@ -219,6 +219,19 @@
                     <tr>
                         <th><code>$TAG1, $TAG2, …</code></th>
                         <td>Value of the first tag, the second tag, …</td>
+                    </tr>
+                    <tr>
+                        <th><code>$JSON</code></th>
+                        <td>
+                            <p>
+                            A JSON representation of the check.
+                            The JSON document has the same fields as the
+                            <a href="{% url 'hc-serve-doc' 'api' %}#get-check">Get a Single Check</a>
+                            API response. You can nest <code>$JSON</code> in your own JSON structure, example: </p>
+                            <pre>{"now": "$NOW", "check": $JSON}</pre>
+                            <p>The resulting payload would be:</p>
+                            <pre>{"now": "{% now_isoformat %}", "check": {"name": "Foo", "slug": "foo", ... }}</pre>
+                        </td>
                     </tr>
                 </table>
             </div>

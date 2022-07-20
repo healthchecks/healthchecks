@@ -393,3 +393,23 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_request.call_args
 
         self.assertEqual(kwargs["headers"]["X-Foo"], "½")
+
+    @patch("hc.api.transports.requests.request")
+    def test_webhooks_support_json_variable(self, mock_post):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "$JSON",
+            "headers_down": {},
+        }
+
+        self._setup_data(json.dumps(definition))
+        self.check.name = "Hello World"
+        self.check.tags = "foo bar"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        body = json.loads(kwargs["data"])
+        self.assertEqual(body["name"], "Hello World")

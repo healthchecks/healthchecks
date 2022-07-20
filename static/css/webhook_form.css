@@ -1,3 +1,7 @@
+#reference-modal  .modal-dialog {
+     width: 900px;
+}
+
 #add-webhook-form div.bootstrap-select {
     width: 100px;
 }

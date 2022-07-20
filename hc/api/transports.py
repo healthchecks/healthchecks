@@ -272,6 +272,7 @@ class Webhook(HttpTransport):
             "$NOW": safe(timezone.now().replace(microsecond=0).isoformat()),
             "$NAME": safe(check.name),
             "$TAGS": safe(check.tags),
+            "$JSON": safe(json.dumps(check.to_dict())),
         }
 
         for i, tag in enumerate(check.tags_list()):

@@ -136,3 +136,23 @@ class SendTestNotificationTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         payload = kwargs["data"]
         self.assertIn("is UP", payload["Body"])
+
+    @patch("hc.api.transports.requests.request")
+    def test_it_handles_webhook_with_json_variable(self, mock_post):
+        self.channel.kind = "webhook"
+        self.channel.value = json.dumps(
+            {
+                "method_down": "POST",
+                "url_down": "https://example.org",
+                "body_down": "$JSON",
+                "headers_down": {},
+            }
+        )
+        self.channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url, {}, follow=True)
+
+        args, kwargs = mock_post.call_args
+        body = json.loads(kwargs["data"])
+        self.assertEqual(body["name"], "TEST")
