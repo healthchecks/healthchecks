@@ -97,6 +97,20 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(facts["Last Ping:"], "Failure, an hour ago")
 
     @patch("hc.api.transports.requests.request")
+    def test_it_handles_last_ping_log(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "log"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
+        self.assertEqual(facts["Last Ping:"], "Log, an hour ago")
+
+    @patch("hc.api.transports.requests.request")
     def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
         mock_post.return_value.status_code = 200
 

@@ -46,6 +46,8 @@
         {% line %}Last ping type: Failure{% endline %}
     {% elif ping.kind == "start" %}
         {% line %}Last ping type: Started{% endline %}
+    {% elif ping.kind == "log" %}
+        {% line %}Last ping type: Log{% endline %}
     {% else %}
         {% line %}Last ping type: Success{% endline %}
     {% endif %}

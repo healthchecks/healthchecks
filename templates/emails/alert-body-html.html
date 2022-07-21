@@ -86,6 +86,10 @@
             <span style="background-color: #dff0d8; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
                 Started
             </span>
+            {% elif ping.kind == "log" %}
+            <span style="background-color: #eeeeee; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
+                Log
+            </span>
             {% else %}
             <span style="background-color: #dff0d8; color: #333333; padding-left: 4px; padding-right: 4px; border-radius: 2px;">
                 Success

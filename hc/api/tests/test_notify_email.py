@@ -235,3 +235,14 @@ class NotifyEmailTestCase(BaseTestCase):
         html = email.alternatives[0][0]
         self.assertIn("Ignored", email.body)
         self.assertIn("Ignored", html)
+
+    def test_it_handles_last_ping_log(self):
+        self.ping.kind = "log"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        self.assertIn("Log", email.body)
+        self.assertIn("Log", html)
