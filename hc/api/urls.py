@@ -31,12 +31,14 @@ uuid_urls = [
     path("", views.ping),
     path("fail", views.ping, {"action": "fail"}),
     path("start", views.ping, {"action": "start"}),
+    path("log", views.ping, {"action": "log"}),
     path("<int:exitstatus>", views.ping),
 ]
 
 slug_urls = [
     path("fail", views.ping_by_slug, {"action": "fail"}),
     path("start", views.ping_by_slug, {"action": "start"}),
+    path("log", views.ping_by_slug, {"action": "log"}),
     path("<int:exitstatus>", views.ping_by_slug),
 ]
 

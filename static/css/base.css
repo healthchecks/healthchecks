@@ -135,7 +135,8 @@ body {
     border: 1px solid #117a3f;
 }
 
-.label.label-ign {
+.label.label-ign,
+.label.label-log {
     background: var(--label-ign-bg);
     color: var(--label-ign-color);
 }

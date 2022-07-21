@@ -289,3 +289,18 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(code, self.check.code)
         self.assertEqual(n, 1)
         self.assertEqual(data, b"a" * 101)
+
+    def test_log_endpoint_works(self):
+        r = self.client.post(self.url + "/log", "hello", content_type="text/plain")
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "new")
+        self.assertIsNone(self.check.alert_after)
+        self.assertFalse(self.check.last_ping)
+
+        ping = Ping.objects.get()
+        self.assertEqual(ping.kind, "log")
+        self.assertEqual(bytes(ping.body_raw), b"hello")
+
+        self.assertFalse(Flip.objects.exists())

@@ -78,6 +78,13 @@ class PingDetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "/start", status_code=200)
 
+    def test_it_shows_log(self):
+        Ping.objects.create(owner=self.check, n=1, kind="log")
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "/log", status_code=200)
+
     def test_it_accepts_n(self):
         # remote_addr, scheme, method, ua, body, action:
         self.check.ping("1.2.3.4", "http", "post", "tester", b"foo-123", "success")

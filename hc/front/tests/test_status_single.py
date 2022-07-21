@@ -94,3 +94,17 @@ class StatusSingleTestCase(BaseTestCase):
         doc = r.json()
 
         self.assertTrue("Ignored" in doc["events"])
+
+    def test_it_handles_log_event(self):
+        p = Ping.objects.create(owner=self.check, kind="log", n=1)
+        self.check.status = "up"
+        self.check.last_ping = p.created
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        doc = r.json()
+
+        self.assertEqual(doc["status"], "up")
+        self.assertEqual(doc["updated"], str(p.created.timestamp()))
+        self.assertIn("label-log", doc["events"])

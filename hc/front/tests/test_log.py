@@ -136,3 +136,11 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Ignored", status_code=200)
+
+    def test_it_handles_log_event(self):
+        self.ping.kind = "log"
+        self.ping.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "label-log", status_code=200)

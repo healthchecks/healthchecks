@@ -57,6 +57,8 @@
                 <span class="label label-danger">Failure</span>
                 {% elif event.kind == "start" %}
                 <span class="label label-start">Started</span>
+                {% elif event.kind == "log" %}
+                <span class="label label-log">Log</span>
                 {% else %}
                 <span class="label label-success">OK</span>
                 {% endif %}

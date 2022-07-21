@@ -56,10 +56,12 @@ Endpoint Name                                               | Endpoint Address
 [Success (UUID)](#success-uuid)       | `PING_ENDPOINT<uuid>`
 [Start (UUID)](#start-uuid)           | `PING_ENDPOINT<uuid>/start`
 [Failure (UUID)](#fail-uuid)          | `PING_ENDPOINT<uuid>/fail`
+[Log (UUID)](#log-uuid)               | `PING_ENDPOINT<uuid>/log`
 [Report script's exit status (UUID)](#exitcode-uuid)           | `PING_ENDPOINT<uuid>/<exit-status>`
 [Success (slug)](#success-slug)       | `PING_ENDPOINT<ping-key>/<slug>`
 [Start (slug)](#start-slug)           | `PING_ENDPOINT<ping-key>/<slug>/start`
 [Failure (slug)](#fail-slug)          | `PING_ENDPOINT<ping-key>/<slug>/fail`
+[Log (slug)](#log-slug)               | `PING_ENDPOINT<ping-key>/<slug>/log`
 [Report script's exit status (slug)](#exitcode-slug)           | `PING_ENDPOINT<ping-key>/<slug>/<exit-status>`
 
 ## Send a "success" Signal Using UUID {: #success-uuid .rule }
@@ -188,6 +190,55 @@ how much data to send in the request bodies of subsequent requests.
 ```http
 GET /5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/fail HTTP/1.0
 Host: hc-ping.com
+```
+
+```http
+HTTP/1.1 200 OK
+Server: nginx
+Date: Wed, 29 Jan 2020 09:58:23 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 2
+Connection: close
+Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
+
+OK
+```
+
+## Send a "log" Signal Using UUID {: #log-uuid .rule }
+
+```text
+HEAD|GET|POST PING_ENDPOINT<uuid>/log
+```
+
+Sends logging information to SITE_NAME without altering check's status.
+
+SITE_NAME identifies the check by the UUID value included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
+
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+404 not found
+:   Could not find a check with the specified UUID.
+
+**Example**
+
+```http
+POST /5bf66975-d4c7-4bf5-bcc8-b8d8a82ea278/log HTTP/1.1
+Host: hc-ping.com
+Content-Type: text/plain
+Content-Length: 11
+
+Hello World
 ```
 
 ```http
@@ -391,6 +442,59 @@ how much data to send in the request bodies of subsequent requests.
 ```http
 GET /fqOOd6-F4MMNuCEnzTU01w/database-backup/fail HTTP/1.0
 Host: hc-ping.com
+```
+
+```http
+HTTP/1.1 200 OK
+Server: nginx
+Date: Wed, 29 Jan 2020 09:58:23 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 2
+Connection: close
+Access-Control-Allow-Origin: *
+Ping-Body-Limit: PING_BODY_LIMIT
+
+OK
+```
+
+## Send a "log" Signal (Using slug) {: #log-slug .rule }
+
+```text
+HEAD|GET|POST PING_ENDPOINT<ping-key/<slug>/log
+```
+
+Sends logging information to SITE_NAME without altering check's status.
+
+SITE_NAME identifies the check by project's ping key and check's slug
+included in the URL.
+
+The response may optionally contain a `Ping-Body-Limit: <n>` response header.
+If this header is present, its value is an integer, and it specifies how many
+bytes from the request body SITE_NAME will store per request. For example, if n=100,
+but the client sends 123 bytes in the request body, SITE_NAME will store the first
+100 bytes, and ignore the remaining 23. The client can use this header to decide
+how much data to send in the request bodies of subsequent requests.
+
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+404 not found
+:   Could not find a check with the specified ping key and slug combination.
+
+409 ambiguous slug
+:   Ambiguous, the slug matched multiple checks.
+
+**Example**
+
+```http
+POST /fqOOd6-F4MMNuCEnzTU01w/database-backup/log HTTP/1.1
+Host: hc-ping.com
+Content-Type: text/plain
+Content-Length: 11
+
+Hello World
 ```
 
 ```http

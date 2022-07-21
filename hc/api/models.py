@@ -311,6 +311,8 @@ class Check(models.Model):
             # Don't update "last_ping" field.
         elif action == "ign":
             pass
+        elif action == "log":
+            pass
         else:
             self.last_ping = frozen_now
             if self.last_start:
@@ -338,7 +340,7 @@ class Check(models.Model):
         ping = Ping(owner=self)
         ping.n = self.n_pings
         ping.created = frozen_now
-        if action in ("start", "fail", "ign"):
+        if action in ("start", "fail", "ign", "log"):
             ping.kind = action
 
         ping.remote_addr = remote_addr
