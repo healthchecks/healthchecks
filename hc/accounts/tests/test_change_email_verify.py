@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner
 from hc.test import BaseTestCase
 
@@ -11,7 +12,7 @@ class ChangeEmailVerifyTestCase(BaseTestCase):
         self.profile.token = make_password("secret-token", "login")
         self.profile.save()
 
-        self.checks_url = "/projects/%s/checks/" % self.project.code
+        self.checks_url = f"/projects/{self.project.code}/checks/"
 
     def _url(self, expired=False):
         payload = {
@@ -62,3 +63,15 @@ class ChangeEmailVerifyTestCase(BaseTestCase):
     def test_it_handles_bad_payload(self):
         r = self.client.post("/accounts/change_email/bad-payload/")
         self.assertContains(r, "The link you just used is incorrect.")
+
+    def test_it_handles_unavailable_email(self):
+        # Make the target address unavailable
+        User.objects.create(email="alice+new@example.org")
+
+        r = self.client.post(self._url(), follow=True)
+        self.assertRedirects(r, "/accounts/login/")
+        self.assertContains(r, "incorrect or expired")
+
+        # Alice's email should have *not* been updated
+        self.alice.refresh_from_db()
+        self.assertEqual(self.alice.email, "alice@example.org")

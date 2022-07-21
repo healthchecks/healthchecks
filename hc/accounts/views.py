@@ -230,6 +230,10 @@ def check_token(request, username, token, new_email=None):
     user = authenticate(username=username, token=token)
     if user is not None and user.is_active:
         if new_email:
+            if User.objects.filter(email=new_email).exists():
+                request.session["bad_link"] = True
+                return redirect("hc-login")
+
             user.email = new_email
             user.set_unusable_password()
             user.save()

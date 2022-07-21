@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix the display of ignored pings with non-zero exit status
+- Fix a race condition in the "Change Email" flow
 
 ## v2.2.1 - 2022-06-13
 
