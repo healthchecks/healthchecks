@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Ping Log - {{ site_name }}{% endblock %}
+{% block title %}Event Log - {{ site_name }}{% endblock %}
 
 
 {% block content %}
@@ -15,7 +15,7 @@
                     {{ check.name_then_code }}
                 </a>
             </li>
-            <li class="active">Log</li>
+            <li class="active">Events</li>
 
             <li id="format-switcher-container" class="pull-right hidden-xs">
                 <div id="format-switcher" class="btn-group" data-toggle="buttons">
