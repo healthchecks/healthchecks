@@ -62,3 +62,16 @@ curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL
 
 * Finally, if it is critical to capture the entire log output,
 consider using a dedicated log aggregation service for capturing the logs.
+
+
+## Where to See Captured Logs
+
+In the check's details page, Events section, click on individual events to see
+full event details, including the captured log information.
+
+![The Events section](IMG_URL/events.png)
+
+In the dialog that opens, use the "Download Original" link to download the request
+body data, exactly as it was submitted to SITE_NAME:
+
+![The Ping Details dialog](IMG_URL/ping_details.png)
