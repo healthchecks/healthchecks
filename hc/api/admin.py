@@ -228,13 +228,13 @@ class NotificationsAdmin(admin.ModelAdmin):
 
     search_fields = ["owner__name", "owner__code", "channel__value", "error", "code"]
     readonly_fields = ("owner", "code")
-    list_select_related = ("channel", "owner")
+    list_select_related = ("channel", "channel__project")
     list_display = (
         "id",
         "created",
         "channel_kind",
         "check_status",
-        "formatted_owner",
+        "project",
         "channel_value",
         "error",
     )
@@ -248,13 +248,11 @@ class NotificationsAdmin(admin.ModelAdmin):
     def channel_value(self, obj):
         return "<div>%s</div>" % escape(obj.channel.value)
 
-    @admin.display(description="Owner")
     @mark_safe
-    def formatted_owner(self, obj):
-        if obj.owner:
-            url = reverse("hc-details", args=[obj.owner.code])
-            name = escape(obj.owner.name_then_code())
-            return f"<div><a href='{url}'>{name}</a></div>"
+    def project(self, obj):
+        url = reverse("hc-channels", args=[obj.channel.project.code])
+        name = escape(obj.channel.project)
+        return f"<div><a href='{url}'>{name}</a></div>"
 
 
 @admin.register(Flip)
