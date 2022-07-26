@@ -16,7 +16,7 @@ ALLOWED_HOSTS=my-hc.example.org,alternative-name.example.org
 
 Apart from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#allowed-hosts).
 
 ## `APPRISE_ENABLED` {: #APPRISE_ENABLED }
 
@@ -42,35 +42,35 @@ The database engine to use. Possible values: `sqlite`, `postgres`, `mysql`.
 Default: `0`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#conn-max-age).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#conn-max-age).
 
 ## `DB_HOST` {: #DB_HOST }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#host).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#host).
 
 ## `DB_NAME` {: #DB_NAME }
 
 Default: `hc` (PostgreSQL, MySQL) or `/path/to/projectdir/hc.sqlite` (SQLite)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#name).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#name).
 
 ## `DB_PASSWORD` {: #DB_PASSWORD }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#password).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#password).
 
 ## `DB_PORT` {: #DB_PORT }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#port).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#port).
 
 ## `DB_SSLMODE` {: #DB_SSLMODE }
 
@@ -89,7 +89,7 @@ PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/libpq-connect.
 Default: `postgres` (PostgreSQL) or `root` (MySQL)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#user).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#user).
 
 ## `DEBUG` {: #DEBUG }
 
@@ -100,14 +100,14 @@ A boolean that turns on/off debug mode.
 _Never run a Healthchecks instance in production with the debug mode turned on!_
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#debug).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#debug).
 
 ## `DEFAULT_FROM_EMAIL` {: #DEFAULT_FROM_EMAIL }
 
 Default: `healthchecks@example.org`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#default-from-email).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#default-from-email).
 
 ## `DISCORD_CLIENT_ID` {: #DISCORD_CLIENT_ID }
 
@@ -139,35 +139,35 @@ The Discord Client Secret, required by the Discord integration. Look it up at
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#email-host).
 
 ## `EMAIL_HOST_PASSWORD` {: #EMAIL_HOST_PASSWORD }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-password).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#email-host-password).
 
 ## `EMAIL_HOST_USER` {: #EMAIL_HOST_USER }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-host-user).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#email-host-user).
 
 ## `EMAIL_PORT` {: #EMAIL_PORT }
 
 Default: `587`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-port).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#email-port).
 
 ## `EMAIL_USE_TLS` {: #EMAIL_USE_TLS }
 
 Default: `True`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#email-use-tls).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#email-use-tls).
 
 ## `EMAIL_USE_VERIFICATION` {: #EMAIL_USE_VERIFICATION }
 
@@ -489,7 +489,7 @@ A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/3.1/ref/settings/#secret-key).
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#secret-key).
 
 ## `SHELL_ENABLED` {: #SHELL_ENABLED }
 

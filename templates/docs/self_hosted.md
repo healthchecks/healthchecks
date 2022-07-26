@@ -101,7 +101,7 @@ EMAIL_USE_TLS = True
 ```
 
 You can read more about handling outbound email in the Django documentation,
-[Sending Email](https://docs.djangoproject.com/en/3.1/topics/email/) section.
+[Sending Email](https://docs.djangoproject.com/en/4.0/topics/email/) section.
 
 ## Receiving Emails
 
