@@ -13,7 +13,7 @@ detect various failure modes:
 * The whole machine goes down (power outage, hardware failure, somebody trips on cables, etc.).
 * The cron daemon is not running or has an invalid configuration.
 * Cron does start your task, but the task exits with a non-zero exit code.
-* The cron job runs for abnormally long time.
+* The cron job runs for an abnormally long time.
 
 ## Setting Up
 
@@ -83,7 +83,7 @@ duration of your cron job.
 
 For example, let's say the cron job starts at 14:00 every day, and takes
 between 15 and 25 minutes to complete. The grace time is set to 30 minutes.
-In this scenario, SITE_NAME will expect a ping to arrive at 14:00 but will not send
+In this scenario, SITE_NAME will expect a ping to arrive at 14:00, but will not send
 any alerts yet. If there is no ping by 14:30, it will declare the job failed and
 send alerts.
 

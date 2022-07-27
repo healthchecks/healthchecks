@@ -57,7 +57,7 @@ You will need to specify Cron Expression, Server's Time Zone, and Grace Time.
 
 * **Cron Expression** is the cron expression you specified in the crontab.
 * **Server's Time Zone** is the timezone of your server. The cron daemon typically uses
-system's local time. If the machine is not using the UTC timezone, you need to
+the system's local time. If the machine is not using the UTC timezone, you need to
 specify it here.
 * **Grace Time**, same as for simple schedules, is how long to wait before sending an
 alert for a late check.

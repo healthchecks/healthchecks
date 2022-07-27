@@ -15,13 +15,13 @@ between projects. The transfer operation preserves check's ping address:
 ## Team Access
 
 You can grant your colleagues access to a project by inviting them into
-the project's team. Each project has its separate team so you can grant access
+the project's team. Each project has its separate team, so you can grant access
 selectively. Inviting team members is **more convenient and more
 secure** than sharing a password to a single account.
 
 ![Team access section](IMG_URL/team_access.png)
 
-The user who created the project is listed as **Owner**. When you invite an user
+The user who created the project is listed as **Owner**. When you invite a user
 to the project, you can select one of the three roles for their membership:
 **Team Member** (what you usually want), **Manager** or **Read-only**.
 
@@ -43,7 +43,7 @@ Team Members can not:
 
 **Managers** have the same permissions as Team Members, with one exception:
 Managers can invite new members and remove existing members from the project's team.
-Managers still can not change or remove project's owner, or manage billing.
+Managers still can not change or remove the project's owner, or manage billing.
 
 **Read-only** members can:
 
@@ -52,13 +52,13 @@ Managers still can not change or remove project's owner, or manage billing.
 * give up their membership
 
 Read-only members can not modify checks, integrations, or project settings.
-They also cannot access the project's API keys as that would effectively give them
+They also cannot access the project's API keys, as that would effectively give them
 read-write access through API.
 
 ## Projects and Check Limits
 
 **Check Limit** is the total number of checks your account can have. The specific
-limit depends on the account's billing plan. When you reach the Check Limit
+limit depends on the account's billing plan. When you reach the Check Limit,
 you will not be able to create new checks.
 
 All projects owned by your account shares your account's Check Limit.

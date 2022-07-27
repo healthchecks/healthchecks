@@ -137,7 +137,7 @@ server restarts.
 
 ## Database Cleanup
 
-With time and use the Healthchecks database will grow in size. You may
+With time and use, the Healthchecks database will grow in size. You may
 decide to prune old data: inactive user accounts, old checks not assigned
 to users, old records of outgoing email messages. There are separate Django management
 commands for each task:
