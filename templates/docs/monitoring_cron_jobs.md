@@ -1,69 +1,57 @@
 # Monitoring Cron Jobs
 
-SITE_NAME is perfectly suited for monitoring cron jobs. All you have to do is
-update your cron job command to send an HTTP request to SITE_NAME
-after completing the job.
+SITE_NAME can monitor your cron jobs and notify you when they don't run at
+expected times. Assuming `curl` or `wget` is available, you will not need to install
+any new software on your servers.
 
-Let's look at an example:
+The principle of operation is simple: your cron job sends an HTTP request ("ping") to
+SITE_NAME every time it completes. When SITE_NAME does not receive the HTTP request
+at the expected time, it notifies you. This monitoring technique is a type of
+[dead man's switch](https://en.wikipedia.org/wiki/Dead_man%27s_switch), and it can
+detect various failure modes:
 
-```bash
-$ crontab -l
-# m h dom mon dow command
-  8 6 * * * /home/user/backup.sh
-```
+* The whole machine goes down (power outage, hardware failure, somebody trips on cables, etc.).
+* The cron daemon is not running or has an invalid configuration.
+* Cron does start your task, but the task exits with a non-zero exit code.
+* The cron job runs for abnormally long time.
 
-The above job runs `/home/user/backup.sh` every day at 6:08. The backup
-script is presumably a headless, background process. Even if it works
-correctly currently, it can start silently failing in the future without
-anyone noticing.
+## Setting Up
 
-You can set up SITE_NAME to notify you whenever the backup script does not
-run on time, or it does not complete successfully. Here are the steps to do that.
-
-1. If you have not already, sign up for a free SITE_NAME account.
-
-1. In your SITE_NAME account, **add a new check**.
-
-1. Give the check **a meaningful name**. Good naming will become
-increasingly important as you add more checks to your account.
-
-1. Edit the check's **schedule**:
-
-    * change its type from "Simple" to "Cron"
-    * enter `8 6 * * *` in the cron expression field
-    * set the timezone to match your machine's timezone
-
-1. Take note of your check's unique **ping URL**.
-
-Finally, edit your cron job definition and append a curl or wget call
-after the command:
+Let's take a look at an example cron job:
 
 ```bash
-$ crontab -e
-# m h dom mon dow command
-  8 6 * * * /home/user/backup.sh && curl -fsS --retry 5 -o /dev/null PING_URL
+# run backup.sh at 06:08 every day
+8 6 * * * /home/me/backup.sh
 ```
 
-Now, each time your cron job runs, it will send an HTTP request to the ping URL.
-Since SITE_NAME knows your cron job's schedule, it can calculate
-the dates and times when the job should run. As soon as your cron job doesn't
-report at an expected time, SITE_NAME will send you a notification.
+To monitor it, first create a new Check in your SITE_NAME account:
 
-This monitoring technique takes care of various failure scenarios that could
-potentially go unnoticed otherwise:
+![The "Add Check" dialog](IMG_URL/add_check.png)
 
-* The whole machine goes down (power outage, janitor stumbles on wires, VPS provider problems, etc.)
-* the cron daemon is not running or has an invalid configuration
-* cron does start your task, but the task exits with a non-zero exit code
+After creating the check, copy the generated **ping URL** , and update the job's
+definition:
+
+```bash
+# run backup.sh, then send a success signal to SITE_NAME
+8 6 * * * /home/me/backup.sh && curl -fsS -m 10 --retry 5 -o /dev/null PING_URL
+```
+
+The extra curl call lets SITE_NAME know the cron job has run successfully.
+SITE_NAME keeps track of the received pings and notifies you as soon as a ping does
+not arrive on time.
+
+Note: you can alternatively add the extra `curl` call as a final line inside the
+`/home/me/backup.sh` script, to keep the cron job's definition clean and short.
+You can use an HTTP client other than curl to send the HTTP request.
 
 ## Curl Options
 
-The extra options in the above example tell curl to retry failed HTTP requests, and
-silence output unless there is an error. Feel free to adjust the curl options to
-suit your needs.
+The extra options in the above example tell curl to retry failed HTTP requests,
+limit the maximum execution time, and silence output unless there is an error.
+Feel free to adjust the curl options to suit your needs.
 
 **&amp;&amp;**
-:   Run curl only if `/home/user/backup.sh` exits with an exit code 0.
+:   Run curl only if `/home/me/backup.sh` exits with an exit code 0.
 
 **-f, --fail**
 :   Makes curl treat non-200 responses as errors.
@@ -74,14 +62,74 @@ suit your needs.
 **-S, --show-error**
 :   Re-enables error messages when -s is used.
 
+**-m &lt;seconds&gt;**
+:   Maximum time in seconds that you allow the whole operation to take.
+
 **--retry &lt;num&gt;**
 :   If a transient error is returned when curl tries to perform a
     transfer, it will retry this number of times before  giving  up.
     Setting  the number to  0 makes curl do no retries (which is the default).
-    Transient error is a timeout or an HTTP 5xx response code.
+    A transient error is a timeout or an HTTP 5xx response code.
 
 **-o /dev/null**
 :   Redirect curl's stdout to /dev/null (error messages still go to stderr).
+
+
+## Grace Time
+
+Grace Time is the amount of extra time to wait when a cron job is running late
+before declaring it as down. Set Grace Time to be above the expected
+duration of your cron job.
+
+For example, let's say the cron job starts at 14:00 every day, and takes
+between 15 and 25 minutes to complete. The grace time is set to 30 minutes.
+In this scenario, SITE_NAME will expect a ping to arrive at 14:00 but will not send
+any alerts yet. If there is no ping by 14:30, it will declare the job failed and
+send alerts.
+
+## Notifications
+
+SITE_NAME has integrations to deliver notifications over different channels: email,
+webhooks, SMS, chat messages, incident management systems, and more. You can and should
+set up multiple ways to get notified about job failures:
+
+* **Redundancy:** if one notification channel fails (e.g., an email message gets
+delivered to spam), you will still receive notifications over the other channels.
+* **Use different notification methods depending on job priority**. You can set up
+the notifications from low-priority jobs to email only, but notifications from
+high-priority jobs to email, SMS, and team chat.
+
+Additionally, to make sure no issues "slip through the cracks", in the
+[Account Settings › Email Reports](../../accounts/profile/notifications/) page
+you can configure SITE_NAME to send repeated email notifications every hour or every
+day as long as any of the jobs is down:
+
+![Email reminder options](IMG_URL/email_reports.png)
+
+## Advanced Techniques
+
+* If your cron job hits an error, you can [actively signal it to SITE_NAME](../signaling_failures/).
+* You can send a "start" signal at the start of the cron job, to [track its run time](../measuring_script_run_time/).
+* You can [send stdout and stderr output](../attaching_logs/) in the HTTP POST body.
+
+## What about MAILTO?
+
+Classic cron implementations have a built-in method of notifying about cron job
+failures, the MAILTO variable:
+
+```bash
+MAILTO=email@example.org
+8 6 * * * /home/me/backup.sh
+```
+
+So why not just use that? There are several drawbacks:
+
+* For MAILTO to work, the server needs to have a configured MTA.
+* You will not get notified if the whole machine is powered off, or has lost
+  network connection.
+* If your cron job produces any stdout output, you will receive an
+  email every time the job runs. This may result in alert fatigue and you not
+  noticing errors between diagnostic messages.
 
 ## Looking up Your Machine's Time Zone
 
@@ -103,6 +151,7 @@ System clock synchronized: yes
               NTP service: active
           RTC in local TZ: no
 ```
+
 
 ## Viewing Cron Logs Using `journalctl`
 
