@@ -34,7 +34,7 @@ def site_name():
 
 @register.simple_tag
 def absolute_site_logo_url():
-    """ Return absolute URL to site's logo.
+    """Return absolute URL to site's logo.
 
     Uses settings.SITE_LOGO_URL if set, uses
     /static/img/logo.png as fallback.
@@ -111,7 +111,7 @@ def not_down_key(check):
 
 @register.filter
 def sortchecks(checks, key):
-    """Sort the list of checks in-place by given key, then by status=down. """
+    """Sort the list of checks in-place by given key, then by status=down."""
 
     if key == "created":
         checks.sort(key=lambda check: check.created)
@@ -137,7 +137,7 @@ def num_down_title(num_down):
 
 @register.filter
 def down_title(check):
-    """ Prepare title tag for the Details page.
+    """Prepare title tag for the Details page.
 
     If the check is down, return "DOWN - Name - site_name".
     Otherwise, return "Name - site_name".
@@ -153,7 +153,7 @@ def down_title(check):
 
 @register.filter
 def break_underscore(s):
-    """ Add zero-width-space characters after underscores. """
+    """Add zero-width-space characters after underscores."""
 
     if len(s) > 30:
         s = s.replace("_", "_\u200b")
@@ -163,7 +163,7 @@ def break_underscore(s):
 
 @register.filter
 def fix_asterisks(s):
-    """ Prepend asterisks with "Combining Grapheme Joiner" characters. """
+    """Prepend asterisks with "Combining Grapheme Joiner" characters."""
 
     return s.replace("*", "\u034f*")
 
@@ -220,7 +220,7 @@ FORMATTED_PING_ENDPOINT = (
 
 @register.filter
 def format_ping_endpoint(ping_url):
-    """ Wrap the ping endpoint in span tags for styling with CSS. """
+    """Wrap the ping endpoint in span tags for styling with CSS."""
 
     assert ping_url.startswith(settings.PING_ENDPOINT)
     tail = ping_url[len(settings.PING_ENDPOINT) :]
@@ -230,3 +230,8 @@ def format_ping_endpoint(ping_url):
 @register.filter
 def mask_key(key):
     return key[:4] + "*" * len(key[4:])
+
+
+@register.filter
+def underline(s):
+    return "=" * len(str(s))
