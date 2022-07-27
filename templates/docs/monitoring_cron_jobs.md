@@ -1,4 +1,4 @@
-# Monitoring Cron Jobs
+# How to Monitor Cron Jobs with SITE_NAME
 
 SITE_NAME can monitor your cron jobs and notify you when they don't run at
 expected times. Assuming `curl` or `wget` is available, you will not need to install
