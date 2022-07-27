@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
+from django.test.utils import override_settings
 
 NAG_TEXT = """Hello,
 
@@ -28,6 +29,7 @@ Mychecks
 """
 
 
+@override_settings(SITE_NAME="Mychecks")
 class SendReportsTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
