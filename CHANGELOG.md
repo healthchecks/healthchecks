@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to HiDPI screenshots in the documentation
 - Add support for the $JSON placeholder in webhook payloads
 - Add ping endpoints for "log" events
+- Add the "Badges" page in docs
 
 ### Bug Fixes
 - Fix the display of ignored pings with non-zero exit status
