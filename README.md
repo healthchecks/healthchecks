@@ -3,14 +3,23 @@
 ![Build Status](https://github.com/healthchecks/healthchecks/workflows/Django%20CI/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
+My Checks page
 
 ![Screenshot of My Checks page](/static/img/my_checks@2x.png?raw=true "My Checks Page")
 
+Period/Grace dialog page
+
 ![Screenshot of Period/Grace dialog](/static/img/period_grace@2x.png?raw=true "Period/Grace Dialog")
+
+Cron dialog page
 
 ![Screenshot of Cron dialog](/static/img/cron%402x.png?raw=true "Cron Dialog")
 
+Check Details page
+
 ![Screenshot of Check Details page](/static/img/check_details@2x.png?raw=true "My Checks Page")
+
+Badges page
 
 ![Screenshot of Badges page](/static/img/badges@2x.png?raw=true "Integrations Page")
 
