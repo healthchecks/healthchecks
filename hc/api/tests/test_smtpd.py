@@ -1,7 +1,9 @@
+from unittest.mock import Mock, patch
+
 from django.test.utils import override_settings
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
-from hc.api.management.commands.smtpd import _process_message
+from hc.api.management.commands.smtpd import _process_message, Listener
 
 
 PAYLOAD_TMPL = """
@@ -175,4 +177,20 @@ class SmtpdTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.scheme, "email")
         self.assertEqual(ping.ua, "Email from foo@example.org")
+        self.assertEqual(ping.kind, None)
+
+    @patch("hc.api.management.commands.smtpd.connections")
+    def test_it_handles_multiple_recipients(self, mock_connections):
+        Listener.process_message(
+            Mock(),
+            ["1.2.3.4"],
+            "foo@example.org",
+            ["bar@example.org", self.email],
+            b"hello world",
+        )
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "email")
+        self.assertEqual(ping.ua, "Email from foo@example.org")
+        self.assertEqual(bytes(ping.body_raw), b"hello world")
         self.assertEqual(ping.kind, None)
