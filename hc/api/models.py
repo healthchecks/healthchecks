@@ -36,34 +36,34 @@ CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
 MAX_DELTA = td(hours=72)
 
 CHANNEL_KINDS = (
-    ("email", "Email"),
-    ("webhook", "Webhook"),
-    ("hipchat", "HipChat"),
-    ("slack", "Slack"),
-    ("pd", "PagerDuty"),
-    ("pagertree", "PagerTree"),
-    ("pagerteam", "Pager Team"),
-    ("po", "Pushover"),
-    ("pushbullet", "Pushbullet"),
-    ("opsgenie", "Opsgenie"),
-    ("victorops", "Splunk On-Call"),
-    ("discord", "Discord"),
-    ("telegram", "Telegram"),
-    ("sms", "SMS"),
-    ("zendesk", "Zendesk"),
-    ("trello", "Trello"),
-    ("matrix", "Matrix"),
-    ("whatsapp", "WhatsApp"),
     ("apprise", "Apprise"),
+    ("call", "Phone Call"),
+    ("discord", "Discord"),
+    ("email", "Email"),
+    ("gotify", "Gotify"),
+    ("hipchat", "HipChat"),
+    ("linenotify", "LINE Notify"),
+    ("matrix", "Matrix"),
     ("mattermost", "Mattermost"),
     ("msteams", "Microsoft Teams"),
+    ("opsgenie", "Opsgenie"),
+    ("pagerteam", "Pager Team"),
+    ("pagertree", "PagerTree"),
+    ("pd", "PagerDuty"),
+    ("po", "Pushover"),
+    ("pushbullet", "Pushbullet"),
     ("shell", "Shell Command"),
-    ("zulip", "Zulip"),
-    ("spike", "Spike"),
-    ("call", "Phone Call"),
-    ("linenotify", "LINE Notify"),
     ("signal", "Signal"),
-    ("gotify", "Gotify"),
+    ("slack", "Slack"),
+    ("sms", "SMS"),
+    ("spike", "Spike"),
+    ("telegram", "Telegram"),
+    ("trello", "Trello"),
+    ("victorops", "Splunk On-Call"),
+    ("webhook", "Webhook"),
+    ("whatsapp", "WhatsApp"),
+    ("zendesk", "Zendesk"),
+    ("zulip", "Zulip"),
 )
 
 PO_PRIORITIES = {
@@ -545,62 +545,60 @@ class Channel(models.Model):
 
     @property
     def transport(self):
-        if self.kind == "email":
-            return transports.Email(self)
-        elif self.kind == "webhook":
-            return transports.Webhook(self)
-        elif self.kind == "slack":
-            return transports.Slack(self)
-        elif self.kind == "mattermost":
-            return transports.Mattermost(self)
-        elif self.kind == "hipchat":
-            return transports.HipChat(self)
-        elif self.kind == "pd":
-            return transports.PagerDuty(self)
-        elif self.kind == "pagertree":
-            return transports.PagerTree(self)
-        elif self.kind == "pagerteam":
-            return transports.PagerTeam(self)
-        elif self.kind == "victorops":
-            return transports.VictorOps(self)
-        elif self.kind == "pushbullet":
-            return transports.Pushbullet(self)
-        elif self.kind == "po":
-            return transports.Pushover(self)
-        elif self.kind == "opsgenie":
-            return transports.Opsgenie(self)
-        elif self.kind == "discord":
-            return transports.Discord(self)
-        elif self.kind == "telegram":
-            return transports.Telegram(self)
-        elif self.kind == "sms":
-            return transports.Sms(self)
-        elif self.kind == "trello":
-            return transports.Trello(self)
-        elif self.kind == "matrix":
-            return transports.Matrix(self)
-        elif self.kind == "whatsapp":
-            return transports.WhatsApp(self)
-        elif self.kind == "apprise":
+        if self.kind == "apprise":
             return transports.Apprise(self)
-        elif self.kind == "msteams":
-            return transports.MsTeams(self)
-        elif self.kind == "shell":
-            return transports.Shell(self)
-        elif self.kind == "zulip":
-            return transports.Zulip(self)
-        elif self.kind == "spike":
-            return transports.Spike(self)
         elif self.kind == "call":
             return transports.Call(self)
-        elif self.kind == "linenotify":
-            return transports.LineNotify(self)
-        elif self.kind == "signal":
-            return transports.Signal(self)
+        elif self.kind == "discord":
+            return transports.Discord(self)
+        elif self.kind == "email":
+            return transports.Email(self)
         elif self.kind == "gotify":
             return transports.Gotify(self)
-        else:
-            raise NotImplementedError("Unknown channel kind: %s" % self.kind)
+        elif self.kind == "linenotify":
+            return transports.LineNotify(self)
+        elif self.kind == "matrix":
+            return transports.Matrix(self)
+        elif self.kind == "mattermost":
+            return transports.Mattermost(self)
+        elif self.kind == "msteams":
+            return transports.MsTeams(self)
+        elif self.kind == "opsgenie":
+            return transports.Opsgenie(self)
+        elif self.kind == "pagertree":
+            return transports.PagerTree(self)
+        elif self.kind == "pd":
+            return transports.PagerDuty(self)
+        elif self.kind == "po":
+            return transports.Pushover(self)
+        elif self.kind == "pushbullet":
+            return transports.Pushbullet(self)
+        elif self.kind == "shell":
+            return transports.Shell(self)
+        elif self.kind == "signal":
+            return transports.Signal(self)
+        elif self.kind == "slack":
+            return transports.Slack(self)
+        elif self.kind == "sms":
+            return transports.Sms(self)
+        elif self.kind == "spike":
+            return transports.Spike(self)
+        elif self.kind == "telegram":
+            return transports.Telegram(self)
+        elif self.kind == "trello":
+            return transports.Trello(self)
+        elif self.kind == "victorops":
+            return transports.VictorOps(self)
+        elif self.kind == "webhook":
+            return transports.Webhook(self)
+        elif self.kind == "whatsapp":
+            return transports.WhatsApp(self)
+        elif self.kind == "zulip":
+            return transports.Zulip(self)
+        elif self.kind in ("hipchat", "pagerteam"):
+            return transports.RemovedTransport(self)
+
+        raise NotImplementedError("Unknown channel kind: %s" % self.kind)
 
     def notify(self, check, is_test=False):
         if self.transport.is_noop(check):

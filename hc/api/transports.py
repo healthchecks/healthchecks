@@ -108,6 +108,13 @@ class Transport(object):
             return check.ping_set.order_by("created").last()
 
 
+class RemovedTransport(Transport):
+    """Dummy transport class for obsolete integrations: hipchat, pagerteam."""
+
+    def is_noop(self, check) -> bool:
+        return True
+
+
 class Email(Transport):
     def notify(self, check, notification=None) -> None:
         if not self.channel.email_verified:
@@ -358,11 +365,6 @@ class Mattermost(HttpTransport):
         self.post(self.channel.slack_webhook_url, json=payload)
 
 
-class HipChat(HttpTransport):
-    def is_noop(self, check) -> bool:
-        return True
-
-
 class Opsgenie(HttpTransport):
     @classmethod
     def raise_for_response(cls, response):
@@ -456,11 +458,6 @@ class PagerTree(HttpTransport):
         }
 
         self.post(url, json=payload, headers=headers)
-
-
-class PagerTeam(HttpTransport):
-    def is_noop(self, check) -> bool:
-        return True
 
 
 class Pushbullet(HttpTransport):
