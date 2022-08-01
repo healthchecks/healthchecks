@@ -1,11 +1,16 @@
+from collections.abc import Mapping
 import json
 from secrets import token_bytes
 from typing import List, Optional, Tuple
 
-from fido2.client import ClientData
-from fido2.ctap2 import AttestationObject, AttestedCredentialData, AuthenticatorData
 from fido2.server import Fido2Server
 from fido2.utils import websafe_encode, websafe_decode
+from fido2.webauthn import (
+    AttestationObject,
+    AttestedCredentialData,
+    AuthenticatorData,
+    CollectedClientData,
+)
 
 
 def bytes_to_b64(obj):
@@ -16,7 +21,7 @@ def bytes_to_b64(obj):
 
     """
 
-    if isinstance(obj, dict):
+    if isinstance(obj, dict) or isinstance(obj, Mapping):
         return {k: bytes_to_b64(v) for k, v in obj.items()}
 
     if isinstance(obj, list):
@@ -29,7 +34,7 @@ def bytes_to_b64(obj):
 
 
 _DECODE_MAP = {
-    "clientDataJSON": ClientData,
+    "clientDataJSON": CollectedClientData,
     "attestationObject": AttestationObject,
     "rawId": bytes,
     "authenticatorData": AuthenticatorData,

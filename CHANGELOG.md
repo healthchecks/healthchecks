@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Add ping endpoints for "log" events
 - Add the "Badges" page in docs
 - Add support for multiple recipients in incoming email (#669)
+- Upgrade to fido2 1.0.0
 
 ### Bug Fixes
 - Fix the display of ignored pings with non-zero exit status
