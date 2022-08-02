@@ -19,6 +19,14 @@ class UpdateNameTestCase(BaseTestCase):
         self.assertEqual(self.check.name, "Alice Was Here")
         self.assertEqual(self.check.slug, "alice-was-here")
 
+    def test_redirect_preserves_querystring(self):
+        referer = self.redirect_url + "?tag=foo"
+
+        self.client.login(username="alice@example.org", password="password")
+        payload = {"name": "Alice Was Here"}
+        r = self.client.post(self.url, data=payload, HTTP_REFERER=referer)
+        self.assertRedirects(r, referer)
+
     def test_it_redirects_to_details(self):
         details_url = f"/checks/{self.check.code}/details/"
         self.client.login(username="alice@example.org", password="password")

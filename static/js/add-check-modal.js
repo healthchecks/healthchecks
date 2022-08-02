@@ -41,6 +41,10 @@ $(function () {
         validateSchedule();
         $("#add-check-tz")[0].selectize.setValue("UTC", true);
         $("#add-check-name").focus();
+
+        // Pre-select the currently active tags
+        var selectedTags = $("#my-checks-tags .checked").map(function() { return this.textContent }).get();
+        $("#add-check-tags")[0].selectize.setValue(selectedTags);
     });
 
     // Update the hidden field when user changes period inputs

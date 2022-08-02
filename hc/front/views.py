@@ -168,6 +168,13 @@ def _refresh_last_active_date(profile):
         profile.save()
 
 
+def _get_referer_qs(request):
+    parsed = urlparse(request.META.get("HTTP_REFERER", ""))
+    if parsed.query:
+        return "?" + parsed.query
+    return ""
+
+
 @login_required
 def my_checks(request, code):
     _refresh_last_active_date(request.profile)
@@ -388,6 +395,7 @@ def add_check(request, code):
     check.assign_all_channels()
 
     url = reverse("hc-checks", args=[project.code])
+    url += _get_referer_qs(request)  # Preserve selected tags and search
     return redirect(url)
 
 
@@ -406,7 +414,9 @@ def update_name(request, code):
     if "/details/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-details", code)
 
-    return redirect("hc-checks", check.project.code)
+    url = reverse("hc-checks", args=[check.project.code])
+    url += _get_referer_qs(request)  # Preserve selected tags and search
+    return redirect(url)
 
 
 @require_POST
@@ -480,7 +490,9 @@ def update_timeout(request, code):
     if "/details/" in request.META.get("HTTP_REFERER", ""):
         return redirect("hc-details", code)
 
-    return redirect("hc-checks", check.project.code)
+    url = reverse("hc-checks", args=[check.project.code])
+    url += _get_referer_qs(request)  # Preserve selected tags and search
+    return redirect(url)
 
 
 @require_POST
