@@ -110,13 +110,23 @@ Healthchecks must be able to send email messages, so it can send out login
 links and alerts to users. Specify your SMTP credentials using the following
 environment variables:
 
-```python
-EMAIL_HOST = "your-smtp-server-here.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "smtp-username"
-EMAIL_HOST_PASSWORD = "smtp-password"
-EMAIL_USE_TLS = True
-```
+- Implicit TLS (*recommended*):
+    ```python
+    EMAIL_HOST = "your-smtp-server-here.com"
+    EMAIL_PORT = 465
+    EMAIL_HOST_USER = "smtp-username"
+    EMAIL_HOST_PASSWORD = "smtp-password"
+    EMAIL_USE_SSL = True
+    ```
+
+- Explicit TLS:
+    ```python
+    EMAIL_HOST = "your-smtp-server-here.com"
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = "smtp-username"
+    EMAIL_HOST_PASSWORD = "smtp-password"
+    EMAIL_USE_TLS = True
+    ```
 
 For more information, have a look at Django documentation,
 [Sending Email](https://docs.djangoproject.com/en/1.10/topics/email/) section.
