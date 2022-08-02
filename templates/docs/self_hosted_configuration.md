@@ -169,6 +169,13 @@ Default: `True`
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#email-use-tls).
 
+## `EMAIL_USE_SSL` {: #EMAIL_USE_SSL}
+
+Default: `False`
+
+This is a standard Django setting, read more in
+[Django documentation](https://docs.djangoproject.com/en/4.0/ref/settings/#email-use-ssl).
+
 ## `EMAIL_USE_VERIFICATION` {: #EMAIL_USE_VERIFICATION }
 
 Default: `True`

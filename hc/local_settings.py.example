@@ -30,3 +30,4 @@
 # EMAIL_HOST_USER = "username"
 # EMAIL_HOST_PASSWORD = "password"
 # EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
