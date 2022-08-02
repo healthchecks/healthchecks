@@ -34,6 +34,7 @@ from hc.api.models import (
     MAX_DELTA,
     Channel,
     Check,
+    Flip,
     Ping,
     Notification,
 )
@@ -456,8 +457,21 @@ def update_timeout(request, code):
         # Checks can flip from "up" to "down" state as a result of changing check's
         # schedule.  We don't want to send notifications when changing schedule
         # interactively in the web UI. So we update the `alert_after` and `status`
-        # fields here the same way as `sendalerts` would do, but without sending
-        # an actual alert:
+        # fields, and create a Flip object here the same way as `sendalerts` would do,
+        # but without sending an actual alert.
+        #
+        # We need to create the Flip object because otherwise the calculation
+        # in Check.downtimes() will come out wrong (when this check later comes up,
+        # we will have no record of when it went down).
+
+        flip = Flip(owner=check)
+        flip.created = now()
+        # mark as processed, don't want sendalerts to process this!
+        flip.processed = flip.created
+        flip.old_status = check.status
+        flip.new_status = "down"
+        flip.save()
+
         check.alert_after = None
         check.status = "down"
 

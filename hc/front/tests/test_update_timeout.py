@@ -53,13 +53,19 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
         # 1 + 1 minute:
         payload = {"kind": "simple", "timeout": 60, "grace": 60}
-
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, data=payload)
 
         self.check.refresh_from_db()
+        # The status should have been changed to "down"
         self.assertEqual(self.check.status, "down")
         self.assertIsNone(self.check.alert_after)
+
+        # It should also create a Flip object for downtime bookkeeping:
+        flip = self.check.flip_set.get()
+        self.assertEqual(flip.old_status, "up")
+        self.assertEqual(flip.new_status, "down")
+        self.assertTrue(flip.processed)
 
     def test_it_saves_cron_expression(self):
         payload = {"kind": "cron", "schedule": "5 * * * *", "tz": "UTC", "grace": 60}
