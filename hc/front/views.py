@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import timedelta as td
 import email
 import json
@@ -298,29 +299,51 @@ def switch_channel(request, code, channel_code):
     return HttpResponse()
 
 
+def _get_project_summary(profile):
+    statuses = defaultdict(lambda: {"status": "up", "started": False})
+    q = profile.checks_from_all_projects()
+    q = q.annotate(project_code=F("project__code"))
+    for check in q:
+        summary = statuses[check.project_code]
+        if check.last_start:
+            summary["started"] = True
+
+        if summary["status"] != "down":
+            status = check.get_status()
+            if status == "down" or (status == "grace" and summary["status"] == "up"):
+                summary["status"] = status
+
+    return statuses
+
+
 def index(request):
-    if request.user.is_authenticated:
-        project_ids = request.profile.projects().values("id")
+    if not request.user.is_authenticated:
+        return redirect("hc-login")
 
-        q = Project.objects.filter(id__in=project_ids)
-        q = q.annotate(n_checks=Count("check", distinct=True))
-        q = q.annotate(n_channels=Count("channel", distinct=True))
-        q = q.annotate(owner_email=F("owner__email"))
+    summary = _get_project_summary(request.profile)
+    if "refresh" in request.GET:
+        return JsonResponse({str(k): v for k, v in summary.items()})
 
-        projects = list(q)
-        # Primary sort key: projects with overall_status=down go first
-        # Secondary sort key: project's name
-        projects.sort(key=lambda p: (p.overall_status() != "down", p.name))
+    q = request.profile.projects()
+    q = q.annotate(n_checks=Count("check", distinct=True))
+    q = q.annotate(n_channels=Count("channel", distinct=True))
+    q = q.annotate(owner_email=F("owner__email"))
+    projects = list(q)
+    for project in projects:
+        project.overall_status = summary[project.code]["status"]
+        project.any_started = summary[project.code]["started"]
 
-        ctx = {
-            "page": "projects",
-            "projects": projects,
-            "last_project_id": request.session.get("last_project_id"),
-        }
+    # Primary sort key: projects with overall_status=down go first
+    # Secondary sort key: project's name
+    projects.sort(key=lambda p: (p.overall_status != "down", p.name))
 
-        return render(request, "front/projects.html", ctx)
+    ctx = {
+        "page": "projects",
+        "projects": projects,
+        "last_project_id": request.session.get("last_project_id"),
+    }
 
-    return redirect("hc-login")
+    return render(request, "front/projects.html", ctx)
 
 
 def dashboard(request):

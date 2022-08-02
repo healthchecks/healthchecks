@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Add the "Badges" page in docs
 - Add support for multiple recipients in incoming email (#669)
 - Upgrade to fido2 1.0.0, requests 2.28.1, segno 1.5.2
+- Implement auto-refresh and running indicator in the My Projects page (#681)
 
 ### Bug Fixes
 - Fix the display of ignored pings with non-zero exit status

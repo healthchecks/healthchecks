@@ -394,19 +394,6 @@ class Project(models.Model):
         for profile in q:
             profile.update_next_nag_date()
 
-    def overall_status(self):
-        if not hasattr(self, "_overall_status"):
-            self._overall_status = "up"
-            for check in self.check_set.all():
-                check_status = check.get_status()
-                if check_status == "grace" and self._overall_status == "up":
-                    self._overall_status = "grace"
-                elif check_status == "down":
-                    self._overall_status = "down"
-                    break
-
-        return self._overall_status
-
     def get_n_down(self):
         result = 0
         for check in self.check_set.all():

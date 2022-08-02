@@ -14,9 +14,12 @@
         <div id="project-selector" class="row">
             {% for project in projects %}
             <a href="{% url 'hc-checks' project.code %}">
-                <div class="col-sm-6 col-md-4">
+                <div id="{{ project.code }}" class="col-sm-6 col-md-4">
                     <div class="panel project {% if project.id == last_project_id %}selected{% endif %}">
-                        <div class="status ic-{{ project.overall_status }}"></div>
+                        <div class="indicators">
+                            <div class="status ic-{{ project.overall_status }}"></div>
+                            <div class="spinner {% if project.any_started %}started{% endif %}"></div>
+                        </div>
                         <h4>{{ project }}</h4>
                         <div>
                             {{ project.n_checks }} check{{ project.n_checks|pluralize }},
@@ -51,6 +54,8 @@
 {% compress js %}
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/adaptive-setinterval.js' %}"></script>
 <script src="{% static 'js/add_project_modal.js' %}"></script>
+<script src="{% static 'js/projects.js' %}"></script>
 {% endcompress %}
 {% endblock %}
