@@ -1,5 +1,4 @@
 from datetime import timedelta as td
-import json
 
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
@@ -83,7 +82,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.grace.total_seconds(), 2592000)
 
     def test_it_accepts_api_key_in_header(self):
-        payload = json.dumps({"name": "Foo"})
+        payload = {"name": "Foo"}
         r = self.client.post(
             self.URL, payload, content_type="application/json", HTTP_X_API_KEY="X" * 32
         )

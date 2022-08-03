@@ -1,5 +1,4 @@
 from datetime import timedelta as td
-import json
 
 from django.utils.timezone import now
 from hc.api.models import Check
@@ -17,7 +16,6 @@ class PauseTestCase(BaseTestCase):
         r = self.csrf_client.post(
             self.url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
         )
-
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
@@ -25,7 +23,7 @@ class PauseTestCase(BaseTestCase):
         self.assertEqual(self.check.status, "paused")
 
     def test_it_accepts_api_key_in_post_body(self):
-        payload = json.dumps({"api_key": "X" * 32})
+        payload = {"api_key": "X" * 32}
         r = self.csrf_client.post(self.url, payload, content_type="application/json")
         self.assertEqual(r.status_code, 200)
 
@@ -44,7 +42,7 @@ class PauseTestCase(BaseTestCase):
     def test_it_validates_ownership(self):
         check = Check.objects.create(project=self.bobs_project, status="up")
 
-        url = "/api/v1/checks/%s/pause" % check.code
+        url = f"/api/v1/checks/{check.code}/pause"
         r = self.client.post(
             url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
         )
