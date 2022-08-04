@@ -658,7 +658,7 @@ def _get_events(check, limit):
     for ping in reversed(pings):
         if ping.kind == "start":
             last_start = ping.created
-        elif (ping.kind is None or ping.kind == "fail") and last_start:
+        elif ping.kind in (None, "", "fail") and last_start:
             delta = ping.created - last_start
             last_start = None
             if delta < MAX_DELTA:
