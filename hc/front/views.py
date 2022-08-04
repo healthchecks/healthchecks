@@ -654,14 +654,15 @@ def _get_events(check, limit):
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
     pings = list(pings)
 
-    prev = None
+    last_start = None
     for ping in reversed(pings):
-        if ping.kind != "start" and prev and prev.kind == "start":
-            delta = ping.created - prev.created
+        if ping.kind == "start":
+            last_start = ping.created
+        elif (ping.kind is None or ping.kind == "fail") and last_start:
+            delta = ping.created - last_start
+            last_start = None
             if delta < MAX_DELTA:
                 setattr(ping, "delta", delta)
-
-        prev = ping
 
     alerts = []
     if len(pings):
