@@ -1,12 +1,12 @@
-from datetime import datetime, timedelta as td
+from datetime import datetime, timedelta as td, timezone
 from unittest.mock import Mock, patch
 
 from django.core import mail
-from django.utils.timezone import now, utc
+from django.utils.timezone import now
 from hc.test import BaseTestCase
 from hc.api.models import Check
 
-CURRENT_TIME = datetime(2020, 1, 15, tzinfo=utc)
+CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
 MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
