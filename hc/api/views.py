@@ -310,6 +310,9 @@ def pause(request, code):
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
+    # Track the status change for correct downtime calculation in Check.downtimes()
+    check.create_flip("paused", mark_as_processed=True)
+
     check.status = "paused"
     check.last_start = None
     check.alert_after = None

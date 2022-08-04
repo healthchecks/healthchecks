@@ -1,7 +1,7 @@
 from datetime import timedelta as td
 
 from django.utils.timezone import now
-from hc.api.models import Check
+from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
 
@@ -21,6 +21,14 @@ class PauseTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "paused")
+
+        # It should also create a Flip object, needed for accurate downtime
+        # tracking in Check.downtimes():
+        flip = Flip.objects.get()
+        self.assertEqual(flip.old_status, "up")
+        self.assertEqual(flip.new_status, "paused")
+        # should be marked as processed from the beginning, so sendalerts ignores it
+        self.assertTrue(flip.processed)
 
     def test_it_accepts_api_key_in_post_body(self):
         payload = {"api_key": "X" * 32}

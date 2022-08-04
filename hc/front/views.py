@@ -496,14 +496,7 @@ def update_timeout(request, code):
         # We need to create the Flip object because otherwise the calculation
         # in Check.downtimes() will come out wrong (when this check later comes up,
         # we will have no record of when it went down).
-
-        flip = Flip(owner=check)
-        flip.created = now()
-        # mark as processed, don't want sendalerts to process this!
-        flip.processed = flip.created
-        flip.old_status = check.status
-        flip.new_status = "down"
-        flip.save()
+        check.create_flip("down", mark_as_processed=True)
 
         check.alert_after = None
         check.status = "down"
@@ -609,6 +602,9 @@ def ping_body(request, code, n):
 @login_required
 def pause(request, code):
     check = _get_rw_check_for_user(request, code)
+
+    # Track the status change for correct downtime calculation in Check.downtimes()
+    check.create_flip("paused", mark_as_processed=True)
 
     check.status = "paused"
     check.last_start = None

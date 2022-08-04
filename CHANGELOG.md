@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - Fix the display of ignored pings with non-zero exit status
 - Fix a race condition in the "Change Email" flow
 - Fix grouping and sorting in the text version of the report/nag emails (#679)
-- Fix the update_timeout view to record more information for downtime bookkeeping
+- Fix the update_timeout and pause views to create flips (for downtime bookkeeping)
 - Fix the checks list to preserve selected filters when adding/updating checks (#684)
 - Fix duration calculation to skip "log" and "ign" events
 
