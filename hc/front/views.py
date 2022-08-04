@@ -626,6 +626,10 @@ def pause(request, code):
 @login_required
 def resume(request, code):
     check = _get_rw_check_for_user(request, code)
+    if check.status != "paused":
+        return HttpResponseBadRequest()
+
+    check.create_flip("new", mark_as_processed=True)
 
     check.status = "new"
     check.last_start = None

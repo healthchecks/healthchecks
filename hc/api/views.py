@@ -325,6 +325,29 @@ def pause(request, code):
     return JsonResponse(check.to_dict())
 
 
+@cors("POST")
+@csrf_exempt
+@validate_json()
+@authorize
+def resume(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    if check.status != "paused":
+        return HttpResponse("check is not paused", status=409)
+
+    check.create_flip("new", mark_as_processed=True)
+
+    check.status = "new"
+    check.last_start = None
+    check.last_ping = None
+    check.alert_after = None
+    check.save()
+
+    return JsonResponse(check.to_dict())
+
+
 @cors("GET")
 @csrf_exempt
 @validate_json()

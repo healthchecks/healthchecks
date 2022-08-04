@@ -286,10 +286,12 @@ class Check(models.Model):
         else:
             update_rel_url = reverse("hc-api-single", args=[self.code])
             pause_rel_url = reverse("hc-api-pause", args=[self.code])
+            resume_rel_url = reverse("hc-api-resume", args=[self.code])
 
             result["ping_url"] = settings.PING_ENDPOINT + str(self.code)
             result["update_url"] = settings.SITE_ROOT + update_rel_url
             result["pause_url"] = settings.SITE_ROOT + pause_rel_url
+            result["resume_url"] = settings.SITE_ROOT + resume_rel_url
             result["channels"] = self.channels_str()
 
         if self.kind == "simple":

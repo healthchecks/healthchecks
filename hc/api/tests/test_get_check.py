@@ -37,7 +37,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 22)
+        self.assertEqual(len(doc), 23)
 
         self.assertEqual(doc["slug"], "alice-1")
         self.assertEqual(doc["timeout"], 3600)
@@ -72,7 +72,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 22)
+        self.assertEqual(len(doc), 23)
 
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)
@@ -95,4 +95,5 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         # When using readonly keys, the ping URLs should not be exposed:
-        self.assertNotContains(r, self.a1.url())
+        for key in ("ping_url", "update_url", "pause_url", "resume_url"):
+            self.assertNotContains(r, key)

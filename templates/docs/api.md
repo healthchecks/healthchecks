@@ -12,6 +12,7 @@ Endpoint Name                                         | Endpoint Address
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v1/checks/`
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
+[Resume monitoring of a check](#resume-check)         | `POST SITE_ROOT/api/v1/checks/<uuid>/resume`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
 [Get a list of check's logged pings](#list-pings)     | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
 [Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
@@ -114,6 +115,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "ping_url": "PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712",
       "update_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712",
       "pause_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause",
+      "resume_url": "SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/resume",
       "channels": "1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c",
       "timeout": 3600
     },
@@ -136,6 +138,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
       "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
       "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
+      "resume_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/resume",
       "channels": "1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c",
       "schedule": "15 5 * * *",
       "tz": "UTC"
@@ -148,7 +151,7 @@ The possible values for the `status` field are: `new`, `started`, `up`, `grace`,
 and `paused`.
 
 When using the read-only API key, SITE_NAME omits the following fields from responses:
-`ping_url`, `update_url`, `pause_url`, `channels`.  It adds an extra
+`ping_url`, `update_url`, `pause_url`, `resume_url`, `channels`.  It adds an extra
 `unique_key` field. The `unique_key` identifier is stable across API calls, and
 you can use it in the [Get a single check](#get-check)
 and [Get a list of check's status changes](#list-flips) API calls.
@@ -252,6 +255,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
   "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
   "update_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
   "pause_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
+  "resume_url": "SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/resume",
   "channels": "1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c",
   "schedule": "15 5 * * *",
   "tz": "UTC"
@@ -264,12 +268,11 @@ and `paused`.
 ### Example Read-Only Response
 
 When using the read-only API key, SITE_NAME omits the following fields from responses:
-`ping_url`, `update_url`, `pause_url`, `channels`.  It adds an extra
+`ping_url`, `update_url`, `pause_url`, `resume_url`, `channels`.  It adds an extra
 `unique_key` field. This identifier is stable across API calls.
 
-Note: although API omits the `ping_url`, `update_url`, and `pause_url` in read-only
-API responses, the client can easily construct these URLs themselves *if* they know the
-check's unique UUID.
+Note: although API omits the `*_url` fields in read-only API responses, the client can
+easily construct these URLs themselves *if* they know the check's unique UUID.
 
 ```json
 {
@@ -583,6 +586,7 @@ curl SITE_ROOT/api/v1/checks/ \
   "filter_subject": false,
   "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
+  "resume_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
   "tags": "prod www",
@@ -855,6 +859,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "filter_subject": false,
   "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
+  "resume_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
   "tags": "prod www",
@@ -868,7 +873,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 
 Disables monitoring for a check without removing it. The check goes into a "paused"
-state. You can resume monitoring of the check by pinging it.
+state. You can resume monitoring of the check by pinging it, or by running
+the [Resume](#resume-check) API call (useful when check's `manual_resume=True`).
 
 This API call has no request parameters.
 
@@ -905,6 +911,7 @@ header is sometimes required by some network proxies and web servers.
   "desc": "",
   "grace": 60,
   "last_ping": null,
+  "next_ping": null,
   "n_pings": 0,
   "name": "Backups",
   "slug": "backups",
@@ -916,6 +923,7 @@ header is sometimes required by some network proxies and web servers.
   "filter_subject": false,
   "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
+  "resume_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "paused",
   "tags": "prod www",
@@ -923,6 +931,74 @@ header is sometimes required by some network proxies and web servers.
   "update_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc"
 }
 ```
+
+## Resume Monitoring of a Check {: #resume-check .rule }
+
+`POST SITE_ROOT/api/v1/checks/<uuid>/resume`
+
+Resumes a check. The check goes into the "new" state. Use this API call to resume
+the monitoring of checks that are in the paused state, and have the `manual_resume`
+configuration parameter set to `True`.
+
+This API call has no request parameters.
+
+### Response Codes
+
+200 OK
+:   The operation was successful.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
+409 Conflict
+:   The specified check is currently not in a paused state.
+
+### Example Request
+
+```bash
+curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/resume \
+    --request POST --header "X-Api-Key: your-api-key" --data ""
+```
+
+Note: the `--data ""` argument forces curl to send a `Content-Length` request header
+even though the request body is empty. For HTTP POST requests, the `Content-Length`
+header is sometimes required by some network proxies and web servers.
+
+### Example Response
+
+```json
+{
+  "channels": "",
+  "desc": "",
+  "grace": 60,
+  "last_ping": null,
+  "next_ping": null,
+  "n_pings": 0,
+  "name": "Backups",
+  "slug": "backups",
+  "next_ping": null,
+  "manual_resume": false,
+  "methods": "",
+  "success_kw": "",
+  "failure_kw": "",
+  "filter_subject": false,
+  "filter_body": false,
+  "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
+  "resume_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
+  "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
+  "status": "new",
+  "tags": "prod www",
+  "timeout": 3600,
+  "update_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc"
+}
+```
+
 
 ## Delete Check {: #delete-check .rule }
 
@@ -973,6 +1049,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "filter_subject": false,
   "filter_body": false,
   "pause_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
+  "resume_url": "SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
   "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
   "status": "new",
   "tags": "prod www",
