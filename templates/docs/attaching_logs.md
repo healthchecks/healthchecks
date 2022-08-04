@@ -41,6 +41,13 @@ Best of all, the syntax is simple and clean:
 runitor -uuid your-uuid-here -- /usr/bin/certbot renew
 ```
 
+## Sending Logs Without Signalling Success or Failure
+
+You may sometimes want to log diagnostic information without altering the check's
+current state. SITE_NAME provides the [/log endpoint](../http_api#log-uuid) just for
+that. When you send an HTTP POST request to this endpoint, SITE_NAME will log the event
+and display it in check's "Events" section, but will keep the check's state unchanged.
+
 ## Handling More Than 10KB of Logs
 
 While SITE_NAME can store a small amount of logs in a pinch, it is not specifically

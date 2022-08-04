@@ -211,7 +211,9 @@ OK
 HEAD|GET|POST PING_ENDPOINT<uuid>/log
 ```
 
-Sends logging information to SITE_NAME without altering check's status.
+Sends logging information to SITE_NAME without signalling success or failure.
+SITE_NAME will log the event and display it in check's "Events" section with the
+"Log" label. The check's status will not change.
 
 SITE_NAME identifies the check by the UUID value included in the URL.
 
@@ -463,7 +465,9 @@ OK
 HEAD|GET|POST PING_ENDPOINT<ping-key/<slug>/log
 ```
 
-Sends logging information to SITE_NAME without altering check's status.
+Sends logging information to SITE_NAME without signalling success or failure.
+SITE_NAME will log the event and display it in check's "Events" section with the
+"Log" label. The check's status will not change.
 
 SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.
