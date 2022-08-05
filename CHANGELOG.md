@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.3 - Unreleased
+## v2.3 - 2022-08-05
 
 ### Improvements
 - Update Dockerfile to start SMTP listener (#668)
