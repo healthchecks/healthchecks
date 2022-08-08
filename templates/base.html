@@ -187,9 +187,10 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'hc-logout' %}">
-                            {% trans "Log Out" %}
-                        </a>
+                        <form method="post" action="{% url 'hc-logout' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-link" type="submit">{% trans "Log Out" %}</button>
+                        </form>
                     </li>
                     </ul>
                 </li>

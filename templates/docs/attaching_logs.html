@@ -29,6 +29,11 @@ Best of all, the syntax is simple and clean:</p>
 <div class="highlight"><pre><span></span><code>runitor -uuid your-uuid-here -- /usr/bin/certbot renew
 </code></pre></div>
 
+<h2>Sending Logs Without Signalling Success or Failure</h2>
+<p>You may sometimes want to log diagnostic information without altering the check's
+current state. SITE_NAME provides the <a href="../http_api#log-uuid">/log endpoint</a> just for
+that. When you send an HTTP POST request to this endpoint, SITE_NAME will log the event
+and display it in check's "Events" section, but will keep the check's state unchanged.</p>
 <h2>Handling More Than 10KB of Logs</h2>
 <p>While SITE_NAME can store a small amount of logs in a pinch, it is not specifically
 designed for that. If you run into the issue of logs getting cut off, consider

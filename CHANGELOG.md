@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.3 - Unreleased
+## v2.3 - 2022-08-05
 
 ### Improvements
 - Update Dockerfile to start SMTP listener (#668)
@@ -16,13 +16,16 @@ All notable changes to this project will be documented in this file.
 - Add support for multiple recipients in incoming email (#669)
 - Upgrade to fido2 1.0.0, requests 2.28.1, segno 1.5.2
 - Implement auto-refresh and running indicator in the My Projects page (#681)
+- Upgrade to Django 4.1 and django-compressor 4.1
+- Add API support for resuming paused checks (#687)
 
 ### Bug Fixes
 - Fix the display of ignored pings with non-zero exit status
 - Fix a race condition in the "Change Email" flow
 - Fix grouping and sorting in the text version of the report/nag emails (#679)
-- Fix the update_timeout view to record more information for downtime bookkeeping
+- Fix the update_timeout and pause views to create flips (for downtime bookkeeping)
 - Fix the checks list to preserve selected filters when adding/updating checks (#684)
+- Fix duration calculation to skip "log" and "ign" events
 
 ## v2.2.1 - 2022-06-13
 

@@ -310,6 +310,9 @@ def pause(request, code):
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
+    # Track the status change for correct downtime calculation in Check.downtimes()
+    check.create_flip("paused", mark_as_processed=True)
+
     check.status = "paused"
     check.last_start = None
     check.alert_after = None
@@ -318,6 +321,29 @@ def pause(request, code):
     # After pausing a check we must check if all checks are up,
     # and Profile.next_nag_date needs to be cleared out:
     check.project.update_next_nag_dates()
+
+    return JsonResponse(check.to_dict())
+
+
+@cors("POST")
+@csrf_exempt
+@validate_json()
+@authorize
+def resume(request, code):
+    check = get_object_or_404(Check, code=code)
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    if check.status != "paused":
+        return HttpResponse("check is not paused", status=409)
+
+    check.create_flip("new", mark_as_processed=True)
+
+    check.status = "new"
+    check.last_start = None
+    check.last_ping = None
+    check.alert_after = None
+    check.save()
 
     return JsonResponse(check.to_dict())
 

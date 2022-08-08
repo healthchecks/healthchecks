@@ -1,4 +1,4 @@
-from hc.api.models import Check
+from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
 
@@ -16,6 +16,27 @@ class ResumeTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "new")
+
+        flip = Flip.objects.get()
+        self.assertEqual(flip.old_status, "paused")
+        self.assertEqual(flip.new_status, "new")
+        # should be marked as processed from the beginning, so sendalerts ignores it
+        self.assertTrue(flip.processed)
+
+    def test_it_handles_not_paused_tests(self):
+        self.check.status = "down"
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url)
+        self.assertEqual(r.status_code, 400)
+
+        # The status should be unchanged
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "down")
+
+        # There should be no Flip object
+        self.assertFalse(Flip.objects.exists())
 
     def test_it_rejects_get(self):
         self.client.login(username="alice@example.org", password="password")

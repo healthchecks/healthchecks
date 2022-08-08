@@ -1,6 +1,8 @@
+from datetime import timedelta as td
 import json
 from unittest.mock import patch
 
+from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
 
@@ -144,3 +146,23 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "label-log", status_code=200)
+
+    def test_it_does_not_show_duration_for_log_event(self):
+        h = td(hours=1)
+        Ping.objects.create(owner=self.check, n=2, kind="start", created=now() - h)
+        Ping.objects.create(owner=self.check, n=3, kind="log", created=now() - h * 2)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "label-log", status_code=200)
+        self.assertNotContains(r, "ic-timer", status_code=200)
+
+    def test_it_does_not_show_duration_for_ign_event(self):
+        h = td(hours=1)
+        Ping.objects.create(owner=self.check, n=2, kind="start", created=now() - h)
+        Ping.objects.create(owner=self.check, n=3, kind="ign", created=now() - h * 2)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "label-ign", status_code=200)
+        self.assertNotContains(r, "ic-timer", status_code=200)

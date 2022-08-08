@@ -496,14 +496,7 @@ def update_timeout(request, code):
         # We need to create the Flip object because otherwise the calculation
         # in Check.downtimes() will come out wrong (when this check later comes up,
         # we will have no record of when it went down).
-
-        flip = Flip(owner=check)
-        flip.created = now()
-        # mark as processed, don't want sendalerts to process this!
-        flip.processed = flip.created
-        flip.old_status = check.status
-        flip.new_status = "down"
-        flip.save()
+        check.create_flip("down", mark_as_processed=True)
 
         check.alert_after = None
         check.status = "down"
@@ -610,6 +603,9 @@ def ping_body(request, code, n):
 def pause(request, code):
     check = _get_rw_check_for_user(request, code)
 
+    # Track the status change for correct downtime calculation in Check.downtimes()
+    check.create_flip("paused", mark_as_processed=True)
+
     check.status = "paused"
     check.last_start = None
     check.alert_after = None
@@ -630,6 +626,10 @@ def pause(request, code):
 @login_required
 def resume(request, code):
     check = _get_rw_check_for_user(request, code)
+    if check.status != "paused":
+        return HttpResponseBadRequest()
+
+    check.create_flip("new", mark_as_processed=True)
 
     check.status = "new"
     check.last_start = None
@@ -654,14 +654,15 @@ def _get_events(check, limit):
     pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
     pings = list(pings)
 
-    prev = None
+    last_start = None
     for ping in reversed(pings):
-        if ping.kind != "start" and prev and prev.kind == "start":
-            delta = ping.created - prev.created
+        if ping.kind == "start":
+            last_start = ping.created
+        elif ping.kind in (None, "", "fail") and last_start:
+            delta = ping.created - last_start
+            last_start = None
             if delta < MAX_DELTA:
                 setattr(ping, "delta", delta)
-
-        prev = ping
 
     alerts = []
     if len(pings):

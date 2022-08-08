@@ -286,10 +286,12 @@ class Check(models.Model):
         else:
             update_rel_url = reverse("hc-api-single", args=[self.code])
             pause_rel_url = reverse("hc-api-pause", args=[self.code])
+            resume_rel_url = reverse("hc-api-resume", args=[self.code])
 
             result["ping_url"] = settings.PING_ENDPOINT + str(self.code)
             result["update_url"] = settings.SITE_ROOT + update_rel_url
             result["pause_url"] = settings.SITE_ROOT + pause_rel_url
+            result["resume_url"] = settings.SITE_ROOT + resume_rel_url
             result["channels"] = self.channels_str()
 
         if self.kind == "simple":
@@ -323,12 +325,7 @@ class Check(models.Model):
 
             new_status = "down" if action == "fail" else "up"
             if self.status != new_status:
-                flip = Flip(owner=self)
-                flip.created = self.last_ping
-                flip.old_status = self.status
-                flip.new_status = new_status
-                flip.save()
-
+                self.create_flip(new_status)
                 self.status = new_status
 
         self.alert_after = self.going_down_after()
@@ -426,6 +423,25 @@ class Check(models.Model):
         """Return downtime summary for two previous months."""
 
         return self.downtimes(3)[:-1]
+
+    def create_flip(self, new_status, mark_as_processed=False):
+        """Create a Flip object for this check.
+
+        Flip objects record check status changes, and have two uses:
+        - for sending notifications asynchronously (create a flip object in
+          wwww process, a separate "sendalerts" process picks it up and processes it)
+        - for downtime statistics calculation. The Check.downtimes() method
+          analyzes the flips and calculates downtime counts and durations per
+          month.
+        """
+
+        flip = Flip(owner=self)
+        flip.created = now()
+        if mark_as_processed:
+            flip.processed = flip.created
+        flip.old_status = self.status
+        flip.new_status = new_status
+        flip.save()
 
 
 class Ping(models.Model):
