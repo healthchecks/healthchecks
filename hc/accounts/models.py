@@ -175,7 +175,11 @@ class Profile(models.Model):
         return q.distinct().order_by("name")
 
     def annotated_projects(self):
-        """Return all projects, annotated with 'n_down'."""
+        """Return all projects, annotated with 'n_down'.
+
+        Used to render the projects list in the navbar / "Account" menu.
+
+        """
 
         # Subquery for getting project ids
         project_ids = self.projects().values("id")
@@ -191,11 +195,9 @@ class Profile(models.Model):
     def checks_from_all_projects(self):
         """Return a queryset of checks from projects we have access to."""
 
-        project_ids = self.projects().values("id")
-
         from hc.api.models import Check
 
-        return Check.objects.filter(project_id__in=project_ids)
+        return Check.objects.filter(project__in=self.projects())
 
     def send_report(self, nag=False):
         checks = self.checks_from_all_projects()
