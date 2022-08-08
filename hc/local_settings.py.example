@@ -26,7 +26,8 @@
 
 # Email
 # EMAIL_HOST = "your-smtp-server-here.com"
-# EMAIL_PORT = 465
+# EMAIL_PORT = 587
 # EMAIL_HOST_USER = "username"
 # EMAIL_HOST_PASSWORD = "password"
-# EMAIL_USE_SSL = True
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False

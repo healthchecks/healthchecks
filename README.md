@@ -116,8 +116,11 @@ environment variables:
     EMAIL_PORT = 465
     EMAIL_HOST_USER = "smtp-username"
     EMAIL_HOST_PASSWORD = "smtp-password"
+    EMAIL_USE_TLS = False
     EMAIL_USE_SSL = True
     ```
+
+    Port 465 should be the preferred method according to [RFC8314 Section 3.3: Implicit TLS for SMTP Submission](https://tools.ietf.org/html/rfc8314#section-3.3). Be sure to use a TLS certificate and not an SSL one.
 
 - Explicit TLS:
     ```python
