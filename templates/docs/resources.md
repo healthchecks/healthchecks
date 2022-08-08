@@ -8,9 +8,8 @@ Please submit additions and corrections
 
 * [linuxserver/docker-healthchecks](https://github.com/linuxserver/docker-healthchecks) – Docker image
 * [galexrt/docker-healthchecks](https://github.com/galexrt/docker-healthchecks) – Docker image
-* [haswalt/docker-healthchecks](https://github.com/haswalt/docker-healthchecks) – Docker image
 * [iphoting/healthchecks](https://github.com/iphoting/healthchecks/) – Deploy Healthchecks to Heroku
-* [coaxial/healthchecks](https://galaxy.ansible.com/coaxial/healthchecks) – Ansible role for deploying Healthchecks
+* [ansible-collections/community.healthchecksio](https://github.com/ansible-collections/community.healthchecksio) - Ansible modules for automating tasks on Healthchecks.io
 
 ## Command Runners, Shell Wrappers
 
