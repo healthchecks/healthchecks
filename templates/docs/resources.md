@@ -6,8 +6,8 @@ Please submit additions and corrections
 
 ## Tools for Self-Hosting
 
-* [linuxserver/docker-healthchecks](https://github.com/linuxserver/docker-healthchecks) – Docker image
-* [galexrt/docker-healthchecks](https://github.com/galexrt/docker-healthchecks) – Docker image
+* [linuxserver/docker-healthchecks](https://github.com/linuxserver/docker-healthchecks) – Alternative Docker image
+* [galexrt/docker-healthchecks](https://github.com/galexrt/docker-healthchecks) – Alternative Docker image
 * [iphoting/healthchecks](https://github.com/iphoting/healthchecks/) – Deploy Healthchecks to Heroku
 * [ansible-collections/community.healthchecksio](https://github.com/ansible-collections/community.healthchecksio) - Ansible modules for automating tasks on Healthchecks.io
 
