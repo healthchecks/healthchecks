@@ -180,6 +180,7 @@ def login(request):
     return render(request, "accounts/login.html", ctx)
 
 
+@require_POST
 def logout(request):
     auth_logout(request)
     return redirect("hc-index")

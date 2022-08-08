@@ -183,6 +183,21 @@ pre {
     padding: 6px 20px 3px 20px;
 }
 
+.dropdown-menu > li .btn-link {
+  display: block;
+  padding: 3px 20px;
+  color: var(--text-color);
+  white-space: nowrap;
+  width: 100%;
+  text-align: left;
+}
+
+.dropdown-menu > li .btn-link:focus,
+.dropdown-menu > li .btn-link:hover {
+    text-decoration: none;
+    background-color: var(--dropdown-link-hover-bg);
+}
+
 .project-item .name {
     display: inline-block;
     max-width: 130px;
