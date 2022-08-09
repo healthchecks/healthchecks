@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.4 - Unreleased
+### Improvements
+- Add support for EMAIL_USE_SSL environment variable (#685)
+
 ## v2.3 - 2022-08-05
 
 ### Improvements
