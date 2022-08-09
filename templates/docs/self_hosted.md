@@ -90,18 +90,20 @@ Healthchecks needs SMTP credentials to be able to send emails:
 login links, monitoring notifications, monthly reports.
 
 Specify SMTP credentials using the `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`,
-`EMAIL_HOST_PASSWORD`, and `EMAIL_USE_TLS` environment variables. Example:
+`EMAIL_HOST_PASSWORD`, `EMAIL_USE_SSL`, and `EMAIL_USE_TLS` environment variables.
+Example:
 
 ```ini
 EMAIL_HOST=my-smtp-server-here.com
-EMAIL_PORT=587
+EMAIL_PORT=465
 EMAIL_HOST_USER=my-username
 EMAIL_HOST_PASSWORD=mypassword
-EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
 ```
 
 You can read more about handling outbound email in the Django documentation,
-[Sending Email](https://docs.djangoproject.com/en/4.0/topics/email/) section.
+[Sending Email](https://docs.djangoproject.com/en/4.1/topics/email/) section.
 
 ## Receiving Emails
 

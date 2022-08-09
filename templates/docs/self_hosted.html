@@ -96,16 +96,18 @@ click on the "Account" dropdown in top navigation, and select "Site Administrati
 <p>Healthchecks needs SMTP credentials to be able to send emails:
 login links, monitoring notifications, monthly reports.</p>
 <p>Specify SMTP credentials using the <code>EMAIL_HOST</code>, <code>EMAIL_PORT</code>, <code>EMAIL_HOST_USER</code>,
-<code>EMAIL_HOST_PASSWORD</code>, and <code>EMAIL_USE_TLS</code> environment variables. Example:</p>
+<code>EMAIL_HOST_PASSWORD</code>, <code>EMAIL_USE_SSL</code>, and <code>EMAIL_USE_TLS</code> environment variables.
+Example:</p>
 <div class="highlight"><pre><span></span><code><span class="na">EMAIL_HOST</span><span class="o">=</span><span class="s">my-smtp-server-here.com</span><span class="w"></span>
-<span class="na">EMAIL_PORT</span><span class="o">=</span><span class="s">587</span><span class="w"></span>
+<span class="na">EMAIL_PORT</span><span class="o">=</span><span class="s">465</span><span class="w"></span>
 <span class="na">EMAIL_HOST_USER</span><span class="o">=</span><span class="s">my-username</span><span class="w"></span>
 <span class="na">EMAIL_HOST_PASSWORD</span><span class="o">=</span><span class="s">mypassword</span><span class="w"></span>
-<span class="na">EMAIL_USE_TLS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span><span class="w"></span>
+<span class="na">EMAIL_USE_SSL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span><span class="w"></span>
+<span class="na">EMAIL_USE_TLS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span><span class="w"></span>
 </code></pre></div>
 
 <p>You can read more about handling outbound email in the Django documentation,
-<a href="https://docs.djangoproject.com/en/4.0/topics/email/">Sending Email</a> section.</p>
+<a href="https://docs.djangoproject.com/en/4.1/topics/email/">Sending Email</a> section.</p>
 <h2>Receiving Emails</h2>
 <p>Healthchecks comes with a <code>smtpd</code> management command, which starts up a
 SMTP listener service. With the command running, you can ping your
