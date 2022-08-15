@@ -224,7 +224,9 @@ class HttpTransport(Transport):
             options["headers"]["User-Agent"] = "healthchecks.io"
 
         try:
-            r = requests.request(method, url, **options)
+            s = requests.Session()
+            s.max_redirects = 3
+            r = s.request(method, url, **options)
             if r.status_code not in (200, 201, 202, 204):
                 cls.raise_for_response(r)
 
@@ -235,6 +237,8 @@ class HttpTransport(Transport):
             raise TransportError("Connection failed")
         except requests.exceptions.ContentDecodingError:
             raise TransportError("Failed to decode response")
+        except requests.exceptions.TooManyRedirects:
+            raise TransportError("Too many redirects")
 
     @classmethod
     def _request_with_retries(cls, method, url, use_retries=True, **kwargs) -> None:

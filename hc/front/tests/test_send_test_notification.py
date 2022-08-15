@@ -63,7 +63,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Email not verified")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_it_handles_webhooks_with_no_down_url(self, mock_get):
         mock_get.return_value.status_code = 200
 
@@ -120,7 +120,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         r = self.client.post(self.url, {}, follow=True)
         self.assertEqual(r.status_code, 404)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_it_handles_up_only_sms_channel(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -137,7 +137,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         payload = kwargs["data"]
         self.assertIn("is UP", payload["Body"])
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_it_handles_webhook_with_json_variable(self, mock_post):
         self.channel.kind = "webhook"
         self.channel.value = json.dumps(

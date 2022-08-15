@@ -53,7 +53,7 @@ class AddTelegramTestCase(BaseTestCase):
 
         self.assertFalse(Channel.objects.exists())
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_bot_sends_invite(self, mock_request):
         mock_request.return_value.status_code = 200
 
@@ -67,7 +67,7 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(mock_request.called)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_bot_handles_channel_post(self, mock_request):
         mock_request.return_value.status_code = 200
 
@@ -81,7 +81,7 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(mock_request.called)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_bot_handles_bad_message(self, mock_get):
         samples = ["", "{}"]
 
@@ -103,7 +103,7 @@ class AddTelegramTestCase(BaseTestCase):
                 # JSON decodes but message structure not recognized
                 self.assertEqual(r.status_code, 200)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_bot_handles_send_failure(self, mock_request):
         mock_request.return_value.status_code = 403
 

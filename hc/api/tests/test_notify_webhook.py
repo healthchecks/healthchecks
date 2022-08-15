@@ -7,7 +7,12 @@ from unittest.mock import patch
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
-from requests.exceptions import ConnectionError, ContentDecodingError, Timeout
+from requests.exceptions import (
+    ConnectionError,
+    ContentDecodingError,
+    Timeout,
+    TooManyRedirects,
+)
 from django.test.utils import override_settings
 
 
@@ -25,7 +30,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhook(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -45,7 +50,7 @@ class NotifyWebhookTestCase(BaseTestCase):
             timeout=10,
         )
 
-    @patch("hc.api.transports.requests.request", side_effect=Timeout)
+    @patch("hc.api.transports.requests.Session.request", side_effect=Timeout)
     def test_webhooks_handle_timeouts(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -66,7 +71,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Connection timed out")
 
-    @patch("hc.api.transports.requests.request", side_effect=ConnectionError)
+    @patch("hc.api.transports.requests.Session.request", side_effect=ConnectionError)
     def test_webhooks_handle_connection_errors(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -83,7 +88,9 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection failed")
 
-    @patch("hc.api.transports.requests.request", side_effect=ContentDecodingError)
+    @patch(
+        "hc.api.transports.requests.Session.request", side_effect=ContentDecodingError
+    )
     def test_webhooks_handle_content_decoding_error(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -100,7 +107,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Failed to decode response")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_500(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -120,7 +127,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
 
-    @patch("hc.api.transports.requests.request", side_effect=Timeout)
+    @patch("hc.api.transports.requests.Session.request", side_effect=Timeout)
     def test_webhooks_dont_retry_when_sending_test_notifications(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -138,7 +145,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Connection timed out")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_support_variables(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -162,7 +169,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(kwargs["headers"], {"User-Agent": "healthchecks.io"})
         self.assertEqual(kwargs["timeout"], 10)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_variable_variables(self, mock_get):
         definition = {
             "method_down": "GET",
@@ -181,7 +188,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_get.call_args
         self.assertEqual(args[1], "http://host/$TAG1")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_support_post(self, mock_request):
         definition = {
             "method_down": "POST",
@@ -202,7 +209,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         payload = kwargs["data"].decode()
         self.assertTrue(payload.startswith("The Time Is 2"))
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_dollarsign_escaping(self, mock_get):
         # If name or tag contains what looks like a variable reference,
         # that should be left alone:
@@ -225,7 +232,7 @@ class NotifyWebhookTestCase(BaseTestCase):
             "get", url, headers={"User-Agent": "healthchecks.io"}, timeout=10
         )
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_up_events(self, mock_get):
         definition = {
             "method_up": "GET",
@@ -241,7 +248,7 @@ class NotifyWebhookTestCase(BaseTestCase):
             "get", "http://bar", headers={"User-Agent": "healthchecks.io"}, timeout=10
         )
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_noop_up_events(self, mock_get):
         definition = {
             "method_up": "GET",
@@ -256,7 +263,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertFalse(mock_get.called)
         self.assertEqual(Notification.objects.count(), 0)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_unicode_post_body(self, mock_request):
         definition = {
             "method_down": "POST",
@@ -274,7 +281,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         # unicode should be encoded into utf-8
         self.assertIsInstance(kwargs["data"], bytes)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_post_headers(self, mock_request):
         definition = {
             "method_down": "POST",
@@ -291,7 +298,7 @@ class NotifyWebhookTestCase(BaseTestCase):
             "post", "http://foo.com", data=b"data", headers=headers, timeout=10
         )
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_get_headers(self, mock_request):
         definition = {
             "method_down": "GET",
@@ -308,7 +315,7 @@ class NotifyWebhookTestCase(BaseTestCase):
             "get", "http://foo.com", headers=headers, timeout=10
         )
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_allow_user_agent_override(self, mock_request):
         definition = {
             "method_down": "GET",
@@ -325,7 +332,7 @@ class NotifyWebhookTestCase(BaseTestCase):
             "get", "http://foo.com", headers=headers, timeout=10
         )
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_support_variables_in_headers(self, mock_request):
         definition = {
             "method_down": "GET",
@@ -360,7 +367,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Webhook notifications are not enabled.")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_non_ascii_in_headers(self, mock_request):
         definition = {
             "method_down": "GET",
@@ -377,7 +384,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.assertEqual(kwargs["headers"]["X-Foo"], "b&#257;r")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_handle_latin1_in_headers(self, mock_request):
         definition = {
             "method_down": "GET",
@@ -394,7 +401,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.assertEqual(kwargs["headers"]["X-Foo"], "½")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_webhooks_support_json_variable(self, mock_post):
         definition = {
             "method_down": "POST",
@@ -413,3 +420,24 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         body = json.loads(kwargs["data"])
         self.assertEqual(body["name"], "Hello World")
+
+    @patch("hc.api.transports.requests.Session.request", side_effect=TooManyRedirects)
+    def test_webhooks_handle_redirect_loops(self, mock_get):
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data(json.dumps(definition))
+        self.channel.notify(self.check)
+
+        # The transport should have retried 3 times
+        self.assertEqual(mock_get.call_count, 3)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Too many redirects")
+
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.last_error, "Too many redirects")

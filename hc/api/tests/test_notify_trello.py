@@ -32,7 +32,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -47,7 +47,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertEqual(params["key"], "fake-trello-app-key")
         self.assertEqual(params["token"], "fake-token")
 
-    @patch("hc.api.transports.requests.request")
+    @patch("hc.api.transports.requests.Session.request")
     def test_it_does_not_escape_name(self, mock_post):
         mock_post.return_value.status_code = 200
 
