@@ -30,7 +30,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -55,7 +55,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         serialized = json.dumps(payload)
         self.assertNotIn(str(self.check.code), serialized)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_msteams_escapes_html_and_markdown_in_desc(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -81,7 +81,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "MS Teams notifications are not enabled.")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_last_ping_fail(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -96,7 +96,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Last Ping:"], "Failure, an hour ago")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_last_ping_log(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -110,7 +110,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Last Ping:"], "Log, an hour ago")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
         mock_post.return_value.status_code = 200
 

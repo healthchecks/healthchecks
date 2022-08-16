@@ -25,7 +25,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         self.check.last_ping = now() - td(hours=2)
         mock_post.return_value.status_code = 200
@@ -46,7 +46,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sms_sent, 1)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_enforces_limit(self, mock_post):
         # At limit already:
         self.profile.last_sms_date = now()
@@ -66,7 +66,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly SMS Limit Reached")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_resets_limit_next_month(self, mock_post):
         # At limit, but also into a new month
         self.profile.sms_sent = 50
@@ -78,7 +78,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.assertTrue(mock_post.called)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_escape_special_characters(self, mock_post):
         self.check.name = "Foo > Bar & Co"
         self.check.last_ping = now() - td(hours=2)
@@ -91,7 +91,7 @@ class NotifySmsTestCase(BaseTestCase):
         payload = kwargs["data"]
         self.assertIn("Foo > Bar & Co", payload["Body"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_disabled_down_notification(self, mock_post):
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
@@ -99,7 +99,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.assertFalse(mock_post.called)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_sends_up_notification(self, mock_post):
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)

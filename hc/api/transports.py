@@ -10,12 +10,11 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import escape
-import requests
 
 from hc.accounts.models import Profile
 from hc.api.schemas import telegram_migration
 from hc.front.templatetags.hc_extras import sortchecks
-from hc.lib import emails, jsonschema
+from hc.lib import curl, emails, jsonschema
 from hc.lib.date import format_duration
 from hc.lib.string import replace
 
@@ -217,28 +216,17 @@ class HttpTransport(Transport):
 
     @classmethod
     def _request(cls, method, url, **kwargs) -> None:
-        options = dict(kwargs)
-        options["timeout"] = 10
-        options.setdefault("headers", {})
-        if "User-Agent" not in options["headers"]:
-            options["headers"]["User-Agent"] = "healthchecks.io"
+        kwargs["timeout"] = 10
+        kwargs.setdefault("headers", {})
+        if "User-Agent" not in kwargs["headers"]:
+            kwargs["headers"]["User-Agent"] = "healthchecks.io"
 
         try:
-            s = requests.Session()
-            s.max_redirects = 3
-            r = s.request(method, url, **options)
+            r = curl.request(method, url, **kwargs)
             if r.status_code not in (200, 201, 202, 204):
                 cls.raise_for_response(r)
-
-        except requests.exceptions.Timeout:
-            # Well, we tried
-            raise TransportError("Connection timed out")
-        except requests.exceptions.ConnectionError:
-            raise TransportError("Connection failed")
-        except requests.exceptions.ContentDecodingError:
-            raise TransportError("Failed to decode response")
-        except requests.exceptions.TooManyRedirects:
-            raise TransportError("Too many redirects")
+        except curl.CurlError as e:
+            raise TransportError(e.message)
 
     @classmethod
     def _request_with_retries(cls, method, url, use_retries=True, **kwargs) -> None:

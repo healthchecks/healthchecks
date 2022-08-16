@@ -28,7 +28,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -49,7 +49,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Mattermost notifications are not enabled.")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_disable_channel_on_404(self, mock_post):
         mock_post.return_value.status_code = 404
 

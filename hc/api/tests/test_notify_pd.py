@@ -26,7 +26,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 200
@@ -41,7 +41,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["event_type"], "trigger")
         self.assertEqual(payload["service_key"], "123")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_pd_complex(self, mock_post):
         self._setup_data(json.dumps({"service_key": "456"}))
         mock_post.return_value.status_code = 200
@@ -62,7 +62,7 @@ class NotifyPdTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "PagerDuty notifications are not enabled.")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_escape_description(self, mock_post):
         self._setup_data("123")
         self.check.name = "Foo & Bar"

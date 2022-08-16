@@ -24,7 +24,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -41,7 +41,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["text"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_returns_error(self, mock_post):
         mock_post.return_value.status_code = 400
         mock_post.return_value.json.return_value = {"description": "Hi"}
@@ -50,7 +50,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 400 with a message: "Hi"')
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_non_json_error(self, mock_post):
         mock_post.return_value.status_code = 400
         mock_post.return_value.json = Mock(side_effect=ValueError)
@@ -59,7 +59,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 400")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_group_supergroup_migration(self, mock_post):
         error_response = Mock(status_code=400)
         error_response.json.return_value = {
@@ -87,7 +87,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_shows_all_other_checks_up_note(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -103,7 +103,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         payload = kwargs["json"]
         self.assertIn("All the other checks are up.", payload["text"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_lists_other_down_checks(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -121,7 +121,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("Foobar", payload["text"])
         self.assertIn(other.cloaked_url(), payload["text"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_show_more_than_10_other_checks(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -139,7 +139,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertNotIn("Foobar", payload["text"])
         self.assertIn("11 other checks are also down.", payload["text"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_disables_channel_on_403_group_deleted(self, mock_post):
         mock_post.return_value.status_code = 403
         mock_post.return_value.json.return_value = {

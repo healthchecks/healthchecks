@@ -25,7 +25,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_pagerteam(self, mock_post):
         self._setup_data("pagerteam", "123")
 
@@ -33,7 +33,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertFalse(mock_post.called)
         self.assertEqual(Notification.objects.count(), 0)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_hipchat(self, mock_post):
         self._setup_data("hipchat", "123")
 
@@ -41,7 +41,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertFalse(mock_post.called)
         self.assertEqual(Notification.objects.count(), 0)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_call(self, mock_post):
         self.profile.call_limit = 1
         self.profile.save()
@@ -62,7 +62,7 @@ class NotifyTestCase(BaseTestCase):
         callback_path = f"/api/v1/notifications/{n.code}/status"
         self.assertTrue(payload["StatusCallback"].endswith(callback_path))
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_call_limit(self, mock_post):
         # At limit already:
         self.profile.call_limit = 50
@@ -86,7 +86,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly Phone Call Limit Reached")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_call_limit_reset(self, mock_post):
         # At limit, but also into a new month
         self.profile.call_limit = 50

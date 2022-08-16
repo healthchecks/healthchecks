@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Notification, Ping
+from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
-from requests.exceptions import Timeout
 from django.test.utils import override_settings
 
 
@@ -31,7 +31,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @override_settings(SITE_ROOT="http://testserver")
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         self._setup_data("https://example.org")
         mock_post.return_value.status_code = 200
@@ -52,7 +52,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertNotIn(str(self.check.code), serialized)
         self.assertIn("http://testserver/static/img/logo.png", serialized)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_slack_with_complex_value(self, mock_post):
         v = json.dumps({"incoming_webhook": {"url": "123"}})
         self._setup_data(v)
@@ -64,7 +64,7 @@ class NotifySlackTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         self.assertEqual(args[1], "123")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_500(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 500
@@ -74,18 +74,18 @@ class NotifySlackTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
 
-    @patch("hc.api.transports.requests.Session.request", side_effect=Timeout)
+    @patch("hc.api.transports.curl.request", side_effect=CurlError("Timed out"))
     def test_it_handles_timeout(self, mock_post):
         self._setup_data("123")
 
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
-        self.assertEqual(n.error, "Connection timed out")
+        self.assertEqual(n.error, "Timed out")
         # Expect 1 try and 2 retries:
         self.assertEqual(mock_post.call_count, 3)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_slack_with_tabs_in_schedule(self, mock_post):
         self._setup_data("123")
         self.check.kind = "cron"
@@ -105,7 +105,7 @@ class NotifySlackTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Slack notifications are not enabled.")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_retry_404(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 404
@@ -116,7 +116,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 404")
         self.assertEqual(mock_post.call_count, 1)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_disables_channel_on_404(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 404
@@ -126,7 +126,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertTrue(self.channel.disabled)
 
     @override_settings(SITE_ROOT="http://testserver")
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_last_ping_fail(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 200
@@ -143,7 +143,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(fields["Last Ping"], "Failure, an hour ago")
 
     @override_settings(SITE_ROOT="http://testserver")
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_last_ping_log(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 200
@@ -159,7 +159,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(fields["Last Ping"], "Log, an hour ago")
 
     @override_settings(SITE_ROOT="http://testserver")
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 200

@@ -4,6 +4,7 @@ Django==4.1
 django-compressor==4.1
 fido2==1.0.0
 psycopg2==2.9.3
+pycurl==7.45.1
 pyotp==2.6.0
 requests==2.28.1
 segno==1.5.2

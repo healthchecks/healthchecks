@@ -25,7 +25,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -37,7 +37,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(self.check.cloaked_url(), payload["message"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_shows_all_other_checks_up_note(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -53,7 +53,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         payload = kwargs["json"]
         self.assertIn("All the other checks are up.", payload["message"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_lists_other_down_checks(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -71,7 +71,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         self.assertIn("Foobar", payload["message"])
         self.assertIn(other.cloaked_url(), payload["message"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_show_more_than_10_other_checks(self, mock_post):
         mock_post.return_value.status_code = 200
 

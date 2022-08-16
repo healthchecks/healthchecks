@@ -24,7 +24,7 @@ class NotifyLineTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
 
@@ -37,7 +37,7 @@ class NotifyLineTestCase(BaseTestCase):
         self.assertEqual(headers["Authorization"], "Bearer fake-token")
         self.assertIn("""The check "Foo" is DOWN""", params["message"])
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_escape_message(self, mock_post):
         mock_post.return_value.status_code = 200
         self.check.name = "Foo & Bar"

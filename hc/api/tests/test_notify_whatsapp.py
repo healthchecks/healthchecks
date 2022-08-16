@@ -24,7 +24,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
         self._setup_data()
@@ -43,7 +43,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sms_sent, 1)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_obeys_up_down_flags(self, mock_post):
         self._setup_data(notify_down=False)
         self.check.last_ping = now() - td(hours=2)
@@ -53,7 +53,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
         self.assertFalse(mock_post.called)
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_enforces_limit(self, mock_post):
         # At limit already:
         self.profile.last_sms_date = now()
@@ -75,7 +75,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly WhatsApp Limit Reached")
 
-    @patch("hc.api.transports.requests.Session.request")
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_escape_special_characters(self, mock_post):
         self._setup_data()
         self.check.name = "Foo > Bar & Co"
