@@ -38,6 +38,7 @@ jobs:
         sudo -u postgres createuser -s runner
     - name: Install Dependencies
       run: |
+        apt install libcurl4-openssl-dev libpython3-dev libssl-dev
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install apprise braintree coverage coveralls mysqlclient
