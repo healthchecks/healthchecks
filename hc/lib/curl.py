@@ -44,8 +44,8 @@ def request(method, url, **kwargs):
         url += "?" + urlencode(kwargs["params"])
     c.setopt(c.URL, url)
 
-    buffer = BytesIO()
-    c.setopt(c.WRITEDATA, buffer)
+    if "auth" in kwargs:
+        c.setopt(c.USERPWD, "%s:%s" % kwargs["auth"])
 
     headers = kwargs.get("headers", {})
     data = kwargs.get("data", "")
@@ -67,6 +67,9 @@ def request(method, url, **kwargs):
     elif method == "put":
         c.setopt(c.CUSTOMREQUEST, "PUT")
         c.setopt(c.POSTFIELDS, data)
+
+    buffer = BytesIO()
+    c.setopt(c.WRITEDATA, buffer)
 
     try:
         c.perform()
