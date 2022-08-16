@@ -33,7 +33,6 @@ def opensocket(purpose, curl_address):
 
 def request(method, url, **kwargs):
     c = pycurl.Curl()
-    c.setopt(c.URL, url)
     c.setopt(c.PROTOCOLS, c.PROTO_HTTP | c.PROTO_HTTPS)
     c.setopt(c.OPENSOCKETFUNCTION, opensocket)
     c.setopt(c.FOLLOWLOCATION, True)  # Allow redirects
@@ -41,11 +40,15 @@ def request(method, url, **kwargs):
     if "timeout" in kwargs:
         c.setopt(c.TIMEOUT, kwargs["timeout"])
 
+    if "params" in kwargs:
+        url += "?" + urlencode(kwargs["params"])
+    c.setopt(c.URL, url)
+
     buffer = BytesIO()
     c.setopt(c.WRITEDATA, buffer)
 
     headers = kwargs.get("headers", {})
-    data = kwargs.get("data")
+    data = kwargs.get("data", "")
 
     if "json" in kwargs:
         data = json.dumps(kwargs["json"])
