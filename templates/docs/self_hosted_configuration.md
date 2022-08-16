@@ -190,6 +190,13 @@ If you are setting up a private healthchecks instance where
 you trust your users, you can opt to disable the verification step. In that case,
 set `EMAIL_USE_VERIFICATION` to `False`.
 
+## `INTEGRATIONS_ALLOW_PRIVATE_IPS` {: #INTEGRATIONS_ALLOW_PRIVATE_IPS }
+
+Default: `False`
+
+A boolean that controls whether the integrations are allowed to make
+requests to private IP addresses (127.0.0.1, 192.168.x.x, ...).
+
 ## `LINENOTIFY_CLIENT_ID` {: #LINENOTIFY_CLIENT_ID }
 
 Default: `None`

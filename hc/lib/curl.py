@@ -1,7 +1,10 @@
 from io import BytesIO
+import ipaddress
 import json
 from urllib.parse import urlencode
+import socket
 
+from django.conf import settings
 import pycurl
 
 
@@ -19,9 +22,20 @@ class Response(object):
         return json.loads(self.content.decode())
 
 
+def opensocket(purpose, curl_address):
+    family, socktype, protocol, address = curl_address
+    if not settings.INTEGRATIONS_ALLOW_PRIVATE_IPS:
+        if ipaddress.ip_address(address[0]).is_private:
+            return pycurl.SOCKET_BAD
+
+    return socket.socket(family, socktype, protocol)
+
+
 def request(method, url, **kwargs):
     c = pycurl.Curl()
     c.setopt(c.URL, url)
+    c.setopt(c.PROTOCOLS, c.PROTO_HTTP | c.PROTO_HTTPS)
+    c.setopt(c.OPENSOCKETFUNCTION, opensocket)
     c.setopt(c.FOLLOWLOCATION, True)  # Allow redirects
     c.setopt(c.MAXREDIRS, 3)
     if "timeout" in kwargs:
@@ -48,8 +62,8 @@ def request(method, url, **kwargs):
         c.setopt(c.POST, 1)
         c.setopt(c.POSTFIELDS, data)
     elif method == "put":
-        c.setopt(c.UPLOAD, 1)
-        c.setopt(c.READDATA, BytesIO(data))
+        c.setopt(c.CUSTOMREQUEST, "PUT")
+        c.setopt(c.POSTFIELDS, data)
 
     try:
         c.perform()
@@ -61,6 +75,8 @@ def request(method, url, **kwargs):
             raise CurlError("Connection failed")
         elif errcode == pycurl.E_TOO_MANY_REDIRECTS:
             raise CurlError("Too many redirects")
+        elif errcode == pycurl.E_PEER_FAILED_VERIFICATION:
+            raise CurlError("Failed certificate verification")
 
         raise CurlError(f"HTTP request failed, code: {errcode}")
 
