@@ -1,7 +1,7 @@
 FROM python:3.10-slim-buster as builder
 
 COPY requirements.txt /tmp
-RUN apt update && apt install -y build-essential libpq-dev libmariadb-dev libffi-dev libssl-dev rustc
+RUN apt update && apt install -y build-essential libpq-dev libmariadb-dev libffi-dev libssl-dev rustc libcurl4-openssl-dev libpython3-dev
 RUN \
     pip install --upgrade pip && \
     pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio -r /tmp/requirements.txt
@@ -19,7 +19,7 @@ COPY --from=builder /wheels /wheels
 
 RUN \
     apt update && \
-    apt install -y libpq5 libmariadb3 && \
+    apt install -y libcurl4 libpq5 libmariadb3 && \
     rm -rf /var/apt/cache
 
 RUN \
