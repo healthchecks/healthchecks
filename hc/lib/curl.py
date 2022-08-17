@@ -1,3 +1,5 @@
+"""requests-like interface for PycURL."""
+
 from io import BytesIO
 import ipaddress
 import json
@@ -14,7 +16,7 @@ class CurlError(Exception):
 
 
 class Response(object):
-    def __init__(self, status_code: int, content: bytes):
+    def __init__(self, status_code: int, content: bytes) -> None:
         self.status_code = status_code
         self.content = content
 
@@ -26,7 +28,7 @@ class Response(object):
         return self.content.decode()
 
 
-def opensocket(purpose, curl_address):
+def _opensocket(purpose, curl_address):
     family, socktype, protocol, address = curl_address
     if not settings.INTEGRATIONS_ALLOW_PRIVATE_IPS:
         if ipaddress.ip_address(address[0]).is_private:
@@ -100,7 +102,7 @@ def request(method: str, url: str, **kwargs) -> Response:
 
     c = pycurl.Curl()
     c.setopt(pycurl.PROTOCOLS, pycurl.PROTO_HTTP | pycurl.PROTO_HTTPS)
-    c.setopt(pycurl.OPENSOCKETFUNCTION, opensocket)
+    c.setopt(pycurl.OPENSOCKETFUNCTION, _opensocket)
     c.setopt(pycurl.FOLLOWLOCATION, True)  # Allow redirects
     c.setopt(pycurl.MAXREDIRS, 3)
     if "timeout" in kwargs:
@@ -149,12 +151,14 @@ def request(method: str, url: str, **kwargs) -> Response:
         errcode = e.args[0]
         if errcode == pycurl.E_OPERATION_TIMEDOUT:
             raise CurlError("Connection timed out")
+        elif errcode == pycurl.E_COULDNT_RESOLVE_HOST:
+            raise CurlError("Could not resolve host")
         elif errcode == pycurl.E_COULDNT_CONNECT:
             raise CurlError("Connection failed")
         elif errcode == pycurl.E_TOO_MANY_REDIRECTS:
             raise CurlError("Too many redirects")
-        elif errcode == pycurl.E_PEER_FAILED_VERIFICATION:
-            raise CurlError("Failed certificate verification")
+        elif errcode in (pycurl.E_SSL_CONNECT_ERROR, pycurl.E_PEER_FAILED_VERIFICATION):
+            raise CurlError("TLS handshake failed")
 
         raise CurlError(f"HTTP request failed, code: {errcode}")
 
