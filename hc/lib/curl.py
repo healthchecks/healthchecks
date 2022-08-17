@@ -70,6 +70,7 @@ def request(method, url, **kwargs):
 
         if isinstance(data, bytes):
             c.setopt(c.UPLOAD, 1)
+            c.setopt(c.INFILESIZE, len(data))
             c.setopt(c.READDATA, BytesIO(data))
 
         c.setopt(c.CUSTOMREQUEST, method.upper())
