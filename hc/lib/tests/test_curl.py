@@ -1,19 +1,35 @@
 from unittest.mock import patch
 
 from django.test import TestCase
-from hc.lib.curl import request
+from django.test.utils import override_settings
+from hc.lib.curl import CurlError, request
 import pycurl
 
 
 class FakeCurl(object):
-    def __init__(self, testclass):
+    def __init__(self, testclass, ip="1.2.3.4"):
         self.opts = {}
         self.testclass = testclass
+        self.ip = ip
 
     def setopt(self, k, v):
         self.opts[k] = v
 
     def perform(self):
+        if pycurl.OPENSOCKETFUNCTION in self.opts:
+            # Simulate what libcurl would be doing here:
+            # - if OPENSOCKETFUNCTION is defined, call it and pass it the ip address
+            # - if the function returns pycurl.SOCKET_BAD, raise an error
+            #
+            # This is needed for test cases that exercise the
+            # INTEGRATIONS_ALLOW_PRIVATE_IPS setting.
+            callback = self.opts[pycurl.OPENSOCKETFUNCTION]
+            address = (self.ip, 80)
+            with patch("hc.lib.curl.socket"):
+                sock = callback(pycurl.SOCKTYPE_IPCXN, (None, None, None, address))
+                if sock == pycurl.SOCKET_BAD:
+                    raise pycurl.error(123)
+
         if pycurl.WRITEDATA in self.opts:
             self.opts[pycurl.WRITEDATA].write(b"hello world")
 
@@ -91,6 +107,14 @@ class CurlTestCase(TestCase):
         self.assertEqual(obj.opts[pycurl.INFILESIZE], 5)
 
     @patch("hc.lib.curl.pycurl.Curl")
+    def test_it_posts_json(self, mock):
+        mock.return_value = obj = FakeCurl(self)
+        request("post", "http://example.org", json=[1, 2, 3])
+        self.assertEqual(obj.opts[pycurl.CUSTOMREQUEST], "POST")
+        self.assertEqual(obj.opts[pycurl.READDATA].getvalue(), b"[1, 2, 3]")
+        self.assertEqual(obj.opts[pycurl.INFILESIZE], 9)
+
+    @patch("hc.lib.curl.pycurl.Curl")
     def test_it_puts_form(self, mock):
         mock.return_value = obj = FakeCurl(self)
         request("put", "http://example.org", data={"a": "b", "c": "d"})
@@ -112,3 +136,24 @@ class CurlTestCase(TestCase):
         self.assertEqual(obj.opts[pycurl.CUSTOMREQUEST], "PUT")
         self.assertEqual(obj.opts[pycurl.READDATA].getvalue(), b"hello")
         self.assertEqual(obj.opts[pycurl.INFILESIZE], 5)
+
+    @patch("hc.lib.curl.pycurl.Curl")
+    def test_it_puts_json(self, mock):
+        mock.return_value = obj = FakeCurl(self)
+        request("put", "http://example.org", json=[1, 2, 3])
+        self.assertEqual(obj.opts[pycurl.CUSTOMREQUEST], "PUT")
+        self.assertEqual(obj.opts[pycurl.READDATA].getvalue(), b"[1, 2, 3]")
+        self.assertEqual(obj.opts[pycurl.INFILESIZE], 9)
+
+    @override_settings(INTEGRATIONS_ALLOW_PRIVATE_IPS=False)
+    @patch("hc.lib.curl.pycurl.Curl")
+    def test_it_rejects_private_ip(self, mock):
+        mock.return_value = FakeCurl(self, ip="127.0.0.1")
+        with self.assertRaises(CurlError):
+            request("get", "http://example.org")
+
+    @override_settings(INTEGRATIONS_ALLOW_PRIVATE_IPS=True)
+    @patch("hc.lib.curl.pycurl.Curl")
+    def test_it_accepts_private_ip(self, mock):
+        mock.return_value = FakeCurl(self, ip="127.0.0.1")
+        request("get", "http://example.org")
