@@ -14,7 +14,7 @@ class CurlError(Exception):
 
 
 class Response(object):
-    def __init__(self, status_code, content):
+    def __init__(self, status_code: int, content: bytes):
         self.status_code = status_code
         self.content = content
 
@@ -22,7 +22,7 @@ class Response(object):
         return json.loads(self.content.decode())
 
     @property
-    def text(self):
+    def text(self) -> str:
         return self.content.decode()
 
 
@@ -35,21 +35,83 @@ def opensocket(purpose, curl_address):
     return socket.socket(family, socktype, protocol)
 
 
-def request(method, url, **kwargs):
+def request(method: str, url: str, **kwargs):
+    """Make a HTTP request using pycurl, return a Response object.
+
+    The `method` argument specifies the HTTP verb, and must be
+    one of: "get", "post", "put".
+
+    The `url` argument is the target URL.
+
+    Optional keyword arguments:
+
+    `data` is the data structure to be sent in the request body. If `data` is a
+    dictionary, it will first be urlencoded and sent as form data, with the
+    "Content-Type: application/x-www-form-urlencoded" request header set.
+    If `data` is string or bytes, it will be sent as-is.
+
+    Example (form data):
+
+    >>> request("post", "http://example.org", data={"u": "jsmith", "p": "hunter2"})
+
+    Example (raw body, will be sent as UTF8 text):
+    >>> request("post", "http://example.org", data="glāžšķūņu rūķīši")
+
+    `headers` is a dictionary of request headers to be sent with the request.
+    Example:
+
+    >>> request("post", "http://example.org", headers={"User-Agent": "My-UA"})
+
+    `json` is a data structure to be sent in request body as JSON document. The
+    data structure must be serializable with the default JSON serializer (json.dumps).
+    The "Content-Type: application/json" request will be added automatically.
+    Example:
+
+    >>> request("post", "http://example.org", json={"foo": [1, 2, 3]})
+
+    `timeout` specifies the time limit in seconds for completing the
+    entire request. If timeout is exceeded, this function will raise CurlException.
+    Example:
+
+    >>> request("get", "http://example.org", timeout=5)
+
+    `params` is a dictionary of query string parameters. If specified, the parameters
+    will urlencoded and appended to the target URL. Example:
+
+    >>> request("get", "http://example.org", params={"foo": bar})
+
+    The resulting URL in this case would be http://example.org?foo=bar
+
+    `auth` is a (username, password) tuple for Basic authentication. Example:
+    >>> request("get", "http://example.org", auth=("jsmith", "hunter2"))
+
+    Notes:
+
+    If the caller does not specify the User-Agent header, this function
+    uses a default "healthchecks.io" value.
+
+    If `INTEGRATIONS_ALLOW_PRIVATE_IPS` is set to `False` in Django settings,
+    this function will raise CurlException if the target IP address is from
+    a private IP range (127.0.0.1, 192.168.x.x, fe80::, ...).
+
+    This function follows up to three HTTP 302 redirects.
+
+    """
+
     c = pycurl.Curl()
-    c.setopt(c.PROTOCOLS, c.PROTO_HTTP | c.PROTO_HTTPS)
-    c.setopt(c.OPENSOCKETFUNCTION, opensocket)
-    c.setopt(c.FOLLOWLOCATION, True)  # Allow redirects
-    c.setopt(c.MAXREDIRS, 3)
+    c.setopt(pycurl.PROTOCOLS, pycurl.PROTO_HTTP | pycurl.PROTO_HTTPS)
+    c.setopt(pycurl.OPENSOCKETFUNCTION, opensocket)
+    c.setopt(pycurl.FOLLOWLOCATION, True)  # Allow redirects
+    c.setopt(pycurl.MAXREDIRS, 3)
     if "timeout" in kwargs:
-        c.setopt(c.TIMEOUT, kwargs["timeout"])
+        c.setopt(pycurl.TIMEOUT, kwargs["timeout"])
 
     if "params" in kwargs:
         url += "?" + urlencode(kwargs["params"])
-    c.setopt(c.URL, url.encode())
+    c.setopt(pycurl.URL, url.encode())
 
     if "auth" in kwargs:
-        c.setopt(c.USERPWD, "%s:%s" % kwargs["auth"])
+        c.setopt(pycurl.USERPWD, "%s:%s" % kwargs["auth"])
 
     headers = kwargs.get("headers", {})
     data = kwargs.get("data", "")
@@ -66,20 +128,20 @@ def request(method, url, **kwargs):
 
     if method in ("post", "put"):
         if isinstance(data, dict):
-            c.setopt(c.POSTFIELDS, urlencode(data))
+            c.setopt(pycurl.POSTFIELDS, urlencode(data))
 
         if isinstance(data, str):
             data = data.encode()
 
         if isinstance(data, bytes):
-            c.setopt(c.UPLOAD, 1)
-            c.setopt(c.INFILESIZE, len(data))
-            c.setopt(c.READDATA, BytesIO(data))
+            c.setopt(pycurl.UPLOAD, 1)
+            c.setopt(pycurl.INFILESIZE, len(data))
+            c.setopt(pycurl.READDATA, BytesIO(data))
 
-        c.setopt(c.CUSTOMREQUEST, method.upper())
+        c.setopt(pycurl.CUSTOMREQUEST, method.upper())
 
     buffer = BytesIO()
-    c.setopt(c.WRITEDATA, buffer)
+    c.setopt(pycurl.WRITEDATA, buffer)
 
     try:
         c.perform()
@@ -96,15 +158,15 @@ def request(method, url, **kwargs):
 
         raise CurlError(f"HTTP request failed, code: {errcode}")
 
-    status = c.getinfo(c.RESPONSE_CODE)
+    status = c.getinfo(pycurl.RESPONSE_CODE)
     c.close()
 
     return Response(status, buffer.getvalue())
 
 
-def post(url, data=None, **kwargs):
+def post(url: str, data=None, **kwargs):
     return request("post", url, data=data, **kwargs)
 
 
-def get(url, **kwargs):
+def get(url: str, **kwargs):
     return request("get", url, **kwargs)

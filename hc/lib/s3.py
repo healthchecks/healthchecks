@@ -36,7 +36,7 @@ ASCII_Z = ord("z")
 
 
 def enc(n):
-    """Generates an object key in the "<sorting prefix>-<n>" form.
+    """Generate an object key in the "<sorting prefix>-<n>" form.
 
     >>> [enc(i) for i in range(0, 5)]
     ['zj-0', 'zi-1', 'zh-2', 'zg-3', 'zf-4']
@@ -52,9 +52,7 @@ def enc(n):
     retrieves all keys at bucket's root directory with n < 123:
 
     >>> client.list_objects(bucket_name, start_after=enc(123))
-
     """
-
     s = str(n)
     len_inverted = chr(ASCII_Z - len(s) + 1)
     inverted = "".join(chr(ASCII_J - int(c)) for c in s)
@@ -109,11 +107,9 @@ def _remove_objects(code, upto_n):
 
 
 def remove_objects(check_code, upto_n):
-    """Removes keys with n values below or equal to `upto_n`.
+    """Remove keys with n values below or equal to `upto_n`.
 
     The S3 API calls can take seconds to complete,
     therefore run the removal code on thread.
-
     """
-
     Thread(target=_remove_objects, args=(check_code, upto_n)).start()

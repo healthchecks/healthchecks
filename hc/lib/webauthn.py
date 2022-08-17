@@ -18,9 +18,7 @@ def bytes_to_b64(obj):
 
     Use this for preparing fido2 data structures for serialization
     with the default JSON serializer.
-
     """
-
     if isinstance(obj, dict) or isinstance(obj, Mapping):
         return {k: bytes_to_b64(v) for k, v in obj.items()}
 
@@ -48,9 +46,7 @@ def json_decode_hook(d: dict) -> dict:
     Use for preparing fido2 data structures from serialized JSON:
 
     >>> json.loads(json_string, object_hook=json_decode_hook)
-
     """
-
     for key, cls in _DECODE_MAP.items():
         if key in d:
             as_bytes = websafe_decode(d[key])
