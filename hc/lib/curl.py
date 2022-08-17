@@ -42,7 +42,7 @@ def request(method, url, **kwargs):
 
     if "params" in kwargs:
         url += "?" + urlencode(kwargs["params"])
-    c.setopt(c.URL, url)
+    c.setopt(c.URL, url.encode())
 
     if "auth" in kwargs:
         c.setopt(c.USERPWD, "%s:%s" % kwargs["auth"])
