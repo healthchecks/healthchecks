@@ -9,18 +9,18 @@ from hc.test import BaseTestCase
 class AddLineNotifyCompleteTestCase(BaseTestCase):
     url = "/integrations/add_linenotify/"
 
-    @patch("hc.front.views.requests")
-    def test_it_handles_oauth_response(self, mock_requests):
+    @patch("hc.front.views.curl")
+    def test_it_handles_oauth_response(self, mock_curl):
         session = self.client.session
         session["add_linenotify"] = ("foo", str(self.project.code))
         session.save()
 
-        mock_requests.post.return_value.json.return_value = {
+        mock_curl.post.return_value.json.return_value = {
             "status": 200,
             "access_token": "test-token",
         }
 
-        mock_requests.get.return_value.json.return_value = {"target": "Alice"}
+        mock_curl.get.return_value.json.return_value = {"target": "Alice"}
 
         url = self.url + "?code=12345678&state=foo"
 

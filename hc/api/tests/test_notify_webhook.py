@@ -41,7 +41,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         mock_get.assert_called_with(
             "get",
             "http://example",
-            headers={"User-Agent": "healthchecks.io"},
+            headers={},
             timeout=10,
         )
 
@@ -125,7 +125,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_get.call_args
         self.assertEqual(args[0], "get")
         self.assertEqual(args[1], url)
-        self.assertEqual(kwargs["headers"], {"User-Agent": "healthchecks.io"})
+        self.assertEqual(kwargs["headers"], {})
         self.assertEqual(kwargs["timeout"], 10)
 
     @patch("hc.api.transports.curl.request")
@@ -187,9 +187,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         url = "http://host/%24TAG1"
-        mock_get.assert_called_with(
-            "get", url, headers={"User-Agent": "healthchecks.io"}, timeout=10
-        )
+        mock_get.assert_called_with("get", url, headers={}, timeout=10)
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_handle_up_events(self, mock_get):
@@ -203,9 +201,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        mock_get.assert_called_with(
-            "get", "http://bar", headers={"User-Agent": "healthchecks.io"}, timeout=10
-        )
+        mock_get.assert_called_with("get", "http://bar", headers={}, timeout=10)
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_handle_noop_up_events(self, mock_get):
@@ -252,7 +248,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.channel.notify(self.check)
 
-        headers = {"User-Agent": "healthchecks.io", "Content-Type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         mock_request.assert_called_with(
             "post", "http://foo.com", data=b"data", headers=headers, timeout=10
         )
@@ -269,7 +265,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.channel.notify(self.check)
 
-        headers = {"User-Agent": "healthchecks.io", "Content-Type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         mock_request.assert_called_with(
             "get", "http://foo.com", headers=headers, timeout=10
         )
@@ -306,7 +302,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        headers = {"User-Agent": "healthchecks.io", "X-Message": "Foo is DOWN"}
+        headers = {"X-Message": "Foo is DOWN"}
         mock_request.assert_called_with(
             "get", "http://foo.com", headers=headers, timeout=10
         )

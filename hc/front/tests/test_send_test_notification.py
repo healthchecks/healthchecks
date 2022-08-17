@@ -90,7 +90,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         mock_get.assert_called_with(
             "get",
             "http://example-url",
-            headers={"User-Agent": "healthchecks.io"},
+            headers={},
             timeout=10,
         )
 

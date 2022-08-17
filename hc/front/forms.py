@@ -12,7 +12,7 @@ from hc.front.validators import (
     TimezoneValidator,
     WebhookValidator,
 )
-import requests
+from hc.lib import curl
 
 
 def _is_latin1(s):
@@ -270,7 +270,7 @@ class AddMatrixForm(forms.Form):
         url = settings.MATRIX_HOMESERVER
         url += "/_matrix/client/r0/join/%s?" % quote(v)
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
-        r = requests.post(url, {})
+        r = curl.post(url, {})
         if r.status_code == 429:
             raise forms.ValidationError(
                 "Matrix server returned status code 429 (Too Many Requests), "

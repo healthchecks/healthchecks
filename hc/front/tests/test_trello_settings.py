@@ -8,7 +8,7 @@ from hc.test import BaseTestCase
 class AddTrelloTestCase(BaseTestCase):
     url = "/integrations/add_trello/settings/"
 
-    @patch("hc.front.views.requests.get")
+    @patch("hc.front.views.curl.get")
     def test_it_works(self, mock_get):
         mock_get.return_value.json.return_value = [
             {"name": "My Board", "lists": [{"name": "Alerts"}]}
@@ -25,7 +25,7 @@ class AddTrelloTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    @patch("hc.front.views.requests.get")
+    @patch("hc.front.views.curl.get")
     def test_it_handles_no_lists(self, mock_get):
         mock_get.return_value.json.return_value = []
 

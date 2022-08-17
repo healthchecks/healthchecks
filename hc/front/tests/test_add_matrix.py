@@ -18,7 +18,7 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Integration Settings", status_code=200)
 
-    @patch("hc.front.forms.requests.post")
+    @patch("hc.front.forms.curl.post")
     def test_it_works(self, mock_post):
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = {"room_id": "fake-room-id"}
@@ -39,7 +39,7 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    @patch("hc.front.forms.requests.post")
+    @patch("hc.front.forms.curl.post")
     def test_it_handles_429(self, mock_post):
         mock_post.return_value.status_code = 429
 
@@ -50,7 +50,7 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertContains(r, "Matrix server returned status code 429")
         self.assertFalse(Channel.objects.exists())
 
-    @patch("hc.front.forms.requests.post")
+    @patch("hc.front.forms.curl.post")
     def test_it_handles_502(self, mock_post):
         mock_post.return_value.status_code = 502
 

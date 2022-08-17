@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.urls import reverse
 
-import requests
+from hc.lib import curl
 
 SETWEBHOOK_TMPL = "https://api.telegram.org/bot%s/setWebhook"
 
@@ -20,7 +20,7 @@ class Command(BaseCommand):
         }
 
         url = SETWEBHOOK_TMPL % settings.TELEGRAM_TOKEN
-        r = requests.post(url, json=form)
+        r = curl.post(url, json=form)
 
         if r.status_code != 200:
             return "Fail: status=%d, %s" % (r.status_code, r.content)

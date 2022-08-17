@@ -58,6 +58,9 @@ def request(method, url, **kwargs):
         data = json.dumps(kwargs["json"])
         headers["Content-Type"] = "application/json"
 
+    if "User-Agent" not in headers:
+        headers["User-Agent"] = "healthchecks.io"
+
     headers_list = [k + ":" + v for k, v in headers.items()]
     c.setopt(pycurl.HTTPHEADER, headers_list)
 
@@ -101,3 +104,7 @@ def request(method, url, **kwargs):
 
 def post(url, data=None, **kwargs):
     return request("post", url, data=data, **kwargs)
+
+
+def get(url, **kwargs):
+    return request("get", url, **kwargs)

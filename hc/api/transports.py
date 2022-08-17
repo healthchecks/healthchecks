@@ -217,9 +217,6 @@ class HttpTransport(Transport):
     @classmethod
     def _request(cls, method, url, **kwargs) -> None:
         kwargs["timeout"] = 10
-        kwargs.setdefault("headers", {})
-        if "User-Agent" not in kwargs["headers"]:
-            kwargs["headers"]["User-Agent"] = "healthchecks.io"
 
         try:
             r = curl.request(method, url, **kwargs)
