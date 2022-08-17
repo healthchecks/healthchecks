@@ -35,7 +35,7 @@ def opensocket(purpose, curl_address):
     return socket.socket(family, socktype, protocol)
 
 
-def request(method: str, url: str, **kwargs):
+def request(method: str, url: str, **kwargs) -> Response:
     """Make a HTTP request using pycurl, return a Response object.
 
     The `method` argument specifies the HTTP verb, and must be

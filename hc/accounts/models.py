@@ -3,6 +3,7 @@ import random
 from secrets import token_urlsafe
 from urllib.parse import quote, urlencode
 import uuid
+import sys
 
 from django.conf import settings
 from django.contrib.auth.hashers import check_password, make_password
@@ -15,9 +16,9 @@ from django.utils.timezone import now
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 
-try:
+if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo
-except ImportError:
+else:
     from backports.zoneinfo import ZoneInfo
 
 

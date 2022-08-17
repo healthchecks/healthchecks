@@ -5,6 +5,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from typing import Any, Mapping
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -72,14 +73,14 @@ MIDDLEWARE = (
     "hc.accounts.middleware.TeamAccessMiddleware",
 )
 
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     "hc.accounts.backends.EmailBackend",
     "hc.accounts.backends.ProfileBackend",
-)
+]
 
 REMOTE_USER_HEADER = os.getenv("REMOTE_USER_HEADER")
 if REMOTE_USER_HEADER:
-    AUTHENTICATION_BACKENDS = ("hc.accounts.backends.CustomHeaderBackend",)
+    AUTHENTICATION_BACKENDS = ["hc.accounts.backends.CustomHeaderBackend"]
 
 ROOT_URLCONF = "hc.urls"
 
@@ -108,7 +109,7 @@ TEST_RUNNER = "hc.api.tests.CustomRunner"
 # Default database engine is SQLite. So one can just check out code,
 # install requirements.txt and do manage.py runserver and it works
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
-DATABASES = {
+DATABASES: Mapping[str, Any] = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.getenv("DB_NAME", BASE_DIR + "/hc.sqlite"),

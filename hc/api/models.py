@@ -1,11 +1,12 @@
 # coding: utf-8
 
+from datetime import datetime, timedelta as td, timezone
 import hashlib
 import json
 import socket
+import sys
 import time
 import uuid
-from datetime import datetime, timedelta as td, timezone
 
 from cronsim import CronSim
 from django.conf import settings
@@ -21,9 +22,9 @@ from hc.lib import emails
 from hc.lib.date import month_boundaries
 from hc.lib.s3 import get_object, put_object, remove_objects
 
-try:
+if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo
-except ImportError:
+else:
     from backports.zoneinfo import ZoneInfo
 
 
