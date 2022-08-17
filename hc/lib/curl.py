@@ -21,6 +21,10 @@ class Response(object):
     def json(self):
         return json.loads(self.content.decode())
 
+    @property
+    def text(self):
+        return self.content.decode()
+
 
 def opensocket(purpose, curl_address):
     family, socktype, protocol, address = curl_address
@@ -54,19 +58,21 @@ def request(method, url, **kwargs):
         data = json.dumps(kwargs["json"])
         headers["Content-Type"] = "application/json"
 
-    if isinstance(data, dict):
-        headers["Content-Type"] = "application/x-www-form-urlencoded"
-        data = urlencode(data)
-
     headers_list = [k + ":" + v for k, v in headers.items()]
     c.setopt(pycurl.HTTPHEADER, headers_list)
 
-    if method == "post":
-        c.setopt(c.POST, 1)
-        c.setopt(c.POSTFIELDS, data)
-    elif method == "put":
-        c.setopt(c.CUSTOMREQUEST, "PUT")
-        c.setopt(c.POSTFIELDS, data)
+    if method in ("post", "put"):
+        if isinstance(data, dict):
+            c.setopt(c.POSTFIELDS, urlencode(data))
+
+        if isinstance(data, str):
+            data = data.encode()
+
+        if isinstance(data, bytes):
+            c.setopt(c.UPLOAD, 1)
+            c.setopt(c.READDATA, BytesIO(data))
+
+        c.setopt(c.CUSTOMREQUEST, method.upper())
 
     buffer = BytesIO()
     c.setopt(c.WRITEDATA, buffer)
@@ -90,3 +96,7 @@ def request(method, url, **kwargs):
     c.close()
 
     return Response(status, buffer.getvalue())
+
+
+def post(url, data=None, **kwargs):
+    return request("post", url, data=data, **kwargs)
