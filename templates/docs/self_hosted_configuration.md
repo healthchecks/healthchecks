@@ -190,12 +190,47 @@ If you are setting up a private healthchecks instance where
 you trust your users, you can opt to disable the verification step. In that case,
 set `EMAIL_USE_VERIFICATION` to `False`.
 
+## `http_proxy` and `https_proxy` {: #http_proxy}
+
+Default: `""` (empty string)
+
+Specifies the proxy server to use for outgoing HTTP and HTTPS requests.
+Supports different proxy server types. Examples:
+
+```
+https_proxy=http://example.org:1234
+https_proxy=https://example.org:1234
+https_proxy=socks4://example.org:1234
+https_proxy=socks5://example.org:1234
+```
+
+Healthchecks uses libcurl as the HTTP client library for making HTTP(S) requests.
+For more information about the proxy functionality, please see
+[libcurl documentation](https://curl.se/libcurl/c/CURLOPT_PROXY.html).
+
 ## `INTEGRATIONS_ALLOW_PRIVATE_IPS` {: #INTEGRATIONS_ALLOW_PRIVATE_IPS }
 
 Default: `False`
 
 A boolean that controls whether the integrations are allowed to make
-requests to private IP addresses (127.0.0.1, 192.168.x.x, ...).
+HTTP(S) requests to private IP addresses (127.0.0.1, 192.168.x.x, ...). This setting
+is set to `False` by default, because allowing users to define webhooks that probe
+internal addresses is a security risk.
+
+Only enable this setting if you run your Healthchecks instance in a trusted
+environment, and need to integrate with services running in your internal network.
+
+This setting affects all integration types, not just webhooks. For example,
+if you run a Gotify instance on `localhost`, you will need to enable
+`INTEGRATIONS_ALLOW_PRIVATE_IPS` to be able to use it via the Gotify integration.
+
+This setting affects all outbound HTTP requests, including those made
+while setting up new integrations (e.g. during the OAuth2 authorization flow).
+
+This setting also affects connections to the proxy server when the `http_proxy` or
+`https_proxy` environment variables are set. If your proxy server has a private
+IP address, you will need to enable `INTEGRATIONS_ALLOW_PRIVATE_IPS`
+in order to use it.
 
 ## `LINENOTIFY_CLIENT_ID` {: #LINENOTIFY_CLIENT_ID }
 

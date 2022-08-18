@@ -114,10 +114,36 @@ after the user clicks the verification link.</p>
 <p>If you are setting up a private healthchecks instance where
 you trust your users, you can opt to disable the verification step. In that case,
 set <code>EMAIL_USE_VERIFICATION</code> to <code>False</code>.</p>
+<h2 id="http_proxy"><code>http_proxy</code> and <code>https_proxy</code></h2>
+<p>Default: <code>""</code> (empty string)</p>
+<p>Specifies the proxy server to use for outgoing HTTP and HTTPS requests.
+Supports different proxy server types. Examples:</p>
+<div class="highlight"><pre><span></span><code>https_proxy=http://example.org:1234
+https_proxy=https://example.org:1234
+https_proxy=socks4://example.org:1234
+https_proxy=socks5://example.org:1234
+</code></pre></div>
+
+<p>Healthchecks uses libcurl as the HTTP client library for making HTTP(S) requests.
+For more information about the proxy functionality, please see
+<a href="https://curl.se/libcurl/c/CURLOPT_PROXY.html">libcurl documentation</a>.</p>
 <h2 id="INTEGRATIONS_ALLOW_PRIVATE_IPS"><code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that controls whether the integrations are allowed to make
-requests to private IP addresses (127.0.0.1, 192.168.x.x, ...).</p>
+HTTP(S) requests to private IP addresses (127.0.0.1, 192.168.x.x, ...). This setting
+is set to <code>False</code> by default, because allowing users to define webhooks that probe
+internal addresses is a security risk.</p>
+<p>Only enable this setting if you run your Healthchecks instance in a trusted
+environment, and need to integrate with services running in your internal network.</p>
+<p>This setting affects all integration types, not just webhooks. For example,
+if you run a Gotify instance on <code>localhost</code>, you will need to enable
+<code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> to be able to use it via the Gotify integration.</p>
+<p>This setting affects all outbound HTTP requests, including those made
+while setting up new integrations (e.g. during the OAuth2 authorization flow).</p>
+<p>This setting also affects connections to the proxy server when the <code>http_proxy</code> or
+<code>https_proxy</code> environment variables are set. If your proxy server has a private
+IP address, you will need to enable <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code>
+in order to use it.</p>
 <h2 id="LINENOTIFY_CLIENT_ID"><code>LINENOTIFY_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <h2 id="LINENOTIFY_CLIENT_SECRET"><code>LINENOTIFY_CLIENT_SECRET</code></h2>
