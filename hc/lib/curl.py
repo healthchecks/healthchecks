@@ -101,6 +101,7 @@ def request(method: str, url: str, **kwargs) -> Response:
     """
 
     c = pycurl.Curl()
+    c.setopt(pycurl.NOSIGNAL, 1)
     c.setopt(pycurl.PROTOCOLS, pycurl.PROTO_HTTP | pycurl.PROTO_HTTPS)
     c.setopt(pycurl.OPENSOCKETFUNCTION, _opensocket)
     c.setopt(pycurl.FOLLOWLOCATION, True)  # Allow redirects
