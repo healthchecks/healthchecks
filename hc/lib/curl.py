@@ -37,6 +37,12 @@ def _opensocket(purpose, curl_address):
     return socket.socket(family, socktype, protocol)
 
 
+def _makeheader(k: str, v: str) -> bytes:
+    key_bytes = k.encode()
+    value_bytes = v.encode("latin-1")
+    return key_bytes + b":" + value_bytes
+
+
 def request(method: str, url: str, **kwargs) -> Response:
     """Make a HTTP request using pycurl, return a Response object.
 
@@ -126,7 +132,7 @@ def request(method: str, url: str, **kwargs) -> Response:
     if "User-Agent" not in headers:
         headers["User-Agent"] = "healthchecks.io"
 
-    headers_list = [k + ":" + v for k, v in headers.items()]
+    headers_list = [_makeheader(k, v) for k, v in headers.items()]
     c.setopt(pycurl.HTTPHEADER, headers_list)
 
     if method in ("post", "put"):

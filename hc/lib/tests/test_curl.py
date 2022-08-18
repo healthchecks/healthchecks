@@ -50,7 +50,7 @@ class CurlTestCase(TestCase):
         self.assertEqual(obj.opts[pycurl.URL], b"http://example.org")
 
         # Default user agent
-        self.assertEqual(obj.opts[pycurl.HTTPHEADER], ["User-Agent:healthchecks.io"])
+        self.assertEqual(obj.opts[pycurl.HTTPHEADER], [b"User-Agent:healthchecks.io"])
 
         # It should allow redirects
         self.assertEqual(obj.opts[pycurl.FOLLOWLOCATION], True)
@@ -75,7 +75,13 @@ class CurlTestCase(TestCase):
         mock.return_value = obj = FakeCurl(self)
         request("get", "http://example.org", headers={"User-Agent": "my-ua"})
         # The custom UA should override the default one
-        self.assertEqual(obj.opts[pycurl.HTTPHEADER], ["User-Agent:my-ua"])
+        self.assertEqual(obj.opts[pycurl.HTTPHEADER], [b"User-Agent:my-ua"])
+
+    @patch("hc.lib.curl.pycurl.Curl")
+    def test_it_encodes_header_values_to_latin1(self, mock):
+        mock.return_value = obj = FakeCurl(self)
+        request("get", "http://example.org", headers={"User-Agent": "À"})
+        self.assertEqual(obj.opts[pycurl.HTTPHEADER], [b"User-Agent:\xc0"])
 
     @patch("hc.lib.curl.pycurl.Curl")
     def test_it_sets_timeout(self, mock):
