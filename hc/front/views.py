@@ -404,7 +404,7 @@ def docs_search(request):
         return render(request, "front/docs_search.html", ctx)
 
     query = """
-        SELECT slug, title, snippet(docs, 2, '<span>', '</span>', '&hellip;', 50)
+        SELECT slug, title, snippet(docs, 2, '<span>', '</span>', '&hellip;', 10)
         FROM docs
         WHERE docs MATCH ?
         ORDER BY bm25(docs, 2.0, 10.0, 1.0)

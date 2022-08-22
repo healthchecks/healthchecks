@@ -16,6 +16,10 @@
     display: none;
 }
 
+#search-results li {
+    margin-bottom: 15px;
+}
+
 #search-results li span {
     background: #ffef82;
     border-radius: 2px;
