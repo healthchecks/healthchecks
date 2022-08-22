@@ -106,5 +106,6 @@ urlpatterns = [
     path("projects/<uuid:code>/", include(project_urls)),
     path("docs/", views.serve_doc, name="hc-docs"),
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
+    path("docs/search/", views.docs_search, name="hc-docs-search"),
     path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
 ]

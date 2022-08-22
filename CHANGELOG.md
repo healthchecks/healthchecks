@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add support for EMAIL_USE_SSL environment variable (#685)
 - Switch from requests to pycurl
+- Implement documentation search
 
 ### Bug Fixes
 - Fix the handling of TooManyRedirects exceptions

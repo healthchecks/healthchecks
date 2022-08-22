@@ -1,0 +1,14 @@
+<ul class="docs-nav">
+    <li class="nav-header">Search Results</li>
+    {% if results %}
+        {% for slug, title, snippet in results %}
+        <li>
+            <a href="{% url 'hc-serve-doc' slug %}">{{ title|safe }}</a>
+            <p>{{ snippet|safe }}</p>
+        </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <li>Your search query matched no results.</li>
+    {% endif %}
+</ul>

@@ -1,0 +1,23 @@
+@media (min-width: 992px) {
+  #docs-search-form {
+    margin-right: 20%;
+  }
+}
+
+#search-results {
+    display: none;
+}
+
+#search-results.on {
+    display: block;
+}
+
+.docs-nav.off {
+    display: none;
+}
+
+#search-results li span {
+    background: #ffef82;
+    border-radius: 2px;
+    color: #111;
+}

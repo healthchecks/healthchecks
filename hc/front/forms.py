@@ -333,3 +333,7 @@ class AddGotifyForm(forms.Form):
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
+class SearchForm(forms.Form):
+    q = forms.RegexField(regex=r"^[0-9a-zA-Z\s]{3,100}$")

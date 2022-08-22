@@ -5,6 +5,7 @@ import json
 import os
 import re
 from secrets import token_urlsafe
+import sqlite3
 from urllib.parse import urlencode, urlparse
 
 from cron_descriptor import ExpressionDescriptor
@@ -348,6 +349,29 @@ def dashboard(request):
     return render(request, "front/dashboard.html", {})
 
 
+def _replace_placeholders(doc, html):
+    if doc.startswith("self_hosted"):
+        return html
+
+    replaces = {
+        "{{ default_timeout }}": str(int(DEFAULT_TIMEOUT.total_seconds())),
+        "{{ default_grace }}": str(int(DEFAULT_GRACE.total_seconds())),
+        "SITE_NAME": settings.SITE_NAME,
+        "SITE_ROOT": settings.SITE_ROOT,
+        "SITE_HOSTNAME": site_hostname(),
+        "SITE_SCHEME": urlparse(settings.SITE_ROOT).scheme,
+        "PING_ENDPOINT": settings.PING_ENDPOINT,
+        "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
+        "PING_BODY_LIMIT": str(settings.PING_BODY_LIMIT or 100),
+        "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
+    }
+
+    for placeholder, value in replaces.items():
+        html = html.replace(placeholder, value)
+
+    return html
+
+
 def serve_doc(request, doc="introduction"):
     # Filenames in /templates/docs/ consist of lowercase letters and underscores,
     # -- make sure we don't accept anything else
@@ -361,23 +385,7 @@ def serve_doc(request, doc="introduction"):
     with open(path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    if not doc.startswith("self_hosted"):
-        replaces = {
-            "{{ default_timeout }}": str(int(DEFAULT_TIMEOUT.total_seconds())),
-            "{{ default_grace }}": str(int(DEFAULT_GRACE.total_seconds())),
-            "SITE_NAME": settings.SITE_NAME,
-            "SITE_ROOT": settings.SITE_ROOT,
-            "SITE_HOSTNAME": site_hostname(),
-            "SITE_SCHEME": urlparse(settings.SITE_ROOT).scheme,
-            "PING_ENDPOINT": settings.PING_ENDPOINT,
-            "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
-            "PING_BODY_LIMIT": str(settings.PING_BODY_LIMIT or 100),
-            "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
-        }
-
-        for placeholder, value in replaces.items():
-            content = content.replace(placeholder, value)
-
+    content = _replace_placeholders(doc, content)
     ctx = {
         "page": "docs",
         "section": doc,
@@ -386,6 +394,30 @@ def serve_doc(request, doc="introduction"):
     }
 
     return render(request, "front/docs_single.html", ctx)
+
+
+@csrf_exempt
+def docs_search(request):
+    form = forms.SearchForm(request.GET)
+    if not form.is_valid():
+        ctx = {"results": []}
+        return render(request, "front/docs_search.html", ctx)
+
+    query = """
+        SELECT slug, title, snippet(docs, 2, '<span>', '</span>', '&hellip;', 50)
+        FROM docs
+        WHERE docs MATCH ?
+        ORDER BY bm25(docs, 2.0, 10.0, 1.0)
+        LIMIT 8
+    """
+
+    q = form.cleaned_data["q"]
+    con = sqlite3.connect(os.path.join(settings.BASE_DIR, "search.db"))
+    cur = con.cursor()
+    res = cur.execute(query, (q,))
+
+    ctx = {"results": res.fetchall()}
+    return render(request, "front/docs_search.html", ctx)
 
 
 def docs_cron(request):
