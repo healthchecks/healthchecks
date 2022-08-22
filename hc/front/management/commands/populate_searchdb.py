@@ -15,7 +15,7 @@ class Command(BaseCommand):
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS docs")
         cur.execute(
-            """CREATE VIRTUAL TABLE docs USING FTS5(slug, title, body, tokenize="trigram")"""
+            """CREATE VIRTUAL TABLE docs USING FTS5(slug, title, body, tokenize="porter unicode61")"""
         )
 
         docs_path = os.path.join(settings.BASE_DIR, "templates/docs")

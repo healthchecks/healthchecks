@@ -24,8 +24,4 @@ $(function() {
             }
         });
     });
-
-    // input.on("blur", function() {
-    //     $("#search-results").removeClass("on");
-    // });
 });
