@@ -578,28 +578,22 @@ Default: `None`
 An URL pointing to the image you want to use as the site logo. If not set,
 Healthchecks will use a fallback image: `/static/img/logo.png`.
 
-Healthchecks will use the provided `SITE_LOGO_URL` value as-is in HTML pages.
-For example, if you set `SITE_LOGO_URL` to `https://example.org/my-custom-logo.svg`,
-Healthchecks will generate the logo HTML markup like so:
-
-```html
-<img id="logo" height="50" src="https://example.org/my-custom-logo.svg" alt="Mychecks">
-```
-
-The `SITE_LOGO_URL`  can point to an asset in your `/static/` directory, for example:
+You can place a custom logo in `/static/img/` and point `SITE_LOGO_URL`
+to it like so:
 
 ```ini
 SITE_LOGO_URL=/static/img/my-custom-logo.png
 ```
 
-Or you can use an absolute URL pointing:
+Or you can serve the logo from another server, and point to it using an absolute URL:
 
 ```ini
-SITE_LOGO_URL=http://example.org/static/img/my-custom-logo.png
+SITE_LOGO_URL=https://example.org/cdn/my-custom-logo.png
 ```
 
-Either way, you should use an URL that the end user's browser will be able to
-access directly. The logo graphic can use any image format supported by browsers
+Either way, Healthchecks will use the provided `SITE_LOGO_URL` value as-is in HTML
+pages, and you should use an URL that **the end user's browser will be able to
+access directly**. The logo image can use any image format supported by browsers
 (PNG, SVG, JPG are all fine).
 
 Please do not use the Healthchecks.io logo (the one with the dark green background) on

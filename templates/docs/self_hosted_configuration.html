@@ -370,22 +370,18 @@ signal-cli 0.10.0 or later).</p>
 <p>Default: <code>None</code></p>
 <p>An URL pointing to the image you want to use as the site logo. If not set,
 Healthchecks will use a fallback image: <code>/static/img/logo.png</code>.</p>
-<p>Healthchecks will use the provided <code>SITE_LOGO_URL</code> value as-is in HTML pages.
-For example, if you set <code>SITE_LOGO_URL</code> to <code>https://example.org/my-custom-logo.svg</code>,
-Healthchecks will generate the logo HTML markup like so:</p>
-<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">img</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;logo&quot;</span> <span class="na">height</span><span class="o">=</span><span class="s">&quot;50&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://example.org/my-custom-logo.svg&quot;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&quot;Mychecks&quot;</span><span class="p">&gt;</span>
-</code></pre></div>
-
-<p>The <code>SITE_LOGO_URL</code>  can point to an asset in your <code>/static/</code> directory, for example:</p>
+<p>You can place a custom logo in <code>/static/img/</code> and point <code>SITE_LOGO_URL</code>
+to it like so:</p>
 <div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">/static/img/my-custom-logo.png</span><span class="w"></span>
 </code></pre></div>
 
-<p>Or you can use an absolute URL pointing:</p>
-<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">http://example.org/static/img/my-custom-logo.png</span><span class="w"></span>
+<p>Or you can serve the logo from another server, and point to it using an absolute URL:</p>
+<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">https://example.org/cdn/my-custom-logo.png</span><span class="w"></span>
 </code></pre></div>
 
-<p>Either way, you should use an URL that the end user's browser will be able to
-access directly. The logo graphic can use any image format supported by browsers
+<p>Either way, Healthchecks will use the provided <code>SITE_LOGO_URL</code> value as-is in HTML
+pages, and you should use an URL that <strong>the end user's browser will be able to
+access directly</strong>. The logo image can use any image format supported by browsers
 (PNG, SVG, JPG are all fine).</p>
 <p>Please do not use the Healthchecks.io logo (the one with the dark green background) on
 self-hosted instances. This logo is not part of the Healthchecks open source project.</p>
