@@ -6,9 +6,9 @@ any new software on your servers.
 
 The principle of operation is simple: your cron job sends an HTTP request ("ping") to
 SITE_NAME every time it completes. When SITE_NAME does not receive the HTTP request
-at the expected time, it notifies you. This monitoring technique is a type of
-[dead man's switch](https://en.wikipedia.org/wiki/Dead_man%27s_switch), and it can
-detect various failure modes:
+at the expected time, it notifies you. This monitoring technique, sometimes called
+"heartbeat monitoring", is a type of [dead man's switch](https://en.wikipedia.org/wiki/Dead_man%27s_switch).
+It can detect various failure modes:
 
 * The whole machine goes down (power outage, hardware failure, somebody trips on cables, etc.).
 * The cron daemon is not running or has an invalid configuration.
