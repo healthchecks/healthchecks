@@ -132,3 +132,16 @@ h2.rule {
 .docs-introduction dt {
     text-align: center;
 }
+
+.docs-content ul.self-hosted-configuration-toc {
+    list-style: none;
+    font-size: 12px;
+    column-width: 270px;
+    margin: 0;
+    padding: 0;
+}
+
+.self-hosted-configuration-toc li {
+    margin: 0;
+    padding: 0;
+}

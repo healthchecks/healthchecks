@@ -1,7 +1,86 @@
 # Server Configuration
 
 Healthchecks prepares its configuration in `hc/settings.py`. It reads configuration
-from environment variables. Below is a list of variables it reads and uses:
+from environment variables. Below is a list of variables it reads and uses.
+
+<ul class="self-hosted-configuration-toc">
+<li><a href="#ALLOWED_HOSTS">ALLOWED_HOSTS</a></li>
+<li><a href="#APPRISE_ENABLED">APPRISE_ENABLED</a></li>
+<li><a href="#DB">DB</a></li>
+<li><a href="#DB_CONN_MAX_AGE">DB_CONN_MAX_AGE</a></li>
+<li><a href="#DB_HOST">DB_HOST</a></li>
+<li><a href="#DB_NAME">DB_NAME</a></li>
+<li><a href="#DB_PASSWORD">DB_PASSWORD</a></li>
+<li><a href="#DB_PORT">DB_PORT</a></li>
+<li><a href="#DB_SSLMODE">DB_SSLMODE</a></li>
+<li><a href="#DB_TARGET_SESSION_ATTRS">DB_TARGET_SESSION_ATTRS</a></li>
+<li><a href="#DB_USER">DB_USER</a></li>
+<li><a href="#DEBUG">DEBUG</a></li>
+<li><a href="#DEFAULT_FROM_EMAIL">DEFAULT_FROM_EMAIL</a></li>
+<li><a href="#DISCORD_CLIENT_ID">DISCORD_CLIENT_ID</a></li>
+<li><a href="#DISCORD_CLIENT_SECRET">DISCORD_CLIENT_SECRET</a></li>
+<li><a href="#EMAIL_HOST">EMAIL_HOST</a></li>
+<li><a href="#EMAIL_HOST_PASSWORD">EMAIL_HOST_PASSWORD</a></li>
+<li><a href="#EMAIL_HOST_USER">EMAIL_HOST_USER</a></li>
+<li><a href="#EMAIL_PORT">EMAIL_PORT</a></li>
+<li><a href="#EMAIL_USE_TLS">EMAIL_USE_TLS</a></li>
+<li><a href="#EMAIL_USE_SSL">EMAIL_USE_SSL</a></li>
+<li><a href="#EMAIL_USE_VERIFICATION">EMAIL_USE_VERIFICATION</a></li>
+<li><a href="#http_proxy">http_proxy and https_proxy</a></li>
+<li><a href="#INTEGRATIONS_ALLOW_PRIVATE_IPS">INTEGRATIONS_ALLOW_PRIVATE_IPS</a></li>
+<li><a href="#LINENOTIFY_CLIENT_ID">LINENOTIFY_CLIENT_ID</a></li>
+<li><a href="#LINENOTIFY_CLIENT_SECRET">LINENOTIFY_CLIENT_SECRET</a></li>
+<li><a href="#MASTER_BADGE_URL">MASTER_BADGE_LABEL</a></li>
+<li><a href="#MATRIX_ACCESS_TOKEN">MATRIX_ACCESS_TOKEN</a></li>
+<li><a href="#MATRIX_HOMESERVER">MATRIX_HOMESERVER</a></li>
+<li><a href="#MATRIX_USER_ID">MATRIX_USER_ID</a></li>
+<li><a href="#MATTERMOST_ENABLED">MATTERMOST_ENABLED</a></li>
+<li><a href="#MSTEAMS_ENABLED">MSTEAMS_ENABLED</a></li>
+<li><a href="#OPSGENIE_ENABLED">OPSGENIE_ENABLED</a></li>
+<li><a href="#PAGERTREE_ENABLED">PAGERTREE_ENABLED</a></li>
+<li><a href="#PD_APP_ID">PD_APP_ID</a></li>
+<li><a href="#PD_ENABLED">PD_ENABLED</a></li>
+<li><a href="#PING_BODY_LIMIT">PING_BODY_LIMIT</a></li>
+<li><a href="#PING_EMAIL_DOMAIN">PING_EMAIL_DOMAIN</a></li>
+<li><a href="#PING_ENDPOINT">PING_ENDPOINT</a></li>
+<li><a href="#PROMETHEUS_ENABLED">PROMETHEUS_ENABLED</a></li>
+<li><a href="#PUSHBULLET_CLIENT_ID">PUSHBULLET_CLIENT_ID</a></li>
+<li><a href="#PUSHBULLET_CLIENT_SECRET">PUSHBULLET_CLIENT_SECRET</a></li>
+<li><a href="#PUSHOVER_API_TOKEN">PUSHOVER_API_TOKEN</a></li>
+<li><a href="#PUSHOVER_EMERGENCY_EXPIRATION">PUSHOVER_EMERGENCY_EXPIRATION</a></li>
+<li><a href="#PUSHOVER_EMERGENCY_RETRY_DELAY">PUSHOVER_EMERGENCY_RETRY_DELAY</a></li>
+<li><a href="#PUSHOVER_SUBSCRIPTION_URL">PUSHOVER_SUBSCRIPTION_URL</a></li>
+<li><a href="#REGISTRATION_OPEN">REGISTRATION_OPEN</a></li>
+<li><a href="#REMOTE_USER_HEADER">REMOTE_USER_HEADER</a></li>
+<li><a href="#RP_ID">RP_ID</a></li>
+<li><a href="#S3_ACCESS_KEY">S3_ACCESS_KEY</a></li>
+<li><a href="#S3_BUCKET">S3_BUCKET</a></li>
+<li><a href="#S3_ENDPOINT">S3_ENDPOINT</a></li>
+<li><a href="#S3_REGION">S3_REGION</a></li>
+<li><a href="#S3_SECRET_KEY">S3_SECRET_KEY</a></li>
+<li><a href="#S3_TIMEOUT">S3_TIMEOUT</a></li>
+<li><a href="#SECRET_KEY">SECRET_KEY</a></li>
+<li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
+<li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
+<li><a href="#SITE_LOGO_URL">SITE_LOGO_URL</a></li>
+<li><a href="#SITE_NAME">SITE_NAME</a></li>
+<li><a href="#SITE_ROOT">SITE_ROOT</a></li>
+<li><a href="#SLACK_CLIENT_ID">SLACK_CLIENT_ID</a></li>
+<li><a href="#SLACK_CLIENT_SECRET">SLACK_CLIENT_SECRET</a></li>
+<li><a href="#SLACK_ENABLED">SLACK_ENABLED</a></li>
+<li><a href="#SPIKE_ENABLED">SPIKE_ENABLED</a></li>
+<li><a href="#TELEGRAM_BOT_NAME">TELEGRAM_BOT_NAME</a></li>
+<li><a href="#TELEGRAM_TOKEN">TELEGRAM_TOKEN</a></li>
+<li><a href="#TRELLO_APP_KEY">TRELLO_APP_KEY</a></li>
+<li><a href="#TWILIO_ACCOUNT">TWILIO_ACCOUNT</a></li>
+<li><a href="#TWILIO_AUTH">TWILIO_AUTH</a></li>
+<li><a href="#TWILIO_FROM">TWILIO_FROM</a></li>
+<li><a href="#TWILIO_USE_WHATSAPP">TWILIO_USE_WHATSAPP</a></li>
+<li><a href="#USE_PAYMENTS">USE_PAYMENTS</a></li>
+<li><a href="#VICTOROPS_ENABLED">VICTOROPS_ENABLED</a></li>
+<li><a href="#WEBHOOKS_ENABLED">WEBHOOKS_ENABLED</a></li>
+<li><a href="#ZULIP_ENABLED">ZULIP_ENABLED</a></li>
+</ul>
 
 ## `ALLOWED_HOSTS` {: #ALLOWED_HOSTS }
 
