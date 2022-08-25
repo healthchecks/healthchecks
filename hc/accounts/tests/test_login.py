@@ -21,7 +21,7 @@ class LoginTestCase(BaseTestCase):
         r = self.client.get("/accounts/login/")
         self.assertRedirects(r, self.checks_url)
 
-    @override_settings(SITE_ROOT="http://testserver")
+    @override_settings(SITE_ROOT="http://testserver", SITE_LOGO_URL=None)
     def test_it_sends_link(self):
         form = {"identity": "alice@example.org"}
 

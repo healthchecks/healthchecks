@@ -30,7 +30,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @override_settings(SITE_ROOT="http://testserver")
+    @override_settings(SITE_ROOT="http://testserver", SITE_LOGO_URL=None)
     @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         self._setup_data("https://example.org")
