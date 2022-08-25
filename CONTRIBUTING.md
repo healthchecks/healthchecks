@@ -21,3 +21,30 @@ documentation page:
 1. Create the appropriate .md file under `templates/docs`
 2. Generate the HTML version with `./manage.py render_docs` 
 3. Add the page to the navigation in `/templates/front/base_docs.html`
+
+## Developing a New Integration
+
+The best way to build a new integration is to pick a similar existing integration
+as a starting point for the new integration and replicate every aspect of it.
+You will need to make changes in the following files:
+
+* Add a new class in `/hc/api/transports.py`.
+* Add a new notification template in `/templates/integrations/`.
+* Write testcases for the new transport class in `/hc/api/tests/test_notify_<kind>.py`.
+* Update `CHANNEL_KINDS` in `/hc/api/models.py`.
+* Update `Channel.transport()` in `/hc/api/models.py`.
+* Create a view for provisioning the new integration in `/hc/front/views.py`.
+* Write a HTML template for the new view in `/templates/front/add_<kind>.py`, and
+  prepare any supporting illustrations in `/static/img/integrations/`.
+* Add a route for the new view in `/hc/front/urls.py`.
+* Write testcases for the new view in `/hc/font/tests/test_add_<kind>.py`.
+* Update `/templates/front/channels.html` – add a new section in the list of available
+  integrations, make sure an existing integration is displayed nicely.
+* Update `/templates/front/event_summary` to make sure notifications sent to the new
+  integration are displayed nicely.
+* Add a logo in `/static/img/integrations/`.
+* Update the icon font (it's a little tricky to do, I can take care of that).
+
+If you intend to contribute the new integration to the Healthchecks project
+(as opposed to maintaining it in a separate fork), please open an issue and
+discuss it first.
