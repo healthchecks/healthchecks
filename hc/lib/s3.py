@@ -1,5 +1,6 @@
 from io import BytesIO
 from threading import Thread
+import time
 
 from django.conf import settings
 
@@ -7,6 +8,7 @@ try:
     from minio import Minio, S3Error
     from minio.deleteobjects import DeleteObject
     from urllib3 import PoolManager
+    from urllib3.exceptions import ReadTimeoutError
 except ImportError:
     # Enforce
     settings.S3_BUCKET = None
@@ -101,9 +103,16 @@ def _remove_objects(code, upto_n):
     q = client().list_objects(settings.S3_BUCKET, prefix, start_after=start_after)
     delete_objs = [DeleteObject(obj.object_name) for obj in q]
     if delete_objs:
-        errors = client().remove_objects(settings.S3_BUCKET, delete_objs)
-        for e in errors:
-            print("remove_objects error: ", e)
+        num_objs = len(delete_objs)
+        try:
+            start = time.time()
+            errors = client().remove_objects(settings.S3_BUCKET, delete_objs)
+            for e in errors:
+                print("remove_objects error: ", e)
+            total = time.time() - start
+            print("remove_objects for %d objects took %.1fs" % (num_objs, total))
+        except ReadTimeoutError:
+            print("remove_objects timed out for %d objects" % num_objs)
 
 
 def remove_objects(check_code, upto_n):
