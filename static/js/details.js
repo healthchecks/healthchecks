@@ -134,7 +134,9 @@ $(function () {
     });
 
     $("#events").on("click", "tr.ok", function() {
-        loadPingDetails(this.dataset.url);
+        var n = $("td", this).first().text();
+        var tmpl = $("#log").data("url").slice(0, -2);
+        loadPingDetails(tmpl + n + "/");
         return false;
     });
 

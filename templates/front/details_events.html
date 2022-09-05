@@ -1,6 +1,9 @@
 {% load hc_extras %}
 {% if events %}
-<table class="table" id="log">{% for event in events %}{% include "front/log_row.html" %}{% endfor %}</table>
+<table
+    class="table"
+    id="log"
+    data-url="{% url 'hc-ping-details' check.code '0' %}">{% for event in events %}{% include "front/log_row.html" %}{% endfor %}</table>
 <p class="text-center"><a href="{% url 'hc-log' check.code %}">Show More&hellip;</a></p>
 {% else %}
     <div class="alert no-events">
