@@ -1,62 +1,7 @@
 {% load hc_extras %}
 {% if events %}
-    <table class="table" id="log">
-    {% for event in events %}
-    {% if event.n %}
-    <tr class="ok" data-dt="{{ event.created|isoformat }}" data-url="{% url 'hc-ping-details' check.code event.n  %}">
-        <td>{{ event.n }}</td>
-        <td></td>
-        <td></td>
-        <td class="event">
-            {% if event.kind == "ign" %}
-            <span class="label label-ign">Ignored</span>
-            {% elif event.exitstatus > 0 %}
-            <span class="label label-danger">Status {{ event.exitstatus }}</span>
-            {% elif event.kind == "fail" %}
-            <span class="label label-danger">Failure</span>
-            {% elif event.kind == "start" %}
-            <span class="label label-start">Started</span>
-            {% elif event.kind == "log" %}
-            <span class="label label-log">Log</span>
-            {% else %}
-            <span class="label label-success">OK</span>
-            {% endif %}
-        </td>
-        <td class="details">
-            {% if event.delta %}
-            <div class="delta">
-                <span class="ic-timer"></span>
-                {{ event.delta|hms }}
-            </div>
-            {% endif %}
-
-            {% if event.scheme == "email" %}
-                {{ event.ua }}
-            {% else %}
-                {{ event.scheme|upper }} {{ event.method }}
-                {% if event.remote_addr %}
-                from {{ event.remote_addr }}
-                {% endif %}
-                {% if event.ua %}
-                <code> - {{ event.ua|truncatechars:80 }}</code>
-                {% endif %}
-            {% endif %}
-        </td>
-    </tr>
-    {% elif event.check_status %}
-    <tr class="missing" data-dt="{{ event.created.isoformat }}">
-        <td><span class="ic-missing"></span></td>
-        <td></td>
-        <td></td>
-        <td class="alert-info" colspan="2">{% include "front/event_summary.html" %}</td>
-    </tr>
-    {% endif %}
-    {% endfor %}
-    </table>
-
-    <p class="text-center">
-        <a href="{% url 'hc-log' check.code %}">Show More&hellip;</a>
-    </p>
+<table class="table" id="log">{% for event in events %}{% include "front/log_row.html" %}{% endfor %}</table>
+<p class="text-center"><a href="{% url 'hc-log' check.code %}">Show More&hellip;</a></p>
 {% else %}
     <div class="alert no-events">
         You will see a <span class="hidden-xs">live-updating</span> log of received pings here. <br />

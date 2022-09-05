@@ -26,19 +26,8 @@
     }
 }
 
-#log .details {
-    width: 100%;
-    max-width: 0;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#log .details code {
-    font-family: "Lucida Console", Monaco, monospace;
-    font-size: 11.7px;
-    color: var(--text-muted);
+#log td:first-child {
+    text-align: right;
 }
 
 #log tr.ok {
@@ -47,20 +36,6 @@
 
 #log tr.ok:hover td {
     background-color: var(--table-bg-hover);
-}
-
-#log tr.missing td {
-    color: #d9534f;
-    background: var(--log-missing-bg);
-}
-
-#log td.event {
-    text-align: right;
-    width: 1%;
-}
-
-#log td:first-child {
-    text-align: right;
 }
 
 #log tr.ok td:first-child {
@@ -72,7 +47,31 @@
     color: #aaa;
 }
 
-#log .alert-info {
-    font-size: 12px;
+#log tr.ok td:nth-child(4) {
+    text-align: right;
+    width: 1%;
 }
 
+#log tr.ok td:nth-child(5) {
+    width: 100%;
+    max-width: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#log tr.ok td:nth-child(5) code {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 11.7px;
+    color: var(--text-muted);
+}
+
+#log tr.missing td {
+    color: #d9534f;
+    background: var(--log-missing-bg);
+}
+
+#log tr.missing td:nth-child(4) {
+    font-size: 12px;
+}

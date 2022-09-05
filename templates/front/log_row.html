@@ -1,0 +1,30 @@
+{% load hc_extras %}{% if event.n %}
+<tr class="ok" data-dt="{{ event.created|isoformat }}">
+<td>{{ event.n }}</td>
+<td></td>
+<td></td>
+<td>
+{% if event.kind == "ign" %}<span class="label label-ign">Ignored</span>
+{% elif event.exitstatus %}<span class="label label-danger">Status {{ event.exitstatus }}</span>
+{% elif event.kind == "fail" %}<span class="label label-danger">Failure</span>
+{% elif event.kind == "start" %}<span class="label label-start">Started</span>
+{% elif event.kind == "log" %}<span class="label label-log">Log</span>
+{% else %}<span class="label label-success">OK</span>
+{% endif %}
+</td>
+<td>
+{% if event.delta %}<div class="delta"><span class="ic-timer"></span> {{ event.delta|hms }}</div>{% endif %}
+{% if event.scheme == "email" %}{{ event.ua }}{% else %}
+{{ event.scheme|upper }} {{ event.method }} {% if event.remote_addr %} from {{ event.remote_addr }}{% endif %}
+<code>{% if event.ua %} - {{ event.ua|truncatechars:80 }}{% endif %} {% if describe_body %}{% if event.body or event.body_raw %} -  {{ event.get_body|truncatechars:150 }} {% elif event.object_size %} - {{ event.object_size }} byte body{% endif %}{% endif %}</code>
+{% endif %}
+</td>
+</tr>
+{% elif event.check_status %}
+<tr class="missing" data-dt="{{ event.created|isoformat }}">
+    <td><span class="ic-missing"></span></td>
+    <td></td>
+    <td></td>
+    <td colspan="2">{% include "front/event_summary.html" %}</td>
+</tr>
+{% endif %}
