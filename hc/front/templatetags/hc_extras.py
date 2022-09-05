@@ -179,8 +179,8 @@ def now_isoformat():
 
 
 @register.filter
-def isoformat(td):
-    return td.replace(microsecond=0).isoformat()
+def timestamp(td):
+    return int(td.timestamp())
 
 
 @register.filter

@@ -1,5 +1,5 @@
 {% load hc_extras %}{% if event.n %}
-<tr class="ok" data-dt="{{ event.created|isoformat }}">
+<tr class="ok" data-dt="{{ event.created|timestamp }}">
 <td>{{ event.n }}</td>
 <td></td>
 <td></td>
@@ -21,7 +21,7 @@
 </td>
 </tr>
 {% elif event.check_status %}
-<tr class="missing" data-dt="{{ event.created|isoformat }}">
+<tr class="missing" data-dt="{{ event.created|timestamp }}">
     <td><span class="ic-missing"></span></td>
     <td></td>
     <td></td>

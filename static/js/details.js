@@ -145,7 +145,7 @@ $(function () {
         lastFormat = format;
 
         document.querySelectorAll("#log tr").forEach(function(row) {
-            var dt = moment(row.dataset.dt);
+            var dt = moment.unix(row.dataset.dt).utc();
             format == "local" ? dt.local() : dt.tz(format);
 
             row.children[1].textContent = dt.format("MMM D");
