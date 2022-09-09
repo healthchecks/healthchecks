@@ -75,3 +75,21 @@
 #log tr.missing td:nth-child(4) {
     font-size: 12px;
 }
+
+#log-slider {
+    margin-bottom: 60px;
+}
+
+#log-slider .noUi-value {
+    font-size: 12px;
+    padding-top: 5px;
+}
+
+#log-slider .noUi-connect {
+    background-color: var(--link-color);
+}
+
+#slider-from-formatted,
+#slider-to-formatted {
+    font-weight: bold;
+}

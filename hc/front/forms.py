@@ -1,4 +1,4 @@
-from datetime import timedelta as td
+from datetime import datetime, timedelta as td, timezone
 import json
 import re
 from urllib.parse import quote, urlencode
@@ -337,3 +337,14 @@ class AddGotifyForm(forms.Form):
 
 class SearchForm(forms.Form):
     q = forms.RegexField(regex=r"^[0-9a-zA-Z\s]{3,100}$")
+
+
+class SeekForm(forms.Form):
+    start = forms.IntegerField()
+    end = forms.IntegerField()
+
+    def clean_start(self):
+        return datetime.fromtimestamp(self.cleaned_data["start"], tz=timezone.utc)
+
+    def clean_end(self):
+        return datetime.fromtimestamp(self.cleaned_data["end"], tz=timezone.utc)

@@ -132,7 +132,7 @@
     margin: 20px 50px 90px 50px;
 }
 
-#period-slider.noUi-connect {
+#period-slider .noUi-connect {
   background: #22bc66;
 }
 
@@ -140,13 +140,13 @@
     margin: 20px 50px 110px 50px;
 }
 
-#grace-slider.noUi-connect {
+#grace-slider .noUi-connect {
   background: #f0ad4e;
 }
 
 #period-slider .noUi-value, #grace-slider .noUi-value {
-    width: 60px;
-    margin-left: -30px;
+    font-size: 12px;
+    padding-top: 5px;
 }
 
 .update-timeout-terms {
