@@ -680,22 +680,8 @@ def remove_check(request, code):
     return redirect("hc-checks", project.code)
 
 
-def _get_min(check):
-    min_n = check.n_pings - check.project.owner_profile.ping_log_limit
-    ping = check.ping_set.filter(n__gt=min_n).first()
-    dt = ping.created if ping else now()
-    return (dt - td(hours=24)).replace(minute=0, second=0)
-
-
-def _get_total(check, start, end):
-    ping_log_limit = check.project.owner_profile.ping_log_limit
-    pings = check.ping_set.filter(created__gte=start, created__lte=end)
-    return min(pings.count(), ping_log_limit)
-
-
 def _get_events(check, page_limit, start=None, end=None):
-    min_n = check.n_pings - check.project.owner_profile.ping_log_limit
-    pings = check.ping_set.filter(n__gt=min_n).order_by("-id")
+    pings = check.visible_pings.order_by("-id")
     if start and end:
         pings = pings.filter(created__gte=start, created__lte=end)
 
@@ -730,16 +716,23 @@ def _get_events(check, page_limit, start=None, end=None):
 def log(request, code):
     check, rw = _get_check_for_user(request, code)
 
-    form = forms.SeekForm(request.GET)
-    smin, smax = _get_min(check), now()
+    smax = now()
+    smin = smax - td(hours=24)
+    ping = check.visible_pings.first()
+    if ping:
+        smin = min(smin, ping.created)
 
+    # Align slider steps to full hours
+    smin = smin.replace(minute=0, second=0)
+
+    form = forms.SeekForm(request.GET)
     if form.is_valid():
         start = form.cleaned_data["start"]
         end = form.cleaned_data["end"]
     else:
-        start = smin
-        end = smax
+        start, end = smin, smax
 
+    total = check.visible_pings.filter(created__gte=start, created__lte=end).count()
     ctx = {
         "page": "log",
         "project": check.project,
@@ -749,7 +742,7 @@ def log(request, code):
         "start": start,
         "end": end,
         "events": _get_events(check, 1000, start=start, end=end),
-        "num_total": _get_total(check, start, end),
+        "num_total": total,
     }
 
     return render(request, "front/log.html", ctx)

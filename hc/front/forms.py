@@ -340,8 +340,9 @@ class SearchForm(forms.Form):
 
 
 class SeekForm(forms.Form):
-    start = forms.IntegerField()
-    end = forms.IntegerField()
+    # min_value is 2010-01-01, max_value is 2030-01-01
+    start = forms.IntegerField(min_value=1262296800, max_value=1893448800)
+    end = forms.IntegerField(min_value=1262296800, max_value=1893448800)
 
     def clean_start(self):
         return datetime.fromtimestamp(self.cleaned_data["start"], tz=timezone.utc)

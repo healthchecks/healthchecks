@@ -376,6 +376,11 @@ class Check(models.Model):
         except Ping.DoesNotExist:
             pass
 
+    @property
+    def visible_pings(self):
+        threshold = self.n_pings - self.project.owner_profile.ping_log_limit
+        return self.ping_set.filter(n__gt=threshold)
+
     def downtimes(self, months):
         """Calculate the number of downtimes and downtime minutes per month.
 
