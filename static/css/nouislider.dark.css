@@ -17,11 +17,3 @@ body.dark .noUi-handle {
 body.dark .noUi-marker {
     background: #777;
 }
-
-body.dark .noUi-pips {
-    color: hsl(240, 3%, 55%);
-}
-
-body.dark .noUi-value-sub {
-    color: hsl(240, 3%, 45%);
-}

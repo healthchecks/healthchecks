@@ -145,8 +145,7 @@
 }
 
 #period-slider .noUi-value, #grace-slider .noUi-value {
-    font-size: 12px;
-    padding-top: 5px;
+    color: var(--text-muted);
 }
 
 .update-timeout-terms {

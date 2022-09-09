@@ -1,0 +1,9 @@
+.noUi-target .noUi-value {
+    color: var(--text-color);
+    font-size: 12px;
+    padding-top: 5px;
+}
+
+.noUi-target .noUi-value-sub {
+    color: var(--text-muted);
+}

@@ -80,11 +80,6 @@
     margin-bottom: 60px;
 }
 
-#log-slider .noUi-value {
-    font-size: 12px;
-    padding-top: 5px;
-}
-
 #log-slider .noUi-connect {
     background-color: var(--link-color);
 }
