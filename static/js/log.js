@@ -1,14 +1,14 @@
 $(function () {
-    var SMALL_LABEL = 2;
     var BIG_LABEL = 1;
+    var SMALL_LABEL = 2;
     var PIP = 0;
     var NO_PIP = -1;
 
     var slider = document.getElementById("log-slider");
     var smin = parseInt(slider.dataset.min);
     var smax = parseInt(slider.dataset.max);
-    var deltaHours = (smax - smin) / 3600;
-    var pixelsPerHour = slider.clientWidth / deltaHours;
+    var pixelsPerSecond = slider.clientWidth / (smax - smin);
+    var pixelsPerHour = pixelsPerSecond * 3600;
     var pixelsPerDay = pixelsPerHour * 24;
     var dayGap = Math.round(0.5 + 80 / pixelsPerDay);
 
