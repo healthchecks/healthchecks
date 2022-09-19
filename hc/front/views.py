@@ -718,7 +718,7 @@ def log(request, code):
 
     smax = now()
     smin = smax - td(hours=24)
-    ping = check.visible_pings.first()
+    ping = check.visible_pings.order_by("n").first()
     if ping:
         smin = min(smin, ping.created)
 
