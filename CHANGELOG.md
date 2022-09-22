@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Switch from requests to pycurl
 - Implement documentation search
 - Add date filters in the Log page
+- Upgrade to cronsim 2.2
 
 ### Bug Fixes
 - Fix the handling of TooManyRedirects exceptions

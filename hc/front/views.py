@@ -9,7 +9,7 @@ import sqlite3
 from urllib.parse import urlencode, urlparse
 
 from cron_descriptor import ExpressionDescriptor
-from cronsim.cronsim import CronSim, CronSimError
+from cronsim import CronSim, CronSimError
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -556,7 +556,7 @@ def cron_preview(request):
         it = CronSim(schedule, now_local)
         for i in range(0, 6):
             ctx["dates"].append(next(it))
-    except CronSimError:
+    except (CronSimError, StopIteration):
         ctx["bad_schedule"] = True
 
     if ctx["dates"]:
@@ -576,8 +576,11 @@ def validate_schedule(request):
     schedule = request.GET.get("schedule", "")
     result = True
     try:
-        CronSim(schedule, now())
-    except CronSimError:
+        # Does cronsim accept the schedule?
+        it = CronSim(schedule, now())
+        # Can it calculate the next datetime?
+        next(it)
+    except (CronSimError, StopIteration):
         result = False
 
     return JsonResponse({"result": result})

@@ -17,7 +17,7 @@ class ValidateScheduleTestCase(BaseTestCase):
         self.assertTrue(r.json()["result"])
 
     def test_it_rejects_bad_schedules(self):
-        for v in ["a", "* * * *", "1-1000 * * * *"]:
+        for v in ["a", "* * * *", "1-1000 * * * *", "0 0 */100 * MON#2"]:
             r = self.client.get(self._url(v))
             self.assertEqual(r.status_code, 200)
             self.assertFalse(r.json()["result"])
