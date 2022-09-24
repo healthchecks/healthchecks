@@ -5,7 +5,7 @@ import json
 from unittest.mock import patch
 
 from django.utils.timezone import now
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
 from django.test.utils import override_settings
@@ -375,3 +375,46 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         body = json.loads(kwargs["data"])
         self.assertEqual(body["name"], "Hello World")
+
+    @patch("hc.api.transports.curl.request")
+    def test_webhooks_support_body_variable_in_body(self, mock_post):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "$BODY",
+            "headers_down": {},
+        }
+
+        self._setup_data(json.dumps(definition))
+
+        ping_body = b"Body Line 1\nBody Line 2"
+        self.ping = Ping(owner=self.check)
+        self.ping.body_raw = ping_body
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        self.assertEqual(kwargs["data"], ping_body)
+
+    @patch("hc.api.transports.curl.request")
+    def test_webhooks_dont_support_body_variable_in_url_and_headers(self, mock_post):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org/$BODY",
+            "body_down": "",
+            "headers_down": {"User-Agent": "$BODY"},
+        }
+
+        self._setup_data(json.dumps(definition))
+
+        ping_body = b"Body Line 1"
+        self.ping = Ping(owner=self.check)
+        self.ping.body_raw = ping_body
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        self.assertTrue(args[1].endswith("$BODY"))
+        self.assertEqual(kwargs["headers"]["User-Agent"], "$BODY")
