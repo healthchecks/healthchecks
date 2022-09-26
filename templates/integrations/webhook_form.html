@@ -195,11 +195,11 @@
                 <table id="webhook-variables" class="table modal-body">
                     <tr>
                         <th><code>$CODE</code></th>
-                        <td>The UUID code of the check</td>
+                        <td>The UUID code of the check.</td>
                     </tr>
                     <tr>
                         <th><code>$NAME</code></th>
-                        <td>Name of the check</td>
+                        <td>Name of the check.</td>
                     </tr>
                     <tr>
                         <th><code>$NOW</code></th>
@@ -210,15 +210,19 @@
                     </tr>
                     <tr>
                         <th><code>$STATUS</code></th>
-                        <td>Check's current status ("up" or "down")</td>
+                        <td>Check's current status ("up" or "down").</td>
                     </tr>
                     <tr>
                         <th><code>$TAGS</code></th>
-                        <td>Check's tags, separated by spaces</td>
+                        <td>Check's tags, separated by spaces.</td>
                     </tr>
                     <tr>
                         <th><code>$TAG1, $TAG2, …</code></th>
                         <td>Value of the first tag, the second tag, …</td>
+                    </tr>
+                    <tr>
+                        <th><code>$BODY</code></th>
+                        <td>The request body of the most recent ping. Works only in the webhook's "Request Body" field.</td>
                     </tr>
                     <tr>
                         <th><code>$JSON</code></th>

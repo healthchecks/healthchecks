@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Implement documentation search
 - Add date filters in the Log page
 - Upgrade to cronsim 2.2
+- Add support for the $BODY placeholder in webhook payloads (#708)
 
 ### Bug Fixes
 - Fix the handling of TooManyRedirects exceptions
