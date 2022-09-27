@@ -6,6 +6,7 @@ import os
 import re
 from secrets import token_urlsafe
 import sqlite3
+import sys
 from urllib.parse import urlencode, urlparse
 
 from cron_descriptor import ExpressionDescriptor
@@ -53,9 +54,9 @@ from hc.lib import curl, jsonschema
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 
-try:
+if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo
-except ImportError:
+else:
     from backports.zoneinfo import ZoneInfo
 
 
