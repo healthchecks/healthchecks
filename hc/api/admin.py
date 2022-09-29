@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.db import connection
 from django.db.models import F
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from hc.api.models import Channel, Check, Flip, Notification, Ping
@@ -132,28 +133,25 @@ class LargeTablePaginator(Paginator):
         except:
             return 0
 
-    def _get_count(self):
+    @cached_property
+    def count(self):
         """
         Changed to use an estimate if the estimate is greater than 10,000
         Returns the total number of objects, across all pages.
         """
-        if not hasattr(self, "_count") or self._count is None:
-            try:
-                estimate = 0
-                if not self.object_list.query.where:
-                    estimate = self._get_estimate()
-                if estimate < 10000:
-                    self._count = self.object_list.count()
-                else:
-                    self._count = estimate
-            except (AttributeError, TypeError):
-                # AttributeError if object_list has no count() method.
-                # TypeError if object_list.count() requires arguments
-                # (i.e. is of type list).
-                self._count = len(self.object_list)
-        return self._count
-
-    count = property(_get_count)
+        try:
+            estimate = 0
+            if not self.object_list.query.where:
+                estimate = self._get_estimate()
+            if estimate < 10000:
+                return self.object_list.count()
+            else:
+                return estimate
+        except (AttributeError, TypeError):
+            # AttributeError if object_list has no count() method.
+            # TypeError if object_list.count() requires arguments
+            # (i.e. is of type list).
+            return len(self.object_list)
 
 
 @admin.register(Ping)
