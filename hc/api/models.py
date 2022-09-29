@@ -6,7 +6,7 @@ import json
 import socket
 import sys
 import time
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Set, TypedDict
 import uuid
 
 from cronsim import CronSim
@@ -81,6 +81,36 @@ PO_PRIORITIES = {
 def isostring(dt) -> Optional[str]:
     """Convert the datetime to ISO 8601 format with no microseconds."""
     return dt.replace(microsecond=0).isoformat() if dt else None
+
+
+class CheckDict(TypedDict, total=False):
+    name: str
+    slug: str
+    tags: str
+    desc: str
+    grace: int
+    n_pings: int
+    status: str
+    last_ping: Optional[str]
+    next_ping: Optional[str]
+    manual_resume: bool
+    methods: str
+    subject: str
+    subject_fail: str
+    success_kw: str
+    failure_kw: str
+    filter_subject: bool
+    filter_body: bool
+    last_duration: int
+    unique_key: str
+    ping_url: str
+    update_url: str
+    pause_url: str
+    resume_url: str
+    channels: str
+    timeout: int
+    schedule: str
+    tz: str
 
 
 class Check(models.Model):
@@ -164,7 +194,7 @@ class Check(models.Model):
             return self.last_duration
         return None
 
-    def set_name_slug(self, name) -> None:
+    def set_name_slug(self, name: str) -> None:
         self.name = name
         self.slug = slugify(name)
 
@@ -236,7 +266,7 @@ class Check(models.Model):
     def tags_list(self) -> List[str]:
         return [t.strip() for t in self.tags.split(" ") if t.strip()]
 
-    def matches_tag_set(self, tag_set) -> bool:
+    def matches_tag_set(self, tag_set: Set[str]) -> bool:
         return tag_set.issubset(self.tags_list())
 
     def channels_str(self) -> str:
@@ -256,8 +286,8 @@ class Check(models.Model):
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
 
-    def to_dict(self, readonly=False) -> Dict[str, Union[str, int, None]]:
-        result: Dict[str, Union[str, int, None]] = {
+    def to_dict(self, readonly=False) -> CheckDict:
+        result: CheckDict = {
             "name": self.name,
             "slug": self.slug,
             "tags": self.tags,
@@ -301,7 +331,16 @@ class Check(models.Model):
 
         return result
 
-    def ping(self, remote_addr, scheme, method, ua, body, action, exitstatus=None):
+    def ping(
+        self,
+        remote_addr: str,
+        scheme: str,
+        method: str,
+        ua: str,
+        body: bytes,
+        action: str,
+        exitstatus: Optional[int] = None,
+    ) -> None:
         frozen_now = now()
 
         if self.status == "paused" and self.manual_resume:
@@ -379,7 +418,7 @@ class Check(models.Model):
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
         return self.ping_set.filter(n__gt=threshold)
 
-    def downtimes(self, months):
+    def downtimes(self, months: int):
         """Calculate the number of downtimes and downtime minutes per month.
 
         Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples.
@@ -428,7 +467,7 @@ class Check(models.Model):
 
         return self.downtimes(3)[:-1]
 
-    def create_flip(self, new_status, mark_as_processed=False):
+    def create_flip(self, new_status: str, mark_as_processed: bool = False) -> None:
         """Create a Flip object for this check.
 
         Flip objects record check status changes, and have two uses:
