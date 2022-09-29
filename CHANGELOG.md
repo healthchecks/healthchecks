@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 - Switch from requests to pycurl
 - Implement documentation search
 - Add date filters in the Log page
-- Upgrade to cronsim 2.2
+- Upgrade to cronsim 2.3
 - Add support for the $BODY placeholder in webhook payloads (#708)
 
 ### Bug Fixes
