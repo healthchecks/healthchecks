@@ -193,7 +193,7 @@ msgstr ""
 
 #: templates/front/welcome.html:200
 msgid "Tap on the integration icons to toggle them on and off."
-msgstr "Klicken sie auf die Integrations-Icons um sie ein- und auszuschalten."
+msgstr "Klicken Sie auf die Integrations-Icons um sie ein- und auszuschalten."
 
 #: templates/front/welcome.html:205
 msgid ""
