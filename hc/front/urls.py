@@ -10,6 +10,7 @@ check_urls = [
     path("pause/", views.pause, name="hc-pause"),
     path("resume/", views.resume, name="hc-resume"),
     path("remove/", views.remove_check, name="hc-remove-check"),
+    path("clear_events/", views.clear_events, name="hc-clear-events"),
     path("log/", views.log, name="hc-log"),
     path("status/", views.status_single, name="hc-status-single"),
     path("last_ping/", views.ping_details, name="hc-last-ping"),

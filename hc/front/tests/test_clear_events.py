@@ -1,42 +1,53 @@
-from hc.api.models import Check
+from django.utils.timezone import now
+from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
 
-class RemoveCheckTestCase(BaseTestCase):
+class ClearEventsTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
-        self.remove_url = f"/checks/{self.check.code}/remove/"
-        self.redirect_url = f"/projects/{self.project.code}/checks/"
+        self.check.last_ping = now()
+        self.check.n_pings = 1
+        self.check.save()
+
+        Ping.objects.create(owner=self.check, n=1)
+
+        self.clear_url = f"/checks/{self.check.code}/clear_events/"
+        self.redirect_url = f"/checks/{self.check.code}/details/"
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.remove_url)
+        r = self.client.post(self.clear_url)
         self.assertRedirects(r, self.redirect_url)
 
-        self.assertEqual(Check.objects.count(), 0)
+        self.check.refresh_from_db()
+        self.assertIsNone(self.check.last_ping)
+        self.assertFalse(self.check.ping_set.exists())
 
     def test_team_access_works(self):
         # Logging in as bob, not alice. Bob has team access so this
         # should work.
         self.client.login(username="bob@example.org", password="password")
-        self.client.post(self.remove_url)
+        r = self.client.post(self.clear_url)
+        self.assertRedirects(r, self.redirect_url)
 
-        self.assertEqual(Check.objects.count(), 0)
+        self.check.refresh_from_db()
+        self.assertIsNone(self.check.last_ping)
 
     def test_it_handles_bad_uuid(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post("/checks/not-uuid/remove/")
+        r = self.client.post("/checks/not-uuid/clear_events/")
         self.assertEqual(r.status_code, 404)
 
     def test_it_checks_owner(self):
         self.client.login(username="charlie@example.org", password="password")
-        r = self.client.post(self.remove_url)
+        r = self.client.post(self.clear_url)
         self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_uuid(self):
         # Valid UUID but there is no check for it:
-        url = "/checks/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/remove/"
+        url = "/checks/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/clear_events/"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(url)
@@ -44,7 +55,7 @@ class RemoveCheckTestCase(BaseTestCase):
 
     def test_it_rejects_get(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.remove_url)
+        r = self.client.get(self.clear_url)
         self.assertEqual(r.status_code, 405)
 
     def test_it_requires_rw_access(self):
@@ -52,5 +63,5 @@ class RemoveCheckTestCase(BaseTestCase):
         self.bobs_membership.save()
 
         self.client.login(username="bob@example.org", password="password")
-        r = self.client.post(self.remove_url)
+        r = self.client.post(self.clear_url)
         self.assertEqual(r.status_code, 403)

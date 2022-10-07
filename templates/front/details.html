@@ -258,6 +258,10 @@
                 &nbsp;
                 <button
                     data-toggle="modal"
+                    data-target="#clear-events-modal"
+                    class="btn btn-sm btn-remove">Clear Events</button>
+                <button
+                    data-toggle="modal"
                     data-target="#remove-check-modal"
                     class="btn btn-sm btn-remove">Remove</button>
             </div>
@@ -316,6 +320,7 @@
 {% include "front/update_timeout_modal.html" %}
 {% include "front/show_usage_modal.html" %}
 {% include "front/remove_check_modal.html" %}
+{% include "front/clear_events_modal.html" %}
 {% include "front/filtering_rules_modal.html" %}
 {% include "front/copy_modal.html" %}
 

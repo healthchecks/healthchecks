@@ -1,0 +1,23 @@
+<div id="clear-events-modal" class="modal">
+    <div class="modal-dialog">
+        <form action="{% url 'hc-clear-events' check.code %}" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Clear Events for  <span class="remove-check-name">{{ check.name_then_code }}</span></h4>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to clear all logged pings and notifications for the check
+                        <strong class="remove-check-name">{{ check.name_then_code }}</strong>.
+                    </p>
+                    <p>Are you sure?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Clear Events</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

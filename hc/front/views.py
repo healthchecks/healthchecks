@@ -7,7 +7,9 @@ import re
 from secrets import token_urlsafe
 import sqlite3
 import sys
+from typing import Tuple
 from urllib.parse import urlencode, urlparse
+from uuid import UUID
 
 from cron_descriptor import ExpressionDescriptor
 from cronsim import CronSim, CronSimError
@@ -19,6 +21,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F
 from django.http import (
     Http404,
+    HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseForbidden,
@@ -88,7 +91,7 @@ def _tags_statuses(checks):
     return tags, num_down
 
 
-def _get_check_for_user(request, code):
+def _get_check_for_user(request: HttpRequest, code: UUID) -> Tuple[Check, bool]:
     """Return specified check if current user has access to it."""
 
     assert request.user.is_authenticated
@@ -104,7 +107,7 @@ def _get_check_for_user(request, code):
     return check, membership.is_rw
 
 
-def _get_rw_check_for_user(request, code):
+def _get_rw_check_for_user(request: HttpRequest, code: UUID) -> Check:
     check, rw = _get_check_for_user(request, code)
     if not rw:
         raise PermissionDenied
@@ -676,12 +679,32 @@ def resume(request, code):
 
 @require_POST
 @login_required
-def remove_check(request, code):
+def remove_check(request: HttpRequest, code: UUID) -> HttpResponse:
     check = _get_rw_check_for_user(request, code)
 
     project = check.project
     check.delete()
     return redirect("hc-checks", project.code)
+
+
+@require_POST
+@login_required
+def clear_events(request: HttpRequest, code: UUID) -> HttpResponse:
+    check = _get_rw_check_for_user(request, code)
+
+    check.status = "new"
+    check.last_ping = None
+    check.last_start = None
+    check.last_duration = None
+    check.has_confirmation_link = False
+    check.alert_after = None
+    check.save()
+
+    check.ping_set.all().delete()
+    check.notification_set.all().delete()
+    check.flip_set.all().delete()
+
+    return redirect("hc-details", code)
 
 
 def _get_events(check, page_limit, start=None, end=None):
