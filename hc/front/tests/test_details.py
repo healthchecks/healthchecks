@@ -70,7 +70,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "Change Schedule")
         self.assertNotContains(r, "Create a Copy&hellip;")
         self.assertNotContains(r, "transfer-btn")
-        self.assertNotContains(r, "details-remove-check")
+        self.assertNotContains(r, "btn-remove")
 
     def test_it_hides_resume_action_from_readonly_users(self):
         self.bobs_membership.role = "r"

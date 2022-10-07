@@ -78,17 +78,6 @@
     background-color: var(--table-bg-hover);
 }
 
-
-#details-remove-check {
-    border-color: #d43f3a;
-    color: var(--btn-remove-color);
-    background-color: var(--btn-remove-bg);
-}
-
-#details-remove-check:hover {
-    background-color: var(--btn-remove-hover);
-}
-
 #downtimes table {
     max-width: 350px;
 }

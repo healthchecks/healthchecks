@@ -258,3 +258,15 @@ input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+
+.btn-remove {
+    border-color: #d43f3a;
+    color: var(--btn-remove-color);
+    background-color: var(--btn-remove-bg);
+}
+
+.btn-remove:hover,
+.btn-remove:focus {
+    background-color: var(--btn-remove-hover);
+    color: var(--btn-remove-color);
+}
