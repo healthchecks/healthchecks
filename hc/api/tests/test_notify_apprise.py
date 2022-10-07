@@ -9,13 +9,16 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 from django.test.utils import override_settings
 
+
 try:
     import apprise
+
+    have_apprise = bool(apprise)
 except ImportError:
-    apprise = None
+    have_apprise = False
 
 
-@skipIf(apprise is None, "apprise not installed")
+@skipIf(not have_apprise, "apprise not installed")
 class NotifyAppriseTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()

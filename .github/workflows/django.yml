@@ -51,6 +51,8 @@ jobs:
         SECRET_KEY: dummy-key
       run: |
         coverage run --omit=*/tests/*,*/migrations/* --source=hc manage.py test
+    - name: Run mypy
+      run: pip install mypy && mypy hc
     - name: Coveralls
       if: matrix.db == 'postgres' && matrix.python-version == '3.8'
       run: coveralls --service=github

@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from django.contrib import admin
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.admin import UserAdmin
@@ -33,8 +35,8 @@ def _format_usage(num_checks, num_channels):
 
 
 class Fieldset:
-    name = None
-    fields = []
+    name = "Group"
+    fields: Sequence[str] = []
 
     @classmethod
     def tuple(cls):
