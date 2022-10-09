@@ -953,6 +953,11 @@ class Channel(models.Model):
         return self.json["to"]
 
     @property
+    def zulip_topic(self):
+        assert self.kind == "zulip"
+        return self.json.get("topic", "")
+
+    @property
     def linenotify_token(self):
         assert self.kind == "linenotify"
         return self.value

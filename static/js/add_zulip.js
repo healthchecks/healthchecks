@@ -2,13 +2,15 @@ $(function() {
     function updateForm() {
         var mType = $('input[name=mtype]:checked').val();
         if (mType == "stream") {
-            $("#z-to-label").text("Stream Name");
+            $("#z-to-label").text("Stream");
             $("#z-to-help").text('Example: "general"');
         }
         if (mType == "private") {
             $("#z-to-label").text("User's Email");
             $("#z-to-help").text('Example: "alice@example.org"');
         }
+
+        $("#z-topic-group").toggleClass("hide", mType == "private");
     }
 
     // Update form labels when user clicks on radio buttons

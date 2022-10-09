@@ -20,18 +20,21 @@ class NotifyZulipTestCase(BaseTestCase):
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
-        definition = {
+        self.channel = Channel(project=self.project)
+        self.channel.kind = "zulip"
+        self.channel.value = json.dumps(self.definition())
+        self.channel.save()
+        self.channel.checks.add(self.check)
+
+    def definition(self, **kwargs):
+        d = {
             "bot_email": "bot@example.org",
             "api_key": "fake-key",
             "mtype": "stream",
             "to": "general",
         }
-
-        self.channel = Channel(project=self.project)
-        self.channel.kind = "zulip"
-        self.channel.value = json.dumps(definition)
-        self.channel.save()
-        self.channel.checks.add(self.check)
+        d.update(kwargs)
+        return d
 
     @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
@@ -50,6 +53,18 @@ class NotifyZulipTestCase(BaseTestCase):
         # payload should not contain check's code
         serialized = json.dumps(payload)
         self.assertNotIn(str(self.check.code), serialized)
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_uses_custom_topic(self, mock_post):
+        self.channel.value = json.dumps(self.definition(topic="foo"))
+        self.channel.save()
+
+        mock_post.return_value.status_code = 200
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["data"]
+        self.assertEqual(payload["topic"], "foo")
 
     @patch("hc.api.transports.curl.request")
     def test_it_returns_error(self, mock_post):

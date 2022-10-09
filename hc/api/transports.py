@@ -262,7 +262,9 @@ class HttpTransport(Transport):
 
 
 class Webhook(HttpTransport):
-    def prepare(self, template: str, check, urlencode=False, latin1=False, allow_ping_body=False) -> str:
+    def prepare(
+        self, template: str, check, urlencode=False, latin1=False, allow_ping_body=False
+    ) -> str:
         """Replace variables with actual values."""
 
         def safe(s: str) -> str:
@@ -821,12 +823,16 @@ class Zulip(HttpTransport):
         if not settings.ZULIP_ENABLED:
             raise TransportError("Zulip notifications are not enabled.")
 
+        topic = self.channel.zulip_topic
+        if not topic:
+            topic = tmpl("zulip_topic.html", check=check)
+
         url = self.channel.zulip_site + "/api/v1/messages"
         auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
         data = {
             "type": self.channel.zulip_type,
             "to": self.channel.zulip_to,
-            "topic": tmpl("zulip_topic.html", check=check),
+            "topic": topic,
             "content": tmpl("zulip_content.html", check=check),
         }
 

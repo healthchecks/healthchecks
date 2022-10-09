@@ -311,6 +311,7 @@ class AddZulipForm(forms.Form):
     site = forms.URLField(max_length=100, validators=[WebhookValidator()])
     mtype = forms.ChoiceField(choices=ZULIP_TARGETS)
     to = forms.CharField(max_length=100)
+    topic = forms.CharField(max_length=100, required=False)
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
@@ -349,3 +350,7 @@ class SeekForm(forms.Form):
 
     def clean_end(self):
         return datetime.fromtimestamp(self.cleaned_data["end"], tz=timezone.utc)
+
+
+class TransferForm(forms.Form):
+    project = forms.UUIDField()

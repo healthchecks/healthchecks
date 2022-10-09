@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to cronsim 2.3
 - Add support for the $BODY placeholder in webhook payloads (#708)
 - Implement the "Clear Events" function
+- Add support for custom topics in Zulip notifications (#583)
 
 ### Bug Fixes
 - Fix the handling of TooManyRedirects exceptions

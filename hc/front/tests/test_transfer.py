@@ -73,3 +73,9 @@ class TransferTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url, payload)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_handles_bad_project_uuid(self):
+        self.client.login(username="bob@example.org", password="password")
+        payload = {"project": "not-uuid"}
+        r = self.client.post(self.url, payload)
+        self.assertEqual(r.status_code, 400)

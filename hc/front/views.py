@@ -139,10 +139,10 @@ def _get_rw_channel_for_user(request, code):
     return channel
 
 
-def _get_project_for_user(request, project_code):
+def _get_project_for_user(request: HttpRequest, code: UUID) -> Tuple[Project, bool]:
     """Check access, return (project, rw) tuple."""
 
-    project = get_object_or_404(Project, code=project_code)
+    project = get_object_or_404(Project, code=code)
     if request.user.is_superuser:
         return project, True
 
@@ -154,10 +154,10 @@ def _get_project_for_user(request, project_code):
     return project, membership.is_rw
 
 
-def _get_rw_project_for_user(request, project_code):
+def _get_rw_project_for_user(request: HttpRequest, code: UUID) -> Project:
     """Check access, return (project, rw) tuple."""
 
-    project, rw = _get_project_for_user(request, project_code)
+    project, rw = _get_project_for_user(request, code)
     if not rw:
         raise PermissionDenied
 
@@ -818,11 +818,15 @@ def uncloak(request, unique_key):
 
 
 @login_required
-def transfer(request, code):
+def transfer(request: HttpRequest, code: UUID) -> HttpResponse:
     check = _get_rw_check_for_user(request, code)
 
     if request.method == "POST":
-        target_project = _get_rw_project_for_user(request, request.POST["project"])
+        form = forms.TransferForm(request.POST)
+        if not form.is_valid():
+            return HttpResponseBadRequest()
+
+        target_project = _get_rw_project_for_user(request, form.cleaned_data["project"])
         if target_project.num_checks_available() <= 0:
             return HttpResponseBadRequest()
 
@@ -1696,7 +1700,7 @@ def add_victorops(request, code):
 
 @require_setting("ZULIP_ENABLED")
 @login_required
-def add_zulip(request, code):
+def add_zulip(request: HttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
 
     if request.method == "POST":

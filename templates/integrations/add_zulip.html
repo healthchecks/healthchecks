@@ -104,8 +104,6 @@
             </div>
         </div>
 
-
-
         <div id="z-mtype-group" class="form-group {{ form.mtype.css_classes }}">
             <label class="col-sm-2 control-label">Post To</label>
             <div class="col-sm-4">
@@ -135,7 +133,7 @@
             {% if form.mtype.value == "private" %}
                 User's Email
             {% else %}
-                Stream Name
+                Stream
             {% endif %}
             </label>
             <div class="col-sm-4">
@@ -152,6 +150,22 @@
                 {% else %}
                     Example: "{% if form.mtype.value == "private" %}alice@example.org{% else %}general{% endif%}"
                 {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div id="z-topic-group" class="form-group {% if form.mtype.value == 'private' %}hide{% endif %} {{ form.topic.css_classes }}">
+            <label for="z-topic" class="col-sm-2 control-label">Topic</label>
+            <div class="col-sm-4">
+                <input
+                    id="z-topic"
+                    type="text"
+                    class="form-control"
+                    name="topic"
+                    value="{{ form.topic.value|default:"" }}">
+                <div class="help-block">
+                    Example: "Alerts". Leave empty to use auto-generated topics in the form:
+                    "{check name} is {status}".
                 </div>
             </div>
         </div>
