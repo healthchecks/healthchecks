@@ -115,7 +115,7 @@ def _get_rw_check_for_user(request: HttpRequest, code: UUID) -> Check:
     return check
 
 
-def _get_channel_for_user(request, code):
+def _get_channel_for_user(request: HttpRequest, code: UUID) -> Tuple[Channel, bool]:
     """Return specified channel if current user has access to it."""
 
     assert request.user.is_authenticated
@@ -131,7 +131,7 @@ def _get_channel_for_user(request, code):
     return channel, membership.is_rw
 
 
-def _get_rw_channel_for_user(request, code):
+def _get_rw_channel_for_user(request: HttpRequest, code: UUID) -> Channel:
     channel, rw = _get_channel_for_user(request, code)
     if not rw:
         raise PermissionDenied
@@ -1080,8 +1080,8 @@ def unsubscribe_email(request, code, signed_token):
 
 @require_POST
 @login_required
-def send_test_notification(request, code):
-    channel, rw = _get_channel_for_user(request, code)
+def send_test_notification(request: HttpRequest, code: UUID) -> HttpResponse:
+    channel = _get_rw_channel_for_user(request, code)
 
     dummy = Check(name="TEST", status="down", project=channel.project)
     dummy.last_ping = now() - td(days=1)
@@ -1108,7 +1108,7 @@ def send_test_notification(request, code):
 
 @require_POST
 @login_required
-def remove_channel(request, code):
+def remove_channel(request: HttpRequest, code: UUID) -> HttpResponse:
     channel = _get_rw_channel_for_user(request, code)
     project = channel.project
     channel.delete()
@@ -1174,7 +1174,7 @@ def email_form(request, channel=None, code=None):
 
 
 @login_required
-def edit_channel(request, code):
+def edit_channel(request: HttpRequest, code: UUID) -> HttpResponse:
     channel = _get_rw_channel_for_user(request, code)
     if channel.kind == "email":
         return email_form(request, channel=channel)
@@ -1299,7 +1299,8 @@ def add_pd_complete(request):
     if "pagerduty" not in request.session:
         return HttpResponseBadRequest()
 
-    state, code = request.session.pop("pagerduty")
+    state, code_str = request.session.pop("pagerduty")
+    code = UUID(code_str)
     if request.GET.get("state") != state:
         return HttpResponseForbidden()
 
@@ -1407,11 +1408,12 @@ def add_slack_btn(request, code):
 @require_setting("SLACK_ENABLED")
 @require_setting("SLACK_CLIENT_ID")
 @login_required
-def add_slack_complete(request):
+def add_slack_complete(request: HttpRequest) -> HttpResponse:
     if "add_slack" not in request.session:
         return HttpResponseForbidden()
 
-    state, code = request.session.pop("add_slack")
+    state, code_str = request.session.pop("add_slack")
+    code = UUID(code_str)
     project = _get_rw_project_for_user(request, code)
     if request.GET.get("error") == "access_denied":
         messages.warning(request, "Slack setup was cancelled.")
@@ -1493,7 +1495,8 @@ def add_pushbullet_complete(request):
     if "add_pushbullet" not in request.session:
         return HttpResponseForbidden()
 
-    state, code = request.session.pop("add_pushbullet")
+    state, code_str = request.session.pop("add_pushbullet")
+    code = UUID(code_str)
     project = _get_rw_project_for_user(request, code)
 
     if request.GET.get("error") == "access_denied":
@@ -1551,7 +1554,8 @@ def add_discord_complete(request):
     if "add_discord" not in request.session:
         return HttpResponseForbidden()
 
-    state, code = request.session.pop("add_discord")
+    state, code_str = request.session.pop("add_discord")
+    code = UUID(code_str)
     project = _get_rw_project_for_user(request, code)
 
     if request.GET.get("error") == "access_denied":
@@ -1781,7 +1785,11 @@ def add_telegram(request):
             return render(request, "bad_link.html")
 
     if request.method == "POST":
-        project = _get_rw_project_for_user(request, request.POST.get("project"))
+        form = forms.AddTelegramForm(request.POST)
+        if not form.is_valid():
+            return HttpResponseBadRequest()
+
+        project = _get_rw_project_for_user(request, form.cleaned_data["project"])
         channel = Channel(project=project, kind="telegram")
         channel.value = json.dumps(
             {"id": chat_id, "type": chat_type, "name": chat_name}
@@ -2204,7 +2212,8 @@ def add_linenotify_complete(request):
     if "add_linenotify" not in request.session:
         return HttpResponseForbidden()
 
-    state, code = request.session.pop("add_linenotify")
+    state, code_str = request.session.pop("add_linenotify")
+    code = UUID(code_str)
     if request.GET.get("state") != state:
         return HttpResponseForbidden()
 

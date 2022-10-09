@@ -354,3 +354,7 @@ class SeekForm(forms.Form):
 
 class TransferForm(forms.Form):
     project = forms.UUIDField()
+
+
+class AddTelegramForm(forms.Form):
+    project = forms.UUIDField()
