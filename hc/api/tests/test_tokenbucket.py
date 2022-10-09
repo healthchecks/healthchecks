@@ -35,7 +35,7 @@ class TokenBucketTestCase(BaseTestCase):
         self.assertTrue(r)
 
         obj.refresh_from_db()
-        self.assertAlmostEqual(obj.tokens, 0.45, places=5)
+        self.assertAlmostEqual(obj.tokens, 0.45, places=4)
 
     def test_it_normalizes_email(self):
         emails = ("alice+alias@example.org", "a.li.ce@example.org")
