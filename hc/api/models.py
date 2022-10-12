@@ -313,14 +313,14 @@ class Check(models.Model):
         if readonly:
             result["unique_key"] = self.unique_key
         else:
-            update_rel_url = reverse("hc-api-single", args=[self.code])
-            pause_rel_url = reverse("hc-api-pause", args=[self.code])
-            resume_rel_url = reverse("hc-api-resume", args=[self.code])
-
             result["ping_url"] = settings.PING_ENDPOINT + str(self.code)
-            result["update_url"] = settings.SITE_ROOT + update_rel_url
-            result["pause_url"] = settings.SITE_ROOT + pause_rel_url
-            result["resume_url"] = settings.SITE_ROOT + resume_rel_url
+
+            # Optimization: construct API URLs manually instead of using reverse().
+            # This is significantly quicker when returning hundreds of checks.
+            update_url = settings.SITE_ROOT + "/api/v1/checks/" + str(self.code)
+            result["update_url"] = update_url
+            result["pause_url"] = update_url + "/pause"
+            result["resume_url"] = update_url + "/resume"
             result["channels"] = self.channels_str()
 
         if self.kind == "simple":

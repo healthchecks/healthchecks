@@ -3,6 +3,7 @@ import time
 
 from django.conf import settings
 from django.db import connection
+from django.db.models import Prefetch
 from django.http import (
     HttpResponse,
     HttpResponseForbidden,
@@ -190,7 +191,9 @@ def _update(check, spec):
 def get_checks(request):
     q = Check.objects.filter(project=request.project)
     if not request.readonly:
-        q = q.prefetch_related("channel_set")
+        # Use QuerySet.only() and Prefetch() to prefetch channel codes only:
+        channel_q = Channel.objects.only("code")
+        q = q.prefetch_related(Prefetch("channel_set", queryset=channel_q))
 
     tags = set(request.GET.getlist("tag"))
     for tag in tags:
