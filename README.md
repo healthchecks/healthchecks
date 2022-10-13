@@ -3,17 +3,6 @@
 ![Build Status](https://github.com/healthchecks/healthchecks/workflows/Django%20CI/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
-
-![Screenshot of My Checks page](/static/img/my_checks@2x.png?raw=true "My Checks Page")
-
-![Screenshot of Period/Grace dialog](/static/img/period_grace@2x.png?raw=true "Period/Grace Dialog")
-
-![Screenshot of Cron dialog](/static/img/cron%402x.png?raw=true "Cron Dialog")
-
-![Screenshot of Check Details page](/static/img/check_details@2x.png?raw=true "My Checks Page")
-
-![Screenshot of Badges page](/static/img/badges@2x.png?raw=true "Integrations Page")
-
 Healthchecks is a cron job monitoring service. It listens for HTTP requests
 and email messages ("pings") from your cron jobs and scheduled tasks ("checks").
 When a ping does not arrive on time, Healthchecks sends out alerts.
@@ -32,6 +21,35 @@ Healthchecks is licensed under the BSD 3-clause license.
 
 Healthchecks is available as a hosted service
 at [https://healthchecks.io/](https://healthchecks.io/).
+
+Screenshots:
+
+The "My Checks" screen. Shows the status of all your cron jobs
+in a live-updating dashboard.
+
+![Screenshot of My Checks page](/static/img/my_checks@2x.png?raw=true "My Checks Page")
+
+Each check has configurable Period and Grace Time parameters. Period is the expected
+time between pings. Grace Time specifies how long to wait before sending out alerts
+when a job is running late.
+
+![Screenshot of Period/Grace dialog](/static/img/period_grace@2x.png?raw=true "Period/Grace Dialog")
+
+Alternatively, you can define the expected schedules using a cron expressions.
+Healthchecks uses the [cronsim](https://github.com/cuu508/cronsim) library to
+parse and evaluate cron expressions.
+
+![Screenshot of Cron dialog](/static/img/cron%402x.png?raw=true "Cron Dialog")
+
+Check details page, with a live-updating event log.
+
+![Screenshot of Check Details page](/static/img/check_details@2x.png?raw=true "Check Details Page")
+
+Healthchecks provides status badges with public but hard-to-guess URLs.
+You can use them in your READMEs, dashboards, or status pages.
+
+![Screenshot of Badges page](/static/img/badges@2x.png?raw=true "Status Badges")
+
 
 ## Setting Up for Development
 
