@@ -382,7 +382,7 @@ class Check(models.Model):
             ping.kind = action
 
         ping.remote_addr = remote_addr
-        if ':' in remote_addr:
+        if ':' in remote_addr and '.' in remote_addr:
             ping.remote_addr = remote_addr.split(':')[0] # If the address contains a port (like in Azure), remove the port portion
         ping.scheme = scheme
         ping.method = method
