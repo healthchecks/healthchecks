@@ -3,6 +3,9 @@ window.addEventListener("DOMContentLoaded", function(e) {
     var submitBtn = document.getElementById("signup-go");
 
     function submitForm() {
+        if (submitBtn.disabled) {
+            return;
+        }
         submitBtn.disabled = true;
 
         try {
