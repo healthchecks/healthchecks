@@ -8,7 +8,7 @@ from hc.test import BaseTestCase
 
 class UpdateSubscriptionTestCase(BaseTestCase):
     def _setup_mock(self, mock):
-        """ Set up Braintree calls that the controller will use. """
+        """Set up Braintree calls that the controller will use."""
 
         mock.Subscription.create.return_value.is_success = True
         mock.Subscription.create.return_value.subscription.id = "t-sub-id"

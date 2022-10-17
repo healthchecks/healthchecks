@@ -18,7 +18,7 @@ class LineModeNode(Node):
 
 @register.tag
 def linemode(parser, token):
-    """ Skip content outside {% line %} blocks.
+    """Skip content outside {% line %} blocks.
 
     Intended to be used for precise control of whitespace and newlines.
     Example usage::
@@ -57,7 +57,7 @@ class LineNode(Node):
 
 @register.tag
 def line(parser, token):
-    """ For use with {% linemode %}.
+    """For use with {% linemode %}.
 
     Renders the enclosed content and appends it to context["__lines__"]
     instead of returning it.

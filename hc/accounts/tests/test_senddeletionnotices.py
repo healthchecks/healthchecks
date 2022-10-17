@@ -14,7 +14,7 @@ from hc.test import BaseTestCase
 
 
 def counts(result):
-    """ Extract integer values from command's return value. """
+    """Extract integer values from command's return value."""
     return [int(s) for s in re.findall(r"\d+", result)]
 
 

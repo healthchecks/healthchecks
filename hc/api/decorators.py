@@ -65,7 +65,7 @@ def authorize_read(f):
 
 
 def validate_json(schema={"type": "object"}):
-    """ Parse request json and validate it against `schema`.
+    """Parse request json and validate it against `schema`.
 
     Put the parsed result in `request.json`.
     If schema is None then only parse and check if the root
