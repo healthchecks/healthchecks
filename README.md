@@ -57,8 +57,8 @@ To set up Healthchecks development environment:
 
 * Install dependencies (Debian/Ubuntu):
 
-        $ sudo apt-get update
-        $ sudo apt-get install -y gcc python3-dev python3-venv libpq-dev
+        $ sudo apt update
+        $ sudo apt install -y gcc python3-dev python3-venv libpq-dev libcurl4-openssl-dev libssl-dev
 
 * Prepare directory for project code and virtualenv. Feel free to use a
   different location:
