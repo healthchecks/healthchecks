@@ -4,14 +4,15 @@ Django settings for healthchecks project.
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+from __future__ import annotations
 
-from typing import Any, Mapping
 import os
+from typing import Any, Mapping
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def envbool(s, default):
+def envbool(s: str, default: str) -> bool:
     v = os.getenv(s, default=default)
     if v not in ("", "True", "False"):
         msg = "Unexpected value %s=%s, use 'True' or 'False'" % (s, v)
@@ -19,7 +20,7 @@ def envbool(s, default):
     return v == "True"
 
 
-def envint(s, default):
+def envint(s: str, default: str) -> int | None:
     v = os.getenv(s, default)
     if v == "None":
         return None
@@ -199,7 +200,7 @@ S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
 S3_ENDPOINT = os.getenv("S3_ENDPOINT")
 S3_REGION = os.getenv("S3_REGION")
 S3_BUCKET = os.getenv("S3_BUCKET")
-S3_TIMEOUT = envint("S3_TIMEOUT", 60)
+S3_TIMEOUT = envint("S3_TIMEOUT", "60")
 
 # Integrations
 

@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 from collections.abc import Mapping
 import json
 from secrets import token_bytes
-from typing import List, Optional, Tuple
 
 from fido2.server import Fido2Server
 from fido2.utils import websafe_encode, websafe_decode
@@ -56,11 +57,11 @@ def json_decode_hook(d: dict) -> dict:
 
 
 class CreateHelper(object):
-    def __init__(self, rp_id: str, credentials: List[bytes]):
+    def __init__(self, rp_id: str, credentials: list[bytes]):
         self.server = Fido2Server({"id": rp_id, "name": "healthchecks"})
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]
 
-    def prepare(self, email: str) -> Tuple[str, dict]:
+    def prepare(self, email: str) -> tuple[str, dict]:
         # User handle is used in a username-less authentication, to map a credential
         # received from browser with an user account in the database.
         # Since we only use security keys as a second factor,
@@ -79,7 +80,7 @@ class CreateHelper(object):
         options, state = self.server.register_begin(user, self.credentials)
         return bytes_to_b64(options), state
 
-    def verify(self, state: dict, response_json: str) -> Optional[bytes]:
+    def verify(self, state: dict, response_json: str) -> bytes | None:
         try:
             doc = json.loads(response_json, object_hook=json_decode_hook)
             auth_data = self.server.register_complete(
@@ -93,11 +94,11 @@ class CreateHelper(object):
 
 
 class GetHelper(object):
-    def __init__(self, rp_id: str, credentials: List[bytes]):
+    def __init__(self, rp_id: str, credentials: list[bytes]):
         self.server = Fido2Server({"id": rp_id, "name": "healthchecks"})
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]
 
-    def prepare(self) -> Tuple[str, dict]:
+    def prepare(self) -> tuple[str, dict]:
         options, state = self.server.authenticate_begin(self.credentials)
         return bytes_to_b64(options), state
 

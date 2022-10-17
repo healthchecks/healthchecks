@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import json
 import logging
 import os
 import socket
 import time
-from typing import Optional
 from urllib.parse import quote, urlencode, urljoin
 import uuid
 
@@ -52,7 +53,7 @@ def get_nested(obj, path, default=None):
     return needle
 
 
-def get_ping_body(ping) -> Optional[str]:
+def get_ping_body(ping) -> str | None:
     body = None
     if ping and ping.has_body():
         body = ping.get_body()

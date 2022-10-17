@@ -1,4 +1,4 @@
-# coding: utf-8
+from __future__ import annotations
 
 from datetime import datetime, timedelta as td, timezone
 import hashlib
@@ -6,7 +6,7 @@ import json
 import socket
 import sys
 import time
-from typing import List, Optional, Set, TypedDict
+from typing import TypedDict
 import uuid
 
 from cronsim import CronSim
@@ -78,7 +78,7 @@ PO_PRIORITIES = {
 }
 
 
-def isostring(dt) -> Optional[str]:
+def isostring(dt) -> str | None:
     """Convert the datetime to ISO 8601 format with no microseconds."""
     return dt.replace(microsecond=0).isoformat() if dt else None
 
@@ -91,8 +91,8 @@ class CheckDict(TypedDict, total=False):
     grace: int
     n_pings: int
     status: str
-    last_ping: Optional[str]
-    next_ping: Optional[str]
+    last_ping: str | None
+    next_ping: str | None
     manual_resume: bool
     methods: str
     subject: str
@@ -162,7 +162,7 @@ class Check(models.Model):
 
         return str(self.code)
 
-    def url(self) -> Optional[str]:
+    def url(self) -> str | None:
         """Return check's ping url in user's preferred style.
 
         Note: this method reads self.project. If project is not loaded already,
@@ -189,7 +189,7 @@ class Check(models.Model):
     def email(self) -> str:
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 
-    def clamped_last_duration(self) -> Optional[td]:
+    def clamped_last_duration(self) -> td | None:
         if self.last_duration and self.last_duration < MAX_DELTA:
             return self.last_duration
         return None
@@ -198,7 +198,7 @@ class Check(models.Model):
         self.name = name
         self.slug = slugify(name)
 
-    def get_grace_start(self, with_started=True) -> Optional[datetime]:
+    def get_grace_start(self, with_started=True) -> datetime | None:
         """Return the datetime when the grace period starts.
 
         If the check is currently new, paused or down, return None.
@@ -223,7 +223,7 @@ class Check(models.Model):
 
         return result if result != NEVER else None
 
-    def going_down_after(self) -> Optional[datetime]:
+    def going_down_after(self) -> datetime | None:
         """Return the datetime when the check goes down.
 
         If the check is new or paused, and not currently running, return None.
@@ -263,10 +263,10 @@ class Check(models.Model):
         channels = Channel.objects.filter(project=self.project)
         self.channel_set.set(channels)
 
-    def tags_list(self) -> List[str]:
+    def tags_list(self) -> list[str]:
         return [t.strip() for t in self.tags.split(" ") if t.strip()]
 
-    def matches_tag_set(self, tag_set: Set[str]) -> bool:
+    def matches_tag_set(self, tag_set: set[str]) -> bool:
         return tag_set.issubset(self.tags_list())
 
     def channels_str(self) -> str:
@@ -339,7 +339,7 @@ class Check(models.Model):
         ua: str,
         body: bytes,
         action: str,
-        exitstatus: Optional[int] = None,
+        exitstatus: int | None = None,
     ) -> None:
         frozen_now = now()
 

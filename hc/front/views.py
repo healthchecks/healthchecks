@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections import defaultdict
 from datetime import timedelta as td
 import email
@@ -7,7 +9,6 @@ import re
 from secrets import token_urlsafe
 import sqlite3
 import sys
-from typing import Tuple
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
 
@@ -91,7 +92,7 @@ def _tags_statuses(checks):
     return tags, num_down
 
 
-def _get_check_for_user(request: HttpRequest, code: UUID) -> Tuple[Check, bool]:
+def _get_check_for_user(request: HttpRequest, code: UUID) -> tuple[Check, bool]:
     """Return specified check if current user has access to it."""
 
     assert request.user.is_authenticated
@@ -115,7 +116,7 @@ def _get_rw_check_for_user(request: HttpRequest, code: UUID) -> Check:
     return check
 
 
-def _get_channel_for_user(request: HttpRequest, code: UUID) -> Tuple[Channel, bool]:
+def _get_channel_for_user(request: HttpRequest, code: UUID) -> tuple[Channel, bool]:
     """Return specified channel if current user has access to it."""
 
     assert request.user.is_authenticated
@@ -139,7 +140,7 @@ def _get_rw_channel_for_user(request: HttpRequest, code: UUID) -> Channel:
     return channel
 
 
-def _get_project_for_user(request: HttpRequest, code: UUID) -> Tuple[Project, bool]:
+def _get_project_for_user(request: HttpRequest, code: UUID) -> tuple[Project, bool]:
     """Check access, return (project, rw) tuple."""
 
     project = get_object_or_404(Project, code=code)
