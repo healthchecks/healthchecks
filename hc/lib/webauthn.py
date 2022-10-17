@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
 import json
+from collections.abc import Mapping
 from secrets import token_bytes
 
 from fido2.server import Fido2Server
-from fido2.utils import websafe_encode, websafe_decode
+from fido2.utils import websafe_decode, websafe_encode
 from fido2.webauthn import (
     AttestationObject,
     AttestedCredentialData,

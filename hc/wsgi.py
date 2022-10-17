@@ -7,6 +7,8 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 """
 
+from __future__ import annotations
+
 import os
 
 from django.core.wsgi import get_wsgi_application

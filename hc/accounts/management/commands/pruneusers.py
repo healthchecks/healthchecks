@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 from django.utils.timezone import now
+
 from hc.accounts.models import Profile
 
 

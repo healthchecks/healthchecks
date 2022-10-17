@@ -1,9 +1,12 @@
-from datetime import timedelta as td
+from __future__ import annotations
+
 import json
+from datetime import timedelta as td
 from unittest.mock import patch
 
-from django.utils.timezone import now
 from django.test.utils import override_settings
+from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 

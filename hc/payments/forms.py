@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from django import forms
+
 from hc.accounts.forms import LowercaseEmailField
 
 

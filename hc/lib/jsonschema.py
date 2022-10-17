@@ -4,9 +4,12 @@ Supports only a tiny subset of jsonschema.
 
 """
 
+from __future__ import annotations
+
 from datetime import datetime
 
 from cronsim import CronSim
+
 from hc.lib.tz import all_timezones
 
 

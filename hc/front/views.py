@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from collections import defaultdict
-from datetime import timedelta as td
 import email
 import json
 import os
 import re
-from secrets import token_urlsafe
 import sqlite3
 import sys
+from collections import defaultdict
+from datetime import timedelta as td
+from secrets import token_urlsafe
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
 
@@ -34,25 +34,26 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from hc.accounts.models import Project, Member
+
+from hc.accounts.models import Member, Project
 from hc.api.models import (
     DEFAULT_GRACE,
     DEFAULT_TIMEOUT,
     MAX_DELTA,
     Channel,
     Check,
-    Ping,
     Notification,
+    Ping,
 )
 from hc.api.transports import Telegram, TransportError
-from hc.front.decorators import require_setting
 from hc.front import forms
+from hc.front.decorators import require_setting
 from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import (
-    num_down_title,
     down_title,
-    sortchecks,
+    num_down_title,
     site_hostname,
+    sortchecks,
 )
 from hc.lib import curl, jsonschema
 from hc.lib.badges import get_badge_url

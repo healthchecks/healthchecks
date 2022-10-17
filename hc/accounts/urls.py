@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from django.urls import path
+
 from hc.accounts import views
 
 urlpatterns = [

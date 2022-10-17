@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncore
 import email
 import email.policy
@@ -6,6 +8,7 @@ from smtpd import SMTPServer
 
 from django.core.management.base import BaseCommand
 from django.db import connections
+
 from hc.api.models import Check
 from hc.lib.html import html2text
 

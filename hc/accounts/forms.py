@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from datetime import timedelta as td
 
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+
 from hc.accounts.models import REPORT_CHOICES, Member
 from hc.api.models import TokenBucket
 from hc.lib.tz import all_timezones

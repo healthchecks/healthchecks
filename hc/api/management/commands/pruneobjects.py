@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 from uuid import UUID
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from minio.deleteobjects import DeleteObject
+
 from hc.api.models import Check
 from hc.lib.s3 import client
-from minio.deleteobjects import DeleteObject
 
 
 class Command(BaseCommand):

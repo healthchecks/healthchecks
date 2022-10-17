@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 

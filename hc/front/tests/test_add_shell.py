@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from django.test.utils import override_settings
+
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 

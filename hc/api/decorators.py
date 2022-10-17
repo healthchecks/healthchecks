@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import json
 from functools import wraps
 
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
+
 from hc.accounts.models import Project
 from hc.lib.jsonschema import ValidationError, validate
 

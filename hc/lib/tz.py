@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 all_timezones = [
     "Africa/Abidjan",
     "Africa/Accra",

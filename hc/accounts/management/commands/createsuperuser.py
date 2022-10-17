@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import getpass
 
 from django.core.management.base import BaseCommand
+
 from hc.accounts.forms import SignupForm
 from hc.accounts.views import _make_user
 

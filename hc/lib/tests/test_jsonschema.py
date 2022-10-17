@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.test import TestCase
 
 from hc.lib.jsonschema import ValidationError, validate

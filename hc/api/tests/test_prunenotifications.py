@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from datetime import timedelta as td
 
 from django.utils.timezone import now
+
 from hc.api.management.commands.prunenotifications import Command
 from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase

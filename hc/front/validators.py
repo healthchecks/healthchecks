@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from datetime import datetime
+from urllib.parse import urlparse
 
 from cronsim import CronSim
 from django.core.exceptions import ValidationError
-from urllib.parse import urlparse
 
 from hc.lib.tz import all_timezones
 

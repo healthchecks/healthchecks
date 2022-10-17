@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from datetime import timedelta as td
 from unittest import TestCase
+
 from hc.front.templatetags.hc_extras import hc_duration
 
 

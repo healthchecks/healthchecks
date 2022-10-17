@@ -1,5 +1,8 @@
-from django.core.signing import TimestampSigner
+from __future__ import annotations
+
 from django.contrib.auth.hashers import make_password
+from django.core.signing import TimestampSigner
+
 from hc.accounts.models import Credential
 from hc.test import BaseTestCase
 

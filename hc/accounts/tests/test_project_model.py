@@ -1,6 +1,8 @@
-from hc.test import BaseTestCase
+from __future__ import annotations
+
 from hc.accounts.models import Member, Project
-from hc.api.models import Check, Channel
+from hc.api.models import Channel, Check
+from hc.test import BaseTestCase
 
 
 class ProjectModelTestCase(BaseTestCase):

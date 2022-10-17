@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 from datetime import timedelta as td
 from unittest.mock import Mock
 
 from django.core import mail
+from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
-from django.test.utils import override_settings
 
 NAG_TEXT = """Hello,
 

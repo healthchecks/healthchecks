@@ -1,10 +1,13 @@
 # coding: utf-8
 
-from datetime import timedelta as td
+from __future__ import annotations
+
 import json
+from datetime import timedelta as td
 from unittest.mock import patch
 
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
 

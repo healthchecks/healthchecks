@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from unittest.mock import patch
 
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip
 from hc.test import BaseTestCase
 

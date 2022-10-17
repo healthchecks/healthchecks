@@ -1,5 +1,7 @@
-from hc.test import BaseTestCase
+from __future__ import annotations
+
 from hc.api.models import Check
+from hc.test import BaseTestCase
 
 
 class BadgesTestCase(BaseTestCase):

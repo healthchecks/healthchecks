@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from django.test.utils import override_settings
 
-from hc.test import BaseTestCase
 from hc.accounts.models import Credential
+from hc.test import BaseTestCase
 
 
 @override_settings(RP_ID="testserver")

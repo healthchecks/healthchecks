@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from datetime import timedelta as td
 
 from django.test import TestCase
 from django.utils import timezone
+
 from hc.api.models import Check
 
 

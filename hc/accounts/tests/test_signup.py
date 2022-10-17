@@ -1,10 +1,13 @@
+from __future__ import annotations
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from django.test.utils import override_settings
+
 from hc.accounts.models import Profile, Project
 from hc.api.models import Channel, Check
-from django.conf import settings
 
 
 class SignupTestCase(TestCase):

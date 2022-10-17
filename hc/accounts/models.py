@@ -1,18 +1,21 @@
-from datetime import timedelta
+from __future__ import annotations
+
 import random
+import sys
+import uuid
+from datetime import timedelta
 from secrets import token_urlsafe
 from urllib.parse import quote, urlencode
-import uuid
-import sys
 
 from django.conf import settings
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
-from django.core.signing import TimestampSigner, BadSignature
+from django.core.signing import BadSignature, TimestampSigner
 from django.db import models
 from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils.timezone import now
+
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 

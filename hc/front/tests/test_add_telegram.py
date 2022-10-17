@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from unittest.mock import patch
 
 from django.core import signing
 from django.test.utils import override_settings
+
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 

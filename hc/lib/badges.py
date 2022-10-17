@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.core.signing import base64_hmac
 from django.template.loader import render_to_string

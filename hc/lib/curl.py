@@ -1,13 +1,15 @@
 """requests-like interface for PycURL."""
 
-from io import BytesIO
+from __future__ import annotations
+
 import ipaddress
 import json
-from urllib.parse import urlencode
 import socket
+from io import BytesIO
+from urllib.parse import urlencode
 
-from django.conf import settings
 import pycurl
+from django.conf import settings
 
 
 class CurlError(Exception):

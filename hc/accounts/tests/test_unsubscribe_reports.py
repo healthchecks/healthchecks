@@ -1,9 +1,12 @@
-from datetime import timedelta as td
+from __future__ import annotations
+
 import time
+from datetime import timedelta as td
 from unittest.mock import patch
 
 from django.core import signing
 from django.utils.timezone import now
+
 from hc.test import BaseTestCase
 
 

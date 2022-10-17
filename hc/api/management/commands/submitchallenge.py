@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import json
 import uuid
 
 from django.core.management.base import BaseCommand
+
 from hc.api.transports import Signal
 
 

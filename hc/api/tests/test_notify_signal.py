@@ -1,13 +1,16 @@
 # coding: utf-8
 
-from datetime import timedelta as td
+from __future__ import annotations
+
 import json
 import logging
+from datetime import timedelta as td
 from unittest.mock import patch
 
 from django.core import mail
-from django.utils.timezone import now
 from django.test.utils import override_settings
+from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Notification, TokenBucket
 from hc.test import BaseTestCase
 

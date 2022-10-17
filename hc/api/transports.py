@@ -5,8 +5,8 @@ import logging
 import os
 import socket
 import time
-from urllib.parse import quote, urlencode, urljoin
 import uuid
+from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -19,7 +19,6 @@ from hc.front.templatetags.hc_extras import sortchecks
 from hc.lib import curl, emails, jsonschema
 from hc.lib.date import format_duration
 from hc.lib.string import replace
-
 
 try:
     import apprise

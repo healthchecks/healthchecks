@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 from django.core import mail
 from django.utils.timezone import now
+
 from hc.accounts.models import Member
 from hc.api.models import Check
 from hc.test import BaseTestCase

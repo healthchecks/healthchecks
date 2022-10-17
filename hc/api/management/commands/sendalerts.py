@@ -1,12 +1,15 @@
-from datetime import timedelta as td
+from __future__ import annotations
+
 import signal
 import time
+from datetime import timedelta as td
 from threading import Thread
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from hc.api.models import Check, Flip
 from statsd.defaults.env import statsd
+
+from hc.api.models import Check, Flip
 
 SENDING_TMPL = "Sending alert, status=%s, code=%s\n"
 SEND_TIME_TMPL = "Sending took %.1fs, code=%s\n"

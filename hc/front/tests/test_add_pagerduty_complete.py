@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import json
+from urllib.parse import urlencode
 
 from django.test.utils import override_settings
+
 from hc.api.models import Channel
 from hc.test import BaseTestCase
-from urllib.parse import urlencode
 
 
 @override_settings(PD_APP_ID="FOOBAR")

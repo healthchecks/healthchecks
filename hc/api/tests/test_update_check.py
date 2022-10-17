@@ -1,7 +1,10 @@
-from datetime import timedelta as td
+from __future__ import annotations
+
 import uuid
+from datetime import timedelta as td
 
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 

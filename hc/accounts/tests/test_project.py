@@ -1,10 +1,12 @@
-from django.core import mail
+from __future__ import annotations
 
 from django.conf import settings
+from django.core import mail
 from django.test.utils import override_settings
-from hc.test import BaseTestCase
+
 from hc.accounts.models import Member, Project
 from hc.api.models import TokenBucket
+from hc.test import BaseTestCase
 
 
 class ProjectTestCase(BaseTestCase):

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from django.core import mail
 from django.core.signing import TimestampSigner
 
-from hc.test import BaseTestCase
 from hc.accounts.models import Credential
 from hc.api.models import TokenBucket
+from hc.test import BaseTestCase
 
 
 class SudoModeTestCase(BaseTestCase):

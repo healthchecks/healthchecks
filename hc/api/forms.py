@@ -1,4 +1,7 @@
-from datetime import datetime as dt, timezone
+from __future__ import annotations
+
+from datetime import datetime as dt
+from datetime import timezone
 
 from django import forms
 from django.core.exceptions import ValidationError

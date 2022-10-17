@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
+
+from hc.api.management.commands.smtpd import Listener, _process_message
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
-from hc.api.management.commands.smtpd import _process_message, Listener
-
 
 PAYLOAD_TMPL = """
 From: "User Name" <username@gmail.com>

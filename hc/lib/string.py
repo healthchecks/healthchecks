@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def replace(template, ctx):
     """Replace placeholders with their values and return the result.
 

@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+
 from hc.front.views import _get_project_for_user
 from hc.payments.forms import InvoiceEmailingForm
 from hc.payments.models import Subscription

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 

@@ -1,6 +1,8 @@
-from smtplib import SMTPServerDisconnected, SMTPDataError
-from threading import Thread
+from __future__ import annotations
+
 import time
+from smtplib import SMTPDataError, SMTPServerDisconnected
+from threading import Thread
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives

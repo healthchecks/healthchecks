@@ -1,10 +1,13 @@
-from datetime import timedelta
+from __future__ import annotations
+
 import time
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.timezone import now
-from hc.accounts.models import Profile, Member
+
+from hc.accounts.models import Member, Profile
 from hc.api.models import Ping
 from hc.lib import emails
 

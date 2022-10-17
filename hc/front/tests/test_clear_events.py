@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from django.utils.timezone import now
+
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 

@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import json
 from unittest.mock import patch
 
 from django.core import mail
+
 from hc.api.models import Channel, Notification
 from hc.test import BaseTestCase
 

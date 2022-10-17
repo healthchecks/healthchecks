@@ -1,6 +1,8 @@
+from __future__ import annotations
+
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.middleware import RemoteUserMiddleware
-from django.conf import settings
 
 from hc.accounts.models import Profile
 

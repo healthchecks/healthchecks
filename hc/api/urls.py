@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from urllib.parse import quote, unquote
 
 from django.urls import include, path, register_converter
+
 from hc.api import views
 
 

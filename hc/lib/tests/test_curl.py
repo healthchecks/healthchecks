@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from unittest.mock import patch
 
+import pycurl
 from django.test import TestCase
 from django.test.utils import override_settings
+
 from hc.lib.curl import CurlError, request
-import pycurl
 
 
 class FakeCurl(object):

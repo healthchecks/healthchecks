@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner
 from django.test import Client, TestCase

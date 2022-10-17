@@ -1,5 +1,7 @@
-from datetime import timedelta as td
+from __future__ import annotations
+
 from datetime import datetime as dt
+from datetime import timedelta as td
 from datetime import timezone
 
 from hc.api.models import Check, Flip

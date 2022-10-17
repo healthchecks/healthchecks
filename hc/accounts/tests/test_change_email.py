@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
+
 from hc.test import BaseTestCase
 
 

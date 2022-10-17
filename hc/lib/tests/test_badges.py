@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from hc.lib.badges import get_width, get_badge_svg
+from hc.lib.badges import get_badge_svg, get_width
 
 
 class BadgesTestCase(TestCase):

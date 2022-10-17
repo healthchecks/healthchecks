@@ -1,8 +1,11 @@
-from functools import wraps
-import secrets
+from __future__ import annotations
 
-from django.core.signing import TimestampSigner, SignatureExpired
+import secrets
+from functools import wraps
+
+from django.core.signing import SignatureExpired, TimestampSigner
 from django.shortcuts import redirect, render
+
 from hc.api.models import TokenBucket
 from hc.lib import emails
 

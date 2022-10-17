@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import signal
 import time
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils import timezone
+
 from hc.accounts.models import NO_NAG, Profile
 from hc.api.models import Check
 

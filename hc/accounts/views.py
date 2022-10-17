@@ -1,33 +1,36 @@
+from __future__ import annotations
+
+import time
+import uuid
 from datetime import timedelta as td
 from secrets import token_urlsafe
 from urllib.parse import urlparse
-import time
-import uuid
 
-from django.db import transaction
-from django.conf import settings
-from django.contrib import messages
-from django.contrib.auth import login as auth_login
-from django.contrib.auth import logout as auth_logout
-from django.contrib.auth import authenticate, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.timezone import now
-from django.urls import resolve, reverse, Resolver404
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
-from hc.accounts import forms
-from hc.accounts.decorators import require_sudo_mode
-from hc.accounts.models import Credential, Profile, Project, Member
-from hc.api.models import Channel, Check, TokenBucket
-from hc.payments.models import Subscription
-from hc.lib.webauthn import CreateHelper, GetHelper
 import pyotp
 import segno
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
+from django.db import transaction
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import Resolver404, resolve, reverse
+from django.utils.timezone import now
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
+from hc.accounts import forms
+from hc.accounts.decorators import require_sudo_mode
+from hc.accounts.models import Credential, Member, Profile, Project
+from hc.api.models import Channel, Check, TokenBucket
+from hc.lib.webauthn import CreateHelper, GetHelper
+from hc.payments.models import Subscription
 
 POST_LOGIN_ROUTES = (
     "hc-checks",

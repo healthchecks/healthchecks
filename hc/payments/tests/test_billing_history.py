@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
+
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 

@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from datetime import timedelta as td
 from io import StringIO
 from unittest.mock import Mock, patch
 
 from django.core.management import call_command
 from django.utils.timezone import now
+
 from hc.api.management.commands.sendalerts import Command, notify
-from hc.api.models import Flip, Check
+from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
 

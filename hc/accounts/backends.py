@@ -1,5 +1,8 @@
-from django.contrib.auth.models import User
+from __future__ import annotations
+
 from django.conf import settings
+from django.contrib.auth.models import User
+
 from hc.accounts.models import Profile
 from hc.accounts.views import _make_user
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 
 from django import template
@@ -7,7 +9,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 
-from hc.lib.date import format_duration, format_approx_duration, format_hms
+from hc.lib.date import format_approx_duration, format_duration, format_hms
 
 register = template.Library()
 

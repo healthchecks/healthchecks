@@ -1,12 +1,15 @@
 # coding: utf-8
 
+from __future__ import annotations
+
 from datetime import timedelta as td
 from unittest.mock import patch
 
+from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Notification, Ping
 from hc.test import BaseTestCase
-from django.test.utils import override_settings
 
 
 class NotifyMattermostTestCase(BaseTestCase):

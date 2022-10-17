@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from hc.test import BaseTestCase
 
 

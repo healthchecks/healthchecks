@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import time
 from unittest.mock import patch
 
 from django.test.utils import override_settings
+
 from hc.test import BaseTestCase
 
 

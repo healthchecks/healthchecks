@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+
 from hc.accounts.models import Profile
 from hc.payments.models import Subscription
 

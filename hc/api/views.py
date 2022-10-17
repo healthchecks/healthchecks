@@ -1,14 +1,16 @@
-from datetime import timedelta as td
+from __future__ import annotations
+
 import time
+from datetime import timedelta as td
 
 from django.conf import settings
 from django.db import connection
 from django.db.models import Prefetch
 from django.http import (
     HttpResponse,
+    HttpResponseBadRequest,
     HttpResponseForbidden,
     HttpResponseNotFound,
-    HttpResponseBadRequest,
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404
@@ -21,7 +23,7 @@ from hc.accounts.models import Profile
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.forms import FlipsFiltersForm
-from hc.api.models import MAX_DELTA, Flip, Channel, Check, Notification, Ping
+from hc.api.models import MAX_DELTA, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 
 

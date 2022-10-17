@@ -1,6 +1,8 @@
+from __future__ import annotations
+
+import time
 from io import BytesIO
 from threading import Thread
-import time
 
 from django.conf import settings
 

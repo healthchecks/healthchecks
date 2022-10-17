@@ -1,5 +1,8 @@
-from django.utils.timezone import now
+from __future__ import annotations
+
 from django.test.utils import override_settings
+from django.utils.timezone import now
+
 from hc.api.models import Check
 from hc.test import BaseTestCase
 

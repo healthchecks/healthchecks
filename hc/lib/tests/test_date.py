@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from datetime import timedelta as td
+
 from django.test import TestCase
 
 from hc.lib.date import format_hms
