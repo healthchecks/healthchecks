@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.4.1 - 2022-10-18
+
+### Bug Fixes
+- Fix the GHA workflow for building arm/v7 docker image
+
 ## v2.4 - 2022-10-18
 
 ### Improvements
