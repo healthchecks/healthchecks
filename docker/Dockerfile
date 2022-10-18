@@ -1,7 +1,8 @@
 FROM python:3.10-slim-bullseye as builder
 
 COPY requirements.txt /tmp
-RUN apt update && apt install -y build-essential libpq-dev libmariadb-dev libffi-dev libssl-dev rustc libcurl4-openssl-dev libpython3-dev
+RUN apt update && apt install -y build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev rustc libcurl4-openssl-dev libpython3-dev
+ENV CARGO_NET_GIT_FETCH_WITH_CLI true
 RUN \
     pip install --upgrade pip && \
     pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio -r /tmp/requirements.txt
