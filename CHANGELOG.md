@@ -1,7 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.4-dev - Unreleased
+## v2.4 - 2022-10-18
+
 ### Improvements
 - Add support for EMAIL_USE_SSL environment variable (#685)
 - Switch from requests to pycurl
@@ -14,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix the handling of TooManyRedirects exceptions
+- Fix MySQL 8 support in the Docker image (upgrade from buster to bullseye) (#717)
 
 ## v2.3 - 2022-08-05
 
