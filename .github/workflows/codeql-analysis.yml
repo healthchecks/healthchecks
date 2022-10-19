@@ -19,6 +19,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
