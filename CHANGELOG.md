@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.5-dev - Unreleased
+
+### Improvements
+- Upgrade to fido2 1.1.0 and simplify hc.lib.webauthn
+
 ## v2.4.1 - 2022-10-18
 
 ### Bug Fixes

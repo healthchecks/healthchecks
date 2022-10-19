@@ -1,69 +1,28 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
 from secrets import token_bytes
 
+import fido2.features
 from fido2.server import Fido2Server
-from fido2.utils import websafe_decode, websafe_encode
 from fido2.webauthn import (
-    AttestationObject,
     AttestedCredentialData,
-    AuthenticatorData,
-    CollectedClientData,
+    PublicKeyCredentialRpEntity,
+    PublicKeyCredentialUserEntity,
 )
 
-
-def bytes_to_b64(obj):
-    """Return a copy, with any bytes fields converted to base64 strings.
-
-    Use this for preparing fido2 data structures for serialization
-    with the default JSON serializer.
-    """
-    if isinstance(obj, dict) or isinstance(obj, Mapping):
-        return {k: bytes_to_b64(v) for k, v in obj.items()}
-
-    if isinstance(obj, list):
-        return [bytes_to_b64(v) for v in obj]
-
-    if isinstance(obj, bytes):
-        return websafe_encode(obj)
-
-    return obj
-
-
-_DECODE_MAP = {
-    "clientDataJSON": CollectedClientData,
-    "attestationObject": AttestationObject,
-    "rawId": bytes,
-    "authenticatorData": AuthenticatorData,
-    "signature": bytes,
-}
-
-
-def json_decode_hook(d: dict) -> dict:
-    """Base64-decode and instantiate fields listed in _DECODE_MAP.
-
-    Use for preparing fido2 data structures from serialized JSON:
-
-    >>> json.loads(json_string, object_hook=json_decode_hook)
-    """
-    for key, cls in _DECODE_MAP.items():
-        if key in d:
-            as_bytes = websafe_decode(d[key])
-            d[key] = cls(as_bytes)
-
-    return d
+fido2.features.webauthn_json_mapping.enabled = True
 
 
 class CreateHelper(object):
     def __init__(self, rp_id: str, credentials: list[bytes]):
-        self.server = Fido2Server({"id": rp_id, "name": "healthchecks"})
+        rp = PublicKeyCredentialRpEntity(id=rp_id, name="healthchecks")
+        self.server = Fido2Server(rp)
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]
 
-    def prepare(self, email: str) -> tuple[str, dict]:
-        # User handle is used in a username-less authentication, to map a credential
-        # received from browser with an user account in the database.
+    def prepare(self, email: str) -> tuple[dict, dict]:
+        # User handle (id) is used in a username-less authentication, to map a
+        # credential received from browser with an user account in the database.
         # Since we only use security keys as a second factor,
         # the user handle is not of much use to us.
         #
@@ -72,22 +31,18 @@ class CreateHelper(object):
         #  - must not be a constant value,
         #  - must not contain personally identifiable information.
         # So we use random bytes, and don't store them on our end:
-        user = {
-            "id": token_bytes(16),
-            "name": email,
-            "displayName": email,
-        }
+        user = PublicKeyCredentialUserEntity(
+            id=token_bytes(16),
+            name=email,
+            display_name=email,
+        )
         options, state = self.server.register_begin(user, self.credentials)
-        return bytes_to_b64(options), state
+        return dict(options), state
 
     def verify(self, state: dict, response_json: str) -> bytes | None:
         try:
-            doc = json.loads(response_json, object_hook=json_decode_hook)
-            auth_data = self.server.register_complete(
-                state,
-                doc["response"]["clientDataJSON"],
-                doc["response"]["attestationObject"],
-            )
+            doc = json.loads(response_json)
+            auth_data = self.server.register_complete(state, doc)
             return auth_data.credential_data
         except ValueError:
             return None
@@ -95,24 +50,18 @@ class CreateHelper(object):
 
 class GetHelper(object):
     def __init__(self, rp_id: str, credentials: list[bytes]):
-        self.server = Fido2Server({"id": rp_id, "name": "healthchecks"})
+        rp = PublicKeyCredentialRpEntity(id=rp_id, name="healthchecks")
+        self.server = Fido2Server(rp)
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]
 
-    def prepare(self) -> tuple[str, dict]:
+    def prepare(self) -> tuple[dict, dict]:
         options, state = self.server.authenticate_begin(self.credentials)
-        return bytes_to_b64(options), state
+        return dict(options), state
 
     def verify(self, state: dict, response_json: str) -> bool:
         try:
-            doc = json.loads(response_json, object_hook=json_decode_hook)
-            self.server.authenticate_complete(
-                state,
-                self.credentials,
-                doc["rawId"],
-                doc["response"]["clientDataJSON"],
-                doc["response"]["authenticatorData"],
-                doc["response"]["signature"],
-            )
+            doc = json.loads(response_json)
+            self.server.authenticate_complete(state, self.credentials, doc)
             return True
         except ValueError:
             return False
