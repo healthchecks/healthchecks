@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import time
 from datetime import timedelta as td
+from uuid import UUID
 
 from django.conf import settings
 from django.db import connection
 from django.db.models import Prefetch
 from django.http import (
+    HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseForbidden,
@@ -34,7 +36,13 @@ class BadChannelException(Exception):
 
 @csrf_exempt
 @never_cache
-def ping(request, code, check=None, action="success", exitstatus=None):
+def ping(
+    request: HttpRequest,
+    code: UUID,
+    check: Check | None = None,
+    action: str = "success",
+    exitstatus: int | None = None,
+) -> HttpResponse:
     if check is None:
         try:
             check = Check.objects.get(code=code)
@@ -73,7 +81,13 @@ def ping(request, code, check=None, action="success", exitstatus=None):
 
 
 @csrf_exempt
-def ping_by_slug(request, ping_key, slug, action="success", exitstatus=None):
+def ping_by_slug(
+    request: HttpRequest,
+    ping_key: str,
+    slug: str,
+    action: str = "success",
+    exitstatus: int | None = None,
+) -> HttpResponse:
     try:
         check = Check.objects.get(slug=slug, project__ping_key=ping_key)
     except Check.DoesNotExist:
