@@ -59,7 +59,8 @@ Please submit additions and corrections
 ## Backup Software Integrations
 
 * [binarybucks/restic-tools](https://github.com/binarybucks/restic-tools) – Wrapper around restic backup, with Healthchecks.io support.
-* [borgmatic](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook) – Backup software for servers and workstations, includes Healthchecks.io support.
+* [borgmatic](https://torsion.org/borgmatic/docs/how-to/monitor-your-backups/#healthchecks-hook) – A frontend to Borg, includes Healthchecks.io support.
+* [emborg](https://emborg.readthedocs.io/en/latest/monitoring.html#healthchecks-io) – A frontend to Borg, includes Healthchecks.io support.
 
 ## Dashboards
 
