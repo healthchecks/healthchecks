@@ -505,7 +505,7 @@ class Ping(models.Model):
     object_size = models.IntegerField(null=True)
     exitstatus = models.SmallIntegerField(null=True)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
@@ -516,13 +516,13 @@ class Ping(models.Model):
             "ua": self.ua,
         }
 
-    def has_body(self):
+    def has_body(self) -> bool:
         if self.body or self.body_raw or self.object_size:
             return True
 
         return False
 
-    def get_body(self):
+    def get_body(self) -> str | None:
         if self.body:
             return self.body
         if self.object_size:
@@ -531,6 +531,8 @@ class Ping(models.Model):
                 return body_raw.decode(errors="replace")
         if self.body_raw:
             return bytes(self.body_raw).decode(errors="replace")
+
+        return None
 
 
 class Channel(models.Model):
