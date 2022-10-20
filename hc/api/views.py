@@ -47,6 +47,11 @@ def ping(request, code, check=None, action="success", exitstatus=None):
     headers = request.META
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
     remote_addr = remote_addr.split(",")[0]
+    if "." in remote_addr and ":" in remote_addr:
+        # If remote_addr is in a ipv4address:port format (like in Azure App Service),
+        # remove the port:
+        remote_addr = remote_addr.split(":")[0]
+
     scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")

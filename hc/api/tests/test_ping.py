@@ -115,8 +115,26 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(ping.remote_addr, "1.1.1.1")
 
+    def test_it_reads_forwarded_ipv6_ip(self):
+        ip = "2001::1"
+        r = self.client.get(self.url, HTTP_X_FORWARDED_FOR=ip)
+        ping = Ping.objects.get()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(ping.remote_addr, "2001::1")
+
     def test_it_reads_first_forwarded_ip(self):
         ip = "1.1.1.1, 2.2.2.2"
+        r = self.client.get(
+            self.url,
+            HTTP_X_FORWARDED_FOR=ip,
+            REMOTE_ADDR="3.3.3.3",
+        )
+        ping = Ping.objects.get()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(ping.remote_addr, "1.1.1.1")
+
+    def test_it_handles_forwarded_ip_plus_port(self):
+        ip = "1.1.1.1:1234"
         r = self.client.get(
             self.url,
             HTTP_X_FORWARDED_FOR=ip,
