@@ -1,3 +1,5 @@
+{% load humanize hc_extras  %}
+
 <div class="modal-body">
     <h3>Ping #{{ ping.n }}
         {% if ping.kind == "ign" %}
@@ -66,10 +68,19 @@
         {% endif %}
 
         {% if subject %}
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <p>
                 <strong>Subject</strong>
                 <span>{{ subject }}</span>
+            </p>
+        </div>
+        {% endif %}
+
+        {% if event.delta %}
+        <div class="col-sm-6">
+            <p>
+                <strong>Duration</strong>
+                <span class="ic-timer"></span> {{ event.delta|hms }}
             </p>
         </div>
         {% endif %}
