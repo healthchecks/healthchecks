@@ -2278,6 +2278,7 @@ def add_gotify(request, code):
     return render(request, "integrations/add_gotify.html", ctx)
 
 
+@require_setting("SIGNAL_CLI_SOCKET")
 @login_required
 def signal_captcha(request: HttpRequest) -> HttpResponse:
     if not request.user.is_superuser:
@@ -2285,8 +2286,11 @@ def signal_captcha(request: HttpRequest) -> HttpResponse:
 
     ctx = {"challenge": request.GET.get("challenge", "")}
     if request.method == "POST":
-        challenge = request.POST.get("challenge")
-        captcha = request.POST.get("captcha")
+        challenge = request.POST.get("challenge", "")
+        captcha = request.POST.get("captcha", "")
+        if captcha.startswith("signalcaptcha://"):
+            captcha = captcha[16:]
+
         payload = {
             "jsonrpc": "2.0",
             "method": "submitRateLimitChallenge",
