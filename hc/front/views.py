@@ -6,6 +6,7 @@ import os
 import re
 import sqlite3
 import sys
+import uuid
 from collections import defaultdict
 from datetime import timedelta as td
 from secrets import token_urlsafe
@@ -45,7 +46,7 @@ from hc.api.models import (
     Notification,
     Ping,
 )
-from hc.api.transports import Telegram, TransportError
+from hc.api.transports import Signal, Telegram, TransportError
 from hc.front import forms
 from hc.front.decorators import require_setting
 from hc.front.schemas import telegram_callback
@@ -2275,6 +2276,37 @@ def add_gotify(request, code):
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_gotify.html", ctx)
+
+
+@login_required
+def signal_captcha(request: HttpRequest) -> HttpResponse:
+    if not request.user.is_superuser:
+        return HttpResponseForbidden()
+
+    ctx = {"challenge": request.GET.get("challenge", "")}
+    if request.method == "POST":
+        challenge = request.POST.get("challenge")
+        captcha = request.POST.get("captcha")
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "submitRateLimitChallenge",
+            "params": {"challenge": str(challenge), "captcha": captcha},
+            "id": str(uuid.uuid4()),
+        }
+
+        payload_bytes = (json.dumps(payload) + "\n").encode()
+        for reply_bytes in Signal(None)._read_replies(payload_bytes):
+            try:
+                reply = json.loads(reply_bytes.decode())
+            except ValueError:
+                ctx["result"] = "submitRateLimitChallenge failed"
+                break
+
+            if reply.get("id") == payload["id"]:
+                ctx["result"] = reply_bytes.decode()
+                break
+
+    return render(request, "front/signal_captcha.html", ctx)
 
 
 # Forks: add custom views after this line

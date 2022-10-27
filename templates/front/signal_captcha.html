@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load compress static hc_extras %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Signal CAPTCHA</h1>
+
+        {% if result %}
+        <p>Result:</p>
+        <pre>{{ result }}</pre>
+        <hr />
+        {% endif %}
+
+        <p>
+            First, solve a CAPTCHA
+            <a href="https://signalcaptchas.org/challenge/generate.html" target="_blank">here</a>,
+            then paste it below:
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="captcha">Challenge</label>
+                <input
+                    name="challenge"
+                    required
+                    class="form-control"
+                    value="{{ challenge }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="captcha">CAPTCHA</label>
+                <textarea
+                    id="captcha"
+                    name="captcha"
+                    required
+                    class="form-control"
+                    rows="10"></textarea>
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

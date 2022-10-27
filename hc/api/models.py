@@ -10,6 +10,7 @@ from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
 from typing import TypedDict
+from urllib.parse import urlencode
 
 from cronsim import CronSim
 from django.conf import settings
@@ -599,9 +600,15 @@ class Channel(models.Model):
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()
+        submit_url = settings.SITE_ROOT + reverse("hc-signal-captcha")
+        submit_url += urlencode({"host": hostname, "challenge": challenge})
         html_message = f"""
             On host <b>{hostname}</b>, run:<br>
             <pre>manage.py submitchallenge {challenge} CAPTCHA-SOLUTION-HERE</pre><br>
+            <br>
+            Alternatively, submit CAPTCHA solution here: <br>
+            {submit_url}<br>
+            <br>
             Message from Signal:<br>
             <pre>{raw}</pre>
         """
