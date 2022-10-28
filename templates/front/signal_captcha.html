@@ -20,8 +20,9 @@
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
-                <label for="captcha">Challenge</label>
+                <label for="challenge">Challenge</label>
                 <input
+                    id="challenge"
                     name="challenge"
                     required
                     class="form-control"

@@ -601,13 +601,12 @@ class Channel(models.Model):
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()
         submit_url = settings.SITE_ROOT + reverse("hc-signal-captcha")
-        submit_url += urlencode({"host": hostname, "challenge": challenge})
+        submit_url += "?" + urlencode({"host": hostname, "challenge": challenge})
         html_message = f"""
             On host <b>{hostname}</b>, run:<br>
             <pre>manage.py submitchallenge {challenge} CAPTCHA-SOLUTION-HERE</pre><br>
             <br>
-            Alternatively, submit CAPTCHA solution here: <br>
-            {submit_url}<br>
+            Alternatively, <a href="{submit_url}">submit CAPTCHA solution here</a>.<br>
             <br>
             Message from Signal:<br>
             <pre>{raw}</pre>
