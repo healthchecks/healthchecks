@@ -6,7 +6,7 @@ import socket
 import sys
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import timedelta as td
 from datetime import timezone
 from typing import TypedDict
@@ -534,7 +534,7 @@ class Ping(models.Model):
 
         return None
 
-    def get_delta(self):
+    def get_delta(self) -> timedelta | None:
         pings = self.owner.ping_set.filter(created__gte=self.created - MAX_DELTA).order_by("-id")
 
         last_start = None
