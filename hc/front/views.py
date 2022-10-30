@@ -605,6 +605,10 @@ def ping_details(request, code, n=None):
         return render(request, "front/ping_details_not_found.html")
 
     body = ping.get_body()
+    delta = ping.get_delta()
+    if delta is not None:
+        setattr(ping, "delta", delta)
+
     ctx = {"check": check, "ping": ping, "plain": None, "html": None, "body": body}
 
     if ping.scheme == "email":

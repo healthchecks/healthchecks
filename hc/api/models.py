@@ -534,6 +534,22 @@ class Ping(models.Model):
 
         return None
 
+    def get_delta(self):
+        pings = self.owner.ping_set.filter(created__gte=self.created - MAX_DELTA).order_by("-id")
+
+        last_start = None
+        for ping in reversed(pings):
+            if ping.kind == "start":
+                last_start = ping.created
+            elif ping.kind in (None, "", "fail") and last_start:
+                delta = ping.created - last_start
+                last_start = None
+                if delta < MAX_DELTA:
+                    if ping == self:
+                        return delta
+
+        return None
+
 
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)

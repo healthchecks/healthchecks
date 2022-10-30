@@ -59,7 +59,11 @@
             </p>
         </div>
         {% else %}
+            {% if ping.delta %}
         <div class="col-sm-6">
+            {% else %}
+        <div class="col-sm-12">
+            {% endif %}
             <p>
                 <strong>User Agent</strong>
                 <span class="ua">{{ ping.ua }}</span>
@@ -68,7 +72,11 @@
         {% endif %}
 
         {% if subject %}
+            {% if ping.delta %}
         <div class="col-sm-6">
+            {% else %}
+        <div class="col-sm-12">
+            {% endif %}
             <p>
                 <strong>Subject</strong>
                 <span>{{ subject }}</span>
@@ -76,11 +84,11 @@
         </div>
         {% endif %}
 
-        {% if event.delta %}
+        {% if ping.delta %}
         <div class="col-sm-6">
             <p>
                 <strong>Duration</strong>
-                <span class="ic-timer"></span> {{ event.delta|hms }}
+                <span class="ic-timer"></span> {{ ping.delta|hms }}
             </p>
         </div>
         {% endif %}
