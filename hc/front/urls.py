@@ -111,4 +111,5 @@ urlpatterns = [
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
     path("docs/search/", views.docs_search, name="hc-docs-search"),
     path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
+    path("signal_captcha/", views.signal_captcha, name="hc-signal-captcha"),
 ]

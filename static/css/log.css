@@ -56,7 +56,6 @@
     width: 100%;
     max-width: 0;
 
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -74,6 +73,11 @@
 
 #log tr.missing td:nth-child(4) {
     font-size: 12px;
+
+    width: 100%;
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #log-slider {

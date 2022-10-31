@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-22 13:13+0200\n"
+"POT-Creation-Date: 2022-10-27 11:20+0000\n"
 "PO-Revision-Date: 2020-07-22 13:29+0200\n"
 "Last-Translator: Giuseppe De Marco <giuseppe.demarco@unical.it>\n"
 "Language-Team: it <>\n"
@@ -18,458 +18,66 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: templates/base.html:133
-msgid "Docs"
-msgstr "Documentazione"
-
-#: templates/base.html:171
-msgid "Sign In"
-msgstr "Accedi"
-
-#: templates/front/welcome.html:5
-msgid ""
-"Cron Monitoring. Monitor nightly backups, weekly reports, cron jobs and "
-"background tasks. Receive alerts when your tasks don't run on time."
-msgstr ""
-"Sistema di Monitoraggio. Controllo backup notturni, report settimanali, cron "
-"job e attività in background. Ricevi avvisi quando le tue attività non "
-"vengono eseguite in tempo."
-
-#: templates/front/welcome.html:19
-msgid ""
-"Monitoring for your nightly backups, weekly reports, cron jobs and "
-"background tasks."
-msgstr ""
-"Sistema di Monitoraggio di servizi, processi, backup notturni, cron job e "
-"attività in background. Invio di avvisi quando le attività non vengono "
-"eseguite in tempo."
-
-#: templates/front/welcome.html:27
-msgid "Make HTTP requests to the Ping URL at regular intervals."
-msgstr ""
-"Invia una richiesta HTTP presso l'URL di controllo (Ping URL) ad un "
-"intervallo regolare."
-
-#: templates/front/welcome.html:29
+#: templates/base.html:5
 #, python-format
 msgid ""
-"When the URL is not pinged on time, %(site_name)s will send you an alert."
-msgstr ""
-"Quando l'URL non viene pingato per tempo %(site_name)s ti invierà un alert."
-
-#: templates/front/welcome.html:35
-msgid "You can monitor any service that can make HTTP requests or send emails."
-msgstr ""
-"Puoi monitorare qualsiasi tipo di servizio inviando una richiesta http "
-"periodica, o una email."
-
-#: templates/front/welcome.html:40
-#, python-format
-msgid ""
-"For each of your periodic tasks, %(site_name)s provides an unique URL "
-"similar to this one:"
-msgstr ""
-"Per ogni task periodico, %(site_name)s provvederà un URL unico simile a "
-"questo: "
-
-#: templates/front/welcome.html:79
-msgid "Browser"
+"%(site_name)s - Monitor Cron Jobs. Get Notified When Your Cron Jobs Fail"
 msgstr ""
 
-#: templates/front/welcome.html:85 templates/front/welcome.html:380
-msgid "Email"
+#: templates/base.html:77
+msgid "Toggle navigation"
 msgstr ""
 
-#: templates/front/welcome.html:125
-msgid ""
-"As an alternative to HTTP requests, you can also report \"liveness\" by "
-"<strong>sending email messages</strong>."
-msgstr ""
-"Come alternativa alle richieste HTTP possiamo anche usare <strong>l'invio di "
-"email</strong>."
-
-#: templates/front/welcome.html:132
-#, python-format
-msgid ""
-"You can instruct %(site_name)s to look for a particular keyword in the "
-"subject line. This is handy when your backup software sends an email after "
-"every run, and uses a different subject line depending on success or failure."
-msgstr ""
-"Puoi istruire %(site_name)s per controllare la presenza di una parola "
-"particolare. Questo è vantaggioso quando un software di backup invia una "
-"email di notifica usando parole differenti nell'oggetto della email, in base "
-"allo stato di esecuzione."
-
-#: templates/front/welcome.html:153
-#, python-format
-msgid ""
-"%(site_name)s monitors the heartbeat messages sent by your cron jobs,  "
-"services and APIs. Get immediate alerts when they don't arrive on schedule."
-msgstr ""
-"%(site_name)s controlla i messaggi di \"heathbeat\" inviati dalle tue "
-"procedure schedulate, dai tuoi servizi e dalle tue APIs. Riceverai avvisi "
-"immediati quando quello che stai controllando non dovesse più risultare "
-"funzionante."
-
-#: templates/front/welcome.html:160
-msgid "Sign Up – It's Free"
-msgstr "Registrati - E' gratuito"
-
-#: templates/front/welcome.html:172
-msgid "A quick peek of what's inside:"
-msgstr "Un rapido sguardo:"
-
-#: templates/front/welcome.html:187
-msgid "Live-updating Dashboard"
-msgstr "Dashboard che si auto aggiorna"
-
-#: templates/front/welcome.html:190
-msgid ""
-"A list of your checks, one for each Cron job, daemon or scheduled task you "
-"want to monitor."
-msgstr ""
-"Una lista di controlli, una per ogni risorsa registrata, servizio o processo "
-"schedulato che desideri monitorare."
-
-#: templates/front/welcome.html:196
-msgid ""
-"Give names and assign tags to your checks to easily recognize them later."
-msgstr ""
-"Rinomina e aggiungi tag ai tuoi controlli periodici, così che tu possa "
-"individuarli meglio in seguito."
-
-#: templates/front/welcome.html:202
-msgid "Tap on the integration icons to toggle them on and off."
-msgstr ""
-"Clicca sulle icone di integrazione per escludere momentaneamente alcuni "
-"recapiti."
-
-#: templates/front/welcome.html:207
-msgid ""
-"Adjust Period and Grace time to match the periodicity and duration of your "
-"tasks."
-msgstr ""
-"Configura un periodo di attesa (Period) e un periodo di Grazia (Grace) "
-"corrispondenti alla durata dei tuoi processi."
-
-#: templates/front/welcome.html:224
-msgid "Simple Configuration"
-msgstr "Configurazione Semplice"
-
-#: templates/front/welcome.html:225
-msgid ""
-"Each check has configurable <strong>Period</strong> and <strong>Grace Time</"
-"strong> parameters. Depending on these parameters and time since the last "
-"ping, the check is in one of the following states:"
-msgstr ""
-"Ogni controllo ha i parametri <strong>Period</strong> e <strong>Grace Time</"
-"strong>. In base a questi e a partire dall'ultimo ping ricevuto, il "
-"controllo può assumere uno dei seguenti stati:"
-
-#: templates/front/welcome.html:237
-msgid "New. A check that has been created, but has not received any pings yet."
-msgstr ""
-"New. Un controllo che è stato creato, ma non ha ancora ricevuto alcun ping."
-
-#: templates/front/welcome.html:248
-msgid "Up. Time since last ping has not exceeded <strong>Period</strong>."
-msgstr ""
-"UP. Il tempo da quando l'ultim ping non ha superato l'intervallo definito "
-"come <strong>Period</strong>."
-
-#: templates/front/welcome.html:259
-msgid ""
-"Late. Time since last ping has exceeded <strong>Period</strong>, but has not "
-"yet exceeded <strong>Period</strong> + <strong>Grace</strong>."
-msgstr ""
-"Late. Da quando l'ultimo ping ha superato la soglia definita in "
-"<strong>Period</strong> ma non <strong>Period</strong> + <strong>Grace</"
-"strong>."
-
-#: templates/front/welcome.html:271
-#, python-format
-msgid ""
-"Down. Time since last ping has exceeded <strong>Period</strong> + "
-"<strong>Grace</strong>. When check goes from \"Late\" to \"Down\", "
-"%(site_name)s sends you a notification."
-msgstr ""
-"Down. Il tempo da quanto l'ultimo ping ha superato l'intervallo di "
-"<strong>Period</strong> + <strong>Grace</strong>. Quando lo stato va da "
-"\"Late\" a \"Down\", %(site_name)s invierà una notifica."
-
-#: templates/front/welcome.html:293
-msgid "Cron Expression Support"
-msgstr "Supporto alle espressioni Cron"
-
-#: templates/front/welcome.html:295
-msgid ""
-"Alternatively, you can define the expected ping dates and times using a cron "
-"expression. See"
-msgstr ""
-"In alternativa, è possibile definire le date e gli orari del ping previsti "
-"utilizzando un'espressione cron. Vedere"
-
-#: templates/front/welcome.html:300
-msgid "Cron Syntax Cheatsheet"
+#: templates/base.html:105
+msgid "Checks"
 msgstr ""
 
-#: templates/front/welcome.html:302
-msgid "for the supported syntax features."
-msgstr "per le sintassi supportate."
-
-#: templates/front/welcome.html:307
-msgid ""
-"<strong>Grace Time</strong> specifies how \"late\" a ping can be before you "
-"will be alerted. Set it to be a little above the expected duration of your "
-"cron job."
-msgstr ""
-"<strong>Grace Time</strong> specifica di quanto possa ritardare un ping "
-"prima di essere ritenuto fallito. Impostalo in modo che sia leggermente "
-"superiore alla durata prevista della tua procedura."
-
-#: templates/front/welcome.html:325
-msgid "Details and Event Log"
-msgstr "Dettagli e log eventi"
-
-#: templates/front/welcome.html:327
-msgid ""
-"You can add a longer, free-form description to each check. Leave notes and "
-"pointers for yourself and for your team."
-msgstr ""
-"È possibile aggiungere una descrizione più lunga e in formato libero a "
-"ciascun controllo. Lascia note e suggerimenti per te e per la tua squadra."
-
-#: templates/front/welcome.html:334
-msgid ""
-"You can also see the log of received pings and sent \"Down\" notifications."
-msgstr ""
-"Puoi anche vedere il registro dei ping ricevuti e le notifiche \"Down\" "
-"inviate."
-
-#: templates/front/welcome.html:351
-msgid "Public Status Badges"
-msgstr "Badges pubblici"
-
-#: templates/front/welcome.html:353
-#, python-format
-msgid ""
-"%(site_name)s provides status badges for each of the tags you have used. "
-"Additionally, the \"%(site_name)s\" badge shows the overall status of all "
-"checks in your account."
-msgstr ""
-"%(site_name)s fornisce badge di stato per ciascuno dei tag che hai usato. "
-"Inoltre i badge mostrano lo stato generale di tutti i controlli che te "
-"configurati."
-
-#: templates/front/welcome.html:360
-msgid ""
-"The badges have public, but hard-to-guess URLs. You can use them in your "
-"READMEs, dashboards or status pages."
-msgstr ""
-"I badge hanno URL pubblici, ma difficili da indovinare. Puoi usarli nei tuoi "
-"README, dashboard, pagine di stato, scheda dei servizi."
-
-#: templates/front/welcome.html:370
+#: templates/base.html:112
 msgid "Integrations"
 msgstr "Integrazioni"
 
-#: templates/front/welcome.html:372
-msgid "Set up multiple ways to get notified:"
-msgstr "Seleziona sistemi di notifica differenti:"
-
-#: templates/front/welcome.html:402 templates/front/welcome.html:410
-#: templates/front/welcome.html:434 templates/front/welcome.html:446
-#: templates/front/welcome.html:457 templates/front/welcome.html:467
-#: templates/front/welcome.html:586 templates/front/welcome.html:620
-#: templates/front/welcome.html:631
-msgid "Chat"
-msgstr "Chat"
-
-#: templates/front/welcome.html:422 templates/front/welcome.html:528
-#: templates/front/welcome.html:540
-msgid "Push Notifications"
-msgstr "Invia notifiche"
-
-#: templates/front/welcome.html:477 templates/front/welcome.html:488
-#: templates/front/welcome.html:496 templates/front/welcome.html:507
-#: templates/front/welcome.html:575 templates/front/welcome.html:609
-msgid "Incident Management"
-msgstr "Gestione degli Incidenti"
-
-#: templates/front/welcome.html:517
-msgid "Event Monitoring"
-msgstr "Controllo degli eventi"
-
-#: templates/front/welcome.html:551
-msgid "Shell Commands"
-msgstr "Comandi Shell"
-
-#: templates/front/welcome.html:563
-msgid "SMS"
-msgstr "SMS"
-
-#: templates/front/welcome.html:598
-msgid "Project Management"
-msgstr "Gestione del Progetto"
-
-#: templates/front/welcome.html:640
-#, python-format
-msgid "What Can I Monitor With %(site_name)s?"
-msgstr "Cosa posso monitorare con %(site_name)s?"
-
-#: templates/front/welcome.html:646
-msgid "Cron Jobs"
+#: templates/base.html:120
+msgid "Badges"
 msgstr ""
 
-#: templates/front/welcome.html:648
-#, python-format
-msgid ""
-"%(site_name)s monitoring is a great fit for cron jobs and cron-like systems "
-"(systemd timers, Jenkins build jobs, Windows Scheduled Tasks, wp-cron, uwsgi "
-"cron-like interface, Heroku Scheduler, ...). A failed cron job often has no "
-"immediate visible consequences, and can go unnoticed for a long time."
-msgstr ""
-"%(site_name)s si adatta perfettamente a lavori cron e sistemi simil-cron "
-"(timer di sistema, lavori di compilazione di Jenkins, operazioni pianificate "
-"di Windows, wp-cron, interfaccia simil-uwsgi-cron, Heroku Scheduler, ...). "
-"Un cron job fallito spesso non ha conseguenze visibili immediate e può "
-"passare inosservato per molto tempo."
-
-#: templates/front/welcome.html:657 templates/front/welcome.html:681
-msgid "Specific examples:"
-msgstr "Esempi specifici:"
-
-#: templates/front/welcome.html:659
-msgid "Filesystem backups"
+#: templates/base.html:126
+msgid "Settings"
 msgstr ""
 
-#: templates/front/welcome.html:660
-msgid "Database backups"
+#: templates/base.html:137 templates/base.html:141
+msgid "Pricing"
 msgstr ""
 
-#: templates/front/welcome.html:661
-msgid "Daily, weekly, monthly report emails"
+#: templates/base.html:149
+msgid "Docs"
+msgstr "Documentazione"
+
+#: templates/base.html:156
+msgid "Account"
 msgstr ""
 
-#: templates/front/welcome.html:662
-msgid "SSL renewals"
+#: templates/base.html:162
+#, fuzzy
+#| msgid "Simple Configuration"
+msgid "Site Administration"
+msgstr "Configurazione Semplice"
+
+#: templates/base.html:168
+msgid "Projects"
 msgstr ""
 
-#: templates/front/welcome.html:663
-msgid "Business data import and sync"
+#: templates/base.html:188
+msgid "Account Settings"
 msgstr ""
 
-#: templates/front/welcome.html:664
-msgid "Antivirus scans"
+#: templates/base.html:194
+msgid "Log Out"
 msgstr ""
 
-#: templates/front/welcome.html:665
-msgid "Dynamic DNS updates"
-msgstr ""
-
-#: templates/front/welcome.html:669
-msgid "Processes, Services, Servers"
-msgstr "Processi, Servizi, Sistemi"
-
-#: templates/front/welcome.html:672
-#, python-format
-msgid ""
-"%(site_name)s monitoring can be used for lightweight server monitoring: "
-"ensuring a particular system service, or the server as a whole is alive and "
-"healthy. Write a shell script that checks for a specific condition, and "
-"pings %(site_name)s if successful. Run the shell script regularly."
-msgstr ""
-"%(site_name)s può essere utilizzato per un controllo agile: garantisce per "
-"un particolare servizio di sistema o che il server nel suo insieme sia vivo "
-"ed integro. Scrivi uno script di shell che verifica una condizione specifica "
-"e avvia un ping periodico."
-
-#: templates/front/welcome.html:683
-msgid "Check a specific docker container is running"
-msgstr ""
-"Controlla che una macchina virtuale o un container sia correttamente in "
-"esecuzione"
-
-#: templates/front/welcome.html:684
-msgid "Check a specific application process is running"
-msgstr "Controlla che una applicazione sia correttamente in esecuzione"
-
-#: templates/front/welcome.html:685
-msgid "Check database replication lag"
-msgstr "Controlla le latenze di replica delle basi dati"
-
-#: templates/front/welcome.html:686
-msgid "Check system resources: free disk, free RAM, ..."
-msgstr "Controlla le risorse di sistema: spazio disco, ram disponibile ..."
-
-#: templates/front/welcome.html:688
-msgid ""
-"Send simple, unconditional \"I'm alive\" messages from your server (or your "
-"NAS, router, Raspberry Pi, ...)"
-msgstr ""
-"Invia messaggi \"I am alive\" semplici e incondizionati dal tuo server (o "
-"dal tuo NAS, router, Raspberry Pi"
-
-#: templates/front/welcome.html:704
-#, python-format
-msgid ""
-"%(site_name)s is a <strong>free</strong> and <a href=\"https://github.com/"
-"healthchecks/healthchecks\">open source</a> service. Setting up monitoring "
-"for your cron jobs only takes minutes. Start sleeping better at nights!"
-msgstr ""
-"%(site_name)s è un progetto <strong>Libero</strong> e <a href=\"https://"
-"github.com/healthchecks/healthchecks\">OpenSource</a>. L'impostazione del "
-"monitoraggio per i tuoi lavori cron richiederà solo pochi minuti."
-
-#: templates/front/welcome.html:712
-msgid "Sign Up"
+#: templates/base.html:202
+msgid "Sign In"
 msgstr "Accedi"
 
-#~ msgid "will send you an alert."
-#~ msgstr "ti invierà un alert."
-
-#~ msgid "For each of your periodic tasks, "
-#~ msgstr "Per ognuno dei tuoi processi periodici,"
-
-#~ msgid "provides an unique URL like this one:"
-#~ msgstr "crea un indirizzo web univoco, come il seguente:"
-
-#~ msgid "Each check has configurable "
-#~ msgstr "Ogni controllo consente di configurare un "
-
-#~ msgid "and"
-#~ msgstr "e"
-
-#~ msgid "Up."
-#~ msgstr "Up."
-
-#~ msgid "Late. "
-#~ msgstr "Ritardo."
-
-#~ msgid "Time since last ping has exceeded"
-#~ msgstr "Tempo a partire dall'ultimo ping ricevuto "
-
-#~ msgid "but has not yet exceeded "
-#~ msgstr "ma non è ancora scaduto "
-
-#~ msgid "Down."
-#~ msgstr "Down."
-
-#~ msgid "Time since last ping has exceeded "
-#~ msgstr "Tempo da quando il tuo ultimo ping è scaduto "
-
-#~ msgid "When check goes from \"Late\" to \"Down\""
-#~ msgstr "Quando un controllo va da \"Late\" a \"Down\""
-
-#~ msgid "badge shows the overall status of all checks in your account."
-#~ msgstr ""
-#~ "badge mostra lo stato generale di tutti gli assegni nel tuo account."
-
-#~ msgid "if successful. Run the shell script regularly."
-#~ msgstr "se attivo. Avvia lo script regolarmente."
-
-#~ msgid "specifies how "
-#~ msgstr "specifica come"
-
-#~ msgid "Send simple, unconditional "
-#~ msgstr "Invia un semplice, incondizionato"
+#: templates/base.html:211
+msgid "Sign Up"
+msgstr "Accedi"
