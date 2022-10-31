@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from datetime import timedelta as td
+
 from unittest.mock import patch
 
 from django.test.utils import override_settings
+from django.utils.timezone import now
 
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
@@ -60,6 +63,19 @@ class PingDetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "this is body", status_code=200)
+
+    def test_it_displays_duration(self):
+        expected_duration = td(minutes=5)
+        end_time = now()
+        start_time = end_time - expected_duration
+
+        Ping.objects.create(owner=self.check, created=start_time, n=1, kind="start")
+        Ping.objects.create(owner=self.check, created=end_time, n=2, kind="")
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "5 min 0 sec", status_code=200)
 
     def test_it_requires_logged_in_user(self):
         Ping.objects.create(owner=self.check, n=1, body="this is body")
