@@ -14,14 +14,14 @@
     white-space: nowrap;
 }
 
-#log .delta {
+#log .duration {
     white-space: nowrap;
     float: right;
     padding-left: 20px;
 }
 
 @media (max-width: 767px) {
-    #log .delta {
+    #log .duration {
         display: none;
     }
 }

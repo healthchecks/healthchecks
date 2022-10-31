@@ -39,8 +39,8 @@ class MyChecksTestCase(BaseTestCase):
 
         # last_active_date should have been bumped
         self.profile.refresh_from_db()
-        delta = timezone.now() - self.profile.last_active_date
-        self.assertTrue(delta.total_seconds() < 1)
+        duration = timezone.now() - self.profile.last_active_date
+        self.assertTrue(duration.total_seconds() < 1)
 
     def test_it_updates_session(self):
         self.client.login(username="alice@example.org", password="password")

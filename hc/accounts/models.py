@@ -3,7 +3,7 @@ from __future__ import annotations
 import random
 import sys
 import uuid
-from datetime import timedelta
+from datetime import timedelta as td
 from secrets import token_urlsafe
 from urllib.parse import quote, urlencode
 
@@ -25,11 +25,11 @@ else:
     from backports.zoneinfo import ZoneInfo
 
 
-NO_NAG = timedelta()
+NO_NAG = td()
 NAG_PERIODS = (
     (NO_NAG, "Disabled"),
-    (timedelta(hours=1), "Hourly"),
-    (timedelta(days=1), "Daily"),
+    (td(hours=1), "Hourly"),
+    (td(days=1), "Daily"),
 )
 
 REPORT_CHOICES = (("off", "Off"), ("weekly", "Weekly"), ("monthly", "Monthly"))
@@ -210,7 +210,7 @@ class Profile(models.Model):
         result = checks.aggregate(models.Max("last_ping"))
         last_ping = result["last_ping__max"]
 
-        six_months_ago = now() - timedelta(days=180)
+        six_months_ago = now() - td(days=180)
         if last_ping is None or last_ping < six_months_ago:
             return False
 
@@ -335,10 +335,10 @@ class Profile(models.Model):
             return None
 
         dt = now().astimezone(ZoneInfo(self.tz))
-        dt = dt.replace(hour=9, minute=0) + timedelta(minutes=random.randrange(0, 120))
+        dt = dt.replace(hour=9, minute=0) + td(minutes=random.randrange(0, 120))
 
         while True:
-            dt += timedelta(days=1)
+            dt += td(days=1)
             if self.reports == "monthly" and dt.day == 1:
                 return dt
             elif self.reports == "weekly" and dt.weekday() == 0:

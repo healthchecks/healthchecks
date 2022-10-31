@@ -25,7 +25,7 @@ from hc.accounts.models import Profile
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.forms import FlipsFiltersForm
-from hc.api.models import MAX_DELTA, Channel, Check, Flip, Notification, Ping
+from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 
 
@@ -396,9 +396,9 @@ def pings(request, code):
     for ping in reversed(pings):
         d = ping.to_dict()
         if ping.kind != "start" and prev and prev.kind == "start":
-            delta = ping.created - prev.created
-            if delta < MAX_DELTA:
-                d["duration"] = delta.total_seconds()
+            duration = ping.created - prev.created
+            if duration < MAX_DURATION:
+                d["duration"] = duration.total_seconds()
 
         dicts.insert(0, d)
         prev = ping

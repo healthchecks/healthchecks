@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import timedelta as td
 
 from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
@@ -55,7 +55,7 @@ class NotificationStatusTestCase(BaseTestCase):
         self.assertEqual(self.channel.last_error, "")
 
     def test_it_checks_ttl(self):
-        self.n.created = self.n.created - timedelta(minutes=61)
+        self.n.created = self.n.created - td(minutes=61)
         self.n.save()
 
         r = self.csrf_client.post(self.url, {"MessageStatus": "failed"})

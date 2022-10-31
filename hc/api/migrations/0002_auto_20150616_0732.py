@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import datetime
+from datetime import timedelta as td
 
 
 class Migration(migrations.Migration):
@@ -32,19 +32,19 @@ class Migration(migrations.Migration):
             name="timeout",
             field=models.DurationField(
                 choices=[
-                    (datetime.timedelta(0, 300), "5 minutes"),
-                    (datetime.timedelta(0, 600), "10 minutes"),
-                    (datetime.timedelta(0, 1800), "30 minutes"),
-                    (datetime.timedelta(0, 3600), "1 hour"),
-                    (datetime.timedelta(0, 7200), "2 hours"),
-                    (datetime.timedelta(0, 21600), "6 hours"),
-                    (datetime.timedelta(0, 43200), "12 hours"),
-                    (datetime.timedelta(1), "1 day"),
-                    (datetime.timedelta(2), "2 days"),
-                    (datetime.timedelta(7), "1 week"),
-                    (datetime.timedelta(14), "2 weeks"),
+                    (td(0, 300), "5 minutes"),
+                    (td(0, 600), "10 minutes"),
+                    (td(0, 1800), "30 minutes"),
+                    (td(0, 3600), "1 hour"),
+                    (td(0, 7200), "2 hours"),
+                    (td(0, 21600), "6 hours"),
+                    (td(0, 43200), "12 hours"),
+                    (td(1), "1 day"),
+                    (td(2), "2 days"),
+                    (td(7), "1 week"),
+                    (td(14), "2 weeks"),
                 ],
-                default=datetime.timedelta(1),
+                default=td(1),
             ),
         ),
     ]

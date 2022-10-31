@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from datetime import timedelta
+from datetime import timedelta as td
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         time.sleep(1)
 
     def handle(self, *args, **options):
-        year_ago = now() - timedelta(days=365)
+        year_ago = now() - td(days=365)
 
         q = Profile.objects.order_by("id")
         # Exclude accounts with logins in the last year

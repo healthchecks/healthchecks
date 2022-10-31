@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import datetime
+from datetime import timedelta as td
 
 
 class Migration(migrations.Migration):
@@ -23,6 +23,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="check",
             name="timeout",
-            field=models.DurationField(default=datetime.timedelta(1)),
+            field=models.DurationField(default=td(1)),
         ),
     ]

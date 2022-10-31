@@ -45,8 +45,8 @@ requests.get(URL)
 
 When SITE_NAME receives a "start" signal followed by a regular ping or a "fail"
 signal, and the two events are less than 72 hours apart,
-you will see the time delta displayed in the list of checks. If the two events are
-more than 72 hours apart, they are assumed to be unrelated, and the time delta is
+you will see the duration displayed in the list of checks. If the two events are
+more than 72 hours apart, they are assumed to be unrelated, and the duration is
 not displayed.
 
 ![List of checks with durations](IMG_URL/checks_durations.png)
