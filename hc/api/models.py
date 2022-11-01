@@ -546,10 +546,12 @@ class Ping(models.Model):
         # only look backwards but don't look further than MAX_DURATION in the past
         pings = pings.filter(id__lt=self.id, created__gte=self.created - MAX_DURATION)
 
-        # look for the closet "start" event
+        # Look for a "start" event, with no success/fail signal inbetween:
         for ping in pings.order_by("-id"):
             if ping.kind == "start":
                 return self.created - ping.created
+            elif ping.kind in (None, "", "fail"):
+                return None
 
         return None
 
