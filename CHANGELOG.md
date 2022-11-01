@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to fido2 1.1.0 and simplify hc.lib.webauthn
 - Add handling for ipv4address:port values in the X-Forwarded-For header (#714)
 - Add a form for submitting Signal CAPTCHA solutions
+- Add Duration field in the Ping Details dialog (#720)
 
 ## v2.4.1 - 2022-10-18
 

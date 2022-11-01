@@ -548,7 +548,7 @@ class Ping(models.Model):
         pings = pings.filter(id__lt=self.id, created__gte=self.created - MAX_DURATION)
 
         # Look for a "start" event, with no success/fail signal inbetween:
-        for ping in pings.order_by("-id"):
+        for ping in pings.order_by("-id").only("created", "kind"):
             if ping.kind == "start":
                 return self.created - ping.created
             elif ping.kind in (None, "", "fail"):
