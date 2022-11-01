@@ -16,6 +16,7 @@ from cronsim import CronSim
 from django.conf import settings
 from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
+from django.utils.functional import cached_property
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
@@ -39,7 +40,7 @@ DEFAULT_GRACE = td(hours=1)
 NEVER = datetime(3000, 1, 1, tzinfo=timezone.utc)
 CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
 # max time between start and ping where we will consider both events related:
-MAX_DELTA = td(hours=72)
+MAX_DURATION = td(hours=72)
 
 CHANNEL_KINDS = (
     ("apprise", "Apprise"),
@@ -147,7 +148,7 @@ class Check(models.Model):
 
     class Meta:
         indexes = [
-            # Index for the alert_after field. Excludes rows with status=down.
+            # Index for the alert_after field. Exclude rows with status=down.
             # Used in the sendalerts management command.
             models.Index(
                 fields=["alert_after"],
@@ -194,7 +195,7 @@ class Check(models.Model):
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
 
     def clamped_last_duration(self) -> td | None:
-        if self.last_duration and self.last_duration < MAX_DELTA:
+        if self.last_duration and self.last_duration < MAX_DURATION:
             return self.last_duration
         return None
 
@@ -281,7 +282,7 @@ class Check(models.Model):
             return ""
 
         # self.channel_set may already be prefetched.
-        # Sort in python to make sure we do't run additional queries
+        # Sort in python to make sure we don't run additional queries
         codes = [str(channel.code) for channel in self.channel_set.all()]
         return ",".join(sorted(codes))
 
@@ -450,8 +451,8 @@ class Check(models.Model):
         dt, status = now(), self.status
         for prev_dt, prev_status in sorted(events, reverse=True):
             if status == "down":
-                delta = dt - prev_dt
-                totals[monthkey(prev_dt)][1] += delta
+                duration = dt - prev_dt
+                totals[monthkey(prev_dt)][1] += duration
                 totals[monthkey(prev_dt)][2] += 1
 
             dt = prev_dt
@@ -532,6 +533,22 @@ class Ping(models.Model):
                 return body_raw.decode(errors="replace")
         if self.body_raw:
             return bytes(self.body_raw).decode(errors="replace")
+
+        return None
+
+    @cached_property
+    def duration(self) -> td | None:
+        # return early if this is not a success or failure ping
+        if self.kind not in (None, "", "fail"):
+            return None
+
+        # only look backwards but don't look further than MAX_DURATION in the past
+        pings = self.owner.ping_set.filter(id__lt=self.id, created__gte=self.created - MAX_DURATION)
+
+        # look for the closet "start" event
+        for ping in pings.order_by("-id"):
+            if ping.kind == "start":
+                return self.created - ping.created
 
         return None
 
@@ -1032,7 +1049,7 @@ class Flip(models.Model):
         For each channel, yield a (channel, error, send_time) triple:
          * channel is a Channel instance
          * error is an empty string ("") on success, error message otherwise
-         * send_time is the send time in seconds (float)
+         * send_time is specified in seconds (float)
         """
 
         # Don't send alerts on new->up and paused->up transitions
@@ -1048,7 +1065,7 @@ class Flip(models.Model):
             if error == "no-op":
                 continue
 
-            yield (channel, error, time.time() - start)
+            yield channel, error, time.time() - start
 
 
 class TokenBucket(models.Model):
@@ -1063,8 +1080,8 @@ class TokenBucket(models.Model):
 
         if not created:
             # Top up the bucket:
-            delta_secs = (frozen_now - obj.updated).total_seconds()
-            obj.tokens = min(1.0, obj.tokens + delta_secs / refill_time_secs)
+            duration_secs = (frozen_now - obj.updated).total_seconds()
+            obj.tokens = min(1.0, obj.tokens + duration_secs / refill_time_secs)
 
         obj.tokens -= 1.0 / capacity
         if obj.tokens < 0:

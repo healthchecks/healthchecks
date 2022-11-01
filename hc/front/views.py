@@ -40,7 +40,7 @@ from hc.accounts.models import Member, Project
 from hc.api.models import (
     DEFAULT_GRACE,
     DEFAULT_TIMEOUT,
-    MAX_DELTA,
+    MAX_DURATION,
     Channel,
     Check,
     Notification,
@@ -722,10 +722,10 @@ def _get_events(check, page_limit, start=None, end=None):
         if ping.kind == "start":
             last_start = ping.created
         elif ping.kind in (None, "", "fail") and last_start:
-            delta = ping.created - last_start
+            duration = ping.created - last_start
             last_start = None
-            if delta < MAX_DELTA:
-                setattr(ping, "delta", delta)
+            if duration < MAX_DURATION:
+                setattr(ping, "duration", duration)
 
     alerts = Notification.objects.select_related("channel")
     alerts = alerts.filter(owner=check, check_status="down")

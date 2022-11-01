@@ -1,12 +1,12 @@
 {% load hc_extras %}
 <table id="downtimes" class="table">
-    {% for boundary, down_timedelta, count in downtimes reversed %}
+    {% for boundary, down_duration_secs, count in downtimes reversed %}
     <tr>
         <th>{{ boundary|date:"N Y"}}</th>
         <td>
             {% if count %}
                 {{ count }} downtime{{ count|pluralize }},
-                {{ down_timedelta|hc_approx_duration }} total
+                {{ down_duration_secs|hc_approx_duration }} total
             {% elif count is None %}
                 –
             {% else %}
