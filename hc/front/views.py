@@ -717,20 +717,28 @@ def _get_events(check, page_limit, start=None, end=None):
 
     pings = list(pings[:page_limit])
 
-    # The template will access Ping.duration, which would generate a SQL query per
-    # displayed ping. Since we've already fetched a list of pings, we can
-    # calculate durations more efficiently, without causing additional SQL queries:
+    # Optimization: the template will access Ping.duration, which would generate a
+    # SQL query per displayed ping. Since we've already fetched a list of pings,
+    # for some of the pings we can calculate durations more efficiently, without
+    # causing additional SQL queries:
+    seen_reset = False
     last_start = None
     for ping in reversed(pings):
-        # Important: override default implementation for all ping types
-        ping.duration = None
         if ping.kind == "start":
             last_start = ping.created
-        elif ping.kind in (None, "", "fail") and last_start:
-            duration = ping.created - last_start
-            last_start = None
-            if duration < MAX_DURATION:
-                ping.duration = duration
+            seen_reset = True
+        elif ping.kind in (None, "", "fail"):
+            if seen_reset:
+                # After we've seen a start/success/failure event, make sure
+                # we will not fall back to Ping.duration()
+                ping.duration = None
+
+            if last_start:
+                duration, last_start = ping.created - last_start, None
+                if duration < MAX_DURATION:
+                    ping.duration = duration
+
+            seen_reset = True
 
     alerts = Notification.objects.select_related("channel")
     alerts = alerts.filter(owner=check, check_status="down")

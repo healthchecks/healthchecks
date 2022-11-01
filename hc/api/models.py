@@ -538,8 +538,9 @@ class Ping(models.Model):
 
     @cached_property
     def duration(self) -> td | None:
-        # return early if this is not a success or failure ping
-        if self.kind not in (None, "", "fail"):
+        # Return early if this is not a success or failure ping,
+        # or if this is the very first ping:
+        if self.kind not in (None, "", "fail") or self.n == 1:
             return None
 
         pings = Ping.objects.filter(owner=self.owner_id)
