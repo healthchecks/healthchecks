@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - Add a form for submitting Signal CAPTCHA solutions
 - Add Duration field in the Ping Details dialog (#720)
 
+### Bug Fixes
+- Fix the most recent ping lookup in the "Ping Details" dialog
+
 ## v2.4.1 - 2022-10-18
 
 ### Bug Fixes

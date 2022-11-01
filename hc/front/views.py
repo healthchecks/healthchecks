@@ -599,6 +599,10 @@ def ping_details(request, code, n=None):
     q = Ping.objects.filter(owner=check)
     if n:
         q = q.filter(n=n)
+    else:
+        # When n is not specified, look up the most recent success or failure,
+        # ignoring "start", "log", "ign" events
+        q = q.exclude(kind__in=("start", "log", "ign"))
 
     try:
         ping = q.latest("created")
@@ -730,7 +734,7 @@ def _get_events(check, page_limit, start=None, end=None):
         elif ping.kind in (None, "", "fail"):
             if seen_reset:
                 # After we've seen a start/success/failure event, make sure
-                # we will not fall back to Ping.duration()
+                # we do not fall back to Ping.duration()
                 ping.duration = None
 
             if last_start:

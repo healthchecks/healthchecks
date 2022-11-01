@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-
 from unittest.mock import patch
 
 from django.test.utils import override_settings
@@ -94,15 +93,25 @@ class PingDetailsTestCase(BaseTestCase):
         Ping.objects.create(owner=self.check, n=1, kind="start")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
+        r = self.client.get(f"/checks/{self.check.code}/pings/1/")
         self.assertContains(r, "/start", status_code=200)
 
     def test_it_shows_log(self):
         Ping.objects.create(owner=self.check, n=1, kind="log")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
+        r = self.client.get(f"/checks/{self.check.code}/pings/1/")
         self.assertContains(r, "/log", status_code=200)
+
+    def test_last_ping_lookup_excludes_log_ign_start(self):
+        Ping.objects.create(owner=self.check, n=1)
+        Ping.objects.create(owner=self.check, n=2, kind="log")
+        Ping.objects.create(owner=self.check, n=3, kind="ign")
+        Ping.objects.create(owner=self.check, n=4, kind="start")
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "#1", status_code=200)
 
     def test_it_accepts_n(self):
         # remote_addr, scheme, method, ua, body, action:
@@ -111,10 +120,10 @@ class PingDetailsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
 
-        r = self.client.get("/checks/%s/pings/1/" % self.check.code)
+        r = self.client.get(f"/checks/{self.check.code}/pings/1/")
         self.assertContains(r, "foo-123", status_code=200)
 
-        r = self.client.get("/checks/%s/pings/2/" % self.check.code)
+        r = self.client.get(f"/checks/{self.check.code}/pings/2/")
         self.assertContains(r, "bar-456", status_code=200)
 
     def test_it_allows_cross_team_access(self):
@@ -263,5 +272,5 @@ class PingDetailsTestCase(BaseTestCase):
         Ping.objects.create(owner=self.check, n=1, kind="ign", exitstatus=42)
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
+        r = self.client.get(f"/checks/{self.check.code}/pings/1/")
         self.assertContains(r, "(ignored)", status_code=200)
