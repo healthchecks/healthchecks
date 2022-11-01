@@ -1,3 +1,7 @@
+#ping-details-body h3 code {
+    color: inherit;
+}
+
 #ping-details-body .modal-body {
     padding: 40px;
 }

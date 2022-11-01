@@ -72,6 +72,8 @@
     --tag-up-color: #333;
     --text-color: #333;
     --text-muted:  #767676;
+    --text-success: #3c763d;
+    --text-danger: #a94442;
 }
 
 
@@ -149,4 +151,6 @@ body.dark {
     --tag-up-color: #e0e0e2;
     --text-color: hsl(240, 3.3%, 88.2%);
     --text-muted: hsl(240, 3%, 55%);
+    --text-success: #22bc66;
+    --text-danger: #d9534f;
 }

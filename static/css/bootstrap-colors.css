@@ -55,3 +55,11 @@
 .panel-success {
     border-color: var(--alert-success-border);
 }
+
+.text-success {
+    color:  var(--text-success);
+}
+
+.text-danger {
+    color:  var(--text-danger);
+}
