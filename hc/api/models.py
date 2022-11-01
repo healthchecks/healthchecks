@@ -542,8 +542,9 @@ class Ping(models.Model):
         if self.kind not in (None, "", "fail"):
             return None
 
+        pings = Ping.objects.filter(owner=self.owner_id)
         # only look backwards but don't look further than MAX_DURATION in the past
-        pings = self.owner.ping_set.filter(id__lt=self.id, created__gte=self.created - MAX_DURATION)
+        pings = pings.filter(id__lt=self.id, created__gte=self.created - MAX_DURATION)
 
         # look for the closet "start" event
         for ping in pings.order_by("-id"):
