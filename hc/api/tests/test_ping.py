@@ -325,3 +325,11 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(bytes(ping.body_raw), b"hello")
 
         self.assertFalse(Flip.objects.exists())
+
+    def test_it_saves_run_id(self):
+        r = self.client.get(self.url + "/start?rid=1")
+        self.assertEqual(r.status_code, 200)
+
+        ping = Ping.objects.get()
+        self.assertEqual(ping.rid, "1")
+

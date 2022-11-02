@@ -71,7 +71,14 @@ def ping(
     if check.methods == "POST" and method != "POST":
         action = "ign"
 
-    check.ping(remote_addr, scheme, method, ua, body, action, exitstatus)
+    if method == "GET":
+        rid = request.GET.get("rid", "")
+    elif method == "POST":
+        rid = request.POST.get("rid", "")
+    else:
+        rid = ""
+
+    check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
 
     response = HttpResponse("OK")
     if settings.PING_BODY_LIMIT is not None:

@@ -152,14 +152,46 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "label-log", status_code=200)
 
     def test_it_does_not_show_duration_for_log_event(self):
-        h = td(hours=1)
-        Ping.objects.create(owner=self.check, n=2, kind="start", created=now() - h)
-        Ping.objects.create(owner=self.check, n=3, kind="log", created=now() - h * 2)
+        # creates 3 overlapping runs according to the following timestamps:
+        # ts 0: Cs
+        # ts 1: As
+        # ts 2: Bs
+        # ts 3: Ae
+        # ts 4: Ce
+        # ts 6: Be
+        # run A is 2 minutes long, B is 5 minutes and C is 4 minutes.
+
+        end_time_b = now()
+        end_time_c = end_time_b - td(minutes=3)
+        end_time_a = end_time_c - td(minutes=1)
+        start_time_b = end_time_a - td(minutes=1)
+        start_time_a = start_time_b - td(minutes=1)
+        start_time_c = start_time_a - td(minutes=1)
+
+        Ping.objects.create(owner=self.check, created=start_time_c, n=2, kind="start")
+        Ping.objects.create(owner=self.check, created=start_time_a, n=3, kind="start", rid='A')
+        Ping.objects.create(owner=self.check, created=start_time_b, n=4, kind="start", rid='B')
+        Ping.objects.create(owner=self.check, created=end_time_a, n=5, kind="", rid='A')
+        Ping.objects.create(owner=self.check, created=end_time_c, n=6, kind="")
+        Ping.objects.create(owner=self.check, created=end_time_b, n=7, kind="", rid='B')
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "2 min 0 sec", status_code=200)
+        self.assertContains(r, "5 min 0 sec", status_code=200)
+        self.assertContains(r, "4 min 0 sec", status_code=200)
+
+    def test_it_calculates_duration_with_overlapping_runs(self):
+        h = td(minutes=1)
+        Ping.objects.create(owner=self.check, n=1, kind="start", created=now() - h)
+        Ping.objects.create(owner=self.check, n=2, kind="success", created=now() - h * 5)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "label-log", status_code=200)
         self.assertNotContains(r, "ic-timer", status_code=200)
+
 
     def test_it_does_not_show_duration_for_ign_event(self):
         h = td(hours=1)
