@@ -183,7 +183,7 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "4 min 0 sec", status_code=200)
 
     def test_it_does_not_show_duration_for_log_event(self):
-        h = td(minutes=1)
+        h = td(hours=1)
         Ping.objects.create(owner=self.check, n=1, kind="start", created=now() - h)
         Ping.objects.create(owner=self.check, n=2, kind="success", created=now() - h * 5)
 
