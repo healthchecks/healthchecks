@@ -184,8 +184,8 @@ class LogTestCase(BaseTestCase):
 
     def test_it_does_not_show_duration_for_log_event(self):
         h = td(hours=1)
-        Ping.objects.create(owner=self.check, n=1, kind="start", created=now() - h)
-        Ping.objects.create(owner=self.check, n=2, kind="success", created=now() - h * 5)
+        Ping.objects.create(owner=self.check, n=2, kind="start", created=now() - h)
+        Ping.objects.create(owner=self.check, n=3, kind="log", created=now() - h * 2)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
