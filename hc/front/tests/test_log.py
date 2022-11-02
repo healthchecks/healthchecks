@@ -151,7 +151,7 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "label-log", status_code=200)
 
-    def test_it_does_not_show_duration_for_log_event(self):
+    def test_it_calculates_duration_with_overlapping_runs(self):
         # creates 3 overlapping runs according to the following timestamps:
         # ts 0: Cs
         # ts 1: As
@@ -182,7 +182,7 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "5 min 0 sec", status_code=200)
         self.assertContains(r, "4 min 0 sec", status_code=200)
 
-    def test_it_calculates_duration_with_overlapping_runs(self):
+    def test_it_does_not_show_duration_for_log_event(self):
         h = td(minutes=1)
         Ping.objects.create(owner=self.check, n=1, kind="start", created=now() - h)
         Ping.objects.create(owner=self.check, n=2, kind="success", created=now() - h * 5)
@@ -191,7 +191,6 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "label-log", status_code=200)
         self.assertNotContains(r, "ic-timer", status_code=200)
-
 
     def test_it_does_not_show_duration_for_ign_event(self):
         h = td(hours=1)
