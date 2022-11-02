@@ -36,6 +36,7 @@ channel_urls = [
     path("telegram/", views.telegram_help, name="hc-telegram-help"),
     path("telegram/bot/", views.telegram_bot, name="hc-telegram-webhook"),
     path("pagerduty/", views.pd_help, name="hc-pagerduty-help"),
+    path("mattermost/", views.mattermost_help, name="hc-mattermost-help"),
     path("add_slack/", views.slack_help, name="hc-slack-help"),
     path("add_slack_btn/", views.add_slack_complete),
     path("add_telegram/", views.add_telegram, name="hc-add-telegram"),

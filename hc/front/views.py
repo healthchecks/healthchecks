@@ -1464,6 +1464,11 @@ def add_slack_complete(request: HttpRequest) -> HttpResponse:
 
 
 @require_setting("MATTERMOST_ENABLED")
+def mattermost_help(request):
+    return render(request, "integrations/add_mattermost.html")
+
+
+@require_setting("MATTERMOST_ENABLED")
 @login_required
 def add_mattermost(request, code):
     project = _get_rw_project_for_user(request, code)

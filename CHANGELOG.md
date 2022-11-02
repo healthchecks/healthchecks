@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add handling for ipv4address:port values in the X-Forwarded-For header (#714)
 - Add a form for submitting Signal CAPTCHA solutions
 - Add Duration field in the Ping Details dialog (#720)
+- Update Mattermost setup instructions
 
 ### Bug Fixes
 - Fix the most recent ping lookup in the "Ping Details" dialog
