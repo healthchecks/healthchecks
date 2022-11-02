@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 from hc.test import BaseTestCase
 
 
-@override_settings(MATTERMOST_ENABLED=True)
+@override_settings(MATTERMOST_ENABLED=True, SITE_NAME="Mychecks")
 class AddSlackHelpTestCase(BaseTestCase):
     def test_instructions_work(self):
         r = self.client.get("/integrations/mattermost/")
