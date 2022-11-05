@@ -46,6 +46,15 @@
         </div>
         {% endif %}
 
+        {% if ping.rid %}
+        <div class="col-sm-6">
+            <p>
+                <strong>Run ID</strong>
+                <span>{{ ping.rid }}</span>
+            </p>
+        </div>
+        {% endif %}
+
         {% if ping.scheme != "email" %}
         <div class="col-sm-12">
             <p>
