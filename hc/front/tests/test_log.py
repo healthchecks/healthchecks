@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import uuid
 from datetime import timedelta as td
 from unittest.mock import patch
 
@@ -161,6 +162,9 @@ class LogTestCase(BaseTestCase):
         # ts 6: Be
         # run A is 2 minutes long, B is 5 minutes and C is 4 minutes.
 
+        uuid_a = str(uuid.uuid4())
+        uuid_b = str(uuid.uuid4())
+        uuid_c = None
         end_time_b = now()
         end_time_c = end_time_b - td(minutes=3)
         end_time_a = end_time_c - td(minutes=1)
@@ -168,12 +172,12 @@ class LogTestCase(BaseTestCase):
         start_time_a = start_time_b - td(minutes=1)
         start_time_c = start_time_a - td(minutes=1)
 
-        Ping.objects.create(owner=self.check, created=start_time_c, n=2, kind="start")
-        Ping.objects.create(owner=self.check, created=start_time_a, n=3, kind="start", rid='A')
-        Ping.objects.create(owner=self.check, created=start_time_b, n=4, kind="start", rid='B')
-        Ping.objects.create(owner=self.check, created=end_time_a, n=5, kind="", rid='A')
-        Ping.objects.create(owner=self.check, created=end_time_c, n=6, kind="")
-        Ping.objects.create(owner=self.check, created=end_time_b, n=7, kind="", rid='B')
+        Ping.objects.create(owner=self.check, created=start_time_c, n=2, kind="start", rid=uuid_c)
+        Ping.objects.create(owner=self.check, created=start_time_a, n=3, kind="start", rid=uuid_a)
+        Ping.objects.create(owner=self.check, created=start_time_b, n=4, kind="start", rid=uuid_b)
+        Ping.objects.create(owner=self.check, created=end_time_a, n=5, kind="", rid=uuid_a)
+        Ping.objects.create(owner=self.check, created=end_time_c, n=6, kind="", rid=uuid_c)
+        Ping.objects.create(owner=self.check, created=end_time_b, n=7, kind="", rid=uuid_b)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)

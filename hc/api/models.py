@@ -508,7 +508,7 @@ class Ping(models.Model):
     body_raw = models.BinaryField(null=True)
     object_size = models.IntegerField(null=True)
     exitstatus = models.SmallIntegerField(null=True)
-    rid = models.CharField(max_length=36, blank=True)
+    rid = models.UUIDField(null=True, blank=True)
 
     def to_dict(self) -> dict:
         return {

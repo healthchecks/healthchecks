@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from datetime import timedelta as td
 from unittest.mock import patch
 
@@ -327,9 +328,10 @@ class PingTestCase(BaseTestCase):
         self.assertFalse(Flip.objects.exists())
 
     def test_it_saves_run_id(self):
-        r = self.client.get(self.url + "/start?rid=1")
+        rid = str(uuid.uuid4())
+        r = self.client.get(self.url + "/start?rid=%s" % rid)
         self.assertEqual(r.status_code, 200)
 
         ping = Ping.objects.get()
-        self.assertEqual(ping.rid, "1")
+        self.assertEqual(str(ping.rid), rid)
 

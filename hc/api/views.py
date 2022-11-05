@@ -72,11 +72,11 @@ def ping(
         action = "ign"
 
     if method == "GET":
-        rid = request.GET.get("rid", "")
+        rid = request.GET.get("rid")
     elif method == "POST":
-        rid = request.POST.get("rid", "")
+        rid = request.POST.get("rid")
     else:
-        rid = ""
+        rid = None
 
     check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
 
