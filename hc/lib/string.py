@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-import uuid
+import re
+
+from django.urls.converters import UUIDConverter
+
+uuid_match_regex = re.compile(UUIDConverter.regex)
 
 
 def replace(template, ctx):
@@ -43,12 +47,5 @@ def replace(template, ctx):
     return "".join(result)
 
 
-def is_valid_uuid(value):
-    if value is not None and not isinstance(value, uuid.UUID):
-        input_form = "int" if isinstance(value, int) else "hex"
-        try:
-            uuid.UUID(**{input_form: value})
-        except (AttributeError, ValueError):
-            return False
-
-    return True
+def is_valid_uuid_string(value):
+    return bool(uuid_match_regex.match(value))
