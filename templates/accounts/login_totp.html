@@ -19,7 +19,8 @@
             pattern="[0-9]{6}"
             title="6-digit code"
             placeholder="6-digit code"
-            class="form-control input-lg" />
+            class="form-control input-lg"
+            autofocus />
         {% if form.code.errors %}
         <div class="help-block">
             {{ form.code.errors|join:"" }}
