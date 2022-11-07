@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import uuid
+
 
 def replace(template, ctx):
     """Replace placeholders with their values and return the result.
@@ -39,3 +41,14 @@ def replace(template, ctx):
         result.append(part)
 
     return "".join(result)
+
+
+def is_valid_uuid(value):
+    if value is not None and not isinstance(value, uuid.UUID):
+        input_form = "int" if isinstance(value, int) else "hex"
+        try:
+            uuid.UUID(**{input_form: value})
+        except (AttributeError, ValueError):
+            return False
+
+    return True

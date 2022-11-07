@@ -27,6 +27,7 @@ from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.forms import FlipsFiltersForm
 from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
+from hc.lib.string import is_valid_uuid
 
 
 class BadChannelException(Exception):
@@ -77,6 +78,9 @@ def ping(
         rid = request.POST.get("rid")
     else:
         rid = None
+
+    if rid is not None and not is_valid_uuid(rid):
+        return HttpResponseBadRequest("invalid uuid format")
 
     check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
 

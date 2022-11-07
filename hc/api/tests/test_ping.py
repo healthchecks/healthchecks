@@ -335,3 +335,9 @@ class PingTestCase(BaseTestCase):
         ping = Ping.objects.get()
         self.assertEqual(str(ping.rid), rid)
 
+    def test_it_handles_invalid_rid(self):
+        rid = '12345'
+        r = self.client.get(self.url + "/start?rid=%s" % rid)
+        self.assertEqual(r.status_code, 400)
+
+
