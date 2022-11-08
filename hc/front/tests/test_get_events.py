@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import uuid
 from datetime import datetime
 from datetime import timedelta as td
+from uuid import uuid4
 
 from django.utils import timezone
 
@@ -36,7 +36,7 @@ class GetEventsTestCase(BaseTestCase):
 
     def test_it_calculates_overlapping_durations(self):
         m = td(minutes=1)
-        a, b = uuid.uuid4(), uuid.uuid4()
+        a, b = uuid4(), uuid4()
         self.check.ping_set.create(n=1, rid=a, created=EPOCH, kind="start")
         self.check.ping_set.create(n=2, rid=b, created=EPOCH + m, kind="start")
         self.check.ping_set.create(n=3, rid=a, created=EPOCH + m * 2)
@@ -46,3 +46,15 @@ class GetEventsTestCase(BaseTestCase):
             pings = _get_events(self.check, 100)
             self.assertEqual(pings[0].duration, td(minutes=5))
             self.assertEqual(pings[1].duration, td(minutes=2))
+
+    def test_it_disables_duration_display(self):
+        # Set up a worst case scenario where each success ping has an unique rid,
+        # and there are no "start" pings:
+        for i in range(1, 12):
+            self.check.ping_set.create(n=i, rid=uuid4(), created=EPOCH + td(minutes=i))
+
+        # Make sure we don't run Ping.duration() per ping:
+        with self.assertNumQueries(2):
+            pings = _get_events(self.check, 100)
+            for ping in pings:
+                self.assertIsNone(ping.duration)

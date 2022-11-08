@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add a form for submitting Signal CAPTCHA solutions
 - Add Duration field in the Ping Details dialog (#720)
 - Update Mattermost setup instructions
+- Add support for specifying a run ID via a "rid" query parameter (#722)
 
 ### Bug Fixes
 - Fix the most recent ping lookup in the "Ping Details" dialog
