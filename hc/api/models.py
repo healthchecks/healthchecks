@@ -344,6 +344,7 @@ class Check(models.Model):
         ua: str,
         body: bytes,
         action: str,
+        rid: str | None,
         exitstatus: int | None = None,
     ) -> None:
         frozen_now = now()
@@ -393,6 +394,7 @@ class Check(models.Model):
             put_object(self.code, ping.n, body)
         else:
             ping.body_raw = body
+        ping.rid = rid
         ping.exitstatus = exitstatus
         ping.save()
 
@@ -430,8 +432,8 @@ class Check(models.Model):
 
         """
 
-        def monthkey(dt):
-            return dt.year, dt.month
+        def monthkey(a_dt):
+            return a_dt.year, a_dt.month
 
         # Datetimes of the first days of months we're interested in. Ascending order.
         boundaries = month_boundaries(months=months)
@@ -506,6 +508,7 @@ class Ping(models.Model):
     body_raw = models.BinaryField(null=True)
     object_size = models.IntegerField(null=True)
     exitstatus = models.SmallIntegerField(null=True)
+    rid = models.UUIDField(null=True)
 
     def to_dict(self) -> dict:
         return {
@@ -516,6 +519,7 @@ class Ping(models.Model):
             "remote_addr": self.remote_addr,
             "method": self.method,
             "ua": self.ua,
+            "rid": self.rid,
         }
 
     def has_body(self) -> bool:
@@ -547,11 +551,11 @@ class Ping(models.Model):
         # only look backwards but don't look further than MAX_DURATION in the past
         pings = pings.filter(id__lt=self.id, created__gte=self.created - MAX_DURATION)
 
-        # Look for a "start" event, with no success/fail signal inbetween:
-        for ping in pings.order_by("-id").only("created", "kind"):
-            if ping.kind == "start":
+        # Look for a "start" event, with no success/fail event in between:
+        for ping in pings.order_by("-id").only("created", "kind", "rid"):
+            if ping.kind == "start" and ping.rid == self.rid:
                 return self.created - ping.created
-            elif ping.kind in (None, "", "fail"):
+            elif ping.kind in (None, "", "fail") and ping.rid == self.rid:
                 return None
 
         return None

@@ -114,9 +114,9 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "#1", status_code=200)
 
     def test_it_accepts_n(self):
-        # remote_addr, scheme, method, ua, body, action:
-        self.check.ping("1.2.3.4", "http", "post", "tester", b"foo-123", "success")
-        self.check.ping("1.2.3.4", "http", "post", "tester", b"bar-456", "success")
+        # remote_addr, scheme, method, ua, body, action, rid:
+        self.check.ping("1.2.3.4", "http", "post", "tester", b"foo-123", "success", None)
+        self.check.ping("1.2.3.4", "http", "post", "tester", b"bar-456", "success", None)
 
         self.client.login(username="alice@example.org", password="password")
 

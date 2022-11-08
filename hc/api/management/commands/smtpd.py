@@ -69,7 +69,7 @@ def _process_message(remote_addr, mailfrom, mailto, data):
             action = "success"
 
     ua = "Email from %s" % mailfrom
-    check.ping(remote_addr, "email", "", ua, data, action)
+    check.ping(remote_addr, "email", "", ua, data, action, None)
 
     return f"Processed ping for {code}"
 

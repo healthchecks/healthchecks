@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import uuid
 from datetime import timedelta as td
 from unittest.mock import patch
 
@@ -150,6 +151,40 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "label-log", status_code=200)
+
+    def test_it_calculates_duration_with_overlapping_runs(self):
+        # creates 3 overlapping runs according to the following timestamps:
+        # ts 0: Cs
+        # ts 1: As
+        # ts 2: Bs
+        # ts 3: Ae
+        # ts 4: Ce
+        # ts 6: Be
+        # run A is 2 minutes long, B is 5 minutes and C is 4 minutes.
+
+        uuid_a = str(uuid.uuid4())
+        uuid_b = str(uuid.uuid4())
+        uuid_c = None
+        end_time_b = now()
+        end_time_c = end_time_b - td(minutes=3)
+        end_time_a = end_time_c - td(minutes=1)
+        start_time_b = end_time_a - td(minutes=1)
+        start_time_a = start_time_b - td(minutes=1)
+        start_time_c = start_time_a - td(minutes=1)
+
+        Ping.objects.create(owner=self.check, created=start_time_c, n=2, kind="start", rid=uuid_c)
+        Ping.objects.create(owner=self.check, created=start_time_a, n=3, kind="start", rid=uuid_a)
+        Ping.objects.create(owner=self.check, created=start_time_b, n=4, kind="start", rid=uuid_b)
+        Ping.objects.create(owner=self.check, created=end_time_a, n=5, kind="", rid=uuid_a)
+        Ping.objects.create(owner=self.check, created=end_time_c, n=6, kind="", rid=uuid_c)
+        Ping.objects.create(owner=self.check, created=end_time_b, n=7, kind="", rid=uuid_b)
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "2 min 0 sec", status_code=200)
+        self.assertContains(r, "5 min 0 sec", status_code=200)
+        self.assertContains(r, "4 min 0 sec", status_code=200)
 
     def test_it_does_not_show_duration_for_log_event(self):
         h = td(hours=1)

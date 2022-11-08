@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+import re
+
+uuid_match_regex = re.compile(
+    "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+)
+
 
 def replace(template, ctx):
     """Replace placeholders with their values and return the result.
@@ -39,3 +45,7 @@ def replace(template, ctx):
         result.append(part)
 
     return "".join(result)
+
+
+def is_valid_uuid_string(value: str) -> bool:
+    return bool(uuid_match_regex.match(value))
