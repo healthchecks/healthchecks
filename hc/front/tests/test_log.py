@@ -152,65 +152,6 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "label-log", status_code=200)
 
-    def test_it_calculates_duration_with_overlapping_runs(self):
-        uuid_b = uuid.uuid4()
-        uuid_c = uuid.uuid4()
-
-        # A starts at 00:00
-        Ping.objects.create(
-            owner=self.check,
-            created="2000-01-02T00:00:00+00:00",
-            n=2,
-            kind="start",
-        )
-
-        # B starts at 00:01
-        Ping.objects.create(
-            owner=self.check,
-            created="2000-01-02T00:01:00+00:00",
-            n=3,
-            kind="start",
-            rid=uuid_b,
-        )
-
-        # C starts at 00:02
-        Ping.objects.create(
-            owner=self.check,
-            created="2000-01-02T00:02:00+00:00",
-            n=4,
-            kind="start",
-            rid=uuid_c,
-        )
-
-        # B finishes at 00:03 (duration: 2 minutes)
-        Ping.objects.create(
-            owner=self.check,
-            created="2000-01-02T00:03:00+00:00",
-            n=5,
-            rid=uuid_b,
-        )
-
-        # A finishes at 00:04 (duration: 4 minutes)
-        Ping.objects.create(
-            owner=self.check,
-            created="2000-01-02T00:04:00+00:00",
-            n=6,
-        )
-
-        # C finishes at 00:07 (duration: 5 minutes)
-        Ping.objects.create(
-            owner=self.check,
-            created="2000-01-02T00:07:00+00:00",
-            n=7,
-            rid=uuid_c,
-        )
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertContains(r, "2 min 0 sec", status_code=200)
-        self.assertContains(r, "4 min 0 sec")
-        self.assertContains(r, "5 min 0 sec")
-
     def test_it_does_not_show_duration_for_log_event(self):
         h = td(hours=1)
         Ping.objects.create(owner=self.check, n=2, kind="start", created=now() - h)
