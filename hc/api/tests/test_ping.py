@@ -336,8 +336,7 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(str(ping.rid), rid)
 
     def test_it_handles_invalid_rid(self):
-        rid = '12345'
-        r = self.client.get(self.url + "/start?rid=%s" % rid)
-        self.assertEqual(r.status_code, 400)
-
-
+        samples = ["12345", "684e2e73-017e-465f-8149-d70b7c5aaa490"]
+        for sample in samples:
+            r = self.client.get(self.url + f"/start?rid={sample}")
+            self.assertEqual(r.status_code, 400)

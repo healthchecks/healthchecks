@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import re
 
-from django.urls.converters import UUIDConverter
-
-uuid_match_regex = re.compile(UUIDConverter.regex)
+uuid_match_regex = re.compile(
+    "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+)
 
 
 def replace(template, ctx):
@@ -47,5 +47,5 @@ def replace(template, ctx):
     return "".join(result)
 
 
-def is_valid_uuid_string(value):
+def is_valid_uuid_string(value: str) -> bool:
     return bool(uuid_match_regex.match(value))

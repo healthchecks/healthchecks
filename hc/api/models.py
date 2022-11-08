@@ -344,7 +344,7 @@ class Check(models.Model):
         ua: str,
         body: bytes,
         action: str,
-        rid: str,
+        rid: str | None,
         exitstatus: int | None = None,
     ) -> None:
         frozen_now = now()

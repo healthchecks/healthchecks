@@ -73,7 +73,6 @@ def ping(
         action = "ign"
 
     rid = request.GET.get("rid")
-
     if rid is not None and not is_valid_uuid_string(rid):
         return HttpResponseBadRequest("invalid uuid format")
 
