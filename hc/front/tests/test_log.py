@@ -153,38 +153,63 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "label-log", status_code=200)
 
     def test_it_calculates_duration_with_overlapping_runs(self):
-        # creates 3 overlapping runs according to the following timestamps:
-        # ts 0: Cs
-        # ts 1: As
-        # ts 2: Bs
-        # ts 3: Ae
-        # ts 4: Ce
-        # ts 6: Be
-        # run A is 2 minutes long, B is 5 minutes and C is 4 minutes.
+        uuid_b = uuid.uuid4()
+        uuid_c = uuid.uuid4()
 
-        uuid_a = str(uuid.uuid4())
-        uuid_b = str(uuid.uuid4())
-        uuid_c = None
-        end_time_b = now()
-        end_time_c = end_time_b - td(minutes=3)
-        end_time_a = end_time_c - td(minutes=1)
-        start_time_b = end_time_a - td(minutes=1)
-        start_time_a = start_time_b - td(minutes=1)
-        start_time_c = start_time_a - td(minutes=1)
+        # A starts at 00:00
+        Ping.objects.create(
+            owner=self.check,
+            created="2000-01-02T00:00:00+00:00",
+            n=2,
+            kind="start",
+        )
 
-        Ping.objects.create(owner=self.check, created=start_time_c, n=2, kind="start", rid=uuid_c)
-        Ping.objects.create(owner=self.check, created=start_time_a, n=3, kind="start", rid=uuid_a)
-        Ping.objects.create(owner=self.check, created=start_time_b, n=4, kind="start", rid=uuid_b)
-        Ping.objects.create(owner=self.check, created=end_time_a, n=5, kind="", rid=uuid_a)
-        Ping.objects.create(owner=self.check, created=end_time_c, n=6, kind="", rid=uuid_c)
-        Ping.objects.create(owner=self.check, created=end_time_b, n=7, kind="", rid=uuid_b)
+        # B starts at 00:01
+        Ping.objects.create(
+            owner=self.check,
+            created="2000-01-02T00:01:00+00:00",
+            n=3,
+            kind="start",
+            rid=uuid_b,
+        )
+
+        # C starts at 00:02
+        Ping.objects.create(
+            owner=self.check,
+            created="2000-01-02T00:02:00+00:00",
+            n=4,
+            kind="start",
+            rid=uuid_c,
+        )
+
+        # B finishes at 00:03 (duration: 2 minutes)
+        Ping.objects.create(
+            owner=self.check,
+            created="2000-01-02T00:03:00+00:00",
+            n=5,
+            rid=uuid_b,
+        )
+
+        # A finishes at 00:04 (duration: 4 minutes)
+        Ping.objects.create(
+            owner=self.check,
+            created="2000-01-02T00:04:00+00:00",
+            n=6,
+        )
+
+        # C finishes at 00:07 (duration: 5 minutes)
+        Ping.objects.create(
+            owner=self.check,
+            created="2000-01-02T00:07:00+00:00",
+            n=7,
+            rid=uuid_c,
+        )
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-
         self.assertContains(r, "2 min 0 sec", status_code=200)
-        self.assertContains(r, "5 min 0 sec", status_code=200)
-        self.assertContains(r, "4 min 0 sec", status_code=200)
+        self.assertContains(r, "4 min 0 sec")
+        self.assertContains(r, "5 min 0 sec")
 
     def test_it_does_not_show_duration_for_log_event(self):
         h = td(hours=1)
