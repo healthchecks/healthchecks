@@ -20,6 +20,12 @@
     padding-left: 20px;
 }
 
+#log tr.ok td:nth-child(5) code.rid {
+    background: #eee;
+    color: #555;
+}
+
+
 @media (max-width: 767px) {
     #log .duration {
         display: none;

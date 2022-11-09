@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import uuid
 from datetime import timedelta as td
 from unittest.mock import patch
+from uuid import uuid4
 
 from django.test import Client
 from django.test.utils import override_settings
@@ -204,6 +204,15 @@ class PingTestCase(BaseTestCase):
         self.assertTrue(self.check.last_start)
         self.assertEqual(self.check.status, "paused")
 
+    def test_start_sets_last_start_rid(self):
+        rid = uuid4()
+        r = self.client.get(self.url + f"/start?rid={rid}")
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertTrue(self.check.last_start)
+        self.assertEqual(self.check.last_start_rid, rid)
+
     def test_it_sets_last_duration(self):
         self.check.last_start = now() - td(seconds=10)
         self.check.save()
@@ -213,6 +222,57 @@ class PingTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertTrue(self.check.last_duration.total_seconds() >= 10)
+
+    def test_it_does_not_update_last_ping_on_rid_mismatch(self):
+        t = now() - td(seconds=10)
+        self.check.last_start = t
+        self.check.last_start_rid = uuid4()
+        self.check.save()
+
+        r = self.client.get(self.url + f"?rid={uuid4()}")
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        # last_start should still be the same
+        self.assertEqual(self.check.last_start, t)
+        # last_duration should be not set
+        self.assertIsNone(self.check.last_duration)
+
+    def test_it_clears_last_ping_and_sets_last_duration_if_rid_matches(self):
+        self.check.last_start = now() - td(seconds=10)
+        self.check.last_start_rid = uuid4()
+        self.check.save()
+
+        r = self.client.get(self.url + f"?rid={self.check.last_start_rid}")
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertIsNone(self.check.last_start)
+        self.assertTrue(self.check.last_duration.total_seconds() >= 10)
+
+    def test_it_clears_last_ping_if_rid_is_absent(self):
+        self.check.last_start = now() - td(seconds=10)
+        self.check.last_start_rid = uuid4()
+        self.check.save()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertIsNone(self.check.last_start)
+        self.assertIsNone(self.check.last_duration)
+
+    def test_it_clears_last_ping_on_failure(self):
+        self.check.last_start = now() - td(seconds=10)
+        self.check.last_start_rid = uuid4()
+        self.check.save()
+
+        r = self.client.get(self.url + f"/fail?rid={uuid4()}")
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertIsNone(self.check.last_start)
+        self.assertIsNone(self.check.last_duration)
 
     def test_it_requires_post(self):
         self.check.methods = "POST"
@@ -328,12 +388,12 @@ class PingTestCase(BaseTestCase):
         self.assertFalse(Flip.objects.exists())
 
     def test_it_saves_run_id(self):
-        rid = str(uuid.uuid4())
-        r = self.client.get(self.url + "/start?rid=%s" % rid)
+        rid = uuid4()
+        r = self.client.get(self.url + f"/start?rid={rid}")
         self.assertEqual(r.status_code, 200)
 
         ping = Ping.objects.get()
-        self.assertEqual(str(ping.rid), rid)
+        self.assertEqual(ping.rid, rid)
 
     def test_it_handles_invalid_rid(self):
         samples = ["12345", "684e2e73-017e-465f-8149-d70b7c5aaa490"]

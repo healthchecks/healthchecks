@@ -72,9 +72,11 @@ def ping(
     if check.methods == "POST" and method != "POST":
         action = "ign"
 
-    rid = request.GET.get("rid")
-    if rid is not None and not is_valid_uuid_string(rid):
-        return HttpResponseBadRequest("invalid uuid format")
+    rid, rid_str = None, request.GET.get("rid")
+    if rid_str is not None:
+        if not is_valid_uuid_string(rid_str):
+            return HttpResponseBadRequest("invalid uuid format")
+        rid = UUID(rid_str)
 
     check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
 

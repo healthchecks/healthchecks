@@ -14,6 +14,7 @@
 </td>
 <td>
 {% if event.duration %}<div class="duration"><span class="ic-timer"></span> {{ event.duration|hms }}</div>{% endif %}
+{% if event.rid %}<code class="rid">{{ event.rid|first5 }}</code> {% endif %}
 {% if event.scheme == "email" %}{{ event.ua }}{% else %}
 {{ event.scheme|upper }} {{ event.method }} {% if event.remote_addr %} from {{ event.remote_addr }}{% endif %}
 <code>{% if event.ua %} - {{ event.ua|truncatechars:80 }}{% endif %} {% if describe_body %}{% if event.body or event.body_raw %} -  {{ event.get_body|truncatechars:150 }} {% elif event.object_size %} - {{ event.object_size }} byte body{% endif %}{% endif %}</code>

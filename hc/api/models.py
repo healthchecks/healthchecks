@@ -141,6 +141,7 @@ class Check(models.Model):
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
     last_start = models.DateTimeField(null=True, blank=True)
+    last_start_rid = models.UUIDField(null=True)
     last_duration = models.DurationField(null=True, blank=True)
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
@@ -344,7 +345,7 @@ class Check(models.Model):
         ua: str,
         body: bytes,
         action: str,
-        rid: str | None,
+        rid: uuid.UUID | None,
         exitstatus: int | None = None,
     ) -> None:
         frozen_now = now()
@@ -354,6 +355,7 @@ class Check(models.Model):
 
         if action == "start":
             self.last_start = frozen_now
+            self.last_start_rid = rid
             # Don't update "last_ping" field.
         elif action == "ign":
             pass
@@ -361,11 +363,17 @@ class Check(models.Model):
             pass
         else:
             self.last_ping = frozen_now
+            self.last_duration = None
             if self.last_start:
-                self.last_duration = self.last_ping - self.last_start
-                self.last_start = None
-            else:
-                self.last_duration = None
+                if self.last_start_rid == rid:
+                    # rid matches: calculate last_duration, clear last_start
+                    self.last_duration = self.last_ping - self.last_start
+                    self.last_start = None
+                elif action == "fail" or rid is None:
+                    # clear last_start (exit the "running" state) on:
+                    # - "success" event with no rid
+                    # - "fail" event, regardless of rid mismatch
+                    self.last_start = None
 
             new_status = "down" if action == "fail" else "up"
             if self.status != new_status:

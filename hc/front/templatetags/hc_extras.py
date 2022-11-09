@@ -237,3 +237,8 @@ def mask_key(key):
 @register.filter
 def underline(s):
     return "=" * len(str(s))
+
+
+@register.filter
+def first5(rid):
+    return str(rid)[:5]
