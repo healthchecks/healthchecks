@@ -20,11 +20,11 @@
     padding-left: 20px;
 }
 
-#log tr.ok td:nth-child(5) code.rid {
-    background: #eee;
-    color: #555;
+#log .label.rid {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    margin-right: 8px;
 }
-
 
 @media (max-width: 767px) {
     #log .duration {

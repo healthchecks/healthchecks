@@ -163,14 +163,12 @@
 .label-tag {
     background-color: var(--tag-bg);
     color: var(--tag-color);
-    font-style: normal;
     font-weight: 500;
 }
 
 .label-confirmation {
     background-color: #22bc66;
     color: #fff;
-    font-style: normal;
     font-weight: 500;
 }
 
