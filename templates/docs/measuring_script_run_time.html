@@ -42,3 +42,48 @@ not displayed.</p>
 <p><img alt="List of checks with durations" src="IMG_URL/checks_durations.png" /></p>
 <p>You can also see durations of the previous runs when viewing an individual check:</p>
 <p><img alt="Log of received pings with durations" src="IMG_URL/details_durations.png" /></p>
+<h2>Specifying Run IDs</h2>
+<p>Wen several instances of the same job can run concurrenlty, the calculated run times
+can come out wrong, as SITE_NAME cannot reliably determine which success event
+corresponds to which start event. To work around this problem, the client can
+optionally specify a run ID in the <code>rid</code> query parameter of any ping URL. When a
+success event specifies the <code>rid</code> parameter, SITE_NAME will look for a
+start event with a matching <code>rid</code> value when calculating the execution time.</p>
+<p>The run IDs must be in a specific format: they must be UUID values in the canonical
+textual representation (example: <code>728b3763-ea80-4113-9fc0-f49b3adf226a</code>, note no
+curly braces, and no uppercase characters).</p>
+<p>The client is free to pick run ID values randomly or use a deterministic process
+to generate them. The only thing that matters is that the start and the success
+pings of a single job execution use the same run ID value.</p>
+<p>Below is an example shell script which generates the run ID using <code>uuidgen</code> and
+makes HTTP requests using curl:</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+
+<span class="nv">RID</span><span class="o">=</span><span class="sb">`</span>uuidgen<span class="sb">`</span>
+
+<span class="c1"># send a start ping, specify rid parameter:</span>
+curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL/start?rid<span class="o">=</span><span class="nv">$RID</span>
+
+<span class="c1"># ... FIXME: run the job here ...</span>
+
+<span class="c1"># send the success ping, use same rid parameter:</span>
+curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL?rid<span class="o">=</span><span class="nv">$RID</span>
+</code></pre></div>
+
+<p>If client specifies run IDs, SITE_NAME will display them in the "Events"
+section in a shortened form:</p>
+<p><img alt="Log of received pings with run IDs and durations" src="IMG_URL/run_ids.png" /></p>
+<p>Also note how the execution times are available for both "success" events. If the
+run IDs were not used in this example, the event #4 would not show an execution time
+since it is not preceded by a "start" event.</p>
+<h2>Alerting Logic When Using Run IDs</h2>
+<p>If a job sends a "start" signal, but then does not send a "success"
+signal within its configured grace time, SITE_NAME will assume the job
+has failed and notify you. However, when using Run IDs, there is an important
+caveat: SITE_NAME <strong>will not monitor the execution times of all
+concurrent job runs</strong>, it will only monitor the execution time of the
+most recently started run.</p>
+<p>To illustrate, let's assume the grace time of 1 minute, and look at the above example
+again. The event #4 ran for 6 minutes 39 seconds and so overshot the time budget
+of 1 minute. But SITE_NAME generated no alerts because <strong>the most recently started
+run completed within the time limit</strong> (it took 37 seconds, which is less than 1 minute).</p>

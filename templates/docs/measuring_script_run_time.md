@@ -54,3 +54,63 @@ not displayed.
 You can also see durations of the previous runs when viewing an individual check:
 
 ![Log of received pings with durations](IMG_URL/details_durations.png)
+
+## Specifying Run IDs
+
+Wen several instances of the same job can run concurrenlty, the calculated run times
+can come out wrong, as SITE_NAME cannot reliably determine which success event
+corresponds to which start event. To work around this problem, the client can
+optionally specify a run ID in the `rid` query parameter of any ping URL. When a
+success event specifies the `rid` parameter, SITE_NAME will look for a
+start event with a matching `rid` value when calculating the execution time.
+
+The run IDs must be in a specific format: they must be UUID values in the canonical
+textual representation (example: `728b3763-ea80-4113-9fc0-f49b3adf226a`, note no
+curly braces, and no uppercase characters).
+
+The client is free to pick run ID values randomly or use a deterministic process
+to generate them. The only thing that matters is that the start and the success
+pings of a single job execution use the same run ID value.
+
+Below is an example shell script which generates the run ID using `uuidgen` and
+makes HTTP requests using curl:
+
+```bash
+#!/bin/sh
+
+RID=`uuidgen`
+
+# send a start ping, specify rid parameter:
+curl -fsS -m 10 --retry 5 PING_URL/start?rid=$RID
+
+# ... FIXME: run the job here ...
+
+# send the success ping, use same rid parameter:
+curl -fsS -m 10 --retry 5 PING_URL?rid=$RID
+```
+
+If client specifies run IDs, SITE_NAME will display them in the "Events"
+section in a shortened form:
+
+![Log of received pings with run IDs and durations](IMG_URL/run_ids.png)
+
+Also note how the execution times are available for both "success" events. If the
+run IDs were not used in this example, the event #4 would not show an execution time
+since it is not preceded by a "start" event.
+
+## Alerting Logic When Using Run IDs
+
+If a job sends a "start" signal, but then does not send a "success"
+signal within its configured grace time, SITE_NAME will assume the job
+has failed and notify you. However, when using Run IDs, there is an important
+caveat: SITE_NAME **will not monitor the execution times of all
+concurrent job runs**, it will only monitor the execution time of the
+most recently started run.
+
+To illustrate, let's assume the grace time of 1 minute, and look at the above example
+again. The event #4 ran for 6 minutes 39 seconds and so overshot the time budget
+of 1 minute. But SITE_NAME generated no alerts because **the most recently started
+run completed within the time limit** (it took 37 seconds, which is less than 1 minute).
+
+
+
