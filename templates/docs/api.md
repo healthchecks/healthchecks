@@ -65,7 +65,7 @@ The response may contain a JSON document with additional data.
 Returns a list of checks belonging to the user, optionally filtered by
 one or more tags.
 
-### Query String Parameters
+### Query Parameters
 
 tag=&lt;value&gt;
 :   Filters the checks and returns only the checks that are tagged with the
@@ -1102,6 +1102,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "remote_addr": "192.0.2.0",
       "method": "GET",
       "ua": "curl/7.68.0",
+      "rid": "123e4567-e89b-12d3-a456-426614174000",
       "duration": 2.896736
     },
     {
@@ -1111,7 +1112,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "scheme": "http",
       "remote_addr": "192.0.2.0",
       "method": "GET",
-      "ua": "curl/7.68.0"
+      "ua": "curl/7.68.0",
+      "rid": "123e4567-e89b-12d3-a456-426614174000"
     },
     {
       "type": "success",
@@ -1121,6 +1123,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "remote_addr": "192.0.2.0",
       "method": "GET",
       "ua": "curl/7.68.0",
+      "rid": null,
       "duration": 2.997976
     },
     {
@@ -1130,7 +1133,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "scheme": "http",
       "remote_addr": "192.0.2.0",
       "method": "GET",
-      "ua": "curl/7.68.0"
+      "ua": "curl/7.68.0",
+      "rid": null
     }
   ]
 }
@@ -1145,7 +1149,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
 Returns a list of "flips" this check has experienced. A flip is a change of status
 (from "down" to "up," or from "up" to "down").
 
-### Query String Parameters
+### Query Parameters
 
 seconds=&lt;value&gt;
 :   Returns the flips from the last `value` seconds

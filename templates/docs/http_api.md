@@ -82,6 +82,16 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
+
 ### Response Codes
 
 200 OK
@@ -131,6 +141,16 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding completion ping for this ping,
+    and calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
+
 ### Response Codes
 
 200 OK
@@ -176,6 +196,16 @@ bytes from the request body SITE_NAME will store per request. For example, if n=
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
+
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
 
 ### Response Codes
 
@@ -223,6 +253,14 @@ bytes from the request body SITE_NAME will store per request. For example, if n=
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
+
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. The value must be a client-picked
+    UUID in the canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
 
 ### Response Codes
 
@@ -275,6 +313,16 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
+
 ### Response Codes
 
 200 OK
@@ -324,6 +372,16 @@ bytes from the request body SITE_NAME will store per request. For example, if n=
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
+
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
 
 ### Response Codes
 
@@ -378,6 +436,16 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding completion ping for this ping,
+    and calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
+
 ### Response Codes
 
 200 OK
@@ -427,6 +495,16 @@ bytes from the request body SITE_NAME will store per request. For example, if n=
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
+
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
 
 ### Response Codes
 
@@ -478,6 +556,14 @@ bytes from the request body SITE_NAME will store per request. For example, if n=
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
+
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. The value must be a client-picked UUID
+    in the canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
 
 ### Response Codes
 
@@ -533,6 +619,16 @@ bytes from the request body SITE_NAME will store per request. For example, if n=
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
 100 bytes, and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
+
+### Query Parameters
+
+rid=&lt;uuid&gt;
+:   Optional, specifies a run ID of this ping. If run ID is specified,
+    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    calculate an accurate duration. The value must be a client-picked UUID in the
+    canonical textual representation.
+
+    Example: `rid=123e4567-e89b-12d3-a456-426614174000`.
 
 ### Response Codes
 

@@ -93,7 +93,7 @@ and 5xx indicates a server error.</p>
 <p><code>GET SITE_ROOT/api/v1/checks/</code></p>
 <p>Returns a list of checks belonging to the user, optionally filtered by
 one or more tags.</p>
-<h3>Query String Parameters</h3>
+<h3>Query Parameters</h3>
 <dl>
 <dt>tag=&lt;value&gt;</dt>
 <dd>
@@ -944,6 +944,7 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;123e4567-e89b-12d3-a456-426614174000&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.896736</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
@@ -953,7 +954,8 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;scheme&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;123e4567-e89b-12d3-a456-426614174000&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
@@ -963,6 +965,7 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.997976</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
@@ -972,7 +975,8 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;scheme&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="w">  </span><span class="p">]</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
@@ -983,7 +987,7 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></p>
 <p>Returns a list of "flips" this check has experienced. A flip is a change of status
 (from "down" to "up," or from "up" to "down").</p>
-<h3>Query String Parameters</h3>
+<h3>Query Parameters</h3>
 <dl>
 <dt>seconds=&lt;value&gt;</dt>
 <dd>
