@@ -396,21 +396,32 @@ def pings(request, code):
 
     # Query in descending order so we're sure to get the most recent
     # pings, regardless of the limit restriction
-    pings = Ping.objects.filter(owner=check).order_by("-id")[:limit]
+    pings = list(Ping.objects.filter(owner=check).order_by("-id")[:limit])
 
-    # Ascending order is more convenient for calculating duration, so use reverse()
-    prev, dicts = None, []
+    starts, num_misses = {}, 0
     for ping in reversed(pings):
-        d = ping.to_dict()
-        if ping.kind != "start" and prev and prev.kind == "start":
-            duration = ping.created - prev.created
-            if duration < MAX_DURATION:
-                d["duration"] = duration.total_seconds()
+        if ping.kind == "start":
+            starts[ping.rid] = ping.created
+        elif ping.kind in (None, "", "fail"):
+            if ping.rid not in starts:
+                # We haven't seen a start, success or fail event for this rid.
+                # Will need to fall back to Ping.duration().
+                num_misses += 1
+            else:
+                ping.duration = None
+                if starts[ping.rid]:
+                    if ping.created - starts[ping.rid] < MAX_DURATION:
+                        ping.duration = ping.created - starts[ping.rid]
 
-        dicts.insert(0, d)
-        prev = ping
+            starts[ping.rid] = None
 
-    return JsonResponse({"pings": dicts})
+    # If we will need to fall back to Ping.duration() more than 10 times
+    # then disable duration display altogether:
+    if num_misses > 10:
+        for ping in pings:
+            ping.duration = None
+
+    return JsonResponse({"pings": [p.to_dict() for p in pings]})
 
 
 def flips(request, check):

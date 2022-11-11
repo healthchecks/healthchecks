@@ -519,7 +519,7 @@ class Ping(models.Model):
     rid = models.UUIDField(null=True)
 
     def to_dict(self) -> dict:
-        return {
+        result = {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
             "n": self.n,
@@ -529,6 +529,12 @@ class Ping(models.Model):
             "ua": self.ua,
             "rid": self.rid,
         }
+
+        duration = self.duration
+        if duration is not None:
+            result["duration"] = duration.total_seconds()
+
+        return result
 
     def has_body(self) -> bool:
         if self.body or self.body_raw or self.object_size:
