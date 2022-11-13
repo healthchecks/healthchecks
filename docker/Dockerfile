@@ -20,7 +20,11 @@ COPY --from=builder /wheels /wheels
 
 RUN \
     apt update && \
-    apt install -y libcurl4 libpq5 libmariadb3 && \
+    apt install -y libcurl4 libpq5 libmariadb3 curl && \
+    curl -sL -o /etc/apt/trusted.gpg.d/morph027-signal-cli.asc https://packaging.gitlab.io/signal-cli/gpg.key && \
+    echo "deb https://packaging.gitlab.io/signal-cli signalcli main" | tee /etc/apt/sources.list.d/morph027-signal-cli.list && \
+    apt update && \
+    apt install -y signal-cli-native morph027-keyring && \
     rm -rf /var/apt/cache
 
 RUN \
