@@ -66,8 +66,8 @@
             {"title": "Total Pings",
              "value": "{{ check.n_pings }}",
              "short": true
-            },
-            {% if body %}
+            }{% if body %},
+            
             {"title": "Details",
             "value": "{{ body|escapejs }}"
             }
