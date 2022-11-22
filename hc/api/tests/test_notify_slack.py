@@ -49,6 +49,7 @@ class NotifySlackTestCase(BaseTestCase):
         attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
+        self.assertNotIn("Last Ping Body", fields)
 
         # The payload should not contain check's code
         serialized = json.dumps(payload)
@@ -178,3 +179,37 @@ class NotifySlackTestCase(BaseTestCase):
         attachment = kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Ignored, an hour ago")
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_last_ping_body(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Last Ping Body"], "```Hello World```")
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_truncated_last_ping_body(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World" * 1000
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertIn("[truncated]", fields["Last Ping Body"])
