@@ -213,3 +213,20 @@ class NotifySlackTestCase(BaseTestCase):
         attachment = kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertIn("[truncated]", fields["Last Ping Body"])
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.curl.request")
+    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello ``` World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertNotIn("Last Ping Body", fields)

@@ -348,6 +348,12 @@ class Slack(HttpTransport):
             raise TransportError("Slack notifications are not enabled.")
         ping = self.last_ping(check)
         body = get_ping_body(ping)
+        if body:
+            if len(body) > 1000:
+                body = body[:1000] + "\n[truncated]"
+            if "```" in body:
+                body = None
+
         text = tmpl("slack_message.json", check=check, ping=ping, body=body)
         payload = json.loads(text)
         self.post(self.channel.slack_webhook_url, json=payload)

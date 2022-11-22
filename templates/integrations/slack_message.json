@@ -78,7 +78,7 @@
             {% if body %},
             {
                 "title": "Last Ping Body",
-                "value": "```{{ body|slice:":1000"|escapejs }}{% if body|length > 1000 %}\n[truncated]{% endif %}```"
+                "value": "```{{ body|escapejs }}```"
             }
             {% endif %}
         ]
