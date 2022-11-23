@@ -1068,6 +1068,17 @@ This endpoint returns pings in reverse order (most recent first), and the total
 number of returned pings depends on the account's billing plan: 100 for free accounts,
 1000 for paid accounts.
 
+### Query Parameters
+
+with_body=value
+:   If set to true, returns each ping's body (if present).
+
+    This parameter is optional and defaults to false.
+
+    Example:
+
+    `SITE_ROOT/api/v1/checks/<uuid>/pings/?with_body=true`
+
 ### Response Codes
 
 200 OK
