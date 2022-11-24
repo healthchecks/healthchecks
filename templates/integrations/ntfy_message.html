@@ -1,0 +1,21 @@
+{% load humanize linemode %}{% linemode %}
+{% if check.status == "down" %}
+    {% line %}The last ping was {{ check.last_ping|naturaltime }}.{% endline %}
+{% endif %}
+
+{% if down_checks is not None %}
+    {% line %}{% endline %}
+    {% if down_checks %}
+        {% if down_checks|length > 10 %}
+            {% line %}{{ down_checks|length }} other checks are {% if check.status == "down" %}also{% else %}still{% endif %} down.{% endline %}
+        {% else %}
+            {% line %}The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:{% endline %}
+            {% for c in down_checks %}
+                {% line %}- {{ c.name_then_code|safe }} (last ping: {{ c.last_ping|naturaltime }}){% endline %}
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        {% line %}All the other checks are up.{% endline %}
+    {% endif %}
+{% endif %}
+{% endlinemode %}

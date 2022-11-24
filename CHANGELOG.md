@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Update Mattermost setup instructions
 - Add support for specifying a run ID via a "rid" query parameter (#722)
 - Add last ping body in Slack notifications (#735)
+- Add ntfy integration (#728)
 
 ### Bug Fixes
 - Fix the most recent ping lookup in the "Ping Details" dialog

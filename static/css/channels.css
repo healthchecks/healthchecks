@@ -240,3 +240,7 @@ body.dark .icon.mattermost,
 body.dark .icon.matrix {
     filter: invert();
 }
+
+img.kind-ntfy {
+    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+}

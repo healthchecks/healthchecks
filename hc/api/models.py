@@ -53,6 +53,7 @@ CHANNEL_KINDS = (
     ("matrix", "Matrix"),
     ("mattermost", "Mattermost"),
     ("msteams", "Microsoft Teams"),
+    ("ntfy", "ntfy"),
     ("opsgenie", "Opsgenie"),
     ("pagerteam", "Pager Team"),
     ("pagertree", "PagerTree"),
@@ -80,6 +81,15 @@ PO_PRIORITIES = {
     0: "normal",
     1: "high",
     2: "emergency",
+}
+
+NTFY_PRIORITIES = {
+    5: "max",
+    4: "high",
+    3: "default",
+    2: "low",
+    1: "min",
+    0: "disabled",
 }
 
 
@@ -611,7 +621,7 @@ class Channel(models.Model):
         return {"id": str(self.code), "name": self.name, "kind": self.kind}
 
     def is_editable(self):
-        return self.kind in ("email", "webhook", "sms", "signal", "whatsapp")
+        return self.kind in ("email", "webhook", "sms", "signal", "whatsapp", "ntfy")
 
     def assign_all_checks(self):
         checks = Check.objects.filter(project=self.project)
@@ -672,6 +682,8 @@ class Channel(models.Model):
             return transports.Mattermost(self)
         elif self.kind == "msteams":
             return transports.MsTeams(self)
+        elif self.kind == "ntfy":
+            return transports.Ntfy(self)
         elif self.kind == "opsgenie":
             return transports.Opsgenie(self)
         elif self.kind == "pagertree":
@@ -1023,6 +1035,34 @@ class Channel(models.Model):
         assert self.kind == "gotify"
         doc = json.loads(self.value)
         return doc["token"]
+
+    @property
+    def ntfy_topic(self):
+        assert self.kind == "ntfy"
+        doc = json.loads(self.value)
+        return doc["topic"]
+
+    @property
+    def ntfy_url(self):
+        assert self.kind == "ntfy"
+        doc = json.loads(self.value)
+        return doc["url"]
+
+    @property
+    def ntfy_priority(self):
+        assert self.kind == "ntfy"
+        doc = json.loads(self.value)
+        return doc["priority"]
+
+    @property
+    def ntfy_priority_up(self):
+        assert self.kind == "ntfy"
+        doc = json.loads(self.value)
+        return doc["priority_up"]
+
+    @property
+    def ntfy_priority_display(self):
+        return NTFY_PRIORITIES[self.ntfy_priority]
 
 
 class Notification(models.Model):

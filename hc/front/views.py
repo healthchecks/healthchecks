@@ -1210,6 +1210,8 @@ def edit_channel(request: HttpRequest, code: UUID) -> HttpResponse:
         return signal_form(request, channel=channel)
     if channel.kind == "whatsapp":
         return whatsapp_form(request, channel=channel)
+    if channel.kind == "ntfy":
+        return ntfy_form(request, channel=channel)
 
     return HttpResponseBadRequest()
 
@@ -2302,6 +2304,43 @@ def add_gotify(request, code):
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_gotify.html", ctx)
+
+
+@login_required
+def ntfy_form(request, channel=None, code=None):
+    is_new = channel is None
+    if is_new:
+        project = _get_rw_project_for_user(request, code)
+        channel = Channel(project=project, kind="ntfy")
+
+    if request.method == "POST":
+        form = forms.NtfyForm(request.POST)
+        if form.is_valid():
+            channel.value = form.get_value()
+            channel.save()
+
+            if is_new:
+                channel.assign_all_checks()
+            return redirect("hc-channels", channel.project.code)
+    elif is_new:
+        form = forms.NtfyForm()
+    else:
+        form = forms.NtfyForm(
+            {
+                "topic": channel.ntfy_topic,
+                "url": channel.ntfy_url,
+                "priority": channel.ntfy_priority,
+            }
+        )
+
+    ctx = {
+        "page": "channels",
+        "project": channel.project,
+        "form": form,
+        "profile": channel.project.owner_profile,
+        "is_new": is_new,
+    }
+    return render(request, "integrations/ntfy_form.html", ctx)
 
 
 @require_setting("SIGNAL_CLI_SOCKET")

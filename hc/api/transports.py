@@ -1000,3 +1000,33 @@ class Gotify(HttpTransport):
         }
 
         self.post(url, json=payload)
+
+
+class Ntfy(HttpTransport):
+    def priority(self, check):
+        if check.status == "up":
+            return self.channel.ntfy_priority_up
+
+        return self.channel.ntfy_priority
+
+    def is_noop(self, check) -> bool:
+        return self.priority(check) == 0
+
+    def notify(self, check, notification=None) -> None:
+        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        payload = {
+            "topic": self.channel.ntfy_topic,
+            "priority": self.priority(check),
+            "title": tmpl("ntfy_title.html", **ctx),
+            "message": tmpl("ntfy_message.html", **ctx),
+            "tags": ["red_circle" if check.status == "down" else "green_circle"],
+            "actions": [
+                {
+                    "action": "view",
+                    "label": f"View on {settings.SITE_NAME}",
+                    "url": check.cloaked_url(),
+                }
+            ],
+        }
+
+        self.post(self.channel.ntfy_url, json=payload)

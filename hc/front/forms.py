@@ -341,6 +341,17 @@ class AddGotifyForm(forms.Form):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
 
 
+class NtfyForm(forms.Form):
+    error_css_class = "has-error"
+    topic = forms.CharField(max_length=50)
+    url = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+    priority = forms.IntegerField(initial=3, min_value=0, max_value=5)
+    priority_up = forms.IntegerField(initial=3, min_value=0, max_value=5)
+
+    def get_value(self):
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
 class SearchForm(forms.Form):
     q = forms.RegexField(regex=r"^[0-9a-zA-Z\s]{3,100}$")
 
