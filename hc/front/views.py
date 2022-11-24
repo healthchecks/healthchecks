@@ -2330,6 +2330,7 @@ def ntfy_form(request, channel=None, code=None):
                 "topic": channel.ntfy_topic,
                 "url": channel.ntfy_url,
                 "priority": channel.ntfy_priority,
+                "priority_up": channel.ntfy_priority_up,
             }
         )
 
@@ -2338,7 +2339,6 @@ def ntfy_form(request, channel=None, code=None):
         "project": channel.project,
         "form": form,
         "profile": channel.project.owner_profile,
-        "is_new": is_new,
     }
     return render(request, "integrations/ntfy_form.html", ctx)
 
