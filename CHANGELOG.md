@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Add support for specifying a run ID via a "rid" query parameter (#722)
 - Add last ping body in Slack notifications (#735)
 - Add ntfy integration (#728)
+- Add ".txt" suffix to the filename when downloading ping body (#738)
 
 ### Bug Fixes
 - Fix the most recent ping lookup in the "Ping Details" dialog

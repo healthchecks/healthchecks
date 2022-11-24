@@ -638,7 +638,7 @@ def ping_body(request, code, n):
 
     response = HttpResponse(body, content_type="application/octet-stream")
     filename = "%s-%s" % (check.code, ping.n)
-    response["Content-Disposition"] = 'attachment; filename="%s"' % filename
+    response["Content-Disposition"] = f'attachment; filename="{filename}.txt"'
     return response
 
 
