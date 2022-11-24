@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import parse_qs, urlparse
+
 from django.test.utils import override_settings
 
 from hc.api.models import Channel
@@ -27,9 +29,17 @@ class AddPushoverTestCase(BaseTestCase):
 
     def test_post_redirects(self):
         self.client.login(username="alice@example.org", password="password")
-        payload = {"po_priority": 2}
-        r = self.client.post(self.url, form=payload)
+        payload = {"po_priority": 2, "po_priority_up": 0}
+        r = self.client.post(self.url, payload)
         self.assertEqual(r.status_code, 302)
+
+        target = r.headers["Location"]
+        params = parse_qs(urlparse(target).query)
+
+        success_url = params["success"][0]
+        sparams = parse_qs(urlparse(success_url).query)
+        self.assertEqual(sparams["prio"][0], "2")
+        self.assertEqual(sparams["prio_up"][0], "0")
 
     def test_it_requires_authenticated_user(self):
         r = self.client.get(self.url)
