@@ -917,16 +917,6 @@ check that was just deleted.</p>
 <p>This endpoint returns pings in reverse order (most recent first), and the total
 number of returned pings depends on the account's billing plan: 100 for free accounts,
 1000 for paid accounts.</p>
-<h3>Query Parameters</h3>
-<dl>
-<dt>with_body=value</dt>
-<dd>
-<p>If set to true, returns each ping's body (if present).</p>
-<p>This parameter is optional and defaults to false.</p>
-<p>Example:</p>
-<p><code>SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/?with_body=true</code></p>
-</dd>
-</dl>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>

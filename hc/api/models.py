@@ -518,7 +518,7 @@ class Ping(models.Model):
     exitstatus = models.SmallIntegerField(null=True)
     rid = models.UUIDField(null=True)
 
-    def to_dict(self, with_body=False) -> dict:
+    def to_dict(self) -> dict:
         result = {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
@@ -533,9 +533,6 @@ class Ping(models.Model):
         duration = self.duration
         if duration is not None:
             result["duration"] = duration.total_seconds()
-
-        if with_body and self.has_body():
-            result["body"] = self.get_body()
 
         return result
 

@@ -421,8 +421,7 @@ def pings(request, code):
         for ping in pings:
             ping.duration = None
 
-    with_body = True if request.GET.get("with_body", "") == "true" else False
-    return JsonResponse({"pings": [p.to_dict(with_body) for p in pings]})
+    return JsonResponse({"pings": [p.to_dict() for p in pings]})
 
 
 def flips(request, check):
