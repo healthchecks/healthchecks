@@ -542,14 +542,8 @@ class Ping(models.Model):
 
     def to_dict(self) -> PingDict:
         if self.has_body():
-            body_url = (
-                settings.SITE_ROOT
-                + "/api/v1/checks/"
-                + str(self.owner.code)
-                + "/pings/"
-                + str(self.n)
-                + "/body/"
-            )
+            args = [self.owner.code, self.n]
+            body_url = settings.SITE_ROOT + reverse("hc-api-ping-body", args=args)
         else:
             body_url = None
         
