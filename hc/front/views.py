@@ -18,6 +18,7 @@ from cronsim import CronSim, CronSimError
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F
@@ -1140,15 +1141,11 @@ def remove_channel(request: HttpRequest, code: UUID) -> HttpResponse:
     return redirect("hc-channels", project.code)
 
 
-@login_required
-def email_form(request, channel=None, code=None):
-    """Add email integration or edit an existing email integration."""
+def email_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    # Convince mypy we have User instead of AnonymousUser:
+    assert isinstance(request.user, User)
 
-    is_new = channel is None
-    if is_new:
-        project = _get_rw_project_for_user(request, code)
-        channel = Channel(project=project, kind="email")
-
+    adding = channel._state.adding
     if request.method == "POST":
         form = forms.EmailForm(request.POST)
         if form.is_valid():
@@ -1169,14 +1166,14 @@ def email_form(request, channel=None, code=None):
             channel.value = form.get_value()
             channel.save()
 
-            if is_new:
+            if adding:
                 channel.assign_all_checks()
 
             if not channel.email_verified:
                 channel.send_verify_link()
 
             return redirect("hc-channels", channel.project.code)
-    elif is_new:
+    elif adding:
         form = forms.EmailForm()
     else:
         form = forms.EmailForm(
@@ -1192,38 +1189,40 @@ def email_form(request, channel=None, code=None):
         "project": channel.project,
         "use_verification": settings.EMAIL_USE_VERIFICATION,
         "form": form,
-        "is_new": is_new,
+        "is_new": adding,
     }
     return render(request, "integrations/email_form.html", ctx)
+
+
+@login_required
+def add_email(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="email")
+    return email_form(request, channel)
 
 
 @login_required
 def edit_channel(request: HttpRequest, code: UUID) -> HttpResponse:
     channel = _get_rw_channel_for_user(request, code)
     if channel.kind == "email":
-        return email_form(request, channel=channel)
+        return email_form(request, channel)
     if channel.kind == "webhook":
-        return webhook_form(request, channel=channel)
+        return webhook_form(request, channel)
     if channel.kind == "sms":
-        return sms_form(request, channel=channel)
+        return sms_form(request, channel)
     if channel.kind == "signal":
-        return signal_form(request, channel=channel)
+        return signal_form(request, channel)
     if channel.kind == "whatsapp":
-        return whatsapp_form(request, channel=channel)
+        return whatsapp_form(request, channel)
     if channel.kind == "ntfy":
-        return ntfy_form(request, channel=channel)
+        return ntfy_form(request, channel)
 
     return HttpResponseBadRequest()
 
 
 @require_setting("WEBHOOKS_ENABLED")
-@login_required
-def webhook_form(request, channel=None, code=None):
-    is_new = channel is None
-    if is_new:
-        project = _get_rw_project_for_user(request, code)
-        channel = Channel(project=project, kind="webhook")
-
+def webhook_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
     if request.method == "POST":
         form = forms.WebhookForm(request.POST)
         if form.is_valid():
@@ -1231,12 +1230,11 @@ def webhook_form(request, channel=None, code=None):
             channel.value = form.get_value()
             channel.save()
 
-            if is_new:
+            if adding:
                 channel.assign_all_checks()
 
             return redirect("hc-channels", channel.project.code)
-
-    elif is_new:
+    elif adding:
         form = forms.WebhookForm()
     else:
 
@@ -1253,9 +1251,17 @@ def webhook_form(request, channel=None, code=None):
         "page": "channels",
         "project": channel.project,
         "form": form,
-        "is_new": is_new,
+        "is_new": adding,
     }
     return render(request, "integrations/webhook_form.html", ctx)
+
+
+@require_setting("WEBHOOKS_ENABLED")
+@login_required
+def add_webhook(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="webhook")
+    return webhook_form(request, channel)
 
 
 @require_setting("SHELL_ENABLED")
@@ -1844,13 +1850,8 @@ def add_telegram(request):
 
 
 @require_setting("TWILIO_AUTH")
-@login_required
-def sms_form(request, channel=None, code=None):
-    is_new = channel is None
-    if is_new:
-        project = _get_rw_project_for_user(request, code)
-        channel = Channel(project=project, kind="sms")
-
+def sms_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
     if request.method == "POST":
         form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
@@ -1858,10 +1859,10 @@ def sms_form(request, channel=None, code=None):
             channel.value = form.get_json()
             channel.save()
 
-            if is_new:
+            if adding:
                 channel.assign_all_checks()
             return redirect("hc-channels", channel.project.code)
-    elif is_new:
+    elif adding:
         form = forms.PhoneUpDownForm(initial={"up": False})
     else:
         form = forms.PhoneUpDownForm(
@@ -1878,9 +1879,17 @@ def sms_form(request, channel=None, code=None):
         "project": channel.project,
         "form": form,
         "profile": channel.project.owner_profile,
-        "is_new": is_new,
+        "is_new": adding,
     }
     return render(request, "integrations/sms_form.html", ctx)
+
+
+@require_setting("TWILIO_AUTH")
+@login_required
+def add_sms(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="sms")
+    return sms_form(request, channel)
 
 
 @require_setting("TWILIO_AUTH")
@@ -1910,13 +1919,8 @@ def add_call(request, code):
 
 
 @require_setting("TWILIO_USE_WHATSAPP")
-@login_required
-def whatsapp_form(request, channel=None, code=None):
-    is_new = channel is None
-    if is_new:
-        project = _get_rw_project_for_user(request, code)
-        channel = Channel(project=project, kind="whatsapp")
-
+def whatsapp_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
     if request.method == "POST":
         form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
@@ -1924,10 +1928,10 @@ def whatsapp_form(request, channel=None, code=None):
             channel.value = form.get_json()
             channel.save()
 
-            if is_new:
+            if adding:
                 channel.assign_all_checks()
             return redirect("hc-channels", channel.project.code)
-    elif is_new:
+    elif adding:
         form = forms.PhoneUpDownForm()
     else:
         form = forms.PhoneUpDownForm(
@@ -1944,19 +1948,22 @@ def whatsapp_form(request, channel=None, code=None):
         "project": channel.project,
         "form": form,
         "profile": channel.project.owner_profile,
-        "is_new": is_new,
+        "is_new": adding,
     }
     return render(request, "integrations/whatsapp_form.html", ctx)
 
 
-@require_setting("SIGNAL_CLI_SOCKET")
+@require_setting("TWILIO_USE_WHATSAPP")
 @login_required
-def signal_form(request, channel=None, code=None):
-    is_new = channel is None
-    if is_new:
-        project = _get_rw_project_for_user(request, code)
-        channel = Channel(project=project, kind="signal")
+def add_whatsapp(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="whatsapp")
+    return whatsapp_form(request, channel)
 
+
+@require_setting("SIGNAL_CLI_SOCKET")
+def signal_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
     if request.method == "POST":
         form = forms.PhoneUpDownForm(request.POST)
         if form.is_valid():
@@ -1964,10 +1971,10 @@ def signal_form(request, channel=None, code=None):
             channel.value = form.get_json()
             channel.save()
 
-            if is_new:
+            if adding:
                 channel.assign_all_checks()
             return redirect("hc-channels", channel.project.code)
-    elif is_new:
+    elif adding:
         form = forms.PhoneUpDownForm()
     else:
         form = forms.PhoneUpDownForm(
@@ -1983,9 +1990,17 @@ def signal_form(request, channel=None, code=None):
         "page": "channels",
         "project": channel.project,
         "form": form,
-        "is_new": is_new,
+        "is_new": adding,
     }
     return render(request, "integrations/signal_form.html", ctx)
+
+
+@require_setting("SIGNAL_CLI_SOCKET")
+@login_required
+def add_signal(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="signal")
+    return signal_form(request, channel)
 
 
 @require_setting("TRELLO_APP_KEY")
@@ -2306,7 +2321,6 @@ def add_gotify(request, code):
     return render(request, "integrations/add_gotify.html", ctx)
 
 
-@login_required
 def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     adding = channel._state.adding
     if request.method == "POST":
