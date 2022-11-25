@@ -512,6 +512,18 @@ class Check(models.Model):
         flip.save()
 
 
+class PingDict(TypedDict, total=False):
+    type: str
+    date: str
+    n: int | None
+    scheme: str
+    remote_addr: str | None
+    method: str
+    ua: str
+    rid: uuid.UUID | None
+    duration: float
+
+
 class Ping(models.Model):
     id = models.BigAutoField(primary_key=True)
     n = models.IntegerField(null=True)
@@ -528,8 +540,8 @@ class Ping(models.Model):
     exitstatus = models.SmallIntegerField(null=True)
     rid = models.UUIDField(null=True)
 
-    def to_dict(self) -> dict:
-        result = {
+    def to_dict(self) -> PingDict:
+        result: PingDict = {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
             "n": self.n,
