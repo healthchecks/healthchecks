@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load compress humanize static hc_extras %}
+
+{% block title %}ntfy Integration for {{ site_name }}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h1>ntfy</h1>
+        <div class="jumbotron">
+            <p>
+            <a href="https://ntfy.sh/">ntfy</a> is is a simple HTTP-based pub-sub
+            notification service. If you use or plan on using ntfy,
+            you can can integrate it with your {{ site_name }} account in few simple steps.
+            </p>
+        </div>
+
+        <h2>Integration Settings</h2>
+
+        <form method="post" class="form-horizontal">
+            {% csrf_token %}
+            <div class="form-group {{ form.topic.css_classes }}">
+                <label for="topic" class="col-sm-3 control-label">Topic</label>
+                <div class="col-sm-6">
+                    <input
+                        id="topic"
+                        name="topic"
+                        type="text"
+                        class="form-control"
+                        value="{{ form.topic.value|default:'' }}"
+                        required>
+                    {% if form.topic.errors %}
+                    <div class="help-block">{{ form.topic.errors|join:"" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group {{ form.url.css_classes }}">
+                <label for="url" class="col-sm-3 control-label">Server URL</label>
+                <div class="col-sm-6">
+                    <input
+                        id="url"
+                        name="url"
+                        type="text"
+                        class="form-control"
+                        placeholder="https://"
+                        value="{{ form.url.value|default:'https://ntfy.sh' }}"
+                        required>
+
+                    {% if form.url.errors %}
+                    <div class="help-block">{{ form.url.errors|join:"" }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Priority for "down" events</label>
+                <div class="col-sm-8">
+                    <select name="priority" class="selectpicker form-control">
+                        <option
+                            value="5"
+                            {% if form.priority.value == 5 %}selected="selected"{% endif %}
+                            data-content="Max priority. <span class='help'>Really long vibration bursts, default notification sound with a pop-over notification.</span>">
+                            Max priority
+                        </option>
+                        <option
+                            value="4"
+                            {% if form.priority.value == 4 %}selected="selected"{% endif %}
+                            data-content="High priority. <span class='help'>Long vibration burst, default notification sound with a pop-over notification.</span>">
+                            High priority
+                        </option>
+                        <option value="3"
+                            {% if form.priority.value == 3 %}selected="selected"{% endif %}
+                            data-content="Default priority. <span class='help'>Short default vibration and sound. Default notification behavior.</span>">
+                            Default priority
+                        </option>
+                        <option
+                            value="2"
+                            {% if form.priority.value == 2 %}selected="selected"{% endif %}
+                            data-content="Low priority. <span class='help'>No vibration or sound. Notification will not visibly show up until notification drawer is pulled down.</span>">
+                            Low priority
+                        </option>
+                        <option
+                            value="1"
+                            {% if form.priority.value == 1 %}selected="selected"{% endif %}
+                            data-content="Min priority. <span class='help'>No vibration or sound. The notification will be under the fold in 'Other notifications'.</span>">
+                            Min priority
+                        </option>
+                        <option
+                            value="0"
+                            {% if form.priority.value == 0 %}selected="selected"{% endif %}
+                            data-content="Disabled. <span class='help'>Will not notify about Down events.</span>">
+                            Disabled
+                        </option>
+                    </select>
+               </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Priority for "up" events</label>
+                <div class="col-sm-8">
+                    <select name="priority_up" class="selectpicker form-control">
+                        <option
+                            value="5"
+                            {% if form.priority_up.value == 5 %}selected="selected"{% endif %}
+                            data-content="Max priority. <span class='help'>Really long vibration bursts, default notification sound with a pop-over notification.</span>">
+                            Max priority
+                        </option>
+                        <option
+                            value="4"
+                            {% if form.priority_up.value == 4 %}selected="selected"{% endif %}
+                            data-content="High priority. <span class='help'>Long vibration burst, default notification sound with a pop-over notification.</span>">
+                            High priority
+                        </option>
+                        <option value="3"
+                            {% if form.priority_up.value == 3 %}selected="selected"{% endif %}
+                            data-content="Default priority. <span class='help'>Short default vibration and sound. Default notification behavior.</span>">
+                            Default priority
+                        </option>
+                        <option
+                            value="2"
+                            {% if form.priority_up.value == 2 %}selected="selected"{% endif %}
+                            data-content="Low priority. <span class='help'>No vibration or sound. Notification will not visibly show up until notification drawer is pulled down.</span>">
+                            Low priority
+                        </option>
+                        <option
+                            value="1"
+                            {% if form.priority_up.value == 1 %}selected="selected"{% endif %}
+                            data-content="Min priority. <span class='help'>No vibration or sound. The notification will be under the fold in 'Other notifications'.</span>">
+                            Min priority
+                        </option>
+                        <option
+                            value="0"
+                            {% if form.priority_up.value == 0 %}selected="selected"{% endif %}
+                            data-content="Disabled. <span class='help'>Will not notify about Up events.</span>">
+                            Disabled
+                        </option>
+                    </select>
+               </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-primary">Save Integration</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+{% endcompress %}
+{% endblock %}

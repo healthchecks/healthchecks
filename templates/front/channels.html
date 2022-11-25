@@ -28,7 +28,7 @@
         {% for ch in channels %}
         <tr class="channel-row kind-{{ ch.kind }}">
             <td class="icon-cell">
-                <img src="{% static ch.icon_path %}" alt="{{ ch.get_kind_display }}" />
+                <img src="{% static ch.icon_path %}" alt="{{ ch.get_kind_display }}" class="kind-{{ ch.kind }}" />
             </td>
             <td>
                 <div class="edit-name" data-toggle="modal" data-target="#name-{{ ch.code }}">
@@ -104,6 +104,9 @@
                             {% if ch.signal_notify_up and not ch.signal_notify_down %}
                                 (up only)
                             {% endif %}
+                        {% elif ch.kind == "ntfy" %}
+                            ntfy topic <span>{{ ch.ntfy_topic }}</span>,
+                            {{ ch.ntfy_priority_display }} priority
                         {% else %}
                             {{ ch.get_kind_display }}
                         {% endif %}
@@ -298,6 +301,15 @@
             <a href="{% url 'hc-add-msteams' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
         {% endif %}
+
+        <li>
+            <img src="{% static 'img/integrations/ntfy.png' %}"
+                class="icon kind-ntfy" alt="ntfy" />
+
+            <h2>ntfy</h2>
+            <p>Send push notifications to your phone or desktop via PUT/POST.</p>
+            <a href="{% url 'hc-add-ntfy' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
 
         {% if enable_opsgenie %}
         <li>

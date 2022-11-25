@@ -94,3 +94,11 @@ class GetPingsTestCase(BaseTestCase):
             doc = self.get().json()
             for d in doc["pings"]:
                 self.assertNotIn("duration", d)
+
+    def test_it_handles_rid(self):
+        self.ping.rid = uuid4()
+        self.ping.save()
+
+        doc = self.get().json()
+        ping = doc["pings"][0]
+        self.assertEqual(ping["rid"], str(self.ping.rid))

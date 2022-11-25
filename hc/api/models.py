@@ -53,6 +53,7 @@ CHANNEL_KINDS = (
     ("matrix", "Matrix"),
     ("mattermost", "Mattermost"),
     ("msteams", "Microsoft Teams"),
+    ("ntfy", "ntfy"),
     ("opsgenie", "Opsgenie"),
     ("pagerteam", "Pager Team"),
     ("pagertree", "PagerTree"),
@@ -80,6 +81,15 @@ PO_PRIORITIES = {
     0: "normal",
     1: "high",
     2: "emergency",
+}
+
+NTFY_PRIORITIES = {
+    5: "max",
+    4: "high",
+    3: "default",
+    2: "low",
+    1: "min",
+    0: "disabled",
 }
 
 
@@ -502,6 +512,18 @@ class Check(models.Model):
         flip.save()
 
 
+class PingDict(TypedDict, total=False):
+    type: str
+    date: str
+    n: int | None
+    scheme: str
+    remote_addr: str | None
+    method: str
+    ua: str
+    rid: uuid.UUID | None
+    duration: float
+
+
 class Ping(models.Model):
     id = models.BigAutoField(primary_key=True)
     n = models.IntegerField(null=True)
@@ -518,7 +540,7 @@ class Ping(models.Model):
     exitstatus = models.SmallIntegerField(null=True)
     rid = models.UUIDField(null=True)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> PingDict:
         if self.has_body():
             body_url = (
                 settings.SITE_ROOT
@@ -530,8 +552,8 @@ class Ping(models.Model):
             )
         else:
             body_url = None
-
-        result = {
+        
+        result: PingDict = {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
             "n": self.n,
@@ -588,6 +610,14 @@ class Ping(models.Model):
         return None
 
 
+def json_property(kind, field):
+    def fget(instance):
+        assert instance.kind == kind
+        return instance.json[field]
+
+    return property(fget)
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -624,7 +654,7 @@ class Channel(models.Model):
         return {"id": str(self.code), "name": self.name, "kind": self.kind}
 
     def is_editable(self):
-        return self.kind in ("email", "webhook", "sms", "signal", "whatsapp")
+        return self.kind in ("email", "webhook", "sms", "signal", "whatsapp", "ntfy")
 
     def assign_all_checks(self):
         checks = Check.objects.filter(project=self.project)
@@ -685,6 +715,8 @@ class Channel(models.Model):
             return transports.Mattermost(self)
         elif self.kind == "msteams":
             return transports.MsTeams(self)
+        elif self.kind == "ntfy":
+            return transports.Ntfy(self)
         elif self.kind == "opsgenie":
             return transports.Opsgenie(self)
         elif self.kind == "pagertree":
@@ -801,15 +833,8 @@ class Channel(models.Model):
     def url_up(self):
         return self.up_webhook_spec["url"]
 
-    @property
-    def cmd_down(self):
-        assert self.kind == "shell"
-        return self.json["cmd_down"]
-
-    @property
-    def cmd_up(self):
-        assert self.kind == "shell"
-        return self.json["cmd_up"]
+    cmd_down = json_property("shell", "cmd_down")
+    cmd_up = json_property("shell", "cmd_up")
 
     @property
     def slack_team(self):
@@ -897,21 +922,14 @@ class Channel(models.Model):
 
         return self.value
 
-    @property
-    def trello_token(self):
-        assert self.kind == "trello"
-        return self.json["token"]
+    trello_token = json_property("trello", "token")
+    trello_list_id = json_property("trello", "list_id")
 
     @property
     def trello_board_list(self):
         assert self.kind == "trello"
         doc = json.loads(self.value)
         return doc["board_name"], doc["list_name"]
-
-    @property
-    def trello_list_id(self):
-        assert self.kind == "trello"
-        return self.json["list_id"]
 
     @property
     def email_value(self):
@@ -937,25 +955,11 @@ class Channel(models.Model):
 
         return self.json.get("down")
 
-    @property
-    def whatsapp_notify_up(self):
-        assert self.kind == "whatsapp"
-        return self.json["up"]
+    whatsapp_notify_up = json_property("whatsapp", "up")
+    whatsapp_notify_down = json_property("whatsapp", "down")
 
-    @property
-    def whatsapp_notify_down(self):
-        assert self.kind == "whatsapp"
-        return self.json["down"]
-
-    @property
-    def signal_notify_up(self):
-        assert self.kind == "signal"
-        return self.json["up"]
-
-    @property
-    def signal_notify_down(self):
-        assert self.kind == "signal"
-        return self.json["down"]
+    signal_notify_up = json_property("signal", "up")
+    signal_notify_down = json_property("signal", "down")
 
     @property
     def sms_notify_up(self):
@@ -983,10 +987,10 @@ class Channel(models.Model):
 
         return self.json["region"]
 
-    @property
-    def zulip_bot_email(self):
-        assert self.kind == "zulip"
-        return self.json["bot_email"]
+    zulip_bot_email = json_property("zulip", "bot_email")
+    zulip_api_key = json_property("zulip", "api_key")
+    zulip_type = json_property("zulip", "mtype")
+    zulip_to = json_property("zulip", "to")
 
     @property
     def zulip_site(self):
@@ -1001,21 +1005,6 @@ class Channel(models.Model):
         return "https://" + domain
 
     @property
-    def zulip_api_key(self):
-        assert self.kind == "zulip"
-        return self.json["api_key"]
-
-    @property
-    def zulip_type(self):
-        assert self.kind == "zulip"
-        return self.json["mtype"]
-
-    @property
-    def zulip_to(self):
-        assert self.kind == "zulip"
-        return self.json["to"]
-
-    @property
     def zulip_topic(self):
         assert self.kind == "zulip"
         return self.json.get("topic", "")
@@ -1025,17 +1014,17 @@ class Channel(models.Model):
         assert self.kind == "linenotify"
         return self.value
 
-    @property
-    def gotify_url(self):
-        assert self.kind == "gotify"
-        doc = json.loads(self.value)
-        return doc["url"]
+    gotify_url = json_property("gotify", "url")
+    gotify_token = json_property("gotify", "token")
+
+    ntfy_topic = json_property("ntfy", "topic")
+    ntfy_url = json_property("ntfy", "url")
+    ntfy_priority = json_property("ntfy", "priority")
+    ntfy_priority_up = json_property("ntfy", "priority_up")
 
     @property
-    def gotify_token(self):
-        assert self.kind == "gotify"
-        doc = json.loads(self.value)
-        return doc["token"]
+    def ntfy_priority_display(self):
+        return NTFY_PRIORITIES[self.ntfy_priority]
 
 
 class Notification(models.Model):

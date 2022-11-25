@@ -126,21 +126,11 @@ class AddOpsgenieForm(forms.Form):
     key = forms.CharField(max_length=40)
 
 
-PRIO_CHOICES = [
-    ("-3", "Disabled"),
-    ("-2", "Lowest Priority"),
-    ("-1", "Low Priority"),
-    ("0", "Normal Priority"),
-    ("1", "High Priority"),
-    ("2", "Emergency Priority"),
-]
-
-
 class AddPushoverForm(forms.Form):
     error_css_class = "has-error"
     pushover_user_key = forms.CharField()
-    prio = forms.ChoiceField(initial="0", choices=PRIO_CHOICES)
-    prio_up = forms.ChoiceField(initial="0", choices=PRIO_CHOICES)
+    prio = forms.IntegerField(initial=0, min_value=-3, max_value=2)
+    prio_up = forms.IntegerField(initial=0, min_value=-3, max_value=2)
 
     def get_value(self):
         key = self.cleaned_data["pushover_user_key"]
@@ -336,6 +326,17 @@ class AddGotifyForm(forms.Form):
     error_css_class = "has-error"
     token = forms.CharField(max_length=50)
     url = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+
+    def get_value(self):
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
+class NtfyForm(forms.Form):
+    error_css_class = "has-error"
+    topic = forms.CharField(max_length=50)
+    url = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+    priority = forms.IntegerField(initial=3, min_value=0, max_value=5)
+    priority_up = forms.IntegerField(initial=3, min_value=0, max_value=5)
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
