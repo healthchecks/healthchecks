@@ -2307,22 +2307,18 @@ def add_gotify(request, code):
 
 
 @login_required
-def ntfy_form(request, channel=None, code=None):
-    is_new = channel is None
-    if is_new:
-        project = _get_rw_project_for_user(request, code)
-        channel = Channel(project=project, kind="ntfy")
-
+def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
     if request.method == "POST":
         form = forms.NtfyForm(request.POST)
         if form.is_valid():
             channel.value = form.get_value()
             channel.save()
 
-            if is_new:
+            if adding:
                 channel.assign_all_checks()
             return redirect("hc-channels", channel.project.code)
-    elif is_new:
+    elif adding:
         form = forms.NtfyForm()
     else:
         form = forms.NtfyForm(
@@ -2334,13 +2330,15 @@ def ntfy_form(request, channel=None, code=None):
             }
         )
 
-    ctx = {
-        "page": "channels",
-        "project": channel.project,
-        "form": form,
-        "profile": channel.project.owner_profile,
-    }
+    ctx = {"page": "channels", "project": channel.project, "form": form}
     return render(request, "integrations/ntfy_form.html", ctx)
+
+
+@login_required
+def add_ntfy(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="ntfy")
+    return ntfy_form(request, channel)
 
 
 @require_setting("SIGNAL_CLI_SOCKET")
