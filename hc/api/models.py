@@ -520,7 +520,14 @@ class Ping(models.Model):
 
     def to_dict(self) -> dict:
         if self.has_body():
-            body_url = settings.SITE_ROOT + "/api/v1/checks/" + str(self.owner.code) + "/pings/" + str(self.n) + "/body/"
+            body_url = (
+                settings.SITE_ROOT
+                + "/api/v1/checks/"
+                + str(self.owner.code)
+                + "/pings/"
+                + str(self.n)
+                + "/body/"
+            )
         else:
             body_url = None
 
@@ -533,7 +540,7 @@ class Ping(models.Model):
             "method": self.method,
             "ua": self.ua,
             "rid": self.rid,
-            "body_url": body_url
+            "body_url": body_url,
         }
 
         duration = self.duration

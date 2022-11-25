@@ -423,6 +423,7 @@ def pings(request, code):
 
     return JsonResponse({"pings": [p.to_dict() for p in pings]})
 
+
 @cors("GET")
 @csrf_exempt
 @validate_json()
