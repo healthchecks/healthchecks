@@ -426,7 +426,6 @@ def pings(request, code):
 
 @cors("GET")
 @csrf_exempt
-@validate_json()
 @authorize
 def ping_body(request, code, n):
     check = get_object_or_404(Check, code=code)
