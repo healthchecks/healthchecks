@@ -15,6 +15,7 @@ Endpoint Name                                         | Endpoint Address
 [Resume monitoring of a check](#resume-check)         | `POST SITE_ROOT/api/v1/checks/<uuid>/resume`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
 [Get a list of check's logged pings](#list-pings)     | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+[Get a ping's logged body](#ping-body)                | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/<n>/body/`
 [Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
 [Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
 [Get project's badges](#list-badges)                  | `GET SITE_ROOT/api/v1/badges/`
@@ -1103,7 +1104,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "method": "GET",
       "ua": "curl/7.68.0",
       "rid": "123e4567-e89b-12d3-a456-426614174000",
-      "duration": 2.896736
+      "duration": 2.896736,
+      "body_url": null
     },
     {
       "type": "start",
@@ -1113,7 +1115,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "remote_addr": "192.0.2.0",
       "method": "GET",
       "ua": "curl/7.68.0",
-      "rid": "123e4567-e89b-12d3-a456-426614174000"
+      "rid": "123e4567-e89b-12d3-a456-426614174000",
+      "body_url": null
     },
     {
       "type": "success",
@@ -1124,7 +1127,8 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "method": "GET",
       "ua": "curl/7.68.0",
       "rid": null,
-      "duration": 2.997976
+      "duration": 2.997976,
+      "body_url": null
     },
     {
       "type": "start",
@@ -1134,10 +1138,50 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
       "remote_addr": "192.0.2.0",
       "method": "GET",
       "ua": "curl/7.68.0",
-      "rid": null
+      "rid": null,
+      "body_url": null
     }
   ]
 }
+```
+
+
+## Get a check's logged body {: #ping-body .rule }
+
+`GET SITE_ROOT/api/v1/checks/<uuid>/pings/<n>/body/`
+
+Returns a ping's logged body.
+
+### Response Codes
+
+200 OK
+:   The request succeeded and a body is present.
+
+404 Not Found
+:   The check or ping do not exist, or it was logged without a body.
+
+### Example Request
+
+```bash
+curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body/ \
+    --header "X-Api-Key: your-api-key"
+```
+
+### Example Response
+
+Returns the ping's body as clear text, e.g.:
+
+```
+CCP Bridgehead has been up for 12 hours.
+
+Docker stats:
+NAMES                       CREATED          STATUS          IMAGE
+bridgehead-spot             12 hours ago     Up 12 hours     samply/spot:latest
+bridgehead-beam-proxy       12 hours ago     Up 12 hours     samply/beam-proxy:develop
+bridgehead-traefik          12 hours ago     Up 12 hours     traefik:latest
+bridgehead-forward-proxy    12 hours ago     Up 12 hours     samply/bridgehead-forward-proxy:latest
+bridgehead-bbmri-blaze      12 hours ago     Up 12 hours     samply/blaze:0.18
+bridgehead-landingpage      12 hours ago     Up 12 hours     samply/bridgehead-landingpage:master
 ```
 
 
