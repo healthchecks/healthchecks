@@ -519,6 +519,11 @@ class Ping(models.Model):
     rid = models.UUIDField(null=True)
 
     def to_dict(self) -> dict:
+        if self.has_body():
+            body_url = settings.SITE_ROOT + "/api/v1/checks/" + str(self.owner.code) + "/pings/" + str(self.n) + "/body/"
+        else:
+            body_url = None
+
         result = {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
@@ -528,6 +533,7 @@ class Ping(models.Model):
             "method": self.method,
             "ua": self.ua,
             "rid": self.rid,
+            "body_url": body_url
         }
 
         duration = self.duration

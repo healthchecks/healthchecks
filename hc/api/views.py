@@ -423,6 +423,24 @@ def pings(request, code):
 
     return JsonResponse({"pings": [p.to_dict() for p in pings]})
 
+@cors("GET")
+@csrf_exempt
+@validate_json()
+@authorize
+def ping_body(request, code, n):
+    check = get_object_or_404(Check, code=code)
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    ping = get_object_or_404(Ping, owner=check, n=n)
+
+    body = ping.get_body()
+    if not body:
+        raise Http404("Body is empty")
+
+    response = HttpResponse(body, content_type="text/plain")
+    return response
+
 
 def flips(request, check):
     if check.project_id != request.project.id:
