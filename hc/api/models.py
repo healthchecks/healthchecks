@@ -546,7 +546,7 @@ class Ping(models.Model):
             body_url = settings.SITE_ROOT + reverse("hc-api-ping-body", args=args)
         else:
             body_url = None
-        
+
         result: PingDict = {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
@@ -571,15 +571,20 @@ class Ping(models.Model):
 
         return False
 
-    def get_body(self) -> str | None:
+    def get_body_bytes(self) -> bytes | None:
         if self.body:
-            return self.body
+            return self.body.encode()
         if self.object_size:
-            body_raw = get_object(self.owner.code, self.n)
-            if body_raw:
-                return body_raw.decode(errors="replace")
+            return get_object(self.owner.code, self.n)
         if self.body_raw:
-            return bytes(self.body_raw).decode(errors="replace")
+            return self.body_raw
+
+        return None
+
+    def get_body(self) -> str | None:
+        body_bytes = self.get_body_bytes()
+        if body_bytes:
+            return bytes(body_bytes).decode(errors="replace")
 
         return None
 

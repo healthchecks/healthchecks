@@ -9,7 +9,7 @@ class PingBodyTestCase(BaseTestCase):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.ping = Ping.objects.create(owner=self.check, n=1, body_raw=b"this is body")
-        self.url = "/checks/%s/pings/%d/body/" % (self.check.code, self.ping.n)
+        self.url = f"/checks/{self.check.code}/pings/1/body/"
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
@@ -41,3 +41,12 @@ class PingBodyTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
+
+    def test_it_returns_original_bytes(self):
+        self.ping.body_raw = b"Hello\x01\x99World"
+        self.ping.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.content, b"Hello\x01\x99World")

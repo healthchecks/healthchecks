@@ -439,7 +439,7 @@ def ping_body(request, code, n):
         raise Http404()
 
     ping = get_object_or_404(Ping, owner=check, n=n)
-    body = ping.get_body()
+    body = ping.get_body_bytes()
     if not body:
         raise Http404()
 

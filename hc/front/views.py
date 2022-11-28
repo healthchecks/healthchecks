@@ -633,7 +633,7 @@ def ping_body(request, code, n):
     check, rw = _get_check_for_user(request, code)
     ping = get_object_or_404(Ping, owner=check, n=n)
 
-    body = ping.get_body()
+    body = ping.get_body_bytes()
     if not body:
         raise Http404("not found")
 

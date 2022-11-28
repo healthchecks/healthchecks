@@ -62,3 +62,12 @@ class GetPingBodyTestCase(BaseTestCase):
 
         r = self.client.get(self.url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 404)
+
+    def test_it_returns_original_bytes(self):
+        self.ping.body_raw = b"Hello\x01\x99World"
+        self.ping.save()
+
+        r = self.client.get(self.url, HTTP_X_API_KEY="X" * 32)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.headers["Content-Type"], "text/plain")
+        self.assertEqual(r.content, b"Hello\x01\x99World")
