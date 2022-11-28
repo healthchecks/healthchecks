@@ -11,7 +11,11 @@ in your account.</p>
 </thead>
 <tbody>
 <tr>
-<td><a href="#list-checks">Get a list of existing checks</a></td>
+<td><strong>Checks</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#list-checks">List existing checks</a></td>
 <td><code>GET SITE_ROOT/api/v1/checks/</code></td>
 </tr>
 <tr>
@@ -39,7 +43,11 @@ in your account.</p>
 <td><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
 </tr>
 <tr>
-<td><a href="#list-pings">Get a list of check's logged pings</a></td>
+<td><strong>Pings</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#list-pings">List check's logged pings</a></td>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></td>
 </tr>
 <tr>
@@ -47,15 +55,27 @@ in your account.</p>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body</code></td>
 </tr>
 <tr>
-<td><a href="#list-flips">Get a list of check's status changes</a></td>
+<td><strong>Flips</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#list-flips">List check's status changes</a></td>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br><code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></td>
 </tr>
 <tr>
-<td><a href="#list-channels">Get a list of existing integrations</a></td>
+<td><strong>Integrations</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#list-channels">List existing integrations</a></td>
 <td><code>GET SITE_ROOT/api/v1/channels/</code></td>
 </tr>
 <tr>
-<td><a href="#list-badges">Get project's badges</a></td>
+<td><strong>Badges</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#list-badges">List project's badges</a></td>
 <td><code>GET SITE_ROOT/api/v1/badges/</code></td>
 </tr>
 </tbody>
@@ -72,10 +92,10 @@ and read-only API keys on the <strong>Project Settings</strong> page.</p>
 <dd>
 <p>Only works with the following API endpoints:</p>
 <ul>
-<li><a href="#list-checks">Get a list of existing checks</a></li>
+<li><a href="#list-checks">List existing checks</a></li>
 <li><a href="#get-check">Get a single check</a></li>
-<li><a href="#list-flips">Get a list of check's status changes</a></li>
-<li><a href="#list-badges">Get project's badges</a></li>
+<li><a href="#list-flips">List check's status changes</a></li>
+<li><a href="#list-badges">List project's badges</a></li>
 </ul>
 <p>Omits sensitive information from the API responses. See the documentation of
 individual API endpoints for details.</p>
@@ -93,7 +113,7 @@ a JSON document (<em>not</em> a <code>multipart/form-data</code> encoded form da
 In general, 2xx class indicates success, 4xx indicates a client error,
 and 5xx indicates a server error.</p>
 <p>The response may contain a JSON document with additional data.</p>
-<h2 class="rule" id="list-checks">Get a List of Existing Checks</h2>
+<h2 class="rule" id="list-checks">List Existing Checks</h2>
 <p><code>GET SITE_ROOT/api/v1/checks/</code></p>
 <p>Returns a list of checks belonging to the user, optionally filtered by
 one or more tags.</p>
@@ -179,7 +199,7 @@ and <code>paused</code>.</p>
 <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>resume_url</code>, <code>channels</code>.  It adds an extra
 <code>unique_key</code> field. The <code>unique_key</code> identifier is stable across API calls, and
 you can use it in the <a href="#get-check">Get a single check</a>
-and <a href="#list-flips">Get a list of check's status changes</a> API calls.</p>
+and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <p>Example:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;checks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
@@ -394,7 +414,7 @@ integrations. Example:</p>
 <p><pre>{"channels": "*"}</pre></p>
 <p>To assign specific integrations, use a comma-separated list of integration
 UUIDs. You can look up integration UUIDs using the
-<a href="#list-channels">Get a List of Existing Integrations</a> API call.</p>
+<a href="#list-channels">List Existing Integrations</a> API call.</p>
 <p>Example:</p>
 <p><pre>{"channels":
  "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre></p>
@@ -629,7 +649,7 @@ all existing integrations. Example:</p>
 <p><pre>{"channels": ""}</pre></p>
 <p>To assign specific integrations, use a comma-separated list of integration
 UUIDs. You can look up integration UUIDs using the
-<a href="#list-channels">Get a List of Existing Integrations</a> API call.</p>
+<a href="#list-channels">List Existing Integrations</a> API call.</p>
 <p>Example:</p>
 <p><pre>{"channels":
  "4ec5a071-2d08-4baa-898a-eb4eb3cd6941,746a083e-f542-4554-be1a-707ce16d3acc"}</pre></p>
@@ -915,7 +935,7 @@ check that was just deleted.</p>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
-<h2 class="rule" id="list-pings">Get a list of check's logged pings</h2>
+<h2 class="rule" id="list-pings">List check's logged pings</h2>
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></p>
 <p>Returns a list of pings this check has received.</p>
 <p>This endpoint returns pings in reverse order (most recent first), and the total
@@ -1008,7 +1028,7 @@ response header, and the ping body is returned verbatim in the response body.</p
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
-<h2 class="rule" id="list-flips">Get a list of check's status changes</h2>
+<h2 class="rule" id="list-flips">List check's status changes</h2>
 <p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br>
 <code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></p>
 <p>Returns a list of "flips" this check has experienced. A flip is a change of status
@@ -1069,7 +1089,7 @@ response header, and the ping body is returned verbatim in the response body.</p
 <span class="p">]</span><span class="w"></span>
 </code></pre></div>
 
-<h2 class="rule" id="list-channels">Get a List of Existing Integrations</h2>
+<h2 class="rule" id="list-channels">List Existing Integrations</h2>
 <p><code>GET SITE_ROOT/api/v1/channels/</code></p>
 <p>Returns a list of integrations belonging to the project.</p>
 <h3>Response Codes</h3>
@@ -1100,7 +1120,7 @@ response header, and the ping body is returned verbatim in the response body.</p
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
-<h2 class="rule" id="list-badges">Get Project's Badges</h2>
+<h2 class="rule" id="list-badges">List Project's Badges</h2>
 <p><code>GET SITE_ROOT/api/v1/badges/</code></p>
 <p>Returns a map of all tags in the project, with badge URLs for each tag. SITE_NAME
 provides badges in a few different formats:</p>

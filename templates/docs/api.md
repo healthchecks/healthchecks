@@ -7,18 +7,23 @@ in your account.
 
 Endpoint Name                                         | Endpoint Address
 ------------------------------------------------------|-------
-[Get a list of existing checks](#list-checks)         | `GET SITE_ROOT/api/v1/checks/`
+**Checks**|
+[List existing checks](#list-checks)                  | `GET SITE_ROOT/api/v1/checks/`
 [Get a single check](#get-check)                      | `GET SITE_ROOT/api/v1/checks/<uuid>`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>`
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v1/checks/`
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v1/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v1/checks/<uuid>/pause`
 [Resume monitoring of a check](#resume-check)         | `POST SITE_ROOT/api/v1/checks/<uuid>/resume`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
-[Get a list of check's logged pings](#list-pings)     | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
+**Pings**|
+[List check's logged pings](#list-pings)              | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
 [Get a ping's logged body](#ping-body)                | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/<n>/body`
-[Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
-[Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
-[Get project's badges](#list-badges)                  | `GET SITE_ROOT/api/v1/badges/`
+**Flips**|
+[List check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
+**Integrations**|
+[List existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
+**Badges**|
+[List project's badges](#list-badges)                  | `GET SITE_ROOT/api/v1/badges/`
 
 ## Authentication
 
@@ -33,10 +38,10 @@ read-write key
 read-only key
 :   Only works with the following API endpoints:
 
-    * [Get a list of existing checks](#list-checks)
+    * [List existing checks](#list-checks)
     * [Get a single check](#get-check)
-    * [Get a list of check's status changes](#list-flips)
-    * [Get project's badges](#list-badges)
+    * [List check's status changes](#list-flips)
+    * [List project's badges](#list-badges)
 
     Omits sensitive information from the API responses. See the documentation of
     individual API endpoints for details.
@@ -59,7 +64,7 @@ and 5xx indicates a server error.
 
 The response may contain a JSON document with additional data.
 
-## Get a List of Existing Checks {: #list-checks .rule }
+## List Existing Checks {: #list-checks .rule }
 
 `GET SITE_ROOT/api/v1/checks/`
 
@@ -155,7 +160,7 @@ When using the read-only API key, SITE_NAME omits the following fields from resp
 `ping_url`, `update_url`, `pause_url`, `resume_url`, `channels`.  It adds an extra
 `unique_key` field. The `unique_key` identifier is stable across API calls, and
 you can use it in the [Get a single check](#get-check)
-and [Get a list of check's status changes](#list-flips) API calls.
+and [List check's status changes](#list-flips) API calls.
 
 Example:
 
@@ -408,7 +413,7 @@ channels
 
     To assign specific integrations, use a comma-separated list of integration
     UUIDs. You can look up integration UUIDs using the
-    [Get a List of Existing Integrations](#list-channels) API call.
+    [List Existing Integrations](#list-channels) API call.
 
     Example:
 
@@ -703,7 +708,7 @@ channels
 
     To assign specific integrations, use a comma-separated list of integration
     UUIDs. You can look up integration UUIDs using the
-    [Get a List of Existing Integrations](#list-channels) API call.
+    [List Existing Integrations](#list-channels) API call.
 
     Example:
 
@@ -1059,7 +1064,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 }
 ```
 
-## Get a list of check's logged pings {: #list-pings .rule }
+## List check's logged pings {: #list-pings .rule }
 
 `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
 
@@ -1171,7 +1176,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body
     --header "X-Api-Key: your-api-key"
 ```
 
-## Get a list of check's status changes {: #list-flips .rule }
+## List check's status changes {: #list-flips .rule }
 
 `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>
 `GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
@@ -1246,7 +1251,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ \
 ]
 ```
 
-## Get a List of Existing Integrations {: #list-channels .rule }
+## List Existing Integrations {: #list-channels .rule }
 
 `GET SITE_ROOT/api/v1/channels/`
 
@@ -1285,7 +1290,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/channels/
 }
 ```
 
-## Get Project's Badges {: #list-badges .rule }
+## List Project's Badges {: #list-badges .rule }
 
 `GET SITE_ROOT/api/v1/badges/`
 
