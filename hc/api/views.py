@@ -435,14 +435,13 @@ def ping_body(request, code, n):
 
     profile = Profile.objects.get(user__project=request.project)
     threshold = check.n_pings - profile.ping_log_limit
-    if n < threshold:
-        raise Http404(f"You are only allowed to access the last {profile.ping_log_limit} pings.")
+    if n <= threshold:
+        raise Http404()
 
     ping = get_object_or_404(Ping, owner=check, n=n)
-
     body = ping.get_body()
     if not body:
-        raise Http404("Body is empty")
+        raise Http404()
 
     response = HttpResponse(body, content_type="text/plain")
     return response

@@ -1158,6 +1158,9 @@ response header, and the ping body is returned verbatim in the response body.
 200 OK
 :   The request succeeded and a body is present.
 
+403 Forbidden
+:   Access denied, wrong API key.
+
 404 Not Found
 :   The check does not exist, the ping does not exist, or the ping has no body data.
 

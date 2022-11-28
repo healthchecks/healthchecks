@@ -20,7 +20,45 @@ class GetPingBodyTestCase(BaseTestCase):
 
         self.url = f"/api/v1/checks/{self.check.code}/pings/1/body"
 
-    def test_it_allows_to_retrieve_bodies(self):
-        r = self.client.get(self.url, HTTP_X_API_KEY=self.project.api_key)
+    def test_it_works(self):
+        r = self.client.get(self.url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "Foo\nBar\nBaz")
+        self.assertEqual(r.headers["Content-Type"], "text/plain")
+        self.assertEqual(r.content, b"Foo\nBar\nBaz")
+
+    def test_it_handles_missing_api_key(self):
+        r = self.client.get(self.url)
+        self.assertContains(r, "missing api key", status_code=401)
+
+    def test_readonly_key_is_not_allowed(self):
+        self.project.api_key_readonly = "R" * 32
+        self.project.save()
+
+        r = self.client.get(self.url, HTTP_X_API_KEY="R" * 32)
+        self.assertEqual(r.status_code, 401)
+
+    def test_it_rejects_post(self):
+        r = self.client.post(self.url, HTTP_X_API_KEY=self.project.api_key)
+        self.assertEqual(r.status_code, 405)
+
+    def test_it_rejects_charlies_key(self):
+        self.charlies_project.api_key = "C" * 32
+        self.charlies_project.save()
+
+        r = self.client.get(self.url, HTTP_X_API_KEY="C" * 32)
+        self.assertEqual(r.status_code, 403)
+
+    def test_it_checks_n_threshold(self):
+        self.check.n_pings = 101
+        self.check.save()
+
+        # The default ping log limit is 100, so the ping #1 is now outside the limit
+        r = self.client.get(self.url, HTTP_X_API_KEY="X" * 32)
+        self.assertEqual(r.status_code, 404)
+
+    def test_it_handles_no_body(self):
+        self.ping.body_raw = None
+        self.ping.save()
+
+        r = self.client.get(self.url, HTTP_X_API_KEY="X" * 32)
+        self.assertEqual(r.status_code, 404)
