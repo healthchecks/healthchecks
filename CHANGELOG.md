@@ -13,9 +13,11 @@ All notable changes to this project will be documented in this file.
 - Add last ping body in Slack notifications (#735)
 - Add ntfy integration (#728)
 - Add ".txt" suffix to the filename when downloading ping body (#738)
+- Add API support for fetching ping bodies (#737)
 
 ### Bug Fixes
 - Fix the most recent ping lookup in the "Ping Details" dialog
+- Fix binary data handling in the hc.front.views.ping_body view
 
 ## v2.4.1 - 2022-10-18
 
