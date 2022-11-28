@@ -15,7 +15,7 @@ Endpoint Name                                         | Endpoint Address
 [Resume monitoring of a check](#resume-check)         | `POST SITE_ROOT/api/v1/checks/<uuid>/resume`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v1/checks/<uuid>`
 [Get a list of check's logged pings](#list-pings)     | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/`
-[Get a ping's logged body](#ping-body)                | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/<n>/body/`
+[Get a ping's logged body](#ping-body)                | `GET SITE_ROOT/api/v1/checks/<uuid>/pings/<n>/body`
 [Get a list of check's status changes](#list-flips)   | `GET SITE_ROOT/api/v1/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v1/checks/<unique_key>/flips/`
 [Get a list of existing integrations](#list-channels) | `GET SITE_ROOT/api/v1/channels/`
 [Get project's badges](#list-badges)                  | `GET SITE_ROOT/api/v1/badges/`
@@ -1146,11 +1146,12 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
 ```
 
 
-## Get a check's logged body {: #ping-body .rule }
+## Get a ping's logged body {: #ping-body .rule }
 
-`GET SITE_ROOT/api/v1/checks/<uuid>/pings/<n>/body/`
+`GET SITE_ROOT/api/v1/checks/<uuid>/pings/<n>/body`
 
-Returns a ping's logged body.
+Returns a ping's logged body. The response always has the `Content-Type: text/plain`
+response header, and the ping body is returned verbatim in the response body.
 
 ### Response Codes
 
@@ -1158,32 +1159,14 @@ Returns a ping's logged body.
 :   The request succeeded and a body is present.
 
 404 Not Found
-:   The check or ping do not exist, or it was logged without a body.
+:   The check does not exist, the ping does not exist, or the ping has no body data.
 
 ### Example Request
 
 ```bash
-curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body/ \
+curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body \
     --header "X-Api-Key: your-api-key"
 ```
-
-### Example Response
-
-Returns the ping's body as clear text, e.g.:
-
-```
-CCP Bridgehead has been up for 12 hours.
-
-Docker stats:
-NAMES                       CREATED          STATUS          IMAGE
-bridgehead-spot             12 hours ago     Up 12 hours     samply/spot:latest
-bridgehead-beam-proxy       12 hours ago     Up 12 hours     samply/beam-proxy:develop
-bridgehead-traefik          12 hours ago     Up 12 hours     traefik:latest
-bridgehead-forward-proxy    12 hours ago     Up 12 hours     samply/bridgehead-forward-proxy:latest
-bridgehead-bbmri-blaze      12 hours ago     Up 12 hours     samply/blaze:0.18
-bridgehead-landingpage      12 hours ago     Up 12 hours     samply/bridgehead-landingpage:master
-```
-
 
 ## Get a list of check's status changes {: #list-flips .rule }
 
