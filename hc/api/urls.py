@@ -62,7 +62,7 @@ urlpatterns = [
     ),
     path("api/v1/checks/<uuid:code>/pings/", views.pings, name="hc-api-pings"),
     path(
-        "api/v1/checks/<uuid:code>/pings/<int:n>/body/",
+        "api/v1/checks/<uuid:code>/pings/<int:n>/body",
         views.ping_body,
         name="hc-api-ping-body",
     ),

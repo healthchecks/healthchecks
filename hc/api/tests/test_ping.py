@@ -401,17 +401,3 @@ class PingTestCase(BaseTestCase):
         for sample in samples:
             r = self.client.get(self.url + f"/start?rid={sample}")
             self.assertEqual(r.status_code, 400)
-
-    def test_it_allows_to_retrieve_bodies(self):
-        msg = "My random message\nto be stored and retrieved.\n\nLet's have two line breaks and an apostrophe."
-        r = self.client.post(self.url + "/log", msg, content_type="text/plain")
-        self.assertEqual(r.status_code, 200)
-
-        r = self.client.get(f"/api/v1/checks/{self.check.code}/pings/", HTTP_X_API_KEY=self.project.api_key)
-        self.assertEqual(r.status_code, 200)
-        first_ping = r.json()["pings"][0]
-
-        body_url = first_ping["body_url"]
-        r = self.client.get(body_url, HTTP_X_API_KEY=self.project.api_key)
-        self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), msg)
