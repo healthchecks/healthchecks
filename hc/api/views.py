@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db import connection
 from django.db.models import Prefetch
 from django.http import (
+    Http404,
     HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
@@ -422,6 +423,29 @@ def pings(request, code):
             ping.duration = None
 
     return JsonResponse({"pings": [p.to_dict() for p in pings]})
+
+
+@cors("GET")
+@csrf_exempt
+@authorize
+def ping_body(request, code, n):
+    check = get_object_or_404(Check, code=code)
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    profile = Profile.objects.get(user__project=request.project)
+    threshold = check.n_pings - profile.ping_log_limit
+    if n < threshold:
+        raise Http404(f"You are only allowed to access the last {profile.ping_log_limit} pings.")
+
+    ping = get_object_or_404(Ping, owner=check, n=n)
+
+    body = ping.get_body()
+    if not body:
+        raise Http404("Body is empty")
+
+    response = HttpResponse(body, content_type="text/plain")
+    return response
 
 
 def flips(request, check):

@@ -43,6 +43,10 @@ in your account.</p>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></td>
 </tr>
 <tr>
+<td><a href="#ping-body">Get a ping's logged body</a></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body/</code></td>
+</tr>
+<tr>
 <td><a href="#list-flips">Get a list of check's status changes</a></td>
 <td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br><code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></td>
 </tr>
@@ -945,7 +949,8 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;123e4567-e89b-12d3-a456-426614174000&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.896736</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.896736</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;body_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;start&quot;</span><span class="p">,</span><span class="w"></span>
@@ -955,7 +960,8 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;123e4567-e89b-12d3-a456-426614174000&quot;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;123e4567-e89b-12d3-a456-426614174000&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;body_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span><span class="w"></span>
@@ -966,7 +972,8 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.997976</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;duration&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.997976</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;body_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;start&quot;</span><span class="p">,</span><span class="w"></span>
@@ -976,10 +983,40 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <span class="w">      </span><span class="nt">&quot;remote_addr&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;192.0.2.0&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ua&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;curl/7.68.0&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;rid&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;body_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 <span class="w">  </span><span class="p">]</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<h2 class="rule" id="ping-body">Get a check's logged body</h2>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body/</code></p>
+<p>Returns a ping's logged body.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded and a body is present.</dd>
+<dt>404 Not Found</dt>
+<dd>The check or ping do not exist, or it was logged without a body.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body/ <span class="se">\</span>
+    --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
+</code></pre></div>
+
+<h3>Example Response</h3>
+<p>Returns the ping's body as clear text, e.g.:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">CCP</span><span class="w"> </span><span class="nv">Bridgehead</span><span class="w"> </span><span class="nv">has</span><span class="w"> </span><span class="nv">been</span><span class="w"> </span><span class="nv">up</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span>.<span class="w"></span>
+
+<span class="nv">Docker</span><span class="w"> </span><span class="nv">stats</span>:<span class="w"></span>
+<span class="nv">NAMES</span><span class="w">                       </span><span class="nv">CREATED</span><span class="w">          </span><span class="nv">STATUS</span><span class="w">          </span><span class="nv">IMAGE</span><span class="w"></span>
+<span class="nv">bridgehead</span><span class="o">-</span><span class="nv">spot</span><span class="w">             </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w"> </span><span class="nv">ago</span><span class="w">     </span><span class="nv">Up</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w">     </span><span class="nv">samply</span><span class="o">/</span><span class="nv">spot</span>:<span class="nv">latest</span><span class="w"></span>
+<span class="nv">bridgehead</span><span class="o">-</span><span class="nv">beam</span><span class="o">-</span><span class="nv">proxy</span><span class="w">       </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w"> </span><span class="nv">ago</span><span class="w">     </span><span class="nv">Up</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w">     </span><span class="nv">samply</span><span class="o">/</span><span class="nv">beam</span><span class="o">-</span><span class="nv">proxy</span>:<span class="nv">develop</span><span class="w"></span>
+<span class="nv">bridgehead</span><span class="o">-</span><span class="nv">traefik</span><span class="w">          </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w"> </span><span class="nv">ago</span><span class="w">     </span><span class="nv">Up</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w">     </span><span class="nv">traefik</span>:<span class="nv">latest</span><span class="w"></span>
+<span class="nv">bridgehead</span><span class="o">-</span><span class="nv">forward</span><span class="o">-</span><span class="nv">proxy</span><span class="w">    </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w"> </span><span class="nv">ago</span><span class="w">     </span><span class="nv">Up</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w">     </span><span class="nv">samply</span><span class="o">/</span><span class="nv">bridgehead</span><span class="o">-</span><span class="nv">forward</span><span class="o">-</span><span class="nv">proxy</span>:<span class="nv">latest</span><span class="w"></span>
+<span class="nv">bridgehead</span><span class="o">-</span><span class="nv">bbmri</span><span class="o">-</span><span class="nv">blaze</span><span class="w">      </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w"> </span><span class="nv">ago</span><span class="w">     </span><span class="nv">Up</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w">     </span><span class="nv">samply</span><span class="o">/</span><span class="nv">blaze</span>:<span class="mi">0</span>.<span class="mi">18</span><span class="w"></span>
+<span class="nv">bridgehead</span><span class="o">-</span><span class="nv">landingpage</span><span class="w">      </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w"> </span><span class="nv">ago</span><span class="w">     </span><span class="nv">Up</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">hours</span><span class="w">     </span><span class="nv">samply</span><span class="o">/</span><span class="nv">bridgehead</span><span class="o">-</span><span class="nv">landingpage</span>:<span class="nv">master</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="list-flips">Get a list of check's status changes</h2>

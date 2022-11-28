@@ -541,6 +541,12 @@ class Ping(models.Model):
     rid = models.UUIDField(null=True)
 
     def to_dict(self) -> PingDict:
+        if self.has_body():
+            args = [self.owner.code, self.n]
+            body_url = settings.SITE_ROOT + reverse("hc-api-ping-body", args=args)
+        else:
+            body_url = None
+        
         result: PingDict = {
             "type": self.kind or "success",
             "date": self.created.isoformat(),
@@ -550,6 +556,7 @@ class Ping(models.Model):
             "method": self.method,
             "ua": self.ua,
             "rid": self.rid,
+            "body_url": body_url,
         }
 
         duration = self.duration
