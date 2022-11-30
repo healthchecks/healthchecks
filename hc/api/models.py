@@ -446,19 +446,19 @@ class Check(models.Model):
     def downtimes(self, months: int):
         """Calculate the number of downtimes and downtime minutes per month.
 
-        Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples.
+        Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples
+        in ascending datetime order.
 
         """
-
-        def monthkey(a_dt):
-            return a_dt.year, a_dt.month
 
         # Datetimes of the first days of months we're interested in. Ascending order.
         boundaries = month_boundaries(months=months)
 
-        # Will accumulate totals here.
-        # (year, month) -> [datetime, total_downtime, number_of_outages]
-        totals = {monthkey(b): [b, td(), 0] for b in boundaries}
+        # Will accumulate totals here
+        # [(datetime, total_downtime, number_of_outages), ...]
+        totals = [[boundary, td(), 0] for boundary in boundaries]
+        # Switch to descending order for easier lookup later
+        totals.reverse()
 
         # A list of flips and month boundaries
         events = [(b, "---") for b in boundaries]
@@ -466,26 +466,32 @@ class Check(models.Model):
         for pair in q.values_list("created", "old_status"):
             events.append(pair)
 
-        # Iterate through flips and month boundaries in reverse order,
+        # Iterate through flips and month boundaries,
         # and for each "down" event increase the counters in `totals`.
         dt, status = now(), self.status
         for prev_dt, prev_status in sorted(events, reverse=True):
             if status == "down":
-                duration = dt - prev_dt
-                totals[monthkey(prev_dt)][1] += duration
-                totals[monthkey(prev_dt)][2] += 1
+                # Find the right element in totals and update it:
+                for triple in totals:
+                    if prev_dt >= triple[0]:
+                        duration = dt - prev_dt
+                        triple[1] += duration
+                        triple[2] += 1
+                        break
 
             dt = prev_dt
             if prev_status != "---":
                 status = prev_status
 
         # Set counters to None for months when the check didn't exist yet
-        for ym in totals:
-            if ym < monthkey(self.created):
-                totals[ym][1] = None
-                totals[ym][2] = None
+        for triple in totals:
+            if triple[0] < self.created:
+                triple[1] = None
+                triple[2] = None
 
-        return sorted(totals.values())
+        # Reverse to ascending order.
+        totals.reverse()
+        return totals
 
     def past_downtimes(self):
         """Return downtime summary for two previous months."""
