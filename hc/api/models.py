@@ -492,12 +492,15 @@ class Check(models.Model):
 
         # Convert to a list of tuples and set counters to None
         # for intervals when the check didn't exist yet
+        prev_boundary = None
         result: list[tuple[datetime, td | None, int | None]] = []
         for triple in summary.as_tuples():
-            if triple[0] < self.created:
+            if prev_boundary and self.created > prev_boundary:
                 result.append((triple[0], None, None))
-            else:
-                result.append(triple)
+                continue
+
+            prev_boundary = triple[0]
+            result.append(triple)
 
         result.sort()
         return result

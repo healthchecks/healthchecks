@@ -264,7 +264,7 @@ class CheckModelTestCase(BaseTestCase):
     @patch("hc.lib.date.timezone.now", MOCK_NOW)
     def test_downtimes_handles_months_when_check_did_not_exist(self):
         check = Check(project=self.project)
-        check.created = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        check.created = datetime(2020, 1, 1, 9, tzinfo=timezone.utc)
         check.save()
 
         nov, dec, jan = check.downtimes(3)
