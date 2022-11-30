@@ -443,30 +443,30 @@ class Check(models.Model):
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
         return self.ping_set.filter(n__gt=threshold)
 
-    def downtimes(self, months: int):
-        """Calculate the number of downtimes and downtime minutes per month.
+    def downtimes_by_boundary(self, boundaries: list[datetime]):
+        """Calculate downtime counts and durations for the given time intervals.
 
         Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples
         in ascending datetime order.
 
-        """
+        `boundaries` are the datetimes of the first days of time intervals
+        (months or weeks) we're interested in, in ascending order.
 
-        # Datetimes of the first days of months we're interested in. Ascending order.
-        boundaries = month_boundaries(months=months)
+        """
 
         # Will accumulate totals here
         # [(datetime, total_downtime, number_of_outages), ...]
         totals = [[boundary, td(), 0] for boundary in boundaries]
-        # Switch to descending order for easier lookup later
+        # Switch to descending order for easier lookups
         totals.reverse()
 
-        # A list of flips and month boundaries
+        # A list of flips and time interval boundaries
         events = [(b, "---") for b in boundaries]
         q = self.flip_set.filter(created__gt=min(boundaries))
         for pair in q.values_list("created", "old_status"):
             events.append(pair)
 
-        # Iterate through flips and month boundaries,
+        # Iterate through flips and boundaries,
         # and for each "down" event increase the counters in `totals`.
         dt, status = now(), self.status
         for prev_dt, prev_status in sorted(events, reverse=True):
@@ -483,7 +483,7 @@ class Check(models.Model):
             if prev_status != "---":
                 status = prev_status
 
-        # Set counters to None for months when the check didn't exist yet
+        # Set counters to None for intervals when the check didn't exist yet
         for triple in totals:
             if triple[0] < self.created:
                 triple[1] = None
@@ -492,6 +492,10 @@ class Check(models.Model):
         # Reverse to ascending order.
         totals.reverse()
         return totals
+
+    def downtimes(self, months: int):
+        boundaries = month_boundaries(months=months)
+        return self.downtimes_by_boundary(boundaries)
 
     def past_downtimes(self):
         """Return downtime summary for two previous months."""

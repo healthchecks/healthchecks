@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from datetime import date
 from datetime import datetime as dt
+from datetime import timedelta as td
 
 from django.utils import timezone
 
@@ -73,7 +75,7 @@ def format_approx_duration(td):
     return ""
 
 
-def month_boundaries(months):
+def month_boundaries(months: int) -> list[dt]:
     result = []
 
     now = timezone.now()
@@ -85,5 +87,17 @@ def month_boundaries(months):
         if m == 0:
             m = 12
             y = y - 1
+
+    return result
+
+
+def week_boundaries(weeks: int) -> list[dt]:
+    result = []
+
+    today = timezone.now().date()
+    needle = today - td(today.weekday())
+    for x in range(0, weeks):
+        result.insert(0, dt(needle.year, needle.month, needle.day, tzinfo=timezone.utc))
+        needle -= td(7)
 
     return result
