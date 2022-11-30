@@ -128,6 +128,23 @@ class CheckDict(TypedDict, total=False):
     tz: str
 
 
+class DowntimeSummary(object):
+    def __init__(self, boundaries: list[datetime]):
+        self.boundaries = list(sorted(boundaries, reverse=True))
+        self.durations = [td() for _ in boundaries]
+        self.counts = [0 for _ in boundaries]
+
+    def add(self, when: datetime, duration: td) -> None:
+        for i in range(0, len(self.boundaries)):
+            if when >= self.boundaries[i]:
+                self.durations[i] += duration
+                self.counts[i] += 1
+                return
+
+    def as_tuples(self) -> zip[tuple[datetime, td, int]]:
+        return zip(self.boundaries, self.durations, self.counts)
+
+
 class Check(models.Model):
     name = models.CharField(max_length=100, blank=True)
     slug = models.CharField(max_length=100, blank=True)
@@ -454,11 +471,7 @@ class Check(models.Model):
 
         """
 
-        # Will accumulate totals here
-        # [(datetime, total_downtime, number_of_outages), ...]
-        totals = [[boundary, td(), 0] for boundary in boundaries]
-        # Switch to descending order for easier lookups
-        totals.reverse()
+        summary = DowntimeSummary(boundaries)
 
         # A list of flips and time interval boundaries
         events = [(b, "---") for b in boundaries]
@@ -471,27 +484,23 @@ class Check(models.Model):
         dt, status = now(), self.status
         for prev_dt, prev_status in sorted(events, reverse=True):
             if status == "down":
-                # Find the right element in totals and update it:
-                for triple in totals:
-                    if prev_dt >= triple[0]:
-                        duration = dt - prev_dt
-                        triple[1] += duration
-                        triple[2] += 1
-                        break
+                summary.add(prev_dt, dt - prev_dt)
 
             dt = prev_dt
             if prev_status != "---":
                 status = prev_status
 
-        # Set counters to None for intervals when the check didn't exist yet
-        for triple in totals:
+        # Convert to a list of tuples and set counters to None
+        # for intervals when the check didn't exist yet
+        result: list[tuple[datetime, td | None, int | None]] = []
+        for triple in summary.as_tuples():
             if triple[0] < self.created:
-                triple[1] = None
-                triple[2] = None
+                result.append((triple[0], None, None))
+            else:
+                result.append(triple)
 
-        # Reverse to ascending order.
-        totals.reverse()
-        return totals
+        result.sort()
+        return result
 
     def downtimes(self, months: int):
         boundaries = month_boundaries(months=months)
@@ -527,6 +536,7 @@ class PingDict(TypedDict, total=False):
     ua: str
     rid: uuid.UUID | None
     duration: float
+    body_url: str | None
 
 
 class Ping(models.Model):

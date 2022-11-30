@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import date
 from datetime import datetime as dt
 from datetime import timedelta as td
 
@@ -76,7 +75,7 @@ def format_approx_duration(td):
 
 
 def month_boundaries(months: int) -> list[dt]:
-    result = []
+    result: list[dt] = []
 
     now = timezone.now()
     y, m = now.year, now.month
@@ -92,7 +91,7 @@ def month_boundaries(months: int) -> list[dt]:
 
 
 def week_boundaries(weeks: int) -> list[dt]:
-    result = []
+    result: list[dt] = []
 
     today = timezone.now().date()
     needle = today - td(days=today.weekday())
