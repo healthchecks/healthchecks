@@ -1,15 +1,20 @@
 from __future__ import annotations
 
+from datetime import date, datetime
 from datetime import timedelta as td
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
-from django.utils.timezone import now
+from django.utils.timezone import now, utc
 
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
+
+CURRENT_TIME = datetime(2020, 1, 15, tzinfo=utc)
+MOCK_NOW = Mock(return_value=CURRENT_TIME)
+
 
 NAG_TEXT = """Hello,
 
@@ -33,15 +38,18 @@ Mychecks
 
 
 @override_settings(SITE_NAME="Mychecks")
+@patch("hc.lib.date.timezone.now", MOCK_NOW)
+@patch("hc.accounts.models.now", MOCK_NOW)
+@patch("hc.api.management.commands.sendreports.timezone.now", MOCK_NOW)
 class SendReportsTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
 
         # Make alice eligible for a monthly report:
-        self.profile.next_report_date = now() - td(hours=1)
+        self.profile.next_report_date = CURRENT_TIME - td(hours=1)
         # and for a nag
         self.profile.nag_period = td(hours=1)
-        self.profile.next_nag_date = now() - td(seconds=10)
+        self.profile.next_nag_date = CURRENT_TIME - td(seconds=10)
         self.profile.save()
 
         # Disable bob's and charlie's monthly reports so they don't interfere
@@ -65,7 +73,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
-        self.assertTrue(self.profile.next_report_date > now())
+        self.assertEqual(self.profile.next_report_date.date(), date(2020, 2, 1))
         self.assertEqual(self.profile.next_report_date.day, 1)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -74,7 +82,11 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
         self.assertEqual(email.subject, "Monthly Report")
         self.assertIn("This is a monthly report", email.body)
-        self.assertIn("This is a monthly report", email.alternatives[0][0])
+
+        html = email.alternatives[0][0]
+        self.assertIn("This is a monthly report", html)
+        self.assertIn("Nov. 2019", html)
+        self.assertIn("Dec. 2019", html)
 
     def test_it_sends_weekly_report(self):
         self.profile.reports = "weekly"
@@ -88,16 +100,20 @@ class SendReportsTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.subject, "Weekly Report")
         self.assertIn("This is a weekly report", email.body)
-        self.assertIn("This is a weekly report", email.alternatives[0][0])
+
+        html = email.alternatives[0][0]
+        self.assertIn("This is a weekly report", html)
+        self.assertIn("Dec 30 - Jan 5", html)
+        self.assertIn("Jan 6 - Jan 12", html)
 
     def test_it_obeys_next_report_date(self):
-        self.profile.next_report_date = now() + td(days=1)
+        self.profile.next_report_date = CURRENT_TIME + td(days=1)
         self.profile.save()
 
         found = Command().handle_one_report()
         self.assertFalse(found)
 
-    def test_it_fills_blank_next_report_date(self):
+    def test_it_fills_blank_next_monthly_report_date(self):
         self.profile.next_report_date = None
         self.profile.save()
 
@@ -105,7 +121,19 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
-        self.assertEqual(self.profile.next_report_date.day, 1)
+        self.assertEqual(self.profile.next_report_date.date(), date(2020, 2, 1))
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_it_fills_blank_next_weekly_report_date(self):
+        self.profile.reports = "weekly"
+        self.profile.next_report_date = None
+        self.profile.save()
+
+        found = Command().handle_one_report()
+        self.assertTrue(found)
+
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.next_report_date.date(), date(2020, 1, 20))
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_obeys_reports_off(self):
@@ -132,7 +160,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
-        self.assertTrue(self.profile.next_nag_date > now())
+        self.assertTrue(self.profile.next_nag_date > CURRENT_TIME)
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
@@ -143,7 +171,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(email.body, NAG_TEXT)
 
     def test_it_obeys_next_nag_date(self):
-        self.profile.next_nag_date = now() + td(days=1)
+        self.profile.next_nag_date = CURRENT_TIME + td(days=1)
         self.profile.save()
 
         # If next_nag_date is in future, a nag should not get sent.

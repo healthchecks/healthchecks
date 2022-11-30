@@ -95,9 +95,9 @@ def week_boundaries(weeks: int) -> list[dt]:
     result = []
 
     today = timezone.now().date()
-    needle = today - td(today.weekday())
+    needle = today - td(days=today.weekday())
     for x in range(0, weeks):
         result.insert(0, dt(needle.year, needle.month, needle.day, tzinfo=timezone.utc))
-        needle -= td(7)
+        needle -= td(days=7)
 
     return result
