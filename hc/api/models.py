@@ -497,11 +497,6 @@ class Check(models.Model):
         boundaries = month_boundaries(months=months)
         return self.downtimes_by_boundary(boundaries)
 
-    def past_downtimes(self):
-        """Return downtime summary for two previous months."""
-
-        return self.downtimes(3)[:-1]
-
     def create_flip(self, new_status: str, mark_as_processed: bool = False) -> None:
         """Create a Flip object for this check.
 

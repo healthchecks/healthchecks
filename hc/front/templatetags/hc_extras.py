@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from datetime import timedelta as td
 
 from django import template
 from django.conf import settings
@@ -242,3 +243,8 @@ def underline(s):
 @register.filter
 def first5(rid):
     return str(rid)[:5]
+
+
+@register.filter
+def add6days(dt):
+    return dt + td(days=6)

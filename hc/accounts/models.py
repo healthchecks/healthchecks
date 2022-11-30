@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from hc.lib import emails
-from hc.lib.date import month_boundaries
+from hc.lib.date import month_boundaries, week_boundaries
 
 if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo
@@ -234,9 +234,15 @@ class Profile(models.Model):
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
 
-        boundaries = month_boundaries(months=3)
-        # throw away the current month, keep two previous months
-        boundaries.pop()
+        if self.reports == "weekly":
+            boundaries = week_boundaries(weeks=3)
+        else:
+            boundaries = month_boundaries(months=3)
+
+        for check in checks:
+            # Calculate the downtimes, throw away the current period,
+            # keep two previous periods
+            check.past_downtimes = check.downtimes_by_boundary(boundaries)[:-1]
 
         ctx = {
             "checks": checks,
@@ -247,7 +253,7 @@ class Profile(models.Model):
             "nag": nag,
             "nag_period": self.nag_period.total_seconds(),
             "num_down": num_down,
-            "month_boundaries": boundaries,
+            "month_boundaries": boundaries[:-1],
             "monthly_or_weekly": self.reports,
         }
 
