@@ -29,6 +29,7 @@ from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.models import Credential, Member, Profile, Project
 from hc.api.models import Channel, Check, TokenBucket
+from hc.lib.tz import all_timezones
 from hc.lib.webauthn import CreateHelper, GetHelper
 from hc.payments.models import Subscription
 
@@ -505,7 +506,12 @@ def project(request, code):
 def notifications(request):
     profile = request.profile
 
-    ctx = {"status": "default", "page": "profile", "profile": profile}
+    ctx = {
+        "status": "default",
+        "page": "profile",
+        "profile": profile,
+        "timezones": all_timezones,
+    }
 
     if request.method == "POST":
         form = forms.ReportSettingsForm(request.POST)

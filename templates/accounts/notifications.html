@@ -32,8 +32,6 @@
                     {% csrf_token %}
                     <h2>Email Reports</h2>
 
-                    <input id="tz" type="hidden" name="tz" value="{{ profile.tz }}" />
-
                     <p>Periodic email reports:</p>
                     <label class="radio-container">
                         <input
@@ -95,15 +93,28 @@
                     </label>
 
                     <br />
+                    <p>Time zone:</p>
+                    <select id="tz" name="tz" class="form-control" value="{{ profile.tz }}">
+                        <option{% if profile.tz == "UTC" %} selected{% endif %}>UTC</option>
+                        {% for tz in timezones %}
+                        <option{% if profile.tz == tz %} selected{% endif %}>{{ tz }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <br />
                     <p class="text-muted">
-                        Reports will be delivered to {{ profile.user.email }}. <br />
-                        {% if profile.next_report_date %}
+                        {% site_name %} will send reports to
+                        <strong>{{ profile.user.email }}</strong>,
+                        between 9:00 and 11:00 in your selected time zone.
+                    </p>
+                    {% if profile.next_report_date %}
+                    <p class="text-muted">
                         {% timezone profile.tz %}
                             Next {{ profile.reports }} report date is
                             {{ profile.next_report_date|date:"F j, Y" }}.
-                        {% endtimezone %}
-                        {% endif %}
+                        {% endtimezone 0%}
                     </p>
+                    {% endif %}
                     <br />
                     <button
                         type="submit"
@@ -124,6 +135,7 @@
 {% compress js %}
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/notifications.js' %}"></script>
 {% endcompress %}
 {% endblock %}

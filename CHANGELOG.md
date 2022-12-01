@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Add ntfy integration (#728)
 - Add ".txt" suffix to the filename when downloading ping body (#738)
 - Add API support for fetching ping bodies (#737)
+- Change "Settings - Email Reports" page to allow manual timezone selection
 
 ### Bug Fixes
 - Fix the most recent ping lookup in the "Ping Details" dialog

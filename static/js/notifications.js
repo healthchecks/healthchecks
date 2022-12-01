@@ -1,3 +1,3 @@
 $(function () {
-    $("#tz").val(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    $("select[name=tz]").selectize();
 });
