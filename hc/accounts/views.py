@@ -643,8 +643,7 @@ def close(request):
     if request.method == "POST":
         if request.POST.get("confirmation") == request.user.email:
             # Cancel their subscription:
-            sub = Subscription.objects.filter(user=user).first()
-            if sub:
+            if sub := Subscription.objects.filter(user=user).first():
                 sub.cancel()
 
             # Deleting user also deletes its profile, checks, channels etc.

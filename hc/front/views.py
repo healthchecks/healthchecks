@@ -1814,8 +1814,7 @@ def telegram_help(request):
 @login_required
 def add_telegram(request):
     chat_id, chat_type, chat_name = None, None, None
-    qs = request.META["QUERY_STRING"]
-    if qs:
+    if qs := request.META["QUERY_STRING"]:
         try:
             chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
         except signing.BadSignature:

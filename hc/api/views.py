@@ -107,8 +107,7 @@ def ping_by_slug(
 
 
 def _lookup(project, spec):
-    unique_fields = spec.get("unique", [])
-    if unique_fields:
+    if unique_fields := spec.get("unique"):
         existing_checks = Check.objects.filter(project=project)
         if "name" in unique_fields:
             existing_checks = existing_checks.filter(name=spec.get("name"))

@@ -57,8 +57,7 @@ class CustomHeaderMiddleware(RemoteUserMiddleware):
 
         # We are seeing this user for the first time in this session, attempt
         # to authenticate the user.
-        user = auth.authenticate(request, remote_user_email=email)
-        if user:
+        if user := auth.authenticate(request, remote_user_email=email):
             # User is valid.  Set request.user and persist user in the session
             # by logging the user in.
             request.user = user
