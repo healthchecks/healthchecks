@@ -1,4 +1,5 @@
-{% load hc_extras %}
+{% load hc_extras tz %}
+{% timezone tz %}
 <table id="downtimes" class="table">
     {% for boundary, down_duration_secs, count in downtimes reversed %}
     <tr>
@@ -16,3 +17,4 @@
     </tr>
     {% endfor %}
 </table>
+{% endtimezone %}

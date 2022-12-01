@@ -255,6 +255,7 @@ class Profile(models.Model):
             "num_down": num_down,
             "month_boundaries": boundaries[:-1],
             "monthly_or_weekly": self.reports,
+            "tz": self.tz,
         }
 
         emails.report(self.user.email, ctx, headers)

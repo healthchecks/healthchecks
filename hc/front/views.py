@@ -826,6 +826,7 @@ def details(request, code):
         "enabled_channels": list(check.channel_set.all()),
         "timezones": all_timezones,
         "downtimes": check.downtimes(3, request.profile.tz),
+        "tz": request.profile.tz,
         "is_copied": "copied" in request.GET,
         "all_tags": " ".join(sorted(all_tags)),
     }
@@ -923,7 +924,9 @@ def status_single(request, code):
     if updated != request.GET.get("u"):
         doc["events"] = EVENTS_TMPL.render({"check": check, "events": events})
         downtimes = check.downtimes(3, request.profile.tz)
-        doc["downtimes"] = DOWNTIMES_TMPL.render({"downtimes": downtimes})
+        doc["downtimes"] = DOWNTIMES_TMPL.render(
+            {"downtimes": downtimes, "tz": request.profile.tz}
+        )
 
     return JsonResponse(doc)
 

@@ -1,5 +1,6 @@
-{% load humanize hc_extras %}
+{% load humanize hc_extras tz %}
 {% regroup checks by project as groups %}
+{% timezone tz %}
 {% spaceless %}
 <table style="margin: 0; width: 100%; font-size: 16px;" cellpadding="0" cellspacing="0">
     {% for group in groups %}
@@ -86,3 +87,4 @@
 </table>
 <br />
 {% endspaceless %}
+{% endtimezone %}
