@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime as dt
+from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
 
@@ -23,7 +23,7 @@ class GetFlipsTestCase(BaseTestCase):
 
         Flip.objects.create(
             owner=self.a1,
-            created=dt(2020, 6, 1, 12, 24, 32, 123000, tzinfo=timezone.utc),
+            created=datetime(2020, 6, 1, 12, 24, 32, 123000, tzinfo=timezone.utc),
             old_status="new",
             new_status="up",
         )

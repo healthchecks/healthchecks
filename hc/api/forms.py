@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime as dt
-from datetime import timezone
+from datetime import datetime, timezone
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -21,7 +20,7 @@ class TimestampField(forms.Field):
         if value_int < 0 or value_int > 10000000000:
             raise ValidationError(message="Out of bounds")
 
-        return dt.fromtimestamp(value_int, timezone.utc)
+        return datetime.fromtimestamp(value_int, timezone.utc)
 
 
 class FlipsFiltersForm(forms.Form):
