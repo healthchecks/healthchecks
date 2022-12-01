@@ -85,3 +85,7 @@ code.totp-secret {
     padding: 4px 0;
     font-size: 18px;
 }
+
+#email-reports .selectize-control {
+    max-width: 300px;
+}
