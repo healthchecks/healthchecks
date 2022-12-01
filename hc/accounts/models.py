@@ -235,9 +235,9 @@ class Profile(models.Model):
         }
 
         if self.reports == "weekly":
-            boundaries = week_boundaries(weeks=3)
+            boundaries = week_boundaries(3, self.tz)
         else:
-            boundaries = month_boundaries(months=3)
+            boundaries = month_boundaries(3, self.tz)
 
         for check in checks:
             # Calculate the downtimes, throw away the current period,

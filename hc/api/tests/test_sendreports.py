@@ -12,7 +12,7 @@ from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
-CURRENT_TIME = datetime(2020, 1, 15, tzinfo=utc)
+CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=utc)
 MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
@@ -105,6 +105,23 @@ class SendReportsTestCase(BaseTestCase):
         self.assertIn("This is a weekly report", html)
         self.assertIn("Dec 30 - Jan 5", html)
         self.assertIn("Jan 6 - Jan 12", html)
+
+    def test_it_obeys_profiles_timezone(self):
+        self.profile.reports = "weekly"
+        self.profile.tz = "America/New_York"
+        self.profile.save()
+
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+        cmd.handle_one_report()
+
+        email = mail.outbox[0]
+        html = email.alternatives[0][0]
+        # In UTC the current time is Monday, Jan 13, 2AM.
+        # But in New York it is still Sunday, Jan 12, 9PM.
+        self.assertIn("Dec 23 - Dec 29", html)
+        self.assertIn("Dec 30 - Jan 5", html)
+        self.assertNotIn("Jan 6 - Jan 12", html)
 
     def test_it_obeys_next_report_date(self):
         self.profile.next_report_date = CURRENT_TIME + td(days=1)

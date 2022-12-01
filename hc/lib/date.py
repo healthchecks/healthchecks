@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+import sys
 from datetime import datetime as dt
 from datetime import timedelta as td
 
 from django.utils import timezone
+
+if sys.version_info >= (3, 9):
+    from zoneinfo import ZoneInfo
+else:
+    from backports.zoneinfo import ZoneInfo
 
 
 class Unit(object):
@@ -74,13 +80,14 @@ def format_approx_duration(td):
     return ""
 
 
-def month_boundaries(months: int) -> list[dt]:
+def month_boundaries(months: int, tzstr: str) -> list[dt]:
+    tz = ZoneInfo(tzstr)
     result: list[dt] = []
 
-    now = timezone.now()
+    now = timezone.now().astimezone(tz)
     y, m = now.year, now.month
     for x in range(0, months):
-        result.insert(0, dt(y, m, 1, tzinfo=timezone.utc))
+        result.insert(0, dt(y, m, 1, tzinfo=tz))
 
         m -= 1
         if m == 0:
@@ -90,13 +97,14 @@ def month_boundaries(months: int) -> list[dt]:
     return result
 
 
-def week_boundaries(weeks: int) -> list[dt]:
+def week_boundaries(weeks: int, tzstr: str) -> list[dt]:
+    tz = ZoneInfo(tzstr)
     result: list[dt] = []
 
-    today = timezone.now().date()
+    today = timezone.now().astimezone(tz).date()
     needle = today - td(days=today.weekday())
     for x in range(0, weeks):
-        result.insert(0, dt(needle.year, needle.month, needle.day, tzinfo=timezone.utc))
+        result.insert(0, dt(needle.year, needle.month, needle.day, tzinfo=tz))
         needle -= td(days=7)
 
     return result

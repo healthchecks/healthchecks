@@ -505,8 +505,8 @@ class Check(models.Model):
         result.sort()
         return result
 
-    def downtimes(self, months: int):
-        boundaries = month_boundaries(months=months)
+    def downtimes(self, months: int, tz: str):
+        boundaries = month_boundaries(months, tz)
         return self.downtimes_by_boundary(boundaries)
 
     def create_flip(self, new_status: str, mark_as_processed: bool = False) -> None:

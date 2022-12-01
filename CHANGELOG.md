@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Fix the most recent ping lookup in the "Ping Details" dialog
 - Fix binary data handling in the hc.front.views.ping_body view
 - Fix downtime summaries in weekly reports (#736)
+- Fix week, month boundary calculation to use user's timezone
 
 ## v2.4.1 - 2022-10-18
 

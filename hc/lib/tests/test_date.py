@@ -1,10 +1,16 @@
 from __future__ import annotations
 
+from datetime import datetime
 from datetime import timedelta as td
+from unittest.mock import Mock, patch
 
 from django.test import TestCase
+from django.utils.timezone import utc
 
-from hc.lib.date import format_hms
+from hc.lib.date import format_hms, month_boundaries, week_boundaries
+
+CURRENT_TIME = datetime(2020, 1, 15, tzinfo=utc)
+MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class DateFormattingTestCase(TestCase):
@@ -31,3 +37,33 @@ class DateFormattingTestCase(TestCase):
 
         s = format_hms(td(seconds=60 * 60))
         self.assertEqual(s, "1 h 0 min 0 sec")
+
+
+@patch("hc.lib.date.timezone.now", MOCK_NOW)
+class MonthBoundaryTestCase(TestCase):
+    def test_utc_works(self):
+        result = month_boundaries(3, "UTC")
+        self.assertEqual(result[0].isoformat(), "2019-11-01T00:00:00+00:00")
+        self.assertEqual(result[1].isoformat(), "2019-12-01T00:00:00+00:00")
+        self.assertEqual(result[2].isoformat(), "2020-01-01T00:00:00+00:00")
+
+    def test_non_utc_works(self):
+        result = month_boundaries(3, "Europe/Riga")
+        self.assertEqual(result[0].isoformat(), "2019-11-01T00:00:00+02:00")
+        self.assertEqual(result[1].isoformat(), "2019-12-01T00:00:00+02:00")
+        self.assertEqual(result[2].isoformat(), "2020-01-01T00:00:00+02:00")
+
+
+@patch("hc.lib.date.timezone.now", MOCK_NOW)
+class WeekBoundaryTestCase(TestCase):
+    def test_utc_works(self):
+        result = week_boundaries(3, "UTC")
+        self.assertEqual(result[0].isoformat(), "2019-12-30T00:00:00+00:00")
+        self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+00:00")
+        self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+00:00")
+
+    def test_non_utc_works(self):
+        result = week_boundaries(3, "Europe/Riga")
+        self.assertEqual(result[0].isoformat(), "2019-12-30T00:00:00+02:00")
+        self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+02:00")
+        self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+02:00")

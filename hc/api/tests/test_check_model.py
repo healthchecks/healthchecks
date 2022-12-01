@@ -183,7 +183,7 @@ class CheckModelTestCase(BaseTestCase):
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
         check.save()
 
-        nov, dec, jan = check.downtimes(3)
+        nov, dec, jan = check.downtimes(3, "UTC")
 
         # Nov. 2019
         self.assertEqual(nov[0].strftime("%m-%Y"), "11-2019")
@@ -207,7 +207,7 @@ class CheckModelTestCase(BaseTestCase):
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
         check.save()
 
-        r = check.downtimes(10)
+        r = check.downtimes(10, "UTC")
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
             self.assertEqual(outages, 1)
@@ -224,7 +224,7 @@ class CheckModelTestCase(BaseTestCase):
         flip.new_status = "down"
         flip.save()
 
-        r = check.downtimes(10)
+        r = check.downtimes(10, "UTC")
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
             if dt.month == 1:
@@ -246,19 +246,48 @@ class CheckModelTestCase(BaseTestCase):
         flip.new_status = "down"
         flip.save()
 
-        r = check.downtimes(10)
-        self.assertEqual(len(r), 10)
-        for dt, downtime, outages in r:
-            if dt.month == 11:
-                self.assertEqual(outages, 1)
-            elif dt.month == 12:
-                self.assertEqual(downtime.total_seconds(), 31 * 86400)
-                self.assertEqual(outages, 1)
-            elif dt.month == 1:
-                self.assertEqual(outages, 1)
-            else:
-                self.assertEqual(downtime.total_seconds(), 0)
-                self.assertEqual(outages, 0)
+        r = check.downtimes(3, "UTC")
+        self.assertEqual(len(r), 3)
+
+        dt, duration, outages = r[0]
+        self.assertEqual(dt.isoformat(), "2019-11-01T00:00:00+00:00")
+        self.assertEqual(duration, td(days=16))
+        self.assertEqual(outages, 1)
+
+        dt, duration, outages = r[1]
+        self.assertEqual(dt.isoformat(), "2019-12-01T00:00:00+00:00")
+        self.assertEqual(duration, td(days=31))
+        self.assertEqual(outages, 1)
+
+        dt, duration, outages = r[2]
+        self.assertEqual(dt.isoformat(), "2020-01-01T00:00:00+00:00")
+        self.assertEqual(duration, td(days=14))
+        self.assertEqual(outages, 1)
+
+    @patch("hc.api.models.now", MOCK_NOW)
+    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    def test_downtimes_handles_non_utc_timezone(self):
+        check = Check.objects.create(project=self.project, status="down")
+        check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
+
+        flip = Flip(owner=check)
+        flip.created = datetime(2019, 12, 31, 23, tzinfo=timezone.utc)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        r = check.downtimes(2, "Europe/Riga")
+        self.assertEqual(len(r), 2)
+
+        dt, duration, outages = r[0]
+        self.assertEqual(dt.isoformat(), "2019-12-01T00:00:00+02:00")
+        self.assertEqual(duration, td())
+        self.assertEqual(outages, 0)
+
+        dt, duration, outages = r[1]
+        self.assertEqual(dt.isoformat(), "2020-01-01T00:00:00+02:00")
+        self.assertEqual(duration, td(days=14, hours=1))
+        self.assertEqual(outages, 1)
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.timezone.now", MOCK_NOW)
@@ -267,7 +296,7 @@ class CheckModelTestCase(BaseTestCase):
         check.created = datetime(2020, 1, 1, 9, tzinfo=timezone.utc)
         check.save()
 
-        nov, dec, jan = check.downtimes(3)
+        nov, dec, jan = check.downtimes(3, "UTC")
 
         # Nov. 2019
         self.assertIsNone(nov[1])
