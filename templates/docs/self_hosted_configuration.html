@@ -366,18 +366,28 @@ can send pings to it).</p>
 to your team account.</p>
 <h2 id="REMOTE_USER_HEADER"><code>REMOTE_USER_HEADER</code></h2>
 <p>Default: <code>None</code></p>
-<p>Specifies the request header to use for external authentication.</p>
-<p>Healthchecks supports external authentication by means of HTTP headers set by
-reverse proxies or the WSGI server. This allows you to integrate it into your
-existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy. When this option is enabled, <strong>Healtchecks will trust the header's value implicitly</strong>, so it is <strong>very important</strong> to ensure that attackers cannot set the value themselves (and thus impersonate any user). How to do this varies by your chosen proxy, but generally involves configuring it to strip out headers that normalize to the same name as the chosen identity header.</p>
-<p>To enable this feature, set the <code>REMOTE_USER_HEADER</code> value to a header you wish to authenticate with. HTTP headers will be prefixed with <code>HTTP_</code> and have any dashes converted to underscores. Headers without that prefix can be set by the WSGI server itself only, which is more secure.</p>
+<p>Specifies the request header to use for external authentication. If you use
+a reverse proxy that handles user authentication, and the reverse proxy can pass
+the authenticated user's email address in a HTTP request header, you can use this
+setting to integrate Healthchecks with it.</p>
 <p>When <code>REMOTE_USER_HEADER</code> is set, Healthchecks will:</p>
 <ul>
+<li>in views that require authentication, look up the request header
+   specified in <code>REMOTE_USER_HEADER</code></li>
 <li>assume the header contains the user's email address</li>
-<li>look up and automatically log in the user with a matching email address</li>
+<li>automatically log in the user with a matching email address</li>
 <li>automatically create a user account if it does not exist</li>
 <li>disable the default authentication methods (login link to email, password)</li>
 </ul>
+<p>The header name in <code>REMOTE_USER_HEADER</code> must be specified in upper-case,
+ with any dashes replaced with underscores, and prefixed with <code>HTTP_</code>. For
+ example, if your authentication proxy sets a <code>X-Authenticated-User</code> request
+ header, you should set <code>REMOTE_USER_HEADER=HTTP_X_AUTHENTICATED_USER</code>.</p>
+<p><strong>Important:</strong> When this option is enabled, <strong>Healtchecks will trust the header's
+value implicitly</strong>, so it is <strong>very important</strong> to ensure that attackers cannot
+set the value themselves (and thus impersonate any user). How to do this varies by
+your chosen proxy, but generally involves configuring it to strip out headers that
+normalize to the same name as the chosen identity header.</p>
 <h2 id="RP_ID"><code>RP_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The <a href="https://www.w3.org/TR/webauthn-2/#relying-party-identifier">Relying Party identifier</a>,
