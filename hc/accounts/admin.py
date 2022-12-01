@@ -126,7 +126,7 @@ class ProfileAdmin(admin.ModelAdmin):
         NumChecksFilter,
         "theme",
     )
-    actions = ("login",)
+    actions = ("login", "send_report", "send_nag", "deactivate")
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
@@ -170,6 +170,26 @@ class ProfileAdmin(admin.ModelAdmin):
         profile = qs.get()
         auth_login(request, profile.user, "hc.accounts.backends.EmailBackend")
         return redirect("hc-index")
+
+    def send_report(self, request, qs):
+        for profile in qs:
+            profile.send_report()
+
+        self.message_user(request, "%d email(s) sent" % qs.count())
+
+    def send_nag(self, request, qs):
+        for profile in qs:
+            profile.send_report(nag=True)
+
+        self.message_user(request, "%d email(s) sent" % qs.count())
+
+    def deactivate(self, request, qs):
+        for profile in qs:
+            profile.user.is_active = False
+            profile.user.set_unusable_password()
+            profile.user.save()
+
+        self.message_user(request, "%d user(s) deactivated" % qs.count())
 
 
 @admin.register(Project)
@@ -215,7 +235,6 @@ class ProjectAdmin(admin.ModelAdmin):
 
 
 class HcUserAdmin(UserAdmin):
-    actions = ["send_report", "send_nag", "deactivate"]
     list_display = (
         "id",
         "email",
@@ -245,26 +264,6 @@ class HcUserAdmin(UserAdmin):
     @mark_safe
     def usage(self, user):
         return _format_usage(user.num_checks, user.num_channels)
-
-    def send_report(self, request, qs):
-        for user in qs:
-            user.profile.send_report()
-
-        self.message_user(request, "%d email(s) sent" % qs.count())
-
-    def send_nag(self, request, qs):
-        for user in qs:
-            user.profile.send_report(nag=True)
-
-        self.message_user(request, "%d email(s) sent" % qs.count())
-
-    def deactivate(self, request, qs):
-        for user in qs:
-            user.is_active = False
-            user.set_unusable_password()
-            user.save()
-
-        self.message_user(request, "%d user(s) deactivated" % qs.count())
 
 
 admin.site.unregister(User)
