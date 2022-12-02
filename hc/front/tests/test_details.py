@@ -149,6 +149,41 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "1 downtime, 1 hour total", html=True)
 
     @patch("hc.lib.date.timezone.now")
+    def test_downtime_summary_handles_positive_utc_offset(self, mock_now):
+        mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
+
+        self.profile.tz = "America/New_York"
+        self.profile.save()
+
+        self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        # It is not February yet in America/New_York:
+        self.assertNotContains(r, "Feb. 2020")
+        self.assertContains(r, "Jan. 2020")
+        self.assertContains(r, "Dec. 2019")
+        self.assertContains(r, "Nov. 2019")
+
+    @patch("hc.lib.date.timezone.now")
+    def test_downtime_summary_handles_negative_utc_offset(self, mock_now):
+        mock_now.return_value = datetime(2020, 1, 31, 23, tzinfo=timezone.utc)
+
+        self.profile.tz = "Europe/Riga"
+        self.profile.save()
+
+        self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        # It is February already in Europe/Riga:
+        self.assertContains(r, "Feb. 2020")
+        self.assertContains(r, "Jan. 2020")
+        self.assertContains(r, "Dec. 2019")
+
+    @patch("hc.lib.date.timezone.now")
     def test_it_handles_months_when_check_did_not_exist(self, mock_now):
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 
