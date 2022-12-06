@@ -1,11 +1,11 @@
-cron-descriptor==1.2.30
+cron-descriptor==1.2.32
 cronsim==2.3
-Django==4.1.2
+Django==4.1.4
 django-compressor==4.1
 fido2==1.1.0
-psycopg2==2.9.3
+psycopg2==2.9.5
 pycurl==7.45.1
-pyotp==2.6.0
+pyotp==2.7.0
 segno==1.5.2
-statsd==3.3.0
+statsd==4.0.1
 whitenoise==6.2.0
