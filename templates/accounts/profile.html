@@ -126,11 +126,12 @@
                         {% endif %}
                     </table>
 
-                    {% if credentials|length == 1 %}
-                    <p class="alert alert-info">
-                        <strong>Tip: add a second security key!</strong>
-                        It is a good practice to register at least two security keys
-                        and store them separately.
+                    {% if credentials|length == 1 and not profile.totp %}
+                    <p class="alert alert-warning">
+                        <strong>Register a backup key!</strong>
+                        You currently have registered a single security key.
+                        Consider registering a second security key, to be used
+                        as a backup if you lose the primary key, or it stops working.
                     </p>
                     {% endif %}
 
