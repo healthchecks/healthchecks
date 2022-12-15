@@ -197,10 +197,10 @@ set <code>EMAIL_USE_VERIFICATION</code> to <code>False</code>.</p>
 <p>Default: <code>""</code> (empty string)</p>
 <p>Specifies the proxy server to use for outgoing HTTP and HTTPS requests.
 Supports different proxy server types. Examples:</p>
-<div class="highlight"><pre><span></span><code>https_proxy=http://example.org:1234
-https_proxy=https://example.org:1234
-https_proxy=socks4://example.org:1234
-https_proxy=socks5://example.org:1234
+<div class="highlight"><pre><span></span><code><span class="na">https_proxy</span><span class="o">=</span><span class="s">http://example.org:1234</span><span class="w"></span>
+<span class="na">https_proxy</span><span class="o">=</span><span class="s">https://example.org:1234</span><span class="w"></span>
+<span class="na">https_proxy</span><span class="o">=</span><span class="s">socks4://example.org:1234</span><span class="w"></span>
+<span class="na">https_proxy</span><span class="o">=</span><span class="s">socks5://example.org:1234</span><span class="w"></span>
 </code></pre></div>
 
 <p>Healthchecks uses libcurl as the HTTP client library for making HTTP(S) requests.
@@ -444,13 +444,22 @@ you fully trust the users of your Healthchecks instance. The commands will be ex
 by the <code>manage.py sendalerts</code> process, and will run with its system permissions.</p>
 <h2 id="SIGNAL_CLI_SOCKET"><code>SIGNAL_CLI_SOCKET</code></h2>
 <p>Default: <code>None</code></p>
-<p>The path to the signal-cli UNIX socket.</p>
+<p>The path to the signal-cli UNIX socket, or the hostname:port of the signal-cli
+TCP socket.</p>
+<p>Example (UNIX socket):</p>
+<div class="highlight"><pre><span></span><code><span class="na">SIGNAL_CLI_SOCKET</span><span class="o">=</span><span class="s">/tmp/signal-cli.socket</span><span class="w"></span>
+</code></pre></div>
+
+<p>Example (TCP socket):</p>
+<div class="highlight"><pre><span></span><code><span class="na">SIGNAL_CLI_SOCKET</span><span class="o">=</span><span class="s">example.org:7583</span><span class="w"></span>
+</code></pre></div>
+
 <p>Healthchecks uses <a href="https://github.com/AsamK/signal-cli">signal-cli</a> to send Signal
-notifications. Healthcecks interacts with signal-cli over UNIX socket (requires
+notifications. Healthcecks interacts with signal-cli over UNIX or TCP socket (requires
 signal-cli 0.10.0 or later).</p>
 <p>To enable the Signal integration:</p>
 <ul>
-<li>Set up and configure signal-cli to expose JSON RPC on an UNIX socket
+<li>Set up and configure signal-cli to expose JSON RPC on an UNIX or TCP socket
   (<a href="https://github.com/AsamK/signal-cli/wiki/JSON-RPC-service">instructions</a>).
   Example: <code>signal-cli -a +xxxxxx daemon --socket /tmp/signal-cli-socket</code></li>
 <li>Put the socket's location in the <code>SIGNAL_CLI_SOCKET</code> environment variable.</li>

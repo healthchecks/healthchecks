@@ -19,14 +19,15 @@ class MockSocket(object):
     def __init__(self, response_tmpl, side_effect=None):
         self.response_tmpl = response_tmpl
         self.side_effect = side_effect
+        self.address = None
         self.req = None
         self.outbox = b""
 
     def settimeout(self, seconds):
         pass
 
-    def connect(self, socket_path):
-        pass
+    def connect(self, address):
+        self.address = address
 
     def shutdown(self, flags):
         pass
@@ -80,6 +81,7 @@ class NotifySignalTestCase(BaseTestCase):
         socketobj = setup_mock(socket, {})
 
         self.channel.notify(self.check)
+        self.assertEqual(socketobj.address, "/tmp/socket")
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
@@ -91,6 +93,17 @@ class NotifySignalTestCase(BaseTestCase):
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", params["message"])
+
+    @override_settings(SIGNAL_CLI_SOCKET="example.org:1234")
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_host_port(self, socket):
+        socketobj = setup_mock(socket, {})
+
+        self.channel.notify(self.check)
+        self.assertEqual(socketobj.address, ("example.org", 1234))
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
 
     @patch("hc.api.transports.socket.socket")
     def test_it_obeys_down_flag(self, socket):

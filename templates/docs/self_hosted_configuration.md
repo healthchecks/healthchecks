@@ -276,7 +276,7 @@ Default: `""` (empty string)
 Specifies the proxy server to use for outgoing HTTP and HTTPS requests.
 Supports different proxy server types. Examples:
 
-```
+```ini
 https_proxy=http://example.org:1234
 https_proxy=https://example.org:1234
 https_proxy=socks4://example.org:1234
@@ -647,15 +647,28 @@ by the `manage.py sendalerts` process, and will run with its system permissions.
 
 Default: `None`
 
-The path to the signal-cli UNIX socket.
+The path to the signal-cli UNIX socket, or the hostname:port of the signal-cli
+TCP socket.
+
+Example (UNIX socket):
+
+```ini
+SIGNAL_CLI_SOCKET=/tmp/signal-cli.socket
+```
+
+Example (TCP socket):
+
+```ini
+SIGNAL_CLI_SOCKET=example.org:7583
+```
 
 Healthchecks uses [signal-cli](https://github.com/AsamK/signal-cli) to send Signal
-notifications. Healthcecks interacts with signal-cli over UNIX socket (requires
+notifications. Healthcecks interacts with signal-cli over UNIX or TCP socket (requires
 signal-cli 0.10.0 or later).
 
 To enable the Signal integration:
 
-* Set up and configure signal-cli to expose JSON RPC on an UNIX socket
+* Set up and configure signal-cli to expose JSON RPC on an UNIX or TCP socket
   ([instructions](https://github.com/AsamK/signal-cli/wiki/JSON-RPC-service)).
   Example: `signal-cli -a +xxxxxx daemon --socket /tmp/signal-cli-socket`
 * Put the socket's location in the `SIGNAL_CLI_SOCKET` environment variable.
