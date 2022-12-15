@@ -945,10 +945,18 @@ class Signal(Transport):
         """
 
         start = time.time()
-        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+        if ":" in settings.SIGNAL_CLI_SOCKET:
+            stype = socket.AF_INET
+            parts = settings.SIGNAL_CLI_SOCKET.split(":")
+            address = (parts[0], int(parts[1]))
+        else:
+            stype = socket.AF_UNIX
+            address = settings.SIGNAL_CLI_SOCKET
+
+        with socket.socket(stype, socket.SOCK_STREAM) as s:
             s.settimeout(15)
             try:
-                s.connect(settings.SIGNAL_CLI_SOCKET)
+                s.connect(address)
                 s.sendall(payload_bytes)
                 s.shutdown(socket.SHUT_WR)  # we are done sending
 
