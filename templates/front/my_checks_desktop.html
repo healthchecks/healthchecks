@@ -21,7 +21,7 @@
             </a>
             {% endif %}
         </th>
-        <th class="hidden-xs hidden-sm">
+        <th class="hidden-xs hidden-sm hidden-md">
             <span class="visible-lg-inline">
                 Ping URL
             </span>
@@ -76,7 +76,7 @@
                 {% endfor %}
             </div>
         </td>
-        <td class="hidden-xs hidden-sm url">
+        <td class="hidden-xs hidden-sm hidden-md">
             {% if project.show_slugs and not check.slug %}
                 <span class="unavailable">unavailable, set name first</span>
             {% else %}
@@ -84,7 +84,6 @@
                 {% if project.show_slugs and check.slug in ambiguous %}
                 <small class="text-danger">(not unique)</small>
                 {% endif %}
-                <button class="copy-link" data-clipboard-text="{{ check.url }}">copy</button>
             {% endif %}
         </td>
         <td class="hidden-xs">

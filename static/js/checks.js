@@ -244,24 +244,6 @@ $(function () {
         adaptiveSetInterval(refreshStatus);
     }
 
-    // Copy to clipboard
-    var clipboard = new ClipboardJS('button.copy-link');
-    $("button.copy-link").mouseout(function(e) {
-        setTimeout(function() {
-            e.target.textContent = "copy";
-        }, 300);
-    });
-
-    clipboard.on('success', function(e) {
-        e.trigger.textContent = "copied!";
-        e.clearSelection();
-    });
-
-    clipboard.on('error', function(e) {
-        var text = e.trigger.getAttribute("data-clipboard-text");
-        prompt("Press Ctrl+C to select:", text)
-    });
-
     // Configure Selectize for entering tags
     function divToOption() {
         return {value: this.textContent};
@@ -279,4 +261,16 @@ $(function () {
         options: $("#my-checks-tags div").map(divToOption).get()
     });
 
+    $('.my-checks-url').tooltip({title: "Click to copy"});
+    $('.my-checks-url').click(function(e) {
+        if (window.getSelection().toString()) {
+            // do nothing, selection not empty
+            return;
+        }
+
+        navigator.clipboard.writeText(this.textContent);
+        $(".tooltip-inner").text("Copied!");
+    });
+
 });
+

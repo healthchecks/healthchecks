@@ -6,7 +6,7 @@
     background-color: var(--table-bg-hover);
 }
 
-.my-checks-name.unnamed, .url span.unavailable {
+.my-checks-name.unnamed, #checks-table span.unavailable {
     color: var(--text-muted);
     font-style: italic;
 }
@@ -87,43 +87,31 @@
     white-space: nowrap;
 }
 
-button.copy-link {
-    opacity: 0;
-
-    display: inline-block;
-    width: 50px;
-
-    background: none!important;
-    border: none;
-    padding: 0!important;
-    text-align: left;
-
-    font-family: "Open Sans", Arial, sans-serif;
-    color: var(--link-color);
-    cursor :pointer;
-    transition: opacity 0.1s linear;
+/* Name cell  */
+#checks-table td:nth-child(2) {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
-button.copy-link:hover {
-    text-decoration: underline;
-}
-
-tr:hover .copy-link {
-    opacity: 1
+/* URL cell  */
+#checks-table td:nth-child(3) {
+    min-width: 420px;
+    max-width: 500px;
 }
 
 .my-checks-url {
     font-family: "Lucida Console", Monaco, monospace;
     font-size: 11.7px;
     position: relative;
-    line-height: 36px;
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+    padding: 4px 0; /* eliminate gaps between lines */
 }
 
 .my-checks-url .base {
     color: var(--text-muted);
 }
 
-#checks-table td.url,
 #checks-table .actions {
     white-space: nowrap;
 }
