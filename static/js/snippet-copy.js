@@ -12,7 +12,6 @@ $(function() {
         })
         .click(function() {
             var text = this.parentNode.innerText;
-            console.log(text);
             navigator.clipboard.writeText(text);
             $(this).tooltip("show");
         })
