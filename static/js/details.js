@@ -116,22 +116,16 @@ $(function () {
     }, true);
 
     // Copy to clipboard
-    var clipboard = new ClipboardJS('button.copy-btn');
-    $("button.copy-btn").mouseout(function(e) {
-        setTimeout(function() {
-            e.target.textContent = e.target.dataset.label;
-        }, 300);
-    });
-
-    clipboard.on('success', function(e) {
-        e.trigger.textContent = "Copied!";
-        e.clearSelection();
-    });
-
-    clipboard.on('error', function(e) {
-        var text = e.trigger.getAttribute("data-clipboard-text");
-        prompt("Press Ctrl+C to select:", text)
-    });
+    $("button.copy-btn")
+        .click(function() {
+            navigator.clipboard.writeText(this.dataset.clipboardText);
+            this.textContent = "Copied!";
+        })
+        .mouseout(function(e) {
+            setTimeout(function() {
+                e.target.textContent = e.target.dataset.label;
+            }, 300);
+        });
 
     $("#events").on("click", "tr.ok", function() {
         var n = $("td", this).first().text();
