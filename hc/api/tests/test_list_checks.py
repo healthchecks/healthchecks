@@ -35,8 +35,8 @@ class ListChecksTestCase(BaseTestCase):
         self.c1 = Channel.objects.create(project=self.project)
         self.a1.channel_set.add(self.c1)
 
-    def get(self):
-        return self.client.get("/api/v1/checks/", HTTP_X_API_KEY="X" * 32)
+    def get(self, v=1):
+        return self.client.get(f"/api/v{v}/checks/", HTTP_X_API_KEY="X" * 32)
 
     def test_it_works(self):
         # Expect 3 queries:
@@ -63,6 +63,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(a1["last_ping"], None)
         self.assertEqual(a1["n_pings"], 0)
         self.assertEqual(a1["status"], "new")
+        self.assertFalse(a1["started"])
         self.assertEqual(a1["channels"], str(self.c1.code))
         self.assertEqual(a1["desc"], "This is description")
 
@@ -155,3 +156,26 @@ class ListChecksTestCase(BaseTestCase):
 
         # When using readonly keys, the ping URLs should not be exposed:
         self.assertNotContains(r, self.a1.url())
+
+    def test_v1_reports_status_started(self):
+        self.a1.last_start = now()
+        self.a1.save()
+        self.a2.delete()
+
+        r = self.get()
+        self.assertEqual(r.status_code, 200)
+
+        a1 = r.json()["checks"][0]
+        self.assertEqual(a1["status"], "started")
+        self.assertTrue(a1["started"])
+
+    def test_v2_reports_started_separately(self):
+        self.a1.last_start = now()
+        self.a1.save()
+        self.a2.delete()
+
+        r = self.get(v=2)
+
+        a1 = r.json()["checks"][0]
+        self.assertEqual(a1["status"], "new")
+        self.assertTrue(a1["started"])

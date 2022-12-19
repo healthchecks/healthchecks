@@ -33,6 +33,7 @@ def authorize(f):
             return error("wrong api key", 401)
 
         request.readonly = False
+        request.v = 2 if request.path_info.startswith("/api/v2/") else 1
         return f(request, *args, **kwds)
 
     return wrapper
@@ -59,6 +60,7 @@ def authorize_read(f):
             return error("wrong api key", 401)
 
         request.readonly = api_key == request.project.api_key_readonly
+        request.v = 2 if request.path_info.startswith("/api/v2/") else 1
         return f(request, *args, **kwds)
 
     return wrapper

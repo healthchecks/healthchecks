@@ -1,4 +1,4 @@
-<h1>Management API v2</h1>
+<h1>Management API v1</h1>
 <p>With the Management API, you can programmatically manage checks and integrations
 in your account.</p>
 <h2>API Endpoints</h2>
@@ -16,31 +16,31 @@ in your account.</p>
 </tr>
 <tr>
 <td><a href="#list-checks">List existing checks</a></td>
-<td><code>GET SITE_ROOT/api/v2/checks/</code></td>
+<td><code>GET SITE_ROOT/api/v1/checks/</code></td>
 </tr>
 <tr>
 <td><a href="#get-check">Get a single check</a></td>
-<td><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code><br><code>GET SITE_ROOT/api/v2/checks/&lt;unique_key&gt;</code></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code><br><code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;</code></td>
 </tr>
 <tr>
 <td><a href="#create-check">Create a new check</a></td>
-<td><code>POST SITE_ROOT/api/v2/checks/</code></td>
+<td><code>POST SITE_ROOT/api/v1/checks/</code></td>
 </tr>
 <tr>
 <td><a href="#update-check">Update an existing check</a></td>
-<td><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code></td>
+<td><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
 </tr>
 <tr>
 <td><a href="#pause-check">Pause monitoring of a check</a></td>
-<td><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;/pause</code></td>
+<td><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pause</code></td>
 </tr>
 <tr>
 <td><a href="#resume-check">Resume monitoring of a check</a></td>
-<td><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;/resume</code></td>
+<td><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/resume</code></td>
 </tr>
 <tr>
 <td><a href="#delete-check">Delete check</a></td>
-<td><code>DELETE SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code></td>
+<td><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></td>
 </tr>
 <tr>
 <td><strong>Pings</strong></td>
@@ -48,11 +48,11 @@ in your account.</p>
 </tr>
 <tr>
 <td><a href="#list-pings">List check's logged pings</a></td>
-<td><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;/pings/</code></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></td>
 </tr>
 <tr>
 <td><a href="#ping-body">Get a ping's logged body</a></td>
-<td><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body</code></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body</code></td>
 </tr>
 <tr>
 <td><strong>Flips</strong></td>
@@ -60,7 +60,7 @@ in your account.</p>
 </tr>
 <tr>
 <td><a href="#list-flips">List check's status changes</a></td>
-<td><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;/flips/</code><br><code>GET SITE_ROOT/api/v2/checks/&lt;unique_key&gt;/flips/</code></td>
+<td><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br><code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></td>
 </tr>
 <tr>
 <td><strong>Integrations</strong></td>
@@ -68,7 +68,7 @@ in your account.</p>
 </tr>
 <tr>
 <td><a href="#list-channels">List existing integrations</a></td>
-<td><code>GET SITE_ROOT/api/v2/channels/</code></td>
+<td><code>GET SITE_ROOT/api/v1/channels/</code></td>
 </tr>
 <tr>
 <td><strong>Badges</strong></td>
@@ -76,24 +76,10 @@ in your account.</p>
 </tr>
 <tr>
 <td><a href="#list-badges">List project's badges</a></td>
-<td><code>GET SITE_ROOT/api/v2/badges/</code></td>
+<td><code>GET SITE_ROOT/api/v1/badges/</code></td>
 </tr>
 </tbody>
 </table>
-<h2>Changes From v1</h2>
-<p>Management API v2 changes the status reporting of checks in started state.
-If a check is running, API v1 reports its status as <code>started</code>. API v2 instead reports
-the started state in a separate <code>started</code> boolean field. It can therefore
-express "up and currently running" and "down, but currently running" states.</p>
-<p>For example, if a check is down, but also has recently received a <code>/start</code> signal,
-Management API v1 would report its status as:</p>
-<div class="highlight"><pre><span></span><code>{&quot;status&quot;: &quot;started&quot;, ...}
-</code></pre></div>
-
-<p>Management API v2 would report its status as:</p>
-<div class="highlight"><pre><span></span><code>{&quot;status&quot;: &quot;down&quot;, &quot;started&quot;: true, ...}
-</code></pre></div>
-
 <h2>Authentication</h2>
 <p>Your requests to SITE_NAME Management API must authenticate using an
 API key. All API keys are project-specific. There are no account-wide API keys.
@@ -128,7 +114,7 @@ In general, 2xx class indicates success, 4xx indicates a client error,
 and 5xx indicates a server error.</p>
 <p>The response may contain a JSON document with additional data.</p>
 <h2 class="rule" id="list-checks">List Existing Checks</h2>
-<p><code>GET SITE_ROOT/api/v2/checks/</code></p>
+<p><code>GET SITE_ROOT/api/v1/checks/</code></p>
 <p>Returns a list of checks belonging to the user, optionally filtered by
 one or more tags.</p>
 <h3>Query Parameters</h3>
@@ -139,7 +125,7 @@ one or more tags.</p>
 specified value.</p>
 <p>This parameter can be repeated multiple times.</p>
 <p>Example:</p>
-<p><code>SITE_ROOT/api/v2/checks/?tag=foo&amp;tag=bar</code></p>
+<p><code>SITE_ROOT/api/v1/checks/?tag=foo&amp;tag=bar</code></p>
 </dd>
 </dl>
 <h3>Response Codes</h3>
@@ -150,7 +136,7 @@ specified value.</p>
 <dd>The API key is either missing or invalid.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v2/checks/
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/
 </code></pre></div>
 
 <h3>Example Response</h3>
@@ -164,7 +150,6 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T14:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T15:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
@@ -174,9 +159,9 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="w"></span>
 <span class="w">    </span><span class="p">},</span><span class="w"></span>
@@ -188,7 +173,6 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
@@ -198,9 +182,9 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/803f680d-e89b-492b-82ef-2be7b774a92d/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">      </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span><span class="w"></span>
@@ -209,7 +193,7 @@ specified value.</p>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
-<p>The possible values for the <code>status</code> field are: <code>new</code>, <code>up</code>, <code>grace</code>, <code>down</code>,
+<p>The possible values for the <code>status</code> field are: <code>new</code>, <code>started</code>, <code>up</code>, <code>grace</code>, <code>down</code>,
 and <code>paused</code>.</p>
 <p>When using the read-only API key, SITE_NAME omits the following fields from responses:
 <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>resume_url</code>, <code>channels</code>.  It adds an extra
@@ -227,7 +211,6 @@ and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;up&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T14:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-24T15:02:03+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
@@ -247,7 +230,6 @@ and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <span class="w">      </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">      </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">      </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
@@ -265,8 +247,8 @@ and <a href="#list-flips">List check's status changes</a> API calls.</p>
 </code></pre></div>
 
 <h2 class="rule" id="get-check">Get a Single Check</h2>
-<p><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code><br>
-<code>GET SITE_ROOT/api/v2/checks/&lt;unique_key&gt;</code></p>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code><br>
+<code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;</code></p>
 <p>Returns a JSON representation of a single check. Accepts either check's UUID or
 the <code>unique_key</code> (a field derived from UUID and returned by API responses when
 using the read-only API key) as an identifier.</p>
@@ -282,7 +264,7 @@ using the read-only API key) as an identifier.</p>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v2/checks/&lt;uuid&gt;
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/checks/&lt;uuid&gt;
 </code></pre></div>
 
 <h3>Example Response</h3>
@@ -294,7 +276,6 @@ using the read-only API key) as an identifier.</p>
 <span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
@@ -304,16 +285,16 @@ using the read-only API key) as an identifier.</p>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/803f680d-e89b-492b-82ef-2be7b774a92d/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/803f680d-e89b-492b-82ef-2be7b774a92d/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1bdea468-03bf-47b8-ab27-29a9dd0e4b94,51c6eb2b-2ae1-456b-99fe-6f1e0a36cd3c&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
-<p>The possible values for the <code>status</code> field are: <code>new</code>, <code>up</code>, <code>grace</code>, <code>down</code>,
+<p>The possible values for the <code>status</code> field are: <code>new</code>, <code>started</code>, <code>up</code>, <code>grace</code>, <code>down</code>,
 and <code>paused</code>.</p>
 <h3>Example Read-Only Response</h3>
 <p>When using the read-only API key, SITE_NAME omits the following fields from responses:
@@ -329,7 +310,6 @@ easily construct these URLs themselves <em>if</em> they know the check's unique 
 <span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;down&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2020-03-23T10:19:32+00:00&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
@@ -345,7 +325,7 @@ easily construct these URLs themselves <em>if</em> they know the check's unique 
 </code></pre></div>
 
 <h2 class="rule" id="create-check">Create a Check</h2>
-<p><code>POST SITE_ROOT/api/v2/checks/</code></p>
+<p><code>POST SITE_ROOT/api/v1/checks/</code></p>
 <p>Creates a new check and returns its ping URL.
 All request parameters are optional and will use their default
 values if omitted.</p>
@@ -548,13 +528,13 @@ field values.</dd>
 the limit is 20 checks per account.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
 <p>Or, alternatively:</p>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/ <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
@@ -574,19 +554,18 @@ the limit is 20 checks per account.</dd>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="update-check">Update an Existing Check</h2>
-<p><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code></p>
+<p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
 <p>Updates an existing check. All request parameters are optional. If you omit  any
 parameter, SITE_NAME will leave its value unchanged.</p>
 <h3>Request Parameters</h3>
@@ -767,13 +746,13 @@ field values.</dd>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
 <p>Or, alternatively:</p>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
     --data <span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
@@ -793,19 +772,18 @@ field values.</dd>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="pause-check">Pause Monitoring of a Check</h2>
-<p><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;/pause</code></p>
+<p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pause</code></p>
 <p>Disables monitoring for a check without removing it. The check goes into a "paused"
 state. You can resume monitoring of the check by pinging it, or by running
 the <a href="#resume-check">Resume</a> API call (useful when check's <code>manual_resume=True</code>).</p>
@@ -822,7 +800,7 @@ the <a href="#resume-check">Resume</a> API call (useful when check's <code>manua
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause <span class="se">\</span>
     --request POST --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> --data <span class="s2">&quot;&quot;</span>
 </code></pre></div>
 
@@ -846,19 +824,18 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;paused&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="resume-check">Resume Monitoring of a Check</h2>
-<p><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;/resume</code></p>
+<p><code>POST SITE_ROOT/api/v1/checks/&lt;uuid&gt;/resume</code></p>
 <p>Resumes a check. The check goes into the "new" state. Use this API call to resume
 the monitoring of checks that are in the paused state, and have the <code>manual_resume</code>
 configuration parameter set to <code>True</code>.</p>
@@ -877,7 +854,7 @@ configuration parameter set to <code>True</code>.</p>
 <dd>The specified check is currently not in a paused state.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/resume <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/resume <span class="se">\</span>
     --request POST --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> --data <span class="s2">&quot;&quot;</span>
 </code></pre></div>
 
@@ -901,19 +878,18 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="delete-check">Delete Check</h2>
-<p><code>DELETE SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code></p>
+<p><code>DELETE SITE_ROOT/api/v1/checks/&lt;uuid&gt;</code></p>
 <p>Permanently deletes the check from the user's account. Returns JSON representation of the
 check that was just deleted.</p>
 <p>This API call has no request parameters.</p>
@@ -929,7 +905,7 @@ check that was just deleted.</p>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc <span class="se">\</span>
     --request DELETE --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
@@ -949,19 +925,18 @@ check that was just deleted.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span><span class="w"></span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 
 <h2 class="rule" id="list-pings">List check's logged pings</h2>
-<p><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;/pings/</code></p>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/</code></p>
 <p>Returns a list of pings this check has received.</p>
 <p>This endpoint returns pings in reverse order (most recent first), and the total
 number of returned pings depends on the account's billing plan: 100 for free accounts,
@@ -978,7 +953,7 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
@@ -1036,7 +1011,7 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 </code></pre></div>
 
 <h2 class="rule" id="ping-body">Get a ping's logged body</h2>
-<p><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body</code></p>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body</code></p>
 <p>Returns a ping's logged body. The response always has the <code>Content-Type: text/plain</code>
 response header, and the ping body is returned verbatim in the response body.</p>
 <h3>Response Codes</h3>
@@ -1049,13 +1024,13 @@ response header, and the ping body is returned verbatim in the response body.</p
 <dd>The check does not exist, the ping does not exist, or the ping has no body data.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
 <h2 class="rule" id="list-flips">List check's status changes</h2>
-<p><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;/flips/</code><br>
-<code>GET SITE_ROOT/api/v2/checks/&lt;unique_key&gt;/flips/</code></p>
+<p><code>GET SITE_ROOT/api/v1/checks/&lt;uuid&gt;/flips/</code><br>
+<code>GET SITE_ROOT/api/v1/checks/&lt;unique_key&gt;/flips/</code></p>
 <p>Returns a list of "flips" this check has experienced. A flip is a change of status
 (from "down" to "up," or from "up" to "down").</p>
 <h3>Query Parameters</h3>
@@ -1064,19 +1039,19 @@ response header, and the ping body is returned verbatim in the response body.</p
 <dd>
 <p>Returns the flips from the last <code>value</code> seconds</p>
 <p>Example:</p>
-<p><code>SITE_ROOT/api/v2/checks/&lt;uuid|unique_key&gt;/flips/?seconds=3600</code></p>
+<p><code>SITE_ROOT/api/v1/checks/&lt;uuid|unique_key&gt;/flips/?seconds=3600</code></p>
 </dd>
 <dt>start=&lt;value&gt;</dt>
 <dd>
 <p>Returns flips that are newer than the specified UNIX timestamp.</p>
 <p>Example:</p>
-<p><code>SITE_ROOT/api/v2/checks/&lt;uuid|unique_key&gt;/flips/?start=1592214380</code></p>
+<p><code>SITE_ROOT/api/v1/checks/&lt;uuid|unique_key&gt;/flips/?start=1592214380</code></p>
 </dd>
 <dt>end=&lt;value&gt;</dt>
 <dd>
 <p>Returns flips that are older than the specified UNIX timestamp.</p>
 <p>Example:</p>
-<p><code>SITE_ROOT/api/v2/checks/&lt;uuid|unique_key&gt;/flips/?end=1592217980</code></p>
+<p><code>SITE_ROOT/api/v1/checks/&lt;uuid|unique_key&gt;/flips/?end=1592217980</code></p>
 </dd>
 </dl>
 <h3>Response Codes</h3>
@@ -1093,7 +1068,7 @@ response header, and the ping body is returned verbatim in the response body.</p
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ <span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc/flips/ <span class="se">\</span>
     --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
@@ -1115,7 +1090,7 @@ response header, and the ping body is returned verbatim in the response body.</p
 </code></pre></div>
 
 <h2 class="rule" id="list-channels">List Existing Integrations</h2>
-<p><code>GET SITE_ROOT/api/v2/channels/</code></p>
+<p><code>GET SITE_ROOT/api/v1/channels/</code></p>
 <p>Returns a list of integrations belonging to the project.</p>
 <h3>Response Codes</h3>
 <dl>
@@ -1125,7 +1100,7 @@ response header, and the ping body is returned verbatim in the response body.</p
 <dd>The API key is either missing or invalid.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v2/channels/
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/channels/
 </code></pre></div>
 
 <h3>Example Response</h3>
@@ -1146,7 +1121,7 @@ response header, and the ping body is returned verbatim in the response body.</p
 </code></pre></div>
 
 <h2 class="rule" id="list-badges">List Project's Badges</h2>
-<p><code>GET SITE_ROOT/api/v2/badges/</code></p>
+<p><code>GET SITE_ROOT/api/v1/badges/</code></p>
 <p>Returns a map of all tags in the project, with badge URLs for each tag. SITE_NAME
 provides badges in a few different formats:</p>
 <ul>
@@ -1171,7 +1146,7 @@ of all checks in the project.</p>
 <dd>The API key is either missing or invalid.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v2/badges/
+<div class="highlight"><pre><span></span><code>curl --header <span class="s2">&quot;X-Api-Key: your-api-key&quot;</span> SITE_ROOT/api/v1/badges/
 </code></pre></div>
 
 <h3>Example Response</h3>

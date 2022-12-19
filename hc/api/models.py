@@ -106,6 +106,7 @@ class CheckDict(TypedDict, total=False):
     grace: int
     n_pings: int
     status: str
+    started: bool
     last_ping: str | None
     next_ping: str | None
     manual_resume: bool
@@ -319,7 +320,8 @@ class Check(models.Model):
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
 
-    def to_dict(self, readonly=False) -> CheckDict:
+    def to_dict(self, readonly=False, v=2) -> CheckDict:
+        with_started = v == 1
         result: CheckDict = {
             "name": self.name,
             "slug": self.slug,
@@ -327,7 +329,8 @@ class Check(models.Model):
             "desc": self.desc,
             "grace": int(self.grace.total_seconds()),
             "n_pings": self.n_pings,
-            "status": self.get_status(with_started=True),
+            "status": self.get_status(with_started=with_started),
+            "started": self.last_start is not None,
             "last_ping": isostring(self.last_ping),
             "next_ping": isostring(self.get_grace_start()),
             "manual_resume": self.manual_resume,
@@ -350,7 +353,7 @@ class Check(models.Model):
 
             # Optimization: construct API URLs manually instead of using reverse().
             # This is significantly quicker when returning hundreds of checks.
-            update_url = settings.SITE_ROOT + "/api/v1/checks/" + str(self.code)
+            update_url = settings.SITE_ROOT + f"/api/v{v}/checks/{self.code}"
             result["update_url"] = update_url
             result["pause_url"] = update_url + "/pause"
             result["resume_url"] = update_url + "/resume"

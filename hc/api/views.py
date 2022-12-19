@@ -232,7 +232,7 @@ def get_checks(request):
     for check in q:
         # precise, final filtering
         if not tags or check.matches_tag_set(tags):
-            checks.append(check.to_dict(readonly=request.readonly))
+            checks.append(check.to_dict(readonly=request.readonly, v=request.v))
 
     return JsonResponse({"checks": checks})
 
@@ -254,7 +254,7 @@ def create_check(request):
     except BadChannelException as e:
         return JsonResponse({"error": e.message}, status=400)
 
-    return JsonResponse(check.to_dict(), status=201 if created else 200)
+    return JsonResponse(check.to_dict(v=request.v), status=201 if created else 200)
 
 
 @csrf_exempt
@@ -280,7 +280,8 @@ def get_check(request, code):
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
-    return JsonResponse(check.to_dict(readonly=request.readonly))
+
+    return JsonResponse(check.to_dict(readonly=request.readonly, v=request.v))
 
 
 @cors("GET")
@@ -290,7 +291,7 @@ def get_check_by_unique_key(request, unique_key):
     checks = Check.objects.filter(project=request.project.id)
     for check in checks:
         if check.unique_key == unique_key:
-            return JsonResponse(check.to_dict(readonly=request.readonly))
+            return JsonResponse(check.to_dict(readonly=request.readonly, v=request.v))
     return HttpResponseNotFound()
 
 
@@ -306,7 +307,7 @@ def update_check(request, code):
     except BadChannelException as e:
         return JsonResponse({"error": e.message}, status=400)
 
-    return JsonResponse(check.to_dict())
+    return JsonResponse(check.to_dict(v=request.v))
 
 
 @authorize
@@ -315,7 +316,7 @@ def delete_check(request, code):
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
-    response = check.to_dict()
+    response = check.to_dict(v=request.v)
     check.delete()
     return JsonResponse(response)
 
@@ -353,7 +354,7 @@ def pause(request, code):
     # and Profile.next_nag_date needs to be cleared out:
     check.project.update_next_nag_dates()
 
-    return JsonResponse(check.to_dict())
+    return JsonResponse(check.to_dict(v=request.v))
 
 
 @cors("POST")
@@ -376,7 +377,7 @@ def resume(request, code):
     check.alert_after = None
     check.save()
 
-    return JsonResponse(check.to_dict())
+    return JsonResponse(check.to_dict(v=request.v))
 
 
 @cors("GET")

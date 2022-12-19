@@ -30,8 +30,8 @@ class GetCheckTestCase(BaseTestCase):
         self.c1 = Channel.objects.create(project=self.project)
         self.a1.channel_set.add(self.c1)
 
-    def get(self, code, api_key="X" * 32):
-        url = "/api/v1/checks/%s" % code
+    def get(self, code, api_key="X" * 32, v=1):
+        url = f"/api/v{v}/checks/{code}"
         return self.client.get(url, HTTP_X_API_KEY=api_key)
 
     def test_it_works(self):
@@ -40,7 +40,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 23)
+        self.assertEqual(len(doc), 24)
 
         self.assertEqual(doc["slug"], "alice-1")
         self.assertEqual(doc["timeout"], 3600)
@@ -49,6 +49,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
         self.assertEqual(doc["status"], "new")
+        self.assertFalse(doc["started"])
         self.assertEqual(doc["channels"], str(self.c1.code))
         self.assertEqual(doc["desc"], "This is description")
         self.assertFalse(doc["manual_resume"])
@@ -75,7 +76,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 23)
+        self.assertEqual(len(doc), 24)
 
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)
@@ -100,3 +101,43 @@ class GetCheckTestCase(BaseTestCase):
         # When using readonly keys, the ping URLs should not be exposed:
         for key in ("ping_url", "update_url", "pause_url", "resume_url"):
             self.assertNotContains(r, key)
+
+    def test_v1_reports_status_started(self):
+        self.a1.last_start = now()
+        self.a1.save()
+
+        r = self.get(self.a1.code)
+        self.assertEqual(r.status_code, 200)
+
+        doc = r.json()
+        self.assertEqual(doc["status"], "started")
+        self.assertTrue(doc["started"])
+
+    def test_v2_reports_started_separately(self):
+        self.a1.last_start = now()
+        self.a1.save()
+
+        r = self.get(self.a1.code, v=2)
+        self.assertEqual(r.status_code, 200)
+
+        doc = r.json()
+        self.assertEqual(doc["status"], "new")
+        self.assertTrue(doc["started"])
+
+    def test_v1_by_unique_key_reports_status_started(self):
+        self.a1.last_start = now()
+        self.a1.save()
+
+        r = self.get(self.a1.unique_key)
+        doc = r.json()
+        self.assertEqual(doc["status"], "started")
+        self.assertTrue(doc["started"])
+
+    def test_v2_by_unique_key_reports_started_separately(self):
+        self.a1.last_start = now()
+        self.a1.save()
+
+        r = self.get(self.a1.unique_key, v=2)
+        doc = r.json()
+        self.assertEqual(doc["status"], "new")
+        self.assertTrue(doc["started"])

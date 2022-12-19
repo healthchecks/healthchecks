@@ -14,8 +14,8 @@ class UpdateCheckTestCase(BaseTestCase):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
 
-    def post(self, code, data):
-        url = "/api/v1/checks/%s" % code
+    def post(self, code, data, v=1):
+        url = f"/api/v{v}/checks/{code}"
         return self.csrf_client.post(url, data, content_type="application/json")
 
     def test_it_works(self):
@@ -380,3 +380,21 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertFalse(self.check.filter_subject)
         self.assertEqual(self.check.success_kw, "SUCCESS")
+
+    def test_v1_reports_status_started(self):
+        self.check.last_start = now()
+        self.check.save()
+
+        r = self.post(self.check.code, {"api_key": "X" * 32})
+        doc = r.json()
+        self.assertEqual(doc["status"], "started")
+        self.assertTrue(doc["started"])
+
+    def test_v2_reports_started_separately(self):
+        self.check.last_start = now()
+        self.check.save()
+
+        r = self.post(self.check.code, {"api_key": "X" * 32}, v=2)
+        doc = r.json()
+        self.assertEqual(doc["status"], "new")
+        self.assertTrue(doc["started"])

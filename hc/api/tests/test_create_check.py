@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from datetime import timedelta as td
 
+from django.utils.timezone import now
+
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -9,11 +11,12 @@ from hc.test import BaseTestCase
 class CreateCheckTestCase(BaseTestCase):
     URL = "/api/v1/checks/"
 
-    def post(self, data, expect_fragment=None):
+    def post(self, data, expect_fragment=None, v=1):
         if "api_key" not in data:
             data["api_key"] = "X" * 32
 
-        r = self.csrf_client.post(self.URL, data, content_type="application/json")
+        url = f"/api/v{v}/checks/"
+        r = self.csrf_client.post(url, data, content_type="application/json")
         if expect_fragment:
             self.assertEqual(r.status_code, 400)
             self.assertIn(expect_fragment, r.json()["error"])
@@ -326,3 +329,14 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_rejects_non_string_subject_fail(self):
         msg = "subject_fail is not a string"
         self.post({"subject_fail": False}, expect_fragment=msg)
+
+    def test_v2_reports_started_separately(self):
+        Check.objects.create(project=self.project, name="X", last_start=now())
+
+        r = self.post({"name": "X", "unique": ["name"]}, v=2)
+        # Expect 200 instead of 201
+        self.assertEqual(r.status_code, 200)
+
+        doc = r.json()
+        self.assertEqual(doc["status"], "new")
+        self.assertTrue(doc["started"])

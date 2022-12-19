@@ -13,7 +13,8 @@ class PauseTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check.objects.create(project=self.project, status="up")
-        self.url = f"/api/v1/checks/{self.check.code}/pause"
+        self.url = f"/api/v2/checks/{self.check.code}/pause"
+        self.urlv1 = f"/api/v2/checks/{self.check.code}/pause"
 
     def test_it_works(self):
         r = self.csrf_client.post(

@@ -383,7 +383,7 @@ def _replace_placeholders(doc, html):
 def serve_doc(request, doc="introduction"):
     # Filenames in /templates/docs/ consist of lowercase letters and underscores,
     # -- make sure we don't accept anything else
-    if not re.match(r"^[a-z_]+$", doc):
+    if not re.match(r"^[0-9a-z_]+$", doc):
         raise Http404("not found")
 
     path = os.path.join(settings.BASE_DIR, "templates/docs", doc + ".html")

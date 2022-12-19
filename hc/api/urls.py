@@ -45,31 +45,38 @@ slug_urls = [
     path("<int:exitstatus>", views.ping_by_slug),
 ]
 
+api_urls = [
+    path("checks/", views.checks),
+    path("checks/<uuid:code>", views.single, name="hc-api-single"),
+    path("checks/<sha1:unique_key>", views.get_check_by_unique_key),
+    path("checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
+    path("checks/<uuid:code>/resume", views.resume, name="hc-api-resume"),
+    path(
+        "notifications/<uuid:code>/status",
+        views.notification_status,
+        name="hc-api-notification-status",
+    ),
+    path("checks/<uuid:code>/pings/", views.pings, name="hc-api-pings"),
+    path(
+        "checks/<uuid:code>/pings/<int:n>/body",
+        views.ping_body,
+        name="hc-api-ping-body",
+    ),
+    path("checks/<uuid:code>/flips/", views.flips_by_uuid, name="hc-api-flips"),
+    path("checks/<sha1:unique_key>/flips/", views.flips_by_unique_key),
+    path("channels/", views.channels),
+    path("badges/", views.badges),
+    path("metrics/", views.metrics),
+    path("status/", views.status),
+]
+
 urlpatterns = [
     path("ping/<uuid:code>", views.ping),
     path("ping/<uuid:code>/", include(uuid_urls)),
     path("ping/<slug:ping_key>/<slug:slug>", views.ping_by_slug),
     path("ping/<slug:ping_key>/<slug:slug>/", include(slug_urls)),
-    path("api/v1/checks/", views.checks),
-    path("api/v1/checks/<uuid:code>", views.single, name="hc-api-single"),
-    path("api/v1/checks/<sha1:unique_key>", views.get_check_by_unique_key),
-    path("api/v1/checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
-    path("api/v1/checks/<uuid:code>/resume", views.resume, name="hc-api-resume"),
-    path(
-        "api/v1/notifications/<uuid:code>/status",
-        views.notification_status,
-        name="hc-api-notification-status",
-    ),
-    path("api/v1/checks/<uuid:code>/pings/", views.pings, name="hc-api-pings"),
-    path(
-        "api/v1/checks/<uuid:code>/pings/<int:n>/body",
-        views.ping_body,
-        name="hc-api-ping-body",
-    ),
-    path("api/v1/checks/<uuid:code>/flips/", views.flips_by_uuid, name="hc-api-flips"),
-    path("api/v1/checks/<sha1:unique_key>/flips/", views.flips_by_unique_key),
-    path("api/v1/channels/", views.channels),
-    path("api/v1/badges/", views.badges),
+    path("api/v1/", include(api_urls)),
+    path("api/v2/", include(api_urls)),
     path(
         "badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>",
         views.badge,
@@ -81,6 +88,4 @@ urlpatterns = [
         {"tag": "*"},
         name="hc-badge-all",
     ),
-    path("api/v1/metrics/", views.metrics),
-    path("api/v1/status/", views.status),
 ]

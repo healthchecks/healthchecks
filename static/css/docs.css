@@ -82,17 +82,20 @@ h2.rule {
 }
 
 .docs-api table,
+.docs-apiv1 table,
 .docs-http_api table {
     width: 100%;
     margin: 8px 0;
 }
 
 .docs-api th,
+.docs-apiv1 th,
 .docs-http_api th {
     display: none;
 }
 
 .docs-api td,
+.docs-apiv1 td,
 .docs-http_api td {
     padding: 8px;
     border: 1px solid var(--border-color);
