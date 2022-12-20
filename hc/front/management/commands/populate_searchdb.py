@@ -25,7 +25,7 @@ class Command(BaseCommand):
         for filename in os.listdir(docs_path):
             if not filename.endswith(".html"):
                 continue
-            if filename == "apiv1.md":
+            if filename == "apiv1.html":
                 continue
 
             slug = filename[:-5]  # cut ".html"
