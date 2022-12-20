@@ -36,6 +36,9 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "healthchecks@example.org")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 USE_PAYMENTS = envbool("USE_PAYMENTS", "False")
 REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "True")
+if admins := os.getenv("ADMINS"):
+    ADMINS = [(email, email) for email in admins.split(",")]
+
 VERSION = ""
 with open(os.path.join(BASE_DIR, "CHANGELOG.md"), encoding="utf-8") as f:
     for line in f.readlines():

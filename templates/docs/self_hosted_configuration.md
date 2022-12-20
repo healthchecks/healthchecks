@@ -4,6 +4,7 @@ Healthchecks prepares its configuration in `hc/settings.py`. It reads configurat
 from environment variables. Below is a list of variables it reads and uses.
 
 <ul class="self-hosted-configuration-toc">
+<li><a href="#ADMINS">ADMINS</a></li>
 <li><a href="#ALLOWED_HOSTS">ALLOWED_HOSTS</a></li>
 <li><a href="#APPRISE_ENABLED">APPRISE_ENABLED</a></li>
 <li><a href="#DB">DB</a></li>
@@ -81,6 +82,21 @@ from environment variables. Below is a list of variables it reads and uses.
 <li><a href="#WEBHOOKS_ENABLED">WEBHOOKS_ENABLED</a></li>
 <li><a href="#ZULIP_ENABLED">ZULIP_ENABLED</a></li>
 </ul>
+
+## `ADMINS` {: #ADMINS }
+
+Default: `""` (empty string)
+
+A comma-sepparated list of email addresses to send code error notifications to.
+When `DEBUG=False`, Healthchecks will send the details of exceptions raised in the
+request/response cycle to the listed addresses. Example:
+
+```ini
+ADMINS=alice@example.org,bob@example.org
+```
+
+Note: for error notifications to work, make sure you have also specified working
+SMTP credentials in the `EMAIL_...` environment variables.
 
 ## `ALLOWED_HOSTS` {: #ALLOWED_HOSTS }
 

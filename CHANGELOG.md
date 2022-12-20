@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Improve layout in "My Checks" for checks with long ping URLs (#745)
 - Add support for communicating with signal-cli over TCP (#732)
 - Add /api/v2/ (changes the status reporting of checks in started state) (#633)
+- Update settings.py to read the ADMINS setting from an environment variable
 
 ## v2.5 - 2022-12-14
 
