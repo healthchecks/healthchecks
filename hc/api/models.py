@@ -232,7 +232,7 @@ class Check(models.Model):
         self.name = name
         self.slug = slugify(name)
 
-    def get_grace_start(self, with_started=True) -> datetime | None:
+    def get_grace_start(self, *, with_started: bool = True) -> datetime | None:
         """Return the datetime when the grace period starts.
 
         If the check is currently new, paused or down, return None.
@@ -269,7 +269,7 @@ class Check(models.Model):
 
         return None
 
-    def get_status(self, with_started=False) -> str:
+    def get_status(self, *, with_started: bool = False) -> str:
         """Return current status for display."""
         frozen_now = now()
 
@@ -282,7 +282,7 @@ class Check(models.Model):
         if self.status in ("new", "paused", "down"):
             return self.status
 
-        grace_start = self.get_grace_start(with_started=with_started)
+        grace_start = self.get_grace_start(with_started=False)
         assert grace_start is not None
         grace_end = grace_start + self.grace
         if frozen_now >= grace_end:
@@ -320,7 +320,7 @@ class Check(models.Model):
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
 
-    def to_dict(self, readonly=False, v=2) -> CheckDict:
+    def to_dict(self, *, readonly: bool = False, v: int = 2) -> CheckDict:
         with_started = v == 1
         result: CheckDict = {
             "name": self.name,
