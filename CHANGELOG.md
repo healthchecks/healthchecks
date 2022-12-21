@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix the Signal integration to handle unexpected RPC messages better (#763)
+- Fix special character encoding in Signal notifications (#767)
 
 ## v2.5 - 2022-12-14
 

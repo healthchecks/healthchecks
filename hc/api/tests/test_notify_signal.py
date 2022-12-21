@@ -173,7 +173,7 @@ class NotifySignalTestCase(BaseTestCase):
         socketobj = setup_mock(socket, {})
 
         other = Check(project=self.project)
-        other.name = "Foobar"
+        other.name = "Foobar & Co"
         other.status = "down"
         other.last_ping = now() - td(minutes=61)
         other.save()
@@ -182,7 +182,7 @@ class NotifySignalTestCase(BaseTestCase):
 
         message = socketobj.req["params"]["message"]
         self.assertIn("The following checks are also down", message)
-        self.assertIn("Foobar", message)
+        self.assertIn("Foobar & Co", message)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_does_not_show_more_than_10_other_checks(self, socket):
