@@ -46,6 +46,8 @@ def get_nested(obj, path, default=None):
 
     needle = obj
     for key in path.split("."):
+        if not isinstance(needle, dict):
+            return default
         if key not in needle:
             return default
         needle = needle[key]

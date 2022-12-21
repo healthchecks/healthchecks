@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - Add /api/v2/ (changes the status reporting of checks in started state) (#633)
 - Update settings.py to read the ADMINS setting from an environment variable
 
+### Bug Fixes
+- Fix the Signal integration to handle unexpected RPC messages better (#763)
+
 ## v2.5 - 2022-12-14
 
 ### Improvements

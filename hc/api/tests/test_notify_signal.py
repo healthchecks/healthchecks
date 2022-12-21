@@ -293,3 +293,19 @@ class NotifySignalTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "admin@example.org")
         self.assertEqual(email.subject, "[Django] Signal CAPTCHA proof required")
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_null_data(self, socket):
+        msg = {
+            "error": {
+                "code": -32602,
+                "message": "Method requires valid account parameter",
+                "data": None,
+            },
+        }
+        setup_mock(socket, msg)
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "signal-cli call failed (-32602)")
