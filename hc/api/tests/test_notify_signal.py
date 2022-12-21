@@ -202,15 +202,6 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", message)
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_unregistered_user(self, socket):
-        setup_mock(socket, {"error": {"message": "UnregisteredUserException"}})
-
-        self.channel.notify(self.check)
-
-        n = Notification.objects.get()
-        self.assertEqual(n.error, "Recipient not found")
-
-    @patch("hc.api.transports.socket.socket")
     def test_it_handles_unregistered_failure(self, socket):
         msg = {
             "error": {
@@ -272,40 +263,7 @@ class NotifySignalTestCase(BaseTestCase):
 
     @override_settings(ADMINS=[("Admin", "admin@example.org")])
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_captcha_challenge_as_network_failure(self, socket):
-        msg = {
-            "error": {
-                "code": -1,
-                "message": "Failed to send message",
-                "data": {
-                    "response": {
-                        "results": [
-                            {
-                                "recipientAddress": {"number": "+123456789"},
-                                "type": "NETWORK_FAILURE",
-                                "token": "fddc87d7-572a-4559-9081-b41e3bc25254",
-                            }
-                        ],
-                    }
-                },
-            },
-        }
-        setup_mock(socket, msg)
-
-        self.channel.notify(self.check)
-
-        n = Notification.objects.get()
-        self.assertEqual(n.error, "CAPTCHA proof required")
-
-        # It should notify ADMINS
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertEqual(email.to[0], "admin@example.org")
-        self.assertEqual(email.subject, "[Django] Signal CAPTCHA proof required")
-
-    @override_settings(ADMINS=[("Admin", "admin@example.org")])
-    @patch("hc.api.transports.socket.socket")
-    def test_it_handles_captcha_challenge_as_rate_limit_failure(self, socket):
+    def test_it_handles_rate_limit_failure(self, socket):
         msg = {
             "error": {
                 "code": -1,

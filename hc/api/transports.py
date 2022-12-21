@@ -902,12 +902,6 @@ class Signal(Transport):
                     # success!
                     break
 
-                # signal-cli 0.10.0
-                message = reply["error"].get("message", "")
-                if "UnregisteredUserException" in message:
-                    raise TransportError("Recipient not found")
-
-                # signal-cli >= 0.10.2
                 for result in get_nested(reply, "error.data.response.results", []):
                     if get_nested(result, "recipientAddress.number") != recipient:
                         continue
@@ -915,13 +909,6 @@ class Signal(Transport):
                     if result.get("type") == "UNREGISTERED_FAILURE":
                         raise TransportError("Recipient not found")
 
-                    if result.get("type") == "NETWORK_FAILURE" and "token" in result:
-                        raw = reply_bytes.decode()
-                        self.channel.send_signal_captcha_alert(result["token"], raw)
-                        raise TransportError("CAPTCHA proof required")
-
-                    # signal-cli >= 0.10.5 use type=RATE_LIMIT_FAILURE for
-                    # CAPTCHA challenges
                     if result.get("type") == "RATE_LIMIT_FAILURE" and "token" in result:
                         raw = reply_bytes.decode()
                         self.channel.send_signal_captcha_alert(result["token"], raw)
