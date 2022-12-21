@@ -367,15 +367,22 @@ To enable the Pushover integration, you will need to:
 ### Signal
 
 Healthchecks uses [signal-cli](https://github.com/AsamK/signal-cli) to send Signal
-notifications. Healthcecks interacts with signal-cli over UNIX socket (requires
-signal-cli 0.10.0 or later).
+notifications. Healthcecks interacts with signal-cli over UNIX or TCP socket.
+Healthchecks requires signal-cli version 0.11.2 or later.
 
-To enable the Signal integration:
+To enable the Signal integration via UNIX socket:
 
 * Set up and configure signal-cli to expose JSON RPC on an UNIX socket
   ([instructions](https://github.com/AsamK/signal-cli/wiki/JSON-RPC-service)).
   Example: `signal-cli -a +xxxxxx daemon --socket /tmp/signal-cli-socket`
 * Put the socket's location in the `SIGNAL_CLI_SOCKET` environment variable.
+
+To enable the Signal integration via TCP socket:
+
+* Set up and configure signal-cli to expose JSON RPC on a TCP socket.
+  Example: `signal-cli -a +xxxxxx daemon --tcp 127.0.0.1:7583`
+* Put the socket's hostname and port in the `SIGNAL_CLI_SOCKET` environment variable
+  using "hostname:port" syntax, example: `127.0.0.1:7583`.
 
 
 ### Telegram
