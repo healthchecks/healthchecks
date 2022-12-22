@@ -91,6 +91,10 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_it_adds_team_member(self):
+        # Use "'" in the name to see if does or doesn't get escaped in email subject:
+        self.project.name = "Alice's Project"
+        self.project.save()
+
         self.client.login(username="alice@example.org", password="password")
 
         form = {"invite_team_member": "1", "email": "frank@example.org", "role": "w"}
@@ -111,8 +115,8 @@ class ProjectTestCase(BaseTestCase):
         self.assertFalse(member.user.project_set.exists())
 
         # And an email should have been sent
-        subj = f"You have been invited to join Alices Project on {settings.SITE_NAME}"
-        self.assertHTMLEqual(mail.outbox[0].subject, subj)
+        subj = f"You have been invited to join Alice's Project on {settings.SITE_NAME}"
+        self.assertEqual(mail.outbox[0].subject, subj)
 
     def test_it_adds_readonly_team_member(self):
         self.client.login(username="alice@example.org", password="password")
