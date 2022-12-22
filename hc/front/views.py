@@ -340,9 +340,10 @@ def index(request):
         project.overall_status = summary[project.code]["status"]
         project.any_started = summary[project.code]["started"]
 
-    # Primary sort key: projects with overall_status=down go first
-    # Secondary sort key: project's name
-    projects.sort(key=lambda p: (p.overall_status != "down", p.name))
+    # The list returned by projects() is already sorted . Do an additional sorting pass
+    # to move projects with overall_status=down to the front (without changing their
+    # relative order)
+    projects.sort(key=lambda p: p.overall_status != "down")
 
     ctx = {
         "page": "projects",

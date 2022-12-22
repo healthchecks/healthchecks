@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from django.db import transaction
+from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import Resolver404, resolve, reverse
@@ -290,6 +291,8 @@ def profile(request):
         ctx["left_project"] = project
         ctx["my_projects_status"] = "info"
 
+    ctx["ownerships"] = request.user.project_set.order_by(Lower("name"))
+    ctx["memberships"] = request.user.memberships.order_by(Lower("project__name"))
     return render(request, "accounts/profile.html", ctx)
 
 

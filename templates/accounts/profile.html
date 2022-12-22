@@ -192,14 +192,14 @@
                     {% csrf_token %}
                     <h2>My Projects</h2>
 
-                    {% if profile.projects.exists %}
+                    {% if ownerships or memberships %}
                     <table id="my-projects" class="table">
                         <tr>
                             <th>Project</th>
                             <th>My role</th>
                             <th></th>
                         </tr>
-                        {% for project in request.user.project_set.all %}
+                        {% for project in ownerships %}
                         <tr>
                             <td>
                                 <div class="name">
@@ -217,7 +217,7 @@
                         </tr>
                         {% endfor %}
 
-                        {% for m in request.user.memberships.all %}
+                        {% for m in memberships %}
                         <tr>
                             <td>
                                 <div class="name">

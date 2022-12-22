@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.6 - Unreleased
+## v2.6-dev - Unreleased
 
 ### Improvements
 - Improve layout in "My Checks" for checks with long ping URLs (#745)
@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix the Signal integration to handle unexpected RPC messages better (#763)
 - Fix special character encoding in Signal notifications (#767)
+- Fix project sort order to be case-insensitive everywhere in the UI (#768)
 
 ## v2.5 - 2022-12-14
 

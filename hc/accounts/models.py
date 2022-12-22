@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.core.signing import BadSignature, TimestampSigner
 from django.db import models
 from django.db.models import Count, Q
+from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -176,7 +177,7 @@ class Profile(models.Model):
         is_owner = Q(owner_id=self.user_id)
         is_member = Q(member__user_id=self.user_id)
         q = Project.objects.filter(is_owner | is_member)
-        return q.distinct().order_by("name")
+        return q.distinct().order_by(Lower("name"))
 
     def annotated_projects(self):
         """Return all projects, annotated with 'n_down'.
@@ -194,7 +195,7 @@ class Profile(models.Model):
         q = Project.objects.filter(id__in=project_ids)
         n_down = Count("check", filter=Q(check__status="down"))
         q = q.annotate(n_down=n_down)
-        return q.order_by("name")
+        return q.order_by(Lower("name"))
 
     def checks_from_all_projects(self):
         """Return a queryset of checks from projects we have access to."""
