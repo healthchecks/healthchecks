@@ -22,12 +22,6 @@
             background: #263026;
         }
 
-        .theme-dark #panel > div.status-started {
-            color: #FFF;
-            background: #263026;
-        }
-
-
         .theme-dark #panel > div.status-grace {
             color: #000;
             background: #FFB300;
@@ -39,7 +33,7 @@
         }
 
         .theme-dark .spinner:after {
-            border-color: #4c604c transparent #4c604c transparent;
+            border-color: rgba(255, 255, 255, 0.3) transparent rgba(255, 255, 255, 0.3) transparent;
         }
 
         /* Colors, light theme */
@@ -68,7 +62,7 @@
         }
 
         .theme-light .spinner:after {
-            border-color: #DDD transparent #DDD transparent;
+            border-color: rgba(0, 0, 0, 0.2) transparent rgba(0, 0, 0, 0.2) transparent;
         }
 
 
@@ -174,7 +168,7 @@
                     }
                 }
             };
-            httpRequest.open("GET", "/api/v1/checks/");
+            httpRequest.open("GET", "/api/v2/checks/");
             httpRequest.setRequestHeader("X-Api-Key", key);
             httpRequest.send();
         }
@@ -215,7 +209,7 @@
                 var fragment = document.createDocumentFragment();
                 sorted.forEach(function(item) {
                     var div = template.cloneNode(true);
-                    div.setAttribute("class", tag + " status-" + item.status);
+                    div.setAttribute("class", tag + " status-" + item.status + (item.started ? " status-started" : ""));
                     div.querySelector(".name").textContent = item.name || "unnamed";
                     if (item.last_ping) {
                         var s = timeSince(Date.parse(item.last_ping)) + " ago";
