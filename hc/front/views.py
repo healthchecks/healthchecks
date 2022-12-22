@@ -95,12 +95,24 @@ def _tags_statuses(checks):
     return tags, num_down
 
 
-def _get_check_for_user(request: HttpRequest, code: UUID) -> tuple[Check, bool]:
-    """Return specified check if current user has access to it."""
+def _get_check_for_user(
+    request: HttpRequest, code: UUID, preload_owner_profile: bool = False
+) -> tuple[Check, bool]:
+    """Return specified check if current user has access to it.
+
+    If `preload_owner_profile` is `True`, the returned check's
+    project.owner.profile will be already loaded. This helps avoid extra SQL queries
+    if the caller later looks up the project owner's check_limit or ping_log_limit.
+
+    """
 
     assert request.user.is_authenticated
 
-    check = get_object_or_404(Check.objects.select_related("project"), code=code)
+    q = Check.objects.select_related("project")
+    if preload_owner_profile:
+        q = q.select_related("project__owner__profile")
+
+    check = get_object_or_404(q, code=code)
     if request.user.is_superuser:
         return check, True
 
@@ -767,7 +779,7 @@ def _get_events(check, page_limit, start=None, end=None):
 
 @login_required
 def log(request, code):
-    check, rw = _get_check_for_user(request, code)
+    check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     smax = now()
     smin = smax - td(hours=24)
@@ -804,7 +816,7 @@ def log(request, code):
 @login_required
 def details(request, code):
     _refresh_last_active_date(request.profile)
-    check, rw = _get_check_for_user(request, code)
+    check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     if request.GET.get("urls") in ("uuid", "slug") and rw:
         check.project.show_slugs = request.GET["urls"] == "slug"
@@ -906,7 +918,7 @@ def copy(request, code):
 
 @login_required
 def status_single(request, code):
-    check, rw = _get_check_for_user(request, code)
+    check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     status = check.get_status()
     events = _get_events(check, 20)
