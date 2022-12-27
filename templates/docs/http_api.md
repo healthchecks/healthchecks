@@ -18,6 +18,20 @@ If the request body looks like a UTF-8 string, SITE_NAME stores the request body
 Successful responses will have the "200 OK" HTTP response status code and a short
 "OK" string in the response body.
 
+If a request is sent to the same check with `HC-Id` header, the following pings will
+be considered as duplicated and ignored.
+
+```bash
+# Accept. The first request with idempotence key "hc"
+curl -H "HC-Id: hc" https://hc-ping.com/10fbcaab-6877-4af9-8dfe-a40de644f3d0
+
+# Ignore. The duplicated request with idempotence key "hc"
+curl -H "HC-Id: hc" https://hc-ping.com/10fbcaab-6877-4af9-8dfe-a40de644f3d0
+
+# Accept. Identical idempotence key to another check.
+curl -H "HC-Id: hc" https://hc-ping.com/30f6e787-2d91-4092-8877-60ac9c3e7f99
+```
+
 ## UUIDs and Slugs
 
 Each Pinging API request needs to uniquely identify a check.

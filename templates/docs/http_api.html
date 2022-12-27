@@ -14,6 +14,18 @@ If the request body looks like a UTF-8 string, SITE_NAME stores the request body
 </ul>
 <p>Successful responses will have the "200 OK" HTTP response status code and a short
 "OK" string in the response body.</p>
+<p>If a request is sent to the same check with <code>HC-Id</code> header, the following pings will
+be considered as duplicated and ignored.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Accept. The first request with idempotence key &quot;hc&quot;</span>
+curl -H <span class="s2">&quot;HC-Id: hc&quot;</span> https://hc-ping.com/10fbcaab-6877-4af9-8dfe-a40de644f3d0
+
+<span class="c1"># Ignore. The duplicated request with idempotence key &quot;hc&quot;</span>
+curl -H <span class="s2">&quot;HC-Id: hc&quot;</span> https://hc-ping.com/10fbcaab-6877-4af9-8dfe-a40de644f3d0
+
+<span class="c1"># Accept. Identical idempotence key to another check.</span>
+curl -H <span class="s2">&quot;HC-Id: hc&quot;</span> https://hc-ping.com/30f6e787-2d91-4092-8877-60ac9c3e7f99
+</code></pre></div>
+
 <h2>UUIDs and Slugs</h2>
 <p>Each Pinging API request needs to uniquely identify a check.
 SITE_NAME supports two ways of identifying a check: by check's UUID,
