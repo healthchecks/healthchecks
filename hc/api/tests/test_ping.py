@@ -401,3 +401,23 @@ class PingTestCase(BaseTestCase):
         for sample in samples:
             r = self.client.get(self.url + f"/start?rid={sample}")
             self.assertEqual(r.status_code, 400)
+
+    def test_it_handles_idempotence_key(self):
+        hc_id = "idempotence"
+
+        # identical idempotence key
+        r = self.client.get(self.url, HTTP_HC_ID=hc_id)
+        self.assertEqual(r.status_code, 200)
+        r = self.client.get(self.url, HTTP_HC_ID=hc_id)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(Ping.objects.count(), 1)
+
+        # another idempotence key
+        r = self.client.get(self.url, HTTP_HC_ID="another")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(Ping.objects.count(), 2)
+
+        # no idempotence key
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(Ping.objects.count(), 3)

@@ -21,6 +21,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.core.cache import cache
 
 from hc.accounts.models import Profile
 from hc.api import schemas
@@ -55,6 +56,13 @@ def ping(
         return HttpResponseBadRequest("invalid url format")
 
     headers = request.META
+    hc_id = headers.get("HTTP_HC_ID", None)
+    if hc_id:
+        idempotence_key = f"{check.code}:{action}:{hc_id}"
+        if cache.get(idempotence_key):
+            return HttpResponse("OK")
+        cache.set(idempotence_key, hc_id)
+
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
     remote_addr = remote_addr.split(",")[0]
     if "." in remote_addr and ":" in remote_addr:
