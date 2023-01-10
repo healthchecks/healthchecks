@@ -1,0 +1,22 @@
+{% if result is None %}
+<div class="alert alert-success">
+    <strong>Success!</strong>
+    All good, the message was sent.
+</div>
+{% elif result == "CAPTCHA proof required" %}
+<div class="alert alert-danger">
+    <p>We hit a Signal rate-limit while sending the message.</p>
+
+    <p>Let's try the other way around: from the Signal application, please send a
+        short message to our Signal account.
+        Then click the "Send Test Message!" button again.
+    </p>
+</div>
+{% elif result == "Recipient not found" %}
+<div class="alert alert-danger">
+    <strong>Recipient not found.</strong>
+    Please make sure you have entered the phone number correctly.
+</div>
+{% else %}
+<div class="alert alert-danger">{{ result }}</div>
+{% endif %}

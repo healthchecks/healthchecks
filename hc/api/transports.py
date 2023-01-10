@@ -912,8 +912,9 @@ class Signal(Transport):
                         raise TransportError("Recipient not found")
 
                     if result.get("type") == "RATE_LIMIT_FAILURE" and "token" in result:
-                        raw = reply_bytes.decode()
-                        self.channel.send_signal_captcha_alert(result["token"], raw)
+                        if self.channel:
+                            raw = reply_bytes.decode()
+                            self.channel.send_signal_captcha_alert(result["token"], raw)
                         raise TransportError("CAPTCHA proof required")
 
                 code = reply["error"].get("code")

@@ -1185,6 +1185,13 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 6, 60)
 
     @staticmethod
+    def authorize_signal_verification(user):
+        value = "signal-verify-%d" % user.id
+
+        # 50 signal recipient verifications per day
+        return TokenBucket.authorize(value, 50, 3600 * 24)
+
+    @staticmethod
     def authorize_pushover(user_key):
         salted_encoded = (user_key + settings.SECRET_KEY).encode()
         value = "po-%s" % hashlib.sha1(salted_encoded).hexdigest()

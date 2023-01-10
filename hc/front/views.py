@@ -46,6 +46,7 @@ from hc.api.models import (
     Check,
     Notification,
     Ping,
+    TokenBucket,
 )
 from hc.api.transports import Signal, Telegram, TransportError
 from hc.front import forms
@@ -2404,6 +2405,30 @@ def signal_captcha(request: HttpRequest) -> HttpResponse:
                 break
 
     return render(request, "front/signal_captcha.html", ctx)
+
+
+@require_setting("SIGNAL_CLI_SOCKET")
+@login_required
+@require_POST
+def verify_signal_number(request: HttpRequest):
+    def render_result(result):
+        return render(request, "integrations/signal_result.html", {"result": result})
+
+    if not TokenBucket.authorize_signal_verification(request.user):
+        return render_result("Verification rate limit exceeded")
+
+    form = forms.PhoneNumberForm(request.POST)
+    if not form.is_valid():
+        return render_result("Invalid phone number")
+
+    try:
+        phone = form.cleaned_data["phone"]
+        Signal(None).send(phone, f"Test message from {settings.SITE_NAME}")
+    except TransportError as e:
+        return render_result(e.message)
+
+    # Success!
+    return render_result(None)
 
 
 # Forks: add custom views after this line

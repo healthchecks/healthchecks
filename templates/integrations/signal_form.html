@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load humanize static hc_extras %}
+{% load compress humanize static hc_extras %}
 
 {% block title %}
 {% if is_new %}
@@ -47,14 +47,24 @@ Signal Settings - {% site_name %}
 
         <div class="form-group {{ form.phone.css_classes }}">
             <label for="id_number" class="col-sm-2 control-label">Phone Number</label>
-            <div class="col-sm-3">
-                <input
-                    id="id_number"
-                    type="tel"
-                    class="form-control"
-                    name="phone"
-                    placeholder="+1234567890"
-                    value="{{ form.phone.value|default:"" }}">
+            <div class="col-sm-6">
+                <div class="input-group">
+                    <input
+                        id="id_number"
+                        type="tel"
+                        class="form-control"
+                        name="phone"
+                        placeholder="+1234567890"
+                        value="{{ form.phone.value|default:"" }}">
+
+                    <span class="input-group-btn">
+                        <button
+                            id="verify-btn"
+                            type="button"
+                            class="btn btn-default"
+                            data-verify-url="{% url 'hc-signal-verify' %}">Send Test Message!</button>
+                    </span>
+                </div>
 
                 {% if form.phone.errors %}
                 <div class="help-block">
@@ -66,6 +76,8 @@ Signal Settings - {% site_name %}
                     country code.
                 </span>
                 {% endif %}
+
+                <div id="verify-result"></div>
             </div>
         </div>
 
@@ -100,10 +112,21 @@ Signal Settings - {% site_name %}
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Save Integration</button>
+                <button
+                    id="submit-btn"
+                    type="submit"
+                    class="btn btn-primary"
+                    disabled>Save Integration</button>
             </div>
         </div>
     </form>
 </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    {% compress js %}
+    <script src="{% static 'js/signal_form.js' %}"></script>
+    {% endcompress %}
 {% endblock %}

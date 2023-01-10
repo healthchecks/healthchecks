@@ -114,4 +114,5 @@ urlpatterns = [
     path("docs/search/", views.docs_search, name="hc-docs-search"),
     path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
     path("signal_captcha/", views.signal_captcha, name="hc-signal-captcha"),
+    path("signal_verify/", views.verify_signal_number, name="hc-signal-verify"),
 ]
