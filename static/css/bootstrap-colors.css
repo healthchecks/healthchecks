@@ -16,6 +16,13 @@
     border-color: var(--btn-active-border);
 }
 
+.btn-default:disabled,
+.btn-default:disabled:hover,
+.btn-default:disabled:focus {
+    border-color: var(--btn-default-border);
+    background-color: var(--btn-default-bg);
+}
+
 .open > .dropdown-toggle.btn-default,
 .open > .dropdown-toggle.btn-default:active,
 .open > .dropdown-toggle.btn-default:hover,

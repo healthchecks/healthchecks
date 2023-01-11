@@ -3,8 +3,11 @@ $(function() {
         $("#submit-btn").attr("disabled", true);
     });
 
-    $("#verify-btn").click(function() {
-        $("#verify-btn").attr("disabled", true);
+    // Show a tooltip on the submit button only if it is disabled
+    $("body").tooltip({selector: "#submit-btn:disabled"});
+
+    $("#signal-verify-btn").click(function() {
+        $("#signal-verify-btn").attr("disabled", true);
 
         var url = this.dataset.verifyUrl;
         var token = $('input[name=csrfmiddlewaretoken]').val();
@@ -16,9 +19,8 @@ $(function() {
             success: function(data) {
                 $("#verify-result").html(data);
                 $("#submit-btn").attr("disabled", data.indexOf("alert-success") == -1);
-                $("#verify-btn").attr("disabled", false);
+                $("#signal-verify-btn").attr("disabled", false);
             }
         });
-
     });
 })

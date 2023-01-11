@@ -59,10 +59,13 @@ Signal Settings - {% site_name %}
 
                     <span class="input-group-btn">
                         <button
-                            id="verify-btn"
+                            id="signal-verify-btn"
                             type="button"
                             class="btn btn-default"
-                            data-verify-url="{% url 'hc-signal-verify' %}">Send Test Message!</button>
+                            data-verify-url="{% url 'hc-signal-verify' %}">
+                            <span>Send Test Message!</span>
+                            <div class="spinner"></div>
+                        </button>
                     </span>
                 </div>
 
@@ -116,6 +119,7 @@ Signal Settings - {% site_name %}
                     id="submit-btn"
                     type="submit"
                     class="btn btn-primary"
+                    title="Please verify the number by sending a test message first."
                     disabled>Save Integration</button>
             </div>
         </div>
