@@ -2410,10 +2410,11 @@ def signal_captcha(request: HttpRequest) -> HttpResponse:
 @require_setting("SIGNAL_CLI_SOCKET")
 @login_required
 @require_POST
-def verify_signal_number(request: HttpRequest):
-    def render_result(result):
+def verify_signal_number(request: HttpRequest) -> HttpResponse:
+    def render_result(result: str | None) -> HttpResponse:
         return render(request, "integrations/signal_result.html", {"result": result})
 
+    # Enforce per-account rate limit (50 verifications per day)
     if not TokenBucket.authorize_signal_verification(request.user):
         return render_result("Verification rate limit exceeded")
 
@@ -2421,8 +2422,12 @@ def verify_signal_number(request: HttpRequest):
     if not form.is_valid():
         return render_result("Invalid phone number")
 
+    phone = form.cleaned_data["phone"]
+    # Enforce per-recipient rate limit (6 messages per minute)
+    if not TokenBucket.authorize_signal(phone):
+        return render_result("Verification rate limit exceeded")
+
     try:
-        phone = form.cleaned_data["phone"]
         Signal(None).send(phone, f"Test message from {settings.SITE_NAME}")
     except TransportError as e:
         return render_result(e.message)

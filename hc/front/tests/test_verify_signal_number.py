@@ -69,9 +69,20 @@ class VerifySignalNumberTestCase(BaseTestCase):
         r = self.client.post(self.url, {"phone": "+1234567890"})
         self.assertRedirects(r, "/accounts/login/?next=" + self.url)
 
-    def test_it_obeys_verification_rate_limit(self):
+    def test_it_obeys_per_account_rate_limit(self):
         TokenBucket.objects.create(value=f"signal-verify-{self.alice.id}", tokens=0)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"phone": "+1234567890"})
+        self.assertContains(r, "Verification rate limit exceeded")
+
+    @override_settings(SECRET_KEY="test-secret")
+    def test_it_obeys_per_recipient_rate_limit(self):
+        # "2862..." is sha1("+123456789test-secret")
+        obj = TokenBucket(value="signal-2862991ccaa15c8856e7ee0abaf3448fb3c292e0")
+        obj.tokens = 0
+        obj.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, {"phone": "+123456789"})
         self.assertContains(r, "Verification rate limit exceeded")

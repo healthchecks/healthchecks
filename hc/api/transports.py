@@ -884,7 +884,7 @@ class Signal(Transport):
         else:
             return not self.channel.signal_notify_up
 
-    def send(self, recipient, message):
+    def send(self, recipient: str, message: str) -> None:
         payload = {
             "jsonrpc": "2.0",
             "method": "send",
@@ -920,7 +920,7 @@ class Signal(Transport):
                 code = reply["error"].get("code")
                 raise TransportError("signal-cli call failed (%s)" % code)
 
-    def _read_replies(self, payload_bytes):
+    def _read_replies(self, payload_bytes: bytes):
         """Send a request to signal-cli over UNIX socket. Read and yield replies.
 
         This method:
