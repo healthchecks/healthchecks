@@ -115,8 +115,13 @@ class ProjectTestCase(BaseTestCase):
         self.assertFalse(member.user.project_set.exists())
 
         # And an email should have been sent
+        message = mail.outbox[0]
         subj = f"You have been invited to join Alice's Project on {settings.SITE_NAME}"
-        self.assertEqual(mail.outbox[0].subject, subj)
+        self.assertEqual(message.subject, subj)
+
+        html, _ = message.alternatives[0]
+        self.assertIn("You will be able to manage", message.body)
+        self.assertIn("You will be able to manage", html)
 
     def test_it_adds_readonly_team_member(self):
         self.client.login(username="alice@example.org", password="password")
@@ -130,6 +135,12 @@ class ProjectTestCase(BaseTestCase):
         )
 
         self.assertEqual(member.role, member.Role.READONLY)
+
+        # And an email should have been sent
+        message = mail.outbox[0]
+        html, _ = message.alternatives[0]
+        self.assertIn("You will be able to view", message.body)
+        self.assertIn("You will be able to view", html)
 
     def test_it_adds_manager_team_member(self):
         self.client.login(username="alice@example.org", password="password")

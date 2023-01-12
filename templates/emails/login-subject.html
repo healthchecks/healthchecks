@@ -1,6 +1,6 @@
 {% load hc_extras %}
-{% if inviting_project %}
-    You have been invited to join {{ inviting_project|safe }} on {% site_name %}
+{% if membership %}
+    You have been invited to join {{ membership.project|safe }} on {% site_name %}
 {% else %}
     Log in to {% site_name %}
 {% endif %}

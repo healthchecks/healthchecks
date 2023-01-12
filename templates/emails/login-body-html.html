@@ -5,20 +5,23 @@
 Hello,
 <br />
 
-{% if inviting_project %}
-    {% if inviting_project.name %}
-        <strong>{{ inviting_project.owner.email }}</strong> invites you to their
+{% if membership %}
+    {% if membership.project.name %}
+        <strong>{{ membership.project.owner.email }}</strong> invites you to their
         <a href="{% site_root %}">{% site_name %}</a>
-        project <strong>{{ inviting_project }}</strong>.
+        project <strong>{{ membership.project }}</strong>.
     {% else %}
-        <strong>{{ inviting_project.owner.email }}</strong> invites you to their
+        <strong>{{ membership.project.owner.email }}</strong> invites you to their
         <a href="{% site_root %}">{% site_name %}</a> account.
     {% endif %}
     <br /><br />
 
-    You will be able to manage their
-    existing monitoring checks and set up new ones. If you already have your
-    own account on {% site_name %}, you will be able to switch
+    {% if membership.role == "r" %}
+    You will be able to view their existing monitoring checks, but not modify them.
+    {% else %}
+    You will be able to manage their existing monitoring checks and set up new ones.
+    {% endif %}
+    If you already have your own account on {% site_name %}, you will be able to switch
     between the two accounts.
     <br /><br />
 {% endif %}

@@ -116,7 +116,7 @@ class Profile(models.Model):
 
         return "login" in self.token and check_password(token, self.token)
 
-    def send_instant_login_link(self, inviting_project=None, redirect_url=None):
+    def send_instant_login_link(self, membership=None, redirect_url=None):
         token = self.prepare_token()
         path = reverse("hc-check-token", args=[self.user.username, token])
         if redirect_url:
@@ -125,7 +125,7 @@ class Profile(models.Model):
         ctx = {
             "button_text": "Sign In",
             "button_url": settings.SITE_ROOT + path,
-            "inviting_project": inviting_project,
+            "membership": membership,
         }
         emails.login(self.user.email, ctx)
 
@@ -393,9 +393,9 @@ class Project(models.Model):
         if self.owner_id == user.id:
             return False
 
-        Member.objects.create(user=user, project=self, role=role)
+        m = Member.objects.create(user=user, project=self, role=role)
         checks_url = reverse("hc-checks", args=[self.code])
-        user.profile.send_instant_login_link(self, redirect_url=checks_url)
+        user.profile.send_instant_login_link(membership=m, redirect_url=checks_url)
         return True
 
     def update_next_nag_dates(self):
