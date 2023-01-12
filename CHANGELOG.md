@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Fix special character encoding in Signal notifications (#767)
 - Fix project sort order to be case-insensitive everywhere in the UI (#768)
 - Fix special character encoding in project invite emails
+- Fix check transfer between same account's projects when at check limit
 
 ## v2.5 - 2022-12-14
 

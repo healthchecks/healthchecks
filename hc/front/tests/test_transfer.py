@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hc.api.models import Channel, Check
+from hc.api.models import Channel, Check, Project
 from hc.test import BaseTestCase
 
 
@@ -9,24 +9,64 @@ class TransferTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check.objects.create(project=self.bobs_project)
-        self.url = "/checks/%s/transfer/" % self.check.code
+        self.url = f"/checks/{self.check.code}/transfer/"
 
     def test_it_serves_form(self):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Transfer to Another Project")
+        self.assertNotContains(r, "(at check limit)")
+
+    def test_form_obeys_check_limit(self):
+        # Alices's projects cannot accept checks due to limits:
+        self.profile.check_limit = 0
+        self.profile.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "Transfer to Another Project")
+        self.assertContains(r, "(at check limit)")
+
+    def test_form_always_allows_transfers_between_same_accounts_projects(self):
+        # If user is at check limit, they should still be able to
+        # transfer checks between their own projects.
+        self.bobs_profile.check_limit = 1
+        self.bobs_profile.save()
+
+        self.bobs_membership.delete()
+        Project.objects.create(owner=self.bob)
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertContains(r, "Transfer to Another Project")
+        self.assertNotContains(r, "(at check limit)")
 
     def test_it_works(self):
         self.client.login(username="bob@example.org", password="password")
         payload = {"project": self.project.code}
         r = self.client.post(self.url, payload, follow=True)
-        self.assertRedirects(r, "/checks/%s/details/" % self.check.code)
+        self.assertRedirects(r, f"/checks/{self.check.code}/details/")
         self.assertContains(r, "Check transferred successfully")
 
         check = Check.objects.get()
         self.assertEqual(check.project, self.project)
 
-    def test_it_obeys_check_limit(self):
+    def test_post_always_allows_transfers_between_same_accounts_projects(self):
+        # If user is at check limit, they should still be able to
+        # transfer checks between their own projects.
+        self.bobs_profile.check_limit = 1
+        self.bobs_profile.save()
+
+        self.bobs_membership.delete()
+        p2 = Project.objects.create(owner=self.bob)
+
+        self.client.login(username="bob@example.org", password="password")
+        payload = {"project": p2.code}
+        r = self.client.post(self.url, payload, follow=True)
+        self.assertRedirects(r, f"/checks/{self.check.code}/details/")
+        self.assertContains(r, "Check transferred successfully")
+
+    def test_post_obeys_check_limit(self):
         # Alice's projects cannot accept checks due to limits:
         self.profile.check_limit = 0
         self.profile.save()

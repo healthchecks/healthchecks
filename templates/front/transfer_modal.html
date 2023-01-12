@@ -36,7 +36,7 @@
                                 <option disabled data-subtext="(current project)">
                                     {{ project }}
                                 </option>
-                            {% elif project.num_checks_available > 0 %}
+                            {% elif project.owner_id == check.project.owner_id or project.num_checks_available > 0 %}
                                 <option value="{{ project.code }}">{{ project }}</option>
                             {% else %}
                                 <option disabled data-subtext="(at check limit)">

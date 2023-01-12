@@ -867,8 +867,9 @@ def transfer(request: HttpRequest, code: UUID) -> HttpResponse:
             return HttpResponseBadRequest()
 
         target_project = _get_rw_project_for_user(request, form.cleaned_data["project"])
-        if target_project.num_checks_available() <= 0:
-            return HttpResponseBadRequest()
+        if target_project.owner_id != check.project.owner_id:
+            if target_project.num_checks_available() <= 0:
+                return HttpResponseBadRequest()
 
         check.project = target_project
         check.save()
