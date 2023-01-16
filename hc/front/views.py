@@ -503,6 +503,7 @@ def filtering_rules(request, code):
     if form.is_valid():
         check.filter_subject = form.cleaned_data["filter_subject"]
         check.filter_body = form.cleaned_data["filter_body"]
+        check.start_kw = form.cleaned_data["start_kw"]
         check.success_kw = form.cleaned_data["success_kw"]
         check.failure_kw = form.cleaned_data["failure_kw"]
 
@@ -901,6 +902,7 @@ def copy(request, code):
 
     copied.filter_subject = check.filter_subject
     copied.filter_body = check.filter_body
+    copied.start_kw = check.start_kw
     copied.success_kw = check.success_kw
     copied.failure_kw = check.failure_kw
 

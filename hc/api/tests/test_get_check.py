@@ -23,6 +23,7 @@ class GetCheckTestCase(BaseTestCase):
         self.a1.tags = "a1-tag a1-additional-tag"
         self.a1.desc = "This is description"
         self.a1.filter_subject = True
+        self.a1.start_kw = "START"
         self.a1.success_kw = "SUCCESS"
         self.a1.failure_kw = "ERROR"
         self.a1.save()
@@ -40,7 +41,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 24)
+        self.assertEqual(len(doc), 25)
 
         self.assertEqual(doc["slug"], "alice-1")
         self.assertEqual(doc["timeout"], 3600)
@@ -56,6 +57,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["methods"], "")
         self.assertEqual(doc["subject"], "SUCCESS")
         self.assertEqual(doc["subject_fail"], "ERROR")
+        self.assertEqual(doc["start_kw"], "START")
         self.assertEqual(doc["success_kw"], "SUCCESS")
         self.assertEqual(doc["failure_kw"], "ERROR")
         self.assertTrue(doc["filter_subject"])
@@ -76,7 +78,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 24)
+        self.assertEqual(len(doc), 25)
 
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)

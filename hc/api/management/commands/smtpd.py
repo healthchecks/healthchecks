@@ -67,6 +67,8 @@ def _process_message(remote_addr, mailfrom, mailto, data):
             action = "fail"
         elif check.success_kw and _match(text, check.success_kw):
             action = "success"
+        elif check.start_kw and _match(text, check.start_kw):
+            action = "start"
 
     ua = "Email from %s" % mailfrom
     check.ping(remote_addr, "email", "", ua, data, action, None)

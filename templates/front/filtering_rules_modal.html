@@ -60,6 +60,25 @@
                     </label>
 
                     <div class="form-group">
+                        <label for="start_kw" class="col-sm-4 control-label">
+                            Start Keywords
+                        </label>
+                        <div class="col-sm-7">
+                            <input
+                                id="start_kw"
+                                name="start_kw"
+                                type="text"
+                                maxlength="200"
+                                value="{{ check.start_kw }}"
+                                {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
+                                class="form-control filter-kw" />
+                            <span class="help-block">
+                                Comma-separated list of keywords. If subject or body
+                                contains any of the keywords, classify the email as "start".
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="success_kw" class="col-sm-4 control-label">
                             Success Keywords
                         </label>

@@ -15,6 +15,7 @@ check = {
         "methods": {"enum": ["", "POST"]},
         "subject": {"type": "string", "maxLength": 200},
         "subject_fail": {"type": "string", "maxLength": 200},
+        "start_kw": {"type": "string", "maxLength": 200},
         "success_kw": {"type": "string", "maxLength": 200},
         "failure_kw": {"type": "string", "maxLength": 200},
         "filter_subject": {"type": "boolean"},

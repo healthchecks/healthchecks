@@ -114,6 +114,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
       "methods": "",
+      "start_kw": "START",
       "success_kw": "SUCCESS",
       "failure_kw": "ERROR",
       "filter_subject": true,
@@ -137,6 +138,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/
       "next_ping": null,
       "manual_resume": false,
       "methods": "",
+      "start_kw": "",
       "success_kw": "",
       "failure_kw": "",
       "filter_subject": false,
@@ -179,6 +181,7 @@ Example:
       "next_ping": "2020-03-24T15:02:03+00:00",
       "manual_resume": false,
       "methods": "",
+      "start_kw": "START",
       "success_kw": "SUCCESS",
       "failure_kw": "ERROR",
       "filter_subject": true,
@@ -198,6 +201,7 @@ Example:
       "next_ping": null,
       "manual_resume": false,
       "methods": "",
+      "start_kw": "",
       "success_kw": "",
       "failure_kw": "",
       "filter_subject": false,
@@ -254,6 +258,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v1/checks/<uuid>
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "start_kw": "START",
   "success_kw": "SUCCESS",
   "failure_kw": "ERROR",
   "filter_subject": true,
@@ -293,6 +298,7 @@ easily construct these URLs themselves *if* they know the check's unique UUID.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "start_kw": "START",
   "success_kw": "SUCCESS",
   "failure_kw": "ERROR",
   "filter_subject": true,
@@ -451,6 +457,24 @@ unique
     In this example, if a check named "Backups" exists, it will be returned.
     Otherwise, a new check will be created and returned.
 
+start_kw
+:   string, optional, default value: "".
+
+    Specifies the keywords for classifying inbound email messages as "Start" signals.
+    Separate multiple keywords using commas.
+
+    Use this field in combination with the `filter_subject` and `filter_body` fields.
+    Setting `filter_subject` to `true` enables filtering on the email subject line,
+    `filter_body` enables filtering on the entire email body. SITE_NAME supports both
+    plain text and HTML email messages.
+
+    Example:
+
+    <pre>{"filter_subject": true, "start_kw": "STARTED"}</pre>
+
+    In this example, SITE_NAME classifies the email as a start signal if the Subject
+    line contains the word "STARTED".
+
 success_kw
 :   string, optional, default value: "".
 
@@ -587,6 +611,7 @@ curl SITE_ROOT/api/v1/checks/ \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
@@ -724,6 +749,24 @@ channels
 
     <pre>{"channels": "Email to Alice,SMS to Alice"}</pre>
 
+start_kw
+:   string, optional, default value: "".
+
+    Specifies the keywords for classifying inbound email messages as "Start" signals.
+    Separate multiple keywords using commas.
+
+    Use this field in combination with the `filter_subject` and `filter_body` fields.
+    Setting `filter_subject` to `true` enables filtering on the email subject line,
+    `filter_body` enables filtering on the entire email body. SITE_NAME supports both
+    plain text and HTML email messages.
+
+    Example:
+
+    <pre>{"filter_subject": true, "start_kw": "STARTED"}</pre>
+
+    In this example, SITE_NAME classifies the email as a start signal if the Subject
+    line contains the word "STARTED".
+
 success_kw
 :   string, optional, default value: "".
 
@@ -860,6 +903,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
@@ -924,6 +968,7 @@ header is sometimes required by some network proxies and web servers.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
@@ -991,6 +1036,7 @@ header is sometimes required by some network proxies and web servers.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
@@ -1050,6 +1096,7 @@ curl SITE_ROOT/api/v1/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,

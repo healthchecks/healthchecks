@@ -113,6 +113,7 @@ class CheckDict(TypedDict, total=False):
     methods: str
     subject: str
     subject_fail: str
+    start_kw: str
     success_kw: str
     failure_kw: str
     filter_subject: bool
@@ -161,6 +162,7 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     filter_subject = models.BooleanField(default=False)
     filter_body = models.BooleanField(default=False)
+    start_kw = models.CharField(max_length=200, blank=True)
     success_kw = models.CharField(max_length=200, blank=True)
     failure_kw = models.CharField(max_length=200, blank=True)
     methods = models.CharField(max_length=30, blank=True)
@@ -337,6 +339,7 @@ class Check(models.Model):
             "methods": self.methods,
             "subject": self.success_kw if self.filter_subject else "",
             "subject_fail": self.failure_kw if self.filter_subject else "",
+            "start_kw": self.start_kw,
             "success_kw": self.success_kw,
             "failure_kw": self.failure_kw,
             "filter_subject": self.filter_subject,

@@ -124,7 +124,7 @@ ul.crosses li:before {
 
 @media (min-width: 992px) {
     #filtering-rules-modal .modal-dialog {
-        width: 650px;
+        width: 730px;
     }
 }
 

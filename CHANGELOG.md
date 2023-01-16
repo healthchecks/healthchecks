@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add support for communicating with signal-cli over TCP (#732)
 - Add /api/v2/ (changes the status reporting of checks in started state) (#633)
 - Update settings.py to read the ADMINS setting from an environment variable
+- Add "Start Keyword" filtering for inbound emails (#716)
 
 ### Bug Fixes
 - Fix the Signal integration to handle unexpected RPC messages better (#763)

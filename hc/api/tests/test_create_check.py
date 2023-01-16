@@ -31,6 +31,7 @@ class CreateCheckTestCase(BaseTestCase):
                 "desc": "description goes here",
                 "timeout": 3600,
                 "grace": 60,
+                "start_kw": "START",
                 "success_kw": "SUCCESS",
                 "failure_kw": "FAILURE",
                 "filter_subject": True,
@@ -50,6 +51,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(doc["last_ping"], None)
         self.assertEqual(doc["n_pings"], 0)
         self.assertEqual(doc["methods"], "")
+        self.assertEqual(doc["start_kw"], "START")
         self.assertEqual(doc["success_kw"], "SUCCESS")
         self.assertEqual(doc["failure_kw"], "FAILURE")
         self.assertTrue(doc["filter_subject"])
@@ -64,6 +66,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.tags, "bar,baz")
         self.assertEqual(check.desc, "description goes here")
         self.assertEqual(check.methods, "")
+        self.assertEqual(check.start_kw, "START")
         self.assertEqual(check.success_kw, "SUCCESS")
         self.assertEqual(check.failure_kw, "FAILURE")
         self.assertTrue(check.filter_subject)

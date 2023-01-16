@@ -12,6 +12,7 @@ class CopyCheckTestCase(BaseTestCase):
         self.check.slug = "foo"
         self.check.filter_subject = True
         self.check.filter_body = True
+        self.check.start_kw = "start-keyword"
         self.check.success_kw = "success-keyword"
         self.check.failure_kw = "failure-keyword"
         self.check.methods = "POST"
@@ -29,6 +30,7 @@ class CopyCheckTestCase(BaseTestCase):
         self.assertEqual(copy.slug, "foo-copy")
         self.assertTrue(copy.filter_subject)
         self.assertTrue(copy.filter_body)
+        self.assertEqual(copy.start_kw, "start-keyword")
         self.assertEqual(copy.success_kw, "success-keyword")
         self.assertEqual(copy.failure_kw, "failure-keyword")
         self.assertEqual(copy.methods, "POST")

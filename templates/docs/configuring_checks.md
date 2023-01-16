@@ -74,11 +74,11 @@ requests to use HTTP POST. Use the "Only POST" option if you run into issues of
 preview bots hitting the ping URLs when you send them in email or post them in chat.
 * **Filter by keywords in the Subject line**. When pinging [via email](../email/),
 look for specific keywords in the subject line. If the subject line contains any of
-the keywords listed in **Success Keywords**, SITE_NAME will assume it to be a success
-signal. Likewise, if it contains any of the keywords listed in **Failure Keywords**,
-SITE_NAME will treat it as an explicit failure signal.
-For example, this is useful if your backup software sends an email after each backup
-run with a different subject line depending on success or failure.
+the keywords listed in **Start Keywords**, **Success Keywords**, or
+**Failure Keywords**, SITE_NAME will assume it to be a start, a success, or a failure
+signal respectively. This is useful if, for example, your backup software sends an
+email after each backup run with a different subject line depending on success or
+failure.
 * **Filter by keywords in the message body**. Same as the previous option, but
 looks for the keywords in the email message body. Supports both plain text and HTML
 email messages.

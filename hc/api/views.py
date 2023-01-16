@@ -196,6 +196,7 @@ def _update(check, spec):
         "manual_resume",
         "methods",
         "tz",
+        "start_kw",
         "success_kw",
         "failure_kw",
         "filter_subject",

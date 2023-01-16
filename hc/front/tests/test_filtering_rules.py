@@ -16,6 +16,7 @@ class FilteringRulesTestCase(BaseTestCase):
         payload = {
             "filter_subject": "on",
             "filter_body": "on",
+            "start_kw": "START",
             "success_kw": "SUCCESS",
             "failure_kw": "ERROR",
             "methods": "POST",
@@ -29,6 +30,7 @@ class FilteringRulesTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertTrue(self.check.filter_subject)
         self.assertTrue(self.check.filter_body)
+        self.assertEqual(self.check.start_kw, "START")
         self.assertEqual(self.check.success_kw, "SUCCESS")
         self.assertEqual(self.check.failure_kw, "ERROR")
         self.assertEqual(self.check.methods, "POST")
@@ -50,6 +52,7 @@ class FilteringRulesTestCase(BaseTestCase):
     def test_it_clears_filtering_fields(self):
         self.check.filter_subject = True
         self.check.filter_body = True
+        self.check.start_kw = "START"
         self.check.success_kw = "SUCCESS"
         self.check.failure_kw = "ERROR"
         self.check.save()
@@ -61,6 +64,7 @@ class FilteringRulesTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertFalse(self.check.filter_subject)
         self.assertFalse(self.check.filter_body)
+        self.assertEqual(self.check.start_kw, "")
         self.assertEqual(self.check.success_kw, "")
         self.assertEqual(self.check.failure_kw, "")
 
