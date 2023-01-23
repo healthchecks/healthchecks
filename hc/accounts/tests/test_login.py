@@ -82,6 +82,32 @@ class LoginTestCase(BaseTestCase):
         # No email should have been sent
         self.assertEqual(len(mail.outbox), 0)
 
+    def test_it_rate_limits_client_ips(self):
+        obj = TokenBucket(value="auth-ip-127.0.0.1")
+        obj.tokens = 0
+        obj.save()
+
+        form = {"identity": "alice@example.org"}
+
+        r = self.client.post("/accounts/login/", form)
+        self.assertContains(r, "Too many attempts")
+
+        # No email should have been sent
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_rate_limiter_uses_x_forwarded_for(self):
+        obj = TokenBucket(value="auth-ip-127.0.0.2")
+        obj.tokens = 0
+        obj.save()
+
+        form = {"identity": "alice@example.org"}
+        xff = "127.0.0.2:1234,127.0.0.3"
+        r = self.client.post("/accounts/login/", form, HTTP_X_FORWARDED_FOR=xff)
+        self.assertContains(r, "Too many attempts")
+
+        # No email should have been sent
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_it_pops_bad_link_from_session(self):
         self.client.session["bad_link"] = True
         self.client.get("/accounts/login/")

@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from hc.accounts.models import Profile, Project
-from hc.api.models import Channel, Check
+from hc.api.models import Channel, Check, TokenBucket
 
 
 class SignupTestCase(TestCase):
@@ -110,3 +110,22 @@ class SignupTestCase(TestCase):
 
         profile = Profile.objects.get()
         self.assertEqual(profile.tz, "UTC")
+
+    def test_it_rate_limits_client_ips(self):
+        obj = TokenBucket(value="auth-ip-127.0.0.1")
+        obj.tokens = 0
+        obj.save()
+
+        form = {"identity": "alice@example.org", "tz": ""}
+        r = self.client.post("/accounts/signup/", form)
+        self.assertContains(r, "please try later")
+
+    def test_rate_limiter_uses_x_forwarded_for(self):
+        obj = TokenBucket(value="auth-ip-127.0.0.2")
+        obj.tokens = 0
+        obj.save()
+
+        form = {"identity": "alice@example.org", "tz": ""}
+        xff = "127.0.0.2:1234,127.0.0.3"
+        r = self.client.post("/accounts/signup/", form, HTTP_X_FORWARDED_FOR=xff)
+        self.assertContains(r, "please try later")

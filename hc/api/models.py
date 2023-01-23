@@ -1144,6 +1144,20 @@ class TokenBucket(models.Model):
         return True
 
     @staticmethod
+    def authorize_auth_ip(request):
+        headers = request.META
+        remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
+        remote_addr = remote_addr.split(",")[0]
+        if "." in remote_addr and ":" in remote_addr:
+            # If remote_addr is in a ipv4address:port format
+            # (like in Azure App Service), remove the port:
+            remote_addr = remote_addr.split(":")[0]
+
+        value = f"auth-ip-{remote_addr}"
+        # 20 signup/login attempts for a single IP per hour:
+        return TokenBucket.authorize(value, 20, 3600)
+
+    @staticmethod
     def authorize_login_email(email):
         # remove dots and alias:
         mailbox, domain = email.split("@")

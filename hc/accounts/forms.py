@@ -25,7 +25,14 @@ class SignupForm(forms.Form):
     )
     tz = forms.CharField(required=False)
 
+    def __init__(self, request):
+        self.request = request
+        super(SignupForm, self).__init__(request.POST)
+
     def clean_identity(self):
+        if not TokenBucket.authorize_auth_ip(self.request):
+            raise forms.ValidationError("Too many attempts, please try later.")
+
         v = self.cleaned_data["identity"]
         if len(v) > 254:
             raise forms.ValidationError("Address is too long.")
@@ -47,9 +54,15 @@ class EmailLoginForm(forms.Form):
     # to avoid some of the dumber bots
     identity = LowercaseEmailField()
 
+    def __init__(self, request):
+        self.request = request
+        super(EmailLoginForm, self).__init__(request.POST)
+
     def clean_identity(self):
         v = self.cleaned_data["identity"]
         if not TokenBucket.authorize_login_email(v):
+            raise forms.ValidationError("Too many attempts, please try later.")
+        if not TokenBucket.authorize_auth_ip(self.request):
             raise forms.ValidationError("Too many attempts, please try later.")
 
         try:

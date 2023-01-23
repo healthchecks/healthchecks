@@ -146,7 +146,7 @@ def _new_key(nbytes=24):
 
 def login(request):
     form = forms.PasswordLoginForm()
-    magic_form = forms.EmailLoginForm()
+    magic_form = forms.EmailLoginForm(request)
 
     if request.method == "POST":
         if request.POST.get("action") == "login":
@@ -155,7 +155,7 @@ def login(request):
                 return _check_2fa(request, form.user)
 
         else:
-            magic_form = forms.EmailLoginForm(request.POST)
+            magic_form = forms.EmailLoginForm(request)
             if magic_form.is_valid():
                 redirect_url = request.GET.get("next")
                 if not _allow_redirect(redirect_url):
@@ -199,7 +199,7 @@ def signup(request):
         return HttpResponseForbidden()
 
     ctx = {}
-    form = forms.SignupForm(request.POST)
+    form = forms.SignupForm(request)
     if form.is_valid():
         email = form.cleaned_data["identity"]
         if not User.objects.filter(email=email).exists():
