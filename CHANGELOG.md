@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.6-dev - Unreleased
+## v2.6 - 2023-01-23
 
 ### Improvements
 - Improve layout in "My Checks" for checks with long ping URLs (#745)
