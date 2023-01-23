@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Fix special character encoding in project invite emails
 - Fix check transfer between same account's projects when at check limit
 - Fix wording in the invite email when inviting read-only users
+- Fix login and signup views to make email enumeration harder
 
 ## v2.5 - 2022-12-14
 

@@ -30,11 +30,6 @@ class SignupForm(forms.Form):
         if len(v) > 254:
             raise forms.ValidationError("Address is too long.")
 
-        if User.objects.filter(email=v).exists():
-            raise forms.ValidationError(
-                "An account with this email address already exists."
-            )
-
         return v
 
     def clean_tz(self):
@@ -60,7 +55,7 @@ class EmailLoginForm(forms.Form):
         try:
             self.user = User.objects.get(email=v)
         except User.DoesNotExist:
-            raise forms.ValidationError("Unknown email address.")
+            self.user = None
 
         return v
 

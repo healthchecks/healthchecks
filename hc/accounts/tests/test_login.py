@@ -57,6 +57,16 @@ class LoginTestCase(BaseTestCase):
         body = mail.outbox[0].body
         self.assertTrue("/?next=" + self.channels_url in body)
 
+    def test_it_handles_unknown_email(self):
+        form = {"identity": "surprise@example.org"}
+
+        r = self.client.post("/accounts/login/", form)
+        self.assertRedirects(r, "/accounts/login_link_sent/")
+        self.assertIn("auto-login", r.cookies)
+
+        # There should be no sent emails.
+        self.assertEqual(len(mail.outbox), 0)
+
     @override_settings(SECRET_KEY="test-secret")
     def test_it_rate_limits_emails(self):
         # "d60d..." is sha1("alice@example.orgtest-secret")

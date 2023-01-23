@@ -161,10 +161,11 @@ def login(request):
                 if not _allow_redirect(redirect_url):
                     redirect_url = None
 
-                profile = Profile.objects.for_user(magic_form.user)
-                profile.send_instant_login_link(redirect_url=redirect_url)
-                response = redirect("hc-login-link-sent")
+                if magic_form.user:
+                    profile = Profile.objects.for_user(magic_form.user)
+                    profile.send_instant_login_link(redirect_url=redirect_url)
 
+                response = redirect("hc-login-link-sent")
                 # check_token looks for this cookie to decide if
                 # it needs to do the extra POST step.
                 response.set_cookie("auto-login", "1", max_age=300, httponly=True)
@@ -201,16 +202,16 @@ def signup(request):
     form = forms.SignupForm(request.POST)
     if form.is_valid():
         email = form.cleaned_data["identity"]
-        tz = form.cleaned_data["tz"]
-        user = _make_user(email, tz)
-        profile = Profile.objects.for_user(user)
-        profile.send_instant_login_link()
-        ctx["created"] = True
+        if not User.objects.filter(email=email).exists():
+            tz = form.cleaned_data["tz"]
+            user = _make_user(email, tz)
+            profile = Profile.objects.for_user(user)
+            profile.send_instant_login_link()
     else:
         ctx = {"form": form}
 
     response = render(request, "accounts/signup_result.html", ctx)
-    if ctx.get("created"):
+    if "form" not in ctx:
         response.set_cookie("auto-login", "1", max_age=300, httponly=True)
 
     return response

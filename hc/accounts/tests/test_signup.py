@@ -16,7 +16,7 @@ class SignupTestCase(TestCase):
         form = {"identity": "alice@example.org", "tz": "Europe/Riga"}
 
         r = self.client.post("/accounts/signup/", form)
-        self.assertContains(r, "Account created")
+        self.assertContains(r, "check your email")
         self.assertIn("auto-login", r.cookies)
 
         # An user should have been created
@@ -75,13 +75,17 @@ class SignupTestCase(TestCase):
         q = User.objects.filter(email="alice@example.org")
         self.assertTrue(q.exists)
 
-    def test_it_checks_for_existing_users(self):
+    def test_it_handles_existing_users(self):
         alice = User(username="alice", email="alice@example.org")
         alice.save()
 
         form = {"identity": "alice@example.org", "tz": ""}
         r = self.client.post("/accounts/signup/", form)
-        self.assertContains(r, "already exists")
+        self.assertContains(r, "check your email")
+        self.assertIn("auto-login", r.cookies)
+
+        # It should not send an email
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_it_checks_syntax(self):
         form = {"identity": "alice at example org", "tz": ""}
@@ -101,7 +105,7 @@ class SignupTestCase(TestCase):
         form = {"identity": "alice@example.org", "tz": "Foo/Bar"}
 
         r = self.client.post("/accounts/signup/", form)
-        self.assertContains(r, "Account created")
+        self.assertContains(r, "check your email")
         self.assertIn("auto-login", r.cookies)
 
         profile = Profile.objects.get()

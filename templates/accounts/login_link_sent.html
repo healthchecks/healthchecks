@@ -1,16 +1,16 @@
 {% extends "base.html" %}
+{% load hc_extras %}
 
 {% block content %}
 <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
         <div class="hc-dialog">
-            <h1>Login Link Sent!</h1>
+            <h1>Check Your Email!</h1>
             <br />
             <p>
-                We've sent you an email with login instructions.
-                Please check your inbox!
+                If a {% site_name %} account exists for this email address,
+                you will receive a login link in your email shortly.
             </p>
-
         </div>
     </div>
 </div>

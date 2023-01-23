@@ -1,7 +1,5 @@
 {% for error in form.identity.errors %}
 <p class="text-danger">{{ error }}</p>
+{% empty %}
+<p class="text-success">Please check your email!</p>
 {% endfor %}
-
-{% if created %}
-<p class="text-success">Account created, please check your email!</p>
-{% endif %}
