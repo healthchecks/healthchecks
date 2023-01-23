@@ -54,9 +54,9 @@ class EmailLoginForm(forms.Form):
     # to avoid some of the dumber bots
     identity = LowercaseEmailField()
 
-    def __init__(self, request):
+    def __init__(self, request=None):
         self.request = request
-        super(EmailLoginForm, self).__init__(request.POST)
+        super(EmailLoginForm, self).__init__(request.POST if request else None)
 
     def clean_identity(self):
         v = self.cleaned_data["identity"]

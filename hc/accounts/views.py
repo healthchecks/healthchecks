@@ -146,7 +146,7 @@ def _new_key(nbytes=24):
 
 def login(request):
     form = forms.PasswordLoginForm()
-    magic_form = forms.EmailLoginForm(request)
+    magic_form = forms.EmailLoginForm()
 
     if request.method == "POST":
         if request.POST.get("action") == "login":
