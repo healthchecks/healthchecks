@@ -28,15 +28,7 @@
 
                     {% if magic_form.identity.errors %}
                     <p class="text-danger">
-                        {% for e in magic_form.identity.errors %}
-                            {{ e }}
-                            {% if e == "Unknown email address." and registration_open %}
-                            <a
-                                href="#"
-                                data-toggle="modal"
-                                data-target="#signup-modal">Create Account?</a>
-                            {% endif %}
-                        {% endfor %}
+                        {% for e in magic_form.identity.errors %}{{ e }}{% endfor %}
                     </p>
                     {% else %}
                     <p>Enter your <strong>email address</strong>.</p>
