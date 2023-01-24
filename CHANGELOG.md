@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.7-dev - Unreleased
+
+WIP
+
 ## v2.6 - 2023-01-23
 
 ### Improvements
