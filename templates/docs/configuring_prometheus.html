@@ -10,10 +10,54 @@ the Prometheus endpoint:</p>
 <div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;healthchecks&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span><span class="w"></span>
 <span class="w">    </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SITE_SCHEME</span><span class="w"></span>
-<span class="w">    </span><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/projects/45sd78-eeee-dddd-8888-b25a9887ecfd/metrics/NXyGzks4s8xcF1J-wzoaioyoqXIANGD0</span><span class="w"></span>
+<span class="w">    </span><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/projects/{your-project-uuid}/metrics/{your-readonly-api-key}</span><span class="w"></span>
 <span class="w">    </span><span class="nt">static_configs</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;SITE_HOSTNAME&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 </code></pre></div>
 
 <p>Notice how we split up the URL and paste in the scheme, domain, and path separately.</p>
 <p>Reload Prometheus, and your changes should be live, coming in under the <code>hc_</code> prefix.</p>
+<h2>Available Metrics</h2>
+<p>The Prometheus metrics endpoint exports the following metrics:</p>
+<dl>
+<dt>hc_check_up</dt>
+<dd>
+<p>For every check, indicates whether the check is currently up
+(1 for yes, 0 for no).</p>
+<p>Labels:</p>
+<ul>
+<li><code>name</code> – name of the check</li>
+<li><code>tags</code> – check's tags as a text string, multiple tags are delimited with spaces</li>
+<li><code>unique_key</code> – a stable, unique identifier of the check (derived from check's code)</li>
+</ul>
+</dd>
+<dt>hc_check_started</dt>
+<dd>
+<p>For every check, indicates whether the check is currently running
+(1 for yes, 0 for no).</p>
+<p>Labels:</p>
+<ul>
+<li><code>name</code> – name of the check</li>
+<li><code>tags</code> – check's tags as a text string, multiple tags are delimited with spaces</li>
+<li><code>unique_key</code> – a stable, unique identifier of the check (derived from check's code)</li>
+</ul>
+</dd>
+<dt>hc_tag_up</dt>
+<dd>
+<p>For every tag, indicates whether all checks with this tag are up
+(1 for yes, 0 for no).</p>
+<p>Labels:</p>
+<ul>
+<li><code>tag</code> – name of the tag</li>
+</ul>
+</dd>
+<dt>hc_checks_total</dt>
+<dd>The total number of checks.</dd>
+<dt>hc_checks_down_total</dt>
+<dd><br>The number of checks currently down.</dd>
+</dl>
+<h2>Constructing Check Details URLs</h2>
+<p>You can use the <code>unique_key</code> labels to construct URLs to check's
+details pages in SITE_NAME. Construct the URLs like so:</p>
+<div class="highlight"><pre><span></span><code>SITE_ROOT/cloaked/{unique_key}/
+</code></pre></div>
