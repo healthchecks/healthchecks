@@ -64,7 +64,7 @@ hc_checks_total
 hc_checks_down_total
 :   <br>The number of checks currently down.
 
-## Constructing Check Details URLs
+## Constructing URLs to Check Details Pages
 
 You can use the `unique_key` labels to construct URLs to check's
 details pages in SITE_NAME. Construct the URLs like so:
