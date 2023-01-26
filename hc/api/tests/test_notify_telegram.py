@@ -152,3 +152,42 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn("Hello World", payload["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_truncated_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World" * 1000
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn("[truncated]", payload["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello ``` World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertNotIn("Hello", payload["text"])

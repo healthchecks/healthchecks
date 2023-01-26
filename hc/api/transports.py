@@ -637,7 +637,18 @@ class Telegram(HttpTransport):
         if not TokenBucket.authorize_telegram(self.channel.telegram_id):
             raise TransportError("Rate limit exceeded")
 
-        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        body = get_ping_body(self.last_ping(check))
+        if body:
+            # Telegram's message limit is 4096 chars, leave some for the rest of the notification
+            if len(body) > 3000:
+                body = body[:3000] + "\n[truncated]"
+            if "```" in body:
+                body = None
+        ctx = {
+            "check": check,
+            "down_checks": self.down_checks(check),
+            "body": body
+        }
         text = tmpl("telegram_message.html", **ctx)
 
         try:
