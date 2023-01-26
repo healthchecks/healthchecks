@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import getpass
+from getpass import getpass
 
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 
-from hc.accounts.forms import SignupForm
+from hc.accounts.forms import LowercaseEmailField
 from hc.accounts.views import _make_user
 
 
@@ -17,16 +18,15 @@ class Command(BaseCommand):
 
         while not email:
             raw = input("Email address:")
-            form = SignupForm({"identity": raw})
-            if not form.is_valid():
-                self.stderr.write("Error: " + " ".join(form.errors["identity"]))
+            try:
+                email = LowercaseEmailField().clean(raw)
+            except ValidationError as e:
+                self.stderr.write("Error: " + " ".join(e.messages))
                 continue
 
-            email = form.cleaned_data["identity"]
-
         while not password:
-            p1 = getpass.getpass()
-            p2 = getpass.getpass("Password (again):")
+            p1 = getpass()
+            p2 = getpass("Password (again):")
             if p1.strip() == "":
                 self.stderr.write("Error: Blank passwords aren't allowed.")
                 continue

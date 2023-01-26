@@ -1,9 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.7-dev - Unreleased
+## v2.6.1 - 2023-01-26
 
-WIP
+### Improvements
+- Improve Prometheus docs, add section "Available Metrics"
+
+### Bug Fixes
+- Fix a crash in the "createsuperuser" management command (#779)
 
 ## v2.6 - 2023-01-23
 
