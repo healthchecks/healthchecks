@@ -13,7 +13,7 @@ from hc.lib.tz import all_timezones
 class WebhookValidator(URLValidator):
     schemes = ["http", "https"]
 
-    def add_tld(self, value):
+    def add_tld(self, value: str) -> str:
         fields = list(urlsplit(value))
         hostport = fields[1].rsplit(":", maxsplit=1)
         if "." not in hostport[0].rstrip("."):
@@ -24,14 +24,14 @@ class WebhookValidator(URLValidator):
             value = urlunsplit(fields)
         return value
 
-    def __call__(self, value):
+    def __call__(self, value: str) -> None:
         super().__call__(self.add_tld(value))
 
 
 class CronExpressionValidator(object):
     message = "Not a valid cron expression."
 
-    def __call__(self, value):
+    def __call__(self, value: str) -> None:
         # Expect 5 components-
         if len(value.split()) != 5:
             raise ValidationError(message=self.message)
@@ -48,6 +48,6 @@ class CronExpressionValidator(object):
 class TimezoneValidator(object):
     message = "Not a valid time zone."
 
-    def __call__(self, value):
+    def __call__(self, value: str) -> None:
         if value not in all_timezones:
             raise ValidationError(message=self.message)

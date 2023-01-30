@@ -19,7 +19,7 @@ from hc.front.validators import (
 from hc.lib import curl
 
 
-def _is_latin1(s):
+def _is_latin1(s: str) -> bool:
     try:
         s.encode("latin-1")
         return True
