@@ -934,7 +934,11 @@ class Signal(Transport):
 
         """
 
+        if not settings.SIGNAL_CLI_SOCKET:
+            raise TransportError("Signal notifications are not enabled")
+
         start = time.time()
+        address: str | tuple[str, int]
         if ":" in settings.SIGNAL_CLI_SOCKET:
             stype = socket.AF_INET
             parts = settings.SIGNAL_CLI_SOCKET.split(":")
