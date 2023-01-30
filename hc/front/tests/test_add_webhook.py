@@ -71,15 +71,34 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertEqual(c.down_webhook_spec["url"], "http://foo.com")
         self.assertEqual(c.up_webhook_spec["url"], "https://bar.com")
 
+    def test_it_accepts_good_urls(self):
+        urls = [
+            "http://foo",
+            "http://localhost:1234/a",
+            "http://127.0.0.1/a",
+            "http://user:pass@example.org:80",
+            "http://user:pass@example:80",
+            "http://example.com.",
+        ]
+
+        self.client.login(username="alice@example.org", password="password")
+        for url in urls:
+            form = {
+                "method_down": "GET",
+                "url_down": url,
+                "method_up": "GET",
+                "url_up": "",
+            }
+            r = self.client.post(self.url, form)
+            self.assertRedirects(r, self.channels_url, msg_prefix=url)
+
     def test_it_rejects_bad_urls(self):
         urls = [
             # clearly not an URL
-            "foo",
+            "foo bar",
             # FTP addresses not allowed
             "ftp://example.org",
-            # no loopback
-            "http://localhost:1234/endpoint",
-            "http://127.0.0.1/endpoint",
+            "http://example:80.com/",
         ]
 
         self.client.login(username="alice@example.org", password="password")

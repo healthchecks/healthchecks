@@ -10,7 +10,6 @@ from urllib.parse import quote, urlencode
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.forms import URLField
 
 from hc.front.validators import (
     CronExpressionValidator,
@@ -26,6 +25,10 @@ def _is_latin1(s):
         return True
     except UnicodeError:
         return False
+
+
+class LaxURLField(forms.URLField):
+    default_validators = [WebhookValidator()]
 
 
 class HeadersField(forms.Field):
@@ -161,7 +164,7 @@ class EmailForm(forms.Form):
 
 class AddUrlForm(forms.Form):
     error_css_class = "has-error"
-    value = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+    value = LaxURLField(max_length=1000)
 
 
 METHODS = ("GET", "POST", "PUT")
@@ -174,16 +177,12 @@ class WebhookForm(forms.Form):
     method_down = forms.ChoiceField(initial="GET", choices=zip(METHODS, METHODS))
     body_down = forms.CharField(max_length=1000, required=False)
     headers_down = HeadersField(required=False)
-    url_down = URLField(
-        max_length=1000, required=False, validators=[WebhookValidator()]
-    )
+    url_down = LaxURLField(max_length=1000, required=False)
 
     method_up = forms.ChoiceField(initial="GET", choices=zip(METHODS, METHODS))
     body_up = forms.CharField(max_length=1000, required=False)
     headers_up = HeadersField(required=False)
-    url_up = forms.URLField(
-        max_length=1000, required=False, validators=[WebhookValidator()]
-    )
+    url_up = LaxURLField(max_length=1000, required=False)
 
     def clean(self):
         super().clean()
@@ -304,7 +303,7 @@ class AddZulipForm(forms.Form):
     error_css_class = "has-error"
     bot_email = forms.EmailField(max_length=100)
     api_key = forms.CharField(max_length=50)
-    site = forms.URLField(max_length=100, validators=[WebhookValidator()])
+    site = LaxURLField(max_length=100)
     mtype = forms.ChoiceField(choices=ZULIP_TARGETS)
     to = forms.CharField(max_length=100)
     topic = forms.CharField(max_length=100, required=False)
@@ -326,7 +325,7 @@ class AddTrelloForm(forms.Form):
 class AddGotifyForm(forms.Form):
     error_css_class = "has-error"
     token = forms.CharField(max_length=50)
-    url = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+    url = LaxURLField(max_length=1000)
 
     def get_value(self):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
@@ -335,7 +334,7 @@ class AddGotifyForm(forms.Form):
 class NtfyForm(forms.Form):
     error_css_class = "has-error"
     topic = forms.CharField(max_length=50)
-    url = forms.URLField(max_length=1000, validators=[WebhookValidator()])
+    url = LaxURLField(max_length=1000)
     priority = forms.IntegerField(initial=3, min_value=0, max_value=5)
     priority_up = forms.IntegerField(initial=3, min_value=0, max_value=5)
 

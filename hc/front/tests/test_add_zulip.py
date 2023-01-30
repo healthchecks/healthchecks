@@ -62,7 +62,7 @@ class AddZulipTestCase(BaseTestCase):
         self.assertContains(r, "Invalid file format.")
 
     def test_it_rejects_malformed_site(self):
-        payload = _get_payload(site="not-an-url")
+        payload = _get_payload(site="not an url")
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, payload)
         self.assertContains(r, "Invalid file format.")

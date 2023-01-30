@@ -1,24 +1,31 @@
 from __future__ import annotations
 
 from datetime import datetime
-from urllib.parse import urlparse
+from urllib.parse import urlsplit, urlunsplit
 
 from cronsim import CronSim
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 from hc.lib.tz import all_timezones
 
 
-class WebhookValidator(object):
-    message = "Enter a valid URL."
+class WebhookValidator(URLValidator):
+    schemes = ["http", "https"]
+
+    def add_tld(self, value):
+        fields = list(urlsplit(value))
+        hostport = fields[1].rsplit(":", maxsplit=1)
+        if "." not in hostport[0].rstrip("."):
+            # If netloc has no TLD, URLValidator will reject it.
+            # So, add a dummy TLD.
+            hostport[0] = hostport[0].rstrip(".") + ".dummytld"
+            fields[1] = ":".join(hostport)
+            value = urlunsplit(fields)
+        return value
 
     def __call__(self, value):
-        parsed = urlparse(value)
-        if parsed.scheme not in ("http", "https"):
-            raise ValidationError(message=self.message)
-
-        if parsed.hostname in ("127.0.0.1", "localhost"):
-            raise ValidationError(message=self.message)
+        super().__call__(self.add_tld(value))
 
 
 class CronExpressionValidator(object):
