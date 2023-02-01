@@ -59,3 +59,51 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
         self.assertFalse(self.channel.disabled)
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Last Ping Body"], "```\nHello World\n```")
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_truncated_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World" * 1000
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertIn("[truncated]", fields["Last Ping Body"])
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.curl.request")
+    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello ``` World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        attachment = kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertNotIn("Last Ping Body", fields)
