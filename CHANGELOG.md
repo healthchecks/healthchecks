@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v2.7-dev - Unreleased
 
+### Improvements
+- Add last ping body in Mattermost notifications (#785)
+
 ### Bug Fixes
 - Fix URL validation to allow hostnames with no TLD ("http://example") (#782)
 - Add handling for ProtocolError exceptions in hc.lib.s3.get_object
