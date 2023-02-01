@@ -195,7 +195,7 @@ class NotifySlackTestCase(BaseTestCase):
         args, kwargs = mock_post.call_args
         attachment = kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Last Ping Body"], "```Hello World```")
+        self.assertEqual(fields["Last Ping Body"], "```\nHello World\n```")
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
