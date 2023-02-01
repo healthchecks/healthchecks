@@ -38,8 +38,10 @@ In that case, one workaround is to save the output to a temporary file,
 then tell curl to send the file as the request body:
 
 ```bash
+#!/bin/sh
+
 /usr/bin/certbot renew > /tmp/certbot-renew.log 2>&1
-curl --data-binary @/tmp/certbot-renew.log PING_URL/$?
+curl -fsS -m 10 --retry 5 --data-binary @/tmp/certbot-renew.log PING_URL/$?
 ```
 
 ## Using Runitor
