@@ -236,8 +236,8 @@ table.channels-table > tbody > tr > th {
     padding: 15px 40px;
 }
 
-body.dark .icon.mattermost,
-body.dark .icon.matrix {
+body.dark img.kind-mattermost,
+body.dark img.kind-matrix {
     filter: invert();
 }
 
