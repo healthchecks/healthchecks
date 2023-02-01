@@ -18,8 +18,6 @@ m=$(/usr/bin/certbot renew 2>&1)
 curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL
 ```
 
-## In Combination with the `/fail` and `/{exit-status}` Endpoints
-
 We can extend the previous example and signal either success or failure
 depending on the exit code:
 
@@ -28,6 +26,20 @@ depending on the exit code:
 
 m=$(/usr/bin/certbot renew 2>&1)
 curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL/$?
+```
+
+If the command produces a lot of output, you may run into the following error:
+
+```
+/usr/bin/curl: Argument list too long
+```
+
+In that case, one workaround is to save the output to a temporary file,
+then tell curl to send the file as the request body:
+
+```bash
+/usr/bin/certbot renew > /tmp/certbot-renew.log 2>&1
+curl --data-binary @/tmp/certbot-renew.log PING_URL/$?
 ```
 
 ## Using Runitor

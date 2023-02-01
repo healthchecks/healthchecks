@@ -12,13 +12,22 @@ and stderr streams), and submit the captured output to SITE_NAME:</p>
 curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
 </code></pre></div>
 
-<h2>In Combination with the <code>/fail</code> and <code>/{exit-status}</code> Endpoints</h2>
 <p>We can extend the previous example and signal either success or failure
 depending on the exit code:</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
 <span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
 curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL/<span class="nv">$?</span>
+</code></pre></div>
+
+<p>If the command produces a lot of output, you may run into the following error:</p>
+<div class="highlight"><pre><span></span><code>/usr/bin/curl: Argument list too long
+</code></pre></div>
+
+<p>In that case, one workaround is to save the output to a temporary file,
+then tell curl to send the file as the request body:</p>
+<div class="highlight"><pre><span></span><code>/usr/bin/certbot renew &gt; /tmp/certbot-renew.log <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+curl --data-binary @/tmp/certbot-renew.log PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 
 <h2>Using Runitor</h2>
