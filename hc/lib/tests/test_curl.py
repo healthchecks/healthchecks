@@ -31,7 +31,7 @@ class FakeCurl(object):
             with patch("hc.lib.curl.socket"):
                 sock = callback(pycurl.SOCKTYPE_IPCXN, (None, None, None, address))
                 if sock == pycurl.SOCKET_BAD:
-                    raise pycurl.error(123)
+                    raise pycurl.error(pycurl.E_COULDNT_CONNECT)
 
         if pycurl.WRITEDATA in self.opts:
             self.opts[pycurl.WRITEDATA].write(b"hello world")
@@ -158,8 +158,12 @@ class CurlTestCase(TestCase):
     @patch("hc.lib.curl.pycurl.Curl")
     def test_it_rejects_private_ip(self, mock):
         mock.return_value = FakeCurl(self, ip="127.0.0.1")
-        with self.assertRaises(CurlError):
+        with self.assertRaises(CurlError) as cm:
             request("get", "http://example.org")
+        self.assertEqual(
+            cm.exception.message,
+            "Connections to private IP addresses are not allowed",
+        )
 
     @override_settings(INTEGRATIONS_ALLOW_PRIVATE_IPS=True)
     @patch("hc.lib.curl.pycurl.Curl")

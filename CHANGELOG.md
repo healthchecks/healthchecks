@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add last ping body in Mattermost notifications (#785)
+- Improve the error message about rejected private IPs
 
 ### Bug Fixes
 - Fix URL validation to allow hostnames with no TLD ("http://example") (#782)
