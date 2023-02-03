@@ -217,6 +217,8 @@ Supports different proxy server types. Examples:</p>
 <p>Healthchecks uses libcurl as the HTTP client library for making HTTP(S) requests.
 For more information about the proxy functionality, please see
 <a href="https://curl.se/libcurl/c/CURLOPT_PROXY.html">libcurl documentation</a>.</p>
+<p>Note: If your proxy server has a private IP address, you will also need to
+set the <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> setting to <code>True</code> in order to use it.</p>
 <h2 id="INTEGRATIONS_ALLOW_PRIVATE_IPS"><code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that controls whether the integrations are allowed to make

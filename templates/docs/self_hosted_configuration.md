@@ -303,6 +303,9 @@ Healthchecks uses libcurl as the HTTP client library for making HTTP(S) requests
 For more information about the proxy functionality, please see
 [libcurl documentation](https://curl.se/libcurl/c/CURLOPT_PROXY.html).
 
+Note: If your proxy server has a private IP address, you will also need to
+set the `INTEGRATIONS_ALLOW_PRIVATE_IPS` setting to `True` in order to use it.
+
 ## `INTEGRATIONS_ALLOW_PRIVATE_IPS` {: #INTEGRATIONS_ALLOW_PRIVATE_IPS }
 
 Default: `False`
