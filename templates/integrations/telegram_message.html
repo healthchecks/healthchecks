@@ -6,9 +6,8 @@
 {% endif %}
 
 {% if body %}
-```
-{{ body|safe }}
-```
+{% line %}Last Ping Body:{% endline %}
+{% line %}<pre>{{ body|escapejs }}</pre>{% endline %}
 {% endif %}
 
 {% if down_checks is not None %}

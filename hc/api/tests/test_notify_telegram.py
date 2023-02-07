@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, TokenBucket
+from hc.api.models import Channel, Check, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -20,6 +20,10 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=61)
+        self.ping.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "telegram"
@@ -183,7 +187,7 @@ class NotifyTelegramTestCase(BaseTestCase):
     def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
         mock_post.return_value.status_code = 200
 
-        self.ping.body_raw = b"Hello ``` World"
+        self.ping.body_raw = b"Hello </pre> World"
         self.ping.save()
 
         self.channel.notify(self.check)

@@ -639,10 +639,10 @@ class Telegram(HttpTransport):
 
         body = get_ping_body(self.last_ping(check))
         if body:
-            # Telegram's message limit is 4096 chars, leave some for the rest of the notification
-            if len(body) > 3000:
-                body = body[:3000] + "\n[truncated]"
-            if "```" in body:
+            # Telegram's message limit is 4096 chars, but clip it at 1000 for consistency
+            if len(body) > 1000:
+                body = body[:1000] + "\n[truncated]"
+            if "</pre>" in body:
                 body = None
         ctx = {
             "check": check,
