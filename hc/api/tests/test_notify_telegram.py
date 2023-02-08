@@ -17,8 +17,11 @@ class NotifyTelegramTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
+        self.check.name = "DB Backup"
+        self.check.tags = "foo bar baz"
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
+        self.check.n_pings = 1
         self.check.save()
 
         self.ping = Ping(owner=self.check)
@@ -42,11 +45,34 @@ class NotifyTelegramTestCase(BaseTestCase):
         payload = kwargs["json"]
         self.assertEqual(payload["chat_id"], 123)
         self.assertIn("The check", payload["text"])
+        self.assertIn(">DB Backup</a>", payload["text"])
         self.assertIn(self.check.cloaked_url(), payload["text"])
+
+        self.assertIn("<b>Project:</b> Alices Project\n", payload["text"])
+        self.assertIn("<b>Tags:</b> foo, bar, baz\n", payload["text"])
+        self.assertIn("<b>Period:</b> 1 day\n", payload["text"])
+        self.assertIn("<b>Total Pings:</b> 1\n", payload["text"])
+        self.assertIn("<b>Last Ping:</b> Success, an hour ago", payload["text"])
 
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_cron_schedule(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.check.kind = "cron"
+        self.check.schedule = "* * * * MON-FRI"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn(
+            "<b>Schedule:</b> <code>* * * * MON-FRI</code>\n", payload["text"]
+        )
 
     @patch("hc.api.transports.curl.request")
     def test_it_returns_error(self, mock_post):
@@ -168,7 +194,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         args, kwargs = mock_post.call_args
         payload = kwargs["json"]
-        self.assertIn("Last Ping Body:", payload["text"])
+        self.assertIn("<b>Last Ping Body:</b>\n", payload["text"])
         self.assertIn("Hello World", payload["text"])
 
     @patch("hc.api.transports.curl.request")
