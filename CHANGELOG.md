@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix URL validation to allow hostnames with no TLD ("http://example") (#782)
 - Add handling for ProtocolError exceptions in hc.lib.s3.get_object
+- Fix a race condition in Check.ping method
 
 ## v2.6.1 - 2023-01-26
 

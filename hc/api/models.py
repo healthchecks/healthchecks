@@ -16,7 +16,7 @@ from cronsim import CronSim
 from django.conf import settings
 from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -381,63 +381,73 @@ class Check(models.Model):
         rid: uuid.UUID | None,
         exitstatus: int | None = None,
     ) -> None:
-        frozen_now = now()
+        # The following block updates a Check object, then creates a Ping object.
+        # There's a possible race condition where the "sendalerts" command sees
+        # the updated Check object before the Ping object is created.
+        # To avoid this, put both operations inside a transaction:
+        with transaction.atomic():
+            frozen_now = now()
 
-        if self.status == "paused" and self.manual_resume:
-            action = "ign"
+            if self.status == "paused" and self.manual_resume:
+                action = "ign"
 
-        if action == "start":
-            self.last_start = frozen_now
-            self.last_start_rid = rid
-            # Don't update "last_ping" field.
-        elif action == "ign":
-            pass
-        elif action == "log":
-            pass
-        else:
-            self.last_ping = frozen_now
-            self.last_duration = None
-            if self.last_start:
-                if self.last_start_rid == rid:
-                    # rid matches: calculate last_duration, clear last_start
-                    self.last_duration = self.last_ping - self.last_start
-                    self.last_start = None
-                elif action == "fail" or rid is None:
-                    # clear last_start (exit the "running" state) on:
-                    # - "success" event with no rid
-                    # - "fail" event, regardless of rid mismatch
-                    self.last_start = None
+            if action == "start":
+                self.last_start = frozen_now
+                self.last_start_rid = rid
+                # Don't update "last_ping" field.
+            elif action == "ign":
+                pass
+            elif action == "log":
+                pass
+            else:
+                self.last_ping = frozen_now
+                self.last_duration = None
+                if self.last_start:
+                    if self.last_start_rid == rid:
+                        # rid matches: calculate last_duration, clear last_start
+                        self.last_duration = self.last_ping - self.last_start
+                        self.last_start = None
+                    elif action == "fail" or rid is None:
+                        # clear last_start (exit the "running" state) on:
+                        # - "success" event with no rid
+                        # - "fail" event, regardless of rid mismatch
+                        self.last_start = None
 
-            new_status = "down" if action == "fail" else "up"
-            if self.status != new_status:
-                self.create_flip(new_status)
-                self.status = new_status
+                new_status = "down" if action == "fail" else "up"
+                if self.status != new_status:
+                    self.create_flip(new_status)
+                    self.status = new_status
 
-        self.alert_after = self.going_down_after()
-        self.n_pings = models.F("n_pings") + 1
-        self.has_confirmation_link = "confirm" in body.decode(errors="replace").lower()
-        self.save()
-        self.refresh_from_db()
+            self.alert_after = self.going_down_after()
+            self.n_pings = models.F("n_pings") + 1
+            body_lowercase = body.decode(errors="replace").lower()
+            self.has_confirmation_link = "confirm" in body_lowercase
+            self.save()
+            self.refresh_from_db()
 
-        ping = Ping(owner=self)
-        ping.n = self.n_pings
-        ping.created = frozen_now
-        if action in ("start", "fail", "ign", "log"):
-            ping.kind = action
+            ping = Ping(owner=self)
+            ping.n = self.n_pings
+            ping.created = frozen_now
+            if action in ("start", "fail", "ign", "log"):
+                ping.kind = action
 
-        ping.remote_addr = remote_addr
-        ping.scheme = scheme
-        ping.method = method
-        # If User-Agent is longer than 200 characters, truncate it:
-        ping.ua = ua[:200]
-        if len(body) > 100 and settings.S3_BUCKET:
-            ping.object_size = len(body)
+            ping.remote_addr = remote_addr
+            ping.scheme = scheme
+            ping.method = method
+            # If User-Agent is longer than 200 characters, truncate it:
+            ping.ua = ua[:200]
+            if len(body) > 100 and settings.S3_BUCKET:
+                ping.object_size = len(body)
+            else:
+                ping.body_raw = body
+            ping.rid = rid
+            ping.exitstatus = exitstatus
+            ping.save()
+
+        # Upload ping body to S3 outside the DB transaction, because this operation
+        # can potentially take a long time:
+        if ping.object_size:
             put_object(self.code, ping.n, body)
-        else:
-            ping.body_raw = body
-        ping.rid = rid
-        ping.exitstatus = exitstatus
-        ping.save()
 
         # Every 100 received pings, prune old pings and notifications:
         if self.n_pings % 100 == 0:
