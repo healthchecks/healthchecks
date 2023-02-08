@@ -638,17 +638,12 @@ class Telegram(HttpTransport):
             raise TransportError("Rate limit exceeded")
 
         body = get_ping_body(self.last_ping(check))
-        if body:
-            # Telegram's message limit is 4096 chars, but clip it at 1000 for consistency
-            if len(body) > 1000:
-                body = body[:1000] + "\n[truncated]"
-            if "</pre>" in body:
-                body = None
-        ctx = {
-            "check": check,
-            "down_checks": self.down_checks(check),
-            "body": body
-        }
+        if body and len(body) > 1000:
+            # Telegram's message limit is 4096 chars, but clip it at 1000 for
+            # consistency
+            body = body[:1000] + "\n[truncated]"
+
+        ctx = {"check": check, "down_checks": self.down_checks(check), "body": body}
         text = tmpl("telegram_message.html", **ctx)
 
         try:

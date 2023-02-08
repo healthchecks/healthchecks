@@ -168,13 +168,14 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         args, kwargs = mock_post.call_args
         payload = kwargs["json"]
+        self.assertIn("Last Ping Body:", payload["text"])
         self.assertIn("Hello World", payload["text"])
 
     @patch("hc.api.transports.curl.request")
     def test_it_shows_truncated_last_ping_body(self, mock_post):
         mock_post.return_value.status_code = 200
 
-        self.ping.body_raw = b"Hello World" * 1000
+        self.ping.body_raw = b"Hello World" * 100
         self.ping.save()
 
         self.channel.notify(self.check)
@@ -184,14 +185,15 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("[truncated]", payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+    def test_it_escapes_html(self, mock_post):
         mock_post.return_value.status_code = 200
 
-        self.ping.body_raw = b"Hello </pre> World"
+        self.ping.body_raw = b"<b>bold</b>\nfoo & bar"
         self.ping.save()
 
         self.channel.notify(self.check)
 
         args, kwargs = mock_post.call_args
         payload = kwargs["json"]
-        self.assertNotIn("Hello", payload["text"])
+        self.assertIn("&lt;b&gt;bold&lt;/b&gt;\n", payload["text"])
+        self.assertIn("foo &amp; bar", payload["text"])
