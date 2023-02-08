@@ -5,6 +5,12 @@
     {% line %}🟢 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>.{% endline %}
 {% endif %}
 
+{% if body %}
+{% line %}{% endline %}
+{% line %}Last Ping Body:{% endline %}
+{% line %}<pre>{{ body }}</pre>{% endline %}
+{% endif %}
+
 {% if down_checks is not None %}
     {% line %}{% endline %}
     {% if down_checks %}

@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, TokenBucket
+from hc.api.models import Channel, Check, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -20,6 +20,10 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=61)
+        self.ping.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "telegram"
@@ -152,3 +156,44 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn("Last Ping Body:", payload["text"])
+        self.assertIn("Hello World", payload["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_truncated_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World" * 100
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn("[truncated]", payload["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_escapes_html(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"<b>bold</b>\nfoo & bar"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        args, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn("&lt;b&gt;bold&lt;/b&gt;\n", payload["text"])
+        self.assertIn("foo &amp; bar", payload["text"])
