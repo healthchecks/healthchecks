@@ -9,7 +9,7 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
-@override_settings(TELEGRAM_TOKEN="fake-token")
+@override_settings(TELEGRAM_TOKEN="fake-token", TELEGRAM_BOT_NAME="ExampleBot")
 class AddTelegramTestCase(BaseTestCase):
     url = "/integrations/add_telegram/"
     bot_url = "/integrations/telegram/bot/"
