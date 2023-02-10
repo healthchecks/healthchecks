@@ -280,9 +280,8 @@ def my_checks(request, code):
 
 @login_required
 def status(request, code):
-    _get_project_for_user(request, code)
-
-    checks = list(Check.objects.filter(project__code=code))
+    project, rw = _get_project_for_user(request, code)
+    checks = list(Check.objects.filter(project=project))
 
     details = []
     for check in checks:
