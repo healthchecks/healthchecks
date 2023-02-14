@@ -20,10 +20,11 @@ from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from django.db import transaction
 from django.db.models.functions import Lower
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.middleware import csrf
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import Resolver404, resolve, reverse
 from django.utils.timezone import now
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from hc.accounts import forms
@@ -192,12 +193,11 @@ def logout(request):
     return redirect("hc-index")
 
 
-@ensure_csrf_cookie
 def signup_csrf(request):
     if not settings.REGISTRATION_OPEN or request.user.is_authenticated:
         return HttpResponseForbidden()
 
-    return HttpResponse()
+    return HttpResponse(csrf.get_token(request))
 
 
 @require_POST

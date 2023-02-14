@@ -2,12 +2,6 @@ window.addEventListener("DOMContentLoaded", function(e) {
     var email = document.getElementById("signup-email");
     var submitBtn = document.getElementById("signup-go");
 
-    function getCsrfToken() {
-        var kv = document.cookie.split("; ").find(s => s.startsWith("csrftoken="));
-        if (kv)
-           return kv.split("=")[1];
-    }
-
     function getTz() {
         try {
             return Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -23,20 +17,24 @@ window.addEventListener("DOMContentLoaded", function(e) {
         submitBtn.disabled = true;
 
         var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
-        fetch(base + "/accounts/signup/csrf/").then(function() {
-            var payload = new FormData();
-            payload.append("identity", email.value);
-            payload.append("tz", getTz());
-            payload.append("csrfmiddlewaretoken", getCsrfToken());
-            fetch(base + "/accounts/signup/", {method: "POST", body: payload})
-                .then(response => response.text())
-                .then(text => {
-                    var resultLine = document.getElementById("signup-result");
-                    resultLine.innerHTML = text;
-                    resultLine.style.display = "block";
-                    submitBtn.disabled = false;
-                });
-        })
+        fetch(base + "/accounts/signup/csrf/")
+            .then(response => response.text())
+            .then(csrfToken => {
+                var payload = new FormData();
+                payload.append("identity", email.value);
+                payload.append("tz", getTz());
+                payload.append("csrfmiddlewaretoken", csrfToken);
+                fetch(base + "/accounts/signup/", {method: "POST", body: payload})
+                    .then(response => response.text())
+                    .then(text => {
+                        var resultLine = document.getElementById("signup-result");
+                        resultLine.innerHTML = text;
+                        resultLine.style.display = "block";
+                        submitBtn.disabled = false;
+                    });
+
+            });
+
         return false;
     }
 
