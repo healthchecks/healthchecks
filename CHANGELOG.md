@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Improve the error message about rejected private IPs
 - Update Docker image's uwsgi.ini to use SMTPD_PORT env var (#791)
 - Update Telegram notification template to include more data
+- Add CSRF protection in the signup view
 
 ### Bug Fixes
 - Fix URL validation to allow hostnames with no TLD ("http://example") (#782)

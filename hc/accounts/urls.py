@@ -9,6 +9,7 @@ urlpatterns = [
     path("login/two_factor/", views.login_webauthn, name="hc-login-webauthn"),
     path("login/two_factor/totp/", views.login_totp, name="hc-login-totp"),
     path("logout/", views.logout, name="hc-logout"),
+    path("signup/csrf/", views.signup_csrf),
     path("signup/", views.signup, name="hc-signup"),
     path("login_link_sent/", views.login_link_sent, name="hc-login-link-sent"),
     path(

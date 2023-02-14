@@ -23,7 +23,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import Resolver404, resolve, reverse
 from django.utils.timezone import now
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 from hc.accounts import forms
@@ -192,10 +192,17 @@ def logout(request):
     return redirect("hc-index")
 
 
+@ensure_csrf_cookie
+def signup_csrf(request):
+    if not settings.REGISTRATION_OPEN or request.user.is_authenticated:
+        return HttpResponseForbidden()
+
+    return HttpResponse()
+
+
 @require_POST
-@csrf_exempt
 def signup(request):
-    if not settings.REGISTRATION_OPEN:
+    if not settings.REGISTRATION_OPEN or request.user.is_authenticated:
         return HttpResponseForbidden()
 
     ctx = {}
@@ -212,7 +219,9 @@ def signup(request):
 
     response = render(request, "accounts/signup_result.html", ctx)
     if "form" not in ctx:
-        response.set_cookie("auto-login", "1", max_age=300, httponly=True)
+        response.set_cookie(
+            "auto-login", "1", max_age=300, httponly=True, samesite="Lax"
+        )
 
     return response
 

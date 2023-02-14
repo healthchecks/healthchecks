@@ -49,6 +49,16 @@ class SignupTestCase(TestCase):
         channel = Channel.objects.get()
         self.assertEqual(channel.project, project)
 
+    def test_it_requires_unauthenticated_user(self):
+        self.alice = User(username="alice", email="alice@example.org")
+        self.alice.set_password("password")
+        self.alice.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        form = {"identity": "alice@example.org", "tz": "Europe/Riga"}
+        r = self.client.post("/accounts/signup/", form)
+        self.assertEqual(r.status_code, 403)
+
     @override_settings(USE_PAYMENTS=True)
     def test_it_sets_limits(self):
         form = {"identity": "alice@example.org", "tz": ""}
