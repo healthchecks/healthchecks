@@ -18,23 +18,22 @@ window.addEventListener("DOMContentLoaded", function(e) {
 
         var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
         fetch(base + "/accounts/signup/csrf/")
-            .then(response => response.text())
+            .then(csrfResponse => csrfResponse.text())
             .then(csrfToken => {
                 var payload = new FormData();
                 payload.append("identity", email.value);
                 payload.append("tz", getTz());
                 payload.append("csrfmiddlewaretoken", csrfToken);
-                fetch(base + "/accounts/signup/", {method: "POST", body: payload})
-                    .then(response => response.text())
-                    .then(text => {
-                        var resultLine = document.getElementById("signup-result");
-                        resultLine.innerHTML = text;
-                        resultLine.style.display = "block";
-                        submitBtn.disabled = false;
-                    });
+                return fetch(base + "/accounts/signup/", {method: "POST", body: payload});
 
+            })
+            .then(signupResponse => signupResponse.text())
+            .then(text => {
+                var resultLine = document.getElementById("signup-result");
+                resultLine.innerHTML = text;
+                resultLine.style.display = "block";
+                submitBtn.disabled = false;
             });
-
         return false;
     }
 
