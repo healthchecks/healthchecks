@@ -154,7 +154,7 @@ def _set_autologin_cookie(response):
         max_age=300,
         httponly=True,
         samesite="Lax",
-        secure=settings.SESSION_COOKIE_SECURE,
+        secure=bool(settings.SESSION_COOKIE_SECURE),
     )
 
 
