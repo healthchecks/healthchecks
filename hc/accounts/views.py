@@ -145,6 +145,19 @@ def _new_key(nbytes=24):
             return candidate
 
 
+def _set_autologin_cookie(response):
+    # check_token looks for this cookie to decide if
+    # it needs to do the extra POST step.
+    response.set_cookie(
+        "auto-login",
+        "1",
+        max_age=300,
+        httponly=True,
+        samesite="Lax",
+        secure=settings.SESSION_COOKIE_SECURE,
+    )
+
+
 def login(request):
     form = forms.PasswordLoginForm()
     magic_form = forms.EmailLoginForm()
@@ -167,9 +180,7 @@ def login(request):
                     profile.send_instant_login_link(redirect_url=redirect_url)
 
                 response = redirect("hc-login-link-sent")
-                # check_token looks for this cookie to decide if
-                # it needs to do the extra POST step.
-                response.set_cookie("auto-login", "1", max_age=300, httponly=True)
+                _set_autologin_cookie(response)
                 return response
 
     if request.user.is_authenticated:
@@ -219,9 +230,7 @@ def signup(request):
 
     response = render(request, "accounts/signup_result.html", ctx)
     if "form" not in ctx:
-        response.set_cookie(
-            "auto-login", "1", max_age=300, httponly=True, samesite="Lax"
-        )
+        _set_autologin_cookie(response)
 
     return response
 
@@ -594,7 +603,7 @@ def change_email(request):
             response = redirect(reverse("hc-change-email"))
             # check_token looks for this cookie to decide if
             # it needs to do the extra POST step.
-            response.set_cookie("auto-login", "1", max_age=900, httponly=True)
+            _set_autologin_cookie(response)
             return response
     else:
         form = forms.ChangeEmailForm()

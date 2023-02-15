@@ -21,7 +21,7 @@ class ChangeEmailTestCase(BaseTestCase):
         r = self.client.get("/accounts/change_email/")
         self.assertContains(r, "Change Account's Email Address")
 
-    @override_settings(SITE_ROOT="http://testserver")
+    @override_settings(SITE_ROOT="http://testserver", SESSION_COOKIE_SECURE=False)
     def test_it_sends_link(self):
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
@@ -30,6 +30,11 @@ class ChangeEmailTestCase(BaseTestCase):
         r = self.client.post("/accounts/change_email/", payload, follow=True)
         self.assertRedirects(r, "/accounts/change_email/")
         self.assertContains(r, "One Last Step")
+
+        self.assertEqual(self.client.cookies["auto-login"].value, "1")
+        self.assertEqual(self.client.cookies["auto-login"]["samesite"], "Lax")
+        self.assertTrue(self.client.cookies["auto-login"]["httponly"])
+        self.assertFalse(self.client.cookies["auto-login"]["secure"])
 
         # The email addess should have not changed yet
         self.alice.refresh_from_db()
@@ -42,6 +47,15 @@ class ChangeEmailTestCase(BaseTestCase):
         self.assertEqual(message.subject, f"Log in to {settings.SITE_NAME}")
         html = message.alternatives[0][0]
         self.assertIn("http://testserver/accounts/change_email/", html)
+
+    @override_settings(SESSION_COOKIE_SECURE=True)
+    def test_it_sets_secure_autologin_cookie(self):
+        self.client.login(username="alice@example.org", password="password")
+        self.set_sudo_flag()
+
+        payload = {"email": "alice2@example.org"}
+        r = self.client.post("/accounts/change_email/", payload)
+        self.assertTrue(r.cookies["auto-login"]["secure"])
 
     def test_it_requires_unique_email(self):
         self.client.login(username="alice@example.org", password="password")

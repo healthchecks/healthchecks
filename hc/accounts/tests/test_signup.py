@@ -11,13 +11,17 @@ from hc.api.models import Channel, Check, TokenBucket
 
 
 class SignupTestCase(TestCase):
-    @override_settings(USE_PAYMENTS=False)
+    @override_settings(USE_PAYMENTS=False, SESSION_COOKIE_SECURE=False)
     def test_it_works(self):
         form = {"identity": "alice@example.org", "tz": "Europe/Riga"}
 
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "check your email")
-        self.assertIn("auto-login", r.cookies)
+
+        self.assertEqual(r.cookies["auto-login"].value, "1")
+        self.assertEqual(r.cookies["auto-login"]["samesite"], "Lax")
+        self.assertTrue(r.cookies["auto-login"]["httponly"])
+        self.assertFalse(r.cookies["auto-login"]["secure"])
 
         # An user should have been created
         user = User.objects.get()
@@ -48,6 +52,12 @@ class SignupTestCase(TestCase):
         # A channel should have been created
         channel = Channel.objects.get()
         self.assertEqual(channel.project, project)
+
+    @override_settings(SESSION_COOKIE_SECURE=True)
+    def test_it_sets_secure_autologin_cookie(self):
+        form = {"identity": "alice@example.org", "tz": "Europe/Riga"}
+        r = self.client.post("/accounts/signup/", form)
+        self.assertTrue(r.cookies["auto-login"]["secure"])
 
     def test_it_requires_unauthenticated_user(self):
         self.alice = User(username="alice", email="alice@example.org")
@@ -91,8 +101,9 @@ class SignupTestCase(TestCase):
 
         form = {"identity": "alice@example.org", "tz": ""}
         r = self.client.post("/accounts/signup/", form)
+        # It should send the same response and cookies as in normal signup
         self.assertContains(r, "check your email")
-        self.assertIn("auto-login", r.cookies)
+        self.assertEqual(r.cookies["auto-login"].value, "1")
 
         # It should not send an email
         self.assertEqual(len(mail.outbox), 0)
@@ -116,7 +127,6 @@ class SignupTestCase(TestCase):
 
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "check your email")
-        self.assertIn("auto-login", r.cookies)
 
         profile = Profile.objects.get()
         self.assertEqual(profile.tz, "UTC")

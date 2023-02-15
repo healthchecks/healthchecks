@@ -24,12 +24,19 @@ class LoginTestCase(BaseTestCase):
         r = self.client.get("/accounts/login/")
         self.assertRedirects(r, self.checks_url)
 
-    @override_settings(SITE_ROOT="http://testserver", SITE_LOGO_URL=None)
+    @override_settings(
+        SITE_ROOT="http://testserver", SITE_LOGO_URL=None, SESSION_COOKIE_SECURE=False
+    )
     def test_it_sends_link(self):
         form = {"identity": "alice@example.org"}
 
         r = self.client.post("/accounts/login/", form)
         self.assertRedirects(r, "/accounts/login_link_sent/")
+
+        self.assertEqual(r.cookies["auto-login"].value, "1")
+        self.assertTrue(r.cookies["auto-login"]["httponly"])
+        self.assertEqual(r.cookies["auto-login"]["samesite"], "Lax")
+        self.assertFalse(r.cookies["auto-login"]["secure"])
 
         # And email should have been sent
         self.assertEqual(len(mail.outbox), 1)
@@ -38,6 +45,12 @@ class LoginTestCase(BaseTestCase):
         html = message.alternatives[0][0]
         self.assertIn("http://testserver/static/img/logo.png", html)
         self.assertIn("http://testserver/docs/", html)
+
+    @override_settings(SESSION_COOKIE_SECURE=True)
+    def test_it_sets_secure_autologin_cookie(self):
+        form = {"identity": "alice@example.org"}
+        r = self.client.post("/accounts/login/", form)
+        self.assertTrue(r.cookies["auto-login"]["secure"])
 
     @override_settings(SITE_LOGO_URL="https://example.org/logo.svg")
     def test_it_uses_custom_logo(self):
@@ -50,7 +63,6 @@ class LoginTestCase(BaseTestCase):
 
         r = self.client.post("/accounts/login/?next=" + self.channels_url, form)
         self.assertRedirects(r, "/accounts/login_link_sent/")
-        self.assertIn("auto-login", r.cookies)
 
         # The check_token link should have a ?next= query parameter:
         self.assertEqual(len(mail.outbox), 1)
@@ -62,7 +74,8 @@ class LoginTestCase(BaseTestCase):
 
         r = self.client.post("/accounts/login/", form)
         self.assertRedirects(r, "/accounts/login_link_sent/")
-        self.assertIn("auto-login", r.cookies)
+        # It should send the same response and cookies as in normal login
+        self.assertEqual(r.cookies["auto-login"].value, "1")
 
         # There should be no sent emails.
         self.assertEqual(len(mail.outbox), 0)
