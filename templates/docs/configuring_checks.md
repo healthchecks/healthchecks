@@ -49,7 +49,8 @@ and send out alerts.
 ## Cron Schedules
 
 Use "cron" for monitoring processes with more complex schedules. This monitoring mode
-ensures that jobs run **at the correct time**, and not just at correct time intervals.
+ensures that jobs run **at the correct time**, and not just at the correct time
+intervals.
 
 ![Editing cron schedule](IMG_URL/edit_cron_schedule.png)
 

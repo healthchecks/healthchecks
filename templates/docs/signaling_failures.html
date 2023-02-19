@@ -14,7 +14,7 @@ curl --retry <span class="m">3</span> PING_URL/1
 <p>By actively signaling failures to SITE_NAME, you can minimize the delay from your
 monitored service encountering a problem to you getting notified about it.</p>
 <h2>Shell Scripts</h2>
-<p>The below shell script appends <code>$?</code> (a special variable which contains the
+<p>The below shell script appends <code>$?</code> (a special variable that contains the
 exit status of the last executed command) to the ping URL:</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 

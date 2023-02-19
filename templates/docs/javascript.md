@@ -11,7 +11,7 @@ https.get('PING_URL').on('error', (err) => {
 
 Note: the "https" library executes requests asynchronously. If you send both "start"
 and "success" signals, you can encounter a race condition where the "success" signal
-arrives before the "start" signal. Avoid the the race condition by using callbacks,
+arrives before the "start" signal. Avoid the race condition by using callbacks,
 promises or the async/await feature. Here is an example that uses async/await and the
 [axios](https://axios-http.com/) library:
 

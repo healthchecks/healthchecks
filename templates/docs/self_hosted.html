@@ -109,7 +109,7 @@ Example:</p>
 <p>You can read more about handling outbound email in the Django documentation,
 <a href="https://docs.djangoproject.com/en/4.1/topics/email/">Sending Email</a> section.</p>
 <h2>Receiving Emails</h2>
-<p>Healthchecks comes with a <code>smtpd</code> management command, which starts up a
+<p>Healthchecks comes with a <code>smtpd</code> management command, which starts up an
 SMTP listener service. With the command running, you can ping your
 checks by sending email messages.</p>
 <p>Start the SMTP listener on port 2525:</p>
@@ -137,8 +137,8 @@ server restarts.</p>
 <h2>Database Cleanup</h2>
 <p>With time and use, the Healthchecks database will grow in size. You may
 decide to prune old data: inactive user accounts, old checks not assigned
-to users, old records of outgoing email messages. There are separate Django management
-commands for each task:</p>
+to users, and old records of outgoing email messages. There are separate Django
+management commands for each task:</p>
 <p>Remove old records of sent notifications. For each check, remove notifications that
 are older than the oldest stored ping for the corresponding check.</p>
 <div class="highlight"><pre><span></span><code>$ ./manage.py prunenotifications

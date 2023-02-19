@@ -657,7 +657,7 @@ curl SITE_ROOT/api/v2/checks/ \
 
 `POST SITE_ROOT/api/v2/checks/<uuid>`
 
-Updates an existing check. All request parameters are optional. If you omit  any
+Updates an existing check. All request parameters are optional. If you omit any
 parameter, SITE_NAME will leave its value unchanged.
 
 ### Request Parameters
@@ -1234,7 +1234,7 @@ curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/ \
 `GET SITE_ROOT/api/v2/checks/<uuid>/pings/<n>/body`
 
 Returns a ping's logged body. The response always has the `Content-Type: text/plain`
-response header, and the ping body is returned verbatim in the response body.
+response header and the ping body is returned verbatim in the response body.
 
 ### Response Codes
 
@@ -1375,7 +1375,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v2/channels/
 Returns a map of all tags in the project, with badge URLs for each tag. SITE_NAME
 provides badges in a few different formats:
 
-* `svg`: returns the badge as a SVG document.
+* `svg`: returns the badge as an SVG document.
 * `json`: returns a JSON document which you can use to generate a custom badge
     yourself.
 * `shields`: returns JSON in a [Shields.io compatible format](https://shields.io/endpoint).

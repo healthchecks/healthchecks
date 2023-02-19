@@ -40,6 +40,6 @@ SITE_NAME offers badges in three different formats:
 
 ## Badge for a Single Check
 
-If you need a status badge for a specific check, assign the check an
-unique tag. Then use that tag's badge.
+If you need a status badge for a specific check, assign the check a unique tag.
+Then use that tag's badge.
 

@@ -81,7 +81,7 @@ Grace Time is the amount of extra time to wait when a cron job is running late
 before declaring it as down. Set Grace Time to be above the expected
 duration of your cron job.
 
-For example, let's say the cron job starts at 14:00 every day, and takes
+For example, let's say the cron job starts at 14:00 every day and takes
 between 15 and 25 minutes to complete. The grace time is set to 30 minutes.
 In this scenario, SITE_NAME will expect a ping to arrive at 14:00, but will not send
 any alerts yet. If there is no ping by 14:30, it will declare the job failed and
@@ -96,7 +96,7 @@ set up multiple ways to get notified about job failures:
 * **Redundancy:** if one notification channel fails (e.g., an email message gets
 delivered to spam), you will still receive notifications over the other channels.
 * **Use different notification methods depending on job priority**. You can set up
-the notifications from low-priority jobs to email only, but notifications from
+notifications from low-priority jobs to email only, but notifications from
 high-priority jobs to email, SMS, and team chat.
 
 Additionally, to make sure no issues "slip through the cracks", in the

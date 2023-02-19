@@ -21,7 +21,7 @@ monitored service encountering a problem to you getting notified about it.
 
 ## Shell Scripts
 
-The below shell script appends `$?` (a special variable which contains the
+The below shell script appends `$?` (a special variable that contains the
 exit status of the last executed command) to the ping URL:
 
 ```bash

@@ -36,7 +36,7 @@ Team Members can:
 
 Team Members can not:
 
-* invite new members into the project
+* invite new members to the project
 * change project's owner
 * manage project owner's billing settings
 * remove the project

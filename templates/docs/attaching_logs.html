@@ -33,7 +33,7 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-b
 </code></pre></div>
 
 <h2>Using Runitor</h2>
-<p><a href="https://github.com/bdd/runitor">Runitor</a> is a third party utility that runs the
+<p><a href="https://github.com/bdd/runitor">Runitor</a> is a third-party utility that runs the
 supplied command, captures its output and reports to SITE_NAME.
 It also measures the execution time and retries HTTP requests on transient errors.
 Best of all, the syntax is simple and clean:</p>
@@ -44,7 +44,7 @@ Best of all, the syntax is simple and clean:</p>
 <p>You may sometimes want to log diagnostic information without altering the check's
 current state. SITE_NAME provides the <a href="../http_api#log-uuid">/log endpoint</a> just for
 that. When you send an HTTP POST request to this endpoint, SITE_NAME will log the event
-and display it in check's "Events" section, but will keep the check's state unchanged.</p>
+and display it in check's "Events" section but will keep the check's state unchanged.</p>
 <h2>Handling More Than 10KB of Logs</h2>
 <p>While SITE_NAME can store a small amount of logs in a pinch, it is not specifically
 designed for that. If you run into the issue of logs getting cut off, consider

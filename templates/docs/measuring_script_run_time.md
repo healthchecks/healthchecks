@@ -8,7 +8,7 @@
 
 ## Alerting Logic
 
-SITE_NAME applies an additional alerting rule for jobs that  use the `/start` signal.
+SITE_NAME applies an additional alerting rule for jobs that use the `/start` signal.
 
 If a job sends a "start" signal, but then does not send a "success"
 signal within its configured grace time, SITE_NAME will assume the job
@@ -57,7 +57,7 @@ You can also see durations of the previous runs when viewing an individual check
 
 ## Specifying Run IDs
 
-When several instances of the same job can run concurrenlty, the calculated run times
+When several instances of the same job can run concurrently, the calculated run times
 can come out wrong, as SITE_NAME cannot reliably determine which success event
 corresponds to which start event. To work around this problem, the client can
 optionally specify a run ID in the `rid` query parameter of any ping URL. When a
@@ -89,12 +89,12 @@ curl -fsS -m 10 --retry 5 PING_URL/start?rid=$RID
 curl -fsS -m 10 --retry 5 PING_URL?rid=$RID
 ```
 
-If client specifies run IDs, SITE_NAME will display them in the "Events"
+If the client specifies run IDs, SITE_NAME will display them in the "Events"
 section in a shortened form:
 
 ![Log of received pings with run IDs and durations](IMG_URL/run_ids.png)
 
-Also note how the execution times are available for both "success" events. If the
+Also, note how the execution times are available for both "success" events. If the
 run IDs were not used in this example, the event #4 would not show an execution time
 since it is not preceded by a "start" event.
 

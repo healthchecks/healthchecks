@@ -218,7 +218,7 @@ Supports different proxy server types. Examples:</p>
 For more information about the proxy functionality, please see
 <a href="https://curl.se/libcurl/c/CURLOPT_PROXY.html">libcurl documentation</a>.</p>
 <p>Note: If your proxy server has a private IP address, you will also need to
-set the <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> setting to <code>True</code> in order to use it.</p>
+set the <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> setting to <code>True</code> to use it.</p>
 <h2 id="INTEGRATIONS_ALLOW_PRIVATE_IPS"><code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that controls whether the integrations are allowed to make
@@ -234,8 +234,7 @@ if you run a Gotify instance on <code>localhost</code>, you will need to enable
 while setting up new integrations (e.g. during the OAuth2 authorization flow).</p>
 <p>This setting also affects connections to the proxy server when the <code>http_proxy</code> or
 <code>https_proxy</code> environment variables are set. If your proxy server has a private
-IP address, you will need to enable <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code>
-in order to use it.</p>
+IP address, you will need to enable <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> to use it.</p>
 <h2 id="LINENOTIFY_CLIENT_ID"><code>LINENOTIFY_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <h2 id="LINENOTIFY_CLIENT_SECRET"><code>LINENOTIFY_CLIENT_SECRET</code></h2>
@@ -381,7 +380,7 @@ to your team account.</p>
 <p>Default: <code>None</code></p>
 <p>Specifies the request header to use for external authentication. If you use
 a reverse proxy that handles user authentication, and the reverse proxy can pass
-the authenticated user's email address in a HTTP request header, you can use this
+the authenticated user's email address in an HTTP request header, you can use this
 setting to integrate Healthchecks with it.</p>
 <p>When <code>REMOTE_USER_HEADER</code> is set, Healthchecks will:</p>
 <ul>
@@ -454,7 +453,7 @@ go up or down. This integration is disabled by default and can be enabled by set
 the <code>SHELL_ENABLED</code> environment variable to <code>True</code>.</p>
 <p>Note: be careful when using "Shell Commands" integration, and only enable it when
 you fully trust the users of your Healthchecks instance. The commands will be executed
-by the <code>manage.py sendalerts</code> process, and will run with its system permissions.</p>
+by the <code>manage.py sendalerts</code> process and will run with its system permissions.</p>
 <h2 id="SIGNAL_CLI_SOCKET"><code>SIGNAL_CLI_SOCKET</code></h2>
 <p>Default: <code>None</code></p>
 <p>The path to the signal-cli UNIX socket, or the hostname:port of the signal-cli
@@ -495,7 +494,7 @@ pages, and you should use an URL that <strong>the end user's browser will be abl
 access directly</strong>. The logo image can use any image format supported by browsers
 (PNG, SVG, JPG are all fine).</p>
 <p>Please do not use the Healthchecks.io logo (the one with the dark green background) on
-self-hosted instances. This logo is not part of the Healthchecks open source project.</p>
+self-hosted instances. This logo is not part of the Healthchecks open-source project.</p>
 <h2 id="SITE_NAME"><code>SITE_NAME</code></h2>
 <p>Default: <code>Mychecks</code></p>
 <p>The display name of this Healthchecks instance. Healthchecks uses it throughout

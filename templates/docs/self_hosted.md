@@ -107,7 +107,7 @@ You can read more about handling outbound email in the Django documentation,
 
 ## Receiving Emails
 
-Healthchecks comes with a `smtpd` management command, which starts up a
+Healthchecks comes with a `smtpd` management command, which starts up an
 SMTP listener service. With the command running, you can ping your
 checks by sending email messages.
 
@@ -141,8 +141,8 @@ server restarts.
 
 With time and use, the Healthchecks database will grow in size. You may
 decide to prune old data: inactive user accounts, old checks not assigned
-to users, old records of outgoing email messages. There are separate Django management
-commands for each task:
+to users, and old records of outgoing email messages. There are separate Django
+management commands for each task:
 
 Remove old records of sent notifications. For each check, remove notifications that
 are older than the oldest stored ping for the corresponding check.

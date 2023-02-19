@@ -304,7 +304,7 @@ For more information about the proxy functionality, please see
 [libcurl documentation](https://curl.se/libcurl/c/CURLOPT_PROXY.html).
 
 Note: If your proxy server has a private IP address, you will also need to
-set the `INTEGRATIONS_ALLOW_PRIVATE_IPS` setting to `True` in order to use it.
+set the `INTEGRATIONS_ALLOW_PRIVATE_IPS` setting to `True` to use it.
 
 ## `INTEGRATIONS_ALLOW_PRIVATE_IPS` {: #INTEGRATIONS_ALLOW_PRIVATE_IPS }
 
@@ -327,8 +327,7 @@ while setting up new integrations (e.g. during the OAuth2 authorization flow).
 
 This setting also affects connections to the proxy server when the `http_proxy` or
 `https_proxy` environment variables are set. If your proxy server has a private
-IP address, you will need to enable `INTEGRATIONS_ALLOW_PRIVATE_IPS`
-in order to use it.
+IP address, you will need to enable `INTEGRATIONS_ALLOW_PRIVATE_IPS` to use it.
 
 ## `LINENOTIFY_CLIENT_ID` {: #LINENOTIFY_CLIENT_ID }
 
@@ -553,7 +552,7 @@ Default: `None`
 
 Specifies the request header to use for external authentication. If you use
 a reverse proxy that handles user authentication, and the reverse proxy can pass
-the authenticated user's email address in a HTTP request header, you can use this
+the authenticated user's email address in an HTTP request header, you can use this
 setting to integrate Healthchecks with it.
 
 When `REMOTE_USER_HEADER` is set, Healthchecks will:
@@ -660,7 +659,7 @@ the `SHELL_ENABLED` environment variable to `True`.
 
 Note: be careful when using "Shell Commands" integration, and only enable it when
 you fully trust the users of your Healthchecks instance. The commands will be executed
-by the `manage.py sendalerts` process, and will run with its system permissions.
+by the `manage.py sendalerts` process and will run with its system permissions.
 
 ## `SIGNAL_CLI_SOCKET` {: #SIGNAL_CLI_SOCKET }
 
@@ -718,7 +717,7 @@ access directly**. The logo image can use any image format supported by browsers
 (PNG, SVG, JPG are all fine).
 
 Please do not use the Healthchecks.io logo (the one with the dark green background) on
-self-hosted instances. This logo is not part of the Healthchecks open source project.
+self-hosted instances. This logo is not part of the Healthchecks open-source project.
 
 ## `SITE_NAME` {: #SITE_NAME }
 

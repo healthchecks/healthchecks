@@ -608,7 +608,7 @@ the limit is 20 checks per account.</dd>
 
 <h2 class="rule" id="update-check">Update an Existing Check</h2>
 <p><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code></p>
-<p>Updates an existing check. All request parameters are optional. If you omit  any
+<p>Updates an existing check. All request parameters are optional. If you omit any
 parameter, SITE_NAME will leave its value unchanged.</p>
 <h3>Request Parameters</h3>
 <dl>
@@ -1077,7 +1077,7 @@ number of returned pings depends on the account's billing plan: 100 for free acc
 <h2 class="rule" id="ping-body">Get a ping's logged body</h2>
 <p><code>GET SITE_ROOT/api/v2/checks/&lt;uuid&gt;/pings/&lt;n&gt;/body</code></p>
 <p>Returns a ping's logged body. The response always has the <code>Content-Type: text/plain</code>
-response header, and the ping body is returned verbatim in the response body.</p>
+response header and the ping body is returned verbatim in the response body.</p>
 <h3>Response Codes</h3>
 <dl>
 <dt>200 OK</dt>
@@ -1189,7 +1189,7 @@ response header, and the ping body is returned verbatim in the response body.</p
 <p>Returns a map of all tags in the project, with badge URLs for each tag. SITE_NAME
 provides badges in a few different formats:</p>
 <ul>
-<li><code>svg</code>: returns the badge as a SVG document.</li>
+<li><code>svg</code>: returns the badge as an SVG document.</li>
 <li><code>json</code>: returns a JSON document which you can use to generate a custom badge
     yourself.</li>
 <li><code>shields</code>: returns JSON in a <a href="https://shields.io/endpoint">Shields.io compatible format</a>.</li>

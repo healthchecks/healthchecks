@@ -46,7 +46,7 @@ curl -fsS -m 10 --retry 5 --data-binary @/tmp/certbot-renew.log PING_URL/$?
 
 ## Using Runitor
 
-[Runitor](https://github.com/bdd/runitor) is a third party utility that runs the
+[Runitor](https://github.com/bdd/runitor) is a third-party utility that runs the
 supplied command, captures its output and reports to SITE_NAME.
 It also measures the execution time and retries HTTP requests on transient errors.
 Best of all, the syntax is simple and clean:
@@ -60,7 +60,7 @@ runitor -uuid your-uuid-here -- /usr/bin/certbot renew
 You may sometimes want to log diagnostic information without altering the check's
 current state. SITE_NAME provides the [/log endpoint](../http_api#log-uuid) just for
 that. When you send an HTTP POST request to this endpoint, SITE_NAME will log the event
-and display it in check's "Events" section, but will keep the check's state unchanged.
+and display it in check's "Events" section but will keep the check's state unchanged.
 
 ## Handling More Than 10KB of Logs
 

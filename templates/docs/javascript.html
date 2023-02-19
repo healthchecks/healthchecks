@@ -8,7 +8,7 @@
 
 <p>Note: the "https" library executes requests asynchronously. If you send both "start"
 and "success" signals, you can encounter a race condition where the "success" signal
-arrives before the "start" signal. Avoid the the race condition by using callbacks,
+arrives before the "start" signal. Avoid the race condition by using callbacks,
 promises or the async/await feature. Here is an example that uses async/await and the
 <a href="https://axios-http.com/">axios</a> library:</p>
 <div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">axios</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;axios&quot;</span><span class="p">);</span><span class="w"></span>

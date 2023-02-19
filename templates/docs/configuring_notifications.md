@@ -70,6 +70,6 @@ For each check, they show:
 
 ![Example monthly report](IMG_URL/monthly_report.png)
 
-You can opt out from receiving the reports in the
+You can opt-out from receiving the reports in the
 [Account Settings › Email Reports](../../accounts/profile/notifications/) page
 or by clicking the "Unsubscribe" link in the email report's footer.

@@ -30,7 +30,7 @@ hides error messages.</dd>
 <dd>Redirect curl's stdout to /dev/null (error messages still go to stderr).</dd>
 </dl>
 <h2>Signaling Failure from Shell Scripts</h2>
-<p>You can append <code>/fail</code> or <code>/{exit-status}</code> to any ping URL and  use the resulting URL
+<p>You can append <code>/fail</code> or <code>/{exit-status}</code> to any ping URL and use the resulting URL
 to actively signal a failure. The exit status should be a 0-255 integer.
 SITE_NAME will interpret exit status 0 as success and all non-zero values as failures.</p>
 <p>The following example runs <code>/usr/bin/certbot renew</code>, and uses the <code>$?</code> variable to

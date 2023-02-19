@@ -22,7 +22,7 @@ You can send additional diagnostic information in HTTP POST requests:
 Invoke-RestMethod -Uri PING_URL -Method Post -Body "temperature=-7"
 ```
 
-For other parameters you can use in the `Invoke-RestMethod` cmdlet,
+For other parameters, you can use in the `Invoke-RestMethod` cmdlet,
 see the official [Invoke-RestMethod documentation](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-restmethod?view=powershell-7.2).
 
 As an alternative to putting the script in a .ps1 file, you can also pass it

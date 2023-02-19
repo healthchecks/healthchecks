@@ -22,7 +22,7 @@ or by a combination of project's Ping Key and check's slug.</p>
 immutable. You cannot replace the automatically assigned UUID with a manually
 chosen one. When you delete a check, you also lose its UUID and cannot get it back.</p>
 <p>You can look up UUIDs of your checks in web UI or via <a href="../api/">Management API</a> calls.</p>
-<p><strong>Check's slug</strong> is derived from check's name using Django's
+<p><strong>Check's slug</strong> is derived from the check's name using Django's
 <a href="https://docs.djangoproject.com/en/3.2/ref/utils/#django.utils.text.slugify">slugify</a>
 function. It applies the following transformations:</p>
 <ul>
@@ -241,7 +241,7 @@ OK
 <div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;uuid&gt;/log
 </code></pre></div>
 
-<p>Sends logging information to SITE_NAME without signalling success or failure.
+<p>Sends logging information to SITE_NAME without signaling success or failure.
 SITE_NAME will log the event and display it in check's "Events" section with the
 "Log" label. The check's status will not change.</p>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
@@ -294,7 +294,7 @@ OK
 
 <p>Sends a success or failure signal depending on the exit status
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
-interprets 0 as success and all other values as failure.</p>
+interprets 0 as a success and all other values as a failure.</p>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -500,7 +500,7 @@ OK
 <div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;ping-key/&lt;slug&gt;/log
 </code></pre></div>
 
-<p>Sends logging information to SITE_NAME without signalling success or failure.
+<p>Sends logging information to SITE_NAME without signaling success or failure.
 SITE_NAME will log the event and display it in check's "Events" section with the
 "Log" label. The check's status will not change.</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
@@ -556,7 +556,7 @@ OK
 
 <p>Sends a success or failure signal depending on the exit status
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
-interprets 0 as success and all other values as failure.</p>
+interprets 0 as a success and all other values as a failure.</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.

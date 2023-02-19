@@ -30,7 +30,7 @@ chosen one. When you delete a check, you also lose its UUID and cannot get it ba
 
 You can look up UUIDs of your checks in web UI or via [Management API](../api/) calls.
 
-**Check's slug** is derived from check's name using Django's
+**Check's slug** is derived from the check's name using Django's
 [slugify](https://docs.djangoproject.com/en/3.2/ref/utils/#django.utils.text.slugify)
 function. It applies the following transformations:
 
@@ -241,7 +241,7 @@ OK
 HEAD|GET|POST PING_ENDPOINT<uuid>/log
 ```
 
-Sends logging information to SITE_NAME without signalling success or failure.
+Sends logging information to SITE_NAME without signaling success or failure.
 SITE_NAME will log the event and display it in check's "Events" section with the
 "Log" label. The check's status will not change.
 
@@ -302,7 +302,7 @@ HEAD|GET|POST PING_ENDPOINT<uuid>/<exit-status>
 
 Sends a success or failure signal depending on the exit status
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
-interprets 0 as success and all other values as failure.
+interprets 0 as a success and all other values as a failure.
 
 SITE_NAME identifies the check by the UUID value included in the URL.
 
@@ -543,7 +543,7 @@ OK
 HEAD|GET|POST PING_ENDPOINT<ping-key/<slug>/log
 ```
 
-Sends logging information to SITE_NAME without signalling success or failure.
+Sends logging information to SITE_NAME without signaling success or failure.
 SITE_NAME will log the event and display it in check's "Events" section with the
 "Log" label. The check's status will not change.
 
@@ -608,7 +608,7 @@ HEAD|GET|POST PING_ENDPOINT<ping-key>/<slug>/<exit-status>
 
 Sends a success or failure signal depending on the exit status
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
-interprets 0 as success and all other values as failure.
+interprets 0 as a success and all other values as a failure.
 
 SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.

@@ -40,7 +40,7 @@ Here's what each curl parameter does:
 
 ## Signaling Failure from Shell Scripts
 
-You can append `/fail` or `/{exit-status}` to any ping URL and  use the resulting URL
+You can append `/fail` or `/{exit-status}` to any ping URL and use the resulting URL
 to actively signal a failure. The exit status should be a 0-255 integer.
 SITE_NAME will interpret exit status 0 as success and all non-zero values as failures.
 
