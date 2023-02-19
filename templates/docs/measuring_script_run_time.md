@@ -57,7 +57,7 @@ You can also see durations of the previous runs when viewing an individual check
 
 ## Specifying Run IDs
 
-Wen several instances of the same job can run concurrenlty, the calculated run times
+When several instances of the same job can run concurrenlty, the calculated run times
 can come out wrong, as SITE_NAME cannot reliably determine which success event
 corresponds to which start event. To work around this problem, the client can
 optionally specify a run ID in the `rid` query parameter of any ping URL. When a
