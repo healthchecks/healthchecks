@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Fix a race condition in Check.ping method
 - Fix the SameSite and Secure attributes on the "auto-login" cookie
 - Fix the "Test" button in the Integrations screen for read-only users
+- Add form double submit protection when registering a WebAuthn key
 
 ## v2.6.1 - 2023-01-26
 

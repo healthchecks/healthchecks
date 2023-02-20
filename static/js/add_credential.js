@@ -32,4 +32,9 @@ $(function() {
     $("#name-next").click(requestCredentials);
     $("#retry").click(requestCredentials);
 
+    // Disable the submit button to prevent double submission
+    $("#add-credential-form").submit(function() {
+        $("#add-credential-submit").prop("disabled", true);
+    });
+
 });
