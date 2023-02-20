@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Add handling for ProtocolError exceptions in hc.lib.s3.get_object
 - Fix a race condition in Check.ping method
 - Fix the SameSite and Secure attributes on the "auto-login" cookie
+- Fix the "Test" button in the Integrations screen for read-only users
 
 ## v2.6.1 - 2023-01-26
 

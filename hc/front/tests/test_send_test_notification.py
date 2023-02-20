@@ -20,7 +20,6 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.url = "/integrations/%s/test/" % self.channel.code
 
     def test_it_sends_test_email(self):
-
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
         self.assertRedirects(r, self.channels_url)
@@ -42,6 +41,17 @@ class SendTestNotificationTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.channel, self.channel)
         self.assertEqual(n.error, "")
+
+    def test_it_allows_readonly_user(self):
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.post(self.url, {})
+        self.assertRedirects(r, self.channels_url)
+
+        # And email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_it_clears_channel_last_error(self):
         self.channel.last_error = "Something went wrong"

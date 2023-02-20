@@ -1126,7 +1126,7 @@ def unsubscribe_email(request, code, signed_token):
 @require_POST
 @login_required
 def send_test_notification(request: HttpRequest, code: UUID) -> HttpResponse:
-    channel = _get_rw_channel_for_user(request, code)
+    channel, rw = _get_channel_for_user(request, code)
 
     dummy = Check(name="TEST", status="down", project=channel.project)
     dummy.last_ping = now() - td(days=1)
