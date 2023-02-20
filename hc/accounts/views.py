@@ -25,6 +25,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import Resolver404, resolve, reverse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
 
 from hc.accounts import forms
@@ -158,6 +159,7 @@ def _set_autologin_cookie(response):
     )
 
 
+@sensitive_post_parameters()
 def login(request):
     form = forms.PasswordLoginForm()
     magic_form = forms.EmailLoginForm()
@@ -559,6 +561,7 @@ def notifications(request):
 
 
 @login_required
+@sensitive_post_parameters()
 @require_sudo_mode
 def set_password(request):
     if request.method == "POST":
