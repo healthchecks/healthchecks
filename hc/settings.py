@@ -108,6 +108,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "hc.wsgi.application"
 TEST_RUNNER = "hc.api.tests.CustomRunner"
+DEFAULT_EXCEPTION_REPORTER_FILTER = "hc.debug.ExceptionReporterFilter"
 
 
 # Default database engine is SQLite. So one can just check out code,
