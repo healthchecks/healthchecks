@@ -9,6 +9,7 @@
 .btn-default:hover:active,
 .btn-default:focus,
 .btn-default:active,
+.btn-default:active:focus,
 .btn-default.active.focus,
 .btn-default.active:hover {
     color: var(--btn-active-color);
