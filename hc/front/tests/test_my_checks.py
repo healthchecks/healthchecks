@@ -24,7 +24,7 @@ class MyChecksTestCase(BaseTestCase):
             self.assertContains(r, "Alice Was Here", status_code=200)
             self.assertContains(r, str(self.check.code), status_code=200)
             # The pause button:
-            self.assertContains(r, "btn btn-default pause", status_code=200)
+            self.assertContains(r, "btn pause", status_code=200)
 
         # last_active_date should have been set
         self.profile.refresh_from_db()
