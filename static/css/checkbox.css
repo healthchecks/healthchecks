@@ -27,7 +27,7 @@
   height: 20px;
   width: 20px;
   border-radius: 3px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border);
 }
 
 /* On mouse-over tint the border */
