@@ -480,8 +480,8 @@ signal-cli 0.10.0 or later).</p>
 <p>Default: <code>None</code></p>
 <p>An URL pointing to the image you want to use as the site logo. If not set,
 Healthchecks will use a fallback image: <code>/static/img/logo.png</code>.</p>
-<p>You can place a custom logo in <code>/static/img/</code> and point <code>SITE_LOGO_URL</code>
-to it like so:</p>
+<p>You can place a custom logo in <code>/static/img/</code>, run <code>manage.py collectstatic</code>, and
+point <code>SITE_LOGO_URL</code> to it like so:</p>
 <div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">/static/img/my-custom-logo.png</span><span class="w"></span>
 </code></pre></div>
 
@@ -493,6 +493,18 @@ to it like so:</p>
 pages, and you should use an URL that <strong>the end user's browser will be able to
 access directly</strong>. The logo image can use any image format supported by browsers
 (PNG, SVG, JPG are all fine).</p>
+<p><strong>Docker note.</strong> You can build a custom Docker image with your logo "baked in". To
+do so, use a Dockerfile with the following contents, and with your logo.png placed next
+to it:</p>
+<div class="highlight"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">healthchecks/healthchecks</span>
+<span class="k">COPY</span><span class="w"> </span>logo.png /opt/healthchecks/static-collected/img/
+</code></pre></div>
+
+<p>This overwrites the default placeholder logo, so, in this case, you do not need to
+specify <code>SITE_LOGO_URL</code>. Notice that the logo must be placed in <code>static-collected</code>, not
+<code>static</code>. This is because <code>manage.py collectstatic</code> has already been run in the base
+image's build time, and the web server will not recognize any new files placed in the
+<code>static</code> directory.</p>
 <p>Please do not use the Healthchecks.io logo (the one with the dark green background) on
 self-hosted instances. This logo is not part of the Healthchecks open-source project.</p>
 <h2 id="SITE_NAME"><code>SITE_NAME</code></h2>

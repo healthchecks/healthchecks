@@ -698,8 +698,8 @@ Default: `None`
 An URL pointing to the image you want to use as the site logo. If not set,
 Healthchecks will use a fallback image: `/static/img/logo.png`.
 
-You can place a custom logo in `/static/img/` and point `SITE_LOGO_URL`
-to it like so:
+You can place a custom logo in `/static/img/`, run `manage.py collectstatic`, and
+point `SITE_LOGO_URL` to it like so:
 
 ```ini
 SITE_LOGO_URL=/static/img/my-custom-logo.png
@@ -715,6 +715,21 @@ Either way, Healthchecks will use the provided `SITE_LOGO_URL` value as-is in HT
 pages, and you should use an URL that **the end user's browser will be able to
 access directly**. The logo image can use any image format supported by browsers
 (PNG, SVG, JPG are all fine).
+
+**Docker note.** You can build a custom Docker image with your logo "baked in". To
+do so, use a Dockerfile with the following contents, and with your logo.png placed next
+to it:
+
+```docker
+FROM healthchecks/healthchecks
+COPY logo.png /opt/healthchecks/static-collected/img/
+```
+
+This overwrites the default placeholder logo, so, in this case, you do not need to
+specify `SITE_LOGO_URL`. Notice that the logo must be placed in `static-collected`, not
+`static`. This is because `manage.py collectstatic` has already been run in the base
+image's build time, and the web server will not recognize any new files placed in the
+`static` directory.
 
 Please do not use the Healthchecks.io logo (the one with the dark green background) on
 self-hosted instances. This logo is not part of the Healthchecks open-source project.
