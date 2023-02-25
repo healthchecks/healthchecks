@@ -271,7 +271,7 @@ input[type=number]::-webkit-inner-spin-button {
     color: var(--btn-remove-color);
 }
 
-/* Greyed out help text in bootstrap-select dropdowns (e.g. in "Add ntfy" forn) */
+/* Greyed out help text in bootstrap-select dropdowns (e.g. in "Add ntfy" form) */
 .dropdown .help {
     opacity: 0.6;
 }
@@ -288,4 +288,3 @@ input[type=number]::-webkit-inner-spin-button {
 .btn-primary {
     box-shadow: 0 5px 0 -3px rgba(34, 188, 102, 0.3);
 }
-
