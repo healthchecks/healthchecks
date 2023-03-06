@@ -37,7 +37,7 @@ and access it via the `secrets` context.
 ## Using the `workflow_run` Trigger
 
 Alternatively, you can put the pinging logic in a separate workflow,
-and configure it to trigger every time your main workflow finished. The main workflow:
+and configure it to trigger every time your main workflow finishes. The main workflow:
 
 ```yaml
 name: Hourly Housekeeping
