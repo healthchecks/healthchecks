@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bullseye as builder
+FROM python:3.11-slim-bullseye as builder
 
 COPY requirements.txt /tmp
 RUN apt update && apt install -y build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev rustc libcurl4-openssl-dev libpython3-dev
@@ -10,7 +10,7 @@ RUN \
 COPY . /opt/healthchecks/
 RUN rm -rf /opt/healthchecks/.git
 
-FROM python:3.10-slim-bullseye
+FROM python:3.11-slim-bullseye
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
