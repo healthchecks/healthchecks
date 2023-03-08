@@ -5,6 +5,8 @@ in your account.
 
 ## API Endpoints
 
+<div id="api-toc"></div>
+
 Endpoint Name                                         | Endpoint Address
 ------------------------------------------------------|-------
 **Checks**|

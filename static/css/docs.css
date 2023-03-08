@@ -101,10 +101,32 @@ h2.rule {
     border: 1px solid var(--border-color);
 }
 
+/* Hide the TOC second column on small screens */
+@media (max-width: 992px) {
+    #api-toc + table td:nth-child(2) {
+        display: none;
+    }
+}
+
 
 .page-docs dl {
     display: grid;
     grid-template-columns: 150px auto;
+}
+
+@media (max-width: 992px) {
+    .page-docs dl {
+        display: grid;
+        grid-template-columns: auto;
+    }
+
+    .page-docs dl dd {
+        border-top: 0;
+    }
+
+    .page-docs dl dd pre {
+        white-space: pre-wrap;
+    }
 }
 
 .page-docs .docs-http_api dl {
