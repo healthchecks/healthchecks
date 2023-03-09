@@ -115,8 +115,12 @@ class PingDetailsTestCase(BaseTestCase):
 
     def test_it_accepts_n(self):
         # remote_addr, scheme, method, ua, body, action, rid:
-        self.check.ping("1.2.3.4", "http", "post", "tester", b"foo-123", "success", None)
-        self.check.ping("1.2.3.4", "http", "post", "tester", b"bar-456", "success", None)
+        self.check.ping(
+            "1.2.3.4", "http", "post", "tester", b"foo-123", "success", None
+        )
+        self.check.ping(
+            "1.2.3.4", "http", "post", "tester", b"bar-456", "success", None
+        )
 
         self.client.login(username="alice@example.org", password="password")
 
@@ -174,7 +178,8 @@ class PingDetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
 
-        self.assertContains(r, "email-body-plain", status_code=200)
+        fragment = """<div id="email-body-plain" class="tab-pane active">"""
+        self.assertContains(r, fragment, status_code=200)
         self.assertContains(r, "aGVsbG8gd29ybGQ=")
         self.assertContains(r, "hello world")
 
@@ -197,7 +202,8 @@ class PingDetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
 
         self.assertNotContains(r, "email-body-plain", status_code=200)
-        self.assertContains(r, "email-body-html")
+        fragment = """<div id="email-body-html" class="tab-pane active">"""
+        self.assertContains(r, fragment)
 
         # PGI+aGVsbG88L2I+ is base64("<b>hello</b>")
         self.assertContains(r, "PGI+aGVsbG88L2I+")

@@ -89,12 +89,12 @@
                     <a href="#email-body-raw" data-toggle="tab">Raw Message</a>
                 </li>
                 {% if plain %}
-                <li {% if active == 'plain' %} class="active" {% endif %}>
+                <li{% if active == 'plain' %} class="active"{% endif %}>
                     <a href="#email-body-plain" data-toggle="tab">Text</a>
                 </li>
                 {% endif %}
                 {% if html %}
-                <li {% if active == 'html' %} class="active" {% endif %}>
+                <li{% if active == 'html' %} class="active"{% endif %}>
                     <a href="#email-body-html" data-toggle="tab">HTML</a>
                 </li>
                 {% endif %}
@@ -105,13 +105,13 @@
                 </div>
 
                 {% if plain %}
-                <div id="email-body-plain" class="tab-pane{% if active == 'plain' %} active {% endif %}">
+                <div id="email-body-plain" class="tab-pane{% if active == 'plain' %} active{% endif %}">
                     <pre>{{ plain }}</pre>
                 </div>
                 {% endif %}
 
                 {% if html %}
-                <div id="email-body-html" class="tab-pane {% if active == 'html' %} active {% endif %}">
+                <div id="email-body-html" class="tab-pane{% if active == 'html' %} active{% endif %}">
                     <pre>{{ html }}</pre>
                 </div>
                 {% endif %}
