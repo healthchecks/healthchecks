@@ -80,7 +80,8 @@ To set up Healthchecks development environment:
 * Install requirements (Django, ...) into virtualenv:
 
         $ pip install -r healthchecks/requirements.txt
-* Mac OS only - pycurl needs to be reinstalled using the following method (assumes OpenSSL was installed using brew):
+
+* macOS only - pycurl needs to be reinstalled using the following method (assumes OpenSSL was installed using brew):
 
         $ export PYCURL_VERSION=`cat requirements.txt | grep pycurl | cut -d '=' -f3`
         $ export OPENSSL_LOCATION=`brew --prefix openssl`

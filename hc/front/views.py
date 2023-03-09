@@ -625,19 +625,34 @@ def ping_details(request, code, n=None):
         return render(request, "front/ping_details_not_found.html")
 
     body = ping.get_body()
-    ctx = {"check": check, "ping": ping, "plain": None, "html": None, "body": body}
+    ctx = {"check": check,
+           "ping": ping,
+           "body": body,
+           "plain": None,
+           "html": None,
+           "active": None}
 
     if ping.scheme == "email":
         parsed = email.message_from_string(body, policy=email.policy.SMTP)
         ctx["subject"] = parsed.get("subject", "")
 
+        # The "active" tab is set to show the value that's successfully parsed last. Per the current implementation,
+        # this means that if both plain text and HTML content are present, the ping details dialog will initially
+        # display the HTML content, otherwise - only one content type exists, and we default to that (either plain text
+        # or HTML, at least one of them should exist in a valid email).
+        #
+        # NOTE: If both plain text and html have not been parsed successfully the "active" tab is not set at all, but
+        # currently this is not an issue since in this case the "ping details" template does not render any tabs.
+
         plain_mime_part = parsed.get_body(("plain",))
         if plain_mime_part:
             ctx["plain"] = plain_mime_part.get_content()
+            ctx["active"] = "plain"
 
         html_mime_part = parsed.get_body(("html",))
         if html_mime_part:
             ctx["html"] = html_mime_part.get_content()
+            ctx["active"] = "html"
 
     return render(request, "front/ping_details.html", ctx)
 
