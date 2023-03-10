@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load compress static %}
+
+{% block base_modals %}
+{% include "accounts/add_project_modal.html" %}
+{% endblock %}
+
+{% block base_scripts %}
+{% compress js %}
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/projects_menu.js' %}"></script>
+<script src="{% static 'js/add_project_modal.js' %}"></script>
+{% endcompress %}
+{% endblock %}

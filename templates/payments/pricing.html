@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_project.html" %}
 {% load static compress hc_extras %}
 
 {% block title %}Pricing - It's Free! - {{ site_name }}{% endblock %}
@@ -330,8 +330,6 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/pricing.js' %}"></script>
 <script src="{% static 'js/signup.js' %}"></script>
 {% endcompress %}

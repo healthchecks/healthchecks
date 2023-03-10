@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_project.html" %}
 {% load compress humanize static hc_extras %}
 
 {% block title %}{{ check|down_title }}{% endblock %}
@@ -352,8 +352,6 @@
 {% block scripts %}
 <script id="all-timezones" type="data">UTC,{{ timezones|join:"," }}</script>
 {% compress js %}
-<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>

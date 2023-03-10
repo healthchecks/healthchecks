@@ -40,6 +40,19 @@ body {
     font-size: small;
 }
 
+@media (min-width: 768px) {
+    #nav-main-sections > #nav-project {
+        margin-left: -30px;
+    }
+}
+
+#nav-main-sections > #nav-project > a {
+    font-size: 18px;
+    text-transform: none;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
 #global-links > li > a {
     font-size: small;
 }
@@ -180,7 +193,11 @@ pre {
 
 .dropdown-menu > li.project-item a {
     min-width: 200px;
-    padding: 6px 20px 3px 20px;
+    padding-left: 12px;
+}
+
+.dropdown-menu > li.project-item a span.status {
+    transform: scale(0.7)
 }
 
 .dropdown-menu > li .btn-link {

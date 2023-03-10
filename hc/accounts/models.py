@@ -179,24 +179,6 @@ class Profile(models.Model):
         q = Project.objects.filter(is_owner | is_member)
         return q.distinct().order_by(Lower("name"))
 
-    def annotated_projects(self):
-        """Return all projects, annotated with 'n_down'.
-
-        Used to render the projects list in the navbar / "Account" menu.
-
-        """
-
-        # Subquery for getting project ids
-        project_ids = self.projects().values("id")
-
-        # Main query with the n_down annotation.
-        # Must use the subquery, otherwise ORM gets confused by
-        # joins and group by's
-        q = Project.objects.filter(id__in=project_ids)
-        n_down = Count("check", filter=Q(check__status="down"))
-        q = q.annotate(n_down=n_down)
-        return q.order_by(Lower("name"))
-
     def checks_from_all_projects(self):
         """Return a queryset of checks from projects we have access to."""
 

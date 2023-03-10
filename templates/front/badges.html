@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_project.html" %}
 {% load compress static hc_extras %}
 
 {% block title %}Status Badges - {{ site_name }}{% endblock %}
@@ -135,8 +135,6 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-<script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/badges.js' %}"></script>
 {% endcompress %}
 {% endblock %}

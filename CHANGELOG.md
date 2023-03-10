@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Add GitHub Actions examples
 - Update the Dockerfile to use Python 3.11
 - Update the Ping Details dialog to show the "HTML" tab by default (#801)
+- Add a "Switch Project" menu in top navigation
 
 ## v2.7 - 2023-03-06
 

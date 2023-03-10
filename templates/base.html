@@ -81,10 +81,8 @@
             </button>
 
             <a id="base-url" class="navbar-brand" href="{% url 'hc-index' %}">
-            {% if request.user.is_authenticated and project %}
-                {{ project }}
-                <span class="caret"></span>
-            {% else %}
+                {% if request.user.is_authenticated and project %}
+                {% else %}
                 <img
                     id="logo"
                     height="50"
@@ -94,38 +92,53 @@
                     src="{% static 'img/logo.png' %}"
                     {% endif %}
                     alt="{{ site_name }}">
-            {% endif %}
+                {% endif %}
             </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             {% if project %}
             <ul id="nav-main-sections" class="nav navbar-nav">
-                    <li {% if page == 'checks' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-checks' project.code %}">
-                            {% trans "Checks" %}
-                        </a>
-                    </li>
+                <li id="nav-project" class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        {{ project }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'hc-index' %}">All Projects</a></li>
+                        <li id="projects-divider" role="separator" class="divider"></li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a  href="#" data-toggle="modal"  data-target="#add-project-modal">New Project&hellip;</a>
+                        </li>
+                    </ul>
+                </li>
 
-                    {% with b=project.have_channel_issues %}
-                    <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
-                        <a href="{% url 'hc-channels' project.code %}">
-                            {% trans "Integrations" %}
-                            {% if b %}<span class="ic-grace"></span>{% endif %}
-                        </a>
-                    </li>
-                    {% endwith %}
+                <li {% if page == 'checks' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-checks' project.code %}">
+                        {% trans "Checks" %}
+                    </a>
+                </li>
 
-                    <li {% if page == 'badges' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-badges' project.code %}">
-                            {% trans "Badges" %}
-                        </a>
-                    </li>
+                {% with b=project.have_channel_issues %}
+                <li {% if b %}id="broken-channels"{% endif %} {% if page == 'channels' %}class="active"{% endif %}>
+                    <a href="{% url 'hc-channels' project.code %}">
+                        {% trans "Integrations" %}
+                        {% if b %}<span class="ic-grace"></span>{% endif %}
+                    </a>
+                </li>
+                {% endwith %}
 
-                    <li {% if page == 'project' %} class="active" {% endif %}>
-                        <a href="{% url 'hc-project-settings' project.code %}">
-                            {% trans "Settings" %}
-                        </a>
-                    </li>
+                <li {% if page == 'badges' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-badges' project.code %}">
+                        {% trans "Badges" %}
+                    </a>
+                </li>
+
+                <li {% if page == 'project' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-project-settings' project.code %}">
+                        {% trans "Settings" %}
+                    </a>
+                </li>
             </ul>
             {% endif %}
 
@@ -164,23 +177,6 @@
                             <li role="separator" class="divider"></li>
                         {% endif %}
 
-                        <li class="dropdown-header">
-                            {% trans "Projects" %}
-                        </li>
-                        {% for project in request.profile.annotated_projects %}
-                        <li class="project-item">
-                            <a href="{% url 'hc-checks' project.code %}">
-                                <span class="name">{{ project }}</span>
-                                {% if project.n_down %}
-                                <span class="badge badge-down pull-right">
-                                    {{ project.n_down }}
-                                </span>
-                                {% endif %}
-                            </a>
-                        </li>
-                        {% endfor %}
-
-                    <li role="separator" class="divider"></li>
                     <li class="dropdown-header">{{ request.user.email }}</li>
 
                     <li>
@@ -237,12 +233,15 @@
         </div>
     </footer>
 
+    {% block base_modals %}{% endblock %}
 
-    {% block scripts %}
+    {% block base_scripts %}
     {% compress js %}
     <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     {% endcompress %}
     {% endblock %}
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>

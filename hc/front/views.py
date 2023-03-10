@@ -366,6 +366,24 @@ def index(request):
     return render(request, "front/projects.html", ctx)
 
 
+@login_required
+def projects_menu(request):
+    projects = list(request.profile.projects())
+
+    statuses = defaultdict(lambda: "up")
+    for check in Check.objects.filter(project__in=projects):
+        old_status = statuses[check.project_id]
+        if old_status != "down":
+            status = check.get_status()
+            if status == "down" or (status == "grace" and old_status == "up"):
+                statuses[check.project_id] = status
+
+    for p in projects:
+        p.overall_status = statuses[p.id]
+
+    return render(request, "front/projects_menu.html", {"projects": projects})
+
+
 def dashboard(request):
     return render(request, "front/dashboard.html", {})
 
@@ -625,12 +643,14 @@ def ping_details(request, code, n=None):
         return render(request, "front/ping_details_not_found.html")
 
     body = ping.get_body()
-    ctx = {"check": check,
-           "ping": ping,
-           "body": body,
-           "plain": None,
-           "html": None,
-           "active": None}
+    ctx = {
+        "check": check,
+        "ping": ping,
+        "body": body,
+        "plain": None,
+        "html": None,
+        "active": None,
+    }
 
     if ping.scheme == "email":
         parsed = email.message_from_string(body, policy=email.policy.SMTP)

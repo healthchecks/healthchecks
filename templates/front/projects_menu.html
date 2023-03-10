@@ -1,0 +1,8 @@
+{% for project in projects %}
+<li class="project-item">
+    <a href="{% url 'hc-checks' project.code %}">
+        <span class="status ic-{{ project.overall_status }}"></span>
+        <span class="name">{{ project }}</span>
+    </a>
+</li>
+{% endfor %}

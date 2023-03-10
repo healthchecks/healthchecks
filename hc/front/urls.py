@@ -108,6 +108,7 @@ urlpatterns = [
     path("checks/<uuid:code>/", include(check_urls)),
     path("cloaked/<sha1:unique_key>/", views.uncloak, name="hc-uncloak"),
     path("integrations/", include(channel_urls)),
+    path("projects/menu/", views.projects_menu, name="hc-projects-menu"),
     path("projects/<uuid:code>/", include(project_urls)),
     path("docs/", views.serve_doc, name="hc-docs"),
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
