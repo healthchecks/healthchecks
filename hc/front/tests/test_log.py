@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import uuid
 from datetime import timedelta as td
 from unittest.mock import patch
 
@@ -65,7 +64,6 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "email from server@example.org", status_code=200)
 
     def test_team_access_works(self):
-
         # Logging in as bob, not alice. Bob has team access so this
         # should work.
         self.client.login(username="bob@example.org", password="password")
@@ -171,3 +169,24 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "label-ign", status_code=200)
         self.assertNotContains(r, "ic-timer", status_code=200)
+
+    def test_it_does_not_show_too_old_notifications(self):
+        self.ping.created = now()
+        self.ping.save()
+
+        ch = Channel(kind="email", project=self.project)
+        ch.value = json.dumps({"value": "alice@example.org", "up": True, "down": True})
+        ch.save()
+
+        n = Notification(owner=self.check)
+        n.created = self.ping.created - td(hours=1)
+        n.channel = ch
+        n.check_status = "down"
+        n.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        # The notification should not show up in the log as it is
+        # older than the oldest visible ping:
+        self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
