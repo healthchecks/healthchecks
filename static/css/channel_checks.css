@@ -1,5 +1,21 @@
+#checks-modal .modal-header {
+    border-bottom: 0;
+}
+
+.channel-checks-table > tbody > tr > th {
+    border-top: 0;
+}
+
 .channel-checks-table td:first-child, .channel-checks-table th:first-child {
     padding-left: 16px;
+}
+
+.channel-checks-table td:nth-child(2) {
+    overflow-wrap: anywhere;
+}
+
+.channel-checks-table td:nth-child(3) {
+    white-space: nowrap;
 }
 
 .channel-checks-table .unnamed {
