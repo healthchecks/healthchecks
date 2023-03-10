@@ -65,6 +65,13 @@ body {
     text-decoration: none;
 }
 
+#project-menu > .dropdown > .dropdown-menu {
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+
 #global-links > li > a {
     font-size: small;
 }
