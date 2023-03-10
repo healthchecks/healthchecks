@@ -13,11 +13,12 @@ $(function() {
             url: base + "/projects/menu/",
             timeout: 2000,
             success: function(data) {
-                $("#nav-project li.project-item").remove();
+                $("#project-menu li.project-item").remove();
                 $("#projects-divider").after(data);
             }
         });
     }
 
-    $("#nav-project").on("mouseenter click", refreshMenu);
+    $("#project-menu").on("mouseenter", refreshMenu);
+    $("#project-menu > .dropdown").on("show.bs.dropdown", refreshMenu);
 });

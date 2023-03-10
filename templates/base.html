@@ -80,9 +80,25 @@
                 <span class="icon-bar"></span>
             </button>
 
+            {% if request.user.is_authenticated and project %}
+            <div id="project-menu" class="navbar-brand">
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                        {{ project }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a id="base-url" href="{% url 'hc-index' %}">All Projects</a></li>
+                        <li id="projects-divider" role="separator" class="divider"></li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a  href="#" data-toggle="modal"  data-target="#add-project-modal">New Project&hellip;</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% else %}
             <a id="base-url" class="navbar-brand" href="{% url 'hc-index' %}">
-                {% if request.user.is_authenticated and project %}
-                {% else %}
                 <img
                     id="logo"
                     height="50"
@@ -92,27 +108,12 @@
                     src="{% static 'img/logo.png' %}"
                     {% endif %}
                     alt="{{ site_name }}">
-                {% endif %}
             </a>
+            {% endif %}
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             {% if project %}
             <ul id="nav-main-sections" class="nav navbar-nav">
-                <li id="nav-project" class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                        {{ project }}
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'hc-index' %}">All Projects</a></li>
-                        <li id="projects-divider" role="separator" class="divider"></li>
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a  href="#" data-toggle="modal"  data-target="#add-project-modal">New Project&hellip;</a>
-                        </li>
-                    </ul>
-                </li>
-
                 <li {% if page == 'checks' %} class="active" {% endif %}>
                     <a href="{% url 'hc-checks' project.code %}">
                         {% trans "Checks" %}

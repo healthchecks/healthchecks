@@ -40,17 +40,29 @@ body {
     font-size: small;
 }
 
-@media (min-width: 768px) {
-    #nav-main-sections > #nav-project {
-        margin-left: -30px;
-    }
+#project-menu {
+    padding: 0;
 }
 
-#nav-main-sections > #nav-project > a {
+#project-menu > .dropdown > a {
+    display: block;
+    padding: 30px 15px;
     font-size: 18px;
     text-transform: none;
     font-weight: bold;
     color: var(--text-color);
+}
+
+#project-menu > .dropdown > a:hover {
+    padding-bottom: 25px;
+    border-bottom: 5px solid var(--border-muted);
+}
+
+#project-menu > .dropdown > a:hover,
+#project-menu > .dropdown > a:active,
+#project-menu > .dropdown > a:focus,
+#project-menu > .dropdown > a:target {
+    text-decoration: none;
 }
 
 #global-links > li > a {
