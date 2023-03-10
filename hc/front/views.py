@@ -819,9 +819,10 @@ def log(request, code):
 
     smax = now()
     smin = smax - td(hours=24)
-    ping = check.visible_pings.order_by("n").first()
-    if ping:
-        smin = min(smin, ping.created)
+
+    oldest_ping = check.visible_pings.order_by("n").first()
+    if oldest_ping:
+        smin = min(smin, oldest_ping.created)
 
     # Align slider steps to full hours
     smin = smin.replace(minute=0, second=0)
@@ -833,7 +834,13 @@ def log(request, code):
     else:
         start, end = smin, smax
 
+    # Clamp the _get_events start argument to the date of the oldest visible ping
+    get_events_start = start
+    if oldest_ping and oldest_ping.created > get_events_start:
+        get_events_start = oldest_ping.created
+
     total = check.visible_pings.filter(created__gte=start, created__lte=end).count()
+    events = _get_events(check, 1000, start=get_events_start, end=end)
     ctx = {
         "page": "log",
         "project": check.project,
@@ -842,7 +849,7 @@ def log(request, code):
         "max": smax,
         "start": start,
         "end": end,
-        "events": _get_events(check, 1000, start=start, end=end),
+        "events": events,
         "num_total": total,
     }
 

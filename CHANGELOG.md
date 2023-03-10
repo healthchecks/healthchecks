@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - Update the Ping Details dialog to show the "HTML" tab by default (#801)
 - Add a "Switch Project" menu in top navigation
 
+### Bug Fixes
+- Fix notification query in the Log page
+
 ## v2.7 - 2023-03-06
 
 ### Improvements
