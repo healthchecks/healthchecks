@@ -126,7 +126,7 @@ class ProfileAdmin(admin.ModelAdmin):
         NumChecksFilter,
         "theme",
     )
-    actions = ("login", "send_report", "send_nag", "deactivate")
+    actions = ("login", "send_report", "send_nag", "deactivate", "remove_totp")
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
@@ -190,6 +190,15 @@ class ProfileAdmin(admin.ModelAdmin):
             profile.user.save()
 
         self.message_user(request, "%d user(s) deactivated" % qs.count())
+
+    @admin.action(description="Remove TOTP")
+    def remove_totp(self, request, qs):
+        for profile in qs:
+            profile.totp = None
+            profile.totp_created = None
+            profile.save()
+
+        self.message_user(request, "Removed TOTP for %d profile(s)" % qs.count())
 
 
 @admin.register(Project)
