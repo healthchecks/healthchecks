@@ -312,9 +312,10 @@ Healthchecks can optionally store large ping bodies in S3-compatible object
 storage. To enable this feature, you will need to:
 
 * ensure you have the [MinIO Python library](https://docs.min.io/docs/python-client-quickstart-guide.html) installed:
-```bash
-pip install minio
-```
+
+  ```bash
+  pip install minio
+  ```
 * configure the credentials for accessing object storage: `S3_ACCESS_KEY`,
   `S3_SECRET_KEY`, `S3_ENDPOINT`, `S3_REGION` and `S3_BUCKET`.
 
@@ -431,9 +432,10 @@ scheme.
 To enable Apprise integration, you will need to:
 
 * ensure you have apprise installed in your local environment:
-```bash
-pip install apprise
-```
+
+  ```bash
+  pip install apprise
+  ```
 * enable the apprise functionality by setting the `APPRISE_ENABLED` environment variable.
 
 ### Shell Commands
