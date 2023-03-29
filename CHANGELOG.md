@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Update the Dockerfile to use Python 3.11
 - Update the Ping Details dialog to show the "HTML" tab by default (#801)
 - Add a "Switch Project" menu in top navigation
+- Update Trello onboarding form to allow longer Trello auth tokens (#806)
 
 ### Bug Fixes
 - Fix notification query in the Log page

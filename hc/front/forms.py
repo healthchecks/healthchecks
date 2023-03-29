@@ -313,7 +313,7 @@ class AddZulipForm(forms.Form):
 
 
 class AddTrelloForm(forms.Form):
-    token = forms.RegexField(regex=r"^[0-9a-fA-F]{64}$")
+    token = forms.RegexField(regex=r"^[0-9a-fA-F]{64,76}$")
     board_name = forms.CharField(max_length=100)
     list_name = forms.CharField(max_length=100)
     list_id = forms.RegexField(regex=r"^[0-9a-fA-F]{16,32}$")
