@@ -18,11 +18,15 @@ termination.
     * `SECRET_KEY` – secures HTTP sessions, set to a random value
 * Create and start containers:
 
-        $ docker-compose up
+  ```sh
+  docker-compose up
+  ```
 
 * Create a superuser:
 
-        $ docker-compose run web /opt/healthchecks/manage.py createsuperuser
+  ```sh
+  docker-compose run web /opt/healthchecks/manage.py createsuperuser
+  ```
 
 * Open [http://localhost:8000](http://localhost:8000) in your browser and log in with
   the credentials from the previous step.
