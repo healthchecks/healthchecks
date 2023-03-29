@@ -34,9 +34,9 @@ class AddTrelloTestCase(BaseTestCase):
         self.assertEqual(c.trello_token, "0" * 64)
         self.assertEqual(c.project, self.project)
 
-    def test_it_handles_76_char_token(self):
+    def test_it_handles_256_char_token(self):
         form = {
-            "token": "0" * 76,
+            "token": "0" * 256,
             "board_name": "My Board",
             "list_name": "My List",
             "list_id": "1" * 32,
@@ -46,7 +46,7 @@ class AddTrelloTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.trello_token, "0" * 76)
+        self.assertEqual(c.trello_token, "0" * 256)
 
     @override_settings(TRELLO_APP_KEY=None)
     def test_it_requires_trello_app_key(self):
