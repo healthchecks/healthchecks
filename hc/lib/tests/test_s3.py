@@ -10,7 +10,7 @@ from hc.lib.s3 import get_object
 
 try:
     from minio import S3Error
-    from urllib3.exceptions import ProtocolError
+    from urllib3.exceptions import InvalidHeader, ProtocolError
 
     have_minio = True
 except ImportError:
@@ -28,10 +28,12 @@ class S3TestCase(TestCase):
         self.assertTrue(mock_client.get_object.called)
 
     @patch("hc.lib.s3._client")
-    def test_get_object_handles_protocolerror(self, mock_client):
-        mock_client.get_object.return_value.read = Mock(side_effect=ProtocolError)
-        self.assertIsNone(get_object("dummy-code", 1))
-        self.assertTrue(mock_client.get_object.called)
+    def test_get_object_handles_urllib_exceptions(self, mock_client):
+        for e in [ProtocolError, InvalidHeader]:
+            mock_client.get_object.reset_mock()
+            mock_client.get_object.return_value.read = Mock(side_effect=e)
+            self.assertIsNone(get_object("dummy-code", 1))
+            self.assertTrue(mock_client.get_object.called)
 
     @override_settings(S3_BUCKET=None)
     @patch("hc.lib.s3._client")

@@ -10,7 +10,7 @@ try:
     from minio import Minio, S3Error
     from minio.deleteobjects import DeleteObject
     from urllib3 import PoolManager
-    from urllib3.exceptions import ProtocolError, ReadTimeoutError
+    from urllib3.exceptions import HTTPError, ReadTimeoutError
 except ImportError:
     # Enforce
     settings.S3_BUCKET = None
@@ -74,7 +74,7 @@ def get_object(code, n):
         return response.read()
     except S3Error:
         return None
-    except ProtocolError:
+    except HTTPError:
         return None
     finally:
         if response:
