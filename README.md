@@ -57,59 +57,74 @@ To set up Healthchecks development environment:
 
 * Install dependencies (Debian/Ubuntu):
 
-        $ sudo apt update
-        $ sudo apt install -y gcc python3-dev python3-venv libpq-dev libcurl4-openssl-dev libssl-dev
+  ```sh
+  sudo apt update
+  sudo apt install -y gcc python3-dev python3-venv libpq-dev libcurl4-openssl-dev libssl-dev
+  ```
 
 * Prepare directory for project code and virtualenv. Feel free to use a
   different location:
 
-        $ mkdir -p ~/webapps
-        $ cd ~/webapps
+  ```sh
+  mkdir -p ~/webapps
+  cd ~/webapps
+  ```
 
 * Prepare virtual environment
   (with virtualenv you get pip, we'll use it soon to install requirements):
 
-        $ python3 -m venv hc-venv
-        $ source hc-venv/bin/activate
-        $ pip3 install wheel # make sure wheel is installed in the venv
+  ```sh
+  python3 -m venv hc-venv
+  source hc-venv/bin/activate
+  pip3 install wheel # make sure wheel is installed in the venv
+  ```
 
 * Check out project code:
 
-        $ git clone https://github.com/healthchecks/healthchecks.git
+  ```sh
+  git clone https://github.com/healthchecks/healthchecks.git
+  ```
 
 * Install requirements (Django, ...) into virtualenv:
 
-        $ pip install -r healthchecks/requirements.txt
+  ```sh
+  pip install -r healthchecks/requirements.txt
+  ```
 
 * macOS only - pycurl needs to be reinstalled using the following method (assumes OpenSSL was installed using brew):
 
-        $ export PYCURL_VERSION=`cat requirements.txt | grep pycurl | cut -d '=' -f3`
-        $ export OPENSSL_LOCATION=`brew --prefix openssl`
-        $ export PYCURL_SSL_LIBRARY=openssl
-        $ export LDFLAGS=-L$OPENSSL_LOCATION/lib
-        $ export CPPFLAGS=-I$OPENSSL_LOCATION/include
-        $ pip uninstall -y pycurl
-        $ pip install pycurl==$PYCURL_VERSION --compile --no-cache-dir
+  ```sh
+  export PYCURL_VERSION=`cat requirements.txt | grep pycurl | cut -d '=' -f3`
+  export OPENSSL_LOCATION=`brew --prefix openssl`
+  export PYCURL_SSL_LIBRARY=openssl
+  export LDFLAGS=-L$OPENSSL_LOCATION/lib
+  export CPPFLAGS=-I$OPENSSL_LOCATION/include
+  pip uninstall -y pycurl
+  pip install pycurl==$PYCURL_VERSION --compile --no-cache-dir
+  ```
 
 * Create database tables and a superuser account:
 
-        $ cd ~/webapps/healthchecks
-        $ ./manage.py migrate
-        $ ./manage.py createsuperuser
+  ```sh
+  cd ~/webapps/healthchecks
+  ./manage.py migrate
+  ./manage.py createsuperuser
+  ```
 
   With the default configuration, Healthchecks stores data in a SQLite file
   `hc.sqlite` in the checkout directory (`~/webapps/healthchecks`).
 
-  To use PostgreSQL or MySQL, see the section **Database Configuration** section
-  below.
-
 * Run tests:
 
-        $ ./manage.py test
+  ```sh
+  ./manage.py test
+  ```
 
 * Run development server:
 
-        $ ./manage.py runserver
+  ```sh
+  ./manage.py runserver
+  ```
 
 The site should now be running at `http://localhost:8000`.
 To access Django administration site, log in as a superuser, then
@@ -170,16 +185,18 @@ to `your-uuid-here@my-monitoring-project.com` email addresses.
 
 Start the SMTP listener on port 2525:
 
-    $ ./manage.py smtpd --port 2525
+```sh
+./manage.py smtpd --port 2525
+```
 
 Send a test email:
 
-    $ curl --url 'smtp://127.0.0.1:2525' \
-        --mail-from 'foo@example.org' \
-        --mail-rcpt '11111111-1111-1111-1111-111111111111@my-monitoring-project.com' \
-        -F '='
-
-
+```sh
+curl --url 'smtp://127.0.0.1:2525' \
+    --mail-from 'foo@example.org' \
+    --mail-rcpt '11111111-1111-1111-1111-111111111111@my-monitoring-project.com' \
+    -F '='
+```
 
 ## Sending Status Notifications
 
@@ -188,7 +205,9 @@ polls database for any checks changing state, and sends out notifications as
 needed. Within an activated virtualenv, you can manually run
 the `sendalerts` command like so:
 
-    $ ./manage.py sendalerts
+```sh
+./manage.py sendalerts
+```
 
 In a production setup, you will want to run this command from a process
 manager like [supervisor](http://supervisord.org/) or systemd.
@@ -214,26 +233,26 @@ Healthchecks also provides management commands for cleaning up
    Assume the user doesn't intend to use the account any more and would
    probably *want* it removed.
 
-    ```
-    $ ./manage.py pruneusers
-    ```
+  ```sh
+  ./manage.py pruneusers
+  ```
 
 * Remove old records from the `api_tokenbucket` table. The TokenBucket
   model is used for rate-limiting login attempts and similar operations.
   Any records older than one day can be safely removed.
 
-    ```
-    $ ./manage.py prunetokenbucket
-    ```
+  ```sh
+  ./manage.py prunetokenbucket
+  ```
 
 * Remove old records from the `api_flip` table. The Flip
   objects are used to track status changes of checks, and to calculate
   downtime statistics month by month. Flip objects from more than 3 months
   ago are not used and can be safely removed.
 
-    ```
-    $ ./manage.py pruneflips
-    ```
+  ```sh
+  ./manage.py pruneflips
+  ```
 
 * Remove old objects from external object storage. When an user removes
   a check, removes a project, or closes their account, Healthchecks
@@ -244,9 +263,9 @@ Healthchecks also provides management commands for cleaning up
   keys in the object storage bucket, and deletes any that don't also
   exist in the database.
 
-    ```
-    $ ./manage.py pruneobjects
-    ```
+  ```sh
+  ./manage.py pruneobjects
+  ```
 
 When you first try these commands on your data, it is a good idea to
 test them on a copy of your database, not on the live database right away.
@@ -399,8 +418,8 @@ in `TELEGRAM_BOT_NAME` and `TELEGRAM_TOKEN` environment variables.
 where to forward channel messages by invoking Telegram's
 [setWebhook](https://core.telegram.org/bots/api#setwebhook) API call:
 
-    ```
-    $ ./manage.py settelegramwebhook
+    ```sh
+    ./manage.py settelegramwebhook
     Done, Telegram's webhook set to: https://my-monitoring-project.com/integrations/telegram/bot/
     ```
 
