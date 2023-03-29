@@ -73,7 +73,6 @@ MIDDLEWARE = (
     "hc.accounts.middleware.CustomHeaderMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
     "hc.accounts.middleware.TeamAccessMiddleware",
 )
 
@@ -158,7 +157,8 @@ if os.getenv("DB") == "mysql":
 
 USE_TZ = True
 TIME_ZONE = "UTC"
-LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
+USE_I18N = False
+USE_L10N = False
 
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
 SITE_NAME = os.getenv("SITE_NAME", "Mychecks")
