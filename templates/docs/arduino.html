@@ -1,0 +1,43 @@
+<h1>Arduino</h1>
+<p>The easiest way to send pings from Arduino projects is by using the
+<a href="https://github.com/arduino-libraries/ArduinoHttpClient">ArduinoHttpClient</a> library.</p>
+<p>The below code uses the <a href="https://www.arduino.cc/reference/en/libraries/wifinina/">WiFiNINA</a>
+network library, and is tested with the Arduino Nano 33 IoT board. The
+ArduinoHttpClient also works with many other network libraries,
+including <a href="https://github.com/arduino-libraries/Ethernet">Ethernet</a> and
+<a href="https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html">ESP8266WiFi</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ArduinoHttpClient.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;WiFiNINA.h&gt;</span><span class="cp"></span>
+
+<span class="n">WiFiSSLClient</span><span class="w"> </span><span class="n">wifi</span><span class="p">;</span><span class="w"></span>
+<span class="n">HttpClient</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HttpClient</span><span class="p">(</span><span class="n">wifi</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hc-ping.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">443</span><span class="p">);</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">Serial</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Connecting ...&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">WiFi</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="s">&quot;your-network-ssid&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;your-network-password&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">WiFi</span><span class="p">.</span><span class="n">status</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">WL_CONNECTED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">delay</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Connected, IP address: &quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">WiFi</span><span class="p">.</span><span class="n">localIP</span><span class="p">());</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1">// Make a HTTPS request:</span>
+<span class="w">  </span><span class="n">client</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;/your-uuid-here&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Status code: &quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">responseStatusCode</span><span class="p">());</span><span class="w"></span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Response: &quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">responseBody</span><span class="p">());</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">loop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+
+<p>Note: For simplicity, the network SSID, password and the
+check's code are hardcoded in this example. In a real-world code, consider
+<a href="https://docs.arduino.cc/arduino-cloud/tutorials/store-your-sensitive-data-safely-when-sharing">storing them in the SECRET_ fields</a>.</p>
