@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Update Trello onboarding form to allow longer Trello auth tokens (#806)
 - Remove L10N markup from base.html, and associated translations
 - Add Arduino usage example
+- Upgrade to Django 4.2
 
 ### Bug Fixes
 - Fix notification query in the Log page
