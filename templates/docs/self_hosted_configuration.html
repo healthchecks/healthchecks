@@ -86,7 +86,7 @@ from environment variables. Below is a list of variables it reads and uses.</p>
 <p>A comma-sepparated list of email addresses to send code error notifications to.
 When <code>DEBUG=False</code>, Healthchecks will send the details of exceptions raised in the
 request/response cycle to the listed addresses. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">ADMINS</span><span class="o">=</span><span class="s">alice@example.org,bob@example.org</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">ADMINS</span><span class="o">=</span><span class="s">alice@example.org,bob@example.org</span>
 </code></pre></div>
 
 <p>Note: for error notifications to work, make sure you have also specified working
@@ -95,7 +95,7 @@ SMTP credentials in the <code>EMAIL_...</code> environment variables.</p>
 <p>Default: <code>*</code></p>
 <p>The host/domain names that this site can serve. You can specify multiple domain names
 by separating them with commas:</p>
-<div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">my-hc.example.org,alternative-name.example.org</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">my-hc.example.org,alternative-name.example.org</span>
 </code></pre></div>
 
 <p>Apart from the comma-separated syntax, this is a standard Django setting.
@@ -106,7 +106,7 @@ Read more about it in the
 <p>A boolean that turns on/off the <a href="https://github.com/caronc/apprise">Apprise</a>
 integration.</p>
 <p>Before enabling the Apprise integration, make sure the <code>apprise</code> package is installed:</p>
-<div class="highlight"><pre><span></span><code>pip install apprise
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>apprise
 </code></pre></div>
 
 <h2 id="DB"><code>DB</code></h2>
@@ -208,10 +208,10 @@ set <code>EMAIL_USE_VERIFICATION</code> to <code>False</code>.</p>
 <p>Default: <code>""</code> (empty string)</p>
 <p>Specifies the proxy server to use for outgoing HTTP and HTTPS requests.
 Supports different proxy server types. Examples:</p>
-<div class="highlight"><pre><span></span><code><span class="na">https_proxy</span><span class="o">=</span><span class="s">http://example.org:1234</span><span class="w"></span>
-<span class="na">https_proxy</span><span class="o">=</span><span class="s">https://example.org:1234</span><span class="w"></span>
-<span class="na">https_proxy</span><span class="o">=</span><span class="s">socks4://example.org:1234</span><span class="w"></span>
-<span class="na">https_proxy</span><span class="o">=</span><span class="s">socks5://example.org:1234</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">https_proxy</span><span class="o">=</span><span class="s">http://example.org:1234</span>
+<span class="na">https_proxy</span><span class="o">=</span><span class="s">https://example.org:1234</span>
+<span class="na">https_proxy</span><span class="o">=</span><span class="s">socks4://example.org:1234</span>
+<span class="na">https_proxy</span><span class="o">=</span><span class="s">socks5://example.org:1234</span>
 </code></pre></div>
 
 <p>Healthchecks uses libcurl as the HTTP client library for making HTTP(S) requests.
@@ -254,9 +254,9 @@ integration.</p>
   using curl in the command shell.</li>
 <li>Set the <code>MATRIX_</code> environment variables. Example:</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="na">MATRIX_ACCESS_TOKEN</span><span class="o">=</span><span class="s">[a long string of characters returned by the login call]</span><span class="w"></span>
-<span class="na">MATRIX_HOMESERVER</span><span class="o">=</span><span class="s">https://matrix.org</span><span class="w"></span>
-<span class="na">MATRIX_USER_ID</span><span class="o">=</span><span class="s">@mychecks:matrix.org</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">MATRIX_ACCESS_TOKEN</span><span class="o">=</span><span class="s">[a long string of characters returned by the login call]</span>
+<span class="na">MATRIX_HOMESERVER</span><span class="o">=</span><span class="s">https://matrix.org</span>
+<span class="na">MATRIX_USER_ID</span><span class="o">=</span><span class="s">@mychecks:matrix.org</span>
 </code></pre></div>
 
 <h2 id="MATRIX_HOMESERVER"><code>MATRIX_HOMESERVER</code></h2>
@@ -302,7 +302,7 @@ it altogether by setting this value to <code>None</code>.</p>
 <h2 id="PING_EMAIL_DOMAIN"><code>PING_EMAIL_DOMAIN</code></h2>
 <p>Default: <code>localhost</code></p>
 <p>The domain to use for generating ping email addresses. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">PING_EMAIL_DOMAIN</span><span class="o">=</span><span class="s">ping.my-hc.example.org</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">PING_EMAIL_DOMAIN</span><span class="o">=</span><span class="s">ping.my-hc.example.org</span>
 </code></pre></div>
 
 <p>In this example, Healthchecks would generate ping email addresses similar
@@ -310,7 +310,7 @@ to <code>3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org</code>.</p>
 <h2 id="PING_ENDPOINT"><code>PING_ENDPOINT</code></h2>
 <p>Default: <code>SITE_ROOT</code> + <code>/ping/</code></p>
 <p>The base URL to use for generating ping URLs. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">PING_ENDPOINT</span><span class="o">=</span><span class="s">https://ping.my-hc.example.org</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">PING_ENDPOINT</span><span class="o">=</span><span class="s">https://ping.my-hc.example.org</span>
 </code></pre></div>
 
 <p>In this example, Healthchecks would generate ping URLs similar
@@ -459,11 +459,11 @@ by the <code>manage.py sendalerts</code> process and will run with its system pe
 <p>The path to the signal-cli UNIX socket, or the hostname:port of the signal-cli
 TCP socket.</p>
 <p>Example (UNIX socket):</p>
-<div class="highlight"><pre><span></span><code><span class="na">SIGNAL_CLI_SOCKET</span><span class="o">=</span><span class="s">/tmp/signal-cli.socket</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">SIGNAL_CLI_SOCKET</span><span class="o">=</span><span class="s">/tmp/signal-cli.socket</span>
 </code></pre></div>
 
 <p>Example (TCP socket):</p>
-<div class="highlight"><pre><span></span><code><span class="na">SIGNAL_CLI_SOCKET</span><span class="o">=</span><span class="s">example.org:7583</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">SIGNAL_CLI_SOCKET</span><span class="o">=</span><span class="s">example.org:7583</span>
 </code></pre></div>
 
 <p>Healthchecks uses <a href="https://github.com/AsamK/signal-cli">signal-cli</a> to send Signal
@@ -482,11 +482,11 @@ signal-cli 0.10.0 or later).</p>
 Healthchecks will use a fallback image: <code>/static/img/logo.png</code>.</p>
 <p>You can place a custom logo in <code>/static/img/</code>, run <code>manage.py collectstatic</code>, and
 point <code>SITE_LOGO_URL</code> to it like so:</p>
-<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">/static/img/my-custom-logo.png</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">/static/img/my-custom-logo.png</span>
 </code></pre></div>
 
 <p>Or you can serve the logo from another server, and point to it using an absolute URL:</p>
-<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">https://example.org/cdn/my-custom-logo.png</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">SITE_LOGO_URL</span><span class="o">=</span><span class="s">https://example.org/cdn/my-custom-logo.png</span>
 </code></pre></div>
 
 <p>Either way, Healthchecks will use the provided <code>SITE_LOGO_URL</code> value as-is in HTML
@@ -497,7 +497,7 @@ access directly</strong>. The logo image can use any image format supported by b
 do so, use a Dockerfile with the following contents, and with your logo.png placed next
 to it:</p>
 <div class="highlight"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">healthchecks/healthchecks</span>
-<span class="k">COPY</span><span class="w"> </span>logo.png /opt/healthchecks/static-collected/img/
+<span class="k">COPY</span><span class="w"> </span>logo.png<span class="w"> </span>/opt/healthchecks/static-collected/img/
 </code></pre></div>
 
 <p>This overwrites the default placeholder logo, so, in this case, you do not need to
@@ -556,8 +556,8 @@ in <code>TELEGRAM_BOT_NAME</code> and <code>TELEGRAM_TOKEN</code> environment va
 where to forward channel messages by invoking Telegram's
 <a href="https://core.telegram.org/bots/api#setwebhook">setWebhook</a> API call:</li>
 </ul>
-<div class="highlight"><pre><span></span><code>$ ./manage.py settelegramwebhook
-Done, Telegram<span class="err">&#39;</span>s webhook <span class="nb">set</span> to: https://my-monitoring-project.com/integrations/telegram/bot/
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>settelegramwebhook
+Done,<span class="w"> </span>Telegram<span class="err">&#39;</span>s<span class="w"> </span>webhook<span class="w"> </span><span class="nb">set</span><span class="w"> </span>to:<span class="w"> </span>https://my-monitoring-project.com/integrations/telegram/bot/
 </code></pre></div>
 
 <p>For this to work, your <code>SITE_ROOT</code> must be publicly accessible and use the "https://"
@@ -582,7 +582,7 @@ scheme.</p>
 <p>The Twilio phone number to use as the sender for SMS and WhatsApp notifications,
 and as the caller for Call integrations.</p>
 <p>Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">TWILIO_FROM</span><span class="o">=</span><span class="s">+15017122661</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">TWILIO_FROM</span><span class="o">=</span><span class="s">+15017122661</span>
 </code></pre></div>
 
 <h2 id="TWILIO_USE_WHATSAPP"><code>TWILIO_USE_WHATSAPP</code></h2>

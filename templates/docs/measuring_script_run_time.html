@@ -62,12 +62,12 @@ makes HTTP requests using curl:</p>
 <span class="nv">RID</span><span class="o">=</span><span class="sb">`</span>uuidgen<span class="sb">`</span>
 
 <span class="c1"># send a start ping, specify rid parameter:</span>
-curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL/start?rid<span class="o">=</span><span class="nv">$RID</span>
+curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>PING_URL/start?rid<span class="o">=</span><span class="nv">$RID</span>
 
 <span class="c1"># ... FIXME: run the job here ...</span>
 
 <span class="c1"># send the success ping, use same rid parameter:</span>
-curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> PING_URL?rid<span class="o">=</span><span class="nv">$RID</span>
+curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>PING_URL?rid<span class="o">=</span><span class="nv">$RID</span>
 </code></pre></div>
 
 <p>If the client specifies run IDs, SITE_NAME will display them in the "Events"

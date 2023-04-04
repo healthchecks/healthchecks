@@ -18,45 +18,45 @@ or test a bugfix.</p>
 <ul>
 <li>
 <p>Install dependencies:</p>
-<div class="highlight"><pre><span></span><code>$ sudo apt-get update
-$ sudo apt-get install -y gcc python3-dev python3-venv
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>gcc<span class="w"> </span>python3-dev<span class="w"> </span>python3-venv
 </code></pre></div>
 
 </li>
 <li>
 <p>Prepare directory for project code and virtualenv. Feel free to use a
   different location:</p>
-<div class="highlight"><pre><span></span><code>$ mkdir -p ~/webapps
-$ <span class="nb">cd</span> ~/webapps
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>~/webapps
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/webapps
 </code></pre></div>
 
 </li>
 <li>
 <p>Prepare virtual environment
   (with virtualenv you get pip, we'll use it soon to install requirements):</p>
-<div class="highlight"><pre><span></span><code>$ python3 -m venv hc-venv
-$ <span class="nb">source</span> hc-venv/bin/activate
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>hc-venv
+$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>hc-venv/bin/activate
 </code></pre></div>
 
 </li>
 <li>
 <p>Check out project code:</p>
-<div class="highlight"><pre><span></span><code>$ git clone https://github.com/healthchecks/healthchecks.git
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/healthchecks/healthchecks.git
 </code></pre></div>
 
 </li>
 <li>
 <p>Install requirements (Django, ...) into virtualenv:</p>
-<div class="highlight"><pre><span></span><code>$ pip install wheel
-$ pip install -r healthchecks/requirements.txt
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>wheel
+$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>healthchecks/requirements.txt
 </code></pre></div>
 
 </li>
 <li>
 <p>Create database tables and a superuser account:</p>
-<div class="highlight"><pre><span></span><code>$ <span class="nb">cd</span> ~/webapps/healthchecks
-$ ./manage.py migrate
-$ ./manage.py createsuperuser
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>~/webapps/healthchecks
+$<span class="w"> </span>./manage.py<span class="w"> </span>migrate
+$<span class="w"> </span>./manage.py<span class="w"> </span>createsuperuser
 </code></pre></div>
 
 <p>With the default configuration, Healthchecks stores data in a SQLite file
@@ -64,20 +64,20 @@ $ ./manage.py createsuperuser
 </li>
 <li>
 <p>Run tests:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py <span class="nb">test</span>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span><span class="nb">test</span>
 </code></pre></div>
 
 </li>
 <li>
 <p>Run development server:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py runserver
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>runserver
 </code></pre></div>
 
 </li>
 <li>
 <p>From another shell, run the <code>sendalerts</code> management command, responsible for
   sending out notifications:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py sendalerts
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>sendalerts
 </code></pre></div>
 
 </li>
@@ -87,7 +87,7 @@ $ ./manage.py createsuperuser
 <p>Healthchecks comes with Django's administration panel where you can manually
 view and modify user accounts, projects, checks, integrations etc. To access it,
 if you haven't already, create a superuser account:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py createsuperuser
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>createsuperuser
 </code></pre></div>
 
 <p>Then, log into the site using the superuser credentials. Once logged in,
@@ -98,12 +98,12 @@ login links, monitoring notifications, monthly reports.</p>
 <p>Specify SMTP credentials using the <code>EMAIL_HOST</code>, <code>EMAIL_PORT</code>, <code>EMAIL_HOST_USER</code>,
 <code>EMAIL_HOST_PASSWORD</code>, <code>EMAIL_USE_SSL</code>, and <code>EMAIL_USE_TLS</code> environment variables.
 Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">EMAIL_HOST</span><span class="o">=</span><span class="s">my-smtp-server-here.com</span><span class="w"></span>
-<span class="na">EMAIL_PORT</span><span class="o">=</span><span class="s">465</span><span class="w"></span>
-<span class="na">EMAIL_HOST_USER</span><span class="o">=</span><span class="s">my-username</span><span class="w"></span>
-<span class="na">EMAIL_HOST_PASSWORD</span><span class="o">=</span><span class="s">mypassword</span><span class="w"></span>
-<span class="na">EMAIL_USE_SSL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span><span class="w"></span>
-<span class="na">EMAIL_USE_TLS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="na">EMAIL_HOST</span><span class="o">=</span><span class="s">my-smtp-server-here.com</span>
+<span class="na">EMAIL_PORT</span><span class="o">=</span><span class="s">465</span>
+<span class="na">EMAIL_HOST_USER</span><span class="o">=</span><span class="s">my-username</span>
+<span class="na">EMAIL_HOST_PASSWORD</span><span class="o">=</span><span class="s">mypassword</span>
+<span class="na">EMAIL_USE_SSL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+<span class="na">EMAIL_USE_TLS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
 </code></pre></div>
 
 <p>You can read more about handling outbound email in the Django documentation,
@@ -113,14 +113,14 @@ Example:</p>
 SMTP listener service. With the command running, you can ping your
 checks by sending email messages.</p>
 <p>Start the SMTP listener on port 2525:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py smtpd --port <span class="m">2525</span>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>smtpd<span class="w"> </span>--port<span class="w"> </span><span class="m">2525</span>
 </code></pre></div>
 
 <p>Send a test email:</p>
-<div class="highlight"><pre><span></span><code>$ curl --url <span class="s1">&#39;smtp://127.0.0.1:2525&#39;</span> <span class="se">\</span>
-    --mail-from <span class="s1">&#39;foo@example.org&#39;</span> <span class="se">\</span>
-    --mail-rcpt <span class="s1">&#39;11111111-1111-1111-1111-111111111111@my-hc.example.org&#39;</span> <span class="se">\</span>
-    -F <span class="s1">&#39;=&#39;</span>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>curl<span class="w"> </span>--url<span class="w"> </span><span class="s1">&#39;smtp://127.0.0.1:2525&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mail-from<span class="w"> </span><span class="s1">&#39;foo@example.org&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mail-rcpt<span class="w"> </span><span class="s1">&#39;11111111-1111-1111-1111-111111111111@my-hc.example.org&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-F<span class="w"> </span><span class="s1">&#39;=&#39;</span>
 </code></pre></div>
 
 <h2>Sending Status Notifications</h2>
@@ -129,7 +129,7 @@ changing state, and sends out notifications as needed.
 When <code>sendalerts</code> is not running, the Healthchecks instance will not send out any
 alerts.</p>
 <p>Within an activated virtualenv, run the <code>sendalerts</code> command like so:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py sendalerts
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>sendalerts
 </code></pre></div>
 
 <p>In a production setup, make sure the <code>sendalerts</code> command can survive
@@ -141,23 +141,23 @@ to users, and old records of outgoing email messages. There are separate Django
 management commands for each task:</p>
 <p>Remove old records of sent notifications. For each check, remove notifications that
 are older than the oldest stored ping for the corresponding check.</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py prunenotifications
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>prunenotifications
 </code></pre></div>
 
 <p>Remove inactive user accounts:</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py pruneusers
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>pruneusers
 </code></pre></div>
 
 <p>Remove old records from the <code>api_tokenbucket</code> table. The TokenBucket
 model is used for rate-limiting login attempts and similar operations.
 Any records older than one day can be safely removed.</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py prunetokenbucket
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>prunetokenbucket
 </code></pre></div>
 
 <p>Remove old records from the <code>api_flip</code> table. The Flip objects are used to track
 status changes of checks, and to calculate downtime statistics month by month.
 Flip objects from more than 3 months ago are not used and can be safely removed.</p>
-<div class="highlight"><pre><span></span><code>$ ./manage.py pruneflips
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>pruneflips
 </code></pre></div>
 
 <p>When you first try these commands on your data, it is a good idea to

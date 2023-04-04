@@ -8,16 +8,16 @@ you can inspect it later.</p>
 and stderr streams), and submit the captured output to SITE_NAME:</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
-<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
-curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
+<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot<span class="w"> </span>renew<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
+curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>--data-raw<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span><span class="w"> </span>PING_URL
 </code></pre></div>
 
 <p>We can extend the previous example and signal either success or failure
 depending on the exit code:</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
-<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot renew <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
-curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL/<span class="nv">$?</span>
+<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>/usr/bin/certbot<span class="w"> </span>renew<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="k">)</span>
+curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>--data-raw<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span><span class="w"> </span>PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 
 <p>If the command produces a lot of output, you may run into the following error:</p>
@@ -28,8 +28,8 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-r
 then tell curl to send the file as the request body:</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
-/usr/bin/certbot renew &gt; /tmp/certbot-renew.log <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
-curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-binary @/tmp/certbot-renew.log PING_URL/<span class="nv">$?</span>
+/usr/bin/certbot<span class="w"> </span>renew<span class="w"> </span>&gt;<span class="w"> </span>/tmp/certbot-renew.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>--data-binary<span class="w"> </span>@/tmp/certbot-renew.log<span class="w"> </span>PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 
 <h2>Using Runitor</h2>
@@ -37,7 +37,7 @@ curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-b
 supplied command, captures its output and reports to SITE_NAME.
 It also measures the execution time and retries HTTP requests on transient errors.
 Best of all, the syntax is simple and clean:</p>
-<div class="highlight"><pre><span></span><code>runitor -uuid your-uuid-here -- /usr/bin/certbot renew
+<div class="highlight"><pre><span></span><code>runitor<span class="w"> </span>-uuid<span class="w"> </span>your-uuid-here<span class="w"> </span>--<span class="w"> </span>/usr/bin/certbot<span class="w"> </span>renew
 </code></pre></div>
 
 <h2>Sending Logs Without Signalling Success or Failure</h2>
@@ -58,8 +58,8 @@ of the first. Here is an example that submits the last 10KB of <code>dmesg</code
 </ul>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 
-<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>dmesg <span class="p">|</span> tail --bytes<span class="o">=</span><span class="m">10000</span><span class="k">)</span>
-curl -fsS -m <span class="m">10</span> --retry <span class="m">5</span> --data-raw <span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span> PING_URL
+<span class="nv">m</span><span class="o">=</span><span class="k">$(</span>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>--bytes<span class="o">=</span><span class="m">10000</span><span class="k">)</span>
+curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>--data-raw<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span><span class="w"> </span>PING_URL
 </code></pre></div>
 
 <ul>
