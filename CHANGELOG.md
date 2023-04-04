@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to Django 4.2
 - Add email fallback for Signal notifications that hit rate limit
 - Make warnings about no backup second factor more assertive
+- Add cron expression tester and sample expressions in the cron cheatsheet page
 
 ### Bug Fixes
 - Fix notification query in the Log page

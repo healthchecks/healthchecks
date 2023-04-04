@@ -1,4 +1,12 @@
+.page-docs-cron h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
 
+.page-docs-cron h2 {
+    margin-top: 32px;
+    font-weight: bold;
+}
 
 .cron-example th {
     background: var(--cheatsheet-example-bg);
@@ -51,4 +59,20 @@
 
 .cron-example td.minor {
     color: var(--text-muted);
+}
+
+.page-docs-cron #test-area {
+    max-width: 920px;
+}
+
+.page-docs-cron #cron-preview {
+    margin-top: 20px;
+}
+
+#common-cron-expressions td:nth-child(2) {
+    font-family: monospace;
+}
+
+#common-cron-expressions td:last-child {
+    text-align: right;
 }

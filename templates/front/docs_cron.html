@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load hc_extras %}
+{% load compress hc_extras static %}
 
 {% block title %}Cron Expression Syntax Cheatsheet - {{ site_name }}{% endblock %}
 
@@ -30,7 +30,6 @@
 <br />
 
 <div id="cron-examples">
-
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Basics</h3>
@@ -470,9 +469,104 @@
             <pre>cat /etc/timezone</pre>
         </div>
     </div>
-
-
-
 </div> <!-- cron examples -->
 
+<div id="test-area">
+    <h2>Test Any Cron Expression</h2>
+
+    <input
+        id="schedule"
+        class="form-control"
+        type="text"
+        name=""
+        value="0 9,12,18 * * *"
+        autocomplete="off" />
+    {% csrf_token %}
+
+
+    <div id="cron-preview"></div>
+
+    <h2>Common Cron Expressions</h2>
+
+    <table id="common-cron-expressions" class="table">
+        <tr>
+            <td>Every minute</td>
+            <td>* * * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>Every 5 minutes</td>
+            <td>*/5 * * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>Every 15 minutes</td>
+            <td>*/15 * * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>Every 30 minutes</td>
+            <td>*/30 * * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>Every hour</td>
+            <td>0 * * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>At 30 minutes past every hour</td>
+            <td>30 * * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>Every 2 hours</td>
+            <td>0 */2 * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>Every 3 hours</td>
+            <td>0 */3 * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>Every 6 hours</td>
+            <td>0 */6 * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>At 3AM every day</td>
+            <td>0 3 * * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>At 3AM every Monday</td>
+            <td>0 3 * * MON</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>At 8AM, only on workdays</td>
+            <td>0 8 * * 1-5</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>At the midnight of the first day of every month</td>
+            <td>0 0 1 * *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+        <tr>
+            <td>At the start of every third month</td>
+            <td>0 0 1 */3 *</td>
+            <td><button class="btn btn-default">Test</button></td>
+        </tr>
+
+    </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/docs_cron.js' %}"></script>
+{% endcompress %}
 {% endblock %}

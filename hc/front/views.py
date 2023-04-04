@@ -460,7 +460,7 @@ def docs_search(request):
 
 
 def docs_cron(request):
-    return render(request, "front/docs_cron.html", {})
+    return render(request, "front/docs_cron.html", {"page": "docs-cron"})
 
 
 @require_POST
