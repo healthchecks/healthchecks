@@ -8,8 +8,8 @@ sending email messages to special email addresses.
 By default, SITE_NAME will consider any email received at the displayed address as
 a "success" signal. You can also configure SITE_NAME to look for specific
 keywords in the subject line or the message body to decide if the message
-is a "success" or a "failure" signal. You can set up the keywords in the
-**Filtering Rules** dialog:
+is a "start", a "success" or a "failure" signal. You can set up the keywords in
+the **Filtering Rules** dialog:
 
 ![Setting filtering rules](IMG_URL/filtering_rules.png)
 
@@ -24,3 +24,13 @@ The solution: set up another check, and add its email address to your list of
 recipient email addresses. Set its Period to 1 week. As long as your weekly email
 script runs correctly, and there are no email delivery issues,
 SITE_NAME will regularly receive an email, and the check will stay up.
+
+## Email Delivery Delays
+
+Emails are more susceptible to random delivery delays than HTTP requests.
+You may need to increase the grace time parameter for your checks to account for the
+possible email delivery delays, and avoid false alerts.
+
+Tracking job durations (using the "start" and "success" signals) will be less
+accurate when pinging via email, and may not be feasible at all for jobs with
+very short durations.
