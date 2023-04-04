@@ -154,6 +154,7 @@ environment variables:
 
 - Implicit TLS (*recommended*):
     ```python
+    DEFAULT_FROM_EMAIL = "valid-sender-address@example.org"
     EMAIL_HOST = "your-smtp-server-here.com"
     EMAIL_PORT = 465
     EMAIL_HOST_USER = "smtp-username"
@@ -166,6 +167,7 @@ environment variables:
 
 - Explicit TLS:
     ```python
+    DEFAULT_FROM_EMAIL = "valid-sender-address@example.org"
     EMAIL_HOST = "your-smtp-server-here.com"
     EMAIL_PORT = 587
     EMAIL_HOST_USER = "smtp-username"
