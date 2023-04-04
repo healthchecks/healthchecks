@@ -777,7 +777,6 @@ class Trello(HttpTransport):
 
 class Apprise(HttpTransport):
     def notify(self, check, notification=None) -> None:
-
         if not settings.APPRISE_ENABLED:
             # Not supported and/or enabled
             raise TransportError("Apprise is disabled and/or not installed")
@@ -934,6 +933,7 @@ class Signal(Transport):
                         if self.channel:
                             raw = reply_bytes.decode()
                             self.channel.send_signal_captcha_alert(result["token"], raw)
+                            self.channel.send_signal_rate_limited_notice(message)
                         raise TransportError("CAPTCHA proof required")
 
                 code = reply["error"].get("code")

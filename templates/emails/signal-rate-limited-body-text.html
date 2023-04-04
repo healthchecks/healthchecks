@@ -1,0 +1,12 @@
+{% load hc_extras %}Hello,
+
+We could not deliver a Signal notification to {{ recipient|mask_phone }} due to
+hitting a rate-limit on the Signal network, so we are sending it via email
+instead:
+
+***
+{{ message }}
+***
+
+Regards,
+The {% site_name %} Team

@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Remove L10N markup from base.html, and associated translations
 - Add Arduino usage example
 - Upgrade to Django 4.2
+- Add email fallback for Signal notifications that hit rate limit
 
 ### Bug Fixes
 - Fix notification query in the Log page

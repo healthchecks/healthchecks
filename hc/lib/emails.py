@@ -92,3 +92,7 @@ def call_limit(to, ctx):
 
 def sudo_code(to, ctx):
     send(make_message("sudo-code", to, ctx))
+
+
+def signal_rate_limited(to, ctx):
+    send(make_message("signal-rate-limited", to, ctx))

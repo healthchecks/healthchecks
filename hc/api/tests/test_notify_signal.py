@@ -288,11 +288,18 @@ class NotifySignalTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "CAPTCHA proof required")
 
+        emails = {email.to[0]: email for email in mail.outbox}
+
         # It should notify ADMINS
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertEqual(email.to[0], "admin@example.org")
+        email = emails["admin@example.org"]
         self.assertEqual(email.subject, "[Django] Signal CAPTCHA proof required")
+
+        # It should notify the user
+        email = emails["alice@example.org"]
+        self.assertEqual(
+            email.subject,
+            "Signal notification failed: The check “Daily Backup” is DOWN. Last ping was an hour ago.",
+        )
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_null_data(self, socket):

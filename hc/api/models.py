@@ -728,6 +728,15 @@ class Channel(models.Model):
         """
         mail_admins(subject, message, html_message=html_message)
 
+    def send_signal_rate_limited_notice(self, message):
+        email = self.project.owner.email
+        ctx = {
+            "recipient": self.phone_number,
+            "subject": message.split("\n")[0],
+            "message": message,
+        }
+        emails.signal_rate_limited(email, ctx)
+
     @property
     def transport(self):
         if self.kind == "apprise":

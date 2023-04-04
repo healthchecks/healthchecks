@@ -248,3 +248,11 @@ def first5(rid):
 @register.filter
 def add6days(dt):
     return dt + td(days=6)
+
+
+@register.filter
+def mask_phone(phone):
+    if len(phone) > 7:
+        return phone[:4] + "******" + phone[-3:]
+
+    return phone

@@ -1,0 +1,21 @@
+{% extends "emails/base.html" %}
+{% load hc_extras %}
+
+{% block content %}
+Hello,<br />
+<p>
+We could not deliver a Signal notification to <strong>{{ recipient|mask_phone }}</strong> due to
+hitting a rate-limit on the Signal network, so we are sending it via email
+instead:
+</p>
+
+<div style="background: #F2F4F6; padding: 20px;">
+    {{ message|linebreaksbr }}
+</div>
+<br />
+{% endblock %}
+
+{% block content_more %}
+Regards,<br />
+The {% site_name %} Team
+{% endblock %}
