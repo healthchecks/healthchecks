@@ -99,6 +99,7 @@ class ProfileTestCase(BaseTestCase):
         self.assertContains(r, "Set Password")
         self.assertNotContains(r, "Change Password")
 
+    @override_settings(RP_ID="testserver")
     def test_it_shows_totp(self):
         self.profile.totp = "0" * 32
         self.profile.totp_created = "2020-01-01T00:00:00+00:00"
