@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Add Arduino usage example
 - Upgrade to Django 4.2
 - Add email fallback for Signal notifications that hit rate limit
+- Make warnings about no backup second factor more assertive
 
 ### Bug Fixes
 - Fix notification query in the Log page

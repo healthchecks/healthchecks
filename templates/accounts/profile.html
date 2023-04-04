@@ -127,12 +127,31 @@
                     </table>
 
                     {% if credentials|length == 1 and not profile.totp %}
-                    <p class="alert alert-warning">
-                        <strong>Register a backup key!</strong>
-                        You currently have registered a single security key.
-                        Consider registering a second security key, to be used
-                        as a backup if you lose the primary key, or it stops working.
-                    </p>
+                    <div class="alert alert-warning">
+                        <p>
+                        <strong>The key "{% for c in credentials%}{{ c.name }}{% endfor %}" is currently your only second factor.</strong>
+                        If you lose this key, or it stops working, you will lose
+                        access to your {% site_name %} account.
+                        </p>
+                        <p>
+                        Register a second security key, to be used
+                        as a backup second factor.
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {% if not credentials and profile.totp %}
+                    <div class="alert alert-warning">
+                        <p>
+                        <strong>The Authenticator app is currently your only second factor.</strong>
+                        If you lose access to it, you will lose access to your
+                        {% site_name %} account.
+                        </p>
+                        <p>
+                        Make sure you have a backup of the Authenticator app's TOTP
+                        seed{% if use_webauthn %}, or register a Security Key to be used as a backup second factor{% endif %}.
+                        </p>
+                    </div>
                     {% endif %}
 
                     {% if not credentials and not profile.totp %}
