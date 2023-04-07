@@ -204,9 +204,9 @@ curl --url 'smtp://127.0.0.1:2525' \
     -F '='
 ```
 
-## Sending Status Notifications
+## Sending Alerts and Reports
 
-healtchecks comes with a `sendalerts` management command, which continuously
+Healtchecks comes with a `sendalerts` management command, which continuously
 polls database for any checks changing state, and sends out notifications as
 needed. Within an activated virtualenv, you can manually run
 the `sendalerts` command like so:
@@ -216,7 +216,23 @@ the `sendalerts` command like so:
 ```
 
 In a production setup, you will want to run this command from a process
-manager like [supervisor](http://supervisord.org/) or systemd.
+manager like systemd or [supervisor](http://supervisord.org/).
+
+Healthchecks also comes with a `sendreports` management command which
+sends out monthly reports, weekly reports, and the daily or hourly reminders.
+
+Run `sendreports` without arguments to run any due reports and reminders
+and then exit:
+
+```sh
+./manage.py sendreports
+```
+
+Run it with the `--loop` argument to make it run continuously:
+
+```sh
+./manage.py sendreports --loop
+```
 
 ## Database Cleanup
 
