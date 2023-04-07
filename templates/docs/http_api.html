@@ -23,7 +23,7 @@ immutable. You cannot replace the automatically assigned UUID with a manually
 chosen one. When you delete a check, you also lose its UUID and cannot get it back.</p>
 <p>You can look up UUIDs of your checks in web UI or via <a href="../api/">Management API</a> calls.</p>
 <p><strong>Check's slug</strong> is derived from the check's name using Django's
-<a href="https://docs.djangoproject.com/en/3.2/ref/utils/#django.utils.text.slugify">slugify</a>
+<a href="https://docs.djangoproject.com/en/4.2/ref/utils/#django.utils.text.slugify">slugify</a>
 function. It applies the following transformations:</p>
 <ul>
 <li>Convert to ASCII.</li>

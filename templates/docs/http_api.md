@@ -31,7 +31,7 @@ chosen one. When you delete a check, you also lose its UUID and cannot get it ba
 You can look up UUIDs of your checks in web UI or via [Management API](../api/) calls.
 
 **Check's slug** is derived from the check's name using Django's
-[slugify](https://docs.djangoproject.com/en/3.2/ref/utils/#django.utils.text.slugify)
+[slugify](https://docs.djangoproject.com/en/4.2/ref/utils/#django.utils.text.slugify)
 function. It applies the following transformations:
 
 * Convert to ASCII.
