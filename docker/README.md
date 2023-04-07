@@ -69,7 +69,9 @@ built automatically for every new release.
 The Docker images:
 
 * Support amd64, arm/v7 and arm64 architectures.
-* Use uWSGI as the web server.
+* Use uWSGI as the web server. uWSGI is configured to perform database migrations
+  on startup, and to run `sendalerts`, `sendreports`, and `smtpd` in the background.
+  You do not need to run them separately.
 * Ship with both PostgreSQL and MySQL database drivers.
 * Serve static files using the whitenoise library.
 * Have the apprise library preinstalled.
