@@ -44,7 +44,7 @@ Read more about configuring uWSGI in [uWSGI documentation](https://uwsgi-docs.re
 ## TLS Termination
 
 If you plan to expose your Healthchecks instance to the public internet, make sure you
-put a TLS-terminating reverse proxy in front of it.
+put a TLS-terminating reverse proxy or load balancer in front of it.
 
 **Important:** This Dockerfile uses UWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
 header to determine if a request is secure or not. Make sure your TLS-terminating
@@ -59,3 +59,20 @@ For example, in NGINX you can use the `$scheme` variable like so:
 ```
 proxy_set_header X-Forwarded-Proto $scheme;
 ```
+
+## Pre-built Images
+
+Pre-built Docker images, built from the Dockerfile in this directory, are available
+[on Docker Hub](https://hub.docker.com/r/healthchecks/healthchecks). The images are
+built automatically for every new release.
+
+The Docker images:
+
+* Support amd64, arm/v7 and arm64 architectures.
+* Use uWSGI as the web server.
+* Ship with both PostgreSQL and MySQL database drivers.
+* Serve static files using the whitenoise library.
+* Have the apprise library preinstalled.
+* Do *not* handle TLS termination. In a production setup, you will want to put
+  the Healthchecks container behind a reverse proxy or load balancer that handles TLS
+  termination.

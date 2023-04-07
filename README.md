@@ -22,6 +22,10 @@ Healthchecks is licensed under the BSD 3-clause license.
 Healthchecks is available as a hosted service
 at [https://healthchecks.io/](https://healthchecks.io/).
 
+A [Dockerfile](https://github.com/healthchecks/healthchecks/tree/master/docker)
+and [pre-built Docker images](https://hub.docker.com/r/healthchecks/healthchecks) are
+available.
+
 Screenshots:
 
 The "My Checks" screen. Shows the status of all your cron jobs
@@ -518,3 +522,20 @@ in production.
   * Make sure the TLS certificates are secured well and are getting refreshed regularly
   * Have monitoring in place to be sure the Healthchecks instance itself is operational
     (is accepting pings, is sending out alerts, is not running out of resources).
+
+## Docker Image
+
+Healthchecks provides a reference Dockerfile and prebuilt Docker images for every
+release. The Dockerfile lives in the [/docker/](https://github.com/healthchecks/healthchecks/tree/master/docker)
+directory, and Docker images for amd64, arm/v7 and arm64 architectures are available
+[on Docker Hub](https://hub.docker.com/r/healthchecks/healthchecks).
+
+The Docker images:
+
+* Use uWSGI as the web server.
+* Ship with both PostgreSQL and MySQL database drivers.
+* Serve static files using the whitenoise library.
+* Have the apprise library preinstalled.
+* Do *not* handle TLS termination. In a production setup, you will want to put
+  the Healthchecks container behind a reverse proxy or load balancer that handles TLS
+  termination.
