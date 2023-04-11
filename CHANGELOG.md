@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.9-dev - Unreleased
+## v2.8.1 - 2023-04-11
 
 ### Bug Fixes
 - Fix django-compressor warning with github_actions.html
