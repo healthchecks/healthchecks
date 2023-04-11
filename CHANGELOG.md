@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.8-dev - Unreleased
+## v2.8 - 2023-04-11
 
 ### Improvements
 - Add GitHub Actions examples
