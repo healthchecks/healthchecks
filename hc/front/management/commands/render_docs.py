@@ -40,7 +40,7 @@ class Command(BaseCommand):
                 print("Rendering %s" % doc)
 
                 src_path = os.path.join(path, doc)
-                dst_path = os.path.join(path, doc[:-3] + ".html")
+                dst_path = os.path.join(path, doc[:-3] + ".html-fragment")
 
                 text = open(src_path, "r", encoding="utf-8").read()
                 html = markdown.markdown(
