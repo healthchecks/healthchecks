@@ -177,10 +177,19 @@ STATICFILES_FINDERS = (
 )
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_HASHING_METHOD = "content"
+# Use CssRelativeFilter instead of CssAbsoluteFilter to fix
+# icon font loading when serving Healthchecks from a subdirectory
+COMPRESS_FILTERS = {
+    "css": [
+        "compressor.filters.css_default.CssRelativeFilter",
+        "compressor.filters.cssmin.rCSSMinFilter",
+    ],
+    "js": ["compressor.filters.jsmin.rJSMinFilter"],
+}
 
 
 def immutable_file_test(path, url):
-    return url.startswith("/static/CACHE/") or url.startswith("/static/fonts/")
+    return "/static/CACHE/" in url or "/static/fonts/" in url
 
 
 WHITENOISE_IMMUTABLE_FILE_TEST = immutable_file_test

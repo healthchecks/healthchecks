@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.9-dev - Unreleased
+
+### Improvements
+- Switch from CssAbsoluteFilter to CssRelativeFilter (#822)
+
 ## v2.8.1 - 2023-04-11
 
 ### Bug Fixes
