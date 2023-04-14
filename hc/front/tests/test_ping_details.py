@@ -267,6 +267,7 @@ class PingDetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "please check back later", status_code=200)
 
+    @override_settings(S3_BUCKET=None)
     def test_it_handles_missing_s3_credentials(self):
         Ping.objects.create(owner=self.check, n=1, object_size=1000)
 
