@@ -5,6 +5,7 @@ from io import BytesIO
 from threading import Thread
 
 from django.conf import settings
+from statsd.defaults.env import statsd
 
 try:
     from minio import Minio, S3Error
@@ -63,6 +64,7 @@ def enc(n):
     return len_inverted + inverted + "-" + s
 
 
+@statsd.timer("hc.lib.s3.getObjectTime")
 def get_object(code, n):
     if not settings.S3_BUCKET:
         return None
@@ -73,8 +75,10 @@ def get_object(code, n):
         response = client().get_object(settings.S3_BUCKET, key)
         return response.read()
     except S3Error:
+        statsd.incr("hc.lib.s3.getObjectErrors")
         return None
     except HTTPError:
+        statsd.incr("hc.lib.s3.getObjectErrors")
         return None
     finally:
         if response:

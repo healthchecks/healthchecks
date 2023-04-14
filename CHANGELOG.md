@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Switch from CssAbsoluteFilter to CssRelativeFilter (#822)
+- Add statsd metric collection in hc.lib.s3.get_object()
 
 ## v2.8.1 - 2023-04-11
 
