@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import time
 from io import BytesIO
 from threading import Thread
@@ -17,6 +18,7 @@ except ImportError:
     settings.S3_BUCKET = None
 
 _client = None
+logger = logging.getLogger(__name__)
 
 
 def client():
@@ -74,10 +76,17 @@ def get_object(code, n):
     try:
         response = client().get_object(settings.S3_BUCKET, key)
         return response.read()
-    except S3Error:
+    except S3Error as e:
+        if e.code == "NoSuchKey":
+            # It's not an error condition if an object does not exist.
+            # Return None, don't log exception, don't increase error counter.
+            return None
+
+        logger.exception("S3Error in hc.lib.s3.get_object")
         statsd.incr("hc.lib.s3.getObjectErrors")
         return None
     except HTTPError:
+        logger.exception("HTTPError in hc.lib.s3.get_object")
         statsd.incr("hc.lib.s3.getObjectErrors")
         return None
     finally:
