@@ -13,7 +13,6 @@ from secrets import token_urlsafe
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
 
-from cron_descriptor import ExpressionDescriptor
 from cronsim import CronSim, CronSimError
 from django.conf import settings
 from django.contrib import messages
@@ -596,18 +595,9 @@ def cron_preview(request):
         it = CronSim(schedule, now_local)
         for i in range(0, 6):
             ctx["dates"].append(next(it))
+        ctx["desc"] = it.explain()
     except (CronSimError, StopIteration):
         ctx["bad_schedule"] = True
-
-    if ctx["dates"]:
-        try:
-            descriptor = ExpressionDescriptor(schedule, use_24hour_time_format=True)
-            ctx["desc"] = descriptor.get_description()
-        except:
-            # We assume the schedule is valid if cronsim accepts it.
-            # If cron-descriptor throws an exception, don't show the description
-            # to the user.
-            pass
 
     return render(request, "front/cron_preview.html", ctx)
 
