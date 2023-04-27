@@ -4,7 +4,7 @@
 }
 
 .page-docs-cron h2 {
-    margin-top: 32px;
+    margin-top: 40px;
     font-weight: bold;
 }
 
@@ -67,6 +67,10 @@
 
 .page-docs-cron #cron-preview {
     margin-top: 20px;
+}
+
+#common-cron-expressions td {
+    vertical-align: middle;
 }
 
 #common-cron-expressions td:nth-child(2) {

@@ -100,7 +100,7 @@
                minutes, hours, days, and months.
             </p>
 
-            <div class="desc">"Run at 6PM on Fridays"</div>
+            <div class="desc">"Run at 6 PM on Fridays"</div>
 
             <table class="cron-example">
                 <tr>
@@ -140,7 +140,7 @@
                 </tr>
                 <tr>
                     <td colspan="4">
-                        Run at 6PM
+                        Run at 6 PM
                     </td>
                 </tr>
                 <tr>
@@ -159,7 +159,7 @@
         <div class="panel-body">
             <p>Use <code>{v1},{v2},...,{vn}</code> to list multiple values.</p>
 
-            <div class="desc">"Run at 9AM, 12PM, and 6PM every day"</div>
+            <div class="desc">"Run at 9 AM, 12 PM, and 6 PM every day"</div>
 
             <table class="cron-example">
                 <tr>
@@ -199,7 +199,7 @@
                 </tr>
                 <tr>
                     <td colspan="4">
-                        Run at 9AM, 12PM and 6PM
+                        Run at 9 AM, 12 PM and 6 PM
                     </td>
                 </tr>
                 <tr>
@@ -378,7 +378,7 @@
                 </tr>
                 <tr>
                     <td colspan="4">
-                        Run at 6PM, 7PM, 8PM, ..., 7AM, 8AM
+                        Run at 6 PM, 7 PM, 8 PM, ..., 7 AM, 8 AM
                     </td>
                 </tr>
                 <tr>
@@ -472,11 +472,12 @@
 </div> <!-- cron examples -->
 
 <div id="test-area">
-    <h2>Test Any Cron Expression</h2>
+    <h2>Cron Expression Tester</h2>
+    <p>Type or paste any cron expression:</p>
 
     <input
         id="schedule"
-        class="form-control"
+        class="form-control input-lg"
         type="text"
         name=""
         value="0 9,12,18 * * *"
@@ -492,72 +493,72 @@
         <tr>
             <td>Every minute</td>
             <td>* * * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>Every 5 minutes</td>
             <td>*/5 * * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>Every 15 minutes</td>
             <td>*/15 * * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>Every 30 minutes</td>
             <td>*/30 * * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>Every hour</td>
             <td>0 * * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>At 30 minutes past every hour</td>
             <td>30 * * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>Every 2 hours</td>
             <td>0 */2 * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>Every 3 hours</td>
             <td>0 */3 * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>Every 6 hours</td>
             <td>0 */6 * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
-            <td>At 3AM every day</td>
+            <td>At 3 AM every day</td>
             <td>0 3 * * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
-            <td>At 3AM every Monday</td>
+            <td>At 3 AM every Monday</td>
             <td>0 3 * * MON</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
-            <td>At 8AM, only on workdays</td>
+            <td>At 8 AM, only on workdays</td>
             <td>0 8 * * 1-5</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>At the midnight of the first day of every month</td>
             <td>0 0 1 * *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
         <tr>
             <td>At the start of every third month</td>
             <td>0 0 1 */3 *</td>
-            <td><button class="btn btn-default">Test</button></td>
+            <td><button class="btn btn-default btn-sm">Test</button></td>
         </tr>
 
     </table>
