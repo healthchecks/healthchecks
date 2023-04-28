@@ -127,3 +127,45 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         payload = kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Last Ping:"], "Ignored, an hour ago")
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        section = kwargs["json"]["sections"][-1]
+        self.assertIn("```\nHello World\n```", section["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_truncated_last_ping_body(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World" * 1000
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        section = kwargs["json"]["sections"][-1]
+        self.assertIn("[truncated]", section["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello ``` World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        args, kwargs = mock_post.call_args
+        section = kwargs["json"]["sections"][-1]
+        self.assertNotIn("Hello", section["text"])

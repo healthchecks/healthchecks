@@ -24,6 +24,10 @@
                 },
                 {% endif %}
                 {
+                    "name": "Total Pings:",
+                    "value": "{{ check.n_pings }}"
+                },
+                {
                     "name": "Last Ping:",
                     {% if ping is None %}
                     "value": "Never"
@@ -38,17 +42,7 @@
                     {% else %}
                      "value": "Success, {{ ping.created|naturaltime }}"
                     {% endif %}
-                },
-                {
-                    "name": "Total Pings:",
-                    "value": "{{ check.n_pings }}"
-                },
-                {% if body %},
-                {
-                    "name": "Last Ping Body",
-                    "value": "```\n{{ body|escapejs }}\n```"
-                },
-                {% endif %}
+                }
             ]
         }
     ],
