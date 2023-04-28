@@ -256,6 +256,7 @@ class HcUserAdmin(UserAdmin):
 
     list_display_links = ("id", "email")
     list_filter = ("last_login", "date_joined", "is_staff", "is_active")
+    actions = ("activate", "deactivate")
 
     ordering = ["-id"]
 
@@ -273,6 +274,21 @@ class HcUserAdmin(UserAdmin):
     @mark_safe
     def usage(self, user):
         return _format_usage(user.num_checks, user.num_channels)
+
+    def activate(self, request, qs):
+        for user in qs:
+            user.is_active = True
+            user.save()
+
+        self.message_user(request, "%d user(s) activated" % qs.count())
+
+    def deactivate(self, request, qs):
+        for user in qs:
+            user.is_active = False
+            user.set_unusable_password()
+            user.save()
+
+        self.message_user(request, "%d user(s) deactivated" % qs.count())
 
 
 admin.site.unregister(User)
