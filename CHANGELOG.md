@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add statsd metric collection in hc.lib.s3.get_object()
 - Upgrade to cronsim 2.4
 - Update Signal notification template to include more data
+- Add Profile.deletion_scheduled_deleted field, and UI banner when it's set
 
 ## v2.8.1 - 2023-04-11
 

@@ -64,6 +64,13 @@
 </head>
 <body class="page-{{ page }}{% if request.user.is_authenticated and request.profile.theme == 'dark' %} dark{% endif%}">
     {% debug_warning %}
+    {% if request.user.is_authenticated and request.profile.deletion_scheduled_date %}
+    <div id="account-warning">
+        Warning: Your account is scheduled for deletion.
+        <a href="mailto:{% support_email %}">Contact support</a> to resolve.
+    </div>
+    {% endif %}
+
     <nav class="navbar navbar-default">
         <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
         <div class="navbar-header">

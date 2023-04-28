@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.utils.timezone import now
 
 from hc.accounts.models import Credential, Profile, Project
 
@@ -82,12 +83,12 @@ class NumChecksFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ("10", "10 or more"),
-            ("20", "20 or more"),
-            ("50", "50 or more"),
-            ("100", "100 or more"),
-            ("500", "500 or more"),
-            ("1000", "1000 or more"),
+            ("10", "More than 10"),
+            ("20", "More than 20"),
+            ("50", "More than 50"),
+            ("100", "More than 100"),
+            ("500", "More than 500"),
+            ("1000", "More than 1000"),
         )
 
     def queryset(self, request, queryset):
@@ -95,7 +96,7 @@ class NumChecksFilter(admin.SimpleListFilter):
             return
 
         value = int(self.value())
-        return queryset.filter(num_checks__gte=value)
+        return queryset.filter(num_checks__gt=value)
 
 
 @admin.register(Profile)
@@ -121,12 +122,20 @@ class ProfileAdmin(admin.ModelAdmin):
     list_filter = (
         "user__date_joined",
         "last_active_date",
+        "deletion_scheduled_date",
         "reports",
         "check_limit",
         NumChecksFilter,
         "theme",
     )
-    actions = ("login", "send_report", "send_nag", "deactivate", "remove_totp")
+    actions = (
+        "login",
+        "send_report",
+        "send_nag",
+        "remove_totp",
+        "mark_for_deletion",
+        "unmark_for_deletion",
+    )
 
     fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
 
@@ -183,14 +192,6 @@ class ProfileAdmin(admin.ModelAdmin):
 
         self.message_user(request, "%d email(s) sent" % qs.count())
 
-    def deactivate(self, request, qs):
-        for profile in qs:
-            profile.user.is_active = False
-            profile.user.set_unusable_password()
-            profile.user.save()
-
-        self.message_user(request, "%d user(s) deactivated" % qs.count())
-
     @admin.action(description="Remove TOTP")
     def remove_totp(self, request, qs):
         for profile in qs:
@@ -199,6 +200,14 @@ class ProfileAdmin(admin.ModelAdmin):
             profile.save()
 
         self.message_user(request, "Removed TOTP for %d profile(s)" % qs.count())
+
+    def mark_for_deletion(self, request, qs):
+        qs.update(deletion_scheduled_date=now())
+        self.message_user(request, "%d user(s) marked for deletion" % qs.count())
+
+    def unmark_for_deletion(self, request, qs):
+        qs.update(deletion_scheduled_date=None)
+        self.message_user(request, "%d user(s) unmarked for deletion" % qs.count())
 
 
 @admin.register(Project)

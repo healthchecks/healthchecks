@@ -78,7 +78,10 @@ class Profile(models.Model):
 
     team_limit = models.IntegerField(default=2)
     sort = models.CharField(max_length=20, default="created")
+    # The date when "Inactive Account Notification" is sent
     deletion_notice_date = models.DateTimeField(null=True, blank=True)
+    # Set manually by admin, causes an orange banner in web UI
+    deletion_scheduled_date = models.DateTimeField(null=True, blank=True)
     last_active_date = models.DateTimeField(null=True, blank=True)
     tz = models.CharField(max_length=36, default="UTC")
     theme = models.CharField(max_length=10, null=True, blank=True)

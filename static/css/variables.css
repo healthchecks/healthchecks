@@ -1,5 +1,6 @@
 :root {
     color-scheme: light;
+    --account-warning-bg:  #ffab0b;
     --alert-no-data-bg: #f5f5f5;
     --alert-no-data-border: #ddd;
     --alert-no-data-color: #444;
@@ -79,6 +80,7 @@
 
 body.dark {
     color-scheme: dark;
+    --account-warning-bg: #ffab0b;
     --alert-no-data-bg: #29292c;
     --alert-no-data-border: #303033;
     --alert-no-data-color: #878790;

@@ -206,6 +206,18 @@ pre {
     padding: 2px 0;
 }
 
+#account-warning {
+    background: var(--account-warning-bg);
+    color: #000;
+    text-align: center;
+    padding: 8px 0;
+}
+
+#account-warning a {
+    color: #000;
+    text-decoration: underline;
+}
+
 .badge-down {
     background-color: #d9534f;
 }
