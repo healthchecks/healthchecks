@@ -810,7 +810,8 @@ class MsTeams(HttpTransport):
         if not settings.MSTEAMS_ENABLED:
             raise TransportError("MS Teams notifications are not enabled.")
 
-        text = tmpl("msteams_message.json", check=check, ping=self.last_ping(check))
+        ping = self.last_ping(check)
+        text = tmpl("msteams_message.json", check=check, ping=ping)
         payload = json.loads(text)
 
         # MS Teams escapes HTML special characters in the summary field.
@@ -829,6 +830,15 @@ class MsTeams(HttpTransport):
         # We want to display the raw content, angle brackets and all,
         # so we run escape() and then additionally escape Markdown:
         payload["sections"][0]["text"] = self.escape_md(check.desc)
+
+        body = get_ping_body(ping)
+        if body:
+            if len(body) > 1000:
+                body = body[:1000] + "\n[truncated]"
+            if "```" not in body:
+                section_text = f"**Last Ping Body**:\n```\n{ body }\n```"
+                payload["sections"].append({"text": section_text})
+                body = None
 
         self.post(self.channel.value, json=payload)
 
