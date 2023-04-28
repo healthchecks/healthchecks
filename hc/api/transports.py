@@ -1001,7 +1001,11 @@ class Signal(Transport):
         if not TokenBucket.authorize_signal(self.channel.phone_number):
             raise TransportError("Rate limit exceeded")
 
-        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        ctx = {
+            "check": check,
+            "ping": self.last_ping(check),
+            "down_checks": self.down_checks(check),
+        }
         text = tmpl("signal_message.html", **ctx)
         self.send(self.channel.phone_number, text)
 

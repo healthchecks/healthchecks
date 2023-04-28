@@ -1,8 +1,42 @@
-{% load humanize linemode %}{% linemode %}
+{% load hc_extras humanize linemode %}{% linemode %}
 {% if check.status == "down" %}
-    {% line %}The check “{{ check.name_then_code|safe }}” is DOWN. Last ping was {{ check.last_ping|naturaltime }}.{% endline %}
+    {% line %}The check “{{ check.name_then_code|safe }}” is DOWN.{% endline %}
 {% else %}
     {% line %}The check “{{ check.name_then_code|safe }}” is now UP.{% endline %}
+{% endif %}
+
+{% line %}{% endline %}
+
+{% if check.project.name %}
+{% line %}Project: {{ check.project.name|safe }}{% endline %}
+{% endif %}
+
+{% if check.tags_list %}
+{% line %}Tags: {{ check.tags_list|safeseq|join:", " }}{% endline %}
+{% endif %}
+
+{% if check.kind == "simple" %}
+{% line %}Period: {{ check.timeout|hc_duration }}{% endline %}
+{% endif %}
+
+{% if check.kind == "cron" %}
+{% line %}Schedule: {{ check.schedule }}{% endline %}
+{% endif %}
+
+{% line %}Total Pings: {{ check.n_pings }}{% endline %}
+
+{% if ping is None %}
+{% line %}Last Ping: Never{% endline %}
+{% elif ping.kind == "ign" %}
+{% line %}Last Ping: Ignored, {{ ping.created|naturaltime }}{% endline %}
+{% elif ping.kind == "fail" or ping.exitstatus > 0 %}
+{% line %}Last Ping: Failure, {{ ping.created|naturaltime }}{% endline %}
+{% elif ping.kind == "start" %}
+{% line %}Last Ping: Start, {{ ping.created|naturaltime }}{% endline %}
+{% elif ping.kind == "log" %}
+{% line %}Last Ping: Log, {{ ping.created|naturaltime }}{% endline %}
+{% else %}
+{% line %}Last Ping: Success, {{ ping.created|naturaltime }}{% endline %}
 {% endif %}
 
 {% if down_checks is not None %}

@@ -11,7 +11,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, TokenBucket
+from hc.api.models import Channel, Check, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -65,9 +65,17 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.check = Check(project=self.project)
         self.check.name = "Daily Backup"
+        self.check.tags = "foo bar"
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
+        self.check.n_pings = 123
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.n = 1
+        self.ping.remote_addr = "1.2.3.4"
+        self.ping.body_raw = b"Body Line 1\nBody Line 2"
+        self.ping.save()
 
         payload = {"value": "+123456789", "up": True, "down": True}
         self.channel = Channel(project=self.project)
@@ -87,12 +95,39 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         params = socketobj.req["params"]
-        self.assertIn("is DOWN", params["message"])
+        self.assertIn("“Daily Backup” is DOWN", params["message"])
+        self.assertIn("Project: Alices Project", params["message"])
+        self.assertIn("Tags: foo, bar", params["message"])
+        self.assertIn("Period: 1 day", params["message"])
+        self.assertIn("Total Pings: 123", params["message"])
+        self.assertIn("Last Ping: Success, now", params["message"])
         self.assertIn("+123456789", params["recipient"])
 
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", params["message"])
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_special_characters(self, socket):
+        socketobj = setup_mock(socket, {})
+
+        self.project.name = "Alice & Friends"
+        self.project.save()
+
+        self.check.name = "Foo & Co"
+        self.check.tags = "foo a&b"
+        self.check.save()
+
+        self.channel.notify(self.check)
+        self.assertEqual(socketobj.address, "/tmp/socket")
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+        params = socketobj.req["params"]
+        self.assertIn("“Foo & Co” is DOWN", params["message"])
+        self.assertIn("Project: Alice & Friends", params["message"])
+        self.assertIn("Tags: foo, a&b", params["message"])
 
     @override_settings(SIGNAL_CLI_SOCKET="example.org:1234")
     @patch("hc.api.transports.socket.socket")
@@ -298,7 +333,7 @@ class NotifySignalTestCase(BaseTestCase):
         email = emails["alice@example.org"]
         self.assertEqual(
             email.subject,
-            "Signal notification failed: The check “Daily Backup” is DOWN. Last ping was an hour ago.",
+            "Signal notification failed: The check “Daily Backup” is DOWN.",
         )
 
     @patch("hc.api.transports.socket.socket")
