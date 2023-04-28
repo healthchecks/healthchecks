@@ -54,7 +54,14 @@ def get_nested(obj, path, default=None):
     return needle
 
 
-def get_ping_body(ping) -> str | None:
+def get_ping_body(ping, maxlen=None) -> str | None:
+    """Return ping body for a given Ping object.
+
+    Does two extra things in addition to simply calling Ping.get_body():
+    * if body has not been uploaded to object storage yet, waits 5 seconds
+      and tries to fetch it again
+    * if body is longer than the `maxlen` argument, truncate it
+    """
     body = None
     if ping and ping.has_body():
         body = ping.get_body()
@@ -63,6 +70,9 @@ def get_ping_body(ping) -> str | None:
             # Wait 5 seconds, then fetch the body again.
             time.sleep(5)
             body = ping.get_body()
+
+    if body and maxlen and len(body) > maxlen:
+        body = body[:maxlen] + "\n[truncated]"
 
     return body
 
@@ -349,12 +359,9 @@ class Slack(HttpTransport):
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
         ping = self.last_ping(check)
-        body = get_ping_body(ping)
-        if body:
-            if len(body) > 1000:
-                body = body[:1000] + "\n[truncated]"
-            if "```" in body:
-                body = None
+        body = get_ping_body(ping, maxlen=1000)
+        if body and "```" in body:
+            body = None
 
         text = tmpl("slack_message.json", check=check, ping=ping, body=body)
         payload = json.loads(text)
@@ -371,12 +378,9 @@ class Mattermost(HttpTransport):
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
         ping = self.last_ping(check)
-        body = get_ping_body(ping)
-        if body:
-            if len(body) > 1000:
-                body = body[:1000] + "\n[truncated]"
-            if "```" in body:
-                body = None
+        body = get_ping_body(ping, maxlen=1000)
+        if body and "```" in body:
+            body = None
 
         text = tmpl("slack_message.json", check=check, ping=ping, body=body)
         payload = json.loads(text)
@@ -645,17 +649,13 @@ class Telegram(HttpTransport):
             raise TransportError("Rate limit exceeded")
 
         ping = self.last_ping(check)
-        body = get_ping_body(ping)
-        if body and len(body) > 1000:
-            # Telegram's message limit is 4096 chars, but clip it at 1000 for
-            # consistency
-            body = body[:1000] + "\n[truncated]"
-
         ctx = {
             "check": check,
             "down_checks": self.down_checks(check),
             "ping": ping,
-            "body": body,
+            # Telegram's message limit is 4096 chars, but clip body at 1000 for
+            # consistency
+            "body": get_ping_body(ping, maxlen=1000),
         }
         text = tmpl("telegram_message.html", **ctx)
 
@@ -831,14 +831,10 @@ class MsTeams(HttpTransport):
         # so we run escape() and then additionally escape Markdown:
         payload["sections"][0]["text"] = self.escape_md(check.desc)
 
-        body = get_ping_body(ping)
-        if body:
-            if len(body) > 1000:
-                body = body[:1000] + "\n[truncated]"
-            if "```" not in body:
-                section_text = f"**Last Ping Body**:\n```\n{ body }\n```"
-                payload["sections"].append({"text": section_text})
-                body = None
+        body = get_ping_body(ping, maxlen=1000)
+        if body and "```" not in body:
+            section_text = f"**Last Ping Body**:\n```\n{ body }\n```"
+            payload["sections"].append({"text": section_text})
 
         self.post(self.channel.value, json=payload)
 
