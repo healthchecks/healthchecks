@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file.
 - Update Signal notification template to include more data
 - Add Profile.deletion_scheduled_deleted field, and UI banner when it's set
 
+### Bug Fixes
+- Fix a race condition when pinging and deleting checks at the same time
+
 ## v2.8.1 - 2023-04-11
 
 ### Bug Fixes

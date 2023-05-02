@@ -5,7 +5,7 @@ from datetime import timedelta as td
 from uuid import UUID
 
 from django.conf import settings
-from django.db import connection
+from django.db import connection, transaction
 from django.db.models import Prefetch
 from django.http import (
     Http404,
@@ -317,9 +317,19 @@ def delete_check(request, code):
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
-    response = check.to_dict(v=request.v)
-    check.delete()
-    return JsonResponse(response)
+    with transaction.atomic():
+        # Read the check from the database again, this time locking it.
+        # Without the lock, the delete can fail if the check gets
+        # pinged while it is in the process of deletion.
+        #
+        # Alternatively, we could acquire the lock already in get_object_or_404(),
+        # but, in that case, anybody with a valid API key could DOS
+        # us by sending lots of DELETE requests, each DELETE causing a short-lived
+        # database lock.
+        check = Check.objects.select_for_update().get(id=check.id)
+        check.delete()
+
+    return JsonResponse(check.to_dict(v=request.v))
 
 
 @csrf_exempt
