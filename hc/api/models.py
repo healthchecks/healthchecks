@@ -295,6 +295,15 @@ class Check(models.Model):
 
         return "up"
 
+    def lock_and_delete(self) -> None:
+        """Acquire a DB lock for this check, then delete the check.
+
+        Without the lock the delete can fail, if the check gets pinged while it is
+        in the process of deletion.
+        """
+        with transaction.atomic():
+            Check.objects.select_for_update().get(id=self.id).delete()
+
     def assign_all_channels(self) -> None:
         channels = Channel.objects.filter(project=self.project)
         self.channel_set.set(channels)

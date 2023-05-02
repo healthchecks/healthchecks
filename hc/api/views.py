@@ -317,17 +317,7 @@ def delete_check(request, code):
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
-    with transaction.atomic():
-        # Read the check from the database again, this time locking it.
-        # Without the lock, the delete can fail if the check gets
-        # pinged while it is in the process of deletion.
-        #
-        # Alternatively, we could acquire the lock already in get_object_or_404(),
-        # but, in that case, anybody with a valid API key could spam us with lots of
-        # DELETE requests, each request causing a brief database lock.
-        check = Check.objects.select_for_update().get(id=check.id)
-        check.delete()
-
+    check.lock_and_delete()
     return JsonResponse(check.to_dict(v=request.v))
 
 
