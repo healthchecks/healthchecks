@@ -323,9 +323,8 @@ def delete_check(request, code):
         # pinged while it is in the process of deletion.
         #
         # Alternatively, we could acquire the lock already in get_object_or_404(),
-        # but, in that case, anybody with a valid API key could DOS
-        # us by sending lots of DELETE requests, each DELETE causing a short-lived
-        # database lock.
+        # but, in that case, anybody with a valid API key could spam us with lots of
+        # DELETE requests, each request causing a brief database lock.
         check = Check.objects.select_for_update().get(id=check.id)
         check.delete()
 
