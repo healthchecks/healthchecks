@@ -41,8 +41,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["@type"], "MessageCard")
 
         # summary and title should be the same, except
@@ -67,9 +66,8 @@ class NotifyMsTeamsTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        text = kwargs["json"]["sections"][0]["text"]
-
+        payload = mock_post.call_args.kwargs["json"]
+        text = payload["sections"][0]["text"]
         self.assertIn(r"\_underscore\_", text)
         self.assertIn(r"\`backticks\`", text)
         self.assertIn("&lt;u&gt;underline&lt;/u&gt;", text)
@@ -93,8 +91,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Last Ping:"], "Failure, an hour ago")
 
@@ -107,8 +104,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Last Ping:"], "Log, an hour ago")
 
@@ -123,8 +119,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Last Ping:"], "Ignored, an hour ago")
 
@@ -138,8 +133,8 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        section = kwargs["json"]["sections"][-1]
+        payload = mock_post.call_args.kwargs["json"]
+        section = payload["sections"][-1]
         self.assertIn("```\nHello World\n```", section["text"])
 
     @patch("hc.api.transports.curl.request")
@@ -152,8 +147,8 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        section = kwargs["json"]["sections"][-1]
+        payload = mock_post.call_args.kwargs["json"]
+        section = payload["sections"][-1]
         self.assertIn("[truncated]", section["text"])
 
     @patch("hc.api.transports.curl.request")
@@ -166,6 +161,6 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        section = kwargs["json"]["sections"][-1]
+        payload = mock_post.call_args.kwargs["json"]
+        section = payload["sections"][-1]
         self.assertNotIn("Hello", section["text"])

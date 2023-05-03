@@ -337,7 +337,6 @@ class CheckModelTestCase(BaseTestCase):
         Ping.objects.create(owner=check, n=1, object_size=1000)
 
         check.prune()
-        args, kwargs = remove_objects.call_args
-        code, upto_n = args
+        code, upto_n = remove_objects.call_args.args
         self.assertEqual(code, check.code)
         self.assertEqual(upto_n, 1)

@@ -37,8 +37,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["description"], "Foo is DOWN")
         self.assertEqual(payload["details"]["Description"], "Description goes here")
         self.assertEqual(payload["event_type"], "trigger")
@@ -52,8 +51,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["event_type"], "trigger")
         self.assertEqual(payload["service_key"], "456")
 
@@ -75,6 +73,5 @@ class NotifyPdTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["description"], "Foo & Bar is DOWN")

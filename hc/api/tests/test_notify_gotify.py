@@ -35,8 +35,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(self.check.cloaked_url(), payload["message"])
 
@@ -52,8 +51,7 @@ class NotifyGotidyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("All the other checks are up.", payload["message"])
 
     @patch("hc.api.transports.curl.request")
@@ -68,8 +66,7 @@ class NotifyGotidyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("The following checks are also down", payload["message"])
         self.assertIn("Foobar", payload["message"])
         self.assertIn(other.cloaked_url(), payload["message"])
@@ -87,7 +84,6 @@ class NotifyGotidyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Foobar", payload["message"])
         self.assertIn("11 other checks are also down.", payload["message"])

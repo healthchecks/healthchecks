@@ -37,9 +37,9 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         self.assertEqual(mock_post.call_count, 1)
-        args, kwargs = mock_post.call_args
-        self.assertIn("api.opsgenie.com", args[1])
-        payload = kwargs["json"]
+        url = mock_post.call_args.args[1]
+        self.assertIn("api.opsgenie.com", url)
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("DOWN", payload["message"])
 
     @patch("hc.api.transports.curl.request")
@@ -52,8 +52,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         self.assertEqual(mock_post.call_count, 1)
-        args, kwargs = mock_post.call_args
-        method, url = args
+        method, url = mock_post.call_args.args
         self.assertTrue(str(self.check.code) in url)
 
     @patch("hc.api.transports.curl.request")
@@ -66,8 +65,8 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         self.assertEqual(mock_post.call_count, 1)
-        args, kwargs = mock_post.call_args
-        self.assertIn("api.eu.opsgenie.com", args[1])
+        url = mock_post.call_args.args[1]
+        self.assertIn("api.eu.opsgenie.com", url)
 
     @patch("hc.api.transports.curl.request")
     def test_opsgenie_returns_error(self, mock_post):

@@ -37,10 +37,10 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.assertEqual(Notification.objects.count(), 1)
 
-        args, kwargs = mock_post.call_args
-        self.assertEqual(args[1], API + "/messages.json")
+        url = mock_post.call_args.args[1]
+        self.assertEqual(url, API + "/messages.json")
 
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(self.check.cloaked_url(), payload["message"])
         # Only one check in the project, so there should be no note about
@@ -56,8 +56,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.assertEqual(Notification.objects.count(), 1)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertIn("UP", payload["title"])
         self.assertEqual(payload["priority"], 2)
         self.assertIn("retry", payload)
@@ -108,8 +107,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertIn("All the other checks are up.", payload["message"])
 
     @patch("hc.api.transports.curl.request")
@@ -125,8 +123,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertIn("The following checks are also down", payload["message"])
         self.assertIn("Foobar", payload["message"])
         self.assertIn(other.cloaked_url(), payload["message"])
@@ -145,8 +142,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertNotIn("Foobar", payload["message"])
         self.assertIn("11 other checks are also down.", payload["message"])
 
@@ -159,8 +155,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["title"], "Foo & Bar is DOWN")
 
     @patch("hc.api.transports.curl.request")

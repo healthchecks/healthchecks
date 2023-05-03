@@ -110,8 +110,7 @@ class NotifyEmailTestCase(BaseTestCase):
         html = email.alternatives[0][0]
         self.assertIn("Line 1<br>Line2", html)
 
-        args, kwargs = get_object.call_args
-        code, n = args
+        code, n = get_object.call_args.args
         self.assertEqual(code, self.check.code)
         self.assertEqual(n, 1)
 

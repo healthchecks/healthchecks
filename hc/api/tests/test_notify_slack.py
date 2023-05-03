@@ -42,10 +42,10 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        self.assertEqual(args[1], "https://example.org")
+        url = mock_post.call_args.args[1]
+        self.assertEqual(url, "https://example.org")
 
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
@@ -65,8 +65,8 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        self.assertEqual(args[1], "123")
+        url = mock_post.call_args.args[1]
+        self.assertEqual(url, "123")
 
     @patch("hc.api.transports.curl.request")
     def test_it_handles_500(self, mock_post):
@@ -141,8 +141,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Failure, an hour ago")
 
@@ -157,8 +156,7 @@ class NotifySlackTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Log, an hour ago")
 
@@ -175,8 +173,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Ignored, an hour ago")
 
@@ -192,8 +189,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping Body"], "```\nHello World\n```")
 
@@ -209,8 +205,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertIn("[truncated]", fields["Last Ping Body"])
 
@@ -226,7 +221,6 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertNotIn("Last Ping Body", fields)

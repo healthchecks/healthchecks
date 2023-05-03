@@ -35,8 +35,7 @@ class NotifySpikeTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["check_id"], str(self.check.code))
         self.assertEqual(payload["title"], "Foo is DOWN")
 
@@ -56,7 +55,6 @@ class NotifySpikeTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "Foo & Bar is UP")
         self.assertEqual(payload["message"], "Foo & Bar is UP.")

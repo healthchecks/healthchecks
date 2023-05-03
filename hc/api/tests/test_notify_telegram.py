@@ -41,8 +41,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["chat_id"], 123)
         self.assertIn("The check", payload["text"])
         self.assertIn(">DB Backup</a>", payload["text"])
@@ -68,8 +67,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn(
             "<b>Schedule:</b> <code>* * * * MON-FRI</code>\n", payload["text"]
         )
@@ -132,8 +130,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("All the other checks are up.", payload["text"])
 
     @patch("hc.api.transports.curl.request")
@@ -148,8 +145,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("The following checks are also down", payload["text"])
         self.assertIn("Foobar", payload["text"])
         self.assertIn(other.cloaked_url(), payload["text"])
@@ -167,8 +163,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Foobar", payload["text"])
         self.assertIn("11 other checks are also down.", payload["text"])
 
@@ -192,8 +187,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("<b>Last Ping Body:</b>\n", payload["text"])
         self.assertIn("Hello World", payload["text"])
 
@@ -206,8 +200,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("[truncated]", payload["text"])
 
     @patch("hc.api.transports.curl.request")
@@ -219,7 +212,6 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertIn("&lt;b&gt;bold&lt;/b&gt;\n", payload["text"])
         self.assertIn("foo &amp; bar", payload["text"])

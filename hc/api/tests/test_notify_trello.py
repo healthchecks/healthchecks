@@ -42,8 +42,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        params = kwargs["params"]
+        params = mock_post.call_args.kwargs["params"]
         self.assertEqual(params["idList"], "fake-list-id")
         self.assertEqual(params["name"], "Down: Foo")
         self.assertIn("Full Details", params["desc"])
@@ -59,6 +58,5 @@ class NotifyTrelloTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        params = kwargs["params"]
+        params = mock_post.call_args.kwargs["params"]
         self.assertEqual(params["name"], "Down: Foo & Bar")

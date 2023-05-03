@@ -373,7 +373,7 @@ https://api.slack.com/apps/APP_ID/oauth?).
 
 To enable Discord integration, you will need to:
 
-* register a new application on https://discordapp.com/developers/applications/me
+* register a new application on https://discord.com/developers/applications/me
 * add a redirect URI to your Discord application. The URI format is
   `SITE_ROOT/integrations/add_discord/`. For example, if you are running a
   development server on `localhost:8000` then the redirect URI would be

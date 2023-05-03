@@ -46,11 +46,10 @@ class NotifyZulipTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        method, url = args
+        method, url = mock_post.call_args.args
         self.assertEqual(url, "https://example.org/api/v1/messages")
 
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "Foobar is DOWN")
 
         # payload should not contain check's code
@@ -65,8 +64,7 @@ class NotifyZulipTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "foo")
 
     @patch("hc.api.transports.curl.request")
@@ -103,12 +101,10 @@ class NotifyZulipTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-
-        method, url = args
+        method, url = mock_post.call_args.args
         self.assertEqual(url, "https://custom.example.org/api/v1/messages")
 
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertIn("DOWN", payload["topic"])
 
     @override_settings(ZULIP_ENABLED=False)
@@ -127,6 +123,5 @@ class NotifyZulipTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "Foo & Bar is DOWN")

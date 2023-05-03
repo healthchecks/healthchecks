@@ -34,9 +34,8 @@ class NotifyLineTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        headers = kwargs["headers"]
-        params = kwargs["params"]
+        headers = mock_post.call_args.kwargs["headers"]
+        params = mock_post.call_args.kwargs["params"]
         self.assertEqual(headers["Authorization"], "Bearer fake-token")
         self.assertIn("""The check "Foo" is DOWN""", params["message"])
 
@@ -49,6 +48,5 @@ class NotifyLineTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        params = kwargs["params"]
+        params = mock_post.call_args.kwargs["params"]
         self.assertEqual(params["message"], 'The check "Foo & Bar" is now UP.')

@@ -147,8 +147,8 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         # $$NAMETAG1 should *not* get transformed to "foo"
-        args, kwargs = mock_get.call_args
-        self.assertEqual(args[1], "http://host/$TAG1")
+        url = mock_get.call_args.args[1]
+        self.assertEqual(url, "http://host/$TAG1")
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_support_post(self, mock_request):
@@ -163,12 +163,12 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.save()
 
         self.channel.notify(self.check)
-        args, kwargs = mock_request.call_args
-        self.assertEqual(args[0], "post")
-        self.assertEqual(args[1], "http://example.com")
+        method, url = mock_request.call_args.args
+        self.assertEqual(method, "post")
+        self.assertEqual(url, "http://example.com")
 
         # spaces should not have been urlencoded:
-        payload = kwargs["data"].decode()
+        payload = mock_request.call_args.kwargs["data"].decode()
         self.assertTrue(payload.startswith("The Time Is 2"))
 
     @patch("hc.api.transports.curl.request")
@@ -234,10 +234,10 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.save()
 
         self.channel.notify(self.check)
-        args, kwargs = mock_request.call_args
 
         # unicode should be encoded into utf-8
-        self.assertIsInstance(kwargs["data"], bytes)
+        payload = mock_request.call_args.kwargs["data"]
+        self.assertIsInstance(payload, bytes)
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_handle_post_headers(self, mock_request):
@@ -338,9 +338,9 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.save()
 
         self.channel.notify(self.check)
-        args, kwargs = mock_request.call_args
 
-        self.assertEqual(kwargs["headers"]["X-Foo"], "b&#257;r")
+        headers = mock_request.call_args.kwargs["headers"]
+        self.assertEqual(headers["X-Foo"], "b&#257;r")
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_handle_latin1_in_headers(self, mock_request):
@@ -355,9 +355,9 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.save()
 
         self.channel.notify(self.check)
-        args, kwargs = mock_request.call_args
 
-        self.assertEqual(kwargs["headers"]["X-Foo"], "½")
+        headers = mock_request.call_args.kwargs["headers"]
+        self.assertEqual(headers["X-Foo"], "½")
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_support_json_variable(self, mock_post):
@@ -375,8 +375,8 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        body = json.loads(kwargs["data"])
+        payload = mock_post.call_args.kwargs["data"]
+        body = json.loads(payload)
         self.assertEqual(body["name"], "Hello World")
 
     @patch("hc.api.transports.curl.request")
@@ -397,8 +397,8 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        self.assertEqual(kwargs["data"], ping_body)
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, ping_body)
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_dont_support_body_variable_in_url_and_headers(self, mock_post):
@@ -418,6 +418,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        self.assertTrue(args[1].endswith("$BODY"))
-        self.assertEqual(kwargs["headers"]["User-Agent"], "$BODY")
+        url = mock_post.call_args.args[1]
+        self.assertTrue(url.endswith("$BODY"))
+        headers = mock_post.call_args.kwargs["headers"]
+        self.assertEqual(headers["User-Agent"], "$BODY")

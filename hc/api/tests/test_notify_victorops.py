@@ -34,8 +34,7 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["message_type"], "CRITICAL")
 
     @override_settings(VICTOROPS_ENABLED=False)
@@ -55,8 +54,7 @@ class NotifyVictorOpsTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["json"]
+        payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(
             payload["state_message"], "Foo & Bar received a ping and is now UP"
         )

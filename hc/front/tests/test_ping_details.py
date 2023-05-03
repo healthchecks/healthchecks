@@ -233,8 +233,7 @@ class PingDetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "dummy body from object storage", status_code=200)
 
-        args, kwargs = get_object.call_args
-        code, n = args
+        code, n = get_object.call_args.args
         self.assertEqual(code, self.check.code)
         self.assertEqual(n, 1)
 

@@ -57,8 +57,7 @@ class NotifyTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
 
         n = Notification.objects.get()

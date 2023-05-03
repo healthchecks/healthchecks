@@ -367,8 +367,7 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(ping.method, "POST")
         self.assertEqual(ping.object_size, 101)
 
-        args, kwargs = put_object.call_args
-        code, n, data = args
+        code, n, data = put_object.call_args.args
         self.assertEqual(code, self.check.code)
         self.assertEqual(n, 1)
         self.assertEqual(data, b"a" * 101)

@@ -38,10 +38,10 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        self.assertEqual(args[1], "https://example.org/slack")
+        url = mock_post.call_args.args[1]
+        self.assertEqual(url, "https://example.org/slack")
 
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
 
@@ -54,10 +54,8 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        url = args[1]
-
-        # discordapp.com is deprecated. For existing webhook URLs, wwe should
+        url = mock_post.call_args.args[1]
+        # discordapp.com is deprecated. For existing webhook URLs, we should
         # rewrite discordapp.com to discord.com:
         self.assertEqual(url, "https://discord.com/foo/slack")
 
@@ -73,7 +71,6 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
-        args, kwargs = mock_post.call_args
-        attachment = kwargs["json"]["attachments"][0]
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Failure, an hour ago")

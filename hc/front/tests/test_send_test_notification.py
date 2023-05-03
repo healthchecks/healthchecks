@@ -146,8 +146,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Test notification sent!")
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertIn("is UP", payload["Body"])
 
     @patch("hc.api.transports.curl.request")
@@ -166,6 +165,6 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, {}, follow=True)
 
-        args, kwargs = mock_post.call_args
-        body = json.loads(kwargs["data"])
+        payload = mock_post.call_args.kwargs["data"]
+        body = json.loads(payload)
         self.assertEqual(body["name"], "TEST")
