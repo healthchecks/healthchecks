@@ -687,10 +687,14 @@ class Sms(HttpTransport):
         text = tmpl("sms_message.html", check=check, site_name=settings.SITE_NAME)
 
         data = {
-            "From": settings.TWILIO_FROM,
             "To": self.channel.phone_number,
             "Body": text,
         }
+
+        if settings.TWILIO_MESSAGING_SERVICE_SID:
+            data["MessagingServiceSid"] = settings.TWILIO_MESSAGING_SERVICE_SID
+        else:
+            data["From"] = settings.TWILIO_FROM
 
         if notification:
             data["StatusCallback"] = notification.status_url()
@@ -746,10 +750,14 @@ class WhatsApp(HttpTransport):
         text = tmpl("whatsapp_message.html", check=check, site_name=settings.SITE_NAME)
 
         data = {
-            "From": "whatsapp:%s" % settings.TWILIO_FROM,
-            "To": "whatsapp:%s" % self.channel.phone_number,
+            "To": f"whatsapp:{self.channel.phone_number}",
             "Body": text,
         }
+
+        if settings.TWILIO_MESSAGING_SERVICE_SID:
+            data["MessagingServiceSid"] = settings.TWILIO_MESSAGING_SERVICE_SID
+        else:
+            data["From"] = f"whatsapp:{settings.TWILIO_FROM}"
 
         if notification:
             data["StatusCallback"] = notification.status_url()

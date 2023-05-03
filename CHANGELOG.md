@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade to cronsim 2.4
 - Update Signal notification template to include more data
 - Add Profile.deletion_scheduled_deleted field, and UI banner when it's set
+- Add support for specifying MessagingServiceSid when sending SMS and WA messages
 
 ### Bug Fixes
 - Fix a race condition when pinging and deleting checks at the same time

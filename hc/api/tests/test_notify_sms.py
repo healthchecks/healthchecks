@@ -7,6 +7,7 @@ from datetime import timedelta as td
 from unittest.mock import patch
 
 from django.core import mail
+from django.test.utils import override_settings
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check, Notification
@@ -28,6 +29,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+    @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
     @patch("hc.api.transports.curl.request")
     def test_it_works(self, mock_post):
         self.check.last_ping = now() - td(hours=2)
@@ -35,9 +37,9 @@ class NotifySmsTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
+        self.assertEqual(payload["From"], "+000")
         self.assertNotIn("\xa0", payload["Body"])
         self.assertIn("is DOWN", payload["Body"])
 
@@ -48,6 +50,18 @@ class NotifySmsTestCase(BaseTestCase):
         # sent SMS counter should go up
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sms_sent, 1)
+
+    @override_settings(TWILIO_MESSAGING_SERVICE_SID="dummy-sid")
+    @patch("hc.api.transports.curl.request")
+    def test_it_uses_messaging_service(self, mock_post):
+        self.check.last_ping = now() - td(hours=2)
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload["MessagingServiceSid"], "dummy-sid")
+        self.assertFalse("From" in payload)
 
     @patch("hc.api.transports.curl.request")
     def test_it_enforces_limit(self, mock_post):
@@ -90,8 +104,7 @@ class NotifySmsTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertIn("Foo > Bar & Co", payload["Body"])
 
     @patch("hc.api.transports.curl.request")
@@ -113,6 +126,5 @@ class NotifySmsTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        args, kwargs = mock_post.call_args
-        payload = kwargs["data"]
+        payload = mock_post.call_args.kwargs["data"]
         self.assertIn("is UP", payload["Body"])

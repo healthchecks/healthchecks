@@ -76,6 +76,7 @@ from environment variables. Below is a list of variables it reads and uses.
 <li><a href="#TWILIO_ACCOUNT">TWILIO_ACCOUNT</a></li>
 <li><a href="#TWILIO_AUTH">TWILIO_AUTH</a></li>
 <li><a href="#TWILIO_FROM">TWILIO_FROM</a></li>
+<li><a href="#TWILIO_MESSAGING_SERVICE_SID">TWILIO_MESSAGING_SERVICE_SID</a></li>
 <li><a href="#TWILIO_USE_WHATSAPP">TWILIO_USE_WHATSAPP</a></li>
 <li><a href="#USE_PAYMENTS">USE_PAYMENTS</a></li>
 <li><a href="#VICTOROPS_ENABLED">VICTOROPS_ENABLED</a></li>
@@ -852,6 +853,27 @@ Example:
 
 ```ini
 TWILIO_FROM=+15017122661
+```
+
+## `TWILIO_MESSAGING_SERVICE_SID` {: #TWILIO_MESSAGING_SERVICE_SID }
+
+Default: `None`
+
+Optional, the Twilio Messaging Service SID for sending SMS and WhatsApp notifications.
+
+If `TWILIO_MESSAGING_SERVICE_SID` is specified, Healthchecks will include it in the
+"MessagingServiceSid" field when sending SMS and WhatsApp messages via Twilio API.
+This will result in Twilio using a Messaging Service instead of a plain sender number
+to deliver the SMS and WhatsApp messages.
+
+If `TWILIO_MESSAGING_SERVICE_SID` is not set, Healthchecks will fall back to using
+the "From" field with the value configured in [TWILIO_FROM](#TWILIO_FROM) in API
+requests.
+
+Example:
+
+```ini
+TWILIO_MESSAGING_SERVICE_SID=MGe56e622d540e6badc52ae0ac4af028c6
 ```
 
 ## `TWILIO_USE_WHATSAPP` {: #TWILIO_USE_WHATSAPP }
