@@ -5,7 +5,7 @@ import time
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
-from django.utils import timezone
+from django.utils.timezone import now
 
 from hc.accounts.models import NO_NAG, Profile
 from hc.api.models import Check
@@ -34,7 +34,7 @@ class Command(BaseCommand):
         )
 
     def handle_one_report(self):
-        report_due = Q(next_report_date__lt=timezone.now())
+        report_due = Q(next_report_date__lt=now())
         report_not_scheduled = Q(next_report_date__isnull=True)
 
         q = Profile.objects.filter(report_due | report_not_scheduled)
@@ -69,8 +69,8 @@ class Command(BaseCommand):
         return True
 
     def handle_one_nag(self):
-        now = timezone.now()
-        q = Profile.objects.filter(next_nag_date__lt=now)
+        now_value = now()
+        q = Profile.objects.filter(next_nag_date__lt=now_value)
         q = q.exclude(nag_period=NO_NAG)
         profile = q.first()
 
@@ -79,7 +79,7 @@ class Command(BaseCommand):
 
         qq = Profile.objects.filter(id=profile.id, next_nag_date=profile.next_nag_date)
 
-        num_updated = qq.update(next_nag_date=now + profile.nag_period)
+        num_updated = qq.update(next_nag_date=now_value + profile.nag_period)
         if num_updated != 1:
             # next_rag_date was already updated elsewhere, skipping
             return True

@@ -6,7 +6,7 @@ from datetime import timedelta as td
 from threading import Thread
 
 from django.core.management.base import BaseCommand
-from django.utils import timezone
+from django.utils.timezone import now
 from statsd.defaults.env import statsd
 
 from hc.api.models import Check, Flip
@@ -31,7 +31,7 @@ def notify(flip_id, stdout):
     check.project.update_next_nag_dates()
 
     # Send notifications
-    send_start = timezone.now()
+    send_start = now()
 
     for ch, error, secs in flip.send_alerts():
         label = "OK"
@@ -43,7 +43,7 @@ def notify(flip_id, stdout):
         s = " * %-5s %4.1fs %-10s %s %s\n" % (label, secs, ch.kind, ch.code, error)
         stdout.write(s)
 
-    send_time = timezone.now() - send_start
+    send_time = now() - send_start
     stdout.write(SEND_TIME_TMPL % (send_time.total_seconds(), check.code))
 
     statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
@@ -86,7 +86,7 @@ class Command(BaseCommand):
             return False
 
         q = Flip.objects.filter(id=flip.id, processed=None)
-        num_updated = q.update(processed=timezone.now())
+        num_updated = q.update(processed=now())
         if num_updated != 1:
             # Nothing got updated: another worker process got there first.
             return True
@@ -101,9 +101,9 @@ class Command(BaseCommand):
     def handle_going_down(self):
         """Process a single check going down."""
 
-        now = timezone.now()
+        now_value = now()
 
-        q = Check.objects.filter(alert_after__lt=now).exclude(status="down")
+        q = Check.objects.filter(alert_after__lt=now_value).exclude(status="down")
         # Sort by alert_after, to avoid unnecessary sorting by id:
         check = q.order_by("alert_after").first()
         if check is None:
@@ -117,7 +117,7 @@ class Command(BaseCommand):
         except Exception as e:
             # Make sure we don't trip on this check again for an hour:
             # Otherwise sendalerts may end up in a crash loop.
-            q.update(alert_after=now + td(hours=1))
+            q.update(alert_after=now_value + td(hours=1))
             # Then re-raise the exception:
             raise e
 
