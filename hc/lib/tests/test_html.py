@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from django.test import TestCase
+from unittest import TestCase
 
 from hc.lib.html import html2text
 

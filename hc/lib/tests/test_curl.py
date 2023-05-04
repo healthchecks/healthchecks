@@ -3,7 +3,7 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pycurl
-from django.test import TestCase
+from django.test import SimpleTestCase
 from django.test.utils import override_settings
 
 from hc.lib.curl import CurlError, request
@@ -43,7 +43,7 @@ class FakeCurl(object):
         pass
 
 
-class CurlTestCase(TestCase):
+class CurlTestCase(SimpleTestCase):
     @patch("hc.lib.curl.pycurl.Curl")
     def test_get_works(self, mock):
         mock.return_value = obj = FakeCurl(self)

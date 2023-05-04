@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from smtplib import SMTPDataError, SMTPServerDisconnected
+from unittest import TestCase
 from unittest.mock import Mock, patch
-
-from django.test import TestCase
 
 from hc.lib.emails import EmailThread
 

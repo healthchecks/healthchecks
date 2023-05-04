@@ -5,7 +5,7 @@ from functools import wraps
 from unittest import skipIf
 from unittest.mock import Mock, patch
 
-from django.test import TestCase
+from django.test import SimpleTestCase
 from django.test.utils import override_settings
 
 from hc.lib.s3 import get_object
@@ -32,16 +32,16 @@ def nolog(func):
 
 @skipIf(not have_minio, "minio not installed")
 @override_settings(S3_BUCKET="dummy-bucket")
-class S3TestCase(TestCase):
+class S3TestCase(SimpleTestCase):
     @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
     def test_get_object_handles_nosuchkey(self, mock_client, mock_statsd):
         e = S3Error("NoSuchKey", "b", "c", "d", "e", "f")
         mock_client.get_object.return_value.read = Mock(side_effect=e)
         self.assertIsNone(get_object("dummy-code", 1))
-        self.assertTrue(mock_client.get_object.called)
+        mock_client.get_object.assert_called_once()
         # Should not increase the error counter for NoSuchKey responses
-        self.assertFalse(mock_statsd.incr.called)
+        mock_statsd.incr.assert_not_called()
 
     @nolog
     @patch("hc.lib.s3.statsd")
@@ -50,8 +50,8 @@ class S3TestCase(TestCase):
         e = S3Error("DummyError", "b", "c", "d", "e", "f")
         mock_client.get_object.return_value.read = Mock(side_effect=e)
         self.assertIsNone(get_object("dummy-code", 1))
-        self.assertTrue(mock_client.get_object.called)
-        self.assertTrue(mock_statsd.incr.called)
+        mock_client.get_object.assert_called_once()
+        mock_statsd.incr.assert_called_once()
 
     @nolog
     @patch("hc.lib.s3._client")
@@ -60,10 +60,10 @@ class S3TestCase(TestCase):
             mock_client.get_object.reset_mock()
             mock_client.get_object.return_value.read = Mock(side_effect=e)
             self.assertIsNone(get_object("dummy-code", 1))
-            self.assertTrue(mock_client.get_object.called)
+            mock_client.get_object.assert_called_once()
 
     @override_settings(S3_BUCKET=None)
     @patch("hc.lib.s3._client")
     def test_get_object_handles_no_s3_configuration(self, mock_client):
         self.assertIsNone(get_object("dummy-code", 1))
-        self.assertFalse(mock_client.get_object.called)
+        mock_client.get_object.assert_not_called()

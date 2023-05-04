@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from django.test import TestCase
+from django.test import SimpleTestCase
 from django.test.utils import override_settings
 
 from hc.lib.badges import get_badge_svg, get_width
 
 
-class BadgesTestCase(TestCase):
+class BadgesTestCase(SimpleTestCase):
     def test_get_width_works(self):
         self.assertEqual(get_width("mm"), 20)
         # Default width for unknown characters is 7
