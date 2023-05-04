@@ -158,7 +158,6 @@ if os.getenv("DB") == "mysql":
 USE_TZ = True
 TIME_ZONE = "UTC"
 USE_I18N = False
-USE_L10N = False
 
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
 SITE_NAME = os.getenv("SITE_NAME", "Mychecks")
