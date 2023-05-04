@@ -2,17 +2,18 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from datetime import timedelta as td
+from datetime import timezone
 from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
-from django.utils.timezone import now, utc
+from django.utils.timezone import now
 
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
-CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=utc)
+CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=timezone.utc)
 MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta as td
 
-from django.utils import timezone
+from django.utils.timezone import now
 
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -12,7 +12,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.check = Check(project=self.project, status="up")
-        self.check.last_ping = timezone.now()
+        self.check.last_ping = now()
         self.check.save()
 
         self.url = "/checks/%s/timeout/" % self.check.code
@@ -43,7 +43,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertRedirects(r, referer)
 
     def test_it_does_not_update_status_to_up(self):
-        self.check.last_ping = timezone.now() - td(days=2)
+        self.check.last_ping = now() - td(days=2)
         self.check.status = "down"
         self.check.save()
 
@@ -57,7 +57,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.status, "down")
 
     def test_it_updates_status_to_down(self):
-        self.check.last_ping = timezone.now() - td(hours=1)
+        self.check.last_ping = now() - td(hours=1)
         self.check.status = "up"
         self.check.alert_after = self.check.going_down_after()
         self.check.save()

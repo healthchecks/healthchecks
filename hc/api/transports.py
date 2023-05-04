@@ -10,8 +10,8 @@ from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.utils import timezone
 from django.utils.html import escape
+from django.utils.timezone import now
 
 from hc.accounts.models import Profile
 from hc.api.schemas import telegram_migration
@@ -191,7 +191,7 @@ class Shell(Transport):
         ctx = {
             "$CODE": str(check.code),
             "$STATUS": check.status,
-            "$NOW": timezone.now().replace(microsecond=0).isoformat(),
+            "$NOW": now().replace(microsecond=0).isoformat(),
             "$NAME": check.name,
             "$TAGS": check.tags,
         }
@@ -285,7 +285,7 @@ class Webhook(HttpTransport):
         ctx = {
             "$CODE": str(check.code),
             "$STATUS": check.status,
-            "$NOW": safe(timezone.now().replace(microsecond=0).isoformat()),
+            "$NOW": safe(now().replace(microsecond=0).isoformat()),
             "$NAME": safe(check.name),
             "$TAGS": safe(check.tags),
             "$JSON": safe(json.dumps(check.to_dict())),

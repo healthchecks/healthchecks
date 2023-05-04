@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from uuid import uuid4
-
-from django.utils import timezone
 
 from hc.api.models import Check, Ping
 from hc.front.views import _get_events

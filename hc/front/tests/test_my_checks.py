@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta as td
 
-from django.utils import timezone
+from django.utils.timezone import now
 
 from hc.api.models import Check
 from hc.test import BaseTestCase
@@ -31,7 +31,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertTrue(self.profile.last_active_date)
 
     def test_it_bumps_last_active_date(self):
-        self.profile.last_active_date = timezone.now() - td(days=10)
+        self.profile.last_active_date = now() - td(days=10)
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
@@ -39,7 +39,7 @@ class MyChecksTestCase(BaseTestCase):
 
         # last_active_date should have been bumped
         self.profile.refresh_from_db()
-        duration = timezone.now() - self.profile.last_active_date
+        duration = now() - self.profile.last_active_date
         self.assertTrue(duration.total_seconds() < 1)
 
     def test_it_updates_session(self):
@@ -55,7 +55,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_shows_green_check(self):
-        self.check.last_ping = timezone.now()
+        self.check.last_ping = now()
         self.check.status = "up"
         self.check.save()
 
@@ -64,7 +64,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, "ic-up")
 
     def test_it_shows_red_check(self):
-        self.check.last_ping = timezone.now() - td(days=3)
+        self.check.last_ping = now() - td(days=3)
         self.check.status = "up"
         self.check.save()
 
@@ -73,7 +73,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, "ic-down")
 
     def test_it_shows_amber_check(self):
-        self.check.last_ping = timezone.now() - td(days=1, minutes=30)
+        self.check.last_ping = now() - td(days=1, minutes=30)
         self.check.status = "up"
         self.check.save()
 
@@ -104,7 +104,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertEqual(self.profile.sort, "created")
 
     def test_it_shows_started_but_down_badge(self):
-        self.check.last_start = timezone.now()
+        self.check.last_start = now()
         self.check.tags = "foo"
         self.check.status = "down"
         self.check.save()
@@ -114,7 +114,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, """<div class="btn btn-xs down ">foo</div>""")
 
     def test_it_shows_grace_badge(self):
-        self.check.last_ping = timezone.now() - td(days=1, minutes=10)
+        self.check.last_ping = now() - td(days=1, minutes=10)
         self.check.tags = "foo"
         self.check.status = "up"
         self.check.save()
@@ -124,8 +124,8 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, """<div class="btn btn-xs grace ">foo</div>""")
 
     def test_it_shows_grace_started_badge(self):
-        self.check.last_start = timezone.now()
-        self.check.last_ping = timezone.now() - td(days=1, minutes=10)
+        self.check.last_start = now()
+        self.check.last_ping = now() - td(days=1, minutes=10)
         self.check.tags = "foo"
         self.check.status = "up"
         self.check.save()

@@ -2,14 +2,13 @@ from __future__ import annotations
 
 from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from django.utils.timezone import utc
-
 from hc.lib.date import format_hms, month_boundaries, week_boundaries
 
-CURRENT_TIME = datetime(2020, 1, 15, tzinfo=utc)
+CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
 MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 

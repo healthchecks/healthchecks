@@ -5,7 +5,7 @@ from datetime import timedelta as td
 from uuid import UUID
 
 from django.conf import settings
-from django.db import connection, transaction
+from django.db import connection
 from django.db.models import Prefetch
 from django.http import (
     Http404,
@@ -17,7 +17,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
+from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -464,7 +464,7 @@ def flips(request, check):
         flips = flips.filter(created__lt=form.cleaned_data["end"])
 
     if form.cleaned_data["seconds"]:
-        threshold = timezone.now() - td(seconds=form.cleaned_data["seconds"])
+        threshold = now() - td(seconds=form.cleaned_data["seconds"])
         flips = flips.filter(created__gte=threshold)
 
     return JsonResponse({"flips": [flip.to_dict() for flip in flips]})
@@ -578,7 +578,7 @@ def notification_status(request, code):
     """Handle notification delivery status callbacks."""
 
     try:
-        cutoff = timezone.now() - td(hours=1)
+        cutoff = now() - td(hours=1)
         notification = Notification.objects.get(code=code, created__gt=cutoff)
     except Notification.DoesNotExist:
         # If the notification does not exist, or is more than a hour old,

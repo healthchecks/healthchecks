@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import annotations, unicode_literals
 
-from django.db import models, migrations
-from django.utils.timezone import utc
 import datetime
+from datetime import timezone
+
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("api", "0003_auto_20150616_1249")]
 
     operations = [
@@ -17,7 +17,9 @@ class Migration(migrations.Migration):
             name="created",
             field=models.DateTimeField(
                 auto_now_add=True,
-                default=datetime.datetime(2015, 6, 16, 13, 19, 17, 218278, tzinfo=utc),
+                default=datetime.datetime(
+                    2015, 6, 16, 13, 19, 17, 218278, tzinfo=timezone.utc
+                ),
             ),
             preserve_default=False,
         ),

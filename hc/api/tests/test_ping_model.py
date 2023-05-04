@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from datetime import timedelta as td
-
-from django.utils import timezone
+from datetime import timezone
 
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase

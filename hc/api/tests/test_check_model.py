@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-from django.utils import timezone
+from django.utils.timezone import make_aware, now
 
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
@@ -31,18 +32,18 @@ class CheckModelTestCase(BaseTestCase):
     def test_status_works_with_grace_period(self):
         check = Check()
         check.status = "up"
-        check.last_ping = timezone.now() - td(days=1, minutes=30)
+        check.last_ping = now() - td(days=1, minutes=30)
 
         self.assertEqual(check.get_status(), "grace")
 
     def test_get_status_handles_paused_check(self):
         check = Check()
         check.status = "paused"
-        check.last_ping = timezone.now() - td(days=1, minutes=30)
+        check.last_ping = now() - td(days=1, minutes=30)
         self.assertEqual(check.get_status(), "paused")
 
     def test_status_works_with_cron_syntax(self):
-        dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
+        dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every midnight, default grace is 1 hour
         check = Check()
@@ -67,7 +68,7 @@ class CheckModelTestCase(BaseTestCase):
             self.assertEqual(check.get_status(), "down")
 
     def test_status_works_with_timezone(self):
-        dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
+        dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every day at 10am, default grace is 1 hour
         check = Check()
@@ -95,22 +96,22 @@ class CheckModelTestCase(BaseTestCase):
     def test_get_status_handles_past_grace(self):
         check = Check()
         check.status = "up"
-        check.last_ping = timezone.now() - td(days=2)
+        check.last_ping = now() - td(days=2)
 
         self.assertEqual(check.get_status(), "down")
 
     def test_get_status_obeys_down_status(self):
         check = Check()
         check.status = "down"
-        check.last_ping = timezone.now() - td(minutes=1)
+        check.last_ping = now() - td(minutes=1)
 
         self.assertEqual(check.get_status(), "down")
 
     def test_get_status_handles_started(self):
         check = Check()
-        check.last_ping = timezone.now() - td(hours=2)
+        check.last_ping = now() - td(hours=2)
         # Last start was 5 minutes ago, display status should be "started"
-        check.last_start = timezone.now() - td(minutes=5)
+        check.last_start = now() - td(minutes=5)
         for status in ("new", "paused", "up", "down"):
             check.status = status
             self.assertEqual(check.get_status(with_started=True), "started")
@@ -118,9 +119,9 @@ class CheckModelTestCase(BaseTestCase):
     def test_get_status_handles_down_then_started_and_expired(self):
         check = Check(status="down")
         # Last ping was 2 days ago
-        check.last_ping = timezone.now() - td(days=2)
+        check.last_ping = now() - td(days=2)
         # Last start was 2 hours ago - the check is past its grace time
-        check.last_start = timezone.now() - td(hours=2)
+        check.last_start = now() - td(hours=2)
 
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
@@ -128,9 +129,9 @@ class CheckModelTestCase(BaseTestCase):
     def test_get_status_handles_up_then_started(self):
         check = Check(status="up")
         # Last ping was 2 hours ago, so is still up
-        check.last_ping = timezone.now() - td(hours=2)
+        check.last_ping = now() - td(hours=2)
         # Last start was 5 minutes ago
-        check.last_start = timezone.now() - td(minutes=5)
+        check.last_start = now() - td(minutes=5)
 
         self.assertEqual(check.get_status(with_started=True), "started")
         # A started check still is considered "up":
@@ -139,9 +140,9 @@ class CheckModelTestCase(BaseTestCase):
     def test_get_status_handles_up_then_started_and_expired(self):
         check = Check(status="up")
         # Last ping was 3 hours ago, so is still up
-        check.last_ping = timezone.now() - td(hours=3)
+        check.last_ping = now() - td(hours=3)
         # Last start was 2 hours ago - the check is past its grace time
-        check.last_start = timezone.now() - td(hours=2)
+        check.last_start = now() - td(hours=2)
 
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
@@ -149,20 +150,20 @@ class CheckModelTestCase(BaseTestCase):
     def test_get_status_handles_paused_then_started_and_expired(self):
         check = Check(status="paused")
         # Last start was 2 hours ago - the check is past its grace time
-        check.last_start = timezone.now() - td(hours=2)
+        check.last_start = now() - td(hours=2)
 
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
 
     def test_get_status_handles_started_and_mia(self):
         check = Check()
-        check.last_start = timezone.now() - td(hours=2)
+        check.last_start = now() - td(hours=2)
 
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
 
     def test_next_ping_with_cron_syntax(self):
-        dt = timezone.make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
+        dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every round hour
         check = Check(project=self.project)

@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from unittest.mock import patch
-
-from django.utils import timezone
 
 from hc.api.models import Check, Flip, Ping
 from hc.test import BaseTestCase

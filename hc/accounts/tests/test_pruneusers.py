@@ -4,7 +4,7 @@ from datetime import timedelta as td
 from unittest.mock import Mock
 
 from django.contrib.auth.models import User
-from django.utils import timezone
+from django.utils.timezone import now
 
 from hc.accounts.management.commands.pruneusers import Command
 from hc.accounts.models import Project
@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 
 class PruneUsersTestCase(BaseTestCase):
-    year_ago = timezone.now() - td(days=365)
+    year_ago = now() - td(days=365)
 
     def test_it_removes_old_never_logged_in_users(self):
         self.charlie.date_joined = self.year_ago
