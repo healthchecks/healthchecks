@@ -99,7 +99,7 @@ class NotifySlackTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         self.assertEqual(Notification.objects.count(), 1)
-        self.assertTrue(mock_post.called)
+        mock_post.assert_called_once()
 
     @override_settings(SLACK_ENABLED=False)
     def test_it_requires_slack_enabled(self):

@@ -218,7 +218,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition), status="up")
         self.channel.notify(self.check)
 
-        self.assertFalse(mock_get.called)
+        mock_get.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.curl.request")

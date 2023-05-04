@@ -70,7 +70,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertTrue(flip.processed)
 
         # It should call `notify_on_thread`
-        self.assertTrue(mock_notify.called)
+        mock_notify.assert_called_once()
 
     @patch("hc.api.management.commands.sendalerts.notify_on_thread")
     def test_it_updates_alert_after(self, mock_notify):
@@ -102,7 +102,7 @@ class SendAlertsTestCase(BaseTestCase):
         call_command("sendalerts", loop=False, use_threads=False, stdout=StringIO())
 
         # It should call `notify` instead of `notify_on_thread`
-        self.assertTrue(mock_notify.called)
+        mock_notify.assert_called_once()
 
     def test_it_sets_next_nag_date(self):
         self.profile.nag_period = td(hours=1)

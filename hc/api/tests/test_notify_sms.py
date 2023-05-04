@@ -71,7 +71,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.profile.save()
 
         self.channel.notify(self.check)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
 
         n = Notification.objects.get()
         self.assertTrue("Monthly SMS limit exceeded" in n.error)
@@ -93,7 +93,7 @@ class NotifySmsTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        self.assertTrue(mock_post.called)
+        mock_post.assert_called_once()
 
     @patch("hc.api.transports.curl.request")
     def test_it_does_not_escape_special_characters(self, mock_post):
@@ -113,7 +113,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.value = json.dumps(payload)
 
         self.channel.notify(self.check)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
 
     @patch("hc.api.transports.curl.request")
     def test_it_sends_up_notification(self, mock_post):

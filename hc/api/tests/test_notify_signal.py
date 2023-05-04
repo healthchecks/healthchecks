@@ -150,8 +150,7 @@ class NotifySignalTestCase(BaseTestCase):
 
         # This channel should not notify on "down" events:
         self.assertEqual(Notification.objects.count(), 0)
-
-        self.assertFalse(socket.called)
+        socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
     def test_it_requires_signal_cli_socket(self, socket):
@@ -160,8 +159,7 @@ class NotifySignalTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Signal notifications are not enabled")
-
-        self.assertFalse(socket.called)
+        socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
     def test_it_does_not_escape_special_characters(self, socket):
@@ -185,8 +183,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.channel.notify(self.check)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
-
-        self.assertFalse(socket.called)
+        socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
     def test_it_shows_all_other_checks_up_note(self, socket):

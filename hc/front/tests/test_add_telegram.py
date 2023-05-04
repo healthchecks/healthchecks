@@ -68,7 +68,7 @@ class AddTelegramTestCase(BaseTestCase):
         }
         r = self.client.post(self.bot_url, data, content_type="application/json")
         self.assertEqual(r.status_code, 200)
-        self.assertTrue(mock_request.called)
+        mock_request.assert_called_once()
 
     @patch("hc.api.transports.curl.request")
     def test_bot_handles_channel_post(self, mock_request):
@@ -82,7 +82,7 @@ class AddTelegramTestCase(BaseTestCase):
         }
         r = self.client.post(self.bot_url, data, content_type="application/json")
         self.assertEqual(r.status_code, 200)
-        self.assertTrue(mock_request.called)
+        mock_request.assert_called_once()
 
     @patch("hc.api.transports.curl.request")
     def test_bot_handles_bad_message(self, mock_get):
@@ -119,7 +119,7 @@ class AddTelegramTestCase(BaseTestCase):
         r = self.client.post(self.bot_url, data, content_type="application/json")
 
         self.assertEqual(r.status_code, 200)
-        self.assertTrue(mock_request.called)
+        mock_request.assert_called()
 
     def test_it_requires_rw_access(self):
         self.bobs_membership.role = "r"

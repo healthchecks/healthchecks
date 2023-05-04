@@ -164,7 +164,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         self.assertEqual(Notification.objects.count(), 0)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
 
     @patch("hc.api.transports.curl.request")
     def test_it_handles_disabled_up_priority(self, mock_post):
@@ -172,4 +172,4 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         self.assertEqual(Notification.objects.count(), 0)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()

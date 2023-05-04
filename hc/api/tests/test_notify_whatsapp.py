@@ -67,8 +67,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         self.assertEqual(Notification.objects.count(), 0)
-
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
 
     @patch("hc.api.transports.curl.request")
     def test_it_enforces_limit(self, mock_post):
@@ -80,7 +79,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self._setup_data()
 
         self.channel.notify(self.check)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
 
         n = Notification.objects.get()
         self.assertTrue("Monthly message limit exceeded" in n.error)

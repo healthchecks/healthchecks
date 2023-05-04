@@ -51,8 +51,7 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "1234 byte body")
-
-        self.assertFalse(get_object.called)
+        get_object.assert_not_called()
 
     def test_it_displays_email(self):
         self.ping.scheme = "email"

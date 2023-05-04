@@ -33,7 +33,7 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("pagerteam", "123")
 
         self.channel.notify(self.check)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.curl.request")
@@ -41,7 +41,7 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("hipchat", "123")
 
         self.channel.notify(self.check)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.curl.request")
@@ -76,7 +76,7 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("call", json.dumps(definition))
 
         self.channel.notify(self.check)
-        self.assertFalse(mock_post.called)
+        mock_post.assert_not_called()
 
         n = Notification.objects.get()
         self.assertTrue("Monthly phone call limit exceeded" in n.error)
@@ -100,7 +100,7 @@ class NotifyTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        self.assertTrue(mock_post.called)
+        mock_post.assert_called_once()
 
     def test_not_implimented(self):
         self._setup_data("webhook", "http://example")
@@ -151,7 +151,7 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("shell", json.dumps(definition))
 
         self.channel.notify(self.check)
-        self.assertFalse(mock_system.called)
+        mock_system.assert_not_called()
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Shell commands are not enabled")

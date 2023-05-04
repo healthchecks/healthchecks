@@ -47,7 +47,7 @@ class CloseAccountTestCase(BaseTestCase):
         self.assertFalse(Check.objects.exists())
 
         # Subscription should have been canceled
-        self.assertTrue(mock_braintree.Subscription.cancel.called)
+        mock_braintree.Subscription.cancel.assert_called_once()
 
         # Subscription should be gone
         self.assertFalse(Subscription.objects.exists())

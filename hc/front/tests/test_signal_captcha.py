@@ -97,7 +97,7 @@ class SignalCaptchaTestCase(BaseTestCase):
             r = self.client.post(self.url, {"challenge": "foo", "captcha": "bar"})
             self.assertEqual(r.status_code, 404)
 
-        self.assertFalse(socket.called)
+        socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
     def test_it_checks_jsonrpc_id(self, socket):

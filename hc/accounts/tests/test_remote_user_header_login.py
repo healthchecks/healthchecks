@@ -55,5 +55,5 @@ class RemoteUserHeaderTestCase(BaseTestCase):
         with patch("hc.accounts.middleware.auth") as mock_auth:
             r = self.client.get("/accounts/profile/", AUTH_USER="alice@example.org")
 
-            self.assertFalse(mock_auth.authenticate.called)
+            mock_auth.authenticate.assert_not_called()
             self.assertContains(r, "alice@example.org")

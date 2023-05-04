@@ -31,4 +31,4 @@ class ServeDocTestCase(TestCase):
         # but the view should still reject them, before any filesystem
         # operations
 
-        self.assertFalse(mock_exists.called)
+        mock_exists.assert_not_called()
