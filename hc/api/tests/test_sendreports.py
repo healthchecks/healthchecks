@@ -39,7 +39,7 @@ Mychecks
 
 
 @override_settings(SITE_NAME="Mychecks")
-@patch("hc.lib.date.timezone.now", MOCK_NOW)
+@patch("hc.lib.date.now", MOCK_NOW)
 @patch("hc.accounts.models.now", MOCK_NOW)
 @patch("hc.api.management.commands.sendreports.timezone.now", MOCK_NOW)
 class SendReportsTestCase(BaseTestCase):

@@ -38,7 +38,7 @@ class DateFormattingTestCase(TestCase):
         self.assertEqual(s, "1 h 0 min 0 sec")
 
 
-@patch("hc.lib.date.timezone.now", MOCK_NOW)
+@patch("hc.lib.date.now", MOCK_NOW)
 class MonthBoundaryTestCase(TestCase):
     def test_utc_works(self):
         result = month_boundaries(3, "UTC")
@@ -53,7 +53,7 @@ class MonthBoundaryTestCase(TestCase):
         self.assertEqual(result[2].isoformat(), "2020-01-01T00:00:00+02:00")
 
 
-@patch("hc.lib.date.timezone.now", MOCK_NOW)
+@patch("hc.lib.date.now", MOCK_NOW)
 class WeekBoundaryTestCase(TestCase):
     def test_utc_works(self):
         result = week_boundaries(3, "UTC")

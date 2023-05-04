@@ -178,7 +178,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
 
     @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
     def test_downtimes_handles_no_flips(self):
         check = Check(project=self.project)
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -202,7 +202,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(jan[2], 0)
 
     @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
     def test_downtimes_handles_currently_down_check(self):
         check = Check(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -214,7 +214,7 @@ class CheckModelTestCase(BaseTestCase):
             self.assertEqual(outages, 1)
 
     @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
     def test_downtimes_handles_flip_one_day_ago(self):
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -236,7 +236,7 @@ class CheckModelTestCase(BaseTestCase):
                 self.assertEqual(outages, 0)
 
     @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
     def test_downtimes_handles_flip_two_months_ago(self):
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -266,7 +266,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(outages, 1)
 
     @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
     def test_downtimes_handles_non_utc_timezone(self):
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -291,7 +291,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(outages, 1)
 
     @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
     def test_downtimes_handles_months_when_check_did_not_exist(self):
         check = Check(project=self.project)
         check.created = datetime(2020, 1, 1, 9, tzinfo=timezone.utc)

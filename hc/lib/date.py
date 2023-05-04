@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 from datetime import timedelta as td
 
-from django.utils import timezone
+from django.utils.timezone import now
 
 if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo
@@ -84,8 +84,8 @@ def month_boundaries(months: int, tzstr: str) -> list[datetime]:
     tz = ZoneInfo(tzstr)
     result: list[datetime] = []
 
-    now = timezone.now().astimezone(tz)
-    y, m = now.year, now.month
+    now_value = now().astimezone(tz)
+    y, m = now_value.year, now_value.month
     for x in range(0, months):
         result.insert(0, datetime(y, m, 1, tzinfo=tz))
 
@@ -101,7 +101,7 @@ def week_boundaries(weeks: int, tzstr: str) -> list[datetime]:
     tz = ZoneInfo(tzstr)
     result: list[datetime] = []
 
-    today = timezone.now().astimezone(tz).date()
+    today = now().astimezone(tz).date()
     needle = today - td(days=today.weekday())
     for x in range(0, weeks):
         result.insert(0, datetime(needle.year, needle.month, needle.day, tzinfo=tz))

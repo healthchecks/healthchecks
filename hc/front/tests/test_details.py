@@ -117,7 +117,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "* * * * * /your/command.sh")
         self.assertContains(r, 'FIXME: replace "* * * * *"')
 
-    @patch("hc.lib.date.timezone.now")
+    @patch("hc.lib.date.now")
     def test_it_calculates_downtime_summary(self, mock_now):
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 
@@ -147,7 +147,7 @@ class DetailsTestCase(BaseTestCase):
         # The summary for Jan. 2020 should be "1 downtime, 1 hour total"
         self.assertContains(r, "1 downtime, 1 hour total", html=True)
 
-    @patch("hc.lib.date.timezone.now")
+    @patch("hc.lib.date.now")
     def test_downtime_summary_handles_positive_utc_offset(self, mock_now):
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 
@@ -165,7 +165,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Dec. 2019")
         self.assertContains(r, "Nov. 2019")
 
-    @patch("hc.lib.date.timezone.now")
+    @patch("hc.lib.date.now")
     def test_downtime_summary_handles_negative_utc_offset(self, mock_now):
         mock_now.return_value = datetime(2020, 1, 31, 23, tzinfo=timezone.utc)
 
@@ -182,7 +182,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Jan. 2020")
         self.assertContains(r, "Dec. 2019")
 
-    @patch("hc.lib.date.timezone.now")
+    @patch("hc.lib.date.now")
     def test_it_handles_months_when_check_did_not_exist(self, mock_now):
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 

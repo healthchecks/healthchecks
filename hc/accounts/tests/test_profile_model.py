@@ -16,7 +16,7 @@ MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class ProfileModelTestCase(BaseTestCase):
-    @patch("hc.lib.date.timezone.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
     def test_it_sends_report(self):
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now()
