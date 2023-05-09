@@ -101,7 +101,8 @@ def debug_warning():
 
 
 def naturalize_int_match(match):
-    return "%08d" % (int(match.group(0)),)
+    n = int(match.group(0))
+    return f"{n:08}"
 
 
 def natural_name_key(check):
