@@ -1,4 +1,5 @@
 {% load hc_extras static %}
+<p>sort is {{ sort }}</p>
 <table
     id="checks-table"
     class="table {% if rw %}rw{% endif%}"
@@ -47,7 +48,7 @@
                 Last Ping<span class="ic-desc"></span>
             </a>
             {% else %}
-            <a href="{% sort_url 'last_ping' %}" data-toggle="tooltip" class="default sort-last-ping" data-sort-value="last-ping">
+            <a href="{% sort_url 'last_ping' %}" data-toggle="tooltip" class="default sort-last-ping" data-sort-value="last_ping">
                 Last Ping
             </a>
             {% endif %}
