@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 
-from hc.api.management.commands.smtpd import Listener, _process_message
+from hc.api.management.commands.smtpd import PingHandler, _process_message
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
@@ -195,16 +195,23 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, None)
 
     @patch("hc.api.management.commands.smtpd.connections")
-    def test_it_handles_multiple_recipients(self, mock_connections):
-        Listener.process_message(
-            Mock(),
-            ["1.2.3.4"],
-            "foo@example.org",
-            ["bar@example.org", self.email],
-            b"hello world",
-        )
+    async def test_it_handles_multiple_recipients(self, mock_connections):
+        class Session:
+            peer = ["1.2.3.4"]
 
-        ping = Ping.objects.latest("id")
+        class Envelope:
+            mail_from = "foo@example.org"
+            rcpt_tos = ["bar@example.org", self.email]
+            content = b"hello world"
+
+        class NullSink:
+            def write(self, *args, **kwargs):
+                pass
+
+        handler = PingHandler(NullSink())
+        await handler.handle_DATA(None, Session(), Envelope())
+
+        ping = await Ping.objects.alatest("id")
         self.assertEqual(ping.scheme, "email")
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(bytes(ping.body_raw), b"hello world")

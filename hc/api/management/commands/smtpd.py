@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import asyncore
 import email
 import email.policy
 import re
-from smtpd import SMTPServer
 
+from aiosmtpd.controller import Controller
+from asgiref.sync import sync_to_async
 from django.core.management.base import BaseCommand
 from django.db import connections
 
@@ -76,18 +76,23 @@ def _process_message(remote_addr, mailfrom, mailto, data):
     return f"Processed ping for {code}"
 
 
-class Listener(SMTPServer):
-    def __init__(self, localaddr, stdout):
+class PingHandler:
+    def __init__(self, stdout):
         self.stdout = stdout
-        super(Listener, self).__init__(localaddr, None, decode_data=False)
+        self.process_message = sync_to_async(_process_message)
 
-    def process_message(self, peer, mailfrom, rcpttos, data, **kwargs):
+    async def handle_DATA(self, server, session, envelope):
         # get a new db connection in case the old one has timed out:
         connections.close_all()
 
-        for rcptto in rcpttos:
-            result = _process_message(peer[0], mailfrom, rcptto, data)
+        remote_addr = session.peer[0]
+        mailfrom = envelope.mail_from
+        data = envelope.content
+        for mailto in envelope.rcpt_tos:
+            result = await self.process_message(remote_addr, mailfrom, mailto, data)
             self.stdout.write(result)
+
+        return "250 OK"
 
 
 class Command(BaseCommand):
@@ -102,6 +107,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, host, port, *args, **options):
-        _ = Listener((host, port), self.stdout)
-        print("Starting SMTP listener on %s:%d ..." % (host, port))
-        asyncore.loop()
+        handler = PingHandler(self.stdout)
+        controller = Controller(handler, hostname=host, port=port)
+        print(f"Starting SMTP listener on {host}:{port} ...")
+        controller.start()
+        input("SMTP server running. Press Return to stop server and exit.\n")
+        controller.stop()
