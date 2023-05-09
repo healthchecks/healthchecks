@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix a race condition when pinging and deleting checks at the same time
+- Fix the checks list to preserve filters when changing sort order (#828)
 
 ## v2.8.1 - 2023-04-11
 

@@ -96,6 +96,12 @@ class MyChecksTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sort, "name")
 
+    def test_it_includes_filters_in_sort_urls(self):
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?tag=foo&search=bar")
+        self.assertContains(r, "?tag=foo&search=bar&sort=name")
+        self.assertContains(r, "?tag=foo&search=bar&sort=last_ping")
+
     def test_it_ignores_bad_sort_value(self):
         self.client.login(username="alice@example.org", password="password")
         self.client.get(self.url + "?sort=invalid")

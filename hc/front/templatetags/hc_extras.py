@@ -261,3 +261,10 @@ def mask_phone(phone):
         return phone[:4] + "******" + phone[-3:]
 
     return phone
+
+
+@register.simple_tag(takes_context=True)
+def sort_url(context, sort):
+    q = context["request"].GET.copy()
+    q["sort"] = sort
+    return mark_safe("?" + q.urlencode())

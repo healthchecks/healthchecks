@@ -2,21 +2,20 @@
 <table
     id="checks-table"
     class="table {% if rw %}rw{% endif%}"
-    data-list-url="{% url 'hc-checks' project.code %}"
     data-status-url="{% url 'hc-status' project.code %}">
     <tr>
         <th></th>
         <th class="th-name">
             {% if sort == "name" %}
-            <a href="?sort=-name" data-toggle="tooltip" class="sort-name">
+            <a href="{% sort_url '-name' %}" data-toggle="tooltip" class="sort-name" data-sort-value="-name">
                 Name<span class="ic-asc"></span>
             </a>
             {% elif sort == "-name" %}
-            <a href="?sort=created" data-toggle="tooltip" class="sort-name">
+            <a href="{% sort_url 'created' %}" data-toggle="tooltip" class="sort-name" data-sort-value="created">
                 Name<span class="ic-desc"></span>
             </a>
             {% else %}
-            <a href="?sort=name" data-toggle="tooltip" class="default sort-name">
+            <a href="{% sort_url 'name' %}" data-toggle="tooltip" class="default sort-name" data-sort-value="name">
                 Name
             </a>
             {% endif %}
@@ -40,15 +39,15 @@
         </th>
         <th class="th-last-ping hidden-xs">
             {% if sort == "last_ping" %}
-            <a href="?sort=created" data-toggle="tooltip" class="sort-last-ping">
-                Last Ping<span class="ic-desc"></span>
-            </a>
-            {% elif sort == "-last_ping" %}
-            <a href="?sort=last_ping" data-toggle="tooltip" class="sort-last-ping">
+            <a href="{% sort_url '-last_ping' %}" data-toggle="tooltip" class="sort-last-ping" data-sort-value="-last_ping">
                 Last Ping<span class="ic-asc"></span>
             </a>
+            {% elif sort == "-last_ping" %}
+            <a href="{% sort_url 'created' %}" data-toggle="tooltip" class="sort-last-ping" data-sort-value="created">
+                Last Ping<span class="ic-desc"></span>
+            </a>
             {% else %}
-            <a href="?sort=-last_ping" data-toggle="tooltip" class="default sort-last-ping">
+            <a href="{% sort_url 'last_ping' %}" data-toggle="tooltip" class="default sort-last-ping" data-sort-value="last-ping">
                 Last Ping
             </a>
             {% endif %}
