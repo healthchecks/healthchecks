@@ -1,6 +1,6 @@
 aiosmtpd==1.4.4.post2
 cronsim==2.4.1
-Django==4.2
+Django==4.2.1
 django-compressor==4.3.1
 fido2==1.1.1
 psycopg2==2.9.6
