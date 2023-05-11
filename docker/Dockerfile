@@ -36,4 +36,5 @@ RUN \
 
 USER hc
 
+ENV USE_GZIP_MIDDLEWARE=True
 CMD [ "uwsgi", "/opt/healthchecks/docker/uwsgi.ini"]

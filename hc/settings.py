@@ -63,7 +63,7 @@ INSTALLED_APPS = (
 )
 
 
-MIDDLEWARE = (
+MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -74,7 +74,10 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "hc.accounts.middleware.TeamAccessMiddleware",
-)
+]
+
+if envbool("USE_GZIP_MIDDLEWARE", "False"):
+    MIDDLEWARE.append("django.middleware.gzip.GZipMiddleware")
 
 AUTHENTICATION_BACKENDS = [
     "hc.accounts.backends.EmailBackend",
