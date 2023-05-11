@@ -176,6 +176,7 @@ STATICFILES_FINDERS = (
 )
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_HASHING_METHOD = "content"
+COMPRESS_STORAGE = "compressor.storage.GzipCompressorFileStorage"
 # Use CssRelativeFilter instead of CssAbsoluteFilter to fix
 # icon font loading when serving Healthchecks from a subdirectory
 COMPRESS_FILTERS = {
