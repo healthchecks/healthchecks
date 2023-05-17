@@ -357,8 +357,8 @@ If you enable external object storage, Healthchecks will still be able to
 access the ping bodies already stored in the database. You don't need to migrate
 them to the object storage. On the other hand, if you later decide to disable
 external object storage, Healthchecks will not have access to the externally
-stored ping bodies any more. And there is currently no documented process for
-migrating ping bodies from external object storage back to the database.
+stored ping bodies any more. And there is currently no script or management command
+for migrating ping bodies from external object storage back to the database.
 
 ## Integrations
 
