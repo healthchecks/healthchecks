@@ -351,6 +351,15 @@ clean up data when you delete checks, projects or entire user accounts.
 Use the `pruneobjects` management command to remove data for checks that don't
 exist any more.
 
+When external object storage is not enabled (the credentials for accessing object
+storage are not set), Healthchecks stores all ping bodies in the database.
+If you enable external object storage, Healthchecks will still be able to
+access the ping bodies already stored in the database. You don't need to migrate
+them to the object storage. On the other hand, if you later decide to disable
+external object storage, Healthchecks will not have access to the externally
+stored ping bodies any more. And there is currently no documented process for
+migrating ping bodies from external object storage back to the database.
+
 ## Integrations
 
 ### Slack
