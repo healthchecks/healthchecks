@@ -6,6 +6,7 @@ import json
 from datetime import timedelta as td
 from unittest.mock import patch
 
+from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -51,7 +52,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
-        self.assertEqual(email.extra_headers["X-Status-Url"], n.status_url())
+        self.assertNotIn("X-Bounce-ID", email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
 
@@ -248,3 +249,15 @@ class NotifyEmailTestCase(BaseTestCase):
         html = email.alternatives[0][0]
         self.assertIn("Log", email.body)
         self.assertIn("Log", html)
+
+    @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
+    def test_it_sets_custom_mail_from(self):
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        self.assertTrue(email.from_email.startswith("n."))
+        self.assertTrue(email.from_email.endswith("@bounces.example.org"))
+        # The From header should contain the display address
+        self.assertEqual(email.extra_headers["From"], settings.DEFAULT_FROM_EMAIL)
+        # There should be no X-Bounce-ID header
+        self.assertNotIn("X-Bounce-ID", email.extra_headers)

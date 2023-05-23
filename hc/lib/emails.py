@@ -39,7 +39,20 @@ def make_message(name, to, ctx, headers={}):
     body = render("emails/%s-body-text.html" % name, ctx)
     html = render("emails/%s-body-html.html" % name, ctx)
 
-    msg = EmailMultiAlternatives(subject, body, to=(to,), headers=headers)
+    # Make sure the From: header contains our display From: address
+    if "From" not in headers:
+        headers["From"] = settings.DEFAULT_FROM_EMAIL
+
+    # If EMAIL_MAIL_FROM_TMPL is set, prepare a custom MAIL FROM address
+    bounce_id = headers.pop("X-Bounce-ID", "bounces")
+    if settings.EMAIL_MAIL_FROM_TMPL:
+        from_email = settings.EMAIL_MAIL_FROM_TMPL % bounce_id
+    else:
+        from_email = settings.DEFAULT_FROM_EMAIL
+
+    msg = EmailMultiAlternatives(
+        subject, body, from_email=from_email, to=(to,), headers=headers
+    )
     msg.attach_alternative(html, "text/html")
     return msg
 

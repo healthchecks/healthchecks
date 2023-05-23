@@ -205,6 +205,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = envbool("EMAIL_USE_TLS", "True")
 EMAIL_USE_SSL = envbool("EMAIL_USE_SSL", "False")
 EMAIL_USE_VERIFICATION = envbool("EMAIL_USE_VERIFICATION", "True")
+EMAIL_MAIL_FROM_TMPL = os.getenv("EMAIL_MAIL_FROM_TMPL", "")
 
 # WebAuthn
 RP_ID = os.getenv("RP_ID")

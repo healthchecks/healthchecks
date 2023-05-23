@@ -30,8 +30,8 @@ class SendTestNotificationTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
-        self.assertTrue("X-Status-Url" in email.extra_headers)
-        self.assertTrue("List-Unsubscribe" in email.extra_headers)
+        self.assertNotIn("X-Bounce-ID", email.extra_headers)
+        self.assertIn("List-Unsubscribe", email.extra_headers)
 
         # It should update self.channel.last_notify
         self.channel.refresh_from_db()

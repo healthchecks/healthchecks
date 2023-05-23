@@ -9,6 +9,7 @@ import uuid
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
+from django.core.signing import TimestampSigner
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.timezone import now
@@ -153,7 +154,8 @@ class Email(Transport):
         }
 
         if notification:
-            headers["X-Status-Url"] = notification.status_url()
+            signer = TimestampSigner(sep=".")
+            headers["X-Bounce-ID"] = signer.sign("n.%s" % notification.code)
 
         from hc.accounts.models import Profile
 

@@ -5,6 +5,7 @@ from datetime import timedelta as td
 from datetime import timezone
 from unittest.mock import Mock, patch
 
+from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -79,8 +80,9 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
-        self.assertTrue("List-Unsubscribe" in email.extra_headers)
-        self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
+        self.assertIn("List-Unsubscribe", email.extra_headers)
+        self.assertIn("List-Unsubscribe-Post", email.extra_headers)
+        self.assertNotIn("X-Bounce-ID", email.extra_headers)
         self.assertEqual(email.subject, "Monthly Report")
         self.assertIn("This is a monthly report", email.body)
 
@@ -236,3 +238,18 @@ class SendReportsTestCase(BaseTestCase):
         # next_nag_date should now be unset
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.next_nag_date)
+
+    @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
+    def test_it_sets_custom_mail_from(self):
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+
+        cmd.handle_one_report()
+
+        email = mail.outbox[0]
+        self.assertTrue(email.from_email.startswith("r."))
+        self.assertTrue(email.from_email.endswith("@bounces.example.org"))
+        # The From header should contain the display address
+        self.assertEqual(email.extra_headers["From"], settings.DEFAULT_FROM_EMAIL)
+        # There should be no X-Bounce-ID header
+        self.assertNotIn("X-Bounce-ID", email.extra_headers)

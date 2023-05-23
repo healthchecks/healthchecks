@@ -213,9 +213,10 @@ class Profile(models.Model):
         # rendering the template
         checks = list(checks)
 
+        bounce_id = TimestampSigner(sep=".").sign("r.%s" % self.user.username)
         unsub_url = self.reports_unsub_url()
-
         headers = {
+            "X-Bounce-ID": bounce_id,
             "List-Unsubscribe": "<%s>" % unsub_url,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
