@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import email.policy
 import time
 from datetime import timedelta as td
+from email import message_from_bytes
 from uuid import UUID
 
 from django.conf import settings
+from django.core.signing import BadSignature, TimestampSigner
 from django.db import connection
 from django.db.models import Prefetch
 from django.http import (
@@ -635,5 +638,63 @@ def status(request):
     with connection.cursor() as c:
         c.execute("SELECT 1")
         c.fetchone()
+
+    return HttpResponse("OK")
+
+
+@csrf_exempt
+def bounces(request):
+    msg = message_from_bytes(request.body, policy=email.policy.SMTP)
+    to_local = msg.get("To", "").split("@")[0]
+
+    try:
+        unsigned = TimestampSigner(sep=".").unsign(to_local, max_age=3600 * 48)
+    except BadSignature:
+        # If the signature is invalid or expired return HTTP 200 so the other party
+        # doesn't retry over and over again-
+        return HttpResponse("OK (bad signature)")
+
+    status = ""
+    for part in msg.walk():
+        if "Status" in part and "Action" in part:
+            status = part["Status"]
+            break
+
+    permanent = status.startswith("5.")
+    transient = status.startswith("4.")
+    if not permanent and not transient:
+        return HttpResponse("OK (ignored)")
+
+    if unsigned.startswith("n."):
+        notification_code = unsigned[2:]
+        try:
+            cutoff = now() - td(hours=48)
+            n = Notification.objects.get(code=notification_code, created__gt=cutoff)
+        except Notification.DoesNotExist:
+            return HttpResponse("OK (notification not found)")
+
+        error = f"Delivery failed ({status})"
+        n.error = error
+        n.save(update_fields=["error"])
+
+        channel_q = Channel.objects.filter(id=n.channel_id)
+        channel_q.update(last_error=error)
+
+        if permanent:
+            channel_q.update(disabled=True)
+
+    if unsigned.startswith("r.") and permanent:
+        username = unsigned[2:]
+
+        try:
+            profile = Profile.objects.get(user__username=username)
+        except Profile.DoesNotExist:
+            return HttpResponse("OK (user not found)")
+
+        profile.reports = "off"
+        profile.next_report_date = None
+        profile.nag_period = td()
+        profile.next_nag_date = None
+        profile.save()
 
     return HttpResponse("OK")

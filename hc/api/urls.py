@@ -68,6 +68,7 @@ api_urls = [
     path("badges/", views.badges),
     path("metrics/", views.metrics),
     path("status/", views.status),
+    path("bounces/", views.bounces),
 ]
 
 urlpatterns = [
