@@ -673,7 +673,7 @@ def bounces(request):
         except Notification.DoesNotExist:
             return HttpResponse("OK (notification not found)")
 
-        error = f"Delivery failed ({status})"
+        error = f"Delivery failed (SMTP status code: {status})"
         n.error = error
         n.save(update_fields=["error"])
 

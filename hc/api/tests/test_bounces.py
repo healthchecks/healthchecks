@@ -73,11 +73,13 @@ To: foo@example.com
         self.assertEqual(r.status_code, 200)
 
         self.n.refresh_from_db()
-        self.assertEqual(self.n.error, "Delivery failed (5.0.0)")
+        self.assertEqual(self.n.error, "Delivery failed (SMTP status code: 5.0.0)")
         self.assertEqual(r.content.decode(), "OK")
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.last_error, "Delivery failed (5.0.0)")
+        self.assertEqual(
+            self.channel.last_error, "Delivery failed (SMTP status code: 5.0.0)"
+        )
         self.assertTrue(self.channel.disabled)
 
     def test_it_handles_transient_notification_bounce(self):
@@ -86,10 +88,12 @@ To: foo@example.com
         self.assertEqual(r.content.decode(), "OK")
 
         self.n.refresh_from_db()
-        self.assertEqual(self.n.error, "Delivery failed (4.0.0)")
+        self.assertEqual(self.n.error, "Delivery failed (SMTP status code: 4.0.0)")
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.last_error, "Delivery failed (4.0.0)")
+        self.assertEqual(
+            self.channel.last_error, "Delivery failed (SMTP status code: 4.0.0)"
+        )
         self.assertFalse(self.channel.disabled)
 
     def test_it_handles_notification_non_bounce(self):
