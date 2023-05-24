@@ -9,7 +9,6 @@ import uuid
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
-from django.core.signing import TimestampSigner
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.timezone import now
@@ -19,6 +18,7 @@ from hc.api.schemas import telegram_migration
 from hc.front.templatetags.hc_extras import sortchecks
 from hc.lib import curl, emails, jsonschema
 from hc.lib.date import format_duration
+from hc.lib.signing import sign_bounce_id
 from hc.lib.string import replace
 
 try:
@@ -154,8 +154,7 @@ class Email(Transport):
         }
 
         if notification:
-            signer = TimestampSigner(sep=".")
-            headers["X-Bounce-ID"] = signer.sign("n.%s" % notification.code)
+            headers["X-Bounce-ID"] = sign_bounce_id("n.%s" % notification.code)
 
         from hc.accounts.models import Profile
 

@@ -4,11 +4,11 @@ import time
 from datetime import timedelta as td
 from unittest.mock import patch
 
-from django.core.signing import TimestampSigner
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check, Notification
+from hc.lib.signing import sign_bounce_id
 from hc.test import BaseTestCase
 
 
@@ -31,7 +31,7 @@ class BounceTestCase(BaseTestCase):
 
     def post(self, status="5.0.0", to_local=None):
         if to_local is None:
-            to_local = TimestampSigner(sep=".").sign("n.%s" % self.n.code)
+            to_local = sign_bounce_id("n.%s" % self.n.code)
 
         msg = f"""Subject: Undelivered Mail Returned to Sender
 To: {to_local}@example.org
@@ -103,16 +103,16 @@ To: foo@example.com
 
     def test_it_handles_bad_signature(self):
         with override_settings(SECRET_KEY="wrong-signing-key"):
-            to_local = TimestampSigner(sep=".").sign("n.%s" % self.n.code)
+            to_local = sign_bounce_id("n.%s" % self.n.code)
 
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.content.decode(), "OK (bad signature)")
 
     def test_it_handles_expired_signature(self):
-        with patch("django.core.signing.time") as mock_time:
+        with patch("hc.lib.signing.time") as mock_time:
             mock_time.time.return_value = time.time() - 3600 * 48 - 1
-            to_local = TimestampSigner(sep=".").sign("n.%s" % self.n.code)
+            to_local = sign_bounce_id("n.%s" % self.n.code)
 
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
@@ -126,7 +126,7 @@ To: foo@example.com
         self.assertEqual(r.content.decode(), "OK (notification not found)")
 
     def test_it_handles_permanent_report_bounce(self):
-        to_local = TimestampSigner(sep=".").sign("r.alice")
+        to_local = sign_bounce_id("r.alice")
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.content.decode(), "OK")
@@ -136,7 +136,7 @@ To: foo@example.com
         self.assertEqual(self.profile.nag_period, td())
 
     def test_it_handles_transient_report_bounce(self):
-        to_local = TimestampSigner(sep=".").sign("r.alice")
+        to_local = sign_bounce_id("r.alice")
         r = self.post(status="4.0.0", to_local=to_local)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.content.decode(), "OK")
@@ -145,7 +145,7 @@ To: foo@example.com
         self.assertEqual(self.profile.reports, "monthly")
 
     def test_it_handles_bad_username(self):
-        to_local = TimestampSigner(sep=".").sign("r.doesnotexist")
+        to_local = sign_bounce_id("r.doesnotexist")
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.content.decode(), "OK (user not found)")

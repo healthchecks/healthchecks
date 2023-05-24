@@ -19,6 +19,7 @@ from django.utils.timezone import now
 
 from hc.lib import emails
 from hc.lib.date import month_boundaries, week_boundaries
+from hc.lib.signing import sign_bounce_id
 
 if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo
@@ -213,10 +214,9 @@ class Profile(models.Model):
         # rendering the template
         checks = list(checks)
 
-        bounce_id = TimestampSigner(sep=".").sign("r.%s" % self.user.username)
         unsub_url = self.reports_unsub_url()
         headers = {
-            "X-Bounce-ID": bounce_id,
+            "X-Bounce-ID": sign_bounce_id("r.%s" % self.user.username),
             "List-Unsubscribe": "<%s>" % unsub_url,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }

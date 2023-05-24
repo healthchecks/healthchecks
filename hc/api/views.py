@@ -7,7 +7,7 @@ from email import message_from_bytes
 from uuid import UUID
 
 from django.conf import settings
-from django.core.signing import BadSignature, TimestampSigner
+from django.core.signing import BadSignature
 from django.db import connection
 from django.db.models import Prefetch
 from django.http import (
@@ -31,6 +31,7 @@ from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.forms import FlipsFiltersForm
 from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
+from hc.lib.signing import unsign_bounce_id
 from hc.lib.string import is_valid_uuid_string
 
 
@@ -648,7 +649,7 @@ def bounces(request):
     to_local = msg.get("To", "").split("@")[0]
 
     try:
-        unsigned = TimestampSigner(sep=".").unsign(to_local, max_age=3600 * 48)
+        unsigned = unsign_bounce_id(to_local, max_age=3600 * 48)
     except BadSignature:
         # If the signature is invalid or expired return HTTP 200 so the other party
         # doesn't retry over and over again-
