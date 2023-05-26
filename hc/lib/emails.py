@@ -40,7 +40,7 @@ def make_message(name, to, ctx, headers={}):
     body = render("emails/%s-body-text.html" % name, ctx)
     html = render("emails/%s-body-html.html" % name, ctx)
 
-    domain = settings.DEFAULT_FROM_EMAIL.split("@")[-1]
+    domain = settings.DEFAULT_FROM_EMAIL.split("@")[-1].strip(">")
     headers["Message-ID"] = make_msgid(domain=domain)
 
     # Make sure the From: header contains our display From: address

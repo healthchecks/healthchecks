@@ -98,6 +98,13 @@ class NotifyEmailTestCase(BaseTestCase):
         # Check's code must not be in the plain text body
         self.assertNotIn(str(self.check.code), email.body)
 
+    @override_settings(DEFAULT_FROM_EMAIL='"Alerts" <alerts@example.org>')
+    def test_it_message_id_generation_handles_angle_brackets(self):
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        self.assertTrue(email.extra_headers["Message-ID"].endswith("@example.org>"))
+
     @override_settings(S3_BUCKET="test-bucket")
     @patch("hc.api.models.get_object")
     def test_it_loads_body_from_object_storage(self, get_object):
