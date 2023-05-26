@@ -30,18 +30,15 @@
                         id="target-project"
                         name="project"
                         title="Select..."
-                        class="form-control selectpicker">
+                        class="form-control">
+                        <option></option>
                         {% for project in request.profile.projects.all %}
                             {% if project == check.project %}
-                                <option disabled data-subtext="(current project)">
-                                    {{ project }}
-                                </option>
+                                <option disabled>{{ project }} (current project)</option>
                             {% elif project.owner_id == check.project.owner_id or project.num_checks_available > 0 %}
                                 <option value="{{ project.code }}">{{ project }}</option>
                             {% else %}
-                                <option disabled data-subtext="(at check limit)">
-                                    {{ project }}
-                                </option>
+                                <option disabled>{{ project }} (at check limit)</option>
                             {% endif %}
                         {% endfor %}
                     </select>

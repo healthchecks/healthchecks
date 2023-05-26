@@ -609,7 +609,8 @@
                             id="new-owner"
                             name="email"
                             title="Select..."
-                            class="form-control selectpicker">
+                            class="form-control">
+                            <option></option>
                             {% for m in memberships %}
                             <option>{{ m.user.email }}</option>
                             {% endfor %}
@@ -643,7 +644,6 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'js/project.js' %}"></script>
 {% endcompress %}
 {% endblock %}

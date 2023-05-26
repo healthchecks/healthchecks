@@ -166,7 +166,6 @@ $(function () {
         transferFormLoadStarted = true;
         $.get(this.dataset.url, function(data) {
             $("#transfer-modal" ).html(data);
-            $("#target-project").selectpicker();
         });
     });
 

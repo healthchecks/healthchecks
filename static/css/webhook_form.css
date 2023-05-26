@@ -2,10 +2,6 @@
      width: 900px;
 }
 
-#add-webhook-form div.bootstrap-select {
-    width: 100px;
-}
-
 .method-url-group {
     display: flex;
 }
