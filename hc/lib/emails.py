@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from email.utils import make_msgid
 from smtplib import SMTPDataError, SMTPServerDisconnected
 from threading import Thread
 
@@ -38,6 +39,9 @@ def make_message(name, to, ctx, headers={}):
     subject = render("emails/%s-subject.html" % name, ctx).strip()
     body = render("emails/%s-body-text.html" % name, ctx)
     html = render("emails/%s-body-html.html" % name, ctx)
+
+    domain = settings.DEFAULT_FROM_EMAIL.split("@")[-1]
+    headers["Message-ID"] = make_msgid(domain=domain)
 
     # Make sure the From: header contains our display From: address
     if "From" not in headers:

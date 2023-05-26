@@ -41,6 +41,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+    @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_works(self):
         self.channel.notify(self.check)
 
@@ -55,6 +56,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertNotIn("X-Bounce-ID", email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
+        self.assertTrue(email.extra_headers["Message-ID"].endswith("@example.org>"))
 
         html = email.alternatives[0][0]
         # Name
