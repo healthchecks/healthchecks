@@ -56,7 +56,7 @@
             <div class="form-group {{ form.url_down.css_classes }}">
                 <label>URL</label>
                 <div class="method-url-group">
-                    <select id="method-down" name="method_down" class="selectpicker">
+                    <select id="method-down" name="method_down" class="form-control">
                         <option{% if form.method_down.value == "GET" %} selected{% endif %}>GET</option>
                         <option{% if form.method_down.value == "POST" %} selected{% endif %}>POST</option>
                         <option{% if form.method_down.value == "PUT" %} selected{% endif %}>PUT</option>
@@ -112,7 +112,7 @@
             <div class="form-group {{ form.url_up.css_classes }}">
                 <label>URL</label>
                 <div class="method-url-group">
-                    <select id="method-up" name="method_up" class="selectpicker">
+                    <select id="method-up" name="method_up" class="form-control">
                         <option{% if form.method_up.value == "GET" %} selected{% endif %}>GET</option>
                         <option{% if form.method_up.value == "POST" %} selected{% endif %}>POST</option>
                         <option{% if form.method_up.value == "PUT" %} selected{% endif %}>PUT</option>
@@ -250,7 +250,6 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script src="{% static 'js/webhook.js' %}"></script>
 {% endcompress %}
 {% endblock %}

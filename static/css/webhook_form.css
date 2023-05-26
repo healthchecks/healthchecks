@@ -42,3 +42,12 @@
 #webhook-form-name {
     max-width: 400px;
 }
+
+#add-webhook-form .form-group select {
+    width: 100px;
+    margin-right: -1px;
+}
+
+#add-webhook-form .form-group select:focus {
+    z-index: 2;
+}
