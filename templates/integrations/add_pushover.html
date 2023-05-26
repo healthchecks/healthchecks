@@ -24,34 +24,24 @@
         <div class="form-group">
             <label class="col-sm-3 control-label">Priority for "down" events</label>
             <div class="col-sm-8">
-                <select name="po_priority" class="selectpicker form-control">
-                    <option
-                        value="-3"
-                        data-content="Disabled. <span class='help'>Does not notify about Down events.</span>">
-                        Disabled
+                <select name="po_priority" class="form-control">
+                    <option value="-3">
+                        Disabled: Does not notify about Down events.
                     </option>
-                    <option
-                        value="-2"
-                        data-content="Lowest priority. <span class='help'>Generates no notification on your device.</span>">
-                        Lowest Priority
+                    <option value="-2">
+                        Lowest Priority: Generates no notification on your device.
                     </option>
-                    <option
-                        value="-1"
-                        data-content="Low priority. <span class='help'>Sends a quiet notification.</span>">
-                        Low Priority
+                    <option value="-1">
+                        Low Priority: Sends a quiet notification.
                     </option>
                     <option value="0" selected="selected">
-                        Normal Priority
+                        Normal Priority:
                     </option>
-                    <option
-                        value="1"
-                        data-content="High priority. <span class='help'>Bypasses user's quiet hours.</span>">
-                        High Priority
+                    <option value="1">
+                        High Priority: Bypasses user's quiet hours.
                     </option>
-                    <option
-                        value="2"
-                        data-content="Emergency priority. <span class='help'>Repeated every {{po_retry_delay|hc_duration }} for at most {{ po_expiration|hc_duration }} until you acknowledge them.</span>">
-                        Emergency Priority
+                    <option value="2">
+                        Emergency Priority: Repeated every {{po_retry_delay|hc_duration }} for at most {{ po_expiration|hc_duration }} until you acknowledge them.
                     </option>
                 </select>
            </div>
@@ -60,34 +50,24 @@
         <div class="form-group">
             <label class="col-sm-3 control-label">Priority for "up" events</label>
             <div class="col-sm-8">
-                <select name="po_priority_up" class="selectpicker form-control">
-                    <option
-                        value="-3"
-                        data-content="Disabled. <span class='help'>Does not notify about Up events.</span>">
-                        Disabled
+                <select name="po_priority_up" class="form-control">
+                    <option value="-3">
+                        Disabled: Does not notify about Up events.
                     </option>
-                    <option
-                        value="-2"
-                        data-content="Lowest priority. <span class='help'>Generates no notification on your device.</span>">
-                        Lowest priority
+                    <option value="-2">
+                        Lowest priority: Generates no notification on your device.
                     </option>
-                    <option
-                        value="-1"
-                        data-content="Low priority. <span class='help'>Sends a quiet notification.</span>">
-                        Low priority
+                    <option value="-1">
+                        Low priority: Sends a quiet notification.
                     </option>
                     <option value="0" selected="selected">
-                        Normal priority
+                        Normal priority:
                     </option>
-                    <option
-                        value="1"
-                        data-content="High priority. <span class='help'>Bypasses user's quiet hours.</span>">
-                        High priority
+                    <option value="1">
+                        High priority: Bypasses user's quiet hours.
                     </option>
-                    <option
-                        value="2"
-                        data-content="Emergency priority. <span class='help'>Repeated every {{po_retry_delay|hc_duration }} for at most {{ po_expiration|hc_duration }} until you acknowledge them.</span>">
-                        Emergency priority
+                    <option value="2">
+                        Emergency priority: Repeated every {{po_retry_delay|hc_duration }} for at most {{ po_expiration|hc_duration }} until you acknowledge them.
                     </option>
                 </select>
            </div>
@@ -108,6 +88,7 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'js/selectize.min.js' %}"></script>
+<script src="{% static 'js/add_pushover.js' %}"></script>
 {% endcompress %}
 {% endblock %}
