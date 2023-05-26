@@ -336,3 +336,8 @@ input[type=number]::-webkit-inner-spin-button {
 .btn-primary {
     box-shadow: 0 5px 0 -3px rgba(34, 188, 102, 0.3);
 }
+
+/* Fix select dropdown in Chrome and dark mode  */
+select.form-control {
+    background-color: var(--panel-bg);
+}
