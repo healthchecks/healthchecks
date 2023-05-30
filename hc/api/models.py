@@ -60,6 +60,7 @@ CHANNEL_KINDS = (
     ("pd", "PagerDuty"),
     ("po", "Pushover"),
     ("pushbullet", "Pushbullet"),
+    ("rocketchat", "Rocket.Chat"),
     ("shell", "Shell Command"),
     ("signal", "Signal"),
     ("slack", "Slack"),
@@ -778,6 +779,8 @@ class Channel(models.Model):
             return transports.Pushover(self)
         elif self.kind == "pushbullet":
             return transports.Pushbullet(self)
+        elif self.kind == "rocketchat":
+            return transports.RocketChat(self)
         elif self.kind == "shell":
             return transports.Shell(self)
         elif self.kind == "signal":

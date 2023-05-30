@@ -40,8 +40,8 @@ You will need to make changes in the following files:
 * Write testcases for the new view in `/hc/font/tests/test_add_<kind>.py`.
 * Update `/templates/front/channels.html` – add a new section in the list of available
   integrations, make sure an existing integration is displayed nicely.
-* Update `/templates/front/event_summary` to make sure notifications sent to the new
-  integration are displayed nicely.
+* Update `/templates/front/event_summary.html` to make sure notifications sent to the
+  new integration are displayed nicely.
 * Add a logo in `/static/img/integrations/`.
 * Update the icon font (it's a little tricky to do, I can take care of that).
 

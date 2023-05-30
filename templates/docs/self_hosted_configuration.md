@@ -53,6 +53,7 @@ from environment variables. Below is a list of variables it reads and uses.
 <li><a href="#PUSHOVER_SUBSCRIPTION_URL">PUSHOVER_SUBSCRIPTION_URL</a></li>
 <li><a href="#REGISTRATION_OPEN">REGISTRATION_OPEN</a></li>
 <li><a href="#REMOTE_USER_HEADER">REMOTE_USER_HEADER</a></li>
+<li><a href="#ROCKETCHAT_ENABLED">ROCKETCHAT_ENABLED</a></li>
 <li><a href="#RP_ID">RP_ID</a></li>
 <li><a href="#S3_ACCESS_KEY">S3_ACCESS_KEY</a></li>
 <li><a href="#S3_BUCKET">S3_BUCKET</a></li>
@@ -575,6 +576,12 @@ value implicitly**, so it is **very important** to ensure that attackers cannot
 set the value themselves (and thus impersonate any user). How to do this varies by
 your chosen proxy, but generally involves configuring it to strip out headers that
 normalize to the same name as the chosen identity header.
+
+## `ROCKETCHAT_ENABLED` {: #ROCKETCHAT_ENABLED }
+
+Default: `True`
+
+A boolean that turns on/off the Rocket.Chat integration. Enabled by default.
 
 ## `RP_ID` {: #RP_ID }
 

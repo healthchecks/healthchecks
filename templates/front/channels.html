@@ -388,6 +388,17 @@
         </li>
         {% endif %}
 
+        {% if enable_rocketchat %}
+        <li>
+            <img src="{% static 'img/integrations/rocketchat.png' %}"
+                class="icon" alt="Rocket.Chat icon" />
+
+            <h2>Rocket.Chat</h2>
+            <p>Open-source communications platform for organizations with high data protection standards.</p>
+            <a href="{% url 'hc-add-rocketchat' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
         {% if enable_shell %}
         <li>
             <img src="{% static 'img/integrations/shell.png' %}"

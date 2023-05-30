@@ -1069,6 +1069,7 @@ def channels(request, code):
         "enable_prometheus": settings.PROMETHEUS_ENABLED is True,
         "enable_pushbullet": bool(settings.PUSHBULLET_CLIENT_ID),
         "enable_pushover": bool(settings.PUSHOVER_API_TOKEN),
+        "enable_rocketchat": settings.ROCKETCHAT_ENABLED is True,
         "enable_shell": settings.SHELL_ENABLED is True,
         "enable_signal": bool(settings.SIGNAL_CLI_SOCKET),
         "enable_slack": settings.SLACK_ENABLED is True,
@@ -1551,6 +1552,32 @@ def add_mattermost(request, code):
 
     ctx = {"page": "channels", "form": form, "project": project}
     return render(request, "integrations/add_mattermost.html", ctx)
+
+
+@require_setting("ROCKETCHAT_ENABLED")
+def rocketchat_help(request):
+    return render(request, "integrations/add_rocketchat.html")
+
+
+@require_setting("ROCKETCHAT_ENABLED")
+@login_required
+def add_rocketchat(request, code):
+    project = _get_rw_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="rocketchat")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels", project.code)
+    else:
+        form = forms.AddUrlForm()
+
+    ctx = {"page": "channels", "form": form, "project": project}
+    return render(request, "integrations/add_rocketchat.html", ctx)
 
 
 @require_setting("PUSHBULLET_CLIENT_ID")

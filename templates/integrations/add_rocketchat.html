@@ -1,0 +1,168 @@
+{% extends "base_project.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Rocket.Chat Integration for {{ site_name }}{% endblock %}
+{% block description %}
+    <meta name="description" content="If your team uses Rocket.Chat, you can set up {{ site_name }} to post alerts directly to an appropriate Rocket.Chat channel when a check goes up or down.">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+
+    <h1>Rocket.Chat</h1>
+    <div class="jumbotron">
+        {% if request.user.is_authenticated %}
+        <p>
+            If your team uses <a href="https://www.rocket.chat/">Rocket.Chat</a>,
+            you can set up {{ site_name }} to post alerts directly to an
+            appropriate Rocket.Chat channel when a check goes <strong>up</strong>
+            or <strong>down</strong>.
+        </p>
+        {% else %}
+        <p>
+            {{ site_name }} is a free and
+            <a href="https://github.com/healthchecks/healthchecks">open source</a>
+            service for monitoring <strong>cron jobs</strong>, <strong>background processes</strong> and
+            <strong>scheduled tasks</strong>. When {% site_name %} detects a problem, it can notify
+            you by posting to a Rocket.Chat channel. To set up the Rocket.Chat
+            integration, please sign into {{ site_name }}:
+        </p>
+
+        <div class="text-center">
+            <a href="{% url 'hc-login' %}"
+               class="btn btn-primary btn-lg">Sign In</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <h2>Setup Guide</h2>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            Log into your Rocket.Chat account and
+            navigate to <strong>Administration</strong> > <strong>Workspace</strong> > <strong>Integrations</strong>.
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_rocketchat_1.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>Click <strong>"+New"</strong> at the top right corner.</p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_rocketchat_2.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>Switch to the <strong>Incoming</strong> tab, and fill in the form:</p>
+            <ul>
+                <li>Turn on the <strong>Enabled</strong> toggle.</li>
+                <li><strong>Name:</strong> give the integration a descriptive name.</li>
+                <li><strong>Post to Channel: </strong> select the channel or user to receive alerts.</li>
+                <li><strong>Post as: </strong> choose the username that this integration posts as. The user must already exist.</li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_rocketchat_3.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            {% if project %}
+            <p>Save the integration, then copy the generated
+            <strong>Webhook URL</strong> and paste it in the form below.</p>
+            {% else %}
+            <p>Save the integration, then copy the generated <strong>Webhook URL</strong>.</p>
+            {% endif %}
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_rocketchat_4.png' %}">
+        </div>
+    </div>
+
+    {% if not project %}
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>Sign into {% site_name %}, then go to the <strong>Integrations</strong>
+                page and click on <strong>Add Integration</strong> next to the
+                Rocket.Chat integration.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_rocketchat_5.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>Paste the copied <strong>URL</strong> in the form.</p>
+            <p>Save the integration, and you are all set!</p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_rocketchat_6.png' %}">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if project %}
+    <h2>Integration Settings</h2>
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group {{ form.value.css_classes }}">
+            <label for="callback-url" class="col-sm-2 control-label">
+                Webhook URL
+            </label>
+            <div class="col-sm-10">
+                <input
+                    id="callback-url"
+                    type="text"
+                    class="form-control"
+                    name="value"
+                    placeholder="https://"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.value.errors %}
+                <div class="help-block">
+                    {{ form.value.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+</div>
+</div>
+{% endblock %}

@@ -553,6 +553,22 @@ class Pushover(HttpTransport):
         self.post(self.URL, data=payload)
 
 
+class RocketChat(HttpTransport):
+    @classmethod
+    def raise_for_response(cls, response):
+        message = f"Received status code {response.status_code}"
+        raise TransportError(message)
+
+    def notify(self, check, notification=None) -> None:
+        if not settings.ROCKETCHAT_ENABLED:
+            raise TransportError("Rocket.Chat notifications are not enabled.")
+        ping = self.last_ping(check)
+        text = tmpl("rocketchat_message.json", check=check, ping=ping)
+        payload = json.loads(text)
+
+        self.post(self.channel.value, json=payload)
+
+
 class VictorOps(HttpTransport):
     def notify(self, check, notification=None) -> None:
         if not settings.VICTOROPS_ENABLED:
