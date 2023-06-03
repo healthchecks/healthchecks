@@ -608,7 +608,9 @@ class RocketChat(HttpTransport):
                 fields.add("Last Ping", f"{formatted_kind}, {created_str}")
 
             if body_size := ping.get_body_size():
-                text = f"{body_size} bytes, [show body]({url}#ping-{ping.n})"
+                bytes_str = "byte" if body_size == 1 else "bytes"
+                ping_url = f"{url}#ping-{ping.n}"
+                text = f"{body_size} {bytes_str}, [show body]({ping_url})"
                 fields.add("Last Ping Body", text)
 
         return result
