@@ -75,3 +75,31 @@ class NotifyRocketChatTestCase(BaseTestCase):
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertIn("11 bytes", fields["Last Ping Body"])
         self.assertIn("#ping-123", fields["Last Ping Body"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_ping_kind_fail(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "fail"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual("Failure, an hour ago", fields["Last Ping"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_nonzero_exitstatus(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual("Exit status 123, an hour ago", fields["Last Ping"])

@@ -641,6 +641,18 @@ class Ping(models.Model):
             return self.object_size
         return 0
 
+    def get_kind_display(self):
+        if self.kind == "ign":
+            return "Ignored"
+        if self.kind == "fail":
+            return "Failure"
+        if self.kind == "start":
+            return "Start"
+        if self.kind == "log":
+            return "Log"
+
+        return "Success"
+
     @cached_property
     def duration(self) -> td | None:
         # Return early if this is not a success or failure ping,

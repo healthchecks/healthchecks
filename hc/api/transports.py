@@ -9,13 +9,18 @@ import uuid
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.timezone import now
 
 from hc.accounts.models import Profile
 from hc.api.schemas import telegram_migration
-from hc.front.templatetags.hc_extras import sortchecks
+from hc.front.templatetags.hc_extras import (
+    absolute_site_logo_url,
+    fix_asterisks,
+    sortchecks,
+)
 from hc.lib import curl, emails, jsonschema
 from hc.lib.date import format_duration
 from hc.lib.signing import sign_bounce_id
@@ -553,20 +558,66 @@ class Pushover(HttpTransport):
         self.post(self.URL, data=payload)
 
 
+class SlackFields(list):
+    def add(self, title, value, short=True):
+        self.append({"title": title, "value": value, "short": short})
+
+
 class RocketChat(HttpTransport):
     @classmethod
     def raise_for_response(cls, response):
         message = f"Received status code {response.status_code}"
         raise TransportError(message)
 
+    def payload(self, check, ping):
+        url = check.cloaked_url()
+        color = "#5cb85c" if check.status == "up" else "#d9534f"
+        fields = SlackFields()
+        result = {
+            "alias": settings.SITE_NAME,
+            "avatar": absolute_site_logo_url(),
+            "text": f"[{check.name_then_code()}]({url}) is {check.status.upper()}.",
+            "attachments": [{"color": color, "fields": fields}],
+        }
+
+        if check.desc:
+            fields.add("Description", check.desc, short=False)
+
+        if check.project.name:
+            fields.add("Project", check.project.name)
+
+        if tags := check.tags_list():
+            fields.add("Tags", " ".join(f"`{tag}`" for tag in tags))
+
+        if check.kind == "simple":
+            fields.add("Period", format_duration(check.timeout))
+
+        if check.kind == "cron":
+            fields.add("Schedule", fix_asterisks(check.schedule))
+
+        fields.add("Total Pings", str(check.n_pings))
+
+        if ping is None:
+            fields.add("Last Ping", "Never")
+        else:
+            created_str = naturaltime(ping.created)
+            if ping.exitstatus:
+                fields.add("Last Ping", f"Exit status {ping.exitstatus}, {created_str}")
+            else:
+                formatted_kind = ping.get_kind_display()
+                fields.add("Last Ping", f"{formatted_kind}, {created_str}")
+
+            if body_size := ping.get_body_size():
+                text = f"{body_size} bytes, [show body]({url}#ping-{ping.n})"
+                fields.add("Last Ping Body", text)
+
+        return result
+
     def notify(self, check, notification=None) -> None:
         if not settings.ROCKETCHAT_ENABLED:
             raise TransportError("Rocket.Chat notifications are not enabled.")
         ping = self.last_ping(check)
-        text = tmpl("rocketchat_message.json", check=check, ping=ping)
-        payload = json.loads(text)
-
-        self.post(self.channel.value, json=payload)
+        self.post(self.channel.value, json=self.payload(check, ping))
 
 
 class VictorOps(HttpTransport):

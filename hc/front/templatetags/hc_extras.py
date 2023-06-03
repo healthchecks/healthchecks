@@ -46,9 +46,7 @@ def absolute_site_logo_url():
 
     Uses settings.SITE_LOGO_URL if set, uses
     /static/img/logo.png as fallback.
-
     """
-
     url = settings.SITE_LOGO_URL or static("img/logo.png")
     if url.startswith("/"):
         url = settings.SITE_ROOT + url
