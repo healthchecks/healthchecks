@@ -601,11 +601,8 @@ class RocketChat(HttpTransport):
             fields.add("Last Ping", "Never")
         else:
             created_str = naturaltime(ping.created)
-            if ping.exitstatus:
-                fields.add("Last Ping", f"Exit status {ping.exitstatus}, {created_str}")
-            else:
-                formatted_kind = ping.get_kind_display()
-                fields.add("Last Ping", f"{formatted_kind}, {created_str}")
+            formatted_kind = ping.get_kind_display()
+            fields.add("Last Ping", f"{formatted_kind}, {created_str}")
 
             if body_size := ping.get_body_size():
                 bytes_str = "byte" if body_size == 1 else "bytes"

@@ -118,3 +118,18 @@ class NotifyRocketChatTestCase(BaseTestCase):
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual("Exit status 123, an hour ago", fields["Last Ping"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "ign"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual("Ignored, an hour ago", fields["Last Ping"])

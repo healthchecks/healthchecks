@@ -646,6 +646,8 @@ class Ping(models.Model):
             return "Ignored"
         if self.kind == "fail":
             return "Failure"
+        if self.exitstatus:
+            return f"Exit status {self.exitstatus}"
         if self.kind == "start":
             return "Start"
         if self.kind == "log":
