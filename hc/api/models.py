@@ -632,6 +632,15 @@ class Ping(models.Model):
 
         return None
 
+    def get_body_size(self) -> int:
+        if self.body:
+            return len(self.body)
+        if self.body_raw:
+            return len(self.body_raw)
+        if self.object_size:
+            return self.object_size
+        return 0
+
     @cached_property
     def duration(self) -> td | None:
         # Return early if this is not a success or failure ping,

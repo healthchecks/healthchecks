@@ -1,18 +1,14 @@
 {% load hc_extras humanize %}
 {
-    "username": "{% site_name %}",
-    "icon_url": "{% absolute_site_logo_url %}",
+    "alias": "{% site_name %}",
+    "avatar": "{% absolute_site_logo_url %}",
+    "text": "[{{ check.name_then_code|escapejs }}]({{ check.cloaked_url }}) is {{ check.status|upper }}.",
     "attachments": [{
         {% if check.status == "up" %}
             "color": "good",
         {% else %}
             "color": "danger",
         {% endif %}
-
-        "fallback": "The check \"{{ check.name_then_code|escapejs }}\" is {{ check.status|upper }}.",
-        "mrkdwn_in": ["fields"],
-        "title": "“{{ check.name_then_code|escapejs }}” is {{ check.status|upper }}.",
-        "title_link": "{{ check.cloaked_url }}",
         "fields": [
             {% if check.desc %}
             {
@@ -74,6 +70,14 @@
                 {% endif %}
                 "short": true
             }
+            {% with body_size=ping.get_body_size %}
+            {% if body_size > 0 %}
+            ,{
+                "title":"Last Ping Body",
+                "value": "{{ body_size }} byte{{ body_size|pluralize }}, [show body]({{ check.cloaked_url }}#ping-{{ ping.n }})"
+            }
+            {% endif %}
+            {% endwith %}
         ]
     }]
 }

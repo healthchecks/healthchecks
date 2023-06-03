@@ -59,3 +59,19 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
         self.assertFalse(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_shows_last_ping_body_size(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.ping.n = 123
+        self.ping.body_raw = b"Hello World"
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertIn("11 bytes", fields["Last Ping Body"])
+        self.assertIn("#ping-123", fields["Last Ping Body"])

@@ -182,4 +182,10 @@ $(function () {
         $(".filter-kw").prop("disabled", !enableInputs);
     });
 
+    // If the URL hash is #ping-<number>,  open the "Ping Details" dialog
+    if (document.location.hash.indexOf("#ping-") === 0) {
+        var n = parseInt(document.location.hash.substr(6));
+        loadPingDetails(`../pings/${n}/`);
+    }
+
 });
