@@ -118,3 +118,19 @@ class NotifyRocketChatTestCase(BaseTestCase):
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual("Exit status 123, an hour ago", fields["Last Ping"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_escapes_markdown(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.check.desc = "*Hello*"
+        self.check.save()
+
+        self.project.name = "*Alices Project*"
+        self.project.save()
+
+        self.channel.notify(self.check)
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Description"], r"\*Hello\*")
+        self.assertEqual(fields["Project"], r"\*Alices Project\*")
