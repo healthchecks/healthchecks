@@ -5,9 +5,9 @@
     "text": "[{{ check.name_then_code|escapejs }}]({{ check.cloaked_url }}) is {{ check.status|upper }}.",
     "attachments": [{
         {% if check.status == "up" %}
-            "color": "good",
+            "color": "#5cb85c",
         {% else %}
-            "color": "danger",
+            "color": "#d9534f",
         {% endif %}
         "fields": [
             {% if check.desc %}
