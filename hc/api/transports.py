@@ -362,20 +362,11 @@ class SlackFields(list):
         self.append(field)
 
 
-class Slack(HttpTransport):
-    @classmethod
-    def raise_for_response(cls, response):
-        message = f"Received status code {response.status_code}"
-        # If Slack returns 404, this endpoint is unlikely to ever work again
-        # https://api.slack.com/messaging/webhooks#handling_errors
-        permanent = response.status_code == 404
-        raise TransportError(message, permanent=permanent)
-
-    def payload(self, check, ping, body):
+class SlackBase(HttpTransport):
+    def notify(self, check, notification=None) -> None:
         name = check.name_then_code()
-        url = check.cloaked_url()
         fields = SlackFields()
-        result = {
+        payload = {
             "username": settings.SITE_NAME,
             "icon_url": absolute_site_logo_url(),
             "attachments": [
@@ -384,7 +375,7 @@ class Slack(HttpTransport):
                     "fallback": f'The check "{name}" is {check.status.upper()}.',
                     "mrkdwn_in": ["fields"],
                     "title": f"“{name}” is {check.status.upper()}.",
-                    "title_link": url,
+                    "title_link": check.cloaked_url(),
                     "fields": fields,
                 }
             ],
@@ -407,44 +398,42 @@ class Slack(HttpTransport):
 
         fields.add("Total Pings", str(check.n_pings))
 
-        if ping is None:
-            fields.add("Last Ping", "Never")
-        else:
+        if ping := self.last_ping(check):
             created_str = naturaltime(ping.created)
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
+        else:
+            fields.add("Last Ping", "Never")
 
+        body = get_ping_body(ping, maxlen=1000)
         if body and "```" not in body:
             fields.add("Last Ping Body", f"```\n{body}\n```", short=False)
 
-        return result
+        self.post(self.channel.slack_webhook_url, json=payload)
+
+
+class Slack(SlackBase):
+    @classmethod
+    def raise_for_response(cls, response):
+        message = f"Received status code {response.status_code}"
+        # If Slack returns 404, this endpoint is unlikely to ever work again
+        # https://api.slack.com/messaging/webhooks#handling_errors
+        permanent = response.status_code == 404
+        raise TransportError(message, permanent=permanent)
 
     def notify(self, check, notification=None) -> None:
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
-        ping = self.last_ping(check)
-        body = get_ping_body(ping, maxlen=1000)
-        payload = self.payload(check, ping, body)
-        self.post(self.channel.slack_webhook_url, json=payload)
+
+        super().notify(check, notification)
 
 
-class Mattermost(HttpTransport):
-    @classmethod
-    def raise_for_response(cls, response):
-        message = f"Received status code {response.status_code}"
-        raise TransportError(message)
-
+class Mattermost(SlackBase):
     def notify(self, check, notification=None) -> None:
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
-        ping = self.last_ping(check)
-        body = get_ping_body(ping, maxlen=1000)
-        if body and "```" in body:
-            body = None
 
-        text = tmpl("slack_message.json", check=check, ping=ping, body=body)
-        payload = json.loads(text)
-        self.post(self.channel.slack_webhook_url, json=payload)
+        super().notify(check, notification)
 
 
 class Opsgenie(HttpTransport):
