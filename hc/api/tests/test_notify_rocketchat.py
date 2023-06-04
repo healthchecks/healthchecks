@@ -59,6 +59,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
         self.assertFalse(self.channel.disabled)
+        self.assertEqual(self.channel.last_error, "Received status code 404")
 
     @patch("hc.api.transports.curl.request")
     def test_it_shows_last_ping_body_size(self, mock_post):

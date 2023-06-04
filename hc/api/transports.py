@@ -614,11 +614,6 @@ class Pushover(HttpTransport):
 
 
 class RocketChat(HttpTransport):
-    @classmethod
-    def raise_for_response(cls, response):
-        message = f"Received status code {response.status_code}"
-        raise TransportError(message)
-
     def payload(self, check, ping):
         url = check.cloaked_url()
         color = "#5cb85c" if check.status == "up" else "#d9534f"
