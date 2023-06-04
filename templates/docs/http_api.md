@@ -10,10 +10,10 @@ All ping endpoints support:
 * HTTP and HTTPS
 * HTTP 1.0, HTTP 1.1 and HTTP 2
 * IPv4 and IPv6
-* HEAD, GET, and POST requests methods. The HTTP POST requests
-can optionally include diagnostic information in the request body.
-If the request body looks like a UTF-8 string, SITE_NAME stores the request body
-(limited to the first 10KB for each received ping).
+* HEAD, GET, and POST request methods. For HTTP POST requests, clients can optionally
+include diagnostic information in the request body. If the request body looks like a
+UTF-8 string, SITE_NAME stores the request body (limited to the first
+PING_BODY_LIMIT_FORMATTED for each received ping).
 
 Successful responses will have the "200 OK" HTTP response status code and a short
 "OK" string in the response body.

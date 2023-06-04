@@ -46,7 +46,7 @@ curl<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><
 <h2>Logging Command Output</h2>
 <p>When pinging with HTTP POST, you can put extra diagnostic information in the request
 body. If the request body looks like a valid UTF-8 string, SITE_NAME
-will accept and store the first 10KB of the request body.</p>
+will accept and store the first PING_BODY_LIMIT_FORMATTED of the request body.</p>
 <p>In the below example, certbot's output is captured and submitted via HTTP POST:</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
 

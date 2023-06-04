@@ -3,8 +3,8 @@
 SITE_NAME ping endpoints accept HTTP HEAD, GET and POST request methods.
 
 When using HTTP POST, **you can include an arbitrary payload in the request body**.
-SITE_NAME will log the first 10 kilobytes (10 000 bytes) of the request body, so that
-you can inspect it later.
+SITE_NAME will log the first PING_BODY_LIMIT_FORMATTED (PING_BODY_LIMIT bytes) of the
+request body, so that you can inspect it later.
 
 ## Logging Command Output
 
@@ -62,7 +62,7 @@ current state. SITE_NAME provides the [/log endpoint](../http_api#log-uuid) just
 that. When you send an HTTP POST request to this endpoint, SITE_NAME will log the event
 and display it in check's "Events" section but will keep the check's state unchanged.
 
-## Handling More Than 10KB of Logs
+## Handling More Than PING_BODY_LIMIT_FORMATTED of Logs
 
 While SITE_NAME can store a small amount of logs in a pinch, it is not specifically
 designed for that. If you run into the issue of logs getting cut off, consider
@@ -71,13 +71,14 @@ the following options:
 * See if the logs can be made less verbose. For example, if you have a batch job
 that outputs a line of text per item processed, perhaps it can output a summary with
 the totals instead.
-* If the important content is usually at the end, submit the **last 10KB** instead
-of the first. Here is an example that submits the last 10KB of `dmesg` output:
+* If the important content is usually at the end, submit the
+**last PING_BODY_LIMIT_FORMATTED** instead of the first. Here is an example that
+submits the last PING_BODY_LIMIT_FORMATTED of `dmesg` output:
 
 ```bash
 #!/bin/sh
 
-m=$(dmesg | tail --bytes=10000)
+m=$(dmesg | tail --bytes=PING_BODY_LIMIT)
 curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL
 ```
 

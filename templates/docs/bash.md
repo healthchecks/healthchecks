@@ -60,7 +60,7 @@ curl -m 10 --retry 5 PING_URL/$?
 
 When pinging with HTTP POST, you can put extra diagnostic information in the request
 body. If the request body looks like a valid UTF-8 string, SITE_NAME
-will accept and store the first 10KB of the request body.
+will accept and store the first PING_BODY_LIMIT_FORMATTED of the request body.
 
 In the below example, certbot's output is captured and submitted via HTTP POST:
 

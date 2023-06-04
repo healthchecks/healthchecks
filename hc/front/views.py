@@ -391,6 +391,12 @@ def _replace_placeholders(doc, html):
     if doc.startswith("self_hosted"):
         return html
 
+    limit = settings.PING_BODY_LIMIT or 100
+    if limit % 1000 == 0:
+        limit_fmt = f"{limit // 1000} kB"
+    else:
+        limit_fmt = f"{limit} bytes"
+
     replaces = {
         "{{ default_timeout }}": str(int(DEFAULT_TIMEOUT.total_seconds())),
         "{{ default_grace }}": str(int(DEFAULT_GRACE.total_seconds())),
@@ -400,7 +406,8 @@ def _replace_placeholders(doc, html):
         "SITE_SCHEME": urlparse(settings.SITE_ROOT).scheme,
         "PING_ENDPOINT": settings.PING_ENDPOINT,
         "PING_URL": settings.PING_ENDPOINT + "your-uuid-here",
-        "PING_BODY_LIMIT": str(settings.PING_BODY_LIMIT or 100),
+        "PING_BODY_LIMIT_FORMATTED": limit_fmt,
+        "PING_BODY_LIMIT": str(limit),
         "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
     }
 
