@@ -362,11 +362,14 @@ class SlackFields(list):
         self.append(field)
 
 
-class SlackBase(HttpTransport):
-    def notify(self, check, notification=None) -> None:
+class Slackalike(HttpTransport):
+    """Base class for transports that use Slack-compatible incoming webhooks."""
+
+    def payload(self, check):
+        """Prepare JSON-serializable payload for Slack-compatible incoming webhook."""
         name = check.name_then_code()
         fields = SlackFields()
-        payload = {
+        result = {
             "username": settings.SITE_NAME,
             "icon_url": absolute_site_logo_url(),
             "attachments": [
@@ -409,10 +412,13 @@ class SlackBase(HttpTransport):
         if body and "```" not in body:
             fields.add("Last Ping Body", f"```\n{body}\n```", short=False)
 
-        self.post(self.channel.slack_webhook_url, json=payload)
+        return result
+
+    def notify(self, check, notification=None) -> None:
+        self.post(self.channel.slack_webhook_url, json=self.payload(check))
 
 
-class Slack(SlackBase):
+class Slack(Slackalike):
     @classmethod
     def raise_for_response(cls, response):
         message = f"Received status code {response.status_code}"
@@ -425,15 +431,21 @@ class Slack(SlackBase):
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
 
-        super().notify(check, notification)
+        self.post(self.channel.slack_webhook_url, json=self.payload(check))
 
 
-class Mattermost(SlackBase):
+class Mattermost(Slackalike):
     def notify(self, check, notification=None) -> None:
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
 
-        super().notify(check, notification)
+        self.post(self.channel.slack_webhook_url, json=self.payload(check))
+
+
+class Discord(Slackalike):
+    def notify(self, check, notification=None) -> None:
+        url = self.channel.discord_webhook_url + "/slack"
+        self.post(url, json=self.payload(check))
 
 
 class Opsgenie(HttpTransport):
@@ -695,14 +707,6 @@ class Matrix(HttpTransport):
         }
 
         self.post(self.get_url(), json=payload)
-
-
-class Discord(HttpTransport):
-    def notify(self, check, notification=None) -> None:
-        text = tmpl("slack_message.json", check=check, ping=self.last_ping(check))
-        payload = json.loads(text)
-        url = self.channel.discord_webhook_url + "/slack"
-        self.post(url, json=payload)
 
 
 class MigrationRequiredError(TransportError):
