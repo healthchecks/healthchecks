@@ -910,45 +910,56 @@ class Apprise(HttpTransport):
 
 
 class MsTeams(HttpTransport):
-    def escape_md(self, s):
-        # Escape special HTML characters
-        s = escape(s)
-        # Escape characters that have special meaning in Markdown
-        for c in r"\`*_{}[]()#+-.!|":
-            s = s.replace(c, "\\" + c)
-        return s
+    def payload(self, check):
+        name = check.name_then_code()
+        color = "5cb85c" if check.status == "up" else "d9534f"
+        facts = []
+        result = {
+            "@type": "MessageCard",
+            "@context": "https://schema.org/extensions",
+            "title": f"“{escape(name)}” is {check.status.upper()}.",
+            "summary": f"“{name}” is {check.status.upper()}.",
+            "themeColor": color,
+            "sections": [{"text": check.desc, "facts": facts}],
+            "potentialAction": [
+                {
+                    "@type": "OpenUri",
+                    "name": f"View in {settings.SITE_NAME}",
+                    "targets": [{"os": "default", "uri": check.cloaked_url()}],
+                }
+            ],
+        }
+
+        if tags := check.tags_list():
+            formatted_tags = " ".join(f"`{tag}`" for tag in tags)
+            facts.append({"name": "Tags:", "value": formatted_tags})
+
+        if check.kind == "simple":
+            facts.append({"name": "Period:", "value": format_duration(check.timeout)})
+
+        if check.kind == "cron":
+            facts.append({"name": "Schedule:", "value": check.schedule})
+
+        facts.append({"name": "Total Pings:", "value": str(check.n_pings)})
+
+        if ping := self.last_ping(check):
+            text = f"{ping.get_kind_display()}, {naturaltime(ping.created)}"
+            facts.append({"name": "Last Ping:", "value": text})
+        else:
+            facts.append({"name": "Last Ping:", "value": "Never"})
+
+        body = get_ping_body(ping, maxlen=1000)
+        if body and "```" not in body:
+            section_text = f"**Last Ping Body**:\n```\n{ body }\n```"
+            result["sections"].append({"text": section_text})
+
+        return result
 
     def notify(self, check, notification=None) -> None:
         if not settings.MSTEAMS_ENABLED:
             raise TransportError("MS Teams notifications are not enabled.")
 
-        ping = self.last_ping(check)
-        text = tmpl("msteams_message.json", check=check, ping=ping)
-        payload = json.loads(text)
-
-        # MS Teams escapes HTML special characters in the summary field.
-        # It does not interpret summary content as Markdown.
-        name = check.name_then_code()
-        payload["summary"] = f"“{name}” is {check.status.upper()}."
-
-        # MS teams *strips* HTML special characters from the title field.
-        # To avoid that, we use escape().
-        # It does not interpret title as Markdown.
-        safe_name = escape(name)
-        payload["title"] = f"“{safe_name}” is {check.status.upper()}."
-
-        # MS teams allows some HTML in the section text.
-        # It also interprets the section text as Markdown.
-        # We want to display the raw content, angle brackets and all,
-        # so we run escape() and then additionally escape Markdown:
-        payload["sections"][0]["text"] = self.escape_md(check.desc)
-
-        body = get_ping_body(ping, maxlen=1000)
-        if body and "```" not in body:
-            section_text = f"**Last Ping Body**:\n```\n{ body }\n```"
-            payload["sections"].append({"text": section_text})
-
-        self.post(self.channel.value, json=payload)
+        self.post(self.channel.value, json=self.payload(check))
 
 
 class Zulip(HttpTransport):

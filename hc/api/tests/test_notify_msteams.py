@@ -56,24 +56,6 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         serialized = json.dumps(payload)
         self.assertNotIn(str(self.check.code), serialized)
 
-    @patch("hc.api.transports.curl.request")
-    def test_msteams_escapes_html_and_markdown_in_desc(self, mock_post):
-        mock_post.return_value.status_code = 200
-
-        self.check.desc = """
-            TEST _underscore_ `backticks` <u>underline</u> \\backslash\\ "quoted"
-        """
-
-        self.channel.notify(self.check)
-
-        payload = mock_post.call_args.kwargs["json"]
-        text = payload["sections"][0]["text"]
-        self.assertIn(r"\_underscore\_", text)
-        self.assertIn(r"\`backticks\`", text)
-        self.assertIn("&lt;u&gt;underline&lt;/u&gt;", text)
-        self.assertIn(r"\\backslash\\ ", text)
-        self.assertIn("&quot;quoted&quot;", text)
-
     @override_settings(MSTEAMS_ENABLED=False)
     def test_it_requires_msteams_enabled(self):
         self.channel.notify(self.check)
