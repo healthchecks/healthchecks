@@ -147,6 +147,21 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
+    def test_it_shows_nonzero_exit_status(self, mock_post):
+        self._setup_data("123")
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "fail"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Last Ping"], "Exit status 123, an hour ago")
+
+    @override_settings(SITE_ROOT="http://testserver")
+    @patch("hc.api.transports.curl.request")
     def test_it_handles_last_ping_log(self, mock_post):
         self._setup_data("123")
         mock_post.return_value.status_code = 200

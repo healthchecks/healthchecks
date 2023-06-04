@@ -352,6 +352,16 @@ class Webhook(HttpTransport):
             self.put(url, use_retries=use_retries, data=body, headers=headers)
 
 
+class SlackFields(list):
+    """Helper class for preparing [{"title": ..., "value": ... }, ...] structures."""
+
+    def add(self, title, value, short=True):
+        field = {"title": title, "value": value}
+        if short:
+            field["short"] = True
+        self.append(field)
+
+
 class Slack(HttpTransport):
     @classmethod
     def raise_for_response(cls, response):
@@ -361,16 +371,60 @@ class Slack(HttpTransport):
         permanent = response.status_code == 404
         raise TransportError(message, permanent=permanent)
 
+    def payload(self, check, ping, body):
+        name = check.name_then_code()
+        url = check.cloaked_url()
+        fields = SlackFields()
+        result = {
+            "username": settings.SITE_NAME,
+            "icon_url": absolute_site_logo_url(),
+            "attachments": [
+                {
+                    "color": "good" if check.status == "up" else "danger",
+                    "fallback": f'The check "{name}" is {check.status.upper()}.',
+                    "mrkdwn_in": ["fields"],
+                    "title": f"“{name}” is {check.status.upper()}.",
+                    "title_link": url,
+                    "fields": fields,
+                }
+            ],
+        }
+
+        if check.desc:
+            fields.add("Description", check.desc, short=False)
+
+        if check.project.name:
+            fields.add("Project", check.project.name)
+
+        if tags := check.tags_list():
+            fields.add("Tags", " ".join(f"`{tag}`" for tag in tags))
+
+        if check.kind == "simple":
+            fields.add("Period", format_duration(check.timeout))
+
+        if check.kind == "cron":
+            fields.add("Schedule", fix_asterisks(check.schedule))
+
+        fields.add("Total Pings", str(check.n_pings))
+
+        if ping is None:
+            fields.add("Last Ping", "Never")
+        else:
+            created_str = naturaltime(ping.created)
+            formatted_kind = ping.get_kind_display()
+            fields.add("Last Ping", f"{formatted_kind}, {created_str}")
+
+        if body and "```" not in body:
+            fields.add("Last Ping Body", f"```\n{body}\n```", short=False)
+
+        return result
+
     def notify(self, check, notification=None) -> None:
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
         ping = self.last_ping(check)
         body = get_ping_body(ping, maxlen=1000)
-        if body and "```" in body:
-            body = None
-
-        text = tmpl("slack_message.json", check=check, ping=ping, body=body)
-        payload = json.loads(text)
+        payload = self.payload(check, ping, body)
         self.post(self.channel.slack_webhook_url, json=payload)
 
 
@@ -556,11 +610,6 @@ class Pushover(HttpTransport):
             payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
         self.post(self.URL, data=payload)
-
-
-class SlackFields(list):
-    def add(self, title, value, short=True):
-        self.append({"title": title, "value": value, "short": short})
 
 
 class RocketChat(HttpTransport):

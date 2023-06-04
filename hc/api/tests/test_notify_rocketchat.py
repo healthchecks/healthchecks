@@ -109,6 +109,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
     def test_it_shows_nonzero_exitstatus(self, mock_post):
         mock_post.return_value.status_code = 200
 
+        self.ping.kind = "fail"
         self.ping.exitstatus = 123
         self.ping.save()
 
