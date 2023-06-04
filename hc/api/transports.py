@@ -16,11 +16,7 @@ from django.utils.timezone import now
 
 from hc.accounts.models import Profile
 from hc.api.schemas import telegram_migration
-from hc.front.templatetags.hc_extras import (
-    absolute_site_logo_url,
-    fix_asterisks,
-    sortchecks,
-)
+from hc.front.templatetags.hc_extras import absolute_site_logo_url, sortchecks
 from hc.lib import curl, emails, jsonschema
 from hc.lib.date import format_duration
 from hc.lib.signing import sign_bounce_id
@@ -81,6 +77,12 @@ def get_ping_body(ping, maxlen=None) -> str | None:
         body = body[:maxlen] + "\n[truncated]"
 
     return body
+
+
+def fix_asterisks(s):
+    """Prepend asterisks with "Combining Grapheme Joiner" characters."""
+
+    return s.replace("*", "\u034f*")
 
 
 class TransportError(Exception):

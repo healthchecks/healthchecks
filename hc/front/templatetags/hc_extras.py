@@ -169,13 +169,6 @@ def break_underscore(s):
 
 
 @register.filter
-def fix_asterisks(s):
-    """Prepend asterisks with "Combining Grapheme Joiner" characters."""
-
-    return s.replace("*", "\u034f*")
-
-
-@register.filter
 def format_headers(headers):
     return "\n".join("%s: %s" % (k, v) for k, v in headers.items())
 
