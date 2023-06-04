@@ -614,7 +614,7 @@ class Pushover(HttpTransport):
 
 
 class RocketChat(HttpTransport):
-    def payload(self, check, ping):
+    def payload(self, check):
         url = check.cloaked_url()
         color = "#5cb85c" if check.status == "up" else "#d9534f"
         fields = SlackFields()
@@ -642,26 +642,24 @@ class RocketChat(HttpTransport):
 
         fields.add("Total Pings", str(check.n_pings))
 
-        if ping is None:
-            fields.add("Last Ping", "Never")
-        else:
+        if ping := self.last_ping(check):
             created_str = naturaltime(ping.created)
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
-
             if body_size := ping.get_body_size():
                 bytes_str = "byte" if body_size == 1 else "bytes"
                 ping_url = f"{url}#ping-{ping.n}"
                 text = f"{body_size} {bytes_str}, [show body]({ping_url})"
                 fields.add("Last Ping Body", text)
+        else:
+            fields.add("Last Ping", "Never")
 
         return result
 
     def notify(self, check, notification=None) -> None:
         if not settings.ROCKETCHAT_ENABLED:
             raise TransportError("Rocket.Chat notifications are not enabled.")
-        ping = self.last_ping(check)
-        self.post(self.channel.value, json=self.payload(check, ping))
+        self.post(self.channel.value, json=self.payload(check))
 
 
 class VictorOps(HttpTransport):
@@ -912,14 +910,13 @@ class Apprise(HttpTransport):
 class MsTeams(HttpTransport):
     def payload(self, check):
         name = check.name_then_code()
-        color = "5cb85c" if check.status == "up" else "d9534f"
         facts = []
         result = {
             "@type": "MessageCard",
             "@context": "https://schema.org/extensions",
             "title": f"“{escape(name)}” is {check.status.upper()}.",
             "summary": f"“{name}” is {check.status.upper()}.",
-            "themeColor": color,
+            "themeColor": "5cb85c" if check.status == "up" else "d9534f",
             "sections": [{"text": check.desc, "facts": facts}],
             "potentialAction": [
                 {
@@ -938,7 +935,7 @@ class MsTeams(HttpTransport):
             facts.append({"name": "Period:", "value": format_duration(check.timeout)})
 
         if check.kind == "cron":
-            facts.append({"name": "Schedule:", "value": check.schedule})
+            facts.append({"name": "Schedule:", "value": fix_asterisks(check.schedule)})
 
         facts.append({"name": "Total Pings:", "value": str(check.n_pings)})
 
