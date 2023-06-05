@@ -1,7 +1,9 @@
 FROM python:3.11-slim-bullseye as builder
 
 COPY requirements.txt /tmp
-RUN apt update && apt install -y build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev rustc libcurl4-openssl-dev libpython3-dev
+RUN apt update && apt install -y build-essential curl git libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev pkg-config
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="${PATH}:/root/.cargo/bin"
 ENV CARGO_NET_GIT_FETCH_WITH_CLI true
 RUN \
     pip install --upgrade pip && \
