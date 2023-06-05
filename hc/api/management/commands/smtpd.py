@@ -12,6 +12,8 @@ from django.db import connections
 from hc.api.models import Check
 from hc.lib.html import html2text
 
+import time
+
 RE_UUID = re.compile(
     "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"
 )
@@ -111,5 +113,10 @@ class Command(BaseCommand):
         controller = Controller(handler, hostname=host, port=port)
         print(f"Starting SMTP listener on {host}:{port} ...")
         controller.start()
-        input("SMTP server running. Press Return to stop server and exit.\n")
+        while True:
+            try:
+                time.sleep(2**32)  # Sleep with a very large timeout
+            except KeyboardInterrupt:
+               print("Interrupt received, exiting.")
+               break
         controller.stop()
