@@ -114,8 +114,13 @@ h2.rule {
     grid-template-columns: 150px auto;
 }
 
+.page-docs .docs-http_api dl {
+    grid-template-columns: 220px auto;
+}
+
 @media (max-width: 992px) {
-    .page-docs dl {
+    .page-docs dl,
+    .page-docs .docs-http_api dl {
         display: grid;
         grid-template-columns: auto;
     }
@@ -129,9 +134,6 @@ h2.rule {
     }
 }
 
-.page-docs .docs-http_api dl {
-    grid-template-columns: 220px auto;
-}
 
 .page-docs dt {
     font-weight: normal;
