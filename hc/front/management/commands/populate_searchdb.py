@@ -14,7 +14,7 @@ class Command(BaseCommand):
     help = "Renders Markdown to HTML"
 
     def handle(self, *args, **options):
-        con = sqlite3.connect(os.path.join(settings.BASE_DIR, "search.db"))
+        con = sqlite3.connect(settings.BASE_DIR / "search.db")
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS docs")
         cur.execute(

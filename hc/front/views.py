@@ -423,11 +423,11 @@ def serve_doc(request, doc="introduction"):
     if not re.match(r"^[0-9a-z_]+$", doc):
         raise Http404("not found")
 
-    path = os.path.join(settings.BASE_DIR, "templates/docs", doc + ".html-fragment")
-    if not os.path.exists(path):
+    path = settings.BASE_DIR / f"templates/docs/{doc}.html-fragment"
+    if not path.exists():
         raise Http404("not found")
 
-    with open(path, "r", encoding="utf-8") as f:
+    with path.open("r", encoding="utf-8") as f:
         content = f.read()
 
     content = _replace_placeholders(doc, content)

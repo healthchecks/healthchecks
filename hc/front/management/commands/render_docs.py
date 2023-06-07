@@ -33,21 +33,16 @@ class Command(BaseCommand):
         }
 
         def process_directory(path):
-            for doc in os.listdir(path):
-                if not doc.endswith(".md"):
-                    continue
+            for src_path in path.glob("*.md"):
+                print(f"Rendering {src_path.name}")
 
-                print("Rendering %s" % doc)
-
-                src_path = os.path.join(path, doc)
-                dst_path = os.path.join(path, doc[:-3] + ".html-fragment")
-
-                text = open(src_path, "r", encoding="utf-8").read()
+                text = src_path.open("r", encoding="utf-8").read()
                 html = markdown.markdown(
                     text, extensions=extensions, extension_configs=extension_configs
                 )
 
-                with open(dst_path, "w", encoding="utf-8") as f:
+                dst_path = src_path.with_suffix(".html-fragment")
+                with dst_path.open("w", encoding="utf-8") as f:
                     f.write(html)
 
-        process_directory(os.path.join(settings.BASE_DIR, "templates/docs"))
+        process_directory(settings.BASE_DIR / "templates/docs")
