@@ -21,17 +21,15 @@ class Command(BaseCommand):
             """CREATE VIRTUAL TABLE docs USING FTS5(slug, title, body, tokenize="porter unicode61")"""
         )
 
-        docs_path = os.path.join(settings.BASE_DIR, "templates/docs")
-        for filename in os.listdir(docs_path):
-            if not filename.endswith(".html"):
-                continue
-            if filename == "apiv1.html":
+        docs_path = settings.BASE_DIR / "templates/docs"
+        for doc_path in docs_path.glob("*.html-fragment"):
+            if doc_path.stem == "apiv1":
                 continue
 
-            slug = filename[:-5]  # cut ".html"
+            slug = doc_path.stem
             print("Processing %s" % slug)
 
-            html = open(os.path.join(docs_path, filename), "r").read()
+            html = doc_path.open("r").read()
             html = _replace_placeholders(slug, html)
 
             lines = html.split("\n")
