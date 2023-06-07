@@ -7,9 +7,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any, Mapping
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def envbool(s: str, default: str) -> bool:
@@ -40,7 +41,8 @@ if admins := os.getenv("ADMINS"):
     ADMINS = [(email, email) for email in admins.split(",")]
 
 VERSION = ""
-with open(os.path.join(BASE_DIR, "CHANGELOG.md"), encoding="utf-8") as f:
+
+with (BASE_DIR / "CHANGELOG.md").open(encoding="utf-8") as f:
     for line in f.readlines():
         if line.startswith("## v"):
             VERSION = line.split()[1]
@@ -93,7 +95,7 @@ ROOT_URLCONF = "hc.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -119,7 +121,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 DATABASES: Mapping[str, Any] = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.getenv("DB_NAME", BASE_DIR + "/hc.sqlite"),
+        "NAME": os.getenv("DB_NAME", BASE_DIR / "hc.sqlite"),
     }
 }
 
@@ -170,8 +172,8 @@ PING_ENDPOINT = os.getenv("PING_ENDPOINT", SITE_ROOT + "/ping/")
 PING_EMAIL_DOMAIN = os.getenv("PING_EMAIL_DOMAIN", "localhost")
 PING_BODY_LIMIT = envint("PING_BODY_LIMIT", "10000")
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
-STATIC_ROOT = os.path.join(BASE_DIR, "static-collected")
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "static-collected"
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -309,5 +311,5 @@ INTEGRATIONS_ALLOW_PRIVATE_IPS = envbool("INTEGRATIONS_ALLOW_PRIVATE_IPS", "Fals
 ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
 
 # Read additional configuration from hc/local_settings.py if it exists
-if os.path.exists(os.path.join(BASE_DIR, "hc/local_settings.py")):
+if (BASE_DIR / "hc/local_settings.py").exists():
     from .local_settings import *
