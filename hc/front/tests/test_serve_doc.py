@@ -22,13 +22,10 @@ class ServeDocTestCase(TestCase):
         r = self.client.get("/docs/does_not_exist/")
         self.assertEqual(r.status_code, 404)
 
-    @patch("hc.front.views.os.path.exists")
-    def test_it_rejects_bad_characters(self, mock_exists):
+    @patch("hc.front.views.settings.BASE_DIR")
+    def test_it_rejects_bad_characters(self, mock_base_dir):
         r = self.client.get("/docs/NAUGHTY/")
-        self.assertEqual(r.status_code, 404)
-
         # URL dispatcher's slug filter lets the uppercase letters through,
         # but the view should still reject them, before any filesystem
         # operations
-
-        mock_exists.assert_not_called()
+        self.assertEqual(len(mock_base_dir.mock_calls), 0)

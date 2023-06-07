@@ -457,7 +457,7 @@ def docs_search(request):
     """
 
     q = form.cleaned_data["q"]
-    con = sqlite3.connect(os.path.join(settings.BASE_DIR, "search.db"))
+    con = sqlite3.connect(settings.BASE_DIR / "search.db")
     cur = con.cursor()
     res = cur.execute(query, (q,))
 
