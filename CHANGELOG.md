@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.10-dev - Unreleased
+
+### Improvements
+- Configure logging to log unhandled exceptions to console even when DEBUG=False (#835)
+
 ## v2.9.2 - 2023-06-05
 
 ### Bug Fixes

@@ -110,6 +110,25 @@ TEMPLATES = [
     }
 ]
 
+# Extend Django logging to log unhandled exceptions to console even when DEBUG=False
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+    },
+    "handlers": {
+        "console_debug_false": {
+            "level": "ERROR",
+            "class": "logging.StreamHandler",
+            "filters": ["require_debug_false"],
+        },
+    },
+    "loggers": {"django.request": {"handlers": ["console_debug_false"]}},
+}
+
 WSGI_APPLICATION = "hc.wsgi.application"
 TEST_RUNNER = "hc.api.tests.CustomRunner"
 DEFAULT_EXCEPTION_REPORTER_FILTER = "hc.debug.ExceptionReporterFilter"
