@@ -69,7 +69,7 @@ class LoginWebAuthnTestCase(BaseTestCase):
     @override_settings(RP_ID=None)
     def test_it_requires_rp_id(self):
         r = self.client.get(self.url)
-        self.assertEqual(r.status_code, 500)
+        self.assertEqual(r.status_code, 404)
 
     @patch("hc.accounts.views.GetHelper.verify")
     def test_it_logs_in(self, mock_verify):
@@ -98,7 +98,6 @@ class LoginWebAuthnTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
     def test_it_handles_bad_json(self):
-
         session = self.client.session
         session["state"] = "dummy-state"
         session.save()

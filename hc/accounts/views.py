@@ -807,7 +807,7 @@ def remove_credential(request, code):
 def login_webauthn(request):
     # We require RP_ID. Fail predicably if it is not set:
     if not settings.RP_ID:
-        return HttpResponse(status=500)
+        return HttpResponse(status=404)
 
     # Expect an unauthenticated user
     if request.user.is_authenticated:
