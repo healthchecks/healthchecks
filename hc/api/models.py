@@ -42,38 +42,40 @@ CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
 # max time between start and ping where we will consider both events related:
 MAX_DURATION = td(hours=72)
 
-CHANNEL_KINDS = (
-    ("apprise", "Apprise"),
-    ("call", "Phone Call"),
-    ("discord", "Discord"),
-    ("email", "Email"),
-    ("gotify", "Gotify"),
-    ("hipchat", "HipChat"),
-    ("linenotify", "LINE Notify"),
-    ("matrix", "Matrix"),
-    ("mattermost", "Mattermost"),
-    ("msteams", "Microsoft Teams"),
-    ("ntfy", "ntfy"),
-    ("opsgenie", "Opsgenie"),
-    ("pagerteam", "Pager Team"),
-    ("pagertree", "PagerTree"),
-    ("pd", "PagerDuty"),
-    ("po", "Pushover"),
-    ("pushbullet", "Pushbullet"),
-    ("rocketchat", "Rocket.Chat"),
-    ("shell", "Shell Command"),
-    ("signal", "Signal"),
-    ("slack", "Slack"),
-    ("sms", "SMS"),
-    ("spike", "Spike"),
-    ("telegram", "Telegram"),
-    ("trello", "Trello"),
-    ("victorops", "Splunk On-Call"),
-    ("webhook", "Webhook"),
-    ("whatsapp", "WhatsApp"),
-    ("zendesk", "Zendesk"),
-    ("zulip", "Zulip"),
-)
+TRANSPORTS = {
+    "apprise": ("Apprise", transports.Apprise),
+    "call": ("Phone Call", transports.Call),
+    "discord": ("Discord", transports.Discord),
+    "email": ("Email", transports.Email),
+    "gotify": ("Gotify", transports.Gotify),
+    "hipchat": ("HipChat", transports.RemovedTransport),
+    "linenotify": ("LINE Notify", transports.LineNotify),
+    "matrix": ("Matrix", transports.Matrix),
+    "mattermost": ("Mattermost", transports.Mattermost),
+    "msteams": ("Microsoft Teams", transports.MsTeams),
+    "ntfy": ("ntfy", transports.Ntfy),
+    "opsgenie": ("Opsgenie", transports.Opsgenie),
+    "pagerteam": ("Pager Team", transports.RemovedTransport),
+    "pagertree": ("PagerTree", transports.PagerTree),
+    "pd": ("PagerDuty", transports.PagerDuty),
+    "po": ("Pushover", transports.Pushover),
+    "pushbullet": ("Pushbullet", transports.Pushbullet),
+    "rocketchat": ("Rocket.Chat", transports.RocketChat),
+    "shell": ("Shell Command", transports.Shell),
+    "signal": ("Signal", transports.Signal),
+    "slack": ("Slack", transports.Slack),
+    "sms": ("SMS", transports.Sms),
+    "spike": ("Spike", transports.Spike),
+    "telegram": ("Telegram", transports.Telegram),
+    "trello": ("Trello", transports.Trello),
+    "victorops": ("Splunk On-Call", transports.VictorOps),
+    "webhook": ("Webhook", transports.Webhook),
+    "whatsapp": ("WhatsApp", transports.WhatsApp),
+    "zendesk": ("Zendesk", transports.RemovedTransport),
+    "zulip": ("Zulip", transports.Zulip),
+}
+
+CHANNEL_KINDS = [(kind, label_cls[0]) for kind, label_cls in TRANSPORTS.items()]
 
 PO_PRIORITIES = {
     -3: "disabled",
@@ -772,64 +774,11 @@ class Channel(models.Model):
 
     @property
     def transport(self):
-        if self.kind == "apprise":
-            return transports.Apprise(self)
-        elif self.kind == "call":
-            return transports.Call(self)
-        elif self.kind == "discord":
-            return transports.Discord(self)
-        elif self.kind == "email":
-            return transports.Email(self)
-        elif self.kind == "gotify":
-            return transports.Gotify(self)
-        elif self.kind == "linenotify":
-            return transports.LineNotify(self)
-        elif self.kind == "matrix":
-            return transports.Matrix(self)
-        elif self.kind == "mattermost":
-            return transports.Mattermost(self)
-        elif self.kind == "msteams":
-            return transports.MsTeams(self)
-        elif self.kind == "ntfy":
-            return transports.Ntfy(self)
-        elif self.kind == "opsgenie":
-            return transports.Opsgenie(self)
-        elif self.kind == "pagertree":
-            return transports.PagerTree(self)
-        elif self.kind == "pd":
-            return transports.PagerDuty(self)
-        elif self.kind == "po":
-            return transports.Pushover(self)
-        elif self.kind == "pushbullet":
-            return transports.Pushbullet(self)
-        elif self.kind == "rocketchat":
-            return transports.RocketChat(self)
-        elif self.kind == "shell":
-            return transports.Shell(self)
-        elif self.kind == "signal":
-            return transports.Signal(self)
-        elif self.kind == "slack":
-            return transports.Slack(self)
-        elif self.kind == "sms":
-            return transports.Sms(self)
-        elif self.kind == "spike":
-            return transports.Spike(self)
-        elif self.kind == "telegram":
-            return transports.Telegram(self)
-        elif self.kind == "trello":
-            return transports.Trello(self)
-        elif self.kind == "victorops":
-            return transports.VictorOps(self)
-        elif self.kind == "webhook":
-            return transports.Webhook(self)
-        elif self.kind == "whatsapp":
-            return transports.WhatsApp(self)
-        elif self.kind == "zulip":
-            return transports.Zulip(self)
-        elif self.kind in ("hipchat", "pagerteam"):
-            return transports.RemovedTransport(self)
+        if self.kind not in TRANSPORTS:
+            raise NotImplementedError(f"Unknown channel kind: {self.kind}")
 
-        raise NotImplementedError("Unknown channel kind: %s" % self.kind)
+        _, cls = TRANSPORTS[self.kind]
+        return cls(self)
 
     def notify(self, check, is_test=False):
         if self.transport.is_noop(check):
