@@ -2,7 +2,9 @@
 {% load compress static %}
 
 {% block base_modals %}
+{% if request.user.is_authenticated %}
 {% include "accounts/add_project_modal.html" %}
+{% endif %}
 {% endblock %}
 
 {% block base_scripts %}
