@@ -122,14 +122,14 @@ def _remove_objects(code, upto_n):
     if delete_objs:
         num_objs = len(delete_objs)
         try:
-            start = time.time()
-            errors = client().remove_objects(settings.S3_BUCKET, delete_objs)
-            for e in errors:
-                print("remove_objects error: ", e)
-            total = time.time() - start
-            print("remove_objects for %d objects took %.1fs" % (num_objs, total))
+            with statsd.timer("hc.lib.s3.removeObjectsTime"):
+                errors = client().remove_objects(settings.S3_BUCKET, delete_objs)
+                for e in errors:
+                    statsd.incr("hc.lib.s3.removeObjectsErrors")
+                    logger.error(f"remove_objects error: {e}")
         except ReadTimeoutError:
-            print("remove_objects timed out for %d objects" % num_objs)
+            logger.exception(f"ReadTimeoutError while removing {num_objs} objects")
+            statsd.incr("hc.lib.s3.removeObjectsErrors")
 
 
 def remove_objects(check_code, upto_n):
