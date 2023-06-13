@@ -36,6 +36,8 @@ RUN \
     DEBUG=False SECRET_KEY=build-key ./manage.py collectstatic --noinput && \
     DEBUG=False SECRET_KEY=build-key ./manage.py compress
 
+RUN mkdir /data && chown hc /data
+
 USER hc
 
 ENV USE_GZIP_MIDDLEWARE=True
