@@ -37,10 +37,6 @@ Please submit additions and corrections
 <ul>
 <li><a href="https://github.com/davehope/HealthChecksIOStatusReport">davehope/HealthChecksIOStatusReport</a> – Supports pinging.</li>
 </ul>
-<h3>Python</h3>
-<ul>
-<li><a href="https://github.com/healthchecks/hchk">healthchecks/hchk</a> – Supports creating, pinging.</li>
-</ul>
 <h3>Ruby</h3>
 <ul>
 <li><a href="https://github.com/gyde-tv/checks">gyde-tv/checks</a> – Supports pinging.</li>

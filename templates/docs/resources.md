@@ -40,10 +40,6 @@ Please submit additions and corrections
 
 * [davehope/HealthChecksIOStatusReport](https://github.com/davehope/HealthChecksIOStatusReport) – Supports pinging.
 
-### Python
-
-* [healthchecks/hchk](https://github.com/healthchecks/hchk) – Supports creating, pinging.
-
 ### Ruby
 
 * [gyde-tv/checks](https://github.com/gyde-tv/checks) – Supports pinging.
