@@ -11,5 +11,7 @@ class CustomRunner(DiscoverRunner):
 
         # Send emails synchronously
         settings.BLOCKING_EMAILS = True
+        # Make sure EMAIL_HOST is set as hc.lib.emails.send() requires it
+        settings.EMAIL_HOST = "example.org"
 
         super(CustomRunner, self).__init__(*args, **kwargs)

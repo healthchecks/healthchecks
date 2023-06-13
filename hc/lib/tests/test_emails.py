@@ -4,7 +4,9 @@ from smtplib import SMTPDataError, SMTPServerDisconnected
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from hc.lib.emails import EmailThread
+from django.test.utils import override_settings
+
+from hc.lib.emails import EmailThread, send
 
 
 @patch("hc.lib.emails.time.sleep")
@@ -36,3 +38,8 @@ class EmailsTestCase(TestCase):
         t.run()
 
         self.assertEqual(mock_msg.send.call_count, 2)
+
+    @override_settings(EMAIL_HOST="")
+    def test_it_requires_smtp_configuration(self, mock_time):
+        with self.assertRaises(AssertionError):
+            send(Mock())

@@ -62,6 +62,11 @@ def make_message(name, to, ctx, headers={}):
 
 
 def send(msg, block=False):
+    assert settings.EMAIL_HOST, (
+        "No SMTP configuration,"
+        " see https://github.com/healthchecks/healthchecks#sending-emails"
+    )
+
     t = EmailThread(msg)
     if block or hasattr(settings, "BLOCKING_EMAILS"):
         # In tests, we send emails synchronously
