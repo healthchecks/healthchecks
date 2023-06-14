@@ -398,3 +398,22 @@ class UpdateCheckTestCase(BaseTestCase):
         doc = r.json()
         self.assertEqual(doc["status"], "new")
         self.assertTrue(doc["started"])
+
+    def test_v3_saves_slug(self):
+        payload = {"slug": "updated-slug", "api_key": "X" * 32}
+        r = self.post(self.check.code, payload, v=3)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.slug, "updated-slug")
+
+    def test_v3_does_not_autogenerate_slug(self):
+        self.check.slug = "foo"
+        self.check.save()
+
+        payload = {"name": "Bar", "api_key": "X" * 32}
+        r = self.post(self.check.code, payload, v=3)
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.slug, "foo")

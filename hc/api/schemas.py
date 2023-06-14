@@ -4,6 +4,7 @@ check = {
     "type": "object",
     "properties": {
         "name": {"type": "string", "maxLength": 100},
+        "slug": {"type": "string", "pattern": "^[a-zA-Z0-9-_]*$"},
         "desc": {"type": "string"},
         "tags": {"type": "string", "maxLength": 500},
         "timeout": {"type": "number", "minimum": 60, "maximum": 31536000},
@@ -22,7 +23,7 @@ check = {
         "filter_body": {"type": "boolean"},
         "unique": {
             "type": "array",
-            "items": {"enum": ["name", "tags", "timeout", "grace"]},
+            "items": {"enum": ["name", "slug", "tags", "timeout", "grace"]},
         },
     },
 }

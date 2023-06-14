@@ -936,8 +936,13 @@ def copy(request, code):
     if len(new_name) > 100:
         new_name = check.name[:90] + "... (copy)"
 
+    new_slug = check.slug + "-copy"
+    if len(new_slug) > 100:
+        new_slug = ""
+
     copied = Check(project=check.project)
-    copied.set_name_slug(new_name)
+    copied.name = new_name
+    copied.slug = new_slug
     copied.desc, copied.tags = check.desc, check.tags
 
     copied.filter_subject = check.filter_subject

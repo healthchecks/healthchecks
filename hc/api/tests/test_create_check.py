@@ -172,6 +172,21 @@ class CreateCheckTestCase(BaseTestCase):
         check.refresh_from_db()
         self.assertEqual(check.tags, "bar")
 
+    def test_it_supports_unique_slug(self):
+        check = Check.objects.create(project=self.project, slug="foo")
+
+        r = self.post({"slug": "foo", "tags": "bar", "unique": ["slug"]})
+
+        # Expect 200 instead of 201
+        self.assertEqual(r.status_code, 200)
+
+        # And there should be only one check in the database:
+        self.assertEqual(Check.objects.count(), 1)
+
+        # The tags field should have a value now:
+        check.refresh_from_db()
+        self.assertEqual(check.tags, "bar")
+
     def test_it_supports_unique_tags(self):
         Check.objects.create(project=self.project, tags="foo")
 
@@ -204,6 +219,18 @@ class CreateCheckTestCase(BaseTestCase):
 
         # And there should be only one check in the database:
         self.assertEqual(Check.objects.count(), 1)
+
+    def test_it_handles_empty_unique_parameter(self):
+        check = Check.objects.create(project=self.project)
+
+        r = self.post({"name": "Hello", "unique": []})
+
+        # Expect 201
+        self.assertEqual(r.status_code, 201)
+
+        # The pre-existing check should be unchanged:
+        check.refresh_from_db()
+        self.assertEqual(check.name, "")
 
     def test_it_handles_missing_request_body(self):
         r = self.client.post(self.URL, content_type="application/json")
@@ -343,3 +370,25 @@ class CreateCheckTestCase(BaseTestCase):
         doc = r.json()
         self.assertEqual(doc["status"], "new")
         self.assertTrue(doc["started"])
+
+    def test_v3_saves_slug(self):
+        r = self.post({"name": "Foo", "slug": "custom-slug"}, v=3)
+        self.assertEqual(r.status_code, 201)
+
+        check = Check.objects.get()
+        self.assertEqual(check.name, "Foo")
+        self.assertEqual(check.slug, "custom-slug")
+
+    def test_v3_does_not_autogenerate_slug(self):
+        r = self.post({"name": "Foo"}, v=3)
+        self.assertEqual(r.status_code, 201)
+
+        check = Check.objects.get()
+        self.assertEqual(check.slug, "")
+
+    def test_it_handles_invalid_slug(self):
+        r = self.post({"name": "Foo", "slug": "Hey!"}, v=3)
+        self.assertEqual(r.status_code, 400)
+        self.assertEqual(
+            r.json()["error"], "json validation error: slug does not match pattern"
+        )

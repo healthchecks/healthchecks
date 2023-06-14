@@ -20,6 +20,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404
+from django.utils.text import slugify
 from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -115,6 +116,8 @@ def _lookup(project, spec):
         existing_checks = Check.objects.filter(project=project)
         if "name" in unique_fields:
             existing_checks = existing_checks.filter(name=spec.get("name"))
+        if "slug" in unique_fields:
+            existing_checks = existing_checks.filter(slug=spec.get("slug"))
         if "tags" in unique_fields:
             existing_checks = existing_checks.filter(tags=spec.get("tags"))
         if "timeout" in unique_fields:
@@ -127,7 +130,7 @@ def _lookup(project, spec):
         return existing_checks.first()
 
 
-def _update(check, spec):
+def _update(check, spec, v: int):
     # First, validate the supplied channel codes/names
     if "channels" not in spec:
         # If the channels key is not present, don't update check's channels
@@ -162,7 +165,10 @@ def _update(check, spec):
         need_save = True
 
     if "name" in spec and check.name != spec["name"]:
-        check.set_name_slug(spec["name"])
+        check.name = spec["name"]
+        if v < 3:
+            # v1 and v2 generates slug automatically from name
+            check.slug = slugify(spec["name"])
         need_save = True
 
     if "timeout" in spec and "schedule" not in spec:
@@ -195,6 +201,7 @@ def _update(check, spec):
         need_save = True
 
     for key in (
+        "slug",
         "tags",
         "desc",
         "manual_resume",
@@ -255,7 +262,7 @@ def create_check(request):
         created = True
 
     try:
-        _update(check, request.json)
+        _update(check, request.json, request.v)
     except BadChannelException as e:
         return JsonResponse({"error": e.message}, status=400)
 
@@ -308,7 +315,7 @@ def update_check(request, code):
         return HttpResponseForbidden()
 
     try:
-        _update(check, request.json)
+        _update(check, request.json, request.v)
     except BadChannelException as e:
         return JsonResponse({"error": e.message}, status=400)
 

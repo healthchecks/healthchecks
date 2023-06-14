@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Configure logging to log unhandled exceptions to console even when DEBUG=False (#835)
 - Make hc.lib.emails raise exceptions when EMAIL_ settings are not set
 - Decouple check's name from slug, allow users to set hand-picked slugs
+- Add /api/v3/ (adds ability to specify slug when creating or updating checks)
 
 ## v2.9.2 - 2023-06-05
 

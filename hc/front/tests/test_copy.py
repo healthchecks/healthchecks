@@ -9,7 +9,7 @@ class CopyCheckTestCase(BaseTestCase):
         super().setUp()
         self.check = Check(project=self.project)
         self.check.name = "Foo"
-        self.check.slug = "foo"
+        self.check.slug = "custom-slug"
         self.check.filter_subject = True
         self.check.filter_body = True
         self.check.start_kw = "start-keyword"
@@ -27,7 +27,7 @@ class CopyCheckTestCase(BaseTestCase):
         self.assertContains(r, "This is a brand new check")
 
         copy = Check.objects.get(name="Foo (copy)")
-        self.assertEqual(copy.slug, "foo-copy")
+        self.assertEqual(copy.slug, "custom-slug-copy")
         self.assertTrue(copy.filter_subject)
         self.assertTrue(copy.filter_body)
         self.assertEqual(copy.start_kw, "start-keyword")

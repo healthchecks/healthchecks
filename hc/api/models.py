@@ -19,7 +19,6 @@ from django.core.signing import TimestampSigner
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.text import slugify
 from django.utils.timezone import now
 
 from hc.accounts.models import Project
@@ -232,10 +231,6 @@ class Check(models.Model):
         if self.last_duration and self.last_duration < MAX_DURATION:
             return self.last_duration
         return None
-
-    def set_name_slug(self, name: str) -> None:
-        self.name = name
-        self.slug = slugify(name)
 
     def get_grace_start(self, *, with_started: bool = True) -> datetime | None:
         """Return the datetime when the grace period starts.

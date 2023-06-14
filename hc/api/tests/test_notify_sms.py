@@ -44,7 +44,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertIn("is DOWN", payload["Body"])
 
         n = Notification.objects.get()
-        callback_path = f"/api/v2/notifications/{n.code}/status"
+        callback_path = f"/api/v3/notifications/{n.code}/status"
         self.assertTrue(payload["StatusCallback"].endswith(callback_path))
 
         # sent SMS counter should go up

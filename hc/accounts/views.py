@@ -79,7 +79,8 @@ def _make_user(email, tz=None, with_project=True):
         project.save()
 
         check = Check(project=project)
-        check.set_name_slug("My First Check")
+        check.name = "My First Check"
+        check.slug = "my-first-check"
         check.save()
 
         channel = Channel(project=project)

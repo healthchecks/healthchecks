@@ -33,7 +33,11 @@ def authorize(f):
             return error("wrong api key", 401)
 
         request.readonly = False
-        request.v = 2 if request.path_info.startswith("/api/v2/") else 1
+        request.v = 1
+        if request.path_info.startswith("/api/v2/"):
+            request.v = 2
+        elif request.path_info.startswith("/api/v3/"):
+            request.v = 3
         return f(request, *args, **kwds)
 
     return wrapper

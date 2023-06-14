@@ -14,7 +14,7 @@ class PruneNotificationsTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
-        self.check.set_name_slug("Alice 1")
+        self.check.name = "Alice 1"
         self.check.n_pings = 101
         self.check.save()
 
