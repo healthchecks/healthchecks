@@ -6,6 +6,7 @@ Supports only a tiny subset of jsonschema.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 
 from cronsim import CronSim
@@ -20,11 +21,13 @@ class ValidationError(Exception):
 def validate(obj, schema, obj_name="value"):
     if schema.get("type") == "string":
         if not isinstance(obj, str):
-            raise ValidationError("%s is not a string" % obj_name)
+            raise ValidationError(f"{obj_name} is not a string")
         if "minLength" in schema and len(obj) < schema["minLength"]:
-            raise ValidationError("%s is too short" % obj_name)
+            raise ValidationError(f"{obj_name} is too short")
         if "maxLength" in schema and len(obj) > schema["maxLength"]:
-            raise ValidationError("%s is too long" % obj_name)
+            raise ValidationError(f"{obj_name} is too long")
+        if "pattern" in schema and not re.match(schema["pattern"], obj):
+            raise ValidationError(f"{obj_name} does not match pattern")
         if schema.get("format") == "cron":
             try:
                 # Does it have 5 components?
@@ -36,32 +39,32 @@ def validate(obj, schema, obj_name="value"):
                 # Can it calculate the next datetime?
                 next(it)
             except:
-                raise ValidationError("%s is not a valid cron expression" % obj_name)
+                raise ValidationError(f"{obj_name} is not a valid cron expression")
         if schema.get("format") == "timezone" and obj not in all_timezones:
-            raise ValidationError("%s is not a valid timezone" % obj_name)
+            raise ValidationError(f"{obj_name} is not a valid timezone")
 
     elif schema.get("type") == "number":
         if not isinstance(obj, int):
-            raise ValidationError("%s is not a number" % obj_name)
+            raise ValidationError(f"{obj_name} is not a number")
         if "minimum" in schema and obj < schema["minimum"]:
-            raise ValidationError("%s is too small" % obj_name)
+            raise ValidationError(f"{obj_name} is too small")
         if "maximum" in schema and obj > schema["maximum"]:
-            raise ValidationError("%s is too large" % obj_name)
+            raise ValidationError(f"{obj_name} is too large")
 
     elif schema.get("type") == "boolean":
         if not isinstance(obj, bool):
-            raise ValidationError("%s is not a boolean" % obj_name)
+            raise ValidationError(f"{obj_name} is not a boolean")
 
     elif schema.get("type") == "array":
         if not isinstance(obj, list):
-            raise ValidationError("%s is not an array" % obj_name)
+            raise ValidationError(f"{obj_name} is not an array")
 
         for v in obj:
-            validate(v, schema["items"], "an item in '%s'" % obj_name)
+            validate(v, schema["items"], f"an item in '{obj_name}'")
 
     elif schema.get("type") == "object":
         if not isinstance(obj, dict):
-            raise ValidationError("%s is not an object" % obj_name)
+            raise ValidationError(f"{obj_name} is not an object")
 
         properties = schema.get("properties", {})
         for key, spec in properties.items():
@@ -70,8 +73,8 @@ def validate(obj, schema, obj_name="value"):
 
         for key in schema.get("required", []):
             if key not in obj:
-                raise ValidationError("key %s absent in %s" % (key, obj_name))
+                raise ValidationError(f"key {key} absent in {obj_name}")
 
     if "enum" in schema:
         if obj not in schema["enum"]:
-            raise ValidationError("%s has unexpected value" % obj_name)
+            raise ValidationError(f"{obj_name} has unexpected value")
