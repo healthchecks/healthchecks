@@ -1,4 +1,4 @@
-<div id="add-check-modal" class="modal simple">
+<div id="add-check-modal" class="modal simple with-slug-suggestions">
     <div class="modal-dialog">
         <form class="form-horizontal" method="post" action="{% url 'hc-add-check' project.code %}">
             {% csrf_token %}
@@ -25,6 +25,30 @@
                             <span class="help-block">
                                 Give this check a human-friendly name.
                             </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-check-slug" class="col-sm-3 control-label">
+                            Slug
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input
+                                    id="add-check-slug"
+                                    name="slug"
+                                    type="text"
+                                    maxlength="100"
+                                    value="{{ check.slug }}"
+                                    pattern="[a-zA-Z0-9_-]+"
+                                    class="form-control" />
+                                <span class="input-group-btn">
+                                    <button
+                                        class="btn btn-default use-suggested-slug"
+                                        type="button">Use Suggested</button>
+                                </span>
+                            </div>
+                            <span class="help-block slug-help-block"></span>
                         </div>
                     </div>
 

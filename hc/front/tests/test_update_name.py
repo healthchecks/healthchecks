@@ -14,12 +14,13 @@ class UpdateNameTestCase(BaseTestCase):
 
     def test_it_works(self):
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, data={"name": "Alice Was Here"})
+        form = {"name": "Alice Was Here", "slug": "custom-slug"}
+        r = self.client.post(self.url, data=form)
         self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.name, "Alice Was Here")
-        self.assertEqual(self.check.slug, "alice-was-here")
+        self.assertEqual(self.check.slug, "custom-slug")
 
     def test_redirect_preserves_querystring(self):
         referer = self.redirect_url + "?tag=foo"

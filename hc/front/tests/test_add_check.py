@@ -14,6 +14,7 @@ class AddCheckTestCase(BaseTestCase):
     def _payload(self, **kwargs):
         payload = {
             "name": "Test",
+            "slug": "custom-slug",
             "tags": "foo bar",
             "kind": "simple",
             "timeout": "120",
@@ -31,7 +32,7 @@ class AddCheckTestCase(BaseTestCase):
         check = Check.objects.get()
         self.assertEqual(check.project, self.project)
         self.assertEqual(check.name, "Test")
-        self.assertEqual(check.slug, "test")
+        self.assertEqual(check.slug, "custom-slug")
         self.assertEqual(check.tags, "foo bar")
         self.assertEqual(check.kind, "simple")
         self.assertEqual(check.timeout.total_seconds(), 120)

@@ -481,7 +481,8 @@ def add_check(request, code):
         return HttpResponseBadRequest()
 
     check = Check(project=project)
-    check.set_name_slug(form.cleaned_data["name"])
+    check.name = form.cleaned_data["name"]
+    check.slug = form.cleaned_data["slug"]
     check.tags = form.cleaned_data["tags"]
     check.kind = form.cleaned_data["kind"]
     check.timeout = form.cleaned_data["timeout"]
@@ -504,7 +505,8 @@ def update_name(request, code):
 
     form = forms.NameTagsForm(request.POST)
     if form.is_valid():
-        check.set_name_slug(form.cleaned_data["name"])
+        check.name = form.cleaned_data["name"]
+        check.slug = form.cleaned_data["slug"]
         check.tags = form.cleaned_data["tags"]
         check.desc = form.cleaned_data["desc"]
         check.save()

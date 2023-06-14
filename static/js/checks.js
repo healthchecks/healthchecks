@@ -7,6 +7,7 @@ $(function () {
 
         $("#update-name-form").attr("action", url);
         $("#update-name-input").val(this.dataset.name);
+        $("#update-slug-input").val(this.dataset.slug);
 
         var tagsSelectize = document.getElementById("update-tags-input").selectize;
         tagsSelectize.setValue(this.dataset.tags.split(" "));

@@ -66,6 +66,7 @@
         </td>
         <td>
             <div data-name="{{ check.name }}"
+                 data-slug="{{ check.slug }}"
                  data-tags="{{ check.tags }}"
                  data-desc="{{ check.desc }}"
                  class="my-checks-name {% if not check.name %}unnamed{% endif %}">
@@ -77,7 +78,7 @@
         </td>
         <td class="hidden-xs hidden-sm hidden-md">
             {% if project.show_slugs and not check.slug %}
-                <span class="unavailable">unavailable, set name first</span>
+                <span class="unavailable">unavailable, slug not set</span>
             {% else %}
                 <span class="my-checks-url">{{ check.url|format_ping_endpoint }}</span>
                 {% if project.show_slugs and check.slug in ambiguous %}
