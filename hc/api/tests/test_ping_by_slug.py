@@ -35,11 +35,6 @@ class PingBySlugTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(Ping.objects.count(), 1)
 
-    def test_it_handles_missing_check(self):
-        r = self.client.get(f"/ping/{self.project.ping_key}/bar")
-        self.assertEqual(r.status_code, 404)
-        self.assertEqual(r.content.decode(), "not found")
-
     def test_it_never_caches(self):
         r = self.client.get(self.url)
         assert "no-cache" in r.get("Cache-Control")
@@ -84,3 +79,14 @@ class PingBySlugTestCase(BaseTestCase):
     def test_it_handles_wrong_ping_key(self):
         r = self.client.get("/ping/rrrrrrrrrrrrrrrrrrrrrr/foo")
         self.assertEqual(r.status_code, 404)
+
+    def test_it_autocreates_missing_check(self):
+        self.check.delete()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+
+        check = Check.objects.get()
+        self.assertEqual(check.name, "foo")
+        self.assertEqual(check.slug, "foo")
+        self.assertEqual(check.ping_set.count(), 1)

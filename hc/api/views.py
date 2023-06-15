@@ -26,7 +26,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from hc.accounts.models import Profile
+from hc.accounts.models import Profile, Project
 from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.forms import FlipsFiltersForm
@@ -104,7 +104,12 @@ def ping_by_slug(
     try:
         check = Check.objects.get(slug=slug, project__ping_key=ping_key)
     except Check.DoesNotExist:
-        return HttpResponseNotFound("not found")
+        try:
+            project = Project.objects.get(ping_key=ping_key)
+        except Project.DoesNotExist:
+            return HttpResponseNotFound("not found")
+        check = Check(project=project, name=slug, slug=slug)
+        check.save()
     except Check.MultipleObjectsReturned:
         return HttpResponse("ambiguous slug", status=409)
 
