@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.test import Client
 
-from hc.api.models import Check, Ping
+from hc.api.models import Channel, Check, Ping
 from hc.test import BaseTestCase
 
 
@@ -82,6 +82,7 @@ class PingBySlugTestCase(BaseTestCase):
 
     def test_it_autocreates_missing_check(self):
         self.check.delete()
+        channel = Channel.objects.create(project=self.project)
 
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
@@ -90,3 +91,5 @@ class PingBySlugTestCase(BaseTestCase):
         self.assertEqual(check.name, "foo")
         self.assertEqual(check.slug, "foo")
         self.assertEqual(check.ping_set.count(), 1)
+        # It should assign all channels to the new check
+        self.assertEqual(check.channel_set.get(), channel)

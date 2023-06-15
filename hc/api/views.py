@@ -110,6 +110,7 @@ def ping_by_slug(
             return HttpResponseNotFound("not found")
         check = Check(project=project, name=slug, slug=slug)
         check.save()
+        check.assign_all_channels()
     except Check.MultipleObjectsReturned:
         return HttpResponse("ambiguous slug", status=409)
 
