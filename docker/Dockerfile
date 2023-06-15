@@ -20,7 +20,7 @@ COPY --from=builder /wheels /wheels
 
 RUN \
     apt update && \
-    apt install -y libcurl4 libpq5 libmariadb3 && \
+    apt install -y libcurl4 libpq5 libmariadb3 libxml2 && \
     rm -rf /var/apt/cache
 
 RUN \
