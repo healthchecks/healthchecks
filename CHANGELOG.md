@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Make hc.lib.emails raise exceptions when EMAIL_ settings are not set
 - Decouple check's name from slug, allow users to set hand-picked slugs
 - Add /api/v3/ (adds ability to specify slug when creating or updating checks)
+- Update Dockerfile to use Debian Bookworm as the base
 
 ## v2.9.2 - 2023-06-05
 

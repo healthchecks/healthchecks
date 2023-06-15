@@ -1,9 +1,7 @@
-FROM python:3.11-slim-bullseye as builder
+FROM python:3.11-slim-bookworm as builder
 
 COPY requirements.txt /tmp
-RUN apt update && apt install -y build-essential curl git libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev pkg-config
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="${PATH}:/root/.cargo/bin"
+RUN apt update && apt install -y build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev rustc
 ENV CARGO_NET_GIT_FETCH_WITH_CLI true
 RUN \
     pip install --upgrade pip && \
@@ -12,7 +10,7 @@ RUN \
 COPY . /opt/healthchecks/
 RUN rm -rf /opt/healthchecks/.git
 
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim-bookworm
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
