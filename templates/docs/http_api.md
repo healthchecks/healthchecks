@@ -30,24 +30,18 @@ chosen one. When you delete a check, you also lose its UUID and cannot get it ba
 
 You can look up UUIDs of your checks in web UI or via [Management API](../api/) calls.
 
-**Check's slug** is derived from the check's name using Django's
-[slugify](https://docs.djangoproject.com/en/4.2/ref/utils/#django.utils.text.slugify)
-function. It applies the following transformations:
+**Check's slug** can be chosen by the user. The slug should only contain the following
+characters: `a-z`, `0-9`, hyphens, underscores. A common practice is to
+derive the slug from the check's name (for example, a check named "Database Backup"
+might have a slug "database-backup"), but the user is free to pick arbitrary slug
+values.
 
-* Convert to ASCII.
-* Convert to lowercase.
-* Remove characters that aren't alphanumerics, underscores, hyphens, or whitespace.
-* Replace any whitespace or repeated hyphens with single hyphens.
-* Remove leading and trailing whitespace, hyphens, and underscores.
+Check's slug **can be changed** by the user, from the web interface or by using
+[Management API](../api/) calls.
 
-For example, if check's name is "Database Backup", its slug is `database-backup`.
-
-Check's slug **can change**. SITE_NAME updates check's slug whenever its name changes.
-
-Check's slug is **not guaranteed to be unique**. If multiple checks in the project
-have the same name, they also have the same slug. If you make a Pinging API
-request using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status
-code and ignore the request.
+Check's slug is **not guaranteed to be unique**. If you make a Pinging API request
+using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status code
+and ignore the request.
 
 ## Endpoints
 

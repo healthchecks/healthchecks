@@ -22,22 +22,16 @@ or by a combination of project's Ping Key and check's slug.</p>
 immutable. You cannot replace the automatically assigned UUID with a manually
 chosen one. When you delete a check, you also lose its UUID and cannot get it back.</p>
 <p>You can look up UUIDs of your checks in web UI or via <a href="../api/">Management API</a> calls.</p>
-<p><strong>Check's slug</strong> is derived from the check's name using Django's
-<a href="https://docs.djangoproject.com/en/4.2/ref/utils/#django.utils.text.slugify">slugify</a>
-function. It applies the following transformations:</p>
-<ul>
-<li>Convert to ASCII.</li>
-<li>Convert to lowercase.</li>
-<li>Remove characters that aren't alphanumerics, underscores, hyphens, or whitespace.</li>
-<li>Replace any whitespace or repeated hyphens with single hyphens.</li>
-<li>Remove leading and trailing whitespace, hyphens, and underscores.</li>
-</ul>
-<p>For example, if check's name is "Database Backup", its slug is <code>database-backup</code>.</p>
-<p>Check's slug <strong>can change</strong>. SITE_NAME updates check's slug whenever its name changes.</p>
-<p>Check's slug is <strong>not guaranteed to be unique</strong>. If multiple checks in the project
-have the same name, they also have the same slug. If you make a Pinging API
-request using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status
-code and ignore the request.</p>
+<p><strong>Check's slug</strong> can be chosen by the user. The slug should only contain the following
+characters: <code>a-z</code>, <code>0-9</code>, hyphens, underscores. A common practice is to
+derive the slug from the check's name (for example, a check named "Database Backup"
+might have a slug "database-backup"), but the user is free to pick arbitrary slug
+values.</p>
+<p>Check's slug <strong>can be changed</strong> by the user, from the web interface or by using
+<a href="../api/">Management API</a> calls.</p>
+<p>Check's slug is <strong>not guaranteed to be unique</strong>. If you make a Pinging API request
+using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status code
+and ignore the request.</p>
 <h2>Endpoints</h2>
 <table>
 <thead>

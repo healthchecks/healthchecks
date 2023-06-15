@@ -1,10 +1,10 @@
-# Management API v3
+# Management API v2
 
 Version:
 <select onchange="document.location = this.value">
     <option value="../apiv1/">v1</option>
-    <option value="../apiv2/">v2</option>
-    <option value="../api/" selected>v3</option>
+    <option value="../apiv2/" selected>v2</option>
+    <option value="../api/">v3</option>
 </select>
 
 With the Management API, you can programmatically manage checks and integrations
@@ -34,12 +34,25 @@ Endpoint Name                                         | Endpoint Address
 **Badges**|
 [List project's badges](#list-badges)                  | `GET SITE_ROOT/api/v2/badges/`
 
-## Changes From v2
+## Changes From v1
 
-Management API v3 adds the ability to specify custom check slugs, instead of
-auto-generating them from check names. The [Create a new check](#create-check)
-and [Update an existing check](#update-check) calls accept a new `slug`
-parameter, and use it instead of generating the slug from the check's name.
+Management API v2 changes the status reporting of checks in started state.
+If a check is running, API v1 reports its status as `started`. API v2 instead reports
+the started state in a separate `started` boolean field. It can therefore
+express "up and currently running" and "down, but currently running" states.
+
+For example, if a check is down, but also has recently received a `/start` signal,
+Management API v1 would report its status as:
+
+```
+{"status": "started", ...}
+```
+
+Management API v2 would report its status as:
+
+```
+{"status": "down", "started": true, ...}
+```
 
 ## Authentication
 
@@ -351,18 +364,6 @@ name
 
     Name for the new check.
 
-    Changed in API v3: the check's slug is no longer automatically generated
-    from the check's name. Instead, the client can specify the slug explicitly
-    via the `slug` field.
-
-slug
-:   string, optional, default value: ""
-
-    Slug for the new check. The slug should only contain the following
-    characters: `a-z`, `0-9`, hyphens, underscores. Example:
-
-    <pre>{"slug": "my-custom-slug"}</pre>
-
 tags
 :   string, optional, default value: ""
 
@@ -482,7 +483,7 @@ unique
     returns it with HTTP status code 200.
 
     The accepted values for the `unique` field are
-    `name`, `slug`, `tags`, `timeout`, and `grace`.
+    `name`, `tags`, `timeout`, and `grace`.
 
     Example:
 
@@ -641,7 +642,7 @@ curl SITE_ROOT/api/v2/checks/ \
   "last_ping": null,
   "n_pings": 0,
   "name": "Backups",
-  "slug": "",
+  "slug": "backups",
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
@@ -674,18 +675,6 @@ name
 :   string, optional.
 
     Name for the check.
-
-    Changed in API v3: the check's slug is no longer automatically generated
-    from the check's name. Instead, the client can specify the slug explicitly
-    via the `slug` field.
-
-slug
-:   string, optional
-
-    Slug for the new check. The slug should only contain the following
-    characters: `a-z`, `0-9`, hyphens, underscores. Example:
-
-    <pre>{"slug": "my-custom-slug"}</pre>
 
 tags
 :   string, optional.
@@ -946,7 +935,7 @@ curl SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
   "last_ping": null,
   "n_pings": 0,
   "name": "Backups",
-  "slug": "",
+  "slug": "backups",
   "next_ping": null,
   "manual_resume": false,
   "methods": "",

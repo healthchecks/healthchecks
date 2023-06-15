@@ -66,7 +66,7 @@ The check is identified by its UUID. Check UUIDs are assigned
 automatically by SITE_NAME, and are guaranteed to be unique.</li>
 <li><code>PING_ENDPOINT&lt;project-ping-key&gt;/&lt;name-slug&gt;</code><br>
 The check is identified by project's <strong>Ping key</strong> and check's
-<strong>slug</strong> (its name, converted to lowercase, spaces replaced with hyphens).</li>
+<strong>slug</strong> (user-chosen, URL-friendly identifier).</li>
 </ul>
 <p>You can append <code>/start</code>, <code>/fail</code> or <code>/&lt;exitcode&gt;</code> to the base ping URL to send
 "start" and "failure" signals. The "start" and "failure" signals are optional.

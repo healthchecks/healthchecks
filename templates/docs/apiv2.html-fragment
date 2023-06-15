@@ -1,9 +1,9 @@
-<h1>Management API v3</h1>
+<h1>Management API v2</h1>
 <p>Version:
 <select onchange="document.location = this.value">
     <option value="../apiv1/">v1</option>
-    <option value="../apiv2/">v2</option>
-    <option value="../api/" selected>v3</option>
+    <option value="../apiv2/" selected>v2</option>
+    <option value="../api/">v3</option>
 </select></p>
 <p>With the Management API, you can programmatically manage checks and integrations
 in your account.</p>
@@ -88,11 +88,20 @@ in your account.</p>
 </tr>
 </tbody>
 </table>
-<h2>Changes From v2</h2>
-<p>Management API v3 adds the ability to specify custom check slugs, instead of
-auto-generating them from check names. The <a href="#create-check">Create a new check</a>
-and <a href="#update-check">Update an existing check</a> calls accept a new <code>slug</code>
-parameter, and use it instead of generating the slug from the check's name.</p>
+<h2>Changes From v1</h2>
+<p>Management API v2 changes the status reporting of checks in started state.
+If a check is running, API v1 reports its status as <code>started</code>. API v2 instead reports
+the started state in a separate <code>started</code> boolean field. It can therefore
+express "up and currently running" and "down, but currently running" states.</p>
+<p>For example, if a check is down, but also has recently received a <code>/start</code> signal,
+Management API v1 would report its status as:</p>
+<div class="highlight"><pre><span></span><code>{&quot;status&quot;: &quot;started&quot;, ...}
+</code></pre></div>
+
+<p>Management API v2 would report its status as:</p>
+<div class="highlight"><pre><span></span><code>{&quot;status&quot;: &quot;down&quot;, &quot;started&quot;: true, ...}
+</code></pre></div>
+
 <h2>Authentication</h2>
 <p>Your requests to SITE_NAME Management API must authenticate using an
 API key. All API keys are project-specific. There are no account-wide API keys.
@@ -365,16 +374,6 @@ values if omitted.</p>
 <dd>
 <p>string, optional, default value: ""</p>
 <p>Name for the new check.</p>
-<p>Changed in API v3: the check's slug is no longer automatically generated
-from the check's name. Instead, the client can specify the slug explicitly
-via the <code>slug</code> field.</p>
-</dd>
-<dt>slug</dt>
-<dd>
-<p>string, optional, default value: ""</p>
-<p>Slug for the new check. The slug should only contain the following
-characters: <code>a-z</code>, <code>0-9</code>, hyphens, underscores. Example:</p>
-<p><pre>{"slug": "my-custom-slug"}</pre></p>
 </dd>
 <dt>tags</dt>
 <dd>
@@ -470,7 +469,7 @@ with the HTTP status code 201.</p>
 <p>If SITE_NAME finds a matching check, it updates the existing check and
 returns it with HTTP status code 200.</p>
 <p>The accepted values for the <code>unique</code> field are
-<code>name</code>, <code>slug</code>, <code>tags</code>, <code>timeout</code>, and <code>grace</code>.</p>
+<code>name</code>, <code>tags</code>, <code>timeout</code>, and <code>grace</code>.</p>
 <p>Example:</p>
 <p><pre>{"name": "Backups", unique: ["name"]}</pre></p>
 <p>In this example, if a check named "Backups" exists, it will be returned.
@@ -595,7 +594,7 @@ the limit is 20 checks per account.</dd>
 <span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -625,16 +624,6 @@ parameter, SITE_NAME will leave its value unchanged.</p>
 <dd>
 <p>string, optional.</p>
 <p>Name for the check.</p>
-<p>Changed in API v3: the check's slug is no longer automatically generated
-from the check's name. Instead, the client can specify the slug explicitly
-via the <code>slug</code> field.</p>
-</dd>
-<dt>slug</dt>
-<dd>
-<p>string, optional</p>
-<p>Slug for the new check. The slug should only contain the following
-characters: <code>a-z</code>, <code>0-9</code>, hyphens, underscores. Example:</p>
-<p><pre>{"slug": "my-custom-slug"}</pre></p>
 </dd>
 <dt>tags</dt>
 <dd>
@@ -839,7 +828,7 @@ field values.</dd>
 <span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>

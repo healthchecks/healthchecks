@@ -1,5 +1,12 @@
 # Management API v1
 
+Version:
+<select onchange="document.location = this.value">
+    <option value="../apiv1/" selected>v1</option>
+    <option value="../apiv2/">v2</option>
+    <option value="../api/">v3</option>
+</select>
+
 With the Management API, you can programmatically manage checks and integrations
 in your account.
 
