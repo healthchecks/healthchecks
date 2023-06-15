@@ -329,7 +329,7 @@ class Check(models.Model):
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
 
-    def to_dict(self, *, readonly: bool = False, v: int = 2) -> CheckDict:
+    def to_dict(self, *, readonly: bool = False, v: int = 3) -> CheckDict:
         with_started = v == 1
         result: CheckDict = {
             "name": self.name,
