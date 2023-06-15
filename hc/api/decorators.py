@@ -14,6 +14,14 @@ def error(msg, status=400):
     return JsonResponse({"error": msg}, status=status)
 
 
+def _get_api_version(request) -> int:
+    if request.path_info.startswith("/api/v3/"):
+        return 3
+    if request.path_info.startswith("/api/v2/"):
+        return 2
+    return 1
+
+
 def authorize(f):
     @wraps(f)
     def wrapper(request, *args, **kwds):
@@ -33,11 +41,7 @@ def authorize(f):
             return error("wrong api key", 401)
 
         request.readonly = False
-        request.v = 1
-        if request.path_info.startswith("/api/v2/"):
-            request.v = 2
-        elif request.path_info.startswith("/api/v3/"):
-            request.v = 3
+        request.v = _get_api_version(request)
         return f(request, *args, **kwds)
 
     return wrapper
@@ -64,11 +68,7 @@ def authorize_read(f):
             return error("wrong api key", 401)
 
         request.readonly = api_key == request.project.api_key_readonly
-        request.v = 1
-        if request.path_info.startswith("/api/v2/"):
-            request.v = 2
-        elif request.path_info.startswith("/api/v3/"):
-            request.v = 3
+        request.v = _get_api_version(request)
         return f(request, *args, **kwds)
 
     return wrapper
