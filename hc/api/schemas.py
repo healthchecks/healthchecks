@@ -4,7 +4,7 @@ check = {
     "type": "object",
     "properties": {
         "name": {"type": "string", "maxLength": 100},
-        "slug": {"type": "string", "pattern": "^[a-zA-Z0-9-_]*$"},
+        "slug": {"type": "string", "pattern": "^[a-z0-9-_]*$"},
         "desc": {"type": "string"},
         "tags": {"type": "string", "maxLength": 500},
         "timeout": {"type": "number", "minimum": 60, "maximum": 31536000},

@@ -23,7 +23,7 @@ $(function () {
             if (suggested) {
                 help.html(`Suggested value: <code>${suggested}</code>`);
             } else {
-                help.text("Allowed characters: a-z, A-Z, 0-9, hyphens, underscores.");
+                help.text("Allowed characters: a-z, 0-9, hyphens, underscores.");
             }
 
             btn.attr("disabled", !suggested);

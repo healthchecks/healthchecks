@@ -387,8 +387,9 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.slug, "")
 
     def test_it_handles_invalid_slug(self):
-        r = self.post({"name": "Foo", "slug": "Hey!"}, v=3)
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(
-            r.json()["error"], "json validation error: slug does not match pattern"
-        )
+        for slug in ["Uppercase", "special!", "look spaces"]:
+            r = self.post({"name": "Foo", "slug": "Hey!"}, v=3)
+            self.assertEqual(r.status_code, 400)
+            self.assertEqual(
+                r.json()["error"], "json validation error: slug does not match pattern"
+            )
