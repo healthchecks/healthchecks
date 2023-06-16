@@ -39,7 +39,9 @@
                 </tr>
                 <tr>
                     <th>Checks Used:</th>
-                    <td>{{ project.owner.profile.num_checks_used }} of {{ project.owner.profile.check_limit }}</td>
+                    <td class="at-limit">
+                        <span>{{ project.owner.profile.num_checks_used }} of {{ project.owner.profile.check_limit }}</span>
+                    </td>
                 </tr>
             </table>
             {% if request.user == project.owner %}
