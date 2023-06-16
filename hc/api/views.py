@@ -349,6 +349,17 @@ def single(request, code):
 
     return get_check(request, code)
 
+@csrf_exempt
+@cors("POST", "DELETE", "GET")
+def single_by_slug(request, ping_key, slug):
+    try:
+        check = Check.objects.get(slug=slug, project__ping_key=ping_key)
+    except Check.DoesNotExist:
+        return HttpResponseNotFound("not found")
+    except Check.MultipleObjectsReturned:
+        return HttpResponse("ambiguous slug", status=409)
+
+    return single(request, check.code)
 
 @cors("POST")
 @csrf_exempt
