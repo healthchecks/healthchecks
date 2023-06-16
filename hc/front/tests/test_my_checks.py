@@ -82,7 +82,7 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, "ic-grace")
 
     def test_it_hides_add_check_button(self):
-        self.profile.check_limit = 0
+        self.profile.check_limit = 1
         self.profile.save()
 
         self.client.login(username="alice@example.org", password="password")
