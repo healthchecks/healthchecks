@@ -30,7 +30,7 @@
                 <tr>
                     <th>Current Plan:</th>
                     <td>
-                        {% if project.owner.subscription %}
+                        {% if project.owner.subscription and project.owner.subscription.plan_name %}
                         {{ project.owner.subscription.plan_name }}
                         {% else %}
                         Hobbyist (free)
