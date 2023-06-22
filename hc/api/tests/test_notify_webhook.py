@@ -422,3 +422,50 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertTrue(url.endswith("$BODY"))
         headers = mock_post.call_args.kwargs["headers"]
         self.assertEqual(headers["User-Agent"], "$BODY")
+
+    @patch("hc.api.transports.curl.request")
+    def test_webhooks_support_exitstatus_variable(self, mock_post):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "Exit status $EXITSTATUS",
+            "headers_down": {},
+        }
+        self._setup_data(json.dumps(definition))
+        Ping.objects.create(owner=self.check, exitstatus=123)
+
+        self.channel.notify(self.check)
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, b"Exit status 123")
+
+    @patch("hc.api.transports.curl.request")
+    def test_webhooks_handle_exitstatus_variable_with_last_ping_missing(
+        self, mock_post
+    ):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "Exit status $EXITSTATUS",
+            "headers_down": {},
+        }
+        self._setup_data(json.dumps(definition))
+        # Note - does not create Ping object
+
+        self.channel.notify(self.check)
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, b"Exit status -1")
+
+    @patch("hc.api.transports.curl.request")
+    def test_webhooks_handle_null_exitstatus(self, mock_post):
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "Exit status $EXITSTATUS",
+            "headers_down": {},
+        }
+        self._setup_data(json.dumps(definition))
+        Ping.objects.create(owner=self.check)  # does not set exitstatus
+
+        self.channel.notify(self.check)
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, b"Exit status -1")

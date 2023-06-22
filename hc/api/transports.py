@@ -304,6 +304,12 @@ class Webhook(HttpTransport):
             body = get_ping_body(self.last_ping(check))
             ctx["$BODY"] = body if body else ""
 
+        if "$EXITSTATUS" in template:
+            ctx["$EXITSTATUS"] = "-1"
+            lp = self.last_ping(check)
+            if lp and lp.exitstatus is not None:
+                ctx["$EXITSTATUS"] = str(lp.exitstatus)
+
         for i, tag in enumerate(check.tags_list()):
             ctx["$TAG%d" % (i + 1)] = safe(tag)
 

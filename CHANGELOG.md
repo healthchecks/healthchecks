@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add /api/v3/ (adds ability to specify slug when creating or updating checks)
 - Update Dockerfile to use Debian Bookworm as the base
 - Implement check auto-provisioning when pinging by slug (#626)
+- Add support for the $EXITSTATUS placeholder in webhook payloads (#826)
 
 ## v2.9.2 - 2023-06-05
 
