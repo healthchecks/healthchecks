@@ -1,6 +1,6 @@
 <h1>Pinging API</h1>
-<p>With the Pinging API, you can signal <strong>success</strong>, <strong>start</strong>, and <strong>failure</strong> events from
-your systems.</p>
+<p>With the Pinging API, you can signal <strong>success</strong>, <strong>start</strong>, <strong>failure</strong>,
+and <strong>log</strong> events from your systems.</p>
 <h2>General Notes</h2>
 <p>All ping endpoints support:</p>
 <ul>
@@ -32,6 +32,9 @@ values.</p>
 <p>Check's slug is <strong>not guaranteed to be unique</strong>. If you make a Pinging API request
 using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status code
 and ignore the request.</p>
+<p>Slug URLs support <strong>auto-provisioning</strong>. If you make a Pinging API request
+to a slug with no corresponding check, SITE_NAME will create the check
+automatically.</p>
 <h2>Endpoints</h2>
 <table>
 <thead>
@@ -340,7 +343,8 @@ OK
 <p>Signals to SITE_NAME that the job has completed successfully (or,
 a continuously running process is still running and healthy).</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.</p>
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
@@ -363,7 +367,7 @@ canonical textual representation.</p>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
 <dt>404 not found</dt>
-<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dd>Could not find a project matching the specified ping key.</dd>
 <dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
@@ -395,7 +399,8 @@ optional, but it enables a few extra features:</p>
 <li>SITE_NAME will detect if the job runs longer than its configured grace time</li>
 </ul>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.</p>
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
@@ -418,7 +423,7 @@ canonical textual representation.</p>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
 <dt>404 not found</dt>
-<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dd>Could not find a project matching the specified ping key.</dd>
 <dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
@@ -446,7 +451,8 @@ OK
 <p>Signals to SITE_NAME that the job has failed. Actively signaling a failure
 minimizes the delay from your monitored service failing to you receiving an alert.</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.</p>
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
@@ -469,7 +475,7 @@ canonical textual representation.</p>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
 <dt>404 not found</dt>
-<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dd>Could not find a project matching the specified ping key.</dd>
 <dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
@@ -498,7 +504,8 @@ OK
 SITE_NAME will log the event and display it in check's "Events" section with the
 "Log" label. The check's status will not change.</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.</p>
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
@@ -519,7 +526,7 @@ in the canonical textual representation.</p>
 <dt>200 OK</dt>
 <dd>The request succeeded.</dd>
 <dt>404 not found</dt>
-<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dd>Could not find a project matching the specified ping key.</dd>
 <dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>
@@ -552,7 +559,8 @@ OK
 included in the URL. The exit status is a 0-255 integer. SITE_NAME
 interprets 0 as a success and all other values as a failure.</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.</p>
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
@@ -577,7 +585,7 @@ canonical textual representation.</p>
 <dt>400 invalid url format</dt>
 <dd>The URL does not match the expected format.</dd>
 <dt>404 not found</dt>
-<dd>Could not find a check with the specified ping key and slug combination.</dd>
+<dd>Could not find a project matching the specified ping key.</dd>
 <dt>409 ambiguous slug</dt>
 <dd>Ambiguous, the slug matched multiple checks.</dd>
 </dl>

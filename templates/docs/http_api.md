@@ -1,7 +1,7 @@
 # Pinging API
 
-With the Pinging API, you can signal **success**, **start**, and **failure** events from
-your systems.
+With the Pinging API, you can signal **success**, **start**, **failure**,
+and **log** events from your systems.
 
 ## General Notes
 
@@ -42,6 +42,10 @@ Check's slug **can be changed** by the user, from the web interface or by using
 Check's slug is **not guaranteed to be unique**. If you make a Pinging API request
 using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status code
 and ignore the request.
+
+Slug URLs support **auto-provisioning**. If you make a Pinging API request
+to a slug with no corresponding check, SITE_NAME will create the check
+automatically.
 
 ## Endpoints
 
@@ -358,7 +362,8 @@ Signals to SITE_NAME that the job has completed successfully (or,
 a continuously running process is still running and healthy).
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -383,7 +388,7 @@ rid=&lt;uuid&gt;
 :   The request succeeded.
 
 404 not found
-:   Could not find a check with the specified ping key and slug combination.
+:   Could not find a project matching the specified ping key.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -421,7 +426,8 @@ optional, but it enables a few extra features:
 * SITE_NAME will detect if the job runs longer than its configured grace time
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -446,7 +452,7 @@ rid=&lt;uuid&gt;
 :   The request succeeded.
 
 404 not found
-:   Could not find a check with the specified ping key and slug combination.
+:   Could not find a project matching the specified ping key.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -481,7 +487,8 @@ Signals to SITE_NAME that the job has failed. Actively signaling a failure
 minimizes the delay from your monitored service failing to you receiving an alert.
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -506,7 +513,7 @@ rid=&lt;uuid&gt;
 :   The request succeeded.
 
 404 not found
-:   Could not find a check with the specified ping key and slug combination.
+:   Could not find a project matching the specified ping key.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -542,7 +549,8 @@ SITE_NAME will log the event and display it in check's "Events" section with the
 "Log" label. The check's status will not change.
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -565,7 +573,7 @@ rid=&lt;uuid&gt;
 :   The request succeeded.
 
 404 not found
-:   Could not find a check with the specified ping key and slug combination.
+:   Could not find a project matching the specified ping key.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -605,7 +613,8 @@ included in the URL. The exit status is a 0-255 integer. SITE_NAME
 interprets 0 as a success and all other values as a failure.
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL.
+included in the URL. If the ping key is correct, but a check with the
+specified slug does not exist, SITE_NAME creates it automatically.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -633,7 +642,7 @@ rid=&lt;uuid&gt;
 :   The URL does not match the expected format.
 
 404 not found
-:   Could not find a check with the specified ping key and slug combination.
+:   Could not find a project matching the specified ping key.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
