@@ -101,6 +101,7 @@ def ping_by_slug(
     action: str = "success",
     exitstatus: int | None = None,
 ) -> HttpResponse:
+    created = False
     try:
         check = Check.objects.get(slug=slug, project__ping_key=ping_key)
     except Check.DoesNotExist:
@@ -111,10 +112,15 @@ def ping_by_slug(
         check = Check(project=project, name=slug, slug=slug)
         check.save()
         check.assign_all_channels()
+        created = True
     except Check.MultipleObjectsReturned:
         return HttpResponse("ambiguous slug", status=409)
 
-    return ping(request, check.code, check, action, exitstatus)
+    response = ping(request, check.code, check, action, exitstatus)
+    if response.status_code == 200 and created:
+        response.content = b"Created"
+        response.status_code = 201
+    return response
 
 
 def _lookup(project, spec):

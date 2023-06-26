@@ -387,6 +387,9 @@ rid=&lt;uuid&gt;
 200 OK
 :   The request succeeded.
 
+201 Created
+:   A new check was automatically created, the request succeeded.
+
 404 not found
 :   Could not find a project matching the specified ping key.
 
@@ -451,6 +454,9 @@ rid=&lt;uuid&gt;
 200 OK
 :   The request succeeded.
 
+201 Created
+:   A new check was automatically created, the request succeeded.
+
 404 not found
 :   Could not find a project matching the specified ping key.
 
@@ -512,6 +518,9 @@ rid=&lt;uuid&gt;
 200 OK
 :   The request succeeded.
 
+201 Created
+:   A new check was automatically created, the request succeeded.
+
 404 not found
 :   Could not find a project matching the specified ping key.
 
@@ -571,6 +580,9 @@ rid=&lt;uuid&gt;
 
 200 OK
 :   The request succeeded.
+
+201 Created
+:   A new check was automatically created, the request succeeded.
 
 404 not found
 :   Could not find a project matching the specified ping key.
@@ -637,6 +649,9 @@ rid=&lt;uuid&gt;
 
 200 OK
 :   The request succeeded.
+
+201 Created
+:   A new check was automatically created, the request succeeded.
 
 400 invalid url format
 :   The URL does not match the expected format.

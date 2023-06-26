@@ -14,6 +14,7 @@ class PingBySlugTestCase(BaseTestCase):
 
     def test_it_works(self):
         r = self.client.get(self.url)
+        self.assertEqual(r.content, b"OK")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.headers["Access-Control-Allow-Origin"], "*")
 
@@ -85,7 +86,8 @@ class PingBySlugTestCase(BaseTestCase):
         channel = Channel.objects.create(project=self.project)
 
         r = self.client.get(self.url)
-        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.content, b"Created")
+        self.assertEqual(r.status_code, 201)
 
         check = Check.objects.get()
         self.assertEqual(check.name, "foo")
