@@ -3,16 +3,15 @@ from __future__ import annotations
 import email
 import email.policy
 import re
+import time
 
 from aiosmtpd.controller import Controller
 from asgiref.sync import sync_to_async
 from django.core.management.base import BaseCommand
-from django.db import connections
+from django.db import connection
 
 from hc.api.models import Check
 from hc.lib.html import html2text
-
-import time
 
 RE_UUID = re.compile(
     "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"
@@ -52,6 +51,11 @@ def _process_message(remote_addr, mailfrom, mailto, data):
     if not RE_UUID.match(code):
         return f"Not an UUID: {code}"
 
+    # Get a new db connection in case the old one has timed out.
+    # The if condition makes sure this does not run during tests.
+    if not connection.in_atomic_block:
+        connection.close()
+
     try:
         check = Check.objects.get(code=code)
     except Check.DoesNotExist:
@@ -84,9 +88,6 @@ class PingHandler:
         self.process_message = sync_to_async(_process_message)
 
     async def handle_DATA(self, server, session, envelope):
-        # get a new db connection in case the old one has timed out:
-        connections.close_all()
-
         remote_addr = session.peer[0]
         mailfrom = envelope.mail_from
         data = envelope.content
@@ -117,6 +118,6 @@ class Command(BaseCommand):
             try:
                 time.sleep(2**32)  # Sleep with a very large timeout
             except KeyboardInterrupt:
-               print("Interrupt received, exiting.")
-               break
+                print("Interrupt received, exiting.")
+                break
         controller.stop()

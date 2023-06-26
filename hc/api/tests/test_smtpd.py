@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from unittest.mock import Mock, patch
-
 from django.test.utils import override_settings
 
 from hc.api.management.commands.smtpd import PingHandler, _process_message
@@ -194,8 +192,7 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.ua, "Email from foo@example.org")
         self.assertEqual(ping.kind, None)
 
-    @patch("hc.api.management.commands.smtpd.connections")
-    async def test_it_handles_multiple_recipients(self, mock_connections):
+    async def test_it_handles_multiple_recipients(self):
         class Session:
             peer = ["1.2.3.4"]
 
