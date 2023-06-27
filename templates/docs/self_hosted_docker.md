@@ -14,11 +14,16 @@ termination.
   [from the GitHub repository](https://github.com/healthchecks/healthchecks).
 * Copy `docker/.env.example` to `docker/.env` and add your configuration in it.
   As a minimum, set the following fields:
-    * `DEFAULT_FROM_EMAIL` – the "From:" address for outbound emails
-    * `EMAIL_HOST` – the SMTP server
-    * `EMAIL_HOST_PASSWORD` – the SMTP password
-    * `EMAIL_HOST_USER` – the SMTP username
-    * `SECRET_KEY` – secures HTTP sessions, set to a random value
+    * `ALLOWED_HOSTS` – the domain name of your Healthchecks instance.
+    Example: `ALLOWED_HOSTS=hc.example.org`.
+    * `DEFAULT_FROM_EMAIL` – the "From:" address for outbound emails.
+    * `EMAIL_HOST` – the SMTP server.
+    * `EMAIL_HOST_PASSWORD` – the SMTP password.
+    * `EMAIL_HOST_USER` – the SMTP username.
+    * `SECRET_KEY` – secures HTTP sessions, set to a random value.
+    * `SITE_ROOT` – The base public URL of your Healthchecks instance. Example:
+    `SITE_ROOT=https://hc.example.org`.
+
 * Create and start containers:
 
         $ cd docker
@@ -59,3 +64,19 @@ For example, in NGINX you can use the `$scheme` variable like so:
 ```text
 proxy_set_header X-Forwarded-Proto $scheme;
 ```
+
+## Pre-built Images
+
+Pre-built Docker images, built from the Dockerfile in the `/docker/` directory,
+are available [on Docker Hub](https://hub.docker.com/r/healthchecks/healthchecks).
+The images are built automatically for every new release. The Docker images support
+amd64, arm/v7 and arm64 architectures.
+
+To use a pre-built image for Healthchecks version X.Y, in the `docker-compose.yml` file
+replace the "build" section with:
+
+```
+image: healthchecks/healthchecks:v2.9.2
+```
+
+
