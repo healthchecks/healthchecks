@@ -255,6 +255,9 @@ def get_checks(request):
         # approximate filtering by tags
         q = q.filter(tags__contains=tag)
 
+    if slug := request.GET.get("slug"):
+        q = q.filter(slug=slug)
+
     checks = []
     for check in q:
         # precise, final filtering

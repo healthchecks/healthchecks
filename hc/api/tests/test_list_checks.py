@@ -16,6 +16,7 @@ class ListChecksTestCase(BaseTestCase):
         self.now = now().replace(microsecond=0)
 
         self.a1 = Check(project=self.project, name="Alice 1")
+        self.a1.slug = "alice-1"
         self.a1.timeout = td(seconds=3600)
         self.a1.grace = td(seconds=900)
         self.a1.n_pings = 0
@@ -179,3 +180,12 @@ class ListChecksTestCase(BaseTestCase):
         a1 = r.json()["checks"][0]
         self.assertEqual(a1["status"], "new")
         self.assertTrue(a1["started"])
+
+    def test_it_works_with_slug_param(self):
+        r = self.client.get("/api/v1/checks/?slug=alice-1", HTTP_X_API_KEY="X" * 32)
+        self.assertEqual(r.status_code, 200)
+
+        doc = r.json()
+        self.assertEqual(len(doc["checks"]), 1)
+        check = doc["checks"][0]
+        self.assertEqual(check["name"], "Alice 1")

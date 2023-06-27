@@ -132,6 +132,14 @@ and 5xx indicates a server error.</p>
 one or more tags.</p>
 <h3>Query Parameters</h3>
 <dl>
+<dt>slug=&lt;value&gt;</dt>
+<dd>
+<p>Filters the checks and returns only the checks with the specified slug.
+If there are no matching checks, returns an empty list. If there are
+multiple matching checks, returns all of them.</p>
+<p>Example:</p>
+<p><code>SITE_ROOT/api/v3/checks/?slug=backups</code></p>
+</dd>
 <dt>tag=&lt;value&gt;</dt>
 <dd>
 <p>Filters the checks and returns only the checks that are tagged with the

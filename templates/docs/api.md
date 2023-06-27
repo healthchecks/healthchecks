@@ -89,6 +89,15 @@ one or more tags.
 
 ### Query Parameters
 
+slug=&lt;value&gt;
+:   Filters the checks and returns only the checks with the specified slug.
+    If there are no matching checks, returns an empty list. If there are
+    multiple matching checks, returns all of them.
+
+    Example:
+
+    `SITE_ROOT/api/v3/checks/?slug=backups`
+
 tag=&lt;value&gt;
 :   Filters the checks and returns only the checks that are tagged with the
     specified value.
