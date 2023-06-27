@@ -105,6 +105,9 @@ def ping_by_slug(
     try:
         check = Check.objects.get(slug=slug, project__ping_key=ping_key)
     except Check.DoesNotExist:
+        if request.GET.get("create") != "1":
+            return HttpResponseNotFound("not found")
+
         try:
             project = Project.objects.get(ping_key=ping_key)
         except Project.DoesNotExist:

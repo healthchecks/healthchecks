@@ -76,8 +76,8 @@ The check is identified by its UUID. Check UUIDs are assigned
 automatically by SITE_NAME, and are guaranteed to be unique.
 * `PING_ENDPOINT<project-ping-key>/<name-slug>`<br>
 The check is identified by project's **Ping key** and check's
-**slug** (user-chosen, URL-friendly identifier). Supports auto-provisioning: if you
-ping a slug value that does not have a corresponding check, SITE_NAME will
+**slug** (user-chosen, URL-friendly identifier). Optionally supports auto-provisioning:
+if you ping a slug value that does not have a corresponding check, SITE_NAME can
 create the check automatically.
 
 You can append `/start`, `/fail` or `/<exitcode>` to the base ping URL to send

@@ -43,9 +43,10 @@ Check's slug is **not guaranteed to be unique**. If you make a Pinging API reque
 using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status code
 and ignore the request.
 
-Slug URLs support **auto-provisioning**. If you make a Pinging API request
-to a slug with no corresponding check, SITE_NAME will create the check
-automatically.
+Slug URLs optionally support **auto-provisioning**: if you make a Pinging API request
+to a slug with no corresponding check, SITE_NAME will create the check automatically.
+Auto-provisioning is off by default, to enable it, add a `create=1` query parameter
+to the ping URL.
 
 ## Endpoints
 
@@ -362,8 +363,7 @@ Signals to SITE_NAME that the job has completed successfully (or,
 a continuously running process is still running and healthy).
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL. If the ping key is correct, but a check with the
-specified slug does not exist, SITE_NAME creates it automatically.
+included in the URL.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -373,6 +373,12 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
+
+create=0|1
+:   Optional, default "0". If set to "1", and if the slug in the URL does not match
+    any existing check in the project, SITE_NAME creates a new check automatically.
+
+    Example: `create=1`
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,
@@ -391,7 +397,7 @@ rid=&lt;uuid&gt;
 :   A new check was automatically created, the request succeeded.
 
 404 not found
-:   Could not find a project matching the specified ping key.
+:   Could not find a check with the specified ping key and slug combination.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -429,8 +435,7 @@ optional, but it enables a few extra features:
 * SITE_NAME will detect if the job runs longer than its configured grace time
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL. If the ping key is correct, but a check with the
-specified slug does not exist, SITE_NAME creates it automatically.
+included in the URL.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -440,6 +445,12 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
+
+create=0|1
+:   Optional, default "0". If set to "1", and if the slug in the URL does not match
+    any existing check in the project, SITE_NAME creates a new check automatically.
+
+    Example: `create=1`
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,
@@ -458,7 +469,7 @@ rid=&lt;uuid&gt;
 :   A new check was automatically created, the request succeeded.
 
 404 not found
-:   Could not find a project matching the specified ping key.
+:   Could not find a check with the specified ping key and slug combination.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -493,8 +504,7 @@ Signals to SITE_NAME that the job has failed. Actively signaling a failure
 minimizes the delay from your monitored service failing to you receiving an alert.
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL. If the ping key is correct, but a check with the
-specified slug does not exist, SITE_NAME creates it automatically.
+included in the URL.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -504,6 +514,12 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
+
+create=0|1
+:   Optional, default "0". If set to "1", and if the slug in the URL does not match
+    any existing check in the project, SITE_NAME creates a new check automatically.
+
+    Example: `create=1`
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,
@@ -522,7 +538,7 @@ rid=&lt;uuid&gt;
 :   A new check was automatically created, the request succeeded.
 
 404 not found
-:   Could not find a project matching the specified ping key.
+:   Could not find a check with the specified ping key and slug combination.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -558,8 +574,7 @@ SITE_NAME will log the event and display it in check's "Events" section with the
 "Log" label. The check's status will not change.
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL. If the ping key is correct, but a check with the
-specified slug does not exist, SITE_NAME creates it automatically.
+included in the URL.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -569,6 +584,12 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
+
+create=0|1
+:   Optional, default "0". If set to "1", and if the slug in the URL does not match
+    any existing check in the project, SITE_NAME creates a new check automatically.
+
+    Example: `create=1`
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. The value must be a client-picked UUID
@@ -585,7 +606,7 @@ rid=&lt;uuid&gt;
 :   A new check was automatically created, the request succeeded.
 
 404 not found
-:   Could not find a project matching the specified ping key.
+:   Could not find a check with the specified ping key and slug combination.
 
 409 ambiguous slug
 :   Ambiguous, the slug matched multiple checks.
@@ -625,8 +646,7 @@ included in the URL. The exit status is a 0-255 integer. SITE_NAME
 interprets 0 as a success and all other values as a failure.
 
 SITE_NAME identifies the check by project's ping key and check's slug
-included in the URL. If the ping key is correct, but a check with the
-specified slug does not exist, SITE_NAME creates it automatically.
+included in the URL.
 
 The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
@@ -636,6 +656,12 @@ but the client sends 123 bytes in the request body, SITE_NAME will store the fir
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
+
+create=0|1
+:   Optional, default "0". If set to "1", and if the slug in the URL does not match
+    any existing check in the project, SITE_NAME creates a new check automatically.
+
+    Example: `create=1`
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,

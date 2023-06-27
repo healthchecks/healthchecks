@@ -81,11 +81,11 @@ class PingBySlugTestCase(BaseTestCase):
         r = self.client.get("/ping/rrrrrrrrrrrrrrrrrrrrrr/foo")
         self.assertEqual(r.status_code, 404)
 
-    def test_it_autocreates_missing_check(self):
+    def test_it_auto_provisions_missing_check(self):
         self.check.delete()
         channel = Channel.objects.create(project=self.project)
 
-        r = self.client.get(self.url)
+        r = self.client.get(self.url + "?create=1")
         self.assertEqual(r.content, b"Created")
         self.assertEqual(r.status_code, 201)
 
@@ -95,3 +95,9 @@ class PingBySlugTestCase(BaseTestCase):
         self.assertEqual(check.ping_set.count(), 1)
         # It should assign all channels to the new check
         self.assertEqual(check.channel_set.get(), channel)
+
+    def test_auto_provisioning_is_off_by_default(self):
+        self.check.delete()
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 404)
+        self.assertFalse(Check.objects.exists())
