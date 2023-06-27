@@ -75,7 +75,7 @@ amd64, arm/v7 and arm64 architectures.
 To use a pre-built image for Healthchecks version X.Y, in the `docker-compose.yml` file
 replace the "build" section with:
 
-```
+```text
 image: healthchecks/healthchecks:v2.9.2
 ```
 
