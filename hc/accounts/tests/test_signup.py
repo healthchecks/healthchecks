@@ -10,6 +10,7 @@ from hc.accounts.models import Profile, Project
 from hc.api.models import Channel, Check, TokenBucket
 
 
+@override_settings(REGISTRATION_OPEN=True)
 class SignupTestCase(TestCase):
     @override_settings(USE_PAYMENTS=False, SESSION_COOKIE_SECURE=False)
     def test_it_works(self):

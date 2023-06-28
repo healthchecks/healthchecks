@@ -5,6 +5,7 @@ from django.test.utils import override_settings
 from hc.test import BaseTestCase
 
 
+@override_settings(REGISTRATION_OPEN=True)
 class SignupCsrfTestCase(BaseTestCase):
     def test_it_works(self):
         r = self.client.get("/accounts/signup/csrf/")
