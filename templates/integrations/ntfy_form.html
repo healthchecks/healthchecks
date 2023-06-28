@@ -57,7 +57,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">Priority for "down" events</label>
                 <div class="col-sm-8">
-                    <select id="priority" name="priority" class="form-control">
+                    <select id="priority" name="priority" class="form-control no-caret">
                         <option value="5" {% if form.priority.value == 5 %}selected="selected"{% endif %}>
                             Max priority: Really long vibration bursts, default notification sound with a pop-over notification.
                         </option>
@@ -83,7 +83,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">Priority for "up" events</label>
                 <div class="col-sm-8">
-                    <select name="priority_up" class="form-control">
+                    <select name="priority_up" class="form-control no-caret">
                         <option value="5" {% if form.priority_up.value == 5 %}selected="selected"{% endif %}>
                             Max priority: Really long vibration bursts, default notification sound with a pop-over notification.
                         </option>

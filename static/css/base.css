@@ -324,8 +324,8 @@ input[type=number]::-webkit-inner-spin-button {
     opacity: 0.6;
 }
 
-/* Hide caret in single-select mode to mimic the standard <select> element  */
-.selectize-control.single {
+/* Hide caret to  mimic the standard <select> element */
+.selectize-control.no-caret {
     caret-color: transparent;
 }
 

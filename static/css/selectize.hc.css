@@ -145,7 +145,8 @@
   border-radius: 1px;
 }
 .selectize-dropdown .option,
-.selectize-dropdown .optgroup-header {
+.selectize-dropdown .optgroup-header,
+.selectize-dropdown .create {
   padding: 3px 12px;
 }
 .selectize-dropdown .option,
