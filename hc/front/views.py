@@ -1876,15 +1876,20 @@ def telegram_bot(request):
         return HttpResponse()
 
     chat = doc["message"]["chat"]
-    name = max(chat.get("title", ""), chat.get("username", ""))
+    recipient = {
+        "id": chat["id"],
+        "type": chat["type"],
+        "name": chat.get("title") or chat.get("username"),
+        "thread_id": doc["message"].get("message_thread_id"),
+    }
 
     invite = render_to_string(
         "integrations/telegram_invite.html",
-        {"qs": signing.dumps((chat["id"], chat["type"], name))},
+        {"qs": signing.dumps(recipient)},
     )
 
     try:
-        Telegram.send(chat["id"], invite)
+        Telegram.send(recipient["id"], recipient["thread_id"], invite)
     except TransportError:
         # Swallow the error and return HTTP 200 OK, otherwise Telegram will
         # hit the webhook again and again.
@@ -1906,10 +1911,11 @@ def telegram_help(request):
 @require_setting("TELEGRAM_TOKEN")
 @login_required
 def add_telegram(request):
-    chat_id, chat_type, chat_name = None, None, None
+    recipient = None
     if qs := request.META["QUERY_STRING"]:
         try:
-            chat_id, chat_type, chat_name = signing.loads(qs, max_age=600)
+            recipient = signing.loads(qs, max_age=600)
+            assert isinstance(recipient, dict)
         except signing.BadSignature:
             return render(request, "bad_link.html")
 
@@ -1920,9 +1926,7 @@ def add_telegram(request):
 
         project = _get_rw_project_for_user(request, form.cleaned_data["project"])
         channel = Channel(project=project, kind="telegram")
-        channel.value = json.dumps(
-            {"id": chat_id, "type": chat_type, "name": chat_name}
-        )
+        channel.value = json.dumps(recipient)
         channel.save()
 
         channel.assign_all_checks()
@@ -1932,9 +1936,7 @@ def add_telegram(request):
     ctx = {
         "page": "channels",
         "projects": request.profile.projects(),
-        "chat_id": chat_id,
-        "chat_type": chat_type,
-        "chat_name": chat_name,
+        "recipient": recipient,
         "bot_name": settings.TELEGRAM_BOT_NAME,
     }
 

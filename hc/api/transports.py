@@ -747,10 +747,16 @@ class Telegram(HttpTransport):
         raise TransportError(message, permanent=permanent)
 
     @classmethod
-    def send(cls, chat_id, text):
+    def send(cls, chat_id, thread_id, text):
         # Telegram.send is a separate method because it is also used in
         # hc.front.views.telegram_bot to send invite links.
-        cls.post(cls.SM, json={"chat_id": chat_id, "text": text, "parse_mode": "html"})
+        payload = {
+            "chat_id": chat_id,
+            "message_thread_id": thread_id,
+            "text": text,
+            "parse_mode": "html",
+        }
+        cls.post(cls.SM, json=payload)
 
     def notify(self, check, notification=None) -> None:
         from hc.api.models import TokenBucket
@@ -770,11 +776,11 @@ class Telegram(HttpTransport):
         text = tmpl("telegram_message.html", **ctx)
 
         try:
-            self.send(self.channel.telegram_id, text)
+            self.send(self.channel.telegram_id, self.channel.telegram_thread_id, text)
         except MigrationRequiredError as e:
             # Save the new chat_id, then try sending again:
             self.channel.update_telegram_id(e.new_chat_id)
-            self.send(self.channel.telegram_id, text)
+            self.send(self.channel.telegram_id, self.channel.telegram_thread_id, text)
 
 
 class Sms(HttpTransport):

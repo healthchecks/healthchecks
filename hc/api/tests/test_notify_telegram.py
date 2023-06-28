@@ -43,6 +43,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["chat_id"], 123)
+        self.assertIsNone(payload["message_thread_id"])
         self.assertIn("The check", payload["text"])
         self.assertIn(">DB Backup</a>", payload["text"])
         self.assertIn(self.check.cloaked_url(), payload["text"])
@@ -56,6 +57,19 @@ class NotifyTelegramTestCase(BaseTestCase):
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["text"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_sends_to_thread(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.channel.value = json.dumps({"id": 123, "thread_id": 456})
+        self.channel.save()
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(payload["chat_id"], 123)
+        self.assertEqual(payload["message_thread_id"], 456)
 
     @patch("hc.api.transports.curl.request")
     def test_it_shows_cron_schedule(self, mock_post):

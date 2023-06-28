@@ -906,6 +906,11 @@ class Channel(models.Model):
         return self.json.get("id")
 
     @property
+    def telegram_thread_id(self):
+        assert self.kind == "telegram"
+        return self.json.get("thread_id")
+
+    @property
     def telegram_type(self):
         assert self.kind == "telegram"
         return self.json.get("type")

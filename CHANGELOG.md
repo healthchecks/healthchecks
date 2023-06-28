@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Implement optional check auto-provisioning when pinging by slug (#626)
 - Add support for the $EXITSTATUS placeholder in webhook payloads (#826)
 - Add API support for filtering checks by slug (#844)
+- Add support for Telegram topics (#852)
 
 ## v2.9.2 - 2023-06-05
 
