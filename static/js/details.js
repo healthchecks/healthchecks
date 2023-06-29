@@ -76,6 +76,8 @@ $(function () {
     });
 
     var statusUrl = document.getElementById("events").dataset.statusUrl;
+    // Look up the active tz switch to determine the initial display timezone:
+    var lastFormat = $(".active", "#format-switcher").data("format");
     var lastStatusText = "";
     var lastUpdated = "";
     var lastStarted = false;
@@ -134,7 +136,6 @@ $(function () {
         return false;
     });
 
-    var lastFormat = "local";
     function switchDateFormat(format) {
         lastFormat = format;
 
@@ -156,7 +157,6 @@ $(function () {
         var format = ev.target.dataset.format;
         switchDateFormat(format);
     });
-
 
     var transferFormLoadStarted = false;
     $("#transfer-btn").on("mouseenter click", function() {

@@ -12,7 +12,8 @@ $(function () {
     var pixelsPerDay = pixelsPerHour * 24;
     var dayGap = Math.round(0.5 + 80 / pixelsPerDay);
 
-    var dateFormat = "local";
+    // Look up the active tz switch to determine the initial display timezone:
+    var dateFormat = $(".active", "#format-switcher").data("format");
     function fromUnix(timestamp) {
         var dt = moment.unix(timestamp);
         dateFormat == "local" ? dt.local() : dt.tz(dateFormat);
@@ -115,7 +116,7 @@ $(function () {
         switchDateFormat(format);
     });
 
-    switchDateFormat("local");
+    switchDateFormat(dateFormat);
     // The table is initially hidden to avoid flickering as we convert dates.
     // Once it's ready, set it to visible:
     $("#log").css("visibility", "visible");

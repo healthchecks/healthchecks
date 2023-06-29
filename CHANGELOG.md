@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Add support for the $EXITSTATUS placeholder in webhook payloads (#826)
 - Add API support for filtering checks by slug (#844)
 - Add support for Telegram topics (#852)
+- For cron checks, switch to using check's (not browser's) timezone to format dates
 
 ## v2.9.2 - 2023-06-05
 
