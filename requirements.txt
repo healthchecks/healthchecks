@@ -1,5 +1,5 @@
 aiosmtpd==1.4.4.post2
-cronsim==2.4.1
+cronsim==2.5
 Django==4.2.2
 django-compressor==4.4
 fido2==1.1.1
