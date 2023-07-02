@@ -1208,7 +1208,7 @@ provides badges in a few different formats:</p>
     considers any checks in the grace period as still "up".</li>
 <li><code>svg3</code>, <code>json3</code>, <code>shields3</code>: reports three states: "up", "late", and "down".</li>
 </ul>
-<p>The response includes a special <code>*</code> entry: this pseudo-tag reports the overal status
+<p>The response includes a special <code>*</code> entry: this pseudo-tag reports the overall status
 of all checks in the project.</p>
 <h3>Response Codes</h3>
 <dl>

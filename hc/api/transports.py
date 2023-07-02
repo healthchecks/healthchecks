@@ -474,7 +474,7 @@ class Opsgenie(HttpTransport):
             raise TransportError("Opsgenie notifications are not enabled.")
 
         headers = {
-            "Conent-Type": "application/json",
+            "Content-Type": "application/json",
             "Authorization": "GenieKey %s" % self.channel.opsgenie_key,
         }
 
@@ -537,7 +537,7 @@ class PagerTree(HttpTransport):
             raise TransportError("PagerTree notifications are not enabled.")
 
         url = self.channel.value
-        headers = {"Conent-Type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         payload = {
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
@@ -557,7 +557,7 @@ class Pushbullet(HttpTransport):
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
             "Access-Token": self.channel.value,
-            "Conent-Type": "application/json",
+            "Content-Type": "application/json",
         }
         payload = {"type": "note", "title": settings.SITE_NAME, "body": text}
         self.post(url, json=payload, headers=headers)
@@ -1012,7 +1012,7 @@ class Spike(HttpTransport):
             raise TransportError("Spike notifications are not enabled.")
 
         url = self.channel.value
-        headers = {"Conent-Type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         payload = {
             "check_id": str(check.code),
             "title": tmpl("spike_title.html", check=check),

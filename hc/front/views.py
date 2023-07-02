@@ -1220,7 +1220,7 @@ def email_form(request: HttpRequest, channel: Channel) -> HttpResponse:
                 channel.disabled = False
 
                 if not settings.EMAIL_USE_VERIFICATION:
-                    # In self-hosted setting, administator can set
+                    # In self-hosted setting, administrator can set
                     # EMAIL_USE_VERIFICATION=False to disable email verification
                     channel.email_verified = True
                 elif form.cleaned_data["value"] == request.user.email:

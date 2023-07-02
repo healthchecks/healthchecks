@@ -37,7 +37,7 @@ class BadgesTestCase(BaseTestCase):
         self.assertContains(r, "badge/alices-badge-key/")
         self.assertContains(r, "badge/alices-badge-key/")
 
-    def test_it_handles_special_characers_in_tags(self):
+    def test_it_handles_special_characters_in_tags(self):
         Check.objects.create(project=self.project, tags="db@dc1")
 
         self.client.login(username="alice@example.org", password="password")

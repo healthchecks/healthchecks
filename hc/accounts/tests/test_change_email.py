@@ -36,7 +36,7 @@ class ChangeEmailTestCase(BaseTestCase):
         self.assertTrue(self.client.cookies["auto-login"]["httponly"])
         self.assertFalse(self.client.cookies["auto-login"]["secure"])
 
-        # The email addess should have not changed yet
+        # The email address should have not changed yet
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.email, "alice@example.org")
         self.assertTrue(self.alice.has_usable_password())
