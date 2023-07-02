@@ -1,6 +1,6 @@
 # Healthchecks
 
-![Build Status](https://github.com/healthchecks/healthchecks/workflows/Django%20CI/badge.svg)
+[![Django CI](https://github.com/healthchecks/healthchecks/actions/workflows/django.yml/badge.svg)](https://github.com/healthchecks/healthchecks/actions/workflows/django.yml)
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
 
 Healthchecks is a cron job monitoring service. It listens for HTTP requests
