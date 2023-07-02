@@ -102,7 +102,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         mock_post.assert_called_once()
 
-    def test_not_implimented(self):
+    def test_not_implemented(self):
         self._setup_data("webhook", "http://example")
         self.channel.kind = "invalid"
 

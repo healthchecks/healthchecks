@@ -392,7 +392,7 @@ this up.
 ### Improvements
 - Add a tooltip to the 'confirmation link' label (#436)
 - Update API to allow specifying channels by names (#440)
-- When saving a phone number, remove any invisible unicode characers
+- When saving a phone number, remove any invisible unicode characters
 - Update the read-only dashboard's CSS for better mobile support (#442)
 - Reduce the number of SQL queries used in the "Get Checks" API call
 - Add support for script's exit status in ping URLs (#429)
