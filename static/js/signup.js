@@ -1,6 +1,10 @@
 window.addEventListener("DOMContentLoaded", function(e) {
     var email = document.getElementById("signup-email");
     var submitBtn = document.getElementById("signup-go");
+    if (!submitBtn) {
+        // Registration is not open, nothing to do here.
+        return;
+    }
 
     function getTz() {
         try {
