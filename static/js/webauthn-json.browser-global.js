@@ -229,4 +229,3 @@
   // src/webauthn-json/browser-global.ts
   globalThis.webauthnJSON = webauthn_json_exports;
 })();
-//# sourceMappingURL=webauthn-json.browser-global.js.map
