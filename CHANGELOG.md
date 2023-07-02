@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.10-dev - Unreleased
+## v2.10 - 2023-07-02
 
 ### Improvements
 - Configure logging to log unhandled exceptions to console even when DEBUG=False (#835)
@@ -14,6 +14,10 @@ All notable changes to this project will be documented in this file.
 - Add API support for filtering checks by slug (#844)
 - Add support for Telegram topics (#852)
 - For cron checks, switch to using check's (not browser's) timezone to format dates
+- Upgrade to cronsim 2.5 (adds support for "LW" in the day-of-month field)
+
+### Bug Fixes
+- Fix DB connection timeouts in `manage.py smtpd` (#847)
 
 ## v2.9.2 - 2023-06-05
 

@@ -76,7 +76,7 @@ To use a pre-built image for Healthchecks version X.Y, in the `docker-compose.ym
 replace the "build" section with:
 
 ```text
-image: healthchecks/healthchecks:v2.9.2
+image: healthchecks/healthchecks:v2.10
 ```
 
 
