@@ -1,0 +1,17 @@
+{% extends "emails/base.html" %}
+{% load hc_extras %}
+
+{% block content %}
+Hello,<br /><br />
+
+Your {% site_name %} account is
+<strong>scheduled for deletion on {{ deletion_scheduled_date.date }}</strong>.
+
+<br /><br />
+If you wish to keep your account, please contact us at {{ support_email}} as
+soon as possible.
+
+<br /><br />
+Sincerely,<br />
+The {% site_name %} Team
+{% endblock %}

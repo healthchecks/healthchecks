@@ -104,6 +104,11 @@ def deletion_notice(to, ctx, headers={}):
     send(m, block=True)
 
 
+def deletion_scheduled(to, ctx, headers={}):
+    m = make_message("deletion-scheduled", to, ctx, headers=headers)
+    send(m, block=True)
+
+
 def sms_limit(to, ctx):
     send(make_message("sms-limit", to, ctx))
 

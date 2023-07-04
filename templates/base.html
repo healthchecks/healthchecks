@@ -66,7 +66,7 @@
     {% debug_warning %}
     {% if request.user.is_authenticated and request.profile.deletion_scheduled_date %}
     <div id="account-warning">
-        Warning: Your account is scheduled for deletion.
+        Warning: Your account is scheduled for deletion on {{ request.profile.deletion_scheduled_date.date }}.
         <a href="mailto:{% support_email %}">Contact support</a> to resolve.
     </div>
     {% endif %}

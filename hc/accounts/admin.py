@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import timedelta as td
+
 from django.contrib import admin
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.admin import UserAdmin
@@ -55,7 +57,6 @@ class ProfileFieldset(Fieldset):
         "next_report_date",
         "nag_period",
         "next_nag_date",
-        "deletion_notice_date",
         "token",
         "sort",
     )
@@ -73,6 +74,14 @@ class TeamFieldset(Fieldset):
         "call_limit",
         "calls_sent",
         "last_call_date",
+    )
+
+
+class DeletionFieldset(Fieldset):
+    name = "Deletion"
+    fields = (
+        "deletion_notice_date",
+        "deletion_scheduled_date",
     )
 
 
@@ -133,11 +142,15 @@ class ProfileAdmin(admin.ModelAdmin):
         "send_report",
         "send_nag",
         "remove_totp",
-        "mark_for_deletion",
+        "mark_for_deletion_in_month",
         "unmark_for_deletion",
     )
 
-    fieldsets = (ProfileFieldset.tuple(), TeamFieldset.tuple())
+    fieldsets = (
+        ProfileFieldset.tuple(),
+        TeamFieldset.tuple(),
+        DeletionFieldset.tuple(),
+    )
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
@@ -201,8 +214,8 @@ class ProfileAdmin(admin.ModelAdmin):
 
         self.message_user(request, "Removed TOTP for %d profile(s)" % qs.count())
 
-    def mark_for_deletion(self, request, qs):
-        qs.update(deletion_scheduled_date=now())
+    def mark_for_deletion_in_month(self, request, qs):
+        qs.update(deletion_scheduled_date=now() + td(days=31))
         self.message_user(request, "%d user(s) marked for deletion" % qs.count())
 
     def unmark_for_deletion(self, request, qs):
