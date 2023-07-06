@@ -29,7 +29,7 @@ class BounceTestCase(BaseTestCase):
 
         self.url = "/api/v2/bounces/"
 
-    def post(self, status="5.0.0", to_local=None):
+    def post(self, status="5.0.0", to_local=None, diagnostic_code=""):
         if to_local is None:
             to_local = sign_bounce_id("n.%s" % self.n.code)
 
@@ -53,7 +53,7 @@ Reporting-Mta: dns; example.com
 
 Status: {status}
 Action: failed
-
+{diagnostic_code}
 
 --e8ed4343d6876891e609b8b58c7e77c88887386efa98970174bb7a6c29a0
 Content-Transfer-Encoding: 8bit
@@ -149,3 +149,33 @@ To: foo@example.com
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.content.decode(), "OK (user not found)")
+
+    def test_it_logs_diagnostic_code(self):
+        diagnostic_code = (
+            "Diagnostic-Code: smtp; 451 4.0.0 No usable MXs, last err: try again later"
+        )
+
+        r = self.post(status="4.0.0", diagnostic_code=diagnostic_code)
+        self.assertEqual(r.status_code, 200)
+
+        expected = (
+            "Delivery failed (451 4.0.0 No usable MXs, last err: try again later)"
+        )
+
+        self.n.refresh_from_db()
+        self.assertEqual(self.n.error, expected)
+
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.last_error, expected)
+
+    def test_it_truncates_long_diagnostic_code(self):
+        diagnostic_code = "Diagnostic-Code: smtp; 451 4.0.0 " + "foo " * 100
+
+        r = self.post(status="4.0.0", diagnostic_code=diagnostic_code)
+        self.assertEqual(r.status_code, 200)
+
+        self.n.refresh_from_db()
+        self.assertEqual(len(self.n.error), 200)
+
+        self.channel.refresh_from_db()
+        self.assertEqual(len(self.channel.last_error), 200)

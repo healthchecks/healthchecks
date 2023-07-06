@@ -680,10 +680,13 @@ def bounces(request):
         # doesn't retry over and over again-
         return HttpResponse("OK (bad signature)")
 
-    status = ""
+    status, diagnostic = "", ""
     for part in msg.walk():
         if "Status" in part and "Action" in part:
             status = part["Status"]
+            diagnostic = part.get("Diagnostic-Code", "")
+            if diagnostic.lower().startswith("smtp; "):
+                diagnostic = diagnostic[6:]
             break
 
     permanent = status.startswith("5.")
@@ -699,7 +702,11 @@ def bounces(request):
         except Notification.DoesNotExist:
             return HttpResponse("OK (notification not found)")
 
-        error = f"Delivery failed (SMTP status code: {status})"
+        if diagnostic:
+            error = f"Delivery failed ({diagnostic})"[:200]
+        else:
+            error = f"Delivery failed (SMTP status code: {status})"[:200]
+
         n.error = error
         n.save(update_fields=["error"])
 
