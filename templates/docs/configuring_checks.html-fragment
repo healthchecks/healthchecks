@@ -5,13 +5,17 @@ each cron job to be monitored. SITE_NAME pricing plans are structured primarily
 around how many checks you can have in your account. You can create checks
 either in SITE_NAME web interface or via <a href="../api/">Management API</a>.</p>
 <h2>Name, Tags, Description</h2>
-<p>Describe each check using an optional name, tags, and description fields.</p>
+<p>Describe each check using an optional name, slug, tags, and description fields.</p>
 <p><img alt="Editing name, tags and description" src="IMG_URL/edit_name.png" /></p>
 <ul>
 <li><strong>Name</strong>: names are optional, but it is a good idea to set them.
 Good naming becomes especially important as you add more checks to the
 account. SITE_NAME will display check names in the web interface, in email reports,
 and in notifications.</li>
+<li><strong>Slug</strong>: URL-friendly identifier, used in <a href="../http_api/#success-slug">slug-based ping URLs</a>
+(an alternative to the default UUID-based ping URLs). The slug should only contain the
+following characters: <code>a-z</code>, <code>0-9</code>, hyphens, underscores. If you don't plan to use
+slug-based ping URLs, you can leave the slug field empty.</li>
 <li><strong>Tags</strong>: a space-separated list of optional labels. Use tags to organize and group
 checks within a project. You can tag checks by the environment
 (<code>prod</code>, <code>staging</code>, <code>dev</code>, etc.) or by role (<code>www</code>, <code>db</code>, <code>worker</code>, etc.) or using

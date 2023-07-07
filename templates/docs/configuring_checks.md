@@ -8,7 +8,7 @@ either in SITE_NAME web interface or via [Management API](../api/).
 
 ## Name, Tags, Description
 
-Describe each check using an optional name, tags, and description fields.
+Describe each check using an optional name, slug, tags, and description fields.
 
 ![Editing name, tags and description](IMG_URL/edit_name.png)
 
@@ -16,6 +16,10 @@ Describe each check using an optional name, tags, and description fields.
 Good naming becomes especially important as you add more checks to the
 account. SITE_NAME will display check names in the web interface, in email reports,
 and in notifications.
+* **Slug**: URL-friendly identifier, used in [slug-based ping URLs](../http_api/#success-slug)
+(an alternative to the default UUID-based ping URLs). The slug should only contain the
+following characters: `a-z`, `0-9`, hyphens, underscores. If you don't plan to use
+slug-based ping URLs, you can leave the slug field empty.
 * **Tags**: a space-separated list of optional labels. Use tags to organize and group
 checks within a project. You can tag checks by the environment
 (`prod`, `staging`, `dev`, etc.) or by role (`www`, `db`, `worker`, etc.) or using
