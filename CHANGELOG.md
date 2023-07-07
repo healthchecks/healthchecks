@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v2.11-dev - Unreleased
+
+### Improvements
+- Add Channel.last_notify_duration field, use it in "sendalerts" for prioritization
+
 ## v2.10 - 2023-07-02
 
 ### Improvements

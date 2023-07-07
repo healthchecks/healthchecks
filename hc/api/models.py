@@ -691,6 +691,7 @@ class Channel(models.Model):
     email_verified = models.BooleanField(default=False)
     disabled = models.BooleanField(null=True)
     last_notify = models.DateTimeField(null=True, blank=True)
+    last_notify_duration = models.DurationField(null=True, blank=True)
     last_error = models.CharField(max_length=200, blank=True)
     checks = models.ManyToManyField(Check)
 
@@ -791,7 +792,7 @@ class Channel(models.Model):
         n.error = "Sending"
         n.save()
 
-        error, disabled = "", self.disabled
+        start, error, disabled = now(), "", self.disabled
         try:
             self.transport.notify(check, notification=n)
         except transports.TransportError as e:
@@ -800,7 +801,10 @@ class Channel(models.Model):
 
         Notification.objects.filter(id=n.id).update(error=error)
         Channel.objects.filter(id=self.id).update(
-            last_notify=now(), last_error=error, disabled=disabled
+            last_notify=start,
+            last_notify_duration=now() - start,
+            last_error=error,
+            disabled=disabled,
         )
 
         return error

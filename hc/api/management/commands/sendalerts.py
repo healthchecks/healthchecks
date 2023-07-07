@@ -6,6 +6,7 @@ from datetime import timedelta as td
 from threading import Thread
 
 from django.core.management.base import BaseCommand
+from django.db.models import Sum
 from django.utils.timezone import now
 from statsd.defaults.env import statsd
 
@@ -78,9 +79,10 @@ class Command(BaseCommand):
     def process_one_flip(self, use_threads=True):
         """Find unprocessed flip, send notifications."""
 
-        # Order by processed, otherwise Django will automatically order by id
-        # and make the query less efficient
-        q = Flip.objects.filter(processed=None).order_by("processed")
+        q = Flip.objects.filter(processed=None)
+        # Prioritize flips with low historic notification send times
+        q = q.annotate(last_duration_sum=Sum("owner__channel__last_notify_duration"))
+        q = q.order_by("last_duration_sum")
         flip = q.first()
         if flip is None:
             return False
