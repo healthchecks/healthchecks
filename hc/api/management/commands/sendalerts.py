@@ -157,18 +157,18 @@ class Command(BaseCommand):
         sent = 0
         while not self.shutdown:
             # Create flips for any checks going down
-            while not self.shutdown and self.handle_going_down():
+            while self.handle_going_down():
                 pass
 
-            # Process the unprocessed flips
-            while not self.shutdown and self.process_one_flip(use_threads):
+            if self.process_one_flip(use_threads):
                 sent += 1
+            else:
+                # There were no more flips to process for now.
+                # If --no-loop was passed then: job done, break out of the loop
+                if not loop:
+                    break
 
-            if not loop:
-                break
-
-            # Sleep for 2 seconds before looking for more work
-            if not self.shutdown:
+                # Otherwise, sleep for 2 seconds, then look for more work
                 time.sleep(2)
 
         return f"Sent {sent} alert(s)."
