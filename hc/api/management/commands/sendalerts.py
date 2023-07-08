@@ -12,43 +12,38 @@ from statsd.defaults.env import statsd
 
 from hc.api.models import Check, Flip
 
-SENDING_TMPL = "Sending alert, status=%s, code=%s\n"
-SEND_TIME_TMPL = "Sending took %.1fs, code=%s\n"
-
 
 def notify(flip_id, stdout):
     flip = Flip.objects.get(id=flip_id)
-
     check = flip.owner
+
+    # Set or clear dates for followup nags
+    check.project.update_next_nag_dates()
+
+    channels = flip.select_channels()
+    if not channels:
+        return
+
     # Set the historic status here but *don't save it*.
     # It would be nicer to pass the status explicitly, as a separate parameter.
     check.status = flip.new_status
     # And just to make sure it doesn't get saved by a future coding accident:
     setattr(check, "save", None)
 
-    stdout.write(SENDING_TMPL % (flip.new_status, check.code))
-
-    # Set or clear dates for followup nags
-    check.project.update_next_nag_dates()
-
     # Send notifications
+    kinds = ", ".join([ch.kind for ch in channels])
+    stdout.write(f"{check.code} goes {check.status}, notifying via {kinds}\n")
     send_start = now()
-
-    for ch, error, secs in flip.send_alerts():
-        label = "OK"
-        if error:
-            label = "ERROR"
-        elif secs > 5:
-            label = "SLOW"
-
+    for ch in channels:
+        notify_start = time.time()
+        error = ch.notify(check)
+        secs = time.time() - notify_start
+        label = "ERROR" if error else "OK"
         s = " * %-5s %4.1fs %-10s %s %s\n" % (label, secs, ch.kind, ch.code, error)
         stdout.write(s)
 
-    send_time = now() - send_start
-    stdout.write(SEND_TIME_TMPL % (send_time.total_seconds(), check.code))
-
     statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
-    statsd.timing("hc.sendalerts.sendTime", send_time)
+    statsd.timing("hc.sendalerts.sendTime", now() - send_start)
 
 
 def notify_on_thread(flip_id, stdout):

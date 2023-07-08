@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from unittest.mock import patch
+import json
 
 from django.utils.timezone import now
 
@@ -20,46 +20,27 @@ class FlipModelTestCase(BaseTestCase):
         self.flip.old_status = "up"
         self.flip.new_status = "down"
 
-    @patch("hc.api.models.Channel.notify")
-    def test_send_alerts_works(self, mock_notify):
-        mock_notify.return_value = ""
+    def test_select_channels_works(self):
+        channels = self.flip.select_channels()
+        self.assertEqual(channels, [self.channel])
 
-        results = list(self.flip.send_alerts())
-        self.assertEqual(len(results), 1)
+    def test_select_channels_handles_noop(self):
+        self.channel.value = json.dumps({"down": False})
+        self.channel.save()
 
-        ch, error, send_time = results[0]
-        self.assertEqual(ch, self.channel)
-        self.assertEqual(error, "")
+        channels = self.flip.select_channels()
+        self.assertEqual(channels, [])
 
-    @patch("hc.api.models.Channel.notify")
-    def test_send_alerts_handles_error(self, mock_notify):
-        mock_notify.return_value = "something went wrong"
-
-        results = list(self.flip.send_alerts())
-        self.assertEqual(len(results), 1)
-
-        ch, error, send_time = results[0]
-        self.assertEqual(error, "something went wrong")
-
-    @patch("hc.api.models.Channel.notify")
-    def test_send_alerts_handles_noop(self, mock_notify):
-
-        mock_notify.return_value = "no-op"
-
-        results = list(self.flip.send_alerts())
-        self.assertEqual(results, [])
-
-    @patch("hc.api.models.Channel.notify")
-    def test_send_alerts_handles_new_up_transition(self, mock_notify):
+    def test_send_alerts_handles_new_up_transition(self):
         self.flip.old_status = "new"
         self.flip.new_status = "up"
 
-        results = list(self.flip.send_alerts())
-        self.assertEqual(results, [])
+        channels = self.flip.select_channels()
+        self.assertEqual(channels, [])
 
     def test_it_skips_disabled_channels(self):
         self.channel.disabled = True
         self.channel.save()
 
-        results = list(self.flip.send_alerts())
-        self.assertEqual(results, [])
+        channels = self.flip.select_channels()
+        self.assertEqual(channels, [])

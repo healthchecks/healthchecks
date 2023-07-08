@@ -1097,29 +1097,23 @@ class Flip(models.Model):
             "up": 1 if self.new_status == "up" else 0,
         }
 
-    def send_alerts(self):
-        """Loop over the enabled channels, call notify() on each.
+    def select_channels(self):
+        """Return a list of channels that need to be notified.
 
-        For each channel, yield a (channel, error, send_time) triple:
-         * channel is a Channel instance
-         * error is an empty string ("") on success, error message otherwise
-         * send_time is specified in seconds (float)
+        * Exclude all channels for new->up and paused->up transitions.
+        * Exclude disabled channels
+        * Exclude channels where transport.is_noop(check) returns True
         """
 
         # Don't send alerts on new->up and paused->up transitions
         if self.new_status == "up" and self.old_status in ("new", "paused"):
-            return
+            return []
 
         if self.new_status not in ("up", "down"):
-            raise NotImplementedError("Unexpected status: %s" % self.status)
+            raise NotImplementedError(f"Unexpected status: {self.status}")
 
-        for channel in self.owner.channel_set.exclude(disabled=True):
-            start = time.time()
-            error = channel.notify(self.owner)
-            if error == "no-op":
-                continue
-
-            yield channel, error, time.time() - start
+        q = self.owner.channel_set.exclude(disabled=True)
+        return [ch for ch in q if not ch.transport.is_noop(self.owner)]
 
 
 class TokenBucket(models.Model):
