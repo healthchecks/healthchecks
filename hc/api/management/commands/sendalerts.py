@@ -38,8 +38,8 @@ def notify(flip_id, stdout):
         notify_start = time.time()
         error = ch.notify(check)
         secs = time.time() - notify_start
-        label = "ERROR" if error else "OK"
-        s = " * %-5s %4.1fs %-10s %s %s\n" % (label, secs, ch.kind, ch.code, error)
+        label = "ERR" if error else "OK"
+        s = " * %-3s %4.1fs %-10s %s %s\n" % (label, secs, ch.kind, ch.code, error)
         stdout.write(s)
 
     statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
