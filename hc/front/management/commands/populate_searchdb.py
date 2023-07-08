@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import sqlite3
 
 from django.conf import settings
@@ -23,7 +22,7 @@ class Command(BaseCommand):
 
         docs_path = settings.BASE_DIR / "templates/docs"
         for doc_path in docs_path.glob("*.html-fragment"):
-            if doc_path.stem == "apiv1":
+            if doc_path.stem == "apiv1" or doc_path.stem == "apiv2":
                 continue
 
             slug = doc_path.stem
