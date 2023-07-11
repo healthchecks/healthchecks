@@ -51,13 +51,13 @@ class ProfileFieldset(Fieldset):
     name = "User Profile"
     fields = (
         "email",
-        "reports",
         "tz",
-        "theme",
+        "reports",
         "next_report_date",
         "nag_period",
         "next_nag_date",
         "token",
+        "theme",
         "sort",
     )
 

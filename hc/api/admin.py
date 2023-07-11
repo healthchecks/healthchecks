@@ -23,6 +23,7 @@ class ChecksAdmin(admin.ModelAdmin):
     search_fields = ["name", "code", "project__owner__email"]
     readonly_fields = ("code",)
     raw_id_fields = ("project",)
+    list_select_related = ("project",)
     list_display = (
         "id",
         "name_tags",
@@ -41,13 +42,12 @@ class ChecksAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(email=F("project__owner__email"))
-        qs = qs.annotate(project_name=F("project__name"))
         return qs
 
     @mark_safe
     def project_(self, obj):
         url = obj.project.checks_url(full=False)
-        name = escape(obj.project_name or "Default")
+        name = escape(obj.project.name or "Default")
         email = escape(obj.email)
         return f'{email} &rsaquo; <a href="{url}"">{name}</a>'
 
@@ -262,7 +262,7 @@ class NotificationsAdmin(admin.ModelAdmin):
 
     search_fields = ["owner__name", "owner__code", "channel__value", "error", "code"]
     readonly_fields = ("owner", "code")
-    list_select_related = ("channel", "channel__project")
+    list_select_related = ("channel", "channel__project", "channel__project__owner")
     list_display = (
         "id",
         "created",
