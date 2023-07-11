@@ -4,7 +4,6 @@ import hashlib
 import json
 import socket
 import sys
-import time
 import uuid
 from datetime import datetime
 from datetime import timedelta as td
@@ -218,8 +217,12 @@ class Check(models.Model):
 
         return settings.PING_ENDPOINT + str(self.code)
 
-    def details_url(self) -> str:
-        return settings.SITE_ROOT + reverse("hc-details", args=[self.code])
+    def details_url(self, full=True) -> str:
+        result = reverse("hc-details", args=[self.code])
+        return settings.SITE_ROOT + result if full else result
+
+    def get_absolute_url(self) -> str:
+        return self.details_url(full=False)
 
     def cloaked_url(self) -> str:
         return settings.SITE_ROOT + reverse("hc-uncloak", args=[self.unique_key])

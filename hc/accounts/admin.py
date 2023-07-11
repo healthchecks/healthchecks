@@ -80,6 +80,7 @@ class LimitsFieldset(Fieldset):
 class DeletionFieldset(Fieldset):
     name = "Deletion"
     fields = (
+        "over_limit_date",
         "deletion_notice_date",
         "deletion_scheduled_date",
     )

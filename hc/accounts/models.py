@@ -439,8 +439,12 @@ class Project(models.Model):
         frag = urlencode({self.api_key_readonly: str(self)}, quote_via=quote)
         return reverse("hc-dashboard") + "#" + frag
 
-    def checks_url(self):
-        return settings.SITE_ROOT + reverse("hc-checks", args=[self.code])
+    def checks_url(self, full=True) -> str:
+        result = reverse("hc-checks", args=[self.code])
+        return settings.SITE_ROOT + result if full else result
+
+    def get_absolute_url(self) -> str:
+        return self.checks_url(full=False)
 
 
 class Member(models.Model):

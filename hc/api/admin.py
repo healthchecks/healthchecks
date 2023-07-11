@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import timedelta as td
+
 from django.contrib import admin
 from django.core.paginator import Paginator
 from django.db import connection
@@ -44,14 +46,14 @@ class ChecksAdmin(admin.ModelAdmin):
 
     @mark_safe
     def project_(self, obj):
-        url = reverse("hc-checks", args=[obj.project.code])
+        url = obj.project.checks_url(full=False)
         name = escape(obj.project_name or "Default")
         email = escape(obj.email)
         return f'{email} &rsaquo; <a href="{url}"">{name}</a>'
 
     @mark_safe
     def name_tags(self, obj):
-        url = reverse("hc-details", args=[obj.code])
+        url = obj.details_url(full=False)
         name = escape(obj.name or "unnamed")
 
         s = f'<a href="{url}"">{name}</a>'
@@ -169,6 +171,26 @@ class PingsAdmin(admin.ModelAdmin):
     show_full_result_count = False
 
 
+class LastNotifyDurationFilter(admin.SimpleListFilter):
+    title = "last notify duration"
+
+    parameter_name = "last_notify_duration"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("1", "More than 1s"),
+            ("6", "More than 6s"),
+            ("10", "More than 10s"),
+        )
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return
+
+        seconds = float(self.value())
+        return queryset.filter(last_notify_duration__gt=td(seconds=seconds))
+
+
 @admin.register(Channel)
 class ChannelsAdmin(admin.ModelAdmin):
     class Media:
@@ -181,19 +203,27 @@ class ChannelsAdmin(admin.ModelAdmin):
         "transport",
         "name",
         "project_",
-        "created",
+        "created_",
         "chopped_value",
         "ok",
+        "time",
     )
-    list_filter = ("kind",)
+    list_filter = ("kind", LastNotifyDurationFilter)
     raw_id_fields = ("project", "checks")
+
+    def created_(self, obj):
+        return obj.created.date()
 
     @mark_safe
     def project_(self, obj):
-        url = reverse("hc-checks", args=[obj.project_code])
+        url = self.view_on_site(obj)
         name = escape(obj.project_name or "Default")
         email = escape(obj.email)
         return f"{email} &rsaquo; <a href='{url}'>{name}</a>"
+
+    def time(self, obj):
+        if obj.last_notify_duration:
+            return "%.1f" % obj.last_notify_duration.total_seconds()
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -201,6 +231,9 @@ class ChannelsAdmin(admin.ModelAdmin):
         qs = qs.annotate(project_name=F("project__name"))
         qs = qs.annotate(email=F("project__owner__email"))
         return qs
+
+    def view_on_site(self, obj):
+        return reverse("hc-channels", args=[obj.project_code])
 
     @mark_safe
     def transport(self, obj):
