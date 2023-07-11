@@ -35,6 +35,10 @@ NAG_PERIODS = (
 )
 
 REPORT_CHOICES = (("off", "Off"), ("weekly", "Weekly"), ("monthly", "Monthly"))
+# How long an account can be over limits before it is scheduled for deletion
+OVER_LIMIT_GRACE = td(days=31)
+# When scheduling for deletion, how many days in the future to schedule
+DELETION_GRACE = td(days=31)
 
 
 def month(dt):
@@ -339,6 +343,17 @@ class Profile(models.Model):
                 return dt
             elif self.reports == "weekly" and dt.weekday() == 0:
                 return dt
+
+    def is_past_over_limit_grace(self) -> bool:
+        """Return True if this profile is over limits for 31 or more days."""
+        if not self.over_limit_date:
+            return False
+
+        return now() > self.over_limit_date + OVER_LIMIT_GRACE
+
+    def schedule_for_deletion(self):
+        self.deletion_scheduled_date = now() + DELETION_GRACE
+        self.save()
 
 
 class Project(models.Model):

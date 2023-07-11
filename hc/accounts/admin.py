@@ -62,8 +62,8 @@ class ProfileFieldset(Fieldset):
     )
 
 
-class TeamFieldset(Fieldset):
-    name = "Team"
+class LimitsFieldset(Fieldset):
+    name = "Limits"
     fields = (
         "team_limit",
         "check_limit",
@@ -142,13 +142,13 @@ class ProfileAdmin(admin.ModelAdmin):
         "send_report",
         "send_nag",
         "remove_totp",
-        "mark_for_deletion_in_month",
-        "unmark_for_deletion",
+        "schedule_for_deletion",
+        "unschedule_for_deletion",
     )
 
     fieldsets = (
         ProfileFieldset.tuple(),
-        TeamFieldset.tuple(),
+        LimitsFieldset.tuple(),
         DeletionFieldset.tuple(),
     )
 
@@ -214,13 +214,14 @@ class ProfileAdmin(admin.ModelAdmin):
 
         self.message_user(request, "Removed TOTP for %d profile(s)" % qs.count())
 
-    def mark_for_deletion_in_month(self, request, qs):
-        qs.update(deletion_scheduled_date=now() + td(days=31))
-        self.message_user(request, "%d user(s) marked for deletion" % qs.count())
+    def schedule_for_deletion(self, request, qs):
+        for profile in qs:
+            profile.schedule_for_deletion()
+        self.message_user(request, "%d user(s) scheduled for deletion" % qs.count())
 
-    def unmark_for_deletion(self, request, qs):
+    def unschedule_for_deletion(self, request, qs):
         qs.update(deletion_scheduled_date=None)
-        self.message_user(request, "%d user(s) unmarked for deletion" % qs.count())
+        self.message_user(request, "%d user(s) unscheduled for deletion" % qs.count())
 
 
 @admin.register(Project)
