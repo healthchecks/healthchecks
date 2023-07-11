@@ -122,21 +122,21 @@ class ProfileAdmin(admin.ModelAdmin):
         "id",
         "email",
         "checks",
-        "date_joined",
-        "last_active_date",
         "projects",
+        "date_joined",
+        "last_active",
+        "deletion",
         "invited",
         "sms",
         "reports",
     )
     list_filter = (
-        "user__date_joined",
-        "last_active_date",
-        "deletion_scheduled_date",
-        "reports",
         "check_limit",
         NumChecksFilter,
-        "theme",
+        "last_active_date",
+        "over_limit_date",
+        "deletion_scheduled_date",
+        "reports",
     )
     actions = (
         "login",
@@ -171,6 +171,14 @@ class ProfileAdmin(admin.ModelAdmin):
 
     def date_joined(self, obj):
         return obj.user.date_joined
+
+    def last_active(self, obj):
+        if obj.last_active_date:
+            return obj.last_active_date.date()
+
+    def deletion(self, obj):
+        if obj.deletion_scheduled_date:
+            return obj.deletion_scheduled_date.date()
 
     @mark_safe
     def projects(self, obj):
