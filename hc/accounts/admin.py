@@ -125,6 +125,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "projects",
         "date_joined",
         "last_active",
+        "over_limit",
         "deletion",
         "invited",
         "sms",
@@ -175,6 +176,10 @@ class ProfileAdmin(admin.ModelAdmin):
     def last_active(self, obj):
         if obj.last_active_date:
             return obj.last_active_date.date()
+
+    def over_limit(self, obj):
+        if obj.over_limit_date:
+            return obj.over_limit_date.date()
 
     def deletion(self, obj):
         if obj.deletion_scheduled_date:
