@@ -389,7 +389,7 @@ Example:</p>
 SITE_NAME will create a Cron check and ignore
 the <code>timeout</code> value.</p>
 <p>Example for a check running every half-hour:</p>
-<p><pre>{"schedule": "0,30 * <em> * </em>"}</pre></p>
+<p><pre>{"schedule": "0,30 * * * *"}</pre></p>
 </dd>
 <dt>tz</dt>
 <dd>
@@ -638,7 +638,7 @@ parameter, SITE_NAME will leave its value unchanged.</p>
 SITE_NAME will save the <code>schedule</code> parameter and ignore
 the <code>timeout</code>.</p>
 <p>Example for a check running every half-hour:</p>
-<p><pre>{"schedule": "0,30 * <em> * </em>"}</pre></p>
+<p><pre>{"schedule": "0,30 * * * *"}</pre></p>
 </dd>
 <dt>tz</dt>
 <dd>

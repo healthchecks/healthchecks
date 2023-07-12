@@ -418,7 +418,7 @@ Example:</p>
 SITE_NAME will create a Cron check and ignore
 the <code>timeout</code> value.</p>
 <p>Example for a check running every half-hour:</p>
-<p><pre>{"schedule": "0,30 * <em> * </em>"}</pre></p>
+<p><pre>{"schedule": "0,30 * * * *"}</pre></p>
 </dd>
 <dt>tz</dt>
 <dd>
@@ -678,7 +678,7 @@ characters: <code>a-z</code>, <code>0-9</code>, hyphens, underscores. Example:</
 SITE_NAME will save the <code>schedule</code> parameter and ignore
 the <code>timeout</code>.</p>
 <p>Example for a check running every half-hour:</p>
-<p><pre>{"schedule": "0,30 * <em> * </em>"}</pre></p>
+<p><pre>{"schedule": "0,30 * * * *"}</pre></p>
 </dd>
 <dt>tz</dt>
 <dd>
