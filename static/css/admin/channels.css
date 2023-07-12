@@ -9,3 +9,8 @@
     font-family: "Lucida Console", Monaco, monospace;
     font-size: 12px;
 }
+
+.field-status .e,
+.field-status .d {
+    font-weight: bold;
+}

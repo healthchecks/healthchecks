@@ -205,10 +205,11 @@ class ChannelsAdmin(admin.ModelAdmin):
         "project_",
         "created_",
         "chopped_value",
-        "ok",
+        "last",
+        "status",
         "time",
     )
-    list_filter = ("kind", LastNotifyDurationFilter)
+    list_filter = ("kind", LastNotifyDurationFilter, "disabled")
     raw_id_fields = ("project", "checks")
 
     def created_(self, obj):
@@ -250,9 +251,19 @@ class ChannelsAdmin(admin.ModelAdmin):
 
         return obj.value
 
-    @admin.display(boolean=True)
-    def ok(self, obj):
-        return False if obj.last_error else True
+    def last(self, obj):
+        if obj.last_notify:
+            return obj.last_notify.date()
+
+    @mark_safe
+    def status(self, obj):
+        if obj.disabled:
+            return "<span class='d'>Disabled</span>"
+        if obj.last_error:
+            return "<span class='e'>Error</span>"
+        if obj.last_notify:
+            return "OK"
+        return "-"
 
 
 @admin.register(Notification)
