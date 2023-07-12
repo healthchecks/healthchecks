@@ -655,13 +655,16 @@ def ping_details(request, code, n=None):
         parsed = email.message_from_string(body, policy=email.policy.SMTP)
         ctx["subject"] = parsed.get("subject", "")
 
-        # The "active" tab is set to show the value that's successfully parsed last. Per the current implementation,
-        # this means that if both plain text and HTML content are present, the ping details dialog will initially
-        # display the HTML content, otherwise - only one content type exists, and we default to that (either plain text
-        # or HTML, at least one of them should exist in a valid email).
+        # The "active" tab is set to show the value that's successfully parsed last.
+        # Per the current implementation, this means that if both plain text and HTML
+        # content are present, the ping details dialog will initially display the HTML
+        # content, otherwise - only one content type exists, and we default to that
+        # (either plain text or HTML, at least one of them should exist in a
+        # valid email).
         #
-        # NOTE: If both plain text and html have not been parsed successfully the "active" tab is not set at all, but
-        # currently this is not an issue since in this case the "ping details" template does not render any tabs.
+        # NOTE: If both plain text and html have not been parsed successfully the
+        # "active" tab is not set at all, but currently this is not an issue since in
+        # this case the "ping details" template does not render any tabs.
 
         plain_mime_part = parsed.get_body(("plain",))
         if plain_mime_part:
@@ -2261,7 +2264,8 @@ def metrics(request, code, key):
         return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
 
     def output(checks):
-        yield "# HELP hc_check_up Whether the check is currently up (1 for yes, 0 for no).\n"
+        help = "Whether the check is currently up (1 for yes, 0 for no)."
+        yield f"# HELP hc_check_up {help}\n"
         yield "# TYPE hc_check_up gauge\n"
 
         TMPL = """hc_check_up{name="%s", tags="%s", unique_key="%s"} %d\n"""
@@ -2270,7 +2274,8 @@ def metrics(request, code, key):
             yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
 
         yield "\n"
-        yield "# HELP hc_check_started Whether the check is currently started (1 for yes, 0 for no).\n"
+        help = "Whether the check is currently started (1 for yes, 0 for no)."
+        yield f"# HELP hc_check_started {help}\n"
         yield "# TYPE hc_check_started gauge\n"
         TMPL = """hc_check_started{name="%s", tags="%s", unique_key="%s"} %d\n"""
         for check in checks:
@@ -2279,7 +2284,8 @@ def metrics(request, code, key):
 
         tags_statuses, num_down = _tags_statuses(checks)
         yield "\n"
-        yield "# HELP hc_tag_up Whether all checks with this tag are up (1 for yes, 0 for no).\n"
+        help = "Whether all checks with this tag are up (1 for yes, 0 for no)."
+        yield f"# HELP hc_tag_up {help}\n"
         yield "# TYPE hc_tag_up gauge\n"
         TMPL = """hc_tag_up{tag="%s"} %d\n"""
         for tag in sorted(tags_statuses):
