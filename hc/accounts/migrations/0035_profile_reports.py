@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0034_credential'),
+        ("accounts", "0034_credential"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='reports',
-            field=models.CharField(choices=[('off', 'Off'), ('weekly', 'Weekly'), ('monthly', 'Monthly')], default='monthly', max_length=10),
+            model_name="profile",
+            name="reports",
+            field=models.CharField(
+                choices=[("off", "Off"), ("weekly", "Weekly"), ("monthly", "Monthly")],
+                default="monthly",
+                max_length=10,
+            ),
         ),
     ]

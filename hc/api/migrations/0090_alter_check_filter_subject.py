@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0089_remove_check_subject_remove_check_subject_fail'),
+        ("api", "0089_remove_check_subject_remove_check_subject_fail"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='check',
-            name='filter_subject',
+            model_name="check",
+            name="filter_subject",
             field=models.BooleanField(default=False),
         ),
     ]

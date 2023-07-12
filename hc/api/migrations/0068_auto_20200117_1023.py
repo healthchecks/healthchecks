@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0067_last_error_values'),
+        ("api", "0067_last_error_values"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ping',
-            name='body',
+            model_name="ping",
+            name="body",
             field=models.TextField(blank=True, null=True),
         ),
     ]

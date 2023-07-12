@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0027_profile_deletion_notice_date'),
+        ("accounts", "0027_profile_deletion_notice_date"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='last_active_date',
+            model_name="profile",
+            name="last_active_date",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='profile',
-            name='sms_limit',
+            model_name="profile",
+            name="sms_limit",
             field=models.IntegerField(default=5),
         ),
     ]

@@ -6,33 +6,65 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0086_remove_check_last_ping_was_fail_and_more'),
+        ("api", "0086_remove_check_last_ping_was_fail_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='check',
-            name='failure_kw',
+            model_name="check",
+            name="failure_kw",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='check',
-            name='filter_body',
+            model_name="check",
+            name="filter_body",
             field=models.BooleanField(null=True),
         ),
         migrations.AddField(
-            model_name='check',
-            name='filter_subject',
+            model_name="check",
+            name="filter_subject",
             field=models.BooleanField(null=True),
         ),
         migrations.AddField(
-            model_name='check',
-            name='success_kw',
+            model_name="check",
+            name="success_kw",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('email', 'Email'), ('webhook', 'Webhook'), ('hipchat', 'HipChat'), ('slack', 'Slack'), ('pd', 'PagerDuty'), ('pagertree', 'PagerTree'), ('pagerteam', 'Pager Team'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('opsgenie', 'Opsgenie'), ('victorops', 'Splunk On-Call'), ('discord', 'Discord'), ('telegram', 'Telegram'), ('sms', 'SMS'), ('zendesk', 'Zendesk'), ('trello', 'Trello'), ('matrix', 'Matrix'), ('whatsapp', 'WhatsApp'), ('apprise', 'Apprise'), ('mattermost', 'Mattermost'), ('msteams', 'Microsoft Teams'), ('shell', 'Shell Command'), ('zulip', 'Zulip'), ('spike', 'Spike'), ('call', 'Phone Call'), ('linenotify', 'LINE Notify'), ('signal', 'Signal'), ('gotify', 'Gotify')], max_length=20),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "Email"),
+                    ("webhook", "Webhook"),
+                    ("hipchat", "HipChat"),
+                    ("slack", "Slack"),
+                    ("pd", "PagerDuty"),
+                    ("pagertree", "PagerTree"),
+                    ("pagerteam", "Pager Team"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("opsgenie", "Opsgenie"),
+                    ("victorops", "Splunk On-Call"),
+                    ("discord", "Discord"),
+                    ("telegram", "Telegram"),
+                    ("sms", "SMS"),
+                    ("zendesk", "Zendesk"),
+                    ("trello", "Trello"),
+                    ("matrix", "Matrix"),
+                    ("whatsapp", "WhatsApp"),
+                    ("apprise", "Apprise"),
+                    ("mattermost", "Mattermost"),
+                    ("msteams", "Microsoft Teams"),
+                    ("shell", "Shell Command"),
+                    ("zulip", "Zulip"),
+                    ("spike", "Spike"),
+                    ("call", "Phone Call"),
+                    ("linenotify", "LINE Notify"),
+                    ("signal", "Signal"),
+                    ("gotify", "Gotify"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

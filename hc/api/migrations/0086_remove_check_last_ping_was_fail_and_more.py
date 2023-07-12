@@ -7,27 +7,27 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0085_ping_object_size'),
+        ("api", "0085_ping_object_size"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='check',
-            name='last_ping_was_fail',
+            model_name="check",
+            name="last_ping_was_fail",
         ),
         migrations.AlterField(
-            model_name='channel',
-            name='created',
+            model_name="channel",
+            name="created",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
         migrations.AlterField(
-            model_name='check',
-            name='created',
+            model_name="check",
+            name="created",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
         migrations.AlterField(
-            model_name='notification',
-            name='created',
+            model_name="notification",
+            name="created",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]

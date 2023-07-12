@@ -6,18 +6,44 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0064_auto_20191119_1346'),
+        ("api", "0064_auto_20191119_1346"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='check',
-            name='methods',
+            model_name="check",
+            name="methods",
             field=models.CharField(blank=True, max_length=30),
         ),
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('email', 'Email'), ('webhook', 'Webhook'), ('hipchat', 'HipChat'), ('slack', 'Slack'), ('pd', 'PagerDuty'), ('pagertree', 'PagerTree'), ('pagerteam', 'Pager Team'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('opsgenie', 'OpsGenie'), ('victorops', 'VictorOps'), ('discord', 'Discord'), ('telegram', 'Telegram'), ('sms', 'SMS'), ('zendesk', 'Zendesk'), ('trello', 'Trello'), ('matrix', 'Matrix'), ('whatsapp', 'WhatsApp'), ('apprise', 'Apprise'), ('mattermost', 'Mattermost'), ('msteams', 'Microsoft Teams'), ('shell', 'Shell Command')], max_length=20),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "Email"),
+                    ("webhook", "Webhook"),
+                    ("hipchat", "HipChat"),
+                    ("slack", "Slack"),
+                    ("pd", "PagerDuty"),
+                    ("pagertree", "PagerTree"),
+                    ("pagerteam", "Pager Team"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("opsgenie", "OpsGenie"),
+                    ("victorops", "VictorOps"),
+                    ("discord", "Discord"),
+                    ("telegram", "Telegram"),
+                    ("sms", "SMS"),
+                    ("zendesk", "Zendesk"),
+                    ("trello", "Trello"),
+                    ("matrix", "Matrix"),
+                    ("whatsapp", "WhatsApp"),
+                    ("apprise", "Apprise"),
+                    ("mattermost", "Mattermost"),
+                    ("msteams", "Microsoft Teams"),
+                    ("shell", "Shell Command"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

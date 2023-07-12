@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0084_ping_body_raw'),
+        ("api", "0084_ping_body_raw"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ping',
-            name='object_size',
+            model_name="ping",
+            name="object_size",
             field=models.IntegerField(null=True),
         ),
     ]

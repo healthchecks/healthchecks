@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0043_add_role_manager'),
+        ("accounts", "0043_add_role_manager"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='totp',
+            model_name="profile",
+            name="totp",
             field=models.CharField(blank=True, max_length=32, null=True),
         ),
         migrations.AddField(
-            model_name='profile',
-            name='totp_created',
+            model_name="profile",
+            name="totp_created",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

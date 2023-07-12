@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0082_fill_last_notify'),
+        ("api", "0082_fill_last_notify"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='channel',
-            name='disabled',
+            model_name="channel",
+            name="disabled",
             field=models.BooleanField(null=True),
         ),
     ]

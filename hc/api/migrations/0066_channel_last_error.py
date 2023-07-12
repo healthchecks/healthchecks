@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0065_auto_20191127_1240'),
+        ("api", "0065_auto_20191127_1240"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='channel',
-            name='last_error',
+            model_name="channel",
+            name="last_error",
             field=models.CharField(blank=True, max_length=200),
         ),
     ]

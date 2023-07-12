@@ -6,18 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0039_remove_profile_reports_allowed'),
+        ("accounts", "0039_remove_profile_reports_allowed"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='member',
-            name='role',
-            field=models.CharField(choices=[('r', 'Read-only'), ('w', 'Member')], default='w', max_length=1),
+            model_name="member",
+            name="role",
+            field=models.CharField(
+                choices=[("r", "Read-only"), ("w", "Member")], default="w", max_length=1
+            ),
         ),
         migrations.AlterField(
-            model_name='member',
-            name='rw',
+            model_name="member",
+            name="rw",
             field=models.BooleanField(default=True, null=True),
         ),
     ]

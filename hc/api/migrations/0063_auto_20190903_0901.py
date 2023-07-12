@@ -6,18 +6,42 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0062_auto_20190720_1350'),
+        ("api", "0062_auto_20190720_1350"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='check',
-            name='last_duration',
+            model_name="check",
+            name="last_duration",
             field=models.DurationField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('email', 'Email'), ('webhook', 'Webhook'), ('hipchat', 'HipChat'), ('slack', 'Slack'), ('pd', 'PagerDuty'), ('pagertree', 'PagerTree'), ('pagerteam', 'Pager Team'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('opsgenie', 'OpsGenie'), ('victorops', 'VictorOps'), ('discord', 'Discord'), ('telegram', 'Telegram'), ('sms', 'SMS'), ('zendesk', 'Zendesk'), ('trello', 'Trello'), ('matrix', 'Matrix'), ('whatsapp', 'WhatsApp'), ('apprise', 'Apprise'), ('mattermost', 'Mattermost')], max_length=20),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "Email"),
+                    ("webhook", "Webhook"),
+                    ("hipchat", "HipChat"),
+                    ("slack", "Slack"),
+                    ("pd", "PagerDuty"),
+                    ("pagertree", "PagerTree"),
+                    ("pagerteam", "Pager Team"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("opsgenie", "OpsGenie"),
+                    ("victorops", "VictorOps"),
+                    ("discord", "Discord"),
+                    ("telegram", "Telegram"),
+                    ("sms", "SMS"),
+                    ("zendesk", "Zendesk"),
+                    ("trello", "Trello"),
+                    ("matrix", "Matrix"),
+                    ("whatsapp", "WhatsApp"),
+                    ("apprise", "Apprise"),
+                    ("mattermost", "Mattermost"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

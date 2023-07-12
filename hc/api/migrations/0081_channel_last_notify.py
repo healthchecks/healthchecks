@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0080_fill_slug'),
+        ("api", "0080_fill_slug"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='channel',
-            name='last_notify',
+            model_name="channel",
+            name="last_notify",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

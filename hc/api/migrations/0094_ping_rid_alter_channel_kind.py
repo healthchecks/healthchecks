@@ -6,18 +6,50 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0093_alter_check_failure_kw'),
+        ("api", "0093_alter_check_failure_kw"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ping',
-            name='rid',
+            model_name="ping",
+            name="rid",
             field=models.UUIDField(null=True),
         ),
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('apprise', 'Apprise'), ('call', 'Phone Call'), ('discord', 'Discord'), ('email', 'Email'), ('gotify', 'Gotify'), ('hipchat', 'HipChat'), ('linenotify', 'LINE Notify'), ('matrix', 'Matrix'), ('mattermost', 'Mattermost'), ('msteams', 'Microsoft Teams'), ('opsgenie', 'Opsgenie'), ('pagerteam', 'Pager Team'), ('pagertree', 'PagerTree'), ('pd', 'PagerDuty'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('shell', 'Shell Command'), ('signal', 'Signal'), ('slack', 'Slack'), ('sms', 'SMS'), ('spike', 'Spike'), ('telegram', 'Telegram'), ('trello', 'Trello'), ('victorops', 'Splunk On-Call'), ('webhook', 'Webhook'), ('whatsapp', 'WhatsApp'), ('zendesk', 'Zendesk'), ('zulip', 'Zulip')], max_length=20),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("apprise", "Apprise"),
+                    ("call", "Phone Call"),
+                    ("discord", "Discord"),
+                    ("email", "Email"),
+                    ("gotify", "Gotify"),
+                    ("hipchat", "HipChat"),
+                    ("linenotify", "LINE Notify"),
+                    ("matrix", "Matrix"),
+                    ("mattermost", "Mattermost"),
+                    ("msteams", "Microsoft Teams"),
+                    ("opsgenie", "Opsgenie"),
+                    ("pagerteam", "Pager Team"),
+                    ("pagertree", "PagerTree"),
+                    ("pd", "PagerDuty"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("shell", "Shell Command"),
+                    ("signal", "Signal"),
+                    ("slack", "Slack"),
+                    ("sms", "SMS"),
+                    ("spike", "Spike"),
+                    ("telegram", "Telegram"),
+                    ("trello", "Trello"),
+                    ("victorops", "Splunk On-Call"),
+                    ("webhook", "Webhook"),
+                    ("whatsapp", "WhatsApp"),
+                    ("zendesk", "Zendesk"),
+                    ("zulip", "Zulip"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

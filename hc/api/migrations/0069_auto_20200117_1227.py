@@ -7,13 +7,13 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0068_auto_20200117_1023'),
+        ("api", "0068_auto_20200117_1023"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ping',
-            name='created',
+            model_name="ping",
+            name="created",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]

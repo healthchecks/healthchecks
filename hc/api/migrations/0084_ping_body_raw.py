@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0083_channel_disabled'),
+        ("api", "0083_channel_disabled"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ping',
-            name='body_raw',
+            model_name="ping",
+            name="body_raw",
             field=models.BinaryField(null=True),
         ),
     ]

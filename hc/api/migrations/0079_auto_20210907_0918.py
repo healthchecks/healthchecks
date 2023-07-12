@@ -6,17 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0078_sms_values'),
+        ("api", "0078_sms_values"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='check',
-            name='slug',
+            model_name="check",
+            name="slug",
             field=models.CharField(blank=True, max_length=100),
         ),
         migrations.AddIndex(
-            model_name='check',
-            index=models.Index(fields=['project_id', 'slug'], name='api_check_project_slug'),
+            model_name="check",
+            index=models.Index(
+                fields=["project_id", "slug"], name="api_check_project_slug"
+            ),
         ),
     ]

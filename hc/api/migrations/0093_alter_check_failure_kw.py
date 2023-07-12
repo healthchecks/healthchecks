@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0092_alter_check_success_kw'),
+        ("api", "0092_alter_check_success_kw"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='check',
-            name='failure_kw',
-            field=models.CharField(blank=True, default='', max_length=200),
+            model_name="check",
+            name="failure_kw",
+            field=models.CharField(blank=True, default="", max_length=200),
             preserve_default=False,
         ),
     ]
