@@ -4,6 +4,7 @@ import email.policy
 import time
 from datetime import timedelta as td
 from email import message_from_bytes
+from typing import Iterable
 from uuid import UUID
 
 from django.conf import settings
@@ -146,6 +147,7 @@ def _lookup(project, spec):
 
 
 def _update(check, spec, v: int):
+    new_channels: Iterable[Channel] | None
     # First, validate the supplied channel codes/names
     if "channels" not in spec:
         # If the channels key is not present, don't update check's channels
