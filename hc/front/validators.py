@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from urllib.parse import urlsplit, urlunsplit
 
-from cronsim import CronSim
+from cronsim import CronSim, CronSimError
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
@@ -41,7 +41,7 @@ class CronExpressionValidator(object):
             it = CronSim(value, datetime(2000, 1, 1))
             # Can it calculate the next datetime?
             next(it)
-        except:
+        except (CronSimError, StopIteration):
             raise ValidationError(message=self.message)
 
 

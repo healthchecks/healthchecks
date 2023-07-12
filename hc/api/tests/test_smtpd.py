@@ -19,21 +19,21 @@ From: "User Name" <username@gmail.com>
 To: "John Smith" <john@example.com>
 Subject: %s
 MIME-Version: 1.0
-Content-Type: multipart/alternative; boundary="=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ=="
+Content-Type: multipart/alternative; boundary="marker"
 
---=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ==
+--marker
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 
 Plain text here
 
---=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ==
+--marker
 Content-Type: text/html; charset=utf-8
 Content-Transfer-Encoding: 8bit
 
 %s
 
---=-eZCfVHHsxj32NZLHPpkbTCXb9C529OcJ23WKzQ==--
+--marker--
 """.strip()
 
 

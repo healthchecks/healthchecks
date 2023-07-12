@@ -135,7 +135,7 @@ class LargeTablePaginator(Paginator):
                 [self.object_list.query.model._meta.db_table],
             )
             return int(cursor.fetchone()[0])
-        except:
+        except Exception:
             return 0
 
     @cached_property

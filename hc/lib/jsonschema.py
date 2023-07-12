@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 from datetime import datetime
 
-from cronsim import CronSim
+from cronsim import CronSim, CronSimError
 
 from hc.lib.tz import all_timezones
 
@@ -29,16 +29,16 @@ def validate(obj, schema, obj_name="value"):
         if "pattern" in schema and not re.match(schema["pattern"], obj):
             raise ValidationError(f"{obj_name} does not match pattern")
         if schema.get("format") == "cron":
-            try:
-                # Does it have 5 components?
-                if len(obj.split()) != 5:
-                    raise ValueError()
+            # Does it have 5 components?
+            if len(obj.split()) != 5:
+                raise ValidationError(f"{obj_name} is not a valid cron expression")
 
+            try:
                 # Does cronsim accept the schedule?
                 it = CronSim(obj, datetime(2000, 1, 1))
                 # Can it calculate the next datetime?
                 next(it)
-            except:
+            except (CronSimError, StopIteration):
                 raise ValidationError(f"{obj_name} is not a valid cron expression")
         if schema.get("format") == "timezone" and obj not in all_timezones:
             raise ValidationError(f"{obj_name} is not a valid timezone")
