@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 from io import BytesIO
 from threading import Thread
 

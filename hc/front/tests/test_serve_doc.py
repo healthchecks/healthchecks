@@ -24,7 +24,7 @@ class ServeDocTestCase(TestCase):
 
     @patch("hc.front.views.settings.BASE_DIR")
     def test_it_rejects_bad_characters(self, mock_base_dir):
-        r = self.client.get("/docs/NAUGHTY/")
+        self.client.get("/docs/NAUGHTY/")
         # URL dispatcher's slug filter lets the uppercase letters through,
         # but the view should still reject them, before any filesystem
         # operations

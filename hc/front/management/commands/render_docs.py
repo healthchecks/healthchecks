@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import os
+from importlib.util import find_spec
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -10,16 +10,14 @@ class Command(BaseCommand):
     help = "Renders Markdown to HTML"
 
     def handle(self, *args, **options):
-        try:
-            import markdown
+        for pkg in ("markdown", "pygments"):
+            if find_spec(pkg) is None:
+                self.stdout.write(f"This command requires the {pkg} package.")
+                self.stdout.write("Please install it with:\n\n")
+                self.stdout.write(f"  pip install {pkg}\n\n")
+                return
 
-            # We use pygments for highlighting code samples
-            import pygments
-        except ImportError as e:
-            self.stdout.write(f"This command requires the {e.name} package.")
-            self.stdout.write("Please install it with:\n\n")
-            self.stdout.write(f"  pip install {e.name}\n\n")
-            return
+        import markdown
 
         extensions = [
             "fenced_code",
