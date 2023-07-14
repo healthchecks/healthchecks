@@ -329,6 +329,9 @@ INTEGRATIONS_ALLOW_PRIVATE_IPS = envbool("INTEGRATIONS_ALLOW_PRIVATE_IPS", "Fals
 # Zulip
 ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
 
+# Custom
+CUSTOM_VIEW_DOWNTIMES_COUNT = envint("CUSTOM_VIEW_DOWNTIMES_COUNT", "3")
+
 # Read additional configuration from hc/local_settings.py if it exists
 if (BASE_DIR / "hc/local_settings.py").exists():
     from .local_settings import *  # noqa: F403
