@@ -193,6 +193,17 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertTrue(self.channel.disabled)
 
     @patch("hc.api.transports.curl.request")
+    def test_it_disables_channel_on_403_bot_blocked(self, mock_post):
+        mock_post.return_value.status_code = 403
+        mock_post.return_value.json.return_value = {
+            "description": "Forbidden: bot was blocked by the user"
+        }
+
+        self.channel.notify(self.check)
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request")
     def test_it_shows_last_ping_body(self, mock_post):
         mock_post.return_value.status_code = 200
 

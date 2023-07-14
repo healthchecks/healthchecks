@@ -743,6 +743,8 @@ class Telegram(HttpTransport):
             message += f' with a message: "{description}"'
             if description == "Forbidden: the group chat was deleted":
                 permanent = True
+            if description == "Forbidden: bot was blocked by the user":
+                permanent = True
 
         raise TransportError(message, permanent=permanent)
 
