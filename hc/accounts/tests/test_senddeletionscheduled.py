@@ -48,10 +48,9 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         cmd.pause = Mock()  # don't pause for 1s
 
         result = cmd.handle()
-        self.assertEqual(counts(result), [2])
+        self.assertEqual(counts(result), [1])
 
-        self.assertEqual(mail.outbox[0].to[0], "alice@example.org")
-        self.assertEqual(mail.outbox[1].to[0], "bob@example.org")
+        self.assertEqual(mail.outbox[0].to, ["alice@example.org", "bob@example.org"])
 
     def test_it_skips_profiles_with_deletion_scheduled_date_not_set(self):
         cmd = Command(stdout=Mock())

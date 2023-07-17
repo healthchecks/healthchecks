@@ -55,7 +55,11 @@ def make_message(name, to, ctx, headers={}):
         from_email = settings.DEFAULT_FROM_EMAIL
 
     msg = EmailMultiAlternatives(
-        subject, body, from_email=from_email, to=(to,), headers=headers
+        subject,
+        body,
+        from_email=from_email,
+        to=[to] if isinstance(to, str) else to,
+        headers=headers,
     )
     msg.attach_alternative(html, "text/html")
     return msg

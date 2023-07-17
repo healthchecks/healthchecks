@@ -33,19 +33,17 @@ class Command(BaseCommand):
             for u in self.members(profile.user):
                 recipients.append(u.email)
 
-            for recipient in recipients:
-                role = "owner" if recipient == profile.user.email else "member"
-                self.stdout.write(f"Sending notice to {recipient} ({role})")
-                ctx = {
-                    "owner_email": profile.user.email,
-                    "num_checks": profile.num_checks_used(),
-                    "support_email": settings.SUPPORT_EMAIL,
-                    "deletion_scheduled_date": profile.deletion_scheduled_date,
-                }
-                emails.deletion_scheduled(recipient, ctx)
-                sent += 1
+            self.stdout.write(f"Sending notice to {recipients}")
+            ctx = {
+                "owner_email": profile.user.email,
+                "num_checks": profile.num_checks_used(),
+                "support_email": settings.SUPPORT_EMAIL,
+                "deletion_scheduled_date": profile.deletion_scheduled_date,
+            }
+            emails.deletion_scheduled(recipients, ctx)
+            sent += 1
 
-                # Throttle so we don't send too many emails at once:
-                self.pause()
+            # Throttle so we don't send too many emails at once:
+            self.pause()
 
         return f"Done!\nNotices sent: {sent}\n"
