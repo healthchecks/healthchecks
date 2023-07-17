@@ -31,7 +31,8 @@ class Command(BaseCommand):
             recipients = [profile.user.email]
             # Include team members in the recipient list too:
             for u in self.members(profile.user):
-                recipients.append(u.email)
+                if u.email not in recipients:
+                    recipients.append(u.email)
 
             self.stdout.write(f"Sending notice to {recipients}")
             ctx = {

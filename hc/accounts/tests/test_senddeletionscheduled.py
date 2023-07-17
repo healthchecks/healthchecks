@@ -8,6 +8,7 @@ from django.core import mail
 from django.utils.timezone import now
 
 from hc.accounts.management.commands.senddeletionscheduled import Command
+from hc.accounts.models import Member, Project
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -70,3 +71,22 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         result = cmd.handle()
         self.assertEqual(counts(result), [0])
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_it_avoids_duplicate_recipients(self):
+        self.profile.deletion_scheduled_date = now() + td(days=31)
+        self.profile.save()
+
+        self.bob.last_login = now()
+        self.bob.save()
+
+        second_project = Project.objects.create(owner=self.alice)
+        Member.objects.create(
+            user=self.bob, project=second_project, role=Member.Role.REGULAR
+        )
+
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+
+        cmd.handle()
+        # Bob should be listed as a recipient a single time, despite two memberships:
+        self.assertEqual(mail.outbox[0].to, ["alice@example.org", "bob@example.org"])
