@@ -167,17 +167,21 @@ class ProfileAdmin(admin.ModelAdmin):
 
         return s
 
+    @admin.display(ordering="user__date_joined")
     def date_joined(self, obj):
         return obj.user.date_joined
 
+    @admin.display(ordering="last_active_date")
     def last_active(self, obj):
         if obj.last_active_date:
             return obj.last_active_date.date()
 
+    @admin.display(ordering="over_limit_date")
     def over_limit(self, obj):
         if obj.over_limit_date:
             return obj.over_limit_date.date()
 
+    @admin.display(ordering="deletion_scheduled_date")
     def deletion(self, obj):
         if obj.deletion_scheduled_date:
             return obj.deletion_scheduled_date.date()
