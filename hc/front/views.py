@@ -767,7 +767,7 @@ def clear_events(request: HttpRequest, code: UUID) -> HttpResponse:
 
 
 def _get_events(check, page_limit, start=None, end=None):
-    pings = check.visible_pings.order_by("-id")
+    pings = check.visible_pings.order_by("-n")
     if start and end:
         pings = pings.filter(created__gte=start, created__lte=end)
 
