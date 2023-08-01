@@ -767,6 +767,10 @@ def clear_events(request: HttpRequest, code: UUID) -> HttpResponse:
 
 
 def _get_events(check, page_limit, start=None, end=None):
+    # Sorting by "n" instead of "id" is important here. Both give the same
+    # query results, but sorting by "id" can cause postgres to pick
+    # api_ping.id index (slow if the api_ping table is big). Sorting by
+    # "n" works around the problem--postgres picks the api_ping.owner_id index.
     pings = check.visible_pings.order_by("-n")
     if start and end:
         pings = pings.filter(created__gte=start, created__lte=end)
