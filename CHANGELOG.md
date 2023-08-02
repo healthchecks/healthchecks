@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Add Channel.last_notify_duration field, use it in "sendalerts" for prioritization
 - Update Telegram integration to treat "bot was blocked by the user" as permanent error
 
+### Bug Fixes
+- Fix "senddeletionnotices" to recognize "Supporter" subscriptions
+
 ## v2.10 - 2023-07-02
 
 ### Improvements

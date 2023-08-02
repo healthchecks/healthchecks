@@ -39,8 +39,8 @@ class Command(BaseCommand):
         q = q.exclude(deletion_notice_date__gt=year_ago)
         # Exclude accounts with activity in the last year
         q = q.exclude(last_active_date__gt=year_ago)
-        # Exclude paid accounts
-        q = q.exclude(sms_limit__gt=5)
+        # Exclude accounts with subscriptions
+        q = q.exclude(user__subscription__subscription_id__gt="")
 
         sent = 0
         skipped_has_team = 0
