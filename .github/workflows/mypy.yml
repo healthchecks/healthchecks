@@ -1,4 +1,4 @@
-name: Mypy type checks
+name: Mypy
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  main:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
@@ -23,5 +23,6 @@ jobs:
         pip install -r requirements.txt
         pip install apprise braintree minio
         pip install mypy django-stubs types-pycurl types-Markdown
+        touch hc/local_settings.py
     - name: Run Mypy
       run: mypy hc
