@@ -1,4 +1,4 @@
-name: Django CI
+name: Tests
 
 on:
   push:
@@ -38,21 +38,15 @@ jobs:
         sudo -u postgres createuser -s runner
     - name: Install Dependencies
       run: |
-        sudo apt-get update
+        sudo apt-get update -qq
         sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install apprise braintree coverage coveralls minio mysqlclient
+        pip install apprise braintree minio mysqlclient
     - name: Run Tests
       env:
         DB: ${{ matrix.db }}
         DB_USER: ${{ matrix.db_user }}
         DB_PASSWORD: ${{ matrix.db_password }}
         SECRET_KEY: dummy-key
-      run: |
-        coverage run --omit=*/tests/*,*/migrations/* --source=hc manage.py test
-    - name: Coveralls
-      if: matrix.db == 'postgres' && matrix.python-version == '3.8'
-      run: coveralls --service=github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: python manage.py test

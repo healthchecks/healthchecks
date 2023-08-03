@@ -1,4 +1,4 @@
-name: Mypy
+name: Coverage
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
     branches: [ master ]
 
 jobs:
-  main:
+  test:
+
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
@@ -21,8 +22,12 @@ jobs:
         sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install apprise braintree minio
-        pip install mypy django-stubs types-pycurl types-Markdown
-        touch hc/local_settings.py
-    - name: Run Mypy
-      run: mypy hc
+        pip install apprise braintree coverage coveralls minio
+    - name: Run Tests
+      env:
+        SECRET_KEY: dummy-key
+      run: coverage run --omit=*/tests/*,*/migrations/* --source=hc manage.py test
+    - name: Coveralls
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
