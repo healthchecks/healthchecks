@@ -127,6 +127,7 @@ class NotifyEmailTestCase(BaseTestCase):
     def test_it_shows_cron_schedule(self):
         self.check.kind = "cron"
         self.check.schedule = "0 18-23,0-8 * * *"
+        self.check.tz = "Europe/Riga"
         self.check.save()
 
         self.channel.notify(self.check)
@@ -135,7 +136,9 @@ class NotifyEmailTestCase(BaseTestCase):
         html = email.alternatives[0][0]
 
         self.assertIn("0 18-23,0-8 * * *", email.body)
+        self.assertIn("Europe/Riga", email.body)
         self.assertIn("<code>0 18-23,0-8 * * *</code>", html)
+        self.assertIn("Europe/Riga", html)
 
     def test_it_truncates_long_body(self):
         self.ping.body = "X" * 10000 + ", and the rest gets cut off"

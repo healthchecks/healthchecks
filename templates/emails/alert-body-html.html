@@ -49,6 +49,11 @@
             <code>{{ check.schedule }}</code>
         </td>
         {{ trtr|safe }} {% cycle trtr %}
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Time Zone</b><br>
+            {{ check.tz }}
+        </td>
+        {{ trtr|safe }} {% cycle trtr %}
         {% endif %}
 
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">

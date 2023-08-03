@@ -31,6 +31,7 @@
 
 {% if check.kind == "cron" %}
     {% line %}Schedule: {{ check.schedule }}{% endline %}
+    {% line %}Time Zone: {{ check.tz }}{% endline %}
 {% endif %}
 
 {% line %}Total pings: {{ check.n_pings }} {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}{% endline %}
