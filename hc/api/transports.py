@@ -406,6 +406,7 @@ class Slackalike(HttpTransport):
 
         if check.kind == "cron":
             fields.add("Schedule", fix_asterisks(check.schedule))
+            fields.add("Time Zone", check.tz)
 
         fields.add("Total Pings", str(check.n_pings))
 
@@ -952,6 +953,7 @@ class MsTeams(HttpTransport):
 
         if check.kind == "cron":
             facts.append({"name": "Schedule:", "value": fix_asterisks(check.schedule)})
+            facts.append({"name": "Time Zone:", "value": check.tz})
 
         facts.append({"name": "Total Pings:", "value": str(check.n_pings)})
 

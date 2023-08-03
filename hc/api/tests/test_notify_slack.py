@@ -90,6 +90,22 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(mock_post.call_count, 3)
 
     @patch("hc.api.transports.curl.request")
+    def test_it_shows_schedule_and_tz(self, mock_post):
+        self._setup_data("123")
+        self.check.kind = "cron"
+        self.check.schedule = "1 1 1 1 1"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        payload = mock_post.call_args.kwargs["json"]
+        attachment = payload["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Schedule"], "1 1 1 1 1")
+        self.assertEqual(fields["Time Zone"], "Europe/Riga")
+
+    @patch("hc.api.transports.curl.request")
     def test_slack_with_tabs_in_schedule(self, mock_post):
         self._setup_data("123")
         self.check.kind = "cron"
