@@ -648,6 +648,7 @@ class RocketChat(HttpTransport):
 
         if check.kind == "cron":
             fields.add("Schedule", fix_asterisks(check.schedule))
+            fields.add("Time Zone", check.tz)
 
         fields.add("Total Pings", str(check.n_pings))
 
