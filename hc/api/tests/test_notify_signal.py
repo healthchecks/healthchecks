@@ -108,6 +108,19 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", params["message"])
 
     @patch("hc.api.transports.socket.socket")
+    def test_it_shows_schedule_and_tz(self, socket):
+        socketobj = setup_mock(socket, {})
+
+        self.check.kind = "cron"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        self.channel.notify(self.check)
+
+        params = socketobj.req["params"]
+        self.assertIn("Schedule: * * * * *", params["message"])
+        self.assertIn("Time Zone: Europe/Riga", params["message"])
+
+    @patch("hc.api.transports.socket.socket")
     def test_it_handles_special_characters(self, socket):
         socketobj = setup_mock(socket, {})
 
