@@ -397,7 +397,7 @@ setting to integrate Healthchecks with it.</p>
  with any dashes replaced with underscores, and prefixed with <code>HTTP_</code>. For
  example, if your authentication proxy sets a <code>X-Authenticated-User</code> request
  header, you should set <code>REMOTE_USER_HEADER=HTTP_X_AUTHENTICATED_USER</code>.</p>
-<p><strong>Important:</strong> When this option is enabled, <strong>Healtchecks will trust the header's
+<p><strong>Important:</strong> When this option is enabled, <strong>Healthchecks will trust the header's
 value implicitly</strong>, so it is <strong>very important</strong> to ensure that attackers cannot
 set the value themselves (and thus impersonate any user). How to do this varies by
 your chosen proxy, but generally involves configuring it to strip out headers that
