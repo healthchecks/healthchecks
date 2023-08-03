@@ -1,0 +1,27 @@
+name: Mypy type checks
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install apprise braintree minio
+        pip install mypy django-stubs types-pycurl types-Markdown
+    - name: Run Mypy
+      run: mypy hc
