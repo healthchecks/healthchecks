@@ -6,7 +6,9 @@
 {% endif %}
 
 {% if check.kind == "cron" %}
-**Schedule:** {{ check.schedule|escapejs }}
+**Schedule:** `{{ check.schedule|fix_asterisks }}`
+
+**Time Zone:** {{ check.tz }}
 {% endif %}
 
 **Last Ping:** {{ check.last_ping|naturaltime }}

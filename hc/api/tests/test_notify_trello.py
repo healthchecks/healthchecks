@@ -50,6 +50,20 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertEqual(params["token"], "fake-token")
 
     @patch("hc.api.transports.curl.request")
+    def test_it_shows_schedule_and_tz(self, mock_post):
+        mock_post.return_value.status_code = 200
+        self.check.kind = "cron"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+
+        self.channel.notify(self.check)
+
+        params = mock_post.call_args.kwargs["params"]
+        a = "\u034f*"
+        self.assertIn(f"**Schedule:** `{a} {a} {a} {a} {a}`", params["desc"])
+        self.assertIn("**Time Zone:** Europe/Riga", params["desc"])
+
+    @patch("hc.api.transports.curl.request")
     def test_it_does_not_escape_name(self, mock_post):
         mock_post.return_value.status_code = 200
 

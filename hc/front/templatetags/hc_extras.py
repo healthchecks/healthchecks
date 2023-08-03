@@ -260,3 +260,10 @@ def sort_url(context, sort):
     q = context["request"].GET.copy()
     q["sort"] = sort
     return mark_safe("?" + q.urlencode())
+
+
+@register.filter
+def fix_asterisks(s):
+    """Prepend asterisks with "Combining Grapheme Joiner" characters."""
+
+    return s.replace("*", "\u034f*")
