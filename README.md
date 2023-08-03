@@ -2,6 +2,7 @@
 
 [![Tests](https://github.com/healthchecks/healthchecks/actions/workflows/tests.yml/badge.svg)](https://github.com/healthchecks/healthchecks/actions/workflows/tests.yml)
 [![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
+[![Release](https://img.shields.io/github/v/release/healthchecks/healthchecks)](https://github.com/healthchecks/healthchecks/releases)
 
 Healthchecks is a cron job monitoring service. It listens for HTTP requests
 and email messages ("pings") from your cron jobs and scheduled tasks ("checks").
