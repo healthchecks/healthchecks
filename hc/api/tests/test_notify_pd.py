@@ -44,6 +44,19 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["service_key"], "123")
 
     @patch("hc.api.transports.curl.request")
+    def test_it_shows_schedule_and_tz(self, mock_post):
+        self._setup_data("123")
+        self.check.kind = "cron"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(payload["details"]["Schedule"], "* * * * *")
+        self.assertEqual(payload["details"]["Time zone"], "Europe/Riga")
+
+    @patch("hc.api.transports.curl.request")
     def test_pd_complex(self, mock_post):
         self._setup_data(json.dumps({"service_key": "456"}))
         mock_post.return_value.status_code = 200

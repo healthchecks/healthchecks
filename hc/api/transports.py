@@ -517,6 +517,7 @@ class PagerDuty(HttpTransport):
             details["Period"] = format_duration(check.timeout)
         if check.kind == "cron":
             details["Schedule"] = check.schedule
+            details["Time zone"] = check.tz
 
         description = tmpl("pd_description.html", check=check)
         payload = {
