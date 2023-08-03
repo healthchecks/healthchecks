@@ -20,6 +20,7 @@
 
 {% if check.kind == "cron" %}
 {% line %}<b>Schedule:</b> <code>{{ check.schedule }}</code>{% endline %}
+{% line %}<b>Time Zone:</b> {{ check.tz }}{% endline %}
 {% endif %}
 
 {% line %}<b>Total Pings:</b> {{ check.n_pings }}{% endline %}

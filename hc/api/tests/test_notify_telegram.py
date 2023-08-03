@@ -77,6 +77,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.check.kind = "cron"
         self.check.schedule = "* * * * MON-FRI"
+        self.check.tz = "Europe/Riga"
         self.check.save()
 
         self.channel.notify(self.check)
@@ -85,6 +86,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn(
             "<b>Schedule:</b> <code>* * * * MON-FRI</code>\n", payload["text"]
         )
+        self.assertIn("<b>Time Zone:</b> Europe/Riga\n", payload["text"])
 
     @patch("hc.api.transports.curl.request")
     def test_it_returns_error(self, mock_post):
