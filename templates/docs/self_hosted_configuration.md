@@ -571,7 +571,7 @@ When `REMOTE_USER_HEADER` is set, Healthchecks will:
  example, if your authentication proxy sets a `X-Authenticated-User` request
  header, you should set `REMOTE_USER_HEADER=HTTP_X_AUTHENTICATED_USER`.
 
-**Important:** When this option is enabled, **Healtchecks will trust the header's
+**Important:** When this option is enabled, **Healthchecks will trust the header's
 value implicitly**, so it is **very important** to ensure that attackers cannot
 set the value themselves (and thus impersonate any user). How to do this varies by
 your chosen proxy, but generally involves configuring it to strip out headers that

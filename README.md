@@ -206,7 +206,7 @@ curl --url 'smtp://127.0.0.1:2525' \
 
 ## Sending Alerts and Reports
 
-Healtchecks comes with a `sendalerts` management command, which continuously
+Healthchecks comes with a `sendalerts` management command, which continuously
 polls database for any checks changing state, and sends out notifications as
 needed. Within an activated virtualenv, you can manually run
 the `sendalerts` command like so:
@@ -311,7 +311,7 @@ from the `django-sslserver` package.
 Healthchecks supports external authentication by means of HTTP headers set by
 reverse proxies or the WSGI server. This allows you to integrate it into your
 existing authentication system (e.g., LDAP or OAuth) via an authenticating proxy.
-When this option is enabled, **healtchecks will trust the header's value implicitly**,
+When this option is enabled, **healthchecks will trust the header's value implicitly**,
 so it is **very important** to ensure that attackers cannot set the value themselves
 (and thus impersonate any user). How to do this varies by your chosen proxy,
 but generally involves configuring it to strip out headers that normalize to the
