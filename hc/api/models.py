@@ -762,12 +762,13 @@ class Channel(models.Model):
         """
         mail_admins(subject, message, html_message=html_message)
 
-    def send_signal_rate_limited_notice(self, message):
+    def send_signal_rate_limited_notice(self, message: str, plaintext: str):
         email = self.project.owner.email
         ctx = {
             "recipient": self.phone_number,
-            "subject": message.split("\n")[0],
+            "subject": plaintext.split("\n")[0],
             "message": message,
+            "plaintext": plaintext,
         }
         emails.signal_rate_limited(email, ctx)
 

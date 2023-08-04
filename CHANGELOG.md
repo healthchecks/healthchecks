@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Add Channel.last_notify_duration field, use it in "sendalerts" for prioritization
 - Update Telegram integration to treat "bot was blocked by the user" as permanent error
 - Add "Time Zone" field in notifications that use the "Schedule" field (#863)
+- Add bold and monospace text formatting in Signal notifications
 
 ### Bug Fixes
 - Fix "senddeletionnotices" to recognize "Supporter" subscriptions

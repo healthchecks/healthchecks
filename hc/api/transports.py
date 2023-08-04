@@ -23,6 +23,7 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.lib import curl, emails, jsonschema
 from hc.lib.date import format_duration
+from hc.lib.html import extract_signal_styles
 from hc.lib.signing import sign_bounce_id
 from hc.lib.string import replace
 
@@ -1047,10 +1048,15 @@ class Signal(Transport):
             return not self.channel.signal_notify_up
 
     def send(self, recipient: str, message: str) -> None:
+        plaintext, styles = extract_signal_styles(message)
         payload = {
             "jsonrpc": "2.0",
             "method": "send",
-            "params": {"recipient": [recipient], "message": message},
+            "params": {
+                "recipient": [recipient],
+                "message": plaintext,
+                "textStyle": styles,
+            },
             "id": str(uuid.uuid4()),
         }
 
@@ -1077,7 +1083,9 @@ class Signal(Transport):
                         if self.channel:
                             raw = reply_bytes.decode()
                             self.channel.send_signal_captcha_alert(result["token"], raw)
-                            self.channel.send_signal_rate_limited_notice(message)
+                            self.channel.send_signal_rate_limited_notice(
+                                message, plaintext
+                            )
                         raise TransportError("CAPTCHA proof required")
 
                 code = reply["error"].get("code")

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from unittest import TestCase
 
-from hc.lib.html import html2text
+from hc.lib.html import extract_signal_styles, html2text
 
 
-class HtmlTestCase(TestCase):
+class Html2TextTestCase(TestCase):
     def test_it_works(self):
         sample = """
             <style>css goes here</style>
@@ -19,3 +19,24 @@ class HtmlTestCase(TestCase):
     def test_it_does_not_inject_whitespace(self):
         sample = """<b>S</b>UCCESS"""
         self.assertEqual(html2text(sample), "SUCCESS")
+
+
+class ExtractSignalTestCase(TestCase):
+    def test_b_works(self):
+        text, styles = extract_signal_styles("<b>foo</b> bar")
+        self.assertEqual(text, "foo bar")
+        self.assertEqual(styles, ["0:3:BOLD"])
+
+    def test_code_works(self):
+        text, styles = extract_signal_styles("foo <code>bar</code>")
+        self.assertEqual(text, "foo bar")
+        self.assertEqual(styles, ["4:3:MONOSPACE"])
+
+    def test_it_rejects_mismatched_tags(self):
+        with self.assertRaises(AssertionError):
+            extract_signal_styles("<b>foo</code>")
+
+    def test_it_unescapes_html(self):
+        text, styles = extract_signal_styles("<b>5 &lt; 10</b>")
+        self.assertEqual(text, "5 < 10")
+        self.assertEqual(styles, ["0:6:BOLD"])
