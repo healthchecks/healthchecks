@@ -9,7 +9,7 @@ over the following:</p>
 <li>Schedule</li>
 <li>Assigned notification methods</li>
 </ul>
-<p>The newly created check has a different ping URL, and it starts with an empty log.</p>
+<p>The newly created check has a different ping URL and an empty event log.</p>
 <h2>Cloning All Checks Into a New Project</h2>
 <p>It is sometimes useful to clone an entire project. For example, when recreating
 an existing deployment in a new region. The SITE_NAME web interface does

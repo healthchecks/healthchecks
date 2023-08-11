@@ -12,7 +12,7 @@ over the following:
 * Schedule
 * Assigned notification methods
 
-The newly created check has a different ping URL, and it starts with an empty log.
+The newly created check has a different ping URL and an empty event log.
 
 ## Cloning All Checks Into a New Project
 

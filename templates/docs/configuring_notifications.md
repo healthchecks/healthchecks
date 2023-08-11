@@ -1,7 +1,7 @@
 # Configuring Notifications
 
 You can set up multiple ways to receive notifications when checks in your account
-change state. Doing so is useful for several reasons:
+change state. Doing so is helpful for several reasons:
 
 * **Redundancy in case of notification failures.** Set up notifications using two
 different notification channels (for example, email and Slack). If one transport
@@ -9,27 +9,27 @@ fails (e.g., an email message goes to spam), you still receive a notification ov
 other channel.
 * **Use different notification methods depending on urgency**. For example, if a
 low-priority housekeeping script fails, post a message in chat. If a vital service fails,
-post in chat, send an email, and send SMS.
+post in chat, send an email, and send an SMS.
 * Route notifications to the right people.
 
 Each notification method ("integration") belongs to a project:
-if you want to use a notification method in multiple projects, you will need to
+if you want to use a notification method in multiple projects, you must
 set it up in each project separately.
 
-In the web interface, the "Checks" page shows a visual overview of which alerting
+The "Checks" page in the web interface shows a visual overview of which alerting
 methods are active for each check. You can click the icons to toggle them on and off:
 
 ![Integration icons in the checks list](IMG_URL/checks_integrations.png)
 
-You can also toggle the integrations by clicking the "ON" / "OFF" labels in
-individual check's details pages:
+You can also toggle the integrations by clicking the "ON" / "OFF" labels on
+each check's details pages:
 
 ![Integration on/off toggles in the check details page](IMG_URL/details_integrations.png)
 
 ## SMS, WhatsApp, and Phone Call Monthly Quotas
 
 SITE_NAME sets a quota on the maximum number of SMS, WhatsApp, and phone-call
-notifications an account can send per given month. The specific limit depends on the
+notifications an account can send per month. The specific limit depends on the
 account's billing plan. The quota automatically resets at the start of each month.
 The "unused" sends from one month do not carry over to the next month.
 
@@ -57,16 +57,16 @@ Set them up in [Account Settings › Email Reports](../../accounts/profile/notif
 
 ## Weekly and Monthly Reports
 
-SITE_NAME sends periodic email reports, either monthly at the start of each month,
-or weekly every Monday. Use them to make sure all checks have their expected state,
+SITE_NAME sends periodic email reports, either monthly at the start of each month
+or weekly every Monday. Use them to ensure all checks have their expected state
 and nothing has "fallen through the cracks."
 
 The reports list checks from all your projects, grouped by project.
 For each check, they show:
 
-* check's current status
-* the number of downtimes by month, for the last two months
-* the total downtime duration by month, for the last two months
+* the check's current status
+* the number of downtimes by month for the last two months
+* the total downtime duration by month for the last two months
 
 ![Example monthly report](IMG_URL/monthly_report.png)
 

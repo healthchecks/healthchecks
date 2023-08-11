@@ -36,9 +36,9 @@ hc_check_up
 
     Labels:
 
-    * `name` – name of the check
-    * `tags` – check's tags as a text string, multiple tags are delimited with spaces
-    * `unique_key` – a stable, unique identifier of the check (derived from check's code)
+    * `name` – the name of the check
+    * `tags` – check's tags as a text string; multiple tags are delimited with spaces
+    * `unique_key` – a stable, unique identifier of the check (derived from the check's code)
 
 hc_check_started
 :   For every check, indicates whether the check is currently running
@@ -46,9 +46,9 @@ hc_check_started
 
     Labels:
 
-    * `name` – name of the check
-    * `tags` – check's tags as a text string, multiple tags are delimited with spaces
-    * `unique_key` – a stable, unique identifier of the check (derived from check's code)
+    * `name` – the name of the check
+    * `tags` – check's tags as a text string; multiple tags are delimited with spaces
+    * `unique_key` – a stable, unique identifier of the check (derived from the check's code)
 
 hc_tag_up
 :   For every tag, indicates whether all checks with this tag are up

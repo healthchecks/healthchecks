@@ -26,9 +26,9 @@ the Prometheus endpoint:</p>
 (1 for yes, 0 for no).</p>
 <p>Labels:</p>
 <ul>
-<li><code>name</code> – name of the check</li>
-<li><code>tags</code> – check's tags as a text string, multiple tags are delimited with spaces</li>
-<li><code>unique_key</code> – a stable, unique identifier of the check (derived from check's code)</li>
+<li><code>name</code> – the name of the check</li>
+<li><code>tags</code> – check's tags as a text string; multiple tags are delimited with spaces</li>
+<li><code>unique_key</code> – a stable, unique identifier of the check (derived from the check's code)</li>
 </ul>
 </dd>
 <dt>hc_check_started</dt>
@@ -37,9 +37,9 @@ the Prometheus endpoint:</p>
 (1 for yes, 0 for no).</p>
 <p>Labels:</p>
 <ul>
-<li><code>name</code> – name of the check</li>
-<li><code>tags</code> – check's tags as a text string, multiple tags are delimited with spaces</li>
-<li><code>unique_key</code> – a stable, unique identifier of the check (derived from check's code)</li>
+<li><code>name</code> – the name of the check</li>
+<li><code>tags</code> – check's tags as a text string; multiple tags are delimited with spaces</li>
+<li><code>unique_key</code> – a stable, unique identifier of the check (derived from the check's code)</li>
 </ul>
 </dd>
 <dt>hc_tag_up</dt>

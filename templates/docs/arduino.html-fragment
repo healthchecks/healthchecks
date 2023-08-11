@@ -2,7 +2,7 @@
 <p>The easiest way to send pings from Arduino projects is by using the
 <a href="https://github.com/arduino-libraries/ArduinoHttpClient">ArduinoHttpClient</a> library.</p>
 <p>The below code uses the <a href="https://www.arduino.cc/reference/en/libraries/wifinina/">WiFiNINA</a>
-network library, and is tested with the Arduino Nano 33 IoT board. The
+network library and is tested with the Arduino Nano 33 IoT board. The
 ArduinoHttpClient also works with many other network libraries,
 including <a href="https://github.com/arduino-libraries/Ethernet">Ethernet</a> and
 <a href="https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/readme.html">ESP8266WiFi</a>.</p>
