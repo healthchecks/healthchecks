@@ -86,7 +86,31 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.deletion_notice_date)
 
-    def test_it_checks_team_members(self):
+    def test_it_checks_recently_active_team_members(self):
+        # bob has access to alice's project
+        Member.objects.create(user=self.bob, project=self.project)
+        self.bobs_profile.last_active_date = now()
+        self.bobs_profile.save()
+
+        result = Command(stdout=Mock()).handle()
+        self.assertEqual(counts(result), [0, 1, 0])
+
+        self.profile.refresh_from_db()
+        self.assertIsNone(self.profile.deletion_notice_date)
+
+    def test_it_checks_recently_logged_in_team_members(self):
+        # bob has access to alice's project
+        Member.objects.create(user=self.bob, project=self.project)
+        self.bob.last_login = now()
+        self.bob.save()
+
+        result = Command(stdout=Mock()).handle()
+        self.assertEqual(counts(result), [0, 1, 0])
+
+        self.profile.refresh_from_db()
+        self.assertIsNone(self.profile.deletion_notice_date)
+
+    def test_it_checks_recently_signed_up_team_members(self):
         # bob has access to alice's project
         Member.objects.create(user=self.bob, project=self.project)
 
@@ -95,6 +119,25 @@ class SendDeletionNoticesTestCase(BaseTestCase):
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.deletion_notice_date)
+
+    def test_it_ignores_inactive_team_members(self):
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+
+        # bob has access to alice's project, but is inactive
+        Member.objects.create(user=self.bob, project=self.project)
+        self.bob.date_joined = now() - td(days=366)
+        self.bob.save()
+
+        result = cmd.handle()
+        # both alice and bob are eligible for deletion
+        self.assertEqual(counts(result), [2, 0, 0])
+
+        self.profile.refresh_from_db()
+        self.assertTrue(self.profile.deletion_notice_date)
+
+        self.bobs_profile.refresh_from_db()
+        self.assertTrue(self.bobs_profile.deletion_notice_date)
 
     def test_it_checks_recent_pings(self):
         check = Check.objects.create(project=self.project)
