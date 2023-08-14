@@ -13,7 +13,7 @@ benefit from SITE_NAME monitoring:</p>
 <ul>
 <li>filesystem backups, database backups</li>
 <li>task queues</li>
-<li>database replication status monitoring scripts</li>
+<li>database replication monitoring scripts</li>
 <li>report generation scripts</li>
 <li>periodic data import and sync jobs</li>
 <li>periodic antivirus scans</li>
@@ -29,7 +29,7 @@ benefit from SITE_NAME monitoring:</p>
 <h2>Concepts</h2>
 <p>A <strong>Check</strong> represents a single service you want to monitor. For example, when
 <a href="monitoring_cron_jobs/">monitoring cron jobs</a>, you would create a separate check for
-each cron job to be monitored. Each check has a unique ping URL, a set schedule,
+each cron job to be monitored. Each check has a unique ping URL, schedule,
 and associated integrations. For the available configuration options, see
 <a href="configuring_checks/">Configuring checks</a>.</p>
 <p>Each check is always in one of the following states, depicted by a status icon:</p>
@@ -38,22 +38,22 @@ and associated integrations. For the available configuration options, see
 <dd><strong>New</strong>. A newly created check that has not received any pings yet. Each new
 check you create will start in this state.</dd>
 <dt><span class="status ic-up"></span></dt>
-<dd><strong>Up</strong>. All is well, the last "success" signal has arrived on time.</dd>
+<dd><strong>Up</strong>. All is well. The last "success" signal has arrived on time.</dd>
 <dt><span class="status ic-grace"></span></dt>
 <dd><strong>Late</strong>. The "success" signal is due but has not arrived yet.
 It is not yet late by more than the check's configured <strong>Grace Time</strong>.</dd>
 <dt><span class="status ic-down"></span></dt>
 <dd><strong>Down</strong>. The "success" signal has not arrived yet, and the Grace Time has elapsed.
-When a check transitions into the "Down" state, SITE_NAME sends out alert
+When a check transitions into the "Down" state, SITE_NAME sends alert
 messages via the configured integrations.</dd>
 <dt><span class="status ic-paused"></span></dt>
 <dd><strong>Paused</strong>. You can manually pause the monitoring of specific checks. For example,
-if a frequently running cron job has a known problem, and a fix is scheduled but
-not yet ready, you can pause monitoring of the corresponding check temporarily to
+if a frequently running cron job has a known problem, and a fix is in the works 
+but not yet ready, you can pause monitoring the corresponding check temporarily to
 avoid unwanted alerts about a known issue.</dd>
 <dt><span class="status ic-up"></span><div class="spinner started"></div></dt>
 <dd>Additionally, if the most recent received signal is a "start" signal,
-this will be indicated by three animated dots under check's status icon.</dd>
+this will be indicated by three animated dots under the check's status icon.</dd>
 </dl>
 <hr />
 <p><strong>Ping URL</strong>. Each check has a unique <strong>Ping URL</strong>. Clients (cron jobs, background
@@ -81,12 +81,12 @@ anybody can send telemetry signals to your checks and mess with your monitoring.
 <hr />
 <p><strong>Grace Time</strong> is one of the configuration parameters you can set for each check.
 It is the additional time to wait before sending an alert when a check
-is late. Use this parameter to account for small, expected deviations in job
+is late. Use this parameter to account for minor, expected deviations in job
 execution times. If you use "start" signals to
 <a href="measuring_script_run_time/">measure job execution time</a>, Grace Time also sets the
 maximum allowed time gap between "start" and "success" signals. If a job
-sends a "start" signal but then does not send a "success" signal within grace time,
-SITE_NAME will assume the job has failed, and send out alerts.</p>
+sends a "start" signal but does not send a "success" signal within grace time,
+SITE_NAME will assume failure and send out alerts.</p>
 <hr />
 <p>An <strong>Integration</strong> is a specific method for delivering monitoring alerts when a check's
 change states. SITE_NAME supports many types of integrations: email,
@@ -96,9 +96,9 @@ For each check, you can specify which integrations it should use.</p>
 <a href="configuring_notifications/">Configuring notifications</a>.</p>
 <hr />
 <p><strong>Project</strong>. To keep things organized, you can group checks and integrations in <strong>Projects</strong>.
-Your account starts with a single default project, but you can create any number
-of additional projects as needed. You can transfer existing checks between projects
-while preserving their configuration and ping URL.</p>
+Your account starts with a single default project, but you can create 
+additional projects as needed. You can transfer existing checks between projects
+while preserving their configuration and ping URLs.</p>
 <p>Each project has a configurable name, a separate set of API keys, and a separate
 project team. The project's team is the set of people you have granted read-only or
 read-write access to the project.</p>

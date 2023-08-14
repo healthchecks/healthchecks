@@ -8,7 +8,7 @@ and **log** events from your systems.
 All ping endpoints support:
 
 * HTTP and HTTPS
-* HTTP 1.0, HTTP 1.1 and HTTP 2
+* HTTP 1.0, HTTP 1.1, and HTTP 2
 * IPv4 and IPv6
 * HEAD, GET, and POST request methods. For HTTP POST requests, clients can optionally
 include diagnostic information in the request body. If the request body looks like a
@@ -20,18 +20,18 @@ Successful responses will have the "200 OK" HTTP response status code and a shor
 
 ## UUIDs and Slugs
 
-Each Pinging API request needs to uniquely identify a check.
-SITE_NAME supports two ways of identifying a check: by check's UUID,
-or by a combination of project's Ping Key and check's slug.
+Each Pinging API request needs to identify a check uniquely.
+SITE_NAME supports two ways of identifying a check: by the check's UUID
+or by a combination of the project's Ping Key and the check's slug.
 
 **Check's UUID** is automatically assigned when the check is created. It is
 immutable. You cannot replace the automatically assigned UUID with a manually
-chosen one. When you delete a check, you also lose its UUID and cannot get it back.
+chosen one. When you delete a check, you lose its UUID and cannot get it back.
 
-You can look up UUIDs of your checks in web UI or via [Management API](../api/) calls.
+You can look up the UUIDs of your checks in web UI or via [Management API](../api/) calls.
 
 **Check's slug** can be chosen by the user. The slug should only contain the following
-characters: `a-z`, `0-9`, hyphens, underscores. A common practice is to
+characters: `a-z`, `0-9`, hyphens, and underscores. A common practice is to
 derive the slug from the check's name (for example, a check named "Database Backup"
 might have a slug "database-backup"), but the user is free to pick arbitrary slug
 values.
@@ -45,7 +45,7 @@ and ignore the request.
 
 Slug URLs optionally support **auto-provisioning**: if you make a Pinging API request
 to a slug with no corresponding check, SITE_NAME will create the check automatically.
-Auto-provisioning is off by default, to enable it, add a `create=1` query parameter
+Auto-provisioning is off by default. To enable it, add a `create=1` query parameter
 to the ping URL.
 
 ## Endpoints
@@ -69,7 +69,7 @@ Endpoint Name                                               | Endpoint Address
 HEAD|GET|POST PING_ENDPOINT<uuid>
 ```
 
-Signals to SITE_NAME that the job has completed successfully (or,
+Signals to SITE_NAME that the job has been completed successfully (or
 a continuously running process is still running and healthy).
 
 SITE_NAME identifies the check by the UUID value included in the URL.
@@ -78,14 +78,14 @@ The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,
-    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    SITE_NAME uses it to match the correct corresponding start ping for this ping and
     calculate an accurate duration. The value must be a client-picked UUID in the
     canonical textual representation.
 
@@ -137,14 +137,14 @@ The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,
-    SITE_NAME uses it to match the correct corresponding completion ping for this ping,
+    SITE_NAME uses it to match the correct corresponding completion ping for this ping
     and calculate an accurate duration. The value must be a client-picked UUID in the
     canonical textual representation.
 
@@ -193,14 +193,14 @@ The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,
-    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    SITE_NAME uses it to match the correct corresponding start ping for this ping and
     calculate an accurate duration. The value must be a client-picked UUID in the
     canonical textual representation.
 
@@ -241,8 +241,8 @@ HEAD|GET|POST PING_ENDPOINT<uuid>/log
 ```
 
 Sends logging information to SITE_NAME without signaling success or failure.
-SITE_NAME will log the event and display it in check's "Events" section with the
-"Log" label. The check's status will not change.
+SITE_NAME will log the event and display it in the check's "Events" section with the
+"Log" label. The check's status will remain the same.
 
 SITE_NAME identifies the check by the UUID value included in the URL.
 
@@ -250,7 +250,7 @@ The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
@@ -309,14 +309,14 @@ The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters
 
 rid=&lt;uuid&gt;
 :   Optional, specifies a run ID of this ping. If run ID is specified,
-    SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+    SITE_NAME uses it to match the correct corresponding start ping for this ping and
     calculate an accurate duration. The value must be a client-picked UUID in the
     canonical textual representation.
 
@@ -359,7 +359,7 @@ OK
 HEAD|GET|POST PING_ENDPOINT<ping-key>/<slug>
 ```
 
-Signals to SITE_NAME that the job has completed successfully (or,
+Signals to SITE_NAME that the job has been completed successfully (or
 a continuously running process is still running and healthy).
 
 SITE_NAME identifies the check by project's ping key and check's slug
@@ -369,7 +369,7 @@ The response may optionally contain a `Ping-Body-Limit: <n>` response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.
 
 ### Query Parameters

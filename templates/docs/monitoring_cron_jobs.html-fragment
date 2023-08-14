@@ -31,7 +31,7 @@ definition:</p>
 SITE_NAME keeps track of the received pings and notifies you as soon as a ping does
 not arrive on time.</p>
 <p>Note: you can alternatively add the extra <code>curl</code> call as a final line inside the
-<code>/home/me/backup.sh</code> script, to keep the cron job's definition clean and short.
+<code>/home/me/backup.sh</code> script to keep the cron job's definition clean and short.
 You can use an HTTP client other than curl to send the HTTP request.</p>
 <h2>Curl Options</h2>
 <p>The extra options in the above example tell curl to retry failed HTTP requests,
@@ -43,15 +43,15 @@ Feel free to adjust the curl options to suit your needs.</p>
 <dt><strong>-f, --fail</strong></dt>
 <dd>Makes curl treat non-200 responses as errors.</dd>
 <dt><strong>-s, --silent</strong></dt>
-<dd>Silent or quiet mode. Hides the progress meter, but also hides error messages.</dd>
+<dd>Silent or quiet mode. Hides the progress meter but also hides error messages.</dd>
 <dt><strong>-S, --show-error</strong></dt>
 <dd>Re-enables error messages when -s is used.</dd>
 <dt><strong>-m &lt;seconds&gt;</strong></dt>
 <dd>Maximum time in seconds that you allow the whole operation to take.</dd>
 <dt><strong>--retry &lt;num&gt;</strong></dt>
 <dd>If a transient error is returned when curl tries to perform a
-transfer, it will retry this number of times before  giving  up.
-Setting  the number to  0 makes curl do no retries (which is the default).
+transfer, it will retry this number of times before giving up.
+Setting the number to 0 makes curl do no retries (which is the default).
 A transient error is a timeout or an HTTP 5xx response code.</dd>
 <dt><strong>-o /dev/null</strong></dt>
 <dd>Redirect curl's stdout to /dev/null (error messages still go to stderr).</dd>
@@ -62,7 +62,7 @@ before declaring it as down. Set Grace Time to be above the expected
 duration of your cron job.</p>
 <p>For example, let's say the cron job starts at 14:00 every day and takes
 between 15 and 25 minutes to complete. The grace time is set to 30 minutes.
-In this scenario, SITE_NAME will expect a ping to arrive at 14:00, but will not send
+In this scenario, SITE_NAME will expect a ping to arrive at 14:00 but will not send
 any alerts yet. If there is no ping by 14:30, it will declare the job failed and
 send alerts.</p>
 <h2>Notifications</h2>
@@ -97,7 +97,7 @@ failures, the MAILTO variable:</p>
 <p>So why not just use that? There are several drawbacks:</p>
 <ul>
 <li>For MAILTO to work, the server needs to have a configured MTA.</li>
-<li>You will not get notified if the whole machine is powered off, or has lost
+<li>You will not be notified if the whole machine is powered off or has lost
   network connection.</li>
 <li>If your cron job produces any stdout output, you will receive an
   email every time the job runs. This may result in alert fatigue and you not

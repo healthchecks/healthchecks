@@ -5,7 +5,7 @@ and <strong>log</strong> events from your systems.</p>
 <p>All ping endpoints support:</p>
 <ul>
 <li>HTTP and HTTPS</li>
-<li>HTTP 1.0, HTTP 1.1 and HTTP 2</li>
+<li>HTTP 1.0, HTTP 1.1, and HTTP 2</li>
 <li>IPv4 and IPv6</li>
 <li>HEAD, GET, and POST request methods. For HTTP POST requests, clients can optionally
 include diagnostic information in the request body. If the request body looks like a
@@ -15,15 +15,15 @@ PING_BODY_LIMIT_FORMATTED for each received ping).</li>
 <p>Successful responses will have the "200 OK" HTTP response status code and a short
 "OK" string in the response body.</p>
 <h2>UUIDs and Slugs</h2>
-<p>Each Pinging API request needs to uniquely identify a check.
-SITE_NAME supports two ways of identifying a check: by check's UUID,
-or by a combination of project's Ping Key and check's slug.</p>
+<p>Each Pinging API request needs to identify a check uniquely.
+SITE_NAME supports two ways of identifying a check: by the check's UUID
+or by a combination of the project's Ping Key and the check's slug.</p>
 <p><strong>Check's UUID</strong> is automatically assigned when the check is created. It is
 immutable. You cannot replace the automatically assigned UUID with a manually
-chosen one. When you delete a check, you also lose its UUID and cannot get it back.</p>
-<p>You can look up UUIDs of your checks in web UI or via <a href="../api/">Management API</a> calls.</p>
+chosen one. When you delete a check, you lose its UUID and cannot get it back.</p>
+<p>You can look up the UUIDs of your checks in web UI or via <a href="../api/">Management API</a> calls.</p>
 <p><strong>Check's slug</strong> can be chosen by the user. The slug should only contain the following
-characters: <code>a-z</code>, <code>0-9</code>, hyphens, underscores. A common practice is to
+characters: <code>a-z</code>, <code>0-9</code>, hyphens, and underscores. A common practice is to
 derive the slug from the check's name (for example, a check named "Database Backup"
 might have a slug "database-backup"), but the user is free to pick arbitrary slug
 values.</p>
@@ -34,7 +34,7 @@ using a non-unique slug, SITE_NAME will return the "409 Conflict" HTTP status co
 and ignore the request.</p>
 <p>Slug URLs optionally support <strong>auto-provisioning</strong>: if you make a Pinging API request
 to a slug with no corresponding check, SITE_NAME will create the check automatically.
-Auto-provisioning is off by default, to enable it, add a <code>create=1</code> query parameter
+Auto-provisioning is off by default. To enable it, add a <code>create=1</code> query parameter
 to the ping URL.</p>
 <h2>Endpoints</h2>
 <table>
@@ -91,21 +91,21 @@ to the ping URL.</p>
 <div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;uuid&gt;
 </code></pre></div>
 
-<p>Signals to SITE_NAME that the job has completed successfully (or,
+<p>Signals to SITE_NAME that the job has been completed successfully (or
 a continuously running process is still running and healthy).</p>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.</p>
 <h3>Query Parameters</h3>
 <dl>
 <dt>rid=&lt;uuid&gt;</dt>
 <dd>
 <p>Optional, specifies a run ID of this ping. If run ID is specified,
-SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+SITE_NAME uses it to match the correct corresponding start ping for this ping and
 calculate an accurate duration. The value must be a client-picked UUID in the
 canonical textual representation.</p>
 <p>Example: <code>rid=123e4567-e89b-12d3-a456-426614174000</code>.</p>
@@ -150,14 +150,14 @@ but it enables a few extra features:</p>
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.</p>
 <h3>Query Parameters</h3>
 <dl>
 <dt>rid=&lt;uuid&gt;</dt>
 <dd>
 <p>Optional, specifies a run ID of this ping. If run ID is specified,
-SITE_NAME uses it to match the correct corresponding completion ping for this ping,
+SITE_NAME uses it to match the correct corresponding completion ping for this ping
 and calculate an accurate duration. The value must be a client-picked UUID in the
 canonical textual representation.</p>
 <p>Example: <code>rid=123e4567-e89b-12d3-a456-426614174000</code>.</p>
@@ -198,14 +198,14 @@ minimizes the delay from your monitored service failing to you receiving an aler
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.</p>
 <h3>Query Parameters</h3>
 <dl>
 <dt>rid=&lt;uuid&gt;</dt>
 <dd>
 <p>Optional, specifies a run ID of this ping. If run ID is specified,
-SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+SITE_NAME uses it to match the correct corresponding start ping for this ping and
 calculate an accurate duration. The value must be a client-picked UUID in the
 canonical textual representation.</p>
 <p>Example: <code>rid=123e4567-e89b-12d3-a456-426614174000</code>.</p>
@@ -240,14 +240,14 @@ OK
 </code></pre></div>
 
 <p>Sends logging information to SITE_NAME without signaling success or failure.
-SITE_NAME will log the event and display it in check's "Events" section with the
-"Log" label. The check's status will not change.</p>
+SITE_NAME will log the event and display it in the check's "Events" section with the
+"Log" label. The check's status will remain the same.</p>
 <p>SITE_NAME identifies the check by the UUID value included in the URL.</p>
 <p>The response may optionally contain a <code>Ping-Body-Limit: &lt;n&gt;</code> response header.
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.</p>
 <h3>Query Parameters</h3>
 <dl>
@@ -298,14 +298,14 @@ interprets 0 as a success and all other values as a failure.</p>
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.</p>
 <h3>Query Parameters</h3>
 <dl>
 <dt>rid=&lt;uuid&gt;</dt>
 <dd>
 <p>Optional, specifies a run ID of this ping. If run ID is specified,
-SITE_NAME uses it to match the correct corresponding start ping for this ping, and
+SITE_NAME uses it to match the correct corresponding start ping for this ping and
 calculate an accurate duration. The value must be a client-picked UUID in the
 canonical textual representation.</p>
 <p>Example: <code>rid=123e4567-e89b-12d3-a456-426614174000</code>.</p>
@@ -341,7 +341,7 @@ OK
 <div class="highlight"><pre><span></span><code>HEAD|GET|POST PING_ENDPOINT&lt;ping-key&gt;/&lt;slug&gt;
 </code></pre></div>
 
-<p>Signals to SITE_NAME that the job has completed successfully (or,
+<p>Signals to SITE_NAME that the job has been completed successfully (or
 a continuously running process is still running and healthy).</p>
 <p>SITE_NAME identifies the check by project's ping key and check's slug
 included in the URL.</p>
@@ -349,7 +349,7 @@ included in the URL.</p>
 If this header is present, its value is an integer, and it specifies how many
 bytes from the request body SITE_NAME will store per request. For example, if n=100,
 but the client sends 123 bytes in the request body, SITE_NAME will store the first
-100 bytes, and ignore the remaining 23. The client can use this header to decide
+100 bytes and ignore the remaining 23. The client can use this header to decide
 how much data to send in the request bodies of subsequent requests.</p>
 <h3>Query Parameters</h3>
 <dl>

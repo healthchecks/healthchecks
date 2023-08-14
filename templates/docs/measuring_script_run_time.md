@@ -10,7 +10,7 @@
 
 SITE_NAME applies an additional alerting rule for jobs that use the `/start` signal.
 
-If a job sends a "start" signal, but then does not send a "success"
+If a job sends a "start" signal but does not send a "success"
 signal within its configured grace time, SITE_NAME will assume the job
 has failed. It will mark the job as "down" and send out alerts.
 
@@ -24,7 +24,7 @@ URL = "PING_URL"
 
 
 # "/start" kicks off a timer: if the job takes longer than
-# the configured grace time, the check will be marked as "down"
+# the configured grace time, SITE_NAME will mark it as "down"
 try:
     requests.get(URL + "/start", timeout=5)
 except requests.exceptions.RequestException:
@@ -51,7 +51,8 @@ not displayed.
 
 ![List of checks with durations](IMG_URL/checks_durations.png)
 
-You can also see durations of the previous runs when viewing an individual check:
+You can also see the durations of the previous runs when viewing an individual 
+check:
 
 ![Log of received pings with durations](IMG_URL/details_durations.png)
 
@@ -66,13 +67,13 @@ start event with a matching `rid` value when calculating the execution time.
 
 The run IDs must be in a specific format: they must be UUID values in the canonical
 textual representation (example: `728b3763-ea80-4113-9fc0-f49b3adf226a`, note no
-curly braces, and no uppercase characters).
+curly braces and no uppercase characters).
 
 The client is free to pick run ID values randomly or use a deterministic process
 to generate them. The only thing that matters is that the start and the success
 pings of a single job execution use the same run ID value.
 
-Below is an example shell script which generates the run ID using `uuidgen` and
+Below is an example shell script that generates the run ID using `uuidgen` and
 makes HTTP requests using curl:
 
 ```bash
@@ -85,7 +86,7 @@ curl -fsS -m 10 --retry 5 PING_URL/start?rid=$RID
 
 # ... FIXME: run the job here ...
 
-# send the success ping, use same rid parameter:
+# send the success ping, use the same rid parameter:
 curl -fsS -m 10 --retry 5 PING_URL?rid=$RID
 ```
 
@@ -100,14 +101,14 @@ since it is not preceded by a "start" event.
 
 ## Alerting Logic When Using Run IDs
 
-If a job sends a "start" signal, but then does not send a "success"
+If a job sends a "start" signal but does not send a "success"
 signal within its configured grace time, SITE_NAME will assume the job
 has failed and notify you. However, when using Run IDs, there is an important
 caveat: SITE_NAME **will not monitor the execution times of all
-concurrent job runs**, it will only monitor the execution time of the
+concurrent job runs**. It will only monitor the execution time of the
 most recently started run.
 
-To illustrate, let's assume the grace time of 1 minute, and look at the above example
+To illustrate, let's assume the grace time of 1 minute and look at the above example
 again. The event #4 ran for 6 minutes 39 seconds and so overshot the time budget
 of 1 minute. But SITE_NAME generated no alerts because **the most recently started
 run completed within the time limit** (it took 37 seconds, which is less than 1 minute).
