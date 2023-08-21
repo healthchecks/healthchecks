@@ -5,11 +5,12 @@ from datetime import timedelta as td
 from unittest.mock import Mock
 
 from django.core import mail
+from django.test.utils import override_settings
 from django.utils.timezone import now
 
 from hc.accounts.management.commands.senddeletionscheduled import Command
 from hc.accounts.models import Member, Project
-from hc.api.models import Check
+from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
@@ -18,7 +19,16 @@ def counts(result):
     return [int(s) for s in re.findall(r"\d+", result)]
 
 
+@override_settings(SITE_NAME="Mychecks")
 class SendDeletionScheduledTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+
+        self.channel = Channel(project=self.project, kind="email")
+        self.channel.value = "alerts@example.org"
+        self.channel.email_verified = True
+        self.channel.save()
+
     def test_it_sends_notice(self):
         self.profile.deletion_scheduled_date = now() + td(days=31)
         self.profile.save()
@@ -90,3 +100,38 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         cmd.handle()
         # Bob should be listed as a recipient a single time, despite two memberships:
         self.assertEqual(mail.outbox[0].to, ["alice@example.org", "bob@example.org"])
+
+    def test_it_notifies_channel(self):
+        self.profile.deletion_scheduled_date = now() + td(days=5)
+        self.profile.save()
+
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+        cmd.handle()
+
+        self.assertEqual(mail.outbox[0].subject, "Account Deletion Warning")
+        s = "DOWN | Mychecks Account Deletion"
+        self.assertTrue(mail.outbox[1].subject.startswith(s))
+
+    def test_it_does_not_notify_channels_if_more_than_14_days_left(self):
+        self.profile.deletion_scheduled_date = now() + td(days=15, minutes=1)
+        self.profile.save()
+
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+        cmd.handle()
+
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_it_skips_email_channels_of_team_members(self):
+        self.profile.deletion_scheduled_date = now() + td(days=5)
+        self.profile.save()
+
+        self.channel.value = "alice@example.org"
+        self.channel.save()
+
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+        cmd.handle()
+
+        self.assertEqual(len(mail.outbox), 1)
