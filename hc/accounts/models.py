@@ -215,15 +215,19 @@ class Profile(models.Model):
         # rendering the template
         checks = list(checks)
 
-        num_down = None
-        if nag:
-            # For nags, only show checks that are currently down
-            checks = [c for c in checks if c.get_status() == "down"]
-            num_down = len(checks)
-            if not checks:
-                return False
+        unsub_url = self.reports_unsub_url()
+        headers = {
+            "X-Bounce-ID": sign_bounce_id("r.%s" % self.user.username),
+            "List-Unsubscribe": "<%s>" % unsub_url,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        }
+        ctx = {
+            "sort": self.sort,
+            "unsub_link": unsub_url,
+            "notifications_url": self.notifications_url(),
+            "tz": self.tz,
+        }
 
-        boundaries = []
         if not nag:
             # For weekly and monthly reports, calculate the downtimes,
             # throw away the current period, keep two previous periods
@@ -235,24 +239,20 @@ class Profile(models.Model):
             for check in checks:
                 check.past_downtimes = check.downtimes_by_boundary(boundaries)[:-1]
 
-        unsub_url = self.reports_unsub_url()
-        headers = {
-            "X-Bounce-ID": sign_bounce_id("r.%s" % self.user.username),
-            "List-Unsubscribe": "<%s>" % unsub_url,
-            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-        }
-        ctx = {
-            "checks": checks,
-            "sort": self.sort,
-            "unsub_link": unsub_url,
-            "notifications_url": self.notifications_url(),
-            "nag": nag,
-            "nag_period": self.nag_period.total_seconds(),
-            "num_down": num_down,
-            "boundaries": boundaries[:-1],
-            "monthly_or_weekly": self.reports,
-            "tz": self.tz,
-        }
+            ctx["nag"] = False
+            ctx["checks"] = checks
+            ctx["boundaries"] = boundaries[:-1]
+            ctx["monthly_or_weekly"] = self.reports
+
+        if nag:
+            # For nags, only show checks that are currently down
+            checks = [c for c in checks if c.get_status() == "down"]
+            if not checks:
+                return False
+            ctx["checks"] = checks
+            ctx["num_down"] = len(checks)
+            ctx["nag"] = True
+            ctx["nag_period"] = self.nag_period.total_seconds()
 
         emails.report(self.user.email, ctx, headers)
         return True
