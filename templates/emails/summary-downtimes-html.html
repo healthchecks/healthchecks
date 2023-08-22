@@ -8,7 +8,7 @@
         <td colspan="2" style="font-weight: bold; padding: 32px 8px 8px 8px; color: #333;">
             {{ group.grouper|mangle_link }}
         </td>
-        {% for dt in month_boundaries %}
+        {% for dt in boundaries %}
         <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">
             {% if monthly_or_weekly == "weekly" %}
             {{ dt|date:"M j"}} - {{ dt|add6days|date:"M j"}}

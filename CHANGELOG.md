@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Update Telegram integration to treat "bot was blocked by the user" as permanent error
 - Add "Time Zone" field in notifications that use the "Schedule" field (#863)
 - Add bold and monospace text formatting in Signal notifications
+- Update hourly/daily email reminders to only show checks in the "down" state (#881)
 
 ### Bug Fixes
 - Fix "senddeletionnotices" to recognize "Supporter" subscriptions

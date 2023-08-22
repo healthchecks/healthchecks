@@ -207,11 +207,6 @@ class Profile(models.Model):
         if last_ping is None or last_ping < six_months_ago:
             return False
 
-        # Is there at least one check that is down?
-        num_down = checks.filter(status="down").count()
-        if nag and num_down == 0:
-            return False
-
         # Sort checks by project. Need this because will group by project in
         # template.
         checks = checks.select_related("project")
@@ -220,23 +215,33 @@ class Profile(models.Model):
         # rendering the template
         checks = list(checks)
 
+        num_down = None
+        if nag:
+            # For nags, only show checks that are currently down
+            checks = [c for c in checks if c.get_status() == "down"]
+            num_down = len(checks)
+            if not checks:
+                return False
+
+        boundaries = []
+        if not nag:
+            # For weekly and monthly reports calculate downtimes
+            if self.reports == "weekly":
+                boundaries = week_boundaries(3, self.tz)
+            else:
+                boundaries = month_boundaries(3, self.tz)
+
+            for check in checks:
+                # Calculate the downtimes, throw away the current period,
+                # keep two previous periods
+                check.past_downtimes = check.downtimes_by_boundary(boundaries)[:-1]
+
         unsub_url = self.reports_unsub_url()
         headers = {
             "X-Bounce-ID": sign_bounce_id("r.%s" % self.user.username),
             "List-Unsubscribe": "<%s>" % unsub_url,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
-
-        if self.reports == "weekly":
-            boundaries = week_boundaries(3, self.tz)
-        else:
-            boundaries = month_boundaries(3, self.tz)
-
-        for check in checks:
-            # Calculate the downtimes, throw away the current period,
-            # keep two previous periods
-            check.past_downtimes = check.downtimes_by_boundary(boundaries)[:-1]
-
         ctx = {
             "checks": checks,
             "sort": self.sort,
@@ -246,7 +251,7 @@ class Profile(models.Model):
             "nag": nag,
             "nag_period": self.nag_period.total_seconds(),
             "num_down": num_down,
-            "month_boundaries": boundaries[:-1],
+            "boundaries": boundaries[:-1],
             "monthly_or_weekly": self.reports,
             "tz": self.tz,
         }

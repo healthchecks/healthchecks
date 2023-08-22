@@ -22,7 +22,7 @@ NAG_TEXT = """Hello,
 
 This is a hourly reminder sent by Mychecks.
 
-One check is currently DOWN.
+One check is currently DOWN:
 
 
 Alices Project
@@ -238,6 +238,25 @@ class SendReportsTestCase(BaseTestCase):
         # next_nag_date should now be unset
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.next_nag_date)
+
+    def test_nags_skip_up_checks(self):
+        check2 = Check(project=self.project, last_ping=now())
+        check2.name = "Foobar"
+        check2.status = "up"
+        check2.save()
+
+        cmd = Command(stdout=Mock())
+        cmd.pause = Mock()  # don't pause for 1s
+        found = cmd.handle_one_nag()
+        self.assertTrue(found)
+
+        email = mail.outbox[0]
+        self.assertIn("Foo", email.body)
+        self.assertNotIn("Foobar", email.body)
+
+        html = email.alternatives[0][0]
+        self.assertIn("Foo", html)
+        self.assertNotIn("Foobar", html)
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_it_sets_custom_mail_from(self):
