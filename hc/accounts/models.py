@@ -225,15 +225,14 @@ class Profile(models.Model):
 
         boundaries = []
         if not nag:
-            # For weekly and monthly reports calculate downtimes
+            # For weekly and monthly reports, calculate the downtimes,
+            # throw away the current period, keep two previous periods
             if self.reports == "weekly":
                 boundaries = week_boundaries(3, self.tz)
             else:
                 boundaries = month_boundaries(3, self.tz)
 
             for check in checks:
-                # Calculate the downtimes, throw away the current period,
-                # keep two previous periods
                 check.past_downtimes = check.downtimes_by_boundary(boundaries)[:-1]
 
         unsub_url = self.reports_unsub_url()
@@ -245,7 +244,6 @@ class Profile(models.Model):
         ctx = {
             "checks": checks,
             "sort": self.sort,
-            "now": now(),
             "unsub_link": unsub_url,
             "notifications_url": self.notifications_url(),
             "nag": nag,
