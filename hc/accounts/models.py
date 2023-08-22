@@ -398,7 +398,9 @@ class Project(models.Model):
 
         m = Member.objects.create(user=user, project=self, role=role)
         checks_url = reverse("hc-checks", args=[self.code])
-        user.profile.send_instant_login_link(membership=m, redirect_url=checks_url)
+
+        profile = Profile.objects.for_user(user)
+        profile.send_instant_login_link(membership=m, redirect_url=checks_url)
         return True
 
     def update_next_nag_dates(self):

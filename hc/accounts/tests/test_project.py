@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core import mail
 from django.test.utils import override_settings
 
@@ -256,6 +257,18 @@ class ProjectTestCase(BaseTestCase):
         form = {"invite_team_member": "1", "email": "frank@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_invites_user_with_email_as_username(self):
+        User.objects.create(username="frank@example.org", email="frank@example.org")
+
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "w"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        q = Member.objects.filter(project=self.project, user__email="frank@example.org")
+        self.assertEqual(q.count(), 1)
 
     def test_it_lets_owner_remove_team_member(self):
         self.client.login(username="alice@example.org", password="password")

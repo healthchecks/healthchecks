@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix "senddeletionnotices" to recognize "Supporter" subscriptions
 - Fix "createsuperuser" to reject already registered email addresses (#880)
+- Fix hc.accounts.views.check_token to handle non-UUID usernames (#882)
 
 ## v2.10 - 2023-07-02
 

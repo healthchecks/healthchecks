@@ -30,6 +30,16 @@ class CheckTokenTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.token, "")
 
+    def test_it_handles_email_in_username(self):
+        # Healthchecks will generate usernames that look like UUIDs. But custom
+        # authentication backends like django-auth-ldap can also create User objects
+        # with non-UUID usernames. In this testcase we check if check_token works
+        # with an username that looks like an email address.
+        self.alice.username = "alice@example.org"
+        self.alice.save()
+        r = self.client.post(self.url.replace("alice", "alice@example.org"))
+        self.assertRedirects(r, self.checks_url)
+
     def test_it_handles_get_with_cookie(self):
         self.client.cookies["auto-login"] = "1"
         r = self.client.get(self.url)
