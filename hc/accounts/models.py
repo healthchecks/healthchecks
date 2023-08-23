@@ -239,10 +239,10 @@ class Profile(models.Model):
             for check in checks:
                 check.past_downtimes = check.downtimes_by_boundary(boundaries)[:-1]
 
-            ctx["nag"] = False
             ctx["checks"] = checks
             ctx["boundaries"] = boundaries[:-1]
             ctx["monthly_or_weekly"] = self.reports
+            emails.report(self.user.email, ctx, headers)
 
         if nag:
             # For nags, only show checks that are currently down
@@ -251,10 +251,9 @@ class Profile(models.Model):
                 return False
             ctx["checks"] = checks
             ctx["num_down"] = len(checks)
-            ctx["nag"] = True
             ctx["nag_period"] = self.nag_period.total_seconds()
+            emails.nag(self.user.email, ctx, headers)
 
-        emails.report(self.user.email, ctx, headers)
         return True
 
     def sms_sent_this_month(self):

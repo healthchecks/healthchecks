@@ -21,7 +21,6 @@ MOCK_NOW = Mock(return_value=CURRENT_TIME)
 NAG_TEXT = """Hello,
 
 This is a hourly reminder sent by Mychecks.
-
 One check is currently DOWN:
 
 

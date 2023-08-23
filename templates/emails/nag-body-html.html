@@ -1,0 +1,34 @@
+{% extends "emails/base.html" %}
+{% load humanize hc_extras %}
+
+{% block content %}
+Hello,<br />
+
+This is a
+{% if nag_period == 3600 %}hourly{% endif %}
+{% if nag_period == 86400 %}daily{% endif %}
+reminder sent by <a href="{% site_root %}">{% site_name %}</a>.<br />
+
+{% if num_down == 1%}
+One check is currently <strong>DOWN</strong>:<br />
+{% else %}
+{{ num_down }} checks are currently <strong>DOWN</strong>:<br />
+{% endif %}
+
+{% include "emails/nag-summary-html.html" %}
+
+<strong>Too many notifications?</strong>
+Visit the <a href="{{ notifications_url }}">Email Reports</a>
+page on {% site_name %} to set your notification preferences.
+<br /><br />
+
+Cheers,<br>
+The {% site_name %} Team
+{% endblock %}
+
+{% block unsub %}
+<br>
+<a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">
+    Unsubscribe
+</a>
+{% endblock %}

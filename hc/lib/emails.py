@@ -103,6 +103,11 @@ def report(to, ctx, headers={}):
     send(m, block=True)
 
 
+def nag(to, ctx, headers={}):
+    m = make_message("nag", to, ctx, headers=headers)
+    send(m, block=True)
+
+
 def deletion_notice(to, ctx, headers={}):
     m = make_message("deletion-notice", to, ctx, headers=headers)
     send(m, block=True)

@@ -1,0 +1,10 @@
+{% load hc_extras %}Hello,
+
+This is a {% if nag_period == 3600 %}hourly {% endif %}{% if nag_period == 86400 %}daily {% endif %}reminder sent by {% site_name %}.
+{% if num_down == 1%}One check is currently DOWN:{% else %}{{ num_down }} checks are currently DOWN:{% endif %}
+{% include 'emails/summary-text.html' %}
+
+
+--
+Cheers,
+{% site_name %}
