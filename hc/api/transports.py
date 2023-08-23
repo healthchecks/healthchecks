@@ -1206,4 +1206,8 @@ class Ntfy(HttpTransport):
             ],
         }
 
-        self.post(self.channel.ntfy_url, json=payload)
+        headers = {}
+        if self.channel.ntfy_token:
+            headers = {"Authorization": f"Bearer {self.channel.ntfy_token}"}
+
+        self.post(self.channel.ntfy_url, headers=headers, json=payload)

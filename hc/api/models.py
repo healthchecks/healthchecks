@@ -1057,6 +1057,11 @@ class Channel(models.Model):
     ntfy_priority_up = json_property("ntfy", "priority_up")
 
     @property
+    def ntfy_token(self):
+        assert self.kind == "ntfy"
+        return self.json.get("token")
+
+    @property
     def ntfy_priority_display(self):
         return NTFY_PRIORITIES[self.ntfy_priority]
 

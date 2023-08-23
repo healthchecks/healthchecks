@@ -59,3 +59,18 @@ class EditNtfyTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_updates_token(self):
+        form = {
+            "topic": "updated-topic",
+            "url": "https://example.com",
+            "priority": "4",
+            "priority_up": "1",
+            "token": "tk_test",
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url, form)
+
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.ntfy_token, "tk_test")

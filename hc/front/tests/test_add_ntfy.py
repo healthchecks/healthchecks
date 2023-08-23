@@ -68,3 +68,18 @@ class AddNtfyTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
+
+    def test_it_saves_token(self):
+        form = {
+            "topic": "foo",
+            "url": "https://example.org",
+            "priority": "5",
+            "priority_up": "1",
+            "token": "tk_test",
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url, form)
+
+        c = Channel.objects.get()
+        self.assertEqual(c.ntfy_token, "tk_test")

@@ -54,6 +54,24 @@
                 </div>
             </div>
 
+            <div class="form-group {{ form.token.css_classes }}">
+                <label for="token" class="col-sm-3 control-label">Access Token</label>
+                <div class="col-sm-6">
+                    <input
+                        id="token"
+                        name="token"
+                        type="text"
+                        class="form-control"
+                        value="{{ form.token.value|default:'' }}">
+
+                    {% if form.token.errors %}
+                    <div class="help-block">{{ form.url.errors|join:"" }}</div>
+                    {% else %}
+                    <div class="help-block">If publishing to the topic requires an access token, specify it here.</div>
+                    {% endif %}
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-3 control-label">Priority for "down" events</label>
                 <div class="col-sm-8">

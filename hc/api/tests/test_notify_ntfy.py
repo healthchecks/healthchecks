@@ -94,3 +94,24 @@ class NotifyNtfyTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Foobar", payload["message"])
         self.assertIn("11 other checks are also down.", payload["message"])
+
+    @patch("hc.api.transports.curl.request")
+    def test_it_uses_access_token(self, mock_post):
+        mock_post.return_value.status_code = 200
+
+        self.channel.value = json.dumps(
+            {
+                "url": "https://example.org",
+                "topic": "foo",
+                "priority": 5,
+                "priority_up": 1,
+                "token": "tk_test",
+            }
+        )
+        self.channel.save()
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        headers = mock_post.call_args.kwargs["headers"]
+        self.assertEqual(headers["Authorization"], "Bearer tk_test")
