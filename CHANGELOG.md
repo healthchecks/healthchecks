@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add bold and monospace text formatting in Signal notifications
 - Update hourly/daily email reminders to only show checks in the "down" state (#881)
 - Add support for ntfy access tokens (#879)
+- Improve ntfy notifications (include tags, period, last ping type etc.)
 
 ### Bug Fixes
 - Fix "senddeletionnotices" to recognize "Supporter" subscriptions
