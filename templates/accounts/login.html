@@ -12,6 +12,14 @@
 {% block content %}
 <div class="row">
     <div class="col-xs-10 col-xs-offset-1 col-sm-12 col-sm-offset-0 col-lg-8 col-lg-offset-2">
+        {% if account_closed %}
+        <div class="alert alert-info">
+            <p>
+                <strong>Account closed.</strong>
+                Your account has been closed and its associated data has been deleted.
+            </p>
+        </div>
+        {% endif %}
 
         <h1>Sign In to {{ site_name }}</h1>
         {% if bad_link %}

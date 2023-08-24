@@ -197,6 +197,7 @@ def login(request):
         "bad_link": bad_link,
         "registration_open": settings.REGISTRATION_OPEN,
         "support_email": settings.SUPPORT_EMAIL,
+        "account_closed": "account-closed" in request.GET,
     }
     return render(request, "accounts/login.html", ctx)
 
@@ -682,7 +683,8 @@ def close(request):
             user.delete()
 
             request.session.flush()
-            return redirect("hc-login")
+            path = reverse("hc-login") + "?account-closed"
+            return redirect(path)
 
     ctx = {}
     if "confirmation" in request.POST:

@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Update hourly/daily email reminders to only show checks in the "down" state (#881)
 - Add support for ntfy access tokens (#879)
 - Improve ntfy notifications (include tags, period, last ping type etc.)
+- Add an "Account closed." confirmation message after closing an account
 
 ### Bug Fixes
 - Fix "senddeletionnotices" to recognize "Supporter" subscriptions

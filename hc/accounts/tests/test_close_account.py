@@ -36,8 +36,9 @@ class CloseAccountTestCase(BaseTestCase):
         self.set_sudo_flag()
 
         payload = {"confirmation": "alice@example.org"}
-        r = self.client.post("/accounts/close/", payload)
+        r = self.client.post("/accounts/close/", payload, follow=True)
         self.assertRedirects(r, "/accounts/login/")
+        self.assertContains(r, "Account closed.")
 
         # Alice should be gone
         alices = User.objects.filter(username="alice")
