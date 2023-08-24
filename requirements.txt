@@ -3,7 +3,7 @@ cronsim==2.5
 Django==4.2.4
 django-compressor==4.4
 fido2==1.1.2
-psycopg2==2.9.6
+psycopg2==2.9.7
 pycurl==7.45.2
 pyotp==2.9.0
 segno==1.5.2
