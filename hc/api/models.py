@@ -717,28 +717,28 @@ class Channel(models.Model):
 
         return self.get_kind_display()
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, str]:
         return {"id": str(self.code), "name": self.name, "kind": self.kind}
 
-    def is_editable(self):
+    def is_editable(self) -> bool:
         return self.kind in ("email", "webhook", "sms", "signal", "whatsapp", "ntfy")
 
-    def assign_all_checks(self):
+    def assign_all_checks(self) -> None:
         checks = Check.objects.filter(project=self.project)
         self.checks.add(*checks)
 
-    def make_token(self):
+    def make_token(self) -> str:
         seed = "%s%s" % (self.code, settings.SECRET_KEY)
         seed = seed.encode()
         return hashlib.sha1(seed).hexdigest()
 
-    def send_verify_link(self):
+    def send_verify_link(self) -> None:
         args = [self.code, self.make_token()]
         verify_link = reverse("hc-verify-email", args=args)
         verify_link = settings.SITE_ROOT + verify_link
         emails.verify_email(self.email_value, {"verify_link": verify_link})
 
-    def get_unsub_link(self):
+    def get_unsub_link(self) -> str:
         signer = TimestampSigner(salt="alerts")
         signed_token = signer.sign(self.make_token())
         args = [self.code, signed_token]
@@ -813,8 +813,8 @@ class Channel(models.Model):
 
         return error
 
-    def icon_path(self):
-        return "img/integrations/%s.png" % self.kind
+    def icon_path(self) -> str:
+        return f"img/integrations/{self.kind}.png"
 
     @property
     def json(self):
@@ -1068,6 +1068,8 @@ class Channel(models.Model):
 
 class Notification(models.Model):
     code = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
+    # owner is null for test notifications, produced by the "Test!" button
+    # in the Integrations page
     owner = models.ForeignKey(Check, models.CASCADE, null=True)
     check_status = models.CharField(max_length=6)
     channel = models.ForeignKey(Channel, models.CASCADE)

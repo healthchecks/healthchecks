@@ -6,7 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse
 
 
-def require_setting(key):
+def require_setting(key: str):
     def decorator(f):
         @wraps(f)
         def wrapper(request, *args, **kwds):
