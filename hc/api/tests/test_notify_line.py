@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
@@ -12,7 +12,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyLineTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -28,7 +28,7 @@ class NotifyLineTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -40,7 +40,7 @@ class NotifyLineTestCase(BaseTestCase):
         self.assertIn("""The check "Foo" is DOWN""", params["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_escape_message(self, mock_post):
+    def test_it_does_not_escape_message(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.name = "Foo & Bar"
         self.check.status = "up"

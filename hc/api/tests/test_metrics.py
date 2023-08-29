@@ -11,7 +11,7 @@ from hc.test import BaseTestCase
 class MetricsTestCase(BaseTestCase):
     url = "/api/v1/metrics/"
 
-    def test_it_returns_num_unprocessed_flips(self):
+    def test_it_returns_num_unprocessed_flips(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         flip = Flip(owner=check)
         flip.created = now()
@@ -25,34 +25,34 @@ class MetricsTestCase(BaseTestCase):
         doc = r.json()
         self.assertEqual(doc["num_unprocessed_flips"], 1)
 
-    def test_it_returns_max_ping_id(self):
+    def test_it_returns_max_ping_id(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
-        Ping.objects.create(owner=check, n=1)
-        last_ping = Ping.objects.last()
+        ping = Ping.objects.create(owner=check, n=1)
 
         r = self.client.get(self.url, HTTP_X_METRICS_KEY="foo")
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()
-        self.assertEqual(doc["max_ping_id"], last_ping.id)
+        self.assertEqual(doc["max_ping_id"], ping.id)
 
-    def test_it_returns_max_notification_id(self):
+    def test_it_returns_max_notification_id(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         channel = Channel.objects.create(project=self.project, kind="email")
-        Notification.objects.create(owner=check, channel=channel, check_status="down")
-        last_notification = Notification.objects.last()
+        n = Notification.objects.create(
+            owner=check, channel=channel, check_status="down"
+        )
 
         r = self.client.get(self.url, HTTP_X_METRICS_KEY="foo")
         self.assertEqual(r.status_code, 200)
 
         doc = r.json()
-        self.assertEqual(doc["max_notification_id"], last_notification.id)
+        self.assertEqual(doc["max_notification_id"], n.id)
 
     @override_settings(METRICS_KEY=None)
-    def test_it_handles_unset_metrics_key(self):
+    def test_it_handles_unset_metrics_key(self) -> None:
         r = self.client.get(self.url, HTTP_X_METRICS_KEY="foo")
         self.assertEqual(r.status_code, 403)
 
-    def test_it_handles_incorrect_metrics_key(self):
+    def test_it_handles_incorrect_metrics_key(self) -> None:
         r = self.client.get(self.url, HTTP_X_METRICS_KEY="bar")
         self.assertEqual(r.status_code, 403)

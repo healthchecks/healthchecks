@@ -13,7 +13,7 @@ from statsd.defaults.env import statsd
 from hc.api.models import Check, Flip
 
 
-def notify(flip_id, stdout):
+def notify(flip_id: int, stdout) -> None:
     flip = Flip.objects.get(id=flip_id)
     check = flip.owner
 
@@ -71,7 +71,7 @@ class Command(BaseCommand):
             help="Send alerts synchronously, without using threads",
         )
 
-    def process_one_flip(self, use_threads=True):
+    def process_one_flip(self, use_threads: bool = True) -> bool:
         """Find unprocessed flip, send notifications."""
 
         q = Flip.objects.filter(processed=None)
@@ -95,7 +95,7 @@ class Command(BaseCommand):
 
         return True
 
-    def handle_going_down(self):
+    def handle_going_down(self) -> bool:
         """Process a single check going down."""
 
         now_value = now()

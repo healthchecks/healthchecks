@@ -14,7 +14,9 @@ from hc.test import BaseTestCase
 
 
 class NotifyOpsGenieTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+    def _setup_data(
+        self, value: str, status: str = "down", email_verified: bool = True
+    ) -> None:
         self.check = Check(project=self.project)
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
@@ -28,7 +30,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_opsgenie_with_legacy_value(self, mock_post):
+    def test_opsgenie_with_legacy_value(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 202
 
@@ -43,7 +45,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertIn("DOWN", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_opsgenie_up(self, mock_post):
+    def test_opsgenie_up(self, mock_post: Mock) -> None:
         self._setup_data("123", status="up")
         mock_post.return_value.status_code = 202
 
@@ -56,7 +58,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertTrue(str(self.check.code) in url)
 
     @patch("hc.api.transports.curl.request")
-    def test_opsgenie_with_json_value(self, mock_post):
+    def test_opsgenie_with_json_value(self, mock_post: Mock) -> None:
         self._setup_data(json.dumps({"key": "456", "region": "eu"}))
         mock_post.return_value.status_code = 202
 
@@ -69,7 +71,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertIn("api.eu.opsgenie.com", url)
 
     @patch("hc.api.transports.curl.request")
-    def test_opsgenie_returns_error(self, mock_post):
+    def test_opsgenie_returns_error(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 403
         mock_post.return_value.json.return_value = {"message": "Nice try"}
@@ -79,7 +81,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_non_json_error_response(self, mock_post):
+    def test_it_handles_non_json_error_response(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 403
         mock_post.return_value.json = Mock(side_effect=ValueError)
@@ -89,7 +91,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 403")
 
     @override_settings(OPSGENIE_ENABLED=False)
-    def test_it_requires_opsgenie_enabled(self):
+    def test_it_requires_opsgenie_enabled(self) -> None:
         self._setup_data("123")
         self.channel.notify(self.check)
 

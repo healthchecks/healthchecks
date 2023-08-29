@@ -33,7 +33,7 @@ class Command(BaseCommand):
             help="Keep running indefinitely in a 300 second wait loop",
         )
 
-    def handle_one_report(self):
+    def handle_one_report(self) -> bool:
         report_due = Q(next_report_date__lt=now())
         report_not_scheduled = Q(next_report_date__isnull=True)
 
@@ -68,7 +68,7 @@ class Command(BaseCommand):
 
         return True
 
-    def handle_one_nag(self):
+    def handle_one_nag(self) -> bool:
         now_value = now()
         q = Profile.objects.filter(next_nag_date__lt=now_value)
         q = q.exclude(nag_period=NO_NAG)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -15,7 +15,9 @@ from hc.test import BaseTestCase
 
 
 class NotifySlackTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+    def _setup_data(
+        self, value: str, status: str = "down", email_verified: bool = True
+    ) -> None:
         self.check = Check(project=self.project)
         self.check.name = "Foobar"
         self.check.status = status
@@ -35,7 +37,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver", SITE_LOGO_URL=None)
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data("https://example.org")
         mock_post.return_value.status_code = 200
 
@@ -57,7 +59,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertIn("http://testserver/static/img/logo.png", serialized)
 
     @patch("hc.api.transports.curl.request")
-    def test_slack_with_complex_value(self, mock_post):
+    def test_slack_with_complex_value(self, mock_post: Mock) -> None:
         v = json.dumps({"incoming_webhook": {"url": "123"}})
         self._setup_data(v)
         mock_post.return_value.status_code = 200
@@ -69,7 +71,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(url, "123")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_500(self, mock_post):
+    def test_it_handles_500(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 500
 
@@ -79,7 +81,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 500")
 
     @patch("hc.api.transports.curl.request", side_effect=CurlError("Timed out"))
-    def test_it_handles_timeout(self, mock_post):
+    def test_it_handles_timeout(self, mock_post: Mock) -> None:
         self._setup_data("123")
 
         self.channel.notify(self.check)
@@ -90,7 +92,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(mock_post.call_count, 3)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_schedule_and_tz(self, mock_post):
+    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
         self._setup_data("123")
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -105,7 +107,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(fields["Time Zone"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request")
-    def test_slack_with_tabs_in_schedule(self, mock_post):
+    def test_slack_with_tabs_in_schedule(self, mock_post: Mock) -> None:
         self._setup_data("123")
         self.check.kind = "cron"
         self.check.schedule = "*\t* * * *"
@@ -117,7 +119,7 @@ class NotifySlackTestCase(BaseTestCase):
         mock_post.assert_called_once()
 
     @override_settings(SLACK_ENABLED=False)
-    def test_it_requires_slack_enabled(self):
+    def test_it_requires_slack_enabled(self) -> None:
         self._setup_data("123")
         self.channel.notify(self.check)
 
@@ -125,7 +127,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(n.error, "Slack notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_retry_404(self, mock_post):
+    def test_it_does_not_retry_404(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 404
 
@@ -136,7 +138,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.assertEqual(mock_post.call_count, 1)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_disables_channel_on_404(self, mock_post):
+    def test_it_disables_channel_on_404(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 404
 
@@ -146,7 +148,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_last_ping_fail(self, mock_post):
+    def test_it_handles_last_ping_fail(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -162,7 +164,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_nonzero_exit_status(self, mock_post):
+    def test_it_shows_nonzero_exit_status(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -177,7 +179,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_last_ping_log(self, mock_post):
+    def test_it_handles_last_ping_log(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -192,7 +194,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
+    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -209,7 +211,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_last_ping_body(self, mock_post):
+    def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -225,7 +227,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_truncated_last_ping_body(self, mock_post):
+    def test_it_shows_truncated_last_ping_body(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -241,7 +243,7 @@ class NotifySlackTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+    def test_it_skips_last_ping_body_with_backticks(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 

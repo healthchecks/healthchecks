@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
+from uuid import UUID
 
 from django.utils.timezone import now
 
@@ -9,7 +10,7 @@ from hc.test import BaseTestCase
 
 
 class GetCheckTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.now = now().replace(microsecond=0)
@@ -32,11 +33,11 @@ class GetCheckTestCase(BaseTestCase):
         self.c1 = Channel.objects.create(project=self.project)
         self.a1.channel_set.add(self.c1)
 
-    def get(self, code, api_key="X" * 32, v=1):
+    def get(self, code: UUID | str, api_key: str = "X" * 32, v: int = 1):
         url = f"/api/v{v}/checks/{code}"
         return self.client.get(url, HTTP_X_API_KEY=api_key)
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         r = self.get(self.a1.code)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -64,16 +65,16 @@ class GetCheckTestCase(BaseTestCase):
         self.assertTrue(doc["filter_subject"])
         self.assertFalse(doc["filter_body"])
 
-    def test_it_handles_invalid_uuid(self):
+    def test_it_handles_invalid_uuid(self) -> None:
         r = self.get("not-an-uuid")
         self.assertEqual(r.status_code, 404)
 
-    def test_it_handles_missing_check(self):
+    def test_it_handles_missing_check(self) -> None:
         made_up_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"
         r = self.get(made_up_code)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_handles_unique_key(self):
+    def test_it_handles_unique_key(self) -> None:
         r = self.get(self.a1.unique_key)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -90,11 +91,11 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["channels"], str(self.c1.code))
         self.assertEqual(doc["desc"], "This is description")
 
-    def test_it_rejects_post_unique_key(self):
+    def test_it_rejects_post_unique_key(self) -> None:
         r = self.csrf_client.post(f"/api/v1/checks/{self.a1.unique_key}")
         self.assertEqual(r.status_code, 405)
 
-    def test_readonly_key_works(self):
+    def test_readonly_key_works(self) -> None:
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 
@@ -105,7 +106,7 @@ class GetCheckTestCase(BaseTestCase):
         for key in ("ping_url", "update_url", "pause_url", "resume_url"):
             self.assertNotContains(r, key)
 
-    def test_v1_reports_status_started(self):
+    def test_v1_reports_status_started(self) -> None:
         self.a1.last_start = now()
         self.a1.save()
 
@@ -116,7 +117,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["status"], "started")
         self.assertTrue(doc["started"])
 
-    def test_v2_reports_started_separately(self):
+    def test_v2_reports_started_separately(self) -> None:
         self.a1.last_start = now()
         self.a1.save()
 
@@ -127,7 +128,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["status"], "new")
         self.assertTrue(doc["started"])
 
-    def test_v1_by_unique_key_reports_status_started(self):
+    def test_v1_by_unique_key_reports_status_started(self) -> None:
         self.a1.last_start = now()
         self.a1.save()
 
@@ -136,7 +137,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["status"], "started")
         self.assertTrue(doc["started"])
 
-    def test_v2_by_unique_key_reports_started_separately(self):
+    def test_v2_by_unique_key_reports_started_separately(self) -> None:
         self.a1.last_start = now()
         self.a1.save()
 

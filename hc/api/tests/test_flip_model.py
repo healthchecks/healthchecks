@@ -9,7 +9,7 @@ from hc.test import BaseTestCase
 
 
 class FlipModelTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.channel = Channel.objects.create(project=self.project, kind="email")
@@ -20,30 +20,30 @@ class FlipModelTestCase(BaseTestCase):
         self.flip.old_status = "up"
         self.flip.new_status = "down"
 
-    def test_select_channels_works(self):
+    def test_select_channels_works(self) -> None:
         channels = self.flip.select_channels()
         self.assertEqual(channels, [self.channel])
 
-    def test_select_channels_handles_noop(self):
+    def test_select_channels_handles_noop(self) -> None:
         self.channel.value = json.dumps({"down": False})
         self.channel.save()
 
         channels = self.flip.select_channels()
         self.assertEqual(channels, [])
 
-    def test_select_channels_validates_new_status(self):
+    def test_select_channels_validates_new_status(self) -> None:
         self.flip.new_status = "paused"
         with self.assertRaises(NotImplementedError):
             self.flip.select_channels()
 
-    def test_send_alerts_handles_new_up_transition(self):
+    def test_send_alerts_handles_new_up_transition(self) -> None:
         self.flip.old_status = "new"
         self.flip.new_status = "up"
 
         channels = self.flip.select_channels()
         self.assertEqual(channels, [])
 
-    def test_it_skips_disabled_channels(self):
+    def test_it_skips_disabled_channels(self) -> None:
         self.channel.disabled = True
         self.channel.save()
 

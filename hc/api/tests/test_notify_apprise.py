@@ -22,7 +22,7 @@ except ImportError:
 
 @skipIf(not have_apprise, "apprise not installed")
 class NotifyAppriseTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -38,7 +38,7 @@ class NotifyAppriseTestCase(BaseTestCase):
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
-    def test_apprise_enabled(self, mock_apprise):
+    def test_apprise_enabled(self, mock_apprise: Mock) -> None:
         mock_aobj = Mock()
         mock_aobj.add.return_value = True
         mock_aobj.notify.return_value = True
@@ -51,7 +51,7 @@ class NotifyAppriseTestCase(BaseTestCase):
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=False)
-    def test_apprise_disabled(self, mock_apprise):
+    def test_apprise_disabled(self, mock_apprise: Mock) -> None:
         self.channel.notify(self.check)
 
         n = Notification.objects.get()

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
@@ -15,7 +15,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyWhatsAppTestCase(BaseTestCase):
-    def _setup_data(self, notify_up=True, notify_down=True):
+    def _setup_data(self, notify_up: bool = True, notify_down: bool = True) -> None:
         self.check = Check(project=self.project)
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
@@ -30,7 +30,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self._setup_data()
 
@@ -50,7 +50,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
     @override_settings(TWILIO_MESSAGING_SERVICE_SID="dummy-sid")
     @patch("hc.api.transports.curl.request")
-    def test_it_uses_messaging_service(self, mock_post):
+    def test_it_uses_messaging_service(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self._setup_data()
 
@@ -61,7 +61,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.assertFalse("From" in payload)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_obeys_up_down_flags(self, mock_post):
+    def test_it_obeys_up_down_flags(self, mock_post: Mock) -> None:
         self._setup_data(notify_down=False)
         self.check.last_ping = now() - td(hours=2)
 
@@ -70,7 +70,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         mock_post.assert_not_called()
 
     @patch("hc.api.transports.curl.request")
-    def test_it_enforces_limit(self, mock_post):
+    def test_it_enforces_limit(self, mock_post: Mock) -> None:
         # At limit already:
         self.profile.last_sms_date = now()
         self.profile.sms_sent = 50
@@ -92,7 +92,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.assertEqual(email.subject, "Monthly WhatsApp Limit Reached")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_escape_special_characters(self, mock_post):
+    def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
         self._setup_data()
         self.check.name = "Foo > Bar & Co"
 

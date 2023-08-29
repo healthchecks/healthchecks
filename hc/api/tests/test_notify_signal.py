@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
@@ -23,7 +23,7 @@ class MockSocket(object):
         self.req = None
         self.outbox = b""
 
-    def settimeout(self, seconds):
+    def settimeout(self, seconds: int) -> None:
         pass
 
     def connect(self, address):
@@ -47,7 +47,7 @@ class MockSocket(object):
         return head
 
 
-def setup_mock(socket, response_tmpl, side_effect=None):
+def setup_mock(socket: Mock, response_tmpl, side_effect=None) -> MockSocket:
     # A mock of socket.socket object
     socketobj = MockSocket(response_tmpl, side_effect)
 
@@ -60,7 +60,7 @@ def setup_mock(socket, response_tmpl, side_effect=None):
 
 @override_settings(SIGNAL_CLI_SOCKET="/tmp/socket")
 class NotifySignalTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -85,7 +85,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_works(self, socket):
+    def test_it_works(self, socket) -> None:
         socketobj = setup_mock(socket, {})
 
         self.channel.notify(self.check)
@@ -110,7 +110,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", params["message"])
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_shows_schedule_and_tz(self, socket):
+    def test_it_shows_schedule_and_tz(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         self.check.kind = "cron"
@@ -123,7 +123,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("Time Zone: Europe/Riga", params["message"])
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_special_characters(self, socket):
+    def test_it_handles_special_characters(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         self.project.name = "Alice & Friends"
@@ -146,7 +146,7 @@ class NotifySignalTestCase(BaseTestCase):
 
     @override_settings(SIGNAL_CLI_SOCKET="example.org:1234")
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_host_port(self, socket):
+    def test_it_handles_host_port(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         self.channel.notify(self.check)
@@ -156,7 +156,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_obeys_down_flag(self, socket):
+    def test_it_obeys_down_flag(self, socket: Mock) -> None:
         payload = {"value": "+123456789", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
         self.channel.save()
@@ -168,7 +168,7 @@ class NotifySignalTestCase(BaseTestCase):
         socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_requires_signal_cli_socket(self, socket):
+    def test_it_requires_signal_cli_socket(self, socket: Mock) -> None:
         with override_settings(SIGNAL_CLI_SOCKET=None):
             self.channel.notify(self.check)
 
@@ -177,7 +177,7 @@ class NotifySignalTestCase(BaseTestCase):
         socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_does_not_escape_special_characters(self, socket):
+    def test_it_does_not_escape_special_characters(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         self.check.name = "Foo & Bar"
@@ -189,7 +189,7 @@ class NotifySignalTestCase(BaseTestCase):
 
     @override_settings(SECRET_KEY="test-secret")
     @patch("hc.api.transports.socket.socket")
-    def test_it_obeys_rate_limit(self, socket):
+    def test_it_obeys_rate_limit(self, socket: Mock) -> None:
         # "2862..." is sha1("+123456789test-secret")
         obj = TokenBucket(value="signal-2862991ccaa15c8856e7ee0abaf3448fb3c292e0")
         obj.tokens = 0
@@ -201,7 +201,7 @@ class NotifySignalTestCase(BaseTestCase):
         socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_shows_all_other_checks_up_note(self, socket):
+    def test_it_shows_all_other_checks_up_note(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         other = Check(project=self.project)
@@ -216,7 +216,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("All the other checks are up.", message)
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_lists_other_down_checks(self, socket):
+    def test_it_lists_other_down_checks(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         other = Check(project=self.project)
@@ -232,7 +232,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("Foobar & Co", message)
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_does_not_show_more_than_10_other_checks(self, socket):
+    def test_it_does_not_show_more_than_10_other_checks(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         for i in range(0, 11):
@@ -249,7 +249,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", message)
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_unregistered_failure(self, socket):
+    def test_it_handles_unregistered_failure(self, socket: Mock) -> None:
         msg = {
             "error": {
                 "code": -1,
@@ -274,7 +274,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "Recipient not found")
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_error_code(self, socket):
+    def test_it_handles_error_code(self, socket: Mock) -> None:
         setup_mock(socket, {"error": {"code": 123}})
 
         self.channel.notify(self.check)
@@ -283,7 +283,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "signal-cli call failed (123)")
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_oserror(self, socket):
+    def test_it_handles_oserror(self, socket: Mock) -> None:
         setup_mock(socket, {}, side_effect=OSError("oops"))
 
         logging.disable(logging.CRITICAL)
@@ -294,7 +294,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "signal-cli call failed (oops)")
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_checks_jsonrpc_id(self, socket):
+    def test_it_checks_jsonrpc_id(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
         # Add a message with an unexpected id in the outbox.
         # The socket reader should skip over it.
@@ -310,7 +310,7 @@ class NotifySignalTestCase(BaseTestCase):
 
     @override_settings(ADMINS=[("Admin", "admin@example.org")])
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_rate_limit_failure(self, socket):
+    def test_it_handles_rate_limit_failure(self, socket: Mock) -> None:
         msg = {
             "error": {
                 "code": -1,
@@ -359,7 +359,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("The check <b>Foo &amp; Co</b> is <b>DOWN</b>.", html)
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_null_data(self, socket):
+    def test_it_handles_null_data(self, socket: Mock) -> None:
         msg = {
             "error": {
                 "code": -32602,

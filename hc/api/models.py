@@ -780,7 +780,7 @@ class Channel(models.Model):
         _, cls = TRANSPORTS[self.kind]
         return cls(self)
 
-    def notify(self, check, is_test=False):
+    def notify(self, check: Check, is_test: bool = False) -> str:
         if self.transport.is_noop(check):
             return "no-op"
 
@@ -1108,7 +1108,7 @@ class Flip(models.Model):
             "up": 1 if self.new_status == "up" else 0,
         }
 
-    def select_channels(self):
+    def select_channels(self) -> list[Channel]:
         """Return a list of channels that need to be notified.
 
         * Exclude all channels for new->up and paused->up transitions.
@@ -1170,7 +1170,7 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 20, 3600)
 
     @staticmethod
-    def authorize_login_email(email):
+    def authorize_login_email(email: str) -> bool:
         # remove dots and alias:
         mailbox, domain = email.split("@")
         mailbox = mailbox.replace(".", "")

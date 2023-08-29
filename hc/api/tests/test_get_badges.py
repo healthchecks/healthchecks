@@ -7,7 +7,7 @@ from hc.test import BaseTestCase
 
 
 class GetBadgesTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.a1 = Check(project=self.project, name="Alice 1")
@@ -20,11 +20,10 @@ class GetBadgesTestCase(BaseTestCase):
 
         self.url = "/api/v1/badges/"
 
-    def get(self, api_key="X" * 32, qs=""):
+    def get(self, api_key: str = "X" * 32, qs: str = ""):
         return self.client.get(self.url + qs, HTTP_X_API_KEY=api_key)
 
-    def test_it_works(self):
-
+    def test_it_works(self) -> None:
         r = self.get()
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -33,17 +32,17 @@ class GetBadgesTestCase(BaseTestCase):
         self.assertTrue("foo" in doc["badges"])
         self.assertTrue("svg" in doc["badges"]["foo"])
 
-    def test_readonly_key_is_allowed(self):
+    def test_readonly_key_is_allowed(self) -> None:
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 
         r = self.get(api_key=self.project.api_key_readonly)
         self.assertEqual(r.status_code, 200)
 
-    def test_it_rejects_post(self):
+    def test_it_rejects_post(self) -> None:
         r = self.csrf_client.post(self.url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 405)
 
-    def test_it_handles_missing_api_key(self):
+    def test_it_handles_missing_api_key(self) -> None:
         r = self.client.get(self.url)
         self.assertContains(r, "missing api key", status_code=401)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
@@ -15,7 +15,9 @@ from hc.test import BaseTestCase
 
 
 class NotifyTestCase(BaseTestCase):
-    def _setup_data(self, kind, value, status="down", email_verified=True):
+    def _setup_data(
+        self, kind: str, value: str, status: str = "down", email_verified: bool = True
+    ) -> None:
         self.check = Check(project=self.project)
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
@@ -29,7 +31,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_pagerteam(self, mock_post):
+    def test_pagerteam(self, mock_post: Mock) -> None:
         self._setup_data("pagerteam", "123")
 
         self.channel.notify(self.check)
@@ -37,7 +39,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.curl.request")
-    def test_hipchat(self, mock_post):
+    def test_hipchat(self, mock_post: Mock) -> None:
         self._setup_data("hipchat", "123")
 
         self.channel.notify(self.check)
@@ -45,7 +47,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
 
     @patch("hc.api.transports.curl.request")
-    def test_call(self, mock_post):
+    def test_call(self, mock_post: Mock) -> None:
         self.profile.call_limit = 1
         self.profile.save()
 
@@ -65,7 +67,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertTrue(payload["StatusCallback"].endswith(callback_path))
 
     @patch("hc.api.transports.curl.request")
-    def test_call_limit(self, mock_post):
+    def test_call_limit(self, mock_post: Mock) -> None:
         # At limit already:
         self.profile.call_limit = 50
         self.profile.last_call_date = now()
@@ -89,7 +91,7 @@ class NotifyTestCase(BaseTestCase):
         self.assertEqual(email.subject, "Monthly Phone Call Limit Reached")
 
     @patch("hc.api.transports.curl.request")
-    def test_call_limit_reset(self, mock_post):
+    def test_call_limit_reset(self, mock_post: Mock) -> None:
         # At limit, but also into a new month
         self.profile.call_limit = 50
         self.profile.calls_sent = 50
@@ -102,7 +104,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         mock_post.assert_called_once()
 
-    def test_not_implemented(self):
+    def test_not_implemented(self) -> None:
         self._setup_data("webhook", "http://example")
         self.channel.kind = "invalid"
 
@@ -111,7 +113,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.os.system")
     @override_settings(SHELL_ENABLED=True)
-    def test_shell(self, mock_system):
+    def test_shell(self, mock_system: Mock) -> None:
         definition = {"cmd_down": "logger hello", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
         mock_system.return_value = 0
@@ -121,7 +123,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.os.system")
     @override_settings(SHELL_ENABLED=True)
-    def test_shell_handles_nonzero_exit_code(self, mock_system):
+    def test_shell_handles_nonzero_exit_code(self, mock_system: Mock) -> None:
         definition = {"cmd_down": "logger hello", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
         mock_system.return_value = 123
@@ -132,7 +134,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.os.system")
     @override_settings(SHELL_ENABLED=True)
-    def test_shell_supports_variables(self, mock_system):
+    def test_shell_supports_variables(self, mock_system: Mock) -> None:
         definition = {"cmd_down": "logger $NAME is $STATUS ($TAG1)", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
         mock_system.return_value = 0
@@ -146,7 +148,7 @@ class NotifyTestCase(BaseTestCase):
 
     @patch("hc.api.transports.os.system")
     @override_settings(SHELL_ENABLED=False)
-    def test_shell_disabled(self, mock_system):
+    def test_shell_disabled(self, mock_system: Mock) -> None:
         definition = {"cmd_down": "logger hello", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
 

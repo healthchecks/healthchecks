@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -14,7 +14,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyMsTeamsTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -33,7 +33,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.check.name = "_underscores_ & more"
@@ -57,7 +57,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertNotIn(str(self.check.code), serialized)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_schedule_and_tz(self, mock_post):
+    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -70,7 +70,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(facts["Time Zone:"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_escapes_stars_in_schedule(self, mock_post):
+    def test_it_escapes_stars_in_schedule(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.check.kind = "cron"
@@ -83,14 +83,14 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(facts["Schedule:"], "\u034f* \u034f* \u034f* \u034f* \u034f*")
 
     @override_settings(MSTEAMS_ENABLED=False)
-    def test_it_requires_msteams_enabled(self):
+    def test_it_requires_msteams_enabled(self) -> None:
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "MS Teams notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_last_ping_fail(self, mock_post):
+    def test_it_handles_last_ping_fail(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "fail"
@@ -104,7 +104,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(facts["Last Ping:"], "Failure, an hour ago")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_last_ping_log(self, mock_post):
+    def test_it_handles_last_ping_log(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "log"
@@ -117,7 +117,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(facts["Last Ping:"], "Log, an hour ago")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
+    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "ign"
@@ -132,7 +132,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(facts["Last Ping:"], "Ignored, an hour ago")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_last_ping_body(self, mock_post):
+    def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello World"
@@ -146,7 +146,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertIn("```\nHello World\n```", section["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_truncated_last_ping_body(self, mock_post):
+    def test_it_shows_truncated_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello World" * 1000
@@ -160,7 +160,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertIn("[truncated]", section["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+    def test_it_skips_last_ping_body_with_backticks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello ``` World"

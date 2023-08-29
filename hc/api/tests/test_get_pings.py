@@ -12,7 +12,7 @@ EPOCH = datetime(2020, 1, 1, tzinfo=timezone.utc)
 
 
 class GetPingsTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.a1 = Check(project=self.project, name="Alice 1")
@@ -34,10 +34,10 @@ class GetPingsTestCase(BaseTestCase):
 
         self.url = "/api/v1/checks/%s/pings/" % self.a1.code
 
-    def get(self, api_key="X" * 32):
+    def get(self, api_key: str = "X" * 32):
         return self.csrf_client.get(self.url, HTTP_X_API_KEY=api_key)
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         r = self.get()
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
@@ -52,22 +52,22 @@ class GetPingsTestCase(BaseTestCase):
         self.assertEqual(ping["method"], "get")
         self.assertEqual(ping["ua"], "foo-agent")
 
-    def test_readonly_key_is_not_allowed(self):
+    def test_readonly_key_is_not_allowed(self) -> None:
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 
         r = self.get(api_key=self.project.api_key_readonly)
         self.assertEqual(r.status_code, 401)
 
-    def test_it_rejects_post(self):
+    def test_it_rejects_post(self) -> None:
         r = self.csrf_client.post(self.url, HTTP_X_API_KEY="X" * 32)
         self.assertEqual(r.status_code, 405)
 
-    def test_it_handles_missing_api_key(self):
+    def test_it_handles_missing_api_key(self) -> None:
         r = self.client.get(self.url)
         self.assertContains(r, "missing api key", status_code=401)
 
-    def test_it_calculates_overlapping_durations(self):
+    def test_it_calculates_overlapping_durations(self) -> None:
         self.ping.delete()
 
         m = td(minutes=1)
@@ -82,7 +82,7 @@ class GetPingsTestCase(BaseTestCase):
             self.assertEqual(doc["pings"][0]["duration"], 300.0)
             self.assertEqual(doc["pings"][1]["duration"], 120.0)
 
-    def test_it_disables_duration_calculation(self):
+    def test_it_disables_duration_calculation(self) -> None:
         self.ping.delete()
         # Set up a worst case scenario where each success ping has an unique rid,
         # and there are no "start" pings:
@@ -95,7 +95,7 @@ class GetPingsTestCase(BaseTestCase):
             for d in doc["pings"]:
                 self.assertNotIn("duration", d)
 
-    def test_it_handles_rid(self):
+    def test_it_handles_rid(self) -> None:
         self.ping.rid = uuid4()
         self.ping.save()
 

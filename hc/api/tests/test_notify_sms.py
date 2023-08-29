@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
@@ -15,7 +15,7 @@ from hc.test import BaseTestCase
 
 
 class NotifySmsTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -31,7 +31,7 @@ class NotifySmsTestCase(BaseTestCase):
 
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         self.check.last_ping = now() - td(hours=2)
         mock_post.return_value.status_code = 200
 
@@ -53,7 +53,7 @@ class NotifySmsTestCase(BaseTestCase):
 
     @override_settings(TWILIO_MESSAGING_SERVICE_SID="dummy-sid")
     @patch("hc.api.transports.curl.request")
-    def test_it_uses_messaging_service(self, mock_post):
+    def test_it_uses_messaging_service(self, mock_post: Mock) -> None:
         self.check.last_ping = now() - td(hours=2)
         mock_post.return_value.status_code = 200
 
@@ -64,7 +64,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertFalse("From" in payload)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_enforces_limit(self, mock_post):
+    def test_it_enforces_limit(self, mock_post: Mock) -> None:
         # At limit already:
         self.profile.last_sms_date = now()
         self.profile.sms_sent = 50
@@ -84,7 +84,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(email.subject, "Monthly SMS Limit Reached")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_resets_limit_next_month(self, mock_post):
+    def test_it_resets_limit_next_month(self, mock_post: Mock) -> None:
         # At limit, but also into a new month
         self.profile.sms_sent = 50
         self.profile.last_sms_date = now() - td(days=100)
@@ -96,7 +96,7 @@ class NotifySmsTestCase(BaseTestCase):
         mock_post.assert_called_once()
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_escape_special_characters(self, mock_post):
+    def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
         self.check.name = "Foo > Bar & Co"
         self.check.last_ping = now() - td(hours=2)
 
@@ -108,7 +108,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertIn("Foo > Bar & Co", payload["Body"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_disabled_down_notification(self, mock_post):
+    def test_it_handles_disabled_down_notification(self, mock_post: Mock) -> None:
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
 
@@ -116,7 +116,7 @@ class NotifySmsTestCase(BaseTestCase):
         mock_post.assert_not_called()
 
     @patch("hc.api.transports.curl.request")
-    def test_it_sends_up_notification(self, mock_post):
+    def test_it_sends_up_notification(self, mock_post: Mock) -> None:
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
 

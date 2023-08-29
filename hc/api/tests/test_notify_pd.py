@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -14,7 +14,9 @@ from hc.test import BaseTestCase
 
 
 class NotifyPdTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+    def _setup_data(
+        self, value: str, status: str = "down", email_verified: bool = True
+    ) -> None:
         self.check = Check(project=self.project)
         self.check.name = "Foo"
         self.check.desc = "Description goes here"
@@ -30,7 +32,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
@@ -44,7 +46,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["service_key"], "123")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_schedule_and_tz(self, mock_post):
+    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
         self._setup_data("123")
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -57,7 +59,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["details"]["Time zone"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request")
-    def test_pd_complex(self, mock_post):
+    def test_pd_complex(self, mock_post: Mock) -> None:
         self._setup_data(json.dumps({"service_key": "456"}))
         mock_post.return_value.status_code = 200
 
@@ -69,7 +71,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["service_key"], "456")
 
     @override_settings(PD_ENABLED=False)
-    def test_it_requires_pd_enabled(self):
+    def test_it_requires_pd_enabled(self) -> None:
         self._setup_data("123")
         self.channel.notify(self.check)
 
@@ -77,7 +79,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(n.error, "PagerDuty notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_escape_description(self, mock_post):
+    def test_it_does_not_escape_description(self, mock_post: Mock) -> None:
         self._setup_data("123")
         self.check.name = "Foo & Bar"
         self.check.save()

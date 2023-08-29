@@ -43,7 +43,7 @@ Mychecks
 @patch("hc.accounts.models.now", MOCK_NOW)
 @patch("hc.api.management.commands.sendreports.now", MOCK_NOW)
 class SendReportsTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         # Make alice eligible for a monthly report:
@@ -66,7 +66,7 @@ class SendReportsTestCase(BaseTestCase):
         self.check.status = "down"
         self.check.save()
 
-    def test_it_sends_monthly_report(self):
+    def test_it_sends_monthly_report(self) -> None:
         cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
@@ -74,6 +74,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
+        assert self.profile.next_report_date
         self.assertEqual(self.profile.next_report_date.date(), date(2020, 2, 1))
         self.assertEqual(self.profile.next_report_date.day, 1)
         self.assertEqual(len(mail.outbox), 1)
@@ -90,7 +91,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertIn("Nov. 2019", html)
         self.assertIn("Dec. 2019", html)
 
-    def test_it_sends_weekly_report(self):
+    def test_it_sends_weekly_report(self) -> None:
         self.profile.reports = "weekly"
         self.profile.save()
 
@@ -108,7 +109,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertIn("Dec 30 - Jan 5", html)
         self.assertIn("Jan 6 - Jan 12", html)
 
-    def test_it_handles_positive_utc_offset(self):
+    def test_it_handles_positive_utc_offset(self) -> None:
         self.profile.reports = "weekly"
         self.profile.tz = "America/New_York"
         self.profile.save()
@@ -127,7 +128,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertIn("Dec 30 - Jan 5", html)
         self.assertNotIn("Jan 6 - Jan 12", html)
 
-    def test_it_handles_negative_utc_offset(self):
+    def test_it_handles_negative_utc_offset(self) -> None:
         self.profile.reports = "weekly"
         self.profile.tz = "Asia/Tokyo"
         self.profile.save()
@@ -144,14 +145,14 @@ class SendReportsTestCase(BaseTestCase):
         self.assertIn("Dec 30 - Jan 5", html)
         self.assertIn("Jan 6 - Jan 12", html)
 
-    def test_it_obeys_next_report_date(self):
+    def test_it_obeys_next_report_date(self) -> None:
         self.profile.next_report_date = CURRENT_TIME + td(days=1)
         self.profile.save()
 
         found = Command().handle_one_report()
         self.assertFalse(found)
 
-    def test_it_fills_blank_next_monthly_report_date(self):
+    def test_it_fills_blank_next_monthly_report_date(self) -> None:
         self.profile.next_report_date = None
         self.profile.save()
 
@@ -159,10 +160,11 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
+        assert self.profile.next_report_date
         self.assertEqual(self.profile.next_report_date.date(), date(2020, 2, 1))
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_fills_blank_next_weekly_report_date(self):
+    def test_it_fills_blank_next_weekly_report_date(self) -> None:
         self.profile.reports = "weekly"
         self.profile.next_report_date = None
         self.profile.save()
@@ -174,14 +176,14 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(self.profile.next_report_date.date(), date(2020, 1, 20))
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_obeys_reports_off(self):
+    def test_it_obeys_reports_off(self) -> None:
         self.profile.reports = "off"
         self.profile.save()
 
         found = Command().handle_one_report()
         self.assertFalse(found)
 
-    def test_it_requires_pinged_checks(self):
+    def test_it_requires_pinged_checks(self) -> None:
         self.check.delete()
 
         found = Command().handle_one_report()
@@ -190,7 +192,7 @@ class SendReportsTestCase(BaseTestCase):
         # No email should have been sent:
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_sends_nag(self):
+    def test_it_sends_nag(self) -> None:
         cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
@@ -198,6 +200,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
+        assert self.profile.next_nag_date
         self.assertTrue(self.profile.next_nag_date > CURRENT_TIME)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -208,7 +211,7 @@ class SendReportsTestCase(BaseTestCase):
 
         self.assertEqual(email.body, NAG_TEXT)
 
-    def test_it_obeys_next_nag_date(self):
+    def test_it_obeys_next_nag_date(self) -> None:
         self.profile.next_nag_date = CURRENT_TIME + td(days=1)
         self.profile.save()
 
@@ -216,7 +219,7 @@ class SendReportsTestCase(BaseTestCase):
         found = Command().handle_one_nag()
         self.assertFalse(found)
 
-    def test_it_obeys_nag_period(self):
+    def test_it_obeys_nag_period(self) -> None:
         self.profile.nag_period = td()
         self.profile.save()
 
@@ -224,7 +227,7 @@ class SendReportsTestCase(BaseTestCase):
         found = Command().handle_one_nag()
         self.assertFalse(found)
 
-    def test_nags_require_down_checks(self):
+    def test_nags_require_down_checks(self) -> None:
         self.check.status = "up"
         self.check.save()
 
@@ -238,7 +241,7 @@ class SendReportsTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.next_nag_date)
 
-    def test_nags_skip_up_checks(self):
+    def test_nags_skip_up_checks(self) -> None:
         check2 = Check(project=self.project, last_ping=now())
         check2.name = "Foobar"
         check2.status = "up"
@@ -258,7 +261,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertNotIn("Foobar", html)
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
-    def test_it_sets_custom_mail_from(self):
+    def test_it_sets_custom_mail_from(self) -> None:
         cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 

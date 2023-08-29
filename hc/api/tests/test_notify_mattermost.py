@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyMattermostTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -32,7 +32,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -46,14 +46,14 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
 
     @override_settings(MATTERMOST_ENABLED=False)
-    def test_it_requires_mattermost_enabled(self):
+    def test_it_requires_mattermost_enabled(self) -> None:
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Mattermost notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_disable_channel_on_404(self, mock_post):
+    def test_it_does_not_disable_channel_on_404(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 404
 
         self.channel.notify(self.check)
@@ -62,7 +62,7 @@ class NotifyMattermostTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_last_ping_body(self, mock_post):
+    def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello World"
@@ -77,7 +77,7 @@ class NotifyMattermostTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_truncated_last_ping_body(self, mock_post):
+    def test_it_shows_truncated_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello World" * 1000
@@ -92,7 +92,7 @@ class NotifyMattermostTestCase(BaseTestCase):
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request")
-    def test_it_skips_last_ping_body_containing_backticks(self, mock_post):
+    def test_it_skips_last_ping_body_with_backticks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello ``` World"

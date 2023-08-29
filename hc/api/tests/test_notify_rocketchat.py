@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyRocketChatTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -32,7 +32,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -46,14 +46,14 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
 
     @override_settings(ROCKETCHAT_ENABLED=False)
-    def test_it_requires_rocketchat_enabled(self):
+    def test_it_requires_rocketchat_enabled(self) -> None:
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Rocket.Chat notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_disable_channel_on_404(self, mock_post):
+    def test_it_does_not_disable_channel_on_404(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 404
 
         self.channel.notify(self.check)
@@ -62,7 +62,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertEqual(self.channel.last_error, "Received status code 404")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_schedule_and_tz(self, mock_post):
+    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -75,7 +75,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertEqual(fields["Time Zone"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_last_ping_body_size(self, mock_post):
+    def test_it_shows_last_ping_body_size(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.n = 123
@@ -91,7 +91,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertIn("#ping-123", fields["Last Ping Body"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_last_ping_body_one_byte(self, mock_post):
+    def test_it_shows_last_ping_body_one_byte(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.n = 123
@@ -106,7 +106,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertIn("1 byte,", fields["Last Ping Body"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_ping_kind_fail(self, mock_post):
+    def test_it_shows_ping_kind_fail(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "fail"
@@ -120,7 +120,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertEqual("Failure, an hour ago", fields["Last Ping"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_nonzero_exitstatus(self, mock_post):
+    def test_it_shows_nonzero_exitstatus(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "fail"
@@ -135,7 +135,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertEqual("Exit status 123, an hour ago", fields["Last Ping"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post):
+    def test_it_shows_ignored_nonzero_exitstatus(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "ign"

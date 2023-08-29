@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyDiscordTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down"):
+    def _setup_data(self, value: str, status: str = "down") -> None:
         self.check = Check(project=self.project)
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
@@ -30,7 +30,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         v = json.dumps({"webhook": {"url": "https://example.org"}})
         self._setup_data(v)
         mock_post.return_value.status_code = 200
@@ -46,7 +46,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_rewrites_discordapp_com(self, mock_post):
+    def test_it_rewrites_discordapp_com(self, mock_post: Mock) -> None:
         v = json.dumps({"webhook": {"url": "https://discordapp.com/foo"}})
         self._setup_data(v)
         mock_post.return_value.status_code = 200
@@ -60,7 +60,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.assertEqual(url, "https://discord.com/foo/slack")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_last_ping_failure(self, mock_post):
+    def test_it_handles_last_ping_failure(self, mock_post: Mock) -> None:
         v = json.dumps({"webhook": {"url": "123"}})
         self._setup_data(v)
         mock_post.return_value.status_code = 200

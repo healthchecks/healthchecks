@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 @override_settings(TRELLO_APP_KEY="fake-trello-app-key")
 class NotifyTrelloTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -36,7 +36,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -50,7 +50,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertEqual(params["token"], "fake-token")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_schedule_and_tz(self, mock_post):
+    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -64,7 +64,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertIn("**Time Zone:** Europe/Riga", params["desc"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_escape_name(self, mock_post):
+    def test_it_does_not_escape_name(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.check.name = "Foo & Bar"

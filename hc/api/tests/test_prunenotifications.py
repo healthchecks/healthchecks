@@ -10,7 +10,7 @@ from hc.test import BaseTestCase
 
 
 class PruneNotificationsTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -21,7 +21,7 @@ class PruneNotificationsTestCase(BaseTestCase):
         self.channel = Channel.objects.create(project=self.project)
         self.check.channel_set.add(self.channel)
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         p = Ping(owner=self.check)
         p.created = now()
         p.save()
@@ -34,6 +34,6 @@ class PruneNotificationsTestCase(BaseTestCase):
         self.assertIn("Pruned 1 notifications", output)
         self.assertFalse(Notification.objects.exists())
 
-    def test_it_handles_missing_pings(self):
+    def test_it_handles_missing_pings(self) -> None:
         output = Command().handle()
         self.assertIn("Pruned 0 notifications", output)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -15,7 +15,9 @@ API = "https://api.pushover.net/1"
 
 
 class NotifyPushoverTestCase(BaseTestCase):
-    def _setup_data(self, value, status="down", email_verified=True):
+    def _setup_data(
+        self, value: str, status: str = "down", email_verified: bool = True
+    ) -> None:
         self.check = Check(project=self.project)
         self.check.name = "Foo"
         self.check.status = status
@@ -30,7 +32,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
 
@@ -49,7 +51,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(payload["tags"], self.check.unique_key)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_supports_up_priority(self, mock_post):
+    def test_it_supports_up_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|0|2", status="up")
         mock_post.return_value.status_code = 200
 
@@ -64,7 +66,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
     @override_settings(SECRET_KEY="test-secret")
     @patch("hc.api.transports.curl.request")
-    def test_it_obeys_rate_limit(self, mock_post):
+    def test_it_obeys_rate_limit(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
 
         # "c0ca..." is sha1("123test-secret")
@@ -77,7 +79,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(n.error, "Rate limit exceeded")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_cancels_emergency_notification(self, mock_post):
+    def test_it_cancels_emergency_notification(self, mock_post: Mock) -> None:
         self._setup_data("123|2|0", status="up")
         mock_post.return_value.status_code = 200
 
@@ -95,7 +97,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertIn("UP", payload["title"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_all_other_checks_up_note(self, mock_post):
+    def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
 
@@ -111,7 +113,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertIn("All the other checks are up.", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_lists_other_down_checks(self, mock_post):
+    def test_it_lists_other_down_checks(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
 
@@ -129,7 +131,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertIn(other.cloaked_url(), payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_show_more_than_10_other_checks(self, mock_post):
+    def test_it_does_not_show_more_than_10_other_checks(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
 
@@ -147,7 +149,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_escape_title(self, mock_post):
+    def test_it_does_not_escape_title(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         self.check.name = "Foo & Bar"
         self.check.save()
@@ -159,7 +161,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(payload["title"], "Foo & Bar is DOWN")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_disabled_priority(self, mock_post):
+    def test_it_handles_disabled_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|-3")
 
         self.channel.notify(self.check)
@@ -167,7 +169,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         mock_post.assert_not_called()
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_disabled_up_priority(self, mock_post):
+    def test_it_handles_disabled_up_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|0|-3", status="up")
 
         self.channel.notify(self.check)

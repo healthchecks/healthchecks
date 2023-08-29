@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
@@ -12,7 +12,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyPushbulletTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -28,7 +28,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -42,7 +42,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_escapes_body(self, mock_post):
+    def test_it_escapes_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.name = "Foo & Bar"
         self.check.save()

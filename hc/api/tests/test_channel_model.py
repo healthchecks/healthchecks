@@ -7,7 +7,7 @@ from hc.test import BaseTestCase
 
 
 class ChannelModelTestCase(BaseTestCase):
-    def test_webhook_spec_handles_mixed(self):
+    def test_webhook_spec_handles_mixed(self) -> None:
         c = Channel(kind="webhook")
         c.value = json.dumps(
             {
@@ -42,18 +42,18 @@ class ChannelModelTestCase(BaseTestCase):
             },
         )
 
-    def test_it_handles_legacy_opsgenie_value(self):
+    def test_it_handles_legacy_opsgenie_value(self) -> None:
         c = Channel(kind="opsgenie", value="foo123")
         self.assertEqual(c.opsgenie_key, "foo123")
         self.assertEqual(c.opsgenie_region, "us")
 
-    def test_it_handles_json_opsgenie_value(self):
+    def test_it_handles_json_opsgenie_value(self) -> None:
         c = Channel(kind="opsgenie")
         c.value = json.dumps({"key": "abc", "region": "eu"})
         self.assertEqual(c.opsgenie_key, "abc")
         self.assertEqual(c.opsgenie_region, "eu")
 
-    def test_it_handles_legacy_sms_json_value(self):
+    def test_it_handles_legacy_sms_json_value(self) -> None:
         c = Channel(kind="sms", value=json.dumps({"value": "+123123123"}))
         self.assertTrue(c.sms_notify_down)
         self.assertFalse(c.sms_notify_up)

@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyTelegramTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -35,7 +35,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -59,7 +59,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_sends_to_thread(self, mock_post):
+    def test_it_sends_to_thread(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.value = json.dumps({"id": 123, "thread_id": 456})
@@ -72,7 +72,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertEqual(payload["message_thread_id"], 456)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_cron_schedule(self, mock_post):
+    def test_it_shows_cron_schedule(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.check.kind = "cron"
@@ -89,7 +89,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("<b>Time Zone:</b> Europe/Riga\n", payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_returns_error(self, mock_post):
+    def test_it_returns_error(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 400
         mock_post.return_value.json.return_value = {"description": "Hi"}
 
@@ -98,7 +98,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertEqual(n.error, 'Received status code 400 with a message: "Hi"')
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_non_json_error(self, mock_post):
+    def test_it_handles_non_json_error(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 400
         mock_post.return_value.json = Mock(side_effect=ValueError)
 
@@ -107,7 +107,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 400")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_group_supergroup_migration(self, mock_post):
+    def test_it_handles_group_supergroup_migration(self, mock_post: Mock) -> None:
         error_response = Mock(status_code=400)
         error_response.json.return_value = {
             "description": "Hello",
@@ -127,7 +127,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
-    def test_telegram_obeys_rate_limit(self):
+    def test_telegram_obeys_rate_limit(self) -> None:
         TokenBucket.objects.create(value="tg-123", tokens=0)
 
         self.channel.notify(self.check)
@@ -135,7 +135,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertEqual(n.error, "Rate limit exceeded")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_all_other_checks_up_note(self, mock_post):
+    def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         other = Check(project=self.project)
@@ -150,7 +150,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("All the other checks are up.", payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_lists_other_down_checks(self, mock_post):
+    def test_it_lists_other_down_checks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         other = Check(project=self.project)
@@ -167,7 +167,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn(other.cloaked_url(), payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_show_more_than_10_other_checks(self, mock_post):
+    def test_it_does_not_show_more_than_10_other_checks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         for i in range(0, 11):
@@ -184,7 +184,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_disables_channel_on_403_group_deleted(self, mock_post):
+    def test_it_disables_channel_on_403_group_deleted(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 403
         mock_post.return_value.json.return_value = {
             "description": "Forbidden: the group chat was deleted"
@@ -195,7 +195,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertTrue(self.channel.disabled)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_disables_channel_on_403_bot_blocked(self, mock_post):
+    def test_it_disables_channel_on_403_bot_blocked(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 403
         mock_post.return_value.json.return_value = {
             "description": "Forbidden: bot was blocked by the user"
@@ -206,7 +206,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertTrue(self.channel.disabled)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_last_ping_body(self, mock_post):
+    def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello World"
@@ -219,7 +219,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("Hello World", payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_truncated_last_ping_body(self, mock_post):
+    def test_it_shows_truncated_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"Hello World" * 100
@@ -231,7 +231,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("[truncated]", payload["text"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_escapes_html(self, mock_post):
+    def test_it_escapes_html(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.ping.body_raw = b"<b>bold</b>\nfoo & bar"

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyNtfyTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -43,7 +43,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -61,7 +61,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_schedule_and_tz(self, mock_post):
+    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.check.kind = "cron"
@@ -74,7 +74,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.assertIn("Time Zone: Europe/Riga", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_shows_all_other_checks_up_note(self, mock_post):
+    def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         other = Check(project=self.project)
@@ -89,7 +89,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.assertIn("All the other checks are up.", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_lists_other_down_checks(self, mock_post):
+    def test_it_lists_other_down_checks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         other = Check(project=self.project)
@@ -105,7 +105,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.assertIn("Foobar", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_show_more_than_10_other_checks(self, mock_post):
+    def test_it_does_not_show_more_than_10_other_checks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         for i in range(0, 11):
@@ -122,7 +122,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", payload["message"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_uses_access_token(self, mock_post):
+    def test_it_uses_access_token(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.value = json.dumps(

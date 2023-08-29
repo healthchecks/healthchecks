@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 
 
 class NotifyPagertreeTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check(project=self.project)
@@ -28,7 +28,7 @@ class NotifyPagertreeTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_works(self, mock_post):
+    def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -38,14 +38,14 @@ class NotifyPagertreeTestCase(BaseTestCase):
         self.assertEqual(payload["event_type"], "trigger")
 
     @override_settings(PAGERTREE_ENABLED=False)
-    def test_it_requires_pagertree_enabled(self):
+    def test_it_requires_pagertree_enabled(self) -> None:
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "PagerTree notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_does_not_escape_title(self, mock_post):
+    def test_it_does_not_escape_title(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.check.name = "Foo & Bar"

@@ -33,9 +33,9 @@ class HexTimestampSigner(Signer):
         return value
 
 
-def sign_bounce_id(s):
+def sign_bounce_id(s: str) -> str:
     return HexTimestampSigner(sep=".", algorithm="sha1").sign(s)
 
 
-def unsign_bounce_id(s, max_age):
+def unsign_bounce_id(s: str, max_age: int) -> str:
     return HexTimestampSigner(sep=".", algorithm="sha1").unsign(s, max_age=max_age)

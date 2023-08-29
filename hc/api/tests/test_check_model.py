@@ -16,7 +16,7 @@ MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class CheckModelTestCase(BaseTestCase):
-    def test_it_strips_tags(self):
+    def test_it_strips_tags(self) -> None:
         check = Check()
 
         check.tags = " foo  bar "
@@ -25,24 +25,24 @@ class CheckModelTestCase(BaseTestCase):
         check.tags = " "
         self.assertEqual(check.tags_list(), [])
 
-    def test_get_status_handles_new_check(self):
+    def test_get_status_handles_new_check(self) -> None:
         check = Check()
         self.assertEqual(check.get_status(), "new")
 
-    def test_status_works_with_grace_period(self):
+    def test_status_works_with_grace_period(self) -> None:
         check = Check()
         check.status = "up"
         check.last_ping = now() - td(days=1, minutes=30)
 
         self.assertEqual(check.get_status(), "grace")
 
-    def test_get_status_handles_paused_check(self):
+    def test_get_status_handles_paused_check(self) -> None:
         check = Check()
         check.status = "paused"
         check.last_ping = now() - td(days=1, minutes=30)
         self.assertEqual(check.get_status(), "paused")
 
-    def test_status_works_with_cron_syntax(self):
+    def test_status_works_with_cron_syntax(self) -> None:
         dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every midnight, default grace is 1 hour
@@ -67,7 +67,7 @@ class CheckModelTestCase(BaseTestCase):
             mock_now.return_value = dt + td(days=1, minutes=60)
             self.assertEqual(check.get_status(), "down")
 
-    def test_status_works_with_timezone(self):
+    def test_status_works_with_timezone(self) -> None:
         dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every day at 10am, default grace is 1 hour
@@ -93,21 +93,21 @@ class CheckModelTestCase(BaseTestCase):
             mock_now.return_value = dt + td(days=1, minutes=60)
             self.assertEqual(check.get_status(), "down")
 
-    def test_get_status_handles_past_grace(self):
+    def test_get_status_handles_past_grace(self) -> None:
         check = Check()
         check.status = "up"
         check.last_ping = now() - td(days=2)
 
         self.assertEqual(check.get_status(), "down")
 
-    def test_get_status_obeys_down_status(self):
+    def test_get_status_obeys_down_status(self) -> None:
         check = Check()
         check.status = "down"
         check.last_ping = now() - td(minutes=1)
 
         self.assertEqual(check.get_status(), "down")
 
-    def test_get_status_handles_started(self):
+    def test_get_status_handles_started(self) -> None:
         check = Check()
         check.last_ping = now() - td(hours=2)
         # Last start was 5 minutes ago, display status should be "started"
@@ -116,7 +116,7 @@ class CheckModelTestCase(BaseTestCase):
             check.status = status
             self.assertEqual(check.get_status(with_started=True), "started")
 
-    def test_get_status_handles_down_then_started_and_expired(self):
+    def test_get_status_handles_down_then_started_and_expired(self) -> None:
         check = Check(status="down")
         # Last ping was 2 days ago
         check.last_ping = now() - td(days=2)
@@ -126,7 +126,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
 
-    def test_get_status_handles_up_then_started(self):
+    def test_get_status_handles_up_then_started(self) -> None:
         check = Check(status="up")
         # Last ping was 2 hours ago, so is still up
         check.last_ping = now() - td(hours=2)
@@ -137,7 +137,7 @@ class CheckModelTestCase(BaseTestCase):
         # A started check still is considered "up":
         self.assertEqual(check.get_status(), "up")
 
-    def test_get_status_handles_up_then_started_and_expired(self):
+    def test_get_status_handles_up_then_started_and_expired(self) -> None:
         check = Check(status="up")
         # Last ping was 3 hours ago, so is still up
         check.last_ping = now() - td(hours=3)
@@ -147,7 +147,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
 
-    def test_get_status_handles_paused_then_started_and_expired(self):
+    def test_get_status_handles_paused_then_started_and_expired(self) -> None:
         check = Check(status="paused")
         # Last start was 2 hours ago - the check is past its grace time
         check.last_start = now() - td(hours=2)
@@ -155,14 +155,14 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
 
-    def test_get_status_handles_started_and_mia(self):
+    def test_get_status_handles_started_and_mia(self) -> None:
         check = Check()
         check.last_start = now() - td(hours=2)
 
         self.assertEqual(check.get_status(with_started=True), "down")
         self.assertEqual(check.get_status(), "down")
 
-    def test_next_ping_with_cron_syntax(self):
+    def test_next_ping_with_cron_syntax(self) -> None:
         dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
         # Expect ping every round hour
@@ -179,7 +179,7 @@ class CheckModelTestCase(BaseTestCase):
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
-    def test_downtimes_handles_no_flips(self):
+    def test_downtimes_handles_no_flips(self) -> None:
         check = Check(project=self.project)
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
         check.save()
@@ -203,7 +203,7 @@ class CheckModelTestCase(BaseTestCase):
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
-    def test_downtimes_handles_currently_down_check(self):
+    def test_downtimes_handles_currently_down_check(self) -> None:
         check = Check(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
         check.save()
@@ -215,7 +215,7 @@ class CheckModelTestCase(BaseTestCase):
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
-    def test_downtimes_handles_flip_one_day_ago(self):
+    def test_downtimes_handles_flip_one_day_ago(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
 
@@ -237,7 +237,7 @@ class CheckModelTestCase(BaseTestCase):
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
-    def test_downtimes_handles_flip_two_months_ago(self):
+    def test_downtimes_handles_flip_two_months_ago(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
 
@@ -267,7 +267,7 @@ class CheckModelTestCase(BaseTestCase):
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
-    def test_downtimes_handles_non_utc_timezone(self):
+    def test_downtimes_handles_non_utc_timezone(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
 
@@ -292,7 +292,7 @@ class CheckModelTestCase(BaseTestCase):
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
-    def test_downtimes_handles_months_when_check_did_not_exist(self):
+    def test_downtimes_handles_months_when_check_did_not_exist(self) -> None:
         check = Check(project=self.project)
         check.created = datetime(2020, 1, 1, 9, tzinfo=timezone.utc)
         check.save()
@@ -312,7 +312,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(jan[2], 0)
 
     @override_settings(S3_BUCKET=None)
-    def test_it_prunes(self):
+    def test_it_prunes(self) -> None:
         check = Check.objects.create(project=self.project, n_pings=101)
         Ping.objects.create(owner=check, n=101)
         Ping.objects.create(owner=check, n=1)
@@ -332,7 +332,7 @@ class CheckModelTestCase(BaseTestCase):
 
     @override_settings(S3_BUCKET="test-bucket")
     @patch("hc.api.models.remove_objects")
-    def test_it_prunes_object_storage(self, remove_objects):
+    def test_it_prunes_object_storage(self, remove_objects: Mock) -> None:
         check = Check.objects.create(project=self.project, n_pings=101)
         Ping.objects.create(owner=check, n=101)
         Ping.objects.create(owner=check, n=1, object_size=1000)
