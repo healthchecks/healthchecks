@@ -692,7 +692,7 @@ class Channel(models.Model):
     kind = models.CharField(max_length=20, choices=CHANNEL_KINDS)
     value = models.TextField(blank=True)
     email_verified = models.BooleanField(default=False)
-    disabled = models.BooleanField(null=True)
+    disabled = models.BooleanField(default=False)
     last_notify = models.DateTimeField(null=True, blank=True)
     last_notify_duration = models.DurationField(null=True, blank=True)
     last_error = models.CharField(max_length=200, blank=True)
