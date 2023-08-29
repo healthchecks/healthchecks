@@ -17,7 +17,7 @@ MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 class ProfileModelTestCase(BaseTestCase):
     @patch("hc.lib.date.now", MOCK_NOW)
-    def test_it_sends_report(self):
+    def test_it_sends_report(self) -> None:
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now()
         check.save()
@@ -38,7 +38,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertIn("Nov. 2019", html)
         self.assertNotIn("Oct. 2019", html)
 
-    def test_it_skips_report_if_no_pings(self):
+    def test_it_skips_report_if_no_pings(self) -> None:
         check = Check(project=self.project, name="Test Check")
         check.save()
 
@@ -47,7 +47,7 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_skips_report_if_no_recent_pings(self):
+    def test_it_skips_report_if_no_recent_pings(self) -> None:
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now() - td(days=365)
         check.save()
@@ -57,7 +57,7 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_sends_nag(self):
+    def test_it_sends_nag(self) -> None:
         check = Check(project=self.project, name="Test Check")
         check.status = "down"
         check.last_ping = now()
@@ -76,7 +76,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEqual(message.subject, "Reminder: 1 check still down")
         self.assertIn("Test Check", message.body)
 
-    def test_it_skips_nag_if_none_down(self):
+    def test_it_skips_nag_if_none_down(self) -> None:
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now()
         check.save()
@@ -89,7 +89,7 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_sets_next_nag_date(self):
+    def test_it_sets_next_nag_date(self) -> None:
         Check.objects.create(project=self.project, status="down")
 
         self.profile.nag_period = td(hours=1)
@@ -97,12 +97,12 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertTrue(self.profile.next_nag_date)
 
-    def test_it_does_not_set_next_nag_date_if_no_nag_period(self):
+    def test_it_does_not_set_next_nag_date_if_no_nag_period(self) -> None:
         Check.objects.create(project=self.project, status="down")
         self.profile.update_next_nag_date()
         self.assertIsNone(self.profile.next_nag_date)
 
-    def test_it_does_not_update_existing_next_nag_date(self):
+    def test_it_does_not_update_existing_next_nag_date(self) -> None:
         Check.objects.create(project=self.project, status="down")
 
         original_nag_date = now() - td(minutes=30)
@@ -113,7 +113,7 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertEqual(self.profile.next_nag_date, original_nag_date)
 
-    def test_it_clears_next_nag_date(self):
+    def test_it_clears_next_nag_date(self) -> None:
         self.profile.next_nag_date = now()
         self.profile.update_next_nag_date()
         self.assertIsNone(self.profile.next_nag_date)

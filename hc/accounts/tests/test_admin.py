@@ -4,14 +4,14 @@ from hc.test import BaseTestCase
 
 
 class AccountsAdminTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.alice.is_staff = True
         self.alice.is_superuser = True
         self.alice.save()
 
-    def test_it_shows_profiles(self):
+    def test_it_shows_profiles(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get("/admin/accounts/profile/")

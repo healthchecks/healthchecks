@@ -8,7 +8,7 @@ from hc.test import BaseTestCase
 
 
 class CheckTokenTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.profile.token = make_password("secret-token", "login")
         self.profile.save()
@@ -17,11 +17,11 @@ class CheckTokenTestCase(BaseTestCase):
         self.url = f"/accounts/check_token/alice/{signed_token}/"
         self.checks_url = "/projects/%s/checks/" % self.project.code
 
-    def test_it_shows_form(self):
+    def test_it_shows_form(self) -> None:
         r = self.client.get(self.url)
         self.assertContains(r, "You are about to log in")
 
-    def test_it_redirects(self):
+    def test_it_redirects(self) -> None:
         r = self.client.post(self.url)
 
         self.assertRedirects(r, self.checks_url)
@@ -30,7 +30,7 @@ class CheckTokenTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.token, "")
 
-    def test_it_handles_email_in_username(self):
+    def test_it_handles_email_in_username(self) -> None:
         # Healthchecks will generate usernames that look like UUIDs. But custom
         # authentication backends like django-auth-ldap can also create User objects
         # with non-UUID usernames. In this testcase we check if check_token works
@@ -40,12 +40,12 @@ class CheckTokenTestCase(BaseTestCase):
         r = self.client.post(self.url.replace("alice", "alice@example.org"))
         self.assertRedirects(r, self.checks_url)
 
-    def test_it_handles_get_with_cookie(self):
+    def test_it_handles_get_with_cookie(self) -> None:
         self.client.cookies["auto-login"] = "1"
         r = self.client.get(self.url)
         self.assertRedirects(r, self.checks_url)
 
-    def test_it_redirects_already_logged_in(self):
+    def test_it_redirects_already_logged_in(self) -> None:
         # Login
         self.client.login(username="alice@example.org", password="password")
 
@@ -54,24 +54,24 @@ class CheckTokenTestCase(BaseTestCase):
 
         self.assertRedirects(r, self.checks_url)
 
-    def test_it_redirects_bad_login(self):
+    def test_it_redirects_bad_login(self) -> None:
         # Login with a bad token
         url = "/accounts/check_token/alice/invalid-token/"
         r = self.client.post(url, follow=True)
         self.assertRedirects(r, "/accounts/login/")
         self.assertContains(r, "incorrect or expired")
 
-    def test_it_handles_next_parameter(self):
+    def test_it_handles_next_parameter(self) -> None:
         url = self.url + "?next=" + self.channels_url
         r = self.client.post(url)
         self.assertRedirects(r, self.channels_url)
 
-    def test_it_ignores_bad_next_parameter(self):
+    def test_it_ignores_bad_next_parameter(self) -> None:
         url = self.url + "?next=/evil/"
         r = self.client.post(url)
         self.assertRedirects(r, self.checks_url)
 
-    def test_it_redirects_to_webauthn_form(self):
+    def test_it_redirects_to_webauthn_form(self) -> None:
         Credential.objects.create(user=self.alice, name="Alices Key")
 
         r = self.client.post(self.url)

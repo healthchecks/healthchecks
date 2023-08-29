@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 
 
 class RemoveCredentialTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.profile.totp = "0" * 32
@@ -13,13 +13,13 @@ class RemoveCredentialTestCase(BaseTestCase):
 
         self.url = "/accounts/two_factor/totp/remove/"
 
-    def test_it_requires_sudo_mode(self):
+    def test_it_requires_sudo_mode(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get(self.url)
         self.assertContains(r, "We have sent a confirmation code")
 
-    def test_it_shows_form(self):
+    def test_it_shows_form(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
@@ -27,7 +27,7 @@ class RemoveCredentialTestCase(BaseTestCase):
         self.assertContains(r, "Disable Authenticator App")
         self.assertContains(r, "two-factor authentication will no longer be active")
 
-    def test_it_skips_warning_when_other_2fa_methods_exist(self):
+    def test_it_skips_warning_when_other_2fa_methods_exist(self) -> None:
         self.c = Credential.objects.create(user=self.alice, name="Alices Key")
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
@@ -35,7 +35,7 @@ class RemoveCredentialTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertNotContains(r, "two-factor authentication will no longer be active")
 
-    def test_it_removes_totp(self):
+    def test_it_removes_totp(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 

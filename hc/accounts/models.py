@@ -110,7 +110,7 @@ class Profile(models.Model):
         path = reverse("hc-unsubscribe-reports", args=[signed_username])
         return settings.SITE_ROOT + path
 
-    def prepare_token(self):
+    def prepare_token(self) -> str:
         token = token_urlsafe(24)
         # Store a hashed transformation of the login token
         self.token = make_password(token, "login")
@@ -196,7 +196,7 @@ class Profile(models.Model):
 
         return Check.objects.filter(project__in=self.projects())
 
-    def send_report(self, nag=False):
+    def send_report(self, nag: bool = False) -> bool:
         checks = self.checks_from_all_projects()
 
         # Has there been a ping in last 6 months?
@@ -313,7 +313,7 @@ class Profile(models.Model):
     def can_accept(self, project):
         return project.num_checks() <= self.num_checks_available()
 
-    def update_next_nag_date(self):
+    def update_next_nag_date(self) -> None:
         any_down = self.checks_from_all_projects().filter(status="down").exists()
         if any_down and self.next_nag_date is None and self.nag_period:
             self.next_nag_date = now() + self.nag_period

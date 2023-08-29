@@ -9,13 +9,13 @@ from hc.test import BaseTestCase
 
 
 class SudoModeTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.c = Credential.objects.create(user=self.alice, name="Alices Key")
         self.url = "/accounts/set_password/"
 
-    def test_it_sends_code(self):
+    def test_it_sends_code(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get(self.url)
@@ -28,7 +28,7 @@ class SudoModeTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertIn("Confirmation code", email.subject)
 
-    def test_it_accepts_code(self):
+    def test_it_accepts_code(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -41,7 +41,7 @@ class SudoModeTestCase(BaseTestCase):
         # sudo mode should now be active
         self.assertIn("sudo", self.client.session)
 
-    def test_it_rejects_incorrect_code(self):
+    def test_it_rejects_incorrect_code(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -54,7 +54,7 @@ class SudoModeTestCase(BaseTestCase):
         # sudo mode should *not* be active
         self.assertNotIn("sudo", self.client.session)
 
-    def test_it_passes_through_if_sudo_mode_is_active(self):
+    def test_it_passes_through_if_sudo_mode_is_active(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -64,7 +64,7 @@ class SudoModeTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Please pick a password")
 
-    def test_it_uses_rate_limiting(self):
+    def test_it_uses_rate_limiting(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         obj = TokenBucket(value=f"sudo-{self.alice.id}")

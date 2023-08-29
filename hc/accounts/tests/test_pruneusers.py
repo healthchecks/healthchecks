@@ -15,7 +15,7 @@ from hc.test import BaseTestCase
 class PruneUsersTestCase(BaseTestCase):
     year_ago = now() - td(days=365)
 
-    def test_it_removes_old_never_logged_in_users(self):
+    def test_it_removes_old_never_logged_in_users(self) -> None:
         self.charlie.date_joined = self.year_ago
         self.charlie.save()
 
@@ -28,7 +28,7 @@ class PruneUsersTestCase(BaseTestCase):
         self.assertEqual(User.objects.filter(username="charlie").count(), 0)
         self.assertEqual(Check.objects.count(), 0)
 
-    def test_it_leaves_team_members_alone(self):
+    def test_it_leaves_team_members_alone(self) -> None:
         self.bob.date_joined = self.year_ago
         self.bob.last_login = self.year_ago
         self.bob.save()

@@ -13,7 +13,7 @@ from hc.api.models import Channel, Check, TokenBucket
 @override_settings(REGISTRATION_OPEN=True)
 class SignupTestCase(TestCase):
     @override_settings(USE_PAYMENTS=False, SESSION_COOKIE_SECURE=False)
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         form = {"identity": "alice@example.org", "tz": "Europe/Riga"}
 
         r = self.client.post("/accounts/signup/", form)
@@ -55,12 +55,12 @@ class SignupTestCase(TestCase):
         self.assertEqual(channel.project, project)
 
     @override_settings(SESSION_COOKIE_SECURE=True)
-    def test_it_sets_secure_autologin_cookie(self):
+    def test_it_sets_secure_autologin_cookie(self) -> None:
         form = {"identity": "alice@example.org", "tz": "Europe/Riga"}
         r = self.client.post("/accounts/signup/", form)
         self.assertTrue(r.cookies["auto-login"]["secure"])
 
-    def test_it_requires_unauthenticated_user(self):
+    def test_it_requires_unauthenticated_user(self) -> None:
         self.alice = User(username="alice", email="alice@example.org")
         self.alice.set_password("password")
         self.alice.save()
@@ -71,7 +71,7 @@ class SignupTestCase(TestCase):
         self.assertEqual(r.status_code, 403)
 
     @override_settings(USE_PAYMENTS=True)
-    def test_it_sets_limits(self):
+    def test_it_sets_limits(self) -> None:
         form = {"identity": "alice@example.org", "tz": ""}
 
         self.client.post("/accounts/signup/", form)
@@ -82,13 +82,13 @@ class SignupTestCase(TestCase):
         self.assertEqual(profile.call_limit, 0)
 
     @override_settings(REGISTRATION_OPEN=False)
-    def test_it_obeys_registration_open(self):
+    def test_it_obeys_registration_open(self) -> None:
         form = {"identity": "dan@example.org", "tz": ""}
 
         r = self.client.post("/accounts/signup/", form)
         self.assertEqual(r.status_code, 403)
 
-    def test_it_ignores_case(self):
+    def test_it_ignores_case(self) -> None:
         form = {"identity": "ALICE@EXAMPLE.ORG", "tz": ""}
         self.client.post("/accounts/signup/", form)
 
@@ -96,7 +96,7 @@ class SignupTestCase(TestCase):
         q = User.objects.filter(email="alice@example.org")
         self.assertTrue(q.exists)
 
-    def test_it_handles_existing_users(self):
+    def test_it_handles_existing_users(self) -> None:
         alice = User(username="alice", email="alice@example.org")
         alice.save()
 
@@ -109,12 +109,12 @@ class SignupTestCase(TestCase):
         # It should not send an email
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_checks_syntax(self):
+    def test_it_checks_syntax(self) -> None:
         form = {"identity": "alice at example org", "tz": ""}
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "Enter a valid email address")
 
-    def test_it_checks_length(self):
+    def test_it_checks_length(self) -> None:
         aaa = "a" * 300
         form = {"identity": f"alice+{aaa}@example.org", "tz": ""}
         r = self.client.post("/accounts/signup/", form)
@@ -123,7 +123,7 @@ class SignupTestCase(TestCase):
         self.assertFalse(User.objects.exists())
 
     @override_settings(USE_PAYMENTS=False)
-    def test_it_ignores_bad_tz(self):
+    def test_it_ignores_bad_tz(self) -> None:
         form = {"identity": "alice@example.org", "tz": "Foo/Bar"}
 
         r = self.client.post("/accounts/signup/", form)
@@ -132,7 +132,7 @@ class SignupTestCase(TestCase):
         profile = Profile.objects.get()
         self.assertEqual(profile.tz, "UTC")
 
-    def test_it_rate_limits_client_ips(self):
+    def test_it_rate_limits_client_ips(self) -> None:
         obj = TokenBucket(value="auth-ip-127.0.0.1")
         obj.tokens = 0
         obj.save()
@@ -141,7 +141,7 @@ class SignupTestCase(TestCase):
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "please try later")
 
-    def test_rate_limiter_uses_x_forwarded_for(self):
+    def test_rate_limiter_uses_x_forwarded_for(self) -> None:
         obj = TokenBucket(value="auth-ip-127.0.0.2")
         obj.tokens = 0
         obj.save()

@@ -20,7 +20,7 @@ _client = None
 logger = logging.getLogger(__name__)
 
 
-def client():
+def client() -> Minio:
     if not settings.S3_BUCKET:
         raise Exception("Object storage is not configured")
 
@@ -41,7 +41,7 @@ ASCII_J = ord("j")
 ASCII_Z = ord("z")
 
 
-def enc(n):
+def enc(n: int) -> str:
     """Generate an object key in the "<sorting prefix>-<n>" form.
 
     >>> [enc(i) for i in range(0, 5)]
@@ -94,7 +94,7 @@ def get_object(code, n):
             response.release_conn()
 
 
-def put_object(code, n, data):
+def put_object(code, n: int, data: bytes) -> None:
     key = "%s/%s" % (code, enc(n))
     retries = 10
     while True:

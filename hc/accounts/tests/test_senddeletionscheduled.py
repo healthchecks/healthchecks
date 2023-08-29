@@ -14,14 +14,14 @@ from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
 
-def counts(result):
+def counts(result: str) -> list[int]:
     """Extract integer values from command's return value."""
     return [int(s) for s in re.findall(r"\d+", result)]
 
 
 @override_settings(SITE_NAME="Mychecks")
 class SendDeletionScheduledTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.channel = Channel(project=self.project, kind="email")
@@ -29,7 +29,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.channel.email_verified = True
         self.channel.save()
 
-    def test_it_sends_notice(self):
+    def test_it_sends_notice(self) -> None:
         self.profile.deletion_scheduled_date = now() + td(days=31)
         self.profile.save()
 
@@ -48,7 +48,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.assertIn("Owner: alice@example.org", email.body)
         self.assertIn("Number of checks in the account: 2", email.body)
 
-    def test_it_sends_notice_to_team_members(self):
+    def test_it_sends_notice_to_team_members(self) -> None:
         self.profile.deletion_scheduled_date = now() + td(days=31)
         self.profile.save()
 
@@ -63,7 +63,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
 
         self.assertEqual(mail.outbox[0].to, ["alice@example.org", "bob@example.org"])
 
-    def test_it_skips_profiles_with_deletion_scheduled_date_not_set(self):
+    def test_it_skips_profiles_with_deletion_scheduled_date_not_set(self) -> None:
         cmd = Command(stdout=Mock())
         cmd.pause = Mock()  # don't pause for 1s
 
@@ -71,7 +71,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.assertEqual(counts(result), [0])
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_skips_profiles_with_deletion_scheduled_date_in_past(self):
+    def test_it_skips_profiles_with_deletion_scheduled_date_in_past(self) -> None:
         self.profile.deletion_scheduled_date = now() - td(minutes=1)
         self.profile.save()
 
@@ -82,7 +82,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.assertEqual(counts(result), [0])
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_avoids_duplicate_recipients(self):
+    def test_it_avoids_duplicate_recipients(self) -> None:
         self.profile.deletion_scheduled_date = now() + td(days=31)
         self.profile.save()
 
@@ -101,7 +101,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         # Bob should be listed as a recipient a single time, despite two memberships:
         self.assertEqual(mail.outbox[0].to, ["alice@example.org", "bob@example.org"])
 
-    def test_it_notifies_channel(self):
+    def test_it_notifies_channel(self) -> None:
         self.profile.deletion_scheduled_date = now() + td(days=5)
         self.profile.save()
 
@@ -113,7 +113,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         s = "DOWN | Mychecks Account Deletion"
         self.assertTrue(mail.outbox[1].subject.startswith(s))
 
-    def test_it_does_not_notify_channels_if_more_than_14_days_left(self):
+    def test_it_does_not_notify_channels_if_more_than_14_days_left(self) -> None:
         self.profile.deletion_scheduled_date = now() + td(days=15, minutes=1)
         self.profile.save()
 
@@ -123,7 +123,7 @@ class SendDeletionScheduledTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 1)
 
-    def test_it_skips_email_channels_of_team_members(self):
+    def test_it_skips_email_channels_of_team_members(self) -> None:
         self.profile.deletion_scheduled_date = now() + td(days=5)
         self.profile.save()
 

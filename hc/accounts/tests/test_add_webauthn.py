@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 
@@ -10,26 +10,26 @@ from hc.test import BaseTestCase
 
 @override_settings(RP_ID="testserver")
 class AddWebauthnTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.url = "/accounts/two_factor/webauthn/"
 
-    def test_it_requires_sudo_mode(self):
+    def test_it_requires_sudo_mode(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get(self.url)
         self.assertContains(r, "We have sent a confirmation code")
 
     @override_settings(RP_ID=None)
-    def test_it_requires_rp_id(self):
+    def test_it_requires_rp_id(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_shows_form(self):
+    def test_it_shows_form(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
@@ -40,7 +40,7 @@ class AddWebauthnTestCase(BaseTestCase):
         self.assertIn("state", self.client.session)
 
     @patch("hc.accounts.views.CreateHelper.verify")
-    def test_it_adds_credential(self, mock_verify):
+    def test_it_adds_credential(self, mock_verify: Mock) -> None:
         mock_verify.return_value = b"dummy-credential-data"
 
         self.client.login(username="alice@example.org", password="password")
@@ -61,7 +61,7 @@ class AddWebauthnTestCase(BaseTestCase):
         # state should have been removed from the session
         self.assertNotIn("state", self.client.session)
 
-    def test_it_handles_bad_response_json(self):
+    def test_it_handles_bad_response_json(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 
@@ -74,7 +74,7 @@ class AddWebauthnTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     @patch("hc.accounts.views.CreateHelper.verify")
-    def test_it_handles_verification_failure(self, mock_verify):
+    def test_it_handles_verification_failure(self, mock_verify: Mock) -> None:
         mock_verify.return_value = None
 
         self.client.login(username="alice@example.org", password="password")

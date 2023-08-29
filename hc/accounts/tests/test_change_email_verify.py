@@ -10,14 +10,14 @@ from hc.test import BaseTestCase
 
 
 class ChangeEmailVerifyTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.profile.token = make_password("secret-token", "login")
         self.profile.save()
 
         self.checks_url = f"/projects/{self.project.code}/checks/"
 
-    def _url(self, expired=False):
+    def _url(self, expired: bool = False) -> str:
         payload = {
             "u": self.alice.username,
             "t": TimestampSigner().sign("secret-token"),
@@ -33,7 +33,7 @@ class ChangeEmailVerifyTestCase(BaseTestCase):
 
         return f"/accounts/change_email/{signed}/"
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         r = self.client.post(self._url())
         self.assertRedirects(r, self.checks_url)
 
@@ -46,7 +46,7 @@ class ChangeEmailVerifyTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.token, "")
 
-    def test_it_handles_get(self):
+    def test_it_handles_get(self) -> None:
         r = self.client.get(self._url())
         self.assertContains(r, "You are about to log into")
 
@@ -54,20 +54,20 @@ class ChangeEmailVerifyTestCase(BaseTestCase):
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.email, "alice@example.org")
 
-    def test_it_handles_get_with_cookie(self):
+    def test_it_handles_get_with_cookie(self) -> None:
         self.client.cookies["auto-login"] = "1"
         r = self.client.get(self._url())
         self.assertRedirects(r, self.checks_url)
 
-    def test_it_handles_expired_link(self):
+    def test_it_handles_expired_link(self) -> None:
         r = self.client.post(self._url(expired=True))
         self.assertContains(r, "The link you just used is incorrect.")
 
-    def test_it_handles_bad_payload(self):
+    def test_it_handles_bad_payload(self) -> None:
         r = self.client.post("/accounts/change_email/bad-payload/")
         self.assertContains(r, "The link you just used is incorrect.")
 
-    def test_it_handles_unavailable_email(self):
+    def test_it_handles_unavailable_email(self) -> None:
         # Make the target address unavailable
         User.objects.create(email="alice+new@example.org")
 

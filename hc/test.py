@@ -8,7 +8,7 @@ from hc.accounts.models import Member, Profile, Project
 
 
 class BaseTestCase(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.csrf_client = Client(enforce_csrf_checks=True)
@@ -58,7 +58,7 @@ class BaseTestCase(TestCase):
 
         self.channels_url = "/projects/%s/integrations/" % self.project.code
 
-    def set_sudo_flag(self):
+    def set_sudo_flag(self) -> None:
         session = self.client.session
         session["sudo"] = TimestampSigner().sign("active")
         session.save()
