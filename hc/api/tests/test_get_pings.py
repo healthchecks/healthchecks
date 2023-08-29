@@ -6,7 +6,7 @@ from datetime import timezone
 from uuid import uuid4
 
 from hc.api.models import Check, Ping
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 EPOCH = datetime(2020, 1, 1, tzinfo=timezone.utc)
 
@@ -34,7 +34,7 @@ class GetPingsTestCase(BaseTestCase):
 
         self.url = "/api/v1/checks/%s/pings/" % self.a1.code
 
-    def get(self, api_key: str = "X" * 32):
+    def get(self, api_key: str = "X" * 32) -> TestHttpResponse:
         return self.csrf_client.get(self.url, HTTP_X_API_KEY=api_key)
 
     def test_it_works(self) -> None:

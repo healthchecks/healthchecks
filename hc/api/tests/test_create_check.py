@@ -5,7 +5,7 @@ from datetime import timedelta as td
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 
 class CreateCheckTestCase(BaseTestCase):
@@ -16,7 +16,7 @@ class CreateCheckTestCase(BaseTestCase):
         data: dict[str, str | int | bool | list[str]],
         expect_fragment: str | None = None,
         v: int = 1,
-    ):
+    ) -> TestHttpResponse:
         if "api_key" not in data:
             data["api_key"] = "X" * 32
 
@@ -43,7 +43,6 @@ class CreateCheckTestCase(BaseTestCase):
                 "filter_body": True,
             }
         )
-
         self.assertEqual(r.status_code, 201)
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
@@ -87,7 +86,6 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_30_days_works(self) -> None:
         r = self.post({"name": "Foo", "timeout": 2592000, "grace": 2592000})
-
         self.assertEqual(r.status_code, 201)
 
         check = Check.objects.get()
@@ -106,8 +104,8 @@ class CreateCheckTestCase(BaseTestCase):
         channel = Channel.objects.create(project=self.project)
 
         r = self.post({"channels": "*"})
-
         self.assertEqual(r.status_code, 201)
+
         check = Check.objects.get()
         self.assertEqual(check.channel_set.get(), channel)
 
@@ -145,7 +143,6 @@ class CreateCheckTestCase(BaseTestCase):
         Channel.objects.create(project=self.project, name="foo")
 
         r = self.post({"channels": "foo"})
-
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "non-unique channel identifier: foo")
 
@@ -166,7 +163,6 @@ class CreateCheckTestCase(BaseTestCase):
         check = Check.objects.create(project=self.project, name="Foo")
 
         r = self.post({"name": "Foo", "tags": "bar", "unique": ["name"]})
-
         # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
@@ -181,7 +177,6 @@ class CreateCheckTestCase(BaseTestCase):
         check = Check.objects.create(project=self.project, slug="foo")
 
         r = self.post({"slug": "foo", "tags": "bar", "unique": ["slug"]})
-
         # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
@@ -196,7 +191,6 @@ class CreateCheckTestCase(BaseTestCase):
         Check.objects.create(project=self.project, tags="foo")
 
         r = self.post({"tags": "foo", "unique": ["tags"]})
-
         # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
@@ -207,7 +201,6 @@ class CreateCheckTestCase(BaseTestCase):
         Check.objects.create(project=self.project, timeout=td(seconds=123))
 
         r = self.post({"timeout": 123, "unique": ["timeout"]})
-
         # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
@@ -218,7 +211,6 @@ class CreateCheckTestCase(BaseTestCase):
         Check.objects.create(project=self.project, grace=td(seconds=123))
 
         r = self.post({"grace": 123, "unique": ["grace"]})
-
         # Expect 200 instead of 201
         self.assertEqual(r.status_code, 200)
 
@@ -229,7 +221,6 @@ class CreateCheckTestCase(BaseTestCase):
         check = Check.objects.create(project=self.project)
 
         r = self.post({"name": "Hello", "unique": []})
-
         # Expect 201
         self.assertEqual(r.status_code, 201)
 
@@ -282,7 +273,6 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_supports_cron_syntax(self) -> None:
         r = self.post({"schedule": "5 * * * *", "tz": "Europe/Riga", "grace": 60})
-
         self.assertEqual(r.status_code, 201)
 
         doc = r.json()
@@ -330,13 +320,12 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_non_boolean_manual_resume(self) -> None:
         r = self.post({"manual_resume": "surprise"})
-
         self.assertEqual(r.status_code, 400)
 
     def test_it_sets_methods(self) -> None:
         r = self.post({"methods": "POST"})
-
         self.assertEqual(r.status_code, 201)
+
         check = Check.objects.get()
         self.assertEqual(check.methods, "POST")
 

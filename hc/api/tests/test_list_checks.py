@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 
 class ListChecksTestCase(BaseTestCase):
@@ -36,7 +36,7 @@ class ListChecksTestCase(BaseTestCase):
         self.c1 = Channel.objects.create(project=self.project)
         self.a1.channel_set.add(self.c1)
 
-    def get(self, v: int = 1):
+    def get(self, v: int = 1) -> TestHttpResponse:
         return self.client.get(f"/api/v{v}/checks/", HTTP_X_API_KEY="X" * 32)
 
     def test_it_works(self) -> None:

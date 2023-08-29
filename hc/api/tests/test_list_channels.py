@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from hc.api.models import Channel
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 
 class ListChannelsTestCase(BaseTestCase):
@@ -15,7 +15,7 @@ class ListChannelsTestCase(BaseTestCase):
 
         self.url = "/api/v1/channels/"
 
-    def get(self):
+    def get(self) -> TestHttpResponse:
         return self.client.get(self.url, HTTP_X_API_KEY="X" * 32)
 
     def test_it_works(self) -> None:

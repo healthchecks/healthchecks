@@ -6,7 +6,7 @@ from uuid import UUID
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 
 class GetCheckTestCase(BaseTestCase):
@@ -33,7 +33,9 @@ class GetCheckTestCase(BaseTestCase):
         self.c1 = Channel.objects.create(project=self.project)
         self.a1.channel_set.add(self.c1)
 
-    def get(self, code: UUID | str, api_key: str = "X" * 32, v: int = 1):
+    def get(
+        self, code: UUID | str, api_key: str = "X" * 32, v: int = 1
+    ) -> TestHttpResponse:
         url = f"/api/v{v}/checks/{code}"
         return self.client.get(url, HTTP_X_API_KEY=api_key)
 

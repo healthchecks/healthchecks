@@ -1,10 +1,22 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner
 from django.test import Client, TestCase
 
 from hc.accounts.models import Member, Profile, Project
+
+if TYPE_CHECKING:
+    # _MonkeyPatchedWSGIResponse is defined in django-stubs,
+    # we import with a "TestHttpResponse" alias.
+    # We list it in __all__ so subclasses can import and use it.
+    from django.test.client import _MonkeyPatchedWSGIResponse as TestHttpResponse
+else:
+    from django.http import HttpResponse as TestHttpResponse
+
+__all__ = ["BaseTestCase", "TestHttpResponse"]
 
 
 class BaseTestCase(TestCase):

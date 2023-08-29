@@ -6,7 +6,7 @@ from datetime import timedelta as td
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 
 class UpdateCheckTestCase(BaseTestCase):
@@ -14,9 +14,17 @@ class UpdateCheckTestCase(BaseTestCase):
         super().setUp()
         self.check = Check.objects.create(project=self.project)
 
-    def post(self, code: uuid.UUID | str, data, v: int = 1):
+    def post(
+        self,
+        code: uuid.UUID | str,
+        data: dict[str, str | int | bool | list[str] | None],
+        v: int = 1,
+        api_key: str = "X" * 32,
+    ) -> TestHttpResponse:
         url = f"/api/v{v}/checks/{code}"
-        return self.csrf_client.post(url, data, content_type="application/json")
+        return self.csrf_client.post(
+            url, data, content_type="application/json", HTTP_X_API_KEY=api_key
+        )
 
     def test_it_works(self) -> None:
         self.check.last_ping = now()
@@ -26,7 +34,6 @@ class UpdateCheckTestCase(BaseTestCase):
         r = self.post(
             self.check.code,
             {
-                "api_key": "X" * 32,
                 "name": "Foo",
                 "tags": "bar,baz",
                 "desc": "My description",
@@ -70,25 +77,25 @@ class UpdateCheckTestCase(BaseTestCase):
         Channel.objects.create(project=self.project)
         self.check.assign_all_channels()
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": ""})
-
+        r = self.post(self.check.code, {"channels": ""})
         self.assertEqual(r.status_code, 200)
+
         check = Check.objects.get()
         self.assertEqual(check.channel_set.count(), 0)
 
     def test_it_handles_invalid_uuid(self) -> None:
-        r = self.post("not-an-uuid", {"api_key": "X" * 32})
+        r = self.post("not-an-uuid", {})
         self.assertEqual(r.status_code, 404)
 
     def test_it_handles_missing_check(self) -> None:
         made_up_code = "07c2f548-9850-4b27-af5d-6c9dc157ec02"
-        r = self.post(made_up_code, {"api_key": "X" * 32})
+        r = self.post(made_up_code, {})
         self.assertEqual(r.status_code, 404)
 
     def test_it_validates_ownership(self) -> None:
         check = Check.objects.create(project=self.bobs_project, status="up")
 
-        r = self.post(check.code, {"api_key": "X" * 32})
+        r = self.post(check.code, {})
         self.assertEqual(r.status_code, 403)
 
     def test_it_updates_cron_to_simple(self) -> None:
@@ -96,7 +103,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.schedule = "5 * * * *"
         self.check.save()
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "timeout": 3600})
+        r = self.post(self.check.code, {"timeout": 3600})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -108,10 +115,7 @@ class UpdateCheckTestCase(BaseTestCase):
         # gets assigned:
         Channel.objects.create(project=self.project)
 
-        r = self.post(
-            self.check.code, {"api_key": "X" * 32, "channels": str(channel.code)}
-        )
-
+        r = self.post(self.check.code, {"channels": str(channel.code)})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -120,8 +124,8 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_sets_the_channel_only_once(self) -> None:
         channel = Channel.objects.create(project=self.project)
-        duplicates = "%s,%s" % (channel.code, channel.code)
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": duplicates})
+        duplicates = f"{channel.code},{channel.code}"
+        r = self.post(self.check.code, {"channels": duplicates})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -130,8 +134,7 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_sets_channel_by_name(self) -> None:
         channel = Channel.objects.create(project=self.project, name="alerts")
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "alerts"})
-
+        r = self.post(self.check.code, {"channels": "alerts"})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -142,7 +145,7 @@ class UpdateCheckTestCase(BaseTestCase):
         name = "102eaa82-a274-4b15-a499-c1bb6bbcd7b6"
         channel = Channel.objects.create(project=self.project, name=name)
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": name})
+        r = self.post(self.check.code, {"channels": name})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -152,11 +155,7 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_handles_comma_separated_channel_codes(self) -> None:
         c1 = Channel.objects.create(project=self.project)
         c2 = Channel.objects.create(project=self.project)
-        r = self.post(
-            self.check.code,
-            {"api_key": "X" * 32, "channels": "%s,%s" % (c1.code, c2.code)},
-        )
-
+        r = self.post(self.check.code, {"channels": "%s,%s" % (c1.code, c2.code)})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -165,8 +164,7 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_handles_asterix(self) -> None:
         Channel.objects.create(project=self.project)
         Channel.objects.create(project=self.project)
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "*"})
-
+        r = self.post(self.check.code, {"channels": "*"})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -176,17 +174,14 @@ class UpdateCheckTestCase(BaseTestCase):
         Channel.objects.create(project=self.project)
         self.check.assign_all_channels()
 
-        r = self.post(self.check.code, {"api_key": "X" * 32})
+        r = self.post(self.check.code, {})
         self.assertEqual(r.status_code, 200)
+
         check = Check.objects.get()
         self.assertEqual(check.channel_set.count(), 1)
 
     def test_it_rejects_bad_channel_code(self) -> None:
-        payload = {"api_key": "X" * 32, "channels": "abc", "name": "New Name"}
-        r = self.post(
-            self.check.code,
-            payload,
-        )
+        r = self.post(self.check.code, {"channels": "abc", "name": "New Name"})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
 
@@ -196,8 +191,7 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_missing_channel(self) -> None:
         code = str(uuid.uuid4())
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": code})
-
+        r = self.post(self.check.code, {"channels": code})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: " + code)
 
@@ -206,10 +200,9 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_channel_from_another_project(self) -> None:
         charlies_channel = Channel.objects.create(project=self.charlies_project)
-
         code = str(charlies_channel.code)
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": code})
 
+        r = self.post(self.check.code, {"channels": code})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: " + code)
 
@@ -217,8 +210,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 0)
 
     def test_it_handles_channel_lookup_by_name_with_no_results(self) -> None:
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "foo"})
-
+        r = self.post(self.check.code, {"channels": "foo"})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "invalid channel identifier: foo")
 
@@ -229,8 +221,7 @@ class UpdateCheckTestCase(BaseTestCase):
         Channel.objects.create(project=self.project, name="foo")
         Channel.objects.create(project=self.project, name="foo")
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": "foo"})
-
+        r = self.post(self.check.code, {"channels": "foo"})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "non-unique channel identifier: foo")
 
@@ -240,7 +231,7 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_rejects_multiple_empty_channel_names(self) -> None:
         Channel.objects.create(project=self.project, name="")
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": ","})
+        r = self.post(self.check.code, {"channels": ","})
         self.assertEqual(r.status_code, 400)
         self.assertEqual(r.json()["error"], "empty channel identifier")
 
@@ -248,13 +239,11 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 0)
 
     def test_it_rejects_non_string_channels_key(self) -> None:
-        r = self.post(self.check.code, {"api_key": "X" * 32, "channels": None})
-
+        r = self.post(self.check.code, {"channels": None})
         self.assertEqual(r.status_code, 400)
 
     def test_it_rejects_non_string_desc(self) -> None:
-        r = self.post(self.check.code, {"api_key": "X" * 32, "desc": 123})
-
+        r = self.post(self.check.code, {"desc": 123})
         self.assertEqual(r.status_code, 400)
 
     def test_it_validates_cron_expression(self) -> None:
@@ -264,8 +253,8 @@ class UpdateCheckTestCase(BaseTestCase):
 
         samples = ["* invalid *", "1,2 61 * * *", "0 0 31 2 *"]
         for sample in samples:
-            r = self.post(self.check.code, {"api_key": "X" * 32, "schedule": sample})
-            self.assertEqual(r.status_code, 400, "Did not reject '%s'" % sample)
+            r = self.post(self.check.code, {"schedule": sample})
+            self.assertEqual(r.status_code, 400, f"Did not reject '{sample}'")
 
         # Schedule should be unchanged
         self.check.refresh_from_db()
@@ -275,11 +264,11 @@ class UpdateCheckTestCase(BaseTestCase):
         self.project.api_key_readonly = "R" * 32
         self.project.save()
 
-        r = self.post(self.check.code, {"api_key": "R" * 32, "name": "Foo"})
+        r = self.post(self.check.code, {"name": "Foo"}, api_key="R" * 32)
         self.assertEqual(r.status_code, 401)
 
     def test_it_sets_manual_resume_to_true(self) -> None:
-        r = self.post(self.check.code, {"api_key": "X" * 32, "manual_resume": True})
+        r = self.post(self.check.code, {"manual_resume": True})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -289,14 +278,14 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.manual_resume = True
         self.check.save()
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "manual_resume": False})
+        r = self.post(self.check.code, {"manual_resume": False})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
         self.assertFalse(self.check.manual_resume)
 
     def test_it_sets_methods(self) -> None:
-        r = self.post(self.check.code, {"api_key": "X" * 32, "methods": "POST"})
+        r = self.post(self.check.code, {"methods": "POST"})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -307,7 +296,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.save()
 
         # Client supplies an empty string: we should save it
-        r = self.post(self.check.code, {"api_key": "X" * 32, "methods": ""})
+        r = self.post(self.check.code, {"methods": ""})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -318,20 +307,18 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.save()
 
         # Client omits the methods key: we should leave it unchanged
-        r = self.post(self.check.code, {"api_key": "X" * 32})
+        r = self.post(self.check.code, {})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.methods, "POST")
 
     def test_it_rejects_bad_methods_value(self) -> None:
-        r = self.post(self.check.code, {"api_key": "X" * 32, "methods": "bad-value"})
+        r = self.post(self.check.code, {"methods": "bad-value"})
         self.assertEqual(r.status_code, 400)
 
     def test_it_sets_success_kw(self) -> None:
-        r = self.post(
-            self.check.code, {"api_key": "X" * 32, "subject": "SUCCESS,COMPLETE"}
-        )
+        r = self.post(self.check.code, {"subject": "SUCCESS,COMPLETE"})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -339,8 +326,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.success_kw, "SUCCESS,COMPLETE")
 
     def test_it_sets_failure_kw(self) -> None:
-        payload = {"api_key": "X" * 32, "subject_fail": "FAILED,FAILURE"}
-        r = self.post(self.check.code, payload)
+        r = self.post(self.check.code, {"subject_fail": "FAILED,FAILURE"})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -352,7 +338,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.success_kw = "SUCCESS"
         self.check.save()
 
-        r = self.post(self.check.code, {"api_key": "X" * 32, "subject": ""})
+        r = self.post(self.check.code, {"subject": ""})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -360,21 +346,18 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.success_kw, "")
 
     def test_it_accepts_60_days_timeout(self) -> None:
-        payload = {"api_key": "X" * 32, "timeout": 60 * 24 * 3600}
-        r = self.post(self.check.code, payload)
+        r = self.post(self.check.code, {"timeout": 60 * 24 * 3600})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.timeout.total_seconds(), 60 * 24 * 3600)
 
     def test_it_rejects_out_of_range_timeout(self) -> None:
-        payload = {"api_key": "X" * 32, "timeout": 500 * 24 * 3600}
-        r = self.post(self.check.code, payload)
+        r = self.post(self.check.code, {"timeout": 500 * 24 * 3600})
         self.assertEqual(r.status_code, 400)
 
     def test_it_prioritizes_filter_subject_field(self) -> None:
-        payload = {"api_key": "X" * 32, "subject": "SUCCESS", "filter_subject": False}
-        r = self.post(self.check.code, payload)
+        r = self.post(self.check.code, {"subject": "SUCCESS", "filter_subject": False})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -385,7 +368,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.last_start = now()
         self.check.save()
 
-        r = self.post(self.check.code, {"api_key": "X" * 32})
+        r = self.post(self.check.code, {})
         doc = r.json()
         self.assertEqual(doc["status"], "started")
         self.assertTrue(doc["started"])
@@ -394,14 +377,13 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.last_start = now()
         self.check.save()
 
-        r = self.post(self.check.code, {"api_key": "X" * 32}, v=2)
+        r = self.post(self.check.code, {}, v=2)
         doc = r.json()
         self.assertEqual(doc["status"], "new")
         self.assertTrue(doc["started"])
 
     def test_v3_saves_slug(self) -> None:
-        payload = {"slug": "updated-slug", "api_key": "X" * 32}
-        r = self.post(self.check.code, payload, v=3)
+        r = self.post(self.check.code, {"slug": "updated-slug"}, v=3)
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
@@ -411,8 +393,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.slug = "foo"
         self.check.save()
 
-        payload = {"name": "Bar", "api_key": "X" * 32}
-        r = self.post(self.check.code, payload, v=3)
+        r = self.post(self.check.code, {"name": "Bar"}, v=3)
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()

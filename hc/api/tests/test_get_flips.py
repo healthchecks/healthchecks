@@ -5,7 +5,7 @@ from datetime import timedelta as td
 from datetime import timezone
 
 from hc.api.models import Check, Flip
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 
 class GetFlipsTestCase(BaseTestCase):
@@ -30,7 +30,7 @@ class GetFlipsTestCase(BaseTestCase):
 
         self.url = f"/api/v1/checks/{self.a1.code}/flips/"
 
-    def get(self, api_key: str = "X" * 32, qs: str = ""):
+    def get(self, api_key: str = "X" * 32, qs: str = "") -> TestHttpResponse:
         return self.client.get(self.url + qs, HTTP_X_API_KEY=api_key)
 
     def test_it_works(self) -> None:
