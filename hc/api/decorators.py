@@ -106,10 +106,10 @@ def validate_json(schema={"type": "object"}):
     return decorator
 
 
-def cors(*methods):
-    methods = set(methods)
-    methods.add("OPTIONS")
-    methods_str = ", ".join(methods)
+def cors(*methods: str):
+    methods_set = set(methods)
+    methods_set.add("OPTIONS")
+    methods_str = ", ".join(methods_set)
 
     def decorator(f):
         @wraps(f)

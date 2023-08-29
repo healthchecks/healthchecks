@@ -31,6 +31,11 @@ class FlipModelTestCase(BaseTestCase):
         channels = self.flip.select_channels()
         self.assertEqual(channels, [])
 
+    def test_select_channels_validates_new_status(self):
+        self.flip.new_status = "paused"
+        with self.assertRaises(NotImplementedError):
+            self.flip.select_channels()
+
     def test_send_alerts_handles_new_up_transition(self):
         self.flip.old_status = "new"
         self.flip.new_status = "up"

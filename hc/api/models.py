@@ -676,7 +676,7 @@ class Ping(models.Model):
         return None
 
 
-def json_property(kind, field):
+def json_property(kind: str, field: str) -> property:
     def fget(instance):
         assert instance.kind == kind
         return instance.json[field]
@@ -1119,7 +1119,7 @@ class Flip(models.Model):
             return []
 
         if self.new_status not in ("up", "down"):
-            raise NotImplementedError(f"Unexpected status: {self.status}")
+            raise NotImplementedError(f"Unexpected status: {self.new_status}")
 
         q = self.owner.channel_set.exclude(disabled=True)
         return [ch for ch in q if not ch.transport.is_noop(self.owner)]
@@ -1131,7 +1131,7 @@ class TokenBucket(models.Model):
     updated = models.DateTimeField(default=now)
 
     @staticmethod
-    def authorize(value, capacity, refill_time_secs):
+    def authorize(value: str, capacity: int, refill_time_secs: int) -> bool:
         frozen_now = now()
         obj, created = TokenBucket.objects.get_or_create(value=value)
 

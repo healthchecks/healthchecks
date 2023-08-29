@@ -7,7 +7,7 @@ uuid_match_regex = re.compile(
 )
 
 
-def replace(template, ctx):
+def replace(template: str, ctx: dict[str, str]) -> str:
     """Replace placeholders with their values and return the result.
 
     Example:

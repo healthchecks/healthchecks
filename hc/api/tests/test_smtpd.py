@@ -181,7 +181,8 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, "start")
 
     def test_it_handles_encoded_subject(self):
-        self.check.subject = "SUCCESS"
+        self.check.filter_subject = True
+        self.check.success_kw = "SUCCESS"
         self.check.save()
 
         body = PAYLOAD_TMPL % "=?US-ASCII?B?W1NVQ0NFU1NdIEJhY2t1cCBjb21wbGV0ZWQ=?="
