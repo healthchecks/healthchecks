@@ -10,7 +10,7 @@ from hc.test import BaseTestCase
 
 
 class EditEmailTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check.objects.create(project=self.project)
@@ -24,14 +24,14 @@ class EditEmailTestCase(BaseTestCase):
 
         self.url = f"/integrations/{self.channel.code}/edit/"
 
-    def test_it_shows_form(self):
+    def test_it_shows_form(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Get an email message when check goes up or down.")
         self.assertContains(r, "alerts@example.org")
         self.assertContains(r, "Email Settings")
 
-    def test_it_saves_changes(self):
+    def test_it_saves_changes(self) -> None:
         form = {"value": "new@example.org", "down": "true", "up": "false"}
 
         self.client.login(username="alice@example.org", password="password")
@@ -51,7 +51,7 @@ class EditEmailTestCase(BaseTestCase):
         # Make sure it does not call assign_all_checks
         self.assertFalse(self.channel.checks.exists())
 
-    def test_it_skips_verification_if_email_unchanged(self):
+    def test_it_skips_verification_if_email_unchanged(self) -> None:
         form = {"value": "alerts@example.org", "down": "false", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
@@ -66,7 +66,7 @@ class EditEmailTestCase(BaseTestCase):
         # The email address did not change, so we should skip verification
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_team_access_works(self):
+    def test_team_access_works(self) -> None:
         form = {"value": "new@example.org", "down": "true", "up": "true"}
 
         self.client.login(username="bob@example.org", password="password")
@@ -76,13 +76,13 @@ class EditEmailTestCase(BaseTestCase):
         self.assertEqual(self.channel.email_value, "new@example.org")
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
-    def test_it_hides_confirmation_needed_notice(self):
+    def test_it_hides_confirmation_needed_notice(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertNotContains(r, "Requires confirmation")
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
-    def test_it_auto_verifies_email(self):
+    def test_it_auto_verifies_email(self) -> None:
         form = {"value": "dan@example.org", "down": "true", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
@@ -95,7 +95,7 @@ class EditEmailTestCase(BaseTestCase):
         # Email should *not* have been sent
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_auto_verifies_own_email(self):
+    def test_it_auto_verifies_own_email(self) -> None:
         form = {"value": "alice@example.org", "down": "true", "up": "true"}
 
         self.client.login(username="alice@example.org", password="password")
@@ -108,7 +108,7 @@ class EditEmailTestCase(BaseTestCase):
         # Email should *not* have been sent
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_resets_disabled_flag(self):
+    def test_it_resets_disabled_flag(self) -> None:
         self.channel.disabled = True
         self.channel.save()
 
@@ -125,7 +125,7 @@ class EditEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertTrue(email.subject.startswith("Verify email address on"))
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 

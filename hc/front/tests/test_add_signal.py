@@ -8,18 +8,18 @@ from hc.test import BaseTestCase
 
 @override_settings(SIGNAL_CLI_SOCKET="/tmp/dummy-signal-cli-socket")
 class AddSignalTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.url = f"/projects/{self.project.code}/add_signal/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Add Signal Integration")
         self.assertContains(r, "Get a Signal message")
 
-    def test_it_creates_channel(self):
+    def test_it_creates_channel(self) -> None:
         form = {
             "label": "My Phone",
             "phone": "+1234567890",
@@ -43,12 +43,12 @@ class AddSignalTestCase(BaseTestCase):
         self.assertEqual(c.checks.count(), 1)
 
     @override_settings(SIGNAL_CLI_SOCKET=None)
-    def test_it_handles_disabled_integration(self):
+    def test_it_handles_disabled_integration(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -56,7 +56,7 @@ class AddSignalTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
 
-    def test_it_handles_down_false_up_true(self):
+    def test_it_handles_down_false_up_true(self) -> None:
         form = {"phone": "+1234567890", "up": True}
 
         self.client.login(username="alice@example.org", password="password")
@@ -66,7 +66,7 @@ class AddSignalTestCase(BaseTestCase):
         self.assertFalse(c.signal_notify_down)
         self.assertTrue(c.signal_notify_up)
 
-    def test_it_rejects_unchecked_up_and_down(self):
+    def test_it_rejects_unchecked_up_and_down(self) -> None:
         form = {"phone": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")

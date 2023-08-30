@@ -5,13 +5,13 @@ from hc.test import BaseTestCase
 
 
 class IndexTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.c1 = Check.objects.create(project=self.project)
         self.c2 = Check.objects.create(project=self.project)
         self.c3 = Check.objects.create(project=self.project)
 
-    def test_it_shows_projects(self):
+    def test_it_shows_projects(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/")
 
@@ -19,7 +19,7 @@ class IndexTestCase(BaseTestCase):
         self.assertContains(r, "3 checks")
         self.assertContains(r, "status ic-up")
 
-    def test_it_shows_overall_down_status(self):
+    def test_it_shows_overall_down_status(self) -> None:
         self.c1.status = "down"
         self.c1.save()
 

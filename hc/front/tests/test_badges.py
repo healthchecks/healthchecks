@@ -5,12 +5,12 @@ from hc.test import BaseTestCase
 
 
 class BadgesTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
-        self.url = "/projects/%s/badges/" % self.project.code
+        self.url = f"/projects/{self.project.code}/badges/"
 
-    def test_it_shows_badges(self):
+    def test_it_shows_badges(self) -> None:
         Check.objects.create(project=self.project, tags="foo a-B_1  baz@")
         Check.objects.create(project=self.bobs_project, tags="bobs-tag")
 
@@ -25,7 +25,7 @@ class BadgesTestCase(BaseTestCase):
         # Expect only Alice's tags
         self.assertNotContains(r, "bobs-tag.svg")
 
-    def test_it_uses_badge_key(self):
+    def test_it_uses_badge_key(self) -> None:
         Check.objects.create(project=self.project, tags="foo bar")
         Check.objects.create(project=self.bobs_project, tags="bobs-tag")
 
@@ -37,7 +37,7 @@ class BadgesTestCase(BaseTestCase):
         self.assertContains(r, "badge/alices-badge-key/")
         self.assertContains(r, "badge/alices-badge-key/")
 
-    def test_it_handles_special_characters_in_tags(self):
+    def test_it_handles_special_characters_in_tags(self) -> None:
         Check.objects.create(project=self.project, tags="db@dc1")
 
         self.client.login(username="alice@example.org", password="password")

@@ -5,7 +5,7 @@ from hc.test import BaseTestCase
 
 
 class CopyCheckTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check(project=self.project)
         self.check.name = "Foo"
@@ -19,9 +19,9 @@ class CopyCheckTestCase(BaseTestCase):
         self.check.manual_resume = True
         self.check.save()
 
-        self.copy_url = "/checks/%s/copy/" % self.check.code
+        self.copy_url = f"/checks/{self.check.code}/copy/"
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.copy_url, follow=True)
         self.assertContains(r, "This is a brand new check")
@@ -36,7 +36,7 @@ class CopyCheckTestCase(BaseTestCase):
         self.assertEqual(copy.methods, "POST")
         self.assertTrue(copy.manual_resume)
 
-    def test_it_obeys_limit(self):
+    def test_it_obeys_limit(self) -> None:
         self.profile.check_limit = 0
         self.profile.save()
 
@@ -44,7 +44,7 @@ class CopyCheckTestCase(BaseTestCase):
         r = self.client.post(self.copy_url)
         self.assertEqual(r.status_code, 400)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -52,7 +52,7 @@ class CopyCheckTestCase(BaseTestCase):
         r = self.client.post(self.copy_url)
         self.assertEqual(r.status_code, 403)
 
-    def test_it_handles_long_check_name(self):
+    def test_it_handles_long_check_name(self) -> None:
         self.check.name = "A" * 100
         self.check.save()
 

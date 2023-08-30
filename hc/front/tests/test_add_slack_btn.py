@@ -7,16 +7,16 @@ from hc.test import BaseTestCase
 
 @override_settings(SLACK_CLIENT_ID="fake-client-id")
 class AddSlackBtnTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
-        self.url = "/projects/%s/add_slack_btn/" % self.project.code
+        self.url = f"/projects/{self.project.code}/add_slack_btn/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Setup Guide", status_code=200)
 
-    def test_slack_button(self):
+    def test_slack_button(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "slack.com/oauth/v2/authorize", status_code=200)
@@ -25,12 +25,12 @@ class AddSlackBtnTestCase(BaseTestCase):
         self.assertTrue("add_slack" in self.client.session)
 
     @override_settings(SLACK_CLIENT_ID=None)
-    def test_it_requires_client_id(self):
+    def test_it_requires_client_id(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -39,7 +39,7 @@ class AddSlackBtnTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     @override_settings(SLACK_ENABLED=False)
-    def test_it_handles_disabled_integration(self):
+    def test_it_handles_disabled_integration(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)

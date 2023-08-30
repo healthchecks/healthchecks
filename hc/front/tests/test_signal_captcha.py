@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 
@@ -16,7 +16,7 @@ class MockSocket(object):
         self.req = None
         self.outbox = b""
 
-    def settimeout(self, seconds):
+    def settimeout(self, seconds: int) -> None:
         pass
 
     def connect(self, socket_path):
@@ -37,7 +37,7 @@ class MockSocket(object):
         return head
 
 
-def setup_mock(socket, response_tmpl):
+def setup_mock(socket: Mock, response_tmpl: dict[str, str]):
     # A mock of socket.socket object
     socketobj = MockSocket(response_tmpl)
 
@@ -50,7 +50,7 @@ def setup_mock(socket, response_tmpl):
 
 @override_settings(SIGNAL_CLI_SOCKET="/tmp/socket")
 class SignalCaptchaTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.alice.is_superuser = True
@@ -59,7 +59,7 @@ class SignalCaptchaTestCase(BaseTestCase):
         self.url = "/signal_captcha/"
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_works(self, socket):
+    def test_it_works(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {"result": "all good"})
 
         self.client.login(username="alice@example.org", password="password")
@@ -71,7 +71,7 @@ class SignalCaptchaTestCase(BaseTestCase):
         self.assertEqual(params["captcha"], "bar")
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_removes_protocol_prefix(self, socket):
+    def test_it_removes_protocol_prefix(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         self.client.login(username="alice@example.org", password="password")
@@ -82,7 +82,7 @@ class SignalCaptchaTestCase(BaseTestCase):
         params = socketobj.req["params"]
         self.assertEqual(params["captcha"], "bar")
 
-    def test_it_requires_superuser(self):
+    def test_it_requires_superuser(self) -> None:
         self.alice.is_superuser = False
         self.alice.save()
 
@@ -91,7 +91,7 @@ class SignalCaptchaTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_requires_signal_cli_socket(self, socket):
+    def test_it_requires_signal_cli_socket(self, socket: Mock) -> None:
         with override_settings(SIGNAL_CLI_SOCKET=None):
             self.client.login(username="alice@example.org", password="password")
             r = self.client.post(self.url, {"challenge": "foo", "captcha": "bar"})
@@ -100,7 +100,7 @@ class SignalCaptchaTestCase(BaseTestCase):
         socket.assert_not_called()
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_checks_jsonrpc_id(self, socket):
+    def test_it_checks_jsonrpc_id(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {"result": "all good"})
         # Add a message with an unexpected id in the outbox.
         # The socket reader should skip over it.

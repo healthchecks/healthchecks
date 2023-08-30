@@ -8,16 +8,16 @@ from hc.test import BaseTestCase
 
 @override_settings(TRELLO_APP_KEY="foo")
 class AddTrelloTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
-        self.url = "/projects/%s/add_trello/" % self.project.code
+        self.url = f"/projects/{self.project.code}/add_trello/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Trello")
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         form = {
             "token": "0" * 64,
             "board_name": "My Board",
@@ -34,7 +34,7 @@ class AddTrelloTestCase(BaseTestCase):
         self.assertEqual(c.trello_token, "0" * 64)
         self.assertEqual(c.project, self.project)
 
-    def test_it_handles_256_char_token(self):
+    def test_it_handles_256_char_token(self) -> None:
         form = {
             "token": "0" * 256,
             "board_name": "My Board",
@@ -49,12 +49,12 @@ class AddTrelloTestCase(BaseTestCase):
         self.assertEqual(c.trello_token, "0" * 256)
 
     @override_settings(TRELLO_APP_KEY=None)
-    def test_it_requires_trello_app_key(self):
+    def test_it_requires_trello_app_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -62,7 +62,7 @@ class AddTrelloTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
 
-    def test_it_requires_board_name(self):
+    def test_it_requires_board_name(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         form = {

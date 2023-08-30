@@ -3,14 +3,14 @@ from __future__ import annotations
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from hc.api.models import Check, Flip, Ping
 from hc.test import BaseTestCase
 
 
 class DetailsTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
 
@@ -23,7 +23,7 @@ class DetailsTestCase(BaseTestCase):
 
         self.url = f"/checks/{self.check.code}/details/"
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "How To Ping", status_code=200)
@@ -31,7 +31,7 @@ class DetailsTestCase(BaseTestCase):
         # The page should contain timezone strings
         self.assertContains(r, "Europe/Riga")
 
-    def test_it_suggests_tags_from_other_checks(self):
+    def test_it_suggests_tags_from_other_checks(self) -> None:
         self.check.tags = "foo bar"
         self.check.save()
 
@@ -41,12 +41,12 @@ class DetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "bar baz foo", status_code=200)
 
-    def test_it_checks_ownership(self):
+    def test_it_checks_ownership(self) -> None:
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_shows_cron_expression(self):
+    def test_it_shows_cron_expression(self) -> None:
         self.check.kind = "cron"
         self.check.save()
 
@@ -54,12 +54,12 @@ class DetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Cron Expression", status_code=200)
 
-    def test_it_allows_cross_team_access(self):
+    def test_it_allows_cross_team_access(self) -> None:
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
 
-    def test_it_hides_actions_from_readonly_users(self):
+    def test_it_hides_actions_from_readonly_users(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -75,7 +75,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "transfer-btn")
         self.assertNotContains(r, "btn-remove")
 
-    def test_it_hides_resume_action_from_readonly_users(self):
+    def test_it_hides_resume_action_from_readonly_users(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -88,7 +88,7 @@ class DetailsTestCase(BaseTestCase):
 
         self.assertNotContains(r, "resume-btn", status_code=200)
 
-    def test_crontab_example_guesses_schedules(self):
+    def test_crontab_example_guesses_schedules(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         pairs = [
@@ -107,7 +107,7 @@ class DetailsTestCase(BaseTestCase):
             self.assertContains(r, f"{expression} /your/command.sh")
             self.assertNotContains(r, 'FIXME: replace "* * * * *"')
 
-    def test_crontab_example_handles_unsupported_timeout_values(self):
+    def test_crontab_example_handles_unsupported_timeout_values(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         self.check.timeout = td(minutes=13)
@@ -118,7 +118,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, 'FIXME: replace "* * * * *"')
 
     @patch("hc.lib.date.now")
-    def test_it_calculates_downtime_summary(self, mock_now):
+    def test_it_calculates_downtime_summary(self, mock_now: Mock) -> None:
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 
         self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
@@ -148,7 +148,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "1 downtime, 1 hour total", html=True)
 
     @patch("hc.lib.date.now")
-    def test_downtime_summary_handles_positive_utc_offset(self, mock_now):
+    def test_downtime_summary_handles_positive_utc_offset(self, mock_now: Mock) -> None:
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 
         self.profile.tz = "America/New_York"
@@ -166,7 +166,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Nov. 2019")
 
     @patch("hc.lib.date.now")
-    def test_downtime_summary_handles_negative_utc_offset(self, mock_now):
+    def test_downtime_summary_handles_negative_utc_offset(self, mock_now: Mock) -> None:
         mock_now.return_value = datetime(2020, 1, 31, 23, tzinfo=timezone.utc)
 
         self.profile.tz = "Europe/Riga"
@@ -183,7 +183,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Dec. 2019")
 
     @patch("hc.lib.date.now")
-    def test_it_handles_months_when_check_did_not_exist(self, mock_now):
+    def test_it_handles_months_when_check_did_not_exist(self, mock_now: Mock) -> None:
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 
         self.check.created = datetime(2020, 1, 10, 0, 0, 0, tzinfo=timezone.utc)
@@ -198,7 +198,7 @@ class DetailsTestCase(BaseTestCase):
         # The summary for Dec. 2019 should be "–"
         self.assertContains(r, "<td>–</td>", html=True)
 
-    def test_it_handles_no_ping_key(self):
+    def test_it_handles_no_ping_key(self) -> None:
         self.project.show_slugs = True
         self.project.ping_key = None
         self.project.save()
@@ -208,7 +208,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Ping Key Required", status_code=200)
         self.assertNotContains(r, "ping-now")
 
-    def test_it_handles_no_ping_key_for_readonly_user(self):
+    def test_it_handles_no_ping_key_for_readonly_user(self) -> None:
         self.project.show_slugs = True
         self.project.ping_key = None
         self.project.save()
@@ -221,7 +221,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "Ping Key Required", status_code=200)
         self.assertNotContains(r, "ping-now")
 
-    def test_it_handles_empty_slug(self):
+    def test_it_handles_empty_slug(self) -> None:
         self.project.show_slugs = True
         self.project.save()
 
@@ -231,14 +231,14 @@ class DetailsTestCase(BaseTestCase):
         self.assertNotContains(r, "Copy URL")
         self.assertNotContains(r, "ping-now")
 
-    def test_it_saves_url_format_preference(self):
+    def test_it_saves_url_format_preference(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.client.get(self.url + "?urls=slug")
 
         self.project.refresh_from_db()
         self.assertTrue(self.project.show_slugs)
 
-    def test_it_outputs_period_grace_as_integers(self):
+    def test_it_outputs_period_grace_as_integers(self) -> None:
         self.check.timeout = td(seconds=123)
         self.check.grace = td(seconds=456)
         self.check.save()

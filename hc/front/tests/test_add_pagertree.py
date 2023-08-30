@@ -7,16 +7,16 @@ from hc.test import BaseTestCase
 
 
 class AddPagerTreeTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
-        self.url = "/projects/%s/add_pagertree/" % self.project.code
+        self.url = f"/projects/{self.project.code}/add_pagertree/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "PagerTree")
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         form = {"value": "http://example.org"}
 
         self.client.login(username="alice@example.org", password="password")
@@ -28,14 +28,14 @@ class AddPagerTreeTestCase(BaseTestCase):
         self.assertEqual(c.value, "http://example.org")
         self.assertEqual(c.project, self.project)
 
-    def test_it_rejects_bad_url(self):
+    def test_it_rejects_bad_url(self) -> None:
         form = {"value": "not an URL"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
         self.assertContains(r, "Enter a valid URL")
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -44,7 +44,7 @@ class AddPagerTreeTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     @override_settings(PAGERTREE_ENABLED=False)
-    def test_it_handles_disabled_integration(self):
+    def test_it_handles_disabled_integration(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)

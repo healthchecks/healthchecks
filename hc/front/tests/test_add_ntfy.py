@@ -5,17 +5,17 @@ from hc.test import BaseTestCase
 
 
 class AddNtfyTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.url = f"/projects/{self.project.code}/add_ntfy/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "simple HTTP-based pub-sub")
 
-    def test_it_creates_channel(self):
+    def test_it_creates_channel(self) -> None:
         form = {
             "topic": "foo",
             "url": "https://example.org",
@@ -38,7 +38,7 @@ class AddNtfyTestCase(BaseTestCase):
         # Make sure it calls assign_all_checks
         self.assertEqual(c.checks.count(), 1)
 
-    def test_it_requires_topic(self):
+    def test_it_requires_topic(self) -> None:
         form = {
             "url": "https://example.org",
             "priority": "5",
@@ -49,7 +49,7 @@ class AddNtfyTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertContains(r, "This field is required")
 
-    def test_it_validates_url(self):
+    def test_it_validates_url(self) -> None:
         form = {
             "topic": "foo",
             "url": "this is not an url",
@@ -61,7 +61,7 @@ class AddNtfyTestCase(BaseTestCase):
         r = self.client.post(self.url, form)
         self.assertContains(r, "Enter a valid URL")
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -69,7 +69,7 @@ class AddNtfyTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
 
-    def test_it_saves_token(self):
+    def test_it_saves_token(self) -> None:
         form = {
             "topic": "foo",
             "url": "https://example.org",

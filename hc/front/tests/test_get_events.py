@@ -13,11 +13,11 @@ EPOCH = datetime(2020, 1, 1, tzinfo=timezone.utc)
 
 
 class GetEventsTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
 
-    def test_it_calculates_duration(self):
+    def test_it_calculates_duration(self) -> None:
         Ping.objects.create(owner=self.check, n=1, created=EPOCH, kind="start")
         Ping.objects.create(owner=self.check, n=2, created=EPOCH + td(minutes=5))
 
@@ -25,7 +25,7 @@ class GetEventsTestCase(BaseTestCase):
             pings = _get_events(self.check, 100)
             self.assertEqual(pings[0].duration, td(minutes=5))
 
-    def test_it_delegates_duration_calculation_to_model(self):
+    def test_it_delegates_duration_calculation_to_model(self) -> None:
         Ping.objects.create(owner=self.check, n=1, created=EPOCH, kind="start")
         Ping.objects.create(owner=self.check, n=2, created=EPOCH + td(minutes=5))
 
@@ -33,7 +33,7 @@ class GetEventsTestCase(BaseTestCase):
             pings = _get_events(self.check, 1)
             self.assertEqual(pings[0].duration, td(minutes=5))
 
-    def test_it_calculates_overlapping_durations(self):
+    def test_it_calculates_overlapping_durations(self) -> None:
         m = td(minutes=1)
         a, b = uuid4(), uuid4()
         self.check.ping_set.create(n=1, rid=a, created=EPOCH, kind="start")
@@ -46,7 +46,7 @@ class GetEventsTestCase(BaseTestCase):
             self.assertEqual(pings[0].duration, td(minutes=5))
             self.assertEqual(pings[1].duration, td(minutes=2))
 
-    def test_it_disables_duration_display(self):
+    def test_it_disables_duration_display(self) -> None:
         # Set up a worst case scenario where each success ping has an unique rid,
         # and there are no "start" pings:
         for i in range(1, 12):

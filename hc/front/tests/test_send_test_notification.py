@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.core import mail
 
@@ -10,16 +10,16 @@ from hc.test import BaseTestCase
 
 
 class SendTestNotificationTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.channel = Channel(kind="email", project=self.project)
         self.channel.email_verified = True
         self.channel.value = "alice@example.org"
         self.channel.save()
 
-        self.url = "/integrations/%s/test/" % self.channel.code
+        self.url = f"/integrations/{self.channel.code}/test/"
 
-    def test_it_sends_test_email(self):
+    def test_it_sends_test_email(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
         self.assertRedirects(r, self.channels_url)
@@ -42,7 +42,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertEqual(n.channel, self.channel)
         self.assertEqual(n.error, "")
 
-    def test_it_allows_readonly_user(self):
+    def test_it_allows_readonly_user(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -53,7 +53,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         # And email should have been sent
         self.assertEqual(len(mail.outbox), 1)
 
-    def test_it_clears_channel_last_error(self):
+    def test_it_clears_channel_last_error(self) -> None:
         self.channel.last_error = "Something went wrong"
         self.channel.save()
 
@@ -63,7 +63,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "")
 
-    def test_it_sets_channel_last_error(self):
+    def test_it_sets_channel_last_error(self) -> None:
         self.channel.email_verified = False
         self.channel.save()
 
@@ -77,7 +77,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertEqual(self.channel.last_error, "Email not verified")
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_webhooks_with_no_down_url(self, mock_get):
+    def test_it_handles_webhooks_with_no_down_url(self, mock_get: Mock) -> None:
         mock_get.return_value.status_code = 200
 
         self.channel.kind = "webhook"
@@ -107,7 +107,7 @@ class SendTestNotificationTestCase(BaseTestCase):
             timeout=10,
         )
 
-    def test_it_handles_webhooks_with_no_urls(self):
+    def test_it_handles_webhooks_with_no_urls(self) -> None:
         self.channel.kind = "webhook"
         self.channel.value = json.dumps(
             {
@@ -128,13 +128,13 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Could not send a test notification")
 
-    def test_it_checks_channel_ownership(self):
+    def test_it_checks_channel_ownership(self) -> None:
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
         self.assertEqual(r.status_code, 404)
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_up_only_sms_channel(self, mock_post):
+    def test_it_handles_up_only_sms_channel(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.kind = "sms"
@@ -150,7 +150,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertIn("is UP", payload["Body"])
 
     @patch("hc.api.transports.curl.request")
-    def test_it_handles_webhook_with_json_variable(self, mock_post):
+    def test_it_handles_webhook_with_json_variable(self, mock_post: Mock) -> None:
         self.channel.kind = "webhook"
         self.channel.value = json.dumps(
             {

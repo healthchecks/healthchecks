@@ -11,14 +11,14 @@ from hc.test import BaseTestCase
 
 @override_settings(PD_APP_ID="FOOBAR")
 class AddPagerDutyCompleteTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         session = self.client.session
         session["pagerduty"] = ("ABC", str(self.project.code))
         session.save()
 
-    def _url(self, state="ABC"):
+    def _url(self, state: str = "ABC") -> str:
         config = {
             "account": {"name": "Foo"},
             "integration_keys": [{"integration_key": "foo", "name": "bar"}],
@@ -28,7 +28,7 @@ class AddPagerDutyCompleteTestCase(BaseTestCase):
         url += urlencode({"state": state, "config": json.dumps(config)})
         return url
 
-    def test_it_adds_channel(self):
+    def test_it_adds_channel(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self._url())
         self.assertRedirects(r, self.channels_url)
@@ -38,26 +38,26 @@ class AddPagerDutyCompleteTestCase(BaseTestCase):
         self.assertEqual(channel.pd_service_key, "foo")
         self.assertEqual(channel.pd_account, "Foo")
 
-    def test_it_validates_state(self):
+    def test_it_validates_state(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self._url(state="XYZ"))
         self.assertEqual(r.status_code, 403)
 
     @override_settings(PD_APP_ID=None)
-    def test_it_requires_app_id(self):
+    def test_it_requires_app_id(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get(self._url())
         self.assertEqual(r.status_code, 404)
 
     @override_settings(PD_ENABLED=False)
-    def test_it_requires_pd_enabled(self):
+    def test_it_requires_pd_enabled(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         r = self.client.get(self._url())
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 

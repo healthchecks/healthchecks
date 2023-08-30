@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 
@@ -14,7 +14,7 @@ class AddPushbulletTestCase(BaseTestCase):
     url = "/integrations/add_pushbullet/"
 
     @patch("hc.front.views.curl.post")
-    def test_it_handles_oauth_response(self, mock_post):
+    def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))
         session.save()
@@ -38,7 +38,7 @@ class AddPushbulletTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_pushbullet" in self.client.session)
 
-    def test_it_avoids_csrf(self):
+    def test_it_avoids_csrf(self) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))
         session.save()
@@ -50,7 +50,7 @@ class AddPushbulletTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     @patch("hc.front.views.curl.post")
-    def test_it_handles_denial(self, mock_post):
+    def test_it_handles_denial(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))
         session.save()
@@ -66,14 +66,14 @@ class AddPushbulletTestCase(BaseTestCase):
         self.assertFalse("add_pushbullet" in self.client.session)
 
     @override_settings(PUSHBULLET_CLIENT_ID=None)
-    def test_it_requires_client_id(self):
+    def test_it_requires_client_id(self) -> None:
         url = self.url + "?code=12345678&state=foo"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))
         session.save()

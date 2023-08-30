@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 
@@ -12,7 +12,7 @@ from hc.test import BaseTestCase
 @override_settings(SLACK_CLIENT_ID="fake-client-id")
 class AddSlackCompleteTestCase(BaseTestCase):
     @patch("hc.front.views.curl.post")
-    def test_it_handles_oauth_response(self, mock_post):
+    def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
         session.save()
@@ -42,7 +42,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_slack" in self.client.session)
 
-    def test_it_avoids_csrf(self):
+    def test_it_avoids_csrf(self) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
         session.save()
@@ -54,7 +54,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     @patch("hc.front.views.curl.post")
-    def test_it_handles_oauth_error(self, mock_post):
+    def test_it_handles_oauth_error(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
         session.save()
@@ -72,12 +72,12 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.assertContains(r, "something went wrong")
 
     @override_settings(SLACK_CLIENT_ID=None)
-    def test_it_requires_client_id(self):
+    def test_it_requires_client_id(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/integrations/add_slack_btn/?code=12345678&state=foo")
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
         session.save()
@@ -90,7 +90,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     @override_settings(SLACK_ENABLED=False)
-    def test_it_requires_slack_enabled(self):
+    def test_it_requires_slack_enabled(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/integrations/add_slack_btn/?code=12345678&state=foo")
         self.assertEqual(r.status_code, 404)

@@ -7,7 +7,7 @@ from hc.test import BaseTestCase
 
 @override_settings(MATTERMOST_ENABLED=True, SITE_NAME="Mychecks")
 class AddSlackHelpTestCase(BaseTestCase):
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         r = self.client.get("/integrations/mattermost/")
         self.assertContains(r, "please sign into Mychecks", status_code=200)
         self.assertContains(
@@ -15,6 +15,6 @@ class AddSlackHelpTestCase(BaseTestCase):
         )
 
     @override_settings(MATTERMOST_ENABLED=False)
-    def test_it_requires_mattermost_enabled(self):
+    def test_it_requires_mattermost_enabled(self) -> None:
         r = self.client.get("/integrations/mattermost/")
         self.assertEqual(r.status_code, 404)

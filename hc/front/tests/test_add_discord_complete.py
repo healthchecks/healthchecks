@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 
@@ -14,7 +14,7 @@ class AddDiscordCompleteTestCase(BaseTestCase):
     url = "/integrations/add_discord/"
 
     @patch("hc.front.views.curl.post")
-    def test_it_handles_oauth_response(self, mock_post):
+    def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_discord"] = ("foo", str(self.project.code))
         session.save()
@@ -41,7 +41,7 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_discord" in self.client.session)
 
-    def test_it_avoids_csrf(self):
+    def test_it_avoids_csrf(self) -> None:
         session = self.client.session
         session["add_discord"] = ("foo", str(self.project.code))
         session.save()
@@ -55,7 +55,7 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_discord" in self.client.session)
 
-    def test_it_handles_access_denied(self):
+    def test_it_handles_access_denied(self) -> None:
         session = self.client.session
         session["add_discord"] = ("foo", str(self.project.code))
         session.save()
@@ -73,12 +73,12 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         self.assertFalse("add_discord" in self.client.session)
 
     @override_settings(DISCORD_CLIENT_ID=None)
-    def test_it_requires_client_id(self):
+    def test_it_requires_client_id(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url + "?code=12345678&state=bar")
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         session = self.client.session
         session["add_discord"] = ("foo", str(self.project.code))
         session.save()

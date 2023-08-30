@@ -7,7 +7,7 @@ from hc.test import BaseTestCase
 
 
 class EditWebhookTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
         self.check = Check.objects.create(project=self.project)
@@ -30,7 +30,7 @@ class EditWebhookTestCase(BaseTestCase):
 
         self.url = f"/integrations/{self.channel.code}/edit/"
 
-    def test_it_shows_form(self):
+    def test_it_shows_form(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Webhook Settings")
@@ -46,7 +46,7 @@ class EditWebhookTestCase(BaseTestCase):
         self.assertContains(r, "http://example.org/up")
         self.assertContains(r, "$NAME is up")
 
-    def test_it_saves_form_and_redirects(self):
+    def test_it_saves_form_and_redirects(self) -> None:
         form = {
             "name": "Call foo.com / bar.com",
             "method_down": "POST",
@@ -81,7 +81,7 @@ class EditWebhookTestCase(BaseTestCase):
         # Make sure it does not call assign_all_checks
         self.assertFalse(self.channel.checks.exists())
 
-    def test_it_requires_kind_webhook(self):
+    def test_it_requires_kind_webhook(self) -> None:
         self.channel.kind = "shell"
         self.channel.save()
 
@@ -89,7 +89,7 @@ class EditWebhookTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 400)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 

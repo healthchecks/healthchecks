@@ -1,25 +1,25 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from hc.test import BaseTestCase
 
 
 class CronPreviewTestCase(BaseTestCase):
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         payload = {"schedule": "* * * * *", "tz": "UTC"}
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertContains(r, "cron-preview-title", status_code=200)
         self.assertContains(r, "“Every minute”")
 
-    def test_it_accepts_sunday_7(self):
+    def test_it_accepts_sunday_7(self) -> None:
         payload = {"schedule": "* * * * 7", "tz": "UTC"}
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertContains(r, "Expected Ping Dates", status_code=200)
         self.assertNotContains(r, "Invalid cron expression", status_code=200)
 
-    def test_it_rejects_invalid_cron_expression(self):
+    def test_it_rejects_invalid_cron_expression(self) -> None:
         samples = ["", "*", "100 100 100 100 100", "* * * * * *"]
 
         for schedule in samples:
@@ -27,22 +27,22 @@ class CronPreviewTestCase(BaseTestCase):
             r = self.client.post("/checks/cron_preview/", payload)
             self.assertContains(r, "Invalid cron expression", status_code=200)
 
-    def test_it_handles_invalid_timezone(self):
+    def test_it_handles_invalid_timezone(self) -> None:
         for tz in ["", "not-a-timezone"]:
             payload = {"schedule": "* * * * *", "tz": tz}
             r = self.client.post("/checks/cron_preview/", payload)
             self.assertContains(r, "Invalid timezone", status_code=200)
 
-    def test_it_handles_missing_arguments(self):
+    def test_it_handles_missing_arguments(self) -> None:
         r = self.client.post("/checks/cron_preview/", {})
         self.assertContains(r, "Invalid timezone", status_code=200)
 
-    def test_it_rejects_get(self):
+    def test_it_rejects_get(self) -> None:
         r = self.client.get("/checks/cron_preview/", {})
         self.assertEqual(r.status_code, 405)
 
     @patch("hc.front.views.now")
-    def test_it_handles_dst_transition(self, mock_now):
+    def test_it_handles_dst_transition(self, mock_now: Mock) -> None:
         # Consider year 2018, Riga, Latvia:
         # The daylight-saving-time ends at 4AM on October 28.
         # At that time, the clock is turned back one hour.
@@ -56,12 +56,12 @@ class CronPreviewTestCase(BaseTestCase):
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertNotContains(r, "Invalid cron expression", status_code=200)
 
-    def test_it_handles_feb_29(self):
+    def test_it_handles_feb_29(self) -> None:
         payload = {"schedule": "0 0 29 2 *", "tz": "UTC"}
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertContains(r, "Feb 29")
 
-    def test_it_handles_no_matches(self):
+    def test_it_handles_no_matches(self) -> None:
         payload = {"schedule": "0 0 */100 * MON#2", "tz": "UTC"}
         r = self.client.post("/checks/cron_preview/", payload)
         self.assertContains(r, "Invalid cron expression", status_code=200)

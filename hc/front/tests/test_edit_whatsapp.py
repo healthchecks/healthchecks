@@ -17,7 +17,7 @@ TEST_CREDENTIALS = {
 
 @override_settings(**TEST_CREDENTIALS)
 class EditWhatsAppTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
 
@@ -29,14 +29,14 @@ class EditWhatsAppTestCase(BaseTestCase):
 
         self.url = f"/integrations/{self.channel.code}/edit/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "WhatsApp Settings")
         self.assertContains(r, "Get a WhatsApp message")
         self.assertContains(r, "+12345678")
 
-    def test_it_updates_channel(self):
+    def test_it_updates_channel(self) -> None:
         form = {
             "label": "My Phone",
             "phone": "+1234567890",
@@ -58,12 +58,12 @@ class EditWhatsAppTestCase(BaseTestCase):
         self.assertFalse(self.channel.checks.exists())
 
     @override_settings(TWILIO_USE_WHATSAPP=False)
-    def test_it_obeys_use_whatsapp_flag(self):
+    def test_it_obeys_use_whatsapp_flag(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 

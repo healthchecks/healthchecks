@@ -766,7 +766,7 @@ def clear_events(request: HttpRequest, code: UUID) -> HttpResponse:
     return redirect("hc-details", code)
 
 
-def _get_events(check, page_limit, start=None, end=None):
+def _get_events(check: Check, page_limit: int, start=None, end=None):
     # Sorting by "n" instead of "id" is important here. Both give the same
     # query results, but sorting by "id" can cause postgres to pick
     # api_ping.id index (slow if the api_ping table is big). Sorting by

@@ -15,19 +15,19 @@ TEST_CREDENTIALS = {
 
 @override_settings(**TEST_CREDENTIALS)
 class AddWhatsAppTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
         self.url = f"/projects/{self.project.code}/add_whatsapp/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Add WhatsApp Integration")
         self.assertContains(r, "Get a WhatsApp message")
 
     @override_settings(USE_PAYMENTS=True)
-    def test_it_warns_about_limits(self):
+    def test_it_warns_about_limits(self) -> None:
         self.profile.sms_limit = 0
         self.profile.save()
 
@@ -35,7 +35,7 @@ class AddWhatsAppTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "upgrade to a")
 
-    def test_it_creates_channel(self):
+    def test_it_creates_channel(self) -> None:
         form = {
             "label": "My Phone",
             "phone": "+1234567890",
@@ -59,12 +59,12 @@ class AddWhatsAppTestCase(BaseTestCase):
         self.assertEqual(c.checks.count(), 1)
 
     @override_settings(TWILIO_USE_WHATSAPP=False)
-    def test_it_obeys_use_whatsapp_flag(self):
+    def test_it_obeys_use_whatsapp_flag(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
@@ -72,7 +72,7 @@ class AddWhatsAppTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 403)
 
-    def test_it_handles_down_false_up_true(self):
+    def test_it_handles_down_false_up_true(self) -> None:
         form = {"phone": "+1234567890", "up": True}
 
         self.client.login(username="alice@example.org", password="password")
@@ -82,7 +82,7 @@ class AddWhatsAppTestCase(BaseTestCase):
         self.assertFalse(c.whatsapp_notify_down)
         self.assertTrue(c.whatsapp_notify_up)
 
-    def test_it_rejects_unchecked_up_and_down(self):
+    def test_it_rejects_unchecked_up_and_down(self) -> None:
         form = {"phone": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")

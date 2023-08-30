@@ -5,14 +5,14 @@ from hc.test import BaseTestCase
 
 
 class FilteringRulesTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
 
-        self.url = "/checks/%s/filtering_rules/" % self.check.code
-        self.redirect_url = "/checks/%s/details/" % self.check.code
+        self.url = f"/checks/{self.check.code}/filtering_rules/"
+        self.redirect_url = f"/checks/{self.check.code}/details/"
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         payload = {
             "filter_subject": "on",
             "filter_body": "on",
@@ -36,8 +36,8 @@ class FilteringRulesTestCase(BaseTestCase):
         self.assertEqual(self.check.methods, "POST")
         self.assertTrue(self.check.manual_resume)
 
-    def test_it_clears_method(self):
-        self.check.method = "POST"
+    def test_it_clears_methods(self) -> None:
+        self.check.methods = "POST"
         self.check.save()
 
         payload = {"methods": "", "filter_by_subject": "yes"}
@@ -49,7 +49,7 @@ class FilteringRulesTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.methods, "")
 
-    def test_it_clears_filtering_fields(self):
+    def test_it_clears_filtering_fields(self) -> None:
         self.check.filter_subject = True
         self.check.filter_body = True
         self.check.start_kw = "START"
@@ -68,7 +68,7 @@ class FilteringRulesTestCase(BaseTestCase):
         self.assertEqual(self.check.success_kw, "")
         self.assertEqual(self.check.failure_kw, "")
 
-    def test_it_clears_manual_resume_flag(self):
+    def test_it_clears_manual_resume_flag(self) -> None:
         self.check.manual_resume = True
         self.check.save()
 
@@ -79,7 +79,7 @@ class FilteringRulesTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertFalse(self.check.manual_resume)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 

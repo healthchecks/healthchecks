@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import timedelta as td
+from datetime import timedelta
 
 from django import template
 from django.conf import settings
@@ -16,18 +16,18 @@ register = template.Library()
 
 
 @register.filter
-def hc_duration(td):
-    return format_duration(td)
+def hc_duration(duration: timedelta) -> str:
+    return format_duration(duration)
 
 
 @register.filter
-def hc_approx_duration(td):
-    return format_approx_duration(td)
+def hc_approx_duration(duration: timedelta) -> str:
+    return format_approx_duration(duration)
 
 
 @register.filter
-def hms(td):
-    return format_hms(td)
+def hms(duration) -> str:
+    return format_hms(duration)
 
 
 @register.simple_tag
@@ -179,8 +179,8 @@ def now_isoformat():
 
 
 @register.filter
-def timestamp(td):
-    return int(td.timestamp())
+def timestamp(duration):
+    return int(duration.timestamp())
 
 
 @register.filter
@@ -244,7 +244,7 @@ def first5(rid):
 
 @register.filter
 def add6days(dt):
-    return dt + td(days=6)
+    return dt + timedelta(days=6)
 
 
 @register.filter

@@ -9,16 +9,16 @@ from hc.test import BaseTestCase
 
 
 class UpdateTimeoutTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
         self.check = Check(project=self.project, status="up")
         self.check.last_ping = now()
         self.check.save()
 
-        self.url = "/checks/%s/timeout/" % self.check.code
-        self.redirect_url = "/projects/%s/checks/" % self.project.code
+        self.url = f"/checks/{self.check.code}/timeout/"
+        self.redirect_url = f"/projects/{self.project.code}/checks/"
 
-    def test_it_works(self):
+    def test_it_works(self) -> None:
         payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
@@ -31,10 +31,11 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.grace.total_seconds(), 60)
 
         # alert_after should be updated too
+        assert self.check.last_ping
         expected_aa = self.check.last_ping + td(seconds=3600 + 60)
         self.assertEqual(self.check.alert_after, expected_aa)
 
-    def test_redirect_preserves_querystring(self):
+    def test_redirect_preserves_querystring(self) -> None:
         referer = self.redirect_url + "?tag=foo"
         payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
@@ -42,7 +43,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         r = self.client.post(self.url, data=payload, HTTP_REFERER=referer)
         self.assertRedirects(r, referer)
 
-    def test_it_does_not_update_status_to_up(self):
+    def test_it_does_not_update_status_to_up(self) -> None:
         self.check.last_ping = now() - td(days=2)
         self.check.status = "down"
         self.check.save()
@@ -56,7 +57,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "down")
 
-    def test_it_updates_status_to_down(self):
+    def test_it_updates_status_to_down(self) -> None:
         self.check.last_ping = now() - td(hours=1)
         self.check.status = "up"
         self.check.alert_after = self.check.going_down_after()
@@ -78,7 +79,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(flip.new_status, "down")
         self.assertTrue(flip.processed)
 
-    def test_it_saves_cron_expression(self):
+    def test_it_saves_cron_expression(self) -> None:
         payload = {"kind": "cron", "schedule": "5 * * * *", "tz": "UTC", "grace": 60}
 
         self.client.login(username="alice@example.org", password="password")
@@ -89,7 +90,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.kind, "cron")
         self.assertEqual(self.check.schedule, "5 * * * *")
 
-    def test_it_validates_cron_expression(self):
+    def test_it_validates_cron_expression(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         samples = ["* invalid *", "1,2 61 * * *", "0 0 31 2 *"]
 
@@ -103,7 +104,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
 
-    def test_it_rejects_six_field_cron_expression(self):
+    def test_it_rejects_six_field_cron_expression(self) -> None:
         payload = {
             "kind": "cron",
             "schedule": "* * * * * *",  # six fields instead of five
@@ -119,7 +120,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
 
-    def test_it_validates_tz(self):
+    def test_it_validates_tz(self) -> None:
         payload = {
             "kind": "cron",
             "schedule": "* * * * *",
@@ -135,7 +136,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
 
-    def test_it_rejects_missing_schedule(self):
+    def test_it_rejects_missing_schedule(self) -> None:
         # tz field is omitted so this should fail:
         payload = {"kind": "cron", "grace": 60, "tz": "UTC"}
 
@@ -143,7 +144,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
 
-    def test_it_rejects_missing_tz(self):
+    def test_it_rejects_missing_tz(self) -> None:
         # tz field is omitted so this should fail:
         payload = {"kind": "cron", "schedule": "* * * * *", "grace": 60}
 
@@ -151,7 +152,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
 
-    def test_team_access_works(self):
+    def test_team_access_works(self) -> None:
         payload = {"kind": "simple", "timeout": 7200, "grace": 60}
 
         # Logging in as bob, not alice. Bob has team access so this
@@ -162,7 +163,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         check = Check.objects.get(code=self.check.code)
         assert check.timeout.total_seconds() == 7200
 
-    def test_it_handles_bad_uuid(self):
+    def test_it_handles_bad_uuid(self) -> None:
         url = "/checks/not-uuid/timeout/"
         payload = {"timeout": 3600, "grace": 60}
 
@@ -170,7 +171,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         r = self.client.post(url, data=payload)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_handles_missing_uuid(self):
+    def test_it_handles_missing_uuid(self) -> None:
         # Valid UUID but there is no check for it:
         url = "/checks/6837d6ec-fc08-4da5-a67f-08a9ed1ccf62/timeout/"
         payload = {"timeout": 3600, "grace": 60}
@@ -179,26 +180,26 @@ class UpdateTimeoutTestCase(BaseTestCase):
         r = self.client.post(url, data=payload)
         assert r.status_code == 404
 
-    def test_it_checks_ownership(self):
+    def test_it_checks_ownership(self) -> None:
         payload = {"timeout": 3600, "grace": 60}
 
         self.client.login(username="charlie@example.org", password="password")
         r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_rejects_get(self):
+    def test_it_rejects_get(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 405)
 
-    def test_it_allows_cross_team_access(self):
+    def test_it_allows_cross_team_access(self) -> None:
         payload = {"kind": "simple", "timeout": 3600, "grace": 60}
 
         self.client.login(username="bob@example.org", password="password")
         r = self.client.post(self.url, data=payload)
         self.assertRedirects(r, self.redirect_url)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 

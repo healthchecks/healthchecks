@@ -7,11 +7,11 @@ from hc.test import BaseTestCase
 
 @override_settings(DISCORD_CLIENT_ID="t1", DISCORD_CLIENT_SECRET="s1")
 class AddDiscordTestCase(BaseTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
-        self.url = "/projects/%s/add_discord/" % self.project.code
+        self.url = f"/projects/{self.project.code}/add_discord/"
 
-    def test_instructions_work(self):
+    def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Connect Discord", status_code=200)
@@ -21,12 +21,12 @@ class AddDiscordTestCase(BaseTestCase):
         self.assertTrue("add_discord" in self.client.session)
 
     @override_settings(DISCORD_CLIENT_ID=None)
-    def test_it_requires_client_id(self):
+    def test_it_requires_client_id(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_requires_rw_access(self):
+    def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
 
