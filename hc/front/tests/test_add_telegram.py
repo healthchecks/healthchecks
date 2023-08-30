@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Union
+from typing import Dict, List, Union
 from unittest.mock import Mock, patch
 
 from django.core import signing
@@ -10,7 +10,7 @@ from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 JSONKey = Union[str, int]
-JSONValue = Union[int, str, None, list["JSONValue"], dict[JSONKey, "JSONValue"]]
+JSONValue = Union[int, str, None, List["JSONValue"], Dict[JSONKey, "JSONValue"]]
 
 
 @override_settings(TELEGRAM_TOKEN="fake-token", TELEGRAM_BOT_NAME="ExampleBot")
