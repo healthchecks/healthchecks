@@ -1079,7 +1079,7 @@ class Notification(models.Model):
     class Meta:
         get_latest_by = "created"
 
-    def status_url(self):
+    def status_url(self) -> str:
         path = reverse("hc-api-notification-status", args=[self.code])
         return settings.SITE_ROOT + path
 
@@ -1199,14 +1199,14 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 20, 3600 * 24)
 
     @staticmethod
-    def authorize_telegram(telegram_id):
+    def authorize_telegram(telegram_id: str) -> bool:
         value = "tg-%s" % telegram_id
 
         # 6 messages for a single chat per minute:
         return TokenBucket.authorize(value, 6, 60)
 
     @staticmethod
-    def authorize_signal(phone):
+    def authorize_signal(phone: str) -> bool:
         salted_encoded = (phone + settings.SECRET_KEY).encode()
         value = "signal-%s" % hashlib.sha1(salted_encoded).hexdigest()
 
@@ -1221,7 +1221,7 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 50, 3600 * 24)
 
     @staticmethod
-    def authorize_pushover(user_key):
+    def authorize_pushover(user_key: str) -> bool:
         salted_encoded = (user_key + settings.SECRET_KEY).encode()
         value = "po-%s" % hashlib.sha1(salted_encoded).hexdigest()
         # 6 messages for a single user key per minute:
