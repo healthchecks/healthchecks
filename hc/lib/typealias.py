@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Dict, List, TypeAlias
+from typing import Dict, List
 
-JSONDict: TypeAlias = Dict[str, "JSONValue"]
-JSONList: TypeAlias = List["JSONValue"]
-JSONValue: TypeAlias = JSONDict | JSONList | str | int | float | bool | None
+JSONDict = Dict[str, "JSONValue"]
+JSONList = List["JSONValue"]
+JSONValue = JSONDict | JSONList | str | int | float | bool | None
