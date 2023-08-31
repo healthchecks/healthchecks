@@ -345,15 +345,19 @@ class Webhook(HttpTransport):
         if not spec["url"]:
             raise TransportError("Empty webhook URL")
 
+        assert isinstance(spec["url"], str)
         url = self.prepare(spec["url"], check, urlencode=True)
         headers = {}
+        assert isinstance(spec["headers"], dict)
         for key, value in spec["headers"].items():
             # Header values should contain ASCII and latin-1 only
             headers[key] = self.prepare(value, check, latin1=True)
 
-        body = spec["body"]
+        body, body_bytes = spec["body"], None
         if body:
-            body = self.prepare(body, check, allow_ping_body=True).encode()
+            assert isinstance(body, str)
+            body = self.prepare(body, check, allow_ping_body=True)
+            body_bytes = body.encode()
 
         # When sending a test notification, don't retry on failures.
         use_retries = True
@@ -363,9 +367,9 @@ class Webhook(HttpTransport):
         if spec["method"] == "GET":
             self.get(url, use_retries=use_retries, headers=headers)
         elif spec["method"] == "POST":
-            self.post(url, use_retries=use_retries, data=body, headers=headers)
+            self.post(url, use_retries=use_retries, data=body_bytes, headers=headers)
         elif spec["method"] == "PUT":
-            self.put(url, use_retries=use_retries, data=body, headers=headers)
+            self.put(url, use_retries=use_retries, data=body_bytes, headers=headers)
 
 
 class SlackFields(list):
@@ -470,11 +474,14 @@ class Opsgenie(HttpTransport):
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
         message = f"Received status code {response.status_code}"
         try:
-            details = response.json().get("message")
-            if isinstance(details, str):
-                message += f' with a message: "{details}"'
+            doc = response.json()
         except ValueError:
-            pass
+            raise TransportError(message)
+
+        assert isinstance(doc, dict)
+        details = doc.get("message")
+        if isinstance(details, str):
+            message += f' with a message: "{details}"'
 
         raise TransportError(message)
 
@@ -743,8 +750,11 @@ class Telegram(HttpTransport):
         # raise MigrationRequiredError, with the new chat_id included
         try:
             jsonschema.validate(doc, telegram_migration)
-            description = cast(str, doc["description"])
+            assert isinstance(doc, dict)
+            description = doc["description"]
+            assert isinstance(description, str)
             chat_id = doc["parameters"]["migrate_to_chat_id"]
+            assert isinstance(chat_id, int)
             raise MigrationRequiredError(description, chat_id)
         except jsonschema.ValidationError:
             pass

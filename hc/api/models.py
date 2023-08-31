@@ -827,7 +827,7 @@ class Channel(models.Model):
         prio = int(parts[1])
         return PO_PRIORITIES[prio]
 
-    def webhook_spec(self, status):
+    def webhook_spec(self, status: str) -> dict[str, str | dict[str, str]]:
         assert self.kind == "webhook"
 
         doc = json.loads(self.value)

@@ -6,10 +6,13 @@ import ipaddress
 import json
 import socket
 from io import BytesIO
+from typing import cast
 from urllib.parse import urlencode
 
 import pycurl
 from django.conf import settings
+
+from hc.lib.typealias import JSONValue
 
 
 class CurlError(Exception):
@@ -22,8 +25,8 @@ class Response(object):
         self.status_code = status_code
         self.content = content
 
-    def json(self):
-        return json.loads(self.content.decode())
+    def json(self) -> JSONValue:
+        return cast(JSONValue, json.loads(self.content.decode()))
 
     @property
     def text(self) -> str:
