@@ -6,6 +6,7 @@ from datetime import timedelta as td
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check
+from hc.lib.typealias import JSONDict
 from hc.test import BaseTestCase, TestHttpResponse
 
 
@@ -17,7 +18,7 @@ class UpdateCheckTestCase(BaseTestCase):
     def post(
         self,
         code: uuid.UUID | str,
-        data: dict[str, str | int | bool | list[str] | None],
+        data: JSONDict,
         v: int = 1,
         api_key: str = "X" * 32,
     ) -> TestHttpResponse:

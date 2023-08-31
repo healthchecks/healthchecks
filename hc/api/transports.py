@@ -6,7 +6,7 @@ import os
 import socket
 import time
 import uuid
-from typing import TYPE_CHECKING, Any, Iterator, NoReturn
+from typing import TYPE_CHECKING, Any, Iterator, NoReturn, cast
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
@@ -27,9 +27,10 @@ from hc.lib.date import format_duration
 from hc.lib.html import extract_signal_styles
 from hc.lib.signing import sign_bounce_id
 from hc.lib.string import replace
+from hc.lib.typealias import JSONDict, JSONList, JSONValue
 
 if TYPE_CHECKING:
-    from hc.api.models import Check, Notification, Ping
+    from hc.api.models import Channel, Check, Notification, Ping
 
 try:
     import apprise
@@ -65,7 +66,7 @@ def get_nested(obj: object, path: str, default: object = None) -> Any:
     return needle
 
 
-def get_ping_body(ping, maxlen=None) -> str | None:
+def get_ping_body(ping: Ping | None, maxlen: int | None = None) -> str | None:
     """Return ping body for a given Ping object.
 
     Does two extra things in addition to simply calling Ping.get_body():
@@ -89,13 +90,13 @@ def get_ping_body(ping, maxlen=None) -> str | None:
 
 
 class TransportError(Exception):
-    def __init__(self, message, permanent=False) -> None:
+    def __init__(self, message: str, permanent: bool = False) -> None:
         self.message = message
         self.permanent = permanent
 
 
 class Transport(object):
-    def __init__(self, channel):
+    def __init__(self, channel: Channel):
         self.channel = channel
 
     def notify(self, check: Check, notification: Notification | None = None) -> None:
@@ -198,7 +199,7 @@ class Email(Transport):
 
 
 class Shell(Transport):
-    def prepare(self, template: str, check) -> str:
+    def prepare(self, template: str, check: Check) -> str:
         """Replace placeholders with actual values."""
 
         ctx = {
@@ -371,7 +372,7 @@ class SlackFields(list):
     """Helper class for preparing [{"title": ..., "value": ... }, ...] structures."""
 
     def add(self, title: str, value: str, short: bool = True) -> None:
-        field = {"title": title, "value": value}
+        field: JSONDict = {"title": title, "value": value}
         if short:
             field["short"] = True
         self.append(field)
@@ -380,11 +381,11 @@ class SlackFields(list):
 class Slackalike(HttpTransport):
     """Base class for transports that use Slack-compatible incoming webhooks."""
 
-    def payload(self, check: Check) -> dict[str, object]:
+    def payload(self, check: Check) -> JSONDict:
         """Prepare JSON-serializable payload for Slack-compatible incoming webhook."""
         name = check.name_then_code()
         fields = SlackFields()
-        result = {
+        result: JSONDict = {
             "username": settings.SITE_NAME,
             "icon_url": absolute_site_logo_url(),
             "attachments": [
@@ -486,10 +487,10 @@ class Opsgenie(HttpTransport):
             "Authorization": "GenieKey %s" % self.channel.opsgenie_key,
         }
 
-        payload = {"alias": str(check.code), "source": settings.SITE_NAME}
+        payload: JSONDict = {"alias": str(check.code), "source": settings.SITE_NAME}
 
         if check.status == "down":
-            payload["tags"] = check.tags_list()
+            payload["tags"] = cast(JSONValue, check.tags_list())
             payload["message"] = tmpl("opsgenie_message.html", check=check)
             payload["note"] = tmpl("opsgenie_note.html", check=check)
             payload["description"] = tmpl("opsgenie_description.html", check=check)
@@ -631,11 +632,11 @@ class Pushover(HttpTransport):
 
 
 class RocketChat(HttpTransport):
-    def payload(self, check):
+    def payload(self, check: Check) -> JSONDict:
         url = check.cloaked_url()
         color = "#5cb85c" if check.status == "up" else "#d9534f"
         fields = SlackFields()
-        result = {
+        result: JSONDict = {
             "alias": settings.SITE_NAME,
             "avatar": absolute_site_logo_url(),
             "text": f"[{check.name_then_code()}]({url}) is {check.status.upper()}.",
@@ -722,7 +723,7 @@ class Matrix(HttpTransport):
 
 
 class MigrationRequiredError(TransportError):
-    def __init__(self, message, new_chat_id: int):
+    def __init__(self, message: str, new_chat_id: int):
         super().__init__(message, permanent=True)
         self.new_chat_id = new_chat_id
 
@@ -742,7 +743,7 @@ class Telegram(HttpTransport):
         # raise MigrationRequiredError, with the new chat_id included
         try:
             jsonschema.validate(doc, telegram_migration)
-            description = doc["description"]
+            description = cast(str, doc["description"])
             chat_id = doc["parameters"]["migrate_to_chat_id"]
             raise MigrationRequiredError(description, chat_id)
         except jsonschema.ValidationError:
@@ -935,11 +936,11 @@ class Apprise(HttpTransport):
 
 
 class MsTeams(HttpTransport):
-    def payload(self, check):
+    def payload(self, check: Check) -> JSONDict:
         name = check.name_then_code()
-        facts = []
-        sections = [{"text": check.desc, "facts": facts}]
-        result = {
+        facts: JSONList = []
+        sections: JSONList = [{"text": check.desc, "facts": facts}]
+        result: JSONDict = {
             "@type": "MessageCard",
             "@context": "https://schema.org/extensions",
             "title": f"“{escape(name)}” is {check.status.upper()}.",

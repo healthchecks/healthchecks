@@ -5,6 +5,7 @@ from datetime import timedelta as td
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check
+from hc.lib.typealias import JSONDict
 from hc.test import BaseTestCase, TestHttpResponse
 
 
@@ -13,7 +14,7 @@ class CreateCheckTestCase(BaseTestCase):
 
     def post(
         self,
-        data: dict[str, str | int | bool | list[str]],
+        data: JSONDict,
         expect_fragment: str | None = None,
         v: int = 1,
     ) -> TestHttpResponse:

@@ -18,7 +18,7 @@ class ValidationError(Exception):
     pass
 
 
-def validate(obj, schema, obj_name="value"):
+def validate(obj, schema, obj_name="value") -> None:
     if schema.get("type") == "string":
         if not isinstance(obj, str):
             raise ValidationError(f"{obj_name} is not a string")

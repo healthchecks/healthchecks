@@ -1,16 +1,13 @@
 from __future__ import annotations
 
-from typing import Dict, List, Union
 from unittest.mock import Mock, patch
 
 from django.core import signing
 from django.test.utils import override_settings
 
 from hc.api.models import Channel
+from hc.lib.typealias import JSONList
 from hc.test import BaseTestCase
-
-JSONKey = Union[str, int]
-JSONValue = Union[int, str, None, List["JSONValue"], Dict[JSONKey, "JSONValue"]]
 
 
 @override_settings(TELEGRAM_TOKEN="fake-token", TELEGRAM_BOT_NAME="ExampleBot")
@@ -127,7 +124,7 @@ class AddTelegramTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request")
     def test_bot_handles_bad_message(self, mock_get: Mock) -> None:
-        samples: list[JSONValue] = ["", "{}"]
+        samples: JSONList = ["", "{}"]
 
         # text is missing
         samples.append({"message": {"chat": {"id": 123, "type": "group"}}})

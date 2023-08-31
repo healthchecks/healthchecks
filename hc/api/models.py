@@ -641,7 +641,7 @@ class Ping(models.Model):
             return self.object_size
         return 0
 
-    def get_kind_display(self):
+    def get_kind_display(self) -> str:
         if self.kind == "ign":
             return "Ignored"
         if self.kind == "fail":
@@ -745,7 +745,7 @@ class Channel(models.Model):
         verify_link = reverse("hc-unsubscribe-alerts", args=args)
         return settings.SITE_ROOT + verify_link
 
-    def send_signal_captcha_alert(self, challenge, raw):
+    def send_signal_captcha_alert(self, challenge: str, raw: str) -> None:
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()

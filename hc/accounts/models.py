@@ -181,7 +181,7 @@ class Profile(models.Model):
 
         emails.call_limit(self.user.email, ctx)
 
-    def projects(self):
+    def projects(self) -> list["Project"]:
         """Return a queryset of all projects we have access to."""
 
         is_owner = Q(owner_id=self.user_id)

@@ -82,53 +82,53 @@ def send(msg, block=False):
         t.start()
 
 
-def login(to, ctx):
+def login(to, ctx) -> None:
     send(make_message("login", to, ctx))
 
 
-def transfer_request(to, ctx):
+def transfer_request(to, ctx) -> None:
     send(make_message("transfer-request", to, ctx))
 
 
-def alert(to, ctx, headers={}):
+def alert(to, ctx, headers={}) -> None:
     send(make_message("alert", to, ctx, headers=headers))
 
 
-def verify_email(to, ctx):
+def verify_email(to, ctx) -> None:
     send(make_message("verify-email", to, ctx))
 
 
-def report(to, ctx, headers={}):
+def report(to, ctx, headers={}) -> None:
     m = make_message("report", to, ctx, headers=headers)
     send(m, block=True)
 
 
-def nag(to, ctx, headers={}):
+def nag(to, ctx, headers={}) -> None:
     m = make_message("nag", to, ctx, headers=headers)
     send(m, block=True)
 
 
-def deletion_notice(to, ctx, headers={}):
+def deletion_notice(to, ctx, headers={}) -> None:
     m = make_message("deletion-notice", to, ctx, headers=headers)
     send(m, block=True)
 
 
-def deletion_scheduled(to, ctx, headers={}):
+def deletion_scheduled(to, ctx, headers={}) -> None:
     m = make_message("deletion-scheduled", to, ctx, headers=headers)
     send(m, block=True)
 
 
-def sms_limit(to, ctx):
+def sms_limit(to, ctx) -> None:
     send(make_message("sms-limit", to, ctx))
 
 
-def call_limit(to, ctx):
+def call_limit(to, ctx) -> None:
     send(make_message("phone-call-limit", to, ctx))
 
 
-def sudo_code(to, ctx):
+def sudo_code(to, ctx) -> None:
     send(make_message("sudo-code", to, ctx))
 
 
-def signal_rate_limited(to, ctx):
+def signal_rate_limited(to, ctx) -> None:
     send(make_message("signal-rate-limited", to, ctx))
