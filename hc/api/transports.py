@@ -6,7 +6,7 @@ import os
 import socket
 import time
 import uuid
-from typing import TYPE_CHECKING, Any, Iterator, NoReturn, cast
+from typing import TYPE_CHECKING, Any, Iterator, NoReturn, Optional, cast
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
@@ -742,7 +742,7 @@ class Telegram(HttpTransport):
 
     class ErrorModel(BaseModel):
         description: str
-        parameters: Telegram.MigrationParameters | None = None
+        parameters: Optional[Telegram.MigrationParameters] = None
 
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
