@@ -91,7 +91,7 @@ class NotifyTelegramTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request")
     def test_it_returns_error(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 400
-        mock_post.return_value.json.return_value = {"description": "Hi"}
+        mock_post.return_value.content = b'{"description": "Hi"}'
 
         self.channel.notify(self.check)
         n = Notification.objects.get()
@@ -109,10 +109,10 @@ class NotifyTelegramTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request")
     def test_it_handles_group_supergroup_migration(self, mock_post: Mock) -> None:
         error_response = Mock(status_code=400)
-        error_response.json.return_value = {
+        error_response.content = b"""{
             "description": "Hello",
-            "parameters": {"migrate_to_chat_id": -234},
-        }
+            "parameters": {"migrate_to_chat_id": -234}
+        }"""
 
         mock_post.side_effect = [error_response, Mock(status_code=200)]
 
@@ -186,9 +186,9 @@ class NotifyTelegramTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request")
     def test_it_disables_channel_on_403_group_deleted(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 403
-        mock_post.return_value.json.return_value = {
+        mock_post.return_value.content = b"""{
             "description": "Forbidden: the group chat was deleted"
-        }
+        }"""
 
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
@@ -197,9 +197,9 @@ class NotifyTelegramTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request")
     def test_it_disables_channel_on_403_bot_blocked(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 403
-        mock_post.return_value.json.return_value = {
+        mock_post.return_value.content = b"""{
             "description": "Forbidden: bot was blocked by the user"
-        }
+        }"""
 
         self.channel.notify(self.check)
         self.channel.refresh_from_db()

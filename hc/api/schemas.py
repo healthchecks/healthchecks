@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pydantic import BaseModel
+
 check = {
     "type": "object",
     "properties": {
@@ -28,15 +30,19 @@ check = {
     },
 }
 
-telegram_migration = {
-    "type": "object",
-    "properties": {
-        "description": {"type": "string"},
-        "parameters": {
-            "type": "object",
-            "properties": {"migrate_to_chat_id": {"type": "number"}},
-            "required": ["migrate_to_chat_id"],
-        },
-    },
-    "required": ["description", "parameters"],
-}
+
+class TelegramFailure(BaseModel):
+    description: str
+
+
+class TelegramMigrationParameters(BaseModel):
+    migrate_to_chat_id: int
+
+
+class TelegramMigration(BaseModel):
+    description: str
+    parameters: TelegramMigrationParameters
+
+    @property
+    def new_chat_id(self) -> int:
+        return self.parameters.migrate_to_chat_id

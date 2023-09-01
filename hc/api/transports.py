@@ -14,15 +14,16 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.timezone import now
+from pydantic import ValidationError
 
 from hc.accounts.models import Profile
-from hc.api.schemas import telegram_migration
+from hc.api.schemas import TelegramFailure, TelegramMigration
 from hc.front.templatetags.hc_extras import (
     absolute_site_logo_url,
     fix_asterisks,
     sortchecks,
 )
-from hc.lib import curl, emails, jsonschema
+from hc.lib import curl, emails
 from hc.lib.date import format_duration
 from hc.lib.html import extract_signal_styles
 from hc.lib.signing import sign_bounce_id
@@ -736,37 +737,30 @@ class MigrationRequiredError(TransportError):
 
 
 class Telegram(HttpTransport):
-    SM = "https://api.telegram.org/bot%s/sendMessage" % settings.TELEGRAM_TOKEN
+    SM = f"https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/sendMessage"
 
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
         message = f"Received status code {response.status_code}"
-        try:
-            doc = response.json()
-        except ValueError:
-            raise TransportError(message)
 
         # If the error payload contains the migrate_to_chat_id field,
         # raise MigrationRequiredError, with the new chat_id included
         try:
-            jsonschema.validate(doc, telegram_migration)
-            assert isinstance(doc, dict)
-            description = doc["description"]
-            assert isinstance(description, str)
-            chat_id = doc["parameters"]["migrate_to_chat_id"]
-            assert isinstance(chat_id, int)
-            raise MigrationRequiredError(description, chat_id)
-        except jsonschema.ValidationError:
+            m = TelegramMigration.model_validate_json(response.content)
+            raise MigrationRequiredError(m.description, m.new_chat_id)
+        except ValidationError:
             pass
 
         permanent = False
-        description = doc.get("description")
-        if isinstance(description, str):
-            message += f' with a message: "{description}"'
-            if description == "Forbidden: the group chat was deleted":
+        try:
+            f = TelegramFailure.model_validate_json(response.content)
+            message += f' with a message: "{f.description}"'
+            if f.description == "Forbidden: the group chat was deleted":
                 permanent = True
-            if description == "Forbidden: bot was blocked by the user":
+            if f.description == "Forbidden: bot was blocked by the user":
                 permanent = True
+        except ValidationError:
+            pass
 
         raise TransportError(message, permanent=permanent)
 
