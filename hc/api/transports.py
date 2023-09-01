@@ -14,10 +14,9 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.timezone import now
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from hc.accounts.models import Profile
-from hc.api.schemas import TelegramFailure, TelegramMigration
 from hc.front.templatetags.hc_extras import (
     absolute_site_logo_url,
     fix_asterisks,
@@ -471,18 +470,17 @@ class Discord(Slackalike):
 
 
 class Opsgenie(HttpTransport):
+    class ErrorModel(BaseModel):
+        message: str
+
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
         message = f"Received status code {response.status_code}"
         try:
-            doc = response.json()
-        except ValueError:
-            raise TransportError(message)
-
-        assert isinstance(doc, dict)
-        details = doc.get("message")
-        if isinstance(details, str):
-            message += f' with a message: "{details}"'
+            r = Opsgenie.ErrorModel.model_validate_json(response.content)
+            message += f' with a message: "{r.message}"'
+        except ValidationError:
+            pass
 
         raise TransportError(message)
 
@@ -739,21 +737,34 @@ class MigrationRequiredError(TransportError):
 class Telegram(HttpTransport):
     SM = f"https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/sendMessage"
 
+    class ErrorModel(BaseModel):
+        description: str
+
+    class MigrationParameters(BaseModel):
+        migrate_to_chat_id: int
+
+    class MigrationModel(BaseModel):
+        description: str
+        parameters: Telegram.MigrationParameters
+
+        @property
+        def new_chat_id(self) -> int:
+            return self.parameters.migrate_to_chat_id
+
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
-        message = f"Received status code {response.status_code}"
-
         # If the error payload contains the migrate_to_chat_id field,
         # raise MigrationRequiredError, with the new chat_id included
         try:
-            m = TelegramMigration.model_validate_json(response.content)
+            m = Telegram.MigrationModel.model_validate_json(response.content)
             raise MigrationRequiredError(m.description, m.new_chat_id)
         except ValidationError:
             pass
 
+        message = f"Received status code {response.status_code}"
         permanent = False
         try:
-            f = TelegramFailure.model_validate_json(response.content)
+            f = Telegram.ErrorModel.model_validate_json(response.content)
             message += f' with a message: "{f.description}"'
             if f.description == "Forbidden: the group chat was deleted":
                 permanent = True
@@ -994,14 +1005,16 @@ class MsTeams(HttpTransport):
 
 
 class Zulip(HttpTransport):
+    class ErrorModel(BaseModel):
+        msg: str
+
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
         message = f"Received status code {response.status_code}"
         try:
-            details = response.json().get("msg")
-            if isinstance(details, str):
-                message += f' with a message: "{details}"'
-        except ValueError:
+            f = Zulip.ErrorModel.model_validate_json(response.content)
+            message += f' with a message: "{f.msg}"'
+        except ValidationError:
             pass
 
         raise TransportError(message)

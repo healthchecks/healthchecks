@@ -70,7 +70,7 @@ class NotifyZulipTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request")
     def test_it_returns_error(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 403
-        mock_post.return_value.json.return_value = {"msg": "Nice try"}
+        mock_post.return_value.content = b"""{"msg": "Nice try"}"""
 
         self.channel.notify(self.check)
 

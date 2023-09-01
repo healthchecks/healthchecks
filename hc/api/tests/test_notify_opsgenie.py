@@ -74,7 +74,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
     def test_opsgenie_returns_error(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 403
-        mock_post.return_value.json.return_value = {"message": "Nice try"}
+        mock_post.return_value.content = b"""{"message": "Nice try"}"""
 
         self.channel.notify(self.check)
         n = Notification.objects.get()
