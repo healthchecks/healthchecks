@@ -737,41 +737,33 @@ class MigrationRequiredError(TransportError):
 class Telegram(HttpTransport):
     SM = f"https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/sendMessage"
 
-    class ErrorModel(BaseModel):
-        description: str
-
     class MigrationParameters(BaseModel):
         migrate_to_chat_id: int
 
-    class MigrationModel(BaseModel):
+    class ErrorModel(BaseModel):
         description: str
-        parameters: Telegram.MigrationParameters
-
-        @property
-        def new_chat_id(self) -> int:
-            return self.parameters.migrate_to_chat_id
+        parameters: Telegram.MigrationParameters | None = None
 
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
-        # If the error payload contains the migrate_to_chat_id field,
-        # raise MigrationRequiredError, with the new chat_id included
-        try:
-            m = Telegram.MigrationModel.model_validate_json(response.content)
-            raise MigrationRequiredError(m.description, m.new_chat_id)
-        except ValidationError:
-            pass
-
         message = f"Received status code {response.status_code}"
-        permanent = False
         try:
-            f = Telegram.ErrorModel.model_validate_json(response.content)
-            message += f' with a message: "{f.description}"'
-            if f.description == "Forbidden: the group chat was deleted":
-                permanent = True
-            if f.description == "Forbidden: bot was blocked by the user":
-                permanent = True
+            m = Telegram.ErrorModel.model_validate_json(response.content)
         except ValidationError:
-            pass
+            raise TransportError(message)
+
+        if m.parameters:
+            # If the error payload contains the migrate_to_chat_id field,
+            # raise MigrationRequiredError, with the new chat_id included
+            chat_id = m.parameters.migrate_to_chat_id
+            raise MigrationRequiredError(m.description, chat_id)
+
+        permanent = False
+        message += f' with a message: "{m.description}"'
+        if m.description == "Forbidden: the group chat was deleted":
+            permanent = True
+        if m.description == "Forbidden: bot was blocked by the user":
+            permanent = True
 
         raise TransportError(message, permanent=permanent)
 
