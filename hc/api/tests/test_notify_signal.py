@@ -37,7 +37,8 @@ class MockSocket(object):
             raise self.side_effect
 
         self.req = json.loads(data.decode())
-        self.response_tmpl["id"] = self.req["id"]
+        if isinstance(self.response_tmpl, dict):
+            self.response_tmpl["id"] = self.req["id"]
 
         message = json.dumps(self.response_tmpl) + "\n"
         self.outbox += message.encode()
@@ -249,6 +250,14 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", message)
 
     @patch("hc.api.transports.socket.socket")
+    def test_it_handles_unexpected_payload(self, socket: Mock) -> None:
+        setup_mock(socket, "surprise")
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "signal-cli call failed (unexpected response)")
+
+    @patch("hc.api.transports.socket.socket")
     def test_it_handles_unregistered_failure(self, socket: Mock) -> None:
         msg = {
             "error": {
@@ -272,6 +281,33 @@ class NotifySignalTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Recipient not found")
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_ignores_unexpected_recipient(self, socket: Mock) -> None:
+        msg = {
+            "error": {
+                "code": -1,
+                "message": "Failed to send message",
+                "data": {
+                    "response": {
+                        "results": [
+                            {
+                                "recipientAddress": {"number": "+999999999"},
+                                "type": "UNREGISTERED_FAILURE",
+                            }
+                        ],
+                    }
+                },
+            },
+        }
+        setup_mock(socket, msg)
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        # UNREGISTERED_FAILURE is reported for a different recipient,
+        # so it should not appear in the error message:
+        self.assertEqual(n.error, "signal-cli call failed (-1)")
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_error_code(self, socket: Mock) -> None:

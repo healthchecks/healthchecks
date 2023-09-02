@@ -1064,8 +1064,7 @@ class Signal(Transport):
         error: Optional[Signal.Error] = None
 
         def get_results(self) -> List[Signal.Result]:
-            if self.error is None:
-                return []
+            assert self.error
             if self.error.data is None:
                 return []
             return self.error.data.response.results
