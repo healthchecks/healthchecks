@@ -151,6 +151,8 @@ class SendTestNotificationTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request")
     def test_it_handles_webhook_with_json_variable(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
         self.channel.kind = "webhook"
         self.channel.value = json.dumps(
             {
@@ -163,7 +165,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.channel.save()
 
         self.client.login(username="alice@example.org", password="password")
-        self.client.post(self.url, {}, follow=True)
+        self.client.post(self.url, {})
 
         payload = mock_post.call_args.kwargs["data"]
         body = json.loads(payload)

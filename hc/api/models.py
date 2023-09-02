@@ -729,8 +729,8 @@ class Channel(models.Model):
 
     def make_token(self) -> str:
         seed = "%s%s" % (self.code, settings.SECRET_KEY)
-        seed = seed.encode()
-        return hashlib.sha1(seed).hexdigest()
+        seed_bytes = seed.encode()
+        return hashlib.sha1(seed_bytes).hexdigest()
 
     def send_verify_link(self) -> None:
         args = [self.code, self.make_token()]
@@ -831,14 +831,14 @@ class Channel(models.Model):
         assert self.kind == "webhook"
 
         doc = json.loads(self.value)
-        if status == "down" and "method_down" in doc:
+        if status == "down":
             return {
                 "method": doc["method_down"],
                 "url": doc["url_down"],
                 "body": doc["body_down"],
                 "headers": doc["headers_down"],
             }
-        elif status == "up" and "method_up" in doc:
+        elif status == "up":
             return {
                 "method": doc["method_up"],
                 "url": doc["url_up"],
