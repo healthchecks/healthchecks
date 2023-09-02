@@ -1245,6 +1245,3 @@ class Ntfy(HttpTransport):
             headers = {"Authorization": f"Bearer {self.channel.ntfy_token}"}
 
         self.post(self.channel.ntfy_url, headers=headers, json=payload)
-
-
-sample = {"code": 123, "a": {"b": {"c": {"d": {"e": {"value": "hello world"}}}}}}
