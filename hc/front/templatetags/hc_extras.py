@@ -41,7 +41,7 @@ def site_name() -> str:
 
 
 @register.simple_tag
-def support_email() -> str:
+def support_email() -> str | None:
     return settings.SUPPORT_EMAIL
 
 
@@ -189,7 +189,7 @@ def timestamp(dt):
 
 
 @register.filter
-def guess_schedule(check: Check) -> str:
+def guess_schedule(check: Check) -> str | None:
     if check.kind == "cron":
         return check.schedule
 
@@ -216,6 +216,8 @@ def guess_schedule(check: Check) -> str:
     hours, seconds = divmod(v, 3600)
     if hours in (2, 3, 4, 6, 8, 12) and seconds == 0:
         return f"0 */{hours} * * *"
+
+    return None
 
 
 FORMATTED_PING_ENDPOINT = (
