@@ -1040,6 +1040,13 @@ class LineNotify(HttpTransport):
         self.post(self.URL, headers=headers, params=payload)
 
 
+class SignalRateLimitFailure(TransportError):
+    def __init__(self, token: str, reply: bytes):
+        super().__init__("CAPTCHA proof required")
+        self.token = token
+        self.reply = reply
+
+
 class Signal(Transport):
     class Recipient(BaseModel):
         number: str
@@ -1075,7 +1082,8 @@ class Signal(Transport):
         else:
             return not self.channel.signal_notify_up
 
-    def send(self, recipient: str, message: str) -> None:
+    @classmethod
+    def send(cls, recipient: str, message: str) -> None:
         plaintext, styles = extract_signal_styles(message)
         payload = {
             "jsonrpc": "2.0",
@@ -1089,7 +1097,7 @@ class Signal(Transport):
         }
 
         payload_bytes = (json.dumps(payload) + "\n").encode()
-        for reply_bytes in self._read_replies(payload_bytes):
+        for reply_bytes in cls._read_replies(payload_bytes):
             try:
                 reply = Signal.Reply.model_validate_json(reply_bytes)
             except ValidationError:
@@ -1109,15 +1117,12 @@ class Signal(Transport):
                     raise TransportError("Recipient not found")
 
                 if result.type == "RATE_LIMIT_FAILURE" and result.token:
-                    if self.channel:
-                        raw = reply_bytes.decode()
-                        self.channel.send_signal_captcha_alert(result.token, raw)
-                        self.channel.send_signal_rate_limited_notice(message, plaintext)
-                    raise TransportError("CAPTCHA proof required")
+                    raise SignalRateLimitFailure(result.token, reply_bytes)
 
             code = reply.error.code
             raise TransportError(f"signal-cli call failed ({code})")
 
+    @classmethod
     def _read_replies(self, payload_bytes: bytes) -> Iterator[bytes]:
         """Send a request to signal-cli over UNIX socket. Read and yield replies.
 
@@ -1186,7 +1191,13 @@ class Signal(Transport):
             "down_checks": self.down_checks(check),
         }
         text = tmpl("signal_message.html", **ctx)
-        self.send(self.channel.phone_number, text)
+        try:
+            self.send(self.channel.phone_number, text)
+        except SignalRateLimitFailure as e:
+            self.channel.send_signal_captcha_alert(e.token, e.reply.decode())
+            plaintext, _ = extract_signal_styles(text)
+            self.channel.send_signal_rate_limited_notice(text, plaintext)
+            raise e
 
 
 class Gotify(HttpTransport):

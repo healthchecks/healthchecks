@@ -2483,7 +2483,7 @@ def signal_captcha(request: HttpRequest) -> HttpResponse:
         }
 
         payload_bytes = (json.dumps(payload) + "\n").encode()
-        for reply_bytes in Signal(None)._read_replies(payload_bytes):
+        for reply_bytes in Signal._read_replies(payload_bytes):
             try:
                 reply = json.loads(reply_bytes.decode())
             except ValueError:
@@ -2518,7 +2518,7 @@ def verify_signal_number(request: HttpRequest) -> HttpResponse:
         return render_result("Verification rate limit exceeded")
 
     try:
-        Signal(None).send(phone, f"Test message from {settings.SITE_NAME}")
+        Signal.send(phone, f"Test message from {settings.SITE_NAME}")
     except TransportError as e:
         return render_result(e.message)
 

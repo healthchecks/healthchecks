@@ -26,9 +26,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
 
     @patch("hc.front.views.Signal")
     def test_it_handles_rate_limit(self, mock_signal: Mock) -> None:
-        mock_signal.return_value.send.side_effect = TransportError(
-            "CAPTCHA proof required"
-        )
+        mock_signal.send.side_effect = TransportError("CAPTCHA proof required")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"phone": "+1234567890"})
@@ -36,9 +34,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
 
     @patch("hc.front.views.Signal")
     def test_it_handles_recipient_not_found(self, mock_signal: Mock) -> None:
-        mock_signal.return_value.send.side_effect = TransportError(
-            "Recipient not found"
-        )
+        mock_signal.send.side_effect = TransportError("Recipient not found")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"phone": "+1234567890"})
@@ -46,9 +42,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
 
     @patch("hc.front.views.Signal")
     def test_it_handles_unhandled_error(self, mock_signal: Mock) -> None:
-        mock_signal.return_value.send.side_effect = TransportError(
-            "signal-cli call failed (123)"
-        )
+        mock_signal.send.side_effect = TransportError("signal-cli call failed (123)")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"phone": "+1234567890"})
