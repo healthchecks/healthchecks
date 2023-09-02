@@ -29,6 +29,7 @@ class PingTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "up")
+        assert self.check.last_ping
         expected_aa = self.check.last_ping + td(days=1, hours=1)
         self.assertEqual(self.check.alert_after, expected_aa)
 
@@ -65,6 +66,7 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
+        assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"hello world")
 
     def test_head_works(self) -> None:
@@ -154,7 +156,7 @@ class PingTestCase(BaseTestCase):
 
     def test_it_never_caches(self) -> None:
         r = self.client.get(self.url)
-        assert "no-cache" in r.get("Cache-Control")
+        assert "no-cache" in r["Cache-Control"]
 
     def test_it_updates_confirmation_flag(self) -> None:
         payload = "Please Confirm ..."
@@ -222,6 +224,7 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()
+        assert self.check.last_duration
         self.assertTrue(self.check.last_duration.total_seconds() >= 10)
 
     def test_it_does_not_update_last_ping_on_rid_mismatch(self) -> None:
@@ -249,6 +252,7 @@ class PingTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertIsNone(self.check.last_start)
+        assert self.check.last_duration
         self.assertTrue(self.check.last_duration.total_seconds() >= 10)
 
     def test_it_clears_last_ping_if_rid_is_absent(self) -> None:
@@ -297,6 +301,7 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
+        assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"hello")
 
     @override_settings(PING_BODY_LIMIT=None)
@@ -305,6 +310,7 @@ class PingTestCase(BaseTestCase):
         self.assertNotIn("Ping-Body-Limit", r.headers)
 
         ping = Ping.objects.get()
+        assert ping.body_raw
         self.assertEqual(len(ping.body_raw), 20000)
 
     def test_it_handles_manual_resume_flag(self) -> None:
@@ -355,6 +361,7 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
+        assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"Hello \xe9 World")
 
     @override_settings(S3_BUCKET="test-bucket", PING_BODY_LIMIT=None)
@@ -383,6 +390,7 @@ class PingTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.kind, "log")
+        assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"hello")
 
         self.assertFalse(Flip.objects.exists())

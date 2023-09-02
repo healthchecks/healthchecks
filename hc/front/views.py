@@ -804,17 +804,20 @@ def _get_events(check: Check, page_limit: int, start=None, end=None):
         for ping in pings:
             ping.duration = None
 
-    alerts = Notification.objects.select_related("channel")
-    alerts = alerts.filter(owner=check, check_status="down")
+    alerts: list[Notification]
+    q = Notification.objects.select_related("channel")
+    q = q.filter(owner=check, check_status="down")
     if start and end:
-        alerts = alerts.filter(created__gte=start, created__lte=end)
+        q = q.filter(created__gte=start, created__lte=end)
+        alerts = list(q)
     elif len(pings):
         cutoff = pings[-1].created
-        alerts = alerts.filter(created__gt=cutoff)
+        q = q.filter(created__gt=cutoff)
+        alerts = list(q)
     else:
         alerts = []
 
-    events = pings + list(alerts)
+    events = pings + alerts
     events.sort(key=lambda el: el.created, reverse=True)
     return events
 

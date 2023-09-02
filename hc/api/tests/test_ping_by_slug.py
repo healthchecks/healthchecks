@@ -28,6 +28,7 @@ class PingBySlugTestCase(BaseTestCase):
 
         ping = Ping.objects.get()
         self.assertEqual(ping.method, "POST")
+        assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"hello world")
 
     def test_head_works(self) -> None:
@@ -38,7 +39,7 @@ class PingBySlugTestCase(BaseTestCase):
 
     def test_it_never_caches(self) -> None:
         r = self.client.get(self.url)
-        assert "no-cache" in r.get("Cache-Control")
+        assert "no-cache" in r["Cache-Control"]
 
     def test_fail_endpoint_works(self) -> None:
         r = self.client.get(self.url + "/fail")
