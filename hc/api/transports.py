@@ -6,7 +6,7 @@ import os
 import socket
 import time
 import uuid
-from typing import TYPE_CHECKING, Any, Iterator, NoReturn, Optional, cast
+from typing import TYPE_CHECKING, Any, Iterator, List, NoReturn, Optional, cast
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
@@ -44,26 +44,6 @@ def tmpl(template_name: str, **ctx: Any) -> str:
     # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
     # and cost twice the money.
     return render_to_string(template_path, ctx).strip().replace("\xa0", " ")
-
-
-def get_nested(obj: object, path: str, default: object = None) -> Any:
-    """Retrieve a field from nested dictionaries.
-
-    Example:
-
-    >>> get_nested({"foo": {"bar": "baz"}}, "foo.bar")
-    'baz'
-
-    """
-
-    needle = obj
-    for key in path.split("."):
-        if not isinstance(needle, dict):
-            return default
-        if key not in needle:
-            return default
-        needle = needle[key]
-    return needle
 
 
 def get_ping_body(ping: Ping | None, maxlen: int | None = None) -> str | None:
@@ -1061,6 +1041,35 @@ class LineNotify(HttpTransport):
 
 
 class Signal(Transport):
+    class Recipient(BaseModel):
+        number: str
+
+    class Result(BaseModel):
+        type: str
+        recipientAddress: Signal.Recipient
+        token: Optional[str] = None
+
+    class Response(BaseModel):
+        results: List[Signal.Result]
+
+    class Data(BaseModel):
+        response: Signal.Response
+
+    class Error(BaseModel):
+        code: int
+        data: Optional[Signal.Data] = None
+
+    class Reply(BaseModel):
+        id: str
+        error: Optional[Signal.Error] = None
+
+        def get_results(self) -> List[Signal.Result]:
+            if self.error is None:
+                return []
+            if self.error.data is None:
+                return []
+            return self.error.data.response.results
+
     def is_noop(self, check: Check) -> bool:
         if check.status == "down":
             return not self.channel.signal_notify_down
@@ -1083,36 +1092,32 @@ class Signal(Transport):
         payload_bytes = (json.dumps(payload) + "\n").encode()
         for reply_bytes in self._read_replies(payload_bytes):
             try:
-                reply = json.loads(reply_bytes.decode())
-            except ValueError:
+                reply = Signal.Reply.model_validate_json(reply_bytes)
+            except ValidationError:
                 raise TransportError("signal-cli call failed (unexpected response)")
 
-            if reply.get("id") == payload["id"]:
-                if "error" not in reply:
-                    # success!
-                    break
+            if reply.id != payload["id"]:
+                continue
 
-                results = get_nested(reply, "error.data.response.results", [])
-                assert isinstance(results, list)
-                for result in results:
-                    if get_nested(result, "recipientAddress.number") != recipient:
-                        continue
+            if reply.error is None:
+                break  # success!
 
-                    assert isinstance(result, dict)
-                    if result.get("type") == "UNREGISTERED_FAILURE":
-                        raise TransportError("Recipient not found")
+            for result in reply.get_results():
+                if result.recipientAddress.number != recipient:
+                    continue
 
-                    if result.get("type") == "RATE_LIMIT_FAILURE" and "token" in result:
-                        if self.channel:
-                            raw = reply_bytes.decode()
-                            self.channel.send_signal_captcha_alert(result["token"], raw)
-                            self.channel.send_signal_rate_limited_notice(
-                                message, plaintext
-                            )
-                        raise TransportError("CAPTCHA proof required")
+                if result.type == "UNREGISTERED_FAILURE":
+                    raise TransportError("Recipient not found")
 
-                code = reply["error"].get("code")
-                raise TransportError("signal-cli call failed (%s)" % code)
+                if result.type == "RATE_LIMIT_FAILURE" and result.token:
+                    if self.channel:
+                        raw = reply_bytes.decode()
+                        self.channel.send_signal_captcha_alert(result.token, raw)
+                        self.channel.send_signal_rate_limited_notice(message, plaintext)
+                    raise TransportError("CAPTCHA proof required")
+
+            code = reply.error.code
+            raise TransportError(f"signal-cli call failed ({code})")
 
     def _read_replies(self, payload_bytes: bytes) -> Iterator[bytes]:
         """Send a request to signal-cli over UNIX socket. Read and yield replies.
@@ -1240,3 +1245,6 @@ class Ntfy(HttpTransport):
             headers = {"Authorization": f"Bearer {self.channel.ntfy_token}"}
 
         self.post(self.channel.ntfy_url, headers=headers, json=payload)
+
+
+sample = {"code": 123, "a": {"b": {"c": {"d": {"e": {"value": "hello world"}}}}}}
