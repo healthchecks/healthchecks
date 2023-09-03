@@ -309,10 +309,8 @@ class Webhook(HttpTransport):
         return result
 
     def is_noop(self, check: Check) -> bool:
-        if check.status == "down" and not self.channel.url_down:
-            return True
-
-        if check.status == "up" and not self.channel.url_up:
+        spec = self.channel.webhook_spec(check.status)
+        if not spec.url:
             return True
 
         return False
@@ -322,20 +320,17 @@ class Webhook(HttpTransport):
             raise TransportError("Webhook notifications are not enabled.")
 
         spec = self.channel.webhook_spec(check.status)
-        if not spec["url"]:
+        if not spec.url:
             raise TransportError("Empty webhook URL")
 
-        assert isinstance(spec["url"], str)
-        url = self.prepare(spec["url"], check, urlencode=True)
+        url = self.prepare(spec.url, check, urlencode=True)
         headers = {}
-        assert isinstance(spec["headers"], dict)
-        for key, value in spec["headers"].items():
+        for key, value in spec.headers.items():
             # Header values should contain ASCII and latin-1 only
             headers[key] = self.prepare(value, check, latin1=True)
 
-        body, body_bytes = spec["body"], None
+        body, body_bytes = spec.body, None
         if body:
-            assert isinstance(body, str)
             body = self.prepare(body, check, allow_ping_body=True)
             body_bytes = body.encode()
 
@@ -344,11 +339,11 @@ class Webhook(HttpTransport):
         if notification and notification.owner is None:
             use_retries = False  # this is a test notification
 
-        if spec["method"] == "GET":
+        if spec.method == "GET":
             self.get(url, use_retries=use_retries, headers=headers)
-        elif spec["method"] == "POST":
+        elif spec.method == "POST":
             self.post(url, use_retries=use_retries, data=body_bytes, headers=headers)
-        elif spec["method"] == "PUT":
+        elif spec.method == "PUT":
             self.put(url, use_retries=use_retries, data=body_bytes, headers=headers)
 
 

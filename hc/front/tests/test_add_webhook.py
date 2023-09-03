@@ -50,8 +50,8 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.project, self.project)
-        self.assertEqual(c.down_webhook_spec["url"], "http://foo.com")
-        self.assertEqual(c.up_webhook_spec["url"], "https://bar.com")
+        self.assertEqual(c.down_webhook_spec.url, "http://foo.com")
+        self.assertEqual(c.up_webhook_spec.url, "https://bar.com")
 
     def test_it_adds_webhook_using_team_access(self) -> None:
         form = {
@@ -68,8 +68,8 @@ class AddWebhookTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.project, self.project)
-        self.assertEqual(c.down_webhook_spec["url"], "http://foo.com")
-        self.assertEqual(c.up_webhook_spec["url"], "https://bar.com")
+        self.assertEqual(c.down_webhook_spec.url, "http://foo.com")
+        self.assertEqual(c.up_webhook_spec.url, "https://bar.com")
 
     def test_it_accepts_good_urls(self) -> None:
         urls = [
@@ -127,8 +127,8 @@ class AddWebhookTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.down_webhook_spec["url"], "")
-        self.assertEqual(c.up_webhook_spec["url"], "http://foo.com")
+        self.assertEqual(c.down_webhook_spec.url, "")
+        self.assertEqual(c.up_webhook_spec.url, "http://foo.com")
 
     def test_it_adds_request_body(self) -> None:
         form = {
@@ -143,7 +143,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
-        self.assertEqual(c.down_webhook_spec["body"], "hello")
+        self.assertEqual(c.down_webhook_spec.body, "hello")
 
     def test_it_adds_headers(self) -> None:
         form = {
@@ -158,9 +158,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
-        self.assertEqual(
-            c.down_webhook_spec["headers"], {"test": "123", "test2": "abc"}
-        )
+        self.assertEqual(c.down_webhook_spec.headers, {"test": "123", "test2": "abc"})
 
     def test_it_rejects_bad_headers(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -201,7 +199,7 @@ class AddWebhookTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
-        self.assertEqual(c.down_webhook_spec["headers"], {"test": "123"})
+        self.assertEqual(c.down_webhook_spec.headers, {"test": "123"})
 
     def test_it_rejects_both_empty(self) -> None:
         self.client.login(username="alice@example.org", password="password")

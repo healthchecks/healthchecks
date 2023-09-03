@@ -67,16 +67,16 @@ class EditWebhookTestCase(BaseTestCase):
         self.assertEqual(self.channel.name, "Call foo.com / bar.com")
 
         down_spec = self.channel.down_webhook_spec
-        self.assertEqual(down_spec["method"], "POST")
-        self.assertEqual(down_spec["url"], "http://foo.com")
-        self.assertEqual(down_spec["body"], "going down")
-        self.assertEqual(down_spec["headers"], {"X-Foo": "1", "X-Bar": "2"})
+        self.assertEqual(down_spec.method, "POST")
+        self.assertEqual(down_spec.url, "http://foo.com")
+        self.assertEqual(down_spec.body, "going down")
+        self.assertEqual(down_spec.headers, {"X-Foo": "1", "X-Bar": "2"})
 
         up_spec = self.channel.up_webhook_spec
-        self.assertEqual(up_spec["method"], "POST")
-        self.assertEqual(up_spec["url"], "https://bar.com")
-        self.assertEqual(up_spec["body"], "going up")
-        self.assertEqual(up_spec["headers"], {"Content-Type": "text/plain"})
+        self.assertEqual(up_spec.method, "POST")
+        self.assertEqual(up_spec.url, "https://bar.com")
+        self.assertEqual(up_spec.body, "going up")
+        self.assertEqual(up_spec.headers, {"Content-Type": "text/plain"})
 
         # Make sure it does not call assign_all_checks
         self.assertFalse(self.channel.checks.exists())

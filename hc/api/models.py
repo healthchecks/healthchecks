@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from typing import TypedDict
+from typing import Dict, TypedDict
 from urllib.parse import urlencode
 
 from cronsim import CronSim
@@ -19,6 +19,7 @@ from django.db import models, transaction
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from pydantic import BaseModel
 
 from hc.accounts.models import Project
 from hc.api import transports
@@ -684,6 +685,13 @@ def json_property(kind: str, field: str) -> property:
     return property(fget)
 
 
+class WebhookSpec(BaseModel):
+    method: str
+    url: str
+    body: str
+    headers: Dict[str, str]
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -827,40 +835,25 @@ class Channel(models.Model):
         prio = int(parts[1])
         return PO_PRIORITIES[prio]
 
-    def webhook_spec(self, status: str) -> dict[str, str | dict[str, str]]:
+    def webhook_spec(self, status: str) -> WebhookSpec:
         assert self.kind == "webhook"
+        assert status in ("up", "down")
 
         doc = json.loads(self.value)
-        if status == "down":
-            return {
-                "method": doc["method_down"],
-                "url": doc["url_down"],
-                "body": doc["body_down"],
-                "headers": doc["headers_down"],
-            }
-        elif status == "up":
-            return {
-                "method": doc["method_up"],
-                "url": doc["url_up"],
-                "body": doc["body_up"],
-                "headers": doc["headers_up"],
-            }
+        return WebhookSpec(
+            method=doc[f"method_{status}"],
+            url=doc[f"url_{status}"],
+            body=doc[f"body_{status}"],
+            headers=doc[f"headers_{status}"],
+        )
 
     @property
-    def down_webhook_spec(self):
+    def down_webhook_spec(self) -> WebhookSpec:
         return self.webhook_spec("down")
 
     @property
-    def up_webhook_spec(self):
+    def up_webhook_spec(self) -> WebhookSpec:
         return self.webhook_spec("up")
-
-    @property
-    def url_down(self):
-        return self.down_webhook_spec["url"]
-
-    @property
-    def url_up(self):
-        return self.up_webhook_spec["url"]
 
     cmd_down = json_property("shell", "cmd_down")
     cmd_up = json_property("shell", "cmd_up")
