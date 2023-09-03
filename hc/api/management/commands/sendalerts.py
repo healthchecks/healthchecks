@@ -96,11 +96,18 @@ class Command(BaseCommand):
         return True
 
     def handle_going_down(self) -> bool:
-        """Process a single check going down."""
+        """Process a single check going down.
 
-        now_value = now()
+        1. Find a check with alert_after in the past, and status other than "down".
+        2. Calculate its current status.
+        3. If calculation throws an exception, push alert_after forward and re-raise.
+        4. If the current status is not "down", update alert_after and return.
+        5. Update the check's status in the database to "down".
+        6. If exactly 1 row gets updated, create a Flip object.
 
-        q = Check.objects.filter(alert_after__lt=now_value).exclude(status="down")
+        """
+
+        q = Check.objects.filter(alert_after__lt=now()).exclude(status="down")
         # Sort by alert_after, to avoid unnecessary sorting by id:
         check = q.order_by("alert_after").first()
         if check is None:
@@ -114,7 +121,7 @@ class Command(BaseCommand):
         except Exception as e:
             # Make sure we don't trip on this check again for an hour:
             # Otherwise sendalerts may end up in a crash loop.
-            q.update(alert_after=now_value + td(hours=1))
+            q.update(alert_after=now() + td(hours=1))
             # Then re-raise the exception:
             raise e
 
