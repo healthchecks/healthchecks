@@ -50,6 +50,7 @@ class SmtpdTestCase(BaseTestCase):
         ping = Ping.objects.latest("id")
         self.assertEqual(ping.scheme, "email")
         self.assertEqual(ping.ua, "Email from foo@example.org")
+        assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"hello world")
         self.assertEqual(ping.kind, None)
 
@@ -212,5 +213,6 @@ class SmtpdTestCase(BaseTestCase):
         ping = await Ping.objects.alatest("id")
         self.assertEqual(ping.scheme, "email")
         self.assertEqual(ping.ua, "Email from foo@example.org")
+        assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"hello world")
         self.assertEqual(ping.kind, None)
