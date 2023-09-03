@@ -6,6 +6,7 @@ from datetime import timezone
 from unittest.mock import Mock, patch
 
 from django.core import mail
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.utils.timezone import now
 
 from hc.api.models import Check
@@ -16,6 +17,12 @@ MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class ProfileModelTestCase(BaseTestCase):
+    def get_html(self, email: EmailMessage) -> str:
+        assert isinstance(email, EmailMultiAlternatives)
+        html, _ = email.alternatives[0]
+        assert isinstance(html, str)
+        return html
+
     @patch("hc.lib.date.now", MOCK_NOW)
     def test_it_sends_report(self) -> None:
         check = Check(project=self.project, name="Test Check")
@@ -32,7 +39,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEqual(message.subject, "Monthly Report")
         self.assertIn("Test Check", message.body)
 
-        html, _ = message.alternatives[0]
+        html = self.get_html(message)
         self.assertNotIn("Jan. 2020", html)
         self.assertIn("Dec. 2019", html)
         self.assertIn("Nov. 2019", html)

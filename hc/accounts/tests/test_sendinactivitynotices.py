@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from datetime import timedelta as td
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.utils.timezone import now
@@ -13,13 +13,16 @@ from hc.api.models import Check, Ping
 from hc.payments.models import Subscription
 from hc.test import BaseTestCase
 
+MOCK_SLEEP = Mock()
+
 
 def counts(result: str) -> list[int]:
     """Extract integer values from command's return value."""
     return [int(s) for s in re.findall(r"\d+", result)]
 
 
-class SendDeletionNoticesTestCase(BaseTestCase):
+@patch("hc.accounts.management.commands.sendinactivitynotices.time.sleep", MOCK_SLEEP)
+class SendInactivityNoticesTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
 
@@ -35,8 +38,6 @@ class SendDeletionNoticesTestCase(BaseTestCase):
 
     def test_it_sends_notice(self) -> None:
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         result = cmd.handle()
         self.assertEqual(counts(result), [1, 0, 0])
 
@@ -121,14 +122,12 @@ class SendDeletionNoticesTestCase(BaseTestCase):
         self.assertIsNone(self.profile.deletion_notice_date)
 
     def test_it_ignores_inactive_team_members(self) -> None:
-        cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         # bob has access to alice's project, but is inactive
         Member.objects.create(user=self.bob, project=self.project)
         self.bob.date_joined = now() - td(days=366)
         self.bob.save()
 
+        cmd = Command(stdout=Mock())
         result = cmd.handle()
         # both alice and bob are eligible for deletion
         self.assertEqual(counts(result), [2, 0, 0])

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from datetime import timedelta as td
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
@@ -13,6 +13,8 @@ from hc.accounts.models import Member, Project
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
+MOCK_SLEEP = Mock()
+
 
 def counts(result: str) -> list[int]:
     """Extract integer values from command's return value."""
@@ -20,6 +22,7 @@ def counts(result: str) -> list[int]:
 
 
 @override_settings(SITE_NAME="Mychecks")
+@patch("hc.api.management.commands.sendreports.time.sleep", MOCK_SLEEP)
 class SendDeletionScheduledTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
@@ -37,8 +40,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         Check.objects.create(project=self.project)
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         result = cmd.handle()
         self.assertEqual(counts(result), [1])
 
@@ -56,8 +57,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.bob.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         result = cmd.handle()
         self.assertEqual(counts(result), [1])
 
@@ -65,8 +64,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
 
     def test_it_skips_profiles_with_deletion_scheduled_date_not_set(self) -> None:
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         result = cmd.handle()
         self.assertEqual(counts(result), [0])
         self.assertEqual(len(mail.outbox), 0)
@@ -76,8 +73,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.profile.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         result = cmd.handle()
         self.assertEqual(counts(result), [0])
         self.assertEqual(len(mail.outbox), 0)
@@ -95,8 +90,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         )
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         cmd.handle()
         # Bob should be listed as a recipient a single time, despite two memberships:
         self.assertEqual(mail.outbox[0].to, ["alice@example.org", "bob@example.org"])
@@ -106,7 +99,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.profile.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
         cmd.handle()
 
         self.assertEqual(mail.outbox[0].subject, "Account Deletion Warning")
@@ -118,7 +110,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.profile.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
         cmd.handle()
 
         self.assertEqual(len(mail.outbox), 1)
@@ -131,7 +122,6 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         self.channel.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
         cmd.handle()
 
         self.assertEqual(len(mail.outbox), 1)

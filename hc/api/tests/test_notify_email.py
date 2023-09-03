@@ -8,6 +8,7 @@ from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.core import mail
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
@@ -41,6 +42,12 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+    def get_html(self, email: EmailMessage) -> str:
+        assert isinstance(email, EmailMultiAlternatives)
+        html, _ = email.alternatives[0]
+        assert isinstance(html, str)
+        return html
+
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_works(self) -> None:
         self.channel.notify(self.check)
@@ -58,7 +65,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
         self.assertTrue(email.extra_headers["Message-ID"].endswith("@example.org>"))
 
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         # Name
         self.assertIn("Daily Backup", email.body)
         self.assertIn("Daily Backup", html)
@@ -116,8 +123,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        email = mail.outbox[0]
-        html = email.alternatives[0][0]
+        html = self.get_html(mail.outbox[0])
         self.assertIn("Line 1<br>Line2", html)
 
         code, n = get_object.call_args.args
@@ -133,8 +139,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
-
+        html = self.get_html(email)
         self.assertIn("0 18-23,0-8 * * *", email.body)
         self.assertIn("Europe/Riga", email.body)
         self.assertIn("<code>0 18-23,0-8 * * *</code>", html)
@@ -147,8 +152,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
-
+        html = self.get_html(email)
         self.assertIn("[truncated]", email.body)
         self.assertIn("[truncated]", html)
         self.assertNotIn("the rest gets cut off", html)
@@ -158,9 +162,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        email = mail.outbox[0]
-        html = email.alternatives[0][0]
-
+        html = self.get_html(mail.outbox[0])
         self.assertIn("Daily Backup", html)
 
     def test_it_handles_missing_profile(self) -> None:
@@ -172,7 +174,7 @@ class NotifyEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice+notifications@example.org")
 
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertIn("Daily Backup", html)
 
         self.assertNotIn("Projects Overview", email.body)
@@ -234,8 +236,7 @@ class NotifyEmailTestCase(BaseTestCase):
             self.channel.notify(self.check)
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
-
+        html = self.get_html(email)
         self.assertIn("The request body data is being processed", email.body)
         self.assertIn("The request body data is being processed", html)
 
@@ -247,7 +248,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertIn("Ignored", email.body)
         self.assertIn("Ignored", html)
 
@@ -258,7 +259,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertIn("Log", email.body)
         self.assertIn("Log", html)
 

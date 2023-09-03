@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.core import mail
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
@@ -16,6 +17,7 @@ from hc.test import BaseTestCase
 
 CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=timezone.utc)
 MOCK_NOW = Mock(return_value=CURRENT_TIME)
+MOCK_SLEEP = Mock()
 
 
 NAG_TEXT = """Hello,
@@ -42,6 +44,7 @@ Mychecks
 @patch("hc.lib.date.now", MOCK_NOW)
 @patch("hc.accounts.models.now", MOCK_NOW)
 @patch("hc.api.management.commands.sendreports.now", MOCK_NOW)
+@patch("hc.api.management.commands.sendreports.time.sleep", MOCK_SLEEP)
 class SendReportsTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
@@ -66,10 +69,14 @@ class SendReportsTestCase(BaseTestCase):
         self.check.status = "down"
         self.check.save()
 
+    def get_html(self, email: EmailMessage) -> str:
+        assert isinstance(email, EmailMultiAlternatives)
+        html, _ = email.alternatives[0]
+        assert isinstance(html, str)
+        return html
+
     def test_it_sends_monthly_report(self) -> None:
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         found = cmd.handle_one_report()
         self.assertTrue(found)
 
@@ -86,7 +93,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(email.subject, "Monthly Report")
         self.assertIn("This is a monthly report", email.body)
 
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertIn("This is a monthly report", html)
         self.assertIn("Nov. 2019", html)
         self.assertIn("Dec. 2019", html)
@@ -96,15 +103,13 @@ class SendReportsTestCase(BaseTestCase):
         self.profile.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         cmd.handle_one_report()
 
         email = mail.outbox[0]
         self.assertEqual(email.subject, "Weekly Report")
         self.assertIn("This is a weekly report", email.body)
 
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertIn("This is a weekly report", html)
         self.assertIn("Dec 30 - Jan 5", html)
         self.assertIn("Jan 6 - Jan 12", html)
@@ -115,11 +120,10 @@ class SendReportsTestCase(BaseTestCase):
         self.profile.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
         cmd.handle_one_report()
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         # UTC:      Monday, Jan 13, 2AM.
         # New York: Sunday, Jan 12, 9PM.
         # The report should not contain the Jan 6 - Jan 12 week, because
@@ -134,11 +138,10 @@ class SendReportsTestCase(BaseTestCase):
         self.profile.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
         cmd.handle_one_report()
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         # UTC:   Monday, Jan 13, 2AM.
         # Tokyo: Monday, Jan 13, 11AM
         self.assertNotIn("Dec 23 - Dec 29", html)
@@ -173,6 +176,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertTrue(found)
 
         self.profile.refresh_from_db()
+        assert self.profile.next_report_date
         self.assertEqual(self.profile.next_report_date.date(), date(2020, 1, 20))
         self.assertEqual(len(mail.outbox), 0)
 
@@ -194,8 +198,6 @@ class SendReportsTestCase(BaseTestCase):
 
     def test_it_sends_nag(self) -> None:
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         found = cmd.handle_one_nag()
         self.assertTrue(found)
 
@@ -205,7 +207,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertNotIn(str(self.check.code), email.body)
         self.assertNotIn(str(self.check.code), html)
 
@@ -248,7 +250,6 @@ class SendReportsTestCase(BaseTestCase):
         check2.save()
 
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
         found = cmd.handle_one_nag()
         self.assertTrue(found)
 
@@ -256,15 +257,13 @@ class SendReportsTestCase(BaseTestCase):
         self.assertIn("Foo", email.body)
         self.assertNotIn("Foobar", email.body)
 
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertIn("Foo", html)
         self.assertNotIn("Foobar", html)
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_it_sets_custom_mail_from(self) -> None:
         cmd = Command(stdout=Mock())
-        cmd.pause = Mock()  # don't pause for 1s
-
         cmd.handle_one_report()
 
         email = mail.outbox[0]

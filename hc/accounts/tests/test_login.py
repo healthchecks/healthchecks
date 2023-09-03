@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.core import mail
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 
 from hc.accounts.models import Credential
@@ -13,6 +14,12 @@ class LoginTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.checks_url = f"/projects/{self.project.code}/checks/"
+
+    def get_html(self, email: EmailMessage) -> str:
+        assert isinstance(email, EmailMultiAlternatives)
+        html, _ = email.alternatives[0]
+        assert isinstance(html, str)
+        return html
 
     def test_it_shows_form(self) -> None:
         r = self.client.get("/accounts/login/")
@@ -42,7 +49,7 @@ class LoginTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
         self.assertEqual(message.subject, f"Log in to {settings.SITE_NAME}")
-        html = message.alternatives[0][0]
+        html = self.get_html(message)
         self.assertIn("http://testserver/static/img/logo.png", html)
         self.assertIn("http://testserver/docs/", html)
 
@@ -55,7 +62,7 @@ class LoginTestCase(BaseTestCase):
     @override_settings(SITE_LOGO_URL="https://example.org/logo.svg")
     def test_it_uses_custom_logo(self) -> None:
         self.client.post("/accounts/login/", {"identity": "alice@example.org"})
-        html = mail.outbox[0].alternatives[0][0]
+        html = self.get_html(mail.outbox[0])
         self.assertIn("https://example.org/logo.svg", html)
 
     def test_it_sends_link_with_next(self) -> None:

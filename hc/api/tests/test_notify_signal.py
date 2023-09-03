@@ -8,6 +8,7 @@ from datetime import timedelta as td
 from unittest.mock import Mock, patch
 
 from django.core import mail
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
@@ -84,6 +85,12 @@ class NotifySignalTestCase(BaseTestCase):
         self.channel.value = json.dumps(payload)
         self.channel.save()
         self.channel.checks.add(self.check)
+
+    def get_html(self, email: EmailMessage) -> str:
+        assert isinstance(email, EmailMultiAlternatives)
+        html, _ = email.alternatives[0]
+        assert isinstance(html, str)
+        return html
 
     @patch("hc.api.transports.socket.socket")
     def test_it_works(self, socket) -> None:
@@ -391,7 +398,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("The check Foo & Co is DOWN.", email.body)
         # The HTML version should retain styling, and escape special characters
         # in project name, check name, etc.:
-        html = email.alternatives[0][0]
+        html = self.get_html(email)
         self.assertIn("The check <b>Foo &amp; Co</b> is <b>DOWN</b>.", html)
 
     @patch("hc.api.transports.socket.socket")

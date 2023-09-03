@@ -2,12 +2,19 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.core import mail
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 
 from hc.test import BaseTestCase
 
 
 class ChangeEmailTestCase(BaseTestCase):
+    def get_html(self, email: EmailMessage) -> str:
+        assert isinstance(email, EmailMultiAlternatives)
+        html, _ = email.alternatives[0]
+        assert isinstance(html, str)
+        return html
+
     def test_it_requires_sudo_mode(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
@@ -45,7 +52,7 @@ class ChangeEmailTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
         message = mail.outbox[0]
         self.assertEqual(message.subject, f"Log in to {settings.SITE_NAME}")
-        html = message.alternatives[0][0]
+        html = self.get_html(message)
         self.assertIn("http://testserver/accounts/change_email/", html)
 
     @override_settings(SESSION_COOKIE_SECURE=True)
