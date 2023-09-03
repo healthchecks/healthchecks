@@ -127,4 +127,5 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         payload = mock_post.call_args.kwargs["data"]
+        assert isinstance(payload["Body"], str)
         self.assertIn("is UP", payload["Body"])

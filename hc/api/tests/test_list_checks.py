@@ -156,7 +156,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         # When using readonly keys, the ping URLs should not be exposed:
-        self.assertNotContains(r, self.a1.url())
+        self.assertNotContains(r, str(self.a1.code))
 
     def test_v1_reports_status_started(self) -> None:
         self.a1.last_start = now()
