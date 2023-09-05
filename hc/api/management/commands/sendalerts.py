@@ -130,8 +130,13 @@ class Command(BaseCommand):
             q.update(alert_after=check.going_down_after())
             return True
 
-        # Atomically update status
         flip_time = check.going_down_after()
+        # In theory, going_down_after() can return None, but:
+        # get_status() just reported status "down", so "going_down_after()"
+        # must be able to calculate precisely when the check's state flipped.
+        assert flip_time
+
+        # Atomically update status
         num_updated = q.update(alert_after=None, status="down")
         if num_updated != 1:
             # Nothing got updated: another worker process got there first.
