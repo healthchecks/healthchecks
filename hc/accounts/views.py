@@ -19,7 +19,12 @@ from django.contrib.auth.models import User
 from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from django.db import transaction
 from django.db.models.functions import Lower
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseForbidden,
+)
 from django.middleware import csrf
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import Resolver404, resolve, reverse
@@ -49,7 +54,12 @@ POST_LOGIN_ROUTES = (
 )
 
 
-def _allow_redirect(redirect_url):
+class AuthenticatedHttpRequest(HttpRequest):
+    user: User
+    profile: Profile
+
+
+def _allow_redirect(redirect_url: str | None) -> bool:
     if not redirect_url:
         return False
 
@@ -66,7 +76,7 @@ def _allow_redirect(redirect_url):
     return match.url_name in POST_LOGIN_ROUTES
 
 
-def _make_user(email, tz=None, with_project=True):
+def _make_user(email: str, tz: str | None = None, with_project: bool = True) -> User:
     username = str(uuid.uuid4())[:30]
     user = User(username=username, email=email)
     user.set_unusable_password()
@@ -100,21 +110,22 @@ def _make_user(email, tz=None, with_project=True):
     return user
 
 
-def _redirect_after_login(request):
+def _redirect_after_login(request: HttpRequest) -> HttpResponse:
     """Redirect to the URL indicated in ?next= query parameter."""
 
     redirect_url = request.GET.get("next")
-    if _allow_redirect(redirect_url):
+    if redirect_url and _allow_redirect(redirect_url):
         return redirect(redirect_url)
 
+    assert isinstance(request.user, User)
     if request.user.project_set.count() == 1:
-        project = request.user.project_set.first()
+        project = request.user.project_set.get()
         return redirect("hc-checks", project.code)
 
     return redirect("hc-index")
 
 
-def _check_2fa(request, user):
+def _check_2fa(request: HttpRequest, user: User) -> HttpResponse:
     have_keys = user.credentials.exists()
     profile = Profile.objects.for_user(user)
     if have_keys or profile.totp:
@@ -140,14 +151,14 @@ def _check_2fa(request, user):
     return _redirect_after_login(request)
 
 
-def _new_key(nbytes=24):
+def _new_key(nbytes: int = 24) -> str:
     while True:
         candidate = token_urlsafe(nbytes)
         if candidate[0] not in "-_" and candidate[-1] not in "-_":
             return candidate
 
 
-def _set_autologin_cookie(response):
+def _set_autologin_cookie(response: HttpResponse) -> None:
     # check_token looks for this cookie to decide if
     # it needs to do the extra POST step.
     response.set_cookie(
@@ -161,14 +172,15 @@ def _set_autologin_cookie(response):
 
 
 @sensitive_post_parameters()
-def login(request):
+def login(request: HttpRequest) -> HttpResponse:
     form = forms.PasswordLoginForm()
-    magic_form = forms.EmailLoginForm()
+    magic_form = forms.EmailLoginForm(request)
 
     if request.method == "POST":
         if request.POST.get("action") == "login":
             form = forms.PasswordLoginForm(request.POST)
             if form.is_valid():
+                assert isinstance(form.user, User)
                 return _check_2fa(request, form.user)
 
         else:
@@ -276,7 +288,7 @@ def check_token(request, username, token, new_email=None):
 
 
 @login_required
-def profile(request):
+def profile(request: AuthenticatedHttpRequest) -> HttpResponse:
     profile = request.profile
 
     ctx = {
@@ -321,7 +333,7 @@ def profile(request):
 
 @login_required
 @require_POST
-def add_project(request):
+def add_project(request: AuthenticatedHttpRequest) -> HttpResponse:
     form = forms.ProjectNameForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest()
@@ -522,14 +534,14 @@ def project(request, code):
             tr.transfer_request_date = None
             tr.save()
 
-    q = project.member_set.select_related("user").order_by("user__email")
-    ctx["memberships"] = list(q)
+    mq = project.member_set.select_related("user").order_by("user__email")
+    ctx["memberships"] = list(mq)
     ctx["can_invite_new_users"] = project.can_invite_new_users()
     return render(request, "accounts/project.html", ctx)
 
 
 @login_required
-def notifications(request):
+def notifications(request: AuthenticatedHttpRequest) -> HttpResponse:
     profile = request.profile
 
     ctx = {
@@ -565,7 +577,7 @@ def notifications(request):
 @login_required
 @sensitive_post_parameters()
 @require_sudo_mode
-def set_password(request):
+def set_password(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = forms.SetPasswordForm(request.POST)
         if form.is_valid():

@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
+from typing import Any
 
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.http import HttpRequest
+from pyotp.totp import TOTP
 
 from hc.accounts.models import REPORT_CHOICES, Member
 from hc.api.models import TokenBucket
@@ -12,7 +15,7 @@ from hc.lib.tz import all_timezones
 
 
 class LowercaseEmailField(forms.EmailField):
-    def clean(self, value):
+    def clean(self, value: str) -> str:
         value = super(LowercaseEmailField, self).clean(value)
         return value.lower()
 
@@ -25,21 +28,24 @@ class SignupForm(forms.Form):
     )
     tz = forms.CharField(required=False)
 
-    def __init__(self, request):
+    def __init__(self, request: HttpRequest):
         self.request = request
         super(SignupForm, self).__init__(request.POST)
 
-    def clean_identity(self):
+    def clean_identity(self) -> str:
         if not TokenBucket.authorize_auth_ip(self.request):
             raise forms.ValidationError("Too many attempts, please try later.")
 
         v = self.cleaned_data["identity"]
+        assert isinstance(v, str)
         if len(v) > 254:
             raise forms.ValidationError("Address is too long.")
 
         return v
 
-    def clean_tz(self):
+    def clean_tz(self) -> str | None:
+        assert isinstance(self.cleaned_data["tz"], str)
+
         # Declare tz as "clean" only if we can find it in hc.lib.tz.all_timezones
         if self.cleaned_data["tz"] in all_timezones:
             return self.cleaned_data["tz"]
@@ -47,6 +53,7 @@ class SignupForm(forms.Form):
         # Otherwise, return None, and *don't* throw a validation exception:
         # If user's browser reports a timezone we don't recognize, we
         # should ignore the timezone but still save the rest of the form.
+        return None
 
 
 class EmailLoginForm(forms.Form):
@@ -54,17 +61,19 @@ class EmailLoginForm(forms.Form):
     # to avoid some of the dumber bots
     identity = LowercaseEmailField()
 
-    def __init__(self, request=None):
+    def __init__(self, request: HttpRequest):
         self.request = request
         super(EmailLoginForm, self).__init__(request.POST if request else None)
 
-    def clean_identity(self):
+    def clean_identity(self) -> str:
         v = self.cleaned_data["identity"]
+        assert isinstance(v, str)
         if not TokenBucket.authorize_login_email(v):
             raise forms.ValidationError("Too many attempts, please try later.")
         if not TokenBucket.authorize_auth_ip(self.request):
             raise forms.ValidationError("Too many attempts, please try later.")
 
+        self.user: User | None
         try:
             self.user = User.objects.get(email=v)
         except User.DoesNotExist:
@@ -77,7 +86,7 @@ class PasswordLoginForm(forms.Form):
     email = LowercaseEmailField()
     password = forms.CharField()
 
-    def clean(self):
+    def clean(self) -> dict[str, Any]:
         username = self.cleaned_data.get("email")
         password = self.cleaned_data.get("password")
 
@@ -97,7 +106,7 @@ class ReportSettingsForm(forms.Form):
     nag_period = forms.IntegerField(min_value=0, max_value=86400)
     tz = forms.CharField()
 
-    def clean_nag_period(self):
+    def clean_nag_period(self) -> td:
         seconds = self.cleaned_data["nag_period"]
 
         if seconds not in (0, 3600, 86400):
@@ -105,7 +114,9 @@ class ReportSettingsForm(forms.Form):
 
         return td(seconds=seconds)
 
-    def clean_tz(self):
+    def clean_tz(self) -> str | None:
+        assert isinstance(self.cleaned_data["tz"], str)
+
         # Declare tz as "clean" only if we can find it in hc.lib.tz.all_timezones
         if self.cleaned_data["tz"] in all_timezones:
             return self.cleaned_data["tz"]
@@ -113,6 +124,7 @@ class ReportSettingsForm(forms.Form):
         # Otherwise, return None, and *don't* throw a validation exception:
         # If user's browser reports a timezone we don't recognize, we
         # should ignore the timezone but still save the rest of the form.
+        return None
 
 
 class SetPasswordForm(forms.Form):
@@ -123,8 +135,9 @@ class ChangeEmailForm(forms.Form):
     error_css_class = "has-error"
     email = LowercaseEmailField()
 
-    def clean_email(self):
+    def clean_email(self) -> str:
         v = self.cleaned_data["email"]
+        assert isinstance(v, str)
         if User.objects.filter(email=v).exists():
             raise forms.ValidationError("%s is already registered" % v)
 
@@ -161,11 +174,12 @@ class TotpForm(forms.Form):
     error_css_class = "has-error"
     code = forms.RegexField(regex=r"^\d{6}$")
 
-    def __init__(self, totp, post=None, files=None):
+    def __init__(self, totp: TOTP, post: Any = None):
         self.totp = totp
-        super(TotpForm, self).__init__(post, files)
+        super(TotpForm, self).__init__(post)
 
-    def clean_code(self):
+    def clean_code(self) -> str:
+        assert isinstance(self.cleaned_data["code"], str)
         if not self.totp.verify(self.cleaned_data["code"], valid_window=1):
             raise forms.ValidationError("The code you entered was incorrect.")
 

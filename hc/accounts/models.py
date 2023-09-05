@@ -47,7 +47,7 @@ def month(dt):
 
 
 class ProfileManager(models.Manager):
-    def for_user(self, user):
+    def for_user(self, user: User) -> "Profile":
         try:
             return user.profile
         except Profile.DoesNotExist:

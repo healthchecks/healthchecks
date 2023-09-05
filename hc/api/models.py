@@ -16,6 +16,7 @@ from django.conf import settings
 from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
 from django.db import models, transaction
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
@@ -1149,7 +1150,7 @@ class TokenBucket(models.Model):
         return True
 
     @staticmethod
-    def authorize_auth_ip(request):
+    def authorize_auth_ip(request: HttpRequest) -> bool:
         headers = request.META
         remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
         remote_addr = remote_addr.split(",")[0]
@@ -1184,7 +1185,7 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 20, 3600 * 24)
 
     @staticmethod
-    def authorize_login_password(email):
+    def authorize_login_password(email: str) -> bool:
         salted_encoded = (email + settings.SECRET_KEY).encode()
         value = "pw-%s" % hashlib.sha1(salted_encoded).hexdigest()
 
