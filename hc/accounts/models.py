@@ -302,15 +302,15 @@ class Profile(models.Model):
         self.save()
         return True
 
-    def num_checks_used(self):
+    def num_checks_used(self) -> int:
         from hc.api.models import Check
 
         return Check.objects.filter(project__owner_id=self.user_id).count()
 
-    def num_checks_available(self):
+    def num_checks_available(self) -> int:
         return self.check_limit - self.num_checks_used()
 
-    def can_accept(self, project):
+    def can_accept(self, project) -> bool:
         return project.num_checks() <= self.num_checks_available()
 
     def update_next_nag_date(self) -> None:
@@ -375,10 +375,10 @@ class Project(models.Model):
     def owner_profile(self):
         return Profile.objects.for_user(self.owner)
 
-    def num_checks(self):
+    def num_checks(self) -> int:
         return self.check_set.count()
 
-    def num_checks_available(self):
+    def num_checks_available(self) -> int:
         return self.owner_profile.num_checks_available()
 
     def invite_suggestions(self):
@@ -386,7 +386,7 @@ class Project(models.Model):
         q = q.exclude(memberships__project=self)
         return q.distinct().order_by("email")
 
-    def can_invite_new_users(self):
+    def can_invite_new_users(self) -> bool:
         q = User.objects.filter(memberships__project__owner_id=self.owner_id)
         used = q.distinct().count()
         return used < self.owner_profile.team_limit
@@ -423,7 +423,7 @@ class Project(models.Model):
 
         return result
 
-    def have_channel_issues(self):
+    def have_channel_issues(self) -> bool:
         errors = list(self.channel_set.values_list("last_error", flat=True))
 
         # It's a problem if a project has no integrations at all

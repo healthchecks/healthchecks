@@ -29,7 +29,7 @@ class TextOnlyParser(HTMLParser):
         return " ".join(messy.split())
 
 
-def html2text(html, skip_pre=False):
+def html2text(html: str, skip_pre: bool = False) -> str:
     parser = TextOnlyParser()
     if skip_pre:
         parser.skiplist.add("pre")

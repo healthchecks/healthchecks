@@ -56,7 +56,7 @@ class Command(BaseCommand):
             if error:
                 self.stdout.write(f"   Error sending notification: {error}")
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> str:
         q = Profile.objects.order_by("id")
         q = q.filter(deletion_scheduled_date__gt=now())
 

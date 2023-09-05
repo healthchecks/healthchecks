@@ -75,14 +75,14 @@ WIDTHS = {
 COLORS = {"up": "#4c1", "late": "#fe7d37", "down": "#e05d44"}
 
 
-def get_width(s):
+def get_width(s: str) -> int:
     total = 0
     for c in s:
         total += WIDTHS.get(c, 7)
     return total
 
 
-def get_badge_svg(tag, status):
+def get_badge_svg(tag: str, status: str) -> str:
     w1 = get_width(tag) + 10
     w2 = get_width(status) + 10
     ctx = {

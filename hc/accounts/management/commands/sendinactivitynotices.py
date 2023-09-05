@@ -39,7 +39,7 @@ class Command(BaseCommand):
     def pause(self):
         time.sleep(1)
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> str:
         q = Profile.objects.order_by("id")
         # Exclude accounts with logins in the last year
         q = q.exclude(user__last_login__gt=YEAR_AGO)

@@ -13,11 +13,11 @@ MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class DateFormattingTestCase(TestCase):
-    def test_sub_second_works(self):
+    def test_sub_second_works(self) -> None:
         s = format_hms(td(seconds=0.12))
         self.assertEqual(s, "0.12 sec")
 
-    def test_mins_secs_work(self):
+    def test_mins_secs_work(self) -> None:
         s = format_hms(td(seconds=0))
         self.assertEqual(s, "0 sec")
 
@@ -30,7 +30,7 @@ class DateFormattingTestCase(TestCase):
         s = format_hms(td(seconds=62))
         self.assertEqual(s, "1 min 2 sec")
 
-    def test_hours_work(self):
+    def test_hours_work(self) -> None:
         s = format_hms(td(seconds=62 + 60 * 60))
         self.assertEqual(s, "1 h 1 min 2 sec")
 
@@ -40,13 +40,13 @@ class DateFormattingTestCase(TestCase):
 
 @patch("hc.lib.date.now", MOCK_NOW)
 class MonthBoundaryTestCase(TestCase):
-    def test_utc_works(self):
+    def test_utc_works(self) -> None:
         result = month_boundaries(3, "UTC")
         self.assertEqual(result[0].isoformat(), "2019-11-01T00:00:00+00:00")
         self.assertEqual(result[1].isoformat(), "2019-12-01T00:00:00+00:00")
         self.assertEqual(result[2].isoformat(), "2020-01-01T00:00:00+00:00")
 
-    def test_non_utc_works(self):
+    def test_non_utc_works(self) -> None:
         result = month_boundaries(3, "Europe/Riga")
         self.assertEqual(result[0].isoformat(), "2019-11-01T00:00:00+02:00")
         self.assertEqual(result[1].isoformat(), "2019-12-01T00:00:00+02:00")
@@ -55,13 +55,13 @@ class MonthBoundaryTestCase(TestCase):
 
 @patch("hc.lib.date.now", MOCK_NOW)
 class WeekBoundaryTestCase(TestCase):
-    def test_utc_works(self):
+    def test_utc_works(self) -> None:
         result = week_boundaries(3, "UTC")
         self.assertEqual(result[0].isoformat(), "2019-12-30T00:00:00+00:00")
         self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+00:00")
         self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+00:00")
 
-    def test_non_utc_works(self):
+    def test_non_utc_works(self) -> None:
         result = week_boundaries(3, "Europe/Riga")
         self.assertEqual(result[0].isoformat(), "2019-12-30T00:00:00+02:00")
         self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+02:00")

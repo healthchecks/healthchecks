@@ -13,7 +13,7 @@ from hc.accounts.views import _make_user
 class Command(BaseCommand):
     help = """Create a super-user account."""
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> str:
         email = None
         password = None
 

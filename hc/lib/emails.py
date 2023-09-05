@@ -13,11 +13,11 @@ from django.template.loader import render_to_string as render
 class EmailThread(Thread):
     MAX_TRIES = 3
 
-    def __init__(self, message):
+    def __init__(self, message) -> None:
         Thread.__init__(self)
         self.message = message
 
-    def run(self):
+    def run(self) -> None:
         for attempt in range(0, self.MAX_TRIES):
             try:
                 # Make sure each retry creates a new connection:
@@ -60,7 +60,7 @@ def make_message(name, to, ctx, headers={}):
     return msg
 
 
-def send(msg, block=False):
+def send(msg, block: bool = False) -> None:
     assert settings.EMAIL_HOST, (
         "No SMTP configuration,"
         " see https://github.com/healthchecks/healthchecks#sending-emails"
