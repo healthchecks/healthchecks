@@ -37,6 +37,7 @@ from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.models import Credential, Member, Profile, Project
 from hc.api.models import Channel, Check, TokenBucket
+from hc.lib.typealias import AuthenticatedHttpRequest
 from hc.lib.tz import all_timezones
 from hc.lib.webauthn import CreateHelper, GetHelper
 from hc.payments.models import Subscription
@@ -52,11 +53,6 @@ POST_LOGIN_ROUTES = (
     "hc-project-settings",
     "hc-uncloak",
 )
-
-
-class AuthenticatedHttpRequest(HttpRequest):
-    user: User
-    profile: Profile
 
 
 def _allow_redirect(redirect_url: str | None) -> bool:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import secrets
 from functools import wraps
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from django.core.signing import SignatureExpired, TimestampSigner
 from django.http import HttpRequest, HttpResponse
@@ -10,11 +10,7 @@ from django.shortcuts import redirect, render
 
 from hc.api.models import TokenBucket
 from hc.lib import emails
-
-if TYPE_CHECKING:
-    from typing import Callable
-
-    ViewFunc = Callable[..., HttpResponse]
+from hc.lib.typealias import ViewFunc
 
 
 def _session_unsign(request: HttpRequest, key: str, max_age: int) -> str | None:
