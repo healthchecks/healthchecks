@@ -325,7 +325,7 @@ class Profile(models.Model):
             self.next_nag_date = None
             self.save(update_fields=["next_nag_date"])
 
-    def choose_next_report_date(self) -> datetime:
+    def choose_next_report_date(self) -> datetime | None:
         """Calculate the target date for the next monthly/weekly report.
 
         Monthly reports should get sent on 1st of each month, between
