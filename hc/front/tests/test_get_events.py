@@ -23,14 +23,18 @@ class GetEventsTestCase(BaseTestCase):
 
         with self.assertNumQueries(2):
             pings = _get_events(self.check, 100)
+        with self.assertNumQueries(0):
+            assert isinstance(pings[0], Ping)
             self.assertEqual(pings[0].duration, td(minutes=5))
 
     def test_it_delegates_duration_calculation_to_model(self) -> None:
         Ping.objects.create(owner=self.check, n=1, created=EPOCH, kind="start")
         Ping.objects.create(owner=self.check, n=2, created=EPOCH + td(minutes=5))
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             pings = _get_events(self.check, 1)
+        with self.assertNumQueries(1):
+            assert isinstance(pings[0], Ping)
             self.assertEqual(pings[0].duration, td(minutes=5))
 
     def test_it_calculates_overlapping_durations(self) -> None:
@@ -43,7 +47,11 @@ class GetEventsTestCase(BaseTestCase):
 
         with self.assertNumQueries(2):
             pings = _get_events(self.check, 100)
+
+        with self.assertNumQueries(0):
+            assert isinstance(pings[0], Ping)
             self.assertEqual(pings[0].duration, td(minutes=5))
+            assert isinstance(pings[1], Ping)
             self.assertEqual(pings[1].duration, td(minutes=2))
 
     def test_it_disables_duration_display(self) -> None:
@@ -55,5 +63,8 @@ class GetEventsTestCase(BaseTestCase):
         # Make sure we don't run Ping.duration() per ping:
         with self.assertNumQueries(2):
             pings = _get_events(self.check, 100)
+
+        with self.assertNumQueries(0):
             for ping in pings:
+                assert isinstance(ping, Ping)
                 self.assertIsNone(ping.duration)

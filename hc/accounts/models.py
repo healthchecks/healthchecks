@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from datetime import timedelta as td
 from secrets import token_urlsafe
+from typing import TYPE_CHECKING
 from urllib.parse import quote, urlencode
 
 from django.conf import settings
@@ -26,6 +27,11 @@ if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo
 else:
     from backports.zoneinfo import ZoneInfo
+
+if TYPE_CHECKING:
+    from hc.api.models import Check
+
+    CheckQuerySet = QuerySet[Check]
 
 
 NO_NAG = td()
@@ -184,7 +190,7 @@ class Profile(models.Model):
 
         emails.call_limit(self.user.email, ctx)
 
-    def projects(self):
+    def projects(self) -> QuerySet["Project"]:
         """Return a queryset of all projects we have access to."""
 
         is_owner = Q(owner_id=self.user_id)
@@ -192,7 +198,7 @@ class Profile(models.Model):
         q = Project.objects.filter(is_owner | is_member)
         return q.distinct().order_by(Lower("name"))
 
-    def checks_from_all_projects(self):
+    def checks_from_all_projects(self) -> CheckQuerySet:
         """Return a queryset of checks from projects we have access to."""
 
         from hc.api.models import Check
@@ -200,23 +206,20 @@ class Profile(models.Model):
         return Check.objects.filter(project__in=self.projects())
 
     def send_report(self, nag: bool = False) -> bool:
-        checks = self.checks_from_all_projects()
+        q = self.checks_from_all_projects()
 
         # Has there been a ping in last 6 months?
-        result = checks.aggregate(models.Max("last_ping"))
+        result = q.aggregate(models.Max("last_ping"))
         last_ping = result["last_ping__max"]
 
         six_months_ago = now() - td(days=180)
         if last_ping is None or last_ping < six_months_ago:
             return False
 
-        # Sort checks by project. Need this because will group by project in
-        # template.
-        checks = checks.select_related("project")
-        checks = checks.order_by("project_id")
-        # list() executes the query, to avoid DB access while
-        # rendering the template
-        checks = list(checks)
+        # Sort checks by project. Need this because will group by project in template.
+        q = q.select_related("project").order_by("project_id")
+        # list() executes the query, to avoid DB access while rendering the template.
+        checks = list(q)
 
         unsub_url = self.reports_unsub_url()
         headers = {
@@ -240,7 +243,11 @@ class Profile(models.Model):
                 boundaries = month_boundaries(3, self.tz)
 
             for check in checks:
-                check.past_downtimes = check.downtimes_by_boundary(boundaries)[:-1]
+                setattr(
+                    check,
+                    "past_downtimes",
+                    check.downtimes_by_boundary(boundaries)[:-1],
+                )
 
             ctx["checks"] = checks
             ctx["boundaries"] = boundaries[:-1]
@@ -408,7 +415,7 @@ class Project(models.Model):
         profile.send_instant_login_link(membership=m, redirect_url=checks_url)
         return True
 
-    def update_next_nag_dates(self):
+    def update_next_nag_dates(self) -> None:
         """Update next_nag_date on profiles of all members of this project."""
 
         is_owner = Q(user_id=self.owner_id)
@@ -417,6 +424,8 @@ class Project(models.Model):
 
         for profile in q:
             profile.update_next_nag_date()
+
+        return None
 
     def get_n_down(self):
         result = 0
