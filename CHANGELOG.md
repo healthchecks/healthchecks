@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v2.11-dev - Unreleased
+## v3.0-dev - Unreleased
+
+This release drops support of Python 3.9 and below. The minimum required Python
+version is 3.10.
 
 ### Improvements
 - Add Channel.last_notify_duration field, use it in "sendalerts" for prioritization

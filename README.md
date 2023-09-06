@@ -13,7 +13,7 @@ team management features: projects, team members, read-only access.
 
 The building blocks are:
 
-* Python 3.8+
+* Python 3.10+
 * Django 4.2
 * PostgreSQL or MySQL
 

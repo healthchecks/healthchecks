@@ -8,7 +8,7 @@ Healthchecks instance yourself.
 
 The building blocks are:
 
-* Python 3.8+
+* Python 3.10+
 * Django 4
 * PostgreSQL or MySQL
 
