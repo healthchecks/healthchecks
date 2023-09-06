@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from secrets import token_bytes
 
 import fido2.features
@@ -15,7 +16,7 @@ fido2.features.webauthn_json_mapping.enabled = True
 
 
 class CreateHelper(object):
-    def __init__(self, rp_id: str, credentials: list[bytes]):
+    def __init__(self, rp_id: str, credentials: Iterable[bytes]):
         rp = PublicKeyCredentialRpEntity(id=rp_id, name="healthchecks")
         self.server = Fido2Server(rp)
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]
@@ -49,7 +50,7 @@ class CreateHelper(object):
 
 
 class GetHelper(object):
-    def __init__(self, rp_id: str, credentials: list[bytes]):
+    def __init__(self, rp_id: str, credentials: Iterable[bytes]):
         rp = PublicKeyCredentialRpEntity(id=rp_id, name="healthchecks")
         self.server = Fido2Server(rp)
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]

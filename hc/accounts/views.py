@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import time
-import uuid
 from datetime import timedelta as td
 from secrets import token_urlsafe
 from urllib.parse import urlparse
+from uuid import UUID, uuid4
 
 import pyotp
 import segno
@@ -77,7 +77,7 @@ def _allow_redirect(redirect_url: str | None) -> bool:
 
 
 def _make_user(email: str, tz: str | None = None, with_project: bool = True) -> User:
-    username = str(uuid.uuid4())[:30]
+    username = str(uuid4())[:30]
     user = User(username=username, email=email)
     user.set_unusable_password()
     user.save()
@@ -215,12 +215,12 @@ def login(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def logout(request):
+def logout(request: HttpRequest) -> HttpResponse:
     auth_logout(request)
     return redirect("hc-index")
 
 
-def signup_csrf(request):
+def signup_csrf(request: HttpRequest) -> HttpResponse:
     if not settings.REGISTRATION_OPEN or request.user.is_authenticated:
         return HttpResponseForbidden()
 
@@ -228,7 +228,7 @@ def signup_csrf(request):
 
 
 @require_POST
-def signup(request):
+def signup(request: HttpRequest) -> HttpResponse:
     if not settings.REGISTRATION_OPEN or request.user.is_authenticated:
         return HttpResponseForbidden()
 
@@ -251,11 +251,13 @@ def signup(request):
     return response
 
 
-def login_link_sent(request):
+def login_link_sent(request: HttpRequest) -> HttpResponse:
     return render(request, "accounts/login_link_sent.html")
 
 
-def check_token(request, username, token, new_email=None):
+def check_token(
+    request: HttpRequest, username: str, token: str, new_email: str | None = None
+) -> HttpResponse:
     if request.user.is_authenticated:
         auth_logout(request)
 
@@ -270,6 +272,7 @@ def check_token(request, username, token, new_email=None):
 
     user = authenticate(username=username, token=token)
     if user is not None and user.is_active:
+        assert isinstance(user, User)
         if new_email:
             if User.objects.filter(email=new_email).exists():
                 request.session["bad_link"] = True
@@ -339,7 +342,7 @@ def add_project(request: AuthenticatedHttpRequest) -> HttpResponse:
         return HttpResponseBadRequest()
 
     project = Project(owner=request.user)
-    project.code = project.badge_key = str(uuid.uuid4())
+    project.code = project.badge_key = str(uuid4())
     project.name = form.cleaned_data["name"]
     project.save()
 
@@ -347,7 +350,7 @@ def add_project(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 
 @login_required
-def project(request, code):
+def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project = get_object_or_404(Project, code=code)
     is_owner = project.owner_id == request.user.id
 
@@ -408,9 +411,9 @@ def project(request, code):
             if not is_manager:
                 return HttpResponseForbidden()
 
-            form = forms.InviteTeamMemberForm(request.POST)
-            if form.is_valid():
-                email = form.cleaned_data["email"]
+            invite_form = forms.InviteTeamMemberForm(request.POST)
+            if invite_form.is_valid():
+                email = invite_form.cleaned_data["email"]
 
                 invite_suggestions = project.invite_suggestions()
                 if not invite_suggestions.filter(email=email).exists():
@@ -427,7 +430,7 @@ def project(request, code):
                 except User.DoesNotExist:
                     user = _make_user(email, with_project=False)
 
-                if project.invite(user, role=form.cleaned_data["role"]):
+                if project.invite(user, role=invite_form.cleaned_data["role"]):
                     ctx["team_member_invited"] = email
                     ctx["team_status"] = "success"
                 else:
@@ -438,11 +441,12 @@ def project(request, code):
             if not is_manager:
                 return HttpResponseForbidden()
 
-            form = forms.RemoveTeamMemberForm(request.POST)
-            if form.is_valid():
-                q = User.objects
-                q = q.filter(email=form.cleaned_data["email"])
-                q = q.filter(memberships__project=project)
+            remove_form = forms.RemoveTeamMemberForm(request.POST)
+            if remove_form.is_valid():
+                q = User.objects.filter(
+                    email=remove_form.cleaned_data["email"],
+                    memberships__project=project,
+                )
                 farewell_user = q.first()
                 if farewell_user is None:
                     return HttpResponseBadRequest()
@@ -452,15 +456,15 @@ def project(request, code):
 
                 Member.objects.filter(project=project, user=farewell_user).delete()
 
-                ctx["team_member_removed"] = form.cleaned_data["email"]
+                ctx["team_member_removed"] = remove_form.cleaned_data["email"]
                 ctx["team_status"] = "info"
         elif "set_project_name" in request.POST:
             if not rw:
                 return HttpResponseForbidden()
 
-            form = forms.ProjectNameForm(request.POST)
-            if form.is_valid():
-                project.name = form.cleaned_data["name"]
+            name_form = forms.ProjectNameForm(request.POST)
+            if name_form.is_valid():
+                project.name = name_form.cleaned_data["name"]
                 project.save()
 
                 ctx["project_name_updated"] = True
@@ -470,10 +474,10 @@ def project(request, code):
             if not is_owner:
                 return HttpResponseForbidden()
 
-            form = forms.TransferForm(request.POST)
-            if form.is_valid():
+            transfer_form = forms.TransferForm(request.POST)
+            if transfer_form.is_valid():
                 # Look up the proposed new owner
-                email = form.cleaned_data["email"]
+                email = transfer_form.cleaned_data["email"]
                 try:
                     membership = project.member_set.filter(user__email=email).get()
                 except Member.DoesNotExist:
@@ -600,7 +604,7 @@ def set_password(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 @login_required
 @require_sudo_mode
-def change_email(request):
+def change_email(request: AuthenticatedHttpRequest) -> HttpResponse:
     if "sent" in request.session:
         ctx = {"email": request.session.pop("sent")}
         return render(request, "accounts/change_email_instructions.html", ctx)
@@ -628,7 +632,7 @@ def change_email(request):
     return render(request, "accounts/change_email.html", {"form": form})
 
 
-def change_email_verify(request, signed_payload):
+def change_email_verify(request: HttpRequest, signed_payload: str) -> HttpResponse:
     try:
         payload = TimestampSigner().unsign_object(signed_payload, max_age=900)
     except BadSignature:
@@ -638,7 +642,7 @@ def change_email_verify(request, signed_payload):
 
 
 @csrf_exempt
-def unsubscribe_reports(request, signed_username):
+def unsubscribe_reports(request: HttpRequest, signed_username: str) -> HttpResponse:
     # Some email servers open links in emails to check for malicious content.
     # To work around this, for GET requests we serve a confirmation form.
     # If the signature is more than 5 minutes old, we also include JS code to
@@ -682,7 +686,7 @@ def unsubscribe_reports(request, signed_username):
 
 @login_required
 @require_sudo_mode
-def close(request):
+def close(request: AuthenticatedHttpRequest) -> HttpResponse:
     user = request.user
 
     if request.method == "POST":
@@ -707,7 +711,7 @@ def close(request):
 
 @require_POST
 @login_required
-def remove_project(request, code):
+def remove_project(request: AuthenticatedHttpRequest, code: str) -> HttpResponse:
     project = get_object_or_404(Project, code=code, owner=request.user)
     project.delete()
     return redirect("hc-index")
@@ -715,7 +719,7 @@ def remove_project(request, code):
 
 @login_required
 @require_sudo_mode
-def add_webauthn(request):
+def add_webauthn(request: AuthenticatedHttpRequest) -> HttpResponse:
     if not settings.RP_ID:
         return HttpResponse(status=404)
 
@@ -747,7 +751,7 @@ def add_webauthn(request):
 
 @login_required
 @require_sudo_mode
-def add_totp(request):
+def add_totp(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.profile.totp:
         # TOTP is already configured, refuse to continue
         return HttpResponseBadRequest()
@@ -782,7 +786,7 @@ def add_totp(request):
 
 @login_required
 @require_sudo_mode
-def remove_totp(request):
+def remove_totp(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST" and "disable_totp" in request.POST:
         request.profile.totp = None
         request.profile.totp_created = None
@@ -796,7 +800,7 @@ def remove_totp(request):
 
 @login_required
 @require_sudo_mode
-def remove_credential(request, code):
+def remove_credential(request: AuthenticatedHttpRequest, code: str) -> HttpResponse:
     if not settings.RP_ID:
         return HttpResponse(status=404)
 
@@ -819,7 +823,7 @@ def remove_credential(request, code):
     return render(request, "accounts/remove_credential.html", ctx)
 
 
-def login_webauthn(request):
+def login_webauthn(request: HttpRequest) -> HttpResponse:
     # We require RP_ID. Fail predicably if it is not set:
     if not settings.RP_ID:
         return HttpResponse(status=404)
@@ -872,7 +876,7 @@ def login_webauthn(request):
     return render(request, "accounts/login_webauthn.html", ctx)
 
 
-def login_totp(request):
+def login_totp(request: HttpRequest) -> HttpResponse:
     # Expect an unauthenticated user
     if request.user.is_authenticated:
         return HttpResponseBadRequest()
@@ -916,7 +920,7 @@ def login_totp(request):
 
 
 @login_required
-def appearance(request):
+def appearance(request: AuthenticatedHttpRequest) -> HttpResponse:
     profile = request.profile
 
     ctx = {

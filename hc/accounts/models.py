@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 import sys
 import uuid
+from datetime import datetime
 from datetime import timedelta as td
 from secrets import token_urlsafe
 from urllib.parse import quote, urlencode
@@ -12,7 +13,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from django.core.signing import BadSignature, TimestampSigner
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.timezone import now
@@ -126,7 +127,9 @@ class Profile(models.Model):
 
         return "login" in self.token and check_password(token, self.token)
 
-    def send_instant_login_link(self, membership=None, redirect_url=None):
+    def send_instant_login_link(
+        self, membership: "Member" | None = None, redirect_url: str | None = None
+    ) -> None:
         token = self.prepare_token()
         path = reverse("hc-check-token", args=[self.user.username, token])
         if redirect_url:
@@ -139,7 +142,7 @@ class Profile(models.Model):
         }
         emails.login(self.user.email, ctx)
 
-    def send_change_email_link(self, new_email):
+    def send_change_email_link(self, new_email: str) -> None:
         payload = {
             "u": self.user.username,
             "t": self.prepare_token(),
@@ -154,7 +157,7 @@ class Profile(models.Model):
         }
         emails.login(new_email, ctx)
 
-    def send_transfer_request(self, project):
+    def send_transfer_request(self, project: "Project") -> None:
         token = self.prepare_token()
         settings_path = reverse("hc-project-settings", args=[project.code])
         path = reverse("hc-check-token", args=[self.user.username, token])
@@ -310,7 +313,7 @@ class Profile(models.Model):
     def num_checks_available(self) -> int:
         return self.check_limit - self.num_checks_used()
 
-    def can_accept(self, project) -> bool:
+    def can_accept(self, project: "Project") -> bool:
         return project.num_checks() <= self.num_checks_available()
 
     def update_next_nag_date(self) -> None:
@@ -322,7 +325,7 @@ class Profile(models.Model):
             self.next_nag_date = None
             self.save(update_fields=["next_nag_date"])
 
-    def choose_next_report_date(self):
+    def choose_next_report_date(self) -> datetime:
         """Calculate the target date for the next monthly/weekly report.
 
         Monthly reports should get sent on 1st of each month, between
@@ -381,7 +384,7 @@ class Project(models.Model):
     def num_checks_available(self) -> int:
         return self.owner_profile.num_checks_available()
 
-    def invite_suggestions(self):
+    def invite_suggestions(self) -> QuerySet[User]:
         q = User.objects.filter(memberships__project__owner_id=self.owner_id)
         q = q.exclude(memberships__project=self)
         return q.distinct().order_by("email")
@@ -391,7 +394,7 @@ class Project(models.Model):
         used = q.distinct().count()
         return used < self.owner_profile.team_limit
 
-    def invite(self, user, role):
+    def invite(self, user: User, role: str) -> bool:
         if Member.objects.filter(user=user, project=self).exists():
             return False
 
@@ -433,7 +436,7 @@ class Project(models.Model):
         # It's a problem if any integration has a logged error
         return True if max(errors) else False
 
-    def transfer_request(self):
+    def transfer_request(self) -> "Member" | None:
         return self.member_set.filter(transfer_request_date__isnull=False).first()
 
     def dashboard_url(self):
@@ -469,7 +472,7 @@ class Member(models.Model):
             )
         ]
 
-    def can_accept(self):
+    def can_accept(self) -> bool:
         return self.user.profile.can_accept(self.project)
 
     @property

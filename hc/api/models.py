@@ -13,6 +13,7 @@ from urllib.parse import urlencode
 
 from cronsim import CronSim
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
 from django.db import models, transaction
@@ -1178,7 +1179,7 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 20, 3600)
 
     @staticmethod
-    def authorize_invite(user):
+    def authorize_invite(user: User) -> bool:
         value = "invite-%d" % user.id
 
         # 20 invites per day
@@ -1208,7 +1209,7 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 6, 60)
 
     @staticmethod
-    def authorize_signal_verification(user):
+    def authorize_signal_verification(user: User) -> bool:
         value = "signal-verify-%d" % user.id
 
         # 50 signal recipient verifications per day
@@ -1222,14 +1223,14 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 6, 60)
 
     @staticmethod
-    def authorize_sudo_code(user):
+    def authorize_sudo_code(user: User) -> bool:
         value = "sudo-%d" % user.id
 
         # 10 sudo attempts per day
         return TokenBucket.authorize(value, 10, 3600 * 24)
 
     @staticmethod
-    def authorize_totp_attempt(user):
+    def authorize_totp_attempt(user: User) -> bool:
         value = "totp-%d" % user.id
 
         # 96 attempts per user per 24 hours
@@ -1237,7 +1238,7 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 96, 3600 * 24)
 
     @staticmethod
-    def authorize_totp_code(user, code):
+    def authorize_totp_code(user: User, code: str) -> bool:
         value = "totpc-%d-%s" % (user.id, code)
 
         # A code has a validity period of 3 * 30 = 90 seconds.

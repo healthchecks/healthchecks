@@ -2,27 +2,34 @@ from __future__ import annotations
 
 import secrets
 from functools import wraps
+from typing import TYPE_CHECKING, Any
 
 from django.core.signing import SignatureExpired, TimestampSigner
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from hc.api.models import TokenBucket
 from hc.lib import emails
 
+if TYPE_CHECKING:
+    from typing import Callable
 
-def _session_unsign(request, key, max_age):
+    ViewFunc = Callable[..., HttpResponse]
+
+
+def _session_unsign(request: HttpRequest, key: str, max_age: int) -> str | None:
     if key not in request.session:
         return None
 
     try:
         return TimestampSigner().unsign(request.session[key], max_age=max_age)
     except SignatureExpired:
-        pass
+        return None
 
 
-def require_sudo_mode(f):
+def require_sudo_mode(f: ViewFunc) -> ViewFunc:
     @wraps(f)
-    def wrapper(request, *args, **kwds):
+    def wrapper(request: HttpRequest, *args: Any, **kwds: Any) -> HttpResponse:
         assert request.user.is_authenticated
 
         # is sudo mode active and has not expired yet?
