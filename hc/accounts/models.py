@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import random
-import sys
 import uuid
 from datetime import datetime
 from datetime import timedelta as td
 from secrets import token_urlsafe
 from typing import TYPE_CHECKING
 from urllib.parse import quote, urlencode
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.auth.hashers import check_password, make_password
@@ -22,11 +22,6 @@ from django.utils.timezone import now
 from hc.lib import emails
 from hc.lib.date import month_boundaries, week_boundaries
 from hc.lib.signing import sign_bounce_id
-
-if sys.version_info >= (3, 9):
-    from zoneinfo import ZoneInfo
-else:
-    from backports.zoneinfo import ZoneInfo
 
 if TYPE_CHECKING:
     from hc.api.models import Check

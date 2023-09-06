@@ -5,7 +5,6 @@ import json
 import os
 import re
 import sqlite3
-import sys
 import uuid
 from collections import defaultdict
 from collections.abc import Iterable
@@ -16,6 +15,7 @@ from secrets import token_urlsafe
 from typing import TypedDict, cast
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from cronsim import CronSim, CronSimError
 from django.conf import settings
@@ -65,12 +65,6 @@ from hc.lib import curl, jsonschema
 from hc.lib.badges import get_badge_url
 from hc.lib.typealias import AuthenticatedHttpRequest
 from hc.lib.tz import all_timezones
-
-if sys.version_info >= (3, 9):
-    from zoneinfo import ZoneInfo
-else:
-    from backports.zoneinfo import ZoneInfo
-
 
 VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 STATUS_TEXT_TMPL = get_template("front/log_status_text.html")

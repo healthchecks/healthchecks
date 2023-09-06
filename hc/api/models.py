@@ -3,13 +3,13 @@ from __future__ import annotations
 import hashlib
 import json
 import socket
-import sys
 import uuid
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
 from typing import TypedDict
 from urllib.parse import urlencode
+from zoneinfo import ZoneInfo
 
 from cronsim import CronSim
 from django.conf import settings
@@ -28,12 +28,6 @@ from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 from hc.lib.s3 import get_object, put_object, remove_objects
-
-if sys.version_info >= (3, 9):
-    from zoneinfo import ZoneInfo
-else:
-    from backports.zoneinfo import ZoneInfo
-
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)

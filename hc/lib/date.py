@@ -1,14 +1,9 @@
 from __future__ import annotations
 
-import sys
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from django.utils.timezone import now
-
-if sys.version_info >= (3, 9):
-    from zoneinfo import ZoneInfo
-else:
-    from backports.zoneinfo import ZoneInfo
 
 
 class Unit(object):
