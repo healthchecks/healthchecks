@@ -6,7 +6,8 @@ import os
 import socket
 import time
 import uuid
-from typing import TYPE_CHECKING, Any, Iterator, List, NoReturn, Optional, cast
+from collections.abc import Iterator
+from typing import TYPE_CHECKING, Any, NoReturn, cast
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
@@ -717,7 +718,7 @@ class Telegram(HttpTransport):
 
     class ErrorModel(BaseModel):
         description: str
-        parameters: Optional[Telegram.MigrationParameters] = None
+        parameters: Telegram.MigrationParameters | None = None
 
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
@@ -1049,23 +1050,23 @@ class Signal(Transport):
     class Result(BaseModel):
         type: str
         recipientAddress: Signal.Recipient
-        token: Optional[str] = None
+        token: str | None = None
 
     class Response(BaseModel):
-        results: List[Signal.Result]
+        results: list[Signal.Result]
 
     class Data(BaseModel):
         response: Signal.Response
 
     class Error(BaseModel):
         code: int
-        data: Optional[Signal.Data] = None
+        data: Signal.Data | None = None
 
     class Reply(BaseModel):
         id: str
-        error: Optional[Signal.Error] = None
+        error: Signal.Error | None = None
 
-        def get_results(self) -> List[Signal.Result]:
+        def get_results(self) -> list[Signal.Result]:
             assert self.error
             if self.error.data is None:
                 return []

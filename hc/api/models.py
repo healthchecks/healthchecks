@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from typing import Dict, TypedDict
+from typing import TypedDict
 from urllib.parse import urlencode
 
 from cronsim import CronSim
@@ -691,7 +691,7 @@ class WebhookSpec(BaseModel):
     method: str
     url: str
     body: str
-    headers: Dict[str, str]
+    headers: dict[str, str]
 
 
 class Channel(models.Model):

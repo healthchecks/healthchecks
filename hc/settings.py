@@ -7,8 +7,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from __future__ import annotations
 
 import os
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

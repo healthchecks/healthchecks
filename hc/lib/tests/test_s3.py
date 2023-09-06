@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
-from typing import TYPE_CHECKING
+from typing import Callable, ParamSpec, TypeVar
 from unittest import skipIf
 from unittest.mock import Mock, patch
 
@@ -19,12 +19,8 @@ try:
 except ImportError:
     have_minio = False
 
-
-if TYPE_CHECKING:
-    from typing import Callable, ParamSpec, TypeVar
-
-    P = ParamSpec("P")
-    T = TypeVar("T")
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
 def nolog(func: Callable[P, T]) -> Callable[P, T]:

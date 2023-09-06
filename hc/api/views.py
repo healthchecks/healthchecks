@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import email.policy
 import time
+from collections.abc import Iterable
 from datetime import timedelta as td
 from email import message_from_bytes
-from typing import Iterable
 from uuid import UUID
 
 from django.conf import settings
