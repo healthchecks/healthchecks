@@ -80,6 +80,19 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.grace.total_seconds(), 60)
         self.assertEqual(check.project, self.project)
 
+    def test_it_rejects_null_values(self) -> None:
+        for field in [
+            "channels",
+            "timeout",
+            "grace",
+            "name",
+            "schedule",
+            "subject",
+            "subject_fail",
+            "unique",
+        ]:
+            self.post({field: None}, expect_fragment=f"{field} is not a")
+
     def test_it_handles_options(self) -> None:
         r = self.client.options(self.URL)
         self.assertEqual(r.status_code, 204)
@@ -160,6 +173,9 @@ class CreateCheckTestCase(BaseTestCase):
         # The check should not have been saved
         self.assertFalse(Check.objects.exists())
 
+    def test_it_rejects_non_string_channels_key(self) -> None:
+        r = self.post({"channels": 123}, expect_fragment="channels is not a string")
+
     def test_it_supports_unique_name(self) -> None:
         check = Check.objects.create(project=self.project, name="Foo")
 
@@ -173,6 +189,12 @@ class CreateCheckTestCase(BaseTestCase):
         # The tags field should have a value now:
         check.refresh_from_db()
         self.assertEqual(check.tags, "bar")
+
+    def test_it_creates_new_check_if_unique_references_absent_field(self) -> None:
+        Check.objects.create(project=self.project)
+        for s in ["name", "slug", "tags", "timeout", "grace"]:
+            r = self.post({"unique": [s]})
+            self.assertEqual(r.status_code, 201)
 
     def test_it_supports_unique_slug(self) -> None:
         check = Check.objects.create(project=self.project, slug="foo")
@@ -349,7 +371,6 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_rejects_non_boolean_filter_flags(self) -> None:
         for s in ("filter_subject", "filter_body"):
             r = self.post({s: "surprise"}, expect_fragment=f"{s} is not a boolean")
-        self.assertEqual(r.status_code, 400)
 
     def test_it_sets_methods(self) -> None:
         r = self.post({"methods": "POST"})
@@ -362,12 +383,10 @@ class CreateCheckTestCase(BaseTestCase):
         r = self.post(
             {"methods": "bad-value"}, expect_fragment="methods has unexpected value"
         )
-        self.assertEqual(r.status_code, 400)
 
     def test_it_rejects_long_filtering_keywords(self) -> None:
         for s in ("subject", "subject_fail", "start_kw", "success_kw", "failure_kw"):
             r = self.post({s: "A" * 201}, expect_fragment=f"{s} is too long")
-        self.assertEqual(r.status_code, 400)
 
     def test_it_sets_success_kw(self) -> None:
         r = self.post({"subject": "SUCCESS,COMPLETE"})

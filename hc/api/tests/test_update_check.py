@@ -240,7 +240,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.channel_set.count(), 0)
 
     def test_it_rejects_non_string_channels_key(self) -> None:
-        r = self.post(self.check.code, {"channels": None})
+        r = self.post(self.check.code, {"channels": 123})
         self.assertEqual(r.status_code, 400)
 
     def test_it_rejects_non_string_desc(self) -> None:
@@ -249,6 +249,7 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_null_values(self) -> None:
         for field in [
+            "channels",
             "timeout",
             "grace",
             "name",

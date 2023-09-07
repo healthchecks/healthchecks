@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
 from email import message_from_bytes
-from typing import Literal
+from typing import Any, Literal
 from uuid import UUID
 
 from cronsim import CronSim, CronSimError
@@ -29,7 +29,7 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 from pydantic_core import PydanticCustomError
 
 from hc.accounts.models import Profile, Project
@@ -47,43 +47,48 @@ class BadChannelException(Exception):
         self.message = message
 
 
-# A sentinel value for marking fields that were absent in the JSON message
-Missing = Literal["__missing__"]
-
-
 class Spec(BaseModel):
-    channels: str | Missing = Missing
-    desc: str | Missing = Missing
-    failure_kw: str | Missing = Field(Missing, max_length=200)
-    filter_body: bool | Missing = Missing
-    filter_subject: bool | Missing = Missing
-    grace: int | Missing = Field(Missing, ge=60, le=31536000)
-    manual_resume: bool | Missing = Missing
-    methods: Literal["", "POST"] | Missing = Missing
-    name: str | Missing = Field(Missing, max_length=100)
-    schedule: str | Missing = Field(Missing, max_length=100)
-    slug: str | Missing = Field(Missing, pattern="^[a-z0-9-_]*$")
-    start_kw: str | Missing = Field(Missing, max_length=200)
-    subject: str | Missing = Field(Missing, max_length=200)
-    subject_fail: str | Missing = Field(Missing, max_length=200)
-    success_kw: str | Missing = Field(Missing, max_length=200)
-    tags: str | Missing = Missing
-    timeout: int | Missing = Field(Missing, ge=60, le=31536000)
-    tz: str | Missing = Missing
-    unique: list[
-        Literal["name", "slug", "tags", "timeout", "grace"]
-    ] | Missing = Missing
+    channels: str | None = None
+    desc: str | None = None
+    failure_kw: str | None = Field(None, max_length=200)
+    filter_body: bool | None = None
+    filter_subject: bool | None = None
+    grace: int | None = Field(None, ge=60, le=31536000)
+    manual_resume: bool | None = None
+    methods: Literal["", "POST"] | None = None
+    name: str | None = Field(None, max_length=100)
+    schedule: str | None = Field(None, max_length=100)
+    slug: str | None = Field(None, pattern="^[a-z0-9-_]*$")
+    start_kw: str | None = Field(None, max_length=200)
+    subject: str | None = Field(None, max_length=200)
+    subject_fail: str | None = Field(None, max_length=200)
+    success_kw: str | None = Field(None, max_length=200)
+    tags: str | None = None
+    timeout: int | None = Field(None, ge=60, le=31536000)
+    tz: str | None = None
+    unique: list[Literal["name", "slug", "tags", "timeout", "grace"]] | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_nulls(cls, data: dict[str, Any]) -> dict[str, Any]:
+        # Look for any null values in the incoming data. Replace them with a
+        # float. None of the fields have a fload type, and we are using
+        # strict validation, so this will cause type validation to fail.
+        for k, v in data.items():
+            if v is None:
+                data[k] = float()
+        return data
 
     @field_validator("tz")
     @classmethod
-    def validate_tz(cls, v: str) -> str:
+    def check_tz(cls, v: str) -> str:
         if v not in all_timezones:
             raise PydanticCustomError("tz", "not a valid timezone")
         return v
 
     @field_validator("schedule")
     @classmethod
-    def validate_schedule(cls, v: str) -> str:
+    def check_schedule(cls, v: str) -> str:
         # Does it have 5 components?
         if len(v.split()) != 5:
             raise PydanticCustomError("cron", "not a valid cron expression")
@@ -118,7 +123,7 @@ CUSTOM_ERRORS = {
 def format_error(exc: ValidationError) -> str:
     for e in exc.errors():
         field = e["loc"][0]
-        if len(e["loc"]) > 2:
+        if len(e["loc"]) == 2:
             field = f"an item in '{field}'"
 
         kind = e["type"]
@@ -213,29 +218,38 @@ def ping_by_slug(
 
 
 def _lookup(project: Project, spec: Spec) -> Check | None:
-    if spec.unique is not Missing and len(spec.unique):
-        existing_checks = Check.objects.filter(project=project)
-        if "name" in spec.unique:
-            existing_checks = existing_checks.filter(name=spec.name)
-        if "slug" in spec.unique:
-            existing_checks = existing_checks.filter(slug=spec.slug)
-        if "tags" in spec.unique:
-            existing_checks = existing_checks.filter(tags=spec.tags)
-        if "timeout" in spec.unique:
-            timeout = td(seconds=spec.timeout)
-            existing_checks = existing_checks.filter(timeout=timeout)
-        if "grace" in spec.unique:
-            grace = td(seconds=spec.grace)
-            existing_checks = existing_checks.filter(grace=grace)
+    if not spec.unique:
+        return None
 
-        return existing_checks.first()
-    return None
+    for field_name in spec.unique:
+        # If any field referenced in 'unique' is absent then return None
+        # (meaning, did not find a matching Check)
+        if getattr(spec, field_name) is None:
+            return None
+
+    existing_checks = Check.objects.filter(project=project)
+    if "name" in spec.unique:
+        existing_checks = existing_checks.filter(name=spec.name)
+    if "slug" in spec.unique:
+        existing_checks = existing_checks.filter(slug=spec.slug)
+    if "tags" in spec.unique:
+        existing_checks = existing_checks.filter(tags=spec.tags)
+    if "timeout" in spec.unique:
+        assert spec.timeout
+        timeout = td(seconds=spec.timeout)
+        existing_checks = existing_checks.filter(timeout=timeout)
+    if "grace" in spec.unique:
+        assert spec.grace
+        grace = td(seconds=spec.grace)
+        existing_checks = existing_checks.filter(grace=grace)
+
+    return existing_checks.first()
 
 
 def _update(check: Check, spec: Spec, v: int) -> None:
     new_channels: Iterable[Channel] | None
     # First, validate the supplied channel codes/names
-    if spec.channels is Missing:
+    if spec.channels is None:
         # If the channels key is not present, don't update check's channels
         new_channels = None
     elif spec.channels == "*":
@@ -267,38 +281,38 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         # and so do need to save() it:
         need_save = True
 
-    if spec.name is not Missing and check.name != spec.name:
+    if spec.name is not None and check.name != spec.name:
         check.name = spec.name
         if v < 3:
             # v1 and v2 generates slug automatically from name
             check.slug = slugify(spec.name)
         need_save = True
 
-    if spec.timeout is not Missing and spec.schedule is Missing:
+    if spec.timeout is not None and spec.schedule is None:
         new_timeout = td(seconds=spec.timeout)
         if check.kind != "simple" or check.timeout != new_timeout:
             check.kind = "simple"
             check.timeout = new_timeout
             need_save = True
 
-    if spec.grace is not Missing:
+    if spec.grace is not None:
         new_grace = td(seconds=spec.grace)
         if check.grace != new_grace:
             check.grace = new_grace
             need_save = True
 
-    if spec.schedule is not Missing:
+    if spec.schedule is not None:
         if check.kind != "cron" or check.schedule != spec.schedule:
             check.kind = "cron"
             check.schedule = spec.schedule
             need_save = True
 
-    if spec.subject is not Missing:
+    if spec.subject is not None:
         check.success_kw = spec.subject
         check.filter_subject = bool(check.success_kw or check.failure_kw)
         need_save = True
 
-    if spec.subject_fail is not Missing:
+    if spec.subject_fail is not None:
         check.failure_kw = spec.subject_fail
         check.filter_subject = bool(check.success_kw or check.failure_kw)
         need_save = True
@@ -317,7 +331,7 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         "filter_body",
     ):
         v = getattr(spec, key)
-        if v is not Missing and getattr(check, key) != v:
+        if v is not None and getattr(check, key) != v:
             setattr(check, key, v)
             need_save = True
 
