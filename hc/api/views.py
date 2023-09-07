@@ -33,7 +33,7 @@ from pydantic import BaseModel, Field, ValidationError, field_validator, model_v
 from pydantic_core import PydanticCustomError
 
 from hc.accounts.models import Profile, Project
-from hc.api.decorators import authorize, authorize_read, cors
+from hc.api.decorators import ApiRequest, authorize, authorize_read, cors
 from hc.api.forms import FlipsFiltersForm
 from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
@@ -342,7 +342,7 @@ def _update(check: Check, spec: Spec, v: int) -> None:
 
 
 @authorize_read
-def get_checks(request):
+def get_checks(request: ApiRequest) -> JsonResponse:
     q = Check.objects.filter(project=request.project)
     if not request.readonly:
         # Use QuerySet.only() and Prefetch() to prefetch channel codes only:
@@ -367,7 +367,7 @@ def get_checks(request):
 
 
 @authorize
-def create_check(request):
+def create_check(request: ApiRequest) -> HttpResponse:
     try:
         spec = Spec.model_validate(request.json, strict=True)
     except ValidationError as e:
@@ -392,7 +392,7 @@ def create_check(request):
 
 @csrf_exempt
 @cors("GET", "POST")
-def checks(request):
+def checks(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         return create_check(request)
 
@@ -402,14 +402,14 @@ def checks(request):
 @cors("GET")
 @csrf_exempt
 @authorize
-def channels(request):
+def channels(request: ApiRequest) -> JsonResponse:
     q = Channel.objects.filter(project=request.project)
     channels = [ch.to_dict() for ch in q]
     return JsonResponse({"channels": channels})
 
 
 @authorize_read
-def get_check(request, code):
+def get_check(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
@@ -420,7 +420,7 @@ def get_check(request, code):
 @cors("GET")
 @csrf_exempt
 @authorize_read
-def get_check_by_unique_key(request, unique_key):
+def get_check_by_unique_key(request: ApiRequest, unique_key: str) -> HttpResponse:
     checks = Check.objects.filter(project=request.project.id)
     for check in checks:
         if check.unique_key == unique_key:
@@ -429,7 +429,7 @@ def get_check_by_unique_key(request, unique_key):
 
 
 @authorize
-def update_check(request, code):
+def update_check(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
@@ -448,7 +448,7 @@ def update_check(request, code):
 
 
 @authorize
-def delete_check(request, code):
+def delete_check(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
@@ -459,7 +459,7 @@ def delete_check(request, code):
 
 @csrf_exempt
 @cors("POST", "DELETE", "GET")
-def single(request, code):
+def single(request: HttpRequest, code: UUID) -> HttpResponse:
     if request.method == "POST":
         return update_check(request, code)
 
@@ -472,7 +472,7 @@ def single(request, code):
 @cors("POST")
 @csrf_exempt
 @authorize
-def pause(request, code):
+def pause(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
@@ -495,7 +495,7 @@ def pause(request, code):
 @cors("POST")
 @csrf_exempt
 @authorize
-def resume(request, code):
+def resume(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
@@ -517,7 +517,7 @@ def resume(request, code):
 @cors("GET")
 @csrf_exempt
 @authorize
-def pings(request, code):
+def pings(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
@@ -532,7 +532,8 @@ def pings(request, code):
     # pings, regardless of the limit restriction
     pings = list(Ping.objects.filter(owner=check).order_by("-id")[:limit])
 
-    starts, num_misses = {}, 0
+    starts: dict[UUID | None, datetime | None] = {}
+    num_misses = 0
     for ping in reversed(pings):
         if ping.kind == "start":
             starts[ping.rid] = ping.created
@@ -543,9 +544,9 @@ def pings(request, code):
                 num_misses += 1
             else:
                 ping.duration = None
-                if starts[ping.rid]:
-                    if ping.created - starts[ping.rid] < MAX_DURATION:
-                        ping.duration = ping.created - starts[ping.rid]
+                start = starts[ping.rid]
+                if start and (ping.created - start) < MAX_DURATION:
+                    ping.duration = ping.created - start
 
             starts[ping.rid] = None
 
@@ -561,7 +562,7 @@ def pings(request, code):
 @cors("GET")
 @csrf_exempt
 @authorize
-def ping_body(request, code, n):
+def ping_body(request: ApiRequest, code: UUID, n: int) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
@@ -580,7 +581,7 @@ def ping_body(request, code, n):
     return response
 
 
-def flips(request, check):
+def flips(request: ApiRequest, check: Check) -> HttpResponse:
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
 
@@ -606,7 +607,7 @@ def flips(request, check):
 @cors("GET")
 @csrf_exempt
 @authorize_read
-def flips_by_uuid(request, code):
+def flips_by_uuid(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     return flips(request, check)
 
@@ -614,7 +615,7 @@ def flips_by_uuid(request, code):
 @cors("GET")
 @csrf_exempt
 @authorize_read
-def flips_by_unique_key(request, unique_key):
+def flips_by_unique_key(request: ApiRequest, unique_key: str) -> HttpResponse:
     checks = Check.objects.filter(project=request.project.id)
     for check in checks:
         if check.unique_key == unique_key:
@@ -625,7 +626,7 @@ def flips_by_unique_key(request, unique_key):
 @cors("GET")
 @csrf_exempt
 @authorize_read
-def badges(request):
+def badges(request: ApiRequest) -> JsonResponse:
     tags = set(["*"])
     for check in Check.objects.filter(project=request.project):
         tags.update(check.tags_list())
@@ -647,7 +648,9 @@ def badges(request):
 
 @never_cache
 @cors("GET")
-def badge(request, badge_key, signature, tag, fmt):
+def badge(
+    request: HttpRequest, badge_key: str, signature: str, tag: str, fmt: str
+) -> HttpResponse:
     if fmt not in ("svg", "json", "shields"):
         return HttpResponseNotFound()
 
@@ -707,7 +710,7 @@ def badge(request, badge_key, signature, tag, fmt):
 
 @csrf_exempt
 @require_POST
-def notification_status(request, code):
+def notification_status(request: HttpRequest, code: UUID) -> HttpResponse:
     """Handle notification delivery status callbacks."""
 
     try:
@@ -723,7 +726,7 @@ def notification_status(request, code):
     # Look for "error" and "mark_disabled" keys:
     if request.POST.get("error"):
         error = request.POST["error"][:200]
-        mark_disabled = request.POST.get("mark_disabled")
+        mark_disabled = bool(request.POST.get("mark_disabled"))
 
     # Handle "MessageStatus" key from Twilio
     if request.POST.get("MessageStatus") in ("failed", "undelivered"):
@@ -746,7 +749,7 @@ def notification_status(request, code):
     return HttpResponse()
 
 
-def metrics(request):
+def metrics(request: HttpRequest) -> HttpResponse:
     if not settings.METRICS_KEY:
         return HttpResponseForbidden()
 
@@ -764,7 +767,7 @@ def metrics(request):
     return JsonResponse(doc)
 
 
-def status(request):
+def status(request: HttpRequest) -> HttpResponse:
     with connection.cursor() as c:
         c.execute("SELECT 1")
         c.fetchone()
@@ -773,7 +776,7 @@ def status(request):
 
 
 @csrf_exempt
-def bounces(request):
+def bounces(request: HttpRequest) -> HttpResponse:
     msg = message_from_bytes(request.body, policy=email.policy.SMTP)
     to_local = msg.get("To", "").split("@")[0]
 

@@ -2,11 +2,20 @@ from __future__ import annotations
 
 import json
 from functools import wraps
+from typing import Any, Callable
 
 from django.db.models import Q
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from hc.accounts.models import Project
+from hc.lib.typealias import ViewFunc
+
+
+class ApiRequest(HttpRequest):
+    json: dict[Any, Any]
+    project: Project
+    readonly: bool
+    v: int
 
 
 def error(msg, status=400):
@@ -21,7 +30,7 @@ def _get_api_version(request) -> int:
     return 1
 
 
-def authorize(f):
+def authorize(f: ViewFunc) -> ViewFunc:
     @wraps(f)
     def wrapper(request, *args, **kwds):
         # For POST requests, we may need to look for the API key inside the
@@ -59,7 +68,7 @@ def authorize(f):
     return wrapper
 
 
-def authorize_read(f):
+def authorize_read(f: ViewFunc) -> ViewFunc:
     @wraps(f)
     def wrapper(request, *args, **kwds):
         if "HTTP_X_API_KEY" in request.META:
@@ -84,12 +93,12 @@ def authorize_read(f):
     return wrapper
 
 
-def cors(*methods: str):
+def cors(*methods: str) -> Callable[[ViewFunc], ViewFunc]:
     methods_set = set(methods)
     methods_set.add("OPTIONS")
     methods_str = ", ".join(methods_set)
 
-    def decorator(f):
+    def decorator(f: ViewFunc) -> ViewFunc:
         @wraps(f)
         def wrapper(request, *args, **kwds):
             if request.method == "OPTIONS":

@@ -1073,6 +1073,11 @@ class Notification(models.Model):
         return settings.SITE_ROOT + path
 
 
+class FlipDict(TypedDict):
+    timestamp: str
+    up: int
+
+
 class Flip(models.Model):
     owner = models.ForeignKey(Check, models.CASCADE)
     created = models.DateTimeField()
@@ -1091,9 +1096,9 @@ class Flip(models.Model):
             )
         ]
 
-    def to_dict(self):
+    def to_dict(self) -> FlipDict:
         return {
-            "timestamp": isostring(self.created),
+            "timestamp": self.created.replace(microsecond=0).isoformat(),
             "up": 1 if self.new_status == "up" else 0,
         }
 

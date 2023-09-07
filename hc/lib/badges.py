@@ -99,7 +99,7 @@ def get_badge_svg(tag: str, status: str) -> str:
     return render_to_string("badge.svg", ctx)
 
 
-def check_signature(username, tag, sig):
+def check_signature(username: str, tag: str, sig: str) -> bool:
     ours = base64_hmac(str(username), tag, settings.SECRET_KEY)
     return ours[:8] == sig[:8]
 
