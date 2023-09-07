@@ -53,7 +53,7 @@ class Spec(BaseModel):
     failure_kw: str | None = Field(None, max_length=200)
     filter_body: bool | None = None
     filter_subject: bool | None = None
-    grace: int | None = Field(None, ge=60, le=31536000)
+    grace: td | None = Field(None, ge=60, le=31536000)
     manual_resume: bool | None = None
     methods: Literal["", "POST"] | None = None
     name: str | None = Field(None, max_length=100)
@@ -64,7 +64,7 @@ class Spec(BaseModel):
     subject_fail: str | None = Field(None, max_length=200)
     success_kw: str | None = Field(None, max_length=200)
     tags: str | None = None
-    timeout: int | None = Field(None, ge=60, le=31536000)
+    timeout: td | None = Field(None, ge=60, le=31536000)
     tz: str | None = None
     unique: list[Literal["name", "slug", "tags", "timeout", "grace"]] | None = None
 
@@ -72,18 +72,25 @@ class Spec(BaseModel):
     @classmethod
     def check_nulls(cls, data: dict[str, Any]) -> dict[str, Any]:
         # Look for any null values in the incoming data. Replace them with a
-        # float. None of the fields have a fload type, and we are using
+        # float. None of the fields have a float type, and we are using
         # strict validation, so this will cause type validation to fail.
         for k, v in data.items():
             if v is None:
                 data[k] = float()
         return data
 
+    @field_validator("timeout", "grace", mode="before")
+    @classmethod
+    def convert_to_timedelta(cls, v: Any) -> Any:
+        if isinstance(v, int):
+            return td(seconds=v)
+        return v
+
     @field_validator("tz")
     @classmethod
     def check_tz(cls, v: str) -> str:
         if v not in all_timezones:
-            raise PydanticCustomError("tz", "not a valid timezone")
+            raise PydanticCustomError("tz_syntax", "not a valid timezone")
         return v
 
     @field_validator("schedule")
@@ -91,7 +98,7 @@ class Spec(BaseModel):
     def check_schedule(cls, v: str) -> str:
         # Does it have 5 components?
         if len(v.split()) != 5:
-            raise PydanticCustomError("cron", "not a valid cron expression")
+            raise PydanticCustomError("cron_syntax", "not a valid cron expression")
 
         try:
             # Does cronsim accept the schedule?
@@ -99,7 +106,7 @@ class Spec(BaseModel):
             # Can it calculate the next datetime?
             next(it)
         except (CronSimError, StopIteration):
-            raise PydanticCustomError("cron", "not a valid cron expression")
+            raise PydanticCustomError("cron_syntax", "not a valid cron expression")
 
         return v
 
@@ -115,8 +122,9 @@ CUSTOM_ERRORS = {
     "bool_type": "%s is not a boolean",
     "literal_error": "%s has unexpected value",
     "list_type": "%s is not an array",
-    "cron": "%s is not a valid cron expression",
-    "tz": "%s is not a valid timezone",
+    "cron_syntax": "%s is not a valid cron expression",
+    "tz_syntax": "%s is not a valid timezone",
+    "time_delta_type": "%s is not a number",
 }
 
 
@@ -235,13 +243,9 @@ def _lookup(project: Project, spec: Spec) -> Check | None:
     if "tags" in spec.unique:
         existing_checks = existing_checks.filter(tags=spec.tags)
     if "timeout" in spec.unique:
-        assert spec.timeout
-        timeout = td(seconds=spec.timeout)
-        existing_checks = existing_checks.filter(timeout=timeout)
+        existing_checks = existing_checks.filter(timeout=spec.timeout)
     if "grace" in spec.unique:
-        assert spec.grace
-        grace = td(seconds=spec.grace)
-        existing_checks = existing_checks.filter(grace=grace)
+        existing_checks = existing_checks.filter(grace=spec.grace)
 
     return existing_checks.first()
 
@@ -289,16 +293,9 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         need_save = True
 
     if spec.timeout is not None and spec.schedule is None:
-        new_timeout = td(seconds=spec.timeout)
-        if check.kind != "simple" or check.timeout != new_timeout:
+        if check.kind != "simple" or check.timeout != spec.timeout:
             check.kind = "simple"
-            check.timeout = new_timeout
-            need_save = True
-
-    if spec.grace is not None:
-        new_grace = td(seconds=spec.grace)
-        if check.grace != new_grace:
-            check.grace = new_grace
+            check.timeout = spec.timeout
             need_save = True
 
     if spec.schedule is not None:
@@ -329,6 +326,7 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         "failure_kw",
         "filter_subject",
         "filter_body",
+        "grace",
     ):
         v = getattr(spec, key)
         if v is not None and getattr(check, key) != v:
