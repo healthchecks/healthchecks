@@ -247,6 +247,19 @@ class UpdateCheckTestCase(BaseTestCase):
         r = self.post(self.check.code, {"desc": 123})
         self.assertEqual(r.status_code, 400)
 
+    def test_it_rejects_null_values(self) -> None:
+        for field in [
+            "timeout",
+            "grace",
+            "name",
+            "schedule",
+            "subject",
+            "subject_fail",
+            "unique",
+        ]:
+            r = self.post(self.check.code, {field: None})
+            self.assertEqual(r.status_code, 400)
+
     def test_it_validates_cron_expression(self) -> None:
         self.check.kind = "cron"
         self.check.schedule = "5 * * * *"

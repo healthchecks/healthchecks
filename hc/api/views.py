@@ -3,10 +3,13 @@ from __future__ import annotations
 import email.policy
 import time
 from collections.abc import Iterable
+from datetime import datetime
 from datetime import timedelta as td
 from email import message_from_bytes
+from typing import Literal
 from uuid import UUID
 
+from cronsim import CronSim, CronSimError
 from django.conf import settings
 from django.core.signing import BadSignature
 from django.db import connection
@@ -26,20 +29,102 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic_core import PydanticCustomError
 
 from hc.accounts.models import Profile, Project
-from hc.api import schemas
 from hc.api.decorators import authorize, authorize_read, cors, validate_json
 from hc.api.forms import FlipsFiltersForm
 from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 from hc.lib.signing import unsign_bounce_id
 from hc.lib.string import is_valid_uuid_string
+from hc.lib.tz import all_timezones
 
 
 class BadChannelException(Exception):
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
+
+
+# A sentinel value for marking fields that were absent in the JSON message
+Missing = Literal["__missing__"]
+
+
+class Spec(BaseModel):
+    channels: str | Missing = Missing
+    desc: str | Missing = Missing
+    failure_kw: str | Missing = Field(Missing, max_length=200)
+    filter_body: bool | Missing = Missing
+    filter_subject: bool | Missing = Missing
+    grace: int | Missing = Field(Missing, ge=60, le=31536000)
+    manual_resume: bool | Missing = Missing
+    methods: Literal["", "POST"] | Missing = Missing
+    name: str | Missing = Field(Missing, max_length=100)
+    schedule: str | Missing = Field(Missing, max_length=100)
+    slug: str | Missing = Field(Missing, pattern="^[a-z0-9-_]*$")
+    start_kw: str | Missing = Field(Missing, max_length=200)
+    subject: str | Missing = Field(Missing, max_length=200)
+    subject_fail: str | Missing = Field(Missing, max_length=200)
+    success_kw: str | Missing = Field(Missing, max_length=200)
+    tags: str | Missing = Missing
+    timeout: int | Missing = Field(Missing, ge=60, le=31536000)
+    tz: str | Missing = Missing
+    unique: list[
+        Literal["name", "slug", "tags", "timeout", "grace"]
+    ] | Missing = Missing
+
+    @field_validator("tz")
+    @classmethod
+    def validate_tz(cls, v: str) -> str:
+        if v not in all_timezones:
+            raise PydanticCustomError("tz", "not a valid timezone")
+        return v
+
+    @field_validator("schedule")
+    @classmethod
+    def validate_schedule(cls, v: str) -> str:
+        # Does it have 5 components?
+        if len(v.split()) != 5:
+            raise PydanticCustomError("cron", "not a valid cron expression")
+
+        try:
+            # Does cronsim accept the schedule?
+            it = CronSim(v, datetime(2000, 1, 1))
+            # Can it calculate the next datetime?
+            next(it)
+        except (CronSimError, StopIteration):
+            raise PydanticCustomError("cron", "not a valid cron expression")
+
+        return v
+
+
+CUSTOM_ERRORS = {
+    "too_long": "%s is too long",
+    "string_too_long": "%s is too long",
+    "string_type": "%s is not a string",
+    "string_pattern_mismatch": "%s does not match pattern",
+    "less_than_equal": "%s is too large",
+    "greater_than_equal": "%s is too small",
+    "int_type": "%s is not a number",
+    "bool_type": "%s is not a boolean",
+    "literal_error": "%s has unexpected value",
+    "list_type": "%s is not an array",
+    "cron": "%s is not a valid cron expression",
+    "tz": "%s is not a valid timezone",
+}
+
+
+def format_error(exc: ValidationError) -> str:
+    for e in exc.errors():
+        field = e["loc"][0]
+        if len(e["loc"]) > 2:
+            field = f"an item in '{field}'"
+
+        kind = e["type"]
+        return "json validation error: " + CUSTOM_ERRORS[kind] % field
+
+    return ""
 
 
 @csrf_exempt
@@ -127,35 +212,36 @@ def ping_by_slug(
     return response
 
 
-def _lookup(project, spec):
-    if unique_fields := spec.get("unique"):
+def _lookup(project: Project, spec: Spec) -> Check | None:
+    if spec.unique is not Missing and len(spec.unique):
         existing_checks = Check.objects.filter(project=project)
-        if "name" in unique_fields:
-            existing_checks = existing_checks.filter(name=spec.get("name"))
-        if "slug" in unique_fields:
-            existing_checks = existing_checks.filter(slug=spec.get("slug"))
-        if "tags" in unique_fields:
-            existing_checks = existing_checks.filter(tags=spec.get("tags"))
-        if "timeout" in unique_fields:
-            timeout = td(seconds=spec["timeout"])
+        if "name" in spec.unique:
+            existing_checks = existing_checks.filter(name=spec.name)
+        if "slug" in spec.unique:
+            existing_checks = existing_checks.filter(slug=spec.slug)
+        if "tags" in spec.unique:
+            existing_checks = existing_checks.filter(tags=spec.tags)
+        if "timeout" in spec.unique:
+            timeout = td(seconds=spec.timeout)
             existing_checks = existing_checks.filter(timeout=timeout)
-        if "grace" in unique_fields:
-            grace = td(seconds=spec["grace"])
+        if "grace" in spec.unique:
+            grace = td(seconds=spec.grace)
             existing_checks = existing_checks.filter(grace=grace)
 
         return existing_checks.first()
+    return None
 
 
-def _update(check, spec, v: int):
+def _update(check: Check, spec: Spec, v: int) -> None:
     new_channels: Iterable[Channel] | None
     # First, validate the supplied channel codes/names
-    if "channels" not in spec:
+    if spec.channels is Missing:
         # If the channels key is not present, don't update check's channels
         new_channels = None
-    elif spec["channels"] == "*":
+    elif spec.channels == "*":
         # "*" means "all project's channels"
         new_channels = Channel.objects.filter(project=check.project)
-    elif spec.get("channels") == "":
+    elif spec.channels == "":
         # "" means "empty list"
         new_channels = []
     else:
@@ -163,7 +249,7 @@ def _update(check, spec, v: int):
         new_channels = set()
         available = list(Channel.objects.filter(project=check.project))
 
-        for s in spec["channels"].split(","):
+        for s in spec.channels.split(","):
             if s == "":
                 raise BadChannelException("empty channel identifier")
 
@@ -181,39 +267,39 @@ def _update(check, spec, v: int):
         # and so do need to save() it:
         need_save = True
 
-    if "name" in spec and check.name != spec["name"]:
-        check.name = spec["name"]
+    if spec.name is not Missing and check.name != spec.name:
+        check.name = spec.name
         if v < 3:
             # v1 and v2 generates slug automatically from name
-            check.slug = slugify(spec["name"])
+            check.slug = slugify(spec.name)
         need_save = True
 
-    if "timeout" in spec and "schedule" not in spec:
-        new_timeout = td(seconds=spec["timeout"])
+    if spec.timeout is not Missing and spec.schedule is Missing:
+        new_timeout = td(seconds=spec.timeout)
         if check.kind != "simple" or check.timeout != new_timeout:
             check.kind = "simple"
             check.timeout = new_timeout
             need_save = True
 
-    if "grace" in spec:
-        new_grace = td(seconds=spec["grace"])
+    if spec.grace is not Missing:
+        new_grace = td(seconds=spec.grace)
         if check.grace != new_grace:
             check.grace = new_grace
             need_save = True
 
-    if "schedule" in spec:
-        if check.kind != "cron" or check.schedule != spec["schedule"]:
+    if spec.schedule is not Missing:
+        if check.kind != "cron" or check.schedule != spec.schedule:
             check.kind = "cron"
-            check.schedule = spec["schedule"]
+            check.schedule = spec.schedule
             need_save = True
 
-    if "subject" in spec:
-        check.success_kw = spec["subject"]
+    if spec.subject is not Missing:
+        check.success_kw = spec.subject
         check.filter_subject = bool(check.success_kw or check.failure_kw)
         need_save = True
 
-    if "subject_fail" in spec:
-        check.failure_kw = spec["subject_fail"]
+    if spec.subject_fail is not Missing:
+        check.failure_kw = spec.subject_fail
         check.filter_subject = bool(check.success_kw or check.failure_kw)
         need_save = True
 
@@ -230,8 +316,9 @@ def _update(check, spec, v: int):
         "filter_subject",
         "filter_body",
     ):
-        if key in spec and getattr(check, key) != spec[key]:
-            setattr(check, key, spec[key])
+        v = getattr(spec, key)
+        if v is not Missing and getattr(check, key) != v:
+            setattr(check, key, v)
             need_save = True
 
     if need_save:
@@ -269,11 +356,16 @@ def get_checks(request):
     return JsonResponse({"checks": checks})
 
 
-@validate_json(schemas.check)
+@validate_json()
 @authorize
 def create_check(request):
+    try:
+        spec = Spec.model_validate_json(request.body, strict=True)
+    except ValidationError as e:
+        return JsonResponse({"error": format_error(e)}, status=400)
+
     created = False
-    check = _lookup(request.project, request.json)
+    check = _lookup(request.project, spec)
     if check is None:
         if request.project.num_checks_available() <= 0:
             return HttpResponseForbidden()
@@ -282,7 +374,7 @@ def create_check(request):
         created = True
 
     try:
-        _update(check, request.json, request.v)
+        _update(check, spec, request.v)
     except BadChannelException as e:
         return JsonResponse({"error": e.message}, status=400)
 
@@ -327,7 +419,7 @@ def get_check_by_unique_key(request, unique_key):
     return HttpResponseNotFound()
 
 
-@validate_json(schemas.check)
+@validate_json()
 @authorize
 def update_check(request, code):
     check = get_object_or_404(Check, code=code)
@@ -335,7 +427,12 @@ def update_check(request, code):
         return HttpResponseForbidden()
 
     try:
-        _update(check, request.json, request.v)
+        spec = Spec.model_validate_json(request.body, strict=True)
+    except ValidationError as e:
+        return JsonResponse({"error": format_error(e)}, status=400)
+
+    try:
+        _update(check, spec, request.v)
     except BadChannelException as e:
         return JsonResponse({"error": e.message}, status=400)
 
