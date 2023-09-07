@@ -33,7 +33,7 @@ from pydantic import BaseModel, Field, ValidationError, field_validator
 from pydantic_core import PydanticCustomError
 
 from hc.accounts.models import Profile, Project
-from hc.api.decorators import authorize, authorize_read, cors, validate_json
+from hc.api.decorators import authorize, authorize_read, cors
 from hc.api.forms import FlipsFiltersForm
 from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
@@ -356,11 +356,10 @@ def get_checks(request):
     return JsonResponse({"checks": checks})
 
 
-@validate_json()
 @authorize
 def create_check(request):
     try:
-        spec = Spec.model_validate_json(request.body, strict=True)
+        spec = Spec.model_validate(request.json, strict=True)
     except ValidationError as e:
         return JsonResponse({"error": format_error(e)}, status=400)
 
@@ -419,7 +418,6 @@ def get_check_by_unique_key(request, unique_key):
     return HttpResponseNotFound()
 
 
-@validate_json()
 @authorize
 def update_check(request, code):
     check = get_object_or_404(Check, code=code)
@@ -427,7 +425,7 @@ def update_check(request, code):
         return HttpResponseForbidden()
 
     try:
-        spec = Spec.model_validate_json(request.body, strict=True)
+        spec = Spec.model_validate(request.json, strict=True)
     except ValidationError as e:
         return JsonResponse({"error": format_error(e)}, status=400)
 
@@ -463,7 +461,6 @@ def single(request, code):
 
 @cors("POST")
 @csrf_exempt
-@validate_json()
 @authorize
 def pause(request, code):
     check = get_object_or_404(Check, code=code)
@@ -487,7 +484,6 @@ def pause(request, code):
 
 @cors("POST")
 @csrf_exempt
-@validate_json()
 @authorize
 def resume(request, code):
     check = get_object_or_404(Check, code=code)
@@ -510,7 +506,6 @@ def resume(request, code):
 
 @cors("GET")
 @csrf_exempt
-@validate_json()
 @authorize
 def pings(request, code):
     check = get_object_or_404(Check, code=code)
