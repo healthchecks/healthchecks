@@ -128,16 +128,14 @@ CUSTOM_ERRORS = {
 }
 
 
-def format_error(exc: ValidationError) -> str:
-    for e in exc.errors():
-        field = e["loc"][0]
-        if len(e["loc"]) == 2:
-            field = f"an item in '{field}'"
+def format_first_error(exc: ValidationError) -> str:
+    first_error = exc.errors()[0]
+    subject = first_error["loc"][0]
+    if len(first_error["loc"]) == 2:
+        subject = f"an item in '{subject}'"
 
-        kind = e["type"]
-        return "json validation error: " + CUSTOM_ERRORS[kind] % field
-
-    return ""
+    tmpl = CUSTOM_ERRORS[first_error["type"]]
+    return "json validation error: " + tmpl % subject
 
 
 @csrf_exempt
@@ -373,7 +371,7 @@ def create_check(request):
     try:
         spec = Spec.model_validate(request.json, strict=True)
     except ValidationError as e:
-        return JsonResponse({"error": format_error(e)}, status=400)
+        return JsonResponse({"error": format_first_error(e)}, status=400)
 
     created = False
     check = _lookup(request.project, spec)
@@ -439,7 +437,7 @@ def update_check(request, code):
     try:
         spec = Spec.model_validate(request.json, strict=True)
     except ValidationError as e:
-        return JsonResponse({"error": format_error(e)}, status=400)
+        return JsonResponse({"error": format_first_error(e)}, status=400)
 
     try:
         _update(check, spec, request.v)
