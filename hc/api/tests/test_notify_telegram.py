@@ -121,7 +121,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         # The chat id should have been updated
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.telegram_id, -234)
+        self.assertEqual(self.channel.telegram.id, -234)
 
         # There should be no logged error
         n = Notification.objects.get()

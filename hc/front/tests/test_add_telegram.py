@@ -45,10 +45,10 @@ class AddTelegramTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "telegram")
-        self.assertEqual(c.telegram_id, 123)
-        self.assertEqual(c.telegram_type, "group")
-        self.assertEqual(c.telegram_name, "My Group")
-        self.assertEqual(c.telegram_thread_id, None)
+        self.assertEqual(c.telegram.id, 123)
+        self.assertEqual(c.telegram.type, "group")
+        self.assertEqual(c.telegram.name, "My Group")
+        self.assertEqual(c.telegram.thread_id, None)
         self.assertEqual(c.project, self.project)
 
     def test_it_saves_thread_id(self) -> None:
@@ -63,8 +63,8 @@ class AddTelegramTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "telegram")
-        self.assertEqual(c.telegram_id, 123)
-        self.assertEqual(c.telegram_thread_id, 456)
+        self.assertEqual(c.telegram.id, 123)
+        self.assertEqual(c.telegram.thread_id, 456)
 
     def test_it_handles_bad_signature(self) -> None:
         self.client.login(username="alice@example.org", password="password")

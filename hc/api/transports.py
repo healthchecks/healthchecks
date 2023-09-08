@@ -758,7 +758,7 @@ class Telegram(HttpTransport):
     def notify(self, check: Check, notification: Notification | None = None) -> None:
         from hc.api.models import TokenBucket
 
-        if not TokenBucket.authorize_telegram(self.channel.telegram_id):
+        if not TokenBucket.authorize_telegram(self.channel.telegram.id):
             raise TransportError("Rate limit exceeded")
 
         ping = self.last_ping(check)
@@ -773,11 +773,11 @@ class Telegram(HttpTransport):
         text = tmpl("telegram_message.html", **ctx)
 
         try:
-            self.send(self.channel.telegram_id, self.channel.telegram_thread_id, text)
+            self.send(self.channel.telegram.id, self.channel.telegram.thread_id, text)
         except MigrationRequiredError as e:
             # Save the new chat_id, then try sending again:
             self.channel.update_telegram_id(e.new_chat_id)
-            self.send(self.channel.telegram_id, self.channel.telegram_thread_id, text)
+            self.send(self.channel.telegram.id, self.channel.telegram.thread_id, text)
 
 
 class Sms(HttpTransport):

@@ -58,12 +58,12 @@
                             {% endif %}
                         {% elif ch.kind == "telegram" %}
                             Telegram
-                            {% if ch.telegram_type == "group" %}
-                                group <span>{{ ch.telegram_name }}</span>
-                            {% elif ch.telegram_type == "private" %}
-                                user <span>{{ ch.telegram_name }}</span>
-                            {% elif ch.telegram_type == "channel" %}
-                                channel <span>{{ ch.telegram_name }}</span>
+                            {% if ch.telegram.type == "group" %}
+                                group <span>{{ ch.telegram.name }}</span>
+                            {% elif ch.telegram.type == "private" %}
+                                user <span>{{ ch.telegram.name }}</span>
+                            {% elif ch.telegram.type == "channel" %}
+                                channel <span>{{ ch.telegram.name }}</span>
                             {% endif %}
                         {% elif ch.kind == "sms" %}
                             SMS to <span>{{ ch.phone_number }}</span>

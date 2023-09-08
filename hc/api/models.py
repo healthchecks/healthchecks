@@ -697,6 +697,13 @@ class WebhookSpec(BaseModel):
     headers: dict[str, str]
 
 
+class TelegramConf(BaseModel):
+    id: int
+    thread_id: int | None = None
+    type: str | None = None
+    name: str | None = None
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -721,7 +728,7 @@ class Channel(models.Model):
         elif self.kind == "slack":
             return "Slack %s" % self.slack_channel
         elif self.kind == "telegram":
-            return "Telegram %s" % self.telegram_name
+            return "Telegram %s" % self.telegram.name
         elif self.kind == "zulip":
             if self.zulip_type == "stream":
                 return "Zulip stream %s" % self.zulip_to
@@ -915,27 +922,11 @@ class Channel(models.Model):
         return url
 
     @property
-    def telegram_id(self):
-        assert self.kind == "telegram"
-        return self.json.get("id")
+    def telegram(self):
+        return TelegramConf.model_validate_json(self.value)
 
-    @property
-    def telegram_thread_id(self):
-        assert self.kind == "telegram"
-        return self.json.get("thread_id")
-
-    @property
-    def telegram_type(self):
-        assert self.kind == "telegram"
-        return self.json.get("type")
-
-    @property
-    def telegram_name(self):
-        assert self.kind == "telegram"
-        return self.json.get("name")
-
-    def update_telegram_id(self, new_chat_id) -> None:
-        doc = self.json
+    def update_telegram_id(self, new_chat_id: int) -> None:
+        doc = json.loads(self.value)
         doc["id"] = new_chat_id
         self.value = json.dumps(doc)
         self.save()
