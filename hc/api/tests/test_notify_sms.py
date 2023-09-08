@@ -83,6 +83,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly SMS Limit Reached")
 
+    @override_settings(TWILIO_FROM="+000")
     @patch("hc.api.transports.curl.request")
     def test_it_resets_limit_next_month(self, mock_post: Mock) -> None:
         # At limit, but also into a new month
@@ -95,6 +96,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         mock_post.assert_called_once()
 
+    @override_settings(TWILIO_FROM="+000")
     @patch("hc.api.transports.curl.request")
     def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
         self.check.name = "Foo > Bar & Co"
@@ -115,6 +117,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         mock_post.assert_not_called()
 
+    @override_settings(TWILIO_FROM="+000")
     @patch("hc.api.transports.curl.request")
     def test_it_sends_up_notification(self, mock_post: Mock) -> None:
         payload = {"value": "+123123123", "up": True, "down": False}

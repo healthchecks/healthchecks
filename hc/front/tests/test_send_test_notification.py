@@ -4,6 +4,7 @@ import json
 from unittest.mock import Mock, patch
 
 from django.core import mail
+from django.test.utils import override_settings
 
 from hc.api.models import Channel, Notification
 from hc.test import BaseTestCase
@@ -133,6 +134,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         r = self.client.post(self.url, {}, follow=True)
         self.assertEqual(r.status_code, 404)
 
+    @override_settings(TWILIO_FROM="+000")
     @patch("hc.api.transports.curl.request")
     def test_it_handles_up_only_sms_channel(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
