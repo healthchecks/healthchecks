@@ -35,8 +35,8 @@ class AddPagerDutyCompleteTestCase(BaseTestCase):
 
         channel = Channel.objects.get()
         self.assertEqual(channel.kind, "pd")
-        self.assertEqual(channel.pd_service_key, "foo")
-        self.assertEqual(channel.pd_account, "Foo")
+        self.assertEqual(channel.pd.service_key, "foo")
+        self.assertEqual(channel.pd.account, "Foo")
 
     def test_it_validates_state(self) -> None:
         self.client.login(username="alice@example.org", password="password")

@@ -32,8 +32,8 @@ class AddShellTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.project, self.project)
-        self.assertEqual(c.cmd_down, "logger down")
-        self.assertEqual(c.cmd_up, "logger up")
+        self.assertEqual(c.shell.cmd_down, "logger down")
+        self.assertEqual(c.shell.cmd_up, "logger up")
 
     def test_it_adds_webhook_using_team_access(self) -> None:
         form = {"cmd_down": "logger down", "cmd_up": "logger up"}
@@ -45,7 +45,7 @@ class AddShellTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.project, self.project)
-        self.assertEqual(c.cmd_down, "logger down")
+        self.assertEqual(c.shell.cmd_down, "logger down")
 
     def test_it_handles_empty_down_command(self) -> None:
         form = {"cmd_down": "", "cmd_up": "logger up"}
@@ -54,8 +54,8 @@ class AddShellTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.cmd_down, "")
-        self.assertEqual(c.cmd_up, "logger up")
+        self.assertEqual(c.shell.cmd_down, "")
+        self.assertEqual(c.shell.cmd_up, "logger up")
 
     def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"

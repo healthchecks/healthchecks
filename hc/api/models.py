@@ -704,6 +704,24 @@ class TelegramConf(BaseModel):
     name: str | None = None
 
 
+class ShellConf(BaseModel):
+    cmd_down: str
+    cmd_up: str
+
+
+class PdConf(BaseModel):
+    service_key: str
+    account: str | None = None
+
+    @classmethod
+    def model_validate_json(cls, data):
+        # Is it plain service_key value?
+        if not data.startswith("{"):
+            return cls.model_validate({"service_key": data})
+
+        return super().model_validate_json(data)
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -867,8 +885,10 @@ class Channel(models.Model):
     def up_webhook_spec(self) -> WebhookSpec:
         return self.webhook_spec("up")
 
-    cmd_down = json_property("shell", "cmd_down")
-    cmd_up = json_property("shell", "cmd_up")
+    @property
+    def shell(self) -> ShellConf:
+        assert self.kind == "shell"
+        return ShellConf.model_validate_json(self.value)
 
     @property
     def slack_team(self) -> str | None:
@@ -923,6 +943,7 @@ class Channel(models.Model):
 
     @property
     def telegram(self):
+        assert self.kind == "telegram"
         return TelegramConf.model_validate_json(self.value)
 
     def update_telegram_id(self, new_chat_id: int) -> None:
@@ -932,19 +953,9 @@ class Channel(models.Model):
         self.save()
 
     @property
-    def pd_service_key(self) -> str:
+    def pd(self) -> PdConf:
         assert self.kind == "pd"
-        if not self.value.startswith("{"):
-            return self.value
-
-        return self.json["service_key"]
-
-    @property
-    def pd_account(self) -> str | None:
-        assert self.kind == "pd"
-        if self.value.startswith("{"):
-            return self.json.get("account")
-        return None
+        return PdConf.model_validate_json(self.value)
 
     @property
     def phone_number(self) -> str:

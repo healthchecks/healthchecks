@@ -197,10 +197,10 @@ class Shell(Transport):
         return replace(template, ctx)
 
     def is_noop(self, check: Check) -> bool:
-        if check.status == "down" and not self.channel.cmd_down:
+        if check.status == "down" and not self.channel.shell.cmd_down:
             return True
 
-        if check.status == "up" and not self.channel.cmd_up:
+        if check.status == "up" and not self.channel.shell.cmd_up:
             return True
 
         return False
@@ -210,9 +210,9 @@ class Shell(Transport):
             raise TransportError("Shell commands are not enabled")
 
         if check.status == "up":
-            cmd = self.channel.cmd_up
+            cmd = self.channel.shell.cmd_up
         elif check.status == "down":
-            cmd = self.channel.cmd_down
+            cmd = self.channel.shell.cmd_down
 
         cmd = self.prepare(cmd, check)
         code = os.system(cmd)
@@ -511,7 +511,7 @@ class PagerDuty(HttpTransport):
 
         description = tmpl("pd_description.html", check=check)
         payload = {
-            "service_key": self.channel.pd_service_key,
+            "service_key": self.channel.pd.service_key,
             "incident_key": str(check.code),
             "event_type": "trigger" if check.status == "down" else "resolve",
             "description": description,

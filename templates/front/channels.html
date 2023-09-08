@@ -47,7 +47,7 @@
                                 (up only)
                             {% endif %}
                         {% elif ch.kind == "pd" %}
-                            PagerDuty account <span>{{ ch.pd_account }}</span>
+                            PagerDuty account <span>{{ ch.pd.account }}</span>
                         {% elif ch.kind == "po" %}
                             Pushover ({{ ch.po_priority }} priority)
                         {% elif ch.kind == "slack" %}
@@ -621,14 +621,14 @@
 
 
                     {% if ch.kind == "shell" %}
-                        {% if ch.cmd_down %}
+                        {% if ch.shell.cmd_down %}
                             <p><strong>Execute on "down" events:</strong></p>
-                            <pre>{{ ch.cmd_down }}</pre>
+                            <pre>{{ ch.shell.cmd_down }}</pre>
                         {% endif %}
 
-                        {% if ch.cmd_up %}
+                        {% if ch.shell.cmd_up %}
                             <p><strong>Execute on "up" events:</strong></p>
-                            <pre>{{ ch.cmd_up }}</pre>
+                            <pre>{{ ch.shell.cmd_up }}</pre>
                         {% endif %}
                     {% endif %}
                 </div>
