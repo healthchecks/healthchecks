@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from typing import TypedDict
+from typing import Any, TypedDict
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
 from django.db import models, transaction
+from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -28,6 +29,7 @@ from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 from hc.lib.s3 import get_object, put_object, remove_objects
+from hc.lib.typealias import JSONDict
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -37,7 +39,7 @@ CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"))
 # max time between start and ping where we will consider both events related:
 MAX_DURATION = td(hours=72)
 
-TRANSPORTS = {
+TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "apprise": ("Apprise", transports.Apprise),
     "call": ("Phone Call", transports.Call),
     "discord": ("Discord", transports.Discord),
@@ -70,6 +72,7 @@ TRANSPORTS = {
     "zulip": ("Zulip", transports.Zulip),
 }
 
+
 CHANNEL_KINDS = [(kind, label_cls[0]) for kind, label_cls in TRANSPORTS.items()]
 
 PO_PRIORITIES = {
@@ -91,7 +94,7 @@ NTFY_PRIORITIES = {
 }
 
 
-def isostring(dt) -> str | None:
+def isostring(dt: datetime | None) -> str | None:
     """Convert the datetime to ISO 8601 format with no microseconds."""
     return dt.replace(microsecond=0).isoformat() if dt else None
 
@@ -129,7 +132,7 @@ class CheckDict(TypedDict, total=False):
 
 
 class DowntimeSummary(object):
-    def __init__(self, boundaries: list[datetime]):
+    def __init__(self, boundaries: list[datetime]) -> None:
         self.boundaries = list(sorted(boundaries, reverse=True))
         self.durations = [td() for _ in boundaries]
         self.counts = [0 for _ in boundaries]
@@ -187,7 +190,7 @@ class Check(models.Model):
             models.Index(fields=["project_id", "slug"], name="api_check_project_slug"),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "%s (%d)" % (self.name or self.code, self.id)
 
     def name_then_code(self) -> str:
@@ -214,7 +217,7 @@ class Check(models.Model):
 
         return settings.PING_ENDPOINT + str(self.code)
 
-    def details_url(self, full=True) -> str:
+    def details_url(self, full: bool = True) -> str:
         result = reverse("hc-details", args=[self.code])
         return settings.SITE_ROOT + result if full else result
 
@@ -479,11 +482,13 @@ class Check(models.Model):
             pass
 
     @property
-    def visible_pings(self):
+    def visible_pings(self) -> QuerySet["Ping"]:
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
         return self.ping_set.filter(n__gt=threshold)
 
-    def downtimes_by_boundary(self, boundaries: list[datetime]):
+    def downtimes_by_boundary(
+        self, boundaries: list[datetime]
+    ) -> list[tuple[datetime, td | None, int | None]]:
         """Calculate downtime counts and durations for the given time intervals.
 
         Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples
@@ -528,7 +533,9 @@ class Check(models.Model):
         result.sort()
         return result
 
-    def downtimes(self, months: int, tz: str):
+    def downtimes(
+        self, months: int, tz: str
+    ) -> list[tuple[datetime, td | None, int | None]]:
         boundaries = month_boundaries(months, tz)
         return self.downtimes_by_boundary(boundaries)
 
@@ -615,7 +622,7 @@ class Ping(models.Model):
     def get_body_bytes(self) -> bytes | None:
         if self.body:
             return self.body.encode()
-        if self.object_size:
+        if self.object_size and self.n:
             return get_object(self.owner.code, self.n)
         if self.body_raw:
             return self.body_raw
@@ -674,9 +681,11 @@ class Ping(models.Model):
 
 
 def json_property(kind: str, field: str) -> property:
-    def fget(instance):
+    def fget(instance: Channel) -> int | str:
         assert instance.kind == kind
-        return instance.json[field]
+        v = instance.json[field]
+        assert isinstance(v, int) or isinstance(v, str)
+        return v
 
     return property(fget)
 
@@ -702,7 +711,7 @@ class Channel(models.Model):
     last_error = models.CharField(max_length=200, blank=True)
     checks = models.ManyToManyField(Check)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.name:
             return self.name
         if self.kind == "email":
@@ -766,7 +775,7 @@ class Channel(models.Model):
         """
         mail_admins(subject, message, html_message=html_message)
 
-    def send_signal_rate_limited_notice(self, message: str, plaintext: str):
+    def send_signal_rate_limited_notice(self, message: str, plaintext: str) -> None:
         email = self.project.owner.email
         ctx = {
             "recipient": self.phone_number,
@@ -777,7 +786,7 @@ class Channel(models.Model):
         emails.signal_rate_limited(email, ctx)
 
     @property
-    def transport(self):
+    def transport(self) -> transports.Transport:
         if self.kind not in TRANSPORTS:
             raise NotImplementedError(f"Unknown channel kind: {self.kind}")
 
@@ -821,11 +830,11 @@ class Channel(models.Model):
         return f"img/integrations/{self.kind}.png"
 
     @property
-    def json(self):
+    def json(self) -> Any:
         return json.loads(self.value)
 
     @property
-    def po_priority(self):
+    def po_priority(self) -> str:
         assert self.kind == "po"
         parts = self.value.split("|")
         prio = int(parts[1])
@@ -855,41 +864,49 @@ class Channel(models.Model):
     cmd_up = json_property("shell", "cmd_up")
 
     @property
-    def slack_team(self):
+    def slack_team(self) -> str | None:
         assert self.kind == "slack"
         if not self.value.startswith("{"):
             return None
 
         doc = json.loads(self.value)
         if "team_name" in doc:
+            assert isinstance(doc["team_name"], str)
             return doc["team_name"]
 
         if "team" in doc:
+            assert isinstance(doc["team"]["name"], str)
             return doc["team"]["name"]
 
+        return None
+
     @property
-    def slack_channel(self):
+    def slack_channel(self) -> str | None:
         assert self.kind == "slack"
         if not self.value.startswith("{"):
             return None
 
         doc = json.loads(self.value)
-        return doc["incoming_webhook"]["channel"]
+        v = doc["incoming_webhook"]["channel"]
+        assert isinstance(v, str)
+        return v
 
     @property
-    def slack_webhook_url(self):
+    def slack_webhook_url(self) -> str:
         assert self.kind in ("slack", "mattermost")
         if not self.value.startswith("{"):
             return self.value
 
         doc = json.loads(self.value)
-        return doc["incoming_webhook"]["url"]
+        v = doc["incoming_webhook"]["url"]
+        assert isinstance(v, str)
+        return v
 
     @property
-    def discord_webhook_url(self):
+    def discord_webhook_url(self) -> str:
         assert self.kind == "discord"
         url = self.json["webhook"]["url"]
-
+        assert isinstance(url, str)
         # Discord migrated to discord.com,
         # and is dropping support for discordapp.com on 7 November 2020
         if url.startswith("https://discordapp.com/"):
@@ -924,7 +941,7 @@ class Channel(models.Model):
         self.save()
 
     @property
-    def pd_service_key(self):
+    def pd_service_key(self) -> str:
         assert self.kind == "pd"
         if not self.value.startswith("{"):
             return self.value
@@ -932,13 +949,14 @@ class Channel(models.Model):
         return self.json["service_key"]
 
     @property
-    def pd_account(self):
+    def pd_account(self) -> str | None:
         assert self.kind == "pd"
         if self.value.startswith("{"):
             return self.json.get("account")
+        return None
 
     @property
-    def phone_number(self):
+    def phone_number(self) -> str:
         assert self.kind in ("call", "sms", "whatsapp", "signal")
         if self.value.startswith("{"):
             return self.json["value"]
@@ -949,13 +967,13 @@ class Channel(models.Model):
     trello_list_id = json_property("trello", "list_id")
 
     @property
-    def trello_board_list(self):
+    def trello_board_list(self) -> tuple[str, str]:
         assert self.kind == "trello"
         doc = json.loads(self.value)
         return doc["board_name"], doc["list_name"]
 
     @property
-    def email_value(self):
+    def email_value(self) -> str:
         assert self.kind == "email"
         if not self.value.startswith("{"):
             return self.value
@@ -963,7 +981,7 @@ class Channel(models.Model):
         return self.json["value"]
 
     @property
-    def email_notify_up(self):
+    def email_notify_up(self) -> bool:
         assert self.kind == "email"
         if not self.value.startswith("{"):
             return True
@@ -971,7 +989,7 @@ class Channel(models.Model):
         return self.json.get("up")
 
     @property
-    def email_notify_down(self):
+    def email_notify_down(self) -> bool:
         assert self.kind == "email"
         if not self.value.startswith("{"):
             return True
@@ -985,17 +1003,17 @@ class Channel(models.Model):
     signal_notify_down = json_property("signal", "down")
 
     @property
-    def sms_notify_up(self):
+    def sms_notify_up(self) -> bool:
         assert self.kind == "sms"
         return self.json.get("up", False)
 
     @property
-    def sms_notify_down(self):
+    def sms_notify_down(self) -> bool:
         assert self.kind == "sms"
         return self.json.get("down", True)
 
     @property
-    def opsgenie_key(self):
+    def opsgenie_key(self) -> str:
         assert self.kind == "opsgenie"
         if not self.value.startswith("{"):
             return self.value
@@ -1003,7 +1021,7 @@ class Channel(models.Model):
         return self.json["key"]
 
     @property
-    def opsgenie_region(self):
+    def opsgenie_region(self) -> str:
         assert self.kind == "opsgenie"
         if not self.value.startswith("{"):
             return "us"
@@ -1016,7 +1034,7 @@ class Channel(models.Model):
     zulip_to = json_property("zulip", "to")
 
     @property
-    def zulip_site(self):
+    def zulip_site(self) -> str:
         assert self.kind == "zulip"
         doc = json.loads(self.value)
         if "site" in doc:
@@ -1028,12 +1046,12 @@ class Channel(models.Model):
         return "https://" + domain
 
     @property
-    def zulip_topic(self):
+    def zulip_topic(self) -> str:
         assert self.kind == "zulip"
         return self.json.get("topic", "")
 
     @property
-    def linenotify_token(self):
+    def linenotify_token(self) -> str:
         assert self.kind == "linenotify"
         return self.value
 
@@ -1046,12 +1064,12 @@ class Channel(models.Model):
     ntfy_priority_up = json_property("ntfy", "priority_up")
 
     @property
-    def ntfy_token(self):
+    def ntfy_token(self) -> str | None:
         assert self.kind == "ntfy"
         return self.json.get("token")
 
     @property
-    def ntfy_priority_display(self):
+    def ntfy_priority_display(self) -> str:
         return NTFY_PRIORITIES[self.ntfy_priority]
 
 
