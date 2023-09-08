@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import random
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from datetime import timedelta as td
 from secrets import token_urlsafe
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote, urlencode
 from zoneinfo import ZoneInfo
 
@@ -24,6 +24,8 @@ from hc.lib.date import month_boundaries, week_boundaries
 from hc.lib.signing import sign_bounce_id
 
 if TYPE_CHECKING:
+    # Importing Check at runtime would cause a circular import, so only import it
+    # during type checking
     from hc.api.models import Check
 
     CheckQuerySet = QuerySet[Check]
@@ -43,12 +45,12 @@ OVER_LIMIT_GRACE = td(days=31)
 DELETION_GRACE = td(days=31)
 
 
-def month(dt):
+def month(dt: datetime) -> date:
     """For a given datetime, return the matching first-day-of-month date."""
     return dt.date().replace(day=1)
 
 
-class ProfileManager(models.Manager):
+class ProfileManager(models.Manager["Profile"]):
     def for_user(self, user: User) -> "Profile":
         try:
             return user.profile
@@ -100,13 +102,13 @@ class Profile(models.Model):
 
     objects = ProfileManager()
 
-    def __str__(self):
-        return "Profile for %s" % self.user.email
+    def __str__(self) -> str:
+        return f"Profile for {self.user.email}"
 
-    def notifications_url(self):
+    def notifications_url(self) -> str:
         return settings.SITE_ROOT + reverse("hc-notifications")
 
-    def reports_unsub_url(self):
+    def reports_unsub_url(self) -> str:
         signer = TimestampSigner(salt="reports")
         signed_username = signer.sign(self.user.username)
         path = reverse("hc-unsubscribe-reports", args=[signed_username])
@@ -120,7 +122,7 @@ class Profile(models.Model):
         # Sign the token so we can check its age later
         return TimestampSigner().sign(token)
 
-    def check_token(self, token):
+    def check_token(self, token: str) -> bool:
         try:
             token = TimestampSigner().unsign(token, max_age=3600)
         except BadSignature:
@@ -171,15 +173,15 @@ class Profile(models.Model):
         }
         emails.transfer_request(self.user.email, ctx)
 
-    def send_sms_limit_notice(self, transport):
+    def send_sms_limit_notice(self, transport: str) -> None:
         ctx = {"transport": transport, "limit": self.sms_limit}
         if self.sms_limit != 500 and settings.USE_PAYMENTS:
             ctx["url"] = settings.SITE_ROOT + reverse("hc-pricing")
 
         emails.sms_limit(self.user.email, ctx)
 
-    def send_call_limit_notice(self):
-        ctx = {"limit": self.call_limit}
+    def send_call_limit_notice(self) -> None:
+        ctx: dict[str, Any] = {"limit": self.call_limit}
         if self.call_limit != 500 and settings.USE_PAYMENTS:
             ctx["url"] = settings.SITE_ROOT + reverse("hc-pricing")
 
@@ -222,7 +224,7 @@ class Profile(models.Model):
             "List-Unsubscribe": "<%s>" % unsub_url,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
-        ctx = {
+        ctx: dict[str, Any] = {
             "sort": self.sort,
             "unsub_link": unsub_url,
             "notifications_url": self.notifications_url(),
@@ -261,7 +263,7 @@ class Profile(models.Model):
 
         return True
 
-    def sms_sent_this_month(self):
+    def sms_sent_this_month(self) -> int:
         # IF last_sms_date was never set, we have not sent any messages yet.
         if not self.last_sms_date:
             return 0
@@ -272,7 +274,7 @@ class Profile(models.Model):
 
         return self.sms_sent
 
-    def authorize_sms(self):
+    def authorize_sms(self) -> bool:
         """If monthly limit not exceeded, increase counter and return True"""
 
         sent_this_month = self.sms_sent_this_month()
@@ -284,7 +286,7 @@ class Profile(models.Model):
         self.save()
         return True
 
-    def calls_sent_this_month(self):
+    def calls_sent_this_month(self) -> int:
         # IF last_call_date was never set, we have not made any phone calls yet.
         if not self.last_call_date:
             return 0
@@ -295,7 +297,7 @@ class Profile(models.Model):
 
         return self.calls_sent
 
-    def authorize_call(self):
+    def authorize_call(self) -> bool:
         """If monthly limit not exceeded, increase counter and return True"""
 
         sent_this_month = self.calls_sent_this_month()
@@ -358,7 +360,7 @@ class Profile(models.Model):
 
         return now() > self.over_limit_date + OVER_LIMIT_GRACE
 
-    def schedule_for_deletion(self):
+    def schedule_for_deletion(self) -> None:
         self.deletion_scheduled_date = now() + DELETION_GRACE
         self.save()
 
@@ -373,11 +375,11 @@ class Project(models.Model):
     ping_key = models.CharField(max_length=128, blank=True, null=True, unique=True)
     show_slugs = models.BooleanField(default=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name or self.owner.email
 
     @property
-    def owner_profile(self):
+    def owner_profile(self) -> Profile:
         return Profile.objects.for_user(self.owner)
 
     def num_checks(self) -> int:
@@ -422,7 +424,7 @@ class Project(models.Model):
 
         return None
 
-    def get_n_down(self):
+    def get_n_down(self) -> int:
         result = 0
         for check in self.check_set.all():
             if check.get_status() == "down":
@@ -443,14 +445,14 @@ class Project(models.Model):
     def transfer_request(self) -> "Member" | None:
         return self.member_set.filter(transfer_request_date__isnull=False).first()
 
-    def dashboard_url(self):
+    def dashboard_url(self) -> str | None:
         if not self.api_key_readonly:
             return None
 
         frag = urlencode({self.api_key_readonly: str(self)}, quote_via=quote)
         return reverse("hc-dashboard") + "#" + frag
 
-    def checks_url(self, full=True) -> str:
+    def checks_url(self, full: bool = True) -> str:
         result = reverse("hc-checks", args=[self.code])
         return settings.SITE_ROOT + result if full else result
 
@@ -480,7 +482,7 @@ class Member(models.Model):
         return self.user.profile.can_accept(self.project)
 
     @property
-    def is_rw(self):
+    def is_rw(self) -> bool:
         return self.role in (Member.Role.REGULAR, Member.Role.MANAGER)
 
 
