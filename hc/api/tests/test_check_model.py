@@ -228,6 +228,7 @@ class CheckModelTestCase(BaseTestCase):
         r = check.downtimes(10, "UTC")
         self.assertEqual(len(r), 10)
         for dt, downtime, outages in r:
+            assert isinstance(downtime, td)
             if dt.month == 1:
                 self.assertEqual(downtime.total_seconds(), 86400)
                 self.assertEqual(outages, 1)
@@ -339,5 +340,5 @@ class CheckModelTestCase(BaseTestCase):
 
         check.prune()
         code, upto_n = remove_objects.call_args.args
-        self.assertEqual(code, check.code)
+        self.assertEqual(code, str(check.code))
         self.assertEqual(upto_n, 1)

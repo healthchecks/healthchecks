@@ -807,6 +807,7 @@ class Sms(HttpTransport):
         if settings.TWILIO_MESSAGING_SERVICE_SID:
             data["MessagingServiceSid"] = settings.TWILIO_MESSAGING_SERVICE_SID
         else:
+            assert settings.TWILIO_FROM
             data["From"] = settings.TWILIO_FROM
 
         if notification:

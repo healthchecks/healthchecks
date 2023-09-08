@@ -805,7 +805,8 @@ def _get_events(
     # SQL query per displayed ping. Since we've already fetched a list of pings,
     # for some of them we can calculate durations more efficiently, without causing
     # additional SQL queries:
-    starts, num_misses = {}, 0
+    starts: dict[UUID | None, datetime | None] = {}
+    num_misses = 0
     for ping in reversed(pings):
         if ping.kind == "start":
             starts[ping.rid] = ping.created
@@ -816,9 +817,10 @@ def _get_events(
                 num_misses += 1
             else:
                 ping.duration = None
-                if starts[ping.rid]:
-                    if ping.created - starts[ping.rid] < MAX_DURATION:
-                        ping.duration = ping.created - starts[ping.rid]
+                start = starts[ping.rid]
+                if start is not None:
+                    if ping.created - start < MAX_DURATION:
+                        ping.duration = ping.created - start
 
             starts[ping.rid] = None
 

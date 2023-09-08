@@ -127,7 +127,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertIn("Line 1<br>Line2", html)
 
         code, n = get_object.call_args.args
-        self.assertEqual(code, self.check.code)
+        self.assertEqual(code, str(self.check.code))
         self.assertEqual(n, 1)
 
     def test_it_shows_cron_schedule(self) -> None:

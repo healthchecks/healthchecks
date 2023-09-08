@@ -234,7 +234,7 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "dummy body from object storage", status_code=200)
 
         code, n = get_object.call_args.args
-        self.assertEqual(code, self.check.code)
+        self.assertEqual(code, str(self.check.code))
         self.assertEqual(n, 1)
 
     @override_settings(S3_BUCKET="test-bucket")

@@ -470,7 +470,7 @@ class Check(models.Model):
 
         # Remove ping bodies from object storage
         if settings.S3_BUCKET:
-            remove_objects(self.code, threshold)
+            remove_objects(str(self.code), threshold)
 
         # Remove ping objects from db
         self.ping_set.filter(n__lte=threshold).delete()
@@ -623,7 +623,7 @@ class Ping(models.Model):
         if self.body:
             return self.body.encode()
         if self.object_size and self.n:
-            return get_object(self.owner.code, self.n)
+            return get_object(str(self.owner.code), self.n)
         if self.body_raw:
             return self.body_raw
 

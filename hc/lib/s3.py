@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 from io import BytesIO
 from threading import Thread
-from uuid import UUID
 
 from django.conf import settings
 from statsd.defaults.env import statsd
@@ -66,7 +65,7 @@ def enc(n: int) -> str:
     return len_inverted + inverted + "-" + s
 
 
-def get_object(code: UUID, n: int) -> bytes | None:
+def get_object(code: str, n: int) -> bytes | None:
     if not settings.S3_BUCKET:
         return None
 
@@ -132,7 +131,7 @@ def _remove_objects(code, upto_n):
             statsd.incr("hc.lib.s3.removeObjectsErrors")
 
 
-def remove_objects(check_code: UUID, upto_n: int) -> None:
+def remove_objects(check_code: str, upto_n: int) -> None:
     """Remove keys with n values below or equal to `upto_n`.
 
     The S3 API calls can take seconds to complete,
