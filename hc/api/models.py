@@ -22,14 +22,13 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries
 from hc.lib.s3 import get_object, put_object, remove_objects
-from hc.lib.typealias import JSONDict
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -714,12 +713,18 @@ class PdConf(BaseModel):
     account: str | None = None
 
     @classmethod
-    def model_validate_json(cls, data):
+    def load(cls, data: Any) -> PdConf:
         # Is it plain service_key value?
         if not data.startswith("{"):
             return cls.model_validate({"service_key": data})
 
         return super().model_validate_json(data)
+
+
+class PhoneConf(BaseModel):
+    value: str
+    notify_up: bool | None = Field(None, alias="up")
+    notify_down: bool | None = Field(None, alias="down")
 
 
 class Channel(models.Model):
@@ -742,7 +747,7 @@ class Channel(models.Model):
         if self.kind == "email":
             return "Email to %s" % self.email_value
         elif self.kind == "sms":
-            return "SMS to %s" % self.phone_number
+            return "SMS to %s" % self.phone.value
         elif self.kind == "slack":
             return "Slack %s" % self.slack_channel
         elif self.kind == "telegram":
@@ -803,7 +808,7 @@ class Channel(models.Model):
     def send_signal_rate_limited_notice(self, message: str, plaintext: str) -> None:
         email = self.project.owner.email
         ctx = {
-            "recipient": self.phone_number,
+            "recipient": self.phone.value,
             "subject": plaintext.split("\n")[0],
             "message": message,
             "plaintext": plaintext,
@@ -942,7 +947,7 @@ class Channel(models.Model):
         return url
 
     @property
-    def telegram(self):
+    def telegram(self) -> TelegramConf:
         assert self.kind == "telegram"
         return TelegramConf.model_validate_json(self.value)
 
@@ -955,15 +960,12 @@ class Channel(models.Model):
     @property
     def pd(self) -> PdConf:
         assert self.kind == "pd"
-        return PdConf.model_validate_json(self.value)
+        return PdConf.load(self.value)
 
     @property
-    def phone_number(self) -> str:
+    def phone(self) -> PhoneConf:
         assert self.kind in ("call", "sms", "whatsapp", "signal")
-        if self.value.startswith("{"):
-            return self.json["value"]
-
-        return self.value
+        return PhoneConf.model_validate_json(self.value)
 
     trello_token = json_property("trello", "token")
     trello_list_id = json_property("trello", "list_id")
@@ -997,22 +999,6 @@ class Channel(models.Model):
             return True
 
         return self.json.get("down")
-
-    whatsapp_notify_up = json_property("whatsapp", "up")
-    whatsapp_notify_down = json_property("whatsapp", "down")
-
-    signal_notify_up = json_property("signal", "up")
-    signal_notify_down = json_property("signal", "down")
-
-    @property
-    def sms_notify_up(self) -> bool:
-        assert self.kind == "sms"
-        return self.json.get("up", False)
-
-    @property
-    def sms_notify_down(self) -> bool:
-        assert self.kind == "sms"
-        return self.json.get("down", True)
 
     @property
     def opsgenie_key(self) -> str:
@@ -1213,7 +1199,7 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 20, 3600 * 24)
 
     @staticmethod
-    def authorize_telegram(telegram_id: str) -> bool:
+    def authorize_telegram(telegram_id: int) -> bool:
         value = "tg-%s" % telegram_id
 
         # 6 messages for a single chat per minute:

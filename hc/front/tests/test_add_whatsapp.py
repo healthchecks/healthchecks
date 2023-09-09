@@ -49,10 +49,10 @@ class AddWhatsAppTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "whatsapp")
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
         self.assertEqual(c.name, "My Phone")
-        self.assertTrue(c.whatsapp_notify_down)
-        self.assertTrue(c.whatsapp_notify_up)
+        self.assertTrue(c.phone.notify_down)
+        self.assertTrue(c.phone.notify_up)
         self.assertEqual(c.project, self.project)
 
         # Make sure it calls assign_all_checks
@@ -79,8 +79,8 @@ class AddWhatsAppTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertFalse(c.whatsapp_notify_down)
-        self.assertTrue(c.whatsapp_notify_up)
+        self.assertFalse(c.phone.notify_down)
+        self.assertTrue(c.phone.notify_up)
 
     def test_it_rejects_unchecked_up_and_down(self) -> None:
         form = {"phone": "+1234567890"}

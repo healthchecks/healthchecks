@@ -35,7 +35,7 @@ class AddCallTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "call")
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
         self.assertEqual(c.name, "My Phone")
         self.assertEqual(c.project, self.project)
 
@@ -53,7 +53,7 @@ class AddCallTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
 
     @override_settings(TWILIO_AUTH=None)
     def test_it_requires_credentials(self) -> None:

@@ -105,7 +105,12 @@ class ChannelsTestCase(BaseTestCase):
         self.assertContains(r, "SMS to +123")
 
     def test_it_shows_channel_issues_indicator(self) -> None:
-        Channel.objects.create(kind="sms", project=self.project, last_error="x")
+        Channel.objects.create(
+            kind="sms",
+            project=self.project,
+            last_error="x",
+            value=json.dumps({"value": "+123"}),
+        )
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.channels_url)

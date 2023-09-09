@@ -37,10 +37,10 @@ class EditSmsTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.phone_number, "+1234567890")
+        self.assertEqual(self.channel.phone.value, "+1234567890")
         self.assertEqual(self.channel.name, "My Phone")
-        self.assertTrue(self.channel.sms_notify_down)
-        self.assertFalse(self.channel.sms_notify_up)
+        self.assertTrue(self.channel.phone.notify_down)
+        self.assertFalse(self.channel.phone.notify_up)
 
         # Make sure it does not call assign_all_checks
         self.assertFalse(self.channel.checks.exists())

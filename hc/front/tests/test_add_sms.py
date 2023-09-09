@@ -37,10 +37,10 @@ class AddSmsTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "sms")
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
         self.assertEqual(c.name, "My Phone")
-        self.assertTrue(c.sms_notify_down)
-        self.assertFalse(c.sms_notify_up)
+        self.assertTrue(c.phone.notify_down)
+        self.assertFalse(c.phone.notify_up)
         self.assertEqual(c.project, self.project)
 
         # Make sure it calls assign_all_checks
@@ -60,7 +60,7 @@ class AddSmsTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
 
     @override_settings(TWILIO_AUTH=None)
     def test_it_requires_credentials(self) -> None:
@@ -84,7 +84,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
 
     def test_it_strips_hyphens(self) -> None:
         form = {"phone": "+123-4567890", "down": True}
@@ -94,7 +94,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
 
     def test_it_strips_spaces(self) -> None:
         form = {"phone": "+123 45 678 90", "down": True}
@@ -104,7 +104,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
-        self.assertEqual(c.phone_number, "+1234567890")
+        self.assertEqual(c.phone.value, "+1234567890")
 
     def test_it_handles_down_false_up_true(self) -> None:
         form = {"phone": "+1234567890", "up": True}
@@ -113,8 +113,8 @@ class AddSmsTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertFalse(c.sms_notify_down)
-        self.assertTrue(c.sms_notify_up)
+        self.assertFalse(c.phone.notify_down)
+        self.assertTrue(c.phone.notify_up)
 
     def test_it_rejects_unchecked_up_and_down(self) -> None:
         form = {"phone": "+1234567890"}

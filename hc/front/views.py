@@ -2002,9 +2002,9 @@ def sms_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         form = forms.PhoneUpDownForm(
             {
                 "label": channel.name,
-                "phone": channel.phone_number,
-                "up": channel.sms_notify_up,
-                "down": channel.sms_notify_down,
+                "phone": channel.phone.value,
+                "up": channel.phone.notify_up,
+                "down": channel.phone.notify_down,
             }
         )
 
@@ -2071,9 +2071,9 @@ def whatsapp_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         form = forms.PhoneUpDownForm(
             {
                 "label": channel.name,
-                "phone": channel.phone_number,
-                "up": channel.whatsapp_notify_up,
-                "down": channel.whatsapp_notify_down,
+                "phone": channel.phone.value,
+                "up": channel.phone.notify_up,
+                "down": channel.phone.notify_down,
             }
         )
 
@@ -2114,9 +2114,9 @@ def signal_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         form = forms.PhoneUpDownForm(
             {
                 "label": channel.name,
-                "phone": channel.phone_number,
-                "up": channel.signal_notify_up,
-                "down": channel.signal_notify_down,
+                "phone": channel.phone.value,
+                "up": channel.phone.notify_up,
+                "down": channel.phone.notify_down,
             }
         )
 

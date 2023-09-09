@@ -66,15 +66,15 @@
                                 channel <span>{{ ch.telegram.name }}</span>
                             {% endif %}
                         {% elif ch.kind == "sms" %}
-                            SMS to <span>{{ ch.phone_number }}</span>
-                            {% if ch.sms_notify_down and not ch.sms_notify_up %}
+                            SMS to <span>{{ ch.phone.value }}</span>
+                            {% if ch.phone.notify_down and not ch.phone.notify_up %}
                                 (down only)
                             {% endif %}
-                            {% if ch.sms_notify_up and not ch.sms_notify_down %}
+                            {% if ch.phone.notify_up and not ch.phone.notify_down %}
                                 (up only)
                             {% endif %}
                         {% elif ch.kind == "call" %}
-                            Phone call to <span>{{ ch.phone_number }}</span>
+                            Phone call to <span>{{ ch.phone.value }}</span>
                         {% elif ch.kind == "trello" %}
                             Trello
                             board <span>{{ ch.trello_board_list|first }}</span>,
@@ -82,11 +82,11 @@
                         {% elif ch.kind == "matrix" %}
                             Matrix <span>{{ ch.value }}</span>
                         {% elif ch.kind == "whatsapp" %}
-                            WhatsApp to <span>{{ ch.phone_number }}</span>
-                            {% if ch.whatsapp_notify_down and not ch.whatsapp_notify_up %}
+                            WhatsApp to <span>{{ ch.phone.value }}</span>
+                            {% if ch.phone.notify_down and not ch.phone.notify_up %}
                                 (down only)
                             {% endif %}
-                            {% if ch.whatsapp_notify_up and not ch.whatsapp_notify_down %}
+                            {% if ch.phone.notify_up and not ch.phone.notify_down %}
                                 (up only)
                             {% endif %}
                         {% elif ch.kind == "zulip" %}
@@ -97,11 +97,11 @@
                             user <span>{{ ch.zulip_to}}</span>
                             {% endif %}
                         {% elif ch.kind == "signal" %}
-                            Signal to <span>{{ ch.phone_number }}</span>
-                            {% if ch.signal_notify_down and not ch.signal_notify_up %}
+                            Signal to <span>{{ ch.phone.value }}</span>
+                            {% if ch.phone.notify_down and not ch.phone.notify_up %}
                                 (down only)
                             {% endif %}
-                            {% if ch.signal_notify_up and not ch.signal_notify_down %}
+                            {% if ch.phone.notify_up and not ch.phone.notify_down %}
                                 (up only)
                             {% endif %}
                         {% elif ch.kind == "ntfy" %}

@@ -744,7 +744,7 @@ class Telegram(HttpTransport):
         raise TransportError(message, permanent=permanent)
 
     @classmethod
-    def send(cls, chat_id: str, thread_id: str, text: str) -> None:
+    def send(cls, chat_id: int, thread_id: int | None, text: str) -> None:
         # Telegram.send is a separate method because it is also used in
         # hc.front.views.telegram_bot to send invite links.
         payload = {
@@ -785,9 +785,9 @@ class Sms(HttpTransport):
 
     def is_noop(self, check: Check) -> bool:
         if check.status == "down":
-            return not self.channel.sms_notify_down
+            return not self.channel.phone.notify_down
         else:
-            return not self.channel.sms_notify_up
+            return not self.channel.phone.notify_up
 
     def notify(self, check: Check, notification: Notification | None = None) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
@@ -800,7 +800,7 @@ class Sms(HttpTransport):
         text = tmpl("sms_message.html", check=check, site_name=settings.SITE_NAME)
 
         data = {
-            "To": self.channel.phone_number,
+            "To": self.channel.phone.value,
             "Body": text,
         }
 
@@ -834,7 +834,7 @@ class Call(HttpTransport):
 
         data = {
             "From": settings.TWILIO_FROM,
-            "To": self.channel.phone_number,
+            "To": self.channel.phone.value,
             "Twiml": twiml,
         }
 
@@ -849,9 +849,9 @@ class WhatsApp(HttpTransport):
 
     def is_noop(self, check: Check) -> bool:
         if check.status == "down":
-            return not self.channel.whatsapp_notify_down
+            return not self.channel.phone.notify_down
         else:
-            return not self.channel.whatsapp_notify_up
+            return not self.channel.phone.notify_up
 
     def notify(self, check: Check, notification: Notification | None = None) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
@@ -864,7 +864,7 @@ class WhatsApp(HttpTransport):
         text = tmpl("whatsapp_message.html", check=check, site_name=settings.SITE_NAME)
 
         data = {
-            "To": f"whatsapp:{self.channel.phone_number}",
+            "To": f"whatsapp:{self.channel.phone.value}",
             "Body": text,
         }
 
@@ -1075,9 +1075,9 @@ class Signal(Transport):
 
     def is_noop(self, check: Check) -> bool:
         if check.status == "down":
-            return not self.channel.signal_notify_down
+            return not self.channel.phone.notify_down
         else:
-            return not self.channel.signal_notify_up
+            return not self.channel.phone.notify_up
 
     @classmethod
     def send(cls, recipient: str, message: str) -> None:
@@ -1179,7 +1179,7 @@ class Signal(Transport):
 
         from hc.api.models import TokenBucket
 
-        if not TokenBucket.authorize_signal(self.channel.phone_number):
+        if not TokenBucket.authorize_signal(self.channel.phone.value):
             raise TransportError("Rate limit exceeded")
 
         ctx = {
@@ -1189,7 +1189,7 @@ class Signal(Transport):
         }
         text = tmpl("signal_message.html", **ctx)
         try:
-            self.send(self.channel.phone_number, text)
+            self.send(self.channel.phone.value, text)
         except SignalRateLimitFailure as e:
             self.channel.send_signal_captcha_alert(e.token, e.reply.decode())
             plaintext, _ = extract_signal_styles(text)

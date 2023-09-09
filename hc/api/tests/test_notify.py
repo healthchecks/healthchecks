@@ -98,7 +98,7 @@ class NotifyTestCase(BaseTestCase):
         self.profile.last_call_date = now() - td(days=100)
         self.profile.save()
 
-        self._setup_data("call", "+1234567890")
+        self._setup_data("call", json.dumps({"value": "+1234567890"}))
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
