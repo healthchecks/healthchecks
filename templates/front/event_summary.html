@@ -1,5 +1,5 @@
 {% if event.channel.kind == "email" %}
-    Sent email to {{ event.channel.email_value }}
+    Sent email to {{ event.channel.email.value }}
 {% elif event.channel.kind == "slack" %}
     Sent Slack alert
     {% if event.channel.slack_channel %}

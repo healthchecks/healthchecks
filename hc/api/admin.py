@@ -219,7 +219,7 @@ class ChannelsAdmin(admin.ModelAdmin):
     def project_(self, obj):
         url = self.view_on_site(obj)
         name = escape(obj.project_name or "Default")
-        email = escape(obj.email)
+        email = escape(obj.owner_email)
         return f"{email} &rsaquo; <a href='{url}'>{name}</a>"
 
     def time(self, obj):
@@ -230,7 +230,7 @@ class ChannelsAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         qs = qs.annotate(project_code=F("project__code"))
         qs = qs.annotate(project_name=F("project__name"))
-        qs = qs.annotate(email=F("project__owner__email"))
+        qs = qs.annotate(owner_email=F("project__owner__email"))
         return qs
 
     def view_on_site(self, obj):

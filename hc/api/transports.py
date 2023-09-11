@@ -155,7 +155,7 @@ class Email(Transport):
         # If this email address has an associated account, include
         # a summary of projects the account has access to
         try:
-            profile = Profile.objects.get(user__email=self.channel.email_value)
+            profile = Profile.objects.get(user__email=self.channel.email.value)
             projects = list(profile.projects())
         except Profile.DoesNotExist:
             projects = None
@@ -170,13 +170,13 @@ class Email(Transport):
             "unsub_link": unsub_link,
         }
 
-        emails.alert(self.channel.email_value, ctx, headers)
+        emails.alert(self.channel.email.value, ctx, headers)
 
     def is_noop(self, check: Check) -> bool:
         if check.status == "down":
-            return not self.channel.email_notify_down
+            return not self.channel.email.notify_down
         else:
-            return not self.channel.email_notify_up
+            return not self.channel.email.notify_up
 
 
 class Shell(Transport):

@@ -39,9 +39,9 @@ class EditEmailTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.email_value, "new@example.org")
-        self.assertTrue(self.channel.email_notify_down)
-        self.assertFalse(self.channel.email_notify_up)
+        self.assertEqual(self.channel.email.value, "new@example.org")
+        self.assertTrue(self.channel.email.notify_down)
+        self.assertFalse(self.channel.email.notify_up)
 
         # It should send a verification link
         email = mail.outbox[0]
@@ -58,9 +58,9 @@ class EditEmailTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.email_value, "alerts@example.org")
-        self.assertFalse(self.channel.email_notify_down)
-        self.assertTrue(self.channel.email_notify_up)
+        self.assertEqual(self.channel.email.value, "alerts@example.org")
+        self.assertFalse(self.channel.email.notify_down)
+        self.assertTrue(self.channel.email.notify_up)
         self.assertTrue(self.channel.email_verified)
 
         # The email address did not change, so we should skip verification
@@ -73,7 +73,7 @@ class EditEmailTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.email_value, "new@example.org")
+        self.assertEqual(self.channel.email.value, "new@example.org")
 
     @override_settings(EMAIL_USE_VERIFICATION=False)
     def test_it_hides_confirmation_needed_notice(self) -> None:
@@ -90,7 +90,7 @@ class EditEmailTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.email_value, "dan@example.org")
+        self.assertEqual(self.channel.email.value, "dan@example.org")
 
         # Email should *not* have been sent
         self.assertEqual(len(mail.outbox), 0)
@@ -103,7 +103,7 @@ class EditEmailTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.email_value, "alice@example.org")
+        self.assertEqual(self.channel.email.value, "alice@example.org")
 
         # Email should *not* have been sent
         self.assertEqual(len(mail.outbox), 0)

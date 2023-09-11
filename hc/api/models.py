@@ -727,6 +727,20 @@ class PhoneConf(BaseModel):
     notify_down: bool | None = Field(None, alias="down")
 
 
+class EmailConf(BaseModel):
+    value: str
+    notify_up: bool = Field(alias="up")
+    notify_down: bool = Field(alias="down")
+
+    @classmethod
+    def load(cls, data: Any) -> EmailConf:
+        # Is it a plain email address?
+        if not data.startswith("{"):
+            return cls.model_validate({"value": data, "up": True, "down": True})
+
+        return super().model_validate_json(data)
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -745,7 +759,7 @@ class Channel(models.Model):
         if self.name:
             return self.name
         if self.kind == "email":
-            return "Email to %s" % self.email_value
+            return "Email to %s" % self.email.value
         elif self.kind == "sms":
             return "SMS to %s" % self.phone.value
         elif self.kind == "slack":
@@ -779,7 +793,7 @@ class Channel(models.Model):
         args = [self.code, self.make_token()]
         verify_link = reverse("hc-verify-email", args=args)
         verify_link = settings.SITE_ROOT + verify_link
-        emails.verify_email(self.email_value, {"verify_link": verify_link})
+        emails.verify_email(self.email.value, {"verify_link": verify_link})
 
     def get_unsub_link(self) -> str:
         signer = TimestampSigner(salt="alerts")
@@ -977,28 +991,8 @@ class Channel(models.Model):
         return doc["board_name"], doc["list_name"]
 
     @property
-    def email_value(self) -> str:
-        assert self.kind == "email"
-        if not self.value.startswith("{"):
-            return self.value
-
-        return self.json["value"]
-
-    @property
-    def email_notify_up(self) -> bool:
-        assert self.kind == "email"
-        if not self.value.startswith("{"):
-            return True
-
-        return self.json.get("up")
-
-    @property
-    def email_notify_down(self) -> bool:
-        assert self.kind == "email"
-        if not self.value.startswith("{"):
-            return True
-
-        return self.json.get("down")
+    def email(self) -> EmailConf:
+        return EmailConf.load(self.value)
 
     @property
     def opsgenie_key(self) -> str:

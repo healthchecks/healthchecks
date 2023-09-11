@@ -39,7 +39,7 @@ class Command(BaseCommand):
             f"please contact {settings.SUPPORT_EMAIL} ASAP."
         )
         for channel in Channel.objects.filter(project__owner_id=profile.user_id):
-            if channel.kind == "email" and channel.email_value in skip_emails:
+            if channel.kind == "email" and channel.email.value in skip_emails:
                 continue
 
             dummy = Check(name=name, desc=desc, status="down", project=channel.project)

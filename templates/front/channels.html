@@ -39,11 +39,11 @@
                      {% endif %}
                      <div class="channel-details-mini">
                         {% if ch.kind == "email" %}
-                            Email to <span>{{ ch.email_value }}</span>
-                            {% if ch.email_notify_down and not ch.email_notify_up %}
+                            Email to <span>{{ ch.email.value }}</span>
+                            {% if ch.email.notify_down and not ch.email.notify_up %}
                                 (down only)
                             {% endif %}
-                            {% if ch.email_notify_up and not ch.email_notify_down %}
+                            {% if ch.email.notify_up and not ch.email.notify_down %}
                                 (up only)
                             {% endif %}
                         {% elif ch.kind == "pd" %}

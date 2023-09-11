@@ -1255,7 +1255,7 @@ def email_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     if request.method == "POST":
         form = forms.EmailForm(request.POST)
         if form.is_valid():
-            if channel.disabled or form.cleaned_data["value"] != channel.email_value:
+            if channel.disabled or form.cleaned_data["value"] != channel.email.value:
                 channel.disabled = False
 
                 if not settings.EMAIL_USE_VERIFICATION:
@@ -1284,9 +1284,9 @@ def email_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     else:
         form = forms.EmailForm(
             {
-                "value": channel.email_value,
-                "up": channel.email_notify_up,
-                "down": channel.email_notify_down,
+                "value": channel.email.value,
+                "up": channel.email.notify_up,
+                "down": channel.email.notify_down,
             }
         )
 

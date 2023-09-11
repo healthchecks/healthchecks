@@ -25,7 +25,9 @@ class FlipModelTestCase(BaseTestCase):
         self.assertEqual(channels, [self.channel])
 
     def test_select_channels_handles_noop(self) -> None:
-        self.channel.value = json.dumps({"down": False})
+        self.channel.value = json.dumps(
+            {"value": "alice@example.org", "up": False, "down": False}
+        )
         self.channel.save()
 
         channels = self.flip.select_channels()
