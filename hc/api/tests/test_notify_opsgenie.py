@@ -31,7 +31,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request")
     def test_opsgenie_with_legacy_value(self, mock_post: Mock) -> None:
-        self._setup_data("123")
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
         mock_post.return_value.status_code = 202
 
         self.channel.notify(self.check)
@@ -46,7 +46,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request")
     def test_opsgenie_up(self, mock_post: Mock) -> None:
-        self._setup_data("123", status="up")
+        self._setup_data(json.dumps({"key": "123", "region": "us"}), status="up")
         mock_post.return_value.status_code = 202
 
         self.channel.notify(self.check)
@@ -58,7 +58,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
         self.assertTrue(str(self.check.code) in url)
 
     @patch("hc.api.transports.curl.request")
-    def test_opsgenie_with_json_value(self, mock_post: Mock) -> None:
+    def test_opsgenie_with_eu_region(self, mock_post: Mock) -> None:
         self._setup_data(json.dumps({"key": "456", "region": "eu"}))
         mock_post.return_value.status_code = 202
 
@@ -72,7 +72,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request")
     def test_opsgenie_returns_error(self, mock_post: Mock) -> None:
-        self._setup_data("123")
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
         mock_post.return_value.status_code = 403
         mock_post.return_value.content = b"""{"message": "Nice try"}"""
 
@@ -82,7 +82,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request")
     def test_it_handles_non_json_error_response(self, mock_post: Mock) -> None:
-        self._setup_data("123")
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
         mock_post.return_value.status_code = 403
         mock_post.return_value.json = Mock(side_effect=ValueError)
 
@@ -92,7 +92,7 @@ class NotifyOpsGenieTestCase(BaseTestCase):
 
     @override_settings(OPSGENIE_ENABLED=False)
     def test_it_requires_opsgenie_enabled(self) -> None:
-        self._setup_data("123")
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
         self.channel.notify(self.check)
 
         n = Notification.objects.get()

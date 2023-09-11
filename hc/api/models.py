@@ -741,6 +741,11 @@ class EmailConf(BaseModel):
         return super().model_validate_json(data)
 
 
+class OpsgenieConf(BaseModel):
+    key: str
+    region: str
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -995,20 +1000,8 @@ class Channel(models.Model):
         return EmailConf.load(self.value)
 
     @property
-    def opsgenie_key(self) -> str:
-        assert self.kind == "opsgenie"
-        if not self.value.startswith("{"):
-            return self.value
-
-        return self.json["key"]
-
-    @property
-    def opsgenie_region(self) -> str:
-        assert self.kind == "opsgenie"
-        if not self.value.startswith("{"):
-            return "us"
-
-        return self.json["region"]
+    def opsgenie(self) -> OpsgenieConf:
+        return OpsgenieConf.model_validate_json(self.value)
 
     zulip_bot_email = json_property("zulip", "bot_email")
     zulip_api_key = json_property("zulip", "api_key")

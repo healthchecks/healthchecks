@@ -42,13 +42,8 @@ class ChannelModelTestCase(BaseTestCase):
             ),
         )
 
-    def test_it_handles_legacy_opsgenie_value(self) -> None:
-        c = Channel(kind="opsgenie", value="foo123")
-        self.assertEqual(c.opsgenie_key, "foo123")
-        self.assertEqual(c.opsgenie_region, "us")
-
     def test_it_handles_json_opsgenie_value(self) -> None:
         c = Channel(kind="opsgenie")
         c.value = json.dumps({"key": "abc", "region": "eu"})
-        self.assertEqual(c.opsgenie_key, "abc")
-        self.assertEqual(c.opsgenie_region, "eu")
+        self.assertEqual(c.opsgenie.key, "abc")
+        self.assertEqual(c.opsgenie.region, "eu")

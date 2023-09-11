@@ -466,7 +466,7 @@ class Opsgenie(HttpTransport):
 
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "GenieKey %s" % self.channel.opsgenie_key,
+            "Authorization": "GenieKey %s" % self.channel.opsgenie.key,
         }
 
         payload: JSONDict = {"alias": str(check.code), "source": settings.SITE_NAME}
@@ -478,7 +478,7 @@ class Opsgenie(HttpTransport):
             payload["description"] = tmpl("opsgenie_description.html", check=check)
 
         url = "https://api.opsgenie.com/v2/alerts"
-        if self.channel.opsgenie_region == "eu":
+        if self.channel.opsgenie.region == "eu":
             url = "https://api.eu.opsgenie.com/v2/alerts"
 
         if check.status == "up":
