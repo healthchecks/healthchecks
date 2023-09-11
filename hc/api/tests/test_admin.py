@@ -21,4 +21,4 @@ class ApiAdminTestCase(BaseTestCase):
         )
 
         r = self.client.get("/admin/api/channel/")
-        self.assertContains(r, "Pushbullet")
+        self.assertContains(r, "ic-pushbullet")
