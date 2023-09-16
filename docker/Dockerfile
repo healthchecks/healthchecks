@@ -1,7 +1,9 @@
 FROM python:3.11-slim-bookworm as builder
 
 COPY requirements.txt /tmp
-RUN apt update && apt install -y build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev rustc pkg-config
+RUN \
+    apt-get update && \
+    apt-get install -y build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev rustc pkg-config
 ENV CARGO_NET_GIT_FETCH_WITH_CLI true
 RUN \
     pip install --upgrade pip && \
@@ -19,8 +21,8 @@ WORKDIR /opt/healthchecks
 COPY --from=builder /wheels /wheels
 
 RUN \
-    apt update && \
-    apt install -y libcurl4 libpq5 libmariadb3 libxml2 && \
+    apt-get update && \
+    apt-get install -y libcurl4 libpq5 libmariadb3 libxml2 && \
     rm -rf /var/apt/cache
 
 RUN \
