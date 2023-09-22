@@ -162,10 +162,11 @@ class LargeTablePaginator(Paginator):
 @admin.register(Ping)
 class PingsAdmin(admin.ModelAdmin):
     search_fields = ("owner__name", "owner__code")
-    readonly_fields = ("owner",)
+    readonly_fields = ("owner", "has_body")
     list_select_related = ("owner",)
     list_display = ("id", "created", "owner", "scheme", "method", "object_size", "ua")
     list_filter = ("created", SchemeListFilter, MethodListFilter, KindListFilter)
+    exclude = ("body",)
 
     paginator = LargeTablePaginator
     show_full_result_count = False
