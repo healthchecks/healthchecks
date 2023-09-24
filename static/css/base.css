@@ -10,7 +10,7 @@ body {
 
 .footer {
     position: absolute;
-    bottom: 0;
+    bottom: auto;
     width: 100%;
     /* Set the fixed height of the footer here */
     height: 84px;
@@ -74,6 +74,18 @@ body {
 
 #global-links > li > a {
     font-size: small;
+}
+
+/* see here: https://stackoverflow.com/questions/23164503/disable-hiding-of-address-bar-on-mobile */
+@media only screen and (max-width: 500px) {
+
+    /* prevent auto hiding of the nav bar on mobile safari*/
+    body, html{
+        height: 100%;
+        position: fixed;
+        width: 100%;
+        overflow-y: scroll;
+    }
 }
 
 @media (min-width: 768px) {
