@@ -20,6 +20,7 @@ version is 3.10.
 - Fix "senddeletionnotices" to recognize "Supporter" subscriptions
 - Fix "createsuperuser" to reject already registered email addresses (#880)
 - Fix hc.accounts.views.check_token to handle non-UUID usernames (#882)
+- Fix time interval formatting in Check Details page, downtime summary table
 
 ## v2.10 - 2023-07-02
 

@@ -148,6 +148,32 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "1 downtime, 1 hour total", html=True)
 
     @patch("hc.lib.date.now")
+    def test_it_downtime_summary_handles_plural(self, mock_now: Mock) -> None:
+        mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
+
+        self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+        self.check.save()
+
+        # going down on Jan 15, at 12:00
+        f1 = Flip(owner=self.check)
+        f1.created = datetime(2020, 1, 15, 12, 0, 0, tzinfo=timezone.utc)
+        f1.old_status = "up"
+        f1.new_status = "down"
+        f1.save()
+
+        # back up 2 hours later
+        f2 = Flip(owner=self.check)
+        f2.created = datetime(2020, 1, 15, 14, 0, 0, tzinfo=timezone.utc)
+        f2.old_status = "down"
+        f2.new_status = "up"
+        f2.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "1 downtime, 2 hours total", html=True)
+
+    @patch("hc.lib.date.now")
     def test_downtime_summary_handles_positive_utc_offset(self, mock_now: Mock) -> None:
         mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
 

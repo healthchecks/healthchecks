@@ -62,7 +62,7 @@ def format_hms(duration: timedelta) -> str:
 
 
 def format_approx_duration(duration: timedelta) -> str:
-    v = duration.total_seconds()
+    v = int(duration.total_seconds())
     for unit in (DAY, HOUR, MINUTE, SECOND):
         if v >= unit.nsecs:
             vv = v // unit.nsecs
