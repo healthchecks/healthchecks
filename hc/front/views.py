@@ -2458,6 +2458,26 @@ def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "integrations/add_gotify.html", ctx)
 
 
+@login_required
+def add_group(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddGroupForm(request.POST, project=project)
+        if form.is_valid():
+            channel = Channel(project=project, kind="group")
+            channel.value = form.get_value()
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels", project.code)
+    else:
+        form = forms.AddGroupForm(project=project)
+
+    ctx = {"page": "channels", "project": project, "form": form}
+    return render(request, "integrations/add_group.html", ctx)
+
+
 def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     adding = channel._state.adding
     if request.method == "POST":

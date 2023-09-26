@@ -44,6 +44,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "discord": ("Discord", transports.Discord),
     "email": ("Email", transports.Email),
     "gotify": ("Gotify", transports.Gotify),
+    "group": ("Group", transports.Group),
     "hipchat": ("HipChat", transports.RemovedTransport),
     "linenotify": ("LINE Notify", transports.LineNotify),
     "matrix": ("Matrix", transports.Matrix),
@@ -1032,6 +1033,13 @@ class Channel(models.Model):
 
     gotify_url = json_property("gotify", "url")
     gotify_token = json_property("gotify", "token")
+
+    @property
+    def group_integrations(self) -> list[Channel]:
+        assert self.kind == "group"
+        return list(
+            Channel.objects.filter(code__in=json.loads(self.value)["integrations"])
+        )
 
     ntfy_topic = json_property("ntfy", "topic")
     ntfy_url = json_property("ntfy", "url")

@@ -258,6 +258,13 @@
             <a href="{% url 'hc-add-gotify' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
+        <li>
+            <img src="{% static 'img/integrations/group.png' %}" class="icon" alt="Group icon" />
+            <h2>Group</h2>
+            <p> Deliver to multiple integrations at once.</p>
+            <a href="{% url 'hc-add-group' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
         {% if enable_linenotify %}
         <li>
             <img src="{% static 'img/integrations/linenotify.png' %}"

@@ -1214,6 +1214,13 @@ class Gotify(HttpTransport):
         self.post(url, json=payload)
 
 
+class Group(Transport):
+    def notify(self, check: Check, notification: Notification | None = None) -> None:
+        integrations = self.channel.group_integrations
+        for integration in integrations:
+            integration.notify(check)
+
+
 class Ntfy(HttpTransport):
     def priority(self, check: Check) -> int:
         if check.status == "up":

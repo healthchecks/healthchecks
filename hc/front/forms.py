@@ -11,6 +11,7 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
+from hc.api.models import Channel
 from hc.front.validators import (
     CronExpressionValidator,
     TimezoneValidator,
@@ -330,6 +331,23 @@ class AddGotifyForm(forms.Form):
     error_css_class = "has-error"
     token = forms.CharField(max_length=50)
     url = LaxURLField(max_length=1000)
+
+    def get_value(self) -> str:
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
+class AddGroupForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop("project")
+        super().__init__(*args, **kwargs)
+
+        self.fields["integrations"].choices = (
+            (c.code, str(c))
+            for c in Channel.objects.filter(project=project).exclude(kind="group")
+        )
+
+    error_css_class = "has-error"
+    integrations = forms.MultipleChoiceField()
 
     def get_value(self) -> str:
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
