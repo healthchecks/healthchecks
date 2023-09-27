@@ -158,7 +158,7 @@ class DowntimeSummary(object):
         for b in boundaries:
             # If the check was created *after* the start of the previous time
             # interval then the check did not yet exist during this time interval:
-            no_data = prev_boundary and created > prev_boundary
+            no_data = prev_boundary is not None and created > prev_boundary
             self.records.append(DowntimeRecord(b, tz, no_data, td(), 0))
             prev_boundary = b
 
