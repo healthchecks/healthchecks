@@ -301,16 +301,13 @@ class CheckModelTestCase(BaseTestCase):
         nov, dec, jan = check.downtimes(3, "UTC")
 
         # Nov. 2019
-        self.assertIsNone(nov[1])
-        self.assertIsNone(nov[2])
+        self.assertIsNone(nov.count)
 
         # Dec. 2019
-        self.assertIsNone(dec[1])
-        self.assertIsNone(dec[2])
+        self.assertIsNone(dec.count)
 
         # Jan. 2020
-        self.assertEqual(jan[1], td())
-        self.assertEqual(jan[2], 0)
+        self.assertEqual(jan.count, 0)
 
     @override_settings(S3_BUCKET=None)
     def test_it_prunes(self) -> None:

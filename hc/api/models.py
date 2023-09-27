@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from typing import Any, TypedDict
+from typing import Any, NamedTuple, TypedDict
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
@@ -130,6 +130,12 @@ class CheckDict(TypedDict, total=False):
     tz: str
 
 
+class DowntimeRecord(NamedTuple):
+    boundary: datetime
+    duration: td
+    count: int | None
+
+
 class DowntimeSummary(object):
     def __init__(self, boundaries: list[datetime]) -> None:
         self.boundaries = list(sorted(boundaries, reverse=True))
@@ -143,8 +149,12 @@ class DowntimeSummary(object):
                 self.counts[i] += 1
                 return
 
-    def as_tuples(self) -> zip[tuple[datetime, td, int]]:
-        return zip(self.boundaries, self.durations, self.counts)
+    def as_records(self) -> list[DowntimeRecord]:
+        result = []
+        for b, d, c in zip(self.boundaries, self.durations, self.counts):
+            result.append(DowntimeRecord(b, d, c))
+
+        return result
 
 
 class Check(models.Model):
@@ -485,9 +495,7 @@ class Check(models.Model):
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
         return self.ping_set.filter(n__gt=threshold)
 
-    def downtimes_by_boundary(
-        self, boundaries: list[datetime]
-    ) -> list[tuple[datetime, td | None, int | None]]:
+    def downtimes_by_boundary(self, boundaries: list[datetime]) -> list[DowntimeRecord]:
         """Calculate downtime counts and durations for the given time intervals.
 
         Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples
@@ -517,24 +525,21 @@ class Check(models.Model):
             if prev_status != "---":
                 status = prev_status
 
-        # Convert to a list of tuples and set counters to None
-        # for intervals when the check didn't exist yet
+        # Set count to None for intervals when the check didn't exist yet
         prev_boundary = None
-        result: list[tuple[datetime, td | None, int | None]] = []
-        for triple in summary.as_tuples():
+        result: list[DowntimeRecord] = []
+        for record in summary.as_records():
             if prev_boundary and self.created > prev_boundary:
-                result.append((triple[0], None, None))
+                result.append(DowntimeRecord(record.boundary, record.duration, None))
                 continue
 
-            prev_boundary = triple[0]
-            result.append(triple)
+            prev_boundary = record.boundary
+            result.append(record)
 
         result.sort()
         return result
 
-    def downtimes(
-        self, months: int, tz: str
-    ) -> list[tuple[datetime, td | None, int | None]]:
+    def downtimes(self, months: int, tz: str) -> list[DowntimeRecord]:
         boundaries = month_boundaries(months, tz)
         return self.downtimes_by_boundary(boundaries)
 

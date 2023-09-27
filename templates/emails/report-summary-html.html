@@ -64,16 +64,16 @@
                 </table>
             {% endif %}
         </td>
-        {% for boundary, seconds, count in check.past_downtimes %}
-        {% if count %}
+        {% for d in check.past_downtimes %}
+        {% if d.count %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
-                {{ count }}&nbsp;downtime{{ count|pluralize }},
+                {{ d.count }}&nbsp;downtime{{ d.count|pluralize }},
                 <br />
-                {{ seconds|hc_approx_duration }} total
+                {{ d.duration|hc_approx_duration }} total
             </td>
         {% else %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif; color: #9BA2AB;">
-                {% if count is None %}
+                {% if d.count is None %}
                     {% comment %} The check didn't exist yet {% endcomment %}
                 {% else %}
                     All good!
