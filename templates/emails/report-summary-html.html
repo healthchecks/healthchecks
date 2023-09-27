@@ -73,7 +73,7 @@
             </td>
         {% else %}
             <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif; color: #9BA2AB;">
-                {% if d.count is None %}
+                {% if d.no_data %}
                     {% comment %} The check didn't exist yet {% endcomment %}
                 {% else %}
                     All good!

@@ -5,11 +5,11 @@
     <tr>
         <th>{{ d.boundary|date:"N Y"}}</th>
         <td>
-            {% if d.count %}
+            {% if d.no_data %}
+                –
+            {% elif d.count %}
                 {{ d.count }} downtime{{ d.count|pluralize }}, {{ d.duration|hc_approx_duration }} total
                 <span class="uptime">{{ d.monthly_uptime|pct }}% uptime</span>
-            {% elif d.count is None %}
-                –
             {% else %}
                 All good!
             {% endif %}

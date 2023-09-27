@@ -188,16 +188,22 @@ class CheckModelTestCase(BaseTestCase):
 
         # Jan. 2020
         self.assertEqual(jan.boundary.strftime("%m-%Y"), "01-2020")
+        self.assertEqual(jan.tz, "UTC")
+        self.assertFalse(jan.no_data)
         self.assertEqual(jan.duration, td())
         self.assertEqual(jan.count, 0)
 
         # Dec. 2019
         self.assertEqual(dec.boundary.strftime("%m-%Y"), "12-2019")
+        self.assertEqual(jan.tz, "UTC")
+        self.assertFalse(jan.no_data)
         self.assertEqual(dec.duration, td())
         self.assertEqual(dec.count, 0)
 
         # Nov. 2019
         self.assertEqual(nov.boundary.strftime("%m-%Y"), "11-2019")
+        self.assertEqual(jan.tz, "UTC")
+        self.assertFalse(jan.no_data)
         self.assertEqual(nov.duration, td())
         self.assertEqual(nov.count, 0)
 
@@ -272,16 +278,19 @@ class CheckModelTestCase(BaseTestCase):
         jan, dec, nov = r
 
         self.assertEqual(jan.boundary.isoformat(), "2020-01-01T00:00:00+00:00")
+        self.assertFalse(jan.no_data)
         self.assertEqual(jan.duration, td(days=14))
         self.assertEqual(jan.monthly_uptime(), (31 - 14) / 31)
         self.assertEqual(jan.count, 1)
 
         self.assertEqual(dec.boundary.isoformat(), "2019-12-01T00:00:00+00:00")
+        self.assertFalse(dec.no_data)
         self.assertEqual(dec.duration, td(days=31))
         self.assertEqual(dec.monthly_uptime(), 0.0)
         self.assertEqual(dec.count, 1)
 
         self.assertEqual(nov.boundary.isoformat(), "2019-11-01T00:00:00+00:00")
+        self.assertFalse(nov.no_data)
         self.assertEqual(nov.duration, td(days=16))
         self.assertEqual(nov.monthly_uptime(), 14 / 30)
         self.assertEqual(nov.count, 1)
@@ -304,6 +313,8 @@ class CheckModelTestCase(BaseTestCase):
         jan, dec = r
 
         self.assertEqual(jan.boundary.isoformat(), "2020-01-01T00:00:00+02:00")
+        self.assertEqual(jan.tz, "Europe/Riga")
+        self.assertFalse(jan.no_data)
         self.assertEqual(jan.duration, td(days=14, hours=1))
         total_hours = 31 * 24
         up_hours = total_hours - 14 * 24 - 1
@@ -311,6 +322,8 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(jan.count, 1)
 
         self.assertEqual(dec.boundary.isoformat(), "2019-12-01T00:00:00+02:00")
+        self.assertEqual(dec.tz, "Europe/Riga")
+        self.assertFalse(dec.no_data)
         self.assertEqual(dec.duration, td())
         self.assertEqual(dec.count, 0)
 
@@ -324,13 +337,13 @@ class CheckModelTestCase(BaseTestCase):
         jan, dec, nov = check.downtimes(3, "UTC")
 
         # Jan. 2020
-        self.assertEqual(jan.count, 0)
+        self.assertFalse(jan.no_data)
 
         # Dec. 2019
-        self.assertIsNone(dec.count)
+        self.assertTrue(dec.no_data)
 
         # Nov. 2019
-        self.assertIsNone(nov.count)
+        self.assertTrue(nov.no_data)
 
     @override_settings(S3_BUCKET=None)
     def test_it_prunes(self) -> None:

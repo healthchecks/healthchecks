@@ -133,27 +133,34 @@ class CheckDict(TypedDict, total=False):
 
 @dataclass
 class DowntimeRecord:
-    boundary: datetime
-    tz: str
-    duration: td
-    count: int | None
+    boundary: datetime  # The start of this time interval (timezone-aware)
+    tz: str  # For calculating total seconds in a month
+    no_data: bool  # True if the check did not yet exist in this time interval
+    duration: td  # Total downtime in this time interval
+    count: int  # The number of downtime events in this time interval
 
     def monthly_uptime(self) -> float:
         # NB: this method assumes monthly boundaries.
         # It will yield incorrect results for weekly boundaries
-
         max_seconds = seconds_in_month(self.boundary.date(), self.tz)
         up_seconds = max_seconds - self.duration.total_seconds()
         return up_seconds / max_seconds
 
 
 class DowntimeSummary(object):
-    def __init__(self, boundaries: list[datetime], tz: str) -> None:
+    def __init__(self, boundaries: list[datetime], tz: str, created: datetime) -> None:
         """
-        `boundaries` are timezone-aware datetimes of the first days of time intervals
-        (months or weeks), and should be pre-sorted in descending order.
+        `boundaries` is a list of timezone-aware datetimes of the starts of time
+        intervals (months or weeks), and should be pre-sorted in descending order.
         """
-        self.records = [DowntimeRecord(b, tz, td(), 0) for b in boundaries]
+        self.records = []
+        prev_boundary = None
+        for b in boundaries:
+            # If the check was created *after* the start of the previous time
+            # interval then the check did not yet exist during this time interval:
+            no_data = prev_boundary and created > prev_boundary
+            self.records.append(DowntimeRecord(b, tz, no_data, td(), 0))
+            prev_boundary = b
 
     def add(self, when: datetime, duration: td) -> None:
         for record in self.records:
@@ -513,7 +520,7 @@ class Check(models.Model):
 
         """
 
-        summary = DowntimeSummary(boundaries, tz)
+        summary = DowntimeSummary(boundaries, tz, self.created)
 
         # A list of flips and time interval boundaries
         events = [(b, "---") for b in boundaries]
@@ -534,14 +541,6 @@ class Check(models.Model):
             dt = prev_dt
             if prev_status != "---":
                 status = prev_status
-
-        # Set count to None for intervals when the check didn't exist yet
-        prev_boundary = None
-        for record in summary.records:
-            if prev_boundary and self.created > prev_boundary:
-                record.count = None
-
-            prev_boundary = record.boundary
 
         return summary.records
 
