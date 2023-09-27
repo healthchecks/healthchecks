@@ -274,3 +274,8 @@ def fix_asterisks(s: str) -> str:
     """Prepend asterisks with "Combining Grapheme Joiner" characters."""
 
     return s.replace("*", "\u034f*")
+
+
+@register.filter
+def pct(v: float) -> str:
+    return str(int(v * 1000) / 10)

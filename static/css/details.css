@@ -93,6 +93,17 @@
     color: #888;
 }
 
+#downtimes .uptime {
+    display: block;
+    color: #888;
+}
+
+@media (min-width: 1199px) {
+    #downtimes .uptime {
+        float: right;
+    }
+}
+
 .alert.no-events, .alert.no-channels {
     border: var(--alert-no-data-border);
     background: var(--alert-no-data-bg);

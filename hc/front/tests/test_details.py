@@ -145,7 +145,8 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Dec. 2019")
 
         # The summary for Jan. 2020 should be "1 downtime, 1 hour total"
-        self.assertContains(r, "1 downtime, 1 hour total", html=True)
+        self.assertContains(r, "1 downtime, 1 hour total")
+        self.assertContains(r, "99.8% uptime")
 
     @patch("hc.lib.date.now")
     def test_it_downtime_summary_handles_plural(self, mock_now: Mock) -> None:
@@ -171,7 +172,8 @@ class DetailsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
 
-        self.assertContains(r, "1 downtime, 2 hours total", html=True)
+        self.assertContains(r, "1 downtime, 2 hours total")
+        self.assertContains(r, "99.7% uptime")
 
     @patch("hc.lib.date.now")
     def test_downtime_summary_handles_positive_utc_offset(self, mock_now: Mock) -> None:

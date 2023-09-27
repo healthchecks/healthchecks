@@ -240,7 +240,7 @@ class Profile(models.Model):
                 boundaries = month_boundaries(3, self.tz)
 
             for check in checks:
-                downtimes = check.downtimes_by_boundary(boundaries)
+                downtimes = check.downtimes_by_boundary(boundaries, self.tz)
                 # downtimes_by_boundary returns records in descending order.
                 # Switch to ascending order:
                 downtimes.reverse()

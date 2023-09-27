@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from datetime import timedelta as td
 from datetime import timezone
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from hc.lib.date import format_hms, month_boundaries, week_boundaries
+from hc.lib.date import format_hms, month_boundaries, seconds_in_month, week_boundaries
 
 CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
 MOCK_NOW = Mock(return_value=CURRENT_TIME)
@@ -66,3 +66,17 @@ class WeekBoundaryTestCase(TestCase):
         self.assertEqual(result[0].isoformat(), "2019-12-30T00:00:00+02:00")
         self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+02:00")
         self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+02:00")
+
+
+class SecondsInMonthTestCase(TestCase):
+    def test_utc_works(self) -> None:
+        result = seconds_in_month(date(2023, 10, 1), "UTC")
+        self.assertEqual(result, 31 * 24 * 60 * 60)
+
+    def test_it_handles_dst_extra_hour(self) -> None:
+        result = seconds_in_month(date(2023, 10, 1), "Europe/Riga")
+        self.assertEqual(result, 31 * 24 * 60 * 60 + 60 * 60)
+
+    def test_it_handles_dst_skipped_hour(self) -> None:
+        result = seconds_in_month(date(2024, 3, 1), "Europe/Riga")
+        self.assertEqual(result, 31 * 24 * 60 * 60 - 60 * 60)

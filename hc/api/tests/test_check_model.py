@@ -210,8 +210,27 @@ class CheckModelTestCase(BaseTestCase):
 
         records = check.downtimes(10, "UTC")
         self.assertEqual(len(records), 10)
-        for r in records:
+
+        self.assertEqual(records[0].count, 1)
+        self.assertEqual(records[0].monthly_uptime(), (31 - 14) / 31)
+
+        for r in records[1:]:
             self.assertEqual(r.count, 1)
+            self.assertEqual(r.monthly_uptime(), 0.0)
+
+    @patch("hc.api.models.now", MOCK_NOW)
+    @patch("hc.lib.date.now", MOCK_NOW)
+    def test_monthly_uptime_pct_handles_dst(self) -> None:
+        check = Check(project=self.project, status="down")
+        check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
+        check.save()
+
+        records = check.downtimes(10, "Europe/Riga")
+        self.assertEqual(len(records), 10)
+
+        for r in records[1:]:
+            self.assertEqual(r.count, 1)
+            self.assertEqual(r.monthly_uptime(), 0.0)
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
@@ -254,14 +273,17 @@ class CheckModelTestCase(BaseTestCase):
 
         self.assertEqual(jan.boundary.isoformat(), "2020-01-01T00:00:00+00:00")
         self.assertEqual(jan.duration, td(days=14))
+        self.assertEqual(jan.monthly_uptime(), (31 - 14) / 31)
         self.assertEqual(jan.count, 1)
 
         self.assertEqual(dec.boundary.isoformat(), "2019-12-01T00:00:00+00:00")
         self.assertEqual(dec.duration, td(days=31))
+        self.assertEqual(dec.monthly_uptime(), 0.0)
         self.assertEqual(dec.count, 1)
 
         self.assertEqual(nov.boundary.isoformat(), "2019-11-01T00:00:00+00:00")
         self.assertEqual(nov.duration, td(days=16))
+        self.assertEqual(nov.monthly_uptime(), 14 / 30)
         self.assertEqual(nov.count, 1)
 
     @patch("hc.api.models.now", MOCK_NOW)
@@ -283,6 +305,9 @@ class CheckModelTestCase(BaseTestCase):
 
         self.assertEqual(jan.boundary.isoformat(), "2020-01-01T00:00:00+02:00")
         self.assertEqual(jan.duration, td(days=14, hours=1))
+        total_hours = 31 * 24
+        up_hours = total_hours - 14 * 24 - 1
+        self.assertEqual(jan.monthly_uptime(), up_hours / total_hours)
         self.assertEqual(jan.count, 1)
 
         self.assertEqual(dec.boundary.isoformat(), "2019-12-01T00:00:00+02:00")

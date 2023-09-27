@@ -28,7 +28,7 @@ from pydantic import BaseModel, Field
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
-from hc.lib.date import month_boundaries
+from hc.lib.date import month_boundaries, seconds_in_month
 from hc.lib.s3 import get_object, put_object, remove_objects
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
@@ -134,15 +134,25 @@ class CheckDict(TypedDict, total=False):
 @dataclass
 class DowntimeRecord:
     boundary: datetime
+    tz: str
     duration: td
     count: int | None
 
+    def monthly_uptime(self) -> float:
+        # NB: this method assumes monthly boundaries.
+        # It will yield incorrect results for weekly boundaries
+
+        max_seconds = seconds_in_month(self.boundary.date(), self.tz)
+        up_seconds = max_seconds - self.duration.total_seconds()
+        return up_seconds / max_seconds
+
 
 class DowntimeSummary(object):
-    def __init__(self, boundaries: list[datetime]) -> None:
+    def __init__(self, boundaries: list[datetime], tz: str) -> None:
         self.boundaries = list(sorted(boundaries, reverse=True))
         self.durations = [td() for _ in boundaries]
         self.counts = [0 for _ in boundaries]
+        self.tz = tz
 
     def add(self, when: datetime, duration: td) -> None:
         for i in range(0, len(self.boundaries)):
@@ -154,7 +164,7 @@ class DowntimeSummary(object):
     def as_records(self) -> list[DowntimeRecord]:
         result = []
         for b, d, c in zip(self.boundaries, self.durations, self.counts):
-            result.append(DowntimeRecord(b, d, c))
+            result.append(DowntimeRecord(b, self.tz, d, c))
 
         return result
 
@@ -497,18 +507,19 @@ class Check(models.Model):
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
         return self.ping_set.filter(n__gt=threshold)
 
-    def downtimes_by_boundary(self, boundaries: list[datetime]) -> list[DowntimeRecord]:
+    def downtimes_by_boundary(
+        self, boundaries: list[datetime], tz: str
+    ) -> list[DowntimeRecord]:
         """Calculate downtime counts and durations for the given time intervals.
 
-        Returns a list of namedtuples (DowntimeRecord instances)
-        in descending datetime order.
+        Returns a list of DowntimeRecord instances in descending datetime order.
 
         `boundaries` are the datetimes of the first days of time intervals
         (months or weeks) we're interested in, in ascending order.
 
         """
 
-        summary = DowntimeSummary(boundaries)
+        summary = DowntimeSummary(boundaries, tz)
 
         # A list of flips and time interval boundaries
         events = [(b, "---") for b in boundaries]
@@ -521,7 +532,10 @@ class Check(models.Model):
         dt, status = now(), self.status
         for prev_dt, prev_status in sorted(events, reverse=True):
             if status == "down":
-                summary.add(prev_dt, dt - prev_dt)
+                # Before subtracting datetimes convert them to UTC.
+                # Otherwise we will get incorrect results around DST transitions:
+                delta = dt.astimezone(timezone.utc) - prev_dt.astimezone(timezone.utc)
+                summary.add(prev_dt, delta)
 
             dt = prev_dt
             if prev_status != "---":
@@ -540,7 +554,7 @@ class Check(models.Model):
 
     def downtimes(self, months: int, tz: str) -> list[DowntimeRecord]:
         boundaries = month_boundaries(months, tz)
-        return self.downtimes_by_boundary(boundaries)
+        return self.downtimes_by_boundary(boundaries, tz)
 
     def create_flip(self, new_status: str, mark_as_processed: bool = False) -> None:
         """Create a Flip object for this check.

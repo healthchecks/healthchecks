@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 from django.utils.timezone import now
@@ -102,3 +102,19 @@ def week_boundaries(weeks: int, tzstr: str) -> list[datetime]:
         needle -= timedelta(days=7)
 
     return result
+
+
+def seconds_in_month(d: date, tzstr: str) -> float:
+    tz = ZoneInfo(tzstr)
+    start = datetime(d.year, d.month, 1, tzinfo=tz)
+    start_utc = start.astimezone(timezone.utc)
+
+    y, m = d.year, d.month
+    m += 1
+    if m > 12:
+        y += 1
+        m = 1
+
+    end = datetime(y, m, 1, tzinfo=tz)
+    end_utc = end.astimezone(timezone.utc)
+    return (end_utc - start_utc).total_seconds()
