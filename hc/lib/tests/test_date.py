@@ -42,30 +42,30 @@ class DateFormattingTestCase(TestCase):
 class MonthBoundaryTestCase(TestCase):
     def test_utc_works(self) -> None:
         result = month_boundaries(3, "UTC")
-        self.assertEqual(result[0].isoformat(), "2019-11-01T00:00:00+00:00")
+        self.assertEqual(result[0].isoformat(), "2020-01-01T00:00:00+00:00")
         self.assertEqual(result[1].isoformat(), "2019-12-01T00:00:00+00:00")
-        self.assertEqual(result[2].isoformat(), "2020-01-01T00:00:00+00:00")
+        self.assertEqual(result[2].isoformat(), "2019-11-01T00:00:00+00:00")
 
     def test_non_utc_works(self) -> None:
         result = month_boundaries(3, "Europe/Riga")
-        self.assertEqual(result[0].isoformat(), "2019-11-01T00:00:00+02:00")
+        self.assertEqual(result[0].isoformat(), "2020-01-01T00:00:00+02:00")
         self.assertEqual(result[1].isoformat(), "2019-12-01T00:00:00+02:00")
-        self.assertEqual(result[2].isoformat(), "2020-01-01T00:00:00+02:00")
+        self.assertEqual(result[2].isoformat(), "2019-11-01T00:00:00+02:00")
 
 
 @patch("hc.lib.date.now", MOCK_NOW)
 class WeekBoundaryTestCase(TestCase):
     def test_utc_works(self) -> None:
         result = week_boundaries(3, "UTC")
-        self.assertEqual(result[0].isoformat(), "2019-12-30T00:00:00+00:00")
+        self.assertEqual(result[0].isoformat(), "2020-01-13T00:00:00+00:00")
         self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+00:00")
-        self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+00:00")
+        self.assertEqual(result[2].isoformat(), "2019-12-30T00:00:00+00:00")
 
     def test_non_utc_works(self) -> None:
         result = week_boundaries(3, "Europe/Riga")
-        self.assertEqual(result[0].isoformat(), "2019-12-30T00:00:00+02:00")
+        self.assertEqual(result[0].isoformat(), "2020-01-13T00:00:00+02:00")
         self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+02:00")
-        self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+02:00")
+        self.assertEqual(result[2].isoformat(), "2019-12-30T00:00:00+02:00")
 
 
 class SecondsInMonthTestCase(TestCase):

@@ -149,24 +149,18 @@ class DowntimeRecord:
 
 class DowntimeSummary(object):
     def __init__(self, boundaries: list[datetime], tz: str) -> None:
-        self.boundaries = list(sorted(boundaries, reverse=True))
-        self.durations = [td() for _ in boundaries]
-        self.counts = [0 for _ in boundaries]
-        self.tz = tz
+        """
+        `boundaries` are timezone-aware datetimes of the first days of time intervals
+        (months or weeks), and should be pre-sorted in descending order.
+        """
+        self.records = [DowntimeRecord(b, tz, td(), 0) for b in boundaries]
 
     def add(self, when: datetime, duration: td) -> None:
-        for i in range(0, len(self.boundaries)):
-            if when >= self.boundaries[i]:
-                self.durations[i] += duration
-                self.counts[i] += 1
+        for record in self.records:
+            if when >= record.boundary:
+                record.duration += duration
+                record.count += 1
                 return
-
-    def as_records(self) -> list[DowntimeRecord]:
-        result = []
-        for b, d, c in zip(self.boundaries, self.durations, self.counts):
-            result.append(DowntimeRecord(b, self.tz, d, c))
-
-        return result
 
 
 class Check(models.Model):
@@ -514,8 +508,8 @@ class Check(models.Model):
 
         Returns a list of DowntimeRecord instances in descending datetime order.
 
-        `boundaries` are the datetimes of the first days of time intervals
-        (months or weeks) we're interested in, in ascending order.
+        `boundaries` are timezone-aware datetimes of the first days of time intervals
+        (months or weeks), and should be pre-sorted in descending order.
 
         """
 
@@ -543,14 +537,13 @@ class Check(models.Model):
 
         # Set count to None for intervals when the check didn't exist yet
         prev_boundary = None
-        results = summary.as_records()
-        for record in results:
+        for record in summary.records:
             if prev_boundary and self.created > prev_boundary:
                 record.count = None
 
             prev_boundary = record.boundary
 
-        return results
+        return summary.records
 
     def downtimes(self, months: int, tz: str) -> list[DowntimeRecord]:
         boundaries = month_boundaries(months, tz)

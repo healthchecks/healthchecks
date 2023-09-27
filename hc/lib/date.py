@@ -75,13 +75,14 @@ def format_approx_duration(duration: timedelta) -> str:
 
 
 def month_boundaries(months: int, tzstr: str) -> list[datetime]:
+    """Return month start times in descending order starting from the current month."""
     tz = ZoneInfo(tzstr)
     result: list[datetime] = []
 
     now_value = now().astimezone(tz)
     y, m = now_value.year, now_value.month
     for x in range(0, months):
-        result.insert(0, datetime(y, m, 1, tzinfo=tz))
+        result.append(datetime(y, m, 1, tzinfo=tz))
 
         m -= 1
         if m == 0:
@@ -92,13 +93,14 @@ def month_boundaries(months: int, tzstr: str) -> list[datetime]:
 
 
 def week_boundaries(weeks: int, tzstr: str) -> list[datetime]:
+    """Return week start times in descending order starting from the current week."""
     tz = ZoneInfo(tzstr)
     result: list[datetime] = []
 
     today = now().astimezone(tz).date()
     needle = today - timedelta(days=today.weekday())
     for x in range(0, weeks):
-        result.insert(0, datetime(needle.year, needle.month, needle.day, tzinfo=tz))
+        result.append(datetime(needle.year, needle.month, needle.day, tzinfo=tz))
         needle -= timedelta(days=7)
 
     return result
