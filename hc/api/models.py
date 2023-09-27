@@ -498,8 +498,8 @@ class Check(models.Model):
     def downtimes_by_boundary(self, boundaries: list[datetime]) -> list[DowntimeRecord]:
         """Calculate downtime counts and durations for the given time intervals.
 
-        Returns a list of (datetime, downtime_in_secs, number_of_outages) tuples
-        in ascending datetime order.
+        Returns a list of namedtuples (DowntimeRecord instances)
+        in descending datetime order.
 
         `boundaries` are the datetimes of the first days of time intervals
         (months or weeks) we're interested in, in ascending order.
@@ -536,7 +536,6 @@ class Check(models.Model):
             prev_boundary = record.boundary
             result.append(record)
 
-        result.sort()
         return result
 
     def downtimes(self, months: int, tz: str) -> list[DowntimeRecord]:

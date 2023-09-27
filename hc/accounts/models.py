@@ -240,11 +240,10 @@ class Profile(models.Model):
                 boundaries = month_boundaries(3, self.tz)
 
             for check in checks:
-                setattr(
-                    check,
-                    "past_downtimes",
-                    check.downtimes_by_boundary(boundaries)[:-1],
-                )
+                downtimes = check.downtimes_by_boundary(boundaries)
+                # Make sure the downtimes are in ascending order:
+                downtimes.sort()
+                setattr(check, "past_downtimes", downtimes[:-1])
 
             ctx["checks"] = checks
             ctx["boundaries"] = boundaries[:-1]

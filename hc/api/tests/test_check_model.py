@@ -184,22 +184,22 @@ class CheckModelTestCase(BaseTestCase):
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
         check.save()
 
-        nov, dec, jan = check.downtimes(3, "UTC")
+        jan, dec, nov = check.downtimes(3, "UTC")
 
-        # Nov. 2019
-        self.assertEqual(nov[0].strftime("%m-%Y"), "11-2019")
-        self.assertEqual(nov[1], td())
-        self.assertEqual(nov[2], 0)
+        # Jan. 2020
+        self.assertEqual(jan[0].strftime("%m-%Y"), "01-2020")
+        self.assertEqual(jan[1], td())
+        self.assertEqual(jan[2], 0)
 
         # Dec. 2019
         self.assertEqual(dec[0].strftime("%m-%Y"), "12-2019")
         self.assertEqual(dec[1], td())
         self.assertEqual(dec[2], 0)
 
-        # Jan. 2020
-        self.assertEqual(jan[0].strftime("%m-%Y"), "01-2020")
-        self.assertEqual(jan[1], td())
-        self.assertEqual(jan[2], 0)
+        # Nov. 2019
+        self.assertEqual(nov[0].strftime("%m-%Y"), "11-2019")
+        self.assertEqual(nov[1], td())
+        self.assertEqual(nov[2], 0)
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
@@ -252,8 +252,8 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(len(r), 3)
 
         dt, duration, outages = r[0]
-        self.assertEqual(dt.isoformat(), "2019-11-01T00:00:00+00:00")
-        self.assertEqual(duration, td(days=16))
+        self.assertEqual(dt.isoformat(), "2020-01-01T00:00:00+00:00")
+        self.assertEqual(duration, td(days=14))
         self.assertEqual(outages, 1)
 
         dt, duration, outages = r[1]
@@ -262,8 +262,8 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(outages, 1)
 
         dt, duration, outages = r[2]
-        self.assertEqual(dt.isoformat(), "2020-01-01T00:00:00+00:00")
-        self.assertEqual(duration, td(days=14))
+        self.assertEqual(dt.isoformat(), "2019-11-01T00:00:00+00:00")
+        self.assertEqual(duration, td(days=16))
         self.assertEqual(outages, 1)
 
     @patch("hc.api.models.now", MOCK_NOW)
@@ -282,14 +282,14 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(len(r), 2)
 
         dt, duration, outages = r[0]
-        self.assertEqual(dt.isoformat(), "2019-12-01T00:00:00+02:00")
-        self.assertEqual(duration, td())
-        self.assertEqual(outages, 0)
-
-        dt, duration, outages = r[1]
         self.assertEqual(dt.isoformat(), "2020-01-01T00:00:00+02:00")
         self.assertEqual(duration, td(days=14, hours=1))
         self.assertEqual(outages, 1)
+
+        dt, duration, outages = r[1]
+        self.assertEqual(dt.isoformat(), "2019-12-01T00:00:00+02:00")
+        self.assertEqual(duration, td())
+        self.assertEqual(outages, 0)
 
     @patch("hc.api.models.now", MOCK_NOW)
     @patch("hc.lib.date.now", MOCK_NOW)
@@ -298,16 +298,16 @@ class CheckModelTestCase(BaseTestCase):
         check.created = datetime(2020, 1, 1, 9, tzinfo=timezone.utc)
         check.save()
 
-        nov, dec, jan = check.downtimes(3, "UTC")
+        jan, dec, nov = check.downtimes(3, "UTC")
 
-        # Nov. 2019
-        self.assertIsNone(nov.count)
+        # Jan. 2020
+        self.assertEqual(jan.count, 0)
 
         # Dec. 2019
         self.assertIsNone(dec.count)
 
-        # Jan. 2020
-        self.assertEqual(jan.count, 0)
+        # Nov. 2019
+        self.assertIsNone(nov.count)
 
     @override_settings(S3_BUCKET=None)
     def test_it_prunes(self) -> None:

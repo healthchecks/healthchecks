@@ -1,7 +1,7 @@
 {% load hc_extras tz %}
 {% timezone tz %}
 <table id="downtimes" class="table">
-    {% for d in downtimes reversed %}
+    {% for d in downtimes %}
     <tr>
         <th>{{ d.boundary|date:"N Y"}}</th>
         <td>
