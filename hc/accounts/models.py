@@ -241,8 +241,9 @@ class Profile(models.Model):
 
             for check in checks:
                 downtimes = check.downtimes_by_boundary(boundaries)
-                # Make sure the downtimes are in ascending order:
-                downtimes.sort()
+                # downtimes_by_boundary returns records in descending order.
+                # Switch to ascending order:
+                downtimes.reverse()
                 setattr(check, "past_downtimes", downtimes[:-1])
 
             ctx["checks"] = checks

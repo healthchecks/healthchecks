@@ -4,10 +4,11 @@ import hashlib
 import json
 import socket
 import uuid
+from dataclasses import dataclass
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from typing import Any, NamedTuple, TypedDict
+from typing import Any, TypedDict
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
@@ -130,7 +131,8 @@ class CheckDict(TypedDict, total=False):
     tz: str
 
 
-class DowntimeRecord(NamedTuple):
+@dataclass
+class DowntimeRecord:
     boundary: datetime
     duration: td
     count: int | None
@@ -527,16 +529,14 @@ class Check(models.Model):
 
         # Set count to None for intervals when the check didn't exist yet
         prev_boundary = None
-        result: list[DowntimeRecord] = []
-        for record in summary.as_records():
+        results = summary.as_records()
+        for record in results:
             if prev_boundary and self.created > prev_boundary:
-                result.append(DowntimeRecord(record.boundary, record.duration, None))
-                continue
+                record.count = None
 
             prev_boundary = record.boundary
-            result.append(record)
 
-        return result
+        return results
 
     def downtimes(self, months: int, tz: str) -> list[DowntimeRecord]:
         boundaries = month_boundaries(months, tz)
