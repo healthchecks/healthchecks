@@ -147,7 +147,7 @@ class DowntimeRecord:
         return up_seconds / max_seconds
 
 
-class DowntimeSummary(object):
+class DowntimeRecorder(object):
     def __init__(self, boundaries: list[datetime], tz: str, created: datetime) -> None:
         """
         `boundaries` is a list of timezone-aware datetimes of the starts of time
@@ -520,7 +520,7 @@ class Check(models.Model):
 
         """
 
-        summary = DowntimeSummary(boundaries, tz, self.created)
+        summary = DowntimeRecorder(boundaries, tz, self.created)
 
         # A list of flips and time interval boundaries
         events = [(b, "---") for b in boundaries]
