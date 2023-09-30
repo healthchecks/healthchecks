@@ -900,7 +900,12 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         check.project.show_slugs = request.GET["urls"] == "slug"
         check.project.save()
 
-    channels = list(check.project.channel_set.order_by("created"))
+    all_channels = check.project.channel_set.order_by("created")
+    regular_channels = []
+    group_channels = []
+    for channel in all_channels:
+        channels = group_channels if channel.kind == "group" else regular_channels
+        channels.append(channel)
 
     all_tags = set()
     q = Check.objects.filter(project=check.project).exclude(tags="")
@@ -912,7 +917,8 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "project": check.project,
         "check": check,
         "rw": rw,
-        "channels": channels,
+        "channels": regular_channels,
+        "group_channels": group_channels,
         "enabled_channels": list(check.channel_set.all()),
         "timezones": all_timezones,
         "downtimes": check.downtimes(3, request.profile.tz),
