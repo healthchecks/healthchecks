@@ -1312,16 +1312,18 @@ def edit_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     channel = _get_rw_channel_for_user(request, code)
     if channel.kind == "email":
         return email_form(request, channel)
-    if channel.kind == "webhook":
+    elif channel.kind == "webhook":
         return webhook_form(request, channel)
-    if channel.kind == "sms":
+    elif channel.kind == "sms":
         return sms_form(request, channel)
-    if channel.kind == "signal":
+    elif channel.kind == "signal":
         return signal_form(request, channel)
-    if channel.kind == "whatsapp":
+    elif channel.kind == "whatsapp":
         return whatsapp_form(request, channel)
-    if channel.kind == "ntfy":
+    elif channel.kind == "ntfy":
         return ntfy_form(request, channel)
+    elif channel.kind == "group":
+        return group_form(request, channel)
 
     return HttpResponseBadRequest()
 
@@ -2458,24 +2460,37 @@ def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "integrations/add_gotify.html", ctx)
 
 
-@login_required
-def add_group(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
+def group_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
     if request.method == "POST":
-        form = forms.AddGroupForm(request.POST, project=project)
+        form = forms.GroupForm(request.POST, project=channel.project)
         if form.is_valid():
-            channel = Channel(project=project, kind="group")
             channel.value = form.get_value()
             channel.save()
 
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
+            if adding:
+                channel.assign_all_checks()
+            return redirect("hc-channels", channel.project.code)
+    elif adding:
+        form = forms.GroupForm(project=channel.project)
     else:
-        form = forms.AddGroupForm(project=project)
+        # Filter out unavailable channsl
+        channels = list(
+            Channel.objects.filter(
+                project=channel.project, code__in=channel.value.split(",")
+            ).values_list("code", flat=True)
+        )
+        form = forms.GroupForm({"channels": channels}, project=channel.project)
 
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_group.html", ctx)
+    ctx = {"page": "channels", "project": channel.project, "form": form}
+    return render(request, "integrations/group_form.html", ctx)
+
+
+@login_required
+def add_group(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="group")
+    return group_form(request, channel)
 
 
 def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:

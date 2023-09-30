@@ -784,7 +784,15 @@ class Channel(models.Model):
         return {"id": str(self.code), "name": self.name, "kind": self.kind}
 
     def is_editable(self) -> bool:
-        return self.kind in ("email", "webhook", "sms", "signal", "whatsapp", "ntfy")
+        return self.kind in (
+            "email",
+            "webhook",
+            "sms",
+            "signal",
+            "whatsapp",
+            "ntfy",
+            "group",
+        )
 
     def assign_all_checks(self) -> None:
         checks = Check.objects.filter(project=self.project)
@@ -1035,10 +1043,10 @@ class Channel(models.Model):
     gotify_token = json_property("gotify", "token")
 
     @property
-    def group_integrations(self) -> list[Channel]:
+    def group_channels(self) -> list[Channel]:
         assert self.kind == "group"
         return list(
-            Channel.objects.filter(code__in=json.loads(self.value)["integrations"])
+            Channel.objects.filter(project=self.project, code__in=self.value.split(","))
         )
 
     ntfy_topic = json_property("ntfy", "topic")

@@ -336,21 +336,21 @@ class AddGotifyForm(forms.Form):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
 
 
-class AddGroupForm(forms.Form):
+class GroupForm(forms.Form):
     def __init__(self, *args, **kwargs):
         project = kwargs.pop("project")
         super().__init__(*args, **kwargs)
 
-        self.fields["integrations"].choices = (
+        self.fields["channels"].choices = (
             (c.code, str(c))
             for c in Channel.objects.filter(project=project).exclude(kind="group")
         )
 
     error_css_class = "has-error"
-    integrations = forms.MultipleChoiceField()
+    channels = forms.MultipleChoiceField()
 
     def get_value(self) -> str:
-        return json.dumps(dict(self.cleaned_data), sort_keys=True)
+        return ",".join(self.cleaned_data["channels"])
 
 
 class NtfyForm(forms.Form):
