@@ -62,16 +62,22 @@ def format_hms(duration: timedelta) -> str:
 
 
 def format_approx_duration(duration: timedelta) -> str:
-    v = int(duration.total_seconds())
-    for unit in (DAY, HOUR, MINUTE, SECOND):
-        if v >= unit.nsecs:
-            vv = v // unit.nsecs
-            if vv == 1:
-                return f"1 {unit.name}"
-            else:
-                return f"{vv} {unit.plural}"
+    total_seconds = int(duration.total_seconds())
 
-    return ""
+    mins, secs = divmod(total_seconds, 60)
+    hours, mins = divmod(mins, 60)
+    days, hours = divmod(hours, 24)
+
+    if days == 1:
+        return f"1 day {hours} h"
+
+    if days:
+        return f"{days} days {hours} h"
+
+    if hours:
+        return f"{hours} h {mins} min"
+
+    return f"{mins} min {secs} sec"
 
 
 def month_boundaries(months: int, tzstr: str) -> list[datetime]:
