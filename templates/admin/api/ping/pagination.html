@@ -1,0 +1,9 @@
+{% load admin_list %}
+{% load i18n %}
+<p class="paginator">
+{% if pagination_required %}
+{% for i in cl.paginator.page_range %}
+    {% paginator_number cl i %}
+{% endfor %}
+{% endif %}
+</p>

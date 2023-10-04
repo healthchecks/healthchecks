@@ -11,6 +11,9 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
+import django_stubs_ext
+
+django_stubs_ext.monkeypatch()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
