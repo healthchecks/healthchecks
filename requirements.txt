@@ -2,6 +2,7 @@ aiosmtpd==1.4.4.post2
 cronsim==2.5
 Django==4.2.5
 django-compressor==4.4
+django-stubs-ext==4.2.2
 fido2==1.1.2
 psycopg2==2.9.9
 pycurl==7.45.2
