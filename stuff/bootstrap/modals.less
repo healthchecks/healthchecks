@@ -44,7 +44,9 @@
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 10px;
+  // Use 60px bottom margin to prevent Mobile Safari's nav bar from interfering
+  // See: https://github.com/healthchecks/healthchecks/pull/899
+  margin: 10px 10px 60px 10px;
 }
 
 // Actual modal

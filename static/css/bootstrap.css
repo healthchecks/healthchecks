@@ -4310,7 +4310,7 @@ button.close {
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 10px;
+  margin: 10px 10px 60px 10px;
 }
 .modal-content {
   position: relative;
