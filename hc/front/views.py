@@ -2481,11 +2481,7 @@ def group_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         form = forms.GroupForm(project=channel.project)
     else:
         # Filter out unavailable channsl
-        channels = list(
-            Channel.objects.filter(
-                project=channel.project, code__in=channel.value.split(",")
-            ).values_list("code", flat=True)
-        )
+        channels = list(channel.group_channels.values_list("code", flat=True))
         form = forms.GroupForm({"channels": channels}, project=channel.project)
 
     ctx = {"page": "channels", "project": channel.project, "form": form}

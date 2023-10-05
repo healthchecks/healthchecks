@@ -1043,10 +1043,10 @@ class Channel(models.Model):
     gotify_token = json_property("gotify", "token")
 
     @property
-    def group_channels(self) -> list[Channel]:
+    def group_channels(self) -> QuerySet[Channel]:
         assert self.kind == "group"
-        return list(
-            Channel.objects.filter(project=self.project, code__in=self.value.split(","))
+        return Channel.objects.filter(
+            project=self.project, code__in=self.value.split(",")
         )
 
     ntfy_topic = json_property("ntfy", "topic")
