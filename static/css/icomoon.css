@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'icomoon';
   src:
-    url('../fonts/icomoon.ttf?omvtqt') format('truetype'),
-    url('../fonts/icomoon.woff?omvtqt') format('woff'),
-    url('../fonts/icomoon.svg?omvtqt#icomoon') format('svg');
+    url('../fonts/icomoon.ttf?fw1vj7') format('truetype'),
+    url('../fonts/icomoon.woff?fw1vj7') format('woff'),
+    url('../fonts/icomoon.svg?fw1vj7#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -24,6 +24,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ic-group:after {
+  content: "\e932";
+  color: #f0ad4e;
+}
 .ic-rocketchat:before {
   content: "\e930";
   color: #f5455c;
