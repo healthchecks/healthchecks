@@ -10,6 +10,8 @@ from urllib.parse import quote, urlencode
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from hc.api.models import Channel
 from hc.front.validators import (
@@ -342,13 +344,16 @@ class GroupForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.fields["channels"].choices = (
-            (c.code, str(c))
+            (
+                c.code,
+                format_html('<span class="ic-{}"></span> {}', mark_safe(c.kind), c),
+            )
             for c in Channel.objects.filter(project=project).exclude(kind="group")
         )
 
     error_css_class = "has-error"
     label = forms.CharField(max_length=100, required=False)
-    channels = forms.MultipleChoiceField()
+    channels = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
 
     def get_value(self) -> str:
         return ",".join(self.cleaned_data["channels"])
