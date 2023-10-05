@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, QuerySet
+from django.db.models import Case, Count, F, QuerySet, When
 from django.http import (
     Http404,
     HttpRequest,
@@ -1102,8 +1102,10 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         return redirect("hc-channels", project.code)
 
     channels = Channel.objects.filter(project=project)
-    channels = channels.order_by("created")
-    channels = channels.annotate(n_checks=Count("checks"))
+    channels = channels.annotate(
+        is_group=Case(When(kind="group", then=0), default=1), n_checks=Count("checks")
+    )
+    channels = channels.order_by("is_group", "created")
 
     ctx = {
         "page": "channels",
