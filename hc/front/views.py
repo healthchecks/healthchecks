@@ -2473,6 +2473,7 @@ def group_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     if request.method == "POST":
         form = forms.GroupForm(request.POST, project=channel.project)
         if form.is_valid():
+            channel.name = form.cleaned_data["label"]
             channel.value = form.get_value()
             channel.save()
 

@@ -347,6 +347,7 @@ class GroupForm(forms.Form):
         )
 
     error_css_class = "has-error"
+    label = forms.CharField(max_length=100, required=False)
     channels = forms.MultipleChoiceField()
 
     def get_value(self) -> str:
