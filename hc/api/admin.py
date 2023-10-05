@@ -7,11 +7,9 @@ from datetime import timedelta as td
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.core.paginator import Paginator
-from django.db import connection
 from django.db.models import F, QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django_stubs_ext import WithAnnotations
