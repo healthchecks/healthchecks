@@ -24,6 +24,7 @@ version is 3.10.
 - Fix "createsuperuser" to reject already registered email addresses (#880)
 - Fix hc.accounts.views.check_token to handle non-UUID usernames (#882)
 - Fix time interval formatting in Check Details page, downtime summary table
+- Fix HTML escaping issue in Project admin
 
 ## v2.10 - 2023-07-02
 
