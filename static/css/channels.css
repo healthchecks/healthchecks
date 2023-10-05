@@ -248,3 +248,19 @@ body.dark img.kind-matrix {
 img.kind-ntfy {
     filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
 }
+
+input[name="channels"] {
+    display: none;
+}
+
+label[for^="id_channels"] {
+    cursor: pointer;
+}
+
+input[name="channels"]:not(:checked) ~ span:before {
+    color: var(--channel-off-inside-color);
+}
+
+input[name="channels"]:not(:checked) ~ span:after {
+    color: var(--channel-off-color);
+}
