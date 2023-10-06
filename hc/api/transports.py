@@ -1220,7 +1220,7 @@ class Group(Transport):
         error_count = 0
         for channel in channels:
             error = channel.notify(check)
-            if error:
+            if error and error != "no-op":
                 error_count += 1
         if error_count:
             raise TransportError(
