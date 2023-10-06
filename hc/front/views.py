@@ -901,8 +901,8 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         check.project.save()
 
     all_channels = check.project.channel_set.order_by("created")
-    regular_channels = []
-    group_channels = []
+    regular_channels: list[Channel] = []
+    group_channels: list[Channel] = []
     for channel in all_channels:
         channels = group_channels if channel.kind == "group" else regular_channels
         channels.append(channel)
