@@ -82,7 +82,7 @@ class ChecksAdmin(ModelAdmin[Check]):
             for channel in check.channel_set.all():
                 channel.notify(check)
 
-        self.message_user(request, "%d alert(s) sent" % qs.count())
+        self.message_user(request, f"Alerts sent for {len(qs)} check(s)")
 
 
 class SchemeListFilter(admin.SimpleListFilter):

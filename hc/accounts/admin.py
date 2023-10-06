@@ -208,38 +208,30 @@ class ProfileAdmin(ModelAdmin[Profile]):
         return redirect("hc-index")
 
     def send_report(self, request: HttpRequest, qs: QuerySet[Profile]) -> None:
-        num_sent = 0
         for profile in qs:
             profile.send_report()
-            num_sent += 1
 
-        self.message_user(request, f"{num_sent} email(s) sent")
+        self.message_user(request, f"{len(qs)} email(s) sent")
 
     def send_nag(self, request: HttpRequest, qs: QuerySet[Profile]) -> None:
-        num_sent = 0
         for profile in qs:
             profile.send_report(nag=True)
-            num_sent += 1
 
-        self.message_user(request, f"{num_sent} email(s) sent")
+        self.message_user(request, f"{len(qs)} email(s) sent")
 
     @admin.action(description="Remove TOTP")
     def remove_totp(self, request: HttpRequest, qs: QuerySet[Profile]) -> None:
-        num_removed = 0
         for profile in qs:
             profile.totp = None
             profile.totp_created = None
             profile.save()
-            num_removed += 1
 
-        self.message_user(request, f"Removed TOTP for {num_removed} profile(s)")
+        self.message_user(request, f"Removed TOTP for {len(qs)} profile(s)")
 
     def schedule_for_deletion(self, r: HttpRequest, qs: QuerySet[Profile]) -> None:
-        num_scheduled = 0
         for profile in qs:
             profile.schedule_for_deletion()
-            num_scheduled += 1
-        self.message_user(r, f"{num_scheduled} user(s) scheduled for deletion")
+        self.message_user(r, f"{len(qs)} user(s) scheduled for deletion")
 
     def unschedule_for_deletion(self, r: HttpRequest, qs: QuerySet[Profile]) -> None:
         num_unscheduled = qs.update(deletion_scheduled_date=None)
@@ -340,23 +332,19 @@ class HcUserAdmin(UserAdmin):
         return _format_usage(user.num_checks, user.num_channels)
 
     def activate(self, request: HttpRequest, qs: QuerySet[User]) -> None:
-        num_activated = 0
         for user in qs:
             user.is_active = True
             user.save()
-            num_activated += 1
 
-        self.message_user(request, f"{num_activated} user(s) activated")
+        self.message_user(request, f"{len(qs)} user(s) activated")
 
     def deactivate(self, request: HttpRequest, qs: QuerySet[User]) -> None:
-        num_deactivated = 0
         for user in qs:
             user.is_active = False
             user.set_unusable_password()
             user.save()
-            num_deactivated += 1
 
-        self.message_user(request, f"{num_deactivated} user(s) deactivated")
+        self.message_user(request, f"{len(qs)} user(s) deactivated")
 
 
 admin.site.unregister(User)
