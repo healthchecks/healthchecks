@@ -10,7 +10,7 @@ from django.core.paginator import Paginator
 from django.db.models import F, QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
-from django.utils.html import escape
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django_stubs_ext import WithAnnotations
 
@@ -49,23 +49,20 @@ class ChecksAdmin(ModelAdmin[Check]):
         qs = qs.annotate(email=F("project__owner__email"))
         return qs
 
-    @mark_safe
     def project_(self, obj: Check) -> str:
         url = obj.project.checks_url(full=False)
-        name = escape(obj.project.name or "Default")
-        email = escape(obj.email)
-        return f'{email} &rsaquo; <a href="{url}"">{name}</a>'
+        name = obj.project.name or "Default"
+        return format_html("""{} &rsaquo; <a href="{}">{}</a>""", obj.email, url, name)
 
-    @mark_safe
     def name_tags(self, obj: Check) -> str:
         url = obj.details_url(full=False)
-        name = escape(obj.name or "unnamed")
-
-        s = f'<a href="{url}"">{name}</a>'
+        name = obj.name or "unnamed"
+        tmpl = """<a href="{}"">{}</a>"""
+        args = [url, name]
         for tag in obj.tags_list():
-            s += " <span>%s</span>" % escape(tag)
-
-        return s
+            tmpl += " <span>{}</span>"
+            args.append(tag)
+        return format_html(tmpl, *args)
 
     @admin.display(description="Schedule")
     def timeout_schedule(self, obj: Check) -> str:
@@ -190,12 +187,11 @@ class ChannelsAdmin(ModelAdmin[Channel]):
     def created_(self, obj: Channel) -> date:
         return obj.created.date()
 
-    @mark_safe
     def project_(self, obj: WithAnnotations[Channel]) -> str:
+        tmpl = """{} &rsaquo; <a href="{}">{}</a>"""
         url = self.view_on_site(obj)
-        name = escape(obj.project_name or "Default")
-        email = escape(obj.owner_email)
-        return f"{email} &rsaquo; <a href='{url}'>{name}</a>"
+        name = obj.project_name or "Default"
+        return format_html(tmpl, obj.owner_email, url, name)
 
     def time(self, obj: Channel) -> str | None:
         if obj.last_notify_duration:
@@ -212,13 +208,12 @@ class ChannelsAdmin(ModelAdmin[Channel]):
     def view_on_site(self, obj: WithAnnotations[Channel]) -> str:
         return reverse("hc-channels", args=[obj.project_code])
 
-    @mark_safe
     def transport(self, obj: Channel) -> str:
+        tmpl = """<span class="ic-{}"></span> &nbsp; {}{}"""
         note = ""
         if obj.kind == "email" and not obj.email_verified:
             note = " (not verified)"
-
-        return f'<span class="ic-{ obj.kind }"></span> &nbsp; {obj.kind}{note}'
+        return format_html(tmpl, obj.kind, obj.kind, note)
 
     @admin.display(description="Value")
     def chopped_value(self, obj: Channel) -> str:
@@ -264,15 +259,13 @@ class NotificationsAdmin(ModelAdmin[Notification]):
     def channel_kind(self, obj: Notification) -> str:
         return obj.channel.kind
 
-    @mark_safe
     def channel_value(self, obj: Notification) -> str:
-        return "<div>%s</div>" % escape(obj.channel.value)
+        return format_html("<div>{}</div>", obj.channel.value)
 
-    @mark_safe
     def project(self, obj: Notification) -> str:
         url = reverse("hc-channels", args=[obj.channel.project.code])
-        name = escape(obj.channel.project)
-        return f"<div><a href='{url}'>{name}</a></div>"
+        name = obj.channel.project
+        return format_html("""<div><a href="{}">{}</a></div>""", url, name)
 
 
 @admin.register(Flip)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import date, datetime
-from typing import TypeAlias, TypedDict
+from typing import TypedDict
 
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
@@ -14,8 +14,7 @@ from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.utils.html import escape
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django_stubs_ext import WithAnnotations
 
 from hc.accounts.models import Credential, Profile, Project
@@ -23,25 +22,24 @@ from hc.accounts.models import Credential, Profile, Project
 Lookups = Iterable[tuple[str, str]]
 
 
-@mark_safe
 def _format_usage(num_checks: int, num_channels: int) -> str:
-    result = ""
+    tmpl = ""
 
     if num_checks == 0:
-        result += "0 checks, "
+        tmpl += "{} checks, "
     elif num_checks == 1:
-        result += "1 check, "
+        tmpl += "{} check, "
     else:
-        result += f"<strong>{num_checks} checks</strong>, "
+        tmpl += "<strong>{} checks</strong>, "
 
     if num_channels == 0:
-        result += "0 channels"
+        tmpl += "{} channels"
     elif num_channels == 1:
-        result += "1 channel"
+        tmpl += "{} channel"
     else:
-        result += f"<strong>{num_channels} channels</strong>"
+        tmpl += "<strong>{} channels</strong>"
 
-    return result
+    return format_html(tmpl, num_checks, num_channels)
 
 
 class NumChecksFilter(admin.SimpleListFilter):
@@ -155,13 +153,11 @@ class ProfileAdmin(ModelAdmin[Profile]):
         qs = qs.annotate(plan=F("user__subscription__plan_name"))
         return qs
 
-    @mark_safe
     def email(self, obj: WithAnnotations[Profile, ProfileAnnotations]) -> str:
-        s = escape(obj.user.email)
         if obj.plan:
-            return f"{s} <span>{obj.plan}</span>"
+            return format_html("{} <span>{}</span>", obj.user.email, obj.plan)
 
-        return s
+        return obj.user.email
 
     @admin.display(ordering="user__date_joined")
     def date_joined(self, obj: Profile) -> datetime:
@@ -185,16 +181,14 @@ class ProfileAdmin(ModelAdmin[Profile]):
             return obj.deletion_scheduled_date.date()
         return None
 
-    @mark_safe
     def projects(self, obj: Profile) -> str:
         return render_to_string("admin/profile_list_projects.html", {"profile": obj})
 
-    @mark_safe
     def checks(self, obj: WithAnnotations[Profile, ProfileAnnotations]) -> str:
-        s = f"{obj.num_checks} of {obj.check_limit}"
+        tmpl = "{} of {}"
         if obj.num_checks > 1:
-            s = "<b>%s</b>" % s
-        return s
+            tmpl = "<b>%s</b>" % tmpl
+        return format_html(tmpl, obj.num_checks, obj.check_limit)
 
     def invited(self, obj: WithAnnotations[Profile, ProfileAnnotations]) -> str:
         return f"{obj.num_members} of {obj.team_limit}"
@@ -269,10 +263,9 @@ class ProjectAdmin(ModelAdmin[Project]):
 
         return f"Default Project for {obj.owner.email}"
 
-    @mark_safe
     def users(self, obj: WithAnnotations[Project, ProjectAnnotations]) -> str:
         if obj.num_members == 0:
-            return escape(obj.owner.email)
+            return obj.owner.email
         else:
             return render_to_string("admin/project_list_team.html", {"project": obj})
 
@@ -282,10 +275,9 @@ class ProjectAdmin(ModelAdmin[Project]):
     def usage(self, obj: WithAnnotations[Project, ProjectAnnotations]) -> str:
         return _format_usage(obj.num_checks, obj.num_channels)
 
-    @mark_safe
     def switch(self, obj: Project) -> str:
         url = reverse("hc-checks", args=[obj.code])
-        return f"<a href='{url}'>Show Checks</a>"
+        return format_html("<a href='{}'>Show Checks</a>", url)
 
 
 class UserAnnotations(TypedDict):
@@ -327,7 +319,6 @@ class HcUserAdmin(UserAdmin):
         )
         return user.last_active_date
 
-    @mark_safe
     def usage(self, user: WithAnnotations[User, UserAnnotations]) -> str:
         return _format_usage(user.num_checks, user.num_channels)
 
