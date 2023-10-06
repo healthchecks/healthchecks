@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from datetime import date
 from datetime import timedelta as td
+from typing import TypedDict
+from uuid import UUID
 
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
@@ -163,6 +165,12 @@ class LastNotifyDurationFilter(admin.SimpleListFilter):
         return qs
 
 
+class ChannelAnnotations(TypedDict):
+    project_code: UUID
+    project_name: str
+    owner_email: str
+
+
 @admin.register(Channel)
 class ChannelsAdmin(ModelAdmin[Channel]):
     class Media:
@@ -187,7 +195,7 @@ class ChannelsAdmin(ModelAdmin[Channel]):
     def created_(self, obj: Channel) -> date:
         return obj.created.date()
 
-    def project_(self, obj: WithAnnotations[Channel]) -> str:
+    def project_(self, obj: WithAnnotations[Channel, ChannelAnnotations]) -> str:
         tmpl = """{} &rsaquo; <a href="{}">{}</a>"""
         url = self.view_on_site(obj)
         name = obj.project_name or "Default"
@@ -205,7 +213,7 @@ class ChannelsAdmin(ModelAdmin[Channel]):
         qs = qs.annotate(owner_email=F("project__owner__email"))
         return qs
 
-    def view_on_site(self, obj: WithAnnotations[Channel]) -> str:
+    def view_on_site(self, obj: WithAnnotations[Channel, ChannelAnnotations]) -> str:
         return reverse("hc-channels", args=[obj.project_code])
 
     def transport(self, obj: Channel) -> str:
