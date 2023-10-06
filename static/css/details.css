@@ -60,20 +60,20 @@
     color: #999;
 }
 
-#details-integrations th {
+.details-integrations th {
     width: 50px;
     text-align: center;
 }
 
-#details-integrations .label {
+.details-integrations .label {
     background: #777777;
 }
 
-#details-integrations .on .label {
+.details-integrations .on .label {
     background: #22bc66;
 }
 
-#details-integrations.rw tr:hover th, #details-integrations.rw tr:hover td {
+.details-integrations.rw tr:hover th, .details-integrations.rw tr:hover td {
     cursor: pointer;
     background-color: var(--table-bg-hover);
 }

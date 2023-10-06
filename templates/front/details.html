@@ -207,9 +207,27 @@
         </div>
 
         <div class="details-block">
+            {% if group_channels %}
+            <h2>Notification Groups</h2>
+            <table class="details-integrations table {% if rw %}rw{% endif %}">
+                {% for channel in group_channels %}
+                    <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in enabled_channels %}class="on"{% endif %}>
+                        <th>
+                            <span class="label">
+                                {% if channel in enabled_channels %}ON{% else %}OFF{% endif %}
+                            </span>
+                        </th>
+                        <td>
+                            <span class="ic-{{ channel.kind }}"></span>
+                            {{ channel }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
             <h2>Notification Methods</h2>
             {% if channels %}
-            <table id="details-integrations" class="table {% if rw %}rw{% endif %}">
+            <table class="details-integrations table {% if rw %}rw{% endif %}">
             {% for channel in channels %}
                 <tr data-url="{% url 'hc-switch-channel' check.code channel.code %}" {% if channel in enabled_channels %}class="on"{% endif %}>
                     <th>

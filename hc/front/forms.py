@@ -10,7 +10,10 @@ from urllib.parse import quote, urlencode
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
+from hc.api.models import Channel
 from hc.front.validators import (
     CronExpressionValidator,
     TimezoneValidator,
@@ -333,6 +336,27 @@ class AddGotifyForm(forms.Form):
 
     def get_value(self) -> str:
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
+
+
+class GroupForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        project = kwargs.pop("project")
+        super().__init__(*args, **kwargs)
+
+        self.fields["channels"].choices = (
+            (
+                c.code,
+                format_html('<span class="ic-{}"></span> {}', mark_safe(c.kind), c),
+            )
+            for c in Channel.objects.filter(project=project).exclude(kind="group")
+        )
+
+    error_css_class = "has-error"
+    label = forms.CharField(max_length=100, required=False)
+    channels = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+
+    def get_value(self) -> str:
+        return ",".join(self.cleaned_data["channels"])
 
 
 class NtfyForm(forms.Form):

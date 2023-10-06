@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, QuerySet
+from django.db.models import Case, Count, F, QuerySet, When
 from django.http import (
     Http404,
     HttpRequest,
@@ -900,7 +900,12 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         check.project.show_slugs = request.GET["urls"] == "slug"
         check.project.save()
 
-    channels = list(check.project.channel_set.order_by("created"))
+    all_channels = check.project.channel_set.order_by("created")
+    regular_channels = []
+    group_channels = []
+    for channel in all_channels:
+        channels = group_channels if channel.kind == "group" else regular_channels
+        channels.append(channel)
 
     all_tags = set()
     q = Check.objects.filter(project=check.project).exclude(tags="")
@@ -912,7 +917,8 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "project": check.project,
         "check": check,
         "rw": rw,
-        "channels": channels,
+        "channels": regular_channels,
+        "group_channels": group_channels,
         "enabled_channels": list(check.channel_set.all()),
         "timezones": all_timezones,
         "downtimes": check.downtimes(3, request.profile.tz),
@@ -1096,8 +1102,10 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         return redirect("hc-channels", project.code)
 
     channels = Channel.objects.filter(project=project)
-    channels = channels.order_by("created")
-    channels = channels.annotate(n_checks=Count("checks"))
+    channels = channels.annotate(
+        is_group=Case(When(kind="group", then=0), default=1), n_checks=Count("checks")
+    )
+    channels = channels.order_by("is_group", "created")
 
     ctx = {
         "page": "channels",
@@ -1312,16 +1320,18 @@ def edit_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     channel = _get_rw_channel_for_user(request, code)
     if channel.kind == "email":
         return email_form(request, channel)
-    if channel.kind == "webhook":
+    elif channel.kind == "webhook":
         return webhook_form(request, channel)
-    if channel.kind == "sms":
+    elif channel.kind == "sms":
         return sms_form(request, channel)
-    if channel.kind == "signal":
+    elif channel.kind == "signal":
         return signal_form(request, channel)
-    if channel.kind == "whatsapp":
+    elif channel.kind == "whatsapp":
         return whatsapp_form(request, channel)
-    if channel.kind == "ntfy":
+    elif channel.kind == "ntfy":
         return ntfy_form(request, channel)
+    elif channel.kind == "group":
+        return group_form(request, channel)
 
     return HttpResponseBadRequest()
 
@@ -2456,6 +2466,36 @@ def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_gotify.html", ctx)
+
+
+def group_form(request: HttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
+    if request.method == "POST":
+        form = forms.GroupForm(request.POST, project=channel.project)
+        if form.is_valid():
+            channel.name = form.cleaned_data["label"]
+            channel.value = form.get_value()
+            channel.save()
+
+            if adding:
+                channel.assign_all_checks()
+            return redirect("hc-channels", channel.project.code)
+    elif adding:
+        form = forms.GroupForm(project=channel.project)
+    else:
+        # Filter out unavailable channsl
+        channels = list(channel.group_channels.values_list("code", flat=True))
+        form = forms.GroupForm({"channels": channels}, project=channel.project)
+
+    ctx = {"page": "channels", "project": channel.project, "form": form}
+    return render(request, "integrations/group_form.html", ctx)
+
+
+@login_required
+def add_group(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="group")
+    return group_form(request, channel)
 
 
 def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:

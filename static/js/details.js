@@ -62,7 +62,7 @@ $(function () {
         }, 300);
     });
 
-    $("#details-integrations.rw tr").click(function() {
+    $(".details-integrations.rw tr").click(function() {
         var isOn = $(this).toggleClass("on").hasClass("on");
         $(".label", this).text(isOn ? "ON" : "OFF");
 

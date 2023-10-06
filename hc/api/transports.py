@@ -1214,6 +1214,20 @@ class Gotify(HttpTransport):
         self.post(url, json=payload)
 
 
+class Group(Transport):
+    def notify(self, check: Check, notification: Notification | None = None) -> None:
+        channels = self.channel.group_channels
+        error_count = 0
+        for channel in channels:
+            error = channel.notify(check)
+            if error:
+                error_count += 1
+        if error_count:
+            raise TransportError(
+                f"{error_count} out of {len(channels)} notifications failed"
+            )
+
+
 class Ntfy(HttpTransport):
     def priority(self, check: Check) -> int:
         if check.status == "up":

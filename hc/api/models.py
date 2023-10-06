@@ -45,6 +45,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "discord": ("Discord", transports.Discord),
     "email": ("Email", transports.Email),
     "gotify": ("Gotify", transports.Gotify),
+    "group": ("Group", transports.Group),
     "hipchat": ("HipChat", transports.RemovedTransport),
     "linenotify": ("LINE Notify", transports.LineNotify),
     "matrix": ("Matrix", transports.Matrix),
@@ -793,7 +794,15 @@ class Channel(models.Model):
         return {"id": str(self.code), "name": self.name, "kind": self.kind}
 
     def is_editable(self) -> bool:
-        return self.kind in ("email", "webhook", "sms", "signal", "whatsapp", "ntfy")
+        return self.kind in (
+            "email",
+            "webhook",
+            "sms",
+            "signal",
+            "whatsapp",
+            "ntfy",
+            "group",
+        )
 
     def assign_all_checks(self) -> None:
         checks = Check.objects.filter(project=self.project)
@@ -1042,6 +1051,13 @@ class Channel(models.Model):
 
     gotify_url = json_property("gotify", "url")
     gotify_token = json_property("gotify", "token")
+
+    @property
+    def group_channels(self) -> QuerySet[Channel]:
+        assert self.kind == "group"
+        return Channel.objects.filter(
+            project=self.project, code__in=self.value.split(",")
+        )
 
     ntfy_topic = json_property("ntfy", "topic")
     ntfy_url = json_property("ntfy", "url")
