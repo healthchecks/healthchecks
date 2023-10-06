@@ -18,6 +18,7 @@ version is 3.10.
 - Add monthly uptime percentage display in Check Details page (#773)
 - Increase the precision of calculated downtime duration in check's details and reports
 - Increase bottom margin for modal windows to work around Mobile Safari issue (#899)
+- New integration: notification group (#894)
 
 ### Bug Fixes
 - Fix "senddeletionnotices" to recognize "Supporter" subscriptions
