@@ -249,18 +249,23 @@ img.kind-ntfy {
     filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
 }
 
-input[name="channels"] {
-    display: none;
+#id_channels > div:nth-child(n+2) {
+    border-top: 1px solid var(--border-color);
+}
+
+#id_channels > div > label {
+    margin: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
 }
 
 label[for^="id_channels"] {
     cursor: pointer;
 }
 
-input[name="channels"]:not(:checked) ~ span:before {
-    color: var(--channel-off-inside-color);
-}
-
-input[name="channels"]:not(:checked) ~ span:after {
-    color: var(--channel-off-color);
+#id_channels input {
+    position: relative;
+    top: -1px;
 }
