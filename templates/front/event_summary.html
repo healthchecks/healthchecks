@@ -50,6 +50,11 @@
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
+{% elif event.channel.kind == "group" %}
+    Sent group notification
+    {% if event.channel.name %}
+        to group "{{ event.channel.name }}"
+    {% endif %}
 {% else %}
     Sent alert to {{ event.channel.get_kind_display }}
     {% if event.channel.name %}
