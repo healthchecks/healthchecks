@@ -222,9 +222,9 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     pairs = list(tags_statuses.items())
     pairs.sort(key=lambda pair: pair[0].lower())
 
-    channels = project.channel_set
-    # Sort group first, then in the creation order
-    channels = channels.annotate(is_group=Case(When(kind="group", then=0), default=1))
+    is_group = Case(When(kind="group", then=0), default=1)
+    channels = project.channel_set.annotate(is_group=is_group)
+    # Sort groups first, then in the creation order
     channels = channels.order_by("is_group", "created")
 
     hidden_checks = set()
