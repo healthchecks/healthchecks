@@ -222,7 +222,10 @@ def my_checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     pairs = list(tags_statuses.items())
     pairs.sort(key=lambda pair: pair[0].lower())
 
-    channels = list(project.channel_set.order_by("created"))
+    channels = project.channel_set
+    # Sort group first, then in the creation order
+    channels = channels.annotate(is_group=Case(When(kind="group", then=0), default=1))
+    channels = channels.order_by("is_group", "created")
 
     hidden_checks = set()
     # Hide checks that don't match selected tags:
@@ -1101,10 +1104,9 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         channel.checks.set(new_checks)
         return redirect("hc-channels", project.code)
 
-    channels = Channel.objects.filter(project=project)
-    channels = channels.annotate(
-        is_group=Case(When(kind="group", then=0), default=1), n_checks=Count("checks")
-    )
+    channels = project.channel_set.annotate(n_checks=Count("checks"))
+    # Sort groups first, then in the creation order
+    channels = channels.annotate(is_group=Case(When(kind="group", then=0), default=1))
     channels = channels.order_by("is_group", "created")
 
     ctx = {
