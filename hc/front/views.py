@@ -198,7 +198,7 @@ def _get_referer_qs(request: HttpRequest) -> str:
 
 
 @login_required
-def my_checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     _refresh_last_active_date(request.profile)
     project, rw = _get_project_for_user(request, code)
 
@@ -278,7 +278,7 @@ def my_checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "show_last_duration": show_last_duration,
     }
 
-    return render(request, "front/my_checks.html", ctx)
+    return render(request, "front/checks.html", ctx)
 
 
 @login_required
