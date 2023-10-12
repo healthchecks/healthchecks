@@ -1,0 +1,77 @@
+{% if ch.kind == "email" %}
+    Email to <span>{{ ch.email.value }}</span>
+    {% if ch.email.notify_down and not ch.email.notify_up %}
+        (down only)
+    {% endif %}
+    {% if ch.email.notify_up and not ch.email.notify_down %}
+        (up only)
+    {% endif %}
+{% elif ch.kind == "pd" %}
+    PagerDuty account <span>{{ ch.pd.account }}</span>
+{% elif ch.kind == "po" %}
+    Pushover ({{ ch.po_priority }} priority)
+{% elif ch.kind == "slack" %}
+    Slack
+    {% if ch.slack_team %}
+        team <span>{{ ch.slack_team }}</span>,
+        channel <span>{{ ch.slack_channel }}</span>
+    {% endif %}
+{% elif ch.kind == "telegram" %}
+    Telegram
+    {% if ch.telegram.type == "group" %}
+        group <span>{{ ch.telegram.name }}</span>
+    {% elif ch.telegram.type == "private" %}
+        user <span>{{ ch.telegram.name }}</span>
+    {% elif ch.telegram.type == "channel" %}
+        channel <span>{{ ch.telegram.name }}</span>
+    {% endif %}
+{% elif ch.kind == "sms" %}
+    SMS to <span>{{ ch.phone.value }}</span>
+    {% if ch.phone.notify_down and not ch.phone.notify_up %}
+        (down only)
+    {% endif %}
+    {% if ch.phone.notify_up and not ch.phone.notify_down %}
+        (up only)
+    {% endif %}
+{% elif ch.kind == "call" %}
+    Phone call to <span>{{ ch.phone.value }}</span>
+{% elif ch.kind == "trello" %}
+    Trello
+    board <span>{{ ch.trello_board_list|first }}</span>,
+    list <span>{{ ch.trello_board_list|last }}</span>
+{% elif ch.kind == "matrix" %}
+    Matrix <span>{{ ch.value }}</span>
+{% elif ch.kind == "whatsapp" %}
+    WhatsApp to <span>{{ ch.phone.value }}</span>
+    {% if ch.phone.notify_down and not ch.phone.notify_up %}
+        (down only)
+    {% endif %}
+    {% if ch.phone.notify_up and not ch.phone.notify_down %}
+        (up only)
+    {% endif %}
+{% elif ch.kind == "zulip" %}
+    Zulip
+    {% if ch.zulip_type == "stream" %}
+    stream <span>{{ ch.zulip_to}}</span>
+    {% elif ch.zulip_type == "private" %}
+    user <span>{{ ch.zulip_to}}</span>
+    {% endif %}
+{% elif ch.kind == "signal" %}
+    Signal to <span>{{ ch.phone.value }}</span>
+    {% if ch.phone.notify_down and not ch.phone.notify_up %}
+        (down only)
+    {% endif %}
+    {% if ch.phone.notify_up and not ch.phone.notify_down %}
+        (up only)
+    {% endif %}
+{% elif ch.kind == "ntfy" %}
+    ntfy topic <span>{{ ch.ntfy_topic }}</span>,
+    {{ ch.ntfy_priority_display }} priority
+{% elif ch.kind == "group" %}
+    Group,
+    {% with ch.group_channels|length as num_members %}
+    {{ num_members }} member{{ num_members|pluralize}}
+    {% endwith %}
+{% else %}
+    {{ ch.get_kind_display }}
+{% endif %}

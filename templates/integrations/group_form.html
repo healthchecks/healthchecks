@@ -40,18 +40,40 @@
             </div>
             <div class="form-group {{ form.channels.css_classes }}">
                 <label for="channels" class="col-sm-2 control-label">Integrations</label>
-                <div class="col-sm-6">
-                    {{ form.channels }}
+                <div id="channel-choices" class="col-sm-6">
+                    {% for code, ch in form.channels.field.choices %}
+                    <label class="checkbox-container">
+                        <input
+                            type="checkbox"
+                            name="channels"
+                            value="{{ code }}"
+                            {% if code in form.channels.value %}checked{% endif %}>
+                        <span class="checkmark"></span>
 
+                        <img src="{% static ch.icon_path %}" alt="{{ ch.get_kind_display }}" class="kind-{{ ch.kind }}" />
+                        <div class="name-desc">
+                            {% if ch.name %}
+                            {{ ch.name }}
+                            {% else %}
+                            <div class="unnamed">unnamed</div>
+                            {% endif %}
+                            <div class="channel-details-mini">
+                            {% include "front/channel_description.html" with ch=ch %}
+                            </div>
+                        </div>
+                    </label>
+                    {% endfor %}
                     {% if form.channels.errors %}
-                    <div class="help-block">{{ form.channels.errors|join:"" }}</div>
+                    <div class="help-block">
+                        {{ form.channels.errors|join:"" }}
+                    </div>
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-primary">Save Integration</button>
+                    <button type="submit" class="btn btn-primary">Save Group</button>
                 </div>
             </div>
         </form>

@@ -1,0 +1,27 @@
+#channel-choices label {
+    display: block;
+    padding: 12px 12px 12px 32px;
+    margin: 0;
+    font-weight: normal;
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+#channel-choices label:nth-child(n + 2) {
+    border-top: 1px solid var(--border-color);
+}
+
+#channel-choices .checkmark {
+    top: 20px;
+}
+
+#channel-choices img {
+    max-height: 40px;
+}
+
+#channel-choices .channel-details-mini {
+    font-size: 11.7px;
+    color: #888;
+}
