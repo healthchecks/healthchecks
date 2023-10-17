@@ -1961,7 +1961,7 @@ def telegram_bot(request: HttpRequest) -> HttpResponse:
     )
 
     try:
-        Telegram.send(recipient["id"], recipient["thread_id"], invite)
+        Telegram.send(chat.id, doc.message.message_thread_id, invite)
     except TransportError:
         # Swallow the error and return HTTP 200 OK, otherwise Telegram will
         # hit the webhook again and again.
