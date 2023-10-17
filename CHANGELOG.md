@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.1 - Unreleased
+
+### Bug Fixes
+- Fix sending test notification to a group integration
+
 ## v3.0 - 2023-10-16
 
 This release drops support of Python 3.9 and below. The minimum required Python

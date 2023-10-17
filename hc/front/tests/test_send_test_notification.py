@@ -26,7 +26,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Test notification sent!")
 
-        # And email should have been sent
+        # An email should have been sent
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
@@ -172,3 +172,23 @@ class SendTestNotificationTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         body = json.loads(payload)
         self.assertEqual(body["name"], "TEST")
+
+    def test_it_handles_group_channel(self) -> None:
+        channel_email = Channel(project=self.project)
+        channel_email.kind = "email"
+        channel_email.value = "alice@example.org"
+        channel_email.email_verified = True
+        channel_email.save()
+
+        self.channel.kind = "group"
+        self.channel.value = f"{channel_email.code}"
+        self.channel.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url, {})
+
+        # An email should have been sent
+        self.assertEqual(len(mail.outbox), 1)
+
+        # It should create two notifications
+        self.assertEqual(Notification.objects.count(), 2)

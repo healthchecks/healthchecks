@@ -1217,9 +1217,14 @@ class Gotify(HttpTransport):
 class Group(Transport):
     def notify(self, check: Check, notification: Notification | None = None) -> None:
         channels = self.channel.group_channels
+        # If notification's owner field is None then this is a test notification,
+        # and we should pass is_test=True to channel.notify() calls
+        is_test = False
+        if notification and notification.owner is None:
+            is_test = True
         error_count = 0
         for channel in channels:
-            error = channel.notify(check)
+            error = channel.notify(check, is_test=is_test)
             if error and error != "no-op":
                 error_count += 1
         if error_count:
