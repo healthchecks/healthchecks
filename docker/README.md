@@ -39,6 +39,10 @@ variables in `docker/.env`. For example, to disable HTTP request logging, set:
 
     UWSGI_DISABLE_LOGGING=1
 
+To adjust the number of uWSGI processes (for example, to save memory), set:
+
+    UWSGI_PROCESSES=2
+
 Read more about configuring uWSGI in [uWSGI documentation](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables).
 
 ## TLS Termination
