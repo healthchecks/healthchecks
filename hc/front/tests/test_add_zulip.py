@@ -37,11 +37,12 @@ class AddZulipTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "zulip")
-        self.assertEqual(c.zulip_bot_email, "foo@example.org")
-        self.assertEqual(c.zulip_api_key, "fake-key")
-        self.assertEqual(c.zulip_type, "stream")
-        self.assertEqual(c.zulip_to, "general")
-        self.assertEqual(c.zulip_topic, "foo")
+        self.assertEqual(c.zulip.bot_email, "foo@example.org")
+        self.assertEqual(c.zulip.api_key, "fake-key")
+        self.assertEqual(c.zulip.mtype, "stream")
+        self.assertEqual(c.zulip.to, "general")
+        self.assertEqual(c.zulip.site, "https://example.org")
+        self.assertEqual(c.zulip.topic, "foo")
 
     def test_it_rejects_bad_email(self) -> None:
         payload = _get_payload(bot_email="not@an@email")

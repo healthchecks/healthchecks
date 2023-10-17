@@ -985,15 +985,15 @@ class Zulip(HttpTransport):
         if not settings.ZULIP_ENABLED:
             raise TransportError("Zulip notifications are not enabled.")
 
-        topic = self.channel.zulip_topic
+        topic = self.channel.zulip.topic
         if not topic:
             topic = tmpl("zulip_topic.html", check=check)
 
-        url = self.channel.zulip_site + "/api/v1/messages"
-        auth = (self.channel.zulip_bot_email, self.channel.zulip_api_key)
+        url = self.channel.zulip.site + "/api/v1/messages"
+        auth = (self.channel.zulip.bot_email, self.channel.zulip.api_key)
         data = {
-            "type": self.channel.zulip_type,
-            "to": self.channel.zulip_to,
+            "type": self.channel.zulip.mtype,
+            "to": self.channel.zulip.to,
             "topic": topic,
             "content": tmpl("zulip_content.html", check=check),
         }

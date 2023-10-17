@@ -51,10 +51,10 @@
     {% endif %}
 {% elif ch.kind == "zulip" %}
     Zulip
-    {% if ch.zulip_type == "stream" %}
-    stream <span>{{ ch.zulip_to}}</span>
-    {% elif ch.zulip_type == "private" %}
-    user <span>{{ ch.zulip_to}}</span>
+    {% if ch.zulip.mtype == "stream" %}
+    stream <span>{{ ch.zulip.to}}</span>
+    {% elif ch.zulip.mtype == "private" %}
+    user <span>{{ ch.zulip.to}}</span>
     {% endif %}
 {% elif ch.kind == "signal" %}
     Signal to <span>{{ ch.phone.value }}</span>

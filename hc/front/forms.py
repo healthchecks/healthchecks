@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
+from typing import Any
 from urllib.parse import quote, urlencode
 
 from django import forms
@@ -336,10 +337,11 @@ class AddGotifyForm(forms.Form):
 
 
 class GroupForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         project = kwargs.pop("project")
         super().__init__(*args, **kwargs)
 
+        assert isinstance(self.fields["channels"], forms.MultipleChoiceField)
         self.fields["channels"].choices = (
             (c.code, c) for c in project.channel_set.exclude(kind="group")
         )

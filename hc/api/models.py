@@ -757,6 +757,22 @@ class OpsgenieConf(BaseModel):
     region: str
 
 
+class ZulipConf(BaseModel):
+    bot_email: str
+    api_key: str
+    mtype: str
+    to: str
+    site: str = ""
+    topic: str = ""
+
+    def model_post_init(self, context):
+        if self.site == "":
+            # Fallback if we don't have the site value:
+            # derive it from bot's email
+            _, domain = self.bot_email.split("@")
+            self.site = f"https://{domain}"
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -775,18 +791,18 @@ class Channel(models.Model):
         if self.name:
             return self.name
         if self.kind == "email":
-            return "Email to %s" % self.email.value
+            return f"Email to {self.email.value}"
         elif self.kind == "sms":
-            return "SMS to %s" % self.phone.value
+            return f"SMS to {self.phone.value}"
         elif self.kind == "slack":
-            return "Slack %s" % self.slack_channel
+            return f"Slack {self.slack_channel}"
         elif self.kind == "telegram":
-            return "Telegram %s" % self.telegram.name
+            return f"Telegram {self.telegram.name}"
         elif self.kind == "zulip":
-            if self.zulip_type == "stream":
-                return "Zulip stream %s" % self.zulip_to
-            if self.zulip_type == "private":
-                return "Zulip user %s" % self.zulip_to
+            if self.zulip.mtype == "stream":
+                return f"Zulip stream {self.zulip.to}"
+            if self.zulip.mtype == "private":
+                return f"Zulip user {self.zulip.to}"
 
         return self.get_kind_display()
 
@@ -1022,27 +1038,9 @@ class Channel(models.Model):
     def opsgenie(self) -> OpsgenieConf:
         return OpsgenieConf.model_validate_json(self.value)
 
-    zulip_bot_email = json_property("zulip", "bot_email")
-    zulip_api_key = json_property("zulip", "api_key")
-    zulip_type = json_property("zulip", "mtype")
-    zulip_to = json_property("zulip", "to")
-
     @property
-    def zulip_site(self) -> str:
-        assert self.kind == "zulip"
-        doc = json.loads(self.value)
-        if "site" in doc:
-            return doc["site"]
-
-        # Fallback if we don't have the site value:
-        # derive it from bot's email
-        _, domain = doc["bot_email"].split("@")
-        return "https://" + domain
-
-    @property
-    def zulip_topic(self) -> str:
-        assert self.kind == "zulip"
-        return self.json.get("topic", "")
+    def zulip(self) -> ZulipConf:
+        return ZulipConf.model_validate_json(self.value)
 
     @property
     def linenotify_token(self) -> str:
