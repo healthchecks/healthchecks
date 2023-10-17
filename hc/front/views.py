@@ -12,7 +12,7 @@ from datetime import datetime
 from datetime import timedelta as td
 from email.message import EmailMessage
 from secrets import token_urlsafe
-from typing import TypedDict, cast
+from typing import Literal, TypedDict, cast
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -39,6 +39,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from pydantic import BaseModel, ValidationError
 
 from hc.accounts.models import Member, Profile, Project
 from hc.api.models import (
@@ -54,14 +55,13 @@ from hc.api.models import (
 from hc.api.transports import Signal, Telegram, TransportError
 from hc.front import forms
 from hc.front.decorators import require_setting
-from hc.front.schemas import telegram_callback
 from hc.front.templatetags.hc_extras import (
     down_title,
     num_down_title,
     site_hostname,
     sortchecks,
 )
-from hc.lib import curl, jsonschema
+from hc.lib import curl
 from hc.lib.badges import get_badge_url
 from hc.lib.typealias import AuthenticatedHttpRequest
 from hc.lib.tz import all_timezones
@@ -1905,34 +1905,54 @@ def add_zulip(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "integrations/add_zulip.html", ctx)
 
 
+class TelegramChat(BaseModel):
+    id: int
+    type: Literal["group", "private", "supergroup", "channel"]
+    title: str | None = None
+    username: str | None = None
+
+
+class TelegramMessage(BaseModel):
+    chat: TelegramChat
+    text: str
+    message_thread_id: int | None = None
+
+
+class TelegramCallback(BaseModel):
+    message: TelegramMessage
+
+    @classmethod
+    def load(self, data: bytes) -> TelegramCallback:
+        doc = json.loads(data.decode())
+        if "channel_post" in doc:
+            # Telegram's "channel_post" key uses the same structure as "message".
+            # To keep the validation and view logic simple, if the payload
+            # contains "channel_post", copy it to "message", and proceed as usual.
+            doc["message"] = doc["channel_post"]
+        return TelegramCallback.model_validate(doc, strict=True)
+
+
 @csrf_exempt
 @require_POST
 def telegram_bot(request: HttpRequest) -> HttpResponse:
     try:
-        doc = json.loads(request.body.decode())
-        if "channel_post" in doc:
-            # Telegram's "channel_post" key uses the same structure as "message".
-            # To keep the JSON schema and the view logic simple, if the payload
-            # contains "channel_post", copy it to "message", and proceed as usual.
-            doc["message"] = doc["channel_post"]
-
-        jsonschema.validate(doc, telegram_callback)
-    except ValueError:
-        return HttpResponseBadRequest()
-    except jsonschema.ValidationError:
+        doc = TelegramCallback.load(request.body)
+    except ValidationError:
         # We don't recognize the message format, but don't want Telegram
         # retrying this over and over again, so respond with 200 OK
         return HttpResponse()
+    except ValueError:
+        return HttpResponseBadRequest()
 
-    if "/start" not in doc["message"]["text"]:
+    if "/start" not in doc.message.text:
         return HttpResponse()
 
-    chat = doc["message"]["chat"]
+    chat = doc.message.chat
     recipient = {
-        "id": chat["id"],
-        "type": chat["type"],
-        "name": chat.get("title") or chat.get("username"),
-        "thread_id": doc["message"].get("message_thread_id"),
+        "id": chat.id,
+        "type": chat.type,
+        "name": chat.title or chat.username,
+        "thread_id": doc.message.message_thread_id,
     }
 
     invite = render_to_string(
