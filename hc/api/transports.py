@@ -80,7 +80,7 @@ class Transport(object):
     def __init__(self, channel: Channel):
         self.channel = channel
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         """Send notification about current status of the check.
 
         This method raises TransportError on error, and returns None
@@ -136,7 +136,7 @@ class RemovedTransport(Transport):
 
 
 class Email(Transport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not self.channel.email_verified:
             raise TransportError("Email not verified")
 
@@ -145,10 +145,8 @@ class Email(Transport):
         headers = {
             "List-Unsubscribe": "<%s>" % unsub_link,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            "X-Bounce-ID": sign_bounce_id("n.%s" % notification.code),
         }
-
-        if notification:
-            headers["X-Bounce-ID"] = sign_bounce_id("n.%s" % notification.code)
 
         from hc.accounts.models import Profile
 
@@ -205,7 +203,7 @@ class Shell(Transport):
 
         return False
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.SHELL_ENABLED:
             raise TransportError("Shell commands are not enabled")
 
@@ -316,7 +314,7 @@ class Webhook(HttpTransport):
 
         return False
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.WEBHOOKS_ENABLED:
             raise TransportError("Webhook notifications are not enabled.")
 
@@ -335,10 +333,11 @@ class Webhook(HttpTransport):
             body = self.prepare(body, check, allow_ping_body=True)
             body_bytes = body.encode()
 
-        # When sending a test notification, don't retry on failures.
         use_retries = True
-        if notification and notification.owner is None:
-            use_retries = False  # this is a test notification
+        if notification.owner is None:
+            # This is a test notification.
+            # When sending a test notification, don't retry on failures.
+            use_retries = False
 
         if spec.method == "GET":
             self.get(url, use_retries=use_retries, headers=headers)
@@ -411,7 +410,7 @@ class Slackalike(HttpTransport):
 
         return result
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         self.post(self.channel.slack_webhook_url, json=self.payload(check))
 
 
@@ -424,7 +423,7 @@ class Slack(Slackalike):
         permanent = response.status_code == 404
         raise TransportError(message, permanent=permanent)
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
 
@@ -432,7 +431,7 @@ class Slack(Slackalike):
 
 
 class Mattermost(Slackalike):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
 
@@ -440,7 +439,7 @@ class Mattermost(Slackalike):
 
 
 class Discord(Slackalike):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         url = self.channel.discord_webhook_url + "/slack"
         self.post(url, json=self.payload(check))
 
@@ -460,7 +459,7 @@ class Opsgenie(HttpTransport):
 
         raise TransportError(message)
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.OPSGENIE_ENABLED:
             raise TransportError("Opsgenie notifications are not enabled.")
 
@@ -490,7 +489,7 @@ class Opsgenie(HttpTransport):
 class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.PD_ENABLED:
             raise TransportError("PagerDuty notifications are not enabled.")
 
@@ -524,7 +523,7 @@ class PagerDuty(HttpTransport):
 
 
 class PagerTree(HttpTransport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.PAGERTREE_ENABLED:
             raise TransportError("PagerTree notifications are not enabled.")
 
@@ -544,7 +543,7 @@ class PagerTree(HttpTransport):
 
 
 class Pushbullet(HttpTransport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         text = tmpl("pushbullet_message.html", check=check)
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
@@ -569,7 +568,7 @@ class Pushover(HttpTransport):
 
         return int(prio) == -3
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         pieces = self.channel.value.split("|")
         user_key, down_prio = pieces[0], pieces[1]
 
@@ -657,14 +656,14 @@ class RocketChat(HttpTransport):
 
         return result
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.ROCKETCHAT_ENABLED:
             raise TransportError("Rocket.Chat notifications are not enabled.")
         self.post(self.channel.value, json=self.payload(check))
 
 
 class VictorOps(HttpTransport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.VICTOROPS_ENABLED:
             raise TransportError("Splunk On-Call notifications are not enabled.")
 
@@ -691,7 +690,7 @@ class Matrix(HttpTransport):
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
         return url
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         plain = tmpl("matrix_description.html", check=check)
         formatted = tmpl("matrix_description_formatted.html", check=check)
         payload = {
@@ -755,7 +754,7 @@ class Telegram(HttpTransport):
         }
         cls.post(cls.SM, json=payload)
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_telegram(self.channel.telegram.id):
@@ -789,7 +788,7 @@ class Sms(HttpTransport):
         else:
             return not self.channel.phone.notify_up
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("SMS")
@@ -802,6 +801,7 @@ class Sms(HttpTransport):
         data = {
             "To": self.channel.phone.value,
             "Body": text,
+            "StatusCallback": notification.status_url(),
         }
 
         if settings.TWILIO_MESSAGING_SERVICE_SID:
@@ -809,9 +809,6 @@ class Sms(HttpTransport):
         else:
             assert settings.TWILIO_FROM
             data["From"] = settings.TWILIO_FROM
-
-        if notification:
-            data["StatusCallback"] = notification.status_url()
 
         self.post(url, data=data, auth=auth)
 
@@ -822,7 +819,7 @@ class Call(HttpTransport):
     def is_noop(self, check: Check) -> bool:
         return check.status != "down"
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_call():
             profile.send_call_limit_notice()
@@ -836,10 +833,8 @@ class Call(HttpTransport):
             "From": settings.TWILIO_FROM,
             "To": self.channel.phone.value,
             "Twiml": twiml,
+            "StatusCallback": notification.status_url(),
         }
-
-        if notification:
-            data["StatusCallback"] = notification.status_url()
 
         self.post(url, data=data, auth=auth)
 
@@ -853,7 +848,7 @@ class WhatsApp(HttpTransport):
         else:
             return not self.channel.phone.notify_up
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("WhatsApp")
@@ -866,15 +861,13 @@ class WhatsApp(HttpTransport):
         data = {
             "To": f"whatsapp:{self.channel.phone.value}",
             "Body": text,
+            "StatusCallback": notification.status_url(),
         }
 
         if settings.TWILIO_MESSAGING_SERVICE_SID:
             data["MessagingServiceSid"] = settings.TWILIO_MESSAGING_SERVICE_SID
         else:
             data["From"] = f"whatsapp:{settings.TWILIO_FROM}"
-
-        if notification:
-            data["StatusCallback"] = notification.status_url()
 
         self.post(url, data=data, auth=auth)
 
@@ -885,7 +878,7 @@ class Trello(HttpTransport):
     def is_noop(self, check: Check) -> bool:
         return check.status != "down"
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         params = {
             "idList": self.channel.trello_list_id,
             "name": tmpl("trello_name.html", check=check),
@@ -898,7 +891,7 @@ class Trello(HttpTransport):
 
 
 class Apprise(HttpTransport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.APPRISE_ENABLED:
             # Not supported and/or enabled
             raise TransportError("Apprise is disabled and/or not installed")
@@ -966,7 +959,7 @@ class MsTeams(HttpTransport):
 
         return result
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.MSTEAMS_ENABLED:
             raise TransportError("MS Teams notifications are not enabled.")
 
@@ -988,7 +981,7 @@ class Zulip(HttpTransport):
 
         raise TransportError(message)
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.ZULIP_ENABLED:
             raise TransportError("Zulip notifications are not enabled.")
 
@@ -1009,7 +1002,7 @@ class Zulip(HttpTransport):
 
 
 class Spike(HttpTransport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.SPIKE_ENABLED:
             raise TransportError("Spike notifications are not enabled.")
 
@@ -1028,7 +1021,7 @@ class Spike(HttpTransport):
 class LineNotify(HttpTransport):
     URL = "https://notify-api.line.me/api/notify"
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Bearer %s" % self.channel.linenotify_token,
@@ -1173,7 +1166,7 @@ class Signal(Transport):
                 # And then report it the same as other errors
                 raise TransportError(msg)
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         if not settings.SIGNAL_CLI_SOCKET:
             raise TransportError("Signal notifications are not enabled")
 
@@ -1198,7 +1191,7 @@ class Signal(Transport):
 
 
 class Gotify(HttpTransport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         url = urljoin(self.channel.gotify_url, "/message")
         url += "?" + urlencode({"token": self.channel.gotify_token})
 
@@ -1215,13 +1208,11 @@ class Gotify(HttpTransport):
 
 
 class Group(Transport):
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         channels = self.channel.group_channels
         # If notification's owner field is None then this is a test notification,
         # and we should pass is_test=True to channel.notify() calls
-        is_test = False
-        if notification and notification.owner is None:
-            is_test = True
+        is_test = notification.owner is None
         error_count = 0
         for channel in channels:
             error = channel.notify(check, is_test=is_test)
@@ -1245,7 +1236,7 @@ class Ntfy(HttpTransport):
     def is_noop(self, check: Check) -> bool:
         return self.priority(check) == 0
 
-    def notify(self, check: Check, notification: Notification | None = None) -> None:
+    def notify(self, check: Check, notification: Notification) -> None:
         ctx = {
             "check": check,
             "ping": self.last_ping(check),
