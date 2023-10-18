@@ -50,6 +50,20 @@ variables in <code>docker/.env</code>. For example, to disable HTTP request logg
 </code></pre></div>
 
 <p>Read more about configuring uWSGI in <a href="https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables">uWSGI documentation</a>.</p>
+<h2>SMTP Listener Configuration via <code>SMTPD_PORT</code></h2>
+<p>Healthchecks comes with a <code>smtpd</code> management command, which runs a SMTP listener
+service. With the command running, you can ping your checks by sending email messages
+to <code>your-uuid-here@your-hc-domain.com</code> email addresses.</p>
+<p>The container is configured to start the SMTP listener conditionally, based
+on the value of the <code>SMTPD_PORT</code> environment value:</p>
+<ul>
+<li>If <code>SMTPD_PORT</code> environment variable is not set, the SMTP listener will not run.</li>
+<li>If <code>SMTPD_PORT</code> is set, the listener will run and listen on the specified port.
+  You may also need to edit <code>docker-compose.yml</code> to expose the listening port
+  (see the "ports" section under the "web" service in <code>docker-compose.yml</code>).</li>
+</ul>
+<p>The conditional logic lives in uWSGI configuration file,
+<a href="https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini">uwsgi.ini</a>.</p>
 <h2>TLS Termination</h2>
 <p>If you plan to expose your Healthchecks instance to the public internet, make sure you
 put a TLS-terminating reverse proxy in front of it.</p>
