@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.urls import reverse
@@ -12,7 +14,7 @@ SETWEBHOOK_TMPL = "https://api.telegram.org/bot%s/setWebhook"
 class Command(BaseCommand):
     help = "Set up telegram bot's webhook address"
 
-    def handle(self, *args, **options):
+    def handle(self, **options: Any) -> str:
         if settings.TELEGRAM_TOKEN is None:
             return "Abort: settings.TELEGRAM_TOKEN is not set"
 

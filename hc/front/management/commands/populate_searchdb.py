@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -12,7 +13,7 @@ from hc.lib.html import html2text
 class Command(BaseCommand):
     help = "Renders Markdown to HTML"
 
-    def handle(self, *args, **options):
+    def handle(self, **options: Any) -> None:
         con = sqlite3.connect(settings.BASE_DIR / "search.db")
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS docs")

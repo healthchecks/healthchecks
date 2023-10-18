@@ -2,29 +2,25 @@ from __future__ import annotations
 
 import signal
 import time
+from argparse import ArgumentParser
+from types import FrameType
+from typing import Any
 
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import now
 
 from hc.accounts.models import NO_NAG, Profile
-from hc.api.models import Check
-
-
-def num_pinged_checks(profile):
-    q = Check.objects.filter(user_id=profile.user.id)
-    q = q.filter(last_ping__isnull=False)
-    return q.count()
 
 
 class Command(BaseCommand):
     help = "Send due monthly reports and nags"
     tmpl = "Sent monthly report to %s"
 
-    def pause(self):
+    def pause(self) -> None:
         time.sleep(3)
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument(
             "--loop",
             action="store_true",
@@ -94,12 +90,12 @@ class Command(BaseCommand):
 
         return True
 
-    def on_signal(self, signum, frame):
+    def on_signal(self, signum: int, frame: FrameType | None) -> None:
         desc = signal.strsignal(signum)
         self.stdout.write(f"{desc}, finishing...\n")
         self.shutdown = True
 
-    def handle(self, loop=False, *args, **options):
+    def handle(self, loop: bool, **options: Any) -> str:
         self.shutdown = False
         signal.signal(signal.SIGTERM, self.on_signal)
         signal.signal(signal.SIGINT, self.on_signal)

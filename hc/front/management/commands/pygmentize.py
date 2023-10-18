@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 from django.core.management.base import BaseCommand
 
+if TYPE_CHECKING:
+    from pygments import lexers
 
-def _process(name, lexer):
+
+def _process(name: str, lexer: lexers.Lexer) -> None:
     from pygments import highlight
     from pygments.formatters import HtmlFormatter
 
@@ -19,8 +24,7 @@ def _process(name, lexer):
 class Command(BaseCommand):
     help = "Compiles snippets with Pygments"
 
-    def handle(self, *args, **options):
-
+    def handle(self, **options: Any) -> None:
         try:
             from pygments import lexers
         except ImportError:

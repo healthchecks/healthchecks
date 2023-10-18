@@ -1113,7 +1113,7 @@ class Signal(Transport):
             raise TransportError(f"signal-cli call failed ({code})")
 
     @classmethod
-    def _read_replies(self, payload_bytes: bytes) -> Iterator[bytes]:
+    def _read_replies(cls, payload_bytes: bytes) -> Iterator[bytes]:
         """Send a request to signal-cli over UNIX socket. Read and yield replies.
 
         This method:

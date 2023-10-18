@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from importlib.util import find_spec
+from pathlib import Path
+from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -9,7 +11,7 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
     help = "Renders Markdown to HTML"
 
-    def handle(self, *args, **options):
+    def handle(self, **options: Any) -> None:
         for pkg in ("markdown", "pygments"):
             if find_spec(pkg) is None:
                 self.stdout.write(f"This command requires the {pkg} package.")
@@ -30,7 +32,7 @@ class Command(BaseCommand):
             "codehilite": {"css_class": "highlight", "startinline": True}
         }
 
-        def process_directory(path):
+        def process_directory(path: Path) -> None:
             for src_path in path.glob("*.md"):
                 print(f"Rendering {src_path.name}")
 

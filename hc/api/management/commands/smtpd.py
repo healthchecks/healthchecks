@@ -4,8 +4,13 @@ import email
 import email.policy
 import re
 import time
+from argparse import ArgumentParser
+from email.message import EmailMessage
+from io import TextIOBase
+from typing import Any
 
 from aiosmtpd.controller import Controller
+from aiosmtpd.smtp import SMTP, Envelope, Session
 from asgiref.sync import sync_to_async
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -18,7 +23,7 @@ RE_UUID = re.compile(
 )
 
 
-def _match(subject, keywords):
+def _match(subject: str, keywords: str) -> bool:
     for s in keywords.split(","):
         s = s.strip()
         if s and s in subject:
@@ -27,24 +32,26 @@ def _match(subject, keywords):
     return False
 
 
-def _to_text(message, with_subject, with_body):
+def _to_text(message: EmailMessage, with_subject: bool, with_body: bool) -> str:
     chunks = []
     if with_subject:
         chunks.append(message.get("subject", ""))
     if with_body:
         plain_mime_part = message.get_body(("plain",))
         if plain_mime_part:
+            assert isinstance(plain_mime_part, EmailMessage)
             chunks.append(plain_mime_part.get_content())
 
         html_mime_part = message.get_body(("html",))
         if html_mime_part:
+            assert isinstance(html_mime_part, EmailMessage)
             html = html_mime_part.get_content()
             chunks.append(html2text(html))
 
     return "\n".join(chunks)
 
 
-def _process_message(remote_addr, mailfrom, mailto, data):
+def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) -> str:
     to_parts = mailto.split("@")
     code = to_parts[0]
 
@@ -66,6 +73,7 @@ def _process_message(remote_addr, mailfrom, mailto, data):
         data_str = data.decode(errors="replace")
         # Specify policy, the default policy does not decode encoded headers:
         message = email.message_from_string(data_str, policy=email.policy.SMTP)
+        assert isinstance(message, EmailMessage)
         text = _to_text(message, check.filter_subject, check.filter_body)
 
         action = "ign"
@@ -83,11 +91,14 @@ def _process_message(remote_addr, mailfrom, mailto, data):
 
 
 class PingHandler:
-    def __init__(self, stdout):
+    def __init__(self, stdout: TextIOBase) -> None:
         self.stdout = stdout
         self.process_message = sync_to_async(_process_message)
 
-    async def handle_DATA(self, server, session, envelope):
+    async def handle_DATA(
+        self, server: SMTP, session: Session, envelope: Envelope
+    ) -> str:
+        assert session.peer
         remote_addr = session.peer[0]
         mailfrom = envelope.mail_from
         data = envelope.content
@@ -101,7 +112,7 @@ class PingHandler:
 class Command(BaseCommand):
     help = "Listen for ping emails"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument(
             "--host", help="ip address to listen on, default 0.0.0.0", default="0.0.0.0"
         )
@@ -109,7 +120,7 @@ class Command(BaseCommand):
             "--port", help="port to listen on, default 25", type=int, default=25
         )
 
-    def handle(self, host, port, *args, **options):
+    def handle(self, host: str, port: int, **options: Any) -> None:
         handler = PingHandler(self.stdout)
         controller = Controller(handler, hostname=host, port=port)
         print(f"Starting SMTP listener on {host}:{port} ...")
