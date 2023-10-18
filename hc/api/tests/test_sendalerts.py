@@ -48,7 +48,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(check.status, "down")
         self.assertEqual(check.alert_after, None)
 
-    @patch("hc.api.management.commands.sendalerts.notify_on_thread")
+    @patch("hc.api.management.commands.sendalerts.notify")
     def test_it_processes_flip(self, mock_notify: Mock) -> None:
         check = Check(project=self.project, status="up")
         check.last_ping = now()
@@ -69,10 +69,10 @@ class SendAlertsTestCase(BaseTestCase):
         flip.refresh_from_db()
         self.assertTrue(flip.processed)
 
-        # It should call `notify_on_thread`
+        # It should call `notify`
         mock_notify.assert_called_once()
 
-    @patch("hc.api.management.commands.sendalerts.notify_on_thread")
+    @patch("hc.api.management.commands.sendalerts.notify")
     def test_it_updates_alert_after(self, mock_notify: Mock) -> None:
         check = Check(project=self.project, status="up")
         check.last_ping = now() - td(hours=1)
@@ -91,18 +91,6 @@ class SendAlertsTestCase(BaseTestCase):
 
         # a flip should have not been created
         self.assertEqual(Flip.objects.count(), 0)
-
-    @patch("hc.api.management.commands.sendalerts.notify")
-    def test_it_works_synchronously(self, mock_notify: Mock) -> None:
-        check = Check(project=self.project, status="up")
-        check.last_ping = now() - td(days=2)
-        check.alert_after = check.last_ping + td(days=1, hours=1)
-        check.save()
-
-        call_command("sendalerts", loop=False, use_threads=False, stdout=StringIO())
-
-        # It should call `notify` instead of `notify_on_thread`
-        mock_notify.assert_called_once()
 
     def test_it_sets_next_nag_date(self) -> None:
         self.profile.nag_period = td(hours=1)

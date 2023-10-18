@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import signal
 import time
+from argparse import ArgumentParser
 from datetime import timedelta as td
-from threading import Thread
+from io import TextIOBase
+from types import FrameType
+from typing import Any
 
 from django.core.management.base import BaseCommand
 from django.db.models import F, Sum
@@ -13,7 +16,7 @@ from statsd.defaults.env import statsd
 from hc.api.models import Check, Flip
 
 
-def notify(flip_id: int, stdout) -> None:
+def notify(flip_id: int, stdout: TextIOBase) -> None:
     flip = Flip.objects.get(id=flip_id)
     check = flip.owner
 
@@ -46,21 +49,16 @@ def notify(flip_id: int, stdout) -> None:
     statsd.timing("hc.sendalerts.sendTime", now() - send_start)
 
 
-def notify_on_thread(flip_id, stdout):
-    t = Thread(target=notify, args=(flip_id, stdout))
-    t.start()
-
-
 class Command(BaseCommand):
     help = "Sends UP/DOWN email alerts"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument(
             "--no-loop",
             action="store_false",
             dest="loop",
             default=True,
-            help="Do not keep running indefinitely in a 2 second wait loop",
+            help="Do not keep running indefinitely. Process all due alerts, then exit.",
         )
 
         parser.add_argument(
@@ -68,10 +66,10 @@ class Command(BaseCommand):
             action="store_false",
             dest="use_threads",
             default=False,
-            help="Send alerts synchronously, without using threads",
+            help="Deprecated and ignored. Do not use.",
         )
 
-    def process_one_flip(self, use_threads: bool = True) -> bool:
+    def process_one_flip(self) -> bool:
         """Find unprocessed flip, send notifications."""
 
         q = Flip.objects.filter(processed=None)
@@ -88,11 +86,7 @@ class Command(BaseCommand):
             # Nothing got updated: another worker process got there first.
             return True
 
-        if use_threads:
-            notify_on_thread(flip.id, self.stdout)
-        else:
-            notify(flip.id, self.stdout)
-
+        notify(flip.id, self.stdout)
         return True
 
     def handle_going_down(self) -> bool:
@@ -150,12 +144,12 @@ class Command(BaseCommand):
 
         return True
 
-    def on_signal(self, signum, frame):
+    def on_signal(self, signum: int, frame: FrameType | None) -> None:
         desc = signal.strsignal(signum)
         self.stdout.write(f"{desc}, finishing...\n")
         self.shutdown = True
 
-    def handle(self, use_threads=True, loop=True, *args, **options):
+    def handle(self, use_threads: bool, loop: bool, **options: Any) -> str:
         self.shutdown = False
         signal.signal(signal.SIGTERM, self.on_signal)
         signal.signal(signal.SIGINT, self.on_signal)
@@ -167,7 +161,7 @@ class Command(BaseCommand):
             while self.handle_going_down():
                 pass
 
-            if self.process_one_flip(use_threads):
+            if self.process_one_flip():
                 sent += 1
             else:
                 # There were no more flips to process for now.
