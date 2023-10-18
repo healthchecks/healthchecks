@@ -6,11 +6,10 @@ import re
 import time
 from argparse import ArgumentParser
 from email.message import EmailMessage
-from io import TextIOBase
-from typing import Any
+from typing import Any, Protocol
 
 from aiosmtpd.controller import Controller
-from aiosmtpd.smtp import SMTP, Envelope, Session
+from aiosmtpd.smtp import SMTP
 from asgiref.sync import sync_to_async
 from django.core.management.base import BaseCommand
 from django.db import connection
@@ -21,6 +20,21 @@ from hc.lib.html import html2text
 RE_UUID = re.compile(
     "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"
 )
+
+
+class LogSink(Protocol):
+    def write(self, text: str) -> None:
+        ...
+
+
+class Session(Protocol):
+    peer: list[str]
+
+
+class Envelope(Protocol):
+    mail_from: str
+    content: bytes
+    rcpt_tos: list[str]
 
 
 def _match(subject: str, keywords: str) -> bool:
@@ -91,7 +105,7 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
 
 
 class PingHandler:
-    def __init__(self, stdout: TextIOBase) -> None:
+    def __init__(self, stdout: LogSink) -> None:
         self.stdout = stdout
         self.process_message = sync_to_async(_process_message)
 

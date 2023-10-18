@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from unittest.mock import Mock
+
 from django.test.utils import override_settings
 
 from hc.api.management.commands.smtpd import PingHandler, _process_message
@@ -204,11 +206,11 @@ class SmtpdTestCase(BaseTestCase):
             content = b"hello world"
 
         class NullSink:
-            def write(self, *args, **kwargs):
+            def write(self, text: str) -> None:
                 pass
 
         handler = PingHandler(NullSink())
-        await handler.handle_DATA(None, Session(), Envelope())
+        await handler.handle_DATA(Mock(), Session(), Envelope())
 
         ping = await Ping.objects.alatest("id")
         self.assertEqual(ping.scheme, "email")
