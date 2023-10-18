@@ -49,6 +49,10 @@ variables in <code>docker/.env</code>. For example, to disable HTTP request logg
 <div class="highlight"><pre><span></span><code>UWSGI_DISABLE_LOGGING=1
 </code></pre></div>
 
+<p>To adjust the number of uWSGI processes (for example, to save memory), set:</p>
+<div class="highlight"><pre><span></span><code>UWSGI_PROCESSES=2
+</code></pre></div>
+
 <p>Read more about configuring uWSGI in <a href="https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables">uWSGI documentation</a>.</p>
 <h2>SMTP Listener Configuration via <code>SMTPD_PORT</code></h2>
 <p>Healthchecks comes with a <code>smtpd</code> management command, which runs a SMTP listener
@@ -66,7 +70,7 @@ on the value of the <code>SMTPD_PORT</code> environment value:</p>
 <a href="https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini">uwsgi.ini</a>.</p>
 <h2>TLS Termination</h2>
 <p>If you plan to expose your Healthchecks instance to the public internet, make sure you
-put a TLS-terminating reverse proxy in front of it.</p>
+put a TLS-terminating reverse proxy or load balancer in front of it.</p>
 <p><strong>Important:</strong> This Dockerfile uses UWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
 header to determine if a request is secure or not. Make sure your TLS-terminating
 reverse proxy:</p>
@@ -82,9 +86,21 @@ reverse proxy:</p>
 <h2>Pre-built Images</h2>
 <p>Pre-built Docker images, built from the Dockerfile in the <code>/docker/</code> directory,
 are available <a href="https://hub.docker.com/r/healthchecks/healthchecks">on Docker Hub</a>.
-The images are built automatically for every new release. The Docker images support
-amd64, arm/v7 and arm64 architectures.</p>
+The images are built automatically for every new release.</p>
+<p>The Docker images:</p>
+<ul>
+<li>Support amd64, arm/v7 and arm64 architectures.</li>
+<li>Use uWSGI as the web server. uWSGI is configured to perform database migrations
+  on startup, and to run <code>sendalerts</code>, <code>sendreports</code>, and <code>smtpd</code> in the background.
+  You do not need to run them separately.</li>
+<li>Ship with both PostgreSQL and MySQL database drivers.</li>
+<li>Serve static files using the whitenoise library.</li>
+<li>Have the apprise library preinstalled.</li>
+<li>Do <em>not</em> handle TLS termination. In a production setup, you will want to put
+  the Healthchecks container behind a reverse proxy or load balancer that handles TLS
+  termination.</li>
+</ul>
 <p>To use a pre-built image for Healthchecks version X.Y, in the <code>docker-compose.yml</code> file
 replace the "build" section with:</p>
-<div class="highlight"><pre><span></span><code>image: healthchecks/healthchecks:v2.10
+<div class="highlight"><pre><span></span><code>image: healthchecks/healthchecks:vX.Y
 </code></pre></div>

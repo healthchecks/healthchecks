@@ -44,6 +44,10 @@ variables in `docker/.env`. For example, to disable HTTP request logging, set:
 
     UWSGI_DISABLE_LOGGING=1
 
+To adjust the number of uWSGI processes (for example, to save memory), set:
+
+    UWSGI_PROCESSES=2
+
 Read more about configuring uWSGI in [uWSGI documentation](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables).
 
 ## SMTP Listener Configuration via `SMTPD_PORT`
@@ -66,7 +70,7 @@ The conditional logic lives in uWSGI configuration file,
 ## TLS Termination
 
 If you plan to expose your Healthchecks instance to the public internet, make sure you
-put a TLS-terminating reverse proxy in front of it.
+put a TLS-terminating reverse proxy or load balancer in front of it.
 
 **Important:** This Dockerfile uses UWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
 header to determine if a request is secure or not. Make sure your TLS-terminating
@@ -86,14 +90,27 @@ proxy_set_header X-Forwarded-Proto $scheme;
 
 Pre-built Docker images, built from the Dockerfile in the `/docker/` directory,
 are available [on Docker Hub](https://hub.docker.com/r/healthchecks/healthchecks).
-The images are built automatically for every new release. The Docker images support
-amd64, arm/v7 and arm64 architectures.
+The images are built automatically for every new release.
+
+The Docker images:
+
+* Support amd64, arm/v7 and arm64 architectures.
+* Use uWSGI as the web server. uWSGI is configured to perform database migrations
+  on startup, and to run `sendalerts`, `sendreports`, and `smtpd` in the background.
+  You do not need to run them separately.
+* Ship with both PostgreSQL and MySQL database drivers.
+* Serve static files using the whitenoise library.
+* Have the apprise library preinstalled.
+* Do *not* handle TLS termination. In a production setup, you will want to put
+  the Healthchecks container behind a reverse proxy or load balancer that handles TLS
+  termination.
+
 
 To use a pre-built image for Healthchecks version X.Y, in the `docker-compose.yml` file
 replace the "build" section with:
 
 ```text
-image: healthchecks/healthchecks:v2.10
+image: healthchecks/healthchecks:vX.Y
 ```
 
 

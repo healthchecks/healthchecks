@@ -11,11 +11,16 @@ termination.
 
 * Copy `/docker/.env.example` to `/docker/.env` and add your configuration in it.
   As a minimum, set the following fields:
-    * `DEFAULT_FROM_EMAIL` – the "From:" address for outbound emails
-    * `EMAIL_HOST` – the SMTP server
-    * `EMAIL_HOST_PASSWORD` – the SMTP password
-    * `EMAIL_HOST_USER` – the SMTP username
-    * `SECRET_KEY` – secures HTTP sessions, set to a random value
+    * `ALLOWED_HOSTS` – the domain name of your Healthchecks instance.
+    Example: `ALLOWED_HOSTS=hc.example.org`.
+    * `DEFAULT_FROM_EMAIL` – the "From:" address for outbound emails.
+    * `EMAIL_HOST` – the SMTP server.
+    * `EMAIL_HOST_PASSWORD` – the SMTP password.
+    * `EMAIL_HOST_USER` – the SMTP username.
+    * `SECRET_KEY` – secures HTTP sessions, set to a random value.
+    * `SITE_ROOT` – The base public URL of your Healthchecks instance. Example:
+    `SITE_ROOT=https://hc.example.org`.
+
 * Create and start containers:
 
   ```sh
@@ -99,3 +104,10 @@ The Docker images:
 * Do *not* handle TLS termination. In a production setup, you will want to put
   the Healthchecks container behind a reverse proxy or load balancer that handles TLS
   termination.
+
+To use a pre-built image for Healthchecks version X.Y, in the `docker-compose.yml` file
+replace the "build" section with:
+
+```text
+image: healthchecks/healthchecks:vX.Y
+```
