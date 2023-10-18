@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
+from typing import Any
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
@@ -21,7 +22,7 @@ class Command(BaseCommand):
 
     """
 
-    def handle(self, *args, **options) -> str:
+    def handle(self, **options: Any) -> str:
         month_ago = now() - td(days=30)
 
         # Old accounts, never logged in, no team memberships

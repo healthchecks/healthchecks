@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from django.core.management.base import BaseCommand
 from django.db.models import Min
 
@@ -9,7 +11,7 @@ from hc.api.models import Check, Notification
 class Command(BaseCommand):
     help = "Prune stored notifications"
 
-    def handle(self, *args, **options):
+    def handle(self, **options: Any) -> str:
         total = 0
 
         q = Check.objects.filter(n_pings__gt=100)
@@ -23,4 +25,4 @@ class Command(BaseCommand):
             num_deleted, _ = qq.delete()
             total += num_deleted
 
-        return "Done! Pruned %d notifications." % total
+        return f"Done! Pruned {total} notifications."

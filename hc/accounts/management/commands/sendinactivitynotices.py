@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 from datetime import timedelta as td
+from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -15,7 +16,7 @@ from hc.lib import emails
 YEAR_AGO = now() - td(days=365)
 
 
-def has_projects_with_active_members(profile):
+def has_projects_with_active_members(profile: Profile) -> bool:
     q = Member.objects.filter(project__owner_id=profile.user_id)
     recent_signup = Q(user__date_joined__gt=YEAR_AGO)
     recent_login = Q(user__last_login__gt=YEAR_AGO)
@@ -36,10 +37,10 @@ class Command(BaseCommand):
 
     """
 
-    def pause(self):
+    def pause(self) -> None:
         time.sleep(1)
 
-    def handle(self, *args, **options) -> str:
+    def handle(self, **options: Any) -> str:
         q = Profile.objects.order_by("id")
         # Exclude accounts with logins in the last year
         q = q.exclude(user__last_login__gt=YEAR_AGO)

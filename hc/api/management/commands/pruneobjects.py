@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from uuid import UUID
 
 from django.conf import settings
@@ -13,7 +14,7 @@ from hc.lib.s3 import client
 class Command(BaseCommand):
     help = "Prune ping bodies of deleted checks from object store."
 
-    def handle(self, *args, **options):
+    def handle(self, **options: Any) -> str:
         existing = set(map(str, Check.objects.values_list("code", flat=True)))
 
         c = client()

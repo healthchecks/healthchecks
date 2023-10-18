@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from getpass import getpass
+from typing import Any
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -13,7 +14,7 @@ from hc.accounts.views import _make_user
 class Command(BaseCommand):
     help = """Create a super-user account."""
 
-    def handle(self, *args, **options) -> str:
+    def handle(self, **options: Any) -> str:
         email = None
         password = None
 
