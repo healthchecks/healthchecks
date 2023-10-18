@@ -72,12 +72,12 @@ The conditional logic lives in uWSGI configuration file,
 If you plan to expose your Healthchecks instance to the public internet, make sure you
 put a TLS-terminating reverse proxy or load balancer in front of it.
 
-**Important:** This Dockerfile uses UWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
+**Important:** This Dockerfile uses uWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
 header to determine if a request is secure or not. Make sure your TLS-terminating
 reverse proxy:
 
-* Discards the X-Forwarded-Proto header sent by the end user.
-* Sets the X-Forwarded-Proto header value to match the protocol of the original request
+* Discards the `X-Forwarded-Proto` header sent by the end user.
+* Sets the `X-Forwarded-Proto` header value to match the protocol of the original request
   ("http" or "https").
 
 For example, in NGINX you can use the `$scheme` variable like so:

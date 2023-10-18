@@ -71,12 +71,12 @@ on the value of the <code>SMTPD_PORT</code> environment value:</p>
 <h2>TLS Termination</h2>
 <p>If you plan to expose your Healthchecks instance to the public internet, make sure you
 put a TLS-terminating reverse proxy or load balancer in front of it.</p>
-<p><strong>Important:</strong> This Dockerfile uses UWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
+<p><strong>Important:</strong> This Dockerfile uses uWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
 header to determine if a request is secure or not. Make sure your TLS-terminating
 reverse proxy:</p>
 <ul>
-<li>Discards the X-Forwarded-Proto header sent by the end user.</li>
-<li>Sets the X-Forwarded-Proto header value to match the protocol of the original request
+<li>Discards the <code>X-Forwarded-Proto</code> header sent by the end user.</li>
+<li>Sets the <code>X-Forwarded-Proto</code> header value to match the protocol of the original request
   ("http" or "https").</li>
 </ul>
 <p>For example, in NGINX you can use the <code>$scheme</code> variable like so:</p>
