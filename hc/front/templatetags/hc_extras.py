@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import re
-from datetime import timedelta
-from typing import TYPE_CHECKING
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, Any
+from uuid import UUID
 
 from django import template
 from django.conf import settings
 from django.templatetags.static import static
-from django.utils.html import escape
-from django.utils.safestring import mark_safe
+from django.utils.html import escape, format_html
+from django.utils.safestring import SafeString, mark_safe
 from django.utils.timezone import now
 
 from hc.lib.date import format_approx_duration, format_duration, format_hms
@@ -31,7 +32,7 @@ def hc_approx_duration(d: timedelta) -> str:
 
 
 @register.filter
-def hms(d) -> str:
+def hms(d: timedelta) -> str:
     return format_hms(d)
 
 
@@ -60,7 +61,7 @@ def absolute_site_logo_url() -> str:
 
 
 @register.filter
-def mangle_link(s):
+def mangle_link(s: str) -> SafeString:
     return mark_safe(escape(s).replace(".", "<span>.</span>"))
 
 
@@ -81,7 +82,7 @@ def site_version() -> str:
 
 
 @register.simple_tag
-def debug_warning():
+def debug_warning() -> str:
     if settings.DEBUG:
         return mark_safe(
             """
@@ -103,7 +104,7 @@ def debug_warning():
     return ""
 
 
-def naturalize_int_match(match) -> str:
+def naturalize_int_match(match: re.Match[str]) -> str:
     n = int(match.group(0))
     return f"{n:08}"
 
@@ -174,7 +175,7 @@ def break_underscore(s: str) -> str:
 
 
 @register.filter
-def format_headers(headers):
+def format_headers(headers: dict[str, str]) -> str:
     return "\n".join("%s: %s" % (k, v) for k, v in headers.items())
 
 
@@ -184,7 +185,7 @@ def now_isoformat() -> str:
 
 
 @register.filter
-def timestamp(dt):
+def timestamp(dt: datetime) -> int:
     return int(dt.timestamp())
 
 
@@ -220,42 +221,42 @@ def guess_schedule(check: Check) -> str | None:
     return None
 
 
-FORMATTED_PING_ENDPOINT = (
-    f"""<span class="base hidden-md">{settings.PING_ENDPOINT}</span>"""
+FORMATTED_PING_ENDPOINT_TMPL = (
+    f"""<span class="base">{settings.PING_ENDPOINT}</span>{{}}"""
 )
 
 
 @register.filter
-def format_ping_endpoint(ping_url):
+def format_ping_endpoint(ping_url: str) -> SafeString:
     """Wrap the ping endpoint in span tags for styling with CSS."""
 
     assert ping_url.startswith(settings.PING_ENDPOINT)
-    tail = ping_url[len(settings.PING_ENDPOINT) :]
-    return mark_safe(FORMATTED_PING_ENDPOINT + escape(tail))
+    tail = ping_url.removeprefix(settings.PING_ENDPOINT)
+    return format_html(FORMATTED_PING_ENDPOINT_TMPL, tail)
 
 
 @register.filter
-def mask_key(key):
+def mask_key(key: str) -> str:
     return key[:4] + "*" * len(key[4:])
 
 
 @register.filter
-def underline(s):
+def underline(s: str) -> str:
     return "=" * len(str(s))
 
 
 @register.filter
-def first5(rid):
+def first5(rid: UUID) -> str:
     return str(rid)[:5]
 
 
 @register.filter
-def add6days(dt):
+def add6days(dt: datetime) -> datetime:
     return dt + timedelta(days=6)
 
 
 @register.filter
-def mask_phone(phone):
+def mask_phone(phone: str) -> str:
     if len(phone) > 7:
         return phone[:4] + "******" + phone[-3:]
 
@@ -263,10 +264,12 @@ def mask_phone(phone):
 
 
 @register.simple_tag(takes_context=True)
-def sort_url(context, sort):
+def sort_url(context: dict[str, Any], sort: str) -> SafeString:
     q = context["request"].GET.copy()
     q["sort"] = sort
-    return mark_safe("?" + q.urlencode())
+    urlencoded = q.urlencode()
+    assert isinstance(urlencoded, str)
+    return mark_safe("?" + urlencoded)
 
 
 @register.filter
