@@ -20,7 +20,7 @@ documentation page:
 
 1. Create the appropriate .md file under `templates/docs`
 2. Generate the HTML version with `./manage.py render_docs` 
-3. Add the page to the navigation in `/templates/front/base_docs.html`
+3. Add the page to the navigation in `/templates/front/docs_single.html`
 
 ## Developing a New Integration
 
