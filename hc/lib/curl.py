@@ -6,17 +6,29 @@ import ipaddress
 import json
 import socket
 from io import BytesIO
-from typing import cast
+from typing import Any, TypedDict, cast
 from urllib.parse import urlencode
 
 import pycurl
 from django.conf import settings
+from typing_extensions import Unpack
 
 from hc.lib.typealias import JSONValue
 
+CurlSockAddr = tuple[int, int, int, tuple[str, int]]
+
+
+class CurlArgs(TypedDict, total=False):
+    data: dict[str, Any] | str | bytes | None
+    headers: dict[str, str]
+    json: Any
+    timeout: int
+    params: dict[str, str]
+    auth: tuple[str, str]
+
 
 class CurlError(Exception):
-    def __init__(self, message) -> None:
+    def __init__(self, message: str) -> None:
         self.message = message
 
 
@@ -25,7 +37,7 @@ class Response(object):
         self.status_code = status_code
         self.content = content
 
-    def json(self) -> JSONValue:
+    def json(self):
         return cast(JSONValue, json.loads(self.content.decode()))
 
     @property
@@ -39,7 +51,7 @@ def _makeheader(k: str, v: str) -> bytes:
     return key_bytes + b":" + value_bytes
 
 
-def request(method: str, url: str, **kwargs) -> Response:
+def request(method: str, url: str, **kwargs: Unpack[CurlArgs]) -> Response:
     """Make a HTTP request using pycurl, return a Response object.
 
     The `method` argument specifies the HTTP verb, and must be
@@ -104,7 +116,7 @@ def request(method: str, url: str, **kwargs) -> Response:
 
     opensocket_rejected_ips = []
 
-    def opensocket(purpose, curl_address):
+    def opensocket(purpose: int, curl_address: CurlSockAddr) -> socket.socket | int:
         family, socktype, protocol, address = curl_address
         if not settings.INTEGRATIONS_ALLOW_PRIVATE_IPS:
             if ipaddress.ip_address(address[0]).is_private:
@@ -130,7 +142,7 @@ def request(method: str, url: str, **kwargs) -> Response:
         c.setopt(pycurl.USERPWD, "%s:%s" % kwargs["auth"])
 
     headers = kwargs.get("headers", {})
-    data = kwargs.get("data", "")
+    data = kwargs.get("data")
 
     if "json" in kwargs:
         data = json.dumps(kwargs["json"])
@@ -184,9 +196,9 @@ def request(method: str, url: str, **kwargs) -> Response:
     return Response(status, buffer.getvalue())
 
 
-def post(url: str, data=None, **kwargs):
-    return request("post", url, data=data, **kwargs)
+def post(url: str, **kwargs: Unpack[CurlArgs]) -> Response:
+    return request("post", url, **kwargs)
 
 
-def get(url: str, **kwargs):
+def get(url: str, **kwargs: Unpack[CurlArgs]) -> Response:
     return request("get", url, **kwargs)

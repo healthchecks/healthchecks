@@ -12,7 +12,7 @@ from hc.test import BaseTestCase
 class AddLineNotifyCompleteTestCase(BaseTestCase):
     url = "/integrations/add_linenotify/"
 
-    @patch("hc.front.views.curl")
+    @patch("hc.front.views.curl", autospec=True)
     def test_it_handles_oauth_response(self, mock_curl: Mock) -> None:
         session = self.client.session
         session["add_linenotify"] = ("foo", str(self.project.code))

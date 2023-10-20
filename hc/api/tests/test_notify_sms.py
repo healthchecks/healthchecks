@@ -14,6 +14,7 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 
 
+@override_settings(TWILIO_ACCOUNT="test", TWILIO_AUTH="dummy")
 class NotifySmsTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
@@ -50,6 +51,13 @@ class NotifySmsTestCase(BaseTestCase):
         # sent SMS counter should go up
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sms_sent, 1)
+
+    @override_settings(TWILIO_ACCOUNT=None)
+    def test_it_requires_twilio_configuration(self) -> None:
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "SMS notifications are not enabled")
 
     @override_settings(TWILIO_MESSAGING_SERVICE_SID="dummy-sid")
     @patch("hc.api.transports.curl.request")

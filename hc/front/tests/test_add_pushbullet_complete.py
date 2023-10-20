@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 class AddPushbulletTestCase(BaseTestCase):
     url = "/integrations/add_pushbullet/"
 
-    @patch("hc.front.views.curl.post")
+    @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))
@@ -49,7 +49,7 @@ class AddPushbulletTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.front.views.curl.post")
+    @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_denial(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))

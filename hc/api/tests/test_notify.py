@@ -6,7 +6,6 @@ import json
 from datetime import timedelta as td
 from unittest.mock import Mock, patch
 
-from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
@@ -45,64 +44,6 @@ class NotifyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         mock_post.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
-
-    @patch("hc.api.transports.curl.request")
-    def test_call(self, mock_post: Mock) -> None:
-        self.profile.call_limit = 1
-        self.profile.save()
-
-        value = {"label": "foo", "value": "+1234567890"}
-        self._setup_data("call", json.dumps(value))
-        self.check.last_ping = now() - td(hours=2)
-
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.check)
-
-        payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload["To"], "+1234567890")
-
-        n = Notification.objects.get()
-        callback_path = f"/api/v3/notifications/{n.code}/status"
-        self.assertTrue(payload["StatusCallback"].endswith(callback_path))
-
-    @patch("hc.api.transports.curl.request")
-    def test_call_limit(self, mock_post: Mock) -> None:
-        # At limit already:
-        self.profile.call_limit = 50
-        self.profile.last_call_date = now()
-        self.profile.calls_sent = 50
-        self.profile.save()
-
-        definition = {"value": "+1234567890"}
-        self._setup_data("call", json.dumps(definition))
-
-        self.channel.notify(self.check)
-        mock_post.assert_not_called()
-
-        n = Notification.objects.get()
-        self.assertTrue("Monthly phone call limit exceeded" in n.error)
-
-        # And email should have been sent
-        self.assertEqual(len(mail.outbox), 1)
-
-        email = mail.outbox[0]
-        self.assertEqual(email.to[0], "alice@example.org")
-        self.assertEqual(email.subject, "Monthly Phone Call Limit Reached")
-
-    @patch("hc.api.transports.curl.request")
-    def test_call_limit_reset(self, mock_post: Mock) -> None:
-        # At limit, but also into a new month
-        self.profile.call_limit = 50
-        self.profile.calls_sent = 50
-        self.profile.last_call_date = now() - td(days=100)
-        self.profile.save()
-
-        self._setup_data("call", json.dumps({"value": "+1234567890"}))
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.check)
-        mock_post.assert_called_once()
 
     def test_not_implemented(self) -> None:
         self._setup_data("webhook", "http://example")

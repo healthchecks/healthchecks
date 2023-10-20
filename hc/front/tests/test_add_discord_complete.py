@@ -13,7 +13,7 @@ from hc.test import BaseTestCase
 class AddDiscordCompleteTestCase(BaseTestCase):
     url = "/integrations/add_discord/"
 
-    @patch("hc.front.views.curl.post")
+    @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_discord"] = ("foo", str(self.project.code))

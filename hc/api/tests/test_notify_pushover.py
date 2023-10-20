@@ -14,6 +14,7 @@ from hc.test import BaseTestCase
 API = "https://api.pushover.net/1"
 
 
+@override_settings(PUSHOVER_API_TOKEN="dummy-token")
 class NotifyPushoverTestCase(BaseTestCase):
     def _setup_data(
         self, value: str, status: str = "down", email_verified: bool = True
@@ -49,6 +50,13 @@ class NotifyPushoverTestCase(BaseTestCase):
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["message"])
         self.assertEqual(payload["tags"], self.check.unique_key)
+
+    @override_settings(PUSHOVER_API_TOKEN=None)
+    def test_it_requires_pushover_api_token(self) -> None:
+        self._setup_data("123|0")
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Pushover notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request")
     def test_it_supports_up_priority(self, mock_post: Mock) -> None:

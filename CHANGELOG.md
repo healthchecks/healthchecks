@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.1 - Unreleased
+## v3.1-dev - Unreleased
 
 ### Bug Fixes
 - Fix sending test notification to a group integration

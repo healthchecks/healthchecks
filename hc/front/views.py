@@ -1577,7 +1577,7 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "client_secret": settings.SLACK_CLIENT_SECRET,
         "code": request.GET.get("code"),
     }
-    result = curl.post("https://slack.com/api/oauth.v2.access", data)
+    result = curl.post("https://slack.com/api/oauth.v2.access", data=data)
 
     doc = result.json()
     if doc.get("ok"):
@@ -1693,7 +1693,7 @@ def add_pushbullet_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "code": request.GET.get("code"),
         "grant_type": "authorization_code",
     }
-    result = curl.post("https://api.pushbullet.com/oauth2/token", data)
+    result = curl.post("https://api.pushbullet.com/oauth2/token", data=data)
 
     doc = result.json()
     if "access_token" in doc:
@@ -1753,7 +1753,7 @@ def add_discord_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "grant_type": "authorization_code",
         "redirect_uri": settings.SITE_ROOT + reverse(add_discord_complete),
     }
-    result = curl.post("https://discordapp.com/api/oauth2/token", data)
+    result = curl.post("https://discordapp.com/api/oauth2/token", data=data)
 
     doc = result.json()
     if "access_token" in doc:
@@ -2264,9 +2264,10 @@ def add_apprise(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 @login_required
 @require_POST
 def trello_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
-    token = request.POST.get("token")
+    token = request.POST.get("token", "")
 
     url = "https://api.trello.com/1/members/me/boards"
+    assert settings.TRELLO_APP_KEY
     params = {
         "key": settings.TRELLO_APP_KEY,
         "token": token,
@@ -2445,7 +2446,7 @@ def add_linenotify_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "client_id": settings.LINENOTIFY_CLIENT_ID,
         "client_secret": settings.LINENOTIFY_CLIENT_SECRET,
     }
-    result = curl.post("https://notify-bot.line.me/oauth/token", data)
+    result = curl.post("https://notify-bot.line.me/oauth/token", data=data)
 
     doc = result.json()
     if doc.get("status") != 200:

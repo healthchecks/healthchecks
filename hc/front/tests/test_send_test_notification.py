@@ -134,7 +134,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         r = self.client.post(self.url, {}, follow=True)
         self.assertEqual(r.status_code, 404)
 
-    @override_settings(TWILIO_FROM="+000")
+    @override_settings(TWILIO_ACCOUNT="test", TWILIO_AUTH="dummy", TWILIO_FROM="+000")
     @patch("hc.api.transports.curl.request")
     def test_it_handles_up_only_sms_channel(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200

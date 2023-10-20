@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.timezone import now
 from pydantic import BaseModel, ValidationError
+from typing_extensions import Unpack
 
 from hc.accounts.models import Profile
 from hc.front.templatetags.hc_extras import (
@@ -24,6 +25,7 @@ from hc.front.templatetags.hc_extras import (
     sortchecks,
 )
 from hc.lib import curl, emails
+from hc.lib.curl import CurlArgs
 from hc.lib.date import format_duration
 from hc.lib.html import extract_signal_styles
 from hc.lib.signing import sign_bounce_id
@@ -226,9 +228,8 @@ class HttpTransport(Transport):
         raise TransportError(f"Received status code {response.status_code}")
 
     @classmethod
-    def _request(cls, method: str, url: str, **kwargs) -> None:
+    def _request(cls, method: str, url: str, **kwargs: Unpack[CurlArgs]) -> None:
         kwargs["timeout"] = 10
-
         try:
             r = curl.request(method, url, **kwargs)
             if r.status_code not in (200, 201, 202, 204):
@@ -237,12 +238,15 @@ class HttpTransport(Transport):
             raise TransportError(e.message)
 
     @classmethod
-    def _request_with_retries(
-        cls, method: str, url: str, use_retries: bool = True, **kwargs
+    def request(
+        cls,
+        method: str,
+        url: str,
+        retry: bool,
+        **kwargs: Unpack[CurlArgs],
     ) -> None:
         start = time.time()
-
-        tries_left = 3 if use_retries else 1
+        tries_left = 3 if retry else 1
         while True:
             try:
                 return cls._request(method, url, **kwargs)
@@ -256,21 +260,26 @@ class HttpTransport(Transport):
                     raise e
 
     @classmethod
-    def get(cls, url: str, **kwargs) -> None:
-        cls._request_with_retries("get", url, **kwargs)
+    def get(cls, url: str, retry: bool = True, **kwargs: Unpack[CurlArgs]) -> None:
+        cls.request("get", url, retry, **kwargs)
 
     @classmethod
-    def post(cls, url: str, **kwargs) -> None:
-        cls._request_with_retries("post", url, **kwargs)
+    def post(cls, url: str, retry: bool = True, **kwargs: Unpack[CurlArgs]) -> None:
+        cls.request("post", url, retry, **kwargs)
 
     @classmethod
-    def put(cls, url: str, **kwargs) -> None:
-        cls._request_with_retries("put", url, **kwargs)
+    def put(cls, url: str, retry: bool = True, **kwargs: Unpack[CurlArgs]) -> None:
+        cls.request("put", url, retry, **kwargs)
 
 
 class Webhook(HttpTransport):
     def prepare(
-        self, template: str, check, urlencode=False, latin1=False, allow_ping_body=False
+        self,
+        template: str,
+        check: Check,
+        urlencode: bool = False,
+        latin1: bool = False,
+        allow_ping_body: bool = False,
     ) -> str:
         """Replace variables with actual values."""
 
@@ -333,21 +342,21 @@ class Webhook(HttpTransport):
             body = self.prepare(body, check, allow_ping_body=True)
             body_bytes = body.encode()
 
-        use_retries = True
+        retry = True
         if notification.owner is None:
             # This is a test notification.
             # When sending a test notification, don't retry on failures.
-            use_retries = False
+            retry = False
 
         if spec.method == "GET":
-            self.get(url, use_retries=use_retries, headers=headers)
+            self.get(url, retry=retry, headers=headers)
         elif spec.method == "POST":
-            self.post(url, use_retries=use_retries, data=body_bytes, headers=headers)
+            self.post(url, retry=retry, data=body_bytes, headers=headers)
         elif spec.method == "PUT":
-            self.put(url, use_retries=use_retries, data=body_bytes, headers=headers)
+            self.put(url, retry=retry, data=body_bytes, headers=headers)
 
 
-class SlackFields(list):
+class SlackFields(list[JSONValue]):
     """Helper class for preparing [{"title": ..., "value": ... }, ...] structures."""
 
     def add(self, title: str, value: str, short: bool = True) -> None:
@@ -569,6 +578,9 @@ class Pushover(HttpTransport):
         return int(prio) == -3
 
     def notify(self, check: Check, notification: Notification) -> None:
+        if not settings.PUSHOVER_API_TOKEN:
+            raise TransportError("Pushover notifications are not enabled.")
+
         pieces = self.channel.value.split("|")
         user_key, down_prio = pieces[0], pieces[1]
 
@@ -606,8 +618,8 @@ class Pushover(HttpTransport):
 
         # Emergency notification
         if prio == "2":
-            payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
-            payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
+            payload["retry"] = str(settings.PUSHOVER_EMERGENCY_RETRY_DELAY)
+            payload["expire"] = str(settings.PUSHOVER_EMERGENCY_EXPIRATION)
 
         self.post(self.URL, data=payload)
 
@@ -789,6 +801,9 @@ class Sms(HttpTransport):
             return not self.channel.phone.notify_up
 
     def notify(self, check: Check, notification: Notification) -> None:
+        if not settings.TWILIO_ACCOUNT or not settings.TWILIO_AUTH:
+            raise TransportError("SMS notifications are not enabled")
+
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("SMS")
@@ -820,6 +835,13 @@ class Call(HttpTransport):
         return check.status != "down"
 
     def notify(self, check: Check, notification: Notification) -> None:
+        if (
+            not settings.TWILIO_ACCOUNT
+            or not settings.TWILIO_AUTH
+            or not settings.TWILIO_FROM
+        ):
+            raise TransportError("Call notifications are not enabled")
+
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_call():
             profile.send_call_limit_notice()
@@ -849,6 +871,9 @@ class WhatsApp(HttpTransport):
             return not self.channel.phone.notify_up
 
     def notify(self, check: Check, notification: Notification) -> None:
+        if not settings.TWILIO_ACCOUNT or not settings.TWILIO_AUTH:
+            raise TransportError("WhatsApp notifications are not enabled")
+
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
             profile.send_sms_limit_notice("WhatsApp")

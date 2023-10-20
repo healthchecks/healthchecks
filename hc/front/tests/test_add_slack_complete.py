@@ -11,7 +11,7 @@ from hc.test import BaseTestCase
 
 @override_settings(SLACK_CLIENT_ID="fake-client-id")
 class AddSlackCompleteTestCase(BaseTestCase):
-    @patch("hc.front.views.curl.post")
+    @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
@@ -53,7 +53,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.front.views.curl.post")
+    @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_oauth_error(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))

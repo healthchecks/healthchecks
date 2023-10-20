@@ -27,6 +27,6 @@ class Command(BaseCommand):
         r = curl.post(url, json=form)
 
         if r.status_code != 200:
-            return "Fail: status=%d, %s" % (r.status_code, r.content)
+            return "Fail: status=%d, %s" % (r.status_code, r.content.decode())
 
         return "Done, Telegram's webhook set to: %s" % form["url"]
