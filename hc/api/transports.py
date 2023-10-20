@@ -618,8 +618,8 @@ class Pushover(HttpTransport):
 
         # Emergency notification
         if prio == "2":
-            payload["retry"] = str(settings.PUSHOVER_EMERGENCY_RETRY_DELAY)
-            payload["expire"] = str(settings.PUSHOVER_EMERGENCY_EXPIRATION)
+            payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
+            payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
         self.post(self.URL, data=payload)
 
