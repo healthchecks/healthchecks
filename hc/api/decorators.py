@@ -18,11 +18,11 @@ class ApiRequest(HttpRequest):
     v: int
 
 
-def error(msg, status=400):
+def error(msg: str, status: int = 400) -> JsonResponse:
     return JsonResponse({"error": msg}, status=status)
 
 
-def _get_api_version(request) -> int:
+def _get_api_version(request: HttpRequest) -> int:
     if request.path_info.startswith("/api/v3/"):
         return 3
     if request.path_info.startswith("/api/v2/"):
@@ -32,7 +32,7 @@ def _get_api_version(request) -> int:
 
 def authorize(f: ViewFunc) -> ViewFunc:
     @wraps(f)
-    def wrapper(request, *args, **kwds):
+    def wrapper(request: ApiRequest, *args: Any, **kwds: Any) -> HttpResponse:
         # For POST requests, we may need to look for the API key inside the
         # request body. Parse the body and put it in request.json
         # so views can avoid parsing it again.
@@ -70,7 +70,7 @@ def authorize(f: ViewFunc) -> ViewFunc:
 
 def authorize_read(f: ViewFunc) -> ViewFunc:
     @wraps(f)
-    def wrapper(request, *args, **kwds):
+    def wrapper(request: ApiRequest, *args: Any, **kwds: Any) -> HttpResponse:
         if "HTTP_X_API_KEY" in request.META:
             api_key = request.META["HTTP_X_API_KEY"]
         else:
@@ -100,7 +100,7 @@ def cors(*methods: str) -> Callable[[ViewFunc], ViewFunc]:
 
     def decorator(f: ViewFunc) -> ViewFunc:
         @wraps(f)
-        def wrapper(request, *args, **kwds):
+        def wrapper(request: HttpRequest, *args: Any, **kwds: Any) -> HttpResponse:
             if request.method == "OPTIONS":
                 # Handle OPTIONS here
                 response = HttpResponse(status=204)
