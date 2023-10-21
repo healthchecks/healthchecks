@@ -27,7 +27,7 @@ class NotifyPagertreeTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -44,7 +44,7 @@ class NotifyPagertreeTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "PagerTree notifications are not enabled.")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_title(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 

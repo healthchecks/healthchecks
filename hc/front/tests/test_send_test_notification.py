@@ -77,7 +77,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Email not verified")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_webhooks_with_no_down_url(self, mock_get: Mock) -> None:
         mock_get.return_value.status_code = 200
 
@@ -131,7 +131,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     @override_settings(TWILIO_ACCOUNT="test", TWILIO_AUTH="dummy", TWILIO_FROM="+000")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_up_only_sms_channel(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -147,7 +147,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("is UP", payload["Body"])
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_webhook_with_json_variable(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 

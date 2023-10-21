@@ -31,7 +31,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -52,7 +52,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Mattermost notifications are not enabled.")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_disable_channel_on_404(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 404
 
@@ -61,7 +61,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.assertFalse(self.channel.disabled)
 
     @override_settings(SITE_ROOT="http://testserver")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -76,7 +76,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.assertEqual(fields["Last Ping Body"], "```\nHello World\n```")
 
     @override_settings(SITE_ROOT="http://testserver")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_truncated_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -91,7 +91,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.assertIn("[truncated]", fields["Last Ping Body"])
 
     @override_settings(SITE_ROOT="http://testserver")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_skips_last_ping_body_with_backticks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 

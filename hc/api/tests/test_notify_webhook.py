@@ -30,7 +30,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhook(self, mock_get: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -46,7 +46,11 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://example"))
 
-    @patch("hc.api.transports.curl.request", side_effect=CurlError("Foo failed"))
+    @patch(
+        "hc.api.transports.curl.request",
+        autospec=True,
+        side_effect=CurlError("Foo failed"),
+    )
     def test_webhooks_handle_curl_errors(self, mock_get: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -67,7 +71,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Foo failed")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_500(self, mock_get: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -87,7 +91,11 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
 
-    @patch("hc.api.transports.curl.request", side_effect=CurlError("Foo failed"))
+    @patch(
+        "hc.api.transports.curl.request",
+        autospec=True,
+        side_effect=CurlError("Foo failed"),
+    )
     def test_webhooks_dont_retry_when_sending_test_notifications(
         self, mock_get: Mock
     ) -> None:
@@ -107,7 +115,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Foo failed")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_variables(self, mock_get: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -131,7 +139,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(kwargs["headers"], {})
         self.assertEqual(kwargs["timeout"], 10)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_variable_variables(self, mock_get: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -150,7 +158,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         url = mock_get.call_args.args[1]
         self.assertEqual(url, "http://host/$TAG1")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_post(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "POST",
@@ -171,7 +179,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         payload = mock_request.call_args.kwargs["data"].decode()
         self.assertTrue(payload.startswith("The Time Is 2"))
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_dollarsign_escaping(self, mock_get: Mock) -> None:
         # If name or tag contains what looks like a variable reference,
         # that should be left alone:
@@ -192,7 +200,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://host/%24TAG1"))
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_up_events(self, mock_get: Mock) -> None:
         definition = {
             "method_up": "GET",
@@ -207,7 +215,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://bar"))
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_noop_up_events(self, mock_get: Mock) -> None:
         definition = {
             "method_up": "GET",
@@ -222,7 +230,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         mock_get.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_unicode_post_body(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "POST",
@@ -240,7 +248,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         payload = mock_request.call_args.kwargs["data"]
         self.assertIsInstance(payload, bytes)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_post_headers(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "POST",
@@ -257,7 +265,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(kwargs["data"], b"data")
         self.assertEqual(kwargs["headers"], {"Content-Type": "application/json"})
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_get_headers(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -273,7 +281,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(args, ("get", "http://foo.com"))
         self.assertEqual(kwargs["headers"], {"Content-Type": "application/json"})
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_allow_user_agent_override(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -289,7 +297,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(args, ("get", "http://foo.com"))
         self.assertEqual(kwargs["headers"], {"User-Agent": "My-Agent"})
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_variables_in_headers(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -323,7 +331,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Webhook notifications are not enabled.")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_non_ascii_in_headers(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -340,7 +348,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         headers = mock_request.call_args.kwargs["headers"]
         self.assertEqual(headers["X-Foo"], "b&#257;r")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_latin1_in_headers(self, mock_request: Mock) -> None:
         definition = {
             "method_down": "GET",
@@ -357,7 +365,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         headers = mock_request.call_args.kwargs["headers"]
         self.assertEqual(headers["X-Foo"], "½")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_json_variable(self, mock_post: Mock) -> None:
         definition = {
             "method_down": "POST",
@@ -377,7 +385,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         body = json.loads(payload)
         self.assertEqual(body["name"], "Hello World")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_body_variable_in_body(self, mock_post: Mock) -> None:
         definition = {
             "method_down": "POST",
@@ -398,7 +406,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, ping_body)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_dont_support_body_variable_in_url_and_headers(
         self, mock_post: Mock
     ) -> None:
@@ -423,7 +431,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         headers = mock_post.call_args.kwargs["headers"]
         self.assertEqual(headers["User-Agent"], "$BODY")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_exitstatus_variable(self, mock_post: Mock) -> None:
         definition = {
             "method_down": "POST",
@@ -438,7 +446,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b"Exit status 123")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_exitstatus_variable_with_last_ping_missing(
         self, mock_post: Mock
     ) -> None:
@@ -455,7 +463,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b"Exit status -1")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_null_exitstatus(self, mock_post: Mock) -> None:
         definition = {
             "method_down": "POST",

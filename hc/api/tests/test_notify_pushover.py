@@ -32,7 +32,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
@@ -58,7 +58,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Pushover notifications are not enabled.")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_supports_up_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|0|2", status="up")
         mock_post.return_value.status_code = 200
@@ -73,7 +73,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertIn("expire", payload)
 
     @override_settings(SECRET_KEY="test-secret")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_obeys_rate_limit(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
 
@@ -86,7 +86,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_cancels_emergency_notification(self, mock_post: Mock) -> None:
         self._setup_data("123|2|0", status="up")
         mock_post.return_value.status_code = 200
@@ -104,7 +104,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         payload = up_kwargs["data"]
         self.assertIn("UP", payload["title"])
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
@@ -120,7 +120,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("All the other checks are up.", payload["message"])
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_lists_other_down_checks(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
@@ -138,7 +138,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertIn("Foobar", payload["message"])
         self.assertIn(other.cloaked_url(), payload["message"])
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_show_more_than_10_other_checks(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
@@ -156,7 +156,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertNotIn("Foobar", payload["message"])
         self.assertIn("11 other checks are also down.", payload["message"])
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_title(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         self.check.name = "Foo & Bar"
@@ -168,7 +168,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["title"], "Foo & Bar is DOWN")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_disabled_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|-3")
 
@@ -176,7 +176,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
         mock_post.assert_not_called()
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_disabled_up_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|0|-3", status="up")
 

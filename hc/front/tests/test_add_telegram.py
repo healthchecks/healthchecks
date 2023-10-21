@@ -73,7 +73,7 @@ class AddTelegramTestCase(BaseTestCase):
 
         self.assertFalse(Channel.objects.exists())
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_bot_sends_invite(self, mock_request: Mock) -> None:
         mock_request.return_value.status_code = 200
 
@@ -90,7 +90,7 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(kwargs["json"]["chat_id"], 123)
         self.assertIsNone(kwargs["json"]["message_thread_id"])
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_bot_sends_invite_to_thread(self, mock_request: Mock) -> None:
         mock_request.return_value.status_code = 200
 
@@ -108,7 +108,7 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(kwargs["json"]["chat_id"], 123)
         self.assertEqual(kwargs["json"]["message_thread_id"], 456)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_bot_handles_channel_post(self, mock_request: Mock) -> None:
         mock_request.return_value.status_code = 200
 
@@ -122,7 +122,7 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         mock_request.assert_called_once()
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_bot_handles_bad_message(self, mock_get: Mock) -> None:
         samples: JSONList = ["", "{}"]
 
@@ -157,7 +157,7 @@ class AddTelegramTestCase(BaseTestCase):
         # It should not have sent an invite for any of the samples
         mock_get.assert_not_called()
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_bot_handles_send_failure(self, mock_request: Mock) -> None:
         mock_request.return_value.status_code = 403
 

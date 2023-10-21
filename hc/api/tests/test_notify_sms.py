@@ -31,7 +31,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self.check.last_ping = now() - td(hours=2)
         mock_post.return_value.status_code = 200
@@ -60,7 +60,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(n.error, "SMS notifications are not enabled")
 
     @override_settings(TWILIO_MESSAGING_SERVICE_SID="dummy-sid")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_uses_messaging_service(self, mock_post: Mock) -> None:
         self.check.last_ping = now() - td(hours=2)
         mock_post.return_value.status_code = 200
@@ -71,7 +71,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(payload["MessagingServiceSid"], "dummy-sid")
         self.assertFalse("From" in payload)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_enforces_limit(self, mock_post: Mock) -> None:
         # At limit already:
         self.profile.last_sms_date = now()
@@ -92,7 +92,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(email.subject, "Monthly SMS Limit Reached")
 
     @override_settings(TWILIO_FROM="+000")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_resets_limit_next_month(self, mock_post: Mock) -> None:
         # At limit, but also into a new month
         self.profile.sms_sent = 50
@@ -105,7 +105,7 @@ class NotifySmsTestCase(BaseTestCase):
         mock_post.assert_called_once()
 
     @override_settings(TWILIO_FROM="+000")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
         self.check.name = "Foo > Bar & Co"
         self.check.last_ping = now() - td(hours=2)
@@ -117,7 +117,7 @@ class NotifySmsTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("Foo > Bar & Co", payload["Body"])
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_disabled_down_notification(self, mock_post: Mock) -> None:
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
@@ -126,7 +126,7 @@ class NotifySmsTestCase(BaseTestCase):
         mock_post.assert_not_called()
 
     @override_settings(TWILIO_FROM="+000")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_sends_up_notification(self, mock_post: Mock) -> None:
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)

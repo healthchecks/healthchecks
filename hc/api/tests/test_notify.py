@@ -29,7 +29,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_pagerteam(self, mock_post: Mock) -> None:
         self._setup_data("pagerteam", "123")
 
@@ -37,7 +37,7 @@ class NotifyTestCase(BaseTestCase):
         mock_post.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_hipchat(self, mock_post: Mock) -> None:
         self._setup_data("hipchat", "123")
 

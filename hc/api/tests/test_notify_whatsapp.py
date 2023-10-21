@@ -30,7 +30,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self._setup_data()
@@ -58,7 +58,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.assertEqual(n.error, "WhatsApp notifications are not enabled")
 
     @override_settings(TWILIO_MESSAGING_SERVICE_SID="dummy-sid")
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_uses_messaging_service(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self._setup_data()
@@ -69,7 +69,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.assertEqual(payload["MessagingServiceSid"], "dummy-sid")
         self.assertFalse("From" in payload)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_obeys_up_down_flags(self, mock_post: Mock) -> None:
         self._setup_data(notify_down=False)
         self.check.last_ping = now() - td(hours=2)
@@ -78,7 +78,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
         mock_post.assert_not_called()
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_enforces_limit(self, mock_post: Mock) -> None:
         # At limit already:
         self.profile.last_sms_date = now()
@@ -100,7 +100,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly WhatsApp Limit Reached")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
         self._setup_data()
         self.check.name = "Foo > Bar & Co"

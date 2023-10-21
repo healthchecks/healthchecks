@@ -27,7 +27,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -41,7 +41,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         )
         self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_escapes_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.name = "Foo & Bar"

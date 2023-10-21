@@ -29,7 +29,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         v = json.dumps({"webhook": {"url": "https://example.org"}})
         self._setup_data(v)
@@ -45,7 +45,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_rewrites_discordapp_com(self, mock_post: Mock) -> None:
         v = json.dumps({"webhook": {"url": "https://discordapp.com/foo"}})
         self._setup_data(v)
@@ -59,7 +59,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         # rewrite discordapp.com to discord.com:
         self.assertEqual(url, "https://discord.com/foo/slack")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_last_ping_failure(self, mock_post: Mock) -> None:
         v = json.dumps({"webhook": {"url": "123"}})
         self._setup_data(v)

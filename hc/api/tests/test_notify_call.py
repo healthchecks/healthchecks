@@ -30,7 +30,7 @@ class NotifyCallTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_call(self, mock_post: Mock) -> None:
         self.profile.call_limit = 1
         self.profile.save()
@@ -52,7 +52,7 @@ class NotifyCallTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Call notifications are not enabled")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_call_limit(self, mock_post: Mock) -> None:
         # At limit already:
         self.profile.call_limit = 50
@@ -73,7 +73,7 @@ class NotifyCallTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertEqual(email.subject, "Monthly Phone Call Limit Reached")
 
-    @patch("hc.api.transports.curl.request")
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_call_limit_reset(self, mock_post: Mock) -> None:
         # At limit, but also into a new month
         self.profile.call_limit = 50
