@@ -1577,7 +1577,7 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "client_secret": settings.SLACK_CLIENT_SECRET,
         "code": request.GET.get("code"),
     }
-    result = curl.post("https://slack.com/api/oauth.v2.access", data=data)
+    result = curl.post("https://slack.com/api/oauth.v2.access", data)
 
     doc = result.json()
     if doc.get("ok"):
@@ -1693,7 +1693,7 @@ def add_pushbullet_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "code": request.GET.get("code"),
         "grant_type": "authorization_code",
     }
-    result = curl.post("https://api.pushbullet.com/oauth2/token", data=data)
+    result = curl.post("https://api.pushbullet.com/oauth2/token", data)
 
     doc = result.json()
     if "access_token" in doc:
@@ -1753,7 +1753,7 @@ def add_discord_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "grant_type": "authorization_code",
         "redirect_uri": settings.SITE_ROOT + reverse(add_discord_complete),
     }
-    result = curl.post("https://discordapp.com/api/oauth2/token", data=data)
+    result = curl.post("https://discordapp.com/api/oauth2/token", data)
 
     doc = result.json()
     if "access_token" in doc:
@@ -2277,7 +2277,7 @@ def trello_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
         "list_fields": "id,name",
     }
 
-    boards = curl.get(url, params=params).json()
+    boards = curl.get(url, params).json()
     num_lists = sum(len(board["lists"]) for board in boards)
 
     ctx = {"token": token, "boards": boards, "num_lists": num_lists}
@@ -2446,7 +2446,7 @@ def add_linenotify_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "client_id": settings.LINENOTIFY_CLIENT_ID,
         "client_secret": settings.LINENOTIFY_CLIENT_SECRET,
     }
-    result = curl.post("https://notify-bot.line.me/oauth/token", data=data)
+    result = curl.post("https://notify-bot.line.me/oauth/token", data)
 
     doc = result.json()
     if doc.get("status") != 200:

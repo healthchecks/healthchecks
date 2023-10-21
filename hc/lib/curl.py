@@ -206,8 +206,8 @@ def request(
 # Convenience wrapper around request for making "GET" requests
 def get(
     url: str,
-    *,
     params: Params = None,
+    *,
     headers: Headers = None,
     auth: Auth = None,
     timeout: Timeout = None,
@@ -220,9 +220,9 @@ def get(
 # Convenience wrapper around request for making "POST" requests
 def post(
     url: str,
+    data: Data = None,
     *,
     params: Params = None,
-    data: Data = None,
     json: Any = None,
     headers: Headers = None,
     auth: Auth = None,
