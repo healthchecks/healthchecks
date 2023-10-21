@@ -10,5 +10,4 @@ pydantic==2.4.2
 pyotp==2.9.0
 segno==1.5.2
 statsd==4.0.1
-typing_extensions==4.8.0
 whitenoise==6.5.0

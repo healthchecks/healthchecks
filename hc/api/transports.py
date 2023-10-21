@@ -16,7 +16,6 @@ from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.timezone import now
 from pydantic import BaseModel, ValidationError
-from typing_extensions import Unpack
 
 from hc.accounts.models import Profile
 from hc.front.templatetags.hc_extras import (
@@ -25,7 +24,6 @@ from hc.front.templatetags.hc_extras import (
     sortchecks,
 )
 from hc.lib import curl, emails
-from hc.lib.curl import CurlArgs
 from hc.lib.date import format_duration
 from hc.lib.html import extract_signal_styles
 from hc.lib.signing import sign_bounce_id
@@ -228,10 +226,28 @@ class HttpTransport(Transport):
         raise TransportError(f"Received status code {response.status_code}")
 
     @classmethod
-    def _request(cls, method: str, url: str, **kwargs: Unpack[CurlArgs]) -> None:
-        kwargs["timeout"] = 10
+    def _request(
+        cls,
+        method: str,
+        url: str,
+        *,
+        params: curl.Params,
+        data: curl.Data,
+        json: Any,
+        headers: curl.Headers,
+        auth: curl.Auth,
+    ) -> None:
         try:
-            r = curl.request(method, url, **kwargs)
+            r = curl.request(
+                method,
+                url,
+                params=params,
+                data=data,
+                json=json,
+                headers=headers,
+                auth=auth,
+                timeout=10,
+            )
             if r.status_code not in (200, 201, 202, 204):
                 cls.raise_for_response(r)
         except curl.CurlError as e:
@@ -243,13 +259,26 @@ class HttpTransport(Transport):
         method: str,
         url: str,
         retry: bool,
-        **kwargs: Unpack[CurlArgs],
+        *,
+        params: curl.Params = None,
+        data: curl.Data = None,
+        json: Any = None,
+        headers: curl.Headers = None,
+        auth: curl.Auth = None,
     ) -> None:
         start = time.time()
         tries_left = 3 if retry else 1
         while True:
             try:
-                return cls._request(method, url, **kwargs)
+                return cls._request(
+                    method,
+                    url,
+                    params=params,
+                    data=data,
+                    json=json,
+                    headers=headers,
+                    auth=auth,
+                )
             except TransportError as e:
                 tries_left = 0 if e.permanent else tries_left - 1
 
@@ -260,16 +289,62 @@ class HttpTransport(Transport):
                     raise e
 
     @classmethod
-    def get(cls, url: str, retry: bool = True, **kwargs: Unpack[CurlArgs]) -> None:
-        cls.request("get", url, retry, **kwargs)
+    def get(
+        cls,
+        url: str,
+        retry: bool = True,
+        *,
+        params: curl.Params = None,
+        headers: curl.Headers = None,
+        auth: curl.Auth = None,
+    ) -> None:
+        cls.request("get", url, retry, params=params, headers=headers, auth=auth)
 
     @classmethod
-    def post(cls, url: str, retry: bool = True, **kwargs: Unpack[CurlArgs]) -> None:
-        cls.request("post", url, retry, **kwargs)
+    def post(
+        cls,
+        url: str,
+        retry: bool = True,
+        *,
+        params: curl.Params = None,
+        data: curl.Data = None,
+        json: Any = None,
+        headers: curl.Headers = None,
+        auth: curl.Auth = None,
+    ) -> None:
+        cls.request(
+            "post",
+            url,
+            retry,
+            params=params,
+            data=data,
+            json=json,
+            headers=headers,
+            auth=auth,
+        )
 
     @classmethod
-    def put(cls, url: str, retry: bool = True, **kwargs: Unpack[CurlArgs]) -> None:
-        cls.request("put", url, retry, **kwargs)
+    def put(
+        cls,
+        url: str,
+        retry: bool = True,
+        *,
+        params: curl.Params = None,
+        data: curl.Data = None,
+        json: Any = None,
+        headers: curl.Headers = None,
+        auth: curl.Auth = None,
+    ) -> None:
+        cls.request(
+            "put",
+            url,
+            retry,
+            params=params,
+            data=data,
+            json=json,
+            headers=headers,
+            auth=auth,
+        )
 
 
 class Webhook(HttpTransport):

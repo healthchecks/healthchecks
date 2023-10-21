@@ -43,12 +43,8 @@ class NotifyWebhookTestCase(BaseTestCase):
         mock_get.return_value.status_code = 200
 
         self.channel.notify(self.check)
-        mock_get.assert_called_with(
-            "get",
-            "http://example",
-            headers={},
-            timeout=10,
-        )
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args, ("get", "http://example"))
 
     @patch("hc.api.transports.curl.request", side_effect=CurlError("Foo failed"))
     def test_webhooks_handle_curl_errors(self, mock_get: Mock) -> None:
@@ -193,8 +189,8 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        url = "http://host/%24TAG1"
-        mock_get.assert_called_with("get", url, headers={}, timeout=10)
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args, ("get", "http://host/%24TAG1"))
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_handle_up_events(self, mock_get: Mock) -> None:
@@ -208,7 +204,8 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        mock_get.assert_called_with("get", "http://bar", headers={}, timeout=10)
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args, ("get", "http://bar"))
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_handle_noop_up_events(self, mock_get: Mock) -> None:
@@ -255,10 +252,10 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.channel.notify(self.check)
 
-        headers = {"Content-Type": "application/json"}
-        mock_request.assert_called_with(
-            "post", "http://foo.com", data=b"data", headers=headers, timeout=10
-        )
+        args, kwargs = mock_request.call_args
+        self.assertEqual(args, ("post", "http://foo.com"))
+        self.assertEqual(kwargs["data"], b"data")
+        self.assertEqual(kwargs["headers"], {"Content-Type": "application/json"})
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_handle_get_headers(self, mock_request: Mock) -> None:
@@ -272,10 +269,9 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.channel.notify(self.check)
 
-        headers = {"Content-Type": "application/json"}
-        mock_request.assert_called_with(
-            "get", "http://foo.com", headers=headers, timeout=10
-        )
+        args, kwargs = mock_request.call_args
+        self.assertEqual(args, ("get", "http://foo.com"))
+        self.assertEqual(kwargs["headers"], {"Content-Type": "application/json"})
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_allow_user_agent_override(self, mock_request: Mock) -> None:
@@ -289,10 +285,9 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.channel.notify(self.check)
 
-        headers = {"User-Agent": "My-Agent"}
-        mock_request.assert_called_with(
-            "get", "http://foo.com", headers=headers, timeout=10
-        )
+        args, kwargs = mock_request.call_args
+        self.assertEqual(args, ("get", "http://foo.com"))
+        self.assertEqual(kwargs["headers"], {"User-Agent": "My-Agent"})
 
     @patch("hc.api.transports.curl.request")
     def test_webhooks_support_variables_in_headers(self, mock_request: Mock) -> None:
@@ -309,10 +304,9 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
-        headers = {"X-Message": "Foo is DOWN"}
-        mock_request.assert_called_with(
-            "get", "http://foo.com", headers=headers, timeout=10
-        )
+        args, kwargs = mock_request.call_args
+        self.assertEqual(args, ("get", "http://foo.com"))
+        self.assertEqual(kwargs["headers"], {"X-Message": "Foo is DOWN"})
 
     @override_settings(WEBHOOKS_ENABLED=False)
     def test_it_requires_webhooks_enabled(self) -> None:

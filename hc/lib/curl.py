@@ -3,28 +3,25 @@
 from __future__ import annotations
 
 import ipaddress
-import json
 import socket
 from io import BytesIO
-from typing import Any, TypedDict, cast
+from json import dumps, loads
+from typing import Any, cast
 from urllib.parse import urlencode
 
 import pycurl
 from django.conf import settings
-from typing_extensions import Unpack
 
 from hc.lib.typealias import JSONValue
 
 CurlSockAddr = tuple[int, int, int, tuple[str, int]]
 
-
-class CurlArgs(TypedDict, total=False):
-    data: dict[str, Any] | str | bytes | None
-    headers: dict[str, str]
-    json: Any
-    timeout: int
-    params: dict[str, str]
-    auth: tuple[str, str]
+# Type aliases for the arguments of the request function
+Data = dict[str, Any] | str | bytes | None
+Headers = dict[str, str] | None
+Timeout = int | None
+Params = dict[str, str] | None
+Auth = tuple[str, str] | None
 
 
 class CurlError(Exception):
@@ -38,7 +35,7 @@ class Response(object):
         self.content = content
 
     def json(self):
-        return cast(JSONValue, json.loads(self.content.decode()))
+        return cast(JSONValue, loads(self.content.decode()))
 
     @property
     def text(self) -> str:
@@ -51,7 +48,17 @@ def _makeheader(k: str, v: str) -> bytes:
     return key_bytes + b":" + value_bytes
 
 
-def request(method: str, url: str, **kwargs: Unpack[CurlArgs]) -> Response:
+def request(
+    method: str,
+    url: str,
+    *,
+    params: Params = None,
+    data: Data = None,
+    json: Any = None,
+    headers: Headers = None,
+    auth: Auth = None,
+    timeout: Timeout = None,
+) -> Response:
     """Make a HTTP request using pycurl, return a Response object.
 
     The `method` argument specifies the HTTP verb, and must be
@@ -131,21 +138,21 @@ def request(method: str, url: str, **kwargs: Unpack[CurlArgs]) -> Response:
     c.setopt(pycurl.OPENSOCKETFUNCTION, opensocket)
     c.setopt(pycurl.FOLLOWLOCATION, True)  # Allow redirects
     c.setopt(pycurl.MAXREDIRS, 3)
-    if "timeout" in kwargs:
-        c.setopt(pycurl.TIMEOUT, kwargs["timeout"])
+    if timeout is not None:
+        c.setopt(pycurl.TIMEOUT, timeout)
 
-    if "params" in kwargs:
-        url += "?" + urlencode(kwargs["params"])
+    if params is not None:
+        url += "?" + urlencode(params)
     c.setopt(pycurl.URL, url.encode())
 
-    if "auth" in kwargs:
-        c.setopt(pycurl.USERPWD, "%s:%s" % kwargs["auth"])
+    if auth is not None:
+        c.setopt(pycurl.USERPWD, "%s:%s" % auth)
 
-    headers = kwargs.get("headers", {})
-    data = kwargs.get("data")
+    if headers is None:
+        headers = {}
 
-    if "json" in kwargs:
-        data = json.dumps(kwargs["json"])
+    if json is not None:
+        data = dumps(json)
         headers["Content-Type"] = "application/json"
 
     if "User-Agent" not in headers:
@@ -196,9 +203,38 @@ def request(method: str, url: str, **kwargs: Unpack[CurlArgs]) -> Response:
     return Response(status, buffer.getvalue())
 
 
-def post(url: str, **kwargs: Unpack[CurlArgs]) -> Response:
-    return request("post", url, **kwargs)
+# Convenience wrapper around request for making "GET" requests
+def get(
+    url: str,
+    *,
+    params: Params = None,
+    headers: Headers = None,
+    auth: Auth = None,
+    timeout: Timeout = None,
+) -> Response:
+    return request(
+        "get", url, params=params, headers=headers, auth=auth, timeout=timeout
+    )
 
 
-def get(url: str, **kwargs: Unpack[CurlArgs]) -> Response:
-    return request("get", url, **kwargs)
+# Convenience wrapper around request for making "POST" requests
+def post(
+    url: str,
+    *,
+    params: Params = None,
+    data: Data = None,
+    json: Any = None,
+    headers: Headers = None,
+    auth: Auth = None,
+    timeout: Timeout = None,
+) -> Response:
+    return request(
+        "put",
+        url,
+        params=params,
+        data=data,
+        json=json,
+        headers=headers,
+        auth=auth,
+        timeout=timeout,
+    )

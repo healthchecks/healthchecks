@@ -101,12 +101,8 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Test notification sent!")
 
-        mock_get.assert_called_with(
-            "get",
-            "http://example-url",
-            headers={},
-            timeout=10,
-        )
+        args, kwargs = mock_get.call_args
+        self.assertEqual(args, ("get", "http://example-url"))
 
     def test_it_handles_webhooks_with_no_urls(self) -> None:
         self.channel.kind = "webhook"
