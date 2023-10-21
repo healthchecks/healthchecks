@@ -35,9 +35,9 @@ from django.views.decorators.http import require_POST
 
 from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
+from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Credential, Member, Profile, Project
 from hc.api.models import Channel, Check, TokenBucket
-from hc.lib.typealias import AuthenticatedHttpRequest
 from hc.lib.tz import all_timezones
 from hc.lib.webauthn import CreateHelper, GetHelper
 from hc.payments.models import Subscription

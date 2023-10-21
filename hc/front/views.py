@@ -41,6 +41,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from pydantic import BaseModel, ValidationError
 
+from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Member, Profile, Project
 from hc.api.models import (
     DEFAULT_GRACE,
@@ -63,7 +64,6 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.lib import curl
 from hc.lib.badges import get_badge_url
-from hc.lib.typealias import AuthenticatedHttpRequest
 from hc.lib.tz import all_timezones
 
 VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
