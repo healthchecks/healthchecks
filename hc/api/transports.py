@@ -258,8 +258,8 @@ class HttpTransport(Transport):
         cls,
         method: str,
         url: str,
-        retry: bool,
         *,
+        retry: bool,
         params: curl.Params = None,
         data: curl.Data = None,
         json: Any = None,
@@ -288,18 +288,7 @@ class HttpTransport(Transport):
                 if tries_left == 0 or time.time() - start > 15:
                     raise e
 
-    @classmethod
-    def get(
-        cls,
-        url: str,
-        retry: bool = True,
-        *,
-        params: curl.Params = None,
-        headers: curl.Headers = None,
-        auth: curl.Auth = None,
-    ) -> None:
-        cls.request("get", url, retry, params=params, headers=headers, auth=auth)
-
+    # Convenience wrapper around self.request for making "POST" requests
     @classmethod
     def post(
         cls,
@@ -315,30 +304,7 @@ class HttpTransport(Transport):
         cls.request(
             "post",
             url,
-            retry,
-            params=params,
-            data=data,
-            json=json,
-            headers=headers,
-            auth=auth,
-        )
-
-    @classmethod
-    def put(
-        cls,
-        url: str,
-        retry: bool = True,
-        *,
-        params: curl.Params = None,
-        data: curl.Data = None,
-        json: Any = None,
-        headers: curl.Headers = None,
-        auth: curl.Auth = None,
-    ) -> None:
-        cls.request(
-            "put",
-            url,
-            retry,
+            retry=retry,
             params=params,
             data=data,
             json=json,
@@ -413,7 +379,7 @@ class Webhook(HttpTransport):
             headers[key] = self.prepare(value, check, latin1=True)
 
         body, body_bytes = spec.body, None
-        if body:
+        if body and spec.method in ("POST", "PUT"):
             body = self.prepare(body, check, allow_ping_body=True)
             body_bytes = body.encode()
 
@@ -423,12 +389,8 @@ class Webhook(HttpTransport):
             # When sending a test notification, don't retry on failures.
             retry = False
 
-        if spec.method == "GET":
-            self.get(url, retry=retry, headers=headers)
-        elif spec.method == "POST":
-            self.post(url, retry=retry, data=body_bytes, headers=headers)
-        elif spec.method == "PUT":
-            self.put(url, retry=retry, data=body_bytes, headers=headers)
+        method = spec.method.lower()
+        self.request(method, url, retry=retry, data=body_bytes, headers=headers)
 
 
 class SlackFields(list[JSONValue]):
