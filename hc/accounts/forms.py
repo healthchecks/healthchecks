@@ -67,9 +67,12 @@ class EmailLoginForm(forms.Form):
 
     def clean_identity(self) -> str:
         v = self.cleaned_data["identity"]
+
         assert isinstance(v, str)
         if not TokenBucket.authorize_login_email(v):
             raise forms.ValidationError("Too many attempts, please try later.")
+
+        assert self.request
         if not TokenBucket.authorize_auth_ip(self.request):
             raise forms.ValidationError("Too many attempts, please try later.")
 
