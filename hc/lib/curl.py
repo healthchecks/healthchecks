@@ -229,7 +229,7 @@ def post(
     timeout: Timeout = None,
 ) -> Response:
     return request(
-        "put",
+        "post",
         url,
         params=params,
         data=data,
