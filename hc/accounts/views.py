@@ -170,8 +170,7 @@ def _set_autologin_cookie(response: HttpResponse) -> None:
 @sensitive_post_parameters()
 def login(request: HttpRequest) -> HttpResponse:
     form = forms.PasswordLoginForm()
-    magic_form = forms.EmailLoginForm(request)
-
+    magic_form = forms.EmailLoginForm()
     if request.method == "POST":
         if request.POST.get("action") == "login":
             form = forms.PasswordLoginForm(request.POST)

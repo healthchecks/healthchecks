@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix sending test notification to a group integration
+- Fix the Login form to not perform form validation in GET requests
 
 ## v3.0 - 2023-10-16
 

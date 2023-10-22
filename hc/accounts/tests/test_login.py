@@ -24,6 +24,8 @@ class LoginTestCase(BaseTestCase):
     def test_it_shows_form(self) -> None:
         r = self.client.get("/accounts/login/")
         self.assertContains(r, "Email Me a Link")
+        # It should not show validation errors yet
+        self.assertNotContains(r, "This field is required")
 
     def test_it_redirects_authenticated_get(self) -> None:
         self.client.login(username="alice@example.org", password="password")
