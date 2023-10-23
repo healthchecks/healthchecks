@@ -27,16 +27,8 @@
 
 {% if ping is None %}
 {% line %}<b>Last Ping:</b> Never{% endline %}
-{% elif ping.kind == "ign" %}
-{% line %}<b>Last Ping:</b> Ignored, {{ ping.created|naturaltime }}{% endline %}
-{% elif ping.kind == "fail" or ping.exitstatus > 0 %}
-{% line %}<b>Last Ping:</b> Failure, {{ ping.created|naturaltime }}{% endline %}
-{% elif ping.kind == "start" %}
-{% line %}<b>Last Ping:</b> Start, {{ ping.created|naturaltime }}{% endline %}
-{% elif ping.kind == "log" %}
-{% line %}<b>Last Ping:</b> Log, {{ ping.created|naturaltime }}{% endline %}
 {% else %}
-{% line %}<b>Last Ping:</b> Success, {{ ping.created|naturaltime }}{% endline %}
+{% line %}<b>Last Ping:</b> {{ ping.get_kind_display }}, {{ ping.created|naturaltime }}{% endline %}
 {% endif %}
 
 {% if body %}

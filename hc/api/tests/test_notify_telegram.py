@@ -59,6 +59,19 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", payload["text"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_exitstatus(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "fail"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("<b>Last Ping:</b> Exit status 123, an hour ago", payload["text"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_sends_to_thread(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -127,7 +140,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
-    def test_telegram_obeys_rate_limit(self) -> None:
+    def test_it_obeys_rate_limit(self) -> None:
         TokenBucket.objects.create(value="tg-123", tokens=0)
 
         self.channel.notify(self.check)
