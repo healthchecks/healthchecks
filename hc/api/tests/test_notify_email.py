@@ -180,7 +180,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertNotIn("Projects Overview", email.body)
         self.assertNotIn("Projects Overview", html)
 
-    def test_email_transport_handles_json_value(self) -> None:
+    def test_it_handles_json_value(self) -> None:
         payload = {"value": "alice@example.org", "up": True, "down": True}
         self.channel.value = json.dumps(payload)
         self.channel.save()
@@ -203,7 +203,7 @@ class NotifyEmailTestCase(BaseTestCase):
         n = Notification.objects.get()
         self.assertEqual(n.error, "Email not verified")
 
-    def test_email_checks_up_down_flags(self) -> None:
+    def test_it_checks_up_down_flags(self) -> None:
         payload = {"value": "alice@example.org", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
         self.channel.save()
@@ -214,7 +214,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_email_handles_amperstand(self) -> None:
+    def test_it_handles_amperstand(self) -> None:
         self.check.name = "Foo & Bar"
         self.check.save()
 
@@ -262,6 +262,18 @@ class NotifyEmailTestCase(BaseTestCase):
         html = self.get_html(email)
         self.assertIn("Log", email.body)
         self.assertIn("Log", html)
+
+    def test_it_handles_last_ping_exitstatus(self) -> None:
+        self.ping.kind = "fail"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        html = self.get_html(email)
+        self.assertIn("Exit status 123", email.body)
+        self.assertIn("Exit status 123", html)
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_it_sets_custom_mail_from(self) -> None:
