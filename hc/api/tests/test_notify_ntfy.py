@@ -61,6 +61,19 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_last_pings_exit_code(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.ping.kind = "fail"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("Last Ping: Exit status 123", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
@@ -78,7 +91,6 @@ class NotifyNtfyTestCase(BaseTestCase):
         other.save()
 
         self.channel.notify(self.check)
-        assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "<Name> is DOWN")

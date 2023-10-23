@@ -21,16 +21,8 @@
 
 {% if ping is None %}
 {% line %}Last Ping: Never{% endline %}
-{% elif ping.kind == "ign" %}
-{% line %}Last Ping: Ignored, {{ ping.created|naturaltime }}{% endline %}
-{% elif ping.kind == "fail" or ping.exitstatus > 0 %}
-{% line %}Last Ping: Failure, {{ ping.created|naturaltime }}{% endline %}
-{% elif ping.kind == "start" %}
-{% line %}Last Ping: Start, {{ ping.created|naturaltime }}{% endline %}
-{% elif ping.kind == "log" %}
-{% line %}Last Ping: Log, {{ ping.created|naturaltime }}{% endline %}
 {% else %}
-{% line %}Last Ping: Success, {{ ping.created|naturaltime }}{% endline %}
+{% line %}Last Ping: {{ ping.get_kind_display }}, {{ ping.created|naturaltime }}{% endline %}
 {% endif %}
 
 {% if down_checks is not None %}
