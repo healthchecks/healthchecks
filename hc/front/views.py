@@ -1670,6 +1670,10 @@ def add_pushbullet(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
     return render(request, "integrations/add_pushbullet.html", ctx)
 
 
+class PushbulletOAuthResponse(BaseModel):
+    access_token: str
+
+
 @require_setting("PUSHBULLET_CLIENT_ID")
 @login_required
 def add_pushbullet_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
@@ -1694,17 +1698,17 @@ def add_pushbullet_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "grant_type": "authorization_code",
     }
     result = curl.post("https://api.pushbullet.com/oauth2/token", data)
-
-    doc = result.json()
-    if "access_token" in doc:
-        channel = Channel(kind="pushbullet", project=project)
-        channel.value = doc["access_token"]
-        channel.save()
-        channel.assign_all_checks()
-        messages.success(request, "The Pushbullet integration has been added!")
-    else:
+    try:
+        doc = PushbulletOAuthResponse.model_validate_json(result.content, strict=True)
+    except ValidationError:
         messages.warning(request, "Something went wrong")
+        return redirect("hc-channels", project.code)
 
+    channel = Channel(kind="pushbullet", project=project)
+    channel.value = doc.access_token
+    channel.save()
+    channel.assign_all_checks()
+    messages.success(request, "The Pushbullet integration has been added!")
     return redirect("hc-channels", project.code)
 
 
