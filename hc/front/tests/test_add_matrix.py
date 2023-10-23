@@ -24,7 +24,7 @@ class AddMatrixTestCase(BaseTestCase):
     @patch("hc.front.forms.curl.post")
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
-        mock_post.return_value.json.return_value = {"room_id": "fake-room-id"}
+        mock_post.return_value.content = b"""{"room_id": "fake-room-id"}"""
 
         form = {"alias": "!foo:example.org"}
         self.client.login(username="alice@example.org", password="password")
@@ -35,6 +35,18 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertEqual(c.kind, "matrix")
         self.assertEqual(c.value, "fake-room-id")
         self.assertEqual(c.project, self.project)
+
+    @patch("hc.front.forms.curl.post")
+    def test_it_handles_invalid_join_responses(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+        form = {"alias": "!foo:example.org"}
+
+        for sample in (None, b"", b"{}", b"""{"room_id": ""}"""):
+            mock_post.return_value.content = sample
+
+            self.client.login(username="alice@example.org", password="password")
+            r = self.client.post(self.url, form)
+            self.assertContains(r, "Matrix server returned unexpected response")
 
     @override_settings(MATRIX_ACCESS_TOKEN=None)
     def test_it_requires_access_token(self) -> None:

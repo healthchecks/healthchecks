@@ -11,6 +11,8 @@ from urllib.parse import quote, urlencode
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from pydantic import BaseModel, Field
+from pydantic import ValidationError as PydanticError
 
 from hc.front.validators import (
     CronExpressionValidator,
@@ -257,6 +259,10 @@ class ChannelNameForm(forms.Form):
     name = forms.CharField(max_length=100, required=False)
 
 
+class MatrixJoinResponse(BaseModel):
+    room_id: str = Field(min_length=1)
+
+
 class AddMatrixForm(forms.Form):
     error_css_class = "has-error"
     alias = forms.CharField(max_length=100)
@@ -282,11 +288,12 @@ class AddMatrixForm(forms.Form):
                 "please try again later."
             )
 
-        doc = r.json()
-        if "error" in doc:
-            raise forms.ValidationError("Response from Matrix: %s" % doc["error"])
+        try:
+            doc = MatrixJoinResponse.model_validate_json(r.content, strict=True)
+        except PydanticError:
+            raise forms.ValidationError("Matrix server returned unexpected response")
 
-        self.cleaned_data["room_id"] = doc["room_id"]
+        self.cleaned_data["room_id"] = doc.room_id
 
         return v
 
