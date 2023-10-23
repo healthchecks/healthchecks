@@ -129,6 +129,24 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", params["message"])
 
     @patch("hc.api.transports.socket.socket")
+    def test_it_shows_exitstatus(self, socket: Mock) -> None:
+        socketobj = setup_mock(socket, {})
+
+        self.ping.kind = "fail"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
+        self.channel.notify(self.check)
+        self.assertEqual(socketobj.address, "/tmp/socket")
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+        assert socketobj.req
+        params = socketobj.req["params"]
+        self.assertIn("Last Ping: Exit status 123, now", params["message"])
+
+    @patch("hc.api.transports.socket.socket")
     def test_it_shows_schedule_and_tz(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
