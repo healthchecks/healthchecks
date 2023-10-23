@@ -6,20 +6,16 @@ from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
 from typing import Any
-from urllib.parse import quote, urlencode
 
 from django import forms
-from django.conf import settings
 from django.core.exceptions import ValidationError
-from pydantic import BaseModel, Field
-from pydantic import ValidationError as PydanticError
 
 from hc.front.validators import (
     CronExpressionValidator,
     TimezoneValidator,
     WebhookValidator,
 )
-from hc.lib import curl
+from hc.lib import matrix
 
 
 def _is_latin1(s: str) -> bool:
@@ -259,10 +255,6 @@ class ChannelNameForm(forms.Form):
     name = forms.CharField(max_length=100, required=False)
 
 
-class MatrixJoinResponse(BaseModel):
-    room_id: str = Field(min_length=1)
-
-
 class AddMatrixForm(forms.Form):
     error_css_class = "has-error"
     alias = forms.CharField(max_length=100)
@@ -272,28 +264,10 @@ class AddMatrixForm(forms.Form):
         assert isinstance(v, str)
 
         # validate it by trying to join
-        assert settings.MATRIX_HOMESERVER
-        url = settings.MATRIX_HOMESERVER
-        url += "/_matrix/client/r0/join/%s?" % quote(v)
-        url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
-        r = curl.post(url)
-        if r.status_code == 429:
-            raise forms.ValidationError(
-                "Matrix server returned status code 429 (Too Many Requests), "
-                "please try again later."
-            )
-        if r.status_code == 502:
-            raise forms.ValidationError(
-                "Matrix server returned status code 502 (Bad Gateway), "
-                "please try again later."
-            )
-
         try:
-            doc = MatrixJoinResponse.model_validate_json(r.content, strict=True)
-        except PydanticError:
-            raise forms.ValidationError("Matrix server returned unexpected response")
-
-        self.cleaned_data["room_id"] = doc.room_id
+            self.cleaned_data["room_id"] = matrix.join(v)
+        except matrix.JoinError as e:
+            raise forms.ValidationError(e.message)
 
         return v
 

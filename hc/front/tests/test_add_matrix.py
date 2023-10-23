@@ -21,7 +21,7 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Integration Settings", status_code=200)
 
-    @patch("hc.front.forms.curl.post")
+    @patch("hc.lib.matrix.curl.post")
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         mock_post.return_value.content = b"""{"room_id": "fake-room-id"}"""
@@ -36,7 +36,7 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertEqual(c.value, "fake-room-id")
         self.assertEqual(c.project, self.project)
 
-    @patch("hc.front.forms.curl.post")
+    @patch("hc.lib.matrix.curl.post")
     def test_it_handles_invalid_join_responses(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         form = {"alias": "!foo:example.org"}
@@ -54,7 +54,7 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    @patch("hc.front.forms.curl.post")
+    @patch("hc.lib.matrix.curl.post")
     def test_it_handles_429(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 429
 
@@ -62,10 +62,10 @@ class AddMatrixTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
 
-        self.assertContains(r, "Matrix server returned status code 429")
+        self.assertContains(r, "Matrix server returned status 429")
         self.assertFalse(Channel.objects.exists())
 
-    @patch("hc.front.forms.curl.post")
+    @patch("hc.lib.matrix.curl.post")
     def test_it_handles_502(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 502
 
@@ -73,7 +73,7 @@ class AddMatrixTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
 
-        self.assertContains(r, "Matrix server returned status code 502")
+        self.assertContains(r, "Matrix server returned status 502")
         self.assertFalse(Channel.objects.exists())
 
     def test_it_requires_rw_access(self) -> None:
