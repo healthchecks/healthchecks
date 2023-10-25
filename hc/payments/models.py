@@ -15,6 +15,6 @@ class Subscription(models.Model):
     send_invoices = models.BooleanField(default=True)
     invoice_email = models.EmailField(blank=True)
 
-    def cancel(self):
+    def cancel(self) -> None:
         # FIXME
         pass

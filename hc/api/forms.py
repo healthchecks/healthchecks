@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 
 
 class TimestampField(forms.Field):
-    def to_python(self, value):
+    def to_python(self, value: str | None) -> datetime | None:
         if value is None:
             return None
 

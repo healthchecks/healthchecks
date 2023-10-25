@@ -765,7 +765,7 @@ class ZulipConf(BaseModel):
     site: str = ""
     topic: str = ""
 
-    def model_post_init(self, context):
+    def model_post_init(self, context: Any) -> None:
         if self.site == "":
             # Fallback if we don't have the site value:
             # derive it from bot's email

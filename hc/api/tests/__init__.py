@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from typing import Any
+
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 
 
 class CustomRunner(DiscoverRunner):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         # For speed:
         settings.PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 

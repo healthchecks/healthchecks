@@ -9,9 +9,13 @@ from django.test.utils import override_settings
 
 from hc.test import BaseTestCase
 
+# Address is either a string (the path to the unix socket)
+# or a host:port tuple.
+Address = str | tuple[str, int]
+
 
 class MockSocket(object):
-    def __init__(self, response_tmpl):
+    def __init__(self, response_tmpl: dict[str, str]) -> None:
         self.response_tmpl = response_tmpl
         self.req = None
         self.outbox = b""
@@ -19,25 +23,26 @@ class MockSocket(object):
     def settimeout(self, seconds: int) -> None:
         pass
 
-    def connect(self, socket_path):
+    def connect(self, socket_path: Address) -> None:
         pass
 
-    def shutdown(self, flags):
+    def shutdown(self, flags: int) -> None:
         pass
 
-    def sendall(self, data):
+    def sendall(self, data: bytes) -> None:
         self.req = json.loads(data.decode())
+        assert self.req
         self.response_tmpl["id"] = self.req["id"]
 
         message = json.dumps(self.response_tmpl) + "\n"
         self.outbox += message.encode()
 
-    def recv(self, nbytes):
+    def recv(self, nbytes: int) -> bytes:
         head, self.outbox = self.outbox[0:1], self.outbox[1:]
         return head
 
 
-def setup_mock(socket: Mock, response_tmpl: dict[str, str]):
+def setup_mock(socket: Mock, response_tmpl: dict[str, str]) -> MockSocket:
     # A mock of socket.socket object
     socketobj = MockSocket(response_tmpl)
 
@@ -66,6 +71,7 @@ class SignalCaptchaTestCase(BaseTestCase):
         r = self.client.post(self.url, {"challenge": "foo", "captcha": "bar"})
         self.assertContains(r, "all good")
 
+        assert socketobj.req
         params = socketobj.req["params"]
         self.assertEqual(params["challenge"], "foo")
         self.assertEqual(params["captcha"], "bar")
@@ -79,6 +85,7 @@ class SignalCaptchaTestCase(BaseTestCase):
             self.url, {"challenge": "foo", "captcha": "signalcaptcha://bar"}
         )
 
+        assert socketobj.req
         params = socketobj.req["params"]
         self.assertEqual(params["captcha"], "bar")
 

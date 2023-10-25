@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 
+from django.apps.registry import Apps
 from django.db import migrations
 
 
-def normalize_opsgenie_values(apps, schema_editor):
+def normalize_opsgenie_values(apps: Apps, schema_editor: Any) -> None:
     Channel = apps.get_model("api", "Channel")
     for ch in Channel.objects.filter(kind="opsgenie").only("value"):
         if ch.value.startswith("{"):
