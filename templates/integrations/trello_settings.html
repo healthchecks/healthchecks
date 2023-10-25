@@ -39,6 +39,11 @@
         </div>
     </div>
 </form>
+{% elif error %}
+<p class="alert alert-warning">
+    Could not retrieve data from your Trello account.
+    Received an unexpected response from Trello.
+</p>
 {% else %}
 <p class="alert alert-warning">
     Could not find any boards with lists in your Trello account.

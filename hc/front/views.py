@@ -40,7 +40,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Member, Profile, Project
@@ -2274,6 +2274,20 @@ def add_apprise(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "integrations/add_apprise.html", ctx)
 
 
+class TrelloList(BaseModel):
+    id: str
+    name: str
+
+
+class TrelloBoard(BaseModel):
+    id: str
+    name: str
+    lists: list[TrelloList]
+
+
+TrelloBoards = TypeAdapter(list[TrelloBoard])
+
+
 @require_setting("TRELLO_APP_KEY")
 @login_required
 @require_POST
@@ -2291,9 +2305,14 @@ def trello_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
         "list_fields": "id,name",
     }
 
-    boards = curl.get(url, params).json()
-    num_lists = sum(len(board["lists"]) for board in boards)
+    result = curl.get(url, params)
+    try:
+        boards = TrelloBoards.validate_json(result.content)
+    except ValidationError:
+        logger.warning("Unexpected Trello API response: %s", result.text)
+        return render(request, "integrations/trello_settings.html", {"error": 1})
 
+    num_lists = sum(len(board.lists) for board in boards)
     ctx = {"token": token, "boards": boards, "num_lists": num_lists}
     return render(request, "integrations/trello_settings.html", ctx)
 
