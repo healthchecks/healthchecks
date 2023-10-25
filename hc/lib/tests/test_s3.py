@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import logging
-from functools import wraps
-from typing import Callable, ParamSpec, TypeVar
 from unittest import skipIf
 from unittest.mock import Mock, patch
 
@@ -10,6 +7,7 @@ from django.test import SimpleTestCase
 from django.test.utils import override_settings
 
 from hc.lib.s3 import get_object
+from hc.test import nolog
 
 try:
     from minio import S3Error
@@ -18,20 +16,6 @@ try:
     have_minio = True
 except ImportError:
     have_minio = False
-
-P = ParamSpec("P")
-T = TypeVar("T")
-
-
-def nolog(func: Callable[P, T]) -> Callable[P, T]:
-    @wraps(func)
-    def wrapper_func(*args: P.args, **kwargs: P.kwargs) -> T:
-        logging.disable(logging.CRITICAL)
-        result = func(*args, **kwargs)
-        logging.disable(logging.NOTSET)
-        return result
-
-    return wrapper_func
 
 
 @skipIf(not have_minio, "minio not installed")
