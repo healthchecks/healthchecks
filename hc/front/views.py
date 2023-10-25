@@ -2455,6 +2455,15 @@ def add_linenotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
     return render(request, "integrations/add_linenotify.html", ctx)
 
 
+class LineTokenResponse(BaseModel):
+    status: Literal[200]
+    access_token: str
+
+
+class LineStatusResponse(BaseModel):
+    target: str
+
+
 @require_setting("LINENOTIFY_CLIENT_ID")
 @login_required
 def add_linenotify_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
@@ -2480,22 +2489,27 @@ def add_linenotify_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "client_secret": settings.LINENOTIFY_CLIENT_SECRET,
     }
     result = curl.post("https://notify-bot.line.me/oauth/token", data)
-
-    doc = result.json()
-    if doc.get("status") != 200:
-        messages.warning(request, "Something went wrong.")
+    try:
+        tr = LineTokenResponse.model_validate_json(result.content, strict=True)
+        token = tr.access_token
+    except ValidationError:
+        messages.warning(request, "Received an unexpected response from LINE Notify.")
+        logger.warning("Unexpected LINE OAuth response: %s", result.text)
         return redirect("hc-channels", project.code)
 
     # Fetch notification target's name, will use it as channel name:
-    token = doc["access_token"]
-    result = curl.get(
-        "https://notify-api.line.me/api/status",
-        headers={"Authorization": "Bearer %s" % token},
-    )
-    doc = result.json()
+    headers = {"Authorization": f"Bearer {token}"}
+    result = curl.get("https://notify-api.line.me/api/status", headers=headers)
+    try:
+        sr = LineStatusResponse.model_validate_json(result.content, strict=True)
+        target = sr.target
+    except ValidationError:
+        messages.warning(request, "Received an unexpected response from LINE Notify.")
+        logger.warning("Unexpected LINE Status response: %s", result.text)
+        return redirect("hc-channels", project.code)
 
     channel = Channel(kind="linenotify", project=project)
-    channel.name = doc.get("target")
+    channel.name = target
     channel.value = token
     channel.save()
     channel.assign_all_checks()
