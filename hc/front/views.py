@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import email
 import json
+import logging
 import os
 import re
 import sqlite3
@@ -65,6 +66,8 @@ from hc.front.templatetags.hc_extras import (
 from hc.lib import curl
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
+
+logger = logging.getLogger(__name__)
 
 VALID_SORT_VALUES = ("name", "-name", "last_ping", "-last_ping", "created")
 STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
@@ -1580,16 +1583,19 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
     result = curl.post("https://slack.com/api/oauth.v2.access", data)
 
     doc = result.json()
-    if doc.get("ok"):
-        channel = Channel(kind="slack", project=project)
-        channel.value = result.text
-        channel.save()
-        channel.assign_all_checks()
-        messages.success(request, "The Slack integration has been added!")
-    else:
-        s = doc.get("error")
-        messages.warning(request, "Error message from slack: %s" % s)
+    if not isinstance(doc, dict) or not doc.get("ok"):
+        messages.warning(
+            request,
+            "Received an unexpected response from Slack. Integration not added.",
+        )
+        logger.warning("Unexpected Slack OAuth response: %s", result.text)
+        return redirect("hc-channels", project.code)
 
+    channel = Channel(kind="slack", project=project)
+    channel.value = result.text
+    channel.save()
+    channel.assign_all_checks()
+    messages.success(request, "The Slack integration has been added!")
     return redirect("hc-channels", project.code)
 
 

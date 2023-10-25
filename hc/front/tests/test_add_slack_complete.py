@@ -69,7 +69,25 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
         self.assertRedirects(r, self.channels_url)
-        self.assertContains(r, "something went wrong")
+        self.assertContains(r, "Slack returned an unexpected response.")
+
+    @patch("hc.front.views.curl.post", autospec=True)
+    def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
+        session = self.client.session
+        session["add_slack"] = ("foo", str(self.project.code))
+        session.save()
+
+        oauth_response = "surprise"
+
+        mock_post.return_value.text = json.dumps(oauth_response)
+        mock_post.return_value.json.return_value = oauth_response
+
+        url = "/integrations/add_slack_btn/?code=12345678&state=foo"
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url, follow=True)
+        self.assertRedirects(r, self.channels_url)
+        self.assertContains(r, "Slack returned an unexpected response.")
 
     @override_settings(SLACK_CLIENT_ID=None)
     def test_it_requires_client_id(self) -> None:
