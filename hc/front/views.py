@@ -1766,15 +1766,19 @@ def add_discord_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
     result = curl.post("https://discordapp.com/api/oauth2/token", data)
 
     doc = result.json()
-    if "access_token" in doc:
-        channel = Channel(kind="discord", project=project)
-        channel.value = result.text
-        channel.save()
-        channel.assign_all_checks()
-        messages.success(request, "The Discord integration has been added!")
-    else:
-        messages.warning(request, "Something went wrong.")
+    if not isinstance(doc, dict) or "access_token" not in doc:
+        messages.warning(
+            request,
+            "Received an unexpected response from Discord. Integration not added.",
+        )
+        logger.warning("Unexpected Discord OAuth response: %s", result.text)
+        return redirect("hc-channels", project.code)
 
+    channel = Channel(kind="discord", project=project)
+    channel.value = result.text
+    channel.save()
+    channel.assign_all_checks()
+    messages.success(request, "The Discord integration has been added!")
     return redirect("hc-channels", project.code)
 
 

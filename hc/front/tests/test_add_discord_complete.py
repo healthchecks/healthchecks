@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 
 from hc.api.models import Channel
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, nolog
 
 
 @override_settings(DISCORD_CLIENT_ID="t1", DISCORD_CLIENT_SECRET="s1")
@@ -40,6 +40,24 @@ class AddDiscordCompleteTestCase(BaseTestCase):
 
         # Session should now be clean
         self.assertFalse("add_discord" in self.client.session)
+
+    @nolog
+    @patch("hc.front.views.curl.post", autospec=True)
+    def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
+        session = self.client.session
+        session["add_discord"] = ("foo", str(self.project.code))
+        session.save()
+
+        oauth_response = "surprise"
+        mock_post.return_value.text = json.dumps(oauth_response)
+        mock_post.return_value.json.return_value = oauth_response
+
+        url = self.url + "?code=12345678&state=foo"
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url, follow=True)
+        self.assertRedirects(r, self.channels_url)
+        self.assertContains(r, "Received an unexpected response from Discord.")
 
     def test_it_avoids_csrf(self) -> None:
         session = self.client.session
