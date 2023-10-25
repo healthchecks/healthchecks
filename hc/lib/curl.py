@@ -34,7 +34,7 @@ class Response(object):
         self.status_code = status_code
         self.content = content
 
-    def json(self):
+    def json(self) -> JSONValue:
         return cast(JSONValue, loads(self.content.decode()))
 
     @property
