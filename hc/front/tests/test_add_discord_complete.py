@@ -44,20 +44,21 @@ class AddDiscordCompleteTestCase(BaseTestCase):
     @nolog
     @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
-        session = self.client.session
-        session["add_discord"] = ("foo", str(self.project.code))
-        session.save()
+        for sample in ("surprise", {}, None):
+            oauth_response = "surprise"
+            mock_post.return_value.text = json.dumps(oauth_response)
+            mock_post.return_value.json.return_value = oauth_response
 
-        oauth_response = "surprise"
-        mock_post.return_value.text = json.dumps(oauth_response)
-        mock_post.return_value.json.return_value = oauth_response
+            session = self.client.session
+            session["add_discord"] = ("foo", str(self.project.code))
+            session.save()
 
-        url = self.url + "?code=12345678&state=foo"
+            url = self.url + "?code=12345678&state=foo"
 
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(url, follow=True)
-        self.assertRedirects(r, self.channels_url)
-        self.assertContains(r, "Received an unexpected response from Discord.")
+            self.client.login(username="alice@example.org", password="password")
+            r = self.client.get(url, follow=True)
+            self.assertRedirects(r, self.channels_url)
+            self.assertContains(r, "Received an unexpected response from Discord.")
 
     def test_it_avoids_csrf(self) -> None:
         session = self.client.session
