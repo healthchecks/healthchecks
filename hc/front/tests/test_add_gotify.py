@@ -23,8 +23,8 @@ class AddGotifyTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "gotify")
-        self.assertEqual(c.gotify_url, "http://example.org")
-        self.assertEqual(c.gotify_token, "abc")
+        self.assertEqual(c.gotify.url, "http://example.org")
+        self.assertEqual(c.gotify.token, "abc")
         self.assertEqual(c.project, self.project)
 
     def test_it_rejects_bad_url(self) -> None:

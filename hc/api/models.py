@@ -690,16 +690,6 @@ class Ping(models.Model):
         return None
 
 
-def json_property(kind: str, field: str) -> property:
-    def fget(instance: Channel) -> int | str:
-        assert instance.kind == kind
-        v = instance.json[field]
-        assert isinstance(v, int) or isinstance(v, str)
-        return v
-
-    return property(fget)
-
-
 class WebhookSpec(BaseModel):
     method: str
     url: str
@@ -790,6 +780,11 @@ class TrelloConf(BaseModel):
     list_id: str
     board_name: str
     list_name: str
+
+
+class GotifyConf(BaseModel):
+    url: str
+    token: str
 
 
 class Channel(models.Model):
@@ -1062,8 +1057,10 @@ class Channel(models.Model):
         assert self.kind == "linenotify"
         return self.value
 
-    gotify_url = json_property("gotify", "url")
-    gotify_token = json_property("gotify", "token")
+    @property
+    def gotify(self) -> GotifyConf:
+        assert self.kind == "gotify"
+        return GotifyConf.model_validate_json(self.value, strict=True)
 
     @property
     def group_channels(self) -> QuerySet[Channel]:
