@@ -10,20 +10,20 @@ from hc.api import views
 class QuoteConverter:
     regex = r"[\w%~_.-]+"
 
-    def to_python(self, value):
+    def to_python(self, value: str) -> str:
         return unquote(value)
 
-    def to_url(self, value):
+    def to_url(self, value: str) -> str:
         return quote(value, safe="")
 
 
 class SHA1Converter:
     regex = "[A-z0-9]{40}"
 
-    def to_python(self, value):
+    def to_python(self, value: str) -> str:
         return value
 
-    def to_url(self, value):
+    def to_url(self, value: str) -> str:
         return value
 
 
