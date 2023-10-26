@@ -216,7 +216,7 @@ COMPRESS_FILTERS = {
 }
 
 
-def immutable_file_test(path, url):
+def immutable_file_test(path: Any, url: str) -> bool:
     return "/static/CACHE/" in url or "/static/fonts/" in url
 
 

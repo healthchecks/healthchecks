@@ -9,7 +9,7 @@ from django.utils.timezone import now
 
 from hc.api.models import Channel, Check, Notification
 from hc.lib.signing import sign_bounce_id
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, TestHttpResponse
 
 
 class BounceTestCase(BaseTestCase):
@@ -34,7 +34,7 @@ class BounceTestCase(BaseTestCase):
         status: str = "5.0.0",
         to_local: str | None = None,
         diagnostic_code: str = "",
-    ):
+    ) -> TestHttpResponse:
         if to_local is None:
             to_local = sign_bounce_id("n.%s" % self.n.code)
 
