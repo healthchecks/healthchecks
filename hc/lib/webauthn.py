@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Iterable
 from secrets import token_bytes
+from typing import Any
 
 import fido2.features
 from fido2.server import Fido2Server
@@ -21,7 +22,7 @@ class CreateHelper(object):
         self.server = Fido2Server(rp)
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]
 
-    def prepare(self, email: str) -> tuple[dict, dict]:
+    def prepare(self, email: str) -> tuple[dict[str, Any], Any]:
         # User handle (id) is used in a username-less authentication, to map a
         # credential received from browser with an user account in the database.
         # Since we only use security keys as a second factor,
@@ -40,7 +41,7 @@ class CreateHelper(object):
         options, state = self.server.register_begin(user, self.credentials)
         return dict(options), state
 
-    def verify(self, state: dict, response_json: str) -> bytes | None:
+    def verify(self, state: Any, response_json: str) -> bytes | None:
         try:
             doc = json.loads(response_json)
             auth_data = self.server.register_complete(state, doc)
@@ -55,11 +56,11 @@ class GetHelper(object):
         self.server = Fido2Server(rp)
         self.credentials = [AttestedCredentialData(blob) for blob in credentials]
 
-    def prepare(self) -> tuple[dict, dict]:
+    def prepare(self) -> tuple[dict[str, Any], Any]:
         options, state = self.server.authenticate_begin(self.credentials)
         return dict(options), state
 
-    def verify(self, state: dict, response_json: str) -> bool:
+    def verify(self, state: Any, response_json: str) -> bool:
         try:
             doc = json.loads(response_json)
             self.server.authenticate_complete(state, self.credentials, doc)
