@@ -18,6 +18,7 @@ class EditNtfyTestCase(BaseTestCase):
                 "url": "https://example.org",
                 "priority": 3,
                 "priority_up": 0,
+                "token": "test-token",
             }
         )
         self.channel.save()
@@ -30,6 +31,7 @@ class EditNtfyTestCase(BaseTestCase):
         self.assertContains(r, "Save Integration")
         self.assertContains(r, "https://example.org")
         self.assertContains(r, "foo-bar-baz")
+        self.assertContains(r, "test-token")
 
     def test_it_updates_channel(self) -> None:
         form = {
@@ -44,10 +46,10 @@ class EditNtfyTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.ntfy_topic, "updated-topic")
-        self.assertEqual(self.channel.ntfy_url, "https://example.com")
-        self.assertEqual(self.channel.ntfy_priority, 4)
-        self.assertEqual(self.channel.ntfy_priority_up, 1)
+        self.assertEqual(self.channel.ntfy.topic, "updated-topic")
+        self.assertEqual(self.channel.ntfy.url, "https://example.com")
+        self.assertEqual(self.channel.ntfy.priority, 4)
+        self.assertEqual(self.channel.ntfy.priority_up, 1)
 
         # Make sure it does not call assign_all_checks
         self.assertFalse(self.channel.checks.exists())
@@ -73,4 +75,4 @@ class EditNtfyTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         self.channel.refresh_from_db()
-        self.assertEqual(self.channel.ntfy_token, "tk_test")
+        self.assertEqual(self.channel.ntfy.token, "tk_test")

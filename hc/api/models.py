@@ -773,6 +773,18 @@ class ZulipConf(BaseModel):
             self.site = f"https://{domain}"
 
 
+class NtfyConf(BaseModel):
+    topic: str
+    url: str
+    priority: int
+    priority_up: int
+    token: str = ""
+
+    @property
+    def priority_display(self) -> str:
+        return NTFY_PRIORITIES[self.priority]
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -1057,19 +1069,9 @@ class Channel(models.Model):
             project=self.project, code__in=self.value.split(",")
         )
 
-    ntfy_topic = json_property("ntfy", "topic")
-    ntfy_url = json_property("ntfy", "url")
-    ntfy_priority = json_property("ntfy", "priority")
-    ntfy_priority_up = json_property("ntfy", "priority_up")
-
     @property
-    def ntfy_token(self) -> str | None:
-        assert self.kind == "ntfy"
-        return self.json.get("token")
-
-    @property
-    def ntfy_priority_display(self) -> str:
-        return NTFY_PRIORITIES[self.ntfy_priority]
+    def ntfy(self) -> NtfyConf:
+        return NtfyConf.model_validate_json(self.value, strict=True)
 
 
 class Notification(models.Model):

@@ -65,8 +65,8 @@
         (up only)
     {% endif %}
 {% elif ch.kind == "ntfy" %}
-    ntfy topic <span>{{ ch.ntfy_topic }}</span>,
-    {{ ch.ntfy_priority_display }} priority
+    ntfy topic <span>{{ ch.ntfy.topic }}</span>,
+    {{ ch.ntfy.priority_display }} priority
 {% elif ch.kind == "group" %}
     Group,
     {% with ch.group_channels|length as num_members %}

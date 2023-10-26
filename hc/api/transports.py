@@ -1289,11 +1289,8 @@ class Group(Transport):
 class Ntfy(HttpTransport):
     def priority(self, check: Check) -> int:
         if check.status == "up":
-            result = self.channel.ntfy_priority_up
-        else:
-            result = self.channel.ntfy_priority
-        assert isinstance(result, int)
-        return result
+            return self.channel.ntfy.priority_up
+        return self.channel.ntfy.priority
 
     def is_noop(self, check: Check) -> bool:
         return self.priority(check) == 0
@@ -1305,7 +1302,7 @@ class Ntfy(HttpTransport):
             "down_checks": self.down_checks(check),
         }
         payload = {
-            "topic": self.channel.ntfy_topic,
+            "topic": self.channel.ntfy.topic,
             "priority": self.priority(check),
             "title": tmpl("ntfy_title.html", **ctx),
             "message": tmpl("ntfy_message.html", **ctx),
@@ -1320,7 +1317,7 @@ class Ntfy(HttpTransport):
         }
 
         headers = {}
-        if self.channel.ntfy_token:
-            headers = {"Authorization": f"Bearer {self.channel.ntfy_token}"}
+        if self.channel.ntfy.token:
+            headers = {"Authorization": f"Bearer {self.channel.ntfy.token}"}
 
-        self.post(self.channel.ntfy_url, headers=headers, json=payload)
+        self.post(self.channel.ntfy.url, headers=headers, json=payload)

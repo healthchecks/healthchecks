@@ -29,10 +29,10 @@ class AddNtfyTestCase(BaseTestCase):
 
         c = Channel.objects.get()
         self.assertEqual(c.kind, "ntfy")
-        self.assertEqual(c.ntfy_topic, "foo")
-        self.assertEqual(c.ntfy_url, "https://example.org")
-        self.assertEqual(c.ntfy_priority, 5)
-        self.assertEqual(c.ntfy_priority_up, 1)
+        self.assertEqual(c.ntfy.topic, "foo")
+        self.assertEqual(c.ntfy.url, "https://example.org")
+        self.assertEqual(c.ntfy.priority, 5)
+        self.assertEqual(c.ntfy.priority_up, 1)
         self.assertEqual(c.project, self.project)
 
         # Make sure it calls assign_all_checks
@@ -82,4 +82,4 @@ class AddNtfyTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.ntfy_token, "tk_test")
+        self.assertEqual(c.ntfy.token, "tk_test")

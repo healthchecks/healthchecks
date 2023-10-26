@@ -2586,10 +2586,11 @@ def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     else:
         form = forms.NtfyForm(
             {
-                "topic": channel.ntfy_topic,
-                "url": channel.ntfy_url,
-                "priority": channel.ntfy_priority,
-                "priority_up": channel.ntfy_priority_up,
+                "topic": channel.ntfy.topic,
+                "url": channel.ntfy.url,
+                "priority": channel.ntfy.priority,
+                "priority_up": channel.ntfy.priority_up,
+                "token": channel.ntfy.token,
             }
         )
 
