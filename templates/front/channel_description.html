@@ -37,8 +37,8 @@
     Phone call to <span>{{ ch.phone.value }}</span>
 {% elif ch.kind == "trello" %}
     Trello
-    board <span>{{ ch.trello_board_list|first }}</span>,
-    list <span>{{ ch.trello_board_list|last }}</span>
+    board <span>{{ ch.trello.board_name }}</span>,
+    list <span>{{ ch.trello.list_name }}</span>
 {% elif ch.kind == "matrix" %}
     Matrix <span>{{ ch.value }}</span>
 {% elif ch.kind == "whatsapp" %}

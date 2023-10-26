@@ -785,6 +785,13 @@ class NtfyConf(BaseModel):
         return NTFY_PRIORITIES[self.priority]
 
 
+class TrelloConf(BaseModel):
+    token: str
+    list_id: str
+    board_name: str
+    list_name: str
+
+
 class Channel(models.Model):
     name = models.CharField(max_length=100, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -1033,14 +1040,10 @@ class Channel(models.Model):
         assert self.kind in ("call", "sms", "whatsapp", "signal")
         return PhoneConf.model_validate_json(self.value)
 
-    trello_token = json_property("trello", "token")
-    trello_list_id = json_property("trello", "list_id")
-
     @property
-    def trello_board_list(self) -> tuple[str, str]:
+    def trello(self) -> TrelloConf:
         assert self.kind == "trello"
-        doc = json.loads(self.value)
-        return doc["board_name"], doc["list_name"]
+        return TrelloConf.model_validate_json(self.value, strict=True)
 
     @property
     def email(self) -> EmailConf:
@@ -1071,6 +1074,7 @@ class Channel(models.Model):
 
     @property
     def ntfy(self) -> NtfyConf:
+        assert self.kind == "ntfy"
         return NtfyConf.model_validate_json(self.value, strict=True)
 
 

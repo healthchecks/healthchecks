@@ -49,6 +49,13 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertEqual(params["key"], "fake-trello-app-key")
         self.assertEqual(params["token"], "fake-token")
 
+    @override_settings(TRELLO_APP_KEY=None)
+    def test_it_requires_trello_app_key(self) -> None:
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Trello notifications are not enabled.")
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200

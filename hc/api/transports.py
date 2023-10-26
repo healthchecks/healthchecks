@@ -941,12 +941,15 @@ class Trello(HttpTransport):
         return check.status != "down"
 
     def notify(self, check: Check, notification: Notification) -> None:
+        if not settings.TRELLO_APP_KEY:
+            raise TransportError("Trello notifications are not enabled.")
+
         params = {
-            "idList": self.channel.trello_list_id,
+            "idList": self.channel.trello.list_id,
             "name": tmpl("trello_name.html", check=check),
             "desc": tmpl("trello_desc.html", check=check),
             "key": settings.TRELLO_APP_KEY,
-            "token": self.channel.trello_token,
+            "token": self.channel.trello.token,
         }
 
         self.post(self.URL, params=params)
