@@ -1156,6 +1156,8 @@ class Signal(Transport):
             try:
                 reply = Signal.Reply.model_validate_json(reply_bytes)
             except ValidationError:
+                msg = "unexpected signal-cli response: %s"
+                logging.getLogger(__name__).error(msg, reply_bytes.decode())
                 raise TransportError("signal-cli call failed (unexpected response)")
 
             if reply.id != payload["id"]:

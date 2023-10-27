@@ -14,7 +14,7 @@ from django.test.utils import override_settings
 from django.utils.timezone import now
 
 from hc.api.models import Channel, Check, Notification, Ping, TokenBucket
-from hc.test import BaseTestCase
+from hc.test import BaseTestCase, nolog
 
 # Address is either a string (the path to the unix socket)
 # or a host:port tuple.
@@ -291,6 +291,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertNotIn("Foobar", message)
         self.assertIn("11 other checks are also down.", message)
 
+    @nolog
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_unexpected_payload(self, socket: Mock) -> None:
         setup_mock(socket, "surprise")
