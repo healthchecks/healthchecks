@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Fix special character escaping in ntfy notifications
 - Fix "Edit ntfy integration" page to fill the existing token in the form
 - Fix "Delete Check" and "Update Check" API calls to handle concurrent deletes
+- Fix Signal transport to handle JSON-RPC messages with no ids
 
 ## v3.0 - 2023-10-16
 

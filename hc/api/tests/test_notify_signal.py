@@ -387,6 +387,20 @@ class NotifySignalTestCase(BaseTestCase):
         # outbox should be empty now
         self.assertEqual(socketobj.outbox, b"")
 
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_missing_jsonrpc_id(self, socket: Mock) -> None:
+        socketobj = setup_mock(socket, {})
+        # Add a message with no id in the outbox. The socket reader should skip over it.
+        socketobj.outbox += b"{}\n"
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+        # outbox should be empty now
+        self.assertEqual(socketobj.outbox, b"")
+
     @override_settings(ADMINS=[("Admin", "admin@example.org")])
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_rate_limit_failure(self, socket: Mock) -> None:

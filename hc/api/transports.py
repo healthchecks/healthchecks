@@ -1122,7 +1122,7 @@ class Signal(Transport):
         data: Signal.Data | None = None
 
     class Reply(BaseModel):
-        id: str
+        id: str = ""
         error: Signal.Error | None = None
 
         def get_results(self) -> list[Signal.Result]:
