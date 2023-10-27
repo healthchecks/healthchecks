@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Fix the Login form to not perform form validation in GET requests
 - Fix special character escaping in ntfy notifications
 - Fix "Edit ntfy integration" page to fill the existing token in the form
+- Fix a race condition in concurrent "Delete Check" API calls
 
 ## v3.0 - 2023-10-16
 
