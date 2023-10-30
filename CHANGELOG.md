@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.1-dev - Unreleased
+## v3.0.1 - 2023-10-30
 
 ### Bug Fixes
 - Fix sending test notification to a group integration
