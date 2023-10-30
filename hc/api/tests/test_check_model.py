@@ -375,3 +375,30 @@ class CheckModelTestCase(BaseTestCase):
         code, upto_n = remove_objects.call_args.args
         self.assertEqual(code, str(check.code))
         self.assertEqual(upto_n, 1)
+
+    def test_get_grace_start_returns_utc(self) -> None:
+        check = Check(project=self.project)
+        check.kind = "cron"
+        check.schedule = "15 * * * *"
+        check.tz = "Europe/Riga"
+        check.last_ping = datetime(2023, 10, 29, 0, 55, tzinfo=timezone.utc)
+        check.status = "up"
+
+        gs = check.get_grace_start()
+        assert gs
+        self.assertEqual(gs.tzinfo, timezone.utc)
+
+    def test_get_status_handles_autumn_dst_transition(self) -> None:
+        check = Check(project=self.project)
+        check.kind = "cron"
+        check.schedule = "15 * * * *"
+        check.grace = td(minutes=5)
+        check.tz = "Europe/Riga"
+        check.last_ping = datetime(2023, 10, 29, 0, 55, tzinfo=timezone.utc)
+        check.status = "up"
+
+        with patch("hc.api.models.now") as mock_now:
+            mock_now.return_value = datetime(2023, 10, 29, 1, 5, tzinfo=timezone.utc)
+            # The next expected run time is at 2023-10-29 01:15 UTC, so the check
+            # should still be up for 10 minutes:
+            self.assertEqual(check.get_status(), "up")

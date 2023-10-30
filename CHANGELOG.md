@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Fix "Edit ntfy integration" page to fill the existing token in the form
 - Fix "Delete Check" and "Update Check" API calls to handle concurrent deletes
 - Fix Signal transport to handle JSON-RPC messages with no ids
+- Fix DST handling in Check.get_grace_start()
 
 ## v3.0 - 2023-10-16
 

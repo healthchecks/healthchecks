@@ -277,6 +277,11 @@ class Check(models.Model):
             # DST transitions). cronsim will handle the timezone-aware datetimes.
             last_local = self.last_ping.astimezone(ZoneInfo(self.tz))
             result = next(CronSim(self.schedule, last_local))
+            # Important: convert from the local timezone back to UTC.
+            # If the result is kept in the local timezone, adding
+            # a timedelta to it later (in `going_down_after` and in `get_status`)
+            # may yield incorrect results during DST transitions.
+            result = result.astimezone(timezone.utc)
 
         if with_started and self.last_start and self.status != "down":
             result = min(result, self.last_start)
