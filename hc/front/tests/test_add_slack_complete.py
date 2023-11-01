@@ -73,8 +73,11 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.assertContains(r, "Received an unexpected response from Slack")
 
     @nolog
+    @patch("hc.front.views.logger")
     @patch("hc.front.views.curl.post", autospec=True)
-    def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
+    def test_it_handles_unexpected_oauth_response(
+        self, mock_post: Mock, logger: Mock
+    ) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
         session.save()
@@ -90,6 +93,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         r = self.client.get(url, follow=True)
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Received an unexpected response from Slack")
+        self.assertTrue(logger.warning.called)
 
     @override_settings(SLACK_CLIENT_ID=None)
     def test_it_requires_client_id(self) -> None:

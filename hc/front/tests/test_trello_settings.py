@@ -45,5 +45,8 @@ class AddTrelloTestCase(BaseTestCase):
             mock_get.return_value.content = sample
 
             self.client.login(username="alice@example.org", password="password")
-            r = self.client.post(self.url)
-            self.assertContains(r, "Received an unexpected response from Trello")
+
+            with patch("hc.front.views.logger") as logger:
+                r = self.client.post(self.url)
+                self.assertContains(r, "Received an unexpected response from Trello")
+                self.assertTrue(logger.warning.called)

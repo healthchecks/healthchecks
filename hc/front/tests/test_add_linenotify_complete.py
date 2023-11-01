@@ -53,9 +53,14 @@ class AddLineNotifyCompleteTestCase(BaseTestCase):
 
             url = self.url + "?code=12345678&state=foo"
             self.client.login(username="alice@example.org", password="password")
-            r = self.client.get(url, follow=True)
-            self.assertRedirects(r, self.channels_url)
-            self.assertContains(r, "Received an unexpected response from LINE Notify")
+
+            with patch("hc.front.views.logger") as logger:
+                r = self.client.get(url, follow=True)
+                self.assertRedirects(r, self.channels_url)
+                self.assertContains(
+                    r, "Received an unexpected response from LINE Notify"
+                )
+                self.assertTrue(logger.warning.called)
 
     @nolog
     @patch("hc.front.views.curl", autospec=True)
@@ -72,9 +77,14 @@ class AddLineNotifyCompleteTestCase(BaseTestCase):
 
             url = self.url + "?code=12345678&state=foo"
             self.client.login(username="alice@example.org", password="password")
-            r = self.client.get(url, follow=True)
-            self.assertRedirects(r, self.channels_url)
-            self.assertContains(r, "Received an unexpected response from LINE Notify")
+
+            with patch("hc.front.views.logger") as logger:
+                r = self.client.get(url, follow=True)
+                self.assertRedirects(r, self.channels_url)
+                self.assertContains(
+                    r, "Received an unexpected response from LINE Notify"
+                )
+                self.assertTrue(logger.warning.called)
 
     def test_it_avoids_csrf(self) -> None:
         session = self.client.session

@@ -39,6 +39,8 @@ except ImportError:
     # Enforce
     settings.APPRISE_ENABLED = False
 
+logger = logging.getLogger(__name__)
+
 
 def tmpl(template_name: str, **ctx: Any) -> str:
     template_path = f"integrations/{template_name}"
@@ -1156,8 +1158,7 @@ class Signal(Transport):
             try:
                 reply = Signal.Reply.model_validate_json(reply_bytes)
             except ValidationError:
-                msg = "unexpected signal-cli response: %s"
-                logging.getLogger(__name__).error(msg, reply_bytes.decode())
+                logger.error("unexpected signal-cli response: %s", reply_bytes)
                 raise TransportError("signal-cli call failed (unexpected response)")
 
             if reply.id != payload["id"]:

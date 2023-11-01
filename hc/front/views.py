@@ -1588,7 +1588,7 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
             request,
             "Received an unexpected response from Slack. Integration not added.",
         )
-        logger.warning("Unexpected Slack OAuth response: %s", result.text)
+        logger.warning("Unexpected Slack OAuth response: %s", result.content)
         return redirect("hc-channels", project.code)
 
     channel = Channel(kind="slack", project=project)
@@ -1707,7 +1707,11 @@ def add_pushbullet_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
     try:
         doc = PushbulletOAuthResponse.model_validate_json(result.content, strict=True)
     except ValidationError:
-        messages.warning(request, "Something went wrong")
+        logger.warning("Unexpected Pushbullet OAuth response: %s", result.content)
+        messages.warning(
+            request,
+            "Received an unexpected response from Pushbullet. Integration not added.",
+        )
         return redirect("hc-channels", project.code)
 
     channel = Channel(kind="pushbullet", project=project)
@@ -1771,7 +1775,7 @@ def add_discord_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
             request,
             "Received an unexpected response from Discord. Integration not added.",
         )
-        logger.warning("Unexpected Discord OAuth response: %s", result.text)
+        logger.warning("Unexpected Discord OAuth response: %s", result.content)
         return redirect("hc-channels", project.code)
 
     channel = Channel(kind="discord", project=project)
@@ -2309,7 +2313,7 @@ def trello_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
     try:
         boards = TrelloBoards.validate_json(result.content)
     except ValidationError:
-        logger.warning("Unexpected Trello API response: %s", result.text)
+        logger.warning("Unexpected Trello API response: %s", result.content)
         return render(request, "integrations/trello_settings.html", {"error": 1})
 
     num_lists = sum(len(board.lists) for board in boards)
@@ -2494,7 +2498,7 @@ def add_linenotify_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         token = tr.access_token
     except ValidationError:
         messages.warning(request, "Received an unexpected response from LINE Notify.")
-        logger.warning("Unexpected LINE OAuth response: %s", result.text)
+        logger.warning("Unexpected LINE OAuth response: %s", result.content)
         return redirect("hc-channels", project.code)
 
     # Fetch notification target's name, will use it as channel name:
@@ -2505,7 +2509,7 @@ def add_linenotify_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         target = sr.target
     except ValidationError:
         messages.warning(request, "Received an unexpected response from LINE Notify.")
-        logger.warning("Unexpected LINE Status response: %s", result.text)
+        logger.warning("Unexpected LINE Status response: %s", result.content)
         return redirect("hc-channels", project.code)
 
     channel = Channel(kind="linenotify", project=project)

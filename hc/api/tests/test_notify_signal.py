@@ -292,13 +292,16 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", message)
 
     @nolog
+    @patch("hc.api.transports.logger")
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_unexpected_payload(self, socket: Mock) -> None:
+    def test_it_handles_unexpected_payload(self, socket: Mock, logger: Mock) -> None:
         setup_mock(socket, "surprise")
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "signal-cli call failed (unexpected response)")
+
+        self.assertTrue(logger.error.called)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_unregistered_failure(self, socket: Mock) -> None:
