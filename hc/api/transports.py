@@ -465,6 +465,9 @@ class Slackalike(HttpTransport):
 class Slack(Slackalike):
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        if response.status_code == 400:
+            logger.debug("Slack returned HTTP 400 with body: %s", response.content)
+
         message = f"Received status code {response.status_code}"
         # If Slack returns 404, this endpoint is unlikely to ever work again
         # https://api.slack.com/messaging/webhooks#handling_errors
