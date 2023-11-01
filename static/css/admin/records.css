@@ -1,0 +1,42 @@
+.field-when {
+    white-space: nowrap;
+}
+
+.field-logger {
+    white-space: nowrap;
+    color: #444;
+}
+
+.field-logger span.N,
+.field-logger span.D,
+.field-logger span.I,
+.field-logger span.W,
+.field-logger span.E,
+.field-logger span.C {
+    display: inline-block;
+    width: 18px;
+    margin-right: 2px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 2px;
+}
+
+.field-logger span.N { background: #e0e0e0; }
+.field-logger span.D { background: #b0bec5; }
+.field-logger span.I { background: #90caf9; }
+.field-logger span.W { background: #ffd54f; }
+.field-logger span.E { background: #d32f2f; color: #FFF; }
+.field-logger span.C { background: #333; color: #FFF; }
+
+.field-message_traceback {
+    width: 100%;
+}
+
+.field-message_traceback pre {
+    padding: 0;
+}
+
+.field-traceback .readonly {
+    font-family: monospace;
+}

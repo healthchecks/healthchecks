@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.1-dev - Unreleased
+
+### Improvements
+- Update logging configuration to write logs to database (to table `logs_record`)
+
 ## v3.0.1 - 2023-10-30
 
 ### Bug Fixes
