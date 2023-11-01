@@ -14,6 +14,9 @@ class Subscription(models.Model):
     address_id = models.CharField(max_length=2, blank=True)
     send_invoices = models.BooleanField(default=True)
     invoice_email = models.EmailField(blank=True)
+    next_billing_date = models.DateField(null=True, blank=True)
+    renew_notice_date = models.DateField(null=True, blank=True)
+    setup_date = models.DateField(null=True, blank=True)
 
     def cancel(self) -> None:
         # FIXME
