@@ -1,13 +1,13 @@
 aiosmtpd==1.4.4.post2
 cronsim==2.5
-Django==4.2.6
+Django==4.2.7
 django-compressor==4.4
-django-stubs-ext==4.2.2
+django-stubs-ext==4.2.5
 fido2==1.1.2
 psycopg2==2.9.9
 pycurl==7.45.2
 pydantic==2.4.2
 pyotp==2.9.0
-segno==1.5.2
+segno==1.5.3
 statsd==4.0.1
-whitenoise==6.5.0
+whitenoise==6.6.0
