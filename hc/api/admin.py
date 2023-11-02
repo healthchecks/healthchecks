@@ -165,6 +165,27 @@ class LastNotifyDurationFilter(admin.SimpleListFilter):
         return qs
 
 
+class LastErrorFilter(admin.SimpleListFilter):
+    title = "last error"
+
+    parameter_name = "status"
+
+    def lookups(self, r: HttpRequest, model_admin: ModelAdmin[Channel]) -> Lookups:
+        return (
+            ("ok", "No Error"),
+            ("error", "Error"),
+        )
+
+    def queryset(self, r: HttpRequest, qs: QuerySet[Channel]) -> QuerySet[Channel]:
+        v = self.value()
+        if v == "ok":
+            qs = qs.filter(last_error="")
+        elif v == "error":
+            qs = qs.exclude(last_error="")
+
+        return qs
+
+
 class ChannelAnnotations(TypedDict):
     project_code: UUID
     project_name: str
@@ -189,8 +210,9 @@ class ChannelsAdmin(ModelAdmin[Channel]):
         "status",
         "time",
     )
-    list_filter = ("kind", LastNotifyDurationFilter, "disabled")
+    list_filter = ("kind", LastNotifyDurationFilter, LastErrorFilter, "disabled")
     raw_id_fields = ("project", "checks")
+    actions = ["disable"]
 
     def created_(self, obj: Channel) -> date:
         return obj.created.date()
@@ -242,6 +264,10 @@ class ChannelsAdmin(ModelAdmin[Channel]):
         if obj.last_notify:
             return "OK"
         return "-"
+
+    def disable(self, request: HttpRequest, qs: QuerySet[Check]) -> None:
+        num_disabled = qs.update(disabled=True)
+        self.message_user(request, f"Disabled {num_disabled} channel(s)")
 
 
 @admin.register(Notification)
