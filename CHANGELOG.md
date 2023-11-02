@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Update logging configuration to write logs to database (to table `logs_record`)
+- Update the Splunk On-Call integration to not retry HTTP 404 responses
 
 ## v3.0.1 - 2023-10-30
 

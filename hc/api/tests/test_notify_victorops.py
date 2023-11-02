@@ -58,3 +58,21 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         self.assertEqual(
             payload["state_message"], "Foo & Bar received a ping and is now UP"
         )
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_does_not_retry_404(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 404
+
+        self.channel.notify(self.check)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 404")
+        self.assertEqual(mock_post.call_count, 1)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_404(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 404
+
+        self.channel.notify(self.check)
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)

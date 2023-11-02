@@ -717,6 +717,13 @@ class RocketChat(HttpTransport):
 
 
 class VictorOps(HttpTransport):
+    @classmethod
+    def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        message = f"Received status code {response.status_code}"
+        # If the endpoint returns 404, this endpoint is unlikely to ever work again
+        permanent = response.status_code == 404
+        raise TransportError(message, permanent=permanent)
+
     def notify(self, check: Check, notification: Notification) -> None:
         if not settings.VICTOROPS_ENABLED:
             raise TransportError("Splunk On-Call notifications are not enabled.")
