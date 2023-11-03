@@ -1595,7 +1595,8 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
     channel.value = result.text
     channel.save()
     channel.assign_all_checks()
-    messages.success(request, "The Slack integration has been added!")
+
+    messages.success(request, "Success, integration added!")
     return redirect("hc-channels", project.code)
 
 

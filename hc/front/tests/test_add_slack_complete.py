@@ -31,7 +31,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url, follow=True)
         self.assertRedirects(r, self.channels_url)
-        self.assertContains(r, "The Slack integration has been added!")
+        self.assertContains(r, "Success, integration added!")
 
         ch = Channel.objects.get()
         self.assertEqual(ch.slack_team, "foo")

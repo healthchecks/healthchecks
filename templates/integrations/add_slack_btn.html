@@ -1,10 +1,10 @@
 {% extends "base_project.html" %}
 {% load humanize static hc_extras %}
 
-{% block title %}Slack Integration for {{ site_name }}{% endblock %}
+{% block title %}{% site_name %} Integration for Slack{% endblock %}
 
 {% block description %}
-    <meta name="description" content="Use {{ site_name }} with Slack: configure {{ site_name }} to post status updates directly to a Slack channel.">
+    <meta name="description" content="Use {% site_name %} with Slack: configure {% site_name %} to post status updates directly to a Slack channel.">
 {% endblock %}
 
 {% block content %}
@@ -14,7 +14,7 @@
     <div class="jumbotron">
         {% if request.user.is_authenticated %}
         <p>If your team uses <a href="https://slack.com/">Slack</a>, you can set
-        up {{ site_name }} to post status updates directly to an appropriate
+        up {% site_name %} to post status updates directly to an appropriate
         Slack channel.</p>
 
         {% if authorize_url %}
@@ -30,11 +30,11 @@
 
         {% else %}
         <p>
-        {{ site_name }} is a <strong>free</strong> and
+        {% site_name %} is a <strong>free</strong> and
         <a href="https://github.com/healthchecks/healthchecks">open source</a>
         service for monitoring your cron jobs, background processes and
-        scheduled tasks. Before adding Slack integration, please log into
-        {{ site_name }}:</p>
+        scheduled tasks. To set up a {% site_name %} integration for Slack, please
+        log into {% site_name %}:</p>
 
         <div class="text-center">
             <a href="{% url 'hc-login' %}"
@@ -58,7 +58,7 @@
 
                 to the <strong>Integrations</strong> page,
                 and click on <strong>Add Integration</strong> next to the
-                Slack integration.
+                Slack icon.
             </p>
         </div>
         <div class="col-sm-6">
@@ -75,9 +75,9 @@
             <span class="step-no"></span>
             <p>
                 Click on the "Add to Slack" button, and you should
-                be on a page that says "{{ site_name }} would like access to
+                be on a page that says "{% site_name %} would like access to
                 your Slack team". Select the team you want to add the
-                {{ site_name }} integration app to.
+                {% site_name %} integration app to.
             </p>
         </div>
         <div class="col-sm-6">
@@ -92,9 +92,9 @@
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                You should now be on a page that says "{{ site_name }} would
+                You should now be on a page that says "{% site_name %} would
                 like access to <i>TEAM NAME</i>". Select the channel you want to
-                post {{ site_name }} notifications to.
+                post {% site_name %} notifications to.
             </p>
         </div>
         <div class="col-sm-6">
@@ -110,7 +110,7 @@
             <span class="step-no"></span>
             <p>
                 That is all! You will now be redirected back to
-                "Integrations" page on {{ site_name }} and see
+                "Integrations" page on {% site_name %} and see
                 the new integration!
             </p>
         </div>

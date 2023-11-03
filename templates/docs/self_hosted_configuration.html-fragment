@@ -522,8 +522,8 @@ its web UI and documentation.</p>
 it needs to construct absolute URLs.</p>
 <h2 id="SLACK_CLIENT_ID"><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
-<p>The Slack Client ID, used by the Slack integration.</p>
-<p>The Slack integration can work with or without the Slack Client ID. If
+<p>The Slack Client ID, used by the Healthchecks integration for Slack.</p>
+<p>The integration can work with or without the Slack Client ID. If
 the Slack Client ID is not set, in the "Integrations - Add Slack" page,
 Healthchecks will ask the user to provide a webhook URL for posting notifications.</p>
 <p>If the Slack Client <em>is</em> set, Healthchecks will use the OAuth2 flow
@@ -543,7 +543,7 @@ and create a <em>Slack app</em>. When setting up the Slack app, make sure to:</p
 Look it up at <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>.</p>
 <h2 id="SLACK_ENABLED"><code>SLACK_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
-<p>A boolean that turns on/off the Slack integration. Enabled by default.</p>
+<p>A boolean that turns on/off the Healthchecks integration for Slack. Enabled by default.</p>
 <h2 id="SPIKE_ENABLED"><code>SPIKE_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the Spike.sh integration. Enabled by default.</p>

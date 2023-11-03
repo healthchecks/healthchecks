@@ -760,9 +760,9 @@ it needs to construct absolute URLs.
 
 Default: `None`
 
-The Slack Client ID, used by the Slack integration.
+The Slack Client ID, used by the Healthchecks integration for Slack.
 
-The Slack integration can work with or without the Slack Client ID. If
+The integration can work with or without the Slack Client ID. If
 the Slack Client ID is not set, in the "Integrations - Add Slack" page,
 Healthchecks will ask the user to provide a webhook URL for posting notifications.
 
@@ -788,7 +788,7 @@ Look it up at [https://api.slack.com/apps/](https://api.slack.com/apps/).
 
 Default: `True`
 
-A boolean that turns on/off the Slack integration. Enabled by default.
+A boolean that turns on/off the Healthchecks integration for Slack. Enabled by default.
 
 ## `SPIKE_ENABLED` {: #SPIKE_ENABLED }
 
