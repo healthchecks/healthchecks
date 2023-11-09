@@ -147,8 +147,23 @@ class NotifySlackTestCase(BaseTestCase):
         mock_post.return_value.status_code = 404
 
         self.channel.notify(self.check)
+        # Make sure the HTTP request was made only once (no retries):
+        self.assertEqual(mock_post.call_count, 1)
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_400_invalid_token(self, mock_post: Mock) -> None:
+        self._setup_data("123")
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.content = b"invalid_token"
+
+        self.channel.notify(self.check)
+        # Make sure the HTTP request was made only once (no retries):
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
+
+        self.assertEqual(mock_post.call_count, 1)
 
     @override_settings(SITE_ROOT="http://testserver")
     @patch("hc.api.transports.curl.request", autospec=True)
