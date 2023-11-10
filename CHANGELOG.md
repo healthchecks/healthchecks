@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Update the Splunk On-Call integration to not retry HTTP 404 responses
 - Update the Slack integration to not retry when Slack returns 400 "invalid_token"
 
+### Bug Fixes
+- Fix "Ping Details" dialog to handle email bodies not yet uploaded to object storage
+
 ## v3.0.1 - 2023-10-30
 
 ### Bug Fixes

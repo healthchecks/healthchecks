@@ -672,8 +672,7 @@ def ping_details(
         "active": None,
     }
 
-    if ping.scheme == "email":
-        assert body
+    if ping.scheme == "email" and body:
         parsed = email.message_from_string(body, policy=email.policy.SMTP)
         assert isinstance(parsed, EmailMessage)
         ctx["subject"] = parsed.get("subject", "")
