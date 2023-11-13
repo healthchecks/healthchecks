@@ -624,15 +624,16 @@ class Pushover(HttpTransport):
 
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
-        permanent = False
         message = f"Received status code {response.status_code}"
-        try:
-            doc = Pushover.ErrorModel.model_validate_json(response.content)
-            if doc.user == "invalid":
-                message += " (invalid user)"
-                permanent = True
-        except ValidationError:
-            logger.debug("Pushover returned HTTP 400 with body: %s", response.content)
+        permanent = False
+        if response.status_code == 400:
+            try:
+                doc = Pushover.ErrorModel.model_validate_json(response.content)
+                if doc.user == "invalid":
+                    message += " (invalid user)"
+                    permanent = True
+            except ValidationError:
+                logger.debug("Pushover HTTP 400 with body: %s", response.content)
 
         raise TransportError(message, permanent=permanent)
 

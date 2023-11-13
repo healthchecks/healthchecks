@@ -207,3 +207,16 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_500(self, mock_post: Mock) -> None:
+        self._setup_data("123|0")
+        mock_post.return_value.status_code = 500
+        mock_post.return_value.content = b"""{"user": "invalid"}"""
+
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 500")
+
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.disabled)
