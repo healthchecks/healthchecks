@@ -44,9 +44,8 @@
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                Look up the room's <strong>alias</strong> or
-                <strong>ID</strong>, and paste it in the form
-                below and save the integration.
+                Navigate to the <strong>Room Settings › General</strong> screen
+                and look up the room's <strong>Published Address</strong>.
             </p>
         </div>
         <div class="col-sm-6">
@@ -61,10 +60,9 @@
         <div class="col-sm-6">
             <span class="step-no"></span>
             <p>
-                {{ matrix_user_id }} will shortly join your room.
-                After that, you are all set! From now on
-                {{ site_name }} will post notifications
-                to your room when checks go down or up.
+                If the room does not have a Published Address,
+                look up its <strong>Internal Room ID</strong>
+                from the <strong>Room Settings › Advanced</strong> screen instead.
             </p>
         </div>
         <div class="col-sm-6">
@@ -75,20 +73,41 @@
         </div>
     </div>
 
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Enter the Published Address or the Internal Room ID
+                in the form below and save the integration.
+            </p>
+            <p>
+                {{ matrix_user_id }} will shortly join your room. After that,
+                you are all set! From now on {{ site_name }} will post notifications
+                to your room when checks go down or up.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_matrix_4.png' %}">
+        </div>
+    </div>
+
     <h2>Integration Settings</h2>
 
     <form method="post" class="form-horizontal">
         {% csrf_token %}
 
         <div class="form-group {{ form.alias.css_classes }}">
-            <label for="alias" class="col-sm-2 control-label">Room Alias or ID</label>
+            <label for="alias" class="col-sm-2 control-label">Address or Internal ID</label>
             <div class="col-sm-6">
                 <input
                     id="alias"
                     type="text"
                     class="form-control"
                     name="alias"
-                    placeholder="!abc:matrix.org"
+                    placeholder="#alias:matrix.org"
                     value="{{ form.alias.value|default:"" }}">
 
                 {% if form.alias.errors %}
