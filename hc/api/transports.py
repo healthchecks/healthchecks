@@ -619,6 +619,23 @@ class Pushover(HttpTransport):
     URL = "https://api.pushover.net/1/messages.json"
     CANCEL_TMPL = "https://api.pushover.net/1/receipts/cancel_by_tag/%s.json"
 
+    class ErrorModel(BaseModel):
+        user: str = ""
+
+    @classmethod
+    def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        permanent = False
+        message = f"Received status code {response.status_code}"
+        try:
+            doc = Pushover.ErrorModel.model_validate_json(response.content)
+            if doc.user == "invalid":
+                message += " (invalid user)"
+                permanent = True
+        except ValidationError:
+            logger.debug("Pushover returned HTTP 400 with body: %s", response.content)
+
+        raise TransportError(message, permanent=permanent)
+
     def is_noop(self, check: Check) -> bool:
         pieces = self.channel.value.split("|")
         _, prio = pieces[0], pieces[1]
