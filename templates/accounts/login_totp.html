@@ -14,12 +14,15 @@
 
     <div class="form-group {{ form.code.css_classes }}">
         <input
+            id="code"
             type="text"
             name="code"
             pattern="[0-9]{6}"
             title="6-digit code"
             placeholder="6-digit code"
+            data-auto-submit="1"
             class="form-control input-lg"
+            required
             autofocus />
         {% if form.code.errors %}
         <div class="help-block">
@@ -37,4 +40,10 @@
     </div>
 </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/auto-submit.js' %}"></script>
+{% endcompress %}
 {% endblock %}
