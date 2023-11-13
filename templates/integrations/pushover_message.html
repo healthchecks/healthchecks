@@ -1,8 +1,35 @@
-{% load humanize linemode %}{% linemode %}
+{% load hc_extras humanize linemode %}{% linemode %}
 {% if check.status == "down" %}
-    {% line %}The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b>. Last ping was {{ check.last_ping|naturaltime }}.{% endline %}
+    {% line %}The check <b>{{ check.name_then_code }}</b> is <b>DOWN</b>.{% endline %}
 {% else %}
-    {% line %}The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>.{% endline %}
+    {% line %}The check <b>{{ check.name_then_code }}</b> is now <b>UP</b>.{% endline %}
+{% endif %}
+
+{% line %}{% endline %}
+
+{% if check.project.name %}
+{% line %}<b>Project:</b> {{ check.project.name }}{% endline %}
+{% endif %}
+
+{% if check.tags_list %}
+{% line %}<b>Tags:</b> {{ check.tags_list|join:", " }}{% endline %}
+{% endif %}
+
+{% if check.kind == "simple" %}
+{% line %}<b>Period:</b> {{ check.timeout|hc_duration }}{% endline %}
+{% endif %}
+
+{% if check.kind == "cron" %}
+{% line %}<b>Schedule:</b> <code>{{ check.schedule }}</code>{% endline %}
+{% line %}<b>Time Zone:</b> {{ check.tz }}{% endline %}
+{% endif %}
+
+{% line %}<b>Total Pings:</b> {{ check.n_pings }}{% endline %}
+
+{% if ping is None %}
+{% line %}<b>Last Ping:</b> Never{% endline %}
+{% else %}
+{% line %}<b>Last Ping:</b> {{ ping.get_kind_display }}, {{ ping.created|naturaltime }}{% endline %}
 {% endif %}
 
 {% if down_checks is not None %}
@@ -13,7 +40,7 @@
         {% else %}
             {% line %}The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:{% endline %}
             {% for c in down_checks %}
-                {% line %}- <a href="{{ c.cloaked_url }}">{{ c.name_then_code }}</a> (last ping: {{ c.last_ping|naturaltime }}){% endline %}
+                {% line %}• <b>{{ c.name_then_code }}</b> (last ping: {{ c.last_ping|naturaltime }}){% endline %}
             {% endfor %}
         {% endif %}
     {% else %}

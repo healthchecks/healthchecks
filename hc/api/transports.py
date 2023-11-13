@@ -653,7 +653,11 @@ class Pushover(HttpTransport):
             cancel_payload = {"token": settings.PUSHOVER_API_TOKEN}
             self.post(url, data=cancel_payload)
 
-        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        ctx = {
+            "check": check,
+            "ping": self.last_ping(check),
+            "down_checks": self.down_checks(check),
+        }
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)
         prio = up_prio if check.status == "up" else down_prio
@@ -666,6 +670,8 @@ class Pushover(HttpTransport):
             "html": 1,
             "priority": int(prio),
             "tags": check.unique_key,
+            "url": check.cloaked_url(),
+            "url_title": f"View on {settings.SITE_NAME}",
         }
 
         # Emergency notification

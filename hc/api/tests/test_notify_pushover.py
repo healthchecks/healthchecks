@@ -44,8 +44,8 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(url, API + "/messages.json")
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload["title"], "Foo is DOWN")
-        self.assertIn(self.check.cloaked_url(), payload["message"])
+        self.assertEqual(payload["title"], "🔴 Foo")
+        self.assertEqual(payload["url"], self.check.cloaked_url())
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["message"])
@@ -67,7 +67,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 1)
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertIn("UP", payload["title"])
+        self.assertEqual(payload["title"], "🟢 Foo")
         self.assertEqual(payload["priority"], 2)
         self.assertIn("retry", payload)
         self.assertIn("expire", payload)
@@ -102,7 +102,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         up_args, up_kwargs = mock_post.call_args_list[1]
         payload = up_kwargs["data"]
-        self.assertIn("UP", payload["title"])
+        self.assertEqual(payload["title"], "🟢 Foo")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:
@@ -136,7 +136,6 @@ class NotifyPushoverTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("The following checks are also down", payload["message"])
         self.assertIn("Foobar", payload["message"])
-        self.assertIn(other.cloaked_url(), payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_show_more_than_10_other_checks(self, mock_post: Mock) -> None:
@@ -166,7 +165,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.notify(self.check)
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload["title"], "Foo & Bar is DOWN")
+        self.assertEqual(payload["title"], "🔴 Foo & Bar")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_disabled_priority(self, mock_post: Mock) -> None:

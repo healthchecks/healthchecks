@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Update logging configuration to write logs to database (to table `logs_record`)
 - Update the Splunk On-Call integration to not retry HTTP 404 responses
 - Update the Slack integration to not retry when Slack returns 400 "invalid_token"
+- Improve Pushover notifications (include tags, period, last ping type etc.)
 
 ### Bug Fixes
 - Fix "Ping Details" dialog to handle email bodies not yet uploaded to object storage
