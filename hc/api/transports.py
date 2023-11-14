@@ -465,22 +465,22 @@ class Slackalike(HttpTransport):
 class Slack(Slackalike):
     @classmethod
     def raise_for_response(cls, response: curl.Response) -> NoReturn:
-        if response.status_code == 400:
-            logger.debug("Slack returned HTTP 400 with body: %s", response.content)
-
         message = f"Received status code {response.status_code}"
-
         permanent = False
         if response.status_code == 404:
             # If Slack returns 404, this endpoint is unlikely to ever work again
             # https://api.slack.com/messaging/webhooks#handling_errors
             permanent = True
-        elif response.status_code == 400 and response.content == b"invalid_token":
-            # If Slack returns 400 with "invalid_token" in response body,
-            # we're using a deactivated user's token to post to a private channel.
-            # In theory this condition can recover (a deactivated user can be
-            # activated), but in practice it is unlikely to happen.
-            permanent = True
+        elif response.status_code == 400:
+            if response.content == b"invalid_token":
+                # If Slack returns 400 with "invalid_token" in response body,
+                # we're using a deactivated user's token to post to a private channel.
+                # In theory this condition can recover (a deactivated user can be
+                # activated), but in practice it is unlikely to happen.
+                permanent = True
+            else:
+                # Log it for later inspection
+                logger.debug("Slack returned HTTP 400 with body: %s", response.content)
 
         raise TransportError(message, permanent=permanent)
 
