@@ -270,6 +270,28 @@ class ChannelsAdmin(ModelAdmin[Channel]):
         self.message_user(request, f"Disabled {num_disabled} channel(s)")
 
 
+class ErrorFilter(admin.SimpleListFilter):
+    title = "error"
+    parameter_name = "status"
+
+    def lookups(self, r: HttpRequest, model_admin: ModelAdmin[Notification]) -> Lookups:
+        return (
+            ("ok", "OK"),
+            ("error", "Error"),
+        )
+
+    def queryset(
+        self, r: HttpRequest, qs: QuerySet[Notification]
+    ) -> QuerySet[Notification]:
+        v = self.value()
+        if v == "ok":
+            qs = qs.filter(error="")
+        elif v == "error":
+            qs = qs.exclude(error="")
+
+        return qs
+
+
 @admin.register(Notification)
 class NotificationsAdmin(ModelAdmin[Notification]):
     class Media:
@@ -287,7 +309,7 @@ class NotificationsAdmin(ModelAdmin[Notification]):
         "channel_value",
         "error",
     )
-    list_filter = ("created", "check_status", "channel__kind")
+    list_filter = ("channel__kind", "created", ErrorFilter)
     raw_id_fields = ("channel",)
 
     def channel_kind(self, obj: Notification) -> str:
