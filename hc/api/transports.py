@@ -877,6 +877,12 @@ class Telegram(HttpTransport):
 class Sms(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
 
+    @classmethod
+    def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        if response.status_code == 400:
+            logger.debug("Twilio Messages HTTP 400 with body: %s", response.content)
+        raise TransportError(f"Received status code {response.status_code}")
+
     def is_noop(self, check: Check) -> bool:
         if check.status == "down":
             return not self.channel.phone.notify_down
@@ -914,6 +920,12 @@ class Sms(HttpTransport):
 class Call(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Calls.json"
 
+    @classmethod
+    def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        if response.status_code == 400:
+            logger.debug("Twilio Calls HTTP 400 with body: %s", response.content)
+        raise TransportError(f"Received status code {response.status_code}")
+
     def is_noop(self, check: Check) -> bool:
         return check.status != "down"
 
@@ -946,6 +958,12 @@ class Call(HttpTransport):
 
 class WhatsApp(HttpTransport):
     URL = "https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json"
+
+    @classmethod
+    def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        if response.status_code == 400:
+            logger.debug("WhatsApp HTTP 400 with body: %s", response.content)
+        raise TransportError(f"Received status code {response.status_code}")
 
     def is_noop(self, check: Check) -> bool:
         if check.status == "down":
