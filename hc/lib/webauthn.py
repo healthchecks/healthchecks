@@ -11,6 +11,7 @@ from fido2.webauthn import (
     AttestedCredentialData,
     PublicKeyCredentialRpEntity,
     PublicKeyCredentialUserEntity,
+    UserVerificationRequirement,
 )
 
 fido2.features.webauthn_json_mapping.enabled = True
@@ -41,7 +42,7 @@ class CreateHelper(object):
         options, state = self.server.register_begin(
             user,
             self.credentials,
-            user_verification="discouraged",
+            user_verification=UserVerificationRequirement.DISCOURAGED,
         )
         return dict(options), state
 
