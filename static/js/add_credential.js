@@ -9,6 +9,19 @@ $(function() {
         $("#success").addClass("hide");
 
         var options = JSON.parse($("#options").text());
+        // Override pubKeyCredParams prepared by python-fido2,
+        // to only list ES256 (-7) and RS256 (-257), **and omit Ed25519 (-8)**.
+        // This is to work around a bug in Firefox < 119. Affected
+        // Firefox versions serialize Ed25519 keys incorrectly,
+        // the workaround is to exclude Ed25519 from pubKeyCredParams.
+        //
+        // For reference, different project, similar issue:
+        // https://github.com/MasterKale/SimpleWebAuthn/issues/463
+        options.publicKey.pubKeyCredParams= [
+            {"alg": -7, "type": "public-key"},
+            {"alg": -257, "type": "public-key"}
+        ]
+
         webauthnJSON.create(options).then(function(response) {
             $("#response").val(JSON.stringify(response));
             // Show the success message and save button
