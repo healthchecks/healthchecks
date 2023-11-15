@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix "Ping Details" dialog to handle email bodies not yet uploaded to object storage
+- Fix webauthn registration failure on Firefox with Bitwarden extension
 
 ## v3.0.1 - 2023-10-30
 

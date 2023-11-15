@@ -38,7 +38,11 @@ class CreateHelper(object):
             name=email,
             display_name=email,
         )
-        options, state = self.server.register_begin(user, self.credentials)
+        options, state = self.server.register_begin(
+            user,
+            self.credentials,
+            user_verification="discouraged",
+        )
         return dict(options), state
 
     def verify(self, state: Any, response_json: str) -> bytes | None:
