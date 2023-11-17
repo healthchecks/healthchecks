@@ -20,6 +20,7 @@
             pattern="[0-9]{6}"
             title="6-digit code"
             placeholder="6-digit code"
+            data-auto-submit="1"
             class="form-control input-lg"
             required
             autofocus />
@@ -40,6 +41,8 @@
 </form>
 </div>
 {% endblock %}
+
+{% block base_scripts %}{% endblock %}
 
 {% block scripts %}
 {% compress js %}
