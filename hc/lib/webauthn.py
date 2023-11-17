@@ -47,12 +47,9 @@ class CreateHelper(object):
         return dict(options), state
 
     def verify(self, state: Any, response_json: str) -> bytes | None:
-        try:
-            doc = json.loads(response_json)
-            auth_data = self.server.register_complete(state, doc)
-            return auth_data.credential_data
-        except ValueError:
-            return None
+        doc = json.loads(response_json)
+        auth_data = self.server.register_complete(state, doc)
+        return auth_data.credential_data
 
 
 class GetHelper(object):

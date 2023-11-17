@@ -40,3 +40,9 @@
 .field-traceback .readonly {
     font-family: monospace;
 }
+
+.field-message .readonly {
+    width: 90%;
+    font-family: monospace;
+
+}

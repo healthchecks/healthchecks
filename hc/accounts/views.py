@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import time
 from datetime import timedelta as td
 from secrets import token_urlsafe
@@ -41,6 +42,8 @@ from hc.api.models import Channel, Check, TokenBucket
 from hc.lib.tz import all_timezones
 from hc.lib.webauthn import CreateHelper, GetHelper
 from hc.payments.models import Subscription
+
+logger = logging.getLogger(__name__)
 
 POST_LOGIN_ROUTES = (
     "hc-checks",
@@ -727,8 +730,10 @@ def add_webauthn(request: AuthenticatedHttpRequest) -> HttpResponse:
             return HttpResponseBadRequest()
 
         state = request.session["state"]
-        credential_bytes = helper.verify(state, form.cleaned_data["response"])
-        if credential_bytes is None:
+        try:
+            credential_bytes = helper.verify(state, form.cleaned_data["response"])
+        except ValueError as e:
+            logger.exception("CreateHelper.verify failed, form: %s", form.cleaned_data)
             return HttpResponseBadRequest()
 
         c = Credential(user=request.user)

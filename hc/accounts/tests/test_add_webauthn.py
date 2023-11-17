@@ -73,9 +73,10 @@ class AddWebauthnTestCase(BaseTestCase):
         r = self.client.post(self.url, payload)
         self.assertEqual(r.status_code, 400)
 
+    @patch("hc.accounts.views.logger")
     @patch("hc.accounts.views.CreateHelper.verify")
-    def test_it_handles_verification_failure(self, mock_verify: Mock) -> None:
-        mock_verify.return_value = None
+    def test_it_handles_verification_failure(self, verify: Mock, logger: Mock) -> None:
+        verify.side_effect = ValueError
 
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
@@ -88,3 +89,6 @@ class AddWebauthnTestCase(BaseTestCase):
 
         r = self.client.post(self.url, payload, follow=True)
         self.assertEqual(r.status_code, 400)
+
+        # It should log the verification failure
+        self.assertTrue(logger.exception.called)
