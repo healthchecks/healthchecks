@@ -6,7 +6,7 @@ django-stubs-ext==4.2.5
 fido2==1.1.2
 psycopg2==2.9.9
 pycurl==7.45.2
-pydantic==2.4.2
+pydantic==2.5.1
 pyotp==2.9.0
 segno==1.5.3
 statsd==4.0.1
