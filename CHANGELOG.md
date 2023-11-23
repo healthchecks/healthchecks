@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Improve Pushover notifications (include tags, period, last ping type etc.)
 - Update the Pushover integration to not retry when Pushover reports invalid user
 - Implement audo-submit in TOTP entry screen (#905)
+- Update Twilio integrations to not retry error 21211 ("Invalid 'To' Phone Number")
 
 ### Bug Fixes
 - Fix "Ping Details" dialog to handle email bodies not yet uploaded to object storage

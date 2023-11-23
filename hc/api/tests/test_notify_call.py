@@ -85,3 +85,29 @@ class NotifyCallTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
         mock_post.assert_called_once()
+
+    @override_settings(TWILIO_FROM="+000")
+    @patch("hc.api.transports.logger.debug", autospec=True)
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_21211(self, mock_post: Mock, debug: Mock) -> None:
+        self.profile.call_limit = 1
+        self.profile.save()
+
+        # Twilio's error 21211 is "Invalid 'To' Phone Number"
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.content = b"""{"code": 21211}"""
+
+        self.channel.notify(self.check)
+
+        # Make sure the HTTP request was made only once (no retries):
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Invalid phone number")
+
+        # It should give up after the first try
+        self.assertEqual(mock_post.call_count, 1)
+
+        # It should not log this event
+        self.assertFalse(debug.called)

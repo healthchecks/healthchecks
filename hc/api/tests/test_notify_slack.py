@@ -162,7 +162,7 @@ class NotifySlackTestCase(BaseTestCase):
         mock_post.return_value.content = b"invalid_token"
 
         self.channel.notify(self.check)
-        # Make sure the HTTP request was made only once (no retries):
+
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
 

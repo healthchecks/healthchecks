@@ -16,13 +16,15 @@ from hc.test import BaseTestCase
 
 @override_settings(TWILIO_ACCOUNT="test", TWILIO_AUTH="dummy")
 class NotifyWhatsAppTestCase(BaseTestCase):
-    def _setup_data(self, notify_up: bool = True, notify_down: bool = True) -> None:
+    def setUp(self) -> None:
+        super().setUp()
+
         self.check = Check(project=self.project)
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
-        definition = {"value": "+1234567890", "up": notify_up, "down": notify_down}
+        definition = {"value": "+1234567890", "up": True, "down": True}
 
         self.channel = Channel(project=self.project, kind="whatsapp")
         self.channel.value = json.dumps(definition)
@@ -33,7 +35,6 @@ class NotifyWhatsAppTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
-        self._setup_data()
 
         self.channel.notify(self.check)
 
@@ -51,7 +52,6 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_configuration(self) -> None:
-        self._setup_data()
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
@@ -61,7 +61,6 @@ class NotifyWhatsAppTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_uses_messaging_service(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
-        self._setup_data()
 
         self.channel.notify(self.check)
 
@@ -71,7 +70,10 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_obeys_up_down_flags(self, mock_post: Mock) -> None:
-        self._setup_data(notify_down=False)
+        definition = {"value": "+1234567890", "up": True, "down": False}
+        self.channel.value = json.dumps(definition)
+        self.channel.save()
+
         self.check.last_ping = now() - td(hours=2)
 
         self.channel.notify(self.check)
@@ -84,8 +86,6 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.profile.last_sms_date = now()
         self.profile.sms_sent = 50
         self.profile.save()
-
-        self._setup_data()
 
         self.channel.notify(self.check)
         mock_post.assert_not_called()
@@ -102,7 +102,6 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
-        self._setup_data()
         self.check.name = "Foo > Bar & Co"
 
         mock_post.return_value.status_code = 200
@@ -111,3 +110,26 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("Foo > Bar & Co", payload["Body"])
+
+    @override_settings(TWILIO_FROM="+000")
+    @patch("hc.api.transports.logger.debug", autospec=True)
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_21211(self, mock_post: Mock, debug: Mock) -> None:
+        # Twilio's error 21211 is "Invalid 'To' Phone Number"
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.content = b"""{"code": 21211}"""
+
+        self.channel.notify(self.check)
+
+        # Make sure the HTTP request was made only once (no retries):
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Invalid phone number")
+
+        # It should give up after the first try
+        self.assertEqual(mock_post.call_count, 1)
+
+        # It should not log this event
+        self.assertFalse(debug.called)
