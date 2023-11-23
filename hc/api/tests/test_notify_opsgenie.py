@@ -13,7 +13,7 @@ from hc.api.models import Channel, Check, Notification
 from hc.test import BaseTestCase
 
 
-class NotifyOpsGenieTestCase(BaseTestCase):
+class NotifyOpsgenieTestCase(BaseTestCase):
     def _setup_data(
         self, value: str, status: str = "down", email_verified: bool = True
     ) -> None:
