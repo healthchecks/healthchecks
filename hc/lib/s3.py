@@ -127,7 +127,7 @@ def _remove_objects(code: UUID, upto_n: int) -> None:
                 errors = client().remove_objects(settings.S3_BUCKET, delete_objs)
                 for e in errors:
                     statsd.incr("hc.lib.s3.removeObjectsErrors")
-                    logger.error("remove_objects error: %s", e)
+                    logger.error("remove_objects error: [%s] %s", e.code, e.message)
         except ReadTimeoutError:
             logger.exception("ReadTimeoutError while removing %d objects", num_objs)
             statsd.incr("hc.lib.s3.removeObjectsErrors")
