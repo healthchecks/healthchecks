@@ -1798,7 +1798,7 @@ def add_pushover(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
 
     if request.method == "POST":
-        state = token_urlsafe()
+        state = token_urlsafe().lower()
 
         failure_url = settings.SITE_ROOT + reverse("hc-channels", args=[project.code])
         success_url = (
