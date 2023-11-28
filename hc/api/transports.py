@@ -1268,7 +1268,7 @@ class Signal(Transport):
                     continue
 
                 if result.type == "UNREGISTERED_FAILURE":
-                    raise TransportError("Recipient not found")
+                    raise TransportError("Recipient not found", permanent=True)
 
                 if result.type == "RATE_LIMIT_FAILURE" and result.token:
                     raise SignalRateLimitFailure(result.token, reply_bytes)

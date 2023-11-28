@@ -325,6 +325,10 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
+        # It should disable the channel, so we don't attempt deliveries to
+        # this recipient in the future
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Recipient not found")
 

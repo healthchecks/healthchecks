@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Update logging configuration to write logs to database (to table `logs_record`)
-- Update the Splunk On-Call integration to not retry HTTP 404 responses
-- Update the Slack integration to not retry when Slack returns 400 "invalid_token"
 - Improve Pushover notifications (include tags, period, last ping type etc.)
-- Update the Pushover integration to not retry when Pushover reports invalid user
 - Implement audo-submit in TOTP entry screen (#905)
-- Update Twilio integrations to not retry error 21211 ("Invalid 'To' Phone Number")
+- Update the Splunk On-Call integration to disable channel on HTTP 404 responses
+- Update the Slack integration to disable channel when Slack returns 400 "invalid_token"
+- Update the Pushover integration to disable channel when Pushover reports invalid user
+- Update Twilio integrations to disable channel on "Invalid 'To' Phone Number"
+- Update the Signal integration to disable channel on UNREGISTERED_FAILURE
 
 ### Bug Fixes
 - Fix "Ping Details" dialog to handle email bodies not yet uploaded to object storage
