@@ -51,8 +51,9 @@ class OnCalendarValidator(object):
 
     def __call__(self, value: str) -> None:
         # Expect 1 - 4 components
-        if len(value.split()) > 4:
-            raise ValidationError(message=self.message)
+        for expr in value.strip().split("\n"):
+            if len(expr.split()) > 4:
+                raise ValidationError(message=self.message)
 
         try:
             # Does oncalendar accept the schedule?

@@ -163,12 +163,32 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.kind, "oncalendar")
         self.assertEqual(self.check.schedule, "12:34")
 
+    def test_it_saves_multiline_oncalendar_expression(self) -> None:
+        schedule = """
+            2024-01-01 12:00 America/New_York
+            2024-02-01 12:00 Europe/Paris
+        """
+        payload = {"kind": "oncalendar", "schedule": schedule, "tz": "UTC", "grace": 60}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, data=payload)
+        self.assertRedirects(r, self.redirect_url)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "oncalendar")
+        self.assertIn("Paris", self.check.schedule)
+
     def test_it_validates_oncalendar_expression(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         samples = ["*-*-* invalid", "12:99", "0-0"]
 
         for sample in samples:
-            payload = {"kind": "oncalendar", "schedule": sample, "tz": "UTC", "grace": 60}
+            payload = {
+                "kind": "oncalendar",
+                "schedule": sample,
+                "tz": "UTC",
+                "grace": 60,
+            }
 
             r = self.client.post(self.url, data=payload)
             self.assertEqual(r.status_code, 400)
