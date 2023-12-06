@@ -11,7 +11,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from hc.front.validators import (
-    CronExpressionValidator,
+    CronValidator,
     OnCalendarValidator,
     TimezoneValidator,
     WebhookValidator,
@@ -87,7 +87,7 @@ class NameTagsForm(forms.Form):
 class AddCheckForm(NameTagsForm):
     kind = forms.ChoiceField(choices=(("simple", "simple"), ("cron", "cron")))
     timeout = forms.IntegerField(min_value=60, max_value=31536000)
-    schedule = forms.CharField(max_length=100, validators=[CronExpressionValidator()])
+    schedule = forms.CharField(max_length=100, validators=[CronValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=60, max_value=31536000)
 
@@ -120,15 +120,13 @@ class TimeoutForm(forms.Form):
 
 
 class CronForm(forms.Form):
-    schedule = forms.CharField(max_length=100, validators=[CronExpressionValidator()])
+    schedule = forms.CharField(max_length=100, validators=[CronValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=1, max_value=43200)
 
 
 class OnCalendarForm(forms.Form):
-    schedule = forms.CharField(
-        max_length=100, validators=[OnCalendarValidator()]
-    )
+    schedule = forms.CharField(max_length=100, validators=[OnCalendarValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=1, max_value=43200)
 

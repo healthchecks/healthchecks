@@ -29,7 +29,7 @@ class WebhookValidator(URLValidator):
         super().__call__(self.add_tld(value))
 
 
-class CronExpressionValidator(object):
+class CronValidator(object):
     message = "Not a valid cron expression."
 
     def __call__(self, value: str) -> None:
