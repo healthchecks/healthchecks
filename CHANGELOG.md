@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Update the Pushover integration to disable channel when Pushover reports invalid user
 - Update Twilio integrations to disable channel on "Invalid 'To' Phone Number"
 - Update the Signal integration to disable channel on UNREGISTERED_FAILURE
+- Upgrade to Django 5.0
 
 ### Bug Fixes
 - Fix "Ping Details" dialog to handle email bodies not yet uploaded to object storage
