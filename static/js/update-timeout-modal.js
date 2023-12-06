@@ -243,7 +243,7 @@ $(function () {
                 }
 
                 $("#oncalendar-preview" ).html(data);
-                var haveError = $("#invalid-arguments").length > 0;
+                var haveError = $("#invalid-oncalendar-arguments").length > 0;
                 $("#update-oncalendar-submit").prop("disabled", haveError);
             }
         });
