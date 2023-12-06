@@ -304,7 +304,7 @@
                 </label>
                 {% endif %}
 
-                {% if check.kind == "cron" %}
+                {% if check.kind == "cron" or check.kind == "oncalendar" %}
                 <label
                     class="btn btn-default btn-xs active"
                     data-format="{{ check.tz }}">
@@ -314,7 +314,7 @@
                 {% endif %}
 
                 <label
-                    class="btn btn-default btn-xs {% if check.kind != 'cron' %}active{% endif %}"
+                    class="btn btn-default btn-xs {% if check.kind == 'simple' %}active{% endif %}"
                     data-format="local">
                     <input type="radio" name="date-format">
                     Browser's time zone
