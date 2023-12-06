@@ -653,7 +653,7 @@ def oncalendar_preview(request: HttpRequest) -> HttpResponse:
     now_local = now().astimezone(ZoneInfo(tz))
     try:
         it = OnCalendar(schedule, now_local)
-        iterations = 5 if tz == "UTC" else 4
+        iterations = 6 if tz == "UTC" else 4
         for i in range(0, iterations):
             assert isinstance(ctx["dates"], list)
             ctx["dates"].append(next(it))
