@@ -1,0 +1,38 @@
+{% load humanize tz %}
+
+{% if bad_schedule %}
+<p id="invalid-arguments">Invalid OnCalendar expression.</p>
+{% elif bad_tz %}
+<p id="invalid-arguments">Invalid timezone.</p>
+{% else %}
+<table class="table">
+    <tr><th id="oncalendar-preview-title" colspan="2">Expected Ping Dates</th></tr>
+    {% for d in dates %}
+    <tr>
+        <td>
+            {% if forloop.first %}
+            Next elapse:
+            {% else %}
+            #{{ forloop.counter }}:
+            {% endif %}
+        </td>
+        <td>
+        {% timezone tz %}
+            <code>{{ d|date:"D Y-m-d H:i:s T" }}</code>
+        {% endtimezone %}
+        </td>
+    </tr>
+    {% if tz != 'UTC' %}
+    <tr class="in-utc">
+        <td>(in UTC):</td>
+        <td><code>{{ d|date:"D Y-m-d H:i:s T" }}</code></td>
+    </tr>
+    {% endif %}
+    <tr class="from-now">
+        <td></td>
+        <td>{{ d|naturaltime }}</td>
+    </tr>
+
+    {% endfor %}
+</table>
+{% endif %}

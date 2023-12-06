@@ -152,6 +152,31 @@ class UpdateTimeoutTestCase(BaseTestCase):
         r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
 
+    def test_it_saves_oncalendar_expression(self) -> None:
+        payload = {"kind": "oncalendar", "schedule": "12:34", "tz": "UTC", "grace": 60}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, data=payload)
+        self.assertRedirects(r, self.redirect_url)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "oncalendar")
+        self.assertEqual(self.check.schedule, "12:34")
+
+    def test_it_validates_oncalendar_expression(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+        samples = ["*-*-* invalid", "12:99", "0-0"]
+
+        for sample in samples:
+            payload = {"kind": "oncalendar", "schedule": sample, "tz": "UTC", "grace": 60}
+
+            r = self.client.post(self.url, data=payload)
+            self.assertEqual(r.status_code, 400)
+
+        # Check should still have its original data:
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "simple")
+
     def test_team_access_works(self) -> None:
         payload = {"kind": "simple", "timeout": 7200, "grace": 60}
 

@@ -69,7 +69,8 @@
     padding: 40px;
 }
 
-#update-cron-form label {
+#update-cron-form label,
+#update-oncalendar-form label {
     font-weight: normal;
 }
 
@@ -91,10 +92,43 @@
     padding: 16px 8px 0px 8px;
 }
 
-#cron-preview {
+#cron-preview, #oncalendar-preview {
     background: var(--pre-bg);
     min-height: 298px;
 }
+
+#update-oncalendar-form .modal-body {
+    padding: 0 15px;
+}
+
+#oncalendar-controls {
+    padding: 15px;
+}
+
+#oncalendar-preview table.table {
+    margin: 15px 0 0 0;
+}
+
+#oncalendar-preview table td:nth-child(1) {
+    text-align: right;
+}
+
+#oncalendar-preview th {
+    padding-top: 0;
+    font-weight: normal;
+    border-top: 0;
+}
+
+#oncalendar-preview tr.in-utc td,
+#oncalendar-preview tr.from-now td {
+    border-top: 0;
+    padding-top: 0;
+}
+
+#oncalendar-preview tr.from-now td {
+    font-size: small;
+}
+
 
 #cron-preview p {
     padding: 8px;

@@ -4,6 +4,7 @@ Django==5.0
 django-compressor==4.4
 django-stubs-ext==4.2.5
 fido2==1.1.2
+oncalendar==1.0a1
 psycopg2==2.9.9
 pycurl==7.45.2
 pydantic==2.5.2

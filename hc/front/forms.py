@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 
 from hc.front.validators import (
     CronExpressionValidator,
+    OnCalendarValidator,
     TimezoneValidator,
     WebhookValidator,
 )
@@ -120,6 +121,14 @@ class TimeoutForm(forms.Form):
 
 class CronForm(forms.Form):
     schedule = forms.CharField(max_length=100, validators=[CronExpressionValidator()])
+    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
+    grace = forms.IntegerField(min_value=1, max_value=43200)
+
+
+class OnCalendarForm(forms.Form):
+    schedule = forms.CharField(
+        max_length=100, validators=[OnCalendarValidator()]
+    )
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=1, max_value=43200)
 

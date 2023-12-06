@@ -15,6 +15,7 @@ $(function () {
 
         $("#update-timeout-form").attr("action", url);
         $("#update-cron-form").attr("action", url);
+        $("#update-oncalendar-form").attr("action", url);
 
         // Simple, period
         var parsed = secsToUnits(this.dataset.timeout);
@@ -33,13 +34,24 @@ $(function () {
         // Cron
         currentPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
-        $("#schedule").val(this.dataset.schedule);
+        $("#schedule").val(this.dataset.kind == "cron" ? this.dataset.schedule: "* * * * *");
         $("#tz")[0].selectize.setValue(this.dataset.tz, true);
+
         var minutes = parseInt(this.dataset.grace / 60);
         $("#update-timeout-grace-cron").val(minutes);
         updateCronPreview();
 
-        this.dataset.kind == "simple" ? showSimple() : showCron();
+        // OnCalendar
+        $("#cron-preview").html("<p>Updating...</p>");
+        $("#schedule-oncalendar").val(this.dataset.kind == "oncalendar" ? this.dataset.schedule: "*-*-* *:*:*");
+        $("#tz-oncalendar")[0].selectize.setValue(this.dataset.tz, true);
+        var minutes = parseInt(this.dataset.grace / 60);
+        $("#update-timeout-grace-oncalendar").val(minutes);
+        updateOnCalendarPreview();
+
+        if (this.dataset.kind == "simple") showSimple();
+        if (this.dataset.kind == "cron") showCron();
+        if (this.dataset.kind == "oncalendar") showOnCalendar();
         $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
         return false;
     });
@@ -157,25 +169,34 @@ $(function () {
     function showSimple() {
         $("#update-timeout-form").show();
         $("#update-cron-form").hide();
+        $("#update-oncalendar-form").hide();
     }
 
     function showCron() {
         $("#update-timeout-form").hide();
         $("#update-cron-form").show();
+        $("#update-oncalendar-form").hide();
     }
 
-    var currentPreviewHash = "";
+    function showOnCalendar() {
+        $("#update-timeout-form").hide();
+        $("#update-cron-form").hide();
+        $("#update-oncalendar-form").show();
+    }
+
+    var cronPreviewHash = "";
     function updateCronPreview() {
+        console.log("updating cron preview");
         var schedule = $("#schedule").val();
         var tz = $("#tz").val();
         var hash = schedule + tz;
 
         // Don't try preview with empty values, or if values have not changed
-        if (!schedule || !tz || hash == currentPreviewHash)
+        if (!schedule || !tz || hash == cronPreviewHash)
             return;
 
         // OK, we're good
-        currentPreviewHash = hash;
+        cronPreviewHash = hash;
         $("#cron-preview-title").text("Updating...");
 
         var token = $('input[name=csrfmiddlewaretoken]').val();
@@ -185,7 +206,7 @@ $(function () {
             headers: {"X-CSRFToken": token},
             data: {schedule: schedule, tz: tz},
             success: function(data) {
-                if (hash != currentPreviewHash) {
+                if (hash != cronPreviewHash) {
                     return;  // ignore stale results
                 }
 
@@ -196,11 +217,46 @@ $(function () {
         });
     }
 
+    var onCalendarPreviewHash = "";
+    function updateOnCalendarPreview() {
+        var schedule = $("#schedule-oncalendar").val();
+        var tz = $("#tz-oncalendar").val();
+        var hash = schedule + tz;
+
+        // Don't try preview with empty values, or if values have not changed
+        if (!schedule || !tz || hash == onCalendarPreviewHash)
+            return;
+
+        // OK, we're good
+        onCalendarPreviewHash = hash;
+        $("#oncalendar-preview-title").text("Updating...");
+
+        var token = $('input[name=csrfmiddlewaretoken]').val();
+        $.ajax({
+            url: base + "/checks/oncalendar_preview/",
+            type: "post",
+            headers: {"X-CSRFToken": token},
+            data: {schedule: schedule, tz: tz},
+            success: function(data) {
+                if (hash != onCalendarPreviewHash) {
+                    return;  // ignore stale results
+                }
+
+                $("#oncalendar-preview" ).html(data);
+                var haveError = $("#invalid-arguments").length > 0;
+                $("#update-oncalendar-submit").prop("disabled", haveError);
+            }
+        });
+    }
+
     // Wire up events for Timeout/Cron forms
     $(".kind-simple").click(showSimple);
     $(".kind-cron").click(showCron);
+    $(".kind-oncalendar").click(showOnCalendar);
 
     $("#schedule").on("keyup", updateCronPreview);
+    $("#schedule-oncalendar").on("keyup", updateOnCalendarPreview);
     $("#tz").on("change", updateCronPreview);
+    $("#tz-oncalendar").on("change", updateOnCalendarPreview);
 
 });

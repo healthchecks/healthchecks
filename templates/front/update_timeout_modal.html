@@ -55,6 +55,7 @@
                     <div class="btn-group pull-left">
                         <label class="btn btn-default kind-simple active">Simple</label>
                         <label class="btn btn-default kind-cron">Cron</label>
+                        <label class="btn btn-default kind-oncalendar">OnCalendar</label>
                     </div>
 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -116,10 +117,64 @@
                     <div class="btn-group pull-left">
                         <label class="btn btn-default kind-simple">Simple</label>
                         <label class="btn btn-default active kind-cron">Cron</label>
+                        <label class="btn btn-default kind-oncalendar">OnCalendar</label>
                     </div>
 
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="update-cron-submit" type="submit" class="btn btn-primary" {% if not rw %}disabled{% endif %}>
+                        Save
+                    </button>
+                </div>
+            </form>
+
+            <form id="update-oncalendar-form" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="kind" value="oncalendar" />
+                <div class="modal-body">
+                    <div class="row">
+                        <div id="oncalendar-controls" class="col-md-6">
+                            <div class="form-group">
+                                <label for="schedule">OnCalendar Expression(s)</label>
+
+                                <textarea
+                                    id="schedule-oncalendar"
+                                    name="schedule"
+                                    class="form-control"
+                                    rows="5"
+                                    placeholder="*-*-* *:*:*"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="tz">Server's Time Zone</label>
+                                <br />
+                                <select id="tz-oncalendar" name="tz" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="update-timeout-grace-oncalendar">Grace Time</label>
+                                <div class="input-group">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="43200"
+                                        class="form-control"
+                                        id="update-timeout-grace-oncalendar"
+                                        name="grace">
+                                    <div class="input-group-addon">minutes</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="oncalendar-preview" class="col-md-6"></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="btn-group pull-left">
+                        <label class="btn btn-default kind-simple">Simple</label>
+                        <label class="btn btn-default kind-cron">Cron</label>
+                        <label class="btn btn-default active kind-oncalendar">OnCalendar</label>
+                    </div>
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button id="update-oncalendar-submit" type="submit" class="btn btn-primary" {% if not rw %}disabled{% endif %}>
                         Save
                     </button>
                 </div>

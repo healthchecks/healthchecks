@@ -40,6 +40,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from oncalendar import OnCalendar, OnCalendarError
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from hc.accounts.http import AuthenticatedHttpRequest
@@ -578,6 +579,15 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.schedule = cron_form.cleaned_data["schedule"]
         check.tz = cron_form.cleaned_data["tz"]
         check.grace = td(minutes=cron_form.cleaned_data["grace"])
+    elif kind == "oncalendar":
+        oncalendar_form = forms.OnCalendarForm(request.POST)
+        if not oncalendar_form.is_valid():
+            return HttpResponseBadRequest()
+
+        check.kind = "oncalendar"
+        check.schedule = oncalendar_form.cleaned_data["schedule"]
+        check.tz = oncalendar_form.cleaned_data["tz"]
+        check.grace = td(minutes=oncalendar_form.cleaned_data["grace"])
 
     check.alert_after = check.going_down_after()
     if check.status == "up":
@@ -628,6 +638,30 @@ def cron_preview(request: HttpRequest) -> HttpResponse:
         ctx["bad_schedule"] = True
 
     return render(request, "front/cron_preview.html", ctx)
+
+
+@require_POST
+def oncalendar_preview(request: HttpRequest) -> HttpResponse:
+    schedule = request.POST.get("schedule", "")
+    tz = request.POST.get("tz")
+    ctx: dict[str, object] = {"tz": tz, "dates": []}
+
+    if tz not in all_timezones:
+        ctx["bad_tz"] = True
+        return render(request, "front/oncalendar_preview.html", ctx)
+
+    now_local = now().astimezone(ZoneInfo(tz))
+    try:
+        it = OnCalendar(schedule, now_local)
+        iterations = 5 if tz == "UTC" else 4
+        for i in range(0, iterations):
+            assert isinstance(ctx["dates"], list)
+            ctx["dates"].append(next(it))
+    except (OnCalendarError, StopIteration):
+        if not ctx["dates"]:
+            ctx["bad_schedule"] = True
+
+    return render(request, "front/oncalendar_preview.html", ctx)
 
 
 def validate_schedule(request: HttpRequest) -> HttpResponse:
