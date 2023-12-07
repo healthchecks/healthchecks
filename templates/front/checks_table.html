@@ -109,7 +109,7 @@
                 {% if check.kind == "simple" %}
                     {{ check.timeout|hc_duration }}
                     <br />
-                {% elif check.kind == "cron" %}
+                {% elif check.kind == "cron" or check.kind == "oncalendar" %}
                     <div class="cron-expression">{{ check.schedule }}</div>
                 {% endif %}
                 <span class="checks-subline">
