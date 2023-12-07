@@ -76,7 +76,8 @@
                                     class="form-control"
                                     id="schedule"
                                     name="schedule"
-                                    placeholder="* * * * *">
+                                    placeholder="* * * * *"
+                                    maxlength="100">
                                 <div class="schedule-hint">
                                     m h dom mon dow
                                     <a href="{% url 'hc-docs-cron' %}" target="_blank">(cheatsheet)</a>
@@ -140,7 +141,8 @@
                                     name="schedule"
                                     class="form-control"
                                     rows="5"
-                                    placeholder="*-*-* *:*:*"></textarea>
+                                    placeholder="*-*-* *:*:*"
+                                    maxlength="100"></textarea>
                                 <div class="schedule-hint">
                                     <a href="https://www.man7.org/linux/man-pages/man7/systemd.time.7.html#CALENDAR_EVENTS" target="_blank">syntax reference</a>
                                 </div>
