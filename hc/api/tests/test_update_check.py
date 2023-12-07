@@ -110,6 +110,18 @@ class UpdateCheckTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "simple")
 
+    def test_it_updates_cron_to_oncalendar(self) -> None:
+        self.check.kind = "cron"
+        self.check.schedule = "5 * * * *"
+        self.check.save()
+
+        r = self.post(self.check.code, {"schedule": "12:34"})
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.kind, "oncalendar")
+        self.assertEqual(self.check.schedule, "12:34")
+
     def test_it_sets_single_channel(self) -> None:
         channel = Channel.objects.create(project=self.project)
         # Create another channel so we can test that only the first one
@@ -261,13 +273,14 @@ class UpdateCheckTestCase(BaseTestCase):
             r = self.post(self.check.code, {field: None})
             self.assertEqual(r.status_code, 400)
 
-    def test_it_validates_cron_expression(self) -> None:
+    def test_it_validates_schedule(self) -> None:
         self.check.kind = "cron"
         self.check.schedule = "5 * * * *"
         self.check.save()
 
-        samples = ["* invalid *", "1,2 61 * * *", "0 0 31 2 *"]
-        for sample in samples:
+        cron_samples = ["* invalid *", "1,2 61 * * *", "0 0 31 2 *"]
+        oncalendar_samples = ["Surprise 12:34", "12:34 Europe/surprise"]
+        for sample in cron_samples + oncalendar_samples:
             r = self.post(self.check.code, {"schedule": sample})
             self.assertEqual(r.status_code, 400, f"Did not reject '{sample}'")
 

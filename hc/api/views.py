@@ -5,6 +5,7 @@ import time
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from email import message_from_bytes
 from typing import Any, Literal
 from uuid import UUID
@@ -29,6 +30,7 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from oncalendar import OnCalendar, OnCalendarError
 from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 from pydantic_core import PydanticCustomError
 
@@ -45,6 +47,14 @@ from hc.lib.tz import all_timezones
 class BadChannelException(Exception):
     def __init__(self, message: str):
         self.message = message
+
+
+def guess_kind(schedule: str) -> str:
+    # If it is a single line with 5 components, it is probably a cron expression:
+    if "\n" not in schedule.strip() and len(schedule.split()) == 5:
+        return "cron"
+
+    return "oncalendar"
 
 
 class Spec(BaseModel):
@@ -96,19 +106,31 @@ class Spec(BaseModel):
     @field_validator("schedule")
     @classmethod
     def check_schedule(cls, v: str) -> str:
-        # Does it have 5 components?
-        if len(v.split()) != 5:
-            raise PydanticCustomError("cron_syntax", "not a valid cron expression")
-
-        try:
-            # Does cronsim accept the schedule?
-            it = CronSim(v, datetime(2000, 1, 1))
-            # Can it calculate the next datetime?
-            next(it)
-        except (CronSimError, StopIteration):
-            raise PydanticCustomError("cron_syntax", "not a valid cron expression")
+        if guess_kind(v) == "cron":
+            try:
+                # Test if cronsim accepts it and can calculate the next datetime
+                it = CronSim(v, datetime(2000, 1, 1))
+                next(it)
+            except (CronSimError, StopIteration):
+                raise PydanticCustomError("cron_syntax", "not a valid cron expression")
+        else:
+            try:
+                # Test if oncalendar accepts it, and can calculate the next datetime
+                it = OnCalendar(v, datetime(2000, 1, 1, tzinfo=timezone.utc))
+                next(it)
+            except (OnCalendarError, StopIteration):
+                raise PydanticCustomError("cron_syntax", "not a valid expression")
 
         return v
+
+    def kind(self) -> str | None:
+        if self.schedule:
+            return guess_kind(self.schedule)
+
+        if self.timeout:
+            return "simple"
+
+        return None
 
 
 CUSTOM_ERRORS = {
@@ -122,7 +144,7 @@ CUSTOM_ERRORS = {
     "bool_type": "%s is not a boolean",
     "literal_error": "%s has unexpected value",
     "list_type": "%s is not an array",
-    "cron_syntax": "%s is not a valid cron expression",
+    "cron_syntax": "%s is not a valid cron or OnCalendar expression",
     "tz_syntax": "%s is not a valid timezone",
     "time_delta_type": "%s is not a number",
 }
@@ -290,15 +312,16 @@ def _update(check: Check, spec: Spec, v: int) -> None:
             check.slug = slugify(spec.name)
         need_save = True
 
-    if spec.timeout is not None and spec.schedule is None:
+    kind = spec.kind()
+    if kind == "simple":
         if check.kind != "simple" or check.timeout != spec.timeout:
             check.kind = "simple"
             check.timeout = spec.timeout
             need_save = True
 
-    if spec.schedule is not None:
-        if check.kind != "cron" or check.schedule != spec.schedule:
-            check.kind = "cron"
+    if kind in ("cron", "oncalendar"):
+        if check.kind != kind or check.schedule != spec.schedule:
+            check.kind = kind
             check.schedule = spec.schedule
             need_save = True
 

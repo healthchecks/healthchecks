@@ -314,7 +314,7 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_validates_cron_expression(self) -> None:
         r = self.post(
             {"schedule": "bad-expression", "tz": "Europe/Riga", "grace": 60},
-            expect_fragment="schedule is not a valid cron expression",
+            expect_fragment="schedule is not a valid cron or OnCalendar expression",
         )
         self.assertEqual(r.status_code, 400)
 
@@ -330,6 +330,24 @@ class CreateCheckTestCase(BaseTestCase):
         r = self.post(
             {"schedule": "* * * * *", "tz": "not-a-timezone", "grace": 60},
             expect_fragment="tz is not a valid timezone",
+        )
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_supports_oncalendar_syntax(self) -> None:
+        r = self.post({"schedule": "12:34", "tz": "Europe/Riga", "grace": 60})
+        self.assertEqual(r.status_code, 201)
+
+        doc = r.json()
+        self.assertEqual(doc["schedule"], "12:34")
+        self.assertEqual(doc["tz"], "Europe/Riga")
+        self.assertEqual(doc["grace"], 60)
+
+        self.assertTrue("timeout" not in doc)
+
+    def test_it_validates_oncalendar_expression(self) -> None:
+        r = self.post(
+            {"schedule": "12:34\nsurprise", "tz": "Europe/Riga", "grace": 60},
+            expect_fragment="schedule is not a valid cron or OnCalendar expression",
         )
         self.assertEqual(r.status_code, 400)
 

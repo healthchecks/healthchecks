@@ -408,7 +408,7 @@ class Check(models.Model):
 
         if self.kind == "simple":
             result["timeout"] = int(self.timeout.total_seconds())
-        elif self.kind == "cron":
+        elif self.kind in ("cron", "oncalendar"):
             result["schedule"] = self.schedule
             result["tz"] = self.tz
 
