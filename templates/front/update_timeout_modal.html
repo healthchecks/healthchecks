@@ -9,7 +9,7 @@
 
                 <div class="modal-body">
                     <div class="interval-controls">
-                        <label>Period</label>
+                        <label for="period-value">Period</label>
                         <input
                             id="period-value"
                             type="number"
@@ -24,7 +24,7 @@
                     <div id="period-slider"></div>
 
                     <div class="interval-controls">
-                        <label>Grace Time</label>
+                        <label for="grace-value">Grace Time</label>
                         <input
                             id="grace-value"
                             type="number"
@@ -77,7 +77,7 @@
                                     id="schedule"
                                     name="schedule"
                                     placeholder="* * * * *">
-                                <div id="schedule-hint">
+                                <div class="schedule-hint">
                                     m h dom mon dow
                                     <a href="{% url 'hc-docs-cron' %}" target="_blank">(cheatsheet)</a>
                                 </div>
@@ -134,17 +134,20 @@
                     <div class="row">
                         <div id="oncalendar-controls" class="col-md-6">
                             <div class="form-group">
-                                <label for="schedule">OnCalendar Expression(s)</label>
-
+                                <label for="schedule-oncalendar">OnCalendar Expression(s)</label>
                                 <textarea
                                     id="schedule-oncalendar"
                                     name="schedule"
                                     class="form-control"
                                     rows="5"
                                     placeholder="*-*-* *:*:*"></textarea>
+                                <div class="schedule-hint">
+                                    <a href="https://www.man7.org/linux/man-pages/man7/systemd.time.7.html#CALENDAR_EVENTS" target="_blank">syntax reference</a>
+                                </div>
+
                             </div>
                             <div class="form-group">
-                                <label for="tz">Server's Time Zone</label>
+                                <label for="tz-oncalendar">Server's Time Zone</label>
                                 <br />
                                 <select id="tz-oncalendar" name="tz" class="form-control"></select>
                             </div>
@@ -152,11 +155,11 @@
                                 <label for="update-timeout-grace-oncalendar">Grace Time</label>
                                 <div class="input-group">
                                     <input
+                                        id="update-timeout-grace-oncalendar"
                                         type="number"
                                         min="1"
                                         max="43200"
                                         class="form-control"
-                                        id="update-timeout-grace-oncalendar"
                                         name="grace">
                                     <div class="input-group-addon">minutes</div>
                                 </div>
