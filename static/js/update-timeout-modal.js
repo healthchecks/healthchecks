@@ -32,7 +32,7 @@ $(function () {
         $("#update-timeout-grace").val(this.dataset.grace);
 
         // Cron
-        currentPreviewHash = "";
+        cronPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(this.dataset.kind == "cron" ? this.dataset.schedule: "* * * * *");
         $("#tz")[0].selectize.setValue(this.dataset.tz, true);
@@ -42,16 +42,15 @@ $(function () {
         updateCronPreview();
 
         // OnCalendar
-        $("#cron-preview").html("<p>Updating...</p>");
+        onCalendarPreviewHash = "";
+        $("#oncalendar-preview").html("<p>Updating...</p>");
         $("#schedule-oncalendar").val(this.dataset.kind == "oncalendar" ? this.dataset.schedule: "*-*-* *:*:*");
         $("#tz-oncalendar")[0].selectize.setValue(this.dataset.tz, true);
         var minutes = parseInt(this.dataset.grace / 60);
         $("#update-timeout-grace-oncalendar").val(minutes);
         updateOnCalendarPreview();
 
-        if (this.dataset.kind == "simple") showSimple();
-        if (this.dataset.kind == "cron") showCron();
-        if (this.dataset.kind == "oncalendar") showOnCalendar();
+        showPanel(this.dataset.kind);
         $('#update-timeout-modal').modal({"show":true, "backdrop":"static"});
         return false;
     });
@@ -166,27 +165,14 @@ $(function () {
         }
     });
 
-    function showSimple() {
-        $("#update-timeout-form").show();
-        $("#update-cron-form").hide();
-        $("#update-oncalendar-form").hide();
-    }
-
-    function showCron() {
-        $("#update-timeout-form").hide();
-        $("#update-cron-form").show();
-        $("#update-oncalendar-form").hide();
-    }
-
-    function showOnCalendar() {
-        $("#update-timeout-form").hide();
-        $("#update-cron-form").hide();
-        $("#update-oncalendar-form").show();
+    function showPanel(kind) {
+        $("#update-timeout-form").toggle(kind == "simple");
+        $("#update-cron-form").toggle(kind == "cron");
+        $("#update-oncalendar-form").toggle(kind == "oncalendar");
     }
 
     var cronPreviewHash = "";
     function updateCronPreview() {
-        console.log("updating cron preview");
         var schedule = $("#schedule").val();
         var tz = $("#tz").val();
         var hash = schedule + tz;
@@ -250,9 +236,9 @@ $(function () {
     }
 
     // Wire up events for Timeout/Cron forms
-    $(".kind-simple").click(showSimple);
-    $(".kind-cron").click(showCron);
-    $(".kind-oncalendar").click(showOnCalendar);
+    $(".kind-simple").click(() => showPanel("simple"));
+    $(".kind-cron").click(() => showPanel("cron"));
+    $(".kind-oncalendar").click(() => showPanel("oncalendar"));
 
     $("#schedule").on("keyup", updateCronPreview);
     $("#schedule-oncalendar").on("keyup", updateOnCalendarPreview);
