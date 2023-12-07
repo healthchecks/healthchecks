@@ -15,8 +15,8 @@ in your account.
 <div id="api-toc"></div>
 
 Endpoint Name                                         | Endpoint Address
-------------------------------------------------------|-------
-**Checks**|
+------------------------------------------------------|-----------------
+**Checks**                                            |
 [List existing checks](#list-checks)                  | `GET SITE_ROOT/api/v3/checks/`
 [Get a single check](#get-check)                      | `GET SITE_ROOT/api/v3/checks/<uuid>`<br>`GET SITE_ROOT/api/v3/checks/<unique_key>`
 [Create a new check](#create-check)                   | `POST SITE_ROOT/api/v3/checks/`
@@ -24,15 +24,15 @@ Endpoint Name                                         | Endpoint Address
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v3/checks/<uuid>/pause`
 [Resume monitoring of a check](#resume-check)         | `POST SITE_ROOT/api/v3/checks/<uuid>/resume`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v3/checks/<uuid>`
-**Pings**|
+**Pings**                                             |
 [List check's logged pings](#list-pings)              | `GET SITE_ROOT/api/v3/checks/<uuid>/pings/`
 [Get a ping's logged body](#ping-body)                | `GET SITE_ROOT/api/v3/checks/<uuid>/pings/<n>/body`
-**Flips**|
-[List check's status changes](#list-flips)   | `GET SITE_ROOT/api/v3/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v3/checks/<unique_key>/flips/`
-**Integrations**|
-[List existing integrations](#list-channels) | `GET SITE_ROOT/api/v3/channels/`
-**Badges**|
-[List project's badges](#list-badges)                  | `GET SITE_ROOT/api/v3/badges/`
+**Flips**                                             |
+[List check's status changes](#list-flips)            | `GET SITE_ROOT/api/v3/checks/<uuid>/flips/`<br>`GET SITE_ROOT/api/v3/checks/<unique_key>/flips/`
+**Integrations**                                      |
+[List existing integrations](#list-channels)          | `GET SITE_ROOT/api/v3/channels/`
+**Badges**                                            |
+[List project's badges](#list-badges)                 | `GET SITE_ROOT/api/v3/badges/`
 
 ## Changes From v2
 
@@ -404,17 +404,23 @@ grace
     Minimum: 60 (one minute), maximum: 31536000 (365 days).
 
 schedule
-:   string, optional, default value: "`* * * * *`".
+:   string, optional.
 
-    A cron expression defining this check's schedule.
+    A cron or systemd OnCalendar expression defining this check's schedule.
+    SITE_NAME will detect the expression type (cron or OnCalendar) automatically.
 
-    If you specify both `timeout` and `schedule` parameters,
-    SITE_NAME will create a Cron check and ignore
-    the `timeout` value.
+    The `schedule` parameter takes precedence over the `timeout` field: if you specify
+    both the `timeout` and the `schedule` parameters, SITE_NAME will save the
+    `schedule` and ignore the `timeout`.
 
-    Example for a check running every half-hour:
+    Example using a cron expression ("run every half-hour"):
 
     <pre>{"schedule": "0,30 * * * *"}</pre>
+
+    Example using an OnCalendar expression ("run at 12:00 of the last day of every
+    month"):
+
+    <pre>{"schedule": "\*-\*~1 12:00"}</pre>
 
 tz
 :   string, optional, default value: "UTC".
@@ -450,7 +456,7 @@ methods
     <pre>{"methods": "POST"}</pre>
 
 channels
-:   string, optional
+:   string, optional.
 
     By default, this API call assigns no integrations to the newly created
     check.
@@ -731,17 +737,23 @@ grace
 schedule
 :   string, optional.
 
-    A cron expression defining this check's schedule.
+    A cron or systemd OnCalendar expression defining this check's schedule.
+    SITE_NAME will detect the expression type (cron or OnCalendar) automatically.
 
-    If you specify both `timeout` and `schedule` parameters,
-    SITE_NAME will save the `schedule` parameter and ignore
-    the `timeout`.
+    The `schedule` parameter takes precedence over the `timeout` field: If you specify
+    both the `timeout` and the `schedule` parameters, SITE_NAME will save the
+    `schedule` and ignore the `timeout`.
 
-    Example for a check running every half-hour:
+    Example using a cron expression ("run every half-hour"):
 
     <pre>{"schedule": "0,30 * * * *"}</pre>
 
-tz
+    Example using an OnCalendar expression ("run at 12:00 of the last day of every
+    month"):
+
+    <pre>{"schedule": "\*-\*~1 12:00"}</pre>
+
+ tz
 :   string, optional.
 
     Server's timezone. This setting only has an effect in combination with the

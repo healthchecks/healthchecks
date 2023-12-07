@@ -412,13 +412,17 @@ Example:</p>
 </dd>
 <dt>schedule</dt>
 <dd>
-<p>string, optional, default value: "<code>* * * * *</code>".</p>
-<p>A cron expression defining this check's schedule.</p>
-<p>If you specify both <code>timeout</code> and <code>schedule</code> parameters,
-SITE_NAME will create a Cron check and ignore
-the <code>timeout</code> value.</p>
-<p>Example for a check running every half-hour:</p>
+<p>string, optional.</p>
+<p>A cron or systemd OnCalendar expression defining this check's schedule.
+SITE_NAME will detect the expression type (cron or OnCalendar) automatically.</p>
+<p>The <code>schedule</code> parameter takes precedence over the <code>timeout</code> field: if you specify
+both the <code>timeout</code> and the <code>schedule</code> parameters, SITE_NAME will save the
+<code>schedule</code> and ignore the <code>timeout</code>.</p>
+<p>Example using a cron expression ("run every half-hour"):</p>
 <p><pre>{"schedule": "0,30 * * * *"}</pre></p>
+<p>Example using an OnCalendar expression ("run at 12:00 of the last day of every
+month"):</p>
+<p><pre>{"schedule": "*-*~1 12:00"}</pre></p>
 </dd>
 <dt>tz</dt>
 <dd>
@@ -449,7 +453,7 @@ and POST requests.</p>
 </dd>
 <dt>channels</dt>
 <dd>
-<p>string, optional</p>
+<p>string, optional.</p>
 <p>By default, this API call assigns no integrations to the newly created
 check.</p>
 <p>Set this field to a special value "*" to automatically assign all existing
@@ -673,12 +677,16 @@ characters: <code>a-z</code>, <code>0-9</code>, hyphens, underscores. Example:</
 <dt>schedule</dt>
 <dd>
 <p>string, optional.</p>
-<p>A cron expression defining this check's schedule.</p>
-<p>If you specify both <code>timeout</code> and <code>schedule</code> parameters,
-SITE_NAME will save the <code>schedule</code> parameter and ignore
-the <code>timeout</code>.</p>
-<p>Example for a check running every half-hour:</p>
+<p>A cron or systemd OnCalendar expression defining this check's schedule.
+SITE_NAME will detect the expression type (cron or OnCalendar) automatically.</p>
+<p>The <code>schedule</code> parameter takes precedence over the <code>timeout</code> field: If you specify
+both the <code>timeout</code> and the <code>schedule</code> parameters, SITE_NAME will save the
+<code>schedule</code> and ignore the <code>timeout</code>.</p>
+<p>Example using a cron expression ("run every half-hour"):</p>
 <p><pre>{"schedule": "0,30 * * * *"}</pre></p>
+<p>Example using an OnCalendar expression ("run at 12:00 of the last day of every
+month"):</p>
+<p><pre>{"schedule": "*-*~1 12:00"}</pre></p>
 </dd>
 <dt>tz</dt>
 <dd>
