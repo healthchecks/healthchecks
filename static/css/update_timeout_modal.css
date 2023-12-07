@@ -76,7 +76,7 @@
     font-weight: normal;
 }
 
-#schedule-hint {
+.schedule-hint {
     margin-left: 8px;
     font-size: small;
 }
@@ -132,7 +132,7 @@
 }
 
 #oncalendar-controls {
-    padding: 15px;
+    padding: 25px;
 }
 
 #oncalendar-preview {
@@ -140,8 +140,12 @@
     min-height: 409px;
 }
 
+#invalid-oncalendar-arguments {
+    padding: 15px;
+}
+
 #oncalendar-preview table.table {
-    margin: 15px 0 0 0;
+    margin: 25px 0 15px 0;
 }
 
 #oncalendar-preview table td:nth-child(1) {
