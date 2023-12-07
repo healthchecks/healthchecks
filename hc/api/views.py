@@ -116,8 +116,8 @@ class Spec(BaseModel):
         else:
             try:
                 # Test if oncalendar accepts it, and can calculate the next datetime
-                it = OnCalendar(v, datetime(2000, 1, 1, tzinfo=timezone.utc))
-                next(it)
+                oncalendar_it = OnCalendar(v, datetime(2000, 1, 1, tzinfo=timezone.utc))
+                next(oncalendar_it)
             except (OnCalendarError, StopIteration):
                 raise PydanticCustomError("cron_syntax", "not a valid expression")
 
@@ -322,6 +322,7 @@ def _update(check: Check, spec: Spec, v: int) -> None:
     if kind in ("cron", "oncalendar"):
         if check.kind != kind or check.schedule != spec.schedule:
             check.kind = kind
+            assert spec.schedule is not None
             check.schedule = spec.schedule
             need_save = True
 
