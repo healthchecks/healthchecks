@@ -72,7 +72,7 @@
                         <label class="col-sm-3 control-label">
                             Schedule
                         </label>
-                        <div class="col-sm-9">
+                        <div id="add-check-kind" class="col-sm-9">
                             <label class="radio-container">
                                 <input type="radio" name="kind" value="simple" checked>
                                 <span class="radiomark"></span>
@@ -82,6 +82,11 @@
                                 <input type="radio" name="kind" value="cron">
                                 <span class="radiomark"></span>
                                 Cron
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="kind" value="oncalendar">
+                                <span class="radiomark"></span>
+                                OnCalendar
                             </label>
                         </div>
                     </div>
@@ -126,7 +131,21 @@
                         </div>
                     </div>
 
-                    <div class="form-group create-cron-extra">
+                    <div class="form-group create-oncalendar-extra">
+                        <label for="add-check-schedule-oncalendar" class="col-sm-3 control-label">
+                            OnCalendar Expression(s)
+                        </label>
+                        <div class="col-sm-9">
+                            <textarea
+                                id="add-check-schedule-oncalendar"
+                                name="schedule"
+                                class="form-control"
+                                rows="3"
+                                maxlength="100">*-*-* *:*:*</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group create-cron-extra create-oncalendar-extra">
                         <label for="add-check-tz" class="col-sm-3 control-label">
                             Time Zone
                         </label>

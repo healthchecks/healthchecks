@@ -3,7 +3,8 @@ $(function () {
     var modal = $("#add-check-modal");
     var period = document.getElementById("add-check-period");
     var periodUnit = document.getElementById("add-check-period-unit");
-    var scheduleField = document.getElementById("add-check-schedule");
+    var cronField = document.getElementById("add-check-schedule");
+    var onCalendarField = document.getElementById("add-check-schedule-oncalendar");
     var grace = document.getElementById("add-check-grace");
     var graceUnit = document.getElementById("add-check-grace-unit");
 
@@ -25,15 +26,14 @@ $(function () {
 
     function updateScheduleExtras() {
         var kind = $('#add-check-modal input[name=kind]:checked').val();
-        modal.removeClass("cron").removeClass("simple").addClass(kind);
-
-        if (kind == "simple" && !scheduleField.checkValidity()) {
-            scheduleField.setCustomValidity("");
-            scheduleField.value = "* * * * *";
-        }
+        modal.removeClass("simple").removeClass("cron").removeClass("oncalendar").addClass(kind);
+        // Include cron schedule in POST data only if kind = "cron"
+        cronField.disabled = kind != "cron";
+        // Include OnCalendar schedule in POST data only if kind = "oncalendar"
+        onCalendarField.disabled = kind != "oncalendar";
     }
 
-    // Show and hide fields when user clicks simple/cron radio buttons
+    // Show and hide fields when user clicks simple/cron/oncalendar radio buttons
     $("#add-check-modal input[type=radio][name=kind]").change(updateScheduleExtras);
 
     modal.on("shown.bs.modal", function() {
@@ -69,22 +69,26 @@ $(function () {
 
     var currentSchedule = "";
     function validateSchedule() {
-        var schedule = scheduleField.value;
+        var kind = $('#add-check-modal input[name=kind]:checked').val();
+        if (kind == "simple") return;
+
+        var field = kind == "cron" ? cronField : onCalendarField;
 
         // Return early if the schedule has not changed
-        if (schedule == currentSchedule)
+        if (field.value == currentSchedule)
             return;
 
-        currentSchedule = schedule;
+        currentSchedule = field.value;
         var token = $('input[name=csrfmiddlewaretoken]').val();
-        $.getJSON(base + "/checks/validate_schedule/", {schedule: schedule}, function(data) {
-            if (schedule != currentSchedule)
+        var payload = {kind: kind, schedule: field.value};
+        $.getJSON(base + "/checks/validate_schedule/", payload, function(data) {
+            if (field.value != currentSchedule)
                 return;  // ignore stale results
 
-            scheduleField.setCustomValidity(data.result ? "" : "Please enter a valid cron expression");
+            field.setCustomValidity(data.result ? "" : "Please enter a valid expression");
         });
     }
 
     $("#add-check-schedule").on("keyup change", validateSchedule);
-
+    $("#add-check-schedule-oncalendar").on("keyup change", validateSchedule);
 });

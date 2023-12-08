@@ -176,7 +176,7 @@
                     </td>
                     {% endif %}
                 </tr>
-                {% if check.kind == "cron" %}
+                {% if check.kind == "cron" or check.kind == "oncalendar" %}
                 <tr>
                     <th>Time Zone</th>
                     <td>

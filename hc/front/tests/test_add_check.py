@@ -19,7 +19,6 @@ class AddCheckTestCase(BaseTestCase):
             "kind": "simple",
             "timeout": "120",
             "grace": "60",
-            "schedule": "* * * * *",
             "tz": "Europe/Riga",
         }
         payload.update(kwargs)
@@ -50,11 +49,24 @@ class AddCheckTestCase(BaseTestCase):
 
     def test_it_saves_cron_schedule(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, self._payload(kind="cron"))
+        r = self.client.post(self.url, self._payload(kind="cron", schedule="0 0 * * *"))
 
         check = Check.objects.get()
         self.assertEqual(check.project, self.project)
         self.assertEqual(check.kind, "cron")
+        self.assertEqual(check.schedule, "0 0 * * *")
+
+        self.assertRedirects(r, self.redirect_url)
+
+    def test_it_saves_oncalendar_schedule(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+        payload = self._payload(kind="oncalendar", schedule="12:34")
+        r = self.client.post(self.url, payload)
+
+        check = Check.objects.get()
+        self.assertEqual(check.project, self.project)
+        self.assertEqual(check.kind, "oncalendar")
+        self.assertEqual(check.schedule, "12:34")
 
         self.assertRedirects(r, self.redirect_url)
 
@@ -81,12 +93,21 @@ class AddCheckTestCase(BaseTestCase):
 
     def test_it_validates_cron_expression(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, self._payload(schedule="* * *"))
+        r = self.client.post(self.url, self._payload(kind="cron", schedule="* * *"))
         self.assertEqual(r.status_code, 400)
 
     def test_it_validates_cron_expression_with_no_matches(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, self._payload(schedule="* * */100 * MON#2"))
+        r = self.client.post(
+            self.url, self._payload(kind="cron", schedule="* * */100 * MON#2")
+        )
+        self.assertEqual(r.status_code, 400)
+
+    def test_it_validates_oncalendar_expression(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(
+            self.url, self._payload(kind="oncalendar", schedule="12:345")
+        )
         self.assertEqual(r.status_code, 400)
 
     def test_it_validates_tz(self) -> None:

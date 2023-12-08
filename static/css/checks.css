@@ -81,16 +81,27 @@
     margin-bottom: 20px;
 }
 
+/* Add Check Modal */
+
 #add-check-modal .modal-body {
     padding: 15px 40px;
 }
 
-.simple .create-cron-extra {
+#add-check-kind label {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.create-simple-extra,
+.create-cron-extra,
+.create-oncalendar-extra {
     display: none;
 }
 
-.cron .create-simple-extra {
-    display: none;
+.simple .create-simple-extra,
+.cron .create-cron-extra,
+.oncalendar .create-oncalendar-extra {
+    display: block;
 }
 
 #add-check-period,

@@ -85,9 +85,11 @@ class NameTagsForm(forms.Form):
 
 
 class AddCheckForm(NameTagsForm):
-    kind = forms.ChoiceField(choices=(("simple", "simple"), ("cron", "cron")))
+    kind = forms.ChoiceField(
+        choices=(("simple", "simple"), ("cron", "cron"), ("oncalendar", "oncalendar"))
+    )
     timeout = forms.IntegerField(min_value=60, max_value=31536000)
-    schedule = forms.CharField(max_length=100, validators=[CronValidator()])
+    schedule = forms.CharField(required=False, max_length=100)
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
     grace = forms.IntegerField(min_value=60, max_value=31536000)
 
@@ -96,6 +98,21 @@ class AddCheckForm(NameTagsForm):
 
     def clean_grace(self) -> td:
         return td(seconds=self.cleaned_data["grace"])
+
+    def clean_schedule(self):
+        kind = self.cleaned_data.get("kind")
+        validator = None
+        if kind == "cron":
+            validator = CronValidator()
+        elif kind == "oncalendar":
+            validator = OnCalendarValidator()
+        else:
+            # If kind is not cron or oncalendar, ignore the passed in value
+            # and use "* * * * *" instead.
+            return "* * * * *"
+
+        validator(self.cleaned_data["schedule"])
+        return self.cleaned_data["schedule"]
 
 
 class FilteringRulesForm(forms.Form):

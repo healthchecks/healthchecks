@@ -665,14 +665,23 @@ def oncalendar_preview(request: HttpRequest) -> HttpResponse:
 
 
 def validate_schedule(request: HttpRequest) -> HttpResponse:
+    kind = request.GET.get("kind", "")
+    iterator: type[CronSim] | type[OnCalendar]
+    if kind == "cron":
+        iterator = CronSim
+    elif kind == "oncalendar":
+        iterator = OnCalendar
+    else:
+        return HttpResponseBadRequest()
+
     schedule = request.GET.get("schedule", "")
     result = True
     try:
-        # Does cronsim accept the schedule?
-        it = CronSim(schedule, now())
+        # Does cronsim/oncalendar accept the schedule?
+        it = iterator(schedule, now())
         # Can it calculate the next datetime?
         next(it)
-    except (CronSimError, StopIteration):
+    except (CronSimError, OnCalendarError, StopIteration):
         result = False
 
     return JsonResponse({"result": result})
