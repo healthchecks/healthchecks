@@ -2,9 +2,9 @@ aiosmtpd==1.4.4.post2
 cronsim==2.5
 Django==5.0
 django-compressor==4.4
-django-stubs-ext==4.2.5
+django-stubs-ext==4.2.7
 fido2==1.1.2
-oncalendar==1.0a2
+oncalendar==1.0
 psycopg2==2.9.9
 pycurl==7.45.2
 pydantic==2.5.2
