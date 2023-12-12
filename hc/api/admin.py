@@ -70,7 +70,9 @@ class ChecksAdmin(ModelAdmin[Check]):
     def timeout_schedule(self, obj: Check) -> str:
         if obj.kind == "simple":
             return format_duration(obj.timeout)
-        elif obj.kind == "cron":
+        elif obj.kind in ("cron", "oncalendar"):
+            if len(obj.schedule) > 30:
+                return obj.schedule[:30] + "..."
             return obj.schedule
         else:
             return "Unknown"
