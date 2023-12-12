@@ -25,9 +25,9 @@ or your future self. Describe the cron job's role, who set it up, what to do in
 case of failures, and where to look for additional information.</li>
 </ul>
 <h2>Simple Schedules</h2>
-<p>SITE_NAME supports two types of schedules: <strong>Simple</strong> and <strong>Cron</strong>. Use Simple
-schedules for monitoring processes that you expect to run at relatively regular
-intervals: once an hour, once a day, once a week, etc.</p>
+<p>SITE_NAME supports three types of schedules: <strong>Simple</strong>, <strong>Cron</strong>, and <strong>OnCalendar</strong>.
+Use Simple schedules for monitoring processes that you expect to run at relatively
+regular intervals: once an hour, once a day, once a week, etc.</p>
 <p><img alt="Editing the period and grace time" src="IMG_URL/edit_simple_schedule.png" /></p>
 <p>For the simple schedules, you can configure two parameters, Period and Grace Time.</p>
 <ul>
@@ -42,9 +42,12 @@ then Grace Time also specifies the maximum allowed time gap between "start" and
 "success" signal within Grace Time. If the success signal does not arrive within the 
 configured Grace Time, SITE_NAME will mark the check as failed and send out alerts.</p>
 <h2>Cron Schedules</h2>
-<p>Use "cron" for monitoring processes with more complex schedules. This monitoring mode
-ensures that jobs run <strong>at the correct time</strong> and not just at the correct time
-intervals.</p>
+<p>Use "Cron" for monitoring cron jobs and other processes with more complex schedules.
+This monitoring mode ensures that jobs run <strong>at the correct time</strong> and not just at
+the correct time intervals.</p>
+<p>See <a href="../cron/">Cron syntax cheatsheet</a> for cron expression syntax examples.
+See <a href="https://www.man7.org/linux/man-pages/man5/crontab.5.html">crontab(5) man page</a>
+for complete cron syntax reference.</p>
 <p><img alt="Editing cron schedule" src="IMG_URL/edit_cron_schedule.png" /></p>
 <p>You will need to specify Cron Expression, Server's Time Zone, and Grace Time.</p>
 <ul>
@@ -55,6 +58,13 @@ timezone here.</li>
 <li><strong>Grace Time</strong>, same as for simple schedules, is how long to wait before sending an
 alert for a late check.</li>
 </ul>
+<h2>OnCalendar Schedules</h2>
+<p>Use "OnCalendar" schedules to monitor systemd timers that use <code>OnCalendar=</code> schedules.
+Same as with systemd timers, you can specify more than one <code>OnCalendar</code> expression,
+and SITE_NAME will expect a ping whenever any schedule matches.</p>
+<p>See <a href="https://www.man7.org/linux/man-pages/man7/systemd.time.7.html#CALENDAR_EVENTS">systemd.time(7) man page</a>
+for complete OnCalendar syntax reference.</p>
+<p><img alt="Editing cron schedule" src="IMG_URL/edit_oncalendar_schedule.png" /></p>
 <h2>Filtering Rules</h2>
 <p>In the "Filtering Rules" dialog, you can control several advanced aspects of
 how SITE_NAME handles incoming pings for a particular check.</p>

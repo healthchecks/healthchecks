@@ -30,9 +30,9 @@ case of failures, and where to look for additional information.
 
 ## Simple Schedules
 
-SITE_NAME supports two types of schedules: **Simple** and **Cron**. Use Simple
-schedules for monitoring processes that you expect to run at relatively regular
-intervals: once an hour, once a day, once a week, etc.
+SITE_NAME supports three types of schedules: **Simple**, **Cron**, and **OnCalendar**.
+Use Simple schedules for monitoring processes that you expect to run at relatively
+regular intervals: once an hour, once a day, once a week, etc.
 
 ![Editing the period and grace time](IMG_URL/edit_simple_schedule.png)
 
@@ -51,9 +51,13 @@ configured Grace Time, SITE_NAME will mark the check as failed and send out aler
 
 ## Cron Schedules
 
-Use "cron" for monitoring processes with more complex schedules. This monitoring mode
-ensures that jobs run **at the correct time** and not just at the correct time
-intervals.
+Use "Cron" for monitoring cron jobs and other processes with more complex schedules.
+This monitoring mode ensures that jobs run **at the correct time** and not just at
+the correct time intervals.
+
+See [Cron syntax cheatsheet](../cron/) for cron expression syntax examples.
+See [crontab(5) man page](https://www.man7.org/linux/man-pages/man5/crontab.5.html)
+for complete cron syntax reference.
 
 ![Editing cron schedule](IMG_URL/edit_cron_schedule.png)
 
@@ -65,6 +69,17 @@ the system's local time. If the machine does not use the UTC timezone, specify i
 timezone here.
 * **Grace Time**, same as for simple schedules, is how long to wait before sending an
 alert for a late check.
+
+## OnCalendar Schedules
+
+Use "OnCalendar" schedules to monitor systemd timers that use `OnCalendar=` schedules.
+Same as with systemd timers, you can specify more than one `OnCalendar` expression,
+and SITE_NAME will expect a ping whenever any schedule matches.
+
+See [systemd.time(7) man page](https://www.man7.org/linux/man-pages/man7/systemd.time.7.html#CALENDAR_EVENTS)
+for complete OnCalendar syntax reference.
+
+![Editing cron schedule](IMG_URL/edit_oncalendar_schedule.png)
 
 ## Filtering Rules
 
