@@ -15,12 +15,14 @@ class OnCalendarPreviewTestCase(BaseTestCase):
 
     def test_it_works(self) -> None:
         payload = {"schedule": "*:*", "tz": "UTC"}
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, payload)
         self.assertContains(r, "oncalendar-preview-title", status_code=200)
         self.assertContains(r, "2020-01-01 00:01:00 UTC")
 
     def test_it_handles_single_result(self) -> None:
         payload = {"schedule": "2020-02-01", "tz": "UTC"}
+        self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, payload)
         self.assertContains(r, "oncalendar-preview-title", status_code=200)
         self.assertContains(r, "2020-02-01 00:00:00 UTC")

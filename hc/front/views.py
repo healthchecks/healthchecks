@@ -641,6 +641,7 @@ def cron_preview(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
+@login_required
 def oncalendar_preview(request: HttpRequest) -> HttpResponse:
     schedule = request.POST.get("schedule", "")
     tz = request.POST.get("tz")
