@@ -71,7 +71,7 @@ m=$(/usr/bin/certbot renew 2>&1)
 curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL
 ```
 
-## Auto provisioning New Checks
+## Auto Provisioning New Checks
 
 This example uses SITE_NAME [auto provisioning feature](../autoprovisioning/) to
 create a check "on the fly" if it does not already exist. Using this technique, you can
