@@ -71,26 +71,24 @@ m=$(/usr/bin/certbot renew 2>&1)
 curl -fsS -m 10 --retry 5 --data-raw "$m" PING_URL
 ```
 
-## Auto-provisioning New Checks
+## Auto provisioning New Checks
 
-This example uses SITE_NAME [Management API](../api/) to create a check "on the fly"
-(if it does not already exist) and retrieve its ping URL.
-Using this technique, you can write services that automatically
-register with SITE_NAME the first time they run.
+This example uses SITE_NAME [auto provisioning feature](../autoprovisioning/) to
+create a check "on the fly" if it does not already exist. Using this technique, you can
+write services that automatically register with SITE_NAME the first time they run.
 
 
 ```bash
 #!/bin/bash
 
-API_KEY=your-api-key-here
+PING_KEY=fixme-your-ping-key-here
 
-# Check's parameters. This example uses system's hostname for check's name.
-PAYLOAD='{"name": "'`hostname`'", "timeout": 60, "grace": 60, "unique": ["name"]}'
+# Use system's hostname as check's slug
+SLUG=$(hostname)
 
-# Create the check if it does not exist.
-# Grab the ping_url from JSON response using the jq utility:
-URL=`curl -s SITE_ROOT/api/v1/checks/  -H "X-Api-Key: $API_KEY" -d "$PAYLOAD"  | jq -r .ping_url`
+# Construct a ping URL and append "?create=1" at the end:
+URL=PING_ENDPOINT$PING_KEY/$SLUG?create=1
 
-# Finally, send a ping:
+# Send a ping:
 curl -m 10 --retry 5 $URL
 ```

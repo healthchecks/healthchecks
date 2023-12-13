@@ -54,22 +54,20 @@ will accept and store the first PING_BODY_LIMIT_FORMATTED of the request body.</
 curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>--data-raw<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$m</span><span class="s2">&quot;</span><span class="w"> </span>PING_URL
 </code></pre></div>
 
-<h2>Auto-provisioning New Checks</h2>
-<p>This example uses SITE_NAME <a href="../api/">Management API</a> to create a check "on the fly"
-(if it does not already exist) and retrieve its ping URL.
-Using this technique, you can write services that automatically
-register with SITE_NAME the first time they run.</p>
+<h2>Auto provisioning New Checks</h2>
+<p>This example uses SITE_NAME <a href="../autoprovisioning/">auto provisioning feature</a> to
+create a check "on the fly" if it does not already exist. Using this technique, you can
+write services that automatically register with SITE_NAME the first time they run.</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 
-<span class="nv">API_KEY</span><span class="o">=</span>your-api-key-here
+<span class="nv">PING_KEY</span><span class="o">=</span>fixme-your-ping-key-here
 
-<span class="c1"># Check&#39;s parameters. This example uses system&#39;s hostname for check&#39;s name.</span>
-<span class="nv">PAYLOAD</span><span class="o">=</span><span class="s1">&#39;{&quot;name&quot;: &quot;&#39;</span><span class="sb">`</span>hostname<span class="sb">`</span><span class="s1">&#39;&quot;, &quot;timeout&quot;: 60, &quot;grace&quot;: 60, &quot;unique&quot;: [&quot;name&quot;]}&#39;</span>
+<span class="c1"># Use system&#39;s hostname as check&#39;s slug</span>
+<span class="nv">SLUG</span><span class="o">=</span><span class="k">$(</span>hostname<span class="k">)</span>
 
-<span class="c1"># Create the check if it does not exist.</span>
-<span class="c1"># Grab the ping_url from JSON response using the jq utility:</span>
-<span class="nv">URL</span><span class="o">=</span><span class="sb">`</span>curl<span class="w"> </span>-s<span class="w"> </span>SITE_ROOT/api/v1/checks/<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;X-Api-Key: </span><span class="nv">$API_KEY</span><span class="s2">&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PAYLOAD</span><span class="s2">&quot;</span><span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>.ping_url<span class="sb">`</span>
+<span class="c1"># Construct a ping URL and append &quot;?create=1&quot; at the end:</span>
+<span class="nv">URL</span><span class="o">=</span>PING_ENDPOINT<span class="nv">$PING_KEY</span>/<span class="nv">$SLUG</span>?create<span class="o">=</span><span class="m">1</span>
 
-<span class="c1"># Finally, send a ping:</span>
+<span class="c1"># Send a ping:</span>
 curl<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="nv">$URL</span>
 </code></pre></div>

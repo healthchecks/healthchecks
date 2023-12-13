@@ -1,0 +1,46 @@
+<h1>Auto Provisioning</h1>
+<p>You can instruct SITE_NAME to automatically create missing checks on the first
+received ping. To enable auto provisiong, use slug-based ping endpoints, and
+append <code>?create=1</code> at the end:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Do some work</span>
+sleep<span class="w"> </span><span class="m">5</span>
+<span class="c1"># Send success signal to SITE_NAME</span>
+curl<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>PING_ENDPOINTmy-ping-key/srv01?create<span class="o">=</span><span class="m">1</span>
+</code></pre></div>
+
+<p>In this example, SITE_NAME will look up project with the Ping Key <code>my-ping-key</code>,
+and check if a check with a slug <code>srv01</code> exists there.</p>
+<ul>
+<li>If the check does not exist yet, SITE_NAME will create it, ping it, and return
+  an HTTP 201 response.</li>
+<li>If the check exists, SITE_NAME will ping it and return an HTTP 200 response.</li>
+</ul>
+<p>Auto provisioning works with all slug-based ping endpoints:</p>
+<ul>
+<li><a href="../http_api/#success-slug">Success</a></li>
+<li><a href="../http_api/#start-slug">Start</a></li>
+<li><a href="../http_api/#failure-slug">Failure</a></li>
+<li><a href="../http_api/#log-slug">Log</a></li>
+<li><a href="../http_api/#exitcode-slug">Exit status</a></li>
+</ul>
+<p>Auto provisioning is handy when working with dynamic infrastructure: if you distribute
+the Ping Key to your monitoring clients, each client can pick its own slug
+(for example, derived from the server’s hostname), construct a ping URL, and
+register with SITE_NAME "on the fly" while sending its first ping.</p>
+<h2>Auto Provisioned Checks Use Default Configuration</h2>
+<p>The checks created via auto provisioning will use the default parameters:</p>
+<ul>
+<li>Period: 1 day.</li>
+<li>Grace time: 1 hour.</li>
+<li>All integrations enabled.</li>
+</ul>
+<p>It is currently not possible to specify a custom period, grace time, or other
+parameters through the ping URL. If you need to change any parameters, you will need
+to do this either from the web dashboard, or through <a href="../api/">Management API</a>.</p>
+<h2>Auto Provisioning and Account Limits</h2>
+<p>Each SITE_NAME account has a specific limit of how many checks it is allowed to
+create: 20 checks for free accounts; 100 or 1000 checks for paid accounts. To reduce
+friction and the risk of silent failures, the auto provisioning functionality
+<strong>is allowed to temporarily exceed the account’s check limit up to two times</strong>.
+Meaning, if your account is already maxed out, auto provisioning will still be able to
+create new checks until you hit two times the limit.</p>
