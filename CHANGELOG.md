@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Update Opsgenie instructions
+- Update Spike.sh instructions
 
 ## v3.1 - 2023-12-13
 
