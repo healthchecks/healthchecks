@@ -21,7 +21,8 @@
             <p>
                 Log into your Opsgenie account,
                 select a team, and go to the team's
-                <strong>Integrations › Add integration</strong> page.
+                <strong>Integrations</strong> page and click
+                <strong>Add integration</strong>.
             </p>
         </div>
         <div class="col-sm-6">
@@ -43,20 +44,11 @@
                 src="{% static 'img/integrations/setup_opsgenie_2.png' %}">
         </div>
     </div>
+
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no"></span>
-            <p>The integration needs a <strong>Create and Update Access</strong>
-                permission, make sure it is <strong>checked</strong>.
-            </p>
-            <p>
-                The integration does not need the <strong>Read Access</strong> and
-                <strong>Delete Access</strong> checkboxes – make sure they are
-                <strong>unchecked</strong>.
-            </p>
-            <p>Give the integration a descriptive name,
-                take note of its <strong>API Key</strong>, then save the integration.
-            </p>
+            Give the integration a descriptive name.
         </div>
         <div class="col-sm-6">
             <img
@@ -69,7 +61,22 @@
     <div class="row ai-step">
         <div class="col-sm-6">
             <span class="step-no"></span>
-            <p>Paste the API Key down below, and make sure the correct
+            <p>Copy the displayed API key, then click on
+               <strong>Turn on integration</strong>.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_opsgenie_4.png' %}">
+        </div>
+    </div>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>Paste the API key in the form below, and make sure the correct
                 <strong>service region</strong> is selected.
                 Save the integration, and you are done!
             </p>
