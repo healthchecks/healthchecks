@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Update Spike.sh instructions
 - Add system check to validate settings.SITE_ROOT (#895)
 
+### Bug Fixes
+- Increase uWSGI buffer size to allow requests with large cookies (#925)
+
 ## v3.1 - 2023-12-13
 
 ### Improvements
