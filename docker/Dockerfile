@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm as builder
+FROM python:3.12-slim-bookworm as builder
 
 COPY requirements.txt /tmp
 RUN \
@@ -12,7 +12,7 @@ RUN \
 COPY . /opt/healthchecks/
 RUN rm -rf /opt/healthchecks/.git
 
-FROM python:3.11-slim-bookworm
+FROM python:3.12-slim-bookworm
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
