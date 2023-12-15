@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
+from typing import Any
+
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.checks import Warning, register
@@ -10,7 +13,11 @@ class ApiConfig(AppConfig):
 
 
 @register()
-def settings_check(app_configs, **kwargs):
+def settings_check(
+    app_configs: Sequence[AppConfig] | None,
+    databases: Sequence[str] | None,
+    **kwargs: dict[str, Any],
+) -> list[Warning]:
     items = []
 
     site_root_parts = settings.SITE_ROOT.split("://")

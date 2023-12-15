@@ -99,19 +99,20 @@ class AddCheckForm(NameTagsForm):
     def clean_grace(self) -> td:
         return td(seconds=self.cleaned_data["grace"])
 
-    def clean_schedule(self):
+    def clean_schedule(self) -> str:
         kind = self.cleaned_data.get("kind")
-        validator = None
         if kind == "cron":
-            validator = CronValidator()
+            cron_validator = CronValidator()
+            cron_validator(self.cleaned_data["schedule"])
         elif kind == "oncalendar":
-            validator = OnCalendarValidator()
+            oncalendar_validator = OnCalendarValidator()
+            oncalendar_validator(self.cleaned_data["schedule"])
         else:
             # If kind is not cron or oncalendar, ignore the passed in value
             # and use "* * * * *" instead.
             return "* * * * *"
 
-        validator(self.cleaned_data["schedule"])
+        assert isinstance(self.cleaned_data["schedule"], str)
         return self.cleaned_data["schedule"]
 
 
