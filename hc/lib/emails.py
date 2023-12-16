@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import time
 from email.utils import make_msgid
 from smtplib import SMTPDataError, SMTPServerDisconnected
@@ -9,6 +10,8 @@ from typing import Any
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives as Message
 from django.template.loader import render_to_string as render
+
+logger = logging.getLogger(__name__)
 
 
 class EmailThread(Thread):
@@ -64,10 +67,12 @@ def make_message(
 
 
 def send(message: Message, block: bool = False) -> None:
-    assert settings.EMAIL_HOST, (
-        "No SMTP configuration,"
-        " see https://github.com/healthchecks/healthchecks#sending-emails"
-    )
+    if not settings.EMAIL_HOST:
+        logger.exception(
+            "No SMTP configuration,"
+            " see https://github.com/healthchecks/healthchecks#sending-emails"
+        )
+        return
 
     t = EmailThread(message)
     if block or hasattr(settings, "BLOCKING_EMAILS"):
