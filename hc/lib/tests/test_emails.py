@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from smtplib import SMTPDataError, SMTPServerDisconnected
 from unittest import TestCase
 from unittest.mock import Mock, patch
@@ -42,6 +41,5 @@ class EmailsTestCase(TestCase):
 
     @override_settings(EMAIL_HOST="")
     def test_it_requires_smtp_configuration(self, mock_time: Mock) -> None:
-        with self.assertLogs('hc.lib.emails', level="ERROR") as cm:
+        with self.assertRaises(AssertionError):
             send(Mock())
-            self.assertIn("ERROR:hc.lib.emails:No SMTP configuration", "".join(cm.output))
