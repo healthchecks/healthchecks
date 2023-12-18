@@ -131,6 +131,17 @@ class ProjectTestCase(BaseTestCase):
         self.assertIn("You will be able to manage", message.body)
         self.assertIn("You will be able to manage", html)
 
+    @override_settings(EMAIL_HOST=None)
+    def test_it_skips_invite_email_if_email_host_not_set(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "w"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        self.assertEqual(self.project.member_set.count(), 2)
+        self.assertEqual(len(mail.outbox), 0)
+
     def test_it_adds_readonly_team_member(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
