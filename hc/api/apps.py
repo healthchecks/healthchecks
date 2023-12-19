@@ -26,7 +26,17 @@ def settings_check(
             Warning(
                 "Invalid settings.SITE_ROOT value",
                 hint="SITE_ROOT should start with either http:// or https://",
-                id="hc.api.E001",
+                id="hc.api.W001",
             )
         )
+
+    if not settings.EMAIL_HOST:
+        items.append(
+            Warning(
+                "settings.EMAIL_HOST is not set, cannot send email",
+                hint="See https://github.com/healthchecks/healthchecks#sending-emails",
+                id="hc.api.W002",
+            )
+        )
+
     return items
