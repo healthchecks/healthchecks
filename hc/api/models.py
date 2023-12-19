@@ -288,9 +288,10 @@ class Check(models.Model):
             last_local = self.last_ping.astimezone(ZoneInfo(self.tz))
             try:
                 result = next(OnCalendar(self.schedule, last_local))
+                # Same as for cron, convert back to UTC:
+                result = result.astimezone(timezone.utc)
             except StopIteration:
-                result = datetime(2200, 1, 1, tzinfo=timezone.utc)
-            result = result.astimezone(timezone.utc)
+                result = NEVER
 
         if with_started and self.last_start and self.status != "down":
             result = min(result, self.last_start)
@@ -323,7 +324,10 @@ class Check(models.Model):
             return self.status
 
         grace_start = self.get_grace_start(with_started=False)
-        assert grace_start is not None
+        if grace_start is None:
+            # next elapse is "never", so this check will stay up indefinitely
+            return "up"
+
         grace_end = grace_start + self.grace
         if frozen_now >= grace_end:
             return "down"

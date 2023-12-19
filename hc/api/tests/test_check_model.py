@@ -88,6 +88,18 @@ class CheckModelTestCase(BaseTestCase):
             mock_now.return_value = dt + td(days=1, minutes=60)
             self.assertEqual(check.get_status(), "down")
 
+    def test_status_handles_stopiteration(self) -> None:
+        # Expect ping every midnight, default grace is 1 hour
+        check = Check()
+        check.kind = "oncalendar"
+        check.schedule = "2019-01-01"
+        check.status = "up"
+        check.last_ping = datetime(2020, 1, 1, tzinfo=timezone.utc)
+
+        with patch("hc.api.models.now") as mock_now:
+            mock_now.return_value = check.last_ping + td(hours=1)
+            self.assertEqual(check.get_status(), "up")
+
     def test_status_works_with_timezone(self) -> None:
         dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
 
