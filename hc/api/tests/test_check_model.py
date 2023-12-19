@@ -6,7 +6,7 @@ from datetime import timezone
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-from django.utils.timezone import make_aware, now
+from django.utils.timezone import now
 
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
@@ -43,8 +43,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(check.get_status(), "paused")
 
     def test_status_works_with_cron_syntax(self) -> None:
-        dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
-
+        dt = datetime(2000, 1, 1, tzinfo=timezone.utc)
         # Expect ping every midnight, default grace is 1 hour
         check = Check()
         check.kind = "cron"
@@ -66,8 +65,7 @@ class CheckModelTestCase(BaseTestCase):
             self.assertEqual(check.get_status(), "down")
 
     def test_status_works_with_oncalendar_syntax(self) -> None:
-        dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
-
+        dt = datetime(2000, 1, 1, tzinfo=timezone.utc)
         # Expect ping every midnight, default grace is 1 hour
         check = Check()
         check.kind = "oncalendar"
@@ -101,8 +99,7 @@ class CheckModelTestCase(BaseTestCase):
             self.assertEqual(check.get_status(), "up")
 
     def test_status_works_with_timezone(self) -> None:
-        dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
-
+        dt = datetime(2000, 1, 1, tzinfo=timezone.utc)
         # Expect ping every day at 10am, default grace is 1 hour
         check = Check()
         check.kind = "cron"
@@ -196,8 +193,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(check.get_status(), "down")
 
     def test_next_ping_with_cron_syntax(self) -> None:
-        dt = make_aware(datetime(2000, 1, 1), timezone=timezone.utc)
-
+        dt = datetime(2000, 1, 1, tzinfo=timezone.utc)
         # Expect ping every round hour
         check = Check(project=self.project)
         check.kind = "cron"
