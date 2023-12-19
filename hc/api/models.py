@@ -286,7 +286,10 @@ class Check(models.Model):
         elif self.kind == "oncalendar" and self.status == "up":
             assert self.last_ping is not None
             last_local = self.last_ping.astimezone(ZoneInfo(self.tz))
-            result = next(OnCalendar(self.schedule, last_local))
+            try:
+                result = next(OnCalendar(self.schedule, last_local))
+            except StopIteration:
+                result = datetime(2200, 1, 1, tzinfo=timezone.utc)
             result = result.astimezone(timezone.utc)
 
         if with_started and self.last_start and self.status != "down":
