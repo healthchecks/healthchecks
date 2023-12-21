@@ -133,10 +133,13 @@ def _remove_objects(code: UUID, upto_n: int) -> None:
             statsd.incr("hc.lib.s3.removeObjectsErrors")
 
 
-def remove_objects(check_code: str, upto_n: int) -> None:
+def remove_objects(check_code: str, upto_n: int, wait: bool = False) -> None:
     """Remove keys with n values below or equal to `upto_n`.
 
     The S3 API calls can take seconds to complete,
     therefore run the removal code on thread.
     """
-    Thread(target=_remove_objects, args=(check_code, upto_n)).start()
+    t = Thread(target=_remove_objects, args=(check_code, upto_n))
+    t.start()
+    if wait:
+        t.join()

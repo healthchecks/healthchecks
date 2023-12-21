@@ -504,14 +504,14 @@ class Check(models.Model):
         if self.n_pings % 100 == 0:
             self.prune()
 
-    def prune(self) -> None:
+    def prune(self, wait: bool = False) -> None:
         """Remove old pings and notifications."""
 
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
 
         # Remove ping bodies from object storage
         if settings.S3_BUCKET:
-            remove_objects(str(self.code), threshold)
+            remove_objects(str(self.code), threshold, wait=wait)
 
         # Remove ping objects from db
         self.ping_set.filter(n__lte=threshold).delete()
