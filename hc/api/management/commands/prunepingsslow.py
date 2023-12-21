@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from hc.api.models import Check
@@ -14,7 +15,10 @@ class Command(BaseCommand):
     help = "Sequentially prune all checks in the database."
 
     def handle(self, **options: Any) -> str:
-        for check in Check.objects.filter(n_pings__gt=100):
+        # Delete operations are sometimes slow, increase timeout
+        settings.S3_TIMEOUT = 60
+
+        for check in Check.objects.filter(n_pings__gt=100).order_by("code"):
             print(f"Pruning: {check.code}")
             try:
                 check.prune(wait=True)
