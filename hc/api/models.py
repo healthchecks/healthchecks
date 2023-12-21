@@ -517,7 +517,10 @@ class Check(models.Model):
         self.ping_set.filter(n__lte=threshold).delete()
 
         try:
-            ping = self.ping_set.earliest("id")
+            # Important: sort by "created", not by "id". Sorting by id
+            # may cause Postgres to use the "api_ping_pkey" index, and scan
+            # a huge number of rows.
+            ping = self.ping_set.earliest("created")
             self.notification_set.filter(created__lt=ping.created).delete()
         except Ping.DoesNotExist:
             pass
