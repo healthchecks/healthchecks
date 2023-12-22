@@ -450,14 +450,30 @@ to `3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org`.
 
 Default: `SITE_ROOT` + `/ping/`
 
-The base URL to use for generating ping URLs. Example:
+The base URL to use for constructing ping URLs for display. Healthchecks constructs ping
+URLs by appending either an UUID value or `<ping-key>/<slug>` value to `PING_ENDPOINT`.
+
+Notes:
+
+* Make sure the `PING_ENDPOINT` value ends with a trailing slash. If a trailing slash
+  is missing, Healthchecks will *not* add it implicitly.
+* Healthchecks uses `PING_ENDPOINT` for formatting ping URLs for display.
+  The `PING_ENDPOINT` value does not influence the routing of incoming HTTP requests.
+  If you change the `PING_ENDPOINT` value, you will likely also need to add matching
+  URL rewriting rules in your reverse proxy configuration.
+
+Example:
 
 ```ini
-PING_ENDPOINT=https://ping.my-hc.example.org
+PING_ENDPOINT=https://ping.my-hc.example.org/
 ```
 
-In this example, Healthchecks would generate ping URLs similar
-to `https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86`.
+With this setting, Healthchecks will generate ping URLs similar to:
+
+```
+https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86
+https://ping.my-hc.example.org/1fj9XWM6Ns8vLGTmnPGk9g/dummy-slug
+```
 
 ## `PROMETHEUS_ENABLED` {: #PROMETHEUS_ENABLED }
 

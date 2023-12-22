@@ -311,12 +311,26 @@ it altogether by setting this value to <code>None</code>.</p>
 to <code>3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org</code>.</p>
 <h2 id="PING_ENDPOINT"><code>PING_ENDPOINT</code></h2>
 <p>Default: <code>SITE_ROOT</code> + <code>/ping/</code></p>
-<p>The base URL to use for generating ping URLs. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">PING_ENDPOINT</span><span class="o">=</span><span class="s">https://ping.my-hc.example.org</span>
+<p>The base URL to use for constructing ping URLs for display. Healthchecks constructs ping
+URLs by appending either an UUID value or <code>&lt;ping-key&gt;/&lt;slug&gt;</code> value to <code>PING_ENDPOINT</code>.</p>
+<p>Notes:</p>
+<ul>
+<li>Make sure the <code>PING_ENDPOINT</code> value ends with a trailing slash. If a trailing slash
+  is missing, Healthchecks will <em>not</em> add it implicitly.</li>
+<li>Healthchecks uses <code>PING_ENDPOINT</code> for formatting ping URLs for display.
+  The <code>PING_ENDPOINT</code> value does not influence the routing of incoming HTTP requests.
+  If you change the <code>PING_ENDPOINT</code> value, you will likely also need to add matching
+  URL rewriting rules in your reverse proxy configuration.</li>
+</ul>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="na">PING_ENDPOINT</span><span class="o">=</span><span class="s">https://ping.my-hc.example.org/</span>
 </code></pre></div>
 
-<p>In this example, Healthchecks would generate ping URLs similar
-to <code>https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86</code>.</p>
+<p>With this setting, Healthchecks will generate ping URLs similar to:</p>
+<div class="highlight"><pre><span></span><code>https://ping.my-hc.example.org/3f1a7317-8e96-437c-a17d-b0d550b51e86
+https://ping.my-hc.example.org/1fj9XWM6Ns8vLGTmnPGk9g/dummy-slug
+</code></pre></div>
+
 <h2 id="PROMETHEUS_ENABLED"><code>PROMETHEUS_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the Prometheus integration. Enabled by default.</p>
