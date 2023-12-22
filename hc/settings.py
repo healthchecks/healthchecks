@@ -193,6 +193,9 @@ MASTER_BADGE_LABEL = os.getenv("MASTER_BADGE_LABEL", SITE_NAME)
 PING_ENDPOINT = os.getenv("PING_ENDPOINT", SITE_ROOT + "/ping/")
 PING_EMAIL_DOMAIN = os.getenv("PING_EMAIL_DOMAIN", "localhost")
 PING_BODY_LIMIT = envint("PING_BODY_LIMIT", "10000")
+# If PING_BODY_LIMIT is higher than the default value for DATA_UPLOAD_MAX_MEMORY_SIZE,
+# then we need to bump up DATA_UPLOAD_MAX_MEMORY_SIZE too:
+DATA_UPLOAD_MAX_MEMORY_SIZE = max(2621440, PING_BODY_LIMIT)
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "static-collected"

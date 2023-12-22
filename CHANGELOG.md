@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Increase uWSGI buffer size to allow requests with large cookies (#925)
 - Fix crash when processing one-shot OnCalendar schedules
+- Fix the handling of ping bodies > 2.5MB (#931)
 
 ## v3.1 - 2023-12-13
 
