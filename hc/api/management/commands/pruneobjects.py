@@ -15,6 +15,9 @@ class Command(BaseCommand):
     help = "Prune ping bodies of deleted checks from object store."
 
     def handle(self, **options: Any) -> str:
+        if not settings.S3_BUCKET:
+            return "Object storage is not configured"
+
         existing = set(map(str, Check.objects.values_list("code", flat=True)))
 
         c = client()

@@ -24,7 +24,7 @@ class S3TestCase(SimpleTestCase):
     @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
     def test_get_object_handles_nosuchkey(self, client: Mock, stats: Mock) -> None:
-        e = S3Error("NoSuchKey", "b", "c", "d", "e", "f")
+        e = S3Error("NoSuchKey", "b", "c", "d", "e", Mock())
         client.get_object.return_value.read = Mock(side_effect=e)
         self.assertIsNone(get_object("dummy-code", 1))
         client.get_object.assert_called_once()
@@ -35,7 +35,7 @@ class S3TestCase(SimpleTestCase):
     @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
     def test_get_object_handles_s3error(self, client: Mock, statsd: Mock) -> None:
-        e = S3Error("DummyError", "b", "c", "d", "e", "f")
+        e = S3Error("DummyError", "b", "c", "d", "e", Mock())
         client.get_object.return_value.read = Mock(side_effect=e)
         self.assertIsNone(get_object("dummy-code", 1))
         client.get_object.assert_called_once()
