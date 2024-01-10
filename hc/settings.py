@@ -246,6 +246,7 @@ S3_ENDPOINT = os.getenv("S3_ENDPOINT")
 S3_REGION = os.getenv("S3_REGION")
 S3_BUCKET = os.getenv("S3_BUCKET")
 S3_TIMEOUT = envint("S3_TIMEOUT", "60")
+S3_SECURE = envbool("S3_SECURE", "True")
 
 # Integrations
 

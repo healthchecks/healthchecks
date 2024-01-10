@@ -34,6 +34,7 @@ def client() -> Minio:
             settings.S3_ACCESS_KEY,
             settings.S3_SECRET_KEY,
             region=settings.S3_REGION,
+            secure=settings.S3_SECURE,
             http_client=PoolManager(timeout=settings.S3_TIMEOUT),
         )
 

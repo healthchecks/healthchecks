@@ -61,6 +61,7 @@ from environment variables. Below is a list of variables it reads and uses.
 <li><a href="#S3_REGION">S3_REGION</a></li>
 <li><a href="#S3_SECRET_KEY">S3_SECRET_KEY</a></li>
 <li><a href="#S3_TIMEOUT">S3_TIMEOUT</a></li>
+<li><a href="#S3_SECURE">S3_SECURE</a></li>
 <li><a href="#SECRET_KEY">SECRET_KEY</a></li>
 <li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
 <li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
@@ -660,6 +661,13 @@ The secret key of an account in S3 service.
 Default: `60`
 
 Timeout for individual S3 operations, in seconds.
+
+## `S3_SECURE` {: #S3_SECURE }
+
+Default: `True`
+
+Whether to use secure (TLS) connection to S3 or not. To
+use unencrypted HTTP requests, set this value to `False`.
 
 ## `SECRET_KEY` {: #SECRET_KEY }
 
