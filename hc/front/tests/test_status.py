@@ -19,7 +19,7 @@ class StatusTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         doc = r.json()
 
-        self.assertEqual(doc["tags"]["foo"], "up")
+        self.assertEqual(doc["tags"]["foo"], ["up", "1 up"])
 
         detail = doc["details"][0]
         self.assertEqual(detail["code"], str(self.check.code))

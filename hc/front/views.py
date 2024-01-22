@@ -7,7 +7,7 @@ import os
 import re
 import sqlite3
 import uuid
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
@@ -77,25 +77,32 @@ EVENTS_TMPL = get_template("front/details_events.html")
 DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
 
 
-def _tags_statuses(checks: Iterable[Check]) -> tuple[dict[str, str], int]:
-    tags, down, grace, num_down = {}, {}, {}, 0
+def _tags_counts(checks: Iterable[Check]) -> tuple[list[tuple[str, str, str]], int]:
+    num_down = 0
+    grace = set()
+    counts: Counter[str] = Counter()
+    down_counts: Counter[str] = Counter()
     for check in checks:
         status = check.get_status()
-
+        counts.update(check.tags_list())
         if status == "down":
             num_down += 1
-            for tag in check.tags_list():
-                down[tag] = "down"
+            down_counts.update(check.tags_list())
         elif status == "grace":
-            for tag in check.tags_list():
-                grace[tag] = "grace"
-        else:
-            for tag in check.tags_list():
-                tags[tag] = "up"
+            grace.update(check.tags_list())
 
-    tags.update(grace)
-    tags.update(down)
-    return tags, num_down
+    result = []
+    for tag in counts:
+        if tag in down_counts:
+            status = "down"
+            text = f"{down_counts[tag]} of {counts[tag]} down"
+        else:
+            status = "grace" if tag in grace else "up"
+            text = f"{counts[tag]} up"
+
+        result.append((tag, status, text))
+
+    return result, num_down
 
 
 def _get_check_for_user(
@@ -222,9 +229,8 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     checks = list(q.prefetch_related("channel_set"))
     sortchecks(checks, request.profile.sort)
 
-    tags_statuses, num_down = _tags_statuses(checks)
-    pairs = list(tags_statuses.items())
-    pairs.sort(key=lambda pair: pair[0].lower())
+    tags_counts, num_down = _tags_counts(checks)
+    tags_counts.sort(key=lambda item: item[0].lower())
 
     is_group = Case(When(kind="group", then=0), default=1)
     channels = project.channel_set.annotate(is_group=is_group)
@@ -269,7 +275,7 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "checks": checks,
         "channels": channels,
         "num_down": num_down,
-        "tags": pairs,
+        "tags": tags_counts,
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": all_timezones,
         "project": project,
@@ -302,9 +308,10 @@ def status(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             }
         )
 
-    tags_statuses, num_down = _tags_statuses(checks)
+    tags_counts, num_down = _tags_counts(checks)
+    tags = {tag: (status, tooltip) for tag, status, tooltip in tags_counts}
     return JsonResponse(
-        {"details": details, "tags": tags_statuses, "title": num_down_title(num_down)}
+        {"details": details, "tags": tags, "title": num_down_title(num_down)}
     )
 
 
@@ -2433,14 +2440,20 @@ def metrics(request: HttpRequest, code: UUID, key: str) -> HttpResponse:
             value = 1 if check.last_start is not None else 0
             yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
 
-        tags_statuses, num_down = _tags_statuses(checks)
+        all_tags, down_tags, num_down = set(), set(), 0
+        for check in checks:
+            all_tags.update(check.tags_list())
+            if check.get_status() == "down":
+                num_down += 1
+                down_tags.update(check.tags_list())
+
         yield "\n"
         help = "Whether all checks with this tag are up (1 for yes, 0 for no)."
         yield f"# HELP hc_tag_up {help}\n"
         yield "# TYPE hc_tag_up gauge\n"
         TMPL = """hc_tag_up{tag="%s"} %d\n"""
-        for tag in sorted(tags_statuses):
-            value = 0 if tags_statuses[tag] == "down" else 1
+        for tag in sorted(all_tags):
+            value = 0 if tag in down_tags else 1
             yield TMPL % (esc(tag), value)
 
         yield "\n"

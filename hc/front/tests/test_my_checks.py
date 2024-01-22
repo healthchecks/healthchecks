@@ -117,7 +117,9 @@ class MyChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, """<div class="btn btn-xs down ">foo</div>""")
+        self.assertContains(
+            r, """<div data-tooltip="1 of 1 down" class="btn btn-xs down ">foo</div>"""
+        )
 
     def test_it_shows_grace_badge(self) -> None:
         self.check.last_ping = now() - td(days=1, minutes=10)
@@ -127,7 +129,9 @@ class MyChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, """<div class="btn btn-xs grace ">foo</div>""")
+        self.assertContains(
+            r, """<div data-tooltip="1 up" class="btn btn-xs grace ">foo</div>"""
+        )
 
     def test_it_shows_grace_started_badge(self) -> None:
         self.check.last_start = now()
@@ -138,7 +142,9 @@ class MyChecksTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, """<div class="btn btn-xs grace ">foo</div>""")
+        self.assertContains(
+            r, """<div data-tooltip="1 up" class="btn btn-xs grace ">foo</div>"""
+        )
 
     def test_it_hides_actions_from_readonly_users(self) -> None:
         self.bobs_membership.role = "r"

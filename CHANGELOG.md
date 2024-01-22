@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Update Opsgenie instructions
 - Update Spike.sh instructions
 - Add system check to validate settings.SITE_ROOT (#895)
+- Add tooltips to tag buttons in the checks list screen (#911)
 
 ### Bug Fixes
 - Increase uWSGI buffer size to allow requests with large cookies (#925)

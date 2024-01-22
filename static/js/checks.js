@@ -67,6 +67,10 @@ $(function () {
         title: 'The word "confirm" was found in request body'
     });
 
+    $("#my-checks-tags .btn").tooltip({
+        title: function() {return this.getAttribute("data-tooltip");}
+    });
+
     function applyFilters() {
         // Make a list of currently checked tags:
         var checked = [];
@@ -226,13 +230,14 @@ $(function () {
                     }
                 }
 
-                $("#my-checks-tags div").each(function(a) {
-                    var status = data.tags[this.innerText];
-                    if (lastStatus[this.innerText] == status)
-                        return;
-
-                    $(this).removeClass("up grace down").addClass(status);
-                    lastStatus[this.innerText] = status;
+                $("#my-checks-tags > div.btn").each(function(a) {
+                    tag = this.innerText;
+                    this.setAttribute("data-tooltip", data.tags[tag][1]);
+                    var status = data.tags[tag][0];
+                    if (lastStatus[tag] != status) {
+                        $(this).removeClass("up grace down").addClass(status);
+                        lastStatus[tag] = status;
+                    }
                 });
 
                 if (document.title != data.title) {

@@ -55,8 +55,8 @@
 {% if checks %}
 <div class="row">
     <div id="my-checks-tags" class="col-sm-9">
-        {% for tag, status in tags %}
-            <div class="btn btn-xs {{ status }} {% if tag in selected_tags %}checked{% endif%}">{{ tag }}</div>
+        {% for tag, status, tooltip in tags %}
+            <div data-tooltip="{{ tooltip }}" class="btn btn-xs {{ status }} {% if tag in selected_tags %}checked{% endif%}">{{ tag }}</div>
         {% endfor %}
     </div>
     <div class="col-sm-3">
