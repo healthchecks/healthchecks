@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 from io import BytesIO
 from threading import Thread
-from typing import cast
 from uuid import UUID
 
 from django.conf import settings
@@ -78,7 +77,7 @@ def get_object(code: str, n: int) -> bytes | None:
         response = None
         try:
             response = client().get_object(settings.S3_BUCKET, key)
-            return cast(bytes, response.read())
+            return response.read()
         except S3Error as e:
             if e.code == "NoSuchKey":
                 # It's not an error condition if an object does not exist.
