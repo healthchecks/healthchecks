@@ -8,7 +8,11 @@ sending email messages to special email addresses.
 By default, SITE_NAME will consider any email received at the displayed address as
 a "success" signal. You can also configure SITE_NAME to look for specific
 keywords in the subject line or the message body to decide if the message
-is a "start," a "success," or a "failure" signal. You can set up the keywords in
+is a "start," a "success," or a "failure" signal.
+
+Keywords are case-sensitive and filtered in the following order: SITE_NAME first
+looks for a failure, then success, then start. If filtering is enabled, an email
+containing no keywords will be ignored. You can set up keywords in
 the **Filtering Rules** dialog:
 
 ![Setting filtering rules](IMG_URL/filtering_rules.png)
