@@ -7,7 +7,7 @@ fido2==1.1.2
 oncalendar==1.0
 psycopg2==2.9.9
 pycurl==7.45.2
-pydantic==2.5.2
+pydantic==2.5.3
 pyotp==2.9.0
 segno==1.6.0
 statsd==4.0.1
