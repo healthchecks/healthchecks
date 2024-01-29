@@ -33,6 +33,8 @@ Endpoint Name                                         | Endpoint Address
 [List existing integrations](#list-channels)          | `GET SITE_ROOT/api/v3/channels/`
 **Badges**                                            |
 [List project's badges](#list-badges)                 | `GET SITE_ROOT/api/v3/badges/`
+**Service status**                                    |
+[Check database connectivity](#status)                | `GET SITE_ROOT/api/v3/status/`
 
 ## Changes From v2
 
@@ -1485,3 +1487,18 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v3/badges/
 }
 ```
 
+## Check Database Connectivity {: #status .rule }
+
+`GET SITE_ROOT/api/v3/status/`
+
+Runs a simple datavase query and returns HTTP 200 if the query completes successfully.
+Use this endpoint to monitor the uptime of your Healthchecks instance with an
+external uptime monitoring system.
+
+### Response Codes
+
+200 OK
+:   The request succeeded.
+
+500 Internal Server Error
+:   Test database query did not succeed.

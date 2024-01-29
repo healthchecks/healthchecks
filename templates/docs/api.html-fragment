@@ -86,6 +86,14 @@ in your account.</p>
 <td><a href="#list-badges">List project's badges</a></td>
 <td><code>GET SITE_ROOT/api/v3/badges/</code></td>
 </tr>
+<tr>
+<td><strong>Service status</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="#status">Check database connectivity</a></td>
+<td><code>GET SITE_ROOT/api/v3/status/</code></td>
+</tr>
 </tbody>
 </table>
 <h2>Changes From v2</h2>
@@ -1286,3 +1294,16 @@ of all checks in the project.</p>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
+
+<h2 class="rule" id="status">Check Database Connectivity</h2>
+<p><code>GET SITE_ROOT/api/v3/status/</code></p>
+<p>Runs a test query and returns HTTP 200 if the query completes successfully.
+Use this endpoint to monitor the uptime of your Healthchecks instance with an
+external uptime monitoring system.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The request succeeded.</dd>
+<dt>500 Internal Server Error</dt>
+<dd>Test database query did not succeed.</dd>
+</dl>
