@@ -165,8 +165,8 @@ class UpdateTimeoutTestCase(BaseTestCase):
 
     def test_it_saves_multiline_oncalendar_expression(self) -> None:
         schedule = """
-            2024-01-01 12:00 America/New_York
-            2024-02-01 12:00 Europe/Paris
+            01-01 12:00 America/New_York
+            02-01 12:00 Europe/Paris
         """
         payload = {"kind": "oncalendar", "schedule": schedule, "tz": "UTC", "grace": 60}
 
