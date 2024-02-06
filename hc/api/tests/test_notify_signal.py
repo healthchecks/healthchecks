@@ -359,14 +359,17 @@ class NotifySignalTestCase(BaseTestCase):
         # so it should not appear in the error message:
         self.assertEqual(n.error, "signal-cli call failed (-1)")
 
+    @patch("hc.api.transports.logger")
     @patch("hc.api.transports.socket.socket")
-    def test_it_handles_error_code(self, socket: Mock) -> None:
+    def test_it_handles_error_code(self, socket: Mock, logger: Mock) -> None:
         setup_mock(socket, {"error": {"code": 123}})
 
         self.channel.notify(self.check)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "signal-cli call failed (123)")
+
+        self.assertTrue(logger.error.called)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_oserror(self, socket: Mock) -> None:

@@ -1273,8 +1273,9 @@ class Signal(Transport):
                 if result.type == "RATE_LIMIT_FAILURE" and result.token:
                     raise SignalRateLimitFailure(result.token, reply_bytes)
 
-            code = reply.error.code
-            raise TransportError(f"signal-cli call failed ({code})")
+            msg = f"signal-cli call failed ({reply.error.code})"
+            logger.error(msg)
+            raise TransportError(msg)
 
     @classmethod
     def _read_replies(cls, payload_bytes: bytes) -> Iterator[bytes]:
@@ -1325,7 +1326,7 @@ class Signal(Transport):
             except OSError as e:
                 msg = "signal-cli call failed (%s)" % e
                 # Log the exception, so any configured logging handlers can pick it up
-                logging.getLogger(__name__).exception(msg)
+                logger.exception(msg)
 
                 # And then report it the same as other errors
                 raise TransportError(msg)
