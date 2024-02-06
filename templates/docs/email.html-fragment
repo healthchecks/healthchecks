@@ -16,7 +16,7 @@ different keywords), and matches them in a specific order:</p>
 <li>If filtering is enabled but none of the keywords match, SITE_NAME <strong>ignores</strong>
   the email message. The email will show in the event log with an "Ignored" badge.</li>
 </ul>
-<p>You can set up keywords inthe <strong>Filtering Rules</strong> dialog:</p>
+<p>You can set up keywords in the <strong>Filtering Rules</strong> dialog:</p>
 <p><img alt="Setting filtering rules" src="IMG_URL/filtering_rules.png" /></p>
 <h2>Use Case: Newsletter Delivery Monitoring</h2>
 <p>Consider a cron job that runs weekly and sends newsletters

@@ -21,7 +21,7 @@ different keywords), and matches them in a specific order:
 * If filtering is enabled but none of the keywords match, SITE_NAME **ignores**
   the email message. The email will show in the event log with an "Ignored" badge.
 
-You can set up keywords inthe **Filtering Rules** dialog:
+You can set up keywords in the **Filtering Rules** dialog:
 
 ![Setting filtering rules](IMG_URL/filtering_rules.png)
 
