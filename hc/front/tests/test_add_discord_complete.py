@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 
 from hc.api.models import Channel
-from hc.test import BaseTestCase, nolog
+from hc.test import BaseTestCase
 
 
 @override_settings(DISCORD_CLIENT_ID="t1", DISCORD_CLIENT_SECRET="s1")
@@ -41,7 +41,6 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_discord" in self.client.session)
 
-    @nolog
     @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
         for sample in ("surprise", {}, None):

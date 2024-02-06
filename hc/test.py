@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import logging
-from functools import wraps
-from typing import TYPE_CHECKING, Callable, ParamSpec, TypeVar
+from typing import TYPE_CHECKING, ParamSpec, TypeVar
 
 from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner
@@ -18,21 +16,10 @@ if TYPE_CHECKING:
 else:
     from django.http import HttpResponse as TestHttpResponse
 
-__all__ = ["BaseTestCase", "TestHttpResponse", "nolog"]
+__all__ = ["BaseTestCase", "TestHttpResponse"]
 
 P = ParamSpec("P")
 T = TypeVar("T")
-
-
-def nolog(func: Callable[P, T]) -> Callable[P, T]:
-    @wraps(func)
-    def wrapper_func(*args: P.args, **kwargs: P.kwargs) -> T:
-        logging.disable(logging.CRITICAL)
-        result = func(*args, **kwargs)
-        logging.disable(logging.NOTSET)
-        return result
-
-    return wrapper_func
 
 
 class BaseTestCase(TestCase):

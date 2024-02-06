@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 
 from hc.api.models import Channel
-from hc.test import BaseTestCase, nolog
+from hc.test import BaseTestCase
 
 
 @override_settings(LINENOTIFY_CLIENT_ID="t1", LINENOTIFY_CLIENT_SECRET="s1")
@@ -40,7 +40,6 @@ class AddLineNotifyCompleteTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_linenotify" in self.client.session)
 
-    @nolog
     @patch("hc.front.views.curl", autospec=True)
     def test_it_handles_unexpected_token_response(self, mock_curl: Mock) -> None:
         mock_curl.get.return_value.content = dumps({"target": "Alice"})
@@ -62,7 +61,6 @@ class AddLineNotifyCompleteTestCase(BaseTestCase):
                 )
                 self.assertTrue(logger.warning.called)
 
-    @nolog
     @patch("hc.front.views.curl", autospec=True)
     def test_it_handles_unexpected_status_response(self, mock_curl: Mock) -> None:
         mock_curl.post.return_value.content = dumps(

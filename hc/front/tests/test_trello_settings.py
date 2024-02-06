@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 
-from hc.test import BaseTestCase, nolog
+from hc.test import BaseTestCase
 
 
 @override_settings(TRELLO_APP_KEY="foo")
@@ -38,7 +38,6 @@ class AddTrelloTestCase(BaseTestCase):
         self.assertNotContains(r, "Please select the Trello list")
         self.assertContains(r, "Could not find any boards with lists")
 
-    @nolog
     @patch("hc.front.views.curl.get", autospec=True)
     def test_it_handles_unexpected_response_from_trello(self, mock_get: Mock) -> None:
         for sample in ("surprise", "{}", """{"lists": "surprise"}"""):

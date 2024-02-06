@@ -3,11 +3,10 @@ from __future__ import annotations
 from unittest import skipIf
 from unittest.mock import Mock, patch
 
-from django.test import SimpleTestCase
+from django.test import TestCase
 from django.test.utils import override_settings
 
 from hc.lib.s3 import get_object
-from hc.test import nolog
 
 try:
     from minio import S3Error
@@ -20,7 +19,7 @@ except ImportError:
 
 @skipIf(not have_minio, "minio not installed")
 @override_settings(S3_BUCKET="dummy-bucket")
-class S3TestCase(SimpleTestCase):
+class S3TestCase(TestCase):
     @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
     def test_get_object_handles_nosuchkey(self, client: Mock, stats: Mock) -> None:
@@ -31,7 +30,6 @@ class S3TestCase(SimpleTestCase):
         # Should not increase the error counter for NoSuchKey responses
         stats.incr.assert_not_called()
 
-    @nolog
     @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
     def test_get_object_handles_s3error(self, client: Mock, statsd: Mock) -> None:
@@ -41,7 +39,6 @@ class S3TestCase(SimpleTestCase):
         client.get_object.assert_called_once()
         statsd.incr.assert_called_once()
 
-    @nolog
     @patch("hc.lib.s3._client")
     def test_get_object_handles_urllib_exceptions(self, client: Mock) -> None:
         for e in [ProtocolError, InvalidHeader]:
