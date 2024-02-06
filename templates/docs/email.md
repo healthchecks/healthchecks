@@ -5,15 +5,23 @@ sending email messages to special email addresses.
 
 ![Email address for pinging via email](IMG_URL/emails.png)
 
+## Keyword Filtering {: #keyword-filtering }
+
 By default, SITE_NAME will consider any email received at the displayed address as
-a "success" signal. You can also configure SITE_NAME to look for specific
+a "success" signal. Optionally, you can configure SITE_NAME to look for specific
 keywords in the subject line or the message body to decide if the message
 is a "start," a "success," or a "failure" signal.
 
-Keywords are case-sensitive and filtered in the following order: SITE_NAME first
-looks for a failure, then success, then start. If filtering is enabled, an email
-containing no keywords will be ignored. You can set up keywords in
-the **Filtering Rules** dialog:
+SITE_NAME treats keywords as case-sensitive (for example, "Error" and "error" are
+different keywords), and matches them in a specific order:
+
+* SITE_NAME first checks the message for presence of any **failure** keyword.
+* It then checks for any **success** keyword.
+* It then checks for any **start** keyword.
+* If filtering is enabled but none of the keywords match, SITE_NAME **ignores**
+  the email message. The email will show in the event log with an "Ignored" badge.
+
+You can set up keywords inthe **Filtering Rules** dialog:
 
 ![Setting filtering rules](IMG_URL/filtering_rules.png)
 

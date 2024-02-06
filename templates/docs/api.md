@@ -1491,7 +1491,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v3/badges/
 
 `GET SITE_ROOT/api/v3/status/`
 
-Runs a simple datavase query and returns HTTP 200 if the query completes successfully.
+Runs a test query and returns HTTP 200 if the query completes successfully.
 Use this endpoint to monitor the uptime of your Healthchecks instance with an
 external uptime monitoring system.
 
