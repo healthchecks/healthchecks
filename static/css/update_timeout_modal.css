@@ -72,7 +72,11 @@
 }
 
 #update-timeout-grace-cron {
-    width: 70px;
+    xwidth: 70px;
+}
+
+#update-timeout-grace-cron-unit {
+    width: 90px;
 }
 
 #update-cron-form label,
@@ -139,10 +143,7 @@
     padding: 25px;
 }
 
-#update-timeout-grace-oncalendar {
-    width: 70px;
-}
-
+#update-timeout-grace-oncalendar,
 #update-timeout-grace-oncalendar-unit {
     width: 90px;
 }
