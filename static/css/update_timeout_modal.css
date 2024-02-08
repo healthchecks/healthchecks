@@ -71,6 +71,10 @@
     padding: 40px;
 }
 
+#update-timeout-grace-cron {
+    width: 70px;
+}
+
 #update-cron-form label,
 #update-oncalendar-form label {
     font-weight: normal;
@@ -133,6 +137,14 @@
 
 #oncalendar-controls {
     padding: 25px;
+}
+
+#update-timeout-grace-oncalendar {
+    width: 70px;
+}
+
+#update-timeout-grace-oncalendar-unit {
+    width: 90px;
 }
 
 #oncalendar-preview {
