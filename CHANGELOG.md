@@ -8,11 +8,14 @@ All notable changes to this project will be documented in this file.
 - Update Spike.sh instructions
 - Add system check to validate settings.SITE_ROOT (#895)
 - Add tooltips to tag buttons in the checks list screen (#911)
+- Improve Email - Keywoard Filtering docs (by @mmomjian)
+- Split the grace time input field into value/unit input group (#945, by @mickBoat00)
 
 ### Bug Fixes
 - Increase uWSGI buffer size to allow requests with large cookies (#925)
 - Fix crash when processing one-shot OnCalendar schedules
 - Fix the handling of ping bodies > 2.5MB (#931)
+- Fix crash when inviting team member but SMTP is not configured (by @marlenekoh)
 
 ## v3.1 - 2023-12-13
 
