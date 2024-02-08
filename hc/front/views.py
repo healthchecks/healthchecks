@@ -207,7 +207,6 @@ def _get_referer_qs(request: HttpRequest) -> str:
         return "?" + parsed.query
     return ""
 
-
 @login_required
 def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     _refresh_last_active_date(request.profile)
@@ -585,7 +584,7 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.kind = "cron"
         check.schedule = cron_form.cleaned_data["schedule"]
         check.tz = cron_form.cleaned_data["tz"]
-        check.grace = td(minutes=cron_form.cleaned_data["grace"])
+        check.grace = cron_form.cleaned_data["grace"]
     elif kind == "oncalendar":
         oncalendar_form = forms.OnCalendarForm(request.POST)
         if not oncalendar_form.is_valid():
@@ -594,7 +593,7 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.kind = "oncalendar"
         check.schedule = oncalendar_form.cleaned_data["schedule"]
         check.tz = oncalendar_form.cleaned_data["tz"]
-        check.grace = td(minutes=oncalendar_form.cleaned_data["grace"])
+        check.grace = oncalendar_form.cleaned_data["grace"]
 
     check.alert_after = check.going_down_after()
     if check.status == "up":

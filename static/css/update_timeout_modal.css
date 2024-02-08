@@ -167,3 +167,11 @@
 #oncalendar-preview tr.from-now td {
     font-size: small;
 }
+
+.select-group {
+    display: flex;
+}
+
+.select-group select { 
+    border-left: 0;
+} 

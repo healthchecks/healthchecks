@@ -140,13 +140,19 @@ class TimeoutForm(forms.Form):
 class CronForm(forms.Form):
     schedule = forms.CharField(max_length=100, validators=[CronValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
-    grace = forms.IntegerField(min_value=1, max_value=43200)
+    grace = forms.IntegerField(min_value=60, max_value=31536000)
+
+    def clean_grace(self) -> td:
+        return td(seconds=self.cleaned_data["grace"])
 
 
 class OnCalendarForm(forms.Form):
     schedule = forms.CharField(max_length=100, validators=[OnCalendarValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
-    grace = forms.IntegerField(min_value=1, max_value=43200)
+    grace = forms.IntegerField(min_value=60, max_value=31536000)
+
+    def clean_grace(self) -> td:
+        return td(seconds=self.cleaned_data["grace"])
 
 
 class AddOpsgenieForm(forms.Form):
