@@ -4,6 +4,11 @@ $(function () {
     var periodUnit = document.getElementById("period-unit");
     var grace = document.getElementById("grace-value");
     var graceUnit = document.getElementById("grace-unit");
+    var graceCron = document.getElementById("update-timeout-grace-cron");
+    var graceCronUnit = document.getElementById("update-timeout-grace-cron-unit");
+    var graceOncalendar = document.getElementById("update-timeout-grace-oncalendar");
+    var graceOncalendarUnit = document.getElementById("update-timeout-grace-oncalendar-unit");
+
 
     $(".rw .timeout-grace").click(function() {
         var code = $(this).closest("tr.checks-row").attr("id");
@@ -36,9 +41,9 @@ $(function () {
         $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(this.dataset.kind == "cron" ? this.dataset.schedule: "* * * * *");
         $("#tz")[0].selectize.setValue(this.dataset.tz, true);
-
-        var minutes = parseInt(this.dataset.grace / 60);
-        $("#update-timeout-grace-cron").val(minutes);
+        graceCron.value = parsed.value;
+        graceCronUnit.value = parsed.unit;
+        $("#update-cron-grace").val(this.dataset.grace);
         updateCronPreview();
 
         // OnCalendar
@@ -46,8 +51,9 @@ $(function () {
         $("#oncalendar-preview").html("<p>Updating...</p>");
         $("#schedule-oncalendar").val(this.dataset.kind == "oncalendar" ? this.dataset.schedule: "*-*-* *:*:*");
         $("#tz-oncalendar")[0].selectize.setValue(this.dataset.tz, true);
-        var minutes = parseInt(this.dataset.grace / 60);
-        $("#update-timeout-grace-oncalendar").val(minutes);
+        graceOncalendar.value = parsed.value
+        graceOncalendarUnit.value = parsed.unit
+        $("#update-oncalendar-grace").val(this.dataset.grace);
         updateOnCalendarPreview();
 
         showPanel(this.dataset.kind);
@@ -234,6 +240,24 @@ $(function () {
             }
         });
     }
+
+    $("#update-timeout-modal .update-timeout-grace-cron-input").on("keyup change", function() {
+        var secs = Math.round(graceCron.value * graceCronUnit.value);
+        graceCron.setCustomValidity(secs <= 31536000 ? "" : "Must not exceed 365 days");
+
+        if (secs >= 60) {
+            $("#update-cron-grace").val(secs);
+        }
+    });
+
+    $("#update-timeout-modal .update-timeout-grace-oncalendar-input").on("keyup change", function() {
+        var secs = Math.round(graceOncalendar.value * graceOncalendarUnit.value);
+        graceOncalendar.setCustomValidity(secs <= 31536000 ? "" : "Must not exceed 365 days");
+
+        if (secs >= 60) {
+            $("#update-oncalendar-grace").val(secs);
+        }
+    });
 
     // Wire up events for Timeout/Cron forms
     $(".kind-simple").click(() => showPanel("simple"));

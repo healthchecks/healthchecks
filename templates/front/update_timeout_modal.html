@@ -66,6 +66,7 @@
             <form id="update-cron-form" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="kind" value="cron" />
+                <input type="hidden" name="grace" id="update-cron-grace"/>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4">
@@ -93,18 +94,22 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="update-timeout-grace-cron">Grace Time</label>
-                                <div class="input-group">
+                                <label for="update-timeout-grace-cron">Grace Time</label>   
+                                <div class="input-group select-group">
                                     <input
                                         type="number"
                                         min="1"
-                                        max="43200"
-                                        class="form-control"
+                                        class="form-control update-timeout-grace-cron-input"
                                         id="update-timeout-grace-cron"
-                                        name="grace">
-                                    <div class="input-group-addon">minutes</div>
+                                        >
+
+                                        <select id="update-timeout-grace-cron-unit" class="form-control update-timeout-grace-cron-input">
+                                            <option value="60">minutes</option>
+                                            <option value="3600">hours</option>
+                                            <option value="86400">days</option>
+                                        </select>
                                 </div>
-                            </div>
+                            </div>     
                         </div>
                     </div>
                     <div class="row">
@@ -131,6 +136,7 @@
             <form id="update-oncalendar-form" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="kind" value="oncalendar" />
+                <input type="hidden" name="grace" id="update-oncalendar-grace"/>
                 <div class="modal-body">
                     <div class="row">
                         <div id="oncalendar-controls" class="col-md-6">
@@ -155,16 +161,19 @@
                             </div>
                             <div class="form-group">
                                 <label for="update-timeout-grace-oncalendar">Grace Time</label>
-                                <div class="input-group">
+                                <div class="input-group select-group">
                                     <input
-                                        id="update-timeout-grace-oncalendar"
                                         type="number"
                                         min="1"
-                                        max="43200"
-                                        class="form-control"
-                                        name="grace">
-                                    <div class="input-group-addon">minutes</div>
-                                </div>
+                                        class="form-control update-timeout-grace-oncalendar-input"
+                                        id="update-timeout-grace-oncalendar"
+                                        >
+                                        <select id="update-timeout-grace-oncalendar-unit" class="form-control update-timeout-grace-oncalendar-input">
+                                            <option value="60">minutes</option>
+                                            <option value="3600">hours</option>
+                                            <option value="86400">days</option>
+                                        </select>
+                                    </div>
                             </div>
                         </div>
                         <div id="oncalendar-preview" class="col-md-6"></div>
