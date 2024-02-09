@@ -5,7 +5,7 @@ from typing import Any
 
 from django.apps import AppConfig
 from django.conf import settings
-from django.core.checks import Warning, register
+from django.core.checks import Error, Warning, register
 
 
 class ApiConfig(AppConfig):
@@ -40,3 +40,46 @@ def settings_check(
         )
 
     return items
+
+
+@register()
+def mariadb_uuid_check(
+    app_configs: Sequence[AppConfig] | None,
+    databases: Sequence[str] | None,
+    **kwargs: dict[str, Any],
+) -> list[Warning]:
+    from django.db import connection
+
+    if connection.vendor != "mysql":
+        return []
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            # Put the datatype lookup in a subquery. This is to make sure we get a
+            # row back even when the "api_check" table does not exist yet.
+            """
+            SELECT VERSION(),
+              (SELECT DATA_TYPE
+               FROM INFORMATION_SCHEMA.COLUMNS
+               WHERE TABLE_SCHEMA = DATABASE()
+                 AND TABLE_NAME = 'api_check'
+                 AND COLUMN_NAME = 'code')
+            """
+        )
+        version, data_type = cursor.fetchone()
+        if "MariaDB" not in version:
+            return []
+
+        # If:
+        # - we are using MariaDB 10.7+
+        # - *and* the UUID columns exist and use a varchar datatype,
+        # then we have a problem.
+        if version >= "10.7" and data_type == "char":
+            e = Error(
+                "Detected MariaDB >= 10.7, a manual migration to UUID datatypes required",
+                hint="See https://github.com/healthchecks/healthchecks/issues/929 for details",
+                id="hc.api.E001",
+            )
+            return [e]
+
+    return []
