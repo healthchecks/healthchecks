@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.2-dev - Unreleased
+## v3.2 - 2024-02-09
 
 ### Improvements
 - Update Opsgenie instructions
