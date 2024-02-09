@@ -70,11 +70,14 @@ def mariadb_uuid_check(
         if "MariaDB" not in version:
             return []
 
+        version_parts = version.split(".")
+        major, minor = int(version_parts[0]), int(version_parts[1])
+
         # If:
         # - we are using MariaDB 10.7+
         # - *and* the UUID columns exist and use a varchar datatype,
         # then we have a problem.
-        if version >= "10.7" and data_type == "char":
+        if major >= 10 and minor >= 7 and data_type == "char":
             e = Error(
                 "Detected MariaDB >= 10.7, a manual migration to UUID datatypes required",
                 hint="See https://github.com/healthchecks/healthchecks/issues/929 for details",
