@@ -63,6 +63,7 @@
                 </tr>
                 {% endif %}
 
+                {% if not urldict.is_check %}
                 <tr>
                     <td>
                         <img class="no-late" src="{{ urldict.svg }}" alt="" />
@@ -73,6 +74,25 @@
                         <code class="with-late">{{ urldict.svg3 }}</code>
                     </td>
                 </tr>
+                {% endif %}
+            {% endfor %}
+            {% if have_checks %}
+            <tr><th colspan="2">Checks</th></tr>
+            {% endif %}
+
+            {% for urldict in badges %}
+                {% if urldict.is_check %}
+                <tr>
+                    <td>
+                        <img class="no-late" src="{{ urldict.svg }}" alt="" />
+                        <img class="with-late" src="{{ urldict.svg3 }}" alt="" />
+                    </td>
+                    <td>
+                        <code class="no-late">{{ urldict.svg }}</code>
+                        <code class="with-late">{{ urldict.svg3 }}</code>
+                    </td>
+                </tr>
+                {% endif %}
             {% endfor %}
         </table>
         <table id="badges-json" class="table badge-preview">
@@ -88,7 +108,7 @@
                     <th colspan="2">Overall Status</th>
                 </tr>
                 {% endif %}
-
+                {% if not urldict.is_check %}
                 <tr>
                     <td>
                         <code class="fetch-json no-late" data-url="{{ urldict.json }}"></code>
@@ -99,6 +119,28 @@
                         <code class="with-late">{{ urldict.json3 }}</code>
                     </td>
                 </tr>
+                {% endif %}
+            {% endfor %}
+
+            {% if have_checks %}
+            <tr>
+                <th colspan="2">Checks</th>
+            </tr>
+            {% endif %}
+
+            {% for urldict in badges %}
+                {% if urldict.is_check %}
+                <tr>
+                    <td>
+                        <code class="fetch-json no-late" data-url="{{ urldict.json }}"></code>
+                        <code class="fetch-json with-late" data-url="{{ urldict.json3 }}"></code>
+                    </td>
+                    <td>
+                        <code class="no-late">{{ urldict.json }}</code>
+                        <code class="with-late">{{ urldict.json3 }}</code>
+                    </td>
+                </tr>
+                {% endif %}           
             {% endfor %}
         </table>
 
@@ -116,7 +158,7 @@
                     <th colspan="2">Overall Status</th>
                 </tr>
                 {% endif %}
-
+                {% if not urldict.is_check %}
                 <tr>
                     <td>
                         <img class="no-late" src="https://img.shields.io/endpoint?url={{ urldict.shields|urlencode:"" }}" alt="" />
@@ -127,6 +169,27 @@
                         <code class="with-late">{{ urldict.shields3 }}</code>
                     </td>
                 </tr>
+                {% endif %}
+            {% endfor %}
+            {% if have_checks %}
+            <tr>
+                <th>Shields.io badge</th>
+            </tr>
+            {% endif %}
+
+            {% for urldict in badges %}
+                {% if urldict.is_check %}
+                <tr>
+                    <td>
+                        <img class="no-late" src="https://img.shields.io/endpoint?url={{ urldict.shields|urlencode:"" }}" alt="" />
+                        <img class="with-late" src="https://img.shields.io/endpoint?url={{ urldict.shields3|urlencode:"" }}" alt="" />
+                    </td>
+                    <td>
+                        <code class="no-late">{{ urldict.shields }}</code>
+                        <code class="with-late">{{ urldict.shields3 }}</code>
+                    </td>
+                </tr>
+                {% endif %}
             {% endfor %}
         </table>
     </div>

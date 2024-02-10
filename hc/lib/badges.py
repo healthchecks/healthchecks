@@ -105,15 +105,15 @@ def check_signature(username: str, tag: str, sig: str) -> bool:
 
 
 def get_badge_url(
-    username: str, tag: str, fmt: str = "svg", with_late: bool = False
+    username: str, badge_label: str, fmt: str = "svg", with_late: bool = False,
 ) -> str:
-    sig = base64_hmac(str(username), tag, settings.SECRET_KEY)[:8]
+    sig = base64_hmac(str(username), badge_label, settings.SECRET_KEY)[:8]
     if not with_late:
         sig += "-2"
 
-    if tag == "*":
+    if badge_label == "*":
         url = reverse("hc-badge-all", args=[username, sig, fmt])
     else:
-        url = reverse("hc-badge", args=[username, sig, tag, fmt])
+        url = reverse("hc-badge", args=[username, sig, badge_label, fmt])
 
     return settings.SITE_ROOT + url

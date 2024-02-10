@@ -80,14 +80,14 @@ urlpatterns = [
     path("api/v2/", include(api_urls)),
     path("api/v3/", include(api_urls)),
     path(
-        "badge/<slug:badge_key>/<slug:signature>/<quoted:tag>.<slug:fmt>",
+        "badge/<slug:badge_key>/<slug:signature>/<quoted:badge_label>.<slug:fmt>",
         views.badge,
         name="hc-badge",
     ),
     path(
         "badge/<slug:badge_key>/<slug:signature>.<slug:fmt>",
         views.badge,
-        {"tag": "*"},
+        {"badge_label": "*"},
         name="hc-badge-all",
     ),
 ]

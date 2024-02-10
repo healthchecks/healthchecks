@@ -14,7 +14,7 @@ from cronsim import CronSim, CronSimError
 from django.conf import settings
 from django.core.signing import BadSignature
 from django.db import connection, transaction
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import (
     Http404,
     HttpRequest,
@@ -688,7 +688,7 @@ def badges(request: ApiRequest) -> JsonResponse:
 @never_cache
 @cors("GET")
 def badge(
-    request: HttpRequest, badge_key: str, signature: str, tag: str, fmt: str
+    request: HttpRequest, badge_key: str, signature: str, badge_label: str, fmt: str
 ) -> HttpResponse:
     if fmt not in ("svg", "json", "shields"):
         return HttpResponseNotFound()
@@ -697,19 +697,19 @@ def badge(
     if len(signature) == 10 and signature.endswith("-2"):
         with_late = False
 
-    if not check_signature(badge_key, tag, signature):
+    if not check_signature(badge_key, badge_label, signature):
         return HttpResponseNotFound()
 
     q = Check.objects.filter(project__badge_key=badge_key)
-    if tag != "*":
-        q = q.filter(tags__contains=tag)
-        label = tag
+    if badge_label != "*":
+        q = q.filter(Q(tags__contains=badge_label) | Q(name=badge_label))
+        label = badge_label
     else:
         label = settings.MASTER_BADGE_LABEL
 
     status, total, grace, down = "up", 0, 0, 0
     for check in q:
-        if tag != "*" and tag not in check.tags_list():
+        if badge_label != "*" and badge_label not in check.tags_list() and badge_label != check.name:
             continue
 
         total += 1

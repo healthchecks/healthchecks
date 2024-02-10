@@ -1094,29 +1094,37 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project, rw = _get_project_for_user(request, code)
 
     tags = set()
+    checks = []
     for check in Check.objects.filter(project=project):
+        if check.name != '':
+            checks.append(check.name)
         tags.update(check.tags_list())
 
     sorted_tags = sorted(tags, key=lambda s: s.lower())
     sorted_tags.append("*")  # For the "overall status" badge
+    sorted_checks = sorted(checks, key=lambda s: s.lower())
 
     key = project.badge_key
     urls = []
-    for tag in sorted_tags:
+    sorted_badge_labels = sorted_tags + sorted_checks
+
+    for badge_label in sorted_badge_labels:
         urls.append(
             {
-                "tag": tag,
-                "svg": get_badge_url(key, tag),
-                "svg3": get_badge_url(key, tag, with_late=True),
-                "json": get_badge_url(key, tag, fmt="json"),
-                "json3": get_badge_url(key, tag, fmt="json", with_late=True),
-                "shields": get_badge_url(key, tag, fmt="shields"),
-                "shields3": get_badge_url(key, tag, fmt="shields", with_late=True),
+                "tag": badge_label,
+                "svg": get_badge_url(key, badge_label),
+                "svg3": get_badge_url(key, badge_label, with_late=True),
+                "json": get_badge_url(key, badge_label, fmt="json"),
+                "json3": get_badge_url(key, badge_label, fmt="json", with_late=True),
+                "shields": get_badge_url(key, badge_label, fmt="shields"),
+                "shields3": get_badge_url(key, badge_label, fmt="shields", with_late=True),
+                "is_check": badge_label in sorted_checks,
             }
         )
 
     ctx = {
         "have_tags": len(urls) > 1,
+        "have_checks": len(sorted_checks) > 0,
         "page": "badges",
         "project": project,
         "badges": urls,
