@@ -275,6 +275,7 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "channels": channels,
         "num_down": num_down,
         "tags": tags_counts,
+        "tags_values": [tag for tag, _, _ in tags_counts], 
         "ping_endpoint": settings.PING_ENDPOINT,
         "timezones": all_timezones,
         "project": project,
@@ -1100,14 +1101,13 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             checks.append(check.name)
         tags.update(check.tags_list())
 
-    sorted_tags = sorted(tags, key=lambda s: s.lower())
-    sorted_tags.append("*")  # For the "overall status" badge
-    sorted_checks = sorted(checks, key=lambda s: s.lower())
-
     key = project.badge_key
     urls = []
-    sorted_badge_labels = sorted_tags + sorted_checks
 
+    badge_labels = set(list(tags) + checks)
+    sorted_badge_labels = sorted(list(badge_labels), key=lambda s: s.lower())
+    sorted_badge_labels.append("*")  # For the "overall status" badge
+    
     for badge_label in sorted_badge_labels:
         urls.append(
             {
@@ -1118,13 +1118,13 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
                 "json3": get_badge_url(key, badge_label, fmt="json", with_late=True),
                 "shields": get_badge_url(key, badge_label, fmt="shields"),
                 "shields3": get_badge_url(key, badge_label, fmt="shields", with_late=True),
-                "is_check": badge_label in sorted_checks,
+                "is_check": badge_label in checks and badge_label not in tags,
             }
         )
 
     ctx = {
         "have_tags": len(urls) > 1,
-        "have_checks": len(sorted_checks) > 0,
+        "have_checks": len(checks) > 0,
         "page": "badges",
         "project": project,
         "badges": urls,

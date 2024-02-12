@@ -7,6 +7,7 @@ $(function () {
     var onCalendarField = document.getElementById("add-check-schedule-oncalendar");
     var grace = document.getElementById("add-check-grace");
     var graceUnit = document.getElementById("add-check-grace-unit");
+    var checkNameField = document.getElementById("add-check-name");
 
     function divToOption() {
         return {value: this.textContent};
@@ -88,6 +89,12 @@ $(function () {
             field.setCustomValidity(data.result ? "" : "Please enter a valid expression");
         });
     }
+
+    var tags = document.getElementById("add-check-button").dataset.tags
+    tags = JSON.parse(tags.replace(/'/g, '"'));
+    const formattedString = "^(?!"+ tags.join("$|") + "$).*";
+    checkNameField.setAttribute("pattern", formattedString);
+    checkNameField.setAttribute("title", "Check name is already a tag name.");
 
     $("#add-check-schedule").on("keyup change", validateSchedule);
     $("#add-check-schedule-oncalendar").on("keyup change", validateSchedule);
