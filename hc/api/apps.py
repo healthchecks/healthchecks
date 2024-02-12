@@ -47,7 +47,7 @@ def mariadb_uuid_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
     **kwargs: dict[str, Any],
-) -> list[Warning]:
+) -> list[Error]:
     from django.db import connection
 
     if connection.vendor != "mysql":
