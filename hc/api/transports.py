@@ -333,6 +333,7 @@ class Webhook(HttpTransport):
             "$CODE": str(check.code),
             "$STATUS": check.status,
             "$NOW": safe(now().replace(microsecond=0).isoformat()),
+            "$NAME_JSON": safe(json.dumps(check.name)),
             "$NAME": safe(check.name),
             "$TAGS": safe(check.tags),
             "$JSON": safe(json.dumps(check.to_dict())),
@@ -341,6 +342,7 @@ class Webhook(HttpTransport):
         # Materialize ping body only if template refers to it.
         if allow_ping_body and "$BODY" in template:
             body = get_ping_body(self.last_ping(check))
+            ctx["$BODY_JSON"] = json.dumps(body if body else "")
             ctx["$BODY"] = body if body else ""
 
         if "$EXITSTATUS" in template:

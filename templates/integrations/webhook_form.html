@@ -202,6 +202,16 @@
                         <td>Name of the check.</td>
                     </tr>
                     <tr>
+                        <th><code>$NAME_JSON</code></th>
+                        <td><p>Name of the check, encoded as JSON string. If
+                            the check's name contains a double quote, this would produce
+                            invalid JSON:</p>
+                            <pre>{"name": "$NAME"}</pre>
+                            <p>But this would work:</p>
+                            <pre>{"name": $NAME_JSON}</pre>
+                        </td>
+                    </tr>
+                    <tr>
                         <th><code>$NOW</code></th>
                         <td>
                             Current UTC time in ISO8601 format. Example:
@@ -223,6 +233,10 @@
                     <tr>
                         <th><code>$BODY</code></th>
                         <td>The request body of the most recent ping. Works only in the webhook's "Request Body" field.</td>
+                    </tr>
+                    <tr>
+                        <th><code>$BODY_JSON</code></th>
+                        <td>Same as $BODY, but encoded as JSON string.</td>
                     </tr>
                     <tr>
                         <th><code>$EXITSTATUS</code></th>

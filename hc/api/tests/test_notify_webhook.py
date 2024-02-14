@@ -477,3 +477,74 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.notify(self.check)
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b"Exit status -1")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_webhooks_do_not_escape_name_variable(self, mock_post: Mock) -> None:
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "$NAME",
+            "headers_down": {},
+        }
+        self._setup_data(json.dumps(definition))
+
+        self.check.name = 'Project "Foo"'
+        self.channel.notify(self.check)
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, self.check.name.encode())
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_webhooks_support_name_json_variable(self, mock_post: Mock) -> None:
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "$NAME_JSON",
+            "headers_down": {},
+        }
+        self._setup_data(json.dumps(definition))
+
+        self.check.name = 'Project "Foo"'
+        self.channel.notify(self.check)
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, json.dumps(self.check.name).encode())
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_webhooks_do_not_escape_body_variable(self, mock_post: Mock) -> None:
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "$BODY",
+            "headers_down": {},
+        }
+
+        self._setup_data(json.dumps(definition))
+
+        self.ping = Ping(owner=self.check)
+        self.ping.body_raw = b'Project "Foo"'
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, b'Project "Foo"')
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_webhooks_support_body_json_variable(self, mock_post: Mock) -> None:
+        definition = {
+            "method_down": "POST",
+            "url_down": "http://example.org",
+            "body_down": "$BODY_JSON",
+            "headers_down": {},
+        }
+
+        self._setup_data(json.dumps(definition))
+
+        ping_body = 'Project "Foo"'
+        self.ping = Ping(owner=self.check)
+        self.ping.body_raw = ping_body.encode()
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertEqual(payload, json.dumps(ping_body).encode())
