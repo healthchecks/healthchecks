@@ -100,7 +100,7 @@ SITE_NAME will first checks for the presence of **Failure** keywords, then **Suc
 keywords, and then **Start** keywords. If filtering is enabled but no keywords
 match, SITE_NAME will **ignore** the email message. The email will show in the event log
 with an "Ignored" badge.<br>The keyword filtering feature is useful if, for example,
-your backup  software sends an email after each backup run with a different subject
+your backup  software sends an email after each backup run, but with a different subject
 line depending on success or failure.
 * **Filter by keywords in the message body**. Same as the previous option, but
 looks for the keywords in the email message body. SITE_NAME checks for keywords both in
