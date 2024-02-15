@@ -92,11 +92,16 @@ how SITE_NAME handles incoming pings for a particular check.
 requests to use HTTP POST. Use the "Only POST" option if you run into issues of
 preview bots hitting the ping URLs when you send them in email or post them in chat.
 * **Filter by keywords in the Subject line**. When pinging [via email](../email/),
-look for specific keywords in the subject line. If the subject line contains any of
-the keywords listed in **Start Keywords**, **Success Keywords**, or
-**Failure Keywords**, SITE_NAME will assume it to be a start, a success, or a failure
-signal, respectively. Useful if, for example, your backup  software sends an email 
-after each backup run with a different subject line depending on success or failure.
+you can instruct SITE_NAME to look for specific keywords in the subject line. If the
+subject line contains any of the keywords listed in **Start Keywords**,
+**Success Keywords**, or **Failure Keywords**, SITE_NAME will classify the email as
+a start, a success, or a failure signal, respectively. Keyword matching is case-sensitive.
+SITE_NAME will first checks for the presence of **Failure** keywords, then **Success**
+keywords, and then **Start** keywords. If filtering is enabled but no keywords
+match, SITE_NAME will **ignore** the email message. The email will show in the event log
+with an "Ignored" badge.<br>The keyword filtering feature is useful if, for example,
+your backup  software sends an email after each backup run with a different subject
+line depending on success or failure.
 * **Filter by keywords in the message body**. Same as the previous option, but
 looks for the keywords in the email message body. SITE_NAME checks for keywords both in
 the plain text and the HTML parts of email messages.

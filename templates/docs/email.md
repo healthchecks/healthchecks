@@ -37,6 +37,16 @@ recipient email addresses. Set its Period to 1 week. As long as your weekly emai
 script runs correctly, and there are no email delivery issues,
 SITE_NAME will regularly receive an email, and the check will stay up.
 
+## Use Case: Backup Monitoring
+
+If you use backup software that can be configured to send an email report
+after each backup run, you can monitor it with SITE_NAME. Create a new check in
+SITE_NAME and configure your backup software to send email reports to its email
+address. Then set up keywords in the **Filtering Rules** dialog to distinguish
+between successful and failed backup runs. SITE_NAME will keep quiet as long
+as it receives regular success reports, but will notify you when it
+does not receive a success report for too long or receives a failure report.
+
 ## Email Delivery Delays
 
 Emails are more susceptible to random delivery delays than HTTP requests.
