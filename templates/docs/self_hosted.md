@@ -137,7 +137,7 @@ Within an activated virtualenv, run the `sendalerts` command like so:
 In a production setup, make sure the `sendalerts` command can survive
 server restarts.
 
-## Database Cleanup
+## Database Cleanup {: #database-cleanup }
 
 With time and use, the Healthchecks database will grow in size. You may
 decide to prune old data: inactive user accounts, old checks not assigned

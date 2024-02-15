@@ -1140,6 +1140,14 @@ response header and the ping body is returned verbatim in the response body.</p>
 <code>GET SITE_ROOT/api/v3/checks/&lt;unique_key&gt;/flips/</code></p>
 <p>Returns a list of "flips" this check has experienced. A flip is a change of status
 (from "down" to "up," or from "up" to "down").</p>
+<p>This API endpoint supports time filtering via the <code>seconds</code>, <code>start</code>, and <code>end</code> query
+parameters. If no time filters are specified, the API returns all stored
+flips for a given check.</p>
+<p>Notes about flip retention: SITE_NAME stores historic flips for the current month
+and for two full months prior to the current month. The cleanup of older flips is
+<a href="../self_hosted/#database-cleanup">a manual administrative action</a>.
+Therefore, SITE_NAME may return even older flips if the server administrator does not
+perform regular database cleanups.</p>
 <h3>Query Parameters</h3>
 <dl>
 <dt>seconds=&lt;value&gt;</dt>

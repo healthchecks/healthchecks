@@ -1305,6 +1305,16 @@ curl SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body
 Returns a list of "flips" this check has experienced. A flip is a change of status
 (from "down" to "up," or from "up" to "down").
 
+This API endpoint supports time filtering via the `seconds`, `start`, and `end` query
+parameters. If no time filters are specified, the API returns all stored
+flips for a given check.
+
+Notes about flip retention: SITE_NAME stores historic flips for the current month
+and for two full months prior to the current month. The cleanup of older flips is
+[a manual administrative action](../self_hosted/#database-cleanup).
+Therefore, SITE_NAME may return even older flips if the server administrator does not
+perform regular database cleanups.
+
 ### Query Parameters
 
 seconds=&lt;value&gt;
