@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add support for $NAME_JSON and $BODY_JSON placeholders in webhook payloads
+- Update the WhatsApp integration to use Twilio Content Templates
 
 ## v3.2 - 2024-02-09
 

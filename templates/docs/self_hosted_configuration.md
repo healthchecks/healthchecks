@@ -83,6 +83,8 @@ from environment variables. Below is a list of variables it reads and uses.
 <li><a href="#USE_PAYMENTS">USE_PAYMENTS</a></li>
 <li><a href="#VICTOROPS_ENABLED">VICTOROPS_ENABLED</a></li>
 <li><a href="#WEBHOOKS_ENABLED">WEBHOOKS_ENABLED</a></li>
+<li><a href="#WHATSAPP_DOWN_CONTENT_SID">WHATSAPP_DOWN_CONTENT_SID</a></li>
+<li><a href="#WHATSAPP_UP_CONTENT_SID">WHATSAPP_UP_CONTENT_SID</a></li>
 <li><a href="#ZULIP_ENABLED">ZULIP_ENABLED</a></li>
 </ul>
 
@@ -890,16 +892,15 @@ TWILIO_FROM=+15017122661
 
 Default: `None`
 
-Optional, the Twilio Messaging Service SID for sending SMS and WhatsApp notifications.
+The Twilio Messaging Service SID for sending SMS and WhatsApp notifications.
 
-If `TWILIO_MESSAGING_SERVICE_SID` is specified, Healthchecks will include it in the
-"MessagingServiceSid" field when sending SMS and WhatsApp messages via Twilio API.
-This will result in Twilio using a Messaging Service instead of a plain sender number
-to deliver the SMS and WhatsApp messages.
+`TWILIO_MESSAGING_SERVICE_SID` is **required** for sending WhatsApp notifications.
 
-If `TWILIO_MESSAGING_SERVICE_SID` is not set, Healthchecks will fall back to using
-the "From" field with the value configured in [TWILIO_FROM](#TWILIO_FROM) in API
-requests.
+`TWILIO_MESSAGING_SERVICE_SID` is **optional** for sending SMS notifications. If specified,
+Healthchecks will pass it in the "MessagingServiceSid" field to Twilio API. This will
+result in Twilio using a Messaging Service instead of a plain sender number to deliver
+the SMS messages. If not specified, Healthchecks will fall back to using
+the "From" field with the value configured in [TWILIO_FROM](#TWILIO_FROM).
 
 Example:
 
@@ -911,7 +912,15 @@ TWILIO_MESSAGING_SERVICE_SID=MGe56e622d540e6badc52ae0ac4af028c6
 
 Default: `False`
 
-A boolean that turns on/off the WhatsApp integration.
+A boolean that turns on/off the WhatsApp integration. For the WhatsApp integration
+to work, you will also need to specify:
+
+* [TWILIO_ACCOUNT](#TWILIO_ACCOUNT)
+* [TWILIO_AUTH](#TWILIO_AUTH)
+* [TWILIO_FROM](#TWILIO_FROM)
+* [TWILIO_MESSAGING_SERVICE_SID](#TWILIO_MESSAGING_SERVICE_SID)
+* [WHATSAPP_DOWN_CONTENT_SID](#WHATSAPP_DOWN_CONTENT_SID)
+* [WHATSAPP_UP_CONTENT_SID](#WHATSAPP_UP_CONTENT_SID).
 
 ## `USE_PAYMENTS` {: #USE_PAYMENTS }
 
@@ -931,6 +940,40 @@ Enabled by default.
 Default: `True`
 
 A boolean that turns on/off the Webhooks integration. Enabled by default.
+
+## `WHATSAPP_DOWN_CONTENT_SID` {: #WHATSAPP_DOWN_CONTENT_SID }
+
+Default: `None`
+
+Identifier of the Twilio content template to use for WhatsApp "down" notifications.
+Required by the WhatsApp integration.
+
+Meta requires WhatsApp message templates to be pre-registered and approved.
+Create a content template in your Twilio account with the following contents:
+
+````
+The check “{{1}}” is DOWN. Last ping was {{2}}.
+````
+
+You can tweak the message contents as needed, but make sure it has two placeholders
+similar to the above example.
+
+## `WHATSAPP_UP_CONTENT_SID` {: #WHATSAPP_UP_CONTENT_SID }
+
+Default: `None`
+
+Identifier of the Twilio content template to use for WhatsApp "up" notifications.
+Required by the WhatsApp integration.
+
+Meta requires WhatsApp message templates to be pre-registered and approved.
+Create a content template in your Twilio account with the following contents:
+
+````
+The check “{{1}}” is now UP.
+````
+
+You can tweak the message contents as needed, but make sure it has a single placeholder
+similar to the above example.
 
 ## `ZULIP_ENABLED` {: #ZULIP_ENABLED }
 

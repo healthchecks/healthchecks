@@ -81,6 +81,8 @@ from environment variables. Below is a list of variables it reads and uses.</p>
 <li><a href="#USE_PAYMENTS">USE_PAYMENTS</a></li>
 <li><a href="#VICTOROPS_ENABLED">VICTOROPS_ENABLED</a></li>
 <li><a href="#WEBHOOKS_ENABLED">WEBHOOKS_ENABLED</a></li>
+<li><a href="#WHATSAPP_DOWN_CONTENT_SID">WHATSAPP_DOWN_CONTENT_SID</a></li>
+<li><a href="#WHATSAPP_UP_CONTENT_SID">WHATSAPP_UP_CONTENT_SID</a></li>
 <li><a href="#ZULIP_ENABLED">ZULIP_ENABLED</a></li>
 </ul>
 
@@ -611,21 +613,29 @@ and as the caller for Call integrations.</p>
 
 <h2 id="TWILIO_MESSAGING_SERVICE_SID"><code>TWILIO_MESSAGING_SERVICE_SID</code></h2>
 <p>Default: <code>None</code></p>
-<p>Optional, the Twilio Messaging Service SID for sending SMS and WhatsApp notifications.</p>
-<p>If <code>TWILIO_MESSAGING_SERVICE_SID</code> is specified, Healthchecks will include it in the
-"MessagingServiceSid" field when sending SMS and WhatsApp messages via Twilio API.
-This will result in Twilio using a Messaging Service instead of a plain sender number
-to deliver the SMS and WhatsApp messages.</p>
-<p>If <code>TWILIO_MESSAGING_SERVICE_SID</code> is not set, Healthchecks will fall back to using
-the "From" field with the value configured in <a href="#TWILIO_FROM">TWILIO_FROM</a> in API
-requests.</p>
+<p>The Twilio Messaging Service SID for sending SMS and WhatsApp notifications.</p>
+<p><code>TWILIO_MESSAGING_SERVICE_SID</code> is <strong>required</strong> for sending WhatsApp notifications.</p>
+<p><code>TWILIO_MESSAGING_SERVICE_SID</code> is <strong>optional</strong> for sending SMS notifications. If specified,
+Healthchecks will pass it in the "MessagingServiceSid" field to Twilio API. This will
+result in Twilio using a Messaging Service instead of a plain sender number to deliver
+the SMS messages. If not specified, Healthchecks will fall back to using
+the "From" field with the value configured in <a href="#TWILIO_FROM">TWILIO_FROM</a>.</p>
 <p>Example:</p>
 <div class="highlight"><pre><span></span><code><span class="na">TWILIO_MESSAGING_SERVICE_SID</span><span class="o">=</span><span class="s">MGe56e622d540e6badc52ae0ac4af028c6</span>
 </code></pre></div>
 
 <h2 id="TWILIO_USE_WHATSAPP"><code>TWILIO_USE_WHATSAPP</code></h2>
 <p>Default: <code>False</code></p>
-<p>A boolean that turns on/off the WhatsApp integration.</p>
+<p>A boolean that turns on/off the WhatsApp integration. For the WhatsApp integration
+to work, you will also need to specify:</p>
+<ul>
+<li><a href="#TWILIO_ACCOUNT">TWILIO_ACCOUNT</a></li>
+<li><a href="#TWILIO_AUTH">TWILIO_AUTH</a></li>
+<li><a href="#TWILIO_FROM">TWILIO_FROM</a></li>
+<li><a href="#TWILIO_MESSAGING_SERVICE_SID">TWILIO_MESSAGING_SERVICE_SID</a></li>
+<li><a href="#WHATSAPP_DOWN_CONTENT_SID">WHATSAPP_DOWN_CONTENT_SID</a></li>
+<li><a href="#WHATSAPP_UP_CONTENT_SID">WHATSAPP_UP_CONTENT_SID</a>.</li>
+</ul>
 <h2 id="USE_PAYMENTS"><code>USE_PAYMENTS</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that turns on/off billing features.</p>
@@ -636,6 +646,28 @@ Enabled by default.</p>
 <h2 id="WEBHOOKS_ENABLED"><code>WEBHOOKS_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the Webhooks integration. Enabled by default.</p>
+<h2 id="WHATSAPP_DOWN_CONTENT_SID"><code>WHATSAPP_DOWN_CONTENT_SID</code></h2>
+<p>Default: <code>None</code></p>
+<p>Identifier of the Twilio content template to use for "down" notifications,
+required by the WhatsApp integration.</p>
+<p>Meta requires WhatsApp message templates to be pre-registered and approved.
+Create a content template in your Twilio account with the following contents:</p>
+<div class="highlight"><pre><span></span><code><span class="x">The check “</span><span class="cp">{{</span><span class="m">1</span><span class="cp">}}</span><span class="x">” is DOWN. Last ping was </span><span class="cp">{{</span><span class="m">2</span><span class="cp">}}</span><span class="x">.</span>
+</code></pre></div>
+
+<p>You can tweak the message contents as needed, but make sure it has two placeholders
+similar to the above example.</p>
+<h2 id="WHATSAPP_UP_CONTENT_SID"><code>WHATSAPP_UP_CONTENT_SID</code></h2>
+<p>Default: <code>None</code></p>
+<p>Identifier of the Twilio content template to use for "up" notifications,
+required by the WhatsApp integration.</p>
+<p>Meta requires WhatsApp message templates to be pre-registered and approved.
+Create a content template in your Twilio account with the following contents:</p>
+<div class="highlight"><pre><span></span><code><span class="x">The check “</span><span class="cp">{{</span><span class="m">1</span><span class="cp">}}</span><span class="x">” is now UP.</span>
+</code></pre></div>
+
+<p>You can tweak the message contents as needed, but make sure it has a single placeholder
+similar to the above example.</p>
 <h2 id="ZULIP_ENABLED"><code>ZULIP_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the Zulip integration. Enabled by default.</p>

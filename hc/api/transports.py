@@ -1008,8 +1008,17 @@ class WhatsApp(HttpTransport):
             return not self.channel.phone.notify_up
 
     def notify(self, check: Check, notification: Notification) -> None:
-        if not settings.TWILIO_ACCOUNT or not settings.TWILIO_AUTH:
-            raise TransportError("WhatsApp notifications are not enabled")
+        for key in (
+            "TWILIO_USE_WHATSAPP",
+            "TWILIO_ACCOUNT",
+            "TWILIO_AUTH",
+            "TWILIO_FROM",
+            "TWILIO_MESSAGING_SERVICE_SID",
+            "WHATSAPP_DOWN_CONTENT_SID",
+            "WHATSAPP_UP_CONTENT_SID",
+        ):
+            if not getattr(settings, key):
+                raise TransportError("WhatsApp notifications are not enabled")
 
         profile = Profile.objects.for_user(self.channel.project.owner)
         if not profile.authorize_sms():
@@ -1017,19 +1026,24 @@ class WhatsApp(HttpTransport):
             raise TransportError("Monthly message limit exceeded")
 
         url = self.URL % settings.TWILIO_ACCOUNT
+        assert settings.TWILIO_ACCOUNT and settings.TWILIO_AUTH
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        text = tmpl("whatsapp_message.html", check=check, site_name=settings.SITE_NAME)
+        if check.status == "down":
+            content_sid = settings.WHATSAPP_DOWN_CONTENT_SID
+            assert check.last_ping
+            ctx = {1: check.name_then_code(), 2: naturaltime(check.last_ping)}
+        else:
+            content_sid = settings.WHATSAPP_UP_CONTENT_SID
+            ctx = {1: check.name_then_code()}
 
         data = {
             "To": f"whatsapp:{self.channel.phone.value}",
-            "Body": text,
+            "From": f"whatsapp:{settings.TWILIO_FROM}",
+            "MessagingServiceSid": settings.TWILIO_MESSAGING_SERVICE_SID,
+            "ContentSid": content_sid,
+            "ContentVariables": json.dumps(ctx),
             "StatusCallback": notification.status_url(),
         }
-
-        if settings.TWILIO_MESSAGING_SERVICE_SID:
-            data["MessagingServiceSid"] = settings.TWILIO_MESSAGING_SERVICE_SID
-        else:
-            data["From"] = f"whatsapp:{settings.TWILIO_FROM}"
 
         self.post(url, data=data, auth=auth)
 
