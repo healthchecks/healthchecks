@@ -15,6 +15,7 @@ from hc.test import BaseTestCase
 
 
 @override_settings(
+    TWILIO_USE_WHATSAPP=True,
     TWILIO_ACCOUNT="test",
     TWILIO_AUTH="dummy",
     TWILIO_MESSAGING_SERVICE_SID="MGx",
