@@ -64,6 +64,18 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sms_sent, 1)
 
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_last_ping_now(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.check.last_ping = now()
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["data"]
+        variables = json.loads(payload["ContentVariables"])
+        self.assertEqual(variables["1"], "Foo")
+        self.assertEqual(variables["2"], "now")
+
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_account(self) -> None:
         self.channel.notify(self.check)

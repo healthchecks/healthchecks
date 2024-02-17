@@ -1031,7 +1031,8 @@ class WhatsApp(HttpTransport):
         if check.status == "down":
             content_sid = settings.WHATSAPP_DOWN_CONTENT_SID
             assert check.last_ping
-            ctx = {1: check.name_then_code(), 2: naturaltime(check.last_ping)}
+            # naturaltime can return a lazy object, so apply str()
+            ctx = {1: check.name_then_code(), 2: str(naturaltime(check.last_ping))}
         else:
             content_sid = settings.WHATSAPP_UP_CONTENT_SID
             ctx = {1: check.name_then_code()}
