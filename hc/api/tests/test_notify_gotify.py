@@ -35,9 +35,36 @@ class NotifyGotidyTestCase(BaseTestCase):
         self.channel.notify(self.check)
         assert Notification.objects.count() == 1
 
+        method, url = mock_post.call_args.args
+        self.assertEqual(url, "https://example.org/message?token=abc")
+
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(self.check.cloaked_url(), payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_subpath(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+        self.channel.value = json.dumps(
+            {"url": "https://example.org/sub/", "token": "abc"}
+        )
+
+        self.channel.notify(self.check)
+
+        method, url = mock_post.call_args.args
+        self.assertEqual(url, "https://example.org/sub/message?token=abc")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_subpath_with_missing_slash(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+        self.channel.value = json.dumps(
+            {"url": "https://example.org/sub", "token": "abc"}
+        )
+
+        self.channel.notify(self.check)
+
+        method, url = mock_post.call_args.args
+        self.assertEqual(url, "https://example.org/sub/message?token=abc")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:

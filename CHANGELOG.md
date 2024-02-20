@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Add support for $NAME_JSON and $BODY_JSON placeholders in webhook payloads
 - Update the WhatsApp integration to use Twilio Content Templates
 
+### Bug Fixes
+- Fix Gotify integration to handle Gotify server URLs with paths (#964)
+
 ## v3.2 - 2024-02-09
 
 ### Improvements

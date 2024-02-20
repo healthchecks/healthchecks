@@ -1374,7 +1374,11 @@ class Signal(Transport):
 
 class Gotify(HttpTransport):
     def notify(self, check: Check, notification: Notification) -> None:
-        url = urljoin(self.channel.gotify.url, "/message")
+        base = self.channel.gotify.url
+        if not base.endswith("/"):
+            base += "/"
+
+        url = urljoin(base, "message")
         url += "?" + urlencode({"token": self.channel.gotify.token})
 
         ctx = {"check": check, "down_checks": self.down_checks(check)}
