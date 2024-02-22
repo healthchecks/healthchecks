@@ -5,8 +5,6 @@ $(function () {
     var NO_PIP = -1;
 
     var slider = document.getElementById("log-slider");
-    var smin = parseInt(slider.dataset.min);
-    var smax = parseInt(slider.dataset.max);
 
     // Look up the active tz switch to determine the initial display timezone:
     var dateFormat = $(".active", "#format-switcher").data("format");
@@ -21,7 +19,7 @@ $(function () {
         $("#slider-from-formatted").text(fromUnix(values[0]).format("MMMM D, HH:mm"));
 
         var toFormatted = "now";
-        if (values[1] < smax) {
+        if (values[1] < parseInt(slider.dataset.max)) {
             toFormatted = fromUnix(values[1]).format("MMMM D, HH:mm");
         }
 
@@ -29,6 +27,8 @@ $(function () {
     }
 
     function setupSlider() {
+        var smin = parseInt(slider.dataset.min);
+        var smax = parseInt(slider.dataset.max);
         var pixelsPerSecond = slider.clientWidth / (smax - smin);
         var pixelsPerHour = pixelsPerSecond * 3600;
         var pixelsPerDay = pixelsPerHour * 24;
@@ -156,23 +156,26 @@ $(function () {
             dataType: "json",
             timeout: 2000,
             success: function(data) {
-                if (data.max - smax > 60) {
-                    // A minute has passed since last slider refresh
-                    smax = data.max;
+                // Has a minute has passed since last slider refresh?
+                if (data.max - slider.dataset.max > 60) {
+                    // If the right handle was all the way to the right,
+                    // make sure it is still all the way to the right after
+                    // the update:
+                    if (slider.dataset.end == slider.dataset.max) {
+                        slider.dataset.end = data.max;
+                    }
+                    slider.dataset.max = data.max;
                     setupSlider();
                 }
 
-                if (!data.events) {
-                    return;
+                if (data.events) {
+                    var tbody = document.createElement("tbody");
+                    tbody.setAttribute("class", "new");
+                    tbody.innerHTML = data.events;
+                    switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                    document.getElementById("log").prepend(tbody);
+                    $("#events-alert").remove();
                 }
-
-                var tbody = document.createElement("tbody");
-                tbody.setAttribute("class", "new");
-                tbody.innerHTML = data.events;
-                switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
-                document.getElementById("log").prepend(tbody);
-
-                $("#events-alert").remove();
             }
         });
     }
