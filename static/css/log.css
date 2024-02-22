@@ -98,3 +98,16 @@
 #slider-to-formatted {
     font-weight: bold;
 }
+#liveUpdates {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+#updateIndicator {
+    display: inline-block; 
+    width: 20px; 
+    height: 20px; 
+    border-radius: 50%; 
+    margin-left: 5px;
+    background-color: green;
+}

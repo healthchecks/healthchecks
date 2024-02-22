@@ -9,11 +9,11 @@ import sqlite3
 import uuid
 from collections import Counter, defaultdict
 from collections.abc import Iterable
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
 from email.message import EmailMessage
 from secrets import token_urlsafe
-from typing import Literal, TypedDict, cast
+from typing import Literal, TypedDict, cast, Dict, Any
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -75,6 +75,7 @@ STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
 DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
+LOGS_TMPL = get_template("front/log_row.html")
 
 
 def _tags_counts(checks: Iterable[Check]) -> tuple[list[tuple[str, str, str]], int]:
@@ -2730,3 +2731,29 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 
 # Forks: add custom views after this line
+@login_required
+def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
+
+    doc: Dict[str, Any] = {}
+
+    start_timestamp = request.GET["start"]
+    start_date = datetime.fromtimestamp(int(start_timestamp), tz=timezone.utc)
+    end_date = start_date + td(days=1)
+    pings_count = 0
+
+    events = _get_events(check, 1000, start=start_date, end=end_date)
+
+    log_template = ""
+
+    for event in events:
+        if isinstance(event, Ping):
+            pings_count += 1
+        log_template += LOGS_TMPL.render({"event": event, "describe_body": True})
+
+    doc["events"] = log_template
+    doc["next_start_date"] = events[-1].created + td(seconds=1) if events else ""
+    doc["events_length"] = len(events)
+    doc["pings_count"] = pings_count
+
+    return JsonResponse(doc)

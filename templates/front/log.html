@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-12">
+    <div class="col-sm-12" id="main-div" data-log-events-url="{% url 'hc-log-events' check.code %}">
         <ol class="breadcrumb">
             <li><a href="{% url 'hc-checks' check.project.code %}">{{ check.project }}</a></li>
             <li>
@@ -41,6 +41,8 @@
             </li>
         </ol>
 
+       <div id="liveUpdates"><strong>Live updates: </strong><span id="updateIndicator"></span></div>
+
         <p>Filter events from <strong id="slider-from-formatted"></strong> to <strong id="slider-to-formatted"></strong>.</p>
         <div
             id="log-slider"
@@ -56,22 +58,25 @@
         </form>
 
         {% if num_total > 1000 %}
-        <p class="alert alert-info">Found {{ num_total }} ping events, displaying the most recent 1000.</p>
+        <p id="events-alert" class="alert alert-info">Found {{ num_total }} ping events, displaying the most recent 1000.</p>
         {% elif num_total > 0 %}
-        <p class="alert alert-info">Found {{ num_total }} ping event{{ num_total|pluralize }}.</p>
+        <p id="events-alert" class="alert alert-info">Found {{ num_total }} ping event{{ num_total|pluralize }}.</p>
         {% elif not events and check.n_pings > 0 %}
-        <div class="alert alert-info">The filter parameters matched no events.</div>
+        <div id="events-alert" class="alert alert-info">The filter parameters matched no events.</div>
         {% elif check.n_pings == 0 %}
-        <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
+        <div id="events-alert" class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
         {% endif %}
 
-        {% if events %}
         <div class="table-responsive">
         <table class="table" id="log" data-url="{% url 'hc-ping-details' check.code '0' %}">
-        {% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}
+            <tbody>
+            {% if events %}
+                {% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}
+            {% endif %}
+            </tbody>
         </table>
         </div>
-        {% endif %}
+        
     </div>
 </div>
 
@@ -96,5 +101,6 @@
 <script src="{% static 'js/purify.min.js' %}"></script>
 <script src="{% static 'js/ping_details.js' %}"></script>
 <script src="{% static 'js/log.js' %}"></script>
+<script src="{% static 'js/adaptive-setinterval.js' %}"></script>
 {% endcompress %}
 {% endblock %}

@@ -1,4 +1,10 @@
 $(function () {
+    // removing session storage for slider here because 
+    // when a slider is moved it stays at its position event you move to a different page and back.
+    // It resets only when you move to the detail of the check or another check.
+    sessionStorage.removeItem('rightSliderHandleMoved');
+    sessionStorage.removeItem('leftSliderHandleMoved'); 
+    
     $("#edit-name").click(function() {
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
