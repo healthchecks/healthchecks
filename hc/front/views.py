@@ -855,7 +855,7 @@ def _get_events(
     # "n" works around the problem--postgres picks the api_ping.owner_id index.
     pq = check.visible_pings.order_by("-n")
     if start and end:
-        pq = pq.filter(created__gte=start, created__lte=end)
+        pq = pq.filter(created__gt=start, created__lte=end)
 
     pings = list(pq[:page_limit])
 
@@ -892,7 +892,7 @@ def _get_events(
     q = Notification.objects.select_related("channel")
     q = q.filter(owner=check, check_status="down")
     if start and end:
-        q = q.filter(created__gte=start, created__lte=end)
+        q = q.filter(created__gt=start, created__lte=end)
         alerts = list(q)
     elif len(pings):
         cutoff = pings[-1].created
@@ -2733,30 +2733,33 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
     return render_result(None)
 
 
-# Forks: add custom views after this line
 @login_required
 def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     doc: Dict[str, Any] = {}
 
-    start_timestamp = request.GET["start"]
-    start_date = datetime.fromtimestamp(int(start_timestamp), tz=timezone.utc)
-    end_date = start_date + td(days=1)
-    pings_count = 0
+    if "start" in request.GET:
+        ts = request.GET["start"]
+        # FIXME must handle non-float values
+        start = datetime.fromtimestamp(float(ts), tz=timezone.utc)
+    else:
+        start = check.created
 
-    events = _get_events(check, 1000, start=start_date, end=end_date)
+    events = _get_events(check, 1000, start=start, end=now())
 
     log_template = ""
-
+    pings_count = 0
     for event in events:
         if isinstance(event, Ping):
             pings_count += 1
         log_template += LOGS_TMPL.render({"event": event, "describe_body": True})
 
     doc["events"] = log_template
-    doc["next_start_date"] = events[-1].created + td(seconds=1) if events else ""
     doc["events_length"] = len(events)
     doc["pings_count"] = pings_count
 
     return JsonResponse(doc)
+
+
+# Forks: add custom views after this line

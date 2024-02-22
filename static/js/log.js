@@ -177,8 +177,14 @@ $(function () {
 
     var startTimestamp = slider.dataset.max;
     function liveUpdate() {
+        var url = logEventsUrl;
+        var firstRow = $("#log tr").get(0);
+        if (firstRow) {
+            url += "?start=" + firstRow.dataset.dt;
+        }
+
         $.ajax({
-            url: logEventsUrl + ("?start=" + startTimestamp),
+            url: url,
             dataType: "json",
             timeout: 2000,
             success: function(data) {
