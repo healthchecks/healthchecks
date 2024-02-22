@@ -2737,8 +2737,6 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
-    doc: Dict[str, Any] = {}
-
     if "start" in request.GET:
         ts = request.GET["start"]
         # FIXME must handle non-float values
@@ -2747,16 +2745,11 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     else:
         start = check.created
 
-    events = _get_events(check, 1000, start=start, end=now())
+    html = ""
+    for event in _get_events(check, 1000, start=start, end=now()):
+        html += LOGS_TMPL.render({"event": event, "describe_body": True})
 
-    log_template = ""
-    for event in events:
-        log_template += LOGS_TMPL.render({"event": event, "describe_body": True})
-
-    doc["max"] = now().timestamp()
-    doc["events"] = log_template
-
-    return JsonResponse(doc)
+    return JsonResponse({"max": now().timestamp(), "events": html})
 
 
 # Forks: add custom views after this line
