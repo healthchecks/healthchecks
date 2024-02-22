@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-12" id="main-div" data-log-events-url="{% url 'hc-log-events' check.code %}">
+    <div class="col-sm-12">
         <ol class="breadcrumb">
             <li><a href="{% url 'hc-checks' check.project.code %}">{{ check.project }}</a></li>
             <li>
@@ -68,7 +68,11 @@
         {% endif %}
 
         <div class="table-responsive">
-        <table class="table" id="log" data-url="{% url 'hc-ping-details' check.code '0' %}">
+        <table
+            class="table"
+            id="log"
+            data-url="{% url 'hc-ping-details' check.code '0' %}"
+            data-refresh-url="{% url 'hc-log-events' check.code %}">
             <tbody>
             {% if events %}
                 {% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}

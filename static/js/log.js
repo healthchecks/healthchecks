@@ -140,12 +140,8 @@ $(function () {
     // Once it's ready, set it to visible:
     $("#log").css("visibility", "visible");
 
-    var mainInnerDiv = document.getElementById("main-div")
-    var logEventsUrl = mainInnerDiv.dataset.logEventsUrl
-
-    var startTimestamp = slider.dataset.max;
     function liveUpdate() {
-        var url = logEventsUrl;
+        var url = document.getElementById("log").dataset.refreshUrl;
         var firstRow = $("#log tr").get(0);
         if (firstRow) {
             url += "?start=" + firstRow.dataset.dt;
