@@ -80,20 +80,22 @@ $(function () {
     function updateSliderPreview() {
         var values = slider.noUiSlider.get();
         $("#slider-from-formatted").text(fromUnix(values[0]).format("MMMM D, HH:mm"));
-        $("#slider-to-formatted").text(fromUnix(values[1]).format("MMMM D, HH:mm"));
+
+        var toFormatted = "now";
+        if (values[1] < smax) {
+            toFormatted = fromUnix(values[1]).format("MMMM D, HH:mm");
+        }
+
+        $("#slider-to-formatted").text(toFormatted);
     }
 
     updateSliderPreview();
     slider.noUiSlider.on("slide", updateSliderPreview);
-
-    slider.noUiSlider.on("slide", function(value, handle){
-        if (handle === 0) sessionStorage.setItem('leftSliderHandleMoved', true)
-        if (handle === 1) sessionStorage.setItem('rightSliderHandleMoved', true)
-    });
-
     slider.noUiSlider.on("change", function(a, b, value) {
-        $("#seek-start").val(Math.round(value[0]));
-        $("#seek-end").val(Math.round(value[1]));
+        var start = Math.round(value[0]);
+        $("#seek-start").val(start).attr("disabled", start == smin);
+        var end = Math.round(value[1]);
+        $("#seek-end").val(end).attr("disabled", end == smax);
         $("#seek-form").submit();
     });
 
@@ -173,36 +175,31 @@ $(function () {
         }
     }
 
-    var startTimestamp = slider.dataset.max
-
-    adaptiveSetInterval(function() {
+    var startTimestamp = slider.dataset.max;
+    function liveUpdate() {
         $.ajax({
             url: logEventsUrl + ("?start=" + startTimestamp),
             dataType: "json",
             timeout: 2000,
             success: function(data) {
-                if (sessionStorage.getItem('leftSliderHandleMoved') || sessionStorage.getItem('rightSliderHandleMoved')) {
-                    updateIndicator = document.getElementById('updateIndicator');
-                    updateIndicator.style.backgroundColor = "red";
-                } else {
-                    updateSliderPerMinute();
-                    events = data.events;
+                updateSliderPerMinute();
+                events = data.events;
 
-                    if (events) {
-                        var tbody = document.createElement("tbody");
-                        tbody.innerHTML = events;
-                        switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
-                        document.getElementById("log").prepend(tbody);
-                        console.log(tbody);
+                if (events) {
+                    var tbody = document.createElement("tbody");
+                    tbody.innerHTML = events;
+                    switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                    document.getElementById("log").prepend(tbody);
 
-                        startTimestamp = moment(data.next_start_date).unix()
-                        updatePingEventsMessage(data.pings_count)
-                    }
+                    startTimestamp = moment(data.next_start_date).unix()
+                    updatePingEventsMessage(data.pings_count)
                 }
-
-                
             }
         });
-    }, true);
+    }
+
+    if (slider.dataset.end == slider.dataset.max) {
+        adaptiveSetInterval(liveUpdate, true);
+    }
 
 });
