@@ -2738,10 +2738,12 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     if "start" in request.GET:
-        ts = request.GET["start"]
-        # FIXME must handle non-float values
-        start = datetime.fromtimestamp(float(ts), tz=timezone.utc)
-        start += td(microseconds=1)
+        try:
+            ts = float(request.GET["start"])
+        except ValueError:
+            return HttpResponseBadRequest()
+
+        start = datetime.fromtimestamp(ts, tz=timezone.utc) + td(microseconds=1)
     else:
         start = check.created
 

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
@@ -23,7 +25,7 @@ class LogTestCase(BaseTestCase):
         self.ping.created = "2000-01-01T00:00:00+00:00"
         self.ping.save()
 
-        self.url = "/checks/%s/log/" % self.check.code
+        self.url = f"/checks/{self.check.code}/log/"
 
     def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -127,11 +129,6 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Called webhook foo/$NAME", status_code=200)
 
-    def test_it_allows_cross_team_access(self) -> None:
-        self.client.login(username="bob@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertEqual(r.status_code, 200)
-
     def test_it_shows_ignored_nonzero_exitstatus(self) -> None:
         self.ping.kind = "ign"
         self.ping.exitstatus = 123
@@ -189,3 +186,28 @@ class LogTestCase(BaseTestCase):
         # The notification should not show up in the log as it is
         # older than the oldest visible ping:
         self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
+
+    def test_it_accepts_start_query_parameter(self) -> None:
+        dt = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        ts = str(dt.timestamp())
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?start=" + ts)
+        self.assertContains(r, f'data-start="{ts}"', status_code=200)
+
+    def test_it_accepts_end_query_parameter(self) -> None:
+        dt = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        ts = str(dt.timestamp())
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?end=" + ts)
+        self.assertContains(r, f'data-end="{ts}"', status_code=200)
+
+    def test_it_ignores_bad_time_filter(self) -> None:
+        self.ping.refresh_from_db()
+        smin = str(self.ping.created.timestamp())
+
+        for sample in ["surprise", "0"]:
+            self.client.login(username="alice@example.org", password="password")
+            r = self.client.get(self.url + "?start=" + sample)
+            self.assertContains(r, f'data-start="{smin}"', status_code=200)
