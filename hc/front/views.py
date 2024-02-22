@@ -9,11 +9,12 @@ import sqlite3
 import uuid
 from collections import Counter, defaultdict
 from collections.abc import Iterable
-from datetime import datetime, timezone
+from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from email.message import EmailMessage
 from secrets import token_urlsafe
-from typing import Literal, TypedDict, cast, Dict, Any
+from typing import Any, Dict, Literal, TypedDict, cast
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -207,6 +208,7 @@ def _get_referer_qs(request: HttpRequest) -> str:
         assert isinstance(parsed.query, str)
         return "?" + parsed.query
     return ""
+
 
 @login_required
 def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
@@ -919,11 +921,12 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     smin = smin.replace(minute=0, second=0)
 
     form = forms.SeekForm(request.GET)
+    start, end = smin, smax
     if form.is_valid():
-        start = form.cleaned_data["start"]
-        end = form.cleaned_data["end"]
-    else:
-        start, end = smin, smax
+        if form.cleaned_data["start"]:
+            start = form.cleaned_data["start"]
+        if form.cleaned_data["end"]:
+            end = form.cleaned_data["end"]
 
     # Clamp the _get_events start argument to the date of the oldest visible ping
     get_events_start = start
