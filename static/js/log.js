@@ -170,7 +170,7 @@ $(function () {
                     tbody.innerHTML = data.events;
                     switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
                     document.getElementById("log").prepend(tbody);
-                    $("#events-alert").remove();
+                    $("#events-count").remove();
                 }
             }
         });
