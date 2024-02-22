@@ -389,12 +389,12 @@ class SeekForm(forms.Form):
     )
     end = forms.IntegerField(min_value=1262296800, max_value=1893448800, required=False)
 
-    def clean_start(self) -> datetime:
+    def clean_start(self) -> datetime | None:
         if self.cleaned_data["start"]:
             return datetime.fromtimestamp(self.cleaned_data["start"], tz=timezone.utc)
         return None
 
-    def clean_end(self) -> datetime:
+    def clean_end(self) -> datetime | None:
         if self.cleaned_data["end"]:
             return datetime.fromtimestamp(self.cleaned_data["end"], tz=timezone.utc)
         return None
