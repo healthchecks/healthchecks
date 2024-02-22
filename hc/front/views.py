@@ -2750,15 +2750,11 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     events = _get_events(check, 1000, start=start, end=now())
 
     log_template = ""
-    pings_count = 0
     for event in events:
-        if isinstance(event, Ping):
-            pings_count += 1
         log_template += LOGS_TMPL.render({"event": event, "describe_body": True})
 
     doc["max"] = now().timestamp()
     doc["events"] = log_template
-    doc["pings_count"] = pings_count
 
     return JsonResponse(doc)
 

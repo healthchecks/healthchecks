@@ -18,6 +18,11 @@
     white-space: nowrap;
 }
 
+#log tbody.new td {
+    background: var(--log-new-row-bg);
+    border-bottom: 1px solid var(--log-new-row-border);
+}
+
 #log .duration {
     white-space: nowrap;
     float: right;

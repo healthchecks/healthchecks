@@ -143,18 +143,6 @@ $(function () {
     var mainInnerDiv = document.getElementById("main-div")
     var logEventsUrl = mainInnerDiv.dataset.logEventsUrl
 
-    function updatePingEventsMessage(numberOfPings) {
-        var currentPingCount = 0
-        var eventsAlertElement = document.getElementById("events-alert")
-        try {
-            currentPingCount = parseInt(eventsAlertElement.innerText.match(/\d+/)[0]);
-        } catch (error) {
-            currentPingCount = 0
-        }
-        var newPingCount = currentPingCount + numberOfPings;
-        eventsAlertElement.innerText = "Found " + newPingCount + " ping events";
-    }
-
     var startTimestamp = slider.dataset.max;
     function liveUpdate() {
         var url = logEventsUrl;
@@ -179,12 +167,12 @@ $(function () {
                 }
 
                 var tbody = document.createElement("tbody");
+                tbody.setAttribute("class", "new");
                 tbody.innerHTML = data.events;
                 switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
                 document.getElementById("log").prepend(tbody);
 
-                startTimestamp = moment(data.next_start_date).unix()
-                updatePingEventsMessage(data.pings_count)
+                $("#events-alert").remove();
             }
         });
     }
