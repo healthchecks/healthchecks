@@ -855,7 +855,7 @@ def _get_events(
     # "n" works around the problem--postgres picks the api_ping.owner_id index.
     pq = check.visible_pings.order_by("-n")
     if start and end:
-        pq = pq.filter(created__gt=start, created__lte=end)
+        pq = pq.filter(created__gte=start, created__lte=end)
 
     pings = list(pq[:page_limit])
 
@@ -892,7 +892,7 @@ def _get_events(
     q = Notification.objects.select_related("channel")
     q = q.filter(owner=check, check_status="down")
     if start and end:
-        q = q.filter(created__gt=start, created__lte=end)
+        q = q.filter(created__gte=start, created__lte=end)
         alerts = list(q)
     elif len(pings):
         cutoff = pings[-1].created
@@ -2743,6 +2743,7 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         ts = request.GET["start"]
         # FIXME must handle non-float values
         start = datetime.fromtimestamp(float(ts), tz=timezone.utc)
+        start += td(microseconds=1)
     else:
         start = check.created
 
@@ -2755,8 +2756,8 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             pings_count += 1
         log_template += LOGS_TMPL.render({"event": event, "describe_body": True})
 
+    doc["max"] = now().timestamp()
     doc["events"] = log_template
-    doc["events_length"] = len(events)
     doc["pings_count"] = pings_count
 
     return JsonResponse(doc)

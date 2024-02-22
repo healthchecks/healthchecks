@@ -7,10 +7,6 @@ $(function () {
     var slider = document.getElementById("log-slider");
     var smin = parseInt(slider.dataset.min);
     var smax = parseInt(slider.dataset.max);
-    var pixelsPerSecond = slider.clientWidth / (smax - smin);
-    var pixelsPerHour = pixelsPerSecond * 3600;
-    var pixelsPerDay = pixelsPerHour * 24;
-    var dayGap = Math.round(0.5 + 80 / pixelsPerDay);
 
     // Look up the active tz switch to determine the initial display timezone:
     var dateFormat = $(".active", "#format-switcher").data("format");
@@ -19,63 +15,6 @@ $(function () {
         dateFormat == "local" ? dt.local() : dt.tz(dateFormat);
         return dt;
     }
-
-    function filterPips(value, type) {
-        var m = fromUnix(value);
-        if (m.minute() != 0)
-            return NO_PIP;
-
-        // Date labels on every day
-        if (pixelsPerDay > 60 && m.hour() == 0)
-            return BIG_LABEL;
-
-        // Date labels every "dayGap" days
-        if (m.hour() == 0 && m.dayOfYear() % dayGap == 0)
-            return BIG_LABEL;
-
-        // Hour labels on every hour:
-        if (pixelsPerHour > 40)
-            return SMALL_LABEL;
-
-        // Hour labels every 3 hours:
-        if (pixelsPerHour > 15 && m.hour() % 3 == 0)
-            return SMALL_LABEL;
-
-        // Hour labels every 6 hours:
-        if (pixelsPerHour > 5 && m.hour() % 6 == 0)
-            return SMALL_LABEL;
-
-        // Pip on every hour
-        if (pixelsPerHour > 5)
-            return PIP;
-
-        // Pip on every day
-        if (pixelsPerDay > 10 && m.hour() == 0)
-            return PIP;
-
-        return NO_PIP;
-    }
-
-    function fmt(ts) {
-        var pipType = filterPips(ts);
-        return fromUnix(ts).format(pipType == 2 ? "HH:mm" : "MMM D");
-    }
-
-    noUiSlider.create(slider, {
-        start: [parseInt(slider.dataset.start), parseInt(slider.dataset.end)],
-        range: {'min': smin, 'max': smax},
-        connect: true,
-        step: 3600,
-        pips: {
-            mode: "steps",
-            density: 3,
-            filter: filterPips,
-            format: {
-                to: fmt,
-                from: function() {}
-            }
-        }
-    });
 
     function updateSliderPreview() {
         var values = slider.noUiSlider.get();
@@ -89,15 +28,84 @@ $(function () {
         $("#slider-to-formatted").text(toFormatted);
     }
 
+    function setupSlider() {
+        var pixelsPerSecond = slider.clientWidth / (smax - smin);
+        var pixelsPerHour = pixelsPerSecond * 3600;
+        var pixelsPerDay = pixelsPerHour * 24;
+        var dayGap = Math.round(0.5 + 80 / pixelsPerDay);
+
+        function filterPips(value, type) {
+            var m = fromUnix(value);
+            if (m.minute() != 0)
+                return NO_PIP;
+
+            // Date labels on every day
+            if (pixelsPerDay > 60 && m.hour() == 0)
+                return BIG_LABEL;
+
+            // Date labels every "dayGap" days
+            if (m.hour() == 0 && m.dayOfYear() % dayGap == 0)
+                return BIG_LABEL;
+
+            // Hour labels on every hour:
+            if (pixelsPerHour > 40)
+                return SMALL_LABEL;
+
+            // Hour labels every 3 hours:
+            if (pixelsPerHour > 15 && m.hour() % 3 == 0)
+                return SMALL_LABEL;
+
+            // Hour labels every 6 hours:
+            if (pixelsPerHour > 5 && m.hour() % 6 == 0)
+                return SMALL_LABEL;
+
+            // Pip on every hour
+            if (pixelsPerHour > 5)
+                return PIP;
+
+            // Pip on every day
+            if (pixelsPerDay > 10 && m.hour() == 0)
+                return PIP;
+
+            return NO_PIP;
+        }
+
+        function fmt(ts) {
+            var pipType = filterPips(ts);
+            return fromUnix(ts).format(pipType == 2 ? "HH:mm" : "MMM D");
+        }
+
+        if (slider.noUiSlider) {
+            slider.noUiSlider.destroy();
+        }
+        noUiSlider.create(slider, {
+            start: [parseInt(slider.dataset.start), parseInt(slider.dataset.end)],
+            range: {'min': smin, 'max': smax},
+            connect: true,
+            step: 3600,
+            pips: {
+                mode: "steps",
+                density: 3,
+                filter: filterPips,
+                format: {
+                    to: fmt,
+                    from: function() {}
+                }
+            }
+        });
+
+        slider.noUiSlider.on("slide", updateSliderPreview);
+        slider.noUiSlider.on("change", function(a, b, value) {
+            var start = Math.round(value[0]);
+            $("#seek-start").val(start).attr("disabled", start == smin);
+            var end = Math.round(value[1]);
+            $("#seek-end").val(end).attr("disabled", end == smax);
+            $("#seek-form").submit();
+        });
+    }
+
+    setupSlider();
     updateSliderPreview();
-    slider.noUiSlider.on("slide", updateSliderPreview);
-    slider.noUiSlider.on("change", function(a, b, value) {
-        var start = Math.round(value[0]);
-        $("#seek-start").val(start).attr("disabled", start == smin);
-        var end = Math.round(value[1]);
-        $("#seek-end").val(end).attr("disabled", end == smax);
-        $("#seek-form").submit();
-    });
 
     $("#log").on("click", "tr.ok", function() {
         var n = $("td", this).first().text();
@@ -147,34 +155,6 @@ $(function () {
         eventsAlertElement.innerText = "Found " + newPingCount + " ping events";
     }
 
-    function updateSliderPerMinute() {
-        now = parseInt(String(Date.now()).slice(0,-3))
-
-        // this function called every 3 seconds with ajax, hence to get the minute
-        // we need to check if the timestamp % 60 <= 3 if we use timestamp % 60 == 0,
-        // we will miss some minutes.
-
-        if (now % 60 <= 3) {
-            // occasionaly this condition passes when we are in the 3 second of a minute
-            // so the slider is update on the 0th second and 3rd second of a minute but this happens ocassionally.
-            updateSliderOptions = {
-                start: [slider.dataset.min,now],
-                range: {'min': smin, 'max': now},
-                pips: {
-                    mode: "steps",
-                    density: 3,
-                    filter: filterPips,
-                    format: {
-                        to: fmt,
-                        from: function() {}
-                    }
-                }
-            }
-            slider.noUiSlider.updateOptions(updateSliderOptions, true);
-            updateSliderPreview(); 
-        }
-    }
-
     var startTimestamp = slider.dataset.max;
     function liveUpdate() {
         var url = logEventsUrl;
@@ -188,24 +168,29 @@ $(function () {
             dataType: "json",
             timeout: 2000,
             success: function(data) {
-                updateSliderPerMinute();
-                events = data.events;
-
-                if (events) {
-                    var tbody = document.createElement("tbody");
-                    tbody.innerHTML = events;
-                    switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
-                    document.getElementById("log").prepend(tbody);
-
-                    startTimestamp = moment(data.next_start_date).unix()
-                    updatePingEventsMessage(data.pings_count)
+                if (data.max - smax > 60) {
+                    // A minute has passed since last slider refresh
+                    smax = data.max;
+                    setupSlider();
                 }
+
+                if (!data.events) {
+                    return;
+                }
+
+                var tbody = document.createElement("tbody");
+                tbody.innerHTML = data.events;
+                switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                document.getElementById("log").prepend(tbody);
+
+                startTimestamp = moment(data.next_start_date).unix()
+                updatePingEventsMessage(data.pings_count)
             }
         });
     }
 
     if (slider.dataset.end == slider.dataset.max) {
-        adaptiveSetInterval(liveUpdate, true);
+        adaptiveSetInterval(liveUpdate, false);
     }
 
 });
