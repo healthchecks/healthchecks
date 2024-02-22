@@ -119,10 +119,6 @@ $(function () {
         slider.noUiSlider.updateOptions({}, true);
         updateSliderPreview();
 
-        if (!rows) {
-            rows = document.querySelectorAll("#log tr");
-        }
-
         rows.forEach(function(row) {
             var dt = fromUnix(row.dataset.dt);
             row.children[1].textContent = dt.format("MMM D");
@@ -132,15 +128,15 @@ $(function () {
 
     $("#format-switcher").click(function(ev) {
         var format = ev.target.dataset.format;
-        switchDateFormat(format);
+        switchDateFormat(format, document.querySelectorAll("#log tr"));
     });
 
-    switchDateFormat(dateFormat);
+    switchDateFormat(dateFormat, document.querySelectorAll("#log tr"));
     // The table is initially hidden to avoid flickering as we convert dates.
     // Once it's ready, set it to visible:
     $("#log").css("visibility", "visible");
 
-    function liveUpdate() {
+    function fetchNewEvents() {
         var url = document.getElementById("log").dataset.refreshUrl;
         var firstRow = $("#log tr").get(0);
         if (firstRow) {
@@ -177,7 +173,7 @@ $(function () {
     }
 
     if (slider.dataset.end == slider.dataset.max) {
-        adaptiveSetInterval(liveUpdate, false);
+        adaptiveSetInterval(fetchNewEvents, false);
     }
 
 });
