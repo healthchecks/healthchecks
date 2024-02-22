@@ -104,12 +104,16 @@ $(function () {
         return false;
     });
 
-    function switchDateFormat(format) {
+    function switchDateFormat(format, rows) {
         dateFormat = format;
         slider.noUiSlider.updateOptions({}, true);
         updateSliderPreview();
 
-        document.querySelectorAll("#log tr").forEach(function(row) {
+        if (!rows) {
+            rows = document.querySelectorAll("#log tr");
+        }
+
+        rows.forEach(function(row) {
             var dt = fromUnix(row.dataset.dt);
             row.children[1].textContent = dt.format("MMM D");
             row.children[2].textContent = dt.format("HH:mm");
@@ -128,20 +132,6 @@ $(function () {
 
     var mainInnerDiv = document.getElementById("main-div")
     var logEventsUrl = mainInnerDiv.dataset.logEventsUrl
-
-    function switchDateFormatRows(format, numRowsToUpdate) {
-        dateFormat = format;
-        slider.noUiSlider.updateOptions({}, true);
-        updateSliderPreview();
-
-        var rowsToUpdate = Array.from(document.querySelectorAll("#log tr")).slice(0,numRowsToUpdate);
-
-        rowsToUpdate.forEach(function(row) {
-            var dt = fromUnix(row.dataset.dt);
-            row.children[1].textContent = dt.format("MMM D");
-            row.children[2].textContent = dt.format("HH:mm");
-        })
-    }
 
     function updatePingEventsMessage(numberOfPings) {
         var currentPingCount = 0
@@ -191,18 +181,21 @@ $(function () {
             dataType: "json",
             timeout: 2000,
             success: function(data) {
-
                 if (sessionStorage.getItem('leftSliderHandleMoved') || sessionStorage.getItem('rightSliderHandleMoved')) {
                     updateIndicator = document.getElementById('updateIndicator');
                     updateIndicator.style.backgroundColor = "red";
                 } else {
-                    updateSliderPerMinute()
-                    events = data.events
+                    updateSliderPerMinute();
+                    events = data.events;
 
                     if (events) {
-                        document.querySelector("#log tbody").innerHTML = `${events}` + document.querySelector("#log tbody").innerHTML;
+                        var tbody = document.createElement("tbody");
+                        tbody.innerHTML = events;
+                        switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                        document.getElementById("log").prepend(tbody);
+                        console.log(tbody);
+
                         startTimestamp = moment(data.next_start_date).unix()
-                        switchDateFormatRows(dateFormat, data.events_length)
                         updatePingEventsMessage(data.pings_count)
                     }
                 }

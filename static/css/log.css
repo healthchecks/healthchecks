@@ -7,6 +7,10 @@
     font-size: 13px;
 }
 
+#log tbody {
+    border: 0;
+}
+
 #log td {
     position: relative;
     border: 0;
