@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add support for $NAME_JSON and $BODY_JSON placeholders in webhook payloads
 - Update the WhatsApp integration to use Twilio Content Templates
+- Add auto-refresh functionality to the Log page (#957, @mickBoat00)
 
 ### Bug Fixes
 - Fix Gotify integration to handle Gotify server URLs with paths (#964)
@@ -17,15 +18,15 @@ All notable changes to this project will be documented in this file.
 - Update Spike.sh instructions
 - Add system check to validate settings.SITE_ROOT (#895)
 - Add tooltips to tag buttons in the checks list screen (#911)
-- Improve Email - Keywoard Filtering docs (by @mmomjian)
-- Split the grace time input field into value/unit input group (#945, by @mickBoat00)
+- Improve Email - Keywoard Filtering docs (@mmomjian)
+- Split the grace time input field into value/unit input group (#945, @mickBoat00)
 - Add a system check to warn about MariaDB UUID migration (#929)
 
 ### Bug Fixes
 - Increase uWSGI buffer size to allow requests with large cookies (#925)
 - Fix crash when processing one-shot OnCalendar schedules
 - Fix the handling of ping bodies > 2.5MB (#931)
-- Fix crash when inviting team member but SMTP is not configured (by @marlenekoh)
+- Fix crash when inviting team member but SMTP is not configured (@marlenekoh)
 
 ## v3.1 - 2023-12-13
 
