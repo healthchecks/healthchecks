@@ -11,6 +11,7 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from email.message import EmailMessage
 from secrets import token_urlsafe
 from typing import Literal, TypedDict, cast
@@ -75,6 +76,7 @@ STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
 DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
+LOGS_TMPL = get_template("front/log_row.html")
 
 
 def _tags_counts(checks: Iterable[Check]) -> tuple[list[tuple[str, str, str]], int]:
@@ -206,6 +208,7 @@ def _get_referer_qs(request: HttpRequest) -> str:
         assert isinstance(parsed.query, str)
         return "?" + parsed.query
     return ""
+
 
 @login_required
 def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
@@ -918,11 +921,12 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     smin = smin.replace(minute=0, second=0)
 
     form = forms.SeekForm(request.GET)
+    start, end = smin, smax
     if form.is_valid():
-        start = form.cleaned_data["start"]
-        end = form.cleaned_data["end"]
-    else:
-        start, end = smin, smax
+        if form.cleaned_data["start"]:
+            start = form.cleaned_data["start"]
+        if form.cleaned_data["end"]:
+            end = form.cleaned_data["end"]
 
     # Clamp the _get_events start argument to the date of the oldest visible ping
     get_events_start = start
@@ -2727,6 +2731,26 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 
     # Success!
     return render_result(None)
+
+
+@login_required
+def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
+
+    form = forms.SeekForm(request.GET)
+    if not form.is_valid():
+        return HttpResponseBadRequest()
+
+    if form.cleaned_data["start"]:
+        start = form.cleaned_data["start"] + td(microseconds=1)
+    else:
+        start = check.created
+
+    html = ""
+    for event in _get_events(check, 1000, start=start, end=now()):
+        html += LOGS_TMPL.render({"event": event, "describe_body": True})
+
+    return JsonResponse({"max": now().timestamp(), "events": html})
 
 
 # Forks: add custom views after this line

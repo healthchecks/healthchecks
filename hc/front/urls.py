@@ -14,6 +14,7 @@ check_urls = [
     path("remove/", views.remove_check, name="hc-remove-check"),
     path("clear_events/", views.clear_events, name="hc-clear-events"),
     path("log/", views.log, name="hc-log"),
+    path("log_events/", views.log_events, name="hc-log-events"),
     path("status/", views.status_single, name="hc-status-single"),
     path("last_ping/", views.ping_details, name="hc-last-ping"),
     path("transfer/", views.transfer, name="hc-transfer"),

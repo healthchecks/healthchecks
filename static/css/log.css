@@ -7,11 +7,20 @@
     font-size: 13px;
 }
 
+#log tbody {
+    border: 0;
+}
+
 #log td {
     position: relative;
     border: 0;
     border-bottom: 1px solid var(--border-muted);
     white-space: nowrap;
+}
+
+#log tbody.new td {
+    background: var(--log-new-row-bg);
+    border-bottom: 1px solid var(--log-new-row-border);
 }
 
 #log .duration {

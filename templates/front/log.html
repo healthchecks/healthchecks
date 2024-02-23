@@ -55,23 +55,37 @@
             <input type="hidden" name="end" id="seek-end">
         </form>
 
-        {% if num_total > 1000 %}
-        <p class="alert alert-info">Found {{ num_total }} ping events, displaying the most recent 1000.</p>
-        {% elif num_total > 0 %}
-        <p class="alert alert-info">Found {{ num_total }} ping event{{ num_total|pluralize }}.</p>
-        {% elif not events and check.n_pings > 0 %}
-        <div class="alert alert-info">The filter parameters matched no events.</div>
-        {% elif check.n_pings == 0 %}
-        <div class="alert alert-info">Log is empty. This check has not received any pings yet.</div>
-        {% endif %}
+        <div class="alert alert-info">
+            <span id="events-count">
+            {% if num_total > 1000 %}
+            Found {{ num_total }} ping events, displaying the most recent 1000.
+            {% elif num_total > 0 %}
+            Found {{ num_total }} ping event{{ num_total|pluralize }}.
+            {% elif not events and check.n_pings > 0 %}
+            The filter parameters matched no events.
+            {% elif check.n_pings == 0 %}
+            Log is empty. This check has not received any pings yet.
+            {% endif %}
+            </span>
+            {% if end == max %}
+            Updating live, new events will load automatically.
+            {% endif %}
+        </div>
 
-        {% if events %}
         <div class="table-responsive">
-        <table class="table" id="log" data-url="{% url 'hc-ping-details' check.code '0' %}">
-        {% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}
+        <table
+            class="table"
+            id="log"
+            data-url="{% url 'hc-ping-details' check.code '0' %}"
+            data-refresh-url="{% url 'hc-log-events' check.code %}">
+            <tbody>
+            {% if events %}
+                {% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}
+            {% endif %}
+            </tbody>
         </table>
         </div>
-        {% endif %}
+        
     </div>
 </div>
 
@@ -96,5 +110,6 @@
 <script src="{% static 'js/purify.min.js' %}"></script>
 <script src="{% static 'js/ping_details.js' %}"></script>
 <script src="{% static 'js/log.js' %}"></script>
+<script src="{% static 'js/adaptive-setinterval.js' %}"></script>
 {% endcompress %}
 {% endblock %}
