@@ -2737,13 +2737,12 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
-    if "start" in request.GET:
-        try:
-            ts = float(request.GET["start"])
-        except ValueError:
-            return HttpResponseBadRequest()
+    form = forms.SeekForm(request.GET)
+    if not form.is_valid():
+        return HttpResponseBadRequest()
 
-        start = datetime.fromtimestamp(ts, tz=timezone.utc) + td(microseconds=1)
+    if form.cleaned_data["start"]:
+        start = form.cleaned_data["start"] + td(microseconds=1)
     else:
         start = check.created
 

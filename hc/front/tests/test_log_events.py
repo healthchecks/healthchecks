@@ -63,5 +63,7 @@ class LogTestCase(BaseTestCase):
 
     def test_it_rejects_bad_start_parameter(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url + "?start=surprise")
-        self.assertEqual(r.status_code, 400)
+
+        for sample in ["surprise", "100000000000000000"]:
+            r = self.client.get(self.url + "?start=" + sample)
+            self.assertEqual(r.status_code, 400)
