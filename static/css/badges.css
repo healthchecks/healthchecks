@@ -1,16 +1,10 @@
-.table.badge-preview th {
-    border-top: 0;
-    color: var(--text-muted);
-    font-weight: normal;
-    font-size: 12px;
-    padding-top: 32px;
+#status-badges #tag {
+    margin-left: 49px;
+    width: 200px
 }
 
-#badges-json .fetch-json {
-    background: var(--pre-bg);
-    padding: 3px;
-}
-
-#badges-json, #badges-shields, .badge-preview .with-late {
-    display: none;
+#status-badges #preview img,
+#status-badges #preview pre,
+#status-badges #preview input {
+    margin-bottom: 20px;
 }

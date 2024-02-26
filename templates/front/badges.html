@@ -4,132 +4,86 @@
 {% block title %}Status Badges - {{ site_name }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-sm-10">
+<div id="status-badges" class="row">
+    <div class="col-sm-12">
         <h1>Status Badges</h1>
-
-        <p id="badges-description">
+        <p>
             {{ site_name }} provides status badges for each of the tags
             you have used. The badges have public, but hard-to-guess
             URLs. You can use them in your READMEs,
             dashboards or status pages.
         </p>
-
         <p>Each badge can be in one of the following states:</p>
         <ul>
             <li><strong>up</strong> – all matching checks are up.</li>
             <li><strong>down</strong> – at least one check is currently down.</li>
         </ul>
-
         <p>
             As an option, the badges can report a third state:
            <strong>late</strong> (when at least one check is running late but has not
            exceeded its grace time yet).
         </p>
-
-        <br />
-
-        <div class="btn-group" data-toggle="buttons">
-            <label id="show-svg" class="btn btn-default active">
-                <input type="radio" checked> SVG
-            </label>
-            <label id="show-json" class="btn btn-default">
-                <input type="radio"> JSON
-            </label>
-            <label id="show-shields" class="btn btn-default">
-                <input type="radio"> Shields.io
-            </label>
-        </div>
-        &nbsp;
-
-        <div class="btn-group" data-toggle="buttons">
-            <label id="show-no-late" class="btn btn-default active">
-                <input type="radio" checked> Badge states: <b>up</b> or <b>down</b>
-            </label>
-            <label id="show-with-late" class="btn btn-default">
-                <input type="radio"> Badge states: <b>up</b>, <b>late</b> or <b>down</b>
-            </label>
-        </div>
-
-        <table id="badges-svg" class="table badge-preview">
-            {% if have_tags %}
-            <tr><th colspan="2">Tags</th></tr>
-            {% endif %}
-
-            {% for urldict in badges %}
-                {% if urldict.tag == "*" %}
-                <tr>
-                    <th colspan="2">Overall Status</th>
-                </tr>
-                {% endif %}
-
-                <tr>
-                    <td>
-                        <img class="no-late" src="{{ urldict.svg }}" alt="" />
-                        <img class="with-late" src="{{ urldict.svg3 }}" alt="" />
-                    </td>
-                    <td>
-                        <code class="no-late">{{ urldict.svg }}</code>
-                        <code class="with-late">{{ urldict.svg3 }}</code>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <table id="badges-json" class="table badge-preview">
-            {% if have_tags %}
-            <tr>
-                <th colspan="2">Tags</th>
-            </tr>
-            {% endif %}
-
-            {% for urldict in badges %}
-                {% if urldict.tag == "*" %}
-                <tr>
-                    <th colspan="2">Overall Status</th>
-                </tr>
-                {% endif %}
-
-                <tr>
-                    <td>
-                        <code class="fetch-json no-late" data-url="{{ urldict.json }}"></code>
-                        <code class="fetch-json with-late" data-url="{{ urldict.json3 }}"></code>
-                    </td>
-                    <td>
-                        <code class="no-late">{{ urldict.json }}</code>
-                        <code class="with-late">{{ urldict.json3 }}</code>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-
-        <table id="badges-shields" class="table badge-preview">
-            {% if have_tags %}
-            <tr>
-                <th>Shields.io badge</th>
-                <th>JSON endpoint for Shields.io <a href="https://shields.io/endpoint">(how to use)</a></th>
-            </tr>
-            {% endif %}
-
-            {% for urldict in badges %}
-                {% if urldict.tag == "*" %}
-                <tr>
-                    <th colspan="2">Overall Status</th>
-                </tr>
-                {% endif %}
-
-                <tr>
-                    <td>
-                        <img class="no-late" src="https://img.shields.io/endpoint?url={{ urldict.shields|urlencode:"" }}" alt="" />
-                        <img class="with-late" src="https://img.shields.io/endpoint?url={{ urldict.shields3|urlencode:"" }}" alt="" />
-                    </td>
-                    <td>
-                        <code class="no-late">{{ urldict.shields }}</code>
-                        <code class="with-late">{{ urldict.shields3 }}</code>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
     </div>
+
+    <div class="col-md-4">
+        <h2>Badge Generator</h2>
+        {% csrf_token %}
+        <form id="badge-settings-form">
+        <div class="form-group">
+            <p>Generate a badge for</p>
+
+            <label class="radio-container">
+                <input type="radio" name="target" value="all" autocomplete="off" checked>
+                <span class="radiomark"></span>
+                All checks in the project
+            </label>
+            {% if tags %}
+            <label class="radio-container">
+                <input type="radio" name="target" value="tag" autocomplete="off">
+                <span class="radiomark"></span>
+                The checks tagged with this tag:
+            </label>
+
+            <select
+                id="tag"
+                name="tag"
+                class="form-control"
+                autocomplete="off">
+                {% for tag in tags %}
+                <option>{{ tag }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+        </div>
+        <div class="form-group">
+        <p>Badge format</p>
+            <label class="radio-container">
+                <input type="radio" name="fmt" value="svg" autocomplete="off" checked>
+                <span class="radiomark"></span> SVG
+            </label>
+            <label class="radio-container">
+                <input type="radio" name="fmt" value="json" autocomplete="off">
+                <span class="radiomark"></span> JSON
+            </label>
+            <label class="radio-container">
+                <input type="radio" name="fmt" value="shields" autocomplete="off">
+                <span class="radiomark"></span> Shields.io
+            </label>
+        </div>
+        <div class="form-group">
+            <p>Badge states</p>
+            <label class="radio-container">
+                <input type="radio" name="states" value="2" autocomplete="off" checked>
+                <span class="radiomark"></span> Two states (<strong>up</strong>, <strong>down</strong>)
+            </label>
+            <label class="radio-container">
+                <input type="radio" name="states" value="3" autocomplete="off">
+                <span class="radiomark"></span> Three states (<strong>up</strong>, <strong>late</strong> or <strong>down</strong>)
+            </label>
+        </div>
+        </form>
+    </div>
+    <div id="preview" class="col-md-8">{% include "front/badges_preview.html" %}</div>
 </div>
 {% endblock %}
 

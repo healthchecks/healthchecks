@@ -1,0 +1,31 @@
+<h2>Preview</h2>
+
+{% if fmt == "json" %}
+<pre class="fetch-json" data-url="{{ url }}"></pre>
+
+<p>Badge URL</p>
+<input
+    class="form-control"
+    type="text" name=""
+    value="{{ url }}" readonly>
+
+{% else %}
+<img src="{{ url }}">
+<p>Badge URL</p>
+<input
+    class="form-control"
+    type="text" name=""
+    value="{{ url }}" readonly>
+<p>HTML code</p>
+<input
+    class="form-control"
+    type="text"
+    name=""
+    value="&lt;a href=&quot;{{ url }}&quot;&gt;{{ label }}&lt;/a&gt;" readonly>
+<p>Markdown code</p>
+<input
+    class="form-control"
+    type="text"
+    name=""
+    value="![{{ label }}]({{ url }})" readonly>
+{% endif %}

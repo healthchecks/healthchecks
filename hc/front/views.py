@@ -11,7 +11,6 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
-from datetime import timezone
 from email.message import EmailMessage
 from secrets import token_urlsafe
 from typing import Literal, TypedDict, cast
@@ -1097,35 +1096,38 @@ def status_single(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
 def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project, rw = _get_project_for_user(request, code)
 
+    if request.method == "POST":
+        form = forms.BadgeSettingsForm(request.POST)
+        if not form.is_valid():
+            return HttpResponseBadRequest()
+
+        if form.cleaned_data["target"] == "all":
+            label = settings.MASTER_BADGE_LABEL
+            tag = "*"
+        else:
+            label = form.cleaned_data["tag"]
+            tag = form.cleaned_data["tag"]
+        fmt = form.cleaned_data["fmt"]
+        with_late = True if form.cleaned_data["states"] == "3" else False
+        url = get_badge_url(project.badge_key, tag, fmt, with_late)
+        if fmt == "shields":
+            url = "https://img.shields.io/endpoint?" + urlencode({"url": url})
+
+        ctx = {"fmt": fmt, "label": label, "url": url}
+        return render(request, "front/badges_preview.html", ctx)
+
     tags = set()
     for check in Check.objects.filter(project=project):
         tags.update(check.tags_list())
 
     sorted_tags = sorted(tags, key=lambda s: s.lower())
-    sorted_tags.append("*")  # For the "overall status" badge
-
-    key = project.badge_key
-    urls = []
-    for tag in sorted_tags:
-        urls.append(
-            {
-                "tag": tag,
-                "svg": get_badge_url(key, tag),
-                "svg3": get_badge_url(key, tag, with_late=True),
-                "json": get_badge_url(key, tag, fmt="json"),
-                "json3": get_badge_url(key, tag, fmt="json", with_late=True),
-                "shields": get_badge_url(key, tag, fmt="shields"),
-                "shields3": get_badge_url(key, tag, fmt="shields", with_late=True),
-            }
-        )
 
     ctx = {
-        "have_tags": len(urls) > 1,
-        "page": "badges",
-        "project": project,
-        "badges": urls,
+        "tags": sorted_tags,
+        "fmt": "svg",
+        "label": settings.MASTER_BADGE_LABEL,
+        "url": get_badge_url(project.badge_key, "*"),
     }
-
     return render(request, "front/badges.html", ctx)
 
 
