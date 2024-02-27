@@ -1101,28 +1101,37 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         if not form.is_valid():
             return HttpResponseBadRequest()
 
+        fmt = form.cleaned_data["fmt"]
+        states = form.cleaned_data["states"]
+        with_late = True if states == "3" else False
         if form.cleaned_data["target"] == "all":
             label = settings.MASTER_BADGE_LABEL
-            tag = "*"
-        else:
+            url = get_badge_url(project.badge_key, "*", fmt, with_late)
+        elif form.cleaned_data["target"] == "tag":
             label = form.cleaned_data["tag"]
-            tag = form.cleaned_data["tag"]
-        fmt = form.cleaned_data["fmt"]
-        with_late = True if form.cleaned_data["states"] == "3" else False
-        url = get_badge_url(project.badge_key, tag, fmt, with_late)
+            url = get_badge_url(project.badge_key, label, fmt, with_late)
+        elif form.cleaned_data["target"] == "check":
+            check = project.check_set.get(code=form.cleaned_data["check"])
+            url = settings.SITE_ROOT + reverse(
+                "hc-badge-check", args=[states, check.prepare_badge_key(), fmt]
+            )
+            label = check.name_then_code()
+
         if fmt == "shields":
             url = "https://img.shields.io/endpoint?" + urlencode({"url": url})
 
         ctx = {"fmt": fmt, "label": label, "url": url}
         return render(request, "front/badges_preview.html", ctx)
 
+    checks = list(Check.objects.filter(project=project).order_by("name"))
     tags = set()
-    for check in Check.objects.filter(project=project):
+    for check in checks:
         tags.update(check.tags_list())
 
     sorted_tags = sorted(tags, key=lambda s: s.lower())
 
     ctx = {
+        "checks": checks,
         "tags": sorted_tags,
         "fmt": "svg",
         "label": settings.MASTER_BADGE_LABEL,

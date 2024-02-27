@@ -406,7 +406,8 @@ class AddTelegramForm(forms.Form):
 
 
 class BadgeSettingsForm(forms.Form):
-    target = forms.ChoiceField(choices=_choices("all,tag"))
+    target = forms.ChoiceField(choices=_choices("all,tag,check"))
     tag = forms.CharField(max_length=100, required=False)
+    check = forms.UUIDField(required=False)
     fmt = forms.ChoiceField(choices=_choices("svg,json,shields"))
     states = forms.ChoiceField(choices=_choices("2,3"))

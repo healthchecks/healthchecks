@@ -54,6 +54,23 @@
                 {% endfor %}
             </select>
             {% endif %}
+            {% if checks %}
+            <label class="radio-container">
+                <input type="radio" name="target" value="check" autocomplete="off">
+                <span class="radiomark"></span>
+                A specific check:
+            </label>
+
+            <select
+                id="check"
+                name="check"
+                class="form-control"
+                autocomplete="off">
+                {% for check in checks %}
+                <option value="{{ check.code }}">{{ check.name_then_code }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
         </div>
         <div class="form-group">
         <p>Badge format</p>

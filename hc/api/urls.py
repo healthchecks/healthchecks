@@ -90,4 +90,9 @@ urlpatterns = [
         {"tag": "*"},
         name="hc-badge-all",
     ),
+    path(
+        "b/<int:states>/<uuid:badge_key>.<slug:fmt>",
+        views.check_badge,
+        name="hc-badge-check",
+    ),
 ]

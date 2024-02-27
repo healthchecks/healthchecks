@@ -685,6 +685,20 @@ def badges(request: ApiRequest) -> JsonResponse:
     return JsonResponse({"badges": badges})
 
 
+SHIELDS_COLORS = {"up": "success", "late": "important", "down": "critical"}
+
+
+def _shields_response(label: str, status: str):
+    return JsonResponse(
+        {
+            "schemaVersion": 1,
+            "label": label,
+            "message": status,
+            "color": SHIELDS_COLORS[status],
+        }
+    )
+
+
 @never_cache
 @cors("GET")
 def badge(
@@ -701,11 +715,11 @@ def badge(
         return HttpResponseNotFound()
 
     q = Check.objects.filter(project__badge_key=badge_key)
-    if tag != "*":
+    if tag == "*":
+        label = settings.MASTER_BADGE_LABEL
+    else:
         q = q.filter(tags__contains=tag)
         label = tag
-    else:
-        label = settings.MASTER_BADGE_LABEL
 
     status, total, grace, down = "up", 0, 0, 0
     for check in q:
@@ -728,15 +742,7 @@ def badge(
                 status = "late"
 
     if fmt == "shields":
-        color = "success"
-        if status == "down":
-            color = "critical"
-        elif status == "late":
-            color = "important"
-
-        return JsonResponse(
-            {"schemaVersion": 1, "label": label, "message": status, "color": color}
-        )
+        return _shields_response(label, status)
 
     if fmt == "json":
         return JsonResponse(
@@ -744,6 +750,39 @@ def badge(
         )
 
     svg = get_badge_svg(label, status)
+    return HttpResponse(svg, content_type="image/svg+xml")
+
+
+@never_cache
+@cors("GET")
+def check_badge(
+    request: HttpRequest, states: int, badge_key: UUID, fmt: str
+) -> HttpResponse:
+    if fmt not in ("svg", "json", "shields"):
+        return HttpResponseNotFound()
+
+    check = get_object_or_404(Check, badge_key=badge_key)
+    check_status = check.get_status()
+    status = "up"
+    if check_status == "down":
+        status = "down"
+    elif check_status == "grace" and states == 3:
+        status = "late"
+
+    if fmt == "shields":
+        return _shields_response(check.name_then_code(), status)
+
+    if fmt == "json":
+        return JsonResponse(
+            {
+                "status": status,
+                "total": 1,
+                "grace": 1 if check_status == "grace" else 0,
+                "down": 1 if check_status == "down" else 0,
+            }
+        )
+
+    svg = get_badge_svg(check.name_then_code(), status)
     return HttpResponse(svg, content_type="image/svg+xml")
 
 

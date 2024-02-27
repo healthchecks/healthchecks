@@ -1,4 +1,5 @@
-#status-badges #tag {
+#status-badges #tag,
+#status-badges #check {
     margin-left: 49px;
     width: 200px
 }

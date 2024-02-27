@@ -192,6 +192,7 @@ class Check(models.Model):
     failure_kw = models.CharField(max_length=200, blank=True)
     methods = models.CharField(max_length=30, blank=True)
     manual_resume = models.BooleanField(default=False)
+    badge_key = models.UUIDField(null=True, unique=True)
 
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
@@ -372,6 +373,12 @@ class Check(models.Model):
     def unique_key(self) -> str:
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
+
+    def prepare_badge_key(self) -> uuid.UUID:
+        if not self.badge_key:
+            self.badge_key = uuid.uuid4()
+            Check.objects.filter(id=self.id).update(badge_key=self.badge_key)
+        return self.badge_key
 
     def to_dict(self, *, readonly: bool = False, v: int = 3) -> CheckDict:
         with_started = v == 1
