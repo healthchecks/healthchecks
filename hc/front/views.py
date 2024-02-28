@@ -1123,7 +1123,7 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         ctx = {"fmt": fmt, "label": label, "url": url}
         return render(request, "front/badges_preview.html", ctx)
 
-    checks = list(Check.objects.filter(project=project).order_by("name"))
+    checks = list(project.check_set.order_by("name"))
     tags = set()
     for check in checks:
         tags.update(check.tags_list())
@@ -1219,8 +1219,7 @@ def channel_checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
     channel = _get_rw_channel_for_user(request, code)
 
     assigned = set(channel.checks.values_list("code", flat=True).distinct())
-    checks = Check.objects.filter(project=channel.project).order_by("created")
-
+    checks = channel.project.check_set.order_by("created")
     ctx = {"checks": checks, "assigned": assigned, "channel": channel}
 
     return render(request, "front/channel_checks.html", ctx)

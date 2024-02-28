@@ -445,8 +445,7 @@ def get_check(request: ApiRequest, code: UUID) -> HttpResponse:
 @csrf_exempt
 @authorize_read
 def get_check_by_unique_key(request: ApiRequest, unique_key: str) -> HttpResponse:
-    checks = Check.objects.filter(project=request.project.id)
-    for check in checks:
+    for check in request.project.check_set.all():
         if check.unique_key == unique_key:
             return JsonResponse(check.to_dict(readonly=request.readonly, v=request.v))
     return HttpResponseNotFound()
@@ -655,8 +654,7 @@ def flips_by_uuid(request: ApiRequest, code: UUID) -> HttpResponse:
 @csrf_exempt
 @authorize_read
 def flips_by_unique_key(request: ApiRequest, unique_key: str) -> HttpResponse:
-    checks = Check.objects.filter(project=request.project.id)
-    for check in checks:
+    for check in request.project.check_set.all():
         if check.unique_key == unique_key:
             return flips(request, check)
     return HttpResponseNotFound()
@@ -667,7 +665,7 @@ def flips_by_unique_key(request: ApiRequest, unique_key: str) -> HttpResponse:
 @authorize_read
 def badges(request: ApiRequest) -> JsonResponse:
     tags = set(["*"])
-    for check in Check.objects.filter(project=request.project):
+    for check in request.project.check_set.all():
         tags.update(check.tags_list())
 
     key = request.project.badge_key
