@@ -26,6 +26,7 @@ class NotifyAppriseTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
+        self.check.name = "Foo"
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -38,7 +39,7 @@ class NotifyAppriseTestCase(BaseTestCase):
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
-    def test_apprise_enabled(self, mock_apprise: Mock) -> None:
+    def test_it_works(self, mock_apprise: Mock) -> None:
         mock_aobj = Mock()
         mock_aobj.add.return_value = True
         mock_aobj.notify.return_value = True
@@ -46,8 +47,9 @@ class NotifyAppriseTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.assertEqual(Notification.objects.count(), 1)
 
-        self.check.status = "up"
-        self.assertEqual(Notification.objects.count(), 1)
+        body = mock_apprise.return_value.notify.call_args.kwargs["body"]
+        self.assertIn("Foo is DOWN", body)
+        self.assertIn("Last ping was an hour ago.", body)
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=False)
@@ -56,3 +58,19 @@ class NotifyAppriseTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Apprise is disabled and/or not installed")
+
+    @patch("apprise.Apprise")
+    @override_settings(APPRISE_ENABLED=True)
+    def test_it_handles_no_last_ping(self, mock_apprise: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+
+        mock_aobj = Mock()
+        mock_aobj.add.return_value = True
+        mock_aobj.notify.return_value = True
+        mock_apprise.return_value = mock_aobj
+        self.channel.notify(self.check)
+
+        body = mock_apprise.return_value.notify.call_args.kwargs["body"]
+        self.assertIn("Foo is DOWN", body)
+        self.assertNotIn("Last ping was", body)

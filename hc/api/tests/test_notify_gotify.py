@@ -41,6 +41,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(self.check.cloaked_url(), payload["message"])
+        self.assertIn("Last ping was an hour ago.", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_subpath(self, mock_post: Mock) -> None:
@@ -114,3 +115,14 @@ class NotifyGotidyTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Foobar", payload["message"])
         self.assertIn("11 other checks are also down.", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+
+        mock_post.return_value.status_code = 200
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertNotIn("Last ping was", payload["message"])

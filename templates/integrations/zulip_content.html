@@ -1,6 +1,6 @@
 {% load hc_extras humanize %}
 
-[{{ check.name_then_code }}]({{ check.cloaked_url }}) is **{{ check.status|upper }}**. {% if check.status == "down" %}Last ping was {{ check.last_ping|naturaltime }}.{% endif %}
+[{{ check.name_then_code }}]({{ check.cloaked_url }}) is **{{ check.status|upper }}**. {% if check.status == "down" and check.last_ping %}Last ping was {{ check.last_ping|naturaltime }}.{% endif %}
 
 {% if check.desc %}
 ---

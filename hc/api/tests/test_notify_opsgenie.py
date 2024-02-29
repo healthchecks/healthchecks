@@ -18,6 +18,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self, value: str, status: str = "down", email_verified: bool = True
     ) -> None:
         self.check = Check(project=self.project)
+        self.check.name = "Foo"
         self.check.status = status
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -28,6 +29,20 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.channel.email_verified = email_verified
         self.channel.save()
         self.channel.checks.add(self.check)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_works(self, mock_post: Mock) -> None:
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
+        mock_post.return_value.status_code = 202
+
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("""The check "Foo" is DOWN.""", payload["message"])
+        self.assertIn("""The check "Foo" is DOWN.""", payload["description"])
+        self.assertIn("Last ping was an hour ago.", payload["description"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_opsgenie_with_legacy_value(self, mock_post: Mock) -> None:
@@ -97,3 +112,17 @@ class NotifyOpsgenieTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Opsgenie notifications are not enabled.")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
+        self.check.last_ping = None
+        self.check.save()
+        mock_post.return_value.status_code = 202
+
+        self.channel.notify(self.check)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "")
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertNotIn("Last ping was", payload["description"])

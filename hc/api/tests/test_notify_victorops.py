@@ -17,6 +17,7 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
+        self.check.name = "Foo"
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -36,6 +37,8 @@ class NotifyVictorOpsTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["message_type"], "CRITICAL")
+        self.assertIn("Foo is DOWN.", payload["state_message"])
+        self.assertIn("Last ping was an hour ago.", payload["state_message"])
 
     @override_settings(VICTOROPS_ENABLED=False)
     def test_it_requires_victorops_enabled(self) -> None:
@@ -76,3 +79,15 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         self.channel.notify(self.check)
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertNotIn("Last ping was", payload["state_message"])

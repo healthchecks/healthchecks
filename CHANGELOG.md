@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix Gotify integration to handle Gotify server URLs with paths (#964)
+- Update notification templates to handle cases where check's last ping value is null
 
 ## v3.2 - 2024-02-09
 

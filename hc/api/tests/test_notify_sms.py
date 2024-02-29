@@ -20,6 +20,7 @@ class NotifySmsTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
+        self.check.name = "Foo"
         self.check.status = "down"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
@@ -33,7 +34,6 @@ class NotifySmsTestCase(BaseTestCase):
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
-        self.check.last_ping = now() - td(hours=2)
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -42,7 +42,8 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(payload["To"], "+1234567890")
         self.assertEqual(payload["From"], "+000")
         self.assertNotIn("\xa0", payload["Body"])
-        self.assertIn("is DOWN", payload["Body"])
+        self.assertIn("""The check "Foo" is DOWN.""", payload["Body"])
+        self.assertIn("""Last ping was an hour ago.""", payload["Body"])
 
         n = Notification.objects.get()
         callback_path = f"/api/v3/notifications/{n.code}/status"
@@ -163,3 +164,15 @@ class NotifySmsTestCase(BaseTestCase):
 
         # It should not log this event
         self.assertFalse(debug.called)
+
+    @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertNotIn("""Last ping was""", payload["Body"])

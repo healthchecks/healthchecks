@@ -38,6 +38,8 @@ class NotifySpikeTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["check_id"], str(self.check.code))
         self.assertEqual(payload["title"], "Foo is DOWN")
+        self.assertIn("Foo is DOWN.", payload["message"])
+        self.assertIn("Last ping was an hour ago.", payload["message"])
 
     @override_settings(SPIKE_ENABLED=False)
     def test_it_requires_spike_enabled(self) -> None:
@@ -58,3 +60,14 @@ class NotifySpikeTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "Foo & Bar is UP")
         self.assertEqual(payload["message"], "Foo & Bar is UP.")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertNotIn("Last ping was", payload["message"])

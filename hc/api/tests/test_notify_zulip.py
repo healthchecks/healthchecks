@@ -51,6 +51,8 @@ class NotifyZulipTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "Foobar is DOWN")
+        self.assertIn("is **DOWN**.", payload["content"])
+        self.assertIn("Last ping was an hour ago.", payload["content"])
 
         # payload should not contain check's code
         serialized = json.dumps(payload)
@@ -125,3 +127,14 @@ class NotifyZulipTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "Foo & Bar is DOWN")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertNotIn("Last ping was", payload["content"])

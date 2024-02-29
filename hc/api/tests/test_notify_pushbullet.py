@@ -29,6 +29,22 @@ class NotifyPushbulletTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
+        self.check.status = "down"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+        assert Notification.objects.count() == 1
+
+        _, kwargs = mock_post.call_args
+        self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
+        payload = kwargs["json"]
+        self.assertEqual(payload["type"], "note")
+        self.assertIn("""The check "Foo" is DOWN.""", payload["body"])
+        self.assertIn("""Last ping was an hour ago.""", payload["body"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_up(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.check)
@@ -54,3 +70,16 @@ class NotifyPushbulletTestCase(BaseTestCase):
             kwargs["json"]["body"],
             'The check "Foo & Bar" received a ping and is now UP.',
         )
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.status = "down"
+        self.check.last_ping = None
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        _, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertNotIn("""Last ping was""", payload["body"])

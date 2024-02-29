@@ -38,6 +38,7 @@ class NotifyLineTestCase(BaseTestCase):
         params = mock_post.call_args.kwargs["params"]
         self.assertEqual(headers["Authorization"], "Bearer fake-token")
         self.assertIn("""The check "Foo" is DOWN""", params["message"])
+        self.assertIn("Last ping was an hour ago.", params["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_message(self, mock_post: Mock) -> None:
@@ -50,3 +51,14 @@ class NotifyLineTestCase(BaseTestCase):
 
         params = mock_post.call_args.kwargs["params"]
         self.assertEqual(params["message"], 'The check "Foo & Bar" is now UP.')
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+
+        mock_post.return_value.status_code = 200
+        self.channel.notify(self.check)
+
+        params = mock_post.call_args.kwargs["params"]
+        self.assertNotIn("Last ping was", params["message"])
