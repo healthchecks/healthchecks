@@ -648,19 +648,19 @@ Enabled by default.</p>
 <p>A boolean that turns on/off the Webhooks integration. Enabled by default.</p>
 <h2 id="WHATSAPP_DOWN_CONTENT_SID"><code>WHATSAPP_DOWN_CONTENT_SID</code></h2>
 <p>Default: <code>None</code></p>
-<p>Identifier of the Twilio content template to use for "down" notifications,
-required by the WhatsApp integration.</p>
+<p>Identifier of the Twilio content template to use for WhatsApp "down" notifications.
+Required by the WhatsApp integration.</p>
 <p>Meta requires WhatsApp message templates to be pre-registered and approved.
 Create a content template in your Twilio account with the following contents:</p>
-<div class="highlight"><pre><span></span><code><span class="x">The check “</span><span class="cp">{{</span><span class="m">1</span><span class="cp">}}</span><span class="x">” is DOWN. Last ping was </span><span class="cp">{{</span><span class="m">2</span><span class="cp">}}</span><span class="x">.</span>
+<div class="highlight"><pre><span></span><code><span class="x">The check “</span><span class="cp">{{</span><span class="m">1</span><span class="cp">}}</span><span class="x">” is DOWN.</span>
 </code></pre></div>
 
-<p>You can tweak the message contents as needed, but make sure it has two placeholders
+<p>You can tweak the message contents as needed, but make sure it has a single placeholder
 similar to the above example.</p>
 <h2 id="WHATSAPP_UP_CONTENT_SID"><code>WHATSAPP_UP_CONTENT_SID</code></h2>
 <p>Default: <code>None</code></p>
-<p>Identifier of the Twilio content template to use for "up" notifications,
-required by the WhatsApp integration.</p>
+<p>Identifier of the Twilio content template to use for WhatsApp "up" notifications.
+Required by the WhatsApp integration.</p>
 <p>Meta requires WhatsApp message templates to be pre-registered and approved.
 Create a content template in your Twilio account with the following contents:</p>
 <div class="highlight"><pre><span></span><code><span class="x">The check “</span><span class="cp">{{</span><span class="m">1</span><span class="cp">}}</span><span class="x">” is now UP.</span>

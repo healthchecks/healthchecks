@@ -1030,19 +1030,15 @@ class WhatsApp(HttpTransport):
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
         if check.status == "down":
             content_sid = settings.WHATSAPP_DOWN_CONTENT_SID
-            assert check.last_ping
-            # naturaltime can return a lazy object, so apply str()
-            ctx = {1: check.name_then_code(), 2: str(naturaltime(check.last_ping))}
         else:
             content_sid = settings.WHATSAPP_UP_CONTENT_SID
-            ctx = {1: check.name_then_code()}
 
         data = {
             "To": f"whatsapp:{self.channel.phone.value}",
             "From": f"whatsapp:{settings.TWILIO_FROM}",
             "MessagingServiceSid": settings.TWILIO_MESSAGING_SERVICE_SID,
             "ContentSid": content_sid,
-            "ContentVariables": json.dumps(ctx),
+            "ContentVariables": json.dumps({1: check.name_then_code()}),
             "StatusCallback": notification.status_url(),
         }
 

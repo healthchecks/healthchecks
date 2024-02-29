@@ -952,10 +952,10 @@ Meta requires WhatsApp message templates to be pre-registered and approved.
 Create a content template in your Twilio account with the following contents:
 
 ````
-The check “{{1}}” is DOWN. Last ping was {{2}}.
+The check “{{1}}” is DOWN.
 ````
 
-You can tweak the message contents as needed, but make sure it has two placeholders
+You can tweak the message contents as needed, but make sure it has a single placeholder
 similar to the above example.
 
 ## `WHATSAPP_UP_CONTENT_SID` {: #WHATSAPP_UP_CONTENT_SID }

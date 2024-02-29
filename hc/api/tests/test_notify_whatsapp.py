@@ -54,7 +54,6 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
         variables = json.loads(payload["ContentVariables"])
         self.assertEqual(variables["1"], "Foo")
-        self.assertEqual(variables["2"], "an hour ago")
 
         n = Notification.objects.get()
         callback_path = f"/api/v3/notifications/{n.code}/status"
@@ -74,7 +73,6 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         variables = json.loads(payload["ContentVariables"])
         self.assertEqual(variables["1"], "Foo")
-        self.assertEqual(variables["2"], "now")
 
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_account(self) -> None:
