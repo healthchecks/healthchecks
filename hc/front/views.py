@@ -1131,6 +1131,8 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     sorted_tags = sorted(tags, key=lambda s: s.lower())
 
     ctx = {
+        "project": project,
+        "page": "badges",
         "checks": checks,
         "tags": sorted_tags,
         "fmt": "svg",
