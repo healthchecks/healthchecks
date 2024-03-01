@@ -97,7 +97,19 @@ class NotifyGotidyTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("The following checks are also down", payload["message"])
         self.assertIn("Foobar", payload["message"])
+        self.assertIn("(last ping: an hour ago)", payload["message"])
         self.assertIn(other.cloaked_url(), payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_other_checks_with_no_last_ping(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        Check.objects.create(project=self.project, status="down")
+
+        self.channel.notify(self.check)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("(last ping: never)", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_show_more_than_10_other_checks(self, mock_post: Mock) -> None:

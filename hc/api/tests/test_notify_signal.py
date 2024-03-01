@@ -272,6 +272,19 @@ class NotifySignalTestCase(BaseTestCase):
         message = socketobj.req["params"]["message"]
         self.assertIn("The following checks are also down", message)
         self.assertIn("Foobar & Co", message)
+        self.assertIn("(last ping: an hour ago)", message)
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_other_checks_with_no_last_ping(self, socket: Mock) -> None:
+        socketobj = setup_mock(socket, {})
+
+        Check.objects.create(project=self.project, status="down")
+
+        self.channel.notify(self.check)
+
+        assert socketobj.req
+        message = socketobj.req["params"]["message"]
+        self.assertIn("(last ping: never)", message)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_does_not_show_more_than_10_other_checks(self, socket: Mock) -> None:

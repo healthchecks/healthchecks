@@ -44,7 +44,7 @@
         {% else %}
             {% line %}The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:{% endline %}
             {% for c in down_checks %}
-                {% line %}- <a href="{{ c.cloaked_url }}">{{ c.name_then_code }}</a> (last ping: {{ c.last_ping|naturaltime }}){% endline %}
+                {% line %}- <a href="{{ c.cloaked_url }}">{{ c.name_then_code }}</a> (last ping: {{ c.last_ping|naturaltime|default:"never" }}){% endline %}
             {% endfor %}
         {% endif %}
     {% else %}

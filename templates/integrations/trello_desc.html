@@ -11,6 +11,6 @@
 **Time Zone:** {{ check.tz }}
 {% endif %}
 
-**Last Ping:** {% if check.last_ping %}{{ check.last_ping|naturaltime }}{% else %}never{% endif %}
+**Last Ping:** {{ check.last_ping|naturaltime|default:"never" }}
 
 [Full Details @ {% site_name %}]({{ check.cloaked_url }})
