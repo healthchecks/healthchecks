@@ -47,6 +47,7 @@ class NotifyMatrixTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("Foo is DOWN.", payload["body"])
         self.assertIn("Last ping was an hour ago.", payload["body"])
+        self.assertIn("Last ping was an hour ago.", payload["formatted_body"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
@@ -59,3 +60,4 @@ class NotifyMatrixTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Last ping was", payload["body"])
+        self.assertNotIn("Last ping was", payload["formatted_body"])

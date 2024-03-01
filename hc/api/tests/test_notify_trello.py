@@ -46,6 +46,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertEqual(params["idList"], "fake-list-id")
         self.assertEqual(params["name"], "Down: Foo")
         self.assertIn("Full Details", params["desc"])
+        self.assertIn("**Last Ping:** an hour ago", params["desc"])
         self.assertEqual(params["key"], "fake-trello-app-key")
         self.assertEqual(params["token"], "fake-token")
 
@@ -81,3 +82,14 @@ class NotifyTrelloTestCase(BaseTestCase):
 
         params = mock_post.call_args.kwargs["params"]
         self.assertEqual(params["name"], "Down: Foo & Bar")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.check.last_ping = None
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.check)
+
+        params = mock_post.call_args.kwargs["params"]
+        self.assertIn("**Last Ping:** never", params["desc"])

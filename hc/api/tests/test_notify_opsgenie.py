@@ -43,6 +43,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.assertIn("""The check "Foo" is DOWN.""", payload["message"])
         self.assertIn("""The check "Foo" is DOWN.""", payload["description"])
         self.assertIn("Last ping was an hour ago.", payload["description"])
+        self.assertIn("Last ping was an hour ago.", payload["note"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_opsgenie_with_legacy_value(self, mock_post: Mock) -> None:
@@ -126,3 +127,4 @@ class NotifyOpsgenieTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Last ping was", payload["description"])
+        self.assertNotIn("Last ping was", payload["note"])
