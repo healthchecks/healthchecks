@@ -345,8 +345,9 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "Recipient not found")
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_ignores_unexpected_recipient(self, socket: Mock) -> None:
+    def test_it_handles_unregistered_and_null_number(self, socket: Mock) -> None:
         msg = {
+            "jsonrpc": "2.0",
             "error": {
                 "code": -1,
                 "message": "Failed to send message",
@@ -354,7 +355,10 @@ class NotifySignalTestCase(BaseTestCase):
                     "response": {
                         "results": [
                             {
-                                "recipientAddress": {"number": "+999999999"},
+                                "recipientAddress": {
+                                    "uuid": "3feed650-c9a3-4cde-9775-0ad0608f407a",
+                                    "number": None,
+                                },
                                 "type": "UNREGISTERED_FAILURE",
                             }
                         ],
@@ -366,10 +370,12 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.channel.notify(self.check)
 
+        # It should disable the channel, so we don't attempt deliveries to
+        # this recipient in the future
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
         n = Notification.objects.get()
-        # UNREGISTERED_FAILURE is reported for a different recipient,
-        # so it should not appear in the error message:
-        self.assertEqual(n.error, "signal-cli call failed (-1)")
+        self.assertEqual(n.error, "Recipient not found")
 
     @patch("hc.api.transports.logger")
     @patch("hc.api.transports.socket.socket")

@@ -1215,7 +1215,8 @@ class SignalRateLimitFailure(TransportError):
 
 class Signal(Transport):
     class Recipient(BaseModel):
-        number: str
+        # number can be null if the recipient has an username
+        number: str | None
 
     class Result(BaseModel):
         type: str
@@ -1277,9 +1278,6 @@ class Signal(Transport):
                 break  # success!
 
             for result in reply.get_results():
-                if result.recipientAddress.number != recipient:
-                    continue
-
                 if result.type == "UNREGISTERED_FAILURE":
                     raise TransportError("Recipient not found", permanent=True)
 
