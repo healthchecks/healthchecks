@@ -167,6 +167,35 @@ $(function () {
                     switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
                     document.getElementById("log").prepend(tbody);
                     $("#events-count").remove();
+
+                }
+
+                if (data.events_filters.length > 0){
+                    for (var i=0; i < data.events_filters.length; i++) {
+                        eventFilter = data.events_filters[i]
+                        filterButtonName = eventFilter[0]
+                        filterButtonToolTip = eventFilter[1]
+
+                        element = document.getElementById(`${filterButtonName}-filter`)
+                        if (element) {
+                            element.dataset.tooltip = updateEventsFilterTooltip(element)
+                        } else {
+                            createEventsFilterButton(filterButtonName, filterButtonToolTip)
+                        }
+
+                        var checkedFilterDivs = document.querySelectorAll("#filters div.checked");
+                        var checkedFilterNames = [];
+                        checkedFilterDivs.forEach(function(element) {
+                            checkedFilterNames.push(element.innerText.toLowerCase());
+                        });
+
+                        if (checkedFilterNames.length > 0){
+                            if (!checkedFilterNames.includes(filterButtonName)){
+                                checkElementAndApplyFilter(filterButtonName)
+                            } 
+                        }
+                    }
+                    
                 }
             }
         });
@@ -174,6 +203,83 @@ $(function () {
 
     if (slider.dataset.end == slider.dataset.max) {
         adaptiveSetInterval(fetchNewEvents, false);
+    }
+
+    // event delegations for filter divs
+    $("#filters").on("click", "div", function() {
+        $(this).toggleClass('checked');
+        applyFilters();
+    });
+    $("#filters").on("mouseenter", ".btn", function() {
+        $(this).tooltip({
+            title: function() { return this.getAttribute("data-tooltip"); }
+        });
+    });
+
+
+    function applyFilters() {
+        // Make a list of currently checked event filters:
+        var checked = [];
+        var url = new URL(window.location.href);
+        url.searchParams.delete("events")
+
+        $("#filters .checked").each(function(index, el) {
+            checked.push(el.textContent.toLowerCase());
+            url.searchParams.append("events", el.textContent.toLowerCase());
+        });
+
+        // // Update hash
+        if (window.history && window.history.replaceState) {
+            window.history.replaceState({}, "events", url.toString());
+        }
+
+        function applySingle(index, element){
+            if (checked.length) {
+                if ($(element).hasClass('missing')) { 
+                    if (!checked.includes("alerts")) {
+                        $(element).hide();
+                        return
+                    }
+                } else {
+                    var pingKind = $(".label", element).text().toLowerCase()
+                    if (!checked.includes(pingKind)) {
+                        $(element).hide();
+                        return
+                    }
+                }
+                
+            }
+
+            $(element).show();
+        }
+
+        $("#log tr").each(applySingle);
+    }
+
+    function updateEventsFilterTooltip(element){
+        var toolTipValue = element.dataset.tooltip
+        var numericValue = parseInt(toolTipValue);
+        var toolTipText = toolTipValue.slice(numericValue.toString().length)
+        if (numericValue == 1) {
+            toolTipText += "s"
+        }
+        numericValue += 1;
+        return numericValue + toolTipText
+    }
+
+    function checkElementAndApplyFilter(filterButtonName) {
+        document.getElementById(`${filterButtonName}-filter`).classList.add("checked");
+        applyFilters();
+    }
+
+    function createEventsFilterButton(buttonName, toolTip){
+        var div = document.createElement("div");
+        div.setAttribute("id", `${buttonName}-filter`);
+        div.setAttribute("class", `btn btn-xs`);
+        div.setAttribute("data-tooltip", toolTip);
+        div.innerText = buttonName.charAt(0).toUpperCase() + buttonName.slice(1);
+        div.style.marginLeft = "2px";
+        document.getElementById("filters").append(div);
     }
 
 });

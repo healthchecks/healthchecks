@@ -55,6 +55,17 @@
             <input type="hidden" name="end" id="seek-end">
         </form>
 
+        <div class="row">
+            <div id="filters" class="col-sm-9">
+                <span>Filter events by: </span>
+                {% if events_filters %}
+                    {% for name, tooltip in events_filters %}
+                        <div id="{{ name }}-filter" data-tooltip="{{ tooltip }}" class="btn btn-xs {% if name in selected_events_params %}checked{% endif%}">{{ name|title }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
         <div class="alert alert-info">
             <span id="events-count">
             {% if num_total > 1000 %}

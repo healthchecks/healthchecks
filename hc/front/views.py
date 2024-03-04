@@ -208,6 +208,60 @@ def _get_referer_qs(request: HttpRequest) -> str:
         return "?" + parsed.query
     return ""
 
+def _get_events_filter(events: list[Notification | Ping]) -> list[tuple[str, str]]:
+    events_counts: dict[str, int] = defaultdict(int)
+    output = []
+    for event in events:
+        if isinstance(event, Notification):
+            events_counts["alerts"] += 1
+        else:
+            if event.kind is None:
+                events_counts["ok"] += 1
+            elif event.kind == "start":
+               events_counts["started"] += 1
+            elif event.kind == "log":
+                events_counts["log"] += 1
+            else:
+                events_counts["failure"] += 1
+
+    for key, count in events_counts.items():
+        ping_message = "Ping" if count == 1 else "Pings"
+        if key == "alerts":
+            tooltip = f"{count} {'Notification' if count == 1 else 'Notifications'}"
+        else:
+            tooltip = f"{count} {key.capitalize()} {ping_message}"
+
+        output.append((key, tooltip))
+
+    return output
+
+
+def _get_hidden_events(
+    events: list[Notification | Ping], selected_events_params: set[str]
+) -> list[Notification | Ping]:
+
+    hidden_events: list[Notification | Ping] = []
+    
+    event_ping_kind_mapping = {
+        "started": "start", 
+        "log": "log",
+        "failure": "fail",  
+        "ok": None, 
+        "alerts":"alerts"
+    }
+
+    transformed_selected_events = {event_ping_kind_mapping.get(kind) for kind in selected_events_params}
+
+    for event in events:
+        if isinstance(event, Ping):
+            if event.kind not in transformed_selected_events:
+                hidden_events.append(event)
+
+        elif isinstance(event, Notification):
+            if "alerts" not in transformed_selected_events:
+                hidden_events.append(event)
+
+    return hidden_events
 
 @login_required
 def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
@@ -934,6 +988,13 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     total = check.visible_pings.filter(created__gte=start, created__lte=end).count()
     events = _get_events(check, 1000, start=get_events_start, end=end)
+
+    filters = _get_events_filter(events)
+    selected_events_params = set(request.GET.getlist("events", []))
+    hidden_events = []
+    if selected_events_params:
+       hidden_events = _get_hidden_events(events, selected_events_params)
+
     ctx = {
         "page": "log",
         "project": check.project,
@@ -944,6 +1005,9 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "end": end,
         "events": events,
         "num_total": total,
+        "events_filters": filters,
+        "selected_events_params": selected_events_params,
+        "hidden_events": hidden_events,
     }
 
     return render(request, "front/log.html", ctx)
@@ -2759,10 +2823,11 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         start = check.created
 
     html = ""
-    for event in _get_events(check, 1000, start=start, end=now()):
+    events = _get_events(check, 1000, start=start, end=now())
+    for event in events:
         html += LOGS_TMPL.render({"event": event, "describe_body": True})
 
-    return JsonResponse({"max": now().timestamp(), "events": html})
+    return JsonResponse({"max": now().timestamp(), "events": html, "events_filters": _get_events_filter(events)})
 
 
 # Forks: add custom views after this line

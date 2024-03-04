@@ -107,3 +107,45 @@
 #slider-to-formatted {
     font-weight: bold;
 }
+
+#filters {
+    margin-bottom: 10px;
+}
+
+#ok-filter {
+    font-weight: 700;
+    background-color: #22bc66;
+    color: #fff;
+}
+
+#alerts-filter {
+    font-weight: 700;
+    color: #d9534f;
+    background: var(--log-missing-bg);
+}
+
+#started-filter{
+    font-weight: 700;
+    color: green;
+    background-color: var(--tag-up-bg);
+    border-color: green;
+}
+
+#log-filter {
+    font-weight: 700;
+    background: var(--label-ign-bg);
+    color: var(--label-ign-color);
+}
+
+#failure-filter {
+    font-weight: 700;
+    background-color: #d9534f;
+    color: #fff;
+}
+
+#filters .checked {
+    box-shadow: 0 0 3px var(--tag-checked-shadow);
+    background: var(--tag-checked-bg);
+    color: var(--tag-checked-color);
+    border-color: var(--tag-checked-border);
+} 
