@@ -1214,13 +1214,8 @@ class SignalRateLimitFailure(TransportError):
 
 
 class Signal(Transport):
-    class Recipient(BaseModel):
-        # number can be null if the recipient has an username
-        number: str | None
-
     class Result(BaseModel):
         type: str
-        recipientAddress: Signal.Recipient
         token: str | None = None
 
     class Response(BaseModel):
