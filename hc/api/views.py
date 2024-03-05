@@ -686,7 +686,7 @@ def badges(request: ApiRequest) -> JsonResponse:
 SHIELDS_COLORS = {"up": "success", "late": "important", "down": "critical"}
 
 
-def _shields_response(label: str, status: str):
+def _shields_response(label: str, status: str) -> JsonResponse:
     return JsonResponse(
         {
             "schemaVersion": 1,
