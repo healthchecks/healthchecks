@@ -86,6 +86,9 @@ MIDDLEWARE = [
 if envbool("USE_GZIP_MIDDLEWARE", "False"):
     MIDDLEWARE.append("django.middleware.gzip.GZipMiddleware")
 
+if envbool("IGNORE_SMTP_SERVER_CERTS", "False"):
+    EMAIL_BACKEND = 'hc.accounts.backends.EmailBackendIgnoringCerts'
+
 AUTHENTICATION_BACKENDS = [
     "hc.accounts.backends.EmailBackend",
     "hc.accounts.backends.ProfileBackend",

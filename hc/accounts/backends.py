@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import ssl
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django.utils.functional import cached_property
+from django.core.mail.backends.smtp import EmailBackend as DjangoSmtpBackend
 
 from hc.accounts.models import Profile
 from hc.accounts.views import _make_user
@@ -60,6 +64,15 @@ class EmailBackend(BasicBackend):
             return None
 
         return user
+
+
+class EmailBackendIgnoringCerts(DjangoSmtpBackend):
+    @cached_property
+    def ssl_context(self):
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        return ssl_context
 
 
 class CustomHeaderBackend(BasicBackend):

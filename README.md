@@ -179,6 +179,12 @@ environment variables:
     EMAIL_USE_TLS = True
     ```
 
+If your SMTP server uses a self-signed certificate (e.g. protonmail-bridge), you can instruct healthchecks to ignore invalid certificates by setting:
+
+  ```python
+  IGNORE_SMTP_SERVER_CERTS = True
+  ```
+
 For more information, have a look at Django documentation,
 [Sending Email](https://docs.djangoproject.com/en/4.2/topics/email/) section.
 
