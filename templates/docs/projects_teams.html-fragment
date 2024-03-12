@@ -49,7 +49,7 @@ a check, go to its details page, and look for the "Transfer to Another Project&h
 button.</p>
 <p><img alt="The transfer dialog" src="IMG_URL/transfer_check.png" /></p>
 <p>The transfer dialog will list all projects you have access to (with the Team Member
-or Manager role). If you do not see a particular project in the dialo, make sure
+or Manager role). If you do not see a particular project in the dialog, make sure
 you are logged into the correct user account, and your user account belongs to the
 project's team.</p>
 <h2 id="transferring-projects">Transferring Projects Between Accounts</h2>

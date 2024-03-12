@@ -63,7 +63,7 @@ button.
 ![The transfer dialog](IMG_URL/transfer_check.png)
 
 The transfer dialog will list all projects you have access to (with the Team Member
-or Manager role). If you do not see a particular project in the dialo, make sure
+or Manager role). If you do not see a particular project in the dialog, make sure
 you are logged into the correct user account, and your user account belongs to the
 project's team.
 
