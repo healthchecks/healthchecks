@@ -4,14 +4,13 @@ has a single default project. You can create additional projects and transfer
 your checks between them as your usage grows.</p>
 <p><img alt="An overview of projects" src="IMG_URL/projects.png" /></p>
 <p>Checks and integrations are project-scoped: each check and each configured
-integration always belongs to a particular project. Checks can be transferred
-between projects. The transfer operation preserves check's ping address:</p>
-<p><img alt="The transfer dialog" src="IMG_URL/transfer_check.png" /></p>
+integration always belongs to a particular project.</p>
 <h2>Team Access</h2>
 <p>You can grant your colleagues access to a project by inviting them into
 the project's team. Each project has its separate team, so you can grant access
 selectively. Inviting team members is <strong>more convenient and more
 secure</strong> than sharing a password to a single account.</p>
+<p>You can manage each project's team from its Settings page:</p>
 <p><img alt="Team access section" src="IMG_URL/team_access.png" /></p>
 <p>The user who created the project is listed as <strong>Owner</strong>. When you invite a user
 to the project, you can select one of the three roles for their membership:
@@ -44,7 +43,27 @@ Managers still can not change or remove the project's owner, or manage billing.<
 <p>Read-only members can not modify checks, integrations, or project settings.
 They also cannot access the project's API keys, as that would effectively give them
 read-write access through API.</p>
-<h2>Projects and Check Limits</h2>
+<h2>Transferring Checks Between Projects</h2>
+<p>You can transfer a check between projects, <strong>and keep its ping address</strong>. To transfer
+a check, go to its details page, and look for the "Transfer to Another Project&hellip;"
+button.</p>
+<p><img alt="The transfer dialog" src="IMG_URL/transfer_check.png" /></p>
+<p>The transfer dialog will list all projects you have access to (with the Team Member
+or Manager role). If you do not see a particular project in the dialo, make sure
+you are logged into the correct user account, and your user account belongs to the
+project's team.</p>
+<h2>Transferring Projects Between Accounts</h2>
+<p>You can transfer entire projects between SITE_NAME accounts. This is particularly
+useful when consolidating multiple accounts into one account.
+To transfer a project, go to its settings page, and look for the
+"Transfer Project&hellip;" button. Only project's owner can transfer the project to
+another account–if you are not the owner, you will not see the button.</p>
+<p><img alt="The transfer dialog" src="IMG_URL/transfer_project.png" /></p>
+<p>The transfer dialog will list the current team members. Select the desired new
+owner, and click "Initiate Transfer". The chosen team member will receive
+an email asking to confirm the ownership change. After they confirm,
+they will become the project's owner, and you will become a Team Member.</p>
+<h2>Check Limits and Team Size Limits</h2>
 <p><strong>Check Limit</strong> is the total number of checks your account can have. The specific
 limit depends on the account's billing plan. When you reach the Check Limit,
 you will not be able to create new checks.</p>
@@ -55,11 +74,12 @@ For example, consider a Business account with two projects,
 <p>However, only checks from your own projects count towards your account's
 quota. If you get invited to somebody else's project, that does not change
 the number of checks you can create in your projects.</p>
-<h2>Projects and Team Size Limits</h2>
-<p><strong>Team Size</strong> is the number of <em>unique</em> users you can invite to your projects.
+<p><strong>Team Size</strong> is the number of <em>unique users</em> you can invite to your projects.
 Same as with Check Limit, all projects share your account's Team Size limit.
 However, if you invite the same user (using the same email address) into multiple
-projects, it only takes up a single seat.</p>
+projects, it only takes up a single seat. In other words, SITE_NAME limits the
+number of distinct users invited into your projects, not the number of
+team memberships.</p>
 <h2>Projects and Monthly Reports</h2>
 <p>SITE_NAME sends periodic email reports with a summary of checks
 from <strong>all your projects</strong>. The reports contain status summaries for

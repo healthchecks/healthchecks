@@ -7,10 +7,7 @@ your checks between them as your usage grows.
 ![An overview of projects](IMG_URL/projects.png)
 
 Checks and integrations are project-scoped: each check and each configured
-integration always belongs to a particular project. Checks can be transferred
-between projects. The transfer operation preserves check's ping address:
-
-![The transfer dialog](IMG_URL/transfer_check.png)
+integration always belongs to a particular project.
 
 ## Team Access
 
@@ -18,6 +15,8 @@ You can grant your colleagues access to a project by inviting them into
 the project's team. Each project has its separate team, so you can grant access
 selectively. Inviting team members is **more convenient and more
 secure** than sharing a password to a single account.
+
+You can manage each project's team from its Settings page:
 
 ![Team access section](IMG_URL/team_access.png)
 
@@ -55,7 +54,35 @@ Read-only members can not modify checks, integrations, or project settings.
 They also cannot access the project's API keys, as that would effectively give them
 read-write access through API.
 
-## Projects and Check Limits
+## Transferring Checks Between Projects
+
+You can transfer a check between projects, **and keep its ping address**. To transfer
+a check, go to its details page, and look for the "Transfer to Another Project&hellip;"
+button.
+
+![The transfer dialog](IMG_URL/transfer_check.png)
+
+The transfer dialog will list all projects you have access to (with the Team Member
+or Manager role). If you do not see a particular project in the dialo, make sure
+you are logged into the correct user account, and your user account belongs to the
+project's team.
+
+## Transferring Projects Between Accounts
+
+You can transfer entire projects between SITE_NAME accounts. This is particularly
+useful when consolidating multiple accounts into one account.
+To transfer a project, go to its settings page, and look for the
+"Transfer Project&hellip;" button. Only project's owner can transfer the project to
+another account–if you are not the owner, you will not see the button.
+
+![The transfer dialog](IMG_URL/transfer_project.png)
+
+The transfer dialog will list the current team members. Select the desired new
+owner, and click "Initiate Transfer". The chosen team member will receive
+an email asking to confirm the ownership change. After they confirm,
+they will become the project's owner, and you will become a Team Member.
+
+## Check Limits and Team Size Limits
 
 **Check Limit** is the total number of checks your account can have. The specific
 limit depends on the account's billing plan. When you reach the Check Limit,
@@ -70,12 +97,12 @@ However, only checks from your own projects count towards your account's
 quota. If you get invited to somebody else's project, that does not change
 the number of checks you can create in your projects.
 
-## Projects and Team Size Limits
-
-**Team Size** is the number of *unique* users you can invite to your projects.
+**Team Size** is the number of *unique users* you can invite to your projects.
 Same as with Check Limit, all projects share your account's Team Size limit.
 However, if you invite the same user (using the same email address) into multiple
-projects, it only takes up a single seat.
+projects, it only takes up a single seat. In other words, SITE_NAME limits the
+number of distinct users invited into your projects, not the number of
+team memberships.
 
 ## Projects and Monthly Reports
 
