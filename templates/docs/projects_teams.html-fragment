@@ -43,7 +43,7 @@ Managers still can not change or remove the project's owner, or manage billing.<
 <p>Read-only members can not modify checks, integrations, or project settings.
 They also cannot access the project's API keys, as that would effectively give them
 read-write access through API.</p>
-<h2>Transferring Checks Between Projects</h2>
+<h2 id="transferring-checks">Transferring Checks Between Projects</h2>
 <p>You can transfer a check between projects, <strong>and keep its ping address</strong>. To transfer
 a check, go to its details page, and look for the "Transfer to Another Project&hellip;"
 button.</p>
@@ -52,7 +52,7 @@ button.</p>
 or Manager role). If you do not see a particular project in the dialo, make sure
 you are logged into the correct user account, and your user account belongs to the
 project's team.</p>
-<h2>Transferring Projects Between Accounts</h2>
+<h2 id="transferring-projects">Transferring Projects Between Accounts</h2>
 <p>You can transfer entire projects between SITE_NAME accounts. This is particularly
 useful when consolidating multiple accounts into one account.
 To transfer a project, go to its settings page, and look for the

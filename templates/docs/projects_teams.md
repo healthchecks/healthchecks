@@ -54,7 +54,7 @@ Read-only members can not modify checks, integrations, or project settings.
 They also cannot access the project's API keys, as that would effectively give them
 read-write access through API.
 
-## Transferring Checks Between Projects
+## Transferring Checks Between Projects {: #transferring-checks }
 
 You can transfer a check between projects, **and keep its ping address**. To transfer
 a check, go to its details page, and look for the "Transfer to Another Project&hellip;"
@@ -67,7 +67,7 @@ or Manager role). If you do not see a particular project in the dialo, make sure
 you are logged into the correct user account, and your user account belongs to the
 project's team.
 
-## Transferring Projects Between Accounts
+## Transferring Projects Between Accounts {: #transferring-projects }
 
 You can transfer entire projects between SITE_NAME accounts. This is particularly
 useful when consolidating multiple accounts into one account.
