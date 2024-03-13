@@ -106,6 +106,10 @@
 </table>
 
 {% if ping and ping.has_body %}
+{% if subject %}
+<p><b>Last Ping Subject</b><br>{{ subject }}</p>
+{% endif %}
+
 <p><b>Last Ping Body</b></p>
 {% if body is None %}
 <p>

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import email
 import json
 import logging
 import os
@@ -7,6 +8,7 @@ import socket
 import time
 import uuid
 from collections.abc import Iterator
+from email.message import EmailMessage
 from typing import TYPE_CHECKING, Any, NoReturn, cast
 from urllib.parse import quote, urlencode, urljoin
 
@@ -162,10 +164,17 @@ class Email(Transport):
 
         ping = self.last_ping(check)
         body = get_ping_body(ping)
+        subject = None
+        if ping is not None and ping.scheme == "email" and body:
+            parsed = email.message_from_string(body, policy=email.policy.SMTP)
+            assert isinstance(parsed, EmailMessage)
+            subject = parsed.get("subject", "")
+
         ctx = {
             "check": check,
             "ping": ping,
             "body": body,
+            "subject": subject,
             "projects": projects,
             "unsub_link": unsub_link,
         }

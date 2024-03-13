@@ -286,3 +286,24 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEqual(email.extra_headers["From"], settings.DEFAULT_FROM_EMAIL)
         # There should be no X-Bounce-ID header
         self.assertNotIn("X-Bounce-ID", email.extra_headers)
+
+    @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
+    def test_it_displays_last_ping_subject(self) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = b"""Subject: Foo bar baz
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+
+"""
+        self.ping.save()
+
+        self.channel.notify(self.check)
+
+        email = mail.outbox[0]
+        self.assertIn("Lorem ipsum", email.body)
+        self.assertIn("Last ping subject: Foo bar baz", email.body)
+
+        html = self.get_html(email)
+        self.assertIn("Lorem ipsum", html)
+        self.assertInHTML("<b>Last Ping Subject</b><br>Foo bar baz", html)
