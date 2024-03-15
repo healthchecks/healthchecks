@@ -36,8 +36,7 @@ class SignupTestCase(TestCase):
 
         # And email sent
         self.assertEqual(len(mail.outbox), 1)
-        subject = "Log in to %s" % settings.SITE_NAME
-        self.assertEqual(mail.outbox[0].subject, subject)
+        self.assertEqual(mail.outbox[0].subject, f"Log in to {settings.SITE_NAME}")
 
         # A project should have been created
         project = Project.objects.get()
@@ -106,8 +105,12 @@ class SignupTestCase(TestCase):
         self.assertContains(r, "check your email")
         self.assertEqual(r.cookies["auto-login"].value, "1")
 
-        # It should not send an email
-        self.assertEqual(len(mail.outbox), 0)
+        # There should still be a single user
+        self.assertEqual(User.objects.count(), 1)
+
+        # It should send a normal sign-in email
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, f"Log in to {settings.SITE_NAME}")
 
     def test_it_checks_syntax(self) -> None:
         form = {"identity": "alice at example org", "tz": ""}

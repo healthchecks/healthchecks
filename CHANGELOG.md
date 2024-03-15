@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Redesign the "Status Badges" page
 - Add support for per-check status badges (#853)
 - Add "Last ping subject" field in email notifications
+- Change the signup flow to accept registered users (and sign them in instead)
 
 ### Bug Fixes
 - Fix Gotify integration to handle Gotify server URLs with paths (#964)

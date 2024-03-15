@@ -234,11 +234,20 @@ def signup(request: HttpRequest) -> HttpResponse:
     form = forms.SignupForm(request)
     if form.is_valid():
         email = form.cleaned_data["identity"]
-        if not User.objects.filter(email=email).exists():
+        try:
+            user = User.objects.get(email=email)
+            # Sometimes existing users forget they already have an account.
+            # They use the signup form and are confused why no email arrives.
+            # To avoid this confusion, if we see the user account already exists,
+            # we will send them sign-in link even though they used the wrong form
+            # ("sign up" instead of "sign in").
+        except User.DoesNotExist:
+            # If the user does not exist, create a new user account.
             tz = form.cleaned_data["tz"]
             user = _make_user(email, tz)
-            profile = Profile.objects.for_user(user)
-            profile.send_instant_login_link()
+
+        profile = Profile.objects.for_user(user)
+        profile.send_instant_login_link()
     else:
         ctx = {"form": form}
 
