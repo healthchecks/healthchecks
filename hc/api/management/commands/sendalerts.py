@@ -11,9 +11,9 @@ from typing import Any
 from django.core.management.base import BaseCommand
 from django.db.models import F, Sum
 from django.utils.timezone import now
-from statsd.defaults.env import statsd
 
 from hc.api.models import Check, Flip
+from hc.lib.statsd import statsd
 
 
 def notify(flip_id: int, stdout: TextIOBase) -> None:

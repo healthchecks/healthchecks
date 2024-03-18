@@ -6,7 +6,8 @@ from threading import Thread
 from uuid import UUID
 
 from django.conf import settings
-from statsd.defaults.env import statsd
+
+from hc.lib.statsd import statsd
 
 try:
     from minio import Minio, S3Error

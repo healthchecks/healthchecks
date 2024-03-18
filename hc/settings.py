@@ -248,6 +248,10 @@ S3_BUCKET = os.getenv("S3_BUCKET")
 S3_TIMEOUT = envint("S3_TIMEOUT", "60")
 S3_SECURE = envbool("S3_SECURE", "True")
 
+# To enable statsd metric collection, set STATSD_HOST="host:hostport"
+# (example: "localhost:8125")
+STATSD_HOST = os.getenv("STATSD_HOST")
+
 # Integrations
 
 # Apprise
