@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from functools import cache
-
 from django.conf import settings
 from statsd.client.base import StatsClientBase
 from statsd.client.udp import StatsClient
