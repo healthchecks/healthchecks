@@ -32,7 +32,6 @@ def get_client() -> StatsClientBase:
     or "example.org:1234" (will use port 1234).
 
     """
-    print("get client runs")
 
     if settings.STATSD_HOST:
         parts = settings.STATSD_HOST.split(":", maxsplit=1)
