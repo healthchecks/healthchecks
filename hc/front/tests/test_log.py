@@ -189,7 +189,7 @@ class LogTestCase(BaseTestCase):
 
     def test_it_accepts_end_query_parameter(self) -> None:
         dt = datetime(2020, 1, 1, tzinfo=timezone.utc)
-        ts = str(dt.timestamp())
+        ts = str(int(dt.timestamp()))
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url + "?end=" + ts)

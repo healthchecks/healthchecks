@@ -82,9 +82,9 @@
             id="end"
             type="range"
             name="end"
-            min="{{ min|timestamp }}"
-            max="{{ max|timestamp }}"
-            value="{{ end|timestamp }}">
+            min="{{ min|timestamp|floatformat:"0" }}"
+            max="{{ max|timestamp|floatformat:"0" }}"
+            value="{{ end|timestamp|floatformat:"0" }}">
 
         <p id="end-help" class="text-muted">⬆<br>{{ min|date:"M d, Y"}}</p>
         </form>

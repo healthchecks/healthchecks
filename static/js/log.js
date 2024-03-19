@@ -11,7 +11,7 @@ $(function () {
 
     function updateSliderPreview() {
         var toFormatted = "now";
-        if (slider.value < parseInt(slider.max)) {
+        if (slider.value != slider.max) {
             toFormatted = fromUnix(slider.value).format("MMM D, HH:mm");
         }
         $("#end-formatted").text(toFormatted);
@@ -19,7 +19,8 @@ $(function () {
 
     $("#end").on("input", updateSliderPreview);
     $("#end").on("change", function() {
-        $("#end").attr("disabled", slider.value == parseInt(slider.max));
+        // Don't send the end parameter if slider is set to "now"
+        $("#end").attr("disabled", slider.value == slider.max);
         $("#filters").submit();
     });
 
