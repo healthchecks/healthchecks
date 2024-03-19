@@ -11,6 +11,7 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
+from datetime import timezone
 from email.message import EmailMessage
 from secrets import token_urlsafe
 from typing import Literal, TypedDict, cast
@@ -874,10 +875,10 @@ def _get_events(
                 num_misses += 1
             else:
                 ping.duration = None
-                start = starts[ping.rid]
-                if start is not None:
-                    if ping.created - start < MAX_DURATION:
-                        ping.duration = ping.created - start
+                matching_start = starts[ping.rid]
+                if matching_start is not None:
+                    if ping.created - matching_start < MAX_DURATION:
+                        ping.duration = ping.created - matching_start
 
             starts[ping.rid] = None
 
@@ -917,13 +918,11 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         smin = min(smin, oldest_ping.created)
 
     # Align slider steps to full hours
-    smin = smin.replace(minute=0, second=0)
+    smin = smin.replace(minute=0, second=0, microsecond=0)
 
-    form = forms.SeekForm(request.GET)
+    form = forms.LogFiltersForm(request.GET)
     start, end = smin, smax
     if form.is_valid():
-        if form.cleaned_data["start"]:
-            start = form.cleaned_data["start"]
         if form.cleaned_data["end"]:
             end = form.cleaned_data["end"]
 
@@ -2749,12 +2748,15 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
-    form = forms.SeekForm(request.GET)
-    if not form.is_valid():
-        return HttpResponseBadRequest()
-
-    if form.cleaned_data["start"]:
-        start = form.cleaned_data["start"] + td(microseconds=1)
+    if "start" in request.GET:
+        try:
+            v = float(request.GET["start"])
+        except ValueError:
+            return HttpResponseBadRequest()
+        # min_value is 2010-01-01, max_value is 2030-01-01
+        if v < 1262296800 or v > 1893448800:
+            return HttpResponseBadRequest()
+        start = datetime.fromtimestamp(v, tz=timezone.utc) + td(microseconds=1)
     else:
         start = check.created
 

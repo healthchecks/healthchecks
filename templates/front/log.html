@@ -40,21 +40,6 @@
                 </div>
             </li>
         </ol>
-
-        <p>Filter events from <strong id="slider-from-formatted"></strong> to <strong id="slider-to-formatted"></strong>.</p>
-        <div
-            id="log-slider"
-            data-min="{{ min|timestamp }}"
-            data-max="{{ max|timestamp }}"
-            data-start="{{ start|timestamp }}"
-            data-end="{{ end|timestamp }}">
-        </div>
-
-        <form id="seek-form" method="get">
-            <input type="hidden" name="start" id="seek-start">
-            <input type="hidden" name="end" id="seek-end">
-        </form>
-
         <div class="alert alert-info">
             <span id="events-count">
             {% if num_total > 1000 %}
@@ -71,7 +56,8 @@
             Updating live, new events will load automatically.
             {% endif %}
         </div>
-
+    </div>
+    <div class="col-sm-9">
         <div class="table-responsive">
         <table
             class="table"
@@ -85,7 +71,23 @@
             </tbody>
         </table>
         </div>
-        
+    </div>
+    <div class="col-sm-3">
+        <form id="filters" method="get">
+        <div>
+            <label>Show events older than:</label>
+            <span id="end-formatted">now</span>
+        </div>
+        <input
+            id="end"
+            type="range"
+            name="end"
+            min="{{ min|timestamp }}"
+            max="{{ max|timestamp }}"
+            value="{{ end|timestamp }}">
+
+        <p id="end-help" class="text-muted">⬆<br>{{ min|date:"M d, Y"}}</p>
+        </form>
     </div>
 </div>
 
@@ -104,7 +106,6 @@
 
 {% block scripts %}
 {% compress js %}
-<script src="{% static 'js/nouislider.min.js' %}"></script>
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/moment-timezone-with-data-10-year-range.min.js' %}"></script>
 <script src="{% static 'js/purify.min.js' %}"></script>

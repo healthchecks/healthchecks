@@ -187,27 +187,10 @@ class LogTestCase(BaseTestCase):
         # older than the oldest visible ping:
         self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
 
-    def test_it_accepts_start_query_parameter(self) -> None:
-        dt = datetime(2020, 1, 1, tzinfo=timezone.utc)
-        ts = str(dt.timestamp())
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url + "?start=" + ts)
-        self.assertContains(r, f'data-start="{ts}"', status_code=200)
-
     def test_it_accepts_end_query_parameter(self) -> None:
         dt = datetime(2020, 1, 1, tzinfo=timezone.utc)
         ts = str(dt.timestamp())
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url + "?end=" + ts)
-        self.assertContains(r, f'data-end="{ts}"', status_code=200)
-
-    def test_it_ignores_bad_time_filter(self) -> None:
-        self.ping.refresh_from_db()
-        smin = str(self.ping.created.timestamp())
-
-        for sample in ["surprise", "0"]:
-            self.client.login(username="alice@example.org", password="password")
-            r = self.client.get(self.url + "?start=" + sample)
-            self.assertContains(r, f'data-start="{smin}"', status_code=200)
+        self.assertContains(r, f'value="{ts}"', status_code=200)

@@ -95,15 +95,15 @@
     text-overflow: ellipsis;
 }
 
-#log-slider {
-    margin-bottom: 60px;
+#end-formatted {
+    float: right;
 }
 
-#log-slider .noUi-connect {
-    background-color: var(--link-color);
+#end-help {
+    font-size: 12px;
+    line-height: 1;
 }
 
-#slider-from-formatted,
-#slider-to-formatted {
-    font-weight: bold;
+#filters-ping-types {
+    margin-left: 20px;
 }

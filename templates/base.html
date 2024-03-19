@@ -72,7 +72,7 @@
     {% endif %}
 
     <nav class="navbar navbar-default">
-        <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
+        <div class="container{% if page == "checks" or page == "details" or page == "log" %}-fluid{% endif %}">
         <div class="navbar-header">
             <button
                 type="button"
@@ -206,13 +206,13 @@
     </nav>
 
     {% block containers %}
-    <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
+    <div class="container{% if page == "checks" or page == "details" or page == "log" %}-fluid{% endif %}">
         {% block content %}{% endblock %}
     </div>
     {% endblock %}
 
     <footer class="footer">
-        <div class="container{% if page == "checks" or page == "details" %}-fluid{% endif %}">
+        <div class="container{% if page == "checks" or page == "details" or page == "log" %}-fluid{% endif %}">
             <ul>
                 <li>
                     Healthchecks {% site_version %}
