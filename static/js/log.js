@@ -1,4 +1,5 @@
 $(function () {
+    var activeRequest = null;
     var slider = document.getElementById("end");
 
     // Look up the active tz switch to determine the initial display timezone:
@@ -10,19 +11,55 @@ $(function () {
     }
 
     function updateSliderPreview() {
-        var toFormatted = "now";
+        var toFormatted = "now, live updates";
         if (slider.value != slider.max) {
             toFormatted = fromUnix(slider.value).format("MMM D, HH:mm");
         }
-        $("#end-formatted").text(toFormatted);
+        $("#end-formatted").html(toFormatted);
+    }
+
+    function formatDateSpans() {
+        $("span[data-dt]").each(function(i, el) {
+            el.innerText = fromUnix(el.dataset.dt).format(el.dataset.fmt);
+        });
+    }
+
+    function updateNumHits() {
+        $("#num-hits").text($("#log tr").length);
+    }
+
+    function applyFilters() {
+        var url = document.getElementById("log").dataset.refreshUrl;
+        $("#end").attr("disabled", slider.value == slider.max);
+        var qs = $("#filters").serialize();
+        $("#end").attr("disabled", false);
+
+        if (activeRequest) {
+            // Abort the previous in-flight request so we don't display stale
+            // data later
+            activeRequest.abort();
+        }
+        activeRequest = $.ajax({
+            url: url + "?" + qs,
+            dataType: "json",
+            timeout: 2000,
+            success: function(data) {
+                activeRequest = null;
+                if (!data.events)
+                    return;
+
+                var tbody = document.createElement("tbody");
+                tbody.innerHTML = data.events;
+                switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                $("#log").empty().append(tbody);
+                updateNumHits();
+            }
+        });
     }
 
     $("#end").on("input", updateSliderPreview);
-    $("#end").on("change", function() {
-        // Don't send the end parameter if slider is set to "now"
-        $("#end").attr("disabled", slider.value == slider.max);
-        $("#filters").submit();
-    });
+    $("#end").on("change", applyFilters);
+    $("#filters input:checkbox").on("change", applyFilters);
 
     $("#log").on("click", "tr.ok", function() {
         var n = $("td", this).first().text();
@@ -45,40 +82,48 @@ $(function () {
     $("#format-switcher").click(function(ev) {
         var format = ev.target.dataset.format;
         switchDateFormat(format, document.querySelectorAll("#log tr"));
+        formatDateSpans();
     });
 
     switchDateFormat(dateFormat, document.querySelectorAll("#log tr"));
+    formatDateSpans();
     // The table is initially hidden to avoid flickering as we convert dates.
     // Once it's ready, set it to visible:
     $("#log").css("visibility", "visible");
 
     function fetchNewEvents() {
-        var url = document.getElementById("log").dataset.refreshUrl;
-        var firstRow = $("#log tr").get(0);
-        if (firstRow) {
-            url += "?start=" + firstRow.dataset.dt;
+        // Do not fetch updates if the slider is not set to "now"
+        // or there's an AJAX request in flight
+        if (slider.value != slider.max || activeRequest) {
+            return;
         }
 
-        $.ajax({
-            url: url,
+        var url = document.getElementById("log").dataset.refreshUrl;
+        var qs = $("#filters").serialize();
+
+        var firstRow = $("#log tr").get(0);
+        if (firstRow) {
+            qs += "&u=" + firstRow.dataset.dt;
+        }
+
+        activeRequest = $.ajax({
+            url: url + "?" + qs,
             dataType: "json",
             timeout: 2000,
             success: function(data) {
-                if (data.events) {
-                    var tbody = document.createElement("tbody");
-                    tbody.setAttribute("class", "new");
-                    tbody.innerHTML = data.events;
-                    switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
-                    document.getElementById("log").prepend(tbody);
-                    $("#events-count").remove();
-                }
+                activeRequest = null;
+                if (!data.events)
+                    return;
+
+                var tbody = document.createElement("tbody");
+                tbody.setAttribute("class", "new");
+                tbody.innerHTML = data.events;
+                switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                document.getElementById("log").prepend(tbody);
+                updateNumHits();
             }
         });
     }
 
-    if (slider.value == slider.max) {
-        adaptiveSetInterval(fetchNewEvents, false);
-    }
-
-
+    adaptiveSetInterval(fetchNewEvents, false);
 });

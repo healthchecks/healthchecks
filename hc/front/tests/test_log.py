@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
 from datetime import timedelta as td
-from datetime import timezone
 from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
@@ -15,7 +13,9 @@ from hc.test import BaseTestCase
 class LogTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.check = Check.objects.create(project=self.project)
+        self.check = Check(project=self.project)
+        self.check.created = "2000-01-01T00:00:00+00:00"
+        self.check.save()
 
         self.ping = Ping.objects.create(owner=self.check, n=1)
         self.ping.body_raw = b"hello world"
@@ -31,7 +31,6 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Browser's time zone", status_code=200)
-        self.assertContains(r, "Found 1 ping event.")
         self.assertContains(r, "hello world")
 
     def test_it_displays_body(self) -> None:
@@ -186,11 +185,3 @@ class LogTestCase(BaseTestCase):
         # The notification should not show up in the log as it is
         # older than the oldest visible ping:
         self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
-
-    def test_it_accepts_end_query_parameter(self) -> None:
-        dt = datetime(2020, 1, 1, tzinfo=timezone.utc)
-        ts = str(int(dt.timestamp()))
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url + "?end=" + ts)
-        self.assertContains(r, f'value="{ts}"', status_code=200)

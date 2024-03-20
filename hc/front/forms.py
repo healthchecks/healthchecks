@@ -383,12 +383,29 @@ class SearchForm(forms.Form):
 
 class LogFiltersForm(forms.Form):
     # min_value is 2010-01-01, max_value is 2030-01-01
-    end = forms.IntegerField(min_value=1262296800, max_value=1893448800, required=False)
+    u = forms.FloatField(min_value=1262296800, max_value=1893448800, required=False)
+    end = forms.FloatField(min_value=1262296800, max_value=1893448800, required=False)
+    success = forms.BooleanField(required=False)
+    fail = forms.BooleanField(required=False, label="Fail")
+    start = forms.BooleanField(required=False)
+    log = forms.BooleanField(required=False)
+    ign = forms.BooleanField(required=False)
+    notification = forms.BooleanField(required=False)
+
+    def clean_u(self) -> datetime | None:
+        if self.cleaned_data["u"]:
+            return datetime.fromtimestamp(self.cleaned_data["u"], tz=timezone.utc)
+        return None
 
     def clean_end(self) -> datetime | None:
         if self.cleaned_data["end"]:
             return datetime.fromtimestamp(self.cleaned_data["end"], tz=timezone.utc)
         return None
+
+    def kinds(self) -> tuple[str, ...]:
+        # FIXME: this is slightly naughty as it is also returning "u" and "end"
+        # which are not ping kinds
+        return tuple(key for key in self.cleaned_data if self.cleaned_data[key])
 
 
 class TransferForm(forms.Form):

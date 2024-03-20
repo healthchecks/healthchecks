@@ -25,7 +25,7 @@ class LogTestCase(BaseTestCase):
 
     def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
+        r = self.client.get(self.url + "?success=on")
         self.assertContains(r, "hello world")
 
     def test_team_access_works(self) -> None:
@@ -58,12 +58,12 @@ class LogTestCase(BaseTestCase):
     def test_it_accepts_start_parameter(self) -> None:
         ts = str(now().timestamp())
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url + "?start=" + ts)
+        r = self.client.get(self.url + "?success=on&u=" + ts)
         self.assertNotContains(r, "hello world")
 
-    def test_it_rejects_bad_start_parameter(self) -> None:
+    def test_it_rejects_bad_u_parameter(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         for sample in ["surprise", "100000000000000000"]:
-            r = self.client.get(self.url + "?start=" + sample)
+            r = self.client.get(self.url + "?u=" + sample)
             self.assertEqual(r.status_code, 400)

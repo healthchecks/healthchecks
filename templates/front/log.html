@@ -40,22 +40,6 @@
                 </div>
             </li>
         </ol>
-        <div class="alert alert-info">
-            <span id="events-count">
-            {% if num_total > 1000 %}
-            Found {{ num_total }} ping events, displaying the most recent 1000.
-            {% elif num_total > 0 %}
-            Found {{ num_total }} ping event{{ num_total|pluralize }}.
-            {% elif not events and check.n_pings > 0 %}
-            The filter parameters matched no events.
-            {% elif check.n_pings == 0 %}
-            Log is empty. This check has not received any pings yet.
-            {% endif %}
-            </span>
-            {% if end == max %}
-            Updating live, new events will load automatically.
-            {% endif %}
-        </div>
     </div>
     <div class="col-sm-9">
         <div class="table-responsive">
@@ -64,13 +48,18 @@
             id="log"
             data-url="{% url 'hc-ping-details' check.code '0' %}"
             data-refresh-url="{% url 'hc-log-events' check.code %}">
-            <tbody>
-            {% if events %}
-                {% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}
-            {% endif %}
-            </tbody>
+            <tbody>{% include "front/log_rows.html" %}</tbody>
         </table>
         </div>
+
+        {% if oldest_ping %}
+        <div class="alert alert-info">
+            Showing <span id="num-hits">{{ events|length }}</span> matching events.
+            <br >
+            The oldest stored ping is ping #{{ oldest_ping.n }} from
+            <span data-dt="{{ oldest_ping.created|timestamp }}" data-fmt="MMM D, YYYY"></span>.
+        </div>
+        {% endif %}
     </div>
     <div class="col-sm-3">
         <form id="filters" method="get">
@@ -84,9 +73,34 @@
             name="end"
             min="{{ min|timestamp|floatformat:"0" }}"
             max="{{ max|timestamp|floatformat:"0" }}"
-            value="{{ end|timestamp|floatformat:"0" }}">
+            value="{{ max|timestamp|floatformat:"0" }}"
+            autocomplete="off">
 
-        <p id="end-help" class="text-muted">⬆<br>{{ min|date:"M d, Y"}}</p>
+        <p id="end-help" class="text-muted">
+            ⬆<br>
+            <span data-dt="{{ min|timestamp }}" data-fmt="MMM D, YYYY"></span>.
+        </p>
+
+        <br>
+        <label>Event types</label>
+        <div class="checkbox">
+            <label><input type="checkbox" name="success" autocomplete="off" checked> OK</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="fail" autocomplete="off" checked> Failure</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="start" autocomplete="off" checked> Started</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="log" autocomplete="off" checked> Log</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="ign" autocomplete="off" checked> Ignored</label>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" name="notification" autocomplete="off" checked> Notification</label>
+        </div>
         </form>
     </div>
 </div>

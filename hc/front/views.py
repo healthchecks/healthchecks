@@ -11,7 +11,6 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
-from datetime import timezone
 from email.message import EmailMessage
 from secrets import token_urlsafe
 from typing import Literal, TypedDict, cast
@@ -26,7 +25,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import signing
 from django.core.exceptions import PermissionDenied
-from django.db.models import Case, Count, F, QuerySet, When
+from django.db.models import Case, Count, F, Q, QuerySet, When
 from django.http import (
     Http404,
     HttpRequest,
@@ -76,7 +75,7 @@ STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
 DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
-LOGS_TMPL = get_template("front/log_row.html")
+LOG_ROWS_TMPL = get_template("front/log_rows.html")
 
 
 def _tags_counts(checks: Iterable[Check]) -> tuple[list[tuple[str, str, str]], int]:
@@ -848,12 +847,18 @@ def _get_events(
     page_limit: int,
     start: datetime | None = None,
     end: datetime | None = None,
+    kinds: tuple[str, ...] | None = None,
 ) -> list[Notification | Ping]:
     # Sorting by "n" instead of "id" is important here. Both give the same
     # query results, but sorting by "id" can cause postgres to pick
     # api_ping.id index (slow if the api_ping table is big). Sorting by
     # "n" works around the problem--postgres picks the api_ping.owner_id index.
     pq = check.visible_pings.order_by("-n")
+    if kinds is not None:
+        q = Q(kind__in=kinds)
+        if "success" in kinds:
+            q = q | Q(kind__isnull=True) | Q(kind="")
+        pq = pq.filter(q)
     if start and end:
         pq = pq.filter(created__gte=start, created__lte=end)
 
@@ -888,61 +893,41 @@ def _get_events(
         for ping in pings:
             ping.duration = None
 
-    alerts: list[Notification]
-    q = Notification.objects.select_related("channel")
-    q = q.filter(owner=check, check_status="down")
-    if start and end:
-        q = q.filter(created__gte=start, created__lte=end)
-        alerts = list(q)
-    elif len(pings):
-        cutoff = pings[-1].created
-        q = q.filter(created__gt=cutoff)
-        alerts = list(q)
-    else:
-        alerts = []
+    alerts: list[Notification] = []
+    if kinds is None or "notification" in kinds:
+        nq = check.notification_set.order_by("-created")
+        nq = nq.filter(check_status="down")
+        nq = nq.select_related("channel")
+        if start and end:
+            nq = nq.filter(created__gte=start, created__lte=end)
+        elif len(pings):
+            cutoff = pings[-1].created
+            nq = nq.filter(created__gt=cutoff)
+        alerts = list(nq[:page_limit])
 
     events = pings + alerts
     events.sort(key=lambda el: el.created, reverse=True)
-    return events
+    return events[:page_limit]
 
 
 @login_required
 def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
+    smin = check.created
     smax = now()
-    smin = smax - td(hours=24)
-
     oldest_ping = check.visible_pings.order_by("n").first()
     if oldest_ping:
-        smin = min(smin, oldest_ping.created)
+        smin = max(smin, oldest_ping.created)
 
-    # Align slider steps to full hours
-    smin = smin.replace(minute=0, second=0, microsecond=0)
-
-    form = forms.LogFiltersForm(request.GET)
-    start, end = smin, smax
-    if form.is_valid():
-        if form.cleaned_data["end"]:
-            end = form.cleaned_data["end"]
-
-    # Clamp the _get_events start argument to the date of the oldest visible ping
-    get_events_start = start
-    if oldest_ping and oldest_ping.created > get_events_start:
-        get_events_start = oldest_ping.created
-
-    total = check.visible_pings.filter(created__gte=start, created__lte=end).count()
-    events = _get_events(check, 1000, start=get_events_start, end=end)
     ctx = {
         "page": "log",
         "project": check.project,
         "check": check,
         "min": smin,
         "max": smax,
-        "start": start,
-        "end": end,
-        "events": events,
-        "num_total": total,
+        "events": _get_events(check, 1000, start=smin, end=smax),
+        "oldest_ping": oldest_ping,
     }
 
     return render(request, "front/log.html", ctx)
@@ -2748,23 +2733,27 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
-    if "start" in request.GET:
-        try:
-            v = float(request.GET["start"])
-        except ValueError:
-            return HttpResponseBadRequest()
-        # min_value is 2010-01-01, max_value is 2030-01-01
-        if v < 1262296800 or v > 1893448800:
-            return HttpResponseBadRequest()
-        start = datetime.fromtimestamp(v, tz=timezone.utc) + td(microseconds=1)
+    form = forms.LogFiltersForm(request.GET)
+    if not form.is_valid():
+        return HttpResponseBadRequest()
+
+    start = form.cleaned_data["u"]
+    if start:
+        # We are live-loading more events
+        start += td(microseconds=1)
+        end = now()
     else:
+        # We're applying new filters
         start = check.created
+        end = form.cleaned_data["end"] or now()
 
-    html = ""
-    for event in _get_events(check, 1000, start=start, end=now()):
-        html += LOGS_TMPL.render({"event": event, "describe_body": True})
+    ctx = {
+        "events": _get_events(check, 1000, start=start, end=end, kinds=form.kinds()),
+        "describe_body": True,
+    }
 
-    return JsonResponse({"max": now().timestamp(), "events": html})
+    payload = {"max": now().timestamp(), "events": LOG_ROWS_TMPL.render(ctx)}
+    return JsonResponse(payload)
 
 
 # Forks: add custom views after this line
