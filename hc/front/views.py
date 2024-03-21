@@ -75,7 +75,6 @@ STATUS_TEXT_TMPL = get_template("front/log_status_text.html")
 LAST_PING_TMPL = get_template("front/last_ping_cell.html")
 EVENTS_TMPL = get_template("front/details_events.html")
 DOWNTIMES_TMPL = get_template("front/details_downtimes.html")
-LOG_ROWS_TMPL = get_template("front/log_rows.html")
 
 
 def _tags_counts(checks: Iterable[Check]) -> tuple[list[tuple[str, str, str]], int]:
@@ -2742,12 +2741,12 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             start = max(start, oldest_ping.created)
 
         end = form.cleaned_data["end"] or now()
+
     ctx = {
         "events": _get_events(check, 1000, start=start, end=end, kinds=form.kinds()),
         "describe_body": True,
     }
-
-    return JsonResponse({"events": LOG_ROWS_TMPL.render(ctx)})
+    return render(request, "front/log_rows.html", ctx)
 
 
 # Forks: add custom views after this line

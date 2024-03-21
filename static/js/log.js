@@ -41,15 +41,14 @@ $(function () {
         }
         activeRequest = $.ajax({
             url: url + "?" + qs,
-            dataType: "json",
             timeout: 2000,
             success: function(data) {
                 activeRequest = null;
-                if (!data.events)
+                if (!data)
                     return;
 
                 var tbody = document.createElement("tbody");
-                tbody.innerHTML = data.events;
+                tbody.innerHTML = data;
                 switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
                 $("#log").empty().append(tbody);
                 updateNumHits();
@@ -108,16 +107,15 @@ $(function () {
 
         activeRequest = $.ajax({
             url: url + "?" + qs,
-            dataType: "json",
             timeout: 2000,
             success: function(data) {
                 activeRequest = null;
-                if (!data.events)
+                if (!data)
                     return;
 
                 var tbody = document.createElement("tbody");
                 tbody.setAttribute("class", "new");
-                tbody.innerHTML = data.events;
+                tbody.innerHTML = data;
                 switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
                 document.getElementById("log").prepend(tbody);
                 updateNumHits();
