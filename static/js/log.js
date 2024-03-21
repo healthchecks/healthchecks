@@ -44,9 +44,6 @@ $(function () {
             timeout: 2000,
             success: function(data) {
                 activeRequest = null;
-                if (!data)
-                    return;
-
                 var tbody = document.createElement("tbody");
                 tbody.innerHTML = data;
                 switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
