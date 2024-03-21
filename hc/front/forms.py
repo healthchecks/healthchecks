@@ -386,7 +386,7 @@ class LogFiltersForm(forms.Form):
     u = forms.FloatField(min_value=1262296800, max_value=1893448800, required=False)
     end = forms.FloatField(min_value=1262296800, max_value=1893448800, required=False)
     success = forms.BooleanField(required=False)
-    fail = forms.BooleanField(required=False, label="Fail")
+    fail = forms.BooleanField(required=False)
     start = forms.BooleanField(required=False)
     log = forms.BooleanField(required=False)
     ign = forms.BooleanField(required=False)

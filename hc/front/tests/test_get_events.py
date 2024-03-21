@@ -15,14 +15,16 @@ EPOCH = datetime(2020, 1, 1, tzinfo=timezone.utc)
 class GetEventsTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.check = Check.objects.create(project=self.project)
+        self.check = Check.objects.create(project=self.project, created=EPOCH)
+        self.start = self.check.created
+        self.end = EPOCH + td(days=10)
 
     def test_it_calculates_duration(self) -> None:
         Ping.objects.create(owner=self.check, n=1, created=EPOCH, kind="start")
         Ping.objects.create(owner=self.check, n=2, created=EPOCH + td(minutes=5))
 
         with self.assertNumQueries(2):
-            pings = _get_events(self.check, 100)
+            pings = _get_events(self.check, 100, start=self.start, end=self.end)
         with self.assertNumQueries(0):
             assert isinstance(pings[0], Ping)
             self.assertEqual(pings[0].duration, td(minutes=5))
@@ -32,7 +34,7 @@ class GetEventsTestCase(BaseTestCase):
         Ping.objects.create(owner=self.check, n=2, created=EPOCH + td(minutes=5))
 
         with self.assertNumQueries(2):
-            pings = _get_events(self.check, 1)
+            pings = _get_events(self.check, 1, start=self.start, end=self.end)
         with self.assertNumQueries(1):
             assert isinstance(pings[0], Ping)
             self.assertEqual(pings[0].duration, td(minutes=5))
@@ -46,7 +48,7 @@ class GetEventsTestCase(BaseTestCase):
         self.check.ping_set.create(n=4, rid=b, created=EPOCH + m * 6)
 
         with self.assertNumQueries(2):
-            pings = _get_events(self.check, 100)
+            pings = _get_events(self.check, 100, start=self.start, end=self.end)
 
         with self.assertNumQueries(0):
             assert isinstance(pings[0], Ping)
@@ -62,7 +64,7 @@ class GetEventsTestCase(BaseTestCase):
 
         # Make sure we don't run Ping.duration() per ping:
         with self.assertNumQueries(2):
-            pings = _get_events(self.check, 100)
+            pings = _get_events(self.check, 100, start=self.start, end=self.end)
 
         with self.assertNumQueries(0):
             for ping in pings:

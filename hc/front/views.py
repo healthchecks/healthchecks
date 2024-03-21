@@ -845,8 +845,8 @@ def clear_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 def _get_events(
     check: Check,
     page_limit: int,
-    start: datetime | None = None,
-    end: datetime | None = None,
+    start: datetime,
+    end: datetime,
     kinds: tuple[str, ...] | None = None,
 ) -> list[Notification | Ping]:
     # Sorting by "n" instead of "id" is important here. Both give the same
@@ -854,13 +854,12 @@ def _get_events(
     # api_ping.id index (slow if the api_ping table is big). Sorting by
     # "n" works around the problem--postgres picks the api_ping.owner_id index.
     pq = check.visible_pings.order_by("-n")
+    pq = pq.filter(created__gte=start, created__lte=end)
     if kinds is not None:
         q = Q(kind__in=kinds)
         if "success" in kinds:
             q = q | Q(kind__isnull=True) | Q(kind="")
         pq = pq.filter(q)
-    if start and end:
-        pq = pq.filter(created__gte=start, created__lte=end)
 
     pings = list(pq[:page_limit])
 
@@ -895,15 +894,10 @@ def _get_events(
 
     alerts: list[Notification] = []
     if kinds is None or "notification" in kinds:
-        nq = check.notification_set.order_by("-created")
-        nq = nq.filter(check_status="down")
-        nq = nq.select_related("channel")
-        if start and end:
-            nq = nq.filter(created__gte=start, created__lte=end)
-        elif len(pings):
-            cutoff = pings[-1].created
-            nq = nq.filter(created__gt=cutoff)
-        alerts = list(nq[:page_limit])
+        aq = check.notification_set.order_by("-created")
+        aq = aq.filter(created__gte=start, created__lte=end, check_status="down")
+        aq = aq.select_related("channel")
+        alerts = list(aq[:page_limit])
 
     events = pings + alerts
     events.sort(key=lambda el: el.created, reverse=True)
@@ -1053,7 +1047,7 @@ def status_single(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     status = check.get_status()
-    events = _get_events(check, 20)
+    events = _get_events(check, 20, start=check.created, end=now())
     updated = "1"
     if len(events):
         updated = str(events[0].created.timestamp())
@@ -2732,28 +2726,28 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 @login_required
 def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
-
     form = forms.LogFiltersForm(request.GET)
     if not form.is_valid():
         return HttpResponseBadRequest()
 
-    start = form.cleaned_data["u"]
-    if start:
+    if form.cleaned_data["u"]:
         # We are live-loading more events
-        start += td(microseconds=1)
+        start = form.cleaned_data["u"] + td(microseconds=1)
         end = now()
     else:
         # We're applying new filters
         start = check.created
-        end = form.cleaned_data["end"] or now()
+        oldest_ping = check.visible_pings.order_by("n").first()
+        if oldest_ping:
+            start = max(start, oldest_ping.created)
 
+        end = form.cleaned_data["end"] or now()
     ctx = {
         "events": _get_events(check, 1000, start=start, end=end, kinds=form.kinds()),
         "describe_body": True,
     }
 
-    payload = {"max": now().timestamp(), "events": LOG_ROWS_TMPL.render(ctx)}
-    return JsonResponse(payload)
+    return JsonResponse({"events": LOG_ROWS_TMPL.render(ctx)})
 
 
 # Forks: add custom views after this line
