@@ -403,9 +403,8 @@ class LogFiltersForm(forms.Form):
         return None
 
     def kinds(self) -> tuple[str, ...]:
-        # FIXME: this is slightly naughty as it is also returning "u" and "end"
-        # which are not ping kinds
-        return tuple(key for key in self.cleaned_data if self.cleaned_data[key])
+        kind_keys = ("success", "fail", "start", "log", "ign", "notification")
+        return tuple(key for key in kind_keys if self.cleaned_data[key])
 
 
 class TransferForm(forms.Form):

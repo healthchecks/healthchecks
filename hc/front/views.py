@@ -855,10 +855,10 @@ def _get_events(
     pq = check.visible_pings.order_by("-n")
     pq = pq.filter(created__gte=start, created__lte=end)
     if kinds is not None:
-        q = Q(kind__in=kinds)
+        kinds_filter = Q(kind__in=kinds)
         if "success" in kinds:
-            q = q | Q(kind__isnull=True) | Q(kind="")
-        pq = pq.filter(q)
+            kinds_filter = kinds_filter | Q(kind__isnull=True) | Q(kind="")
+        pq = pq.filter(kinds_filter)
 
     pings = list(pq[:page_limit])
 
@@ -2736,11 +2736,12 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     else:
         # We're applying new filters
         start = check.created
-        oldest_ping = check.visible_pings.order_by("n").first()
-        if oldest_ping:
-            start = max(start, oldest_ping.created)
-
         end = form.cleaned_data["end"] or now()
+
+    # clamp start to the date of the oldest visible ping
+    oldest_ping = check.visible_pings.order_by("n").first()
+    if oldest_ping:
+        start = max(start, oldest_ping.created)
 
     ctx = {
         "events": _get_events(check, 1000, start=start, end=end, kinds=form.kinds()),
