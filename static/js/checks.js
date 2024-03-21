@@ -240,6 +240,18 @@ $(function () {
                     }
                 });
 
+                if(data.title.includes('down')){
+                    //get count from title
+                    var count = data.title.match(/\d+/);
+                    count = parseInt(count[0]);
+                    //draw favicon
+                    drawFavicon(count);
+                }
+                else{
+                    var favicon = document.querySelector('link[rel="icon"]');
+                    favicon.href = base + "/static/img/favicon.ico";
+                }
+
                 if (document.title != data.title) {
                     document.title = data.title;
                 }
@@ -282,3 +294,34 @@ $(function () {
 
 });
 
+function drawFavicon(count) {
+    // Create a canvas element
+    var canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+
+    // Get the 2D context of the canvas
+    var context = canvas.getContext('2d');
+    
+    // Draw a red circle
+    context.beginPath();
+    context.arc(16, 16, 16, 0, 2 * Math.PI, false);
+    context.fillStyle = '#e23737';
+    context.fill();
+    
+    // Add a white stroke to the circle
+    context.lineWidth = 1;
+    context.strokeStyle = 'white';
+    context.stroke();
+    
+    // Add text to the circle
+    context.font = 'bold 20px Arial';
+    context.fillStyle = 'white';
+    context.textAlign = 'center';
+    context.fillText(count, 16, 22);
+    
+    // Convert the canvas to a data URL and set it as the favicon
+    var favicon = document.querySelector('link[rel="icon"]');
+
+    favicon.href = canvas.toDataURL('image/x-icon');
+}
