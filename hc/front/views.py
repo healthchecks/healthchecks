@@ -1046,7 +1046,7 @@ def status_single(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     status = check.get_status()
-    events = _get_events(check, 20, start=check.created, end=now())
+    events = _get_events(check, 30, start=check.created, end=now())
     updated = "1"
     if len(events):
         updated = str(events[0].created.timestamp())
