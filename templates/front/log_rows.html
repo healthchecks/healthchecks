@@ -1,4 +1,1 @@
-{% if events %}
-    {% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}
-{% endif %}
-
+{% if events %}{% for event in events %}{% include "front/log_row.html" with describe_body=True %}{% endfor %}{% endif %}
