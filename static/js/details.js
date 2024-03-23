@@ -118,7 +118,7 @@ $(function () {
                 }
                 else{
                     var favicon = document.querySelector('link[rel="icon"]');
-                    favicon.href = "/static/img/favicon.ico";
+                    favicon.href = "/static/img/favicon.svg";
                 }
 
                 if (document.title != data.title) {

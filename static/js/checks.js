@@ -248,7 +248,7 @@ $(function () {
                 }
                 else{
                     var favicon = document.querySelector('link[rel="icon"]');
-                    favicon.href = base + "/static/img/favicon.ico";
+                    favicon.href = base + "/static/img/favicon.svg";
                 }
 
                 if (document.title != data.title) {
