@@ -15,7 +15,7 @@
     {% if request.user.is_authenticated and request.profile.theme == 'dark' %}
     <meta name="theme-color" content="#18181b">
     {% endif %}
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-180.png' %}">
     {% block head %}{% endblock %}
     {% compress css %}
