@@ -110,6 +110,17 @@ $(function () {
                     $("#downtimes").html(data.downtimes);
                 }
 
+                if(data.status == "down"){
+                    // Get the favicon element
+                    var favicon = document.querySelector('link[rel="icon"]');
+                    //replace the favicon with the down favicon
+                    favicon.href = "/static/img/favicon_down.svg";
+                }
+                else{
+                    var favicon = document.querySelector('link[rel="icon"]');
+                    favicon.href = "/static/img/favicon.svg";
+                }
+
                 if (document.title != data.title) {
                     document.title = data.title;
                 }
