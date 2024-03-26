@@ -2,6 +2,13 @@
 {% load compress humanize static hc_extras %}
 
 {% block title %}{{ check|down_title }}{% endblock %}
+{% block favicon %}
+    {% if check.status == "down" %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon_down.svg' %}">
+    {% else %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    {% endif %}
+{% endblock %}
 
 
 {% block content %}
