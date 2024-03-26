@@ -25,6 +25,7 @@ class DetailsTestCase(BaseTestCase):
 
         self.url = f"/checks/{self.check.code}/details/"
 
+    @override_settings(SITE_NAME="Mychecks")
     def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
