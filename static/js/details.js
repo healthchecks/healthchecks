@@ -1,4 +1,7 @@
 $(function () {
+    var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
+    var favicon = document.querySelector('link[rel="icon"]');
+
     $("#edit-name").click(function() {
         $('#update-name-modal').modal("show");
         $("#update-name-input").focus();
@@ -110,19 +113,10 @@ $(function () {
                     $("#downtimes").html(data.downtimes);
                 }
 
-                if(data.status == "down"){
-                    // Get the favicon element
-                    var favicon = document.querySelector('link[rel="icon"]');
-                    //replace the favicon with the down favicon
-                    favicon.href = "/static/img/favicon_down.svg";
-                }
-                else{
-                    var favicon = document.querySelector('link[rel="icon"]');
-                    favicon.href = "/static/img/favicon.svg";
-                }
-
                 if (document.title != data.title) {
                     document.title = data.title;
+                    var downPostfix = data.status == "down" ? "_down" : "";
+                    favicon.href = `${base}/static/img/favicon${downPostfix}.svg`;
                 }
             }
         });
