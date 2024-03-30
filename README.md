@@ -364,19 +364,31 @@ for migrating ping bodies from external object storage back to the database.
 
 ### Slack
 
-To enable the Slack "self-service" integration, you will need to create a "Slack App".
+Healthchecks supports two Slack integration setup flows: legacy and app-based.
 
-To do so:
-* Create a _new Slack app_ on https://api.slack.com/apps/
-* Add at least _one scope_ in the permissions section to be able to deploy the app in your workspace (By example `incoming-webhook` for the `Bot Token Scopes`
-https://api.slack.com/apps/APP_ID/oauth?).
+The legacy flow does not require additional configuration and is used by default.
+In this flow the user creates an incoming webhook URL on the Slack side, and
+pastes the webhook URL in a form on the Healthchecks side.
+
+In the app-based flow the user clicks an "Add to Slack" button in Healthchecks,
+and gets transferred to a Slack-hosted dialog where they select the channel to
+post notifications to. This flow uses OAuth2 behind the scenes. To enable this
+flow, you will need to set up a Slack OAuth2 app:
+
+* Create a new Slack app on https://api.slack.com/apps/
+* Add at least one scope in the permissions section to be able to deploy the app in
+  your workspace (By example `incoming-webhook` for the `Bot Token Scopes`).
 * Add a _redirect url_ in the format `SITE_ROOT/integrations/add_slack_btn/`.
-  For example, if your SITE_ROOT is `https://my-hc.example.org` then the redirect URL would be
-  `https://my-hc.example.org/integrations/add_slack_btn/`.
-* Look up your Slack app for the Client ID and Client Secret at https://api.slack.com/apps/APP_ID/general? . Put them
+  For example, if your SITE_ROOT is `https://my-hc.example.org` then the redirect URL
+  would be `https://my-hc.example.org/integrations/add_slack_btn/`.
+* Look up your Slack app for the Client ID and Client Secret. Put them
   in `SLACK_CLIENT_ID` and `SLACK_CLIENT_SECRET` environment
-  variables.
+  variables. Once these variables are set, Healthchecks will switch from using
+  the legacy flow to using the app-based flow.
 
+The legacy and app-based flows only affect the user experience during the initial
+setup of Slack integrations. The contents of notifications posted to Slack are the same
+regardless of the setup flow used.
 
 ### Discord
 
