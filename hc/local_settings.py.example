@@ -1,4 +1,5 @@
 # SITE_ROOT = "https://my-monitoring-project.com"
+# PING_ENDPOINT = "https://my-monitoring-project.com/ping/"
 # SITE_NAME = "My Monitoring Project"
 # DEFAULT_FROM_EMAIL = "noreply@my-monitoring-project.com"
 
