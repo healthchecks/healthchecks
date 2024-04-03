@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.3-dev - Unreleased
+## v3.3 - 2024-04-03
 
 ### Improvements
 - Add support for $NAME_JSON and $BODY_JSON placeholders in webhook payloads
