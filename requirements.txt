@@ -1,6 +1,6 @@
 aiosmtpd==1.4.5
 cronsim==2.5
-Django==5.0.3
+Django==5.0.4
 django-compressor==4.4
 django-stubs-ext==4.2.7
 fido2==1.1.3
