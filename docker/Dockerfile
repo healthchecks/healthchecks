@@ -10,7 +10,9 @@ RUN \
     pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
-RUN rm -rf /opt/healthchecks/.git
+RUN \
+    rm -rf /opt/healthchecks/.git && \
+    rm -rf /opt/healthchecks/stuff
 
 FROM python:3.12-slim-bookworm
 
@@ -23,7 +25,9 @@ COPY --from=builder /wheels /wheels
 RUN \
     apt-get update && \
     apt-get install -y libcurl4 libpq5 libmariadb3 libxml2 && \
-    rm -rf /var/apt/cache
+    rm -rf /var/apt/cache && \
+    rm -rf /var/lib/apt/lists
+
 
 RUN \
     pip install --upgrade pip && \

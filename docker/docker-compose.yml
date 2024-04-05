@@ -16,7 +16,7 @@ services:
         dockerfile: docker/Dockerfile
     # To use a pre-built image, remove the above "build" section
     # and uncomment the following line:
-    # image: healthchecks/healthchecks:v3.0
+    # image: healthchecks/healthchecks:latest
     env_file:
         - .env
     ports:
