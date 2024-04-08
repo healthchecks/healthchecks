@@ -84,6 +84,7 @@
 #log tr.missing td {
     color: #d9534f;
     background: var(--log-missing-bg);
+    border-bottom: 1px solid var(--log-missing-border);
 }
 
 #log tr.missing td:nth-child(4) {

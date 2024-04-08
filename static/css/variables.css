@@ -41,6 +41,7 @@
     --link-color: #0091EA;
     --link-hover-color: #00629e;
     --log-missing-bg: #fff3f2;
+    --log-missing-border: #fbe2e0;
     --modal-content-bg: #fff;
     --nav-link-hover-bg: #eee;
     --panel-bg: #fff;
@@ -123,6 +124,7 @@ body.dark {
     --link-color: hsl(202.8, 100%, 55%);
     --link-hover-color: hsl(202.8, 100%, 65%);
     --log-missing-bg: #2d1e21;
+    --log-missing-border: #403033;
     --modal-content-bg: #1f1f22;
     --nav-link-hover-bg: #383840;
     --panel-bg: hsl(240, 6%, 16%);
