@@ -82,9 +82,11 @@
 }
 
 #log tr.missing td {
-    color: #d9534f;
-    background: var(--log-missing-bg);
-    border-bottom: 1px solid var(--log-missing-border);
+    color: #a94442;
+}
+
+#log tr.flip {
+    background: var(--log-flip-bg);
 }
 
 #log tr.missing td:nth-child(4) {
@@ -105,3 +107,6 @@
     line-height: 1;
 }
 
+#filters hr {
+    margin: 10px;
+}

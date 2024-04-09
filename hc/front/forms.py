@@ -391,6 +391,7 @@ class LogFiltersForm(forms.Form):
     log = forms.BooleanField(required=False)
     ign = forms.BooleanField(required=False)
     notification = forms.BooleanField(required=False)
+    flip = forms.BooleanField(required=False)
 
     def clean_u(self) -> datetime | None:
         if self.cleaned_data["u"]:
@@ -403,7 +404,7 @@ class LogFiltersForm(forms.Form):
         return None
 
     def kinds(self) -> tuple[str, ...]:
-        kind_keys = ("success", "fail", "start", "log", "ign", "notification")
+        kind_keys = ("success", "fail", "start", "log", "ign", "notification", "flip")
         return tuple(key for key in kind_keys if self.cleaned_data[key])
 
 

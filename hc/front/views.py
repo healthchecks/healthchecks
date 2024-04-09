@@ -51,6 +51,7 @@ from hc.api.models import (
     MAX_DURATION,
     Channel,
     Check,
+    Flip,
     Notification,
     Ping,
     TokenBucket,
@@ -847,7 +848,7 @@ def _get_events(
     start: datetime,
     end: datetime,
     kinds: tuple[str, ...] | None = None,
-) -> list[Notification | Ping]:
+) -> list[Notification | Ping | Flip]:
     # Sorting by "n" instead of "id" is important here. Both give the same
     # query results, but sorting by "id" can cause postgres to pick
     # api_ping.id index (slow if the api_ping table is big). Sorting by
@@ -892,13 +893,19 @@ def _get_events(
             ping.duration = None
 
     alerts: list[Notification] = []
-    if kinds is None or "notification" in kinds:
+    if kinds and "notification" in kinds:
         aq = check.notification_set.order_by("-created")
         aq = aq.filter(created__gte=start, created__lte=end, check_status="down")
         aq = aq.select_related("channel")
         alerts = list(aq[:page_limit])
 
-    events = pings + alerts
+    flips: list[Flip] = []
+    if kinds is None or "flip" in kinds:
+        fq = check.flip_set.order_by("-created")
+        fq = fq.filter(created__gte=start, created__lte=end)
+        flips = list(fq[:page_limit])
+
+    events = pings + alerts + flips
     events.sort(key=lambda el: el.created, reverse=True)
     return events[:page_limit]
 

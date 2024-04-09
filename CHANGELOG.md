@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.4-dev - Unreleased
+
+### Improvements
+- Show status changes (flips) in check's log page (#447)
+
 ## v3.3 - 2024-04-03
 
 ### Improvements

@@ -24,8 +24,14 @@
 {% elif event.check_status %}
 <tr class="missing" data-dt="{{ event.created|timestamp }}">
     <td><span class="ic-missing"></span></td>
-    <td></td>
-    <td></td>
+    <td></td><td></td>
     <td colspan="2">{% include "front/event_summary.html" %}</td>
+</tr>
+{% elif event.new_status %}
+<tr class="flip" data-dt="{{ event.created|timestamp }}">
+    <td></td><td></td><td></td>
+    <td colspan="2">
+        Status: <strong>{{ event.old_status }} ➔ {{ event.new_status }}</strong>.
+    </td>
 </tr>
 {% endif %}

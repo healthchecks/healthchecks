@@ -40,8 +40,7 @@
     --label-start-color: #117a3f;
     --link-color: #0091EA;
     --link-hover-color: #00629e;
-    --log-missing-bg: #fff3f2;
-    --log-missing-border: #fbe2e0;
+    --log-flip-bg: #eee;
     --modal-content-bg: #fff;
     --nav-link-hover-bg: #eee;
     --panel-bg: #fff;
@@ -123,8 +122,7 @@ body.dark {
     --label-start-color: #e0e0e2;
     --link-color: hsl(202.8, 100%, 55%);
     --link-hover-color: hsl(202.8, 100%, 65%);
-    --log-missing-bg: #2d1e21;
-    --log-missing-border: #403033;
+    --log-flip-bg: #383840;
     --modal-content-bg: #1f1f22;
     --nav-link-hover-bg: #383840;
     --panel-bg: hsl(240, 6%, 16%);

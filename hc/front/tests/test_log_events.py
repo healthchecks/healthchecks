@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -20,6 +20,12 @@ class LogTestCase(BaseTestCase):
         ch = Channel(kind="email", project=self.project)
         ch.value = json.dumps({"value": "alice@example.org", "up": True, "down": True})
         ch.save()
+
+        f = Flip(owner=self.check)
+        f.created = now() - td(hours=1)
+        f.old_status = "new"
+        f.new_status = "down"
+        f.save()
 
         n = Notification(owner=self.check)
         n.created = now() - td(hours=1)
@@ -36,7 +42,7 @@ class LogTestCase(BaseTestCase):
 
     def url(self, **kwargs):
         params = {}
-        for key in ("success", "fail", "start", "log", "ign", "notification"):
+        for key in ("success", "fail", "start", "log", "ign", "notification", "flip"):
             if kwargs.get(key, True):
                 params[key] = "on"
         for key in ("u", "end"):
@@ -48,8 +54,9 @@ class LogTestCase(BaseTestCase):
     def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url())
-        self.assertContains(r, "hello world")
-        self.assertContains(r, "Sent email to alice@example.org", status_code=200)
+        self.assertContains(r, "hello world", status_code=200)
+        self.assertContains(r, "Sent email to alice@example.org")
+        self.assertContains(r, "new ➔ down")
 
     def test_team_access_works(self) -> None:
         # Logging in as bob, not alice. Bob has team access so this
@@ -128,3 +135,9 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url(notification=False))
         self.assertContains(r, "hello world")
         self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
+
+    def test_it_filters_flip(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url(flip=False))
+        self.assertContains(r, "hello world")
+        self.assertNotContains(r, "new ➔ down")
