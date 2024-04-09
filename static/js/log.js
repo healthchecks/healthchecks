@@ -87,6 +87,7 @@ $(function () {
     // Once it's ready, set it to visible:
     $("#log").css("visibility", "visible");
 
+    var lastUpdated = document.getElementById("last-event-timestamp").textContent;
     function fetchNewEvents() {
         // Do not fetch updates if the slider is not set to "now"
         // or there's an AJAX request in flight
@@ -97,19 +98,19 @@ $(function () {
         var url = document.getElementById("log").dataset.refreshUrl;
         var qs = $("#filters").serialize();
 
-        var firstRow = $("#log tr").get(0);
-        if (firstRow) {
-            qs += "&u=" + firstRow.dataset.dt;
+        if (lastUpdated) {
+            qs += "&u=" + lastUpdated;
         }
 
         activeRequest = $.ajax({
             url: url + "?" + qs,
             timeout: 2000,
-            success: function(data) {
+            success: function(data, textStatus, xhr) {
                 activeRequest = null;
                 if (!data)
                     return;
 
+                lastUpdated = xhr.getResponseHeader("X-Last-Event-Timestamp");
                 var tbody = document.createElement("tbody");
                 tbody.setAttribute("class", "new");
                 tbody.innerHTML = data;

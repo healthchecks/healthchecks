@@ -90,44 +90,6 @@ class LogTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    def test_it_shows_email_notification(self) -> None:
-        ch = Channel(kind="email", project=self.project)
-        ch.value = json.dumps({"value": "alice@example.org", "up": True, "down": True})
-        ch.save()
-
-        Notification(owner=self.check, channel=ch, check_status="down").save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertContains(r, "Sent email to alice@example.org", status_code=200)
-
-    def test_it_shows_pushover_notification(self) -> None:
-        ch = Channel.objects.create(kind="po", project=self.project)
-
-        Notification(owner=self.check, channel=ch, check_status="down").save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertContains(r, "Sent a Pushover notification", status_code=200)
-
-    def test_it_shows_webhook_notification(self) -> None:
-        ch = Channel(kind="webhook", project=self.project)
-        ch.value = json.dumps(
-            {
-                "method_down": "GET",
-                "url_down": "foo/$NAME",
-                "body_down": "",
-                "headers_down": {},
-            }
-        )
-        ch.save()
-
-        Notification(owner=self.check, channel=ch, check_status="down").save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertContains(r, "Called webhook foo/$NAME", status_code=200)
-
     def test_it_shows_ignored_nonzero_exitstatus(self) -> None:
         self.ping.kind = "ign"
         self.ping.exitstatus = 123

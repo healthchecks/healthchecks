@@ -71,9 +71,9 @@
             id="end"
             type="range"
             name="end"
-            min="{{ min|timestamp|floatformat:"0" }}"
-            max="{{ max|timestamp|floatformat:"0" }}"
-            value="{{ max|timestamp|floatformat:"0" }}"
+            min="{{ min|timestamp }}"
+            max="{{ max|timestamp }}"
+            value="{{ max|timestamp }}"
             autocomplete="off">
 
         <p id="end-help" class="text-muted">
@@ -123,6 +123,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script id="last-event-timestamp" type="data">{{ last_event_timestamp }}</script>
 {% compress js %}
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/moment-timezone-with-data-10-year-range.min.js' %}"></script>

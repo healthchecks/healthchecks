@@ -185,8 +185,8 @@ def now_isoformat() -> str:
 
 
 @register.filter
-def timestamp(dt: datetime) -> float:
-    return dt.timestamp()
+def timestamp(dt: datetime) -> int:
+    return int(dt.timestamp())
 
 
 @register.filter

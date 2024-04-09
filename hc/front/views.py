@@ -920,15 +920,22 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     if oldest_ping:
         smin = max(smin, oldest_ping.created)
 
+    events = _get_events(check, 1000, start=smin, end=smax)
     ctx = {
         "page": "log",
         "project": check.project,
         "check": check,
         "min": smin,
         "max": smax,
-        "events": _get_events(check, 1000, start=smin, end=smax),
+        "events": events,
         "oldest_ping": oldest_ping,
     }
+
+    if events:
+        # A full precision timestamp of the most recent event.
+        # This will be used client-side for fetching live updates to specify
+        # "return any events after *this* point".
+        ctx["last_event_timestamp"] = events[0].created.timestamp()
 
     return render(request, "front/log.html", ctx)
 
@@ -2750,11 +2757,19 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     if oldest_ping:
         start = max(start, oldest_ping.created)
 
+    events = _get_events(check, 1000, start=start, end=end, kinds=form.kinds())
     ctx = {
-        "events": _get_events(check, 1000, start=start, end=end, kinds=form.kinds()),
+        "events": events,
         "describe_body": True,
     }
-    return render(request, "front/log_rows.html", ctx)
+    response = render(request, "front/log_rows.html", ctx)
+
+    if events:
+        # Include a full precision timestamp of the most recent event in a
+        # response header. This will be used client-side for fetching live updates
+        # to specify "return any events after *this* point".
+        response["X-Last-Event-Timestamp"] = str(events[0].created.timestamp())
+    return response
 
 
 # Forks: add custom views after this line
