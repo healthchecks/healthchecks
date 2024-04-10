@@ -910,7 +910,9 @@ def _get_events(
         flips = list(fq[:page_limit])
 
     events = pings + alerts + flips
-    events.sort(key=lambda el: el.created, reverse=True)
+    # Sort events by the timestamp.
+    # If timestamps are equal, put flips chronologically after pings
+    events.sort(key=lambda el: (el.created, isinstance(el, Flip)), reverse=True)
     return events[:page_limit]
 
 
