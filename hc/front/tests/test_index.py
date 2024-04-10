@@ -18,6 +18,7 @@ class IndexTestCase(BaseTestCase):
         self.assertContains(r, "Alices Project")
         self.assertContains(r, "3 checks")
         self.assertContains(r, "status ic-up")
+        self.assertContains(r, "favicon.svg")
 
     def test_it_shows_overall_down_status(self) -> None:
         self.c1.status = "down"
@@ -26,3 +27,4 @@ class IndexTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/")
         self.assertContains(r, "status ic-down")
+        self.assertContains(r, "favicon_down.svg")

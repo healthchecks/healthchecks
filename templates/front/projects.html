@@ -2,6 +2,13 @@
 {% load compress static hc_extras %}
 
 {% block title %}{{ site_name }}{% endblock %}
+{% block favicon %}
+    {% if any_down %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon_down.svg' %}">
+    {% else %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    {% endif %}
+{% endblock %}
 
 
 {% block content %}

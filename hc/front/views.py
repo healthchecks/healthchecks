@@ -373,9 +373,12 @@ def index(request: HttpRequest) -> HttpResponse:
     q = q.annotate(n_channels=Count("channel", distinct=True))
     q = q.annotate(owner_email=F("owner__email"))
     projects = list(q)
+    any_down = False
     for project in projects:
         setattr(project, "overall_status", summary[project.code]["status"])
         setattr(project, "any_started", summary[project.code]["started"])
+        if summary[project.code]["status"] == "down":
+            any_down = True
 
     # The list returned by projects() is already sorted . Do an additional sorting pass
     # to move projects with overall_status=down to the front (without changing their
@@ -386,6 +389,7 @@ def index(request: HttpRequest) -> HttpResponse:
         "page": "projects",
         "projects": projects,
         "last_project_id": request.session.get("last_project_id"),
+        "any_down": any_down,
     }
 
     return render(request, "front/projects.html", ctx)
