@@ -12,9 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-title" content="{{ site_name }}">
     <meta name="application-name" content="{{ site_name }}">
-    {% if request.user.is_authenticated and request.profile.theme == 'dark' %}
-    <meta name="theme-color" content="#18181b">
-    {% endif %}
     {% block favicon %}
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     {% endblock %}
@@ -236,23 +233,18 @@
     {% if request.user.is_authenticated and request.profile.theme == 'system' %}
     <script>
         // Check to see if Media-Queries are supported
-        if (window.matchMedia) {
-            // Check if the dark-mode Media-Query matches
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                // Create a new meta tag element
-                var metaTag = $('<meta>');
+        if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+            // Create a new meta tag element
+            var metaTag = $('<meta>');
 
-                // Set attributes for the meta tag
-                metaTag.attr('name', 'description');
-                metaTag.attr('content', 'Your meta tag content goes here');
+            // Set attributes for the meta tag
+            metaTag.attr('name', 'description');
+            metaTag.attr('content', 'Your meta tag content goes here');
 
-                // Append the meta tag to the head element
-                $('head').append(metaTag);
-                $("body").addClass("dark");
-                console.log('dark mode enabled');
-            } else {
-                // Light is default
-            }
+            // Append the meta tag to the head element
+            $('head').append(metaTag);
+            $("body").addClass("dark");
+            console.log('dark mode enabled');
         }
     </script>
     {% endif %}
