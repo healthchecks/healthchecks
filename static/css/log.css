@@ -67,7 +67,7 @@
     width: 1%;
 }
 
-#log tr.ok td:nth-child(5) {
+#log td:nth-child(5) {
     width: 100%;
     max-width: 0;
 
@@ -75,18 +75,18 @@
     text-overflow: ellipsis;
 }
 
-#log tr.ok td:nth-child(5) code {
+#log td:nth-child(5) code {
     font-family: "Lucida Console", Monaco, monospace;
     font-size: 11.7px;
     color: var(--text-muted);
 }
 
-#log tr.missing td {
-    color: #a94442;
-}
-
 #log tr.flip {
     background: var(--log-flip-bg);
+}
+
+#log tr.missing td {
+    color: #a94442;
 }
 
 #log tr.missing td:nth-child(4) {
