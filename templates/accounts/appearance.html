@@ -69,7 +69,24 @@
                                 Dark
                             </label>
                         </div>
-                    </div>
+                        <div class="col-sm-6 theme">
+                            <label for="theme-system">
+                                <img
+                                    src="{% static 'img/theme-system.png' %}"
+                                    alt="System theme preview">
+                            </label>
+
+                            <label class="radio-container">
+                                <input
+                                    id="theme-system"
+                                    type="radio"
+                                    name="theme"
+                                    value="system"
+                                    {% if profile.theme == "system" %} checked {% endif %}>
+                                <span class="radiomark"></span>
+                                System
+                            </label>
+                        </div>
                 </form>
             </div>
             {% if status == "info" %}

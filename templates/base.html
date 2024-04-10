@@ -224,7 +224,7 @@
             </ul>
         </div>
     </footer>
-
+    
     {% block base_modals %}{% endblock %}
 
     {% block base_scripts %}
@@ -233,6 +233,29 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     {% endcompress %}
     {% endblock %}
+    {% if request.user.is_authenticated and request.profile.theme == 'system' %}
+    <script>
+        // Check to see if Media-Queries are supported
+        if (window.matchMedia) {
+            // Check if the dark-mode Media-Query matches
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                // Create a new meta tag element
+                var metaTag = $('<meta>');
+
+                // Set attributes for the meta tag
+                metaTag.attr('name', 'description');
+                metaTag.attr('content', 'Your meta tag content goes here');
+
+                // Append the meta tag to the head element
+                $('head').append(metaTag);
+                $("body").addClass("dark");
+                console.log('dark mode enabled');
+            } else {
+                // Light is default
+            }
+        }
+    </script>
+    {% endif %}
 
     {% block scripts %}{% endblock %}
 </body>

@@ -940,7 +940,7 @@ def appearance(request: AuthenticatedHttpRequest) -> HttpResponse:
 
     if request.method == "POST":
         theme = request.POST.get("theme", "")
-        if theme in ("", "dark"):
+        if theme in ("", "dark", "system"):
             profile.theme = theme
             profile.save()
             ctx["status"] = "info"
