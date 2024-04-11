@@ -266,6 +266,63 @@
         </div>
 
         {% if rw %}
+        <form id= "truncate-form" action="{% url 'hc-api-truncate' check.code %}" method="post">
+            {% csrf_token %}
+            <div class="details-block">
+                <h2>Truncate Logs</h2>
+                <p>
+                    If your check pings back with a long body, you may want to truncate it.
+                </p>
+                <div class="form-group">
+                    <label for="truncate-length" class="col-sm-2 control-label">
+                        Truncate Logs After
+                    </label>
+                    <div class="col-sm-10">
+                        <input
+                            id="truncate-length"
+                            name="body_truncate_length"
+                            type="number"
+                            min="0"
+                            max="1000000"
+                            value="{{ check.body_truncate_length }}"
+                            class="form-control" />
+                        <span class="help-block">
+                            If set to 0, logs will not be truncated.
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="truncate-end" class="col-sm-2 control-label">
+                        Truncate From End
+                    </label>
+                    <div class="col-sm-10">
+                        <input
+                    id="truncate-end"
+                    name="body_truncate_end"
+                    type="hidden" 
+                    value="False" />
+                        <input
+                            id="truncate-end"
+                            name="body_truncate_end"
+                            type="checkbox"
+                            {% if check.body_truncate_end %}checked{% endif %}
+                            value="True"
+                            class="form-control" />
+                        <span class="help-block">
+                            If checked, truncation will start from the end of the log.
+                        </span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <button
+                        id="save-truncate"
+                        type="submit"
+                        class="btn btn-sm btn-default">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </form>
         <div class="details-block">
             <h2>Danger Zone</h2>
             <p>Copy, transfer, or permanently remove this check.</p>
