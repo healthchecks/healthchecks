@@ -528,7 +528,18 @@ class Check(models.Model):
             # may cause Postgres to use the "api_ping_pkey" index, and scan
             # a huge number of rows.
             ping = self.ping_set.earliest("created")
+
+            # Delete notifications older than the oldest retained ping
             self.notification_set.filter(created__lt=ping.created).delete()
+
+            # Delete flips older than the oldest retained ping *and*
+            # older than 93 days. We need ~3 months of flips for calculating
+            # downtime statistics. The precise requirement is
+            # "we need the current month and full two previous months of data".
+            # We could calculate this precisely, but 3*31 is close enough and
+            # much simpler.
+            flip_threshold = min(ping.created, now() - td(days=93))
+            self.flip_set.filter(created__lt=flip_threshold).delete()
         except Ping.DoesNotExist:
             pass
 

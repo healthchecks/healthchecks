@@ -377,13 +377,20 @@ class CheckModelTestCase(BaseTestCase):
     @override_settings(S3_BUCKET=None)
     def test_it_prunes(self) -> None:
         check = Check.objects.create(project=self.project, n_pings=101)
-        Ping.objects.create(owner=check, n=101)
-        Ping.objects.create(owner=check, n=1)
+        Ping.objects.create(owner=check, created=CURRENT_TIME, n=101)
+        Ping.objects.create(owner=check, created=CURRENT_TIME, n=1)
+
+        f = Flip(owner=check)
+        # older than the earliest ping, and also older than 93 days
+        f.created = CURRENT_TIME - td(days=93, seconds=1)
+        f.old_status = "new"
+        f.new_status = "down"
+        f.save()
 
         n = Notification(owner=check)
         n.channel = Channel.objects.create(project=self.project, kind="email")
         n.check_status = "down"
-        n.created = check.created - td(minutes=10)
+        n.created = CURRENT_TIME - td(minutes=10)
         n.save()
 
         check.prune()
@@ -392,6 +399,41 @@ class CheckModelTestCase(BaseTestCase):
         self.assertFalse(Ping.objects.filter(n=1).exists())
 
         self.assertEqual(Notification.objects.count(), 0)
+        self.assertEqual(Flip.objects.count(), 0)
+
+    @override_settings(S3_BUCKET=None)
+    @patch("hc.api.models.now", MOCK_NOW)
+    def test_it_does_not_prune_flips_less_than_93_days_old(self) -> None:
+        check = Check.objects.create(project=self.project, n_pings=101)
+        Ping.objects.create(owner=check, n=101)
+
+        f = Flip(owner=check)
+        # older than the earliest ping, but not older than 93 days
+        f.created = CURRENT_TIME - td(days=92)
+        f.old_status = "new"
+        f.new_status = "down"
+        f.save()
+
+        check.prune()
+
+        self.assertEqual(Flip.objects.count(), 1)
+
+    @override_settings(S3_BUCKET=None)
+    def test_it_does_not_prune_flips_newer_than_the_earliest_ping(self) -> None:
+        check = Check.objects.create(project=self.project, n_pings=101)
+        Ping.objects.create(owner=check, n=101)
+        Ping.objects.create(owner=check, n=100, created=CURRENT_TIME - td(days=100))
+
+        f = Flip(owner=check)
+        # older than 93 days, but not older than the earliest ping
+        f.created = CURRENT_TIME - td(days=92)
+        f.old_status = "new"
+        f.new_status = "down"
+        f.save()
+
+        check.prune()
+
+        self.assertEqual(Flip.objects.count(), 1)
 
     @override_settings(S3_BUCKET="test-bucket")
     @patch("hc.api.models.remove_objects")
