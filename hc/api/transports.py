@@ -51,7 +51,7 @@ def tmpl(template_name: str, **ctx: Any) -> str:
     return render_to_string(template_path, ctx).strip().replace("\xa0", " ")
 
 
-def get_ping_body(ping: Ping | None, maxlen: int | None = None) -> str | None:
+def get_ping_body(ping: Ping | None, maxlen: int | None = 10, truncate_end: bool = False) -> str | None:
     """Return ping body for a given Ping object.
 
     Does two extra things in addition to simply calling Ping.get_body():
@@ -69,7 +69,10 @@ def get_ping_body(ping: Ping | None, maxlen: int | None = None) -> str | None:
             body = ping.get_body()
 
     if body and maxlen and len(body) > maxlen:
-        body = body[:maxlen] + "\n[truncated]"
+        if truncate_end:
+            body = body[:maxlen] + "\n[truncated]"
+        else:
+            body = "[truncated]\n" + body[-maxlen:]
 
     return body
 
@@ -163,7 +166,7 @@ class Email(Transport):
             projects = None
 
         ping = self.last_ping(check)
-        body = get_ping_body(ping)
+        body = get_ping_body(ping, maxlen=check.body_truncate_length, truncate_end=check.body_truncate_end)
         subject = None
         if ping is not None and ping.scheme == "email" and body:
             parsed = email.message_from_string(body, policy=email.policy.SMTP)
@@ -350,7 +353,7 @@ class Webhook(HttpTransport):
 
         # Materialize ping body only if template refers to it.
         if allow_ping_body and "$BODY" in template:
-            body = get_ping_body(self.last_ping(check))
+            body = get_ping_body(self.last_ping(check), maxlen=check.body_truncate_length , truncate_end=check.body_truncate_end)
             ctx["$BODY_JSON"] = json.dumps(body if body else "")
             ctx["$BODY"] = body if body else ""
 
@@ -463,7 +466,7 @@ class Slackalike(HttpTransport):
         else:
             fields.add("Last Ping", "Never")
 
-        body = get_ping_body(ping, maxlen=1000)
+        body = get_ping_body(ping, maxlen=check.body_truncate_length, truncate_end=check.body_truncate_end)
         if body and "```" not in body:
             fields.add("Last Ping Body", f"```\n{body}\n```", short=False)
 
@@ -873,7 +876,7 @@ class Telegram(HttpTransport):
             "ping": ping,
             # Telegram's message limit is 4096 chars, but clip body at 1000 for
             # consistency
-            "body": get_ping_body(ping, maxlen=1000),
+            "body": get_ping_body(ping, maxlen=check.body_truncate_length, truncate_end=check.body_truncate_end),
         }
         text = tmpl("telegram_message.html", **ctx)
 
@@ -1137,7 +1140,7 @@ class MsTeams(HttpTransport):
         else:
             facts.append({"name": "Last Ping:", "value": "Never"})
 
-        body = get_ping_body(ping, maxlen=1000)
+        body = get_ping_body(ping, maxlen=check.body_truncate_length, truncate_end=check.body_truncate_end)
         if body and "```" not in body:
             section_text = f"**Last Ping Body**:\n```\n{ body }\n```"
             sections.append({"text": section_text})

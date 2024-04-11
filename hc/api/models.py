@@ -202,6 +202,8 @@ class Check(models.Model):
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
+    body_truncate_length = models.IntegerField(default=1000)
+    body_truncate_end = models.BooleanField(default=False)
 
     class Meta:
         indexes = [

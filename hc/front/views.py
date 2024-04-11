@@ -816,6 +816,19 @@ def resume(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return redirect("hc-details", code)
 
 
+
+@require_POST
+@login_required
+def truncate(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    check = _get_rw_check_for_user(request, code)
+
+    check.body_truncate_length = request.POST.get("body_truncate_length", 0)
+    check.body_truncate_end = request.POST.get("body_truncate_end", False)
+    check.save()
+
+    return redirect("hc-details", code)
+
+
 @require_POST
 @login_required
 def remove_check(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
