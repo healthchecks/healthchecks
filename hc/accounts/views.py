@@ -208,6 +208,7 @@ def login(request: HttpRequest) -> HttpResponse:
         "registration_open": settings.REGISTRATION_OPEN,
         "support_email": settings.SUPPORT_EMAIL,
         "account_closed": "account-closed" in request.GET,
+        "magic_link_enabled": settings.EMAIL_HOST not in (None, ""),
     }
     return render(request, "accounts/login.html", ctx)
 

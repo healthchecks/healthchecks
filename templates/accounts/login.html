@@ -29,7 +29,8 @@
         </div>
         {% endif %}
 
-        <div class="row">
+        <div class="row" style="display: flex; justify-content: center;">
+            {% if magic_link_enabled %}
             <div class="col-sm-6">
                 <form id="magic-link-form" method="post">
                     {% csrf_token %}
@@ -60,6 +61,7 @@
                 </form>
                 <div id="login-sep" class="hidden-xs"><div>or</div></div>
             </div>
+            {% endif %}
 
             <div class="col-xs-12 visible-xs-block">
                 <div id="xs-login-sep">
