@@ -1219,13 +1219,13 @@ class Spike(HttpTransport):
 class LineNotify(HttpTransport):
     URL = "https://notify-api.line.me/api/notify"
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Bearer %s" % self.channel.linenotify_token,
         }
-        payload = {"message": tmpl("linenotify_message.html", check=check)}
-        self.post(self.URL, headers=headers, params=payload)
+        msg = tmpl("linenotify_message.html", check=flip.owner, status=flip.new_status)
+        self.post(self.URL, headers=headers, params={"message": msg})
 
 
 class SignalRateLimitFailure(TransportError):

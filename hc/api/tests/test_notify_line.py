@@ -17,7 +17,9 @@ class NotifyLineTestCase(BaseTestCase):
 
         self.check = Check(project=self.project)
         self.check.name = "Foo"
-        self.check.status = "down"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
@@ -49,8 +51,10 @@ class NotifyLineTestCase(BaseTestCase):
     def test_it_does_not_escape_message(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.name = "Foo & Bar"
-        self.check.status = "up"
         self.check.save()
+
+        self.flip.old_status = "down"
+        self.flip.new_status = "up"
 
         self.channel.notify(self.flip)
 
