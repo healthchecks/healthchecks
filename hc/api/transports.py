@@ -1088,21 +1088,20 @@ class Trello(HttpTransport):
 
 
 class Apprise(HttpTransport):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.APPRISE_ENABLED:
             # Not supported and/or enabled
             raise TransportError("Apprise is disabled and/or not installed")
 
         a = apprise.Apprise()
-        title = tmpl("apprise_title.html", check=check)
-        body = tmpl("apprise_description.html", check=check)
+        check, status = flip.owner, flip.new_status
+        title = tmpl("apprise_title.html", check=check, status=status)
+        body = tmpl("apprise_description.html", check=check, status=status)
 
         a.add(self.channel.value)
 
         notify_type = (
-            apprise.NotifyType.SUCCESS
-            if check.status == "up"
-            else apprise.NotifyType.FAILURE
+            apprise.NotifyType.SUCCESS if status == "up" else apprise.NotifyType.FAILURE
         )
 
         if not a.notify(body=body, title=title, notify_type=notify_type):
