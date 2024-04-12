@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -27,11 +27,16 @@ class NotifyLineTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         headers = mock_post.call_args.kwargs["headers"]
@@ -47,7 +52,7 @@ class NotifyLineTestCase(BaseTestCase):
         self.check.status = "up"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         params = mock_post.call_args.kwargs["params"]
         self.assertEqual(params["message"], 'The check "Foo & Bar" is now UP.')
@@ -58,7 +63,7 @@ class NotifyLineTestCase(BaseTestCase):
         self.check.save()
 
         mock_post.return_value.status_code = 200
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         params = mock_post.call_args.kwargs["params"]
         self.assertNotIn("Last ping was", params["message"])

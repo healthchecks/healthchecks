@@ -9,7 +9,7 @@ from urllib.parse import quote
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -32,11 +32,16 @@ class NotifyMatrixTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         method, url = mock_post.call_args.args
@@ -55,7 +60,7 @@ class NotifyMatrixTestCase(BaseTestCase):
         self.check.save()
 
         mock_post.return_value.status_code = 200
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]

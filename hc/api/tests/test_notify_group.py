@@ -9,7 +9,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -35,8 +35,13 @@ class NotifyGroupTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     def test_it_works(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "")
@@ -57,7 +62,7 @@ class NotifyGroupTestCase(BaseTestCase):
         )
         self.channel_email.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "")
@@ -72,7 +77,7 @@ class NotifyGroupTestCase(BaseTestCase):
         )
         self.channel.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         assert self.channel.last_error == ""
@@ -86,7 +91,7 @@ class NotifyGroupTestCase(BaseTestCase):
         self.channel_email.email_verified = False
         self.channel_email.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         assert self.channel.last_error == "1 out of 1 notifications failed"

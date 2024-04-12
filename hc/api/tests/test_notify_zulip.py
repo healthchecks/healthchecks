@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -29,6 +29,11 @@ class NotifyZulipTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     def definition(self, **kwargs: str) -> dict[str, str]:
         d = {
             "bot_email": "bot@example.org",
@@ -43,7 +48,7 @@ class NotifyZulipTestCase(BaseTestCase):
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         method, url = mock_post.call_args.args
@@ -64,7 +69,7 @@ class NotifyZulipTestCase(BaseTestCase):
         self.channel.save()
 
         mock_post.return_value.status_code = 200
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "foo")
@@ -74,7 +79,7 @@ class NotifyZulipTestCase(BaseTestCase):
         mock_post.return_value.status_code = 403
         mock_post.return_value.content = b"""{"msg": "Nice try"}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
@@ -84,7 +89,7 @@ class NotifyZulipTestCase(BaseTestCase):
         mock_post.return_value.status_code = 403
         mock_post.return_value.json = Mock(side_effect=ValueError)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 403")
 
@@ -100,7 +105,7 @@ class NotifyZulipTestCase(BaseTestCase):
         }
         self.channel.value = json.dumps(definition)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         method, url = mock_post.call_args.args
@@ -111,7 +116,7 @@ class NotifyZulipTestCase(BaseTestCase):
 
     @override_settings(ZULIP_ENABLED=False)
     def test_it_requires_zulip_enabled(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Zulip notifications are not enabled.")
@@ -123,7 +128,7 @@ class NotifyZulipTestCase(BaseTestCase):
         self.check.name = "Foo & Bar"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "Foo & Bar is DOWN")
@@ -134,7 +139,7 @@ class NotifyZulipTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertNotIn("Last ping was", payload["content"])

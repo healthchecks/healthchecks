@@ -33,7 +33,7 @@ from hc.lib.string import replace
 from hc.lib.typealias import JSONDict, JSONList, JSONValue
 
 if TYPE_CHECKING:
-    from hc.api.models import Channel, Check, Notification, Ping
+    from hc.api.models import Channel, Check, Flip, Notification, Ping
 
 try:
     import apprise
@@ -94,7 +94,11 @@ class Transport(object):
 
         raise NotImplementedError()
 
-    def is_noop(self, status: str) -> bool:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+        # The default implementation calls self.notify
+        self.notify(flip.owner, notification)
+
+    def is_noop(self, check: Check) -> bool:
         """Return True if transport will ignore check's current status.
 
         This method is overridden in Webhook subclass where the user can
@@ -328,7 +332,7 @@ class Webhook(HttpTransport):
     def prepare(
         self,
         template: str,
-        check: Check,
+        flip: Flip,
         urlencode: bool = False,
         latin1: bool = False,
         allow_ping_body: bool = False,
@@ -338,10 +342,11 @@ class Webhook(HttpTransport):
         def safe(s: str) -> str:
             return quote(s) if urlencode else s
 
+        check = flip.owner
         ctx = {
             "$CODE": str(check.code),
-            "$STATUS": check.status,
-            "$NOW": safe(now().replace(microsecond=0).isoformat()),
+            "$STATUS": flip.new_status,
+            "$NOW": safe(flip.created.replace(microsecond=0).isoformat()),
             "$NAME_JSON": safe(json.dumps(check.name)),
             "$NAME": safe(check.name),
             "$TAGS": safe(check.tags),
@@ -377,23 +382,23 @@ class Webhook(HttpTransport):
 
         return False
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.WEBHOOKS_ENABLED:
             raise TransportError("Webhook notifications are not enabled.")
 
-        spec = self.channel.webhook_spec(check.status)
+        spec = self.channel.webhook_spec(flip.new_status)
         if not spec.url:
             raise TransportError("Empty webhook URL")
 
-        url = self.prepare(spec.url, check, urlencode=True)
+        url = self.prepare(spec.url, flip, urlencode=True)
         headers = {}
         for key, value in spec.headers.items():
             # Header values should contain ASCII and latin-1 only
-            headers[key] = self.prepare(value, check, latin1=True)
+            headers[key] = self.prepare(value, flip, latin1=True)
 
         body, body_bytes = spec.body, None
         if body and spec.method in ("POST", "PUT"):
-            body = self.prepare(body, check, allow_ping_body=True)
+            body = self.prepare(body, flip, allow_ping_body=True)
             body_bytes = body.encode()
 
         retry = True
@@ -911,7 +916,7 @@ class Sms(HttpTransport):
         else:
             return not self.channel.phone.notify_up
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.TWILIO_ACCOUNT or not settings.TWILIO_AUTH:
             raise TransportError("SMS notifications are not enabled")
 
@@ -922,7 +927,12 @@ class Sms(HttpTransport):
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        text = tmpl("sms_message.html", check=check, site_name=settings.SITE_NAME)
+        text = tmpl(
+            "sms_message.html",
+            check=flip.owner,
+            status=flip.new_status,
+            site_name=settings.SITE_NAME,
+        )
 
         data = {
             "To": self.channel.phone.value,
@@ -1392,14 +1402,14 @@ class Gotify(HttpTransport):
 
 
 class Group(Transport):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         channels = self.channel.group_channels
         # If notification's owner field is None then this is a test notification,
         # and we should pass is_test=True to channel.notify() calls
         is_test = notification.owner is None
         error_count = 0
         for channel in channels:
-            error = channel.notify(check, is_test=is_test)
+            error = channel.notify(flip, is_test=is_test)
             if error and error != "no-op":
                 error_count += 1
         if error_count:

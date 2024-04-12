@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -31,12 +31,17 @@ class NotifyPdTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = status
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data("123")
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
@@ -53,7 +58,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["details"]["Schedule"], "* * * * *")
         self.assertEqual(payload["details"]["Time zone"], "Europe/Riga")
@@ -63,7 +68,7 @@ class NotifyPdTestCase(BaseTestCase):
         self._setup_data(json.dumps({"service_key": "456"}))
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
@@ -73,7 +78,7 @@ class NotifyPdTestCase(BaseTestCase):
     @override_settings(PD_ENABLED=False)
     def test_it_requires_pd_enabled(self) -> None:
         self._setup_data("123")
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "PagerDuty notifications are not enabled.")
@@ -86,7 +91,7 @@ class NotifyPdTestCase(BaseTestCase):
 
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["description"], "Foo & Bar is DOWN")

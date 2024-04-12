@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, Ping, TokenBucket
+from hc.api.models import Channel, Check, Flip, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -34,11 +34,16 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
@@ -66,7 +71,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.ping.exitstatus = 123
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("<b>Last Ping:</b> Exit status 123, an hour ago", payload["text"])
@@ -77,7 +82,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         self.channel.value = json.dumps({"id": 123, "thread_id": 456})
         self.channel.save()
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
@@ -93,7 +98,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.check.tz = "Europe/Riga"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn(
@@ -106,7 +111,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b'{"description": "Hi"}'
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 400 with a message: "Hi"')
 
@@ -115,7 +120,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.json = Mock(side_effect=ValueError)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 400")
 
@@ -129,7 +134,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         mock_post.side_effect = [error_response, Mock(status_code=200)]
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(mock_post.call_count, 2)
 
         # The chat id should have been updated
@@ -143,7 +148,7 @@ class NotifyTelegramTestCase(BaseTestCase):
     def test_it_obeys_rate_limit(self) -> None:
         TokenBucket.objects.create(value="tg-123", tokens=0)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
 
@@ -157,7 +162,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         other.last_ping = now() - td(minutes=61)
         other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("All the other checks are up.", payload["text"])
@@ -172,7 +177,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         other.last_ping = now() - td(minutes=61)
         other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("The following checks are also down", payload["text"])
@@ -186,7 +191,7 @@ class NotifyTelegramTestCase(BaseTestCase):
 
         Check.objects.create(project=self.project, status="down")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("(last ping: never)", payload["text"])
@@ -202,7 +207,7 @@ class NotifyTelegramTestCase(BaseTestCase):
             other.last_ping = now() - td(minutes=61)
             other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Foobar", payload["text"])
@@ -215,7 +220,7 @@ class NotifyTelegramTestCase(BaseTestCase):
             "description": "Forbidden: the group chat was deleted"
         }"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
 
@@ -226,7 +231,7 @@ class NotifyTelegramTestCase(BaseTestCase):
             "description": "Forbidden: bot was blocked by the user"
         }"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
 
@@ -237,7 +242,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.ping.body_raw = b"Hello World"
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("<b>Last Ping Body:</b>\n", payload["text"])
@@ -250,7 +255,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.ping.body_raw = b"Hello World" * 100
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("[truncated]", payload["text"])
@@ -262,7 +267,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.ping.body_raw = b"<b>bold</b>\nfoo & bar"
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("&lt;b&gt;bold&lt;/b&gt;\n", payload["text"])

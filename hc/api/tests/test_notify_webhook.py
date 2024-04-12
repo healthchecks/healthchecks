@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
 
@@ -30,6 +30,11 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = status
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhook(self, mock_get: Mock) -> None:
         definition = {
@@ -42,7 +47,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         mock_get.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://example"))
 
@@ -60,7 +65,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
 
         self._setup_data(json.dumps(definition))
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         # The transport should have retried 3 times
         self.assertEqual(mock_get.call_count, 3)
@@ -83,7 +88,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         mock_get.return_value.status_code = 500
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         # The transport should have retried 3 times
         self.assertEqual(mock_get.call_count, 3)
@@ -107,7 +112,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
 
         self._setup_data(json.dumps(definition))
-        self.channel.notify(self.check, is_test=True)
+        self.channel.notify(self.flip, is_test=True)
 
         # is_test flag is set, the transport should not retry:
         self.assertEqual(mock_get.call_count, 1)
@@ -129,7 +134,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.tags = "foo bar"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         url = "http://host/%s/down/foo/bar/?name=Hello%%20World" % self.check.code
 
@@ -152,7 +157,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.tags = "foo bar"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         # $$NAMETAG1 should *not* get transformed to "foo"
         url = mock_get.call_args.args[1]
@@ -170,7 +175,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         method, url = mock_request.call_args.args
         self.assertEqual(method, "post")
         self.assertEqual(url, "http://example.com")
@@ -195,7 +200,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.tags = "foo"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://host/%24TAG1"))
@@ -210,7 +215,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
         self._setup_data(json.dumps(definition), status="up")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://bar"))
@@ -225,7 +230,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
 
         self._setup_data(json.dumps(definition), status="up")
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         mock_get.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
@@ -242,7 +247,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         # unicode should be encoded into utf-8
         payload = mock_request.call_args.kwargs["data"]
@@ -258,7 +263,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
 
         self._setup_data(json.dumps(definition))
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         args, kwargs = mock_request.call_args
         self.assertEqual(args, ("post", "http://foo.com"))
@@ -275,7 +280,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
 
         self._setup_data(json.dumps(definition))
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         args, kwargs = mock_request.call_args
         self.assertEqual(args, ("get", "http://foo.com"))
@@ -291,7 +296,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
 
         self._setup_data(json.dumps(definition))
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         args, kwargs = mock_request.call_args
         self.assertEqual(args, ("get", "http://foo.com"))
@@ -310,7 +315,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.name = "Foo"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         args, kwargs = mock_request.call_args
         self.assertEqual(args, ("get", "http://foo.com"))
@@ -326,7 +331,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         }
 
         self._setup_data(json.dumps(definition))
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Webhook notifications are not enabled.")
@@ -343,7 +348,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         headers = mock_request.call_args.kwargs["headers"]
         self.assertEqual(headers["X-Foo"], "b&#257;r")
@@ -360,7 +365,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         headers = mock_request.call_args.kwargs["headers"]
         self.assertEqual(headers["X-Foo"], "½")
@@ -379,7 +384,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.tags = "foo bar"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         body = json.loads(payload)
@@ -401,7 +406,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.ping.body_raw = ping_body
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, ping_body)
@@ -424,7 +429,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.ping.body_raw = ping_body
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         url = mock_post.call_args.args[1]
         self.assertTrue(url.endswith("$BODY"))
@@ -442,7 +447,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         Ping.objects.create(owner=self.check, exitstatus=123)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b"Exit status 123")
 
@@ -459,7 +464,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         # Note - does not create Ping object
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b"Exit status -1")
 
@@ -474,7 +479,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         Ping.objects.create(owner=self.check)  # does not set exitstatus
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b"Exit status -1")
 
@@ -489,7 +494,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
 
         self.check.name = 'Project "Foo"'
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, self.check.name.encode())
 
@@ -504,7 +509,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
 
         self.check.name = 'Project "Foo"'
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, json.dumps(self.check.name).encode())
 
@@ -523,7 +528,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.ping.body_raw = b'Project "Foo"'
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b'Project "Foo"')
@@ -544,7 +549,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.ping.body_raw = ping_body.encode()
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, json.dumps(ping_body).encode())

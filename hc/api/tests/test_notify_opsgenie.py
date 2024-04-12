@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -30,12 +30,17 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data(json.dumps({"key": "123", "region": "us"}))
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
@@ -50,7 +55,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self._setup_data(json.dumps({"key": "123", "region": "us"}))
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
@@ -65,7 +70,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self._setup_data(json.dumps({"key": "123", "region": "us"}), status="up")
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
@@ -78,7 +83,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self._setup_data(json.dumps({"key": "456", "region": "eu"}))
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
@@ -92,7 +97,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         mock_post.return_value.status_code = 403
         mock_post.return_value.content = b"""{"message": "Nice try"}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
 
@@ -102,14 +107,14 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         mock_post.return_value.status_code = 403
         mock_post.return_value.json = Mock(side_effect=ValueError)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 403")
 
     @override_settings(OPSGENIE_ENABLED=False)
     def test_it_requires_opsgenie_enabled(self) -> None:
         self._setup_data(json.dumps({"key": "123", "region": "us"}))
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Opsgenie notifications are not enabled.")
@@ -121,7 +126,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 

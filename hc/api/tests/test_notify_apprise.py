@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 try:
@@ -37,6 +37,11 @@ class NotifyAppriseTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
     def test_it_works(self, mock_apprise: Mock) -> None:
@@ -44,7 +49,7 @@ class NotifyAppriseTestCase(BaseTestCase):
         mock_aobj.add.return_value = True
         mock_aobj.notify.return_value = True
         mock_apprise.return_value = mock_aobj
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 1)
 
         body = mock_apprise.return_value.notify.call_args.kwargs["body"]
@@ -54,7 +59,7 @@ class NotifyAppriseTestCase(BaseTestCase):
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=False)
     def test_apprise_disabled(self, mock_apprise: Mock) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Apprise is disabled and/or not installed")
@@ -69,7 +74,7 @@ class NotifyAppriseTestCase(BaseTestCase):
         mock_aobj.add.return_value = True
         mock_aobj.notify.return_value = True
         mock_apprise.return_value = mock_aobj
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         body = mock_apprise.return_value.notify.call_args.kwargs["body"]
         self.assertIn("Foo is DOWN", body)

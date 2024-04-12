@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -27,13 +27,18 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self.check.status = "down"
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         _, kwargs = mock_post.call_args
@@ -47,7 +52,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
     def test_it_handles_up(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         _, kwargs = mock_post.call_args
@@ -63,7 +68,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.check.name = "Foo & Bar"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         _, kwargs = mock_post.call_args
         self.assertEqual(
@@ -78,7 +83,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         _, kwargs = mock_post.call_args
         payload = kwargs["json"]

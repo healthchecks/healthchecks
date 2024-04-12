@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -29,13 +29,18 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = status
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         v = json.dumps({"webhook": {"url": "https://example.org"}})
         self._setup_data(v)
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         url = mock_post.call_args.args[1]
@@ -51,7 +56,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         self._setup_data(v)
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         url = mock_post.call_args.args[1]
@@ -68,7 +73,7 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.ping.kind = "fail"
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]

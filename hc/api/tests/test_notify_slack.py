@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
 
@@ -35,13 +35,18 @@ class NotifySlackTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = status
+
     @override_settings(SITE_ROOT="http://testserver", SITE_LOGO_URL=None)
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data("https://example.org")
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         url = mock_post.call_args.args[1]
@@ -64,7 +69,7 @@ class NotifySlackTestCase(BaseTestCase):
         self._setup_data(v)
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         url = mock_post.call_args.args[1]
@@ -75,7 +80,7 @@ class NotifySlackTestCase(BaseTestCase):
         self._setup_data("123")
         mock_post.return_value.status_code = 500
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
@@ -88,7 +93,7 @@ class NotifySlackTestCase(BaseTestCase):
     def test_it_handles_timeout(self, mock_post: Mock) -> None:
         self._setup_data("123")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Timed out")
@@ -103,7 +108,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["json"]
         attachment = payload["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
@@ -118,14 +123,14 @@ class NotifySlackTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 1)
         mock_post.assert_called_once()
 
     @override_settings(SLACK_ENABLED=False)
     def test_it_requires_slack_enabled(self) -> None:
         self._setup_data("123")
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Slack notifications are not enabled.")
@@ -135,7 +140,7 @@ class NotifySlackTestCase(BaseTestCase):
         self._setup_data("123")
         mock_post.return_value.status_code = 404
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 404")
@@ -146,7 +151,7 @@ class NotifySlackTestCase(BaseTestCase):
         self._setup_data("123")
         mock_post.return_value.status_code = 404
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         # Make sure the HTTP request was made only once (no retries):
         self.assertEqual(mock_post.call_count, 1)
         self.channel.refresh_from_db()
@@ -161,7 +166,7 @@ class NotifySlackTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b"invalid_token"
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         self.assertTrue(self.channel.disabled)
@@ -178,7 +183,7 @@ class NotifySlackTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b"surprise"
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertTrue(debug.called)
 
     @override_settings(SITE_ROOT="http://testserver")
@@ -190,7 +195,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.ping.kind = "fail"
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
@@ -207,7 +212,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.ping.exitstatus = 123
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Exit status 123, an hour ago")
@@ -221,7 +226,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.ping.kind = "log"
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
@@ -237,7 +242,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.ping.exitstatus = 123
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
@@ -253,7 +258,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.ping.body_raw = b"Hello World"
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
@@ -269,7 +274,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.ping.body_raw = b"Hello World" * 1000
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
@@ -285,7 +290,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.ping.body_raw = b"Hello ``` World"
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]

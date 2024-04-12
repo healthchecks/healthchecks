@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -42,11 +42,16 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
@@ -68,7 +73,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.ping.exitstatus = 123
         self.ping.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("Last Ping: Exit status 123", payload["message"])
@@ -90,7 +95,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         other.last_ping = now() - td(minutes=61)
         other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "<Name> is DOWN")
@@ -105,7 +110,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
         self.check.save()
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("Schedule: * * * * *", payload["message"])
@@ -121,7 +126,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         other.last_ping = now() - td(minutes=61)
         other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("All the other checks are up.", payload["message"])
@@ -136,7 +141,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         other.last_ping = now() - td(minutes=61)
         other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("The following checks are also down", payload["message"])
@@ -149,7 +154,7 @@ class NotifyNtfyTestCase(BaseTestCase):
 
         Check.objects.create(project=self.project, status="down")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("(last ping: never)", payload["message"])
@@ -165,7 +170,7 @@ class NotifyNtfyTestCase(BaseTestCase):
             other.last_ping = now() - td(minutes=61)
             other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Foobar", payload["message"])
@@ -186,7 +191,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         )
         self.channel.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         headers = mock_post.call_args.kwargs["headers"]

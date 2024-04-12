@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification, TokenBucket
+from hc.api.models import Channel, Check, Flip, Notification, TokenBucket
 from hc.test import BaseTestCase
 
 API = "https://api.pushover.net/1"
@@ -32,12 +32,17 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = status
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 1)
 
         url = mock_post.call_args.args[1]
@@ -54,7 +59,7 @@ class NotifyPushoverTestCase(BaseTestCase):
     @override_settings(PUSHOVER_API_TOKEN=None)
     def test_it_requires_pushover_api_token(self) -> None:
         self._setup_data("123|0")
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Pushover notifications are not enabled.")
 
@@ -63,7 +68,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self._setup_data("123|0|2", status="up")
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 1)
 
         payload = mock_post.call_args.kwargs["data"]
@@ -82,7 +87,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         obj.tokens = 0
         obj.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
 
@@ -91,7 +96,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self._setup_data("123|2|0", status="up")
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 1)
 
         self.assertEqual(mock_post.call_count, 2)
@@ -115,7 +120,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         other.last_ping = now() - td(minutes=61)
         other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("All the other checks are up.", payload["message"])
@@ -131,7 +136,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         other.last_ping = now() - td(minutes=61)
         other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("The following checks are also down", payload["message"])
@@ -145,7 +150,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         Check.objects.create(project=self.project, status="down")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("(last ping: never)", payload["message"])
@@ -162,7 +167,7 @@ class NotifyPushoverTestCase(BaseTestCase):
             other.last_ping = now() - td(minutes=61)
             other.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertNotIn("Foobar", payload["message"])
@@ -175,7 +180,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["title"], "🔴 Foo & Bar")
@@ -184,7 +189,7 @@ class NotifyPushoverTestCase(BaseTestCase):
     def test_it_handles_disabled_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|-3")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 0)
         mock_post.assert_not_called()
 
@@ -192,7 +197,7 @@ class NotifyPushoverTestCase(BaseTestCase):
     def test_it_handles_disabled_up_priority(self, mock_post: Mock) -> None:
         self._setup_data("123|0|-3", status="up")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 0)
         mock_post.assert_not_called()
 
@@ -201,7 +206,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self._setup_data("123|0")
         mock_post.return_value.status_code = 400
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 400")
 
@@ -214,7 +219,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b"""{"user": "invalid"}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 400 (invalid user)")
 
@@ -227,7 +232,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         mock_post.return_value.status_code = 500
         mock_post.return_value.content = b"""{"user": "invalid"}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 500")
 

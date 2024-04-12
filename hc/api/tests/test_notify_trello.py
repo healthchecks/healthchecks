@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -35,11 +35,16 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
         params = mock_post.call_args.kwargs["params"]
@@ -52,7 +57,7 @@ class NotifyTrelloTestCase(BaseTestCase):
 
     @override_settings(TRELLO_APP_KEY=None)
     def test_it_requires_trello_app_key(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Trello notifications are not enabled.")
@@ -64,7 +69,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.check.tz = "Europe/Riga"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         params = mock_post.call_args.kwargs["params"]
         a = "\u034f*"
@@ -78,7 +83,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.check.name = "Foo & Bar"
         self.check.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         params = mock_post.call_args.kwargs["params"]
         self.assertEqual(params["name"], "Down: Foo & Bar")
@@ -89,7 +94,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         params = mock_post.call_args.kwargs["params"]
         self.assertIn("**Last Ping:** never", params["desc"])

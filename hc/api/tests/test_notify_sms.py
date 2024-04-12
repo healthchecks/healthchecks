@@ -10,7 +10,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -31,12 +31,17 @@ class NotifySmsTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
@@ -55,7 +60,7 @@ class NotifySmsTestCase(BaseTestCase):
 
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_configuration(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "SMS notifications are not enabled")
@@ -66,7 +71,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.check.last_ping = now() - td(hours=2)
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["MessagingServiceSid"], "dummy-sid")
@@ -79,7 +84,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.profile.sms_sent = 50
         self.profile.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_not_called()
 
         n = Notification.objects.get()
@@ -102,7 +107,7 @@ class NotifySmsTestCase(BaseTestCase):
 
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_called_once()
 
     @override_settings(TWILIO_FROM="+000")
@@ -113,7 +118,7 @@ class NotifySmsTestCase(BaseTestCase):
 
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("Foo > Bar & Co", payload["Body"])
@@ -123,7 +128,7 @@ class NotifySmsTestCase(BaseTestCase):
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_not_called()
 
     @override_settings(TWILIO_FROM="+000")
@@ -132,11 +137,11 @@ class NotifySmsTestCase(BaseTestCase):
         payload = {"value": "+123123123", "up": True, "down": False}
         self.channel.value = json.dumps(payload)
 
-        self.check.last_ping = now()
-        self.check.status = "up"
+        self.flip.old_status = "down"
+        self.flip.new_status = "up"
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         assert isinstance(payload["Body"], str)
@@ -150,7 +155,7 @@ class NotifySmsTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b"""{"code": 21211}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         # Make sure the HTTP request was made only once (no retries):
         self.channel.refresh_from_db()
@@ -172,7 +177,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.check.save()
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertNotIn("""Last ping was""", payload["Body"])

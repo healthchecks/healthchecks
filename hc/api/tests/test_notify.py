@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -29,11 +29,16 @@ class NotifyTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = status
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_pagerteam(self, mock_post: Mock) -> None:
         self._setup_data("pagerteam", "123")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
 
@@ -41,7 +46,7 @@ class NotifyTestCase(BaseTestCase):
     def test_hipchat(self, mock_post: Mock) -> None:
         self._setup_data("hipchat", "123")
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_not_called()
         self.assertEqual(Notification.objects.count(), 0)
 
@@ -50,7 +55,7 @@ class NotifyTestCase(BaseTestCase):
         self.channel.kind = "invalid"
 
         with self.assertRaises(NotImplementedError):
-            self.channel.notify(self.check)
+            self.channel.notify(self.flip)
 
     @patch("hc.api.transports.os.system")
     @override_settings(SHELL_ENABLED=True)
@@ -59,7 +64,7 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("shell", json.dumps(definition))
         mock_system.return_value = 0
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_system.assert_called_with("logger hello")
 
     @patch("hc.api.transports.os.system")
@@ -69,7 +74,7 @@ class NotifyTestCase(BaseTestCase):
         self._setup_data("shell", json.dumps(definition))
         mock_system.return_value = 123
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Command returned exit code 123")
 
@@ -83,7 +88,7 @@ class NotifyTestCase(BaseTestCase):
         self.check.name = "Database"
         self.check.tags = "foo bar"
         self.check.save()
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         mock_system.assert_called_with("logger Database is down (foo)")
 
@@ -93,7 +98,7 @@ class NotifyTestCase(BaseTestCase):
         definition = {"cmd_down": "logger hello", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_system.assert_not_called()
 
         n = Notification.objects.get()

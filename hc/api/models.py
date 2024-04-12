@@ -930,8 +930,8 @@ class Channel(models.Model):
         _, cls = TRANSPORTS[self.kind]
         return cls(self)
 
-    def notify(self, check: Check, is_test: bool = False) -> str:
-        if self.transport.is_noop(check.status):
+    def notify(self, flip: "Flip", is_test: bool = False) -> str:
+        if self.transport.is_noop(flip.new_status):
             return "no-op"
 
         n = Notification(channel=self)
@@ -940,15 +940,16 @@ class Channel(models.Model):
             # (the passed check is a dummy, unsaved Check instance)
             pass
         else:
-            n.owner = check
+            n.owner = flip.owner
 
-        n.check_status = check.status
+        n.check_status = flip.new_status
         n.error = "Sending"
         n.save()
 
         start, error, disabled = now(), "", self.disabled
         try:
-            self.transport.notify(check, notification=n)
+            self.transport.notify_flip(flip, notification=n)
+
         except transports.TransportError as e:
             disabled = True if e.permanent else disabled
             error = e.message
