@@ -1374,7 +1374,7 @@ class Signal(Transport):
                 # And then report it the same as other errors
                 raise TransportError(msg)
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.SIGNAL_CLI_SOCKET:
             raise TransportError("Signal notifications are not enabled")
 
@@ -1384,9 +1384,10 @@ class Signal(Transport):
             raise TransportError("Rate limit exceeded")
 
         ctx = {
-            "check": check,
-            "ping": self.last_ping(check),
-            "down_checks": self.down_checks(check),
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip.owner),
+            "down_checks": self.down_checks(flip.owner),
         }
         text = tmpl("signal_message.html", **ctx)
         try:

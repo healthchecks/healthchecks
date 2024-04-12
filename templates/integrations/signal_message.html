@@ -1,5 +1,5 @@
 {% load hc_extras humanize linemode %}{% linemode %}
-{% if check.status == "down" %}
+{% if status == "down" %}
     {% line %}The check <b>{{ check.name_then_code }}</b> is <b>DOWN</b>.{% endline %}
 {% else %}
     {% line %}The check <b>{{ check.name_then_code }}</b> is now <b>UP</b>.{% endline %}
@@ -36,9 +36,9 @@
     {% line %}{% endline %}
     {% if down_checks %}
         {% if down_checks|length > 10 %}
-            {% line %}{{ down_checks|length }} other checks are {% if check.status == "down" %}also{% else %}still{% endif %} down.{% endline %}
+            {% line %}{{ down_checks|length }} other checks are {% if status == "down" %}also{% else %}still{% endif %} down.{% endline %}
         {% else %}
-            {% line %}The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:{% endline %}
+            {% line %}The following checks are {% if status == "down" %}also{% else %}still{% endif %} down:{% endline %}
             {% for c in down_checks %}
                 {% line %}• <b>{{ c.name_then_code|safe }}</b> (last ping: {{ c.last_ping|naturaltime|default:"never" }}){% endline %}
             {% endfor %}

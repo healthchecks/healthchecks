@@ -78,7 +78,9 @@ class NotifySignalTestCase(BaseTestCase):
         self.check = Check(project=self.project)
         self.check.name = "Daily Backup"
         self.check.tags = "foo bar"
-        self.check.status = "down"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.n_pings = 123
         self.check.save()
