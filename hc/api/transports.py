@@ -194,13 +194,14 @@ class Email(Transport):
 
 
 class Shell(Transport):
-    def prepare(self, template: str, check: Check) -> str:
+    def prepare(self, template: str, flip: Flip) -> str:
         """Replace placeholders with actual values."""
 
+        check = flip.owner
         ctx = {
             "$CODE": str(check.code),
-            "$STATUS": check.status,
-            "$NOW": now().replace(microsecond=0).isoformat(),
+            "$STATUS": flip.new_status,
+            "$NOW": flip.created.replace(microsecond=0).isoformat(),
             "$NAME": check.name,
             "$TAGS": check.tags,
         }
@@ -219,16 +220,16 @@ class Shell(Transport):
 
         return False
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.SHELL_ENABLED:
             raise TransportError("Shell commands are not enabled")
 
-        if check.status == "up":
+        if flip.new_status == "up":
             cmd = self.channel.shell.cmd_up
-        elif check.status == "down":
+        elif flip.new_status == "down":
             cmd = self.channel.shell.cmd_down
 
-        cmd = self.prepare(cmd, check)
+        cmd = self.prepare(cmd, flip)
         code = os.system(cmd)
 
         if code != 0:
