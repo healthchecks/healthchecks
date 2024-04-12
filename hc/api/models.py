@@ -948,7 +948,7 @@ class Channel(models.Model):
 
         start, error, disabled = now(), "", self.disabled
         try:
-            self.transport.notify_flip(flip, notification=n)
+            self.transport.notify(flip, notification=n)
 
         except transports.TransportError as e:
             disabled = True if e.permanent else disabled

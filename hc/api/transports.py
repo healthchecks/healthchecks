@@ -83,7 +83,7 @@ class Transport(object):
     def __init__(self, channel: Channel):
         self.channel = channel
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         """Send notification about current status of the check.
 
         This method raises TransportError on error, and returns None
@@ -92,10 +92,6 @@ class Transport(object):
         """
 
         raise NotImplementedError()
-
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
-        # The default implementation calls self.notify
-        self.notify(flip.owner, notification)
 
     def is_noop(self, status: str) -> bool:
         """Return True if transport will ignore check's current status.
@@ -143,7 +139,7 @@ class RemovedTransport(Transport):
 
 
 class Email(Transport):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not self.channel.email_verified:
             raise TransportError("Email not verified")
 
@@ -219,7 +215,7 @@ class Shell(Transport):
 
         return False
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.SHELL_ENABLED:
             raise TransportError("Shell commands are not enabled")
 
@@ -383,7 +379,7 @@ class Webhook(HttpTransport):
 
         return False
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.WEBHOOKS_ENABLED:
             raise TransportError("Webhook notifications are not enabled.")
 
@@ -476,7 +472,7 @@ class Slackalike(HttpTransport):
 
         return result
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         self.post(self.channel.slack_webhook_url, json=self.payload(flip))
 
 
@@ -502,7 +498,7 @@ class Slack(Slackalike):
 
         raise TransportError(message, permanent=permanent)
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
 
@@ -510,7 +506,7 @@ class Slack(Slackalike):
 
 
 class Mattermost(Slackalike):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
 
@@ -518,7 +514,7 @@ class Mattermost(Slackalike):
 
 
 class Discord(Slackalike):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         url = self.channel.discord_webhook_url + "/slack"
         self.post(url, json=self.payload(flip))
 
@@ -538,7 +534,7 @@ class Opsgenie(HttpTransport):
 
         raise TransportError(message)
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.OPSGENIE_ENABLED:
             raise TransportError("Opsgenie notifications are not enabled.")
 
@@ -569,7 +565,7 @@ class Opsgenie(HttpTransport):
 class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.PD_ENABLED:
             raise TransportError("PagerDuty notifications are not enabled.")
 
@@ -604,7 +600,7 @@ class PagerDuty(HttpTransport):
 
 
 class PagerTree(HttpTransport):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.PAGERTREE_ENABLED:
             raise TransportError("PagerTree notifications are not enabled.")
 
@@ -627,7 +623,7 @@ class PagerTree(HttpTransport):
 
 
 class Pushbullet(HttpTransport):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         text = tmpl("pushbullet_message.html", check=flip.owner, status=flip.new_status)
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
@@ -670,7 +666,7 @@ class Pushover(HttpTransport):
 
         return int(prio) == -3
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.PUSHOVER_API_TOKEN:
             raise TransportError("Pushover notifications are not enabled.")
 
@@ -770,7 +766,7 @@ class RocketChat(HttpTransport):
 
         return result
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.ROCKETCHAT_ENABLED:
             raise TransportError("Rocket.Chat notifications are not enabled.")
         self.post(self.channel.value, json=self.payload(flip))
@@ -784,7 +780,7 @@ class VictorOps(HttpTransport):
         permanent = response.status_code == 404
         raise TransportError(message, permanent=permanent)
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.VICTOROPS_ENABLED:
             raise TransportError("Splunk On-Call notifications are not enabled.")
 
@@ -813,7 +809,7 @@ class Matrix(HttpTransport):
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
         return url
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         plain = tmpl(
             "matrix_description.html", check=flip.owner, status=flip.new_status
         )
@@ -883,7 +879,7 @@ class Telegram(HttpTransport):
         }
         cls.post(cls.SM, json=payload)
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_telegram(self.channel.telegram.id):
@@ -935,7 +931,7 @@ class Sms(HttpTransport):
         else:
             return not self.channel.phone.notify_up
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.TWILIO_ACCOUNT or not settings.TWILIO_AUTH:
             raise TransportError("SMS notifications are not enabled")
 
@@ -990,7 +986,7 @@ class Call(HttpTransport):
     def is_noop(self, status: str) -> bool:
         return status != "down"
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if (
             not settings.TWILIO_ACCOUNT
             or not settings.TWILIO_AUTH
@@ -1047,7 +1043,7 @@ class WhatsApp(HttpTransport):
         else:
             return not self.channel.phone.notify_up
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         for key in (
             "TWILIO_USE_WHATSAPP",
             "TWILIO_ACCOUNT",
@@ -1091,7 +1087,7 @@ class Trello(HttpTransport):
     def is_noop(self, status: str) -> bool:
         return status != "down"
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.TRELLO_APP_KEY:
             raise TransportError("Trello notifications are not enabled.")
 
@@ -1107,7 +1103,7 @@ class Trello(HttpTransport):
 
 
 class Apprise(HttpTransport):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.APPRISE_ENABLED:
             # Not supported and/or enabled
             raise TransportError("Apprise is disabled and/or not installed")
@@ -1175,7 +1171,7 @@ class MsTeams(HttpTransport):
 
         return result
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.MSTEAMS_ENABLED:
             raise TransportError("MS Teams notifications are not enabled.")
 
@@ -1197,7 +1193,7 @@ class Zulip(HttpTransport):
 
         raise TransportError(message)
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.ZULIP_ENABLED:
             raise TransportError("Zulip notifications are not enabled.")
 
@@ -1219,7 +1215,7 @@ class Zulip(HttpTransport):
 
 
 class Spike(HttpTransport):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.SPIKE_ENABLED:
             raise TransportError("Spike notifications are not enabled.")
 
@@ -1240,7 +1236,7 @@ class Spike(HttpTransport):
 class LineNotify(HttpTransport):
     URL = "https://notify-api.line.me/api/notify"
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Bearer %s" % self.channel.linenotify_token,
@@ -1380,7 +1376,7 @@ class Signal(Transport):
                 # And then report it the same as other errors
                 raise TransportError(msg)
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.SIGNAL_CLI_SOCKET:
             raise TransportError("Signal notifications are not enabled")
 
@@ -1406,7 +1402,7 @@ class Signal(Transport):
 
 
 class Gotify(HttpTransport):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         base = self.channel.gotify.url
         if not base.endswith("/"):
             base += "/"
@@ -1431,7 +1427,7 @@ class Gotify(HttpTransport):
 
 
 class Group(Transport):
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         channels = self.channel.group_channels
         # If notification's owner field is None then this is a test notification,
         # and we should pass is_test=True to channel.notify() calls
@@ -1456,7 +1452,7 @@ class Ntfy(HttpTransport):
     def is_noop(self, status: str) -> bool:
         return self.priority(status) == 0
 
-    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+    def notify(self, flip: Flip, notification: Notification) -> None:
         ctx = {
             "check": flip.owner,
             "status": flip.new_status,
