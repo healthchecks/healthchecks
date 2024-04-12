@@ -538,7 +538,7 @@ class Opsgenie(HttpTransport):
 
         raise TransportError(message)
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.OPSGENIE_ENABLED:
             raise TransportError("Opsgenie notifications are not enabled.")
 
@@ -547,9 +547,10 @@ class Opsgenie(HttpTransport):
             "Authorization": "GenieKey %s" % self.channel.opsgenie.key,
         }
 
+        check = flip.owner
         payload: JSONDict = {"alias": str(check.code), "source": settings.SITE_NAME}
 
-        if check.status == "down":
+        if flip.new_status == "down":
             payload["tags"] = cast(JSONValue, check.tags_list())
             payload["message"] = tmpl("opsgenie_message.html", check=check)
             payload["note"] = tmpl("opsgenie_note.html", check=check)
@@ -559,7 +560,7 @@ class Opsgenie(HttpTransport):
         if self.channel.opsgenie.region == "eu":
             url = "https://api.eu.opsgenie.com/v2/alerts"
 
-        if check.status == "up":
+        if flip.new_status == "up":
             url += "/%s/close?identifierType=alias" % check.code
 
         self.post(url, json=payload, headers=headers)
