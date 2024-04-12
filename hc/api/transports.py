@@ -604,19 +604,17 @@ class PagerTree(HttpTransport):
         if not settings.PAGERTREE_ENABLED:
             raise TransportError("PagerTree notifications are not enabled.")
 
-        check = flip.owner
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
+        ctx = {"check": flip.owner, "status": flip.new_status}
         payload = {
-            "incident_key": str(check.code),
+            "incident_key": str(flip.owner.code),
             "event_type": "trigger" if flip.new_status == "down" else "resolve",
-            "title": tmpl("pagertree_title.html", check=check, status=flip.new_status),
-            "description": tmpl(
-                "pagertree_description.html", check=check, status=flip.new_status
-            ),
+            "title": tmpl("pagertree_title.html", **ctx),
+            "description": tmpl("pagertree_description.html", **ctx),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
-            "tags": ",".join(check.tags_list()),
+            "tags": ",".join(flip.owner.tags_list()),
         }
 
         self.post(url, json=payload, headers=headers)
@@ -784,15 +782,13 @@ class VictorOps(HttpTransport):
         if not settings.VICTOROPS_ENABLED:
             raise TransportError("Splunk On-Call notifications are not enabled.")
 
-        description = tmpl(
-            "victorops_description.html", check=flip.owner, status=flip.new_status
-        )
+        ctx = {"check": flip.owner, "status": flip.new_status}
         mtype = "CRITICAL" if flip.new_status == "down" else "RECOVERY"
         payload = {
             "entity_id": str(flip.owner.code),
             "message_type": mtype,
             "entity_display_name": flip.owner.name_then_code(),
-            "state_message": description,
+            "state_message": tmpl("victorops_description.html", **ctx),
             "monitoring_tool": settings.SITE_NAME,
         }
 
@@ -810,14 +806,9 @@ class Matrix(HttpTransport):
         return url
 
     def notify(self, flip: Flip, notification: Notification) -> None:
-        plain = tmpl(
-            "matrix_description.html", check=flip.owner, status=flip.new_status
-        )
-        formatted = tmpl(
-            "matrix_description_formatted.html",
-            check=flip.owner,
-            status=flip.new_status,
-        )
+        ctx = {"check": flip.owner, "status": flip.new_status}
+        plain = tmpl("matrix_description.html", **ctx)
+        formatted = tmpl("matrix_description_formatted.html", **ctx)
         payload = {
             "msgtype": "m.text",
             "body": plain,
@@ -1001,14 +992,11 @@ class Call(HttpTransport):
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        twiml = tmpl(
-            "call_message.html", check=flip.owner, site_name=settings.SITE_NAME
-        )
-
+        ctx = {"check": flip.owner, "site_name": settings.SITE_NAME}
         data = {
             "From": settings.TWILIO_FROM,
             "To": self.channel.phone.value,
-            "Twiml": twiml,
+            "Twiml": tmpl("call_message.html", **ctx),
             "StatusCallback": notification.status_url(),
         }
 
@@ -1221,12 +1209,11 @@ class Spike(HttpTransport):
 
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
+        ctx = {"check": flip.owner, "status": flip.new_status}
         payload = {
             "check_id": str(flip.owner.code),
-            "title": tmpl("spike_title.html", check=flip.owner, status=flip.new_status),
-            "message": tmpl(
-                "spike_description.html", check=flip.owner, status=flip.new_status
-            ),
+            "title": tmpl("spike_title.html", **ctx),
+            "message": tmpl("spike_description.html", **ctx),
             "status": flip.new_status,
         }
 
