@@ -670,7 +670,7 @@ class Pushover(HttpTransport):
 
         return int(prio) == -3
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.PUSHOVER_API_TOKEN:
             raise TransportError("Pushover notifications are not enabled.")
 
@@ -687,21 +687,23 @@ class Pushover(HttpTransport):
         if not TokenBucket.authorize_pushover(user_key):
             raise TransportError("Rate limit exceeded")
 
+        check = flip.owner
         # If down events have the emergency priority,
         # send a cancel call first
-        if check.status == "up" and down_prio == "2":
+        if flip.new_status == "up" and down_prio == "2":
             url = self.CANCEL_TMPL % check.unique_key
             cancel_payload = {"token": settings.PUSHOVER_API_TOKEN}
             self.post(url, data=cancel_payload)
 
         ctx = {
             "check": check,
+            "status": flip.new_status,
             "ping": self.last_ping(check),
             "down_checks": self.down_checks(check),
         }
         text = tmpl("pushover_message.html", **ctx)
         title = tmpl("pushover_title.html", **ctx)
-        prio = up_prio if check.status == "up" else down_prio
+        prio = up_prio if flip.new_status == "up" else down_prio
 
         payload = {
             "token": settings.PUSHOVER_API_TOKEN,
