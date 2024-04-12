@@ -1089,14 +1089,14 @@ class Trello(HttpTransport):
     def is_noop(self, status: str) -> bool:
         return status != "down"
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.TRELLO_APP_KEY:
             raise TransportError("Trello notifications are not enabled.")
 
         params = {
             "idList": self.channel.trello.list_id,
-            "name": tmpl("trello_name.html", check=check),
-            "desc": tmpl("trello_desc.html", check=check),
+            "name": tmpl("trello_name.html", check=flip.owner, status=flip.new_status),
+            "desc": tmpl("trello_desc.html", check=flip.owner),
             "key": settings.TRELLO_APP_KEY,
             "token": self.channel.trello.token,
         }
