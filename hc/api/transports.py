@@ -97,7 +97,7 @@ class Transport(object):
         # The default implementation calls self.notify
         self.notify(flip.owner, notification)
 
-    def is_noop(self, check: Check) -> bool:
+    def is_noop(self, status: str) -> bool:
         """Return True if transport will ignore check's current status.
 
         This method is overridden in Webhook subclass where the user can
@@ -476,8 +476,8 @@ class Slackalike(HttpTransport):
 
         return result
 
-    def notify(self, check: Check, notification: Notification) -> None:
-        self.post(self.channel.slack_webhook_url, json=self.payload(check))
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+        self.post(self.channel.slack_webhook_url, json=self.payload(flip))
 
 
 class Slack(Slackalike):
