@@ -20,7 +20,9 @@ class NotifyPdTestCase(BaseTestCase):
         self.check = Check(project=self.project)
         self.check.name = "Foo"
         self.check.desc = "Description goes here"
-        self.check.status = status
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 

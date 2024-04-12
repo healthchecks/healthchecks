@@ -569,10 +569,11 @@ class Opsgenie(HttpTransport):
 class PagerDuty(HttpTransport):
     URL = "https://events.pagerduty.com/generic/2010-04-15/create_event.json"
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.PD_ENABLED:
             raise TransportError("PagerDuty notifications are not enabled.")
 
+        check = flip.owner
         details = {
             "Project": check.project.name,
             "Total pings": check.n_pings,
@@ -588,11 +589,11 @@ class PagerDuty(HttpTransport):
             details["Schedule"] = check.schedule
             details["Time zone"] = check.tz
 
-        description = tmpl("pd_description.html", check=check)
+        description = tmpl("pd_description.html", check=check, status=flip.new_status)
         payload = {
             "service_key": self.channel.pd.service_key,
             "incident_key": str(check.code),
-            "event_type": "trigger" if check.status == "down" else "resolve",
+            "event_type": "trigger" if flip.new_status == "down" else "resolve",
             "description": description,
             "client": settings.SITE_NAME,
             "client_url": check.details_url(),
