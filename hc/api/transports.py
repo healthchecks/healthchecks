@@ -784,16 +784,18 @@ class VictorOps(HttpTransport):
         permanent = response.status_code == 404
         raise TransportError(message, permanent=permanent)
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.VICTOROPS_ENABLED:
             raise TransportError("Splunk On-Call notifications are not enabled.")
 
-        description = tmpl("victorops_description.html", check=check)
-        mtype = "CRITICAL" if check.status == "down" else "RECOVERY"
+        description = tmpl(
+            "victorops_description.html", check=flip.owner, status=flip.new_status
+        )
+        mtype = "CRITICAL" if flip.new_status == "down" else "RECOVERY"
         payload = {
-            "entity_id": str(check.code),
+            "entity_id": str(flip.owner.code),
             "message_type": mtype,
-            "entity_display_name": check.name_then_code(),
+            "entity_display_name": flip.owner.name_then_code(),
             "state_message": description,
             "monitoring_tool": settings.SITE_NAME,
         }
