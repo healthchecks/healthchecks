@@ -20,7 +20,9 @@ class NotifySlackTestCase(BaseTestCase):
     ) -> None:
         self.check = Check(project=self.project)
         self.check.name = "Foobar"
-        self.check.status = status
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
@@ -54,6 +56,8 @@ class NotifySlackTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         attachment = payload["attachments"][0]
+        self.assertEqual(attachment["fallback"], """The check "Foobar" is DOWN.""")
+
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
         self.assertNotIn("Last Ping Body", fields)

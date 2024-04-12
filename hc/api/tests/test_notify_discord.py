@@ -15,7 +15,10 @@ from hc.test import BaseTestCase
 class NotifyDiscordTestCase(BaseTestCase):
     def _setup_data(self, value: str, status: str = "down") -> None:
         self.check = Check(project=self.project)
-        self.check.status = status
+        self.check.name = "foo"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
@@ -47,6 +50,8 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.assertEqual(url, "https://example.org/slack")
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        self.assertEqual(attachment["fallback"], """The check "foo" is DOWN.""")
+
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
 

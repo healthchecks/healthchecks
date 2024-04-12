@@ -425,8 +425,9 @@ class SlackFields(list[JSONValue]):
 class Slackalike(HttpTransport):
     """Base class for transports that use Slack-compatible incoming webhooks."""
 
-    def payload(self, check: Check) -> JSONDict:
+    def payload(self, flip: Flip) -> JSONDict:
         """Prepare JSON-serializable payload for Slack-compatible incoming webhook."""
+        check = flip.owner
         name = check.name_then_code()
         fields = SlackFields()
         result: JSONDict = {
@@ -434,10 +435,10 @@ class Slackalike(HttpTransport):
             "icon_url": absolute_site_logo_url(),
             "attachments": [
                 {
-                    "color": "good" if check.status == "up" else "danger",
-                    "fallback": f'The check "{name}" is {check.status.upper()}.',
+                    "color": "good" if flip.new_status == "up" else "danger",
+                    "fallback": f'The check "{name}" is {flip.new_status.upper()}.',
                     "mrkdwn_in": ["fields"],
-                    "title": f"“{name}” is {check.status.upper()}.",
+                    "title": f"“{name}” is {flip.new_status.upper()}.",
                     "title_link": check.cloaked_url(),
                     "fields": fields,
                 }
@@ -501,25 +502,25 @@ class Slack(Slackalike):
 
         raise TransportError(message, permanent=permanent)
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.SLACK_ENABLED:
             raise TransportError("Slack notifications are not enabled.")
 
-        self.post(self.channel.slack_webhook_url, json=self.payload(check))
+        self.post(self.channel.slack_webhook_url, json=self.payload(flip))
 
 
 class Mattermost(Slackalike):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
 
-        self.post(self.channel.slack_webhook_url, json=self.payload(check))
+        self.post(self.channel.slack_webhook_url, json=self.payload(flip))
 
 
 class Discord(Slackalike):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         url = self.channel.discord_webhook_url + "/slack"
-        self.post(url, json=self.payload(check))
+        self.post(url, json=self.payload(flip))
 
 
 class Opsgenie(HttpTransport):
