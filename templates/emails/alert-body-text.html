@@ -1,6 +1,6 @@
 {% load hc_extras humanize linemode %}{% linemode %}
 
-{% line %}The check "{{ check.name_then_code|safe }}" has gone {{ check.status }}.{% endline %}
+{% line %}The check "{{ check.name_then_code|safe }}" has gone {{ flip.new_status }}.{% endline %}
 {% line %}{% endline %}
 
 {% line %}View on {% site_name %}:{% endline %}

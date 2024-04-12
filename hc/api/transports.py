@@ -144,7 +144,7 @@ class RemovedTransport(Transport):
 
 
 class Email(Transport):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not self.channel.email_verified:
             raise TransportError("Email not verified")
 
@@ -166,7 +166,7 @@ class Email(Transport):
         except Profile.DoesNotExist:
             projects = None
 
-        ping = self.last_ping(check)
+        ping = self.last_ping(flip.owner)
         body = get_ping_body(ping)
         subject = None
         if ping is not None and ping.scheme == "email" and body:
@@ -175,7 +175,8 @@ class Email(Transport):
             subject = parsed.get("subject", "")
 
         ctx = {
-            "check": check,
+            "flip": flip,
+            "check": flip.owner,
             "ping": ping,
             "body": body,
             "subject": subject,

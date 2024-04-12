@@ -2,7 +2,7 @@
 {% load hc_extras humanize %}
 
 <p>
-    "{{ check.name_then_code }}" is {{ check.status|upper }}.
+    "{{ check.name_then_code }}" is {{ flip.new_status|upper }}.
     <a href="{{ check.cloaked_url }}">View on {% site_name %}&hellip;</a>
 </p>
 

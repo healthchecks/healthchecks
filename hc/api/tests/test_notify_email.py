@@ -24,7 +24,9 @@ class NotifyEmailTestCase(BaseTestCase):
         self.check.name = "Daily Backup"
         self.check.desc = "Line 1\nLine2"
         self.check.tags = "foo bar"
-        self.check.status = "down"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.n_pings = 112233
         self.check.save()
@@ -64,6 +66,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
+        self.assertEqual(email.subject, "DOWN | Daily Backup")
         self.assertEqual(email.to[0], "alice@example.org")
         self.assertNotIn("X-Bounce-ID", email.extra_headers)
         self.assertTrue("List-Unsubscribe" in email.extra_headers)
@@ -71,9 +74,9 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertTrue(email.extra_headers["Message-ID"].endswith("@example.org>"))
 
         html = self.get_html(email)
-        # Name
-        self.assertIn("Daily Backup", email.body)
-        self.assertIn("Daily Backup", html)
+        # Message
+        self.assertIn("""The check "Daily Backup" has gone down.""", email.body)
+        self.assertIn(""""Daily Backup" is DOWN.""", html)
 
         # Description
         self.assertIn("Line 1\nLine2", email.body)
