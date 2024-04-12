@@ -20,7 +20,10 @@ class NotifyCallTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
-        self.check.status = "down"
+        self.check.name = "foo"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
@@ -46,6 +49,7 @@ class NotifyCallTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
+        self.assertIn("""The check "foo" is down.""", payload["Twiml"])
 
         n = Notification.objects.get()
         callback_path = f"/api/v3/notifications/{n.code}/status"

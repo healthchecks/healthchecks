@@ -16,7 +16,6 @@ from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.loader import render_to_string
 from django.utils.html import escape
-from django.utils.timezone import now
 from pydantic import BaseModel, ValidationError
 
 from hc.accounts.models import Profile
@@ -973,7 +972,7 @@ class Call(HttpTransport):
     def is_noop(self, status: str) -> bool:
         return status != "down"
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if (
             not settings.TWILIO_ACCOUNT
             or not settings.TWILIO_AUTH
@@ -988,7 +987,9 @@ class Call(HttpTransport):
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        twiml = tmpl("call_message.html", check=check, site_name=settings.SITE_NAME)
+        twiml = tmpl(
+            "call_message.html", check=flip.owner, site_name=settings.SITE_NAME
+        )
 
         data = {
             "From": settings.TWILIO_FROM,
