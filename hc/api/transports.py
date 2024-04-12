@@ -1215,17 +1215,19 @@ class Zulip(HttpTransport):
 
 
 class Spike(HttpTransport):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.SPIKE_ENABLED:
             raise TransportError("Spike notifications are not enabled.")
 
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
         payload = {
-            "check_id": str(check.code),
-            "title": tmpl("spike_title.html", check=check),
-            "message": tmpl("spike_description.html", check=check),
-            "status": check.status,
+            "check_id": str(flip.owner.code),
+            "title": tmpl("spike_title.html", check=flip.owner, status=flip.new_status),
+            "message": tmpl(
+                "spike_description.html", check=flip.owner, status=flip.new_status
+            ),
+            "status": flip.new_status,
         }
 
         self.post(url, json=payload, headers=headers)
