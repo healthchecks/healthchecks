@@ -17,7 +17,9 @@ class NotifyPushbulletTestCase(BaseTestCase):
 
         self.check = Check(project=self.project)
         self.check.name = "Foo"
-        self.check.status = "up"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
@@ -30,12 +32,11 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.flip = Flip(owner=self.check)
         self.flip.created = now()
         self.flip.old_status = "new"
-        self.flip.new_status = "down"
+        self.flip.new_status = "up"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
-        self.check.status = "down"
-        self.check.save()
+        self.flip.new_status = "down"
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.flip)

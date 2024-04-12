@@ -627,8 +627,8 @@ class PagerTree(HttpTransport):
 
 
 class Pushbullet(HttpTransport):
-    def notify(self, check: Check, notification: Notification) -> None:
-        text = tmpl("pushbullet_message.html", check=check)
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+        text = tmpl("pushbullet_message.html", check=flip.owner, status=flip.new_status)
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
             "Access-Token": self.channel.value,
