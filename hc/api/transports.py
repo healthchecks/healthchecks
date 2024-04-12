@@ -1047,7 +1047,7 @@ class WhatsApp(HttpTransport):
         else:
             return not self.channel.phone.notify_up
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         for key in (
             "TWILIO_USE_WHATSAPP",
             "TWILIO_ACCOUNT",
@@ -1068,7 +1068,7 @@ class WhatsApp(HttpTransport):
         url = self.URL % settings.TWILIO_ACCOUNT
         assert settings.TWILIO_ACCOUNT and settings.TWILIO_AUTH
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        if check.status == "down":
+        if flip.new_status == "down":
             content_sid = settings.WHATSAPP_DOWN_CONTENT_SID
         else:
             content_sid = settings.WHATSAPP_UP_CONTENT_SID
@@ -1078,7 +1078,7 @@ class WhatsApp(HttpTransport):
             "From": f"whatsapp:{settings.TWILIO_FROM}",
             "MessagingServiceSid": settings.TWILIO_MESSAGING_SERVICE_SID,
             "ContentSid": content_sid,
-            "ContentVariables": json.dumps({1: check.name_then_code()}),
+            "ContentVariables": json.dumps({1: flip.owner.name_then_code()}),
             "StatusCallback": notification.status_url(),
         }
 
