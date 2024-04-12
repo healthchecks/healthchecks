@@ -94,7 +94,7 @@ class Transport(object):
 
         raise NotImplementedError()
 
-    def is_noop(self, check: Check) -> bool:
+    def is_noop(self, status: str) -> bool:
         """Return True if transport will ignore check's current status.
 
         This method is overridden in Webhook subclass where the user can
@@ -135,7 +135,7 @@ class Transport(object):
 class RemovedTransport(Transport):
     """Dummy transport class for obsolete integrations: hipchat, pagerteam."""
 
-    def is_noop(self, check: Check) -> bool:
+    def is_noop(self, status: str) -> bool:
         return True
 
 
@@ -181,8 +181,8 @@ class Email(Transport):
 
         emails.alert(self.channel.email.value, ctx, headers)
 
-    def is_noop(self, check: Check) -> bool:
-        if check.status == "down":
+    def is_noop(self, status: str) -> bool:
+        if status == "down":
             return not self.channel.email.notify_down
         else:
             return not self.channel.email.notify_up
@@ -205,11 +205,11 @@ class Shell(Transport):
 
         return replace(template, ctx)
 
-    def is_noop(self, check: Check) -> bool:
-        if check.status == "down" and not self.channel.shell.cmd_down:
+    def is_noop(self, status: str) -> bool:
+        if status == "down" and not self.channel.shell.cmd_down:
             return True
 
-        if check.status == "up" and not self.channel.shell.cmd_up:
+        if status == "up" and not self.channel.shell.cmd_up:
             return True
 
         return False
@@ -370,8 +370,8 @@ class Webhook(HttpTransport):
 
         return result
 
-    def is_noop(self, check: Check) -> bool:
-        spec = self.channel.webhook_spec(check.status)
+    def is_noop(self, status: str) -> bool:
+        spec = self.channel.webhook_spec(status)
         if not spec.url:
             return True
 
@@ -648,12 +648,12 @@ class Pushover(HttpTransport):
 
         raise TransportError(message, permanent=permanent)
 
-    def is_noop(self, check: Check) -> bool:
+    def is_noop(self, status: str) -> bool:
         pieces = self.channel.value.split("|")
         _, prio = pieces[0], pieces[1]
 
         # The third element, if present, is the priority for "up" events
-        if check.status == "up" and len(pieces) == 3:
+        if status == "up" and len(pieces) == 3:
             prio = pieces[2]
 
         return int(prio) == -3
@@ -905,8 +905,8 @@ class Sms(HttpTransport):
 
         raise TransportError(f"Received status code {response.status_code}")
 
-    def is_noop(self, check: Check) -> bool:
-        if check.status == "down":
+    def is_noop(self, status: str) -> bool:
+        if status == "down":
             return not self.channel.phone.notify_down
         else:
             return not self.channel.phone.notify_up
@@ -958,8 +958,8 @@ class Call(HttpTransport):
             logger.debug("Twilio Calls HTTP 400 with body: %s", response.content)
         raise TransportError(f"Received status code {response.status_code}")
 
-    def is_noop(self, check: Check) -> bool:
-        return check.status != "down"
+    def is_noop(self, status: str) -> bool:
+        return status != "down"
 
     def notify(self, check: Check, notification: Notification) -> None:
         if (
@@ -1010,8 +1010,8 @@ class WhatsApp(HttpTransport):
 
         raise TransportError(f"Received status code {response.status_code}")
 
-    def is_noop(self, check: Check) -> bool:
-        if check.status == "down":
+    def is_noop(self, status: str) -> bool:
+        if status == "down":
             return not self.channel.phone.notify_down
         else:
             return not self.channel.phone.notify_up
@@ -1057,8 +1057,8 @@ class WhatsApp(HttpTransport):
 class Trello(HttpTransport):
     URL = "https://api.trello.com/1/cards"
 
-    def is_noop(self, check: Check) -> bool:
-        return check.status != "down"
+    def is_noop(self, status: str) -> bool:
+        return status != "down"
 
     def notify(self, check: Check, notification: Notification) -> None:
         if not settings.TRELLO_APP_KEY:
@@ -1247,8 +1247,8 @@ class Signal(Transport):
                 return []
             return self.error.data.response.results
 
-    def is_noop(self, check: Check) -> bool:
-        if check.status == "down":
+    def is_noop(self, status: str) -> bool:
+        if status == "down":
             return not self.channel.phone.notify_down
         else:
             return not self.channel.phone.notify_up
@@ -1409,13 +1409,13 @@ class Group(Transport):
 
 
 class Ntfy(HttpTransport):
-    def priority(self, check: Check) -> int:
-        if check.status == "up":
+    def priority(self, status: str) -> int:
+        if status == "up":
             return self.channel.ntfy.priority_up
         return self.channel.ntfy.priority
 
-    def is_noop(self, check: Check) -> bool:
-        return self.priority(check) == 0
+    def is_noop(self, status: str) -> bool:
+        return self.priority(status) == 0
 
     def notify(self, check: Check, notification: Notification) -> None:
         ctx = {
@@ -1425,7 +1425,7 @@ class Ntfy(HttpTransport):
         }
         payload = {
             "topic": self.channel.ntfy.topic,
-            "priority": self.priority(check),
+            "priority": self.priority(check.status),
             "title": tmpl("ntfy_title.html", **ctx),
             "message": tmpl("ntfy_message.html", **ctx),
             "tags": ["red_circle" if check.status == "down" else "green_circle"],

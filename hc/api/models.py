@@ -931,7 +931,7 @@ class Channel(models.Model):
         return cls(self)
 
     def notify(self, check: Check, is_test: bool = False) -> str:
-        if self.transport.is_noop(check):
+        if self.transport.is_noop(check.status):
             return "no-op"
 
         n = Notification(channel=self)
@@ -1166,7 +1166,7 @@ class Flip(models.Model):
 
         * Exclude all channels for new->up and paused->up transitions.
         * Exclude disabled channels
-        * Exclude channels where transport.is_noop(check) returns True
+        * Exclude channels where transport.is_noop(status) returns True
         """
 
         # Don't send alerts on new->up and paused->up transitions
@@ -1177,7 +1177,7 @@ class Flip(models.Model):
             raise NotImplementedError(f"Unexpected status: {self.new_status}")
 
         q = self.owner.channel_set.exclude(disabled=True)
-        return [ch for ch in q if not ch.transport.is_noop(self.owner)]
+        return [ch for ch in q if not ch.transport.is_noop(self.new_status)]
 
 
 class TokenBucket(models.Model):
