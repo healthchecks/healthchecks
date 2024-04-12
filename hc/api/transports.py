@@ -1384,7 +1384,7 @@ class Signal(Transport):
 
 
 class Gotify(HttpTransport):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         base = self.channel.gotify.url
         if not base.endswith("/"):
             base += "/"
@@ -1392,7 +1392,11 @@ class Gotify(HttpTransport):
         url = urljoin(base, "message")
         url += "?" + urlencode({"token": self.channel.gotify.token})
 
-        ctx = {"check": check, "down_checks": self.down_checks(check)}
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "down_checks": self.down_checks(flip.owner),
+        }
         payload = {
             "title": tmpl("gotify_title.html", **ctx),
             "message": tmpl("gotify_message.html", **ctx),
