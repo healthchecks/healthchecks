@@ -20,7 +20,9 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.check.name = "Foo"
         self.check.tags = "foo bar"
         self.check.n_pings = 123
-        self.check.status = "down"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 

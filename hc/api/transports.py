@@ -1441,23 +1441,24 @@ class Ntfy(HttpTransport):
     def is_noop(self, status: str) -> bool:
         return self.priority(status) == 0
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         ctx = {
-            "check": check,
-            "ping": self.last_ping(check),
-            "down_checks": self.down_checks(check),
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip.owner),
+            "down_checks": self.down_checks(flip.owner),
         }
         payload = {
             "topic": self.channel.ntfy.topic,
-            "priority": self.priority(check.status),
+            "priority": self.priority(flip.new_status),
             "title": tmpl("ntfy_title.html", **ctx),
             "message": tmpl("ntfy_message.html", **ctx),
-            "tags": ["red_circle" if check.status == "down" else "green_circle"],
+            "tags": ["red_circle" if flip.new_status == "down" else "green_circle"],
             "actions": [
                 {
                     "action": "view",
                     "label": f"View on {settings.SITE_NAME}",
-                    "url": check.cloaked_url(),
+                    "url": flip.owner.cloaked_url(),
                 }
             ],
         }

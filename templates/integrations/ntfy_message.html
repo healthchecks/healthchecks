@@ -29,9 +29,9 @@
     {% line %}{% endline %}
     {% if down_checks %}
         {% if down_checks|length > 10 %}
-            {% line %}{{ down_checks|length }} other checks are {% if check.status == "down" %}also{% else %}still{% endif %} down.{% endline %}
+            {% line %}{{ down_checks|length }} other checks are {% if status == "down" %}also{% else %}still{% endif %} down.{% endline %}
         {% else %}
-            {% line %}The following checks are {% if check.status == "down" %}also{% else %}still{% endif %} down:{% endline %}
+            {% line %}The following checks are {% if status == "down" %}also{% else %}still{% endif %} down:{% endline %}
             {% for c in down_checks %}
                 {% line %}• {{ c.name_then_code }} (last ping: {{ c.last_ping|naturaltime|default:"never" }}){% endline %}
             {% endfor %}
