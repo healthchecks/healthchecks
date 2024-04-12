@@ -1,5 +1,5 @@
 {% load humanize %}
-{% if check.status == "down" %}
+{% if status == "down" %}
     🔴 <b>{{ check.name_then_code }}</b> is <b>DOWN</b>.{% if check.last_ping %} Last ping was {{ check.last_ping|naturaltime }}.{% endif %}
 {% else %}
     🟢 <b>{{ check.name_then_code }}</b> is now <b>UP</b>.

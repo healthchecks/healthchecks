@@ -803,9 +803,15 @@ class Matrix(HttpTransport):
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
         return url
 
-    def notify(self, check: Check, notification: Notification) -> None:
-        plain = tmpl("matrix_description.html", check=check)
-        formatted = tmpl("matrix_description_formatted.html", check=check)
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
+        plain = tmpl(
+            "matrix_description.html", check=flip.owner, status=flip.new_status
+        )
+        formatted = tmpl(
+            "matrix_description_formatted.html",
+            check=flip.owner,
+            status=flip.new_status,
+        )
         payload = {
             "msgtype": "m.text",
             "body": plain,
