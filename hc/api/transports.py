@@ -881,16 +881,17 @@ class Telegram(HttpTransport):
         }
         cls.post(cls.SM, json=payload)
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         from hc.api.models import TokenBucket
 
         if not TokenBucket.authorize_telegram(self.channel.telegram.id):
             raise TransportError("Rate limit exceeded")
 
-        ping = self.last_ping(check)
+        ping = self.last_ping(flip.owner)
         ctx = {
-            "check": check,
-            "down_checks": self.down_checks(check),
+            "check": flip.owner,
+            "status": flip.new_status,
+            "down_checks": self.down_checks(flip.owner),
             "ping": ping,
             # Telegram's message limit is 4096 chars, but clip body at 1000 for
             # consistency
