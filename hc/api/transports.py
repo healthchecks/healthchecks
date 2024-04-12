@@ -603,17 +603,20 @@ class PagerDuty(HttpTransport):
 
 
 class PagerTree(HttpTransport):
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.PAGERTREE_ENABLED:
             raise TransportError("PagerTree notifications are not enabled.")
 
+        check = flip.owner
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
         payload = {
             "incident_key": str(check.code),
-            "event_type": "trigger" if check.status == "down" else "resolve",
-            "title": tmpl("pagertree_title.html", check=check),
-            "description": tmpl("pagertree_description.html", check=check),
+            "event_type": "trigger" if flip.new_status == "down" else "resolve",
+            "title": tmpl("pagertree_title.html", check=check, status=flip.new_status),
+            "description": tmpl(
+                "pagertree_description.html", check=check, status=flip.new_status
+            ),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
             "tags": ",".join(check.tags_list()),
