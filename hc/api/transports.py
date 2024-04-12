@@ -1197,21 +1197,22 @@ class Zulip(HttpTransport):
 
         raise TransportError(message)
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.ZULIP_ENABLED:
             raise TransportError("Zulip notifications are not enabled.")
 
         topic = self.channel.zulip.topic
         if not topic:
-            topic = tmpl("zulip_topic.html", check=check)
+            topic = tmpl("zulip_topic.html", check=flip.owner, status=flip.new_status)
 
         url = self.channel.zulip.site + "/api/v1/messages"
         auth = (self.channel.zulip.bot_email, self.channel.zulip.api_key)
+        content = tmpl("zulip_content.html", check=flip.owner, status=flip.new_status)
         data = {
             "type": self.channel.zulip.mtype,
             "to": self.channel.zulip.to,
             "topic": topic,
-            "content": tmpl("zulip_content.html", check=check),
+            "content": content,
         }
 
         self.post(url, data=data, auth=auth)
