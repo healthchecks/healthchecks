@@ -17,7 +17,9 @@ class NotifyRocketChatTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
-        self.check.status = "down"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
@@ -45,6 +47,9 @@ class NotifyRocketChatTestCase(BaseTestCase):
 
         url = mock_post.call_args.args[1]
         self.assertEqual(url, "https://example.org")
+
+        text = mock_post.call_args.kwargs["json"]["text"]
+        self.assertTrue(text.endswith("is DOWN."))
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}

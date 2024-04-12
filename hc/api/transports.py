@@ -726,14 +726,15 @@ class Pushover(HttpTransport):
 
 
 class RocketChat(HttpTransport):
-    def payload(self, check: Check) -> JSONDict:
+    def payload(self, flip: Flip) -> JSONDict:
+        check = flip.owner
         url = check.cloaked_url()
-        color = "#5cb85c" if check.status == "up" else "#d9534f"
+        color = "#5cb85c" if flip.new_status == "up" else "#d9534f"
         fields = SlackFields()
         result: JSONDict = {
             "alias": settings.SITE_NAME,
             "avatar": absolute_site_logo_url(),
-            "text": f"[{check.name_then_code()}]({url}) is {check.status.upper()}.",
+            "text": f"[{check.name_then_code()}]({url}) is {flip.new_status.upper()}.",
             "attachments": [{"color": color, "fields": fields}],
         }
 
@@ -769,10 +770,10 @@ class RocketChat(HttpTransport):
 
         return result
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.ROCKETCHAT_ENABLED:
             raise TransportError("Rocket.Chat notifications are not enabled.")
-        self.post(self.channel.value, json=self.payload(check))
+        self.post(self.channel.value, json=self.payload(flip))
 
 
 class VictorOps(HttpTransport):
