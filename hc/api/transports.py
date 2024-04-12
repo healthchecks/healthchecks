@@ -1117,16 +1117,17 @@ class Apprise(HttpTransport):
 
 
 class MsTeams(HttpTransport):
-    def payload(self, check: Check) -> JSONDict:
+    def payload(self, flip: Flip) -> JSONDict:
+        check = flip.owner
         name = check.name_then_code()
         facts: JSONList = []
         sections: JSONList = [{"text": check.desc, "facts": facts}]
         result: JSONDict = {
             "@type": "MessageCard",
             "@context": "https://schema.org/extensions",
-            "title": f"“{escape(name)}” is {check.status.upper()}.",
-            "summary": f"“{name}” is {check.status.upper()}.",
-            "themeColor": "5cb85c" if check.status == "up" else "d9534f",
+            "title": f"“{escape(name)}” is {flip.new_status.upper()}.",
+            "summary": f"“{name}” is {flip.new_status.upper()}.",
+            "themeColor": "5cb85c" if flip.new_status == "up" else "d9534f",
             "sections": sections,
             "potentialAction": [
                 {
@@ -1163,11 +1164,11 @@ class MsTeams(HttpTransport):
 
         return result
 
-    def notify(self, check: Check, notification: Notification) -> None:
+    def notify_flip(self, flip: Flip, notification: Notification) -> None:
         if not settings.MSTEAMS_ENABLED:
             raise TransportError("MS Teams notifications are not enabled.")
 
-        self.post(self.channel.value, json=self.payload(check))
+        self.post(self.channel.value, json=self.payload(flip))
 
 
 class Zulip(HttpTransport):
