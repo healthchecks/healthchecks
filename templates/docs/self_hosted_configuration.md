@@ -792,7 +792,7 @@ The integration can work with or without the Slack Client ID. If
 the Slack Client ID is not set, in the "Integrations - Add Slack" page,
 Healthchecks will ask the user to provide a webhook URL for posting notifications.
 
-If the Slack Client _is_ set, Healthchecks will use the OAuth2 flow
+If the Slack Client ID _is_ set, Healthchecks will use the OAuth2 flow
 to get the webhook URL from Slack. The OAuth2 flow is more user-friendly.
 To set it up, go to [https://api.slack.com/apps/](https://api.slack.com/apps/)
 and create a _Slack app_. When setting up the Slack app, make sure to:
