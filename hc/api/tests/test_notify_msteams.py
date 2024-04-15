@@ -21,11 +21,12 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
 
         self.ping = Ping(owner=self.check)
         self.ping.created = now() - td(minutes=61)
+        self.ping.n = 112233
         self.ping.save()
 
         self.channel = Channel(project=self.project)
@@ -58,6 +59,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
 
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Last Ping:"], "Success, an hour ago")
+        self.assertEqual(facts["Total Pings:"], "112233")
 
         # The payload should not contain check's code
         serialized = json.dumps(payload)

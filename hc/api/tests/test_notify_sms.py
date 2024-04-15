@@ -10,7 +10,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Flip, Notification
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -24,8 +24,13 @@ class NotifySmsTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
+        self.ping.save()
 
         spec = {"value": "+1234567890", "up": False, "down": True}
         self.channel = Channel(project=self.project, kind="sms")
@@ -50,7 +55,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(payload["From"], "+000")
         self.assertNotIn("\xa0", payload["Body"])
         self.assertIn("""The check "Foo" is DOWN.""", payload["Body"])
-        self.assertIn("""Last ping was an hour ago.""", payload["Body"])
+        self.assertIn("""Last ping was 10 minutes ago.""", payload["Body"])
 
         n = Notification.objects.get()
         callback_path = f"/api/v3/notifications/{n.code}/status"
@@ -175,8 +180,7 @@ class NotifySmsTestCase(BaseTestCase):
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
-        self.check.last_ping = None
-        self.check.save()
+        self.ping.delete()
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.flip)

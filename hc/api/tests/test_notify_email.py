@@ -27,12 +27,12 @@ class NotifyEmailTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
-        self.check.n_pings = 112233
+        self.check.last_ping = now()
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.n = 1
+        self.ping.created = now() - td(minutes=61)
+        self.ping.n = 112233
         self.ping.remote_addr = "1.2.3.4"
         self.ping.body_raw = b"Body Line 1\nBody Line 2"
         self.ping.save()
@@ -103,6 +103,10 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertIn("112233", email.body)
         self.assertIn("112233", html)
 
+        # Last ping time
+        self.assertIn("an hour ago", email.body)
+        self.assertIn("an hour ago", html)
+
         # Last ping body
         self.assertIn("Body Line 1\nBody Line 2", email.body)
         self.assertIn("Body Line 1<br>Body Line 2", html)
@@ -136,7 +140,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         code, n = get_object.call_args.args
         self.assertEqual(code, str(self.check.code))
-        self.assertEqual(n, 1)
+        self.assertEqual(n, 112233)
 
     def test_it_shows_cron_schedule(self) -> None:
         self.check.kind = "cron"

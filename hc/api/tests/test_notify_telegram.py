@@ -22,12 +22,13 @@ class NotifyTelegramTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.n_pings = 1
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.created = now() - td(minutes=61)
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
         self.ping.save()
 
         self.channel = Channel(project=self.project)
@@ -58,8 +59,8 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("<b>Project:</b> Alices Project\n", payload["text"])
         self.assertIn("<b>Tags:</b> foo, bar, baz\n", payload["text"])
         self.assertIn("<b>Period:</b> 1 day\n", payload["text"])
-        self.assertIn("<b>Total Pings:</b> 1\n", payload["text"])
-        self.assertIn("<b>Last Ping:</b> Success, an hour ago", payload["text"])
+        self.assertIn("<b>Total Pings:</b> 112233\n", payload["text"])
+        self.assertIn("<b>Last Ping:</b> Success, 10 minutes ago", payload["text"])
 
         # Only one check in the project, so there should be no note about
         # other checks:
@@ -76,7 +77,9 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn("<b>Last Ping:</b> Exit status 123, an hour ago", payload["text"])
+        self.assertIn(
+            "<b>Last Ping:</b> Exit status 123, 10 minutes ago", payload["text"]
+        )
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_sends_to_thread(self, mock_post: Mock) -> None:

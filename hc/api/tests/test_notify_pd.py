@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Flip, Notification
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -23,8 +23,13 @@ class NotifyPdTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
+        self.ping.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "pd"
@@ -51,6 +56,8 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["details"]["Description"], "Description goes here")
         self.assertEqual(payload["event_type"], "trigger")
         self.assertEqual(payload["service_key"], "123")
+        self.assertEqual(payload["details"]["Last ping"], "10 minutes ago")
+        self.assertEqual(payload["details"]["Total pings"], 112233)
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:

@@ -23,11 +23,12 @@ class NotifySlackTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
 
         self.ping = Ping(owner=self.check)
         self.ping.created = now() - td(minutes=61)
+        self.ping.n = 112233
         self.ping.save()
 
         self.channel = Channel(project=self.project)
@@ -60,6 +61,7 @@ class NotifySlackTestCase(BaseTestCase):
 
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
+        self.assertEqual(fields["Total Pings"], "112233")
         self.assertNotIn("Last Ping Body", fields)
 
         # The payload should not contain check's code

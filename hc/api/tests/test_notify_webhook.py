@@ -22,11 +22,12 @@ class NotifyWebhookTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.created = self.check.last_ping
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
         self.ping.body_raw = b"Body Line 1\nBody Line 2"
         self.ping.exitstatus = 123
         self.ping.save()

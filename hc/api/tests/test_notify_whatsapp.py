@@ -32,7 +32,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
 
         definition = {"value": "+1234567890", "up": True, "down": True}

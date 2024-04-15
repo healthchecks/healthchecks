@@ -463,13 +463,13 @@ class Slackalike(HttpTransport):
             fields.add("Schedule", fix_asterisks(check.schedule))
             fields.add("Time Zone", check.tz)
 
-        fields.add("Total Pings", str(check.n_pings))
-
         if ping := self.last_ping(flip):
+            fields.add("Total Pings", str(ping.n))
             created_str = naturaltime(ping.created)
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
         else:
+            fields.add("Total Pings", "0")
             fields.add("Last Ping", "Never")
 
         body = get_ping_body(ping, maxlen=1000)
@@ -553,10 +553,11 @@ class Opsgenie(HttpTransport):
         payload: JSONDict = {"alias": str(check.code), "source": settings.SITE_NAME}
 
         if flip.new_status == "down":
+            ctx = {"check": check, "ping": self.last_ping(flip)}
             payload["tags"] = cast(JSONValue, check.tags_list())
-            payload["message"] = tmpl("opsgenie_message.html", check=check)
-            payload["note"] = tmpl("opsgenie_note.html", check=check)
-            payload["description"] = tmpl("opsgenie_description.html", check=check)
+            payload["message"] = tmpl("opsgenie_message.html", **ctx)
+            payload["note"] = tmpl("opsgenie_note.html", **ctx)
+            payload["description"] = tmpl("opsgenie_description.html", **ctx)
 
         url = "https://api.opsgenie.com/v2/alerts"
         if self.channel.opsgenie.region == "eu":
@@ -576,10 +577,11 @@ class PagerDuty(HttpTransport):
             raise TransportError("PagerDuty notifications are not enabled.")
 
         check = flip.owner
+        ping = self.last_ping(flip)
         details = {
             "Project": check.project.name,
-            "Total pings": check.n_pings,
-            "Last ping": tmpl("pd_last_ping.html", check=check),
+            "Total pings": ping.n if ping else 0,
+            "Last ping": tmpl("pd_last_ping.html", ping=ping),
         }
         if check.desc:
             details["Description"] = check.desc
@@ -612,7 +614,11 @@ class PagerTree(HttpTransport):
 
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
-        ctx = {"check": flip.owner, "status": flip.new_status}
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip),
+        }
         payload = {
             "incident_key": str(flip.owner.code),
             "event_type": "trigger" if flip.new_status == "down" else "resolve",
@@ -628,12 +634,17 @@ class PagerTree(HttpTransport):
 
 class Pushbullet(HttpTransport):
     def notify(self, flip: Flip, notification: Notification) -> None:
-        text = tmpl("pushbullet_message.html", check=flip.owner, status=flip.new_status)
         url = "https://api.pushbullet.com/v2/pushes"
         headers = {
             "Access-Token": self.channel.value,
             "Content-Type": "application/json",
         }
+        text = tmpl(
+            "pushbullet_message.html",
+            check=flip.owner,
+            status=flip.new_status,
+            ping=self.last_ping(flip),
+        )
         payload = {"type": "note", "title": settings.SITE_NAME, "body": text}
         self.post(url, json=payload, headers=headers)
 
@@ -754,9 +765,8 @@ class RocketChat(HttpTransport):
             fields.add("Schedule", fix_asterisks(check.schedule))
             fields.add("Time Zone", check.tz)
 
-        fields.add("Total Pings", str(check.n_pings))
-
         if ping := self.last_ping(flip):
+            fields.add("Total Pings", str(ping.n))
             created_str = naturaltime(ping.created)
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
@@ -766,6 +776,7 @@ class RocketChat(HttpTransport):
                 text = f"{body_size} {bytes_str}, [show body]({ping_url})"
                 fields.add("Last Ping Body", text)
         else:
+            fields.add("Total Pings", "0")
             fields.add("Last Ping", "Never")
 
         return result
@@ -788,7 +799,11 @@ class VictorOps(HttpTransport):
         if not settings.VICTOROPS_ENABLED:
             raise TransportError("Splunk On-Call notifications are not enabled.")
 
-        ctx = {"check": flip.owner, "status": flip.new_status}
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip),
+        }
         mtype = "CRITICAL" if flip.new_status == "down" else "RECOVERY"
         payload = {
             "entity_id": str(flip.owner.code),
@@ -812,7 +827,11 @@ class Matrix(HttpTransport):
         return url
 
     def notify(self, flip: Flip, notification: Notification) -> None:
-        ctx = {"check": flip.owner, "status": flip.new_status}
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip),
+        }
         plain = tmpl("matrix_description.html", **ctx)
         formatted = tmpl("matrix_description_formatted.html", **ctx)
         payload = {
@@ -943,6 +962,7 @@ class Sms(HttpTransport):
             "sms_message.html",
             check=flip.owner,
             status=flip.new_status,
+            ping=self.last_ping(flip),
             site_name=settings.SITE_NAME,
         )
 
@@ -1085,10 +1105,15 @@ class Trello(HttpTransport):
         if not settings.TRELLO_APP_KEY:
             raise TransportError("Trello notifications are not enabled.")
 
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip),
+        }
         params = {
             "idList": self.channel.trello.list_id,
-            "name": tmpl("trello_name.html", check=flip.owner, status=flip.new_status),
-            "desc": tmpl("trello_desc.html", check=flip.owner),
+            "name": tmpl("trello_name.html", **ctx),
+            "desc": tmpl("trello_desc.html", **ctx),
             "key": settings.TRELLO_APP_KEY,
             "token": self.channel.trello.token,
         }
@@ -1103,9 +1128,9 @@ class Apprise(HttpTransport):
             raise TransportError("Apprise is disabled and/or not installed")
 
         a = apprise.Apprise()
-        check, status = flip.owner, flip.new_status
+        check, status, ping = flip.owner, flip.new_status, self.last_ping(flip)
         title = tmpl("apprise_title.html", check=check, status=status)
-        body = tmpl("apprise_description.html", check=check, status=status)
+        body = tmpl("apprise_description.html", check=check, status=status, ping=ping)
 
         a.add(self.channel.value)
 
@@ -1150,12 +1175,12 @@ class MsTeams(HttpTransport):
             facts.append({"name": "Schedule:", "value": fix_asterisks(check.schedule)})
             facts.append({"name": "Time Zone:", "value": check.tz})
 
-        facts.append({"name": "Total Pings:", "value": str(check.n_pings)})
-
         if ping := self.last_ping(flip):
+            facts.append({"name": "Total Pings:", "value": str(ping.n)})
             text = f"{ping.get_kind_display()}, {naturaltime(ping.created)}"
             facts.append({"name": "Last Ping:", "value": text})
         else:
+            facts.append({"name": "Total Pings:", "value": "0"})
             facts.append({"name": "Last Ping:", "value": "Never"})
 
         body = get_ping_body(ping, maxlen=1000)
@@ -1197,7 +1222,12 @@ class Zulip(HttpTransport):
 
         url = self.channel.zulip.site + "/api/v1/messages"
         auth = (self.channel.zulip.bot_email, self.channel.zulip.api_key)
-        content = tmpl("zulip_content.html", check=flip.owner, status=flip.new_status)
+        content = tmpl(
+            "zulip_content.html",
+            check=flip.owner,
+            status=flip.new_status,
+            ping=self.last_ping(flip),
+        )
         data = {
             "type": self.channel.zulip.mtype,
             "to": self.channel.zulip.to,
@@ -1215,7 +1245,11 @@ class Spike(HttpTransport):
 
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
-        ctx = {"check": flip.owner, "status": flip.new_status}
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip),
+        }
         payload = {
             "check_id": str(flip.owner.code),
             "title": tmpl("spike_title.html", **ctx),
@@ -1234,7 +1268,12 @@ class LineNotify(HttpTransport):
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Bearer %s" % self.channel.linenotify_token,
         }
-        msg = tmpl("linenotify_message.html", check=flip.owner, status=flip.new_status)
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip),
+        }
+        msg = tmpl("linenotify_message.html", **ctx)
         self.post(self.URL, headers=headers, params={"message": msg})
 
 
@@ -1406,6 +1445,7 @@ class Gotify(HttpTransport):
         ctx = {
             "check": flip.owner,
             "status": flip.new_status,
+            "ping": self.last_ping(flip),
             "down_checks": self.down_checks(flip.owner),
         }
         payload = {

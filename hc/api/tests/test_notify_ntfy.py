@@ -23,11 +23,12 @@ class NotifyNtfyTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.n = 1
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
         self.ping.remote_addr = "1.2.3.4"
         self.ping.save()
 
@@ -61,8 +62,8 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.assertIn("Project: Alices Project", payload["message"])
         self.assertIn("Tags: foo, bar", payload["message"])
         self.assertIn("Period: 1 day", payload["message"])
-        self.assertIn("Total Pings: 123", payload["message"])
-        self.assertIn("Last Ping: Success, now", payload["message"])
+        self.assertIn("Total Pings: 112233", payload["message"])
+        self.assertIn("Last Ping: Success, 10 minutes ago", payload["message"])
 
         self.assertEqual(payload["actions"][0]["url"], self.check.cloaked_url())
         self.assertNotIn("All the other checks are up.", payload["message"])

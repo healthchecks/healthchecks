@@ -81,12 +81,13 @@ class NotifySignalTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.n_pings = 123
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.n = 1
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
         self.ping.remote_addr = "1.2.3.4"
         self.ping.body_raw = b"Body Line 1\nBody Line 2"
         self.ping.save()
@@ -127,8 +128,8 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("Project: Alices Project", params["message"])
         self.assertIn("Tags: foo, bar", params["message"])
         self.assertIn("Period: 1 day", params["message"])
-        self.assertIn("Total Pings: 123", params["message"])
-        self.assertIn("Last Ping: Success, now", params["message"])
+        self.assertIn("Total Pings: 112233", params["message"])
+        self.assertIn("Last Ping: Success, 10 minutes ago", params["message"])
         self.assertIn("+123456789", params["recipient"])
 
         # Only one check in the project, so there should be no note about
@@ -151,7 +152,7 @@ class NotifySignalTestCase(BaseTestCase):
 
         assert socketobj.req
         params = socketobj.req["params"]
-        self.assertIn("Last Ping: Exit status 123, now", params["message"])
+        self.assertIn("Last Ping: Exit status 123, 10 minutes ago", params["message"])
 
     @patch("hc.api.transports.socket.socket")
     def test_it_shows_schedule_and_tz(self, socket: Mock) -> None:

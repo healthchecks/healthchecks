@@ -17,7 +17,7 @@
 {% line %}Time Zone: {{ check.tz }}{% endline %}
 {% endif %}
 
-{% line %}Total Pings: {{ check.n_pings }}{% endline %}
+{% line %}Total Pings: {% if ping %}{{ ping.n }}{% else %}0{% endif %}{% endline %}
 
 {% if ping is None %}
 {% line %}Last Ping: Never{% endline %}

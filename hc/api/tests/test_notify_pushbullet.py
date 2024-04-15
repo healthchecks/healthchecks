@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Flip, Notification
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -20,8 +20,13 @@ class NotifyPushbulletTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
+        self.ping.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "pushbullet"
@@ -47,7 +52,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         payload = kwargs["json"]
         self.assertEqual(payload["type"], "note")
         self.assertIn("""The check "Foo" is DOWN.""", payload["body"])
-        self.assertIn("""Last ping was an hour ago.""", payload["body"])
+        self.assertIn("""Last ping was 10 minutes ago.""", payload["body"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_up(self, mock_post: Mock) -> None:
@@ -79,8 +84,8 @@ class NotifyPushbulletTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self.ping.delete()
         self.check.status = "down"
-        self.check.last_ping = None
         self.check.save()
         mock_post.return_value.status_code = 200
 

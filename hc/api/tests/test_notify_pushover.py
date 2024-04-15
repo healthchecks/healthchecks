@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Flip, Notification, TokenBucket
+from hc.api.models import Channel, Check, Flip, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
 API = "https://api.pushover.net/1"
@@ -24,8 +24,13 @@ class NotifyPushoverTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
+        self.ping.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "po"
@@ -53,6 +58,9 @@ class NotifyPushoverTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["title"], "🔴 Foo")
         self.assertEqual(payload["url"], self.check.cloaked_url())
+        self.assertIn("112233", payload["message"])
+        self.assertIn("10 minutes ago", payload["message"])
+
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["message"])

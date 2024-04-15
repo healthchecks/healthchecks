@@ -58,7 +58,7 @@
 
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
             <b>Total Pings</b><br>
-            {{ check.n_pings }}
+            {% if ping %}{{ ping.n }}{% else %}0{% endif %}
             {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}
         </td>
     </tr>

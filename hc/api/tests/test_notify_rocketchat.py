@@ -20,11 +20,12 @@ class NotifyRocketChatTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
 
         self.ping = Ping(owner=self.check)
         self.ping.created = now() - td(minutes=61)
+        self.ping.n = 112233
         self.ping.save()
 
         self.channel = Channel(project=self.project)
@@ -54,6 +55,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, an hour ago")
+        self.assertEqual(fields["Total Pings"], "112233")
 
     @override_settings(ROCKETCHAT_ENABLED=False)
     def test_it_requires_rocketchat_enabled(self) -> None:

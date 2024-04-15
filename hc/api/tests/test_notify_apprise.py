@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Flip, Notification
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 try:
@@ -30,8 +30,13 @@ class NotifyAppriseTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.last_ping = now()
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
+        self.ping.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "apprise"
@@ -56,7 +61,7 @@ class NotifyAppriseTestCase(BaseTestCase):
 
         body = mock_apprise.return_value.notify.call_args.kwargs["body"]
         self.assertIn("Foo is DOWN", body)
-        self.assertIn("Last ping was an hour ago.", body)
+        self.assertIn("Last ping was 10 minutes ago.", body)
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=False)
@@ -69,8 +74,7 @@ class NotifyAppriseTestCase(BaseTestCase):
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
     def test_it_handles_no_last_ping(self, mock_apprise: Mock) -> None:
-        self.check.last_ping = None
-        self.check.save()
+        self.ping.delete()
 
         mock_aobj = Mock()
         mock_aobj.add.return_value = True
