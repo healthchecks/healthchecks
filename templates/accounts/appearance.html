@@ -33,7 +33,7 @@
                     <h2>Theme</h2>
 
                     <div class="row">
-                        <div class="col-sm-6 theme">
+                        <div class="col-sm-4 theme">
                             <label for="theme-light">
                                 <img
                                     src="{% static 'img/theme-light.png' %}"
@@ -51,7 +51,7 @@
                                 Light
                             </label>
                         </div>
-                        <div class="col-sm-6 theme">
+                        <div class="col-sm-4 theme">
                             <label for="theme-dark">
                                 <img
                                     src="{% static 'img/theme-dark.png' %}"
@@ -69,7 +69,24 @@
                                 Dark
                             </label>
                         </div>
-                    </div>
+                        <div class="col-sm-4 theme">
+                            <label for="theme-system">
+                                <img
+                                    src="{% static 'img/theme-system.png' %}"
+                                    alt="System theme preview">
+                            </label>
+
+                            <label class="radio-container">
+                                <input
+                                    id="theme-system"
+                                    type="radio"
+                                    name="theme"
+                                    value="system"
+                                    {% if profile.theme == "system" %} checked {% endif %}>
+                                <span class="radiomark"></span>
+                                System
+                            </label>
+                        </div>
                 </form>
             </div>
             {% if status == "info" %}

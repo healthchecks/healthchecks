@@ -12,9 +12,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-title" content="{{ site_name }}">
     <meta name="application-name" content="{{ site_name }}">
-    {% if request.user.is_authenticated and request.profile.theme == 'dark' %}
-    <meta name="theme-color" content="#18181b">
-    {% endif %}
     {% block favicon %}
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     {% endblock %}
@@ -224,8 +221,21 @@
             </ul>
         </div>
     </footer>
-
+    
     {% block base_modals %}{% endblock %}
+
+    {% if request.user.is_authenticated and request.profile.theme == 'system' %}
+    <script>
+        (function() {
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+            function switchColors() {
+                document.body.classList.toggle("dark", prefersDark.matches);
+            }
+            switchColors();
+            prefersDark.addEventListener("change", switchColors);
+        })();
+    </script>
+    {% endif %}
 
     {% block base_scripts %}
     {% compress js %}
