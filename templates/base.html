@@ -224,19 +224,25 @@
     
     {% block base_modals %}{% endblock %}
 
+    {% if request.user.is_authenticated and request.profile.theme == 'system' %}
+    <script>
+        (function() {
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+            function switchColors() {
+                document.body.classList.toggle("dark", prefersDark.matches);
+            }
+            switchColors();
+            prefersDark.addEventListener("change", switchColors);
+        })();
+    </script>
+    {% endif %}
+
     {% block base_scripts %}
     {% compress js %}
     <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     {% endcompress %}
     {% endblock %}
-    {% if request.user.is_authenticated and request.profile.theme == 'system' %}
-    <script>
-        if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-            $("body").addClass("dark");
-        }
-    </script>
-    {% endif %}
 
     {% block scripts %}{% endblock %}
 </body>
