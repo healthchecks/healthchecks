@@ -173,6 +173,28 @@ class NotifyEmailTestCase(BaseTestCase):
         html = self.get_html(mail.outbox[0])
         self.assertIn("Daily Backup", html)
 
+    def test_it_ignores_ping_after_flip(self) -> None:
+        self.ping.created = self.flip.created + td(minutes=5)
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        email = mail.outbox[0]
+        html = self.get_html(email)
+        self.assertNotIn("Last ping", email.body)
+        self.assertNotIn("Last Ping", html)
+
+    def test_it_handles_identic_ping_and_flip_timestamp(self) -> None:
+        self.ping.created = self.flip.created
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        email = mail.outbox[0]
+        html = self.get_html(email)
+        self.assertIn("Last ping", email.body)
+        self.assertIn("Last Ping", html)
+
     def test_it_handles_missing_profile(self) -> None:
         self.channel.value = "alice+notifications@example.org"
         self.channel.save()

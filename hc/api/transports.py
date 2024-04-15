@@ -122,13 +122,19 @@ class Transport(object):
 
         return down_siblings
 
-    def last_ping(self, check: Check) -> Ping | None:
-        """Return the last Ping object for this check."""
+    def last_ping(self, flip: Flip) -> Ping | None:
+        """Return the last Ping object received before this flip."""
 
-        if check.pk:
-            return check.ping_set.order_by("created").last()
+        if not flip.owner.pk:
+            return None
 
-        return None
+        # Sort by "created". Sorting by "id" can cause postgres to pick api_ping.id
+        # index (slow if the api_ping table is big)
+        q = flip.owner.ping_set.order_by("created")
+        # Make sure we're not selecting pings that occured after the flip
+        q = q.filter(created__lte=flip.created)
+
+        return q.last()
 
 
 class RemovedTransport(Transport):
@@ -161,7 +167,7 @@ class Email(Transport):
         except Profile.DoesNotExist:
             projects = None
 
-        ping = self.last_ping(flip.owner)
+        ping = self.last_ping(flip)
         body = get_ping_body(ping)
         subject = None
         if ping is not None and ping.scheme == "email" and body:
@@ -352,13 +358,13 @@ class Webhook(HttpTransport):
 
         # Materialize ping body only if template refers to it.
         if allow_ping_body and "$BODY" in template:
-            body = get_ping_body(self.last_ping(check))
+            body = get_ping_body(self.last_ping(flip))
             ctx["$BODY_JSON"] = json.dumps(body if body else "")
             ctx["$BODY"] = body if body else ""
 
         if "$EXITSTATUS" in template:
             ctx["$EXITSTATUS"] = "-1"
-            lp = self.last_ping(check)
+            lp = self.last_ping(flip)
             if lp and lp.exitstatus is not None:
                 ctx["$EXITSTATUS"] = str(lp.exitstatus)
 
@@ -459,7 +465,7 @@ class Slackalike(HttpTransport):
 
         fields.add("Total Pings", str(check.n_pings))
 
-        if ping := self.last_ping(check):
+        if ping := self.last_ping(flip):
             created_str = naturaltime(ping.created)
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
@@ -692,7 +698,7 @@ class Pushover(HttpTransport):
         ctx = {
             "check": check,
             "status": flip.new_status,
-            "ping": self.last_ping(check),
+            "ping": self.last_ping(flip),
             "down_checks": self.down_checks(check),
         }
         text = tmpl("pushover_message.html", **ctx)
@@ -750,7 +756,7 @@ class RocketChat(HttpTransport):
 
         fields.add("Total Pings", str(check.n_pings))
 
-        if ping := self.last_ping(check):
+        if ping := self.last_ping(flip):
             created_str = naturaltime(ping.created)
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
@@ -876,7 +882,7 @@ class Telegram(HttpTransport):
         if not TokenBucket.authorize_telegram(self.channel.telegram.id):
             raise TransportError("Rate limit exceeded")
 
-        ping = self.last_ping(flip.owner)
+        ping = self.last_ping(flip)
         ctx = {
             "check": flip.owner,
             "status": flip.new_status,
@@ -1146,7 +1152,7 @@ class MsTeams(HttpTransport):
 
         facts.append({"name": "Total Pings:", "value": str(check.n_pings)})
 
-        if ping := self.last_ping(check):
+        if ping := self.last_ping(flip):
             text = f"{ping.get_kind_display()}, {naturaltime(ping.created)}"
             facts.append({"name": "Last Ping:", "value": text})
         else:
@@ -1375,7 +1381,7 @@ class Signal(Transport):
         ctx = {
             "check": flip.owner,
             "status": flip.new_status,
-            "ping": self.last_ping(flip.owner),
+            "ping": self.last_ping(flip),
             "down_checks": self.down_checks(flip.owner),
         }
         text = tmpl("signal_message.html", **ctx)
@@ -1443,7 +1449,7 @@ class Ntfy(HttpTransport):
         ctx = {
             "check": flip.owner,
             "status": flip.new_status,
-            "ping": self.last_ping(flip.owner),
+            "ping": self.last_ping(flip),
             "down_checks": self.down_checks(flip.owner),
         }
         payload = {

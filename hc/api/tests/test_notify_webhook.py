@@ -25,6 +25,12 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.check.last_ping = now() - td(minutes=61)
         self.check.save()
 
+        self.ping = Ping(owner=self.check)
+        self.ping.created = self.check.last_ping
+        self.ping.body_raw = b"Body Line 1\nBody Line 2"
+        self.ping.exitstatus = 123
+        self.ping.save()
+
         self.channel = Channel(project=self.project)
         self.channel.kind = "webhook"
         self.channel.value = value
@@ -400,18 +406,11 @@ class NotifyWebhookTestCase(BaseTestCase):
             "body_down": "$BODY",
             "headers_down": {},
         }
-
         self._setup_data(json.dumps(definition))
-
-        ping_body = b"Body Line 1\nBody Line 2"
-        self.ping = Ping(owner=self.check)
-        self.ping.body_raw = ping_body
-        self.ping.save()
-
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload, ping_body)
+        self.assertEqual(payload, b"Body Line 1\nBody Line 2")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_dont_support_body_variable_in_url_and_headers(
@@ -428,6 +427,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         ping_body = b"Body Line 1"
         self.ping = Ping(owner=self.check)
+        self.flip.created = now()
         self.ping.body_raw = ping_body
         self.ping.save()
 
@@ -447,9 +447,8 @@ class NotifyWebhookTestCase(BaseTestCase):
             "headers_down": {},
         }
         self._setup_data(json.dumps(definition))
-        Ping.objects.create(owner=self.check, exitstatus=123)
-
         self.channel.notify(self.flip)
+
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload, b"Exit status 123")
 
@@ -464,7 +463,7 @@ class NotifyWebhookTestCase(BaseTestCase):
             "headers_down": {},
         }
         self._setup_data(json.dumps(definition))
-        # Note - does not create Ping object
+        self.ping.delete()
 
         self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["data"]
@@ -479,7 +478,8 @@ class NotifyWebhookTestCase(BaseTestCase):
             "headers_down": {},
         }
         self._setup_data(json.dumps(definition))
-        Ping.objects.create(owner=self.check)  # does not set exitstatus
+        self.ping.exitstatus = None
+        self.ping.save()
 
         self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["data"]
@@ -527,6 +527,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
 
         self.ping = Ping(owner=self.check)
+        self.flip.created = now()
         self.ping.body_raw = b'Project "Foo"'
         self.ping.save()
 
@@ -543,15 +544,9 @@ class NotifyWebhookTestCase(BaseTestCase):
             "body_down": "$BODY_JSON",
             "headers_down": {},
         }
-
         self._setup_data(json.dumps(definition))
-
-        ping_body = 'Project "Foo"'
-        self.ping = Ping(owner=self.check)
-        self.ping.body_raw = ping_body.encode()
-        self.ping.save()
-
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload, json.dumps(ping_body).encode())
+        expected_payload = json.dumps("Body Line 1\nBody Line 2").encode()
+        self.assertEqual(payload, expected_payload)
