@@ -40,14 +40,13 @@ class LogTestCase(BaseTestCase):
         self.ping.created = "2000-01-01T00:00:00+00:00"
         self.ping.save()
 
-    def url(self, **kwargs):
+    def url(self, u: str | None = None, **kwargs: bool) -> str:
         params = {}
         for key in ("success", "fail", "start", "log", "ign", "notification", "flip"):
             if kwargs.get(key, True):
                 params[key] = "on"
-        for key in ("u", "end"):
-            if key in kwargs:
-                params[key] = kwargs[key]
+        if u:
+            params["u"] = u
 
         return f"/checks/{self.check.code}/log_events/?" + urlencode(params)
 
@@ -118,7 +117,7 @@ class LogTestCase(BaseTestCase):
         self.check.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url(u=1262296800))
+        r = self.client.get(self.url(u="1262296800"))
 
         # The notification should not show up in the log as it is
         # older than the oldest visible ping:
