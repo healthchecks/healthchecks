@@ -18,15 +18,19 @@ curl -fsS -m 10 --retry 5 -o /dev/null PING_URL
 Here's what each curl parameter does:
 
 **-m &lt;seconds&gt;**
-:   Maximum time in seconds that you allow the whole operation to take.
+:   Maximum time in seconds that you allow the HTTP request to take.
+    If you use the `--retry` parameter, then the time counter is reset
+    at the start of each retry.
 
 **--retry &lt;num&gt;**
-:   If an HTTP request fails, retry up to this many times. By default, curl
+:   On transient errors, retry up to this many times. By default, curl
     uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...).
     See also [--retry-delay](https://curl.haxx.se/docs/manpage.html#--retry-delay).
+    Transient errors are: timeouts, HTTP status codes 408, 429, 500, 502, 503, 504.
 
 **-f, --fail**
-:   Makes curl treat non-200 responses as errors.
+:   Makes curl treat non-200 responses as errors, and
+    [return error 22](https://curl.se/docs/manpage.html#-f).
 
 **-s, --silent**
 :   Silent or quiet mode. Hides the progress meter, but also
@@ -36,7 +40,7 @@ Here's what each curl parameter does:
 :   Re-enables error messages when -s is used.
 
 **-o /dev/null**
-:   Redirect curl's stdout to /dev/null (error messages still go to stderr).
+:   Redirects curl's stdout to /dev/null (error messages still go to stderr).
 
 ## Signaling Failure from Shell Scripts
 
@@ -53,6 +57,22 @@ look up its exit status:
 # Payload here:
 /usr/bin/certbot renew
 # Ping SITE_NAME
+curl -m 10 --retry 5 PING_URL/$?
+```
+
+Note on pipelines (`command1 | command2 | command3`) in Bash scripts: by default, a
+pipeline's exit status is the exit status of the rightmost command in the pipeline.
+Use `set -o pipefail` if you need the pipeline to return non-zero exit status if *any*
+part of the pipeline fails:
+
+```bash
+#!/bin/sh
+
+set -o pipefail
+pg_dump somedb | gpg --encrypt --recipient alice@example.org --output somedb.sql.gpg
+# Without pipefail, if pg_dump command fails, but gpg succeeds, $? will be 0,
+# and the script will report success.
+# With pipefail, if pg_dump fails, the script will report the exit code returned by pg_dump.
 curl -m 10 --retry 5 PING_URL/$?
 ```
 
