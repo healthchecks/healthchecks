@@ -29,8 +29,8 @@
         </div>
         {% endif %}
 
-        <div class="row" style="display: flex; justify-content: center;">
-            {% if magic_link_enabled %}
+        <div id="login-form-container" class="row">
+            {% if use_magic_form %}
             <div class="col-sm-6">
                 <form id="magic-link-form" method="post">
                     {% csrf_token %}

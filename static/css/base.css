@@ -76,6 +76,11 @@ body {
     font-size: small;
 }
 
+#login-form-container {
+    display: flex;
+    justify-content: center;
+}
+
 @media (min-width: 768px) {
     .navbar-default .navbar-nav > li.active > a,
     .navbar-default .navbar-nav > li > a:hover {
