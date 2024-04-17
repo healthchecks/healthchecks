@@ -465,7 +465,7 @@ class Slackalike(HttpTransport):
 
         if ping := self.last_ping(flip):
             fields.add("Total Pings", str(ping.n))
-            created_str = naturaltime(ping.created)
+            created_str = naturaltime(ping.created).replace("\xa0", " ")
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
         else:
@@ -767,7 +767,7 @@ class RocketChat(HttpTransport):
 
         if ping := self.last_ping(flip):
             fields.add("Total Pings", str(ping.n))
-            created_str = naturaltime(ping.created)
+            created_str = naturaltime(ping.created).replace("\xa0", " ")
             formatted_kind = ping.get_kind_display()
             fields.add("Last Ping", f"{formatted_kind}, {created_str}")
             if body_size := ping.get_body_size():
@@ -1177,7 +1177,8 @@ class MsTeams(HttpTransport):
 
         if ping := self.last_ping(flip):
             facts.append({"name": "Total Pings:", "value": str(ping.n)})
-            text = f"{ping.get_kind_display()}, {naturaltime(ping.created)}"
+            created_str = naturaltime(ping.created).replace("\xa0", " ")
+            text = f"{ping.get_kind_display()}, {created_str}"
             facts.append({"name": "Last Ping:", "value": text})
         else:
             facts.append({"name": "Total Pings:", "value": "0"})

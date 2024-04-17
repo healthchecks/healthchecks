@@ -25,7 +25,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.created = now() - td(minutes=61)
+        self.ping.created = now() - td(minutes=10)
         self.ping.n = 112233
         self.ping.save()
 
@@ -58,7 +58,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertEqual(payload["title"], "“_underscores_ &amp; more” is DOWN.")
 
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
-        self.assertEqual(facts["Last Ping:"], "Success, an hour ago")
+        self.assertEqual(facts["Last Ping:"], "Success, 10 minutes ago")
         self.assertEqual(facts["Total Pings:"], "112233")
 
         # The payload should not contain check's code
@@ -110,7 +110,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
-        self.assertEqual(facts["Last Ping:"], "Failure, an hour ago")
+        self.assertEqual(facts["Last Ping:"], "Failure, 10 minutes ago")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_last_ping_log(self, mock_post: Mock) -> None:
@@ -123,7 +123,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
-        self.assertEqual(facts["Last Ping:"], "Log, an hour ago")
+        self.assertEqual(facts["Last Ping:"], "Log, 10 minutes ago")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_ignored_nonzero_exitstatus(self, mock_post: Mock) -> None:
@@ -138,7 +138,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
-        self.assertEqual(facts["Last Ping:"], "Ignored, an hour ago")
+        self.assertEqual(facts["Last Ping:"], "Ignored, 10 minutes ago")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:

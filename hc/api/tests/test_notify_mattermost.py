@@ -25,7 +25,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.created = now() - td(minutes=61)
+        self.ping.created = now() - td(minutes=10)
         self.ping.n = 112233
         self.ping.save()
 
@@ -54,7 +54,7 @@ class NotifyMattermostTestCase(BaseTestCase):
         self.assertEqual(attachment["fallback"], """The check "foo" is DOWN.""")
 
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Last Ping"], "Success, an hour ago")
+        self.assertEqual(fields["Last Ping"], "Success, 10 minutes ago")
         self.assertEqual(fields["Total Pings"], "112233")
 
     @override_settings(MATTERMOST_ENABLED=False)

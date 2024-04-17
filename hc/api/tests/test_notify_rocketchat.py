@@ -24,7 +24,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.created = now() - td(minutes=61)
+        self.ping.created = now() - td(minutes=10)
         self.ping.n = 112233
         self.ping.save()
 
@@ -54,7 +54,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Last Ping"], "Success, an hour ago")
+        self.assertEqual(fields["Last Ping"], "Success, 10 minutes ago")
         self.assertEqual(fields["Total Pings"], "112233")
 
     @override_settings(ROCKETCHAT_ENABLED=False)
@@ -129,7 +129,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual("Failure, an hour ago", fields["Last Ping"])
+        self.assertEqual("Failure, 10 minutes ago", fields["Last Ping"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_nonzero_exitstatus(self, mock_post: Mock) -> None:
@@ -144,7 +144,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual("Exit status 123, an hour ago", fields["Last Ping"])
+        self.assertEqual("Exit status 123, 10 minutes ago", fields["Last Ping"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_ignored_nonzero_exitstatus(self, mock_post: Mock) -> None:
@@ -159,4 +159,4 @@ class NotifyRocketChatTestCase(BaseTestCase):
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual("Ignored, an hour ago", fields["Last Ping"])
+        self.assertEqual("Ignored, 10 minutes ago", fields["Last Ping"])
