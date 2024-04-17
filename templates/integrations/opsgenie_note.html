@@ -1,4 +1,4 @@
 {% load hc_extras humanize %}
 
 {% if check.kind == "simple" %}Expecting to receive a ping every {{ check.timeout|hc_duration }}.{% endif %}
-{% if check.last_ping %}Last ping was {{ check.last_ping|naturaltime }}.{% endif %}
+{% if ping %}Last ping was {{ ping.created|naturaltime }}.{% endif %}

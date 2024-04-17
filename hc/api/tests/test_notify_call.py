@@ -10,7 +10,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -20,8 +20,11 @@ class NotifyCallTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
-        self.check.status = "down"
-        self.check.last_ping = now() - td(minutes=61)
+        self.check.name = "foo"
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
+        self.check.last_ping = now()
         self.check.save()
 
         self.channel = Channel(project=self.project)
@@ -30,6 +33,11 @@ class NotifyCallTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_call(self, mock_post: Mock) -> None:
         self.profile.call_limit = 1
@@ -37,10 +45,11 @@ class NotifyCallTestCase(BaseTestCase):
 
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
+        self.assertIn("""The check "foo" is down.""", payload["Twiml"])
 
         n = Notification.objects.get()
         callback_path = f"/api/v3/notifications/{n.code}/status"
@@ -48,7 +57,7 @@ class NotifyCallTestCase(BaseTestCase):
 
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_configuration(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Call notifications are not enabled")
 
@@ -60,7 +69,7 @@ class NotifyCallTestCase(BaseTestCase):
         self.profile.calls_sent = 50
         self.profile.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_not_called()
 
         n = Notification.objects.get()
@@ -83,7 +92,7 @@ class NotifyCallTestCase(BaseTestCase):
 
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_called_once()
 
     @override_settings(TWILIO_FROM="+000")
@@ -97,7 +106,7 @@ class NotifyCallTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b"""{"code": 21211}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         # Make sure the HTTP request was made only once (no retries):
         self.channel.refresh_from_db()

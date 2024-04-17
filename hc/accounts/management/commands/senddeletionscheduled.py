@@ -11,7 +11,7 @@ from django.db.models import QuerySet
 from django.utils.timezone import now
 
 from hc.accounts.models import Profile
-from hc.api.models import Channel, Check
+from hc.api.models import Channel, Check, Flip
 from hc.lib import emails
 
 
@@ -51,12 +51,16 @@ class Command(BaseCommand):
             dummy.last_ping = now() - td(days=1)
             dummy.n_pings = 1
 
+            dummy_flip = Flip(owner=dummy)
+            dummy_flip.old_status = "up"
+            dummy_flip.new_status = "down"
+
             self.stdout.write(f" * Sending notification to {channel.kind}")
-            error = channel.notify(dummy, is_test=True)
+            error = channel.notify(dummy_flip, is_test=True)
             if error == "no-op":
                 # This channel may be configured to send "up" notifications only.
                 dummy.status = "up"
-                error = channel.notify(dummy, is_test=True)
+                error = channel.notify(dummy_flip, is_test=True)
 
             if error:
                 self.stdout.write(f"   Error sending notification: {error}")

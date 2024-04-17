@@ -930,8 +930,8 @@ class Channel(models.Model):
         _, cls = TRANSPORTS[self.kind]
         return cls(self)
 
-    def notify(self, check: Check, is_test: bool = False) -> str:
-        if self.transport.is_noop(check):
+    def notify(self, flip: "Flip", is_test: bool = False) -> str:
+        if self.transport.is_noop(flip.new_status):
             return "no-op"
 
         n = Notification(channel=self)
@@ -940,15 +940,16 @@ class Channel(models.Model):
             # (the passed check is a dummy, unsaved Check instance)
             pass
         else:
-            n.owner = check
+            n.owner = flip.owner
 
-        n.check_status = check.status
+        n.check_status = flip.new_status
         n.error = "Sending"
         n.save()
 
         start, error, disabled = now(), "", self.disabled
         try:
-            self.transport.notify(check, notification=n)
+            self.transport.notify(flip, notification=n)
+
         except transports.TransportError as e:
             disabled = True if e.permanent else disabled
             error = e.message
@@ -1166,7 +1167,7 @@ class Flip(models.Model):
 
         * Exclude all channels for new->up and paused->up transitions.
         * Exclude disabled channels
-        * Exclude channels where transport.is_noop(check) returns True
+        * Exclude channels where transport.is_noop(status) returns True
         """
 
         # Don't send alerts on new->up and paused->up transitions
@@ -1177,7 +1178,7 @@ class Flip(models.Model):
             raise NotImplementedError(f"Unexpected status: {self.new_status}")
 
         q = self.owner.channel_set.exclude(disabled=True)
-        return [ch for ch in q if not ch.transport.is_noop(self.owner)]
+        return [ch for ch in q if not ch.transport.is_noop(self.new_status)]
 
 
 class TokenBucket(models.Model):

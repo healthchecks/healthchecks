@@ -9,7 +9,7 @@ from unittest.mock import Mock, patch
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
@@ -19,9 +19,16 @@ class NotifyOpsgenieTestCase(BaseTestCase):
     ) -> None:
         self.check = Check(project=self.project)
         self.check.name = "Foo"
-        self.check.status = status
-        self.check.last_ping = now() - td(minutes=61)
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
+        self.check.last_ping = now()
         self.check.save()
+
+        self.ping = Ping(owner=self.check)
+        self.ping.created = now() - td(minutes=10)
+        self.ping.n = 112233
+        self.ping.save()
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "opsgenie"
@@ -30,27 +37,32 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = status
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         self._setup_data(json.dumps({"key": "123", "region": "us"}))
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("""The check "Foo" is DOWN.""", payload["message"])
         self.assertIn("""The check "Foo" is DOWN.""", payload["description"])
-        self.assertIn("Last ping was an hour ago.", payload["description"])
-        self.assertIn("Last ping was an hour ago.", payload["note"])
+        self.assertIn("Last ping was 10 minutes ago.", payload["description"])
+        self.assertIn("Last ping was 10 minutes ago.", payload["note"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_opsgenie_with_legacy_value(self, mock_post: Mock) -> None:
         self._setup_data(json.dumps({"key": "123", "region": "us"}))
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
@@ -65,7 +77,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self._setup_data(json.dumps({"key": "123", "region": "us"}), status="up")
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
@@ -78,7 +90,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self._setup_data(json.dumps({"key": "456", "region": "eu"}))
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 
@@ -92,7 +104,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         mock_post.return_value.status_code = 403
         mock_post.return_value.content = b"""{"message": "Nice try"}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, 'Received status code 403 with a message: "Nice try"')
 
@@ -102,14 +114,14 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         mock_post.return_value.status_code = 403
         mock_post.return_value.json = Mock(side_effect=ValueError)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Received status code 403")
 
     @override_settings(OPSGENIE_ENABLED=False)
     def test_it_requires_opsgenie_enabled(self) -> None:
         self._setup_data(json.dumps({"key": "123", "region": "us"}))
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Opsgenie notifications are not enabled.")
@@ -117,11 +129,10 @@ class NotifyOpsgenieTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
         self._setup_data(json.dumps({"key": "123", "region": "us"}))
-        self.check.last_ping = None
-        self.check.save()
+        self.ping.delete()
         mock_post.return_value.status_code = 202
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "")
 

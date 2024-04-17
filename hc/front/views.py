@@ -1293,16 +1293,22 @@ def send_test_notification(
     dummy.last_ping = now() - td(days=1)
     dummy.n_pings = 42
 
+    dummy_flip = Flip(owner=dummy)
+    dummy_flip.created = now()
+    dummy_flip.old_status = "up"
+    dummy_flip.new_status = "down"
+
     # Delete all older test notifications for this channel
     Notification.objects.filter(channel=channel, owner=None).delete()
 
     # Send the test notification
-    error = channel.notify(dummy, is_test=True)
+    error = channel.notify(dummy_flip, is_test=True)
 
     if error == "no-op":
         # This channel may be configured to send "up" notifications only.
-        dummy.status = "up"
-        error = channel.notify(dummy, is_test=True)
+        dummy_flip.old_status = "down"
+        dummy_flip.new_status = "up"
+        error = channel.notify(dummy_flip, is_test=True)
 
     if error:
         messages.warning(request, "Could not send a test notification. %s." % error)

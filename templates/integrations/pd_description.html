@@ -1,4 +1,4 @@
-{% if check.status == "down" %}
+{% if status == "down" %}
     {{ check.name_then_code|safe }} is DOWN
 {% else %}
     {{ check.name_then_code|safe }} received a ping and is now UP

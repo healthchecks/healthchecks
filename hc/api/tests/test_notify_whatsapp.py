@@ -10,7 +10,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -29,8 +29,10 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
         self.check = Check(project=self.project)
         self.check.name = "Foo"
-        self.check.status = "down"
-        self.check.last_ping = now() - td(minutes=61)
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
+        self.check.last_ping = now()
         self.check.save()
 
         definition = {"value": "+1234567890", "up": True, "down": True}
@@ -40,11 +42,16 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["From"], "whatsapp:+000")
@@ -68,7 +75,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.check.last_ping = now()
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         variables = json.loads(payload["ContentVariables"])
@@ -76,14 +83,14 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_account(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "WhatsApp notifications are not enabled")
 
     @override_settings(WHATSAPP_UP_CONTENT_SID=None)
     def test_it_requires_content_template_sids(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "WhatsApp notifications are not enabled")
@@ -96,7 +103,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
         self.check.last_ping = now() - td(hours=2)
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 0)
         mock_post.assert_not_called()
 
@@ -107,7 +114,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         self.profile.sms_sent = 50
         self.profile.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
         mock_post.assert_not_called()
 
         n = Notification.objects.get()
@@ -126,7 +133,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
 
         mock_post.return_value.status_code = 200
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("Foo > Bar & Co", payload["ContentVariables"])
@@ -138,7 +145,7 @@ class NotifyWhatsAppTestCase(BaseTestCase):
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b"""{"code": 21211}"""
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         # Make sure the HTTP request was made only once (no retries):
         self.channel.refresh_from_db()

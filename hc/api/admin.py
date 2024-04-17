@@ -44,8 +44,6 @@ class ChecksAdmin(ModelAdmin[Check]):
     )
     list_filter = ("status", "kind", "last_ping", "last_start")
 
-    actions = ["send_alert"]
-
     def get_queryset(self, request: HttpRequest) -> QuerySet[Check]:
         qs = super().get_queryset(request)
         qs = qs.annotate(email=F("project__owner__email"))
@@ -76,14 +74,6 @@ class ChecksAdmin(ModelAdmin[Check]):
             return obj.schedule
         else:
             return "Unknown"
-
-    @admin.action(description="Send Alert")
-    def send_alert(self, request: HttpRequest, qs: QuerySet[Check]) -> None:
-        for check in qs:
-            for channel in check.channel_set.all():
-                channel.notify(check)
-
-        self.message_user(request, f"Alerts sent for {len(qs)} check(s)")
 
 
 class SchemeListFilter(admin.SimpleListFilter):

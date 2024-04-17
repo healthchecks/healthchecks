@@ -1,4 +1,4 @@
-{% if check.status == "down" %}
+{% if status == "down" %}
     Down: {{ check.name_then_code|safe }}
 {% else %}
     Up: {{ check.name_then_code|safe }}

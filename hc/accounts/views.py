@@ -721,6 +721,8 @@ def close(request: AuthenticatedHttpRequest) -> HttpResponse:
 @login_required
 def remove_project(request: AuthenticatedHttpRequest, code: str) -> HttpResponse:
     project = get_object_or_404(Project, code=code, owner=request.user)
+    for check in project.check_set.all():
+        check.lock_and_delete()
     project.delete()
     return redirect("hc-index")
 
@@ -941,7 +943,7 @@ def appearance(request: AuthenticatedHttpRequest) -> HttpResponse:
 
     if request.method == "POST":
         theme = request.POST.get("theme", "")
-        if theme in ("", "dark"):
+        if theme in ("", "dark", "system"):
             profile.theme = theme
             profile.save()
             ctx["status"] = "info"

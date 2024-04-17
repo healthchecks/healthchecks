@@ -14,20 +14,24 @@ curl<span class="w"> </span>-fsS<span class="w"> </span>-m<span class="w"> </spa
 <p>Here's what each curl parameter does:</p>
 <dl>
 <dt><strong>-m &lt;seconds&gt;</strong></dt>
-<dd>Maximum time in seconds that you allow the whole operation to take.</dd>
+<dd>Maximum time in seconds that you allow the HTTP request to take.
+If you use the <code>--retry</code> parameter, then the time counter is reset
+at the start of each retry.</dd>
 <dt><strong>--retry &lt;num&gt;</strong></dt>
-<dd>If an HTTP request fails, retry up to this many times. By default, curl
+<dd>On transient errors, retry up to this many times. By default, curl
 uses an increasing delay between each retry (1s, 2s, 4s, 8s, ...).
-See also <a href="https://curl.haxx.se/docs/manpage.html#--retry-delay">--retry-delay</a>.</dd>
+See also <a href="https://curl.haxx.se/docs/manpage.html#--retry-delay">--retry-delay</a>.
+Transient errors are: timeouts, HTTP status codes 408, 429, 500, 502, 503, 504.</dd>
 <dt><strong>-f, --fail</strong></dt>
-<dd>Makes curl treat non-200 responses as errors.</dd>
+<dd>Makes curl treat non-200 responses as errors, and
+<a href="https://curl.se/docs/manpage.html#-f">return error 22</a>.</dd>
 <dt><strong>-s, --silent</strong></dt>
 <dd>Silent or quiet mode. Hides the progress meter, but also
 hides error messages.</dd>
 <dt><strong>-S, --show-error</strong></dt>
 <dd>Re-enables error messages when -s is used.</dd>
 <dt><strong>-o /dev/null</strong></dt>
-<dd>Redirect curl's stdout to /dev/null (error messages still go to stderr).</dd>
+<dd>Redirects curl's stdout to /dev/null (error messages still go to stderr).</dd>
 </dl>
 <h2>Signaling Failure from Shell Scripts</h2>
 <p>You can append <code>/fail</code> or <code>/{exit-status}</code> to any ping URL and use the resulting URL
@@ -40,6 +44,20 @@ look up its exit status:</p>
 <span class="c1"># Payload here:</span>
 /usr/bin/certbot<span class="w"> </span>renew
 <span class="c1"># Ping SITE_NAME</span>
+curl<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>PING_URL/<span class="nv">$?</span>
+</code></pre></div>
+
+<p>Note on pipelines (<code>command1 | command2 | command3</code>) in Bash scripts: by default, a
+pipeline's exit status is the exit status of the rightmost command in the pipeline.
+Use <code>set -o pipefail</code> if you need the pipeline to return non-zero exit status if <em>any</em>
+part of the pipeline fails:</p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/sh</span>
+
+<span class="nb">set</span><span class="w"> </span>-o<span class="w"> </span>pipefail
+pg_dump<span class="w"> </span>somedb<span class="w"> </span><span class="p">|</span><span class="w"> </span>gpg<span class="w"> </span>--encrypt<span class="w"> </span>--recipient<span class="w"> </span>alice@example.org<span class="w"> </span>--output<span class="w"> </span>somedb.sql.gpg
+<span class="c1"># Without pipefail, if pg_dump command fails, but gpg succeeds, $? will be 0,</span>
+<span class="c1"># and the script will report success.</span>
+<span class="c1"># With pipefail, if pg_dump fails, the script will report the exit code returned by pg_dump.</span>
 curl<span class="w"> </span>-m<span class="w"> </span><span class="m">10</span><span class="w"> </span>--retry<span class="w"> </span><span class="m">5</span><span class="w"> </span>PING_URL/<span class="nv">$?</span>
 </code></pre></div>
 

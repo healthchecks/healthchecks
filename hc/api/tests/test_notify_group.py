@@ -9,7 +9,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
-from hc.api.models import Channel, Check, Notification
+from hc.api.models import Channel, Check, Flip, Notification
 from hc.test import BaseTestCase
 
 
@@ -19,8 +19,10 @@ class NotifyGroupTestCase(BaseTestCase):
 
         self.check = Check(project=self.project)
         self.check.name = "Foobar"
-        self.check.status = "down"
-        self.check.last_ping = now() - td(minutes=61)
+        # Transport classes should use flip.new_status,
+        # so the status "paused" should not appear anywhere
+        self.check.status = "paused"
+        self.check.last_ping = now()
         self.check.save()
 
         self.channel_email = Channel(project=self.project)
@@ -35,8 +37,13 @@ class NotifyGroupTestCase(BaseTestCase):
         self.channel.save()
         self.channel.checks.add(self.check)
 
+        self.flip = Flip(owner=self.check)
+        self.flip.created = now()
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+
     def test_it_works(self) -> None:
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "")
@@ -57,7 +64,7 @@ class NotifyGroupTestCase(BaseTestCase):
         )
         self.channel_email.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "")
@@ -72,7 +79,7 @@ class NotifyGroupTestCase(BaseTestCase):
         )
         self.channel.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         assert self.channel.last_error == ""
@@ -86,7 +93,7 @@ class NotifyGroupTestCase(BaseTestCase):
         self.channel_email.email_verified = False
         self.channel_email.save()
 
-        self.channel.notify(self.check)
+        self.channel.notify(self.flip)
 
         self.channel.refresh_from_db()
         assert self.channel.last_error == "1 out of 1 notifications failed"

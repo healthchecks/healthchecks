@@ -1,6 +1,6 @@
 {% load humanize %}
-{% if check.last_ping %}
-    {{ check.last_ping|naturaltime }}
+{% if ping %}
+    {{ ping.created|naturaltime }}
 {% else %}
     Never
 {% endif %}
