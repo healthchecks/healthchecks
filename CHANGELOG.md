@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Implement dynamic favicon in the projects overview page (#971)
 - Add support for system theme (#978, @moraj-turing)
 
+### Bug Fixes
+- Fix hc.front.views.docs_search to handle words "AND", "OR", "NOT" as queries
+
 ## v3.3 - 2024-04-03
 
 ### Improvements

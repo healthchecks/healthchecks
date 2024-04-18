@@ -485,7 +485,9 @@ def docs_search(request: HttpRequest) -> HttpResponse:
         LIMIT 8
     """
 
-    q = form.cleaned_data["q"]
+    # Wrap the query in double quotes to get a valid FTS string
+    # https://www.sqlite.org/fts5.html#full_text_query_syntax
+    q = '"%s"' % form.cleaned_data["q"]
     con = sqlite3.connect(settings.BASE_DIR / "search.db")
     cur = con.cursor()
     res = cur.execute(query, (q,))
