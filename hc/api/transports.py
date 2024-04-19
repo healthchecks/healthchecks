@@ -561,7 +561,7 @@ class Opsgenie(HttpTransport):
             payload["message"] = tmpl("opsgenie_message.html", **ctx)
             payload["description"] = check.desc
 
-            details = {}
+            details: JSONDict = {}
             details["Project"] = check.project.name
             if ping := self.last_ping(flip):
                 details["Total pings"] = ping.n
