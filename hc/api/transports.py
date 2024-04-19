@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Any, NoReturn, cast
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
-from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from pydantic import BaseModel, ValidationError
@@ -465,9 +464,7 @@ class Slackalike(HttpTransport):
 
         if ping := self.last_ping(flip):
             fields.add("Total Pings", str(ping.n))
-            created_str = naturaltime(ping.created).replace("\xa0", " ")
-            formatted_kind = ping.get_kind_display()
-            fields.add("Last Ping", f"{formatted_kind}, {created_str}")
+            fields.add("Last Ping", ping.formatted_kind_created())
         else:
             fields.add("Total Pings", "0")
             fields.add("Last Ping", "Never")
@@ -565,9 +562,7 @@ class Opsgenie(HttpTransport):
             details["Project"] = check.project.name
             if ping := self.last_ping(flip):
                 details["Total pings"] = ping.n
-                created_str = naturaltime(ping.created).replace("\xa0", " ")
-                text = f"{ping.get_kind_display()}, {created_str}"
-                details["Last ping"] = text
+                details["Last ping"] = ping.formatted_kind_created()
             else:
                 details["Total pings"] = 0
                 details["Last ping"] = "Never"
@@ -788,9 +783,7 @@ class RocketChat(HttpTransport):
 
         if ping := self.last_ping(flip):
             fields.add("Total Pings", str(ping.n))
-            created_str = naturaltime(ping.created).replace("\xa0", " ")
-            formatted_kind = ping.get_kind_display()
-            fields.add("Last Ping", f"{formatted_kind}, {created_str}")
+            fields.add("Last Ping", ping.formatted_kind_created())
             if body_size := ping.get_body_size():
                 bytes_str = "byte" if body_size == 1 else "bytes"
                 ping_url = f"{url}#ping-{ping.n}"
@@ -1198,9 +1191,7 @@ class MsTeams(HttpTransport):
 
         if ping := self.last_ping(flip):
             facts.append({"name": "Total Pings:", "value": str(ping.n)})
-            created_str = naturaltime(ping.created).replace("\xa0", " ")
-            text = f"{ping.get_kind_display()}, {created_str}"
-            facts.append({"name": "Last Ping:", "value": text})
+            facts.append({"name": "Last Ping:", "value": ping.formatted_kind_created()})
         else:
             facts.append({"name": "Total Pings:", "value": "0"})
             facts.append({"name": "Last Ping:", "value": "Never"})

@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 from cronsim import CronSim
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
 from django.db import models, transaction
@@ -727,6 +728,12 @@ class Ping(models.Model):
                 return None
 
         return None
+
+    def formatted_kind_created(self) -> str:
+        """Return a string in "Success, 10 minutes" form."""
+        # xa0 is non-breaking spaces, we want regular spaces
+        created_str = naturaltime(self.created).replace("\xa0", " ")
+        return f"{self.get_kind_display()}, {created_str}"
 
 
 class WebhookSpec(BaseModel):
