@@ -565,7 +565,9 @@ class Opsgenie(HttpTransport):
             details["Project"] = check.project.name
             if ping := self.last_ping(flip):
                 details["Total pings"] = ping.n
-                details["Last ping"] = naturaltime(ping.created).replace("\xa0", " ")
+                created_str = naturaltime(ping.created).replace("\xa0", " ")
+                text = f"{ping.get_kind_display()}, {created_str}"
+                details["Last ping"] = text
             else:
                 details["Total pings"] = 0
                 details["Last ping"] = "Never"

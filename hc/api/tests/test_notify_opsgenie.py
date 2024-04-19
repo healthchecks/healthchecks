@@ -57,7 +57,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
 
         details = payload["details"]
         self.assertIn("cloaked", details["Full details"])
-        self.assertEqual(details["Last ping"], "10 minutes ago")
+        self.assertEqual(details["Last ping"], "Success, 10 minutes ago")
         self.assertEqual(details["Total pings"], 112233)
 
     @patch("hc.api.transports.curl.request", autospec=True)
