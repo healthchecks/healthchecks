@@ -52,6 +52,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(payload["alias"], self.check.unique_key)
         self.assertIn("""The check "Foo" is DOWN.""", payload["message"])
         self.assertIn("""The check "Foo" is DOWN.""", payload["description"])
         self.assertIn("Last ping was 10 minutes ago.", payload["description"])
@@ -83,7 +84,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
 
         self.assertEqual(mock_post.call_count, 1)
         method, url = mock_post.call_args.args
-        self.assertTrue(str(self.check.code) in url)
+        self.assertTrue(str(self.check.unique_key) in url)
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_opsgenie_with_eu_region(self, mock_post: Mock) -> None:

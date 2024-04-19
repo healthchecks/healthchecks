@@ -550,7 +550,10 @@ class Opsgenie(HttpTransport):
         }
 
         check = flip.owner
-        payload: JSONDict = {"alias": str(check.code), "source": settings.SITE_NAME}
+        payload: JSONDict = {
+            "alias": str(check.unique_key),
+            "source": settings.SITE_NAME,
+        }
 
         if flip.new_status == "down":
             ctx = {"check": check, "ping": self.last_ping(flip)}
@@ -564,7 +567,7 @@ class Opsgenie(HttpTransport):
             url = "https://api.eu.opsgenie.com/v2/alerts"
 
         if flip.new_status == "up":
-            url += "/%s/close?identifierType=alias" % check.code
+            url += f"/{check.unique_key}/close?identifierType=alias"
 
         self.post(url, json=payload, headers=headers)
 
