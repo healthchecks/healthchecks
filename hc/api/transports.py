@@ -559,8 +559,24 @@ class Opsgenie(HttpTransport):
             ctx = {"check": check, "ping": self.last_ping(flip)}
             payload["tags"] = cast(JSONValue, check.tags_list())
             payload["message"] = tmpl("opsgenie_message.html", **ctx)
-            payload["note"] = tmpl("opsgenie_note.html", **ctx)
-            payload["description"] = tmpl("opsgenie_description.html", **ctx)
+            payload["description"] = check.desc
+
+            details = {}
+            details["Project"] = check.project.name
+            if ping := self.last_ping(flip):
+                details["Total pings"] = ping.n
+                details["Last ping"] = naturaltime(ping.created).replace("\xa0", " ")
+            else:
+                details["Total pings"] = 0
+                details["Last ping"] = "Never"
+
+            if check.kind == "simple":
+                details["Period"] = format_duration(check.timeout)
+            if check.kind in ("cron", "oncalendar"):
+                details["Schedule"] = f"<code>{check.schedule}</code>"
+                details["Time zone"] = check.tz
+            details["Full details"] = check.cloaked_url()
+            payload["details"] = details
 
         url = "https://api.opsgenie.com/v2/alerts"
         if self.channel.opsgenie.region == "eu":

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Show status changes (flips) in check's log page (#447)
 - Implement dynamic favicon in the projects overview page (#971)
 - Add support for system theme (#978, @moraj-turing)
+- Improve Opsgenie notifications (include description, schedule, link etc.)
 
 ### Bug Fixes
 - Fix hc.front.views.docs_search to handle words "AND", "OR", "NOT" as queries

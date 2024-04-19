@@ -54,9 +54,27 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["alias"], self.check.unique_key)
         self.assertIn("""The check "Foo" is DOWN.""", payload["message"])
-        self.assertIn("""The check "Foo" is DOWN.""", payload["description"])
-        self.assertIn("Last ping was 10 minutes ago.", payload["description"])
-        self.assertIn("Last ping was 10 minutes ago.", payload["note"])
+
+        details = payload["details"]
+        self.assertIn("cloaked", details["Full details"])
+        self.assertEqual(details["Last ping"], "10 minutes ago")
+        self.assertEqual(details["Total pings"], 112233)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_oncalendar_schedule(self, mock_post: Mock) -> None:
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        mock_post.return_value.status_code = 202
+
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        details = payload["details"]
+        self.assertEqual(details["Schedule"], "<code>Mon 2-29</code>")
+        self.assertEqual(details["Time zone"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_opsgenie_with_legacy_value(self, mock_post: Mock) -> None:
@@ -138,5 +156,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertNotIn("Last ping was", payload["description"])
-        self.assertNotIn("Last ping was", payload["note"])
+        details = payload["details"]
+        self.assertIn("cloaked", details["Full details"])
+        self.assertEqual(details["Last ping"], "Never")
+        self.assertEqual(details["Total pings"], 0)
