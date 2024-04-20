@@ -1,6 +1,6 @@
 # Go
 
-Below is an example of making an HTTP request to SITE_NAME from Go using stdlib's `net/http`.
+Below is an example of making an HTTP request to SITE_NAME from Go.
 
 ```go
 package main

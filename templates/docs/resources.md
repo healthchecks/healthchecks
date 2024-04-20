@@ -22,6 +22,7 @@ Please submit additions and corrections
 ### Go
 
 * [kristofferahl/go-healthchecksio](https://github.com/kristofferahl/go-healthchecksio) – Supports listing, creating, updating, deleting, pausing, pinging.
+* [gitlab.com/etke.cc/go/healthchecks](https://gitlab.com/etke.cc/go/healthchecks) – Supports pinging.
 
 ### PowerShell
 
