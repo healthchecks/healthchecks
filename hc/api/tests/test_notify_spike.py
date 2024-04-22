@@ -48,7 +48,7 @@ class NotifySpikeTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(payload["check_id"], str(self.check.code))
+        self.assertEqual(payload["check_id"], self.check.unique_key)
         self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn("Foo is DOWN.", payload["message"])
         self.assertIn("Last ping was 10 minutes ago.", payload["message"])

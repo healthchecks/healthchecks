@@ -1268,7 +1268,7 @@ class Spike(HttpTransport):
             "ping": self.last_ping(flip),
         }
         payload = {
-            "check_id": str(flip.owner.code),
+            "check_id": str(flip.owner.unique_key),
             "title": tmpl("spike_title.html", **ctx),
             "message": tmpl("spike_description.html", **ctx),
             "status": flip.new_status,
