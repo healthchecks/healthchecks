@@ -443,22 +443,23 @@ Default: `localhost`
 The domain to use for generating ping email addresses. Example:
 
 ```ini
-PING_EMAIL_DOMAIN=ping.my-hc.example.org
+PING_EMAIL_DOMAIN=hc.example.org
 ```
 
 In this example, Healthchecks would generate ping email addresses similar
-to `3f1a7317-8e96-437c-a17d-b0d550b51e86@ping.my-hc.example.org`.
+to `3f1a7317-8e96-437c-a17d-b0d550b51e86@hc.example.org`.
 
 This setting only controls how the ping email addresses are constructed, and
 does not by itself enable the ping-by-sending-email functionality. To receive
 emails, you will also need:
 
-* A DNS record pointing `ping.my-hc.example.org` to your Healthchecks
+* A DNS record pointing `hc.example.org` to your Healthchecks
   instance's IP address.
 * `manage.py smtpd` (Healthchecks' SMTP listener service) running, listening
   on port 25, and reachable from the outside world. If you are using the
   [official Docker image](https://hub.docker.com/r/healthchecks/healthchecks),
-  see [the instructions here](https://github.com/healthchecks/healthchecks/tree/master/docker#smtp-listener-configuration-via-smtpd_port) for enabling the SMTP listener service.
+  see [the instructions here](../self_hosted_docker/#SMTPD_PORT) for enabling the SMTP
+  listener service.
 
 ## `PING_ENDPOINT` {: #PING_ENDPOINT }
 

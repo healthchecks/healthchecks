@@ -176,7 +176,7 @@ h2.rule {
     padding: 0;
 }
 
-.page-docs h2:target code {
+.page-docs .self-hosted-configuration-toc ~ h2:target code {
     display: inline-block;
     color: #333;
     background: #ffef82;

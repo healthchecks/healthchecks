@@ -50,11 +50,11 @@ To adjust the number of uWSGI processes (for example, to save memory), set:
 
 Read more about configuring uWSGI in [uWSGI documentation](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables).
 
-## SMTP Listener Configuration via `SMTPD_PORT`
+## SMTP Listener Configuration via `SMTPD_PORT` {: #SMTPD_PORT }
 
 Healthchecks comes with a `smtpd` management command, which runs a SMTP listener
 service. With the command running, you can ping your checks by sending email messages
-to `your-uuid-here@your-hc-domain.com` email addresses.
+to `your-uuid-here@hc.example.org` email addresses.
 
 The container is configured to start the SMTP listener conditionally, based
 on the value of the `SMTPD_PORT` environment value:
@@ -66,6 +66,9 @@ on the value of the `SMTPD_PORT` environment value:
 
 The conditional logic lives in uWSGI configuration file,
 [uwsgi.ini](https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini).
+
+See also: the [PING_EMAIL_DOMAIN](../self_hosted_configuration/#PING_EMAIL_DOMAIN)
+environment variable for customizing the domain part of the email addresses.
 
 ## TLS Termination
 
