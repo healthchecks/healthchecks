@@ -1841,6 +1841,11 @@ def add_discord_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
     result = curl.post("https://discordapp.com/api/oauth2/token", data)
 
     doc = result.json()
+    if isinstance(doc, dict) and doc.get("code") == 30007:
+        e = "maximum number of webhooks reached"
+        messages.warning(request, f"Response from Discord: {e}. Integration not added.")
+        return redirect("hc-channels", project.code)
+
     if not isinstance(doc, dict) or "access_token" not in doc:
         messages.warning(
             request,

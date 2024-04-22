@@ -42,6 +42,21 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         self.assertFalse("add_discord" in self.client.session)
 
     @patch("hc.front.views.curl.post", autospec=True)
+    def test_it_handles_code_30007(self, mock_post: Mock) -> None:
+        oauth_response = {"code": 30007}
+        mock_post.return_value.text = json.dumps(oauth_response)
+        mock_post.return_value.json.return_value = oauth_response
+
+        session = self.client.session
+        session["add_discord"] = ("foo", str(self.project.code))
+        session.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url + "?code=12345678&state=foo", follow=True)
+        self.assertRedirects(r, self.channels_url)
+        self.assertContains(r, "maximum number of webhooks")
+
+    @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
         for sample in ("surprise", {}, None):
             oauth_response = "surprise"
