@@ -593,12 +593,16 @@ class PagerDuty(HttpTransport):
             raise TransportError("PagerDuty notifications are not enabled.")
 
         check = flip.owner
-        ping = self.last_ping(flip)
         details = {
             "Project": check.project.name,
-            "Total pings": ping.n if ping else 0,
-            "Last ping": tmpl("pd_last_ping.html", ping=ping),
         }
+        if ping := self.last_ping(flip):
+            details["Total pings"] = ping.n
+            details["Last ping"] = ping.formatted_kind_created()
+        else:
+            details["Total pings"] = 0
+            details["Last ping"] = "Never"
+
         if check.desc:
             details["Description"] = check.desc
         if check.tags:

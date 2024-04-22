@@ -56,7 +56,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["details"]["Description"], "Description goes here")
         self.assertEqual(payload["event_type"], "trigger")
         self.assertEqual(payload["service_key"], "123")
-        self.assertEqual(payload["details"]["Last ping"], "10 minutes ago")
+        self.assertEqual(payload["details"]["Last ping"], "Success, 10 minutes ago")
         self.assertEqual(payload["details"]["Total pings"], 112233)
         self.assertEqual(payload["incident_key"], self.check.unique_key)
 
@@ -105,3 +105,16 @@ class NotifyPdTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["description"], "Foo & Bar is DOWN")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
+        self._setup_data("123")
+        self.ping.delete()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+        assert Notification.objects.count() == 1
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(payload["details"]["Last ping"], "Never")
+        self.assertEqual(payload["details"]["Total pings"], 0)
