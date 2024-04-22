@@ -49,6 +49,7 @@ class NotifyVictorOpsTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["message_type"], "CRITICAL")
+        self.assertEqual(payload["entity_id"], self.check.unique_key)
         self.assertIn("Foo is DOWN.", payload["state_message"])
         self.assertIn("Last ping was 10 minutes ago.", payload["state_message"])
 

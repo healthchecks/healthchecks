@@ -824,7 +824,7 @@ class VictorOps(HttpTransport):
         }
         mtype = "CRITICAL" if flip.new_status == "down" else "RECOVERY"
         payload = {
-            "entity_id": str(flip.owner.code),
+            "entity_id": str(flip.owner.unique_key),
             "message_type": mtype,
             "entity_display_name": flip.owner.name_then_code(),
             "state_message": tmpl("victorops_description.html", **ctx),
