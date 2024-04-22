@@ -51,7 +51,7 @@ h2.rule {
 }
 
 .docs-content h2 {
-    margin-top: 30px;
+    padding-top: 30px;
     font-weight: bold;
 }
 
@@ -174,4 +174,10 @@ h2.rule {
 .self-hosted-configuration-toc li {
     margin: 0;
     padding: 0;
+}
+
+.page-docs h2:target code {
+    display: inline-block;
+    color: #333;
+    background: #ffef82;
 }
