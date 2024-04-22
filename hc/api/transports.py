@@ -593,7 +593,7 @@ class PagerDuty(HttpTransport):
             raise TransportError("PagerDuty notifications are not enabled.")
 
         check = flip.owner
-        details = {
+        details: JSONDict = {
             "Project": check.project.name,
         }
         if ping := self.last_ping(flip):
