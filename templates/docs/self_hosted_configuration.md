@@ -458,6 +458,9 @@ emails, you will also need:
 * `manage.py smtpd` (Healthchecks' SMTP listener service) running, listening
   on port 25, and reachable from the outside world.
 
+Note: if you are using the [official Docker image](https://hub.docker.com/r/healthchecks/healthchecks),
+see [the instructions here](https://github.com/healthchecks/healthchecks/tree/master/docker#smtp-listener-configuration-via-smtpd_port) for enabling the SMTP listener service.
+
 ## `PING_ENDPOINT` {: #PING_ENDPOINT }
 
 Default: `SITE_ROOT` + `/ping/`
