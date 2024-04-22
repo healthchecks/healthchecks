@@ -49,6 +49,7 @@ class NotifyPagertreeTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["event_type"], "trigger")
+        self.assertEqual(payload["incident_key"], self.check.unique_key)
         self.assertIn("Foo is DOWN.", payload["description"])
         self.assertIn("Last ping was 10 minutes ago.", payload["description"])
 

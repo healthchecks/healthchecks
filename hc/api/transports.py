@@ -640,7 +640,7 @@ class PagerTree(HttpTransport):
             "ping": self.last_ping(flip),
         }
         payload = {
-            "incident_key": str(flip.owner.code),
+            "incident_key": str(flip.owner.unique_key),
             "event_type": "trigger" if flip.new_status == "down" else "resolve",
             "title": tmpl("pagertree_title.html", **ctx),
             "description": tmpl("pagertree_description.html", **ctx),
