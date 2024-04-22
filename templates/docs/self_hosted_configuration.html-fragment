@@ -319,10 +319,10 @@ emails, you will also need:</p>
 <li>A DNS record pointing <code>ping.my-hc.example.org</code> to your Healthchecks
   instance's IP address.</li>
 <li><code>manage.py smtpd</code> (Healthchecks' SMTP listener service) running, listening
-  on port 25, and reachable from the outside world.</li>
+  on port 25, and reachable from the outside world. If you are using the
+  <a href="https://hub.docker.com/r/healthchecks/healthchecks">official Docker image</a>,
+  see <a href="https://github.com/healthchecks/healthchecks/tree/master/docker#smtp-listener-configuration-via-smtpd_port">the instructions here</a> for enabling the SMTP listener service.</li>
 </ul>
-<p>Note: if you are using the <a href="https://hub.docker.com/r/healthchecks/healthchecks">official Docker image</a>,
-see <a href="https://github.com/healthchecks/healthchecks/tree/master/docker#smtp-listener-configuration-via-smtpd_port">the instructions here</a> for enabling the SMTP listener service.</p>
 <h2 id="PING_ENDPOINT"><code>PING_ENDPOINT</code></h2>
 <p>Default: <code>SITE_ROOT</code> + <code>/ping/</code></p>
 <p>The base URL to use for constructing ping URLs for display. Healthchecks constructs ping
