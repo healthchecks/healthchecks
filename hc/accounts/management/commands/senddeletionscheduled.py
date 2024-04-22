@@ -52,6 +52,7 @@ class Command(BaseCommand):
             dummy.n_pings = 1
 
             dummy_flip = Flip(owner=dummy)
+            dummy_flip.created = now()
             dummy_flip.old_status = "up"
             dummy_flip.new_status = "down"
 
