@@ -612,7 +612,7 @@ class PagerDuty(HttpTransport):
         description = tmpl("pd_description.html", check=check, status=flip.new_status)
         payload = {
             "service_key": self.channel.pd.service_key,
-            "incident_key": str(check.code),
+            "incident_key": check.unique_key,
             "event_type": "trigger" if flip.new_status == "down" else "resolve",
             "description": description,
             "client": settings.SITE_NAME,

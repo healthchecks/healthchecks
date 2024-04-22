@@ -58,6 +58,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["service_key"], "123")
         self.assertEqual(payload["details"]["Last ping"], "10 minutes ago")
         self.assertEqual(payload["details"]["Total pings"], 112233)
+        self.assertEqual(payload["incident_key"], self.check.unique_key)
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
