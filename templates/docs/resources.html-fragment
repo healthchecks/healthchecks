@@ -19,6 +19,7 @@ Please submit additions and corrections
 <h3>Go</h3>
 <ul>
 <li><a href="https://github.com/kristofferahl/go-healthchecksio">kristofferahl/go-healthchecksio</a> – Supports listing, creating, updating, deleting, pausing, pinging.</li>
+<li><a href="https://gitlab.com/etke.cc/go/healthchecks">gitlab.com/etke.cc/go/healthchecks</a> – Supports pinging.</li>
 </ul>
 <h3>PowerShell</h3>
 <ul>
