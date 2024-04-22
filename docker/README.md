@@ -97,7 +97,8 @@ The Docker images:
 * Support amd64, arm/v7 and arm64 architectures.
 * Use uWSGI as the web server. uWSGI is configured to perform database migrations
   on startup, and to run `sendalerts`, `sendreports`, and `smtpd` in the background.
-  You do not need to run them separately.
+  You do not need to run them separately. The SMTP listener (`manage.py smtpd`) is
+  started conditionally, [based on the value of the `SMTPD_PORT` environment variable](https://github.com/healthchecks/healthchecks/tree/master/docker#smtp-listener-configuration-via-smtpd_port).
 * Ship with both PostgreSQL and MySQL database drivers.
 * Serve static files using the whitenoise library.
 * Have the apprise library preinstalled.
