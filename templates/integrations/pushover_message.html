@@ -19,7 +19,7 @@
 {% line %}<b>Period:</b> {{ check.timeout|hc_duration }}{% endline %}
 {% endif %}
 
-{% if check.kind == "cron" %}
+{% if check.kind == "cron" or check.kind == "oncalendar" %}
 {% line %}<b>Schedule:</b> <code>{{ check.schedule }}</code>{% endline %}
 {% line %}<b>Time Zone:</b> {{ check.tz }}{% endline %}
 {% endif %}

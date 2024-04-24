@@ -70,7 +70,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.assertEqual(n.error, "Trello notifications are not enabled.")
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
+    def test_it_shows_cron_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -81,6 +81,20 @@ class NotifyTrelloTestCase(BaseTestCase):
         params = mock_post.call_args.kwargs["params"]
         a = "\u034f*"
         self.assertIn(f"**Schedule:** `{a} {a} {a} {a} {a}`", params["desc"])
+        self.assertIn("**Time Zone:** Europe/Riga", params["desc"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_oncalendar_schedule(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+
+        self.channel.notify(self.flip)
+
+        params = mock_post.call_args.kwargs["params"]
+        self.assertIn("**Schedule:** `Mon 2-29`", params["desc"])
         self.assertIn("**Time Zone:** Europe/Riga", params["desc"])
 
     @patch("hc.api.transports.curl.request", autospec=True)

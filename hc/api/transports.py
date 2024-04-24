@@ -458,7 +458,7 @@ class Slackalike(HttpTransport):
         if check.kind == "simple":
             fields.add("Period", format_duration(check.timeout))
 
-        if check.kind == "cron":
+        if check.kind in ("cron", "oncalendar"):
             fields.add("Schedule", fix_asterisks(check.schedule))
             fields.add("Time Zone", check.tz)
 
@@ -609,7 +609,7 @@ class PagerDuty(HttpTransport):
             details["Tags"] = ", ".join(check.tags_list())
         if check.kind == "simple":
             details["Period"] = format_duration(check.timeout)
-        if check.kind == "cron":
+        if check.kind in ("cron", "oncalendar"):
             details["Schedule"] = check.schedule
             details["Time zone"] = check.tz
 
@@ -781,7 +781,7 @@ class RocketChat(HttpTransport):
         if check.kind == "simple":
             fields.add("Period", format_duration(check.timeout))
 
-        if check.kind == "cron":
+        if check.kind in ("cron", "oncalendar"):
             fields.add("Schedule", fix_asterisks(check.schedule))
             fields.add("Time Zone", check.tz)
 
@@ -1189,7 +1189,7 @@ class MsTeams(HttpTransport):
         if check.kind == "simple":
             facts.append({"name": "Period:", "value": format_duration(check.timeout)})
 
-        if check.kind == "cron":
+        if check.kind in ("cron", "oncalendar"):
             facts.append({"name": "Schedule:", "value": fix_asterisks(check.schedule)})
             facts.append({"name": "Time Zone:", "value": check.tz})
 

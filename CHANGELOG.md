@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix hc.front.views.docs_search to handle words "AND", "OR", "NOT" as queries
 - Fix integrations to not disclose check's code in incident data
+- Fix integrations to include oncalendar schedules in notifications
 
 ## v3.3 - 2024-04-03
 

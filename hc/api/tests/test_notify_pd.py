@@ -61,7 +61,7 @@ class NotifyPdTestCase(BaseTestCase):
         self.assertEqual(payload["incident_key"], self.check.unique_key)
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
+    def test_it_shows_cron_schedule_and_tz(self, mock_post: Mock) -> None:
         self._setup_data("123")
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -71,6 +71,20 @@ class NotifyPdTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["details"]["Schedule"], "* * * * *")
+        self.assertEqual(payload["details"]["Time zone"], "Europe/Riga")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_oncalendar_schedule_and_tz(self, mock_post: Mock) -> None:
+        self._setup_data("123")
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(payload["details"]["Schedule"], "Mon 2-29")
         self.assertEqual(payload["details"]["Time zone"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request", autospec=True)

@@ -74,7 +74,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertEqual(self.channel.last_error, "Received status code 404")
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
+    def test_it_shows_cron_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -84,6 +84,20 @@ class NotifyRocketChatTestCase(BaseTestCase):
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Schedule"], "\u034f* \u034f* \u034f* \u034f* \u034f*")
+        self.assertEqual(fields["Time Zone"], "Europe/Riga")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_oncalendar_schedule_and_tz(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+
+        self.channel.notify(self.flip)
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Schedule"], "Mon 2-29")
         self.assertEqual(fields["Time Zone"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request", autospec=True)

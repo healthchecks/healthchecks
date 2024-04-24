@@ -157,6 +157,21 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertIn("<code>0 18-23,0-8 * * *</code>", html)
         self.assertIn("Europe/Riga", html)
 
+    def test_it_shows_oncalendar_schedule(self) -> None:
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+
+        self.channel.notify(self.flip)
+
+        email = mail.outbox[0]
+        html = self.get_html(email)
+        self.assertIn("Mon 2-29", email.body)
+        self.assertIn("Europe/Riga", email.body)
+        self.assertIn("<code>Mon 2-29</code>", html)
+        self.assertIn("Europe/Riga", html)
+
     def test_it_truncates_long_body(self) -> None:
         self.ping.body = "X" * 10000 + ", and the rest gets cut off"
         self.ping.save()

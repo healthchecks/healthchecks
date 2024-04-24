@@ -155,7 +155,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertIn("Last Ping: Exit status 123, 10 minutes ago", params["message"])
 
     @patch("hc.api.transports.socket.socket")
-    def test_it_shows_schedule_and_tz(self, socket: Mock) -> None:
+    def test_it_shows_cron_schedule_and_tz(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})
 
         self.check.kind = "cron"
@@ -166,6 +166,21 @@ class NotifySignalTestCase(BaseTestCase):
         assert socketobj.req
         params = socketobj.req["params"]
         self.assertIn("Schedule: * * * * *", params["message"])
+        self.assertIn("Time Zone: Europe/Riga", params["message"])
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_shows_oncalendar_schedule_and_tz(self, socket: Mock) -> None:
+        socketobj = setup_mock(socket, {})
+
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        self.channel.notify(self.flip)
+
+        assert socketobj.req
+        params = socketobj.req["params"]
+        self.assertIn("Schedule: Mon 2-29", params["message"])
         self.assertIn("Time Zone: Europe/Riga", params["message"])
 
     @patch("hc.api.transports.socket.socket")

@@ -5,7 +5,7 @@
 **Period:** {{ check.timeout|hc_duration }}
 {% endif %}
 
-{% if check.kind == "cron" %}
+{% if check.kind == "cron" or check.kind == "oncalendar" %}
 **Schedule:** `{{ check.schedule|fix_asterisks }}`
 
 **Time Zone:** {{ check.tz }}

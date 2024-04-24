@@ -29,7 +29,7 @@
     {% line %}Period: {{ check.timeout|hc_duration }}{% endline %}
 {% endif %}
 
-{% if check.kind == "cron" %}
+{% if check.kind == "cron" or check.kind == "oncalendar" %}
     {% line %}Schedule: {{ check.schedule }}{% endline %}
     {% line %}Time Zone: {{ check.tz }}{% endline %}
 {% endif %}

@@ -43,7 +43,7 @@
         {{ trtr|safe }} {% cycle trtr %}
         {% endif %}
 
-        {% if check.kind == "cron" %}
+        {% if check.kind == "cron" or check.kind == "oncalendar" %}
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
             <b>Schedule</b><br>
             <code>{{ check.schedule }}</code>

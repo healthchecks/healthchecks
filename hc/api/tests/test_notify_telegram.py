@@ -112,6 +112,21 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("<b>Time Zone:</b> Europe/Riga\n", payload["text"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_oncalendar_schedule(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("<b>Schedule:</b> <code>Mon 2-29</code>\n", payload["text"])
+        self.assertIn("<b>Time Zone:</b> Europe/Riga\n", payload["text"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_returns_error(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 400
         mock_post.return_value.content = b'{"description": "Hi"}'

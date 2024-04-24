@@ -66,7 +66,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.assertNotIn(str(self.check.code), serialized)
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_shows_schedule_and_tz(self, mock_post: Mock) -> None:
+    def test_it_shows_cron_schedule_and_tz(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         self.check.kind = "cron"
         self.check.tz = "Europe/Riga"
@@ -76,6 +76,20 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
         self.assertEqual(facts["Schedule:"], "\u034f* \u034f* \u034f* \u034f* \u034f*")
+        self.assertEqual(facts["Time Zone:"], "Europe/Riga")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_oncalendar_schedule_and_tz(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+
+        self.channel.notify(self.flip)
+        payload = mock_post.call_args.kwargs["json"]
+        facts = {f["name"]: f["value"] for f in payload["sections"][0]["facts"]}
+        self.assertEqual(facts["Schedule:"], "Mon 2-29")
         self.assertEqual(facts["Time Zone:"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request", autospec=True)

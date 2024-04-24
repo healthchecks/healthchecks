@@ -66,6 +66,35 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertNotIn("All the other checks are up.", payload["message"])
         self.assertEqual(payload["tags"], self.check.unique_key)
 
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_cron_schedule(self, mock_post: Mock) -> None:
+        self._setup_data("123|0")
+        self.check.kind = "cron"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertIn("<b>Schedule:</b> <code>* * * * *</code>", payload["message"])
+        self.assertIn("<b>Time Zone:</b> Europe/Riga", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_oncalendar_schedule(self, mock_post: Mock) -> None:
+        self._setup_data("123|0")
+        self.check.kind = "oncalendar"
+        self.check.schedule = "Mon 2-29"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertIn("<b>Schedule:</b> <code>Mon 2-29</code>", payload["message"])
+        self.assertIn("<b>Time Zone:</b> Europe/Riga", payload["message"])
+
     @override_settings(PUSHOVER_API_TOKEN=None)
     def test_it_requires_pushover_api_token(self) -> None:
         self._setup_data("123|0")
