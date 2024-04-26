@@ -103,6 +103,13 @@
         </td>
     </tr>
     {% endif %}
+
+    <tr>
+        <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
+            <b>Status Changed to {{ flip.new_status|title }} at</b><br>
+            {{ flip.created|date:"Y-m-d H:i:s T" }}
+        </td>
+    </tr>
 </table>
 
 {% if ping and ping.has_body %}

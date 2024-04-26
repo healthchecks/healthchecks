@@ -43,19 +43,21 @@
     {% if subject %}
     {% line %}Last ping subject: {{ subject }}{% endline %}
     {% endif %}
+{% endif %}
 
-    {% if ping.has_body %}
-        {% line %}{% endline %}
-        {% line %}Last Ping Body:{% endline %}
-        {% line %}---------------{% endline %}
-        {% if body is None %}
-            {% line %}The request body data is being processed and will be available for viewing shortly.{% endline %}
-            {% line %}Please view it on the website.{% endline %}
-        {% else %}
-            {% line %}{{ body|safe|slice:":10000"|wordwrap:80 }}{% endline %}
-            {% if body|length > 10000 %}
-                {% line %}[truncated]{% endline %}
-            {% endif %}
+{% line %}Status changed to {{ flip.new_status|title }} at: {{ flip.created|date:"Y-m-d H:i:s T" }}{% endline %}
+
+{% if ping and ping.has_body %}
+    {% line %}{% endline %}
+    {% line %}Last Ping Body:{% endline %}
+    {% line %}---------------{% endline %}
+    {% if body is None %}
+        {% line %}The request body data is being processed and will be available for viewing shortly.{% endline %}
+        {% line %}Please view it on the website.{% endline %}
+    {% else %}
+        {% line %}{{ body|safe|slice:":10000"|wordwrap:80 }}{% endline %}
+        {% if body|length > 10000 %}
+            {% line %}[truncated]{% endline %}
         {% endif %}
     {% endif %}
 {% endif %}

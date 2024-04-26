@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add support for system theme (#978, @moraj-turing)
 - Improve Opsgenie notifications (include description, schedule, link etc.)
 - Update the Discord integration to disable channel on HTTP 404 responses
+- Update email notifications to include the timestamps of status flips
 
 ### Bug Fixes
 - Fix hc.front.views.docs_search to handle words "AND", "OR", "NOT" as queries
