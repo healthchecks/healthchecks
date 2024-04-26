@@ -31,7 +31,7 @@
 
 {% if check.kind == "cron" or check.kind == "oncalendar" %}
     {% line %}Schedule: {{ check.schedule }}{% endline %}
-    {% line %}Time Zone: {{ check.tz }}{% endline %}
+    {% line %}Time zone: {{ check.tz }}{% endline %}
 {% endif %}
 
 {% line %}Total pings: {% if ping %}{{ ping.n }}{% else %}0{% endif %} {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}{% endline %}
@@ -45,7 +45,7 @@
     {% endif %}
 {% endif %}
 
-{% line %}Status changed to {{ flip.new_status|title }} at: {{ flip.created|date:"Y-m-d H:i:s T" }}{% endline %}
+{% line %}Status changed to {{ flip.new_status }} at: {{ flip.created|date:"Y-m-d H:i:s T" }}{% endline %}
 
 {% if ping and ping.has_body %}
     {% line %}{% endline %}
