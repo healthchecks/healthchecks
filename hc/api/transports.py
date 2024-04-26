@@ -517,6 +517,13 @@ class Mattermost(Slackalike):
 
 
 class Discord(Slackalike):
+    @classmethod
+    def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        message = f"Received status code {response.status_code}"
+        # Consider 404 a permanent failure
+        permanent = response.status_code == 404
+        raise TransportError(message, permanent=permanent)
+
     def notify(self, flip: Flip, notification: Notification) -> None:
         url = self.channel.discord_webhook_url + "/slack"
         self.post(url, json=self.payload(flip))
