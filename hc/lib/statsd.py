@@ -5,7 +5,7 @@ from statsd.client.base import StatsClientBase
 from statsd.client.udp import StatsClient
 
 
-class NoopClient(StatsClientBase):
+class NoopClient(StatsClientBase):  # type: ignore
     """A client for statsd that does nothing."""
 
     _prefix = None
