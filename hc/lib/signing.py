@@ -6,15 +6,16 @@ from django.core.signing import SignatureExpired, Signer
 from django.utils.crypto import salted_hmac
 
 
-def hex_hmac(salt: str, value: bytes | str, key: str, algorithm: str) -> str:
+def hex_hmac(salt: str, value: bytes | str, key: bytes | str, algorithm: str) -> str:
     return salted_hmac(salt, value, key, algorithm=algorithm).hexdigest()
 
 
 class HexTimestampSigner(Signer):
     """TimestampSigner, but uses hex for serialization."""
 
-    def signature(self, value: bytes | str, key: str | None = None) -> str:
+    def signature(self, value: bytes | str, key: bytes | str | None = None) -> str:
         key = key or self.key
+        assert isinstance(self.salt, str)
         return hex_hmac(self.salt + "signer", value, key, algorithm=self.algorithm)
 
     def sign(self, value: str) -> str:
