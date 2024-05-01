@@ -227,7 +227,8 @@ class ChannelsAdmin(ModelAdmin[Channel]):
         qs = qs.annotate(owner_email=F("project__owner__email"))
         return qs
 
-    def view_on_site(self, obj):
+    def view_on_site(self, obj: Channel) -> str:
+        assert hasattr(obj, "project_code")
         return reverse("hc-channels", args=[obj.project_code])
 
     def transport(self, obj: Channel) -> str:
