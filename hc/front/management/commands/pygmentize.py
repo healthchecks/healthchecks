@@ -1,17 +1,20 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from django.core.management.base import BaseCommand
 
-if TYPE_CHECKING:
-    from pygments import lexers
-
-
-def _process(name: str, lexer: lexers.Lexer) -> None:
-    from pygments import highlight
+try:
+    from pygments import highlight, lexers
     from pygments.formatters import HtmlFormatter
+    from pygments.lexer import Lexer
 
+    have_pygments = True
+except ImportError:
+    have_pygments = False
+
+
+def _process(name: str, lexer: Lexer) -> None:
     source = open("templates/front/snippets/%s.txt" % name).read()
     processed = highlight(source, lexer, HtmlFormatter())
     processed = processed.replace("PING_URL", "{{ ping_url }}")
@@ -25,9 +28,7 @@ class Command(BaseCommand):
     help = "Compiles snippets with Pygments"
 
     def handle(self, **options: Any) -> None:
-        try:
-            from pygments import lexers
-        except ImportError:
+        if not have_pygments:
             self.stdout.write("This command requires the Pygments package.")
             self.stdout.write("Please install it with:\n\n")
             self.stdout.write("  pip install Pygments\n\n")
