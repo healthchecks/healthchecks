@@ -9,11 +9,6 @@ RUN \
     pip install --upgrade pip && \
     pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio -r /tmp/requirements.txt
 
-COPY . /opt/healthchecks/
-RUN \
-    rm -rf /opt/healthchecks/.git && \
-    rm -rf /opt/healthchecks/stuff
-
 FROM python:3.12-slim-bookworm
 
 RUN useradd --system hc
@@ -31,7 +26,7 @@ RUN --mount=type=bind,target=/wheels,source=/wheels,from=builder \
     pip install --upgrade pip && \
     pip install --no-cache /wheels/*
 
-COPY --from=builder /opt/healthchecks/ /opt/healthchecks/
+COPY . /opt/healthchecks/
 
 RUN \
     rm -f /opt/healthchecks/hc/local_settings.py && \
