@@ -23,9 +23,14 @@ class LoginTestCase(BaseTestCase):
 
     def test_it_shows_form(self) -> None:
         r = self.client.get("/accounts/login/")
-        self.assertContains(r, "Email Me a Link")
+        self.assertContains(r, "magic-link-form")
         # It should not show validation errors yet
         self.assertNotContains(r, "This field is required")
+
+    @override_settings(EMAIL_HOST=None)
+    def test_it_handles_no_smtp(self) -> None:
+        r = self.client.get("/accounts/login/")
+        self.assertNotContains(r, "magic-link-form")
 
     def test_it_redirects_authenticated_get(self) -> None:
         self.client.login(username="alice@example.org", password="password")

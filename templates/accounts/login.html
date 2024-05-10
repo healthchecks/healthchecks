@@ -30,6 +30,7 @@
         {% endif %}
 
         <div class="row">
+            {% if use_magic_form %}
             <div class="col-sm-6">
                 <form id="magic-link-form" method="post">
                     {% csrf_token %}
@@ -66,8 +67,9 @@
                     <div>or</div>
                 </div>
             </div>
+            {% endif %}
 
-            <div class="col-sm-6">
+            <div class="col-sm-6{% if not use_magic_form %} col-sm-offset-3{% endif %}">
                 <form id="login-form" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="login" />
