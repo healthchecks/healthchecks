@@ -6,7 +6,6 @@ Please submit additions and corrections
 <ul>
 <li><a href="https://github.com/linuxserver/docker-healthchecks">linuxserver/docker-healthchecks</a> – Alternative Docker image</li>
 <li><a href="https://github.com/galexrt/docker-healthchecks">galexrt/docker-healthchecks</a> – Alternative Docker image</li>
-<li><a href="https://github.com/ansible-collections/community.healthchecksio">ansible-collections/community.healthchecksio</a> - Ansible modules for automating tasks on Healthchecks.io</li>
 </ul>
 <h2>Command Runners, Shell Wrappers</h2>
 <ul>
@@ -16,6 +15,10 @@ Please submit additions and corrections
 <li><a href="https://gist.github.com/odolbeau/bd6d8eb7910d1289e2687682c8db9275">hc-monitor</a> – Bash wrapper, supports pinging.</li>
 </ul>
 <h2>API Wrappers</h2>
+<h3>Ansible</h3>
+<ul>
+<li><a href="https://github.com/ansible-collections/community.healthchecksio">ansible-collections/community.healthchecksio</a> - Ansible modules for automating tasks on Healthchecks.io</li>
+</ul>
 <h3>Go</h3>
 <ul>
 <li><a href="https://github.com/kristofferahl/go-healthchecksio">kristofferahl/go-healthchecksio</a> – Supports listing, creating, updating, deleting, pausing, pinging.</li>
