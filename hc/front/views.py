@@ -2777,11 +2777,7 @@ def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         start = max(start, oldest_ping.created)
 
     events = _get_events(check, 1000, start=start, end=end, kinds=form.kinds())
-    ctx = {
-        "events": events,
-        "describe_body": True,
-    }
-    response = render(request, "front/log_rows.html", ctx)
+    response = render(request, "front/log_rows.html", {"events": events})
 
     if events:
         # Include a full precision timestamp of the most recent event in a
