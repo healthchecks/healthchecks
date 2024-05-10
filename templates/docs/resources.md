@@ -32,6 +32,7 @@ Please submit additions and corrections
 
 * [samarpan-rai/healthchecks_wrapper](https://github.com/samarpan-rai/healthchecks_wrapper) – Python context manager, supports pinging.
 * [danidelvalle/healthchecks-decorator](https://github.com/danidelvalle/healthchecks-decorator) – Python context manager, supports pinging.
+* [andrewthetechie/py-healthchecks.io](https://github.com/andrewthetechie/py-healthchecks.io) – Supports creating, pinging. Has sync and async implementations.
 
 ### Rust
 

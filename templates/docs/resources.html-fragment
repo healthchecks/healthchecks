@@ -29,6 +29,7 @@ Please submit additions and corrections
 <ul>
 <li><a href="https://github.com/samarpan-rai/healthchecks_wrapper">samarpan-rai/healthchecks_wrapper</a> – Python context manager, supports pinging.</li>
 <li><a href="https://github.com/danidelvalle/healthchecks-decorator">danidelvalle/healthchecks-decorator</a> – Python context manager, supports pinging.</li>
+<li><a href="https://github.com/andrewthetechie/py-healthchecks.io">andrewthetechie/py-healthchecks.io</a> – Supports creating, pinging. Has sync and async implementations.</li>
 </ul>
 <h3>Rust</h3>
 <ul>
