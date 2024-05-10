@@ -42,8 +42,9 @@ $(function () {
         activeRequest = $.ajax({
             url: url + "?" + qs,
             timeout: 2000,
-            success: function(data) {
+            success: function(data, textStatus, xhr) {
                 activeRequest = null;
+                lastUpdated = xhr.getResponseHeader("X-Last-Event-Timestamp");
                 var tbody = document.createElement("tbody");
                 tbody.innerHTML = data;
                 switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
