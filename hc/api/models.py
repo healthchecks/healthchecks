@@ -1123,7 +1123,7 @@ class Channel(models.Model):
 
 
 class Notification(models.Model):
-    code = models.UUIDField(default=uuid.uuid4, null=True, editable=False)
+    code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     # owner is null for test notifications, produced by the "Test!" button
     # in the Integrations page
     owner = models.ForeignKey(Check, models.CASCADE, null=True)
