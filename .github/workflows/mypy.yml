@@ -25,4 +25,4 @@ jobs:
         pip install mypy django-stubs types-braintree types-pycurl==7.45.2.20240311 types-Markdown types-pygments
         touch hc/local_settings.py
     - name: Run Mypy
-      run: mypy hc
+      run: mypy --strict hc
