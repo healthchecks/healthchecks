@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import socket
 
 from django.db import Error
 
@@ -18,6 +19,7 @@ class Handler(logging.Handler):
 
         try:
             Record.objects.create(
+                host=socket.gethostname(),
                 name=record.name,
                 level=record.levelno,
                 message=record.getMessage(),

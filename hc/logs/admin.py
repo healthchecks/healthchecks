@@ -15,7 +15,7 @@ class RecordsAdmin(ModelAdmin[Record]):
 
     search_fields = ["name", "message"]
     readonly_fields = ("message",)
-    list_display = ("when", "logger", "message_traceback")
+    list_display = ("when", "host", "logger", "message_traceback")
     list_filter = (
         "created",
         "level",

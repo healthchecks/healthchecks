@@ -17,6 +17,7 @@ LEVELS = [
 
 class Record(models.Model):
     created = models.DateTimeField(default=now)
+    host = models.CharField(max_length=50, blank=True)
     name = models.CharField(max_length=100)
     level = models.PositiveSmallIntegerField(choices=LEVELS)
     message = models.TextField()
