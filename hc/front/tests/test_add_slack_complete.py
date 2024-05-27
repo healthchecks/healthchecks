@@ -34,6 +34,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.assertContains(r, "Success, integration added!")
 
         ch = Channel.objects.get()
+        self.assertEqual(ch.name, "bar")
         self.assertEqual(ch.slack_team, "foo")
         self.assertEqual(ch.slack_channel, "bar")
         self.assertEqual(ch.slack_webhook_url, "http://example.org")

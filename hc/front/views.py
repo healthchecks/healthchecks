@@ -1663,6 +1663,7 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
 
     channel = Channel(kind="slack", project=project)
     channel.value = result.text
+    channel.name = channel.slack_channel
     channel.save()
     channel.assign_all_checks()
 
