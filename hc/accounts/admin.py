@@ -286,7 +286,7 @@ class UserAnnotations(TypedDict):
     last_active_date: datetime | None
 
 
-class HcUserAdmin(UserAdmin):
+class HcUserAdmin(UserAdmin[User]):
     list_display = (
         "id",
         "email",
