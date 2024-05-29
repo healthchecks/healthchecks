@@ -11,6 +11,18 @@
     margin: 0 0 24px 0;
 }
 
+#ping-details-body .times {
+    display: flex;
+    gap: 10px;
+}
+
+#ping-details-body .times > div {
+    min-width: 100px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    padding: 8px 10px;
+}
+
 #ping-details-body .ua {
     font-size: 11px;
     font-family: monospace;

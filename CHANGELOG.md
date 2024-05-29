@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Update email notifications to include the timestamps of status flips
 - Update the Sign In page to hide "Email Link" option if SMTP is not configured (#922)
 - Update Slack integration to use channel name as the integration name (#1003)
+- Update Ping Details dialog to also show formatted datetimes (#975)
 
 ### Bug Fixes
 - Fix hc.front.views.docs_search to handle words "AND", "OR", "NOT" as queries

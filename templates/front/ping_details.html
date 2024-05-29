@@ -18,10 +18,29 @@
     </h3>
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <p>
                 <strong>Time Received</strong>
                 <code>{{ ping.created.isoformat }}</code>
+                <div class="times" data-dt="{{ ping.created|timestamp }}">
+                    {% if check.kind == "simple" or check.tz != "UTC" %}
+                    <div>
+                        UTC<br>
+                        <span data-format="UTC"></span>
+                    </div>
+                    {% endif %}
+                    {% if check.kind == "cron" or check.kind == "oncalendar" %}
+                    <div data-format="{{ check.tz }}">
+                        {{ check.tz }}<br>
+                        <span data-format="{{ check.tz }}"></span>
+                    </div>
+                    {% endif %}
+                    <div>
+                        Browser's time zone<br>
+                        <span data-format="local"></span>
+                    </div>
+                </div>
+
             </p>
         </div>
 
