@@ -493,7 +493,6 @@ class Member(models.Model):
     def is_true_rw(self) -> bool:
         return self.role in (Member.Role.TRUEREADONLY)
 
-
 class Credential(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)
     name = models.CharField(max_length=100)

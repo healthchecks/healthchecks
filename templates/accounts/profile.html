@@ -259,7 +259,8 @@
                     {% else %}
                         <p>You do not have any projects. Create one!</p>
                     {% endif %}
-                    {% if not read_only %}
+
+                    {% if not true_rw %}
                     <a
                         id="create-project"
                         href="#"

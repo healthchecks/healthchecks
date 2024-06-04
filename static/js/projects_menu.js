@@ -17,7 +17,6 @@ $(function() {
                 $("#project-menu .new_project").remove();
                 $("#projects-divider").after(data);
             }
-                           
         });
     }
 
