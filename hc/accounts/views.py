@@ -301,12 +301,16 @@ def check_token(
 @login_required
 def profile(request: AuthenticatedHttpRequest) -> HttpResponse:
     profile = request.profile
-    true_rw = False  
-    for p in request.profile.projects():
-        member = get_object_or_404(Member, project=p, user=request.user)
-        if member.is_true_rw:
-            true_rw = True
-            break
+    true_rw = False 
+    if not request.user.is_superuser:
+        for p in request.profile.projects():
+            member = get_object_or_404(Member, project=p, user=request.user)
+            if request.user.id == p.owner_id:
+                true_rw = False
+                break
+            if member.is_true_rw:
+                true_rw = True
+                break
     ctx = {
         "page": "profile",
         "profile": profile,
