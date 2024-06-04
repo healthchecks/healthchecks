@@ -40,7 +40,8 @@
                 </div>
             </a>
             {% endfor %}
-
+            
+            {% if not read_only %}
             <a id="add-project" href="#" data-toggle="modal" data-target="#add-project-modal">
                 <div class="col-sm-6 col-md-4">
                     <div class="panel project">
@@ -48,6 +49,7 @@
                     </div>
                 </div>
             </a>
+            {% endif %}
 
         </div>
     </div>

@@ -6,3 +6,12 @@
     </a>
 </li>
 {% endfor %}
+{%if not read_only %}
+<div class="new_project">
+    <li role="separator" class="divider"></li>
+</div>
+<li class="new_project">
+    <a  href="#" data-toggle="modal"  data-target="#add-project-modal">New Project&hellip;</a>
+</li>
+{% endif %}
+

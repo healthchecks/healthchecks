@@ -180,7 +180,19 @@ def _get_project_for_user(request: HttpRequest, code: UUID) -> tuple[Project, bo
 
     return project, membership.is_rw
 
+def _get_true_rw_project_for_user(request: HttpRequest, project) -> Project:
+    """Check access, return true_rw)"""
+    if request.user.is_superuser:
+        return False
 
+    if request.user.id == project.owner_id:
+        return False
+    
+    membership = get_object_or_404(Member, project=project, user=request.user)
+
+    print("DANS LA FONCTION :")
+    print(membership.is_true_rw)
+    return membership.is_true_rw
 def _get_rw_project_for_user(request: HttpRequest, code: UUID) -> Project:
     """Check access, return (project, rw) tuple."""
 
@@ -367,7 +379,7 @@ def index(request: HttpRequest) -> HttpResponse:
     summary = _get_project_summary(request.profile)
     if "refresh" in request.GET:
         return JsonResponse({str(k): v for k, v in summary.items()})
-
+    read_only = False
     q = request.profile.projects()
     q = q.annotate(n_checks=Count("check", distinct=True))
     q = q.annotate(n_channels=Count("channel", distinct=True))
@@ -379,26 +391,29 @@ def index(request: HttpRequest) -> HttpResponse:
         setattr(project, "any_started", summary[project.code]["started"])
         if summary[project.code]["status"] == "down":
             any_down = True
-
+        
+    for p in request.profile.projects():
+        if _get_true_rw_project_for_user(request, p):
+            read_only = True
     # The list returned by projects() is already sorted . Do an additional sorting pass
     # to move projects with overall_status=down to the front (without changing their
     # relative order)
     projects.sort(key=lambda p: getattr(p, "overall_status") != "down")
-
+    print(read_only)
     ctx = {
         "page": "projects",
         "projects": projects,
+        "read_only": read_only,
         "last_project_id": request.session.get("last_project_id"),
         "any_down": any_down,
     }
 
     return render(request, "front/projects.html", ctx)
 
-
 @login_required
 def projects_menu(request: AuthenticatedHttpRequest) -> HttpResponse:
     projects = list(request.profile.projects())
-
+    read_only = False
     statuses: dict[int, str] = defaultdict(lambda: "up")
     for check in Check.objects.filter(project__in=projects):
         old_status = statuses[check.project_id]
@@ -406,12 +421,16 @@ def projects_menu(request: AuthenticatedHttpRequest) -> HttpResponse:
             status = check.get_status()
             if status == "down" or (status == "grace" and old_status == "up"):
                 statuses[check.project_id] = status
-
     for p in projects:
         setattr(p, "overall_status", statuses[p.id])
+        if _get_true_rw_project_for_user(request, p):
+            read_only = True
 
-    return render(request, "front/projects_menu.html", {"projects": projects})
+    print(read_only)
+    return render(request, "front/projects_menu.html", {"projects": projects,"read_only": read_only})
 
+def has_permission(perm:str ,request: AuthenticatedHttpRequest):
+    return perm in [f"{perm.content_type.app_label}.{perm.codename}" for perm in request.user.user_permissions.all()]
 
 def dashboard(request: HttpRequest) -> HttpResponse:
     return render(request, "front/dashboard.html", {})
