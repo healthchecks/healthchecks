@@ -466,6 +466,7 @@ class Project(models.Model):
 
 class Member(models.Model):
     class Role(models.TextChoices):
+        TRUEREADONLY = "t", "True Read-only"
         READONLY = "r", "Read-only"
         REGULAR = "w", "Member"
         MANAGER = "m", "Manager"
@@ -488,6 +489,9 @@ class Member(models.Model):
     @property
     def is_rw(self) -> bool:
         return self.role in (Member.Role.REGULAR, Member.Role.MANAGER)
+    @property
+    def is_true_rw(self) -> bool:
+        return self.role in (Member.Role.TRUEREADONLY)
 
 
 class Credential(models.Model):
