@@ -3,7 +3,7 @@
 {% if membership %}
 {{ membership.project.owner.email }} invites you to their {% site_name %} account.
 
-{% if membership.role == "r" %}You will be able to view their existing monitoring checks, but not
+{% if membership.role == "r" or membership.role == "t" %}You will be able to view their existing monitoring checks, but not
 modify them.{% else %}You will be able to manage their existing monitoring checks and set up
 new ones.{% endif %} If you already have your own account on {% site_name %}, you will
 be able to switch between the two accounts.{% endif %}
@@ -15,7 +15,9 @@ To log into {% site_name %}, please open the link below:
 Thanks,
 The {% site_name %} Team
 
+{% if show_doc %}
 P.S. Need help getting started? Check out our help documentation
 at {% site_root %}{% url 'hc-docs' %}
 Or, just reply to this email with any questions or issues you have.
+{% endif %} 
 {% endblock %}
