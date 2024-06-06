@@ -66,14 +66,6 @@
             <div data-tooltip="{{ tooltip }}" class="btn btn-xs {{ status }} {% if tag in selected_tags %}checked{% endif%}">{{ tag }}</div>
         {% endfor %}
     </div>
-    <div class="col-sm-3">
-        <input
-            id="search"
-            type="text"
-            placeholder="Filter by check name&hellip;"
-            class="form-control hidden-xs"
-            value="{{ search }}" />
-    </div>
 </div>
 {% endif %}
 

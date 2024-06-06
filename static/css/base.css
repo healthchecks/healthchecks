@@ -6,6 +6,7 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 84px;
+    overflow-y: scroll;
 }
 
 .footer {
@@ -148,13 +149,13 @@ body {
 
 .page-checks .container-fluid,
 .page-details .container-fluid {
-    /* Fluid below 1320px, but max width capped to 1320px ... */
-    max-width: 1320px;
+    /* Fluid below 1200px, but max width capped to 1320px ... */
+    max-width: 1170px;
 }
 
 .page-log .container-fluid {
-    /* Fluid below 1520px, but max width capped to 1520px ... */
-    max-width: 1520px;
+    /* Fluid below 1200px, but max width capped to 1520px ... */
+    max-width: 1170px;
 }
 
 
