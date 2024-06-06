@@ -152,7 +152,6 @@
                 <li {% if page == 'docs' %} class="active" {% endif %}>
                     <a href="{% url 'hc-docs' %}">Docs</a>
                 </li>
-
                 {% if request.user.is_authenticated %}
                 <li class="dropdown">
                     <a id="nav-email" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
