@@ -1210,6 +1210,7 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
         "enable_zulip": settings.ZULIP_ENABLED is True,
         "use_payments": settings.USE_PAYMENTS,
+        "show_doc": settings.SHOW_DOC,
     }
 
     return render(request, "front/channels.html", ctx)

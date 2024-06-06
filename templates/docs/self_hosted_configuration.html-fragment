@@ -62,6 +62,7 @@ from environment variables. Below is a list of variables it reads and uses.</p>
 <li><a href="#S3_SECURE">S3_SECURE</a></li>
 <li><a href="#SECRET_KEY">SECRET_KEY</a></li>
 <li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
+<li><a href="#SHOW_DOC">SHOW_DOC</a></li>
 <li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
 <li><a href="#SITE_LOGO_URL">SITE_LOGO_URL</a></li>
 <li><a href="#SITE_NAME">SITE_NAME</a></li>
@@ -492,6 +493,12 @@ the <code>SHELL_ENABLED</code> environment variable to <code>True</code>.</p>
 <p>Note: be careful when using "Shell Commands" integration, and only enable it when
 you fully trust the users of your Healthchecks instance. The commands will be executed
 by the <code>manage.py sendalerts</code> process and will run with its system permissions.</p>
+<h2 id="SHOW_DOC"><code>SHOW_DOC</code></h2>
+<p>Default: <code>True</code><p>
+<p>A boolean that turns on/off the documentation button.<p>
+<p>The "SHOW_DOC" display a docs button in the navigation bar.</p>
+<p>This integration is enabled by default and can be disable by setting
+the <code>SHOW_DOC</code> environment variable to <code>False</code>.</p>
 <h2 id="SIGNAL_CLI_SOCKET"><code>SIGNAL_CLI_SOCKET</code></h2>
 <p>Default: <code>None</code></p>
 <p>The path to the signal-cli UNIX socket, or the hostname:port of the signal-cli

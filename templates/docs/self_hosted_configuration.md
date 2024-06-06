@@ -64,6 +64,7 @@ from environment variables. Below is a list of variables it reads and uses.
 <li><a href="#S3_SECURE">S3_SECURE</a></li>
 <li><a href="#SECRET_KEY">SECRET_KEY</a></li>
 <li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
+<li><a href="#SHOW_DOC">SHOW_DOC</a></li>
 <li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
 <li><a href="#SITE_LOGO_URL">SITE_LOGO_URL</a></li>
 <li><a href="#SITE_NAME">SITE_NAME</a></li>
@@ -706,6 +707,17 @@ the `SHELL_ENABLED` environment variable to `True`.
 Note: be careful when using "Shell Commands" integration, and only enable it when
 you fully trust the users of your Healthchecks instance. The commands will be executed
 by the `manage.py sendalerts` process and will run with its system permissions.
+
+## `SHOW_DOC` {: #SHOW_DOC }
+
+Default: `True`
+
+A boolean that turns on/off the documentation button.
+
+The "SHOW_DOC" display a docs button in the navigation bar.
+This integration is enabled by default and can be disable by setting
+the `SHOW_DOC` environment variable to `False`.
+
 
 ## `SIGNAL_CLI_SOCKET` {: #SIGNAL_CLI_SOCKET }
 
