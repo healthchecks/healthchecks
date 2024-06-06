@@ -34,4 +34,27 @@ $(function () {
     }
 
     adaptiveSetInterval(refreshStatus);
+    
+
+    var originalOrder = $('#project-selector a').get();
+
+    $('#search').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        if (value === '') {
+            $('#project-selector a').show();
+            $('#project-selector').empty().append(originalOrder);
+            return;
+        }
+        $('#project-selector .project').each(function() {
+            var text = $(this).find('h4').text().toLowerCase();
+            var matches = text.startsWith(value);
+            var projectElement = $(this).closest('a');
+            if (projectElement.attr('id') !== 'add-project') {
+                projectElement.toggle(matches);
+                if (matches) {
+                    projectElement.prependTo('#project-selector');
+                }
+            }
+        });
+    });
 });
