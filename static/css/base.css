@@ -148,8 +148,8 @@ body {
 
 .page-checks .container-fluid,
 .page-details .container-fluid {
-    /* Fluid below 1320px, but max width capped to 1320px ... */
-    max-width: 1320px;
+    /* Fluid below 1520px, but max width capped to 1320px ... */
+    max-width: 1520px;
 }
 
 .page-log .container-fluid {

@@ -116,6 +116,7 @@
                     alt="{{ site_name }}">
             </a>
             {% endif %}
+            
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             {% if project %}
@@ -142,7 +143,18 @@
                 </li>
             </ul>
             {% endif %}
-
+            <ul class="nav navbar-nav navbar-right">
+                <li class="searchbar">
+                    {% if page == 'projects' %}
+                    <input 
+                        id="search" 
+                        type="text" 
+                        placeholder="Filter by project name&hellip;" 
+                        class="form-control" 
+                        value="">
+                    {% endif %}
+                </li>
+                <li>
             <ul id="global-links" class="nav navbar-nav navbar-right">
                 {% if show_pricing %}
                 <li {% if page == 'pricing' %} class="active" {% endif %}>
@@ -199,6 +211,8 @@
                 {% endif %}
                 {% endif %}
             </ul>
+                </li>
+            
         </div>
 
         </div>
