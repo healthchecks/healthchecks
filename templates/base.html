@@ -149,24 +149,6 @@
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
                 <li class="searchbar">
-                    <li class="searchbar">
-                        {% if page == 'checks' %}
-                            <input 
-                            id="search" 
-                            type="text" 
-                            placeholder="Filter by check&hellip;" 
-                            class="form-control hidden-xs" 
-                            value="">
-                        {% endif %}
-                        {% if page == 'projects' %}
-                            <input 
-                                id="search" 
-                                type="text" 
-                                placeholder="Filter by project name&hellip;" 
-                                class="form-control" 
-                                value="">
-                    {% endif %}
-                </li>
                 <li>
                 <ul id="global-links" class="nav navbar-nav navbar-right">
                     {% if show_pricing %}
