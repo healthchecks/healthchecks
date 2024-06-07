@@ -154,8 +154,8 @@ body {
 }
 
 .page-log .container-fluid {
-    /* Fluid below 1520px, but max width capped to 1520px ... */
-    max-width: 1520px;
+    /* Fluid below 1170px, but max width capped to 1170px ... */
+    max-width: 1170px;
 }
 
 
