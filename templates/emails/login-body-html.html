@@ -35,8 +35,9 @@ please press the button below:
 Thanks,<br>
 The {% site_name %} Team
 <br /><br />
-
+{% if show_doc %}
 <strong>P.S.</strong> Need help getting started? Check out our
 <a href="{% site_root %}{% url 'hc-docs' %}">help documentation</a>.
 Or, just reply to this email with any questions or issues you have.
+{% endif %}
 {% endblock %}

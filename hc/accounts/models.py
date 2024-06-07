@@ -142,6 +142,7 @@ class Profile(models.Model):
             "button_text": "Sign In",
             "button_url": settings.SITE_ROOT + path,
             "membership": membership,
+            "show_doc": settings.SHOW_DOC,
         }
         emails.login(self.user.email, ctx)
 
