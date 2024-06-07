@@ -16,7 +16,7 @@ Hello,
     {% endif %}
     <br /><br />
 
-    {% if membership.role == "r" %}
+    {% if membership.role == "r" or membership.role == "t" %}
     You will be able to view their existing monitoring checks, but not modify them.
     {% else %}
     You will be able to manage their existing monitoring checks and set up new ones.
