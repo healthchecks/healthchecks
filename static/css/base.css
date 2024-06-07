@@ -149,13 +149,13 @@ body {
 
 .page-checks .container-fluid,
 .page-details .container-fluid {
-    /* Fluid below 1200px, but max width capped to 1320px ... */
+    /* Fluid below 1170px, but max width capped to 1170px ... */
     max-width: 1170px;
 }
 
 .page-log .container-fluid {
-    /* Fluid below 1200px, but max width capped to 1520px ... */
-    max-width: 1170px;
+    /* Fluid below 1520px, but max width capped to 1520px ... */
+    max-width: 1520px;
 }
 
 
@@ -353,4 +353,9 @@ input[type=number]::-webkit-inner-spin-button {
 /* Fix select dropdown in Chrome and dark mode  */
 select.form-control {
     background-color: var(--panel-bg);
+}
+
+.searchbar {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
