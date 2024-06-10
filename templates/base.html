@@ -210,6 +210,7 @@
     </div>
     {% endblock %}
 
+    {% if show_footer %}
     <footer class="footer">
         <div class="container{% if page == "checks" or page == "details" or page == "log" %}-fluid{% endif %}">
             <ul>
@@ -221,7 +222,7 @@
             </ul>
         </div>
     </footer>
-    
+    {% endif %}
     {% block base_modals %}{% endblock %}
 
     {% if request.user.is_authenticated and request.profile.theme == 'system' %}

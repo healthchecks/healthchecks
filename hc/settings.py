@@ -110,6 +110,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "hc.front.context_processors.branding",
                 "hc.payments.context_processors.payments",
+                "hc.front.context_processors.show_footer",
             ]
         },
     }
@@ -305,6 +306,9 @@ ROCKETCHAT_ENABLED = envbool("ROCKETCHAT_ENABLED", "True")
 
 # Local shell commands
 SHELL_ENABLED = envbool("SHELL_ENABLED", "False")
+
+# Show footer
+SHOW_FOOTER = envbool("SHOW_FOOTER", "True")
 
 # Signal
 SIGNAL_CLI_SOCKET = os.getenv("SIGNAL_CLI_SOCKET")

@@ -9,3 +9,6 @@ def branding(request: HttpRequest) -> dict[str, str | None]:
         "site_name": settings.SITE_NAME,
         "site_logo_url": settings.SITE_LOGO_URL,
     }
+
+def show_footer(request: HttpRequest)-> dict[str, bool]:
+    return {'show_footer': settings.SHOW_FOOTER}
