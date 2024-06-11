@@ -65,13 +65,19 @@ $(function () {
         return false;
     });
 
+    var current_year = moment().year()
     function switchDateFormat(format, rows) {
         dateFormat = format;
         updateSliderPreview();
 
         rows.forEach(function(row) {
             var dt = fromUnix(row.dataset.dt);
-            row.children[1].textContent = dt.format("MMM D");
+            var dtFormat = "MMM D"
+            if (current_year != dt.year()) {
+                dtFormat = "MMM D, YYYY"
+            }
+            
+            row.children[1].textContent = dt.format(dtFormat);
             row.children[2].textContent = dt.format("HH:mm");
         })
     }
