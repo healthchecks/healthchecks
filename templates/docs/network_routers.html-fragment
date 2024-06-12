@@ -27,7 +27,7 @@ parameters:</p>
 <ul>
 <li>Name: <code>ping</code> (example, you can use a different name)</li>
 <li>Policy: <code>read</code>, <code>test</code></li>
-<li>Source: <code>/tool fetch url="/tool fetch url="PING_URL" output=none</code></li>
+<li>Source: <code>/tool fetch url="PING_URL" output=none</code></li>
 </ul>
 <p><img alt="DD-WRT control panel" src="IMG_URL/routeros1.png" /></p>
 <p>Then, create a schedule in WebFig, <strong>System › Scheduler › Add New</strong>. Use parameters:</p>

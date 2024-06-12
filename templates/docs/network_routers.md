@@ -35,7 +35,7 @@ parameters:
 
 * Name: `ping` (example, you can use a different name)
 * Policy: `read`, `test`
-* Source: `/tool fetch url="/tool fetch url="PING_URL" output=none`
+* Source: `/tool fetch url="PING_URL" output=none`
 
 ![DD-WRT control panel](IMG_URL/routeros1.png)
 
