@@ -99,6 +99,9 @@ class Spec(BaseModel):
     @field_validator("tz")
     @classmethod
     def check_tz(cls, v: str) -> str:
+        if v == "Europe/Kiev":
+            v = "Europe/Kyiv"
+
         if v not in all_timezones:
             raise PydanticCustomError("tz_syntax", "not a valid timezone")
         return v

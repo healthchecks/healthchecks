@@ -333,6 +333,13 @@ class CreateCheckTestCase(BaseTestCase):
         )
         self.assertEqual(r.status_code, 400)
 
+    def test_it_converts_kiev_kyiv(self) -> None:
+        r = self.post({"schedule": "* * * * *", "tz": "Europe/Kiev", "grace": 60})
+        self.assertEqual(r.status_code, 201)
+
+        doc = r.json()
+        self.assertEqual(doc["tz"], "Europe/Kyiv")
+
     def test_it_supports_oncalendar_syntax(self) -> None:
         r = self.post({"schedule": "12:34", "tz": "Europe/Riga", "grace": 60})
         self.assertEqual(r.status_code, 201)
