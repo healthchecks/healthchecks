@@ -41,7 +41,7 @@ from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 from hc.lib.signing import unsign_bounce_id
 from hc.lib.string import is_valid_uuid_string
-from hc.lib.tz import all_timezones
+from hc.lib.tz import all_timezones, legacy_timezones
 
 
 class BadChannelException(Exception):
@@ -99,8 +99,10 @@ class Spec(BaseModel):
     @field_validator("tz")
     @classmethod
     def check_tz(cls, v: str) -> str:
-        if v == "Europe/Kiev":
-            v = "Europe/Kyiv"
+        if v in legacy_timezones:
+            # Replace legacy timezone with the current canonical time zone
+            # (for example, Europe/Kiev -> Europe/Kyiv)
+            v = legacy_timezones[v]
 
         if v not in all_timezones:
             raise PydanticCustomError("tz_syntax", "not a valid timezone")
