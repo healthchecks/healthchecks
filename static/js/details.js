@@ -141,16 +141,16 @@ $(function () {
         return false;
     });
 
-    var current_year = moment().year() 
     function switchDateFormat(format) {
         lastFormat = format;
+        var currentYear = moment().year();
 
         document.querySelectorAll("#log tr").forEach(function(row) {
             var dt = moment.unix(row.dataset.dt).utc();
             format == "local" ? dt.local() : dt.tz(format);
-            var dateFormat = "MMM D"
-            if (current_year != dt.year()) {
-                dateFormat = "MMM D, YYYY"
+            var dateFormat = "MMM D";
+            if (dt.year() != currentYear) {
+                dateFormat = "MMM D, YYYY";
             }
 
             row.children[1].textContent = dt.format(dateFormat);

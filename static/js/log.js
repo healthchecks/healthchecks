@@ -65,16 +65,16 @@ $(function () {
         return false;
     });
 
-    var current_year = moment().year()
     function switchDateFormat(format, rows) {
         dateFormat = format;
+        var currentYear = moment().year();
         updateSliderPreview();
 
         rows.forEach(function(row) {
             var dt = fromUnix(row.dataset.dt);
-            var dtFormat = "MMM D"
-            if (current_year != dt.year()) {
-                dtFormat = "MMM D, YYYY"
+            var dtFormat = "MMM D";
+            if (dt.year() != currentYear) {
+                dtFormat = "MMM D, YYYY";
             }
             
             row.children[1].textContent = dt.format(dtFormat);
