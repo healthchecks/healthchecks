@@ -10,7 +10,7 @@ from django.conf import settings
 from hc.lib.statsd import statsd
 
 try:
-    from minio import Minio, S3Error
+    from minio import InvalidResponseError, Minio, S3Error
     from minio.deleteobjects import DeleteObject
     from urllib3 import PoolManager
     from urllib3.exceptions import HTTPError, ReadTimeoutError
@@ -86,6 +86,10 @@ def get_object(code: str, n: int) -> bytes | None:
                 return None
 
             logger.exception("S3Error in hc.lib.s3.get_object")
+            statsd.incr("hc.lib.s3.getObjectErrors")
+            return None
+        except InvalidResponseError:
+            logger.exception("InvalidResponseError in hc.lib.s3.get_object")
             statsd.incr("hc.lib.s3.getObjectErrors")
             return None
         except HTTPError:
