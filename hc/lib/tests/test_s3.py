@@ -49,7 +49,7 @@ class S3TestCase(TestCase):
 
     @patch("hc.lib.s3._client")
     def test_get_object_handles_invalidresponseerror(self, client: Mock) -> None:
-        e = InvalidResponseError("foo", "text/plain", b"")
+        e = InvalidResponseError(123, "text/plain", None)
         client.get_object.return_value.read = Mock(side_effect=e)
         self.assertIsNone(get_object("dummy-code", 1))
         client.get_object.assert_called_once()
