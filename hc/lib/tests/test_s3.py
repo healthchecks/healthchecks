@@ -9,7 +9,7 @@ from django.test.utils import override_settings
 from hc.lib.s3 import get_object
 
 try:
-    from minio import S3Error
+    from minio import InvalidResponseError, S3Error
     from urllib3.exceptions import InvalidHeader, ProtocolError
 
     have_minio = True
@@ -46,6 +46,13 @@ class S3TestCase(TestCase):
             client.get_object.return_value.read = Mock(side_effect=e)
             self.assertIsNone(get_object("dummy-code", 1))
             client.get_object.assert_called_once()
+
+    @patch("hc.lib.s3._client")
+    def test_get_object_handles_invalidresponseerror(self, client: Mock) -> None:
+        e = InvalidResponseError("foo", "text/plain", b"")
+        client.get_object.return_value.read = Mock(side_effect=e)
+        self.assertIsNone(get_object("dummy-code", 1))
+        client.get_object.assert_called_once()
 
     @override_settings(S3_BUCKET=None)
     @patch("hc.lib.s3._client")
