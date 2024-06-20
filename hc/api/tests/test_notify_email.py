@@ -203,7 +203,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertNotIn("Last ping", email.body)
         self.assertNotIn("Last Ping", html)
 
-    def test_it_handles_identic_ping_and_flip_timestamp(self) -> None:
+    def test_it_handles_identical_ping_and_flip_timestamp(self) -> None:
         self.ping.created = self.flip.created
         self.ping.save()
 
