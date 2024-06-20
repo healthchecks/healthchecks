@@ -346,7 +346,7 @@ class Check(models.Model):
         in the process of deletion.
         """
         with transaction.atomic():
-            Check.objects.select_for_update().get(id=self.id).delete()
+            Check.objects.select_for_update().filter(id=self.id).delete()
 
     def assign_all_channels(self) -> None:
         channels = Channel.objects.filter(project=self.project)

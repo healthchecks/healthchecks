@@ -473,3 +473,11 @@ class CheckModelTestCase(BaseTestCase):
             # The next expected run time is at 2023-10-29 01:15 UTC, so the check
             # should still be up for 10 minutes:
             self.assertEqual(check.get_status(), "up")
+
+    def test_lock_and_delete_handles_already_deleted_checks(self) -> None:
+        check = Check.objects.create(project=self.project)
+        same_check = Check.objects.get(id=check.id)
+        check.delete()
+
+        # lock_and_delete should handle an already deleted check gracefully:
+        same_check.lock_and_delete()
