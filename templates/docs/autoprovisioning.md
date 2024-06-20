@@ -1,7 +1,7 @@
 # Auto Provisioning
 
 You can instruct SITE_NAME to automatically create missing checks on the first
-received ping. To enable auto provisiong, use slug-based ping endpoints, and
+received ping. To enable auto provisioning, use slug-based ping endpoints, and
 append `?create=1` at the end:
 
 ```bash
