@@ -14,14 +14,17 @@ class StatsdTestCase(TestCase):
         client = get_client()
         self.assertTrue(isinstance(client, StatsClient))
         self.assertEqual(client._addr, ("127.0.0.1", 8125))
+        client.close()
 
     @override_settings(STATSD_HOST="localhost:1234")
     def test_it_parses_port(self) -> None:
         client = get_client()
         self.assertTrue(isinstance(client, StatsClient))
         self.assertEqual(client._addr, ("127.0.0.1", 1234))
+        client.close()
 
     @override_settings(STATSD_HOST=None)
     def test_it_initializes_noop_client(self) -> None:
         client = get_client()
         self.assertTrue(isinstance(client, NoopClient))
+        client.close()
