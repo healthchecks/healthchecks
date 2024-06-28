@@ -33,12 +33,6 @@ from hc.lib.typealias import JSONDict, JSONList, JSONValue
 if TYPE_CHECKING:
     from hc.api.models import Channel, Check, Flip, Notification, Ping
 
-try:
-    import apprise
-except ImportError:
-    # Enforce
-    settings.APPRISE_ENABLED = False
-
 logger = logging.getLogger(__name__)
 
 
