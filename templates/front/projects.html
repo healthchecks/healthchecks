@@ -14,10 +14,21 @@
 {% block content %}
 <div class="row">
     <div class="col-sm-12">
-        <h1 class="settings-title">
-            My Projects
-        </h1>
-
+        <div class="row">
+            <div class="col-sm-9">
+                <h1 class="settings-title">
+                    My Projects
+                </h1>
+            </div>
+            <div class="col-sm-3">
+                <input 
+                    id="search" 
+                    type="text" 
+                    placeholder="Filter by project name&hellip;" 
+                    class="form-control" 
+                    value="">        
+            </div>
+        </div>
         <div id="project-selector" class="row">
             {% for project in projects %}
             <a href="{% url 'hc-checks' project.code %}">
