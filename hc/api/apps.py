@@ -43,7 +43,7 @@ def settings_check(
 
 
 @register()
-def settings_check(
+def apprise_settings_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
     **kwargs: dict[str, Any],
