@@ -24,6 +24,19 @@ documentation page:
 
 ## Developing a New Integration
 
+Before starting work on a new integration, please open an issue and
+discuss it first. We use several criteria when deciding whether to work on an
+integration or accept a PR:
+
+* Most important: is there substantial end-user (ideally, paying or would-be-paying
+  end user) interest, across GitHub issues, private emails, social media?
+* Would it be fun to work on?
+* Is the service we are integrating with developer-friendly? Does it have an open
+  and well-documented API? Can we develop and test the integration while avoiding
+  sales calls, contract signing, paid subscriptions?
+* Does the new integration enable something that is otherwise not possible (or is
+  very inconvenient) via webhooks or email?
+
 The best way to build a new integration is to pick a similar existing integration
 as a starting point for the new integration and replicate every aspect of it.
 You will need to make changes in the following files:
@@ -45,6 +58,3 @@ You will need to make changes in the following files:
 * Add a logo in `/static/img/integrations/`.
 * Update the icon font (it's a little tricky to do, I can take care of that).
 
-If you intend to contribute the new integration to the Healthchecks project
-(as opposed to maintaining it in a separate fork), please open an issue and
-discuss it first.
