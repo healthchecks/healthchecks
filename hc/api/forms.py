@@ -13,8 +13,8 @@ class TimestampField(forms.Field):
 
         try:
             value_int = int(value)
-        except ValueError:
-            raise ValidationError(message="Must be an integer")
+        except ValueError as exc:
+            raise ValidationError(message="Must be an integer") from exc
 
         # 10000000000 is year 2286 (a sanity check)
         if value_int < 0 or value_int > 10000000000:

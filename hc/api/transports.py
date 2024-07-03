@@ -268,7 +268,7 @@ class HttpTransport(Transport):
             if r.status_code not in (200, 201, 202, 204):
                 cls.raise_for_response(r)
         except curl.CurlError as e:
-            raise TransportError(e.message)
+            raise TransportError(e.message) from e
 
     @classmethod
     def request(
@@ -890,8 +890,8 @@ class Telegram(HttpTransport):
         message = f"Received status code {response.status_code}"
         try:
             m = Telegram.ErrorModel.model_validate_json(response.content)
-        except ValidationError:
-            raise TransportError(message)
+        except ValidationError as exc:
+            raise TransportError(message) from exc
 
         if m.parameters:
             # If the error payload contains the migrate_to_chat_id field,
@@ -1357,9 +1357,9 @@ class Signal(Transport):
         for reply_bytes in cls._read_replies(payload_bytes):
             try:
                 reply = Signal.Reply.model_validate_json(reply_bytes)
-            except ValidationError:
+            except ValidationError as exc:
                 logger.error("unexpected signal-cli response: %s", reply_bytes)
-                raise TransportError("signal-cli call failed (unexpected response)")
+                raise TransportError("signal-cli call failed (unexpected response)") from exc
 
             if reply.id != payload["id"]:
                 continue
@@ -1422,7 +1422,7 @@ class Signal(Transport):
                         buffer = []
 
                     if time.time() - start > 20:
-                        raise TransportError("signal-cli call timed out")
+                        raise TransportError("signal-cli call timed out") from e
 
             except OSError as e:
                 msg = "signal-cli call failed (%s)" % e
@@ -1430,7 +1430,7 @@ class Signal(Transport):
                 logger.exception(msg)
 
                 # And then report it the same as other errors
-                raise TransportError(msg)
+                raise TransportError(msg) from e
 
     def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.SIGNAL_CLI_SOCKET:

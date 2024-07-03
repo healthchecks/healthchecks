@@ -33,7 +33,7 @@ def join(alias: str) -> str:
 
     try:
         doc = MatrixJoinResponse.model_validate_json(r.content, strict=True)
-    except ValidationError:
-        raise JoinError("Matrix server returned unexpected response")
-
+    except ValidationError as exc:
+        raise JoinError("Matrix server returned unexpected response") from exc
+    
     return doc.room_id
