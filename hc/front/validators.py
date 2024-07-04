@@ -42,8 +42,8 @@ class CronValidator(object):
             it = CronSim(value, datetime(2000, 1, 1))
             # Can it calculate the next datetime?
             next(it)
-        except (CronSimError, StopIteration):
-            raise ValidationError(message=self.message)
+        except (CronSimError, StopIteration) as exc:
+            raise ValidationError(message=self.message) from exc
 
 
 class OnCalendarValidator(object):
@@ -60,8 +60,8 @@ class OnCalendarValidator(object):
             it = OnCalendar(value, datetime(2000, 1, 1, tzinfo=timezone.utc))
             # Can it calculate the next datetime?
             next(it)
-        except (OnCalendarError, StopIteration):
-            raise ValidationError(message=self.message)
+        except (OnCalendarError, StopIteration) as exc:
+            raise ValidationError(message=self.message) from exc
 
 
 class TimezoneValidator(object):

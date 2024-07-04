@@ -116,15 +116,15 @@ class Spec(BaseModel):
                 # Test if cronsim accepts it and can calculate the next datetime
                 it = CronSim(v, datetime(2000, 1, 1))
                 next(it)
-            except (CronSimError, StopIteration):
-                raise PydanticCustomError("cron_syntax", "not a valid cron expression")
+            except (CronSimError, StopIteration) as exc:
+                raise PydanticCustomError("cron_syntax", "not a valid cron expression") from exc
         else:
             try:
                 # Test if oncalendar accepts it, and can calculate the next datetime
                 oncalendar_it = OnCalendar(v, datetime(2000, 1, 1, tzinfo=timezone.utc))
                 next(oncalendar_it)
-            except (OnCalendarError, StopIteration):
-                raise PydanticCustomError("cron_syntax", "not a valid expression")
+            except (OnCalendarError, StopIteration) as exc:
+                raise PydanticCustomError("cron_syntax", "not a valid expression") from exc
 
         return v
 
