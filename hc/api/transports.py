@@ -35,9 +35,10 @@ if TYPE_CHECKING:
 
 try:
     import apprise
+
+    have_apprise = True
 except ImportError:
-    # Enforce
-    settings.APPRISE_ENABLED = False
+    have_apprise = False
 
 logger = logging.getLogger(__name__)
 
@@ -1148,8 +1149,7 @@ class Trello(HttpTransport):
 
 class Apprise(HttpTransport):
     def notify(self, flip: Flip, notification: Notification) -> None:
-        if not settings.APPRISE_ENABLED:
-            # Not supported and/or enabled
+        if not settings.APPRISE_ENABLED or not have_apprise:
             raise TransportError("Apprise is disabled and/or not installed")
 
         a = apprise.Apprise()
