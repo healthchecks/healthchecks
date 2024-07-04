@@ -12,7 +12,7 @@ class ApiConfig(AppConfig):
     name = "hc.api"
 
 
-@register()
+@register()  # W001, W002
 def settings_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
@@ -42,31 +42,7 @@ def settings_check(
     return items
 
 
-@register()
-def apprise_installed_check(
-    app_configs: Sequence[AppConfig] | None,
-    databases: Sequence[str] | None,
-    **kwargs: dict[str, Any],
-) -> list[Warning]:
-    if not settings.APPRISE_ENABLED:
-        return []
-
-    items = []
-    try:
-        import apprise
-    except ImportError:
-        items.append(
-            Warning(
-                "settings.APPRISE_ENABLED is set to True, but apprise is not installed",
-                hint="try installing it using `pip install apprise`",
-                id="hc.api.W004",
-            )
-        )
-
-    return items
-
-
-@register()
+@register()  # W003
 def whatsapp_settings_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
@@ -96,7 +72,31 @@ def whatsapp_settings_check(
     return items
 
 
-@register()
+@register()  # W004
+def apprise_installed_check(
+    app_configs: Sequence[AppConfig] | None,
+    databases: Sequence[str] | None,
+    **kwargs: dict[str, Any],
+) -> list[Warning]:
+    if not settings.APPRISE_ENABLED:
+        return []
+
+    items = []
+    try:
+        import apprise
+    except ImportError:
+        items.append(
+            Warning(
+                "settings.APPRISE_ENABLED is set to True, but apprise is not installed",
+                hint="try installing it using `pip install apprise`",
+                id="hc.api.W004",
+            )
+        )
+
+    return items
+
+
+@register()  # E001
 def mariadb_uuid_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
