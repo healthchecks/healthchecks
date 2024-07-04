@@ -43,6 +43,29 @@ def settings_check(
 
 
 @register()
+def apprise_settings_check(
+    app_configs: Sequence[AppConfig] | None,
+    databases: Sequence[str] | None,
+    **kwargs: dict[str, Any],
+) -> list[Warning]:
+    items = []
+    if settings.APPRISE_ENABLED:
+        try:
+            import apprise
+        except ImportError:
+            items.append(
+                Warning(
+                    "settings.APPRISE_ENABLED is set to True, but apprise is not installed",
+                    hint="try insallting it using pip install apprise",
+                    id="hc.api.W004",
+                )
+            )
+            settings.APPRISE_ENABLED = False
+
+    return items
+
+
+@register()
 def whatsapp_settings_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
