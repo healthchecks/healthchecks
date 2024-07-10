@@ -445,6 +445,9 @@ class Check(models.Model):
         # the updated Check object before the Ping object is created.
         # To avoid this, put both operations inside a transaction:
         with transaction.atomic():
+            # Acquire a lock. Without locking, on MariaDB, concurrent pings can
+            # lead to a deadlock
+            self = Check.objects.select_for_update().get(id=self.id)
             frozen_now = now()
 
             if self.status == "paused" and self.manual_resume:
