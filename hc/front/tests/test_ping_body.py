@@ -36,7 +36,7 @@ class PingBodyTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     def test_it_allows_cross_team_access(self) -> None:
-        Ping.objects.create(owner=self.check, body="this is body")
+        Ping.objects.create(owner=self.check)
 
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)

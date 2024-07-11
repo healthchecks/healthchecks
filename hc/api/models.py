@@ -635,7 +635,6 @@ class Ping(models.Model):
     remote_addr = models.GenericIPAddressField(blank=True, null=True)
     method = models.CharField(max_length=10, blank=True)
     ua = models.CharField(max_length=200, blank=True)
-    body = models.TextField(blank=True, null=True)
     body_raw = models.BinaryField(null=True)
     object_size = models.IntegerField(null=True)
     exitstatus = models.SmallIntegerField(null=True)

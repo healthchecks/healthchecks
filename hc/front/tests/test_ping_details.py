@@ -70,7 +70,7 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "5 min 0 sec", status_code=200)
 
     def test_it_requires_logged_in_user(self) -> None:
-        Ping.objects.create(owner=self.check, n=1, body="this is body")
+        Ping.objects.create(owner=self.check, n=1)
 
         r = self.client.get(self.url)
         self.assertRedirects(r, "/accounts/login/?next=" + self.url)
@@ -124,7 +124,7 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "bar-456", status_code=200)
 
     def test_it_allows_cross_team_access(self) -> None:
-        Ping.objects.create(owner=self.check, n=1, body="this is body")
+        Ping.objects.create(owner=self.check, n=1)
 
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)
