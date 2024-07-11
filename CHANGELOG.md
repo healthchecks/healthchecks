@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v3.5-dev - Unreleased
 
+### Improvements
+- Improve performance of loading ping body previews (#1023)
+
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)
 

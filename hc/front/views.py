@@ -26,6 +26,7 @@ from django.contrib.auth.models import User
 from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.db.models import Case, Count, F, Q, QuerySet, When
+from django.db.models.functions import Substr
 from django.http import (
     Http404,
     HttpRequest,
@@ -867,6 +868,11 @@ def _get_events(
             kinds_filter = kinds_filter | Q(kind__isnull=True) | Q(kind="")
         pq = pq.filter(kinds_filter)
 
+    # Optimization: defer loading body_raw, instead load its first 150 bytes
+    # as "body_raw_preview". This reduces both network I/O to database, and disk I/O
+    # on the database host if the database contains large request bodies.
+    pq = pq.defer("body_raw")
+    pq = pq.annotate(body_raw_preview=Substr("body_raw", 1, 151))
     pings = list(pq[:page_limit])
 
     # Optimization: the template will access Ping.duration, which would generate a

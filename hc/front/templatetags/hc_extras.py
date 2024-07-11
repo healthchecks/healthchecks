@@ -282,3 +282,8 @@ def fix_asterisks(s: str) -> str:
 @register.filter
 def pct(v: float) -> str:
     return str(int(v * 10000) / 100)
+
+
+@register.filter
+def decode(v: bytes) -> str:
+    return bytes(v).decode(errors="replace")
