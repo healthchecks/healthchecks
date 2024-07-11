@@ -41,6 +41,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django_stubs_ext import WithAnnotations
 from oncalendar import OnCalendar, OnCalendarError
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
@@ -849,13 +850,17 @@ def clear_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return redirect("hc-details", code)
 
 
+class PingAnnotations(TypedDict):
+    body_raw_preview: bytes
+
+
 def _get_events(
     check: Check,
     page_limit: int,
     start: datetime,
     end: datetime,
     kinds: tuple[str, ...] | None = None,
-) -> list[Notification | Ping | Flip]:
+) -> list[Notification | WithAnnotations[Ping, PingAnnotations] | Flip]:
     # Sorting by "n" instead of "id" is important here. Both give the same
     # query results, but sorting by "id" can cause postgres to pick
     # api_ping.id index (slow if the api_ping table is big). Sorting by
