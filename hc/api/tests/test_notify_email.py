@@ -173,7 +173,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertIn("Europe/Riga", html)
 
     def test_it_truncates_long_body(self) -> None:
-        self.ping.body = "X" * 10000 + ", and the rest gets cut off"
+        self.ping.body_raw = b"X" * 10000 + b", and the rest gets cut off"
         self.ping.save()
 
         self.channel.notify(self.flip)

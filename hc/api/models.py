@@ -667,14 +667,12 @@ class Ping(models.Model):
         return result
 
     def has_body(self) -> bool:
-        if self.body or self.body_raw or self.object_size:
+        if self.body_raw or self.object_size:
             return True
 
         return False
 
     def get_body_bytes(self) -> bytes | None:
-        if self.body:
-            return self.body.encode()
         if self.object_size and self.n:
             return get_object(str(self.owner.code), self.n)
         if self.body_raw:
@@ -690,8 +688,6 @@ class Ping(models.Model):
         return None
 
     def get_body_size(self) -> int:
-        if self.body:
-            return len(self.body)
         if self.body_raw:
             return len(self.body_raw)
         if self.object_size:

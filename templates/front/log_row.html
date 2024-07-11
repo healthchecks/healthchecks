@@ -17,7 +17,7 @@
 {% if event.rid %}<span class="label rid">{{ event.rid|first5 }}</span> {% endif %}
 {% if event.scheme == "email" %}{{ event.ua }}{% else %}
 {{ event.scheme|upper }} {{ event.method }}{% if event.remote_addr %} from {{ event.remote_addr }}{% endif %}
-<code>{% if event.body or event.body_raw %}- {{ event.get_body|truncatechars:150 }}{% elif event.object_size %}- {{ event.object_size }} byte body{% endif %}{% if event.ua %} - {{ event.ua|truncatechars:80 }}{% endif %}</code>
+<code>{% if event.body_raw %}- {{ event.get_body|truncatechars:150 }}{% elif event.object_size %}- {{ event.object_size }} byte body{% endif %}{% if event.ua %} - {{ event.ua|truncatechars:80 }}{% endif %}</code>
 {% endif %}
 </td>
 </tr>

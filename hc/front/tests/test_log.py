@@ -33,16 +33,6 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "Browser's time zone", status_code=200)
         self.assertContains(r, "hello world")
 
-    def test_it_displays_body(self) -> None:
-        self.ping.body = "hello world"
-        self.ping.body_raw = None
-        self.ping.save()
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertContains(r, "Browser's time zone", status_code=200)
-        self.assertContains(r, "hello world")
-
     @patch("hc.api.models.get_object")
     def test_it_does_not_load_body_from_object_storage(self, get_object: Mock) -> None:
         self.ping.body_raw = None

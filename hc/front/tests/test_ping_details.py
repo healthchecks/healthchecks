@@ -56,13 +56,6 @@ class PingDetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "this is body", status_code=200)
 
-    def test_it_displays_body(self) -> None:
-        Ping.objects.create(owner=self.check, n=1, body="this is body")
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-        self.assertContains(r, "this is body", status_code=200)
-
     def test_it_displays_duration(self) -> None:
         expected_duration = td(minutes=5)
         end_time = now()
@@ -171,18 +164,6 @@ class PingDetailsTestCase(BaseTestCase):
         self.assertContains(r, "aGVsbG8gd29ybGQ=")
         self.assertContains(r, "hello world")
 
-    def test_it_decodes_plaintext_email_body_str(self) -> None:
-        body = PLAINTEXT_EMAIL.decode()
-        Ping.objects.create(owner=self.check, n=1, scheme="email", body=body)
-
-        self.client.login(username="alice@example.org", password="password")
-        r = self.client.get(self.url)
-
-        fragment = """<div id="email-body-plain" class="tab-pane active">"""
-        self.assertContains(r, fragment, status_code=200)
-        self.assertContains(r, "aGVsbG8gd29ybGQ=")
-        self.assertContains(r, "hello world")
-
     def test_it_handles_bad_base64_in_email_body(self) -> None:
         Ping.objects.create(
             owner=self.check, n=1, scheme="email", body_raw=BAD_BASE64_EMAIL
@@ -214,7 +195,7 @@ class PingDetailsTestCase(BaseTestCase):
             owner=self.check,
             n=1,
             scheme="email",
-            body="Subject: =?UTF-8?B?aGVsbG8gd29ybGQ=?=",
+            body_raw=b"Subject: =?UTF-8?B?aGVsbG8gd29ybGQ=?=",
         )
 
         self.client.login(username="alice@example.org", password="password")
