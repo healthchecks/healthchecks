@@ -128,6 +128,15 @@
   margin-left: -1.056640625em;
   color: rgb(78, 86, 190);
 }
+.ic-msteamsw:before {
+  content: "\e916";
+  color: rgb(255, 255, 255);
+}
+.ic-msteamsw:after {
+  content: "\e924";
+  margin-left: -1.056640625em;
+  color: rgb(78, 86, 190);
+}
 .ic-opsgenie:after {
   content: "\e910";
   color: #2684ff;

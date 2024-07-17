@@ -19,31 +19,26 @@
             <div class="col-sm-6">
                 <span class="step-no"></span>
                 <p>
-                    Log into your Microsoft Teams account, click the <strong>Apps</strong> tab.
-                </p>
-                <p>
-                    Search for the <strong>Incoming Webhook</strong> connector, and add it.
+                    Log into your Microsoft Teams account. In the channel list,
+                    click on the three dot menu next to a channel,
+                    and select <strong>Workflows</strong>.
                 </p>
             </div>
             <div class="col-sm-6">
-                <div class="marker-wrap">
-                    <span style="left: 6%; top: 69%;" class="marker"></span>
-                    <img
-                        class="ai-guide-screenshot"
-                        alt="Add the Incoming Webhook connector"
-                        src="{% static 'img/integrations/setup_msteams_1.png' %}" />
-                </div>
+                <img
+                    class="ai-guide-screenshot"
+                    alt="Add the Incoming Webhook connector"
+                    src="{% static 'img/integrations/setup_msteams_1.png' %}" />
             </div>
         </div>
 
         <div class="row ai-step">
             <div class="col-sm-6">
                 <span class="step-no"></span>
-                <p>If you have not used Incoming Webhooks before, Microsoft Teams
-                   will ask for a confirmation to add the Incoming Webhooks
-                   connector to your team.
+                <p>
+                    Search workflow templates for "webhook". Select the template named
+                    <strong>"Post to a channel when a webhook request is received"</strong>.
                 </p>
-                <p>Click <strong>Add to team</strong> to continue.</p>
             </div>
             <div class="col-sm-6">
                 <img
@@ -56,10 +51,7 @@
         <div class="row ai-step">
             <div class="col-sm-6">
                 <span class="step-no"></span>
-                <p>
-                  Select the channel where you want {{ site_name }} to post
-                  notifications.
-                </p>
+                <p>Give the new workflow a descriptive name.</p>
             </div>
             <div class="col-sm-6">
                 <img
@@ -73,40 +65,15 @@
             <div class="col-sm-6">
                 <span class="step-no"></span>
                 <p>
-                    Give the connector a descriptive name.
-                </p>
-                <p>
-                    Optionally, upload an icon
-                    (feel free to use <a href="{% absolute_site_logo_url %}">this one</a>).
-                </p>
-                <p>
-                    Click on <strong>Create</strong>.
-                </p>
-            </div>
-            <div class="col-sm-6">
-                <img
-                    class="ai-guide-screenshot"
-                    alt="Create the connector"
-                    src="{% static 'img/integrations/setup_msteams_4.png' %}">
-            </div>
-        </div>
-
-        <div class="row ai-step">
-            <div class="col-sm-6">
-                <span class="step-no"></span>
-                <p>
                     Copy the displayed webhook URL and paste it
                     in the form below. Save the integration, and you are done!
                 </p>
             </div>
             <div class="col-sm-6">
-                <div class="marker-wrap">
-                    <span style="left: 42%; top: 48%;" class="marker"></span>
-                    <img
-                        class="ai-guide-screenshot"
-                        alt="Copy the Webhook URL"
-                        src="{% static 'img/integrations/setup_msteams_5.png' %}">
-                </div>
+                <img
+                    class="ai-guide-screenshot"
+                    alt="Copy the Webhook URL"
+                    src="{% static 'img/integrations/setup_msteams_4.png' %}">
             </div>
         </div>
 

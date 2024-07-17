@@ -2418,7 +2418,7 @@ def add_msteams(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     if request.method == "POST":
         form = forms.AddUrlForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=project, kind="msteams")
+            channel = Channel(project=project, kind="msteamsw")
             channel.value = form.cleaned_data["value"]
             channel.save()
 

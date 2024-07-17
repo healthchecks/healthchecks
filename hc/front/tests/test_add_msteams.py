@@ -24,7 +24,7 @@ class AddMsTeamsTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
-        self.assertEqual(c.kind, "msteams")
+        self.assertEqual(c.kind, "msteamsw")
         self.assertEqual(c.value, "https://example.com/foo")
         self.assertEqual(c.project, self.project)
 

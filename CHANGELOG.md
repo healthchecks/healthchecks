@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Improve performance of loading ping body previews (#1023)
+- Implement MS Teams Workflows integration (#1024)
 
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)
