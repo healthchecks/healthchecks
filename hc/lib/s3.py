@@ -14,6 +14,7 @@ try:
     from minio.deleteobjects import DeleteObject
     from urllib3 import PoolManager
     from urllib3.exceptions import HTTPError, ReadTimeoutError
+    from urllib3.util import Retry
 except ImportError:
     # Enforce
     settings.S3_BUCKET = None
@@ -35,7 +36,9 @@ def client() -> Minio:
             settings.S3_SECRET_KEY,
             region=settings.S3_REGION,
             secure=settings.S3_SECURE,
-            http_client=PoolManager(timeout=settings.S3_TIMEOUT),
+            http_client=PoolManager(
+                timeout=settings.S3_TIMEOUT, retries=Retry(total=1)
+            ),
         )
 
     return _client
