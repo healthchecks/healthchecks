@@ -147,6 +147,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v3/checks/
       "failure_kw": "ERROR",
       "filter_subject": true,
       "filter_body": false,
+      "uuid": "31365bce-8da9-4729-8ff3-aaa71d56b712",
       "ping_url": "PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712",
       "update_url": "SITE_ROOT/api/v3/checks/31365bce-8da9-4729-8ff3-aaa71d56b712",
       "pause_url": "SITE_ROOT/api/v3/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause",
@@ -172,6 +173,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v3/checks/
       "failure_kw": "",
       "filter_subject": false,
       "filter_body": false,
+      "uuid": "803f680d-e89b-492b-82ef-2be7b774a92d",
       "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
       "update_url": "SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
       "pause_url": "SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -188,8 +190,8 @@ The possible values for the `status` field are: `new`, `up`, `grace`, `down`,
 and `paused`.
 
 When using the read-only API key, SITE_NAME omits the following fields from responses:
-`ping_url`, `update_url`, `pause_url`, `resume_url`, `channels`.  It adds an extra
-`unique_key` field. The `unique_key` identifier is stable across API calls, and
+`uuid`, `ping_url`, `update_url`, `pause_url`, `resume_url`, `channels`.  It adds an
+extra `unique_key` field. The `unique_key` identifier is stable across API calls, and
 you can use it in the [Get a single check](#get-check)
 and [List check's status changes](#list-flips) API calls.
 
@@ -295,6 +297,7 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v3/checks/<uuid>
   "failure_kw": "ERROR",
   "filter_subject": true,
   "filter_body": false,
+  "uuid": "803f680d-e89b-492b-82ef-2be7b774a92d",
   "ping_url": "PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d",
   "update_url": "SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d",
   "pause_url": "SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause",
@@ -311,8 +314,8 @@ and `paused`.
 ### Example Read-Only Response
 
 When using the read-only API key, SITE_NAME omits the following fields from responses:
-`ping_url`, `update_url`, `pause_url`, `resume_url`, `channels`.  It adds an extra
-`unique_key` field. This identifier is stable across API calls.
+`uuid`, `ping_url`, `update_url`, `pause_url`, `resume_url`, `channels`.  It adds an
+extra `unique_key` field. This identifier is stable across API calls.
 
 Note: although API omits the `*_url` fields in read-only API responses, the client can
 easily construct these URLs themselves *if* they know the check's unique UUID.
@@ -652,29 +655,32 @@ curl SITE_ROOT/api/v3/checks/ \
 
 ```json
 {
-  "channels": "",
-  "desc": "",
-  "grace": 60,
-  "last_ping": null,
-  "n_pings": 0,
   "name": "Backups",
   "slug": "",
+  "tags": "prod www",
+  "desc": "",
+  "grace": 60,
+  "n_pings": 0,
+  "status": "new",
+  "started": false,
+  "last_ping": null,
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
   "filter_body": false,
-  "pause_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
-  "resume_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
-  "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
-  "status": "new",
-  "started": false,
-  "tags": "prod www",
-  "timeout": 3600,
-  "update_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc",
+  "uuid": "7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "ping_url": "PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "update_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "pause_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause",
+  "resume_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume",
+  "channels": "",
+  "timeout": 3600
 }
 ```
 
@@ -947,7 +953,7 @@ subject_fail
 ### Example Request
 
 ```bash
-curl SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
+curl SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79 \
     --header "X-Api-Key: your-api-key" \
     --data '{"name": "Backups", "tags": "prod www", "timeout": 3600, "grace": 60}'
 ```
@@ -955,7 +961,7 @@ curl SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 Or, alternatively:
 
 ```bash
-curl SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
+curl SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79 \
     --data '{"api_key": "your-api-key", "name": "Backups", "tags": "prod www", "timeout": 3600, "grace": 60}'
 ```
 
@@ -963,29 +969,32 @@ curl SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 
 ```json
 {
-  "channels": "",
-  "desc": "",
-  "grace": 60,
-  "last_ping": null,
-  "n_pings": 0,
   "name": "Backups",
   "slug": "",
+  "tags": "prod www",
+  "desc": "",
+  "grace": 60,
+  "n_pings": 0,
+  "status": "new",
+  "started": false,
+  "last_ping": null,
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
   "filter_body": false,
-  "pause_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
-  "resume_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
-  "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
-  "status": "new",
-  "started": false,
-  "tags": "prod www",
-  "timeout": 3600,
-  "update_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc",
+  "uuid": "7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "ping_url": "PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "update_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "pause_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause",
+  "resume_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume",
+  "channels": "",
+  "timeout": 3600
 }
 ```
 
@@ -1016,7 +1025,7 @@ This API call has no request parameters.
 ### Example Request
 
 ```bash
-curl SITE_ROOT/api/v3/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause \
+curl SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause \
     --request POST --header "X-Api-Key: your-api-key" --data ""
 ```
 
@@ -1028,30 +1037,32 @@ header is sometimes required by some network proxies and web servers.
 
 ```json
 {
-  "channels": "",
+  "name": "Backups",
+  "slug": "",
+  "tags": "prod www",
   "desc": "",
   "grace": 60,
-  "last_ping": null,
-  "next_ping": null,
   "n_pings": 0,
-  "name": "Backups",
-  "slug": "backups",
+  "status": "paused",
+  "started": false,
+  "last_ping": null,
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
   "filter_body": false,
-  "pause_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
-  "resume_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
-  "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
-  "status": "paused",
-  "started": false,
-  "tags": "prod www",
-  "timeout": 3600,
-  "update_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc"
+  "uuid": "7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "ping_url": "PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "update_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "pause_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause",
+  "resume_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume",
+  "channels": "",
+  "timeout": 3600
 }
 ```
 
@@ -1085,7 +1096,7 @@ This API call has no request parameters.
 ### Example Request
 
 ```bash
-curl SITE_ROOT/api/v3/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/resume \
+curl SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume \
     --request POST --header "X-Api-Key: your-api-key" --data ""
 ```
 
@@ -1097,30 +1108,32 @@ header is sometimes required by some network proxies and web servers.
 
 ```json
 {
-  "channels": "",
+  "name": "Backups",
+  "slug": "",
+  "tags": "prod www",
   "desc": "",
   "grace": 60,
-  "last_ping": null,
-  "next_ping": null,
   "n_pings": 0,
-  "name": "Backups",
-  "slug": "backups",
+  "status": "new",
+  "started": false,
+  "last_ping": null,
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
   "filter_body": false,
-  "pause_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
-  "resume_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
-  "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
-  "status": "new",
-  "started": false,
-  "tags": "prod www",
-  "timeout": 3600,
-  "update_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc"
+  "uuid": "7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "ping_url": "PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "update_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "pause_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause",
+  "resume_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume",
+  "channels": "",
+  "timeout": 3600
 }
 ```
 
@@ -1151,7 +1164,7 @@ This API call has no request parameters.
 ### Example Request
 
 ```bash
-curl SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
+curl SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79 \
     --request DELETE --header "X-Api-Key: your-api-key"
 ```
 
@@ -1159,29 +1172,32 @@ curl SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc \
 
 ```json
 {
-  "channels": "",
+  "name": "Backups",
+  "slug": "",
+  "tags": "prod www",
   "desc": "",
   "grace": 60,
-  "last_ping": null,
   "n_pings": 0,
-  "name": "Backups",
-  "slug": "backups",
+  "status": "new",
+  "started": false,
+  "last_ping": null,
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
+  "subject": "",
+  "subject_fail": "",
   "start_kw": "",
   "success_kw": "",
   "failure_kw": "",
   "filter_subject": false,
   "filter_body": false,
-  "pause_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause",
-  "resume_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume",
-  "ping_url": "PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc",
-  "status": "new",
-  "started": false,
-  "tags": "prod www",
-  "timeout": 3600,
-  "update_url": "SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc",
+  "uuid": "7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "ping_url": "PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "update_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "pause_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause",
+  "resume_url": "SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume",
+  "channels": "",
+  "timeout": 3600
 }
 ```
 

@@ -189,6 +189,7 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/31365bce-8da9-4729-8ff3-aaa71d56b712/pause&quot;</span><span class="p">,</span>
@@ -214,6 +215,7 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span>
@@ -229,8 +231,8 @@ specified value.</p>
 <p>The possible values for the <code>status</code> field are: <code>new</code>, <code>up</code>, <code>grace</code>, <code>down</code>,
 and <code>paused</code>.</p>
 <p>When using the read-only API key, SITE_NAME omits the following fields from responses:
-<code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>resume_url</code>, <code>channels</code>.  It adds an extra
-<code>unique_key</code> field. The <code>unique_key</code> identifier is stable across API calls, and
+<code>uuid</code>, <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>resume_url</code>, <code>channels</code>.  It adds an
+extra <code>unique_key</code> field. The <code>unique_key</code> identifier is stable across API calls, and
 you can use it in the <a href="#get-check">Get a single check</a>
 and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <p>Example:</p>
@@ -323,6 +325,7 @@ using the read-only API key) as an identifier.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d/pause&quot;</span><span class="p">,</span>
@@ -337,8 +340,8 @@ using the read-only API key) as an identifier.</p>
 and <code>paused</code>.</p>
 <h3>Example Read-Only Response</h3>
 <p>When using the read-only API key, SITE_NAME omits the following fields from responses:
-<code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>resume_url</code>, <code>channels</code>.  It adds an extra
-<code>unique_key</code> field. This identifier is stable across API calls.</p>
+<code>uuid</code>, <code>ping_url</code>, <code>update_url</code>, <code>pause_url</code>, <code>resume_url</code>, <code>channels</code>.  It adds an
+extra <code>unique_key</code> field. This identifier is stable across API calls.</p>
 <p>Note: although API omits the <code>*_url</code> fields in read-only API responses, the client can
 easily construct these URLs themselves <em>if</em> they know the check's unique UUID.</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
@@ -609,29 +612,32 @@ the limit is 20 checks per account.</dd>
 
 <h3>Example Response</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;success_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -845,41 +851,44 @@ field values.</dd>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--header<span class="w"> </span><span class="s2">&quot;X-Api-Key: your-api-key&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--data<span class="w"> </span><span class="s1">&#39;{&quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
 <p>Or, alternatively:</p>
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--data<span class="w"> </span><span class="s1">&#39;{&quot;api_key&quot;: &quot;your-api-key&quot;, &quot;name&quot;: &quot;Backups&quot;, &quot;tags&quot;: &quot;prod www&quot;, &quot;timeout&quot;: 3600, &quot;grace&quot;: 60}&#39;</span>
 </code></pre></div>
 
 <h3>Example Response</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;success_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -901,7 +910,7 @@ the <a href="#resume-check">Resume</a> API call (useful when check's <code>manua
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/pause<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--request<span class="w"> </span>POST<span class="w"> </span>--header<span class="w"> </span><span class="s2">&quot;X-Api-Key: your-api-key&quot;</span><span class="w"> </span>--data<span class="w"> </span><span class="s2">&quot;&quot;</span>
 </code></pre></div>
 
@@ -910,30 +919,32 @@ even though the request body is empty. For HTTP POST requests, the <code>Content
 header is sometimes required by some network proxies and web servers.</p>
 <h3>Example Response</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;paused&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;success_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;paused&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span>
+<span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -957,7 +968,7 @@ configuration parameter set to <code>True</code>.</p>
 <dd>The specified check is currently not in a paused state.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/0c8983c9-9d73-446f-adb5-0641fdacc9d4/resume<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--request<span class="w"> </span>POST<span class="w"> </span>--header<span class="w"> </span><span class="s2">&quot;X-Api-Key: your-api-key&quot;</span><span class="w"> </span>--data<span class="w"> </span><span class="s2">&quot;&quot;</span>
 </code></pre></div>
 
@@ -966,30 +977,32 @@ even though the request body is empty. For HTTP POST requests, the <code>Content
 header is sometimes required by some network proxies and web servers.</p>
 <h3>Example Response</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;success_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span>
+<span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -1010,35 +1023,38 @@ check that was just deleted.</p>
 <dd>The specified check does not exist.</dd>
 </dl>
 <h3>Example Request</h3>
-<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc<span class="w"> </span><span class="se">\</span>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--request<span class="w"> </span>DELETE<span class="w"> </span>--header<span class="w"> </span><span class="s2">&quot;X-Api-Key: your-api-key&quot;</span>
 </code></pre></div>
 
 <h3>Example Response</h3>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;backups&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;success_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pause&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/resume&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINTf618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
 <span class="p">}</span>
 </code></pre></div>
 

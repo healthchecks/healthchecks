@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Improve performance of loading ping body previews (#1023)
 - Implement MS Teams Workflows integration (#1024)
+- Add "uuid" field in API responses when read/write key is used (#1007)
 
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)

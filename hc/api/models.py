@@ -101,6 +101,7 @@ def isostring(dt: datetime | None) -> str | None:
 
 
 class CheckDict(TypedDict, total=False):
+    code: str | None
     name: str
     slug: str
     tags: str
@@ -409,6 +410,7 @@ class Check(models.Model):
         if readonly:
             result["unique_key"] = self.unique_key
         else:
+            result["uuid"] = str(self.code)
             result["ping_url"] = settings.PING_ENDPOINT + str(self.code)
 
             # Optimization: construct API URLs manually instead of using reverse().

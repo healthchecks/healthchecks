@@ -58,6 +58,7 @@ class ListChecksTestCase(BaseTestCase):
             by_name[check["name"]] = check
 
         a1 = by_name["Alice 1"]
+        self.assertEqual(a1["uuid"], str(self.a1.code))
         self.assertEqual(a1["timeout"], 3600)
         self.assertEqual(a1["grace"], 900)
         self.assertEqual(a1["ping_url"], self.a1.url())
@@ -76,6 +77,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(a1["next_ping"], None)
 
         a2 = by_name["Alice 2"]
+        self.assertEqual(a2["uuid"], str(self.a2.code))
         self.assertEqual(a2["timeout"], 86400)
         self.assertEqual(a2["grace"], 3600)
         self.assertEqual(a2["ping_url"], self.a2.url())
