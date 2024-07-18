@@ -101,7 +101,7 @@ def isostring(dt: datetime | None) -> str | None:
 
 
 class CheckDict(TypedDict, total=False):
-    code: str | None
+    uuid: str | None
     name: str
     slug: str
     tags: str
