@@ -36,22 +36,6 @@ class NotifyTestCase(BaseTestCase):
         self.flip.old_status = "new"
         self.flip.new_status = status
 
-    @patch("hc.api.transports.curl.request", autospec=True)
-    def test_pagerteam(self, mock_post: Mock) -> None:
-        self._setup_data("pagerteam", "123")
-
-        self.channel.notify(self.flip)
-        mock_post.assert_not_called()
-        self.assertEqual(Notification.objects.count(), 0)
-
-    @patch("hc.api.transports.curl.request", autospec=True)
-    def test_hipchat(self, mock_post: Mock) -> None:
-        self._setup_data("hipchat", "123")
-
-        self.channel.notify(self.flip)
-        mock_post.assert_not_called()
-        self.assertEqual(Notification.objects.count(), 0)
-
     def test_not_implemented(self) -> None:
         self._setup_data("webhook", "http://example")
         self.channel.kind = "invalid"

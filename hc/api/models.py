@@ -48,7 +48,6 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "email": ("Email", transports.Email),
     "gotify": ("Gotify", transports.Gotify),
     "group": ("Group", transports.Group),
-    "hipchat": ("HipChat", transports.RemovedTransport),
     "linenotify": ("LINE Notify", transports.LineNotify),
     "matrix": ("Matrix", transports.Matrix),
     "mattermost": ("Mattermost", transports.Mattermost),
@@ -56,7 +55,6 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "msteamsw": ("Microsoft Teams", transports.MsTeamsWorkflow),
     "ntfy": ("ntfy", transports.Ntfy),
     "opsgenie": ("Opsgenie", transports.Opsgenie),
-    "pagerteam": ("Pager Team", transports.RemovedTransport),
     "pagertree": ("PagerTree", transports.PagerTree),
     "pd": ("PagerDuty", transports.PagerDuty),
     "po": ("Pushover", transports.Pushover),
@@ -72,7 +70,6 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "victorops": ("Splunk On-Call", transports.VictorOps),
     "webhook": ("Webhook", transports.Webhook),
     "whatsapp": ("WhatsApp", transports.WhatsApp),
-    "zendesk": ("Zendesk", transports.RemovedTransport),
     "zulip": ("Zulip", transports.Zulip),
 }
 

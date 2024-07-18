@@ -137,13 +137,6 @@ class Transport(object):
         return q.last()
 
 
-class RemovedTransport(Transport):
-    """Dummy transport class for obsolete integrations: hipchat, pagerteam."""
-
-    def is_noop(self, status: str) -> bool:
-        return True
-
-
 class Email(Transport):
     def notify(self, flip: Flip, notification: Notification) -> None:
         if not self.channel.email_verified:
@@ -1165,6 +1158,7 @@ class Apprise(HttpTransport):
 
         if not a.notify(body=body, title=title, notify_type=notify_type):
             raise TransportError("Failed")
+
 
 class MsTeams(HttpTransport):
     def payload(self, flip: Flip) -> JSONDict:
