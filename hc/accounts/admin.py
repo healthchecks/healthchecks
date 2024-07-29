@@ -57,7 +57,9 @@ class NumChecksFilter(admin.SimpleListFilter):
             ("1000", "More than 1000"),
         )
 
-    def queryset(self, r: HttpRequest, qs: QuerySet[Profile]) -> QuerySet[Profile]:
+    def queryset(
+        self, r: HttpRequest, qs: QuerySet[WithAnnotations[Profile, ProfileAnnotations]]
+    ) -> QuerySet[WithAnnotations[Profile, ProfileAnnotations]]:
         value = self.value()
         if value:
             qs = qs.filter(num_checks__gt=int(value))
