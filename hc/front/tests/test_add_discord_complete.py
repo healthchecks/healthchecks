@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
@@ -58,8 +59,8 @@ class AddDiscordCompleteTestCase(BaseTestCase):
 
     @patch("hc.front.views.curl.post", autospec=True)
     def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
-        for sample in ("surprise", {}, None):
-            oauth_response = "surprise"
+        oauth_response: Any
+        for oauth_response in ("surprise", {}, None):
             mock_post.return_value.text = json.dumps(oauth_response)
             mock_post.return_value.json.return_value = oauth_response
 
