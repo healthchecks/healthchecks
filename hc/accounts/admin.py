@@ -271,9 +271,6 @@ class ProjectAdmin(ModelAdmin[Project]):
         else:
             return render_to_string("admin/project_list_team.html", {"project": obj})
 
-    def email(self, obj: Project) -> str:
-        return obj.owner.email
-
     def usage(self, obj: WithAnnotations[Project, ProjectAnnotations]) -> str:
         return _format_usage(obj.num_checks, obj.num_channels)
 
