@@ -6,7 +6,7 @@ Healthchecks instance yourself.</p>
 <p>The building blocks are:</p>
 <ul>
 <li>Python 3.10+</li>
-<li>Django 5</li>
+<li>Django 5.1</li>
 <li>PostgreSQL or MySQL</li>
 </ul>
 <h2>Setting Up for Development</h2>

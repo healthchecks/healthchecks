@@ -9,7 +9,7 @@ Healthchecks instance yourself.
 The building blocks are:
 
 * Python 3.10+
-* Django 5
+* Django 5.1
 * PostgreSQL or MySQL
 
 ## Setting Up for Development

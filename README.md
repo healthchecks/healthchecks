@@ -14,7 +14,7 @@ team management features: projects, team members, read-only access.
 The building blocks are:
 
 * Python 3.10+
-* Django 5
+* Django 5.1
 * PostgreSQL or MySQL
 
 Healthchecks is licensed under the BSD 3-clause license.
