@@ -296,7 +296,7 @@ class NotificationsAdmin(ModelAdmin[Notification]):
     list_display = (
         "id",
         "created",
-        "channel_kind",
+        "channel__kind",
         "check_status",
         "project",
         "channel_value",
@@ -304,9 +304,6 @@ class NotificationsAdmin(ModelAdmin[Notification]):
     )
     list_filter = ("channel__kind", "created", ErrorFilter)
     raw_id_fields = ("channel",)
-
-    def channel_kind(self, obj: Notification) -> str:
-        return obj.channel.kind
 
     def channel_value(self, obj: Notification) -> str:
         return format_html("<div>{}</div>", obj.channel.value)
