@@ -1,10 +1,15 @@
-version: "3"
 volumes:
-    db-data:
+  db-data:
+    name: healthcheck-db-data
+
+networks:
+  default:
+    name: healthcheck-network
 
 services:
   db:
-    image: postgres:12
+    image: postgres:15.7-alpine
+    container_name: healthcheck-db
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
@@ -17,6 +22,7 @@ services:
     # To use a pre-built image, remove the above "build" section
     # and uncomment the following line:
     # image: healthchecks/healthchecks:latest
+    container_name: healthcheck-web
     env_file:
         - .env
     ports:

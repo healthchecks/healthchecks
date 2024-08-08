@@ -1,12 +1,12 @@
-FROM python:3.12-slim-bookworm as builder
+FROM python:3.12-slim-bookworm AS builder
 
 COPY requirements.txt /tmp
 RUN \
     apt-get update && \
-    apt-get install -y build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev rustc pkg-config
-ENV CARGO_NET_GIT_FETCH_WITH_CLI true
+    apt-get install -y --no-install-recommends build-essential git libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev rustc pkg-config
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 RUN \
-    pip install --upgrade pip && \
+    pip install --no-cache-dir --upgrade  pip && \
     pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
@@ -22,14 +22,13 @@ WORKDIR /opt/healthchecks
 
 RUN \
     apt-get update && \
-    apt-get install -y libcurl4 libpq5 libmariadb3 libxml2 && \
+    apt-get install --no-install-recommends -y libcurl4 libpq5 libmariadb3 libxml2 && \
     rm -rf /var/apt/cache && \
     rm -rf /var/lib/apt/lists
 
-
 RUN --mount=type=bind,target=/wheels,source=/wheels,from=builder \
-    pip install --upgrade pip && \
-    pip install --no-cache /wheels/*
+    pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir /wheels/*
 
 COPY --from=builder /opt/healthchecks/ /opt/healthchecks/
 
