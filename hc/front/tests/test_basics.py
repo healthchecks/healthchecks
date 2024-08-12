@@ -13,7 +13,7 @@ class BasicsTestCase(TestCase):
     @override_settings(DEBUG=False, SECRET_KEY="abc")
     def test_it_shows_no_warning(self) -> None:
         r = self.client.get("/accounts/login/")
-        self.assertContains(r, "Sign In to", status_code=200)
+        self.assertContains(r, "Log In to", status_code=200)
         self.assertNotContains(r, "do not use in production")
 
     @override_settings(DEBUG=True, SECRET_KEY="abc")
@@ -24,7 +24,7 @@ class BasicsTestCase(TestCase):
     @override_settings(DEBUG=False, SECRET_KEY="---")
     def test_it_shows_secret_key_warning(self) -> None:
         r = self.client.get("/accounts/login/")
-        self.assertContains(r, "Sign In to", status_code=200)
+        self.assertContains(r, "Log In to", status_code=200)
         self.assertContains(r, "Running with an insecure SECRET_KEY value")
 
     @override_settings(REGISTRATION_OPEN=False)

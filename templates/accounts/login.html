@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load compress hc_extras static %}
 
-{% block title %}Sign In - {{ site_name }}{% endblock %}
+{% block title %}Log In - {{ site_name }}{% endblock %}
 
 {% block description %}{% endblock %}
 
@@ -21,7 +21,7 @@
         </div>
         {% endif %}
 
-        <h1>Sign In to {{ site_name }}</h1>
+        <h1>Log In to {{ site_name }}</h1>
         {% if bad_link %}
         <div class="alert alert-warning">
             <p>The login link you just used is either incorrect or expired.</p>
@@ -52,7 +52,7 @@
                         autocomplete="email">
 
                     <p id="link-instruction">
-                        We will email you a magic sign in link.
+                        We will email you a magic log in link.
                     </p>
 
                     <button type="submit" class="btn btn-lg btn-primary btn-block">
@@ -104,7 +104,7 @@
                     </p>
 
                     <button type="submit" class="btn btn-lg btn-primary btn-block">
-                        Sign In
+                        Log In
                     </button>
                 </form>
             </div>
@@ -128,7 +128,7 @@
                     If you need to reset your password, please do the following:
                 </p>
                 <ol>
-                    <li>Sign in using the <strong>Email Me a Link</strong> method.</li>
+                    <li>Log in using the <strong>Email Me a Link</strong> method.</li>
                     <li>
                         Once in your account, go to
                         <strong>Account Settings › Set Password</strong>

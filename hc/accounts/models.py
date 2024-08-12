@@ -139,7 +139,7 @@ class Profile(models.Model):
             path += "?next=%s" % redirect_url
 
         ctx = {
-            "button_text": "Sign In",
+            "button_text": "Log In",
             "button_url": settings.SITE_ROOT + path,
             "membership": membership,
         }
@@ -155,7 +155,7 @@ class Profile(models.Model):
         path = reverse("hc-change-email-verify", args=[signed_payload])
 
         ctx = {
-            "button_text": "Sign In",
+            "button_text": "Log In",
             "button_url": settings.SITE_ROOT + path,
         }
         emails.login(new_email, ctx)
