@@ -386,7 +386,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script id="all-timezones" type="data">UTC,{{ timezones|join:"," }}</script>
+<script id="common-timezones" type="data">{{ common_timezones|join:"," }}</script>
+<script id="all-timezones" type="data">{{ timezones|join:"," }}</script>
 {% compress js %}
 <script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/nouislider.min.js' %}"></script>

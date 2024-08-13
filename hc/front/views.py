@@ -108,6 +108,14 @@ def _tags_counts(checks: Iterable[Check]) -> tuple[list[tuple[str, str, str]], i
     return result, num_down
 
 
+def _common_timezones(checks: Iterable[Check]) -> list[str]:
+    counter: Counter[str] = Counter()
+    for check in checks:
+        counter[check.tz] += 1
+
+    return [tz for tz, _ in counter.most_common(3)]
+
+
 def _get_check_for_user(
     request: HttpRequest, code: UUID, preload_owner_profile: bool = False
 ) -> tuple[Check, bool]:
@@ -280,6 +288,7 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "num_down": num_down,
         "tags": tags_counts,
         "ping_endpoint": settings.PING_ENDPOINT,
+        "common_timezones": _common_timezones(checks),
         "timezones": all_timezones,
         "project": project,
         "num_available": project.num_checks_available(),
@@ -976,9 +985,10 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         channels.append(channel)
 
     all_tags = set()
-    q = Check.objects.filter(project=check.project).exclude(tags="")
-    for tags in q.values_list("tags", flat=True):
-        all_tags.update(tags.split(" "))
+    sibling_checks = Check.objects.filter(project=check.project).only("tags", "tz")
+    for sibling in sibling_checks:
+        if sibling.tags:
+            all_tags.update(sibling.tags.split(" "))
 
     ctx = {
         "page": "details",
@@ -988,6 +998,7 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "channels": regular_channels,
         "group_channels": group_channels,
         "enabled_channels": list(check.channel_set.all()),
+        "common_timezones": _common_timezones(sibling_checks),
         "timezones": all_timezones,
         "downtimes": check.downtimes(3, request.profile.tz),
         "tz": request.profile.tz,
