@@ -246,7 +246,7 @@
   height: 1px;
   margin: 9px 0;
   overflow: hidden;
-  background-color: #e5e5e5;
+  background-color: var(--border-color);
   margin-left: -12px;
   margin-right: -12px;
 }
