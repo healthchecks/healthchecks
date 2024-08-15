@@ -1,16 +1,21 @@
 $(function () {
-    var $pw = $("#password");
-    var $meter = $("#meter");
-    $pw.on("input", function() {
-        var candidate = $pw.val();
-        if (!candidate) {
-            $meter.attr("class", "score-0");
-            return;
+    var pw = document.getElementById("password");
+    var meter = document.getElementById("meter");
+    pw.addEventListener("input", function() {
+        if (!pw.value) {
+            // If the field is empty, clear the strength meter
+            // and let the default validation take over.
+            meter.removeAttribute("class");
+            pw.setCustomValidity("");
+            return
         }
 
-        var result = zxcvbn(candidate);
-        // If user has entered anything at all cap score at 1
-        var score = Math.max(result.score, 1);
-        $meter.attr("class", "score-" + score);
+        var score = zxcvbn(pw.value).score;
+        meter.setAttribute("class", "score-" + score);
+        if (pw.validity.valid && score == 0) {
+             pw.setCustomValidity("Please pick a stronger password.");
+        } else {
+            pw.setCustomValidity("");
+        }
     });
 });
