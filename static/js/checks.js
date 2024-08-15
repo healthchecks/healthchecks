@@ -105,21 +105,19 @@ $(function () {
         }
 
         function applySingle(index, element) {
+            var nameDiv = element.querySelector(".my-checks-name");
             if (search) {
-                var code = element.getAttribute("id");
-                var name = $(".my-checks-name", element).attr("data-name").toLowerCase();
-                if (name.indexOf(search) == -1 && code.indexOf(search) == -1) {
+                var haystack = [nameDiv.dataset.name, nameDiv.dataset.slug, element.id].join("\n");
+                if (haystack.toLowerCase().indexOf(search) == -1) {
                     $(element).hide();
                     return;
                 }
             }
 
             if (checked.length) {
-                // use attr(), as data() tries converting strings to JS types:
-                // (e.g., "123" -> 123)
-                var tags = $(".my-checks-name", element).attr("data-tags").split(" ");
-                for (var i=0, tag; tag=checked[i]; i++) {
-                    if (tags.indexOf(tag) == -1) {
+                var tags = nameDiv.dataset.tags.split(" ");
+                for (var i=0, checkedTag; checkedTag=checked[i]; i++) {
+                    if (tags.indexOf(checkedTag) == -1) {
                         $(element).hide();
                         return;
                     }

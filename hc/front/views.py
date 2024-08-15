@@ -260,8 +260,8 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     search = request.GET.get("search", "")
     if search:
         for check in checks:
-            search_key = "%s\n%s" % (check.name.lower(), check.code)
-            if search not in search_key:
+            haystack = f"{check.name}\n{check.slug}\n{check.code}"
+            if search not in haystack.lower():
                 hidden_checks.add(check)
 
     # Figure out which checks have ambiguous ping URLs

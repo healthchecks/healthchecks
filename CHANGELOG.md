@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add "uuid" field in API responses when read/write key is used (#1007)
 - Update timezone dropdowns to show frequently used timezones at the top
 - Update the "Set Password" page to reject very weak passwords
+- Implement search by slug in the checks list (#1048)
 
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)
