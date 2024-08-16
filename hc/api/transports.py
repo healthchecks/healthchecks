@@ -345,6 +345,7 @@ class Webhook(HttpTransport):
             "$NOW": safe(flip.created.replace(microsecond=0).isoformat()),
             "$NAME_JSON": safe(json.dumps(check.name)),
             "$NAME": safe(check.name),
+            "$SLUG": check.slug,
             "$TAGS": safe(check.tags),
             "$JSON": safe(json.dumps(check.to_dict())),
         }

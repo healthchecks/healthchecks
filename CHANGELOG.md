@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Update timezone dropdowns to show frequently used timezones at the top
 - Update the "Set Password" page to reject very weak passwords
 - Implement search by slug in the checks list (#1048)
+- Add support for $SLUG placeholder in webhook payloads (#1049)
 
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)

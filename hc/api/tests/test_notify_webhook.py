@@ -133,19 +133,20 @@ class NotifyWebhookTestCase(BaseTestCase):
     def test_webhooks_support_variables(self, mock_get: Mock) -> None:
         definition = {
             "method_down": "GET",
-            "url_down": "http://host/$CODE/$STATUS/$TAG1/$TAG2/?name=$NAME",
+            "url_down": "http://host/$CODE/$SLUG/$STATUS/$TAG1/$TAG2/?name=$NAME",
             "body_down": "",
             "headers_down": {},
         }
 
         self._setup_data(json.dumps(definition))
         self.check.name = "Hello World"
+        self.check.slug = "hello-world"
         self.check.tags = "foo bar"
         self.check.save()
 
         self.channel.notify(self.flip)
 
-        url = "http://host/%s/down/foo/bar/?name=Hello%%20World" % self.check.code
+        url = f"http://host/{self.check.code}/hello-world/down/foo/bar/?name=Hello%20World"
 
         args, kwargs = mock_get.call_args
         self.assertEqual(args[0], "get")
