@@ -43,4 +43,5 @@ RUN mkdir /data && chown hc /data
 USER hc
 
 ENV USE_GZIP_MIDDLEWARE=True
+HEALTHCHECK --interval=10s --start-period=10s --retries=1 CMD /opt/healthchecks/docker/fetchstatus.sh
 CMD [ "uwsgi", "/opt/healthchecks/docker/uwsgi.ini"]

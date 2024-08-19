@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Update the "Set Password" page to reject very weak passwords
 - Implement search by slug in the checks list (#1048)
 - Add support for $SLUG placeholder in webhook payloads (#1049)
+- Update Dockerfile to use HEALTHCHECK instruction and report container health (#1045)
 
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)

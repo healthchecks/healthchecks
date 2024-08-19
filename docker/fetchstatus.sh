@@ -1,0 +1,1 @@
+python -c "from urllib.request import urlopen; urlopen('http://localhost:8000/api/v3/status/')"
