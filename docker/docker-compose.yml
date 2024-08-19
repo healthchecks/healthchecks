@@ -1,10 +1,9 @@
-version: "3"
 volumes:
     db-data:
 
 services:
   db:
-    image: postgres:12
+    image: postgres:16
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:

@@ -86,6 +86,31 @@ For example, in NGINX you can use the `$scheme` variable like so:
 proxy_set_header X-Forwarded-Proto $scheme;
 ```
 
+## Upgrading Database
+
+When you upgrade the database version in `docker-compose.yml` (for example,
+from `postgres:12` to `postgres:16`), you will also need to upgrade your postgres
+data directory. One way to do this is using the
+[pgautoupgrade](https://hub.docker.com/r/pgautoupgrade/pgautoupgrade) container.
+
+Steps:
+
+* As the very first step, **take a full backup of your database**.
+* Stop the `db` and `web` containers: `docker compose stop`
+* Look up the name of the postgres data volume name using `docker volume ls`
+* Run `pgautoupgrade` like so:
+
+```
+docker run --rm --name pgauto -it \
+   --mount type=volume,source=<pg-volume-name-here>,target=/var/lib/postgresql/data \
+   -e POSTGRES_PASSWORD=password \
+   -e PGAUTO_ONESHOT=yes \
+   pgautoupgrade/pgautoupgrade:16-bookworm
+```
+
+* Update the `docker-compose.yml` file to use the `postgres:16` image
+* Start containers: `docker compose up`
+
 ## Pre-built Images
 
 Pre-built Docker images, built from the Dockerfile in this directory, are available
