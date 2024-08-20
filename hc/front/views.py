@@ -12,6 +12,7 @@ from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
 from email.message import EmailMessage
+from itertools import islice
 from secrets import token_urlsafe
 from typing import Literal, TypedDict, cast
 from urllib.parse import urlencode, urlparse
@@ -658,9 +659,12 @@ def cron_preview(request: HttpRequest) -> HttpResponse:
     now_local = now().astimezone(ZoneInfo(tz))
     try:
         it = CronSim(schedule, now_local)
-        ctx["dates"] = [next(it) for i in range(0, 6)]
+        ctx["dates"] = list(islice(it, 0, 6))
         ctx["desc"] = it.explain()
-    except (CronSimError, StopIteration):
+    except CronSimError:
+        ctx["bad_schedule"] = True
+
+    if not ctx.get("dates"):
         ctx["bad_schedule"] = True
 
     return render(request, "front/cron_preview.html", ctx)
@@ -681,12 +685,12 @@ def oncalendar_preview(request: HttpRequest) -> HttpResponse:
     try:
         it = OnCalendar(schedule, now_local)
         iterations = 6 if tz == "UTC" else 4
-        for i in range(0, iterations):
-            assert isinstance(ctx["dates"], list)
-            ctx["dates"].append(next(it))
-    except (OnCalendarError, StopIteration):
-        if not ctx["dates"]:
-            ctx["bad_schedule"] = True
+        ctx["dates"] = list(islice(it, 0, iterations))
+    except OnCalendarError:
+        ctx["bad_schedule"] = True
+
+    if not ctx["dates"]:
+        ctx["bad_schedule"] = True
 
     return render(request, "front/oncalendar_preview.html", ctx)
 
