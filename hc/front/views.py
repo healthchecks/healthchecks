@@ -376,6 +376,7 @@ def index(request: HttpRequest) -> HttpResponse:
     if not request.user.is_authenticated:
         return redirect("hc-login")
 
+    # We now know user is logged, tell the type checker request.profile exists-
     request = cast(AuthenticatedHttpRequest, request)
     summary = _get_project_summary(request.profile)
     if "refresh" in request.GET:
@@ -1091,6 +1092,8 @@ def status_single(request: HttpRequest, code: UUID) -> HttpResponse:
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
 
+    # We now know user is logged, tell the type checker request.profile exists-
+    request = cast(AuthenticatedHttpRequest, request)
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     status = check.get_status()
