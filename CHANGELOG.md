@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.5.1 - 2024-08-20
+
+### Bug Fixes
+- Fix the Dockerfile for building arm/v7 docker image
+
 ## v3.5 - 2024-08-20
 
 Important: this Healthchecks release is using Django 5.1, which has dropped support
