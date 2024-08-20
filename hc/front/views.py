@@ -303,8 +303,10 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "front/checks.html", ctx)
 
 
-@login_required
-def status(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+def status(request: HttpRequest, code: UUID) -> HttpResponse:
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+
     project, rw = _get_project_for_user(request, code)
     checks = list(Check.objects.filter(project=project))
 
@@ -1085,8 +1087,10 @@ def copy(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return redirect(url + "?copied")
 
 
-@login_required
-def status_single(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+def status_single(request: HttpRequest, code: UUID) -> HttpResponse:
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     status = check.get_status()
@@ -2779,8 +2783,10 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
     return render_result(None)
 
 
-@login_required
-def log_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+def log_events(request: HttpRequest, code: UUID) -> HttpResponse:
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
     form = forms.LogFiltersForm(request.GET)
     if not form.is_valid():

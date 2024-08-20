@@ -26,6 +26,10 @@ class StatusTestCase(BaseTestCase):
         self.assertEqual(detail["status"], "new")
         self.assertIn("Never", detail["last_ping"])
 
+    def test_it_returns_403_for_anon_requests(self) -> None:
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 403)
+
     def test_it_allows_cross_team_access(self) -> None:
         self.client.login(username="bob@example.org", password="password")
         r = self.client.get(self.url)

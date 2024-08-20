@@ -21,6 +21,10 @@ class StatusSingleTestCase(BaseTestCase):
         self.assertTrue("never received a ping" in doc["status_text"])
         self.assertTrue("not received any pings yet" in doc["events"])
 
+    def test_it_returns_403_for_anon_requests(self) -> None:
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 403)
+
     def test_it_returns_events(self) -> None:
         p = Ping.objects.create(owner=self.check, ua="test-user-agent", n=1)
         self.check.status = "up"

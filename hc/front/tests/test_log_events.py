@@ -57,6 +57,10 @@ class LogTestCase(BaseTestCase):
         self.assertContains(r, "Sent email to alice@example.org")
         self.assertContains(r, "new ➔ down")
 
+    def test_it_returns_403_for_anon_requests(self) -> None:
+        r = self.client.get(self.url())
+        self.assertEqual(r.status_code, 403)
+
     def test_team_access_works(self) -> None:
         # Logging in as bob, not alice. Bob has team access so this
         # should work.

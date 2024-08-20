@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)
+- Fix AJAX views to better handle user logging out
 
 
 ## v3.4 - 2024-06-20

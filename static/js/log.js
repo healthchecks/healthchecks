@@ -124,6 +124,9 @@ $(function () {
                 switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
                 document.getElementById("log").prepend(tbody);
                 updateNumHits();
+            },
+            error: function(data, textStatus, xhr) {
+                activeRequest = null;
             }
         });
     }
