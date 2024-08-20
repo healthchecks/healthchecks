@@ -1359,10 +1359,7 @@ def remove_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
     return redirect("hc-channels", project.code)
 
 
-def email_form(request: HttpRequest, channel: Channel) -> HttpResponse:
-    # Convince mypy we have User instead of AnonymousUser:
-    assert isinstance(request.user, User)
-
+def email_form(request: AuthenticatedHttpRequest, channel: Channel) -> HttpResponse:
     adding = channel._state.adding
     if request.method == "POST":
         form = forms.EmailForm(request.POST)
