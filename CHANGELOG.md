@@ -1,7 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.5-dev - Unreleased
+## v3.5 - 2024-08-20
+
+Important: this Healthchecks release is using Django 5.1, which has dropped support
+for PostgreSQL 12. Therefore, the PostgreSQL image in the sample `docker-compose.yml`
+file has been updated from `postgres:12` to `postgres:16`. PostgreSQL does not
+automatically upgrade its data files between major version upgrades, you will need
+to do this manually. Instructions:
+https://github.com/healthchecks/healthchecks/tree/master/docker#upgrading-database
 
 ### Improvements
 - Improve performance of loading ping body previews (#1023)
@@ -16,7 +23,6 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix Check.ping() to lock the check before updating (#1023)
 - Fix AJAX views to better handle user logging out
-
 
 ## v3.4 - 2024-06-20
 
