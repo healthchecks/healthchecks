@@ -649,7 +649,7 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
 def cron_preview(request: HttpRequest) -> HttpResponse:
     schedule = request.POST.get("schedule", "")
     tz = request.POST.get("tz")
-    ctx: dict[str, object] = {"tz": tz, "dates": []}
+    ctx: dict[str, object] = {"tz": tz}
 
     if tz not in all_timezones:
         ctx["bad_tz"] = True
@@ -658,9 +658,7 @@ def cron_preview(request: HttpRequest) -> HttpResponse:
     now_local = now().astimezone(ZoneInfo(tz))
     try:
         it = CronSim(schedule, now_local)
-        for i in range(0, 6):
-            assert isinstance(ctx["dates"], list)
-            ctx["dates"].append(next(it))
+        ctx["dates"] = [next(it) for i in range(0, 6)]
         ctx["desc"] = it.explain()
     except (CronSimError, StopIteration):
         ctx["bad_schedule"] = True
