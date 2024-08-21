@@ -33,6 +33,7 @@ RUN --mount=type=bind,target=/wheels,source=/wheels,from=builder \
     pip install --no-cache /wheels/*
 
 COPY --from=builder /opt/healthchecks/ /opt/healthchecks/
+COPY docker/fetchstatus.py /opt/healthchecks/hc/api/management/commands/
 
 RUN \
     rm -f /opt/healthchecks/hc/local_settings.py && \
@@ -44,5 +45,5 @@ RUN mkdir /data && chown hc /data
 USER hc
 
 ENV USE_GZIP_MIDDLEWARE=True
-HEALTHCHECK --interval=10s --start-period=10s --retries=1 CMD /opt/healthchecks/docker/fetchstatus.sh
+HEALTHCHECK --interval=10s --start-period=10s --retries=1 CMD ./manage.py fetchstatus
 CMD [ "uwsgi", "/opt/healthchecks/docker/uwsgi.ini"]

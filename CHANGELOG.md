@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.5.2 - 2024-08-21
+
+### Bug Fixes
+- Fix the Docker healthcheck script to supply correct Host header (#1051)
+
 ## v3.5.1 - 2024-08-20
 
 ### Bug Fixes
