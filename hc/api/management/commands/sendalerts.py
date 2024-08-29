@@ -73,12 +73,14 @@ class Command(BaseCommand):
     def process_one_flip(self) -> bool:
         """Find unprocessed flip, send notifications.
 
-        Return True if a flip was submitted to executor.
-        Return False if no flip was submitted to executor. This can happen when:
-        * all workers are currently busy
-        * or if there were no unprocessed Flips in the database
-        * or if there was a Flip to process but another sendalerts process
+        Return True if the main loop should continue without pausing:
+        * if an unprocessed flip was found and submitted to executor.
+        * or, if an unprocessed flip was found but another sendalerts process
           snatched it first.
+
+        Return False if the main loop should wait a bit before continuing:
+        * if all workers are currently busy
+        * or, if there were no unprocessed flips in the database
 
         """
 
