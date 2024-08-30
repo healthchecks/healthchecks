@@ -26,25 +26,27 @@ def notify(flip_id: int, stdout: TextIOBase, close_conn: bool = False) -> None:
     check.project.update_next_nag_dates()
 
     if channels := flip.select_channels():
-        # Set the historic status here but *don't save it*.
-        # It would be nicer to pass the status explicitly, as a separate parameter.
-        check.status = flip.new_status
-        # And just to make sure it doesn't get saved by a future coding accident:
-        setattr(check, "save", None)
+        # Transport classes should use flip's status, not check's status
+        # (which can already be different by the time the notification goes out).
+        # To make sure we catch template bugs, set check's status to an obnoxious,
+        # invalid value:
+        check.status = "IF_YOU_SEE_THIS_WE_HAVE_A_BUG"
 
         # Send notifications
-        kinds = ", ".join([ch.kind for ch in channels])
-        stdout.write(f"{check.code} goes {check.status}, notifying via {kinds}\n")
+        logs = []
+        logs.append(f"{check.code} goes {flip.new_status}")
         send_start = now()
         for ch in channels:
-            print("Sending to %s %s" % (ch.kind, ch.code))
             notify_start = time.time()
             error = ch.notify(flip)
             secs = time.time() - notify_start
-            label = "ERR" if error else "OK"
-            s = " * %-3s %4.1fs %-10s %s %s\n" % (label, secs, ch.kind, ch.code, error)
-            stdout.write(s)
+            code8 = str(ch.code)[:8]
+            if error:
+                logs.append(f"  {code8} ({ch.kind}) Error in {secs:.1f}s: {error}")
+            else:
+                logs.append(f"  {code8} ({ch.kind}) OK in {secs:.1f}s")
 
+        stdout.write("\n".join(logs))
         statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
         statsd.timing("hc.sendalerts.sendTime", now() - send_start)
 
