@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, NoReturn, cast
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
+from django.db import close_old_connections
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from pydantic import BaseModel, ValidationError
@@ -387,24 +388,26 @@ class Webhook(HttpTransport):
         if not spec.url:
             raise TransportError("Empty webhook URL")
 
+        method = spec.method.lower()
         url = self.prepare(spec.url, flip, urlencode=True)
-        headers = {}
-        for key, value in spec.headers.items():
-            # Header values should contain ASCII and latin-1 only
-            headers[key] = self.prepare(value, flip, latin1=True)
-
-        body, body_bytes = spec.body, None
-        if body and spec.method in ("POST", "PUT"):
-            body = self.prepare(body, flip, allow_ping_body=True)
-            body_bytes = body.encode()
-
         retry = True
         if notification.owner is None:
             # This is a test notification.
             # When sending a test notification, don't retry on failures.
             retry = False
 
-        method = spec.method.lower()
+        body, body_bytes = spec.body, None
+        if body and spec.method in ("POST", "PUT"):
+            body = self.prepare(body, flip, allow_ping_body=True)
+            body_bytes = body.encode()
+
+        headers = {}
+        for key, value in spec.headers.items():
+            # Header values should contain ASCII and latin-1 only
+            headers[key] = self.prepare(value, flip, latin1=True)
+
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
         self.request(method, url, retry=retry, data=body_bytes, headers=headers)
 
 

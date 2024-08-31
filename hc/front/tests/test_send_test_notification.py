@@ -10,6 +10,7 @@ from hc.api.models import Channel, Notification
 from hc.test import BaseTestCase
 
 
+@patch("hc.api.transports.close_old_connections", Mock())
 class SendTestNotificationTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
