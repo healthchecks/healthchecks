@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import signal
 import time
 from argparse import ArgumentParser
@@ -16,6 +17,8 @@ from django.utils.timezone import now
 
 from hc.api.models import Check, Flip
 from hc.lib.statsd import statsd
+
+logger = logging.getLogger("hc")
 
 
 def notify(flip_id: int, stdout: TextIOBase) -> None:
@@ -72,6 +75,9 @@ class Command(BaseCommand):
     def on_notify_done(self, future):
         close_old_connections()
         self.seats.release()
+        if exc := future.exception():
+            logger.error("Exception in notify", exc_info=exc)
+            raise exc
 
     def process_one_flip(self) -> bool:
         """Find unprocessed flip, send notifications.
