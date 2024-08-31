@@ -4,7 +4,7 @@ import logging
 import signal
 import time
 from argparse import ArgumentParser
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import timedelta as td
 from io import TextIOBase
 from threading import BoundedSemaphore
@@ -72,7 +72,7 @@ class Command(BaseCommand):
             help="The number of concurrent worker processes to use",
         )
 
-    def on_notify_done(self, future):
+    def on_notify_done(self, future: Future[None]) -> None:
         close_old_connections()
         self.seats.release()
         if exc := future.exception():
@@ -189,4 +189,4 @@ class Command(BaseCommand):
                 time.sleep(2)
 
         self.executor.shutdown(wait=True)
-        return f"Sent {sent} alert(s)."
+        return "Done."
