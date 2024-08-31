@@ -82,24 +82,21 @@ class Command(BaseCommand):
     def process_one_flip(self) -> bool:
         """Find unprocessed flip, send notifications.
 
-        Return True if the main loop should continue without pausing:
-        * if an unprocessed flip was found and submitted to executor.
-        * or, if an unprocessed flip was found but another sendalerts process
-          snatched it first.
+        Return True if the main loop should continue right away.
 
-        Return False if the main loop should wait a bit before continuing:
-        * if all workers are currently busy
-        * or, if there were no unprocessed flips in the database
+        Return False if the main loop should  wait a bit before continuing.
+        (because either all workers are currently busy or there are currently no
+        unprocessed flips in the database).
 
         """
 
-        if not self.seats.acquire(blocking=False):
-            return False  # All workers are busy right now
+        if not self.seats.acquire(timeout=1):
+            return False  # Workers busy, main thread should wait a bit
 
         flip = Flip.objects.filter(processed=None).first()
         if flip is None:
             self.seats.release()
-            return False
+            return False  # Workers busy, main thread should wait a bit
 
         q = Flip.objects.filter(id=flip.id, processed=None)
         num_updated = q.update(processed=now())
@@ -178,16 +175,15 @@ class Command(BaseCommand):
         signal.signal(signal.SIGINT, self.on_signal)
 
         self.stdout.write("sendalerts is now running\n")
-        sent = 0
         while not self.shutdown:
             # Create flips for any checks going down
             while self.handle_going_down():
                 pass
 
-            if self.process_one_flip():
-                sent += 1
-            else:
-                # Sleep for 2 seconds, then look for more work
+            found_flip = self.process_one_flip()
+            if not found_flip:
+                # Either all workers are busy or there are no unprocessed flips.
+                # Wait a bit:
                 time.sleep(2)
 
         self.executor.shutdown(wait=True)
