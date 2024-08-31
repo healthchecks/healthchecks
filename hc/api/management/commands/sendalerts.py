@@ -11,14 +11,14 @@ from types import FrameType
 from typing import Any
 
 from django.core.management.base import BaseCommand
-from django.db import connection
+from django.db import close_old_connections
 from django.utils.timezone import now
 
 from hc.api.models import Check, Flip
 from hc.lib.statsd import statsd
 
 
-def notify(flip_id: int, stdout: TextIOBase, close_conn: bool = False) -> None:
+def notify(flip_id: int, stdout: TextIOBase) -> None:
     flip = Flip.objects.get(id=flip_id)
     check = flip.owner
 
@@ -50,9 +50,6 @@ def notify(flip_id: int, stdout: TextIOBase, close_conn: bool = False) -> None:
         statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
         statsd.timing("hc.sendalerts.sendTime", now() - send_start)
 
-    if close_conn:
-        connection.close()
-
 
 class Command(BaseCommand):
     help = "Sends UP/DOWN email alerts"
@@ -71,6 +68,10 @@ class Command(BaseCommand):
             default=1,
             help="The number of concurrent worker processes to use",
         )
+
+    def on_notify_done(self, future):
+        close_old_connections()
+        self.seats.release()
 
     def process_one_flip(self) -> bool:
         """Find unprocessed flip, send notifications.
@@ -101,8 +102,8 @@ class Command(BaseCommand):
             self.seats.release()
             return True
 
-        f = self.executor.submit(notify, flip.id, self.stdout, close_conn=True)
-        f.add_done_callback(lambda _: self.seats.release())
+        f = self.executor.submit(notify, flip.id, self.stdout)
+        f.add_done_callback(self.on_notify_done)
         return True
 
     def handle_going_down(self) -> bool:

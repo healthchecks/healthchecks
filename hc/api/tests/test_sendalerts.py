@@ -10,6 +10,7 @@ from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
 
+@patch("hc.api.management.commands.sendalerts.close_old_connections", Mock())
 class SendAlertsTestCase(BaseTestCase):
     def test_it_handles_grace_period(self) -> None:
         check = Check(project=self.project, status="up")
