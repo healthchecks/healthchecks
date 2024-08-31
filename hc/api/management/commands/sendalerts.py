@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
-        self.executor = ThreadPoolExecutor()
+        self.executor = ThreadPoolExecutor(max_workers=10)
         self.seats = BoundedSemaphore(10)
         self.shutdown = False
 
@@ -171,6 +171,8 @@ class Command(BaseCommand):
 
     def handle(self, num_workers: int, **options: Any) -> str:
         self.seats = BoundedSemaphore(num_workers)
+        self.executor = ThreadPoolExecutor(max_workers=num_workers)
+
         signal.signal(signal.SIGTERM, self.on_signal)
         signal.signal(signal.SIGINT, self.on_signal)
 
