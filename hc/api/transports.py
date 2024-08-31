@@ -1379,6 +1379,8 @@ class SignalRateLimitFailure(TransportError):
 
 
 class Signal(Transport):
+    TIMEOUT = 60
+
     class Result(BaseModel):
         type: str
         token: str | None = None
@@ -1477,7 +1479,7 @@ class Signal(Transport):
             address = settings.SIGNAL_CLI_SOCKET
 
         with socket.socket(stype, socket.SOCK_STREAM) as s:
-            s.settimeout(20)
+            s.settimeout(cls.TIMEOUT)
             try:
                 s.connect(address)
                 s.sendall(payload_bytes)
@@ -1491,7 +1493,7 @@ class Signal(Transport):
                         yield b"".join(buffer)
                         buffer = []
 
-                    if time.time() - start > 20:
+                    if time.time() - start > cls.TIMEOUT:
                         raise TransportError("signal-cli call timed out")
 
             except OSError as e:

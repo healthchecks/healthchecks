@@ -27,12 +27,13 @@ class MockSocket(object):
     ) -> None:
         self.response_tmpl = response_tmpl
         self.side_effect = side_effect
+        self.timeout: None | int = None
         self.address: None | Address = None
         self.req = None
         self.outbox = b""
 
     def settimeout(self, seconds: int) -> None:
-        pass
+        self.timeout = seconds
 
     def connect(self, address: Address) -> None:
         self.address = address
@@ -121,6 +122,8 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         assert socketobj.req
+        self.assertEqual(socketobj.timeout, 60)
+
         params = socketobj.req["params"]
         self.assertIn("Daily Backup is DOWN", params["message"])
         self.assertEqual(params["textStyle"][0], "10:12:BOLD")
