@@ -21,21 +21,24 @@ from hc.lib.statsd import statsd
 logger = logging.getLogger("hc")
 
 
-def notify(flip_id: int, stdout: TextIOBase) -> None:
-    flip = Flip.objects.get(id=flip_id)
-    check = flip.owner
+def notify(flip: Flip, stdout: TextIOBase) -> None:
+    # First, mark the flip as processed:
+    q = Flip.objects.filter(id=flip.id, processed=None)
+    num_updated = q.update(processed=now())
+    if num_updated != 1:
+        # Nothing got updated: another sendalerts process got there first.
+        return
 
     # Set or clear dates for followup nags
+    check = flip.owner
     check.project.update_next_nag_dates()
+    # Transport classes should use flip's status, not check's status
+    # (which can already be different by the time the notification goes out).
+    # To make sure we catch template bugs, set check's status to an obnoxious,
+    # invalid value:
+    check.status = "IF_YOU_SEE_THIS_WE_HAVE_A_BUG"
 
     if channels := flip.select_channels():
-        # Transport classes should use flip's status, not check's status
-        # (which can already be different by the time the notification goes out).
-        # To make sure we catch template bugs, set check's status to an obnoxious,
-        # invalid value:
-        check.status = "IF_YOU_SEE_THIS_WE_HAVE_A_BUG"
-
-        # Send notifications
         logs = []
         logs.append(f"{check.code} goes {flip.new_status}")
         send_start = now()
@@ -96,16 +99,9 @@ class Command(BaseCommand):
         flip = Flip.objects.filter(processed=None).first()
         if flip is None:
             self.seats.release()
-            return False  # Workers busy, main thread should wait a bit
+            return False  # No work found, main thread should wait a bit
 
-        q = Flip.objects.filter(id=flip.id, processed=None)
-        num_updated = q.update(processed=now())
-        if num_updated != 1:
-            # Nothing got updated: another sendalerts process got there first.
-            self.seats.release()
-            return True
-
-        f = self.executor.submit(notify, flip.id, self.stdout)
+        f = self.executor.submit(notify, flip, self.stdout)
         f.add_done_callback(self.on_notify_done)
         return True
 
@@ -182,11 +178,13 @@ class Command(BaseCommand):
             while self.handle_going_down():
                 pass
 
-            found_flip = self.process_one_flip()
-            if not found_flip:
-                # Either all workers are busy or there are no unprocessed flips.
-                # Wait a bit:
-                time.sleep(2)
+            # Submit unprocessed flips to the self.executor
+            while self.process_one_flip():
+                pass
+
+            # Either all workers are busy or there are no unprocessed flips.
+            # Wait a bit:
+            time.sleep(2)
 
         self.executor.shutdown(wait=True)
         return "Done."
