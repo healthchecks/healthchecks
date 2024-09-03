@@ -179,16 +179,17 @@ class Command(BaseCommand):
         self.stdout.write("sendalerts is now running\n")
         while not self.shutdown:
             # Create flips for any checks going down
-            while self.handle_going_down():
+            while self.handle_going_down() and not self.shutdown:
                 pass
 
             # Submit unprocessed flips to the self.executor
-            while self.process_one_flip():
+            while self.process_one_flip() and not self.shutdown:
                 pass
 
             # Either all workers are busy or there are no unprocessed flips.
             # Wait a bit:
-            time.sleep(2)
+            if not self.shutdown:
+                time.sleep(2)
 
         self.executor.shutdown(wait=True)
         return "Done."
