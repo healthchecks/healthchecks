@@ -21,13 +21,13 @@ from hc.lib.statsd import statsd
 logger = logging.getLogger("hc")
 
 
-def notify(flip: Flip, stdout: TextIOBase) -> None:
+def notify(flip: Flip) -> str | None:
     # First, mark the flip as processed:
     q = Flip.objects.filter(id=flip.id, processed=None)
     num_updated = q.update(processed=now())
     if num_updated != 1:
         # Nothing got updated: another sendalerts process got there first.
-        return
+        return None
 
     # Set or clear dates for followup nags
     check = flip.owner
@@ -37,24 +37,25 @@ def notify(flip: Flip, stdout: TextIOBase) -> None:
     # To make sure we catch template bugs, set check's status to an obnoxious,
     # invalid value:
     check.status = "IF_YOU_SEE_THIS_WE_HAVE_A_BUG"
+    channels = flip.select_channels()
+    if not channels:
+        return None
 
-    if channels := flip.select_channels():
-        logs = []
-        logs.append(f"{check.code} goes {flip.new_status}")
-        send_start = now()
-        for ch in channels:
-            notify_start = time.time()
-            error = ch.notify(flip)
-            secs = time.time() - notify_start
-            code8 = str(ch.code)[:8]
-            if error:
-                logs.append(f"  {code8} ({ch.kind}) Error in {secs:.1f}s: {error}")
-            else:
-                logs.append(f"  {code8} ({ch.kind}) OK in {secs:.1f}s")
+    send_start = now()
+    logs = [f"{check.code} goes {flip.new_status}"]
+    for ch in channels:
+        notify_start = time.time()
+        error = ch.notify(flip)
+        secs = time.time() - notify_start
+        code8 = str(ch.code)[:8]
+        if error:
+            logs.append(f"  {code8} ({ch.kind}) Error in {secs:.1f}s: {error}")
+        else:
+            logs.append(f"  {code8} ({ch.kind}) OK in {secs:.1f}s")
 
-        stdout.write("\n".join(logs))
-        statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
-        statsd.timing("hc.sendalerts.sendTime", now() - send_start)
+    statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
+    statsd.timing("hc.sendalerts.sendTime", now() - send_start)
+    return "\n".join(logs)
 
 
 class Command(BaseCommand):
@@ -75,9 +76,12 @@ class Command(BaseCommand):
             help="The number of concurrent worker processes to use",
         )
 
-    def on_notify_done(self, future: Future[None]) -> None:
+    def on_notify_done(self, future: Future[str | None]) -> None:
         close_old_connections()
         self.seats.release()
+        if logs := future.result():
+            self.stdout.write(logs)
+
         if exc := future.exception():
             logger.error("Exception in notify", exc_info=exc)
             raise exc
@@ -101,7 +105,7 @@ class Command(BaseCommand):
             self.seats.release()
             return False  # No work found, main thread should wait a bit
 
-        f = self.executor.submit(notify, flip, self.stdout)
+        f = self.executor.submit(notify, flip)
         f.add_done_callback(self.on_notify_done)
         return True
 
