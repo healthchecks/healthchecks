@@ -8,7 +8,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
 ENV PATH=$PATH:/root/.cargo/bin
 RUN \
     pip install --upgrade pip && \
-    pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio -r /tmp/requirements.txt
+    pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio psycopg-c==3.2.1 -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
 RUN \
