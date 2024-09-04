@@ -1,10 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.6-dev - Unreleased
+## v3.6 - 2024-09-04
+
+### Security
+- Upgrade to Django 5.1.1 (it fixes a vulnerability in `urlize` which we do use)
 
 ### Improvements
 - Implement concurrent sending and `--num-workers` argument in `manage.py sendalerts`
+- Upgrade from psycopg2 to psycopg 3.x
 
 ## v3.5.2 - 2024-08-21
 
