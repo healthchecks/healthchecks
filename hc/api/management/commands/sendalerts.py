@@ -6,7 +6,6 @@ import time
 from argparse import ArgumentParser
 from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import timedelta as td
-from io import TextIOBase
 from threading import BoundedSemaphore
 from types import FrameType
 from typing import Any
