@@ -546,6 +546,7 @@ in production.
      **Do not use it in production**, instead consider using
      [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) or
      [gunicorn](https://gunicorn.org/).
+     An example with minimal setup on http would be to install uWSGI `pip3 install uwsgi`, and used `uwsgi --http :8000 --module hc.wsgi`
   *  `manage.py sendalerts` is the process that monitors checks and sends out
      monitoring alerts. It must be always running, it must be started on reboot, and it
      must be restarted if it itself crashes. On modern linux systems, a good option is
