@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.7-dev - Unreleased
+
+### Bug Fixes
+- Update sqlite settings to avoid "Database is locked" errors (#1057)
+
 ## v3.6 - 2024-09-04
 
 ### Security

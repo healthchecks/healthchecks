@@ -144,6 +144,10 @@ DATABASES: Mapping[str, Any] = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.getenv("DB_NAME", BASE_DIR / "hc.sqlite"),
+        "OPTIONS": {
+            "init_command": "PRAGMA busy_timeout = 5000;",
+            "transaction_mode": "IMMEDIATE",
+        },
     }
 }
 
