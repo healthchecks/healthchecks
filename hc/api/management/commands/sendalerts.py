@@ -10,6 +10,7 @@ from threading import BoundedSemaphore
 from types import FrameType
 from typing import Any
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import close_old_connections
 from django.utils.timezone import now
@@ -70,9 +71,14 @@ class Command(BaseCommand):
         parser.add_argument(
             "--num-workers",
             type=int,
-            dest="num_workers",
             default=1,
             help="The number of concurrent worker processes to use",
+        )
+
+        parser.add_argument(
+            "--pool",
+            action="store_true",
+            help="Use DB connection pool (PostgreSQL-only)",
         )
 
     def on_notify_done(self, future: Future[str | None]) -> None:
@@ -168,7 +174,14 @@ class Command(BaseCommand):
         self.stdout.write(f"{desc}, finishing...\n")
         self.shutdown = True
 
-    def handle(self, num_workers: int, **options: Any) -> str:
+    def handle(self, num_workers: int, pool: bool, **options: Any) -> str:
+        if pool:
+            db = settings.DATABASES["default"]
+            # psycopg_pool requires non-persistent connections:
+            db["CONN_MAX_AGE"] = 0
+            options = db.setdefault("OPTIONS", {})
+            options["pool"] = True
+
         self.seats = BoundedSemaphore(num_workers)
         self.executor = ThreadPoolExecutor(max_workers=num_workers)
 
