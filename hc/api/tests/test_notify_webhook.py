@@ -60,6 +60,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://example"))
+        self.assertEqual(kwargs["timeout"], 30)
 
     @patch(
         "hc.api.transports.curl.request",
@@ -153,7 +154,6 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(args[0], "get")
         self.assertEqual(args[1], url)
         self.assertEqual(kwargs["headers"], {})
-        self.assertEqual(kwargs["timeout"], 10)
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_handle_variable_variables(self, mock_get: Mock) -> None:

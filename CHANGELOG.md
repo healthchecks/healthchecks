@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v3.7-dev - Unreleased
 
+### Improvements
+- Increase outgoing webhook timeout from 10 to 30 seconds
+
 ### Bug Fixes
 - Update sqlite settings to avoid "Database is locked" errors (#1057)
 

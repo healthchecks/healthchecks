@@ -258,7 +258,7 @@ class HttpTransport(Transport):
                 json=json,
                 headers=headers,
                 auth=auth,
-                timeout=10,
+                timeout=30,
             )
             if r.status_code not in (200, 201, 202, 204):
                 cls.raise_for_response(r)
@@ -278,7 +278,6 @@ class HttpTransport(Transport):
         headers: curl.Headers = None,
         auth: curl.Auth = None,
     ) -> None:
-        start = time.time()
         tries_left = 3 if retry else 1
         while True:
             try:
@@ -293,11 +292,9 @@ class HttpTransport(Transport):
                 )
             except TransportError as e:
                 tries_left = 0 if e.permanent else tries_left - 1
-
-                # If we have no tries left *or* have already used more than
-                # 15 seconds of time then abort the retry loop by re-raising
+                # If we have no tries left then abort the retry loop by re-raising
                 # the exception:
-                if tries_left == 0 or time.time() - start > 15:
+                if tries_left == 0:
                     raise e
 
     # Convenience wrapper around self.request for making "POST" requests
