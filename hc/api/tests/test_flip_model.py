@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import timedelta as td
 
 from django.utils.timezone import now
 
@@ -51,3 +52,16 @@ class FlipModelTestCase(BaseTestCase):
 
         channels = self.flip.select_channels()
         self.assertEqual(channels, [])
+
+    def test_it_sorts_channels_by_last_notify_duration(self) -> None:
+        c1 = Channel.objects.create(
+            project=self.project, kind="email", last_notify_duration=td(seconds=1)
+        )
+        c1.checks.add(self.check)
+        c9 = Channel.objects.create(
+            project=self.project, kind="email", last_notify_duration=td(seconds=9)
+        )
+        c9.checks.add(self.check)
+
+        channels = self.flip.select_channels()
+        self.assertEqual(channels, [c1, c9, self.channel])

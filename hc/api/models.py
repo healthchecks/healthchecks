@@ -1173,6 +1173,7 @@ class Flip(models.Model):
         * Exclude all channels for new->up and paused->up transitions.
         * Exclude disabled channels
         * Exclude channels where transport.is_noop(status) returns True
+        * Sort channels by last_notify_duration (shorter durations first)
         """
 
         # Don't send alerts on new->up and paused->up transitions
@@ -1183,6 +1184,7 @@ class Flip(models.Model):
             raise NotImplementedError(f"Unexpected status: {self.new_status}")
 
         q = self.owner.channel_set.exclude(disabled=True)
+        q = q.order_by("last_notify_duration")
         return [ch for ch in q if not ch.transport.is_noop(self.new_status)]
 
 
