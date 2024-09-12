@@ -12,6 +12,7 @@ from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
+@patch("hc.api.transports.close_old_connections", Mock())
 class NotifyNtfyTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()

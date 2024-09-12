@@ -1603,8 +1603,11 @@ class Ntfy(HttpTransport):
             ],
         }
 
+        url = self.channel.ntfy.url
         headers = {}
         if self.channel.ntfy.token:
             headers = {"Authorization": f"Bearer {self.channel.ntfy.token}"}
 
-        self.post(self.channel.ntfy.url, headers=headers, json=payload)
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
+        self.post(url, headers=headers, json=payload)
