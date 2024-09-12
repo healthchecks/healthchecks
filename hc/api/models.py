@@ -19,7 +19,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.mail import mail_admins
 from django.core.signing import TimestampSigner
 from django.db import models, transaction
-from django.db.models import QuerySet
+from django.db.models import F, QuerySet
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -1184,7 +1184,7 @@ class Flip(models.Model):
             raise NotImplementedError(f"Unexpected status: {self.new_status}")
 
         q = self.owner.channel_set.exclude(disabled=True)
-        q = q.order_by("last_notify_duration")
+        q = q.order_by(F("last_notify_duration").asc(nulls_last=True))
         return [ch for ch in q if not ch.transport.is_noop(self.new_status)]
 
 
