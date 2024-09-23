@@ -70,12 +70,14 @@ on the value of the <code>SMTPD_PORT</code> environment value:</p>
 <a href="https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini">uwsgi.ini</a>.</p>
 <p>See also: the <a href="../self_hosted_configuration/#PING_EMAIL_DOMAIN">PING_EMAIL_DOMAIN</a>
 environment variable for customizing the domain part of the email addresses.</p>
-<h2>TLS Termination</h2>
+<h2 id="tls-termination">TLS Termination and CSRF Protection</h2>
 <p>If you plan to expose your Healthchecks instance to the public internet, make sure you
 put a TLS-terminating reverse proxy or load balancer in front of it.</p>
 <p><strong>Important:</strong> This Dockerfile uses uWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
-header to determine if a request is secure or not. Make sure your TLS-terminating
-reverse proxy:</p>
+header to determine if a request is secure or not. Without this information you
+may run into HTTP 403 "CSRF verification failed." errors when using your Healthchecks
+instance. See <a href="https://github.com/healthchecks/healthchecks/discussions/851#discussioncomment-6293396">this issue comment</a> for more information.</p>
+<p>Make sure your TLS-terminating reverse proxy:</p>
 <ul>
 <li>Discards the <code>X-Forwarded-Proto</code> header sent by the end user.</li>
 <li>Sets the <code>X-Forwarded-Proto</code> header value to match the protocol of the original request
@@ -83,6 +85,11 @@ reverse proxy:</p>
 </ul>
 <p>For example, in NGINX you can use the <code>$scheme</code> variable like so:</p>
 <div class="highlight"><pre><span></span><code>proxy_set_header X-Forwarded-Proto $scheme;
+</code></pre></div>
+
+<p>If you are using haproxy, you can do the same like so:</p>
+<div class="highlight"><pre><span></span><code>http-request set-header X-Forwarded-Proto https if { ssl_fc }
+http-request set-header X-Forwarded-Proto http unless { ssl_fc }
 </code></pre></div>
 
 <h2>Upgrading Database</h2>

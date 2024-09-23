@@ -67,14 +67,18 @@ on the value of the `SMTPD_PORT` environment value:
 The conditional logic lives in uWSGI configuration file,
 [uwsgi.ini](https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini).
 
-## TLS Termination
+## TLS Termination and CSRF Protection
 
 If you plan to expose your Healthchecks instance to the public internet, make sure you
 put a TLS-terminating reverse proxy or load balancer in front of it.
 
 **Important:** This Dockerfile uses uWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
-header to determine if a request is secure or not. Make sure your TLS-terminating
-reverse proxy:
+header to determine if a request is secure or not. Without this information you
+may run into HTTP 403 "CSRF verification failed." errors when using your Healthchecks
+instance. See [this issue comment](https://github.com/healthchecks/healthchecks/discussions/851#discussioncomment-6293396)
+for more information.
+
+Make sure your TLS-terminating reverse proxy:
 
 * Discards the `X-Forwarded-Proto` header sent by the end user.
 * Sets the `X-Forwarded-Proto` header value to match the protocol of the original request
@@ -84,6 +88,13 @@ For example, in NGINX you can use the `$scheme` variable like so:
 
 ```
 proxy_set_header X-Forwarded-Proto $scheme;
+```
+
+If you are using haproxy, you can do the same like so:
+
+```
+http-request set-header X-Forwarded-Proto https if { ssl_fc }
+http-request set-header X-Forwarded-Proto http unless { ssl_fc }
 ```
 
 ## Upgrading Database
