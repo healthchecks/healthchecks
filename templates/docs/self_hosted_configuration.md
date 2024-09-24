@@ -608,6 +608,20 @@ set the value themselves (and thus impersonate any user). How to do this varies 
 your chosen proxy, but generally involves configuring it to strip out headers that
 normalize to the same name as the chosen identity header.
 
+**On using `local_settings.py`:**
+When Healthchecks reads settings from environment variables and encounters
+the `REMOTE_USER_HEADER` environment variable, it sets *two* settings,
+`REMOTE_USER_HEADER` and `AUTHENTICATION_BACKENDS`. This logic has already run by the
+time Healthchecks reads `local_settings.py`. Therefore, if you configure Healthchecks
+using the `local_settings.py` file instead of environment variables, and specify
+`REMOTE_USER_HEADER` there, you will also need a line which sets the other setting,
+`AUTHENTICATION_BACKENDS`:
+
+```
+REMOTE_USER_HEADER = "HTTP_X_AUTHENTICATED_USER"
+AUTHENTICATION_BACKENDS = ["hc.accounts.backends.CustomHeaderBackend"]
+```
+
 ## `ROCKETCHAT_ENABLED` {: #ROCKETCHAT_ENABLED }
 
 Default: `True`

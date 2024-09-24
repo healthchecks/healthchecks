@@ -76,7 +76,8 @@ put a TLS-terminating reverse proxy or load balancer in front of it.</p>
 <p><strong>Important:</strong> This Dockerfile uses uWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
 header to determine if a request is secure or not. Without this information you
 may run into HTTP 403 "CSRF verification failed." errors when using your Healthchecks
-instance. See <a href="https://github.com/healthchecks/healthchecks/discussions/851#discussioncomment-6293396">this issue comment</a> for more information.</p>
+instance. See <a href="https://github.com/healthchecks/healthchecks/discussions/851#discussioncomment-6293396">this issue comment</a>
+for more information.</p>
 <p>Make sure your TLS-terminating reverse proxy:</p>
 <ul>
 <li>Discards the <code>X-Forwarded-Proto</code> header sent by the end user.</li>
