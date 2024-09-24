@@ -321,7 +321,7 @@ class Profile(models.Model):
         return self.check_limit - self.num_checks_used()
 
     def can_accept(self, project: "Project") -> bool:
-        return project.num_checks() <= self.num_checks_available()
+        return project.check_set.count() <= self.num_checks_available()
 
     def update_next_nag_date(self) -> None:
         any_down = self.checks_from_all_projects().filter(status="down").exists()
@@ -384,9 +384,6 @@ class Project(models.Model):
     @property
     def owner_profile(self) -> Profile:
         return Profile.objects.for_user(self.owner)
-
-    def num_checks(self) -> int:
-        return self.check_set.count()
 
     def num_checks_available(self) -> int:
         return self.owner_profile.num_checks_available()

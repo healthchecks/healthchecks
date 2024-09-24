@@ -23,7 +23,7 @@
                 </p>
 
                 {% if not can_accept %}
-                {% with num_checks=project.num_checks num_available=request.profile.num_checks_available %}
+                {% with num_checks=project.check_set.count num_available=request.profile.num_checks_available %}
                 <p>
                     This project has
                     <strong>{{ num_checks }} check{{ num_checks|pluralize}}</strong>,
