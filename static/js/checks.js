@@ -140,6 +140,17 @@ $(function () {
     // User changes the search string: apply filters
     $("#search").keyup(applyFilters);
 
+    function switchUrlFormat(format) {
+        var url = new URL(window.location.href);
+        url.searchParams.delete("urls");
+        url.searchParams.append("urls", format);
+        window.location.href = url.toString();
+        return false;
+    }
+
+    $("#to-uuid").click(e => switchUrlFormat("uuid"));
+    $("#to-slug").click(e => switchUrlFormat("slug"));
+
     $(".show-log").click(function(e) {
         var code = $(this).closest("tr.checks-row").attr("id");
         var url = base + "/checks/" + code + "/details/";
