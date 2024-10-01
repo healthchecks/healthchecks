@@ -597,10 +597,10 @@ When `REMOTE_USER_HEADER` is set, Healthchecks will:
  - automatically create a user account if it does not exist
  - disable the default authentication methods (login link to email, password)
 
- The header name in `REMOTE_USER_HEADER` must be specified in upper-case,
- with any dashes replaced with underscores, and prefixed with `HTTP_`. For
- example, if your authentication proxy sets a `X-Authenticated-User` request
- header, you should set `REMOTE_USER_HEADER=HTTP_X_AUTHENTICATED_USER`.
+The header name in `REMOTE_USER_HEADER` must be specified in upper-case,
+with any dashes replaced with underscores, and prefixed with `HTTP_`. For
+example, if your authentication proxy sets a `X-Authenticated-User` request
+header, you should set `REMOTE_USER_HEADER=HTTP_X_AUTHENTICATED_USER`.
 
 **Important:** When this option is enabled, **Healthchecks will trust the header's
 value implicitly**, so it is **very important** to ensure that attackers cannot
