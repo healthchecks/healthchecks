@@ -44,6 +44,10 @@ REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "True")
 if admins := os.getenv("ADMINS"):
     ADMINS = [(email, email) for email in admins.split(",")]
 
+if v := os.getenv("SECURE_PROXY_SSL_HEADER"):
+    SECURE_PROXY_SSL_HEADER = tuple(v.split(",", maxsplit=1))
+
+
 VERSION = ""
 
 with (BASE_DIR / "CHANGELOG.md").open(encoding="utf-8") as f:

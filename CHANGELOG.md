@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Increase outgoing webhook timeout from 10 to 30 seconds
 - Remove `pruneflips` management command (flips are now cleaned up automatically)
+- Update settings.py to read SECURE_PROXY_SSL_HEADER from env vars
 
 ### Bug Fixes
 - Update sqlite settings to avoid "Database is locked" errors (#1057)

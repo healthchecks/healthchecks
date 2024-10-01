@@ -1,6 +1,6 @@
 <h1>Server Configuration</h1>
 <p>Healthchecks prepares its configuration in <code>hc/settings.py</code>. It reads configuration
-from environment variables. Below is a list of variables it reads and uses.</p>
+from environment variables. Below is a list of environment variables it reads and uses.</p>
 <ul class="self-hosted-configuration-toc">
 <li><a href="#ADMINS">ADMINS</a></li>
 <li><a href="#ALLOWED_HOSTS">ALLOWED_HOSTS</a></li>
@@ -61,6 +61,7 @@ from environment variables. Below is a list of variables it reads and uses.</p>
 <li><a href="#S3_TIMEOUT">S3_TIMEOUT</a></li>
 <li><a href="#S3_SECURE">S3_SECURE</a></li>
 <li><a href="#SECRET_KEY">SECRET_KEY</a></li>
+<li><a href="#SECURE_PROXY_SSL_HEADER">SECURE_PROXY_SSL_HEADER</a></li>
 <li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
 <li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
 <li><a href="#SITE_LOGO_URL">SITE_LOGO_URL</a></li>
@@ -105,7 +106,7 @@ by separating them with commas:</p>
 
 <p>Apart from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#allowed-hosts">Django documentation</a>.</p>
 <h2 id="APPRISE_ENABLED"><code>APPRISE_ENABLED</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that turns on/off the <a href="https://github.com/caronc/apprise">Apprise</a>
@@ -120,23 +121,23 @@ integration.</p>
 <h2 id="DB_CONN_MAX_AGE"><code>DB_CONN_MAX_AGE</code></h2>
 <p>Default: <code>0</code></p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#conn-max-age">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#conn-max-age">Django documentation</a>.</p>
 <h2 id="DB_HOST"><code>DB_HOST</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#host">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#host">Django documentation</a>.</p>
 <h2 id="DB_NAME"><code>DB_NAME</code></h2>
 <p>Default: <code>hc</code> (PostgreSQL, MySQL) or <code>/path/to/projectdir/hc.sqlite</code> (SQLite)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#name">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#name">Django documentation</a>.</p>
 <h2 id="DB_PASSWORD"><code>DB_PASSWORD</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#password">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#password">Django documentation</a>.</p>
 <h2 id="DB_PORT"><code>DB_PORT</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#port">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#port">Django documentation</a>.</p>
 <h2 id="DB_SSLMODE"><code>DB_SSLMODE</code></h2>
 <p>Default: <code>prefer</code></p>
 <p>PostgreSQL-specific, <a href="https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNECT-SSLMODE">details</a></p>
@@ -146,17 +147,17 @@ integration.</p>
 <h2 id="DB_USER"><code>DB_USER</code></h2>
 <p>Default: <code>postgres</code> (PostgreSQL) or <code>root</code> (MySQL)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#user">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#user">Django documentation</a>.</p>
 <h2 id="DEBUG"><code>DEBUG</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off debug mode.</p>
 <p><em>Never run a Healthchecks instance in production with the debug mode turned on!</em></p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#debug">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#debug">Django documentation</a>.</p>
 <h2 id="DEFAULT_FROM_EMAIL"><code>DEFAULT_FROM_EMAIL</code></h2>
 <p>Default: <code>healthchecks@example.org</code></p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#default-from-email">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#default-from-email">Django documentation</a>.</p>
 <h2 id="DISCORD_CLIENT_ID"><code>DISCORD_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Discord Client ID, required by the Discord integration.</p>
@@ -179,27 +180,27 @@ integration.</p>
 <h2 id="EMAIL_HOST"><code>EMAIL_HOST</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#email-host">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host">Django documentation</a>.</p>
 <h2 id="EMAIL_HOST_PASSWORD"><code>EMAIL_HOST_PASSWORD</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#email-host-password">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password">Django documentation</a>.</p>
 <h2 id="EMAIL_HOST_USER"><code>EMAIL_HOST_USER</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#email-host-user">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-user">Django documentation</a>.</p>
 <h2 id="EMAIL_PORT"><code>EMAIL_PORT</code></h2>
 <p>Default: <code>587</code></p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#email-port">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-port">Django documentation</a>.</p>
 <h2 id="EMAIL_USE_TLS"><code>EMAIL_USE_TLS</code></h2>
 <p>Default: <code>True</code></p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#email-use-tls">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-tls">Django documentation</a>.</p>
 <h2 id="EMAIL_USE_SSL"><code>EMAIL_USE_SSL</code></h2>
 <p>Default: <code>False</code></p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#email-use-ssl">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-ssl">Django documentation</a>.</p>
 <h2 id="EMAIL_USE_VERIFICATION"><code>EMAIL_USE_VERIFICATION</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off a verification step when adding an email integration.</p>
@@ -494,7 +495,24 @@ use unencrypted HTTP requests, set this value to <code>False</code>.</p>
 <p>A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.</p>
 <p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/4.2/ref/settings/#secret-key">Django documentation</a>.</p>
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key">Django documentation</a>.</p>
+<h2 id="SECURE_PROXY_SSL_HEADER"><code>SECURE_PROXY_SSL_HEADER</code></h2>
+<p>Default: <code>None</code></p>
+<p>Comma-separated HTTP header name and value that signifies a request is secure
+(made over https://). This information is important for CSRF protection.</p>
+<p>If Healthchecks is running behind a proxy, the proxy may be "swallowing" whether the original
+request uses HTTPS or not. In this case, you may see HTTP 403 errors when submitting
+forms (for example, trying to log in).</p>
+<p>If set, the value should contain the name of the header to look for and the required
+value, separated with comma. The header name must be specified in upper-case,
+with any dashes replaced with underscores, and prefixed with <code>HTTP_</code>. Example:</p>
+<div class="highlight"><pre><span></span><code><span class="na">SECURE_PROXY_SSL_HEADER</span><span class="o">=</span><span class="s">HTTP_X_FORWARDED_PROTO,https</span>
+</code></pre></div>
+
+<p>You should <em>only</em> set this environment variable if you control your proxy or have some
+other guarantee that it sets/strips this header appropriately.</p>
+<p>This environment variable maps to a standard Django setting, read more in
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#secure-proxy-ssl-header">Django documentation</a>.</p>
 <h2 id="SHELL_ENABLED"><code>SHELL_ENABLED</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that turns on/off the "Shell Commands" integration.</p>

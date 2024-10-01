@@ -39,6 +39,16 @@ def settings_check(
             )
         )
 
+    v = settings.SECURE_PROXY_SSL_HEADER
+    if v is not None and (not isinstance(v, tuple) or len(v) != 2):
+        items.append(
+            Warning(
+                "settings.SECURE_PROXY_SSL_HEADER is not 2-element tuple",
+                hint="See https://healthchecks.io/docs/self_hosted_configuration/#SECURE_PROXY_SSL_HEADER",
+                id="hc.api.W003",
+            )
+        )
+
     return items
 
 

@@ -1,7 +1,7 @@
 # Server Configuration
 
 Healthchecks prepares its configuration in `hc/settings.py`. It reads configuration
-from environment variables. Below is a list of variables it reads and uses.
+from environment variables. Below is a list of environment variables it reads and uses.
 
 <ul class="self-hosted-configuration-toc">
 <li><a href="#ADMINS">ADMINS</a></li>
@@ -63,6 +63,7 @@ from environment variables. Below is a list of variables it reads and uses.
 <li><a href="#S3_TIMEOUT">S3_TIMEOUT</a></li>
 <li><a href="#S3_SECURE">S3_SECURE</a></li>
 <li><a href="#SECRET_KEY">SECRET_KEY</a></li>
+<li><a href="#SECURE_PROXY_SSL_HEADER">SECURE_PROXY_SSL_HEADER</a></li>
 <li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
 <li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
 <li><a href="#SITE_LOGO_URL">SITE_LOGO_URL</a></li>
@@ -116,7 +117,7 @@ ALLOWED_HOSTS=my-hc.example.org,alternative-name.example.org
 
 Apart from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#allowed-hosts).
 
 ## `APPRISE_ENABLED` {: #APPRISE_ENABLED }
 
@@ -142,35 +143,35 @@ The database engine to use. Possible values: `sqlite`, `postgres`, `mysql`.
 Default: `0`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#conn-max-age).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#conn-max-age).
 
 ## `DB_HOST` {: #DB_HOST }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#host).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#host).
 
 ## `DB_NAME` {: #DB_NAME }
 
 Default: `hc` (PostgreSQL, MySQL) or `/path/to/projectdir/hc.sqlite` (SQLite)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#name).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#name).
 
 ## `DB_PASSWORD` {: #DB_PASSWORD }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#password).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#password).
 
 ## `DB_PORT` {: #DB_PORT }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#port).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#port).
 
 ## `DB_SSLMODE` {: #DB_SSLMODE }
 
@@ -189,7 +190,7 @@ PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/libpq-connect.
 Default: `postgres` (PostgreSQL) or `root` (MySQL)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#user).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#user).
 
 ## `DEBUG` {: #DEBUG }
 
@@ -200,14 +201,14 @@ A boolean that turns on/off debug mode.
 _Never run a Healthchecks instance in production with the debug mode turned on!_
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#debug).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#debug).
 
 ## `DEFAULT_FROM_EMAIL` {: #DEFAULT_FROM_EMAIL }
 
 Default: `healthchecks@example.org`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#default-from-email).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#default-from-email).
 
 ## `DISCORD_CLIENT_ID` {: #DISCORD_CLIENT_ID }
 
@@ -239,42 +240,42 @@ The Discord Client Secret, required by the Discord integration. Look it up at
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#email-host).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host).
 
 ## `EMAIL_HOST_PASSWORD` {: #EMAIL_HOST_PASSWORD }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#email-host-password).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password).
 
 ## `EMAIL_HOST_USER` {: #EMAIL_HOST_USER }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#email-host-user).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-user).
 
 ## `EMAIL_PORT` {: #EMAIL_PORT }
 
 Default: `587`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#email-port).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-port).
 
 ## `EMAIL_USE_TLS` {: #EMAIL_USE_TLS }
 
 Default: `True`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#email-use-tls).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-tls).
 
 ## `EMAIL_USE_SSL` {: #EMAIL_USE_SSL}
 
 Default: `False`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#email-use-ssl).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-ssl).
 
 ## `EMAIL_USE_VERIFICATION` {: #EMAIL_USE_VERIFICATION }
 
@@ -705,7 +706,33 @@ A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/4.2/ref/settings/#secret-key).
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key).
+
+## `SECURE_PROXY_SSL_HEADER` {: #SECURE_PROXY_SSL_HEADER }
+
+Default: `None`
+
+Comma-separated HTTP header name and value that signifies a request is secure
+(made over https://). This information is important for CSRF protection.
+
+If Healthchecks is running behind a proxy, the proxy may be "swallowing" whether the original
+request uses HTTPS or not. In this case, you may see HTTP 403 errors when submitting
+forms (for example, trying to log in).
+
+If set, the value should contain the name of the header to look for and the required
+value, separated with comma. The header name must be specified in upper-case,
+with any dashes replaced with underscores, and prefixed with `HTTP_`. Example:
+
+```ini
+SECURE_PROXY_SSL_HEADER=HTTP_X_FORWARDED_PROTO,https
+```
+
+You should *only* set this environment variable if you control your proxy or have some
+other guarantee that it sets/strips this header appropriately.
+
+This environment variable maps to a standard Django setting, read more in
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secure-proxy-ssl-header).
+
 
 ## `SHELL_ENABLED` {: #SHELL_ENABLED }
 

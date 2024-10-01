@@ -17,3 +17,8 @@ class SystemChecksCase(BaseTestCase):
     def test_it_warns_about_missing_smtp_credentials(self) -> None:
         ids = [item.id for item in settings_check(None, None)]
         self.assertEqual(ids, ["hc.api.W002"])
+
+    @override_settings(SECURE_PROXY_SSL_HEADER="abc")
+    def test_it_checks_secure_proxy_ssl_header_tupleness(self) -> None:
+        ids = [item.id for item in settings_check(None, None)]
+        self.assertEqual(ids, ["hc.api.W003"])
