@@ -161,12 +161,6 @@ Any records older than one day can be safely removed.
 
     $ ./manage.py prunetokenbucket
 
-Remove old records from the `api_flip` table. The Flip objects are used to track
-status changes of checks, and to calculate downtime statistics month by month.
-Flip objects from more than 3 months ago are not used and can be safely removed.
-
-    $ ./manage.py pruneflips
-
 When you first try these commands on your data, it is a good idea to
 test them on a copy of your database, and not on the live system.
 

@@ -267,15 +267,6 @@ Healthchecks also provides management commands for cleaning up
   ./manage.py prunetokenbucket
   ```
 
-* Remove old records from the `api_flip` table. The Flip
-  objects are used to track status changes of checks, and to calculate
-  downtime statistics month by month. Flip objects from more than 3 months
-  ago are not used and can be safely removed.
-
-  ```sh
-  ./manage.py pruneflips
-  ```
-
 * Remove old objects from external object storage. When an user removes
   a check, removes a project, or closes their account, Healthchecks
   does not remove the associated objects from the external object

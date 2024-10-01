@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Increase outgoing webhook timeout from 10 to 30 seconds
+- Remove `pruneflips` management command (flips are now cleaned up automatically)
 
 ### Bug Fixes
 - Update sqlite settings to avoid "Database is locked" errors (#1057)
