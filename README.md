@@ -136,9 +136,14 @@ visit `http://localhost:8000/admin/`
 
 ## Configuration
 
-Healthchecks reads configuration from environment variables.
+Healthchecks reads configuration from environment variables. See the
+[full list of configuration parameters](https://healthchecks.io/docs/self_hosted_configuration/)
+you can set via environment variables.
 
-[Full list of configuration parameters](https://healthchecks.io/docs/self_hosted_configuration/).
+In addition, Healthchecks reads settings from the `hc/local_settings.py` file if it
+exists. You can set or override any [standard Django setting](https://docs.djangoproject.com/en/5.1/ref/settings/)
+in this file. `hc/local_settings.py.example` is provided as an example and a starting
+point.
 
 ## Accessing Administration Panel
 
@@ -311,6 +316,25 @@ When `REMOTE_USER_HEADER` is set, Healthchecks will:
  - look up and automatically log in the user with a matching email address
  - automatically create an user account if it does not exist
  - disable the default authentication methods (login link to email, password)
+
+The header name in `REMOTE_USER_HEADER` must be specified in upper-case,
+with any dashes replaced with underscores, and prefixed with `HTTP_`. For
+example, if your authentication proxy sets a `X-Authenticated-User` request
+header, you should set `REMOTE_USER_HEADER=HTTP_X_AUTHENTICATED_USER`.
+
+**Note on using `local_settings.py`:**
+When Healthchecks reads settings from environment variables and encounters
+the `REMOTE_USER_HEADER` environment variable, it sets *two* settings,
+`REMOTE_USER_HEADER` and `AUTHENTICATION_BACKENDS`. This logic has already run by the
+time Healthchecks reads `local_settings.py`. Therefore, if you configure Healthchecks
+using the `local_settings.py` file instead of environment variables, and specify
+`REMOTE_USER_HEADER` there, you will also need a line which sets the other setting,
+`AUTHENTICATION_BACKENDS`:
+
+```
+REMOTE_USER_HEADER = "HTTP_X_AUTHENTICATED_USER"
+AUTHENTICATION_BACKENDS = ["hc.accounts.backends.CustomHeaderBackend"]
+```
 
 ## External Object Storage
 
