@@ -84,9 +84,10 @@ $<span class="w"> </span>./manage.py<span class="w"> </span>createsuperuser
 </ul>
 <p>At this point, the site should now be running at <code>http://localhost:8000</code>.</p>
 <h2>Accessing Administration Panel</h2>
-<p>Healthchecks comes with Django's administration panel where you can manually
-view and modify user accounts, projects, checks, integrations etc. To access it,
-if you haven't already, create a superuser account:</p>
+<p>Healthchecks comes with Django's administration panel where you can perform
+administrative tasks: delete user accounts, change passwords, increase limits for
+specific users, inspect contents of database tables.</p>
+<p>To access the administration panel, if you haven't already, create a superuser account:</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>createsuperuser
 </code></pre></div>
 
@@ -161,7 +162,7 @@ storage on the fly. Instead, you should run <code>pruneobjects</code> occasional
 of all checks in the database, and then iterates over top-level
 keys in the object storage bucket, and deletes any that don't also
 exist in the database.</p>
-<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>pruneobjects
+<div class="highlight"><pre><span></span><code>./manage.py<span class="w"> </span>pruneobjects
 </code></pre></div>
 
 <p>When you first try these commands on your data, it is a good idea to

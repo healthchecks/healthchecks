@@ -75,9 +75,11 @@ At this point, the site should now be running at `http://localhost:8000`.
 
 ## Accessing Administration Panel
 
-Healthchecks comes with Django's administration panel where you can manually
-view and modify user accounts, projects, checks, integrations etc. To access it,
-if you haven't already, create a superuser account:
+Healthchecks comes with Django's administration panel where you can perform
+administrative tasks: delete user accounts, change passwords, increase limits for
+specific users, inspect contents of database tables.
+
+To access the administration panel, if you haven't already, create a superuser account:
 
     $ ./manage.py createsuperuser
 
