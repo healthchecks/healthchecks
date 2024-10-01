@@ -236,24 +236,17 @@ Run it with the `--loop` argument to make it run continuously:
 
 ## Database Cleanup
 
-Healthchecks deletes old entries from `api_ping` and `api_notification`
+Healthchecks deletes old entries from `api_ping`, `api_flip`, and `api_notification`
 tables automatically. By default, Healthchecks keeps the 100 most recent
 pings for every check. You can set the limit higher to keep a longer history:
 go to the Administration Panel, look up user's **Profile** and modify its
 "Ping log limit" field.
 
-For each check, Healthchecks removes notifications that are older than the
-oldest stored ping for same check.
-
 Healthchecks also provides management commands for cleaning up
-`auth_user`, `api_tokenbucket` and `api_flip` tables.
+`auth_user` (user accounts) and `api_tokenbucket` (rate limiting records) tables,
+and for removing stale objects from external object storage.
 
-* Remove user accounts that match either of these conditions:
-  * Account was created more than 6 months ago, and user has never logged in.
-   These can happen when user enters invalid email address when signing up.
-  * Last login was more than 6 months ago, and the account has no checks.
-   Assume the user doesn't intend to use the account any more and would
-   probably *want* it removed.
+* Remove user accounts that are older than 1 month and have never logged in:
 
   ```sh
   ./manage.py pruneusers

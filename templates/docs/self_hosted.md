@@ -139,19 +139,19 @@ server restarts.
 
 ## Database Cleanup {: #database-cleanup }
 
-With time and use, the Healthchecks database will grow in size. You may
-decide to prune old data: inactive user accounts, old checks not assigned
-to users, and old records of outgoing email messages. There are separate Django
-management commands for each task:
+Healthchecks deletes old entries from `api_ping`, `api_flip`, and `api_notification`
+tables automatically. By default, Healthchecks keeps the 100 most recent
+pings for every check. You can set the limit higher to keep a longer history:
+go to the Administration Panel, look up user's **Profile** and modify its
+"Ping log limit" field.
 
-Remove old records of sent notifications. For each check, remove notifications that
-are older than the oldest stored ping for the corresponding check.
+Healthchecks provides management commands for cleaning up
+`auth_user` (user accounts) and `api_tokenbucket` (rate limiting records) tables,
+and for removing stale objects from external object storage.
 
-    $ ./manage.py prunenotifications
+Remove user accounts that are older than 1 month and have never logged in:
 
-Remove inactive user accounts:
-
-```bash
+```sh
 $ ./manage.py pruneusers
 ```
 
@@ -159,11 +159,25 @@ Remove old records from the `api_tokenbucket` table. The TokenBucket
 model is used for rate-limiting login attempts and similar operations.
 Any records older than one day can be safely removed.
 
-    $ ./manage.py prunetokenbucket
+```sh
+$ ./manage.py prunetokenbucket
+```
+
+Remove old objects from external object storage. When an user removes
+a check, removes a project, or closes their account, Healthchecks
+does not remove the associated objects from the external object
+storage on the fly. Instead, you should run `pruneobjects` occasionally
+(for example, once a month). This command first takes an inventory
+of all checks in the database, and then iterates over top-level
+keys in the object storage bucket, and deletes any that don't also
+exist in the database.
+
+```sh
+$ ./manage.py pruneobjects
+```
 
 When you first try these commands on your data, it is a good idea to
-test them on a copy of your database, and not on the live system.
-
+test them on a copy of your database, not on the live database right away.
 In a production setup, you will want to run these commands regularly, as well as
 have regular, automatic database backups set up.
 
