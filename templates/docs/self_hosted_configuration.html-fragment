@@ -514,7 +514,7 @@ with any dashes replaced with underscores, and prefixed with <code>HTTP_</code>.
 other guarantee that it sets/strips this header appropriately.</p>
 <p><strong>Note on using <code>local_settings.py</code>:</strong>
 When Healthchecks reads settings from environment variables, it expects
-SECURE_PROXY_SSL_HEADER to contain header name and value, separated with comma.
+<code>SECURE_PROXY_SSL_HEADER</code> to contain header name and value, separated with comma.
 If you set <code>SECURE_PROXY_SSL_HEADER</code> in <code>local_settings.py</code>, it should be a
 a tuple with two elements instead:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># in local_settings.py</span>

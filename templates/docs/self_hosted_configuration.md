@@ -733,7 +733,7 @@ other guarantee that it sets/strips this header appropriately.
 
 **Note on using `local_settings.py`:**
 When Healthchecks reads settings from environment variables, it expects
-SECURE_PROXY_SSL_HEADER to contain header name and value, separated with comma.
+`SECURE_PROXY_SSL_HEADER` to contain header name and value, separated with comma.
 If you set `SECURE_PROXY_SSL_HEADER` in `local_settings.py`, it should be a
 a tuple with two elements instead:
 
