@@ -142,8 +142,11 @@ you can set via environment variables.
 
 In addition, Healthchecks reads settings from the `hc/local_settings.py` file if it
 exists. You can set or override any [standard Django setting](https://docs.djangoproject.com/en/5.1/ref/settings/)
-in this file. `hc/local_settings.py.example` is provided as an example and a starting
-point.
+in this file. You can copy the provided `hc/local_settings.py.example` as
+`hc/local_settings.py` and use it as a starting point.
+
+If a setting is specified both as environment variable and in `hc/local_settings.py`,
+the latter takes precedence.
 
 ## Accessing Administration Panel
 
