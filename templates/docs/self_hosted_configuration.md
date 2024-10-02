@@ -724,15 +724,26 @@ value, separated with comma. The header name must be specified in upper-case,
 with any dashes replaced with underscores, and prefixed with `HTTP_`. Example:
 
 ```ini
+# environment variable
 SECURE_PROXY_SSL_HEADER=HTTP_X_FORWARDED_PROTO,https
 ```
 
 You should *only* set this environment variable if you control your proxy or have some
 other guarantee that it sets/strips this header appropriately.
 
+**Note on using `local_settings.py`:**
+When Healthchecks reads settings from environment variables, it expects
+SECURE_PROXY_SSL_HEADER to contain header name and value, separated with comma.
+If you set `SECURE_PROXY_SSL_HEADER` in `local_settings.py`, it should be a
+a tuple with two elements instead:
+
+```ini
+# in local_settings.py
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+```
+
 This environment variable maps to a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secure-proxy-ssl-header).
-
 
 ## `SHELL_ENABLED` {: #SHELL_ENABLED }
 

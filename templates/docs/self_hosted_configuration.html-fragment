@@ -506,11 +506,21 @@ forms (for example, trying to log in).</p>
 <p>If set, the value should contain the name of the header to look for and the required
 value, separated with comma. The header name must be specified in upper-case,
 with any dashes replaced with underscores, and prefixed with <code>HTTP_</code>. Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">SECURE_PROXY_SSL_HEADER</span><span class="o">=</span><span class="s">HTTP_X_FORWARDED_PROTO,https</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># environment variable</span>
+<span class="na">SECURE_PROXY_SSL_HEADER</span><span class="o">=</span><span class="s">HTTP_X_FORWARDED_PROTO,https</span>
 </code></pre></div>
 
 <p>You should <em>only</em> set this environment variable if you control your proxy or have some
 other guarantee that it sets/strips this header appropriately.</p>
+<p><strong>Note on using <code>local_settings.py</code>:</strong>
+When Healthchecks reads settings from environment variables, it expects
+SECURE_PROXY_SSL_HEADER to contain header name and value, separated with comma.
+If you set <code>SECURE_PROXY_SSL_HEADER</code> in <code>local_settings.py</code>, it should be a
+a tuple with two elements instead:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># in local_settings.py</span>
+<span class="na">SECURE_PROXY_SSL_HEADER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">(&quot;HTTP_X_FORWARDED_PROTO&quot;, &quot;https&quot;)</span>
+</code></pre></div>
+
 <p>This environment variable maps to a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#secure-proxy-ssl-header">Django documentation</a>.</p>
 <h2 id="SHELL_ENABLED"><code>SHELL_ENABLED</code></h2>
