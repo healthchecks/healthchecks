@@ -990,6 +990,7 @@ class Sms(HttpTransport):
             "To": self.channel.phone.value,
             "Body": text,
             "StatusCallback": notification.status_url(),
+            "RiskCheck": "disable",
         }
 
         if settings.TWILIO_MESSAGING_SERVICE_SID:
