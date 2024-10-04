@@ -744,7 +744,7 @@ def add_webauthn(request: AuthenticatedHttpRequest) -> HttpResponse:
         state = request.session["state"]
         try:
             credential_bytes = helper.verify(state, form.cleaned_data["response"])
-        except ValueError as e:
+        except ValueError:
             logger.exception("CreateHelper.verify failed, form: %s", form.cleaned_data)
             return HttpResponseBadRequest()
 

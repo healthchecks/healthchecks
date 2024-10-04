@@ -174,7 +174,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertFalse(Check.objects.exists())
 
     def test_it_rejects_non_string_channels_key(self) -> None:
-        r = self.post({"channels": 123}, expect_fragment="channels is not a string")
+        self.post({"channels": 123}, expect_fragment="channels is not a string")
 
     def test_it_supports_unique_name(self) -> None:
         check = Check.objects.create(project=self.project, name="Foo")
@@ -396,7 +396,7 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_non_boolean_filter_flags(self) -> None:
         for s in ("filter_subject", "filter_body"):
-            r = self.post({s: "surprise"}, expect_fragment=f"{s} is not a boolean")
+            self.post({s: "surprise"}, expect_fragment=f"{s} is not a boolean")
 
     def test_it_sets_methods(self) -> None:
         r = self.post({"methods": "POST"})
@@ -406,13 +406,13 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(check.methods, "POST")
 
     def test_it_rejects_bad_methods_value(self) -> None:
-        r = self.post(
+        self.post(
             {"methods": "bad-value"}, expect_fragment="methods has unexpected value"
         )
 
     def test_it_rejects_long_filtering_keywords(self) -> None:
         for s in ("subject", "subject_fail", "start_kw", "success_kw", "failure_kw"):
-            r = self.post({s: "A" * 201}, expect_fragment=f"{s} is too long")
+            self.post({s: "A" * 201}, expect_fragment=f"{s} is too long")
 
     def test_it_sets_success_kw(self) -> None:
         r = self.post({"subject": "SUCCESS,COMPLETE"})
