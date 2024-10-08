@@ -194,17 +194,6 @@
             <a href="{% url 'hc-add-group' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
-        {% if enable_linenotify %}
-        <li>
-            <img src="{% static 'img/integrations/linenotify.png' %}"
-                class="icon" alt="LINE Notify icon" />
-
-            <h2>LINE Notify</h2>
-            <p>Receive a notification on LINE when a check goes up or down.</p>
-            <a href="{% url 'hc-add-linenotify' project.code %}" class="btn btn-primary">Add Integration</a>
-        </li>
-        {% endif %}
-
         {% if enable_matrix %}
         <li>
             <img src="{% static 'img/integrations/matrix.png' %}"

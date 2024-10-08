@@ -1216,7 +1216,6 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_call": bool(settings.TWILIO_AUTH),
         "enable_discord": bool(settings.DISCORD_CLIENT_ID),
-        "enable_linenotify": bool(settings.LINENOTIFY_CLIENT_ID),
         "enable_matrix": bool(settings.MATRIX_ACCESS_TOKEN),
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
@@ -2542,95 +2541,6 @@ def add_spike(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_spike.html", ctx)
-
-
-@require_setting("LINENOTIFY_CLIENT_ID")
-@login_required
-def add_linenotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    state = token_urlsafe()
-    authorize_url = " https://notify-bot.line.me/oauth/authorize?" + urlencode(
-        {
-            "client_id": settings.LINENOTIFY_CLIENT_ID,
-            "redirect_uri": settings.SITE_ROOT + reverse(add_linenotify_complete),
-            "response_type": "code",
-            "state": state,
-            "scope": "notify",
-        }
-    )
-
-    ctx = {
-        "page": "channels",
-        "project": project,
-        "authorize_url": authorize_url,
-    }
-
-    request.session["add_linenotify"] = (state, str(project.code))
-    return render(request, "integrations/add_linenotify.html", ctx)
-
-
-class LineTokenResponse(BaseModel):
-    status: Literal[200]
-    access_token: str
-
-
-class LineStatusResponse(BaseModel):
-    target: str
-
-
-@require_setting("LINENOTIFY_CLIENT_ID")
-@login_required
-def add_linenotify_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
-    if "add_linenotify" not in request.session:
-        return HttpResponseForbidden()
-
-    state, code_str = request.session.pop("add_linenotify")
-    code = UUID(code_str)
-    if request.GET.get("state") != state:
-        return HttpResponseForbidden()
-
-    project = _get_rw_project_for_user(request, code)
-    if request.GET.get("error") == "access_denied":
-        messages.warning(request, "LINE Notify setup was cancelled.")
-        return redirect("hc-channels", project.code)
-
-    # Exchange code for access token
-    data = {
-        "grant_type": "authorization_code",
-        "code": request.GET.get("code"),
-        "redirect_uri": settings.SITE_ROOT + reverse(add_linenotify_complete),
-        "client_id": settings.LINENOTIFY_CLIENT_ID,
-        "client_secret": settings.LINENOTIFY_CLIENT_SECRET,
-    }
-    result = curl.post("https://notify-bot.line.me/oauth/token", data)
-    try:
-        tr = LineTokenResponse.model_validate_json(result.content, strict=True)
-        token = tr.access_token
-    except ValidationError:
-        messages.warning(request, "Received an unexpected response from LINE Notify.")
-        logger.warning("Unexpected LINE OAuth response: %s", result.content)
-        return redirect("hc-channels", project.code)
-
-    # Fetch notification target's name, will use it as channel name:
-    headers = {"Authorization": f"Bearer {token}"}
-    result = curl.get("https://notify-api.line.me/api/status", headers=headers)
-    try:
-        sr = LineStatusResponse.model_validate_json(result.content, strict=True)
-        target = sr.target
-    except ValidationError:
-        messages.warning(request, "Received an unexpected response from LINE Notify.")
-        logger.warning("Unexpected LINE Status response: %s", result.content)
-        return redirect("hc-channels", project.code)
-
-    channel = Channel(kind="linenotify", project=project)
-    channel.name = target
-    channel.value = token
-    channel.save()
-    channel.assign_all_checks()
-    messages.success(request, "The LINE Notify integration has been added!")
-
-    return redirect("hc-channels", project.code)
 
 
 @login_required
