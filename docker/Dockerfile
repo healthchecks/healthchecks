@@ -3,7 +3,7 @@ FROM python:3.12-slim-bookworm as builder
 COPY requirements.txt /tmp
 RUN \
     apt-get update && \
-    apt-get install -y build-essential curl libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libpython3-dev pkg-config
+    apt-get install -y build-essential curl libpq-dev libmariadb-dev libffi-dev libssl-dev libcurl4-openssl-dev libsasl2-dev libldap2-dev libpython3-dev pkg-config
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- -y
 ENV PATH=$PATH:/root/.cargo/bin
 RUN \
@@ -23,7 +23,7 @@ WORKDIR /opt/healthchecks
 
 RUN \
     apt-get update && \
-    apt-get install -y libcurl4 libpq5 libmariadb3 libxml2 && \
+    apt-get install -y ca-certificates libcurl4 libpq5 libmariadb3 libxml2 && \
     rm -rf /var/apt/cache && \
     rm -rf /var/lib/apt/lists
 

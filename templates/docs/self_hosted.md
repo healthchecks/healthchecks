@@ -183,6 +183,31 @@ test them on a copy of your database, not on the live database right away.
 In a production setup, you will want to run these commands regularly, as well as
 have regular, automatic database backups set up.
 
+## LDAP Integration
+
+Healthchecks needs the LDAP environment to be configured to use this feature.
+LDAP is disabled unless `AUTH_LDAP` is set to "True". Sample LDAP configuration:
+
+```ini
+AUTH_LDAP="True"
+AUTH_LDAP_SERVER=ldap://ldap-server.example.com:389
+AUTH_LDAP_BIND_USER=LDAPReadOnly@example.com
+AUTH_LDAP_BIND_PASSWORD=hunter2
+AUTH_LDAP_UID_FIELD=mail
+AUTH_LDAP_EMAIL_FIELD=mail
+AUTH_LDAP_FIRSTNAME_FIELD=givenName
+AUTH_LDAP_LASTNAME_FIELD=sn
+AUTH_LDAP_GID_FIELD=cn
+AUTH_LDAP_USER_SEARCH="OU=Accounts,DC=MyCompany"
+AUTH_LDAP_GROUP_SEARCH="OU=Groups,DC=MyCompany"
+AUTH_LDAP_FLAG_IS_ACTIVE="CN=Healthchecks-Active,OU=MyGroup,DC=MyCompany"
+AUTH_LDAP_FLAG_IS_STAFF="CN=Healthchecks-Staff,OU=MyGroup,DC=MyCompany"
+AUTH_LDAP_FLAG_IS_SUPERUSER="CN=Healthchecks-Admin,OU=MyGroup,DC=MyCompany"
+```
+
+You will likely also want to set `REGISTRATION_OPEN` to "False" since users are 
+managed outside of Healthchecks.
+
 ## Next Steps
 
 Get the [source code](https://github.com/healthchecks/healthchecks).

@@ -13,6 +13,9 @@ from typing import Any
 
 import django_stubs_ext
 
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+
 django_stubs_ext.monkeypatch()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -98,6 +101,66 @@ AUTHENTICATION_BACKENDS = [
 REMOTE_USER_HEADER = os.getenv("REMOTE_USER_HEADER")
 if REMOTE_USER_HEADER:
     AUTHENTICATION_BACKENDS = ["hc.accounts.backends.CustomHeaderBackend"]
+
+AUTH_LDAP = os.getenv("AUTH_LDAP")
+if AUTH_LDAP:
+    # Baseline configuration.
+    AUTH_LDAP_SERVER_URI = os.getenv("AUTH_LDAP_SERVER")
+
+    AUTH_LDAP_BIND_DN = os.getenv("AUTH_LDAP_BIND_USER")
+    AUTH_LDAP_BIND_PASSWORD = os.getenv("AUTH_LDAP_BIND_PASSWORD")
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        os.getenv("AUTH_LDAP_USER_SEARCH"),
+        ldap.SCOPE_SUBTREE,
+        '(' + os.getenv("AUTH_LDAP_UID_FIELD") + '=%(user)s)',
+    )
+    # Or:
+    # AUTH_LDAP_USER_DN_TEMPLATE = 'uid=%(user)s,ou=users,dc=example,dc=com'
+
+    # Set up the basic group parameters.
+    AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+        os.getenv("AUTH_LDAP_GROUP_SEARCH"),
+        ldap.SCOPE_SUBTREE,
+        '(objectClass=groupOfNames)',
+    )
+    AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(
+        name_attr=os.getenv("AUTH_LDAP_GID_FIELD", 'cn')
+    )
+
+    # Simple group restrictions
+    # AUTH_LDAP_REQUIRE_GROUP = 'cn=enabled,ou=django,ou=groups,dc=example,dc=com'
+    # AUTH_LDAP_DENY_GROUP = 'cn=disabled,ou=django,ou=groups,dc=example,dc=com'
+
+    # Populate the Django user from the LDAP directory.
+    AUTH_LDAP_USER_ATTR_MAP = {
+        'first_name': os.getenv("AUTH_LDAP_FIRSTNAME_FIELD", 'givenName'),
+        'last_name': os.getenv("AUTH_LDAP_LASTNAME_FIELD", 'sn'),
+        'email': os.getenv("AUTH_LDAP_EMAIL_FIELD", 'mail'),
+    }
+
+    AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+        'is_active': os.getenv("AUTH_LDAP_FLAG_IS_ACTIVE"),
+        'is_staff': os.getenv("AUTH_LDAP_FLAG_IS_STAFF"),
+        'is_superuser': os.getenv("AUTH_LDAP_FLAG_IS_SUPERUSER"),
+    }
+
+    # This is the default, but I like to be explicit.
+    AUTH_LDAP_ALWAYS_UPDATE_USER = True
+
+    # Use LDAP group membership to calculate group permissions.
+    AUTH_LDAP_FIND_GROUP_PERMS = True
+
+    # Cache distinguished names and group memberships for an hour to minimize
+    # LDAP traffic.
+    AUTH_LDAP_CACHE_TIMEOUT = 3600
+
+    # Keep ModelBackend around for per-user permissions and maybe a local
+    # superuser.
+    AUTHENTICATION_BACKENDS = (
+        'hc.accounts.backends.CustomLDAPBackend',
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
 
 ROOT_URLCONF = "hc.urls"
 

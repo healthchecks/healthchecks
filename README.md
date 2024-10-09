@@ -63,7 +63,7 @@ To set up Healthchecks development environment:
 
   ```sh
   sudo apt update
-  sudo apt install -y gcc python3-dev python3-venv libpq-dev libcurl4-openssl-dev libssl-dev
+  sudo apt install -y gcc python3-dev python3-venv libpq-dev libcurl4-openssl-dev libssl-dev libsasl2-dev libldap2-dev
   ```
 
 * Prepare directory for project code and virtualenv. Feel free to use a
