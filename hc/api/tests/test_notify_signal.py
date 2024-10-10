@@ -406,7 +406,7 @@ class NotifySignalTestCase(BaseTestCase):
     @patch("hc.api.transports.logger")
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_error_code(self, socket: Mock, logger: Mock) -> None:
-        setup_mock(socket, {"error": {"code": 123}})
+        setup_mock(socket, {"error": {"code": 123, "foo": "foobar"}})
 
         self.channel.notify(self.flip)
 
@@ -414,6 +414,11 @@ class NotifySignalTestCase(BaseTestCase):
         self.assertEqual(n.error, "signal-cli call failed (123)")
 
         self.assertTrue(logger.error.called)
+        # The log message should contain the full JSON message we received from
+        # signal-cli. This helps troubleshooting when we receive messages
+        # from signal-cli that we have not seen before.
+        message = logger.error.call_args[0][0]
+        self.assertIn("foobar", message)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_oserror(self, socket: Mock) -> None:

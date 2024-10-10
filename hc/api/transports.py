@@ -1448,7 +1448,10 @@ class Signal(Transport):
                     raise SignalRateLimitFailure(result.token, reply_bytes)
 
             msg = f"signal-cli call failed ({reply.error.code})"
-            logger.error(msg)
+            msg_with_reply = msg + "\n" + reply_bytes.decode()
+            # Include signal-cli reply in the message we log for ourselves
+            logger.error(msg_with_reply)
+            # Do not include signal-cli reply in the message we show to the user
             raise TransportError(msg)
 
     @classmethod
