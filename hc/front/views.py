@@ -201,12 +201,17 @@ def _get_rw_project_for_user(request: HttpRequest, code: UUID) -> Project:
     return project
 
 
-def _refresh_last_active_date(profile: Profile) -> None:
+def _refresh_last_active_date(request: AuthenticatedHttpRequest) -> None:
     """Update last_active_date if it is more than a day old."""
 
+    profile = request.profile
     if profile.last_active_date is None or (now() - profile.last_active_date).days > 0:
         profile.last_active_date = now()
         profile.save()
+
+        # Also modify session to trigger session cookie refresh
+        # and push forward its expiry date:
+        request.session["last_active"] = profile.last_active_date.timestamp()
 
     return None
 
@@ -221,7 +226,7 @@ def _get_referer_qs(request: HttpRequest) -> str:
 
 @login_required
 def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    _refresh_last_active_date(request.profile)
+    _refresh_last_active_date(request)
     project, rw = _get_project_for_user(request, code)
 
     if request.GET.get("sort") in VALID_SORT_VALUES:
@@ -378,6 +383,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
     # We now know user is logged, tell the type checker request.profile exists-
     request = cast(AuthenticatedHttpRequest, request)
+    _refresh_last_active_date(request)
     summary = _get_project_summary(request.profile)
     if "refresh" in request.GET:
         return JsonResponse({str(k): v for k, v in summary.items()})
@@ -974,7 +980,7 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
 @login_required
 def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    _refresh_last_active_date(request.profile)
+    _refresh_last_active_date(request)
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     if request.GET.get("urls") in ("uuid", "slug") and rw:
