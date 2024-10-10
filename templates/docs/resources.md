@@ -4,17 +4,18 @@ A collection of third-party software projects that integrate with SITE_NAME.
 Please submit additions and corrections
 [on GitHub](https://github.com/healthchecks/healthchecks/issues).
 
-## Tools for Self-Hosting
-
-* [linuxserver/docker-healthchecks](https://github.com/linuxserver/docker-healthchecks) – Alternative Docker image
-* [galexrt/docker-healthchecks](https://github.com/galexrt/docker-healthchecks) – Alternative Docker image
-
 ## Command Runners, Shell Wrappers
 
 * [runitor](https://github.com/bdd/runitor) - A command runner with Healthchecks.io integration to keep your scripts and containers simple.
 * [crontask.sh](https://github.com/pforret/crontask) – Bash wrapper to use in crontab. Supports pinging.
 * [task-mon](https://github.com/dimo414/task-mon) – A small binary for notifying Healthchecks.io when a command runs, written in Rust.
 * [hc-monitor](https://gist.github.com/odolbeau/bd6d8eb7910d1289e2687682c8db9275) – Bash wrapper, supports pinging.
+
+## Tools for Self-Hosting
+
+* [linuxserver/docker-healthchecks](https://github.com/linuxserver/docker-healthchecks) – Alternative Docker image
+* [galexrt/docker-healthchecks](https://github.com/galexrt/docker-healthchecks) – Alternative Docker image
+* [Elestio](https://elest.io/open-source/healthchecks) – Managed hosting platform with Healthchecks support (uses the linuxserver image)
 
 ## API Wrappers
 
