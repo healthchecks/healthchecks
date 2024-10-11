@@ -38,7 +38,7 @@
 }
 
 #period-slider .noUi-connect {
-  background: #22bc66;
+    background: #22bc66;
 }
 
 #grace-slider {
@@ -50,7 +50,12 @@
 }
 
 #period-slider .noUi-value, #grace-slider .noUi-value {
+    cursor: pointer;
     color: var(--text-muted);
+}
+
+#period-slider .noUi-value:hover, #grace-slider .noUi-value:hover {
+    color: var(--text-color);
 }
 
 .update-timeout-terms {

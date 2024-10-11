@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Remove `prunenotifications` management command (now cleaned up automatically)
 - Update settings.py to read SECURE_PROXY_SSL_HEADER from env vars
 - Remove LINE Notify onboarding form (as LINE Notify is shutting down on Apr 1, 2025)
+- Make slider labels clickable in the "Update Period & Grace" dialog (#1039)
 
 ### Bug Fixes
 - Update sqlite settings to avoid "Database is locked" errors (#1057)

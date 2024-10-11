@@ -106,15 +106,25 @@ $(function () {
         }
     });
 
-    // Update inputs and the hidden field when user slides the period slider
-    periodSlider.noUiSlider.on("slide", function(a, b, value) {
-        var rounded = Math.round(value);
-        $("#update-timeout-timeout").val(rounded);
-
-        var parsed = secsToUnits(rounded);
+    function setPeriod(secs) {
+        // Set the hidden form field
+        $("#update-timeout-timeout").val(secs);
+        // Set the visible value+units form fields
+        var parsed = secsToUnits(secs);
         period.value = parsed.value;
         periodUnit.value = parsed.unit;
+    }
+
+    // Update inputs and the hidden field when user slides the period slider
+    periodSlider.noUiSlider.on("slide", function(a, b, value) {
+        setPeriod(Math.round(value));
     });
+
+    // Update slider, inputs and the hidden field when user clicks slider labels
+    $("#period-slider .noUi-value").on("click", function() {
+        periodSlider.noUiSlider.set(this.dataset.value);
+        setPeriod(this.dataset.value);
+    })
 
     // Update the slider and the hidden field when user changes period inputs
     $("#update-timeout-modal .period-input").on("keyup change", function() {
@@ -150,15 +160,25 @@ $(function () {
         }
     });
 
-    // Update inputs and the hidden field when user slides the grace slider
-    graceSlider.noUiSlider.on("slide", function(a, b, value) {
-        var rounded = Math.round(value);
-        $("#update-timeout-grace").val(rounded);
-
-        var parsed = secsToUnits(rounded);
+    function setGrace(secs) {
+        // Set the hidden form field
+        $("#update-timeout-grace").val(secs);
+        // Set the visible value+units form fields
+        var parsed = secsToUnits(secs);
         grace.value = parsed.value;
         graceUnit.value = parsed.unit;
+    }
+
+    // Update inputs and the hidden field when user slides the grace slider
+    graceSlider.noUiSlider.on("slide", function(a, b, value) {
+        setGrace(Math.round(value));
     });
+
+    // Update slider, inputs and the hidden field when user clicks slider labels
+    $("#grace-slider .noUi-value").on("click", function() {
+        graceSlider.noUiSlider.set(this.dataset.value);
+        setGrace(this.dataset.value);
+    })
 
     // Update the slider and the hidden field when user changes grace inputs
     $("#update-timeout-modal .grace-input").on("keyup change", function() {
