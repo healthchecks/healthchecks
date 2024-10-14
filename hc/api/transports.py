@@ -1524,13 +1524,20 @@ class Signal(Transport):
             "down_checks": self.down_checks(flip.owner),
         }
         text = tmpl("signal_message.html", **ctx)
-        try:
-            self.send(self.channel.phone.value, text)
-        except SignalRateLimitFailure as e:
-            self.channel.send_signal_captcha_alert(e.token, e.reply.decode())
-            plaintext, _ = extract_signal_styles(text)
-            self.channel.send_signal_rate_limited_notice(text, plaintext)
-            raise e
+        tries_left = 2
+        while True:
+            try:
+                return self.send(self.channel.phone.value, text)
+            except SignalRateLimitFailure as e:
+                self.channel.send_signal_captcha_alert(e.token, e.reply.decode())
+                plaintext, _ = extract_signal_styles(text)
+                self.channel.send_signal_rate_limited_notice(text, plaintext)
+                raise e
+            except TransportError as e:
+                tries_left -= 1
+                if e.permanent or tries_left == 0:
+                    raise e
+                logger.debug("Retrying signal-cli call")
 
 
 class Gotify(HttpTransport):

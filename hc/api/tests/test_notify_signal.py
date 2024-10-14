@@ -363,6 +363,9 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
+        # It should have tried one time:
+        self.assertEqual(socket.return_value.__enter__.call_count, 1)
+
         # It should disable the channel, so we don't attempt deliveries to
         # this recipient in the future
         self.channel.refresh_from_db()
@@ -487,6 +490,9 @@ class NotifySignalTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
+        # It should have tried one time:
+        self.assertEqual(socket.return_value.__enter__.call_count, 1)
+
         n = Notification.objects.get()
         self.assertEqual(n.error, "CAPTCHA proof required")
 
@@ -525,3 +531,31 @@ class NotifySignalTestCase(BaseTestCase):
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "signal-cli call failed (-32602)")
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_retries_network_failure(self, socket: Mock) -> None:
+        msg = {
+            "error": {
+                "code": -1,
+                "message": "Failed to send message",
+                "data": {
+                    "response": {
+                        "results": [
+                            {
+                                "recipientAddress": {"number": "+123456789"},
+                                "type": "NETWORK_FAILURE",
+                            }
+                        ],
+                    }
+                },
+            },
+        }
+        setup_mock(socket, msg)
+
+        self.channel.notify(self.flip)
+
+        # It should have tried two times:
+        self.assertEqual(socket.return_value.__enter__.call_count, 2)
+        n = Notification.objects.get()
+
+        self.assertEqual(n.error, "signal-cli call failed (-1)")
