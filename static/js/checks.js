@@ -281,7 +281,7 @@ $(function () {
         options: $("#my-checks-tags div").map(divToOption).get()
     });
 
-    $('.my-checks-url').tooltip({title: "Click to copy"});
+    $('.my-checks-url').tooltip({container: "body", title: "Click to copy"});
     $('.my-checks-url').click(function(e) {
         if (window.getSelection().toString()) {
             // do nothing, selection not empty
