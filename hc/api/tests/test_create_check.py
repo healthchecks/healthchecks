@@ -463,8 +463,13 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_handles_invalid_slug(self) -> None:
         for slug in ["Uppercase", "special!", "look spaces"]:
-            r = self.post({"name": "Foo", "slug": "Hey!"}, v=3)
+            r = self.post({"name": "Foo", "slug": slug}, v=3)
             self.assertEqual(r.status_code, 400)
             self.assertEqual(
                 r.json()["error"], "json validation error: slug does not match pattern"
             )
+
+    def test_it_rejects_long_slug(self) -> None:
+        r = self.post(
+            {"name": "Foo", "slug": "a" * 101}, v=3, expect_fragment="slug is too long"
+        )

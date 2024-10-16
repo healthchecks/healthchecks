@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Update sqlite settings to avoid "Database is locked" errors (#1057)
+- Fix API to gracefully handle too long slugs
 
 ## v3.6 - 2024-09-04
 
