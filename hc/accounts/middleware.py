@@ -54,6 +54,9 @@ class CustomHeaderMiddleware(object):
                 auth.logout(request)
             return self.get_response(request)
 
+        # Normalizes email address to lower case for consistency with other places.
+        email = email.lower()
+
         # If the user is already authenticated and that user is the user we are
         # getting passed in the headers, then the correct user is already
         # persisted in the session and we don't need to continue.

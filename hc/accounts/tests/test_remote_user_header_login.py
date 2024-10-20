@@ -22,6 +22,10 @@ class RemoteUserHeaderTestCase(BaseTestCase):
         r = self.client.get("/accounts/profile/", AUTH_USER="alice@example.org")
         self.assertContains(r, "alice@example.org")
 
+    def test_it_normalizes_case_sensitivity(self) -> None:
+        r = self.client.get("/accounts/profile/", AUTH_USER="AlIcE@eXaMpLe.OrG")
+        self.assertContains(r, "alice@example.org")
+
     def test_it_does_nothing_when_header_not_set(self) -> None:
         r = self.client.get("/accounts/profile/")
         self.assertRedirects(r, "/accounts/login/?next=/accounts/profile/")
