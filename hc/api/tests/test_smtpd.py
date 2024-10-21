@@ -40,12 +40,17 @@ Content-Transfer-Encoding: 8bit
 """.strip()
 
 
-@override_settings(S3_BUCKET=None)
+class NullSink:
+    def write(self, text: str) -> None:
+        pass
+
+
+@override_settings(S3_BUCKET=None, PING_EMAIL_DOMAIN="hc.example.com")
 class SmtpdTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
-        self.email = "%s@does.not.matter" % self.check.code
+        self.email = f"{self.check.code}@hc.example.com"
 
     def test_it_works(self) -> None:
         _process_message("1.2.3.4", "foo@example.org", self.email, b"hello world")
@@ -210,10 +215,6 @@ class SmtpdTestCase(BaseTestCase):
         envelope.rcpt_tos = ["bar@example.org", self.email]
         envelope.content = b"hello world"
 
-        class NullSink:
-            def write(self, text: str) -> None:
-                pass
-
         handler = PingHandler(NullSink())
         await handler.handle_DATA(Mock(), session, envelope)
 
@@ -226,12 +227,14 @@ class SmtpdTestCase(BaseTestCase):
 
     async def test_it_rejects_non_uuid_mailboxes(self) -> None:
         session = Session(loop=Mock())
-
-        class NullSink:
-            def write(self, text: str) -> None:
-                pass
-
         handler = PingHandler(NullSink())
         address = "foo@example.com"
+        result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
+        self.assertTrue(result.startswith("550"))
+
+    async def test_it_rejects_wrong_domain(self) -> None:
+        session = Session(loop=Mock())
+        handler = PingHandler(NullSink())
+        address = f"{self.check.code}@bad.domain"
         result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
         self.assertTrue(result.startswith("550"))

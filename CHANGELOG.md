@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ## v3.8-dev - Unreleased
 
 ### Bug Fixes
-- Fix the smtp listener to reject email addresses with non-UUID local parts (#1077)
+- Improve recipient address validation in the smtp listener (#1077)
 
 ## v3.7 - 2024-10-21
 

@@ -11,6 +11,7 @@ from typing import Any, Protocol
 from aiosmtpd.controller import Controller
 from aiosmtpd.smtp import SMTP, Envelope, Session
 from asgiref.sync import sync_to_async
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import connection
 
@@ -107,10 +108,11 @@ class PingHandler:
         address: str,
         rcpt_options: list[str],
     ) -> str:
-        to_parts = address.split("@")
-        code = to_parts[0]
+        code, domain = address.split("@", maxsplit=1)
+        if domain != settings.PING_EMAIL_DOMAIN:
+            return "550 5.1.1 Recipient rejected"
         if not RE_UUID.match(code):
-            return "550 5.1.0 Requested action not taken: mailbox unavailable"
+            return "550 5.1.1 Invalid mailbox"
 
         envelope.rcpt_tos.append(address)
         return "250 OK"
