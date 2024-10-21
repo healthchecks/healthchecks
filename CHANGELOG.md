@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.7-dev - Unreleased
+## v3.7 - 2024-10-21
 
 ### Improvements
 - Increase outgoing webhook timeout from 10 to 30 seconds
