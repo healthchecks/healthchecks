@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import Mock
 
+from aiosmtpd.smtp import Envelope, Session
 from django.test.utils import override_settings
 
 from hc.api.management.commands.smtpd import PingHandler, _process_message
@@ -197,20 +198,24 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, None)
 
     async def test_it_handles_multiple_recipients(self) -> None:
-        class Session:
-            peer = ["1.2.3.4"]
+        session = Session(loop=Mock())
+        # Session.peer appears to have an incorrect type annotation:
+        # https://github.com/aio-libs/aiosmtpd/issues/518
+        # If/when the type annotation gets fixed, we should be able to
+        # remove the type: ignore below
+        session.peer = ("1.2.3.4", 1234)  # type: ignore
 
-        class Envelope:
-            mail_from = "foo@example.org"
-            rcpt_tos = ["bar@example.org", self.email]
-            content = b"hello world"
+        envelope = Envelope()
+        envelope.mail_from = "foo@example.org"
+        envelope.rcpt_tos = ["bar@example.org", self.email]
+        envelope.content = b"hello world"
 
         class NullSink:
             def write(self, text: str) -> None:
                 pass
 
         handler = PingHandler(NullSink())
-        await handler.handle_DATA(Mock(), Session(), Envelope())
+        await handler.handle_DATA(Mock(), session, envelope)
 
         ping = await Ping.objects.alatest("id")
         self.assertEqual(ping.scheme, "email")
@@ -220,11 +225,13 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(ping.kind, None)
 
     async def test_it_rejects_non_uuid_mailboxes(self) -> None:
+        session = Session(loop=Mock())
+
         class NullSink:
             def write(self, text: str) -> None:
                 pass
 
         handler = PingHandler(NullSink())
         address = "foo@example.com"
-        result = await handler.handle_RCPT(None, None, None, address, None)
+        result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
         self.assertTrue(result.startswith("550"))
