@@ -109,6 +109,15 @@ class PingHandler:
         self.stdout = stdout
         self.process_message = sync_to_async(_process_message)
 
+    async def handle_RCPT(self, server, session, envelope, address, rcpt_options):
+        to_parts = address.split("@")
+        code = to_parts[0]
+        if not RE_UUID.match(code):
+            return "550 5.1.0 Requested action not taken: mailbox unavailable"
+
+        envelope.rcpt_tos.append(address)
+        return "250 OK"
+
     async def handle_DATA(
         self, server: SMTP, session: Session, envelope: Envelope
     ) -> str:

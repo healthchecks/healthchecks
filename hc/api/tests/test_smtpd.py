@@ -218,3 +218,13 @@ class SmtpdTestCase(BaseTestCase):
         assert ping.body_raw
         self.assertEqual(bytes(ping.body_raw), b"hello world")
         self.assertEqual(ping.kind, None)
+
+    async def test_it_rejects_non_uuid_mailboxes(self) -> None:
+        class NullSink:
+            def write(self, text: str) -> None:
+                pass
+
+        handler = PingHandler(NullSink())
+        address = "foo@example.com"
+        result = await handler.handle_RCPT(None, None, None, address, None)
+        self.assertTrue(result.startswith("550"))
