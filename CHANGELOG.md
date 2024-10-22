@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v3.8-dev - Unreleased
 
+### Improvements
+- Rewrite the docker/fetchstatus.py script to reduce Docker container CPU use (#1071)
+
 ### Bug Fixes
 - Improve recipient address validation in the smtp listener (#1077)
 
