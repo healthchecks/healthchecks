@@ -1,4 +1,4 @@
-FROM python:3.12.6-slim-bookworm AS builder
+FROM python:3.12.7-slim-bookworm AS builder
 
 COPY requirements.txt /tmp
 RUN \
@@ -15,7 +15,7 @@ RUN \
     rm -rf /opt/healthchecks/.git && \
     rm -rf /opt/healthchecks/stuff
 
-FROM python:3.12.6-slim-bookworm
+FROM python:3.12.7-slim-bookworm
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
@@ -23,7 +23,7 @@ WORKDIR /opt/healthchecks
 
 RUN \
     apt-get update && \
-    apt-get install -y libcurl4 libpq5 libmariadb3 libxml2 && \
+    apt-get install -y libcurl4 libexpat1 libpq5 libmariadb3 libxml2 && \
     rm -rf /var/apt/cache && \
     rm -rf /var/lib/apt/lists
 
