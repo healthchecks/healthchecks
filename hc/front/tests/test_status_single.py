@@ -18,8 +18,23 @@ class StatusSingleTestCase(BaseTestCase):
         doc = r.json()
 
         self.assertEqual(doc["status"], "new")
-        self.assertTrue("never received a ping" in doc["status_text"])
-        self.assertTrue("not received any pings yet" in doc["events"])
+        self.assertIn("never received a ping", doc["status_text"])
+        self.assertIn("not received any pings yet", doc["events"])
+
+    def test_status_text_shows_elapsed_run_time(self) -> None:
+        p = Ping.objects.create(owner=self.check, n=1, kind="start")
+        self.check.status = "new"
+        self.check.n_pings = 1
+        self.check.last_start = p.created
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        doc = r.json()
+
+        self.assertEqual(doc["status"], "new")
+        self.assertIn("This check is ready for pings.", doc["status_text"])
+        self.assertIn("Currently running, started now.", doc["status_text"])
 
     def test_it_returns_403_for_anon_requests(self) -> None:
         r = self.client.get(self.url)
@@ -37,7 +52,7 @@ class StatusSingleTestCase(BaseTestCase):
 
         self.assertEqual(doc["status"], "up")
         self.assertEqual(doc["updated"], str(p.created.timestamp()))
-        self.assertTrue("test-user-agent" in doc["events"])
+        self.assertIn("test-user-agent", doc["events"])
 
     def test_it_omits_events(self) -> None:
         p = Ping.objects.create(owner=self.check, ua="test-user-agent", n=1)
@@ -52,7 +67,7 @@ class StatusSingleTestCase(BaseTestCase):
         r = self.client.get(url)
         doc = r.json()
 
-        self.assertFalse("events" in doc)
+        self.assertNotIn("events", doc)
 
     def test_it_allows_cross_team_access(self) -> None:
         self.client.login(username="bob@example.org", password="password")
@@ -99,7 +114,7 @@ class StatusSingleTestCase(BaseTestCase):
         r = self.client.get(self.url)
         doc = r.json()
 
-        self.assertTrue("Ignored" in doc["events"])
+        self.assertIn("Ignored", doc["events"])
 
     def test_it_handles_log_event(self) -> None:
         p = Ping.objects.create(owner=self.check, kind="log", n=1)
