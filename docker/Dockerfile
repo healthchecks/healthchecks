@@ -45,5 +45,5 @@ RUN mkdir /data && chown hc /data
 USER hc
 
 ENV USE_GZIP_MIDDLEWARE=True
-HEALTHCHECK --interval=10s --start-period=10s --retries=1 CMD ./fetchstatus.py
+HEALTHCHECK --interval=60s --start-period=10s --retries=1 CMD ./fetchstatus.py
 CMD [ "uwsgi", "/opt/healthchecks/docker/uwsgi.ini"]
