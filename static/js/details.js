@@ -95,7 +95,7 @@ $(function () {
                     $("#current-status-icon").attr("class", "status ic-" + data.status);
                     $("#current-status-text").html(data.status_text);
 
-                    $('#pause-btn').prop('disabled', data.status == "paused");
+                    $('#pause-btn').prop('disabled', data.status == "paused" && !data.started);
                 }
 
                 if (data.started != lastStarted) {
