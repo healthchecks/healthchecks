@@ -169,6 +169,27 @@ exist in the database.</p>
 test them on a copy of your database, not on the live database right away.
 In a production setup, you will want to run these commands regularly, as well as
 have regular, automatic database backups set up.</p>
+<h2>LDAP Integration</h2>
+<p>Healthchecks needs the LDAP environment to be configured to use this feature.
+LDAP is disabled unless <code>AUTH_LDAP</code> is set to "True". Sample LDAP configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="na">AUTH_LDAP</span><span class="o">=</span><span class="s">&quot;True&quot;</span>
+<span class="na">AUTH_LDAP_SERVER</span><span class="o">=</span><span class="s">ldap://ldap-server.example.com:389</span>
+<span class="na">AUTH_LDAP_BIND_USER</span><span class="o">=</span><span class="s">LDAPReadOnly@example.com</span>
+<span class="na">AUTH_LDAP_BIND_PASSWORD</span><span class="o">=</span><span class="s">hunter2</span>
+<span class="na">AUTH_LDAP_UID_FIELD</span><span class="o">=</span><span class="s">mail</span>
+<span class="na">AUTH_LDAP_EMAIL_FIELD</span><span class="o">=</span><span class="s">mail</span>
+<span class="na">AUTH_LDAP_FIRSTNAME_FIELD</span><span class="o">=</span><span class="s">givenName</span>
+<span class="na">AUTH_LDAP_LASTNAME_FIELD</span><span class="o">=</span><span class="s">sn</span>
+<span class="na">AUTH_LDAP_GID_FIELD</span><span class="o">=</span><span class="s">cn</span>
+<span class="na">AUTH_LDAP_USER_SEARCH</span><span class="o">=</span><span class="s">&quot;OU=Accounts,DC=MyCompany&quot;</span>
+<span class="na">AUTH_LDAP_GROUP_SEARCH</span><span class="o">=</span><span class="s">&quot;OU=Groups,DC=MyCompany&quot;</span>
+<span class="na">AUTH_LDAP_FLAG_IS_ACTIVE</span><span class="o">=</span><span class="s">&quot;CN=Healthchecks-Active,OU=MyGroup,DC=MyCompany&quot;</span>
+<span class="na">AUTH_LDAP_FLAG_IS_STAFF</span><span class="o">=</span><span class="s">&quot;CN=Healthchecks-Staff,OU=MyGroup,DC=MyCompany&quot;</span>
+<span class="na">AUTH_LDAP_FLAG_IS_SUPERUSER</span><span class="o">=</span><span class="s">&quot;CN=Healthchecks-Admin,OU=MyGroup,DC=MyCompany&quot;</span>
+</code></pre></div>
+
+<p>You will likely also want to set <code>REGISTRATION_OPEN</code> to "False" since users are 
+managed outside of Healthchecks.</p>
 <h2>Next Steps</h2>
 <p>Get the <a href="https://github.com/healthchecks/healthchecks">source code</a>.</p>
 <p>See <a href="../self_hosted_configuration/">Configuration</a> for a list of configuration options.</p>

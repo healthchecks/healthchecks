@@ -1,12 +1,31 @@
 from __future__ import annotations
+import os
+import logging
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django_auth_ldap.backend import LDAPBackend
 
 from hc.accounts.models import Profile
 from hc.accounts.views import _make_user
 
+logger = logging.getLogger(__name__)
+
+class CustomLDAPBackend(LDAPBackend):
+    def get_or_build_user(self, username, ldap_user):
+
+        # mail = "mail"
+        # if self.settings.EMAIL_FIELD:
+        #     mail = self.settings.EMAIL_FIELD
+        mail = os.getenv("AUTH_LDAP_EMAIL_FIELD", "mail")
+
+        if mail in ldap_user.attrs:
+            ldap_user.attrs[mail][0] = ldap_user.attrs[mail][0].lower()
+
+        user = super().get_or_build_user(username, ldap_user)
+
+        return user
 
 class BasicBackend(object):
     def get_user(self, user_id: int) -> User | None:
