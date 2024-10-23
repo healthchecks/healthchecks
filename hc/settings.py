@@ -99,6 +99,9 @@ REMOTE_USER_HEADER = os.getenv("REMOTE_USER_HEADER")
 if REMOTE_USER_HEADER:
     AUTHENTICATION_BACKENDS = ["hc.accounts.backends.CustomHeaderBackend"]
 
+# https://github.com/healthchecks/healthchecks/issues/1074
+REMOTE_USER_HEADER_FORCE_LOWERCASE = os.getenv("REMOTE_USER_HEADER_FORCE_LOWERCASE", False)
+
 ROOT_URLCONF = "hc.urls"
 
 TEMPLATES = [

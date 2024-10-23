@@ -22,7 +22,12 @@ class RemoteUserHeaderTestCase(BaseTestCase):
         r = self.client.get("/accounts/profile/", AUTH_USER="alice@example.org")
         self.assertContains(r, "alice@example.org")
 
-    def test_it_normalizes_case_sensitivity(self) -> None:
+    def test_it_does_not_normalize_user(self) -> None:
+        r = self.client.get("/accounts/profile/", AUTH_USER="AlIcE@eXaMpLe.OrG")
+        self.assertContains(r, "AlIcE@eXaMpLe.OrG")
+
+    @override_settings(REMOTE_USER_HEADER_FORCE_LOWERCASE=True)
+    def test_it_normalizes_user_with_enabled_setting(self) -> None:
         r = self.client.get("/accounts/profile/", AUTH_USER="AlIcE@eXaMpLe.OrG")
         self.assertContains(r, "alice@example.org")
 
