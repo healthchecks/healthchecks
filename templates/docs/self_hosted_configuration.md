@@ -53,6 +53,7 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#PUSHOVER_SUBSCRIPTION_URL">PUSHOVER_SUBSCRIPTION_URL</a></li>
 <li><a href="#REGISTRATION_OPEN">REGISTRATION_OPEN</a></li>
 <li><a href="#REMOTE_USER_HEADER">REMOTE_USER_HEADER</a></li>
+<li><a href="#REMOTE_USER_HEADER_FORCE_LOWERCASE">REMOTE_USER_HEADER_FORCE_LOWERCASE</a></li>
 <li><a href="#ROCKETCHAT_ENABLED">ROCKETCHAT_ENABLED</a></li>
 <li><a href="#RP_ID">RP_ID</a></li>
 <li><a href="#S3_ACCESS_KEY">S3_ACCESS_KEY</a></li>
@@ -622,6 +623,15 @@ using the `local_settings.py` file instead of environment variables, and specify
 REMOTE_USER_HEADER = "HTTP_X_AUTHENTICATED_USER"
 AUTHENTICATION_BACKENDS = ["hc.accounts.backends.CustomHeaderBackend"]
 ```
+
+## `REMOTE_USER_HEADER_FORCE_LOWERCASE` {: #REMOTE_USER_HEADER_FORCE_LOWERCASE }
+
+Default: `False`
+
+A boolean that will normalize values of `REMOTE_USER_HEADER` to lower cases if turned on.
+
+See [#1074](https://github.com/healthchecks/healthchecks/issues/1074) for details.
+
 
 ## `ROCKETCHAT_ENABLED` {: #ROCKETCHAT_ENABLED }
 
