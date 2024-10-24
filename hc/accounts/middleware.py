@@ -54,6 +54,12 @@ class CustomHeaderMiddleware(object):
                 auth.logout(request)
             return self.get_response(request)
 
+        # The email address from the external authentication system may be in
+        # in upper case or mixed case. Convert it to lower case, as we do
+        # elsewhere in the system (when registering new users, when inviting users
+        # into projects, when changing email address) to avoid naming conflicts.
+        email = email.lower()
+
         # If the user is already authenticated and that user is the user we are
         # getting passed in the headers, then the correct user is already
         # persisted in the session and we don't need to continue.

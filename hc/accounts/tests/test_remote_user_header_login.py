@@ -22,6 +22,12 @@ class RemoteUserHeaderTestCase(BaseTestCase):
         r = self.client.get("/accounts/profile/", AUTH_USER="alice@example.org")
         self.assertContains(r, "alice@example.org")
 
+    def test_it_forces_lowercase(self) -> None:
+        r = self.client.get("/accounts/profile/", AUTH_USER="USER@example.org")
+        # It should have created a new user account, the email should have been
+        # converted to lowercase
+        self.assertContains(r, "user@example.org")
+
     def test_it_does_nothing_when_header_not_set(self) -> None:
         r = self.client.get("/accounts/profile/")
         self.assertRedirects(r, "/accounts/login/?next=/accounts/profile/")

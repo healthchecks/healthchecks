@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Rewrite the docker/fetchstatus.py script to reduce Docker container CPU use (#1071)
 - Update Dockerfile to use Python 3.13
+- Update CustomHeaderMiddleware to normalize email addresses to lower case (#1074)
+- Add data migration to convert existing user account emails to lower case
 
 ### Bug Fixes
 - Improve recipient address validation in the smtp listener (#1077)
