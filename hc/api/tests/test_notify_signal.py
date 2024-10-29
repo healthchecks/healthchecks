@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from __future__ import annotations
 
 import json
@@ -21,7 +19,7 @@ from hc.test import BaseTestCase
 Address = str | tuple[str, int]
 
 
-class MockSocket(object):
+class MockSocket:
     def __init__(
         self, response_tmpl: Any, side_effect: Exception | None = None
     ) -> None:

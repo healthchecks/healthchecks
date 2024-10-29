@@ -29,7 +29,7 @@ class WebhookValidator(URLValidator):
         super().__call__(self.add_tld(value))
 
 
-class CronValidator(object):
+class CronValidator:
     message = "Not a valid cron expression."
 
     def __call__(self, value: str) -> None:
@@ -46,7 +46,7 @@ class CronValidator(object):
             raise ValidationError(message=self.message)
 
 
-class OnCalendarValidator(object):
+class OnCalendarValidator:
     message = "Not a valid OnCalendar expression."
 
     def __call__(self, value: str) -> None:
@@ -64,7 +64,7 @@ class OnCalendarValidator(object):
             raise ValidationError(message=self.message)
 
 
-class TimezoneValidator(object):
+class TimezoneValidator:
     message = "Not a valid time zone."
 
     def __call__(self, value: str) -> None:

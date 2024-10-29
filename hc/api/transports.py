@@ -80,7 +80,7 @@ class TransportError(Exception):
         self.permanent = permanent
 
 
-class Transport(object):
+class Transport:
     def __init__(self, channel: Channel):
         self.channel = channel
 

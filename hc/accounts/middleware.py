@@ -13,7 +13,7 @@ from hc.accounts.models import Profile
 MiddlewareFunc = Callable[[HttpRequest], HttpResponse]
 
 
-class TeamAccessMiddleware(object):
+class TeamAccessMiddleware:
     def __init__(self, get_response: MiddlewareFunc) -> None:
         self.get_response = get_response
 
@@ -25,7 +25,7 @@ class TeamAccessMiddleware(object):
         return self.get_response(request)
 
 
-class CustomHeaderMiddleware(object):
+class CustomHeaderMiddleware:
     """
     Middleware for utilizing Web-server-provided authentication.
 

@@ -29,7 +29,7 @@ class CurlError(Exception):
         self.message = message
 
 
-class Response(object):
+class Response:
     def __init__(self, status_code: int, content: bytes) -> None:
         self.status_code = status_code
         self.content = content

@@ -149,7 +149,7 @@ class DowntimeRecord:
         return up_seconds / max_seconds
 
 
-class DowntimeRecorder(object):
+class DowntimeRecorder:
     def __init__(self, boundaries: list[datetime], tz: str, created: datetime) -> None:
         """
         `boundaries` is a list of timezone-aware datetimes of the starts of time

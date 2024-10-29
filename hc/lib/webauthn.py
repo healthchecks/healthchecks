@@ -17,7 +17,7 @@ from fido2.webauthn import (
 fido2.features.webauthn_json_mapping.enabled = True
 
 
-class CreateHelper(object):
+class CreateHelper:
     def __init__(self, rp_id: str, credentials: Iterable[bytes]):
         rp = PublicKeyCredentialRpEntity(id=rp_id, name="healthchecks")
         self.server = Fido2Server(rp)
@@ -52,7 +52,7 @@ class CreateHelper(object):
         return auth_data.credential_data
 
 
-class GetHelper(object):
+class GetHelper:
     def __init__(self, rp_id: str, credentials: Iterable[bytes]):
         rp = PublicKeyCredentialRpEntity(id=rp_id, name="healthchecks")
         self.server = Fido2Server(rp)

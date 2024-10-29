@@ -10,7 +10,7 @@ from django.test.utils import override_settings
 from hc.lib.curl import CurlError, request
 
 
-class FakeCurl(object):
+class FakeCurl:
     def __init__(self, ip: str = "1.2.3.4") -> None:
         self.opts: dict[int, Any] = {}
         self.ip = ip

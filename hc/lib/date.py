@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 from django.utils.timezone import now
 
 
-class Unit(object):
+class Unit:
     def __init__(self, name: str, nsecs: int):
         self.name = name
         self.plural = name + "s"
