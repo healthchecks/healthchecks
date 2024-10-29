@@ -24,8 +24,7 @@ RE_UUID = re.compile(
 
 
 class LogSink(Protocol):
-    def write(self, text: str) -> None:
-        ...
+    def write(self, msg: str) -> None: ...
 
 
 def _match(subject: str, keywords: str) -> bool:
