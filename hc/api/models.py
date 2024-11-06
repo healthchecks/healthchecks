@@ -548,7 +548,7 @@ class Check(models.Model):
             pass
 
     @property
-    def visible_pings(self) -> QuerySet["Ping"]:
+    def visible_pings(self) -> QuerySet[Ping]:
         threshold = self.n_pings - self.project.owner_profile.ping_log_limit
         return self.ping_set.filter(n__gt=threshold)
 
@@ -935,7 +935,7 @@ class Channel(models.Model):
         _, cls = TRANSPORTS[self.kind]
         return cls(self)
 
-    def notify(self, flip: "Flip", is_test: bool = False) -> str:
+    def notify(self, flip: Flip, is_test: bool = False) -> str:
         if self.transport.is_noop(flip.new_status):
             return "no-op"
 

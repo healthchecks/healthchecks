@@ -51,7 +51,7 @@ def month(dt: datetime) -> date:
 
 
 class ProfileManager(models.Manager["Profile"]):
-    def for_user(self, user: User) -> "Profile":
+    def for_user(self, user: User) -> Profile:
         try:
             return user.profile
         except Profile.DoesNotExist:
@@ -131,7 +131,7 @@ class Profile(models.Model):
         return "login" in self.token and check_password(token, self.token)
 
     def send_instant_login_link(
-        self, membership: "Member" | None = None, redirect_url: str | None = None
+        self, membership: Member | None = None, redirect_url: str | None = None
     ) -> None:
         token = self.prepare_token()
         path = reverse("hc-check-token", args=[self.user.username, token])
@@ -160,7 +160,7 @@ class Profile(models.Model):
         }
         emails.login(new_email, ctx)
 
-    def send_transfer_request(self, project: "Project") -> None:
+    def send_transfer_request(self, project: Project) -> None:
         token = self.prepare_token()
         settings_path = reverse("hc-project-settings", args=[project.code])
         path = reverse("hc-check-token", args=[self.user.username, token])
@@ -187,7 +187,7 @@ class Profile(models.Model):
 
         emails.call_limit(self.user.email, ctx)
 
-    def projects(self) -> QuerySet["Project"]:
+    def projects(self) -> QuerySet[Project]:
         """Return a queryset of all projects we have access to."""
 
         is_owner = Q(owner_id=self.user_id)
@@ -320,7 +320,7 @@ class Profile(models.Model):
     def num_checks_available(self) -> int:
         return self.check_limit - self.num_checks_used()
 
-    def can_accept(self, project: "Project") -> bool:
+    def can_accept(self, project: Project) -> bool:
         return project.check_set.count() <= self.num_checks_available()
 
     def update_next_nag_date(self) -> None:
@@ -443,7 +443,7 @@ class Project(models.Model):
         # It's a problem if any integration has a logged error
         return True if max(errors) else False
 
-    def transfer_request(self) -> "Member" | None:
+    def transfer_request(self) -> Member | None:
         return self.member_set.filter(transfer_request_date__isnull=False).first()
 
     def dashboard_url(self) -> str | None:
