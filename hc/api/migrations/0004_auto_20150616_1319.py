@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import annotations, unicode_literals
+from __future__ import annotations
 
 import datetime
 from datetime import timezone

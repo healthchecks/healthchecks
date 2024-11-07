@@ -86,7 +86,7 @@ class Spec(BaseModel):
         # strict validation, so this will cause type validation to fail.
         for k, v in data.items():
             if v is None:
-                data[k] = float()
+                data[k] = 0.0
         return data
 
     @field_validator("timeout", "grace", mode="before")
