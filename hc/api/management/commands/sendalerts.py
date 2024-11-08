@@ -165,6 +165,7 @@ class Command(BaseCommand):
         flip.created = flip_time
         flip.old_status = old_status
         flip.new_status = "down"
+        flip.reason = "timeout"
         flip.save()
 
         return True

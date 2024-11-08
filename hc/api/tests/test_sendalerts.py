@@ -41,6 +41,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(flip.owner_id, check.id)
         self.assertEqual(flip.created, check.alert_after)
         self.assertEqual(flip.new_status, "down")
+        self.assertEqual(flip.reason, "timeout")
 
         # It should change stored status to "down", and clear out alert_after
         check.refresh_from_db()

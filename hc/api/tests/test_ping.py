@@ -180,6 +180,7 @@ class PingTestCase(BaseTestCase):
         flip = Flip.objects.get()
         self.assertEqual(flip.owner, self.check)
         self.assertEqual(flip.new_status, "down")
+        self.assertEqual(flip.reason, "fail")
 
     def test_start_endpoint_works(self) -> None:
         last_ping = now() - td(hours=2)

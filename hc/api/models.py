@@ -40,6 +40,8 @@ NEVER = datetime(3000, 1, 1, tzinfo=timezone.utc)
 CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"), ("oncalendar", "OnCalendar"))
 # max time between start and ping where we will consider both events related:
 MAX_DURATION = td(hours=72)
+REASONS = (("", "Unknown"), ("timeout", "Timeout"), ("fail", "Fail signal"))
+
 
 TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "apprise": ("Apprise", transports.Apprise),
@@ -477,7 +479,8 @@ class Check(models.Model):
 
                 new_status = "down" if action == "fail" else "up"
                 if self.status != new_status:
-                    self.create_flip(new_status)
+                    reason = "fail" if action == "fail" else ""
+                    self.create_flip(new_status, reason=reason)
                     self.status = new_status
 
             self.alert_after = self.going_down_after()
@@ -592,7 +595,9 @@ class Check(models.Model):
         boundaries = month_boundaries(months, tz)
         return self.downtimes_by_boundary(boundaries, tz)
 
-    def create_flip(self, new_status: str, mark_as_processed: bool = False) -> None:
+    def create_flip(
+        self, new_status: str, reason: str = "", mark_as_processed: bool = False
+    ) -> None:
         """Create a Flip object for this check.
 
         Flip objects record check status changes, and have two uses:
@@ -609,6 +614,7 @@ class Check(models.Model):
             flip.processed = flip.created
         flip.old_status = self.status
         flip.new_status = new_status
+        flip.reason = reason
         flip.save()
 
 
@@ -1149,6 +1155,7 @@ class Flip(models.Model):
     processed = models.DateTimeField(null=True, blank=True)
     old_status = models.CharField(max_length=8, choices=STATUSES)
     new_status = models.CharField(max_length=8, choices=STATUSES)
+    reason = models.CharField(max_length=8, choices=REASONS, default="")
 
     class Meta:
         indexes = [
