@@ -2,7 +2,13 @@
 {% load hc_extras humanize %}
 
 <p>
+    {% if flip.new_status == "down" and flip.reason == "timeout" %}
+    "{{ check.name_then_code }}" is DOWN (success signal did not arrive on time, grace time passed).
+    {% elif flip.new_status == "down" and flip.reason == "fail" %}
+    "{{ check.name_then_code }}" is DOWN (received failure signal).
+    {% else %}
     "{{ check.name_then_code }}" is {{ flip.new_status|upper }}.
+    {% endif %}
     <a href="{{ check.cloaked_url }}">View on {% site_name %}&hellip;</a>
 </p>
 

@@ -1,6 +1,11 @@
 {% load hc_extras humanize linemode %}{% linemode %}
 
 {% line %}The check "{{ check.name_then_code|safe }}" has gone {{ flip.new_status }}.{% endline %}
+{% if flip.reason == "timeout" %}
+{% line %}Reason: success signal did not arrive on time, grace time passed.{% endline %}
+{% elif flip.reason == "fail" %}
+{% line %}Reason: received failure signal.{% endline %}
+{% endif %}
 {% line %}{% endline %}
 
 {% line %}View on {% site_name %}:{% endline %}

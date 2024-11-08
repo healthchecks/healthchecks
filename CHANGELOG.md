@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Update Dockerfile to use Python 3.13
 - Update CustomHeaderMiddleware to normalize email addresses to lower case (#1074)
 - Add data migration to convert existing user account emails to lower case
+- Update email alerts to mention failure reason (#1069)
 
 ### Bug Fixes
 - Improve recipient address validation in the smtp listener (#1077)
