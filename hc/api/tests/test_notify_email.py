@@ -125,10 +125,10 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         email = mail.outbox[0]
-        self.assertIn("received failure signal", email.body)
+        self.assertIn("received a failure signal", email.body)
 
         html = self.get_html(email)
-        self.assertIn("received failure signal", html)
+        self.assertIn("received a failure signal", html)
 
     @override_settings(DEFAULT_FROM_EMAIL='"Alerts" <alerts@example.org>')
     def test_it_message_id_generation_handles_angle_brackets(self) -> None:
