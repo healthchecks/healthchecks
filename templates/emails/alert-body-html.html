@@ -156,14 +156,11 @@
 </table>
 {% endif %}
 
-<p style="color: #666666">
+<br>
+<p style="color: #666666; font-size: 90%">
 &mdash;<br>
-{% site_name %}<br>
-<a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">
-    {% if check.project.name %}
-    Unsubscribe from "{{ check.project.name }}" notifications
-    {% else %}
-    Unsubscribe
-    {% endif %}
-</a>
+You are receiving this email because you are subscribed to {% site_name %} monitoring
+notifications{% if check.project.name %} for project "{{ check.project.name }}"{% endif %}.<br>
+Don't want to receive these notifications?
+<a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">Unsubscribe</a>.
 </p>
