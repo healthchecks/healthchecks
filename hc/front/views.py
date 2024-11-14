@@ -223,7 +223,7 @@ def _get_referer_qs(request: HttpRequest) -> str:
     return ""
 
 
-def _status_match(check: Check, statuses: list[str]) -> bool:
+def _status_match(check: Check, statuses: set[str]) -> bool:
     if "started" in statuses and check.last_start:
         return True
     return check.cached_status in statuses
