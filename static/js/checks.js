@@ -1,8 +1,5 @@
 $(function () {
-    var base = document
-        .getElementById("base-url")
-        .getAttribute("href")
-        .slice(0, -1);
+    var base = document.getElementById("base-url").getAttribute("href").slice(0, -1);
     var favicon = document.querySelector('link[rel="icon"]');
 
     $(".rw .my-checks-name").click(function () {
@@ -13,8 +10,7 @@ $(function () {
         $("#update-name-input").val(this.dataset.name);
         $("#update-slug-input").val(this.dataset.slug);
 
-        var tagsSelectize =
-            document.getElementById("update-tags-input").selectize;
+        var tagsSelectize = document.getElementById("update-tags-input").selectize;
         tagsSelectize.setValue(this.dataset.tags.split(" "));
 
         $("#update-desc-input").val(this.dataset.desc);
@@ -42,12 +38,7 @@ $(function () {
         var channelCode = $("#ch-" + idx).data("code");
 
         var url =
-            base +
-            "/checks/" +
-            checkCode +
-            "/channels/" +
-            channelCode +
-            "/enabled";
+            base + "/checks/" + checkCode + "/channels/" + channelCode + "/enabled";
 
         $.ajax({
             url: url,
@@ -84,21 +75,42 @@ $(function () {
         },
     });
 
+    function statusMatch(el, statuses) {
+        var statusClassList = el.querySelector(".status").classList;
+        // Go through currently active status filters, and, for each,
+        // check if the current check matches
+        for (const status of statuses) {
+            if (
+                status == "started" &&
+                el.querySelector(".spinner").classList.contains("started")
+            ) {
+                return true;
+            }
+            if (statusClassList.contains("ic-" + status)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function applyFilters() {
-        // Make a list of currently checked tags:
-        var checked = [];
         var url = new URL(window.location.href);
         url.search = "";
+
+        // Checked tags
+        var checked = [];
         $("#my-checks-tags .checked").each(function (index, el) {
             checked.push(el.textContent);
             url.searchParams.append("tag", el.textContent);
         });
 
+        // Search string
         var search = $("#search").val().toLowerCase();
         if (search) {
             url.searchParams.append("search", search);
         }
 
+        // Status filters
         var statuses = [];
         $(".filter-btn:visible").each(function (index, el) {
             statuses.push(el.dataset.value);
@@ -123,13 +135,9 @@ $(function () {
         }
 
         function applySingle(index, element) {
-            var nameDiv = element.querySelector(".my-checks-name");
+            var nameData = element.querySelector(".my-checks-name").dataset;
             if (search) {
-                var haystack = [
-                    nameDiv.dataset.name,
-                    nameDiv.dataset.slug,
-                    element.id,
-                ].join("\n");
+                var haystack = [nameData.name, nameData.slug, element.id].join("\n");
                 if (haystack.toLowerCase().indexOf(search) == -1) {
                     $(element).hide();
                     return;
@@ -137,7 +145,7 @@ $(function () {
             }
 
             if (checked.length) {
-                var tags = nameDiv.dataset.tags.split(" ");
+                var tags = nameData.tags.split(" ");
                 for (var i = 0, checkedTag; (checkedTag = checked[i]); i++) {
                     if (tags.indexOf(checkedTag) == -1) {
                         $(element).hide();
@@ -147,29 +155,7 @@ $(function () {
             }
 
             if (statuses.length) {
-                var ok = false;
-                var statusClassList =
-                    element.querySelector(".status").classList;
-                // Go through currently active status filters, and, for each,
-                // check if the current check matches
-                for (var i = 0, status; (status = statuses[i]); i++) {
-                    if (
-                        status == "started" &&
-                        element
-                            .querySelector(".spinner")
-                            .classList.contains("started")
-                    ) {
-                        ok = true;
-                        break;
-                    }
-                    if (statusClassList.contains("ic-" + status)) {
-                        ok = true;
-                        break;
-                    }
-                }
-
-                // If no status filter matched, hide the element
-                if (!ok) {
+                if (!statusMatch(element, statuses)) {
                     $(element).hide();
                     return;
                 }
@@ -318,9 +304,7 @@ $(function () {
 
                 if (document.title != data.title) {
                     document.title = data.title;
-                    var downPostfix = data.title.includes("down")
-                        ? "_down"
-                        : "";
+                    var downPostfix = data.title.includes("down") ? "_down" : "";
                     favicon.href = `${base}/static/img/favicon${downPostfix}.svg`;
                 }
             },
