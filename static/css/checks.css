@@ -45,7 +45,7 @@
     padding-left: 30px;
 }
 
-#filters > button {
+#filters > button:not(:active) {
     box-shadow: none;
 }
 

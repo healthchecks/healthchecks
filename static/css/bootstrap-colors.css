@@ -11,7 +11,10 @@
 .btn-default:active,
 .btn-default:active:focus,
 .btn-default.active.focus,
-.btn-default.active:hover {
+.btn-default.active:hover,
+.open > .dropdown-toggle.btn-default,
+.open > .dropdown-toggle.btn-default:hover,
+.open > .dropdown-toggle.btn-default:focus {
     color: var(--btn-active-color);
     background-color: var(--btn-active-bg);
     border-color: var(--btn-active-border);
@@ -45,9 +48,9 @@
 }
 
 .text-success {
-    color:  var(--text-success);
+    color: var(--text-success);
 }
 
 .text-danger {
-    color:  var(--text-danger);
+    color: var(--text-danger);
 }
