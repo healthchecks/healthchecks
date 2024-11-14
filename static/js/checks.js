@@ -274,6 +274,7 @@ $(function () {
             dataType: "json",
             timeout: 2000,
             success: function (data) {
+                var statusChanged = false;
                 for (var i = 0, el; (el = data.details[i]); i++) {
                     if (lastStatus[el.code] != el.status) {
                         lastStatus[el.code] = el.status;
@@ -281,6 +282,7 @@ $(function () {
                             "class",
                             "status ic-" + el.status,
                         );
+                        statusChanged = true;
                     }
 
                     if (lastStarted[el.code] != el.started) {
@@ -289,6 +291,7 @@ $(function () {
                             "started",
                             el.started,
                         );
+                        statusChanged = true;
                     }
 
                     if (lastPing[el.code] != el.last_ping) {
@@ -297,8 +300,9 @@ $(function () {
                     }
                 }
 
-                // If there are any active status filters, then we need to re-apply filters
-                if ($(".filter-btn:visible").length) {
+                // If there were status updates and we have active status filters
+                // then we need to reapply filters now:
+                if (statusChanged && $(".filter-btn:visible").length) {
                     applyFilters();
                 }
 
