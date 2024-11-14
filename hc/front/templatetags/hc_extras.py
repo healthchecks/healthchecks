@@ -119,7 +119,7 @@ def last_ping_key(check: Check) -> str:
 
 
 def not_down_key(check: Check) -> bool:
-    return check.get_status() != "down"
+    return check.cached_status != "down"
 
 
 @register.filter

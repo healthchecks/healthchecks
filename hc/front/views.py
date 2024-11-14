@@ -86,12 +86,11 @@ def _tags_counts(checks: Iterable[Check]) -> tuple[list[tuple[str, str, str]], i
     counts: Counter[str] = Counter()
     down_counts: Counter[str] = Counter()
     for check in checks:
-        status = check.get_status()
         counts.update(check.tags_list())
-        if status == "down":
+        if check.cached_status == "down":
             num_down += 1
             down_counts.update(check.tags_list())
-        elif status == "grace":
+        elif check.cached_status == "grace":
             grace.update(check.tags_list())
 
     result = []
@@ -227,7 +226,7 @@ def _get_referer_qs(request: HttpRequest) -> str:
 def _status_match(check: Check, statuses: list[str]) -> bool:
     if "started" in statuses and check.last_start:
         return True
-    return check.get_status() in statuses
+    return check.cached_status in statuses
 
 
 @login_required

@@ -313,6 +313,10 @@ class Check(models.Model):
 
         return None
 
+    @cached_property
+    def cached_status(self) -> str:
+        return self.get_status()
+
     def get_status(self, *, with_started: bool = False) -> str:
         """Return current status for display."""
         frozen_now = now()
