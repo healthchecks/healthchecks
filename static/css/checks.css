@@ -44,8 +44,8 @@
     font-weight: 500;
 }
 
-#show-usage-modal  .modal-dialog {
-     width: 1100px;
+#show-usage-modal .modal-dialog {
+    width: 1100px;
 }
 
 #usage-examples-title {
@@ -62,7 +62,7 @@
     padding: 15px;
 }
 
-#show-usage-modal .highlight:nth-child(n+2) {
+#show-usage-modal .highlight:nth-child(n + 2) {
     border-top: 1px solid var(--border-color);
 }
 
@@ -120,7 +120,7 @@
     margin-bottom: 20px;
 }
 
-#my-checks-limit-notice table  {
+#my-checks-limit-notice table {
     margin-top: 20px;
     width: auto;
     font-size: small;
@@ -131,15 +131,15 @@
     border-color: transparent;
 }
 
-
 @media (min-width: 992px) {
-    #update-timeout-modal .modal-dialog, #ping-details-modal .modal-dialog  {
+    #update-timeout-modal .modal-dialog,
+    #ping-details-modal .modal-dialog {
         width: 850px;
     }
-    #update-name-modal .modal-dialog  {
+    #update-name-modal .modal-dialog {
         width: 650px;
     }
-    #add-check-modal .modal-dialog  {
+    #add-check-modal .modal-dialog {
         width: 650px;
     }
 }

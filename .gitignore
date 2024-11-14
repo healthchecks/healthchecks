@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 .coverage
 .env
+.venv
+.zed
 hc.sqlite
 hc/local_settings.py
 static-collected

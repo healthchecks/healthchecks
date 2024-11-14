@@ -71,7 +71,6 @@ body {
     border-top-right-radius: 0;
 }
 
-
 #global-links > li > a {
     font-size: small;
 }
@@ -98,10 +97,11 @@ body {
 
 .navbar-default {
     border-color: transparent;
-    border-bottom-color:  var(--border-muted);
+    border-bottom-color: var(--border-muted);
 }
 
-.navbar-default .navbar-brand, .navbar-default .navbar-brand:hover {
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:hover {
     font-weight: bold;
 }
 
@@ -117,7 +117,8 @@ body {
     border: 0;
 }
 
-#nav-sign-up:focus, #nav-sign-up:active {
+#nav-sign-up:focus,
+#nav-sign-up:active {
     outline: none;
 }
 
@@ -145,7 +146,6 @@ body {
     color: hsl(1.2, 53.8%, 56.1%);
 }
 
-
 .page-checks .container-fluid,
 .page-details .container-fluid {
     /* Fluid below 1320px, but max width capped to 1320px ... */
@@ -157,17 +157,26 @@ body {
     max-width: 1520px;
 }
 
-
 .status {
     font-size: 24px;
     display: inline-block;
     width: 24px;
 }
 
-.status.ic-up, .status.ic-started { color: #5cb85c; }
-.status.ic-new, .status.ic-paused { color: var(--status-new-color); }
-.status.ic-grace { color: #f0ad4e; }
-.status.ic-down { color: #d9534f; }
+.status.ic-up,
+.status.ic-started {
+    color: #5cb85c;
+}
+.status.ic-new,
+.status.ic-paused {
+    color: var(--status-new-color);
+}
+.status.ic-grace {
+    color: #f0ad4e;
+}
+.status.ic-down {
+    color: #d9534f;
+}
 
 .label.label-start {
     color: var(--label-start-color);
@@ -195,7 +204,7 @@ body {
 }
 
 pre {
-  border: 0;
+    border: 0;
 }
 
 .nav-pills > li > a {
@@ -235,16 +244,16 @@ pre {
 }
 
 .dropdown-menu > li.project-item a span.status {
-    transform: scale(0.7)
+    transform: scale(0.7);
 }
 
 .dropdown-menu > li .btn-link {
-  display: block;
-  padding: 3px 20px;
-  color: var(--text-color);
-  white-space: nowrap;
-  width: 100%;
-  text-align: left;
+    display: block;
+    padding: 3px 20px;
+    color: var(--text-color);
+    white-space: nowrap;
+    width: 100%;
+    text-align: left;
 }
 
 .dropdown-menu > li .btn-link:focus,
@@ -275,13 +284,45 @@ pre {
 }
 
 @keyframes spinner-pulse {
-    0%   {box-shadow: 8px 0 #aaaaaa99, -8px 0 #aaaaaa00; background: #aaaaaa4c }
-    15%  {box-shadow: 8px 0 #aaaaaa4c, -8px 0 #aaaaaa4c; background: #aaaaaa00 }
-    30%  {box-shadow: 8px 0 #aaaaaa00, -8px 0 #aaaaaa99; }
-    50%  {box-shadow: 8px 0 #aaaaaa66, -8px 0 #aaaaaaff; }
-    65%  {box-shadow: 8px 0 #aaaaaab2, -8px 0 #aaaaaab2; background: #aaaaaaff }
-    80%  {box-shadow: 8px 0 #aaaaaaff, -8px 0 #aaaaaa66; }
-    100% {box-shadow: 8px 0 #aaaaaa99, -8px 0 #aaaaaa00; background: #aaaaaa4c }
+    0% {
+        box-shadow:
+            8px 0 #aaaaaa99,
+            -8px 0 #aaaaaa00;
+        background: #aaaaaa4c;
+    }
+    15% {
+        box-shadow:
+            8px 0 #aaaaaa4c,
+            -8px 0 #aaaaaa4c;
+        background: #aaaaaa00;
+    }
+    30% {
+        box-shadow:
+            8px 0 #aaaaaa00,
+            -8px 0 #aaaaaa99;
+    }
+    50% {
+        box-shadow:
+            8px 0 #aaaaaa66,
+            -8px 0 #aaaaaaff;
+    }
+    65% {
+        box-shadow:
+            8px 0 #aaaaaab2,
+            -8px 0 #aaaaaab2;
+        background: #aaaaaaff;
+    }
+    80% {
+        box-shadow:
+            8px 0 #aaaaaaff,
+            -8px 0 #aaaaaa66;
+    }
+    100% {
+        box-shadow:
+            8px 0 #aaaaaa99,
+            -8px 0 #aaaaaa00;
+        background: #aaaaaa4c;
+    }
 }
 
 .nav-tabs > li.active > a,
@@ -305,12 +346,12 @@ pre {
 }
 
 /* no up/down buttons for number fields */
-input[type=number] {
+input[type="number"] {
     -moz-appearance: textfield;
 }
 
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
 
