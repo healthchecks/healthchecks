@@ -60,10 +60,6 @@
     width: 20px;
 }
 
-.filter-btn {
-    display: none;
-}
-
 .label-tag {
     background-color: var(--tag-bg);
     color: var(--tag-color);

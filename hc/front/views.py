@@ -224,6 +224,12 @@ def _get_referer_qs(request: HttpRequest) -> str:
     return ""
 
 
+def _status_match(check: Check, statuses: list[str]) -> bool:
+    if "started" in statuses and check.last_start:
+        return True
+    return check.get_status() in statuses
+
+
 @login_required
 def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     _refresh_last_active_date(request)
@@ -269,6 +275,13 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             if search not in haystack.lower():
                 hidden_checks.add(check)
 
+    # Hide checks that don't match status filters
+    selected_statuses = set(request.GET.getlist("status", []))
+    if selected_statuses:
+        for check in checks:
+            if not _status_match(check, selected_statuses):
+                hidden_checks.add(check)
+
     # Figure out which checks have ambiguous ping URLs
     seen, ambiguous = set(), set()
     if project.show_slugs:
@@ -299,6 +312,7 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "num_available": project.num_checks_available(),
         "sort": request.profile.sort,
         "selected_tags": selected_tags,
+        "selected_statuses": selected_statuses,
         "search": search,
         "hidden_checks": hidden_checks,
         "ambiguous": ambiguous,

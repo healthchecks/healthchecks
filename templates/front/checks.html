@@ -110,12 +110,30 @@
             </ul>
         </div>
     </div>
-    <button class="filter-btn btn btn-default" data-value="new">New ×</button>
-    <button class="filter-btn btn btn-default" data-value="paused">Paused ×</button>
-    <button class="filter-btn btn btn-default" data-value="started">Started ×</button>
-    <button class="filter-btn btn btn-default" data-value="up">Up ×</button>
-    <button class="filter-btn btn btn-default" data-value="grace">Late ×</button>
-    <button class="filter-btn btn btn-default" data-value="down">Down ×</button>
+    <button
+        class="filter-btn btn btn-default"
+        {% if 'new' not in selected_statuses %}style="display: none"{% endif %}
+        data-value="new">New ×</button>
+    <button
+        class="filter-btn btn btn-default"
+        {% if 'paused' not in selected_statuses %}style="display: none"{% endif %}
+        data-value="paused">Paused ×</button>
+    <button
+        class="filter-btn btn btn-default"
+        {% if 'started' not in selected_statuses %}style="display: none"{% endif %}
+        data-value="started">Started ×</button>
+    <button
+        class="filter-btn btn btn-default"
+        {% if 'up' not in selected_statuses %}style="display: none"{% endif %}
+        data-value="up">Up ×</button>
+    <button
+        class="filter-btn btn btn-default"
+        {% if 'grace' not in selected_statuses %}style="display: none"{% endif %}
+        data-value="grace">Late ×</button>
+    <button
+        class="filter-btn btn btn-default"
+        {% if 'down' not in selected_statuses %}style="display: none"{% endif %}
+        data-value="down">Down ×</button>
 
     {% if rw %}
     <button
