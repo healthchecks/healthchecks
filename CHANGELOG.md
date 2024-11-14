@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 - Add data migration to convert existing user account emails to lower case
 - Update email alerts to mention failure reason (#1069)
 - De-emphasize the unsubscribe link in email notifications
+- In the checks list, move the "Add Check" button to the top of the page
+- Implement filtering by status in the checks list page
 
 ### Bug Fixes
 - Improve recipient address validation in the smtp listener (#1077)
