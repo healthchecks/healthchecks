@@ -177,6 +177,10 @@ body {
 .status.ic-down {
     color: #d9534f;
 }
+/* used in the filters dropdown: */
+.status.ic-dots {
+    color: var(--text-muted);
+}
 
 .label.label-start {
     color: var(--label-start-color);

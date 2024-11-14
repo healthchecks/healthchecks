@@ -99,6 +99,12 @@ $(function () {
             url.searchParams.append("search", search);
         }
 
+        var statuses = [];
+        $(".filter-btn:visible").each(function (index, el) {
+            statuses.push(el.dataset.value);
+            url.searchParams.append("status", el.dataset.value);
+        });
+
         // Update hash
         if (window.history && window.history.replaceState) {
             window.history.replaceState({}, "", url.toString());
@@ -110,8 +116,8 @@ $(function () {
             a.setAttribute("href", url.toString());
         });
 
-        // No checked tags and no search string: show all
-        if (checked.length == 0 && !search) {
+        // No checked tags, no search string, no status filters: show all
+        if (checked.length == 0 && !search && statuses.length == 0) {
             $("#checks-table tr.checks-row").show();
             return;
         }
@@ -137,6 +143,35 @@ $(function () {
                         $(element).hide();
                         return;
                     }
+                }
+            }
+
+            if (statuses.length) {
+                var ok = false;
+                var statusClassList =
+                    element.querySelector(".status").classList;
+                // Go through currently active status filters, and, for each,
+                // check if the current check matches
+                for (var i = 0, status; (status = statuses[i]); i++) {
+                    if (
+                        status == "started" &&
+                        element
+                            .querySelector(".spinner")
+                            .classList.contains("started")
+                    ) {
+                        ok = true;
+                        break;
+                    }
+                    if (statusClassList.contains("ic-" + status)) {
+                        ok = true;
+                        break;
+                    }
+                }
+
+                // If no status filter matched, hide the element
+                if (!ok) {
+                    $(element).hide();
+                    return;
                 }
             }
 
@@ -262,6 +297,11 @@ $(function () {
                     }
                 }
 
+                // If there are any active status filters, then we need to re-apply filters
+                if ($(".filter-btn:visible").length) {
+                    applyFilters();
+                }
+
                 $("#my-checks-tags > div.btn").each(function (a) {
                     tag = this.innerText;
                     this.setAttribute("data-tooltip", data.tags[tag][1]);
@@ -314,5 +354,18 @@ $(function () {
 
         navigator.clipboard.writeText(this.textContent);
         $(".tooltip-inner").text("Copied!");
+    });
+
+    $("#check-filters button[title]").tooltip();
+
+    $("#filters li a").click(function () {
+        var v = this.dataset.value;
+        $("#check-filters button[data-value=" + v + "]").toggle();
+        applyFilters();
+    });
+
+    $(".filter-btn").click(function () {
+        $(this).hide();
+        applyFilters();
     });
 });

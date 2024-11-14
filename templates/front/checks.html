@@ -60,20 +60,73 @@
 {% endif %}
 
 {% if checks %}
-<div class="row">
-    <div id="my-checks-tags" class="col-sm-9">
-        {% for tag, status, tooltip in tags %}
-            <div data-tooltip="{{ tooltip }}" class="btn btn-xs {{ status }} {% if tag in selected_tags %}checked{% endif%}">{{ tag }}</div>
-        {% endfor %}
+<div id="check-filters">
+    <div id="my-checks-tags">
+    {% for tag, status, tooltip in tags %}
+        <div data-tooltip="{{ tooltip }}" class="btn btn-xs {{ status }} {% if tag in selected_tags %}checked{% endif%}">{{ tag }}</div>
+    {% endfor %}
     </div>
-    <div class="col-sm-3">
+    <div id="search-group" class="input-group hidden-xs">
         <input
             id="search"
             type="text"
-            placeholder="Filter by check name&hellip;"
-            class="form-control hidden-xs"
-            value="{{ search }}" />
+            class="form-control">
+        <div id="filters" class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li class="header">Filter by status</li>
+                <li>
+                    <a href="javascript:;" data-value="new">
+                        <span class="status ic-new"></span> New
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" data-value="paused">
+                        <span class="status ic-paused"></span> Paused
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" data-value="started">
+                        <span class="status ic-dots"></span> Started
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" data-value="up">
+                        <span class="status ic-up"></span> Up
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" data-value="grace">
+                        <span class="status ic-grace"></span> Late
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;" data-value="down">
+                        <span class="status ic-down"></span> Down
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
+    <button class="filter-btn btn btn-default" data-value="new">New ×</button>
+    <button class="filter-btn btn btn-default" data-value="paused">Paused ×</button>
+    <button class="filter-btn btn btn-default" data-value="started">Started ×</button>
+    <button class="filter-btn btn btn-default" data-value="up">Up ×</button>
+    <button class="filter-btn btn btn-default" data-value="grace">Late ×</button>
+    <button class="filter-btn btn btn-default" data-value="down">Down ×</button>
+
+    {% if rw %}
+    <button
+        class="btn btn-primary hidden-xs"
+        data-toggle="modal"
+        data-target="#add-check-modal"
+        title="{{ checks|length }} in use, {{ num_available }} available"
+        {% if num_available <= 0 %}disabled{% endif %}>
+            Add Check
+        </button>
+    {% endif %}
 </div>
 {% endif %}
 
@@ -87,31 +140,18 @@
     </div>
 </div>
 
-{% if rw %}
+{% if num_available == 0 %}
 <div id="my-checks-bottom-actions" class="row">
     <div class="col-sm-12 text-center">
-        {% if num_available > 0 %}
-            <button
-                class="btn btn-primary btn-lg"
-                data-toggle="modal"
-                data-target="#add-check-modal"
-                value="Add Check">Add Check</button>
-            {% if num_available <= 10 %}
-            <div class="add-check-note">
-                ({{ checks|length }} in use, {{ num_available }} available)
-            </div>
+        <div class="alert alert-info">
+            <strong>There are more things to monitor.</strong>
+            To add more checks, please
+            {% if request.user == project.owner %}
+            <a href="{% url 'hc-billing' %}">upgrade your account</a>.
+            {% else %}
+            ask <strong>{{ project.owner.email }}</strong> to upgrade their account.
             {% endif %}
-        {% elif num_available == 0 %}
-            <div class="alert alert-info">
-                <strong>There are more things to monitor.</strong>
-                To add more checks, please
-                {% if request.user == project.owner %}
-                <a href="{% url 'hc-billing' %}">upgrade your account</a>.
-                {% else %}
-                ask <strong>{{ project.owner.email }}</strong> to upgrade their account.
-                {% endif %}
-            </div>
-        {% endif %}
+        </div>
     </div>
 </div>
 {% endif %}
