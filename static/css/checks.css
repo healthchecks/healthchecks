@@ -164,3 +164,10 @@
         width: 650px;
     }
 }
+
+#no-checks {
+    padding: 1em;
+    text-align: center;
+    font-size: 36px;
+    opacity: 0.3;
+}

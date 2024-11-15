@@ -128,44 +128,50 @@ $(function () {
             a.setAttribute("href", url.toString());
         });
 
-        // No checked tags, no search string, no status filters: show all
         if (checked.length == 0 && !search && statuses.length == 0) {
+            // No checked tags, no search string, no status filters: show all
             $("#checks-table tr.checks-row").show();
-            return;
-        }
-
-        function applySingle(index, element) {
-            var nameData = element.querySelector(".my-checks-name").dataset;
-            if (search) {
-                var haystack = [nameData.name, nameData.slug, element.id].join("\n");
-                if (haystack.toLowerCase().indexOf(search) == -1) {
-                    $(element).hide();
-                    return;
-                }
-            }
-
-            if (checked.length) {
-                var tags = nameData.tags.split(" ");
-                for (var i = 0, checkedTag; (checkedTag = checked[i]); i++) {
-                    if (tags.indexOf(checkedTag) == -1) {
+            var numVisible = $("#checks-table tr.checks-row").length;
+        } else {
+            var numVisible = 0;
+            function applySingle(index, element) {
+                var nameData = element.querySelector(".my-checks-name").dataset;
+                if (search) {
+                    var parts = [nameData.name, nameData.slug, element.id];
+                    var haystack = parts.join("\n").toLowerCase();
+                    if (haystack.indexOf(search) == -1) {
                         $(element).hide();
                         return;
                     }
                 }
-            }
 
-            if (statuses.length) {
-                if (!statusMatch(element, statuses)) {
-                    $(element).hide();
-                    return;
+                if (checked.length) {
+                    var tags = nameData.tags.split(" ");
+                    for (var i = 0, checkedTag; (checkedTag = checked[i]); i++) {
+                        if (tags.indexOf(checkedTag) == -1) {
+                            $(element).hide();
+                            return;
+                        }
+                    }
                 }
+
+                if (statuses.length) {
+                    if (!statusMatch(element, statuses)) {
+                        $(element).hide();
+                        return;
+                    }
+                }
+
+                $(element).show();
+                numVisible += 1;
             }
 
-            $(element).show();
+            // For each row, see if it needs to be shown or hidden
+            $("#checks-table tr.checks-row").each(applySingle);
         }
 
-        // For each row, see if it needs to be shown or hidden
-        $("#checks-table tr.checks-row").each(applySingle);
+        $("#checks-table").toggle(numVisible > 0);
+        $("#no-checks").toggle(numVisible == 0);
     }
 
     // User clicks on tags: apply filters

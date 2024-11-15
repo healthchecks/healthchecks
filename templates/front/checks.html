@@ -70,7 +70,8 @@
         <input
             id="search"
             type="text"
-            class="form-control">
+            class="form-control"
+            value="{{ search }}">
         <div id="filters" class="input-group-btn">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <span class="caret"></span>
@@ -146,17 +147,38 @@
         </button>
     {% endif %}
 </div>
-{% endif %}
+
 
 <div class="row">
     <div class="col-sm-12">
-    {% if checks %}
         {% include "front/checks_table.html" %}
-    {% else %}
-    <div class="alert alert-info">The project <strong>{{ project }}</strong> does not have any checks yet.</div>
-    {% endif %}
+        <div id="no-checks" {% if num_visible > 0 %}style="display: none"{% endif %}>
+            no matching checks found
+        </div>
     </div>
 </div>
+{% else %}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="alert alert-info">
+            The project <strong>{{ project }}</strong> does not have any checks yet.
+            {% if rw and num_available > 0 %}
+            <br><br>
+            <button
+                class="btn btn-primary"
+                data-toggle="modal"
+                data-target="#add-check-modal"
+                {% if num_available <= 0 %}disabled{% endif %}>
+                    Add Check
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+
 
 {% if num_available == 0 %}
 <div id="my-checks-bottom-actions" class="row">

@@ -314,6 +314,7 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "selected_statuses": selected_statuses,
         "search": search,
         "hidden_checks": hidden_checks,
+        "num_visible": len(checks) - len(hidden_checks),
         "ambiguous": ambiguous,
         "show_last_duration": show_last_duration,
     }
