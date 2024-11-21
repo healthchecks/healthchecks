@@ -26,7 +26,7 @@
                     {% if check.kind == "simple" or check.tz != "UTC" %}
                     <div>
                         UTC<br>
-                        <span data-format="UTC"></span>
+                        <span data-format="UTC" data-toggle="tooltip"></span>
                     </div>
                     {% endif %}
                     {% if check.kind == "cron" or check.kind == "oncalendar" %}
@@ -37,7 +37,7 @@
                     {% endif %}
                     <div>
                         Browser's time zone<br>
-                        <span data-format="local"></span>
+                        <span data-format="local" data-toggle="tooltip"></span>
                     </div>
                 </div>
 
