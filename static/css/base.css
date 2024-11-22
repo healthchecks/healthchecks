@@ -163,8 +163,7 @@ body {
     width: 24px;
 }
 
-.status.ic-up,
-.status.ic-started {
+.status.ic-up {
     color: #5cb85c;
 }
 .status.ic-new,
