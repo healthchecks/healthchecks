@@ -11,9 +11,8 @@
     font-style: italic;
 }
 
-#checks-table .indicator-cell {
+#checks-table tr.checks-row td:first-child {
     text-align: center;
-    margin: 0 auto;
 }
 
 #checks-table th {
