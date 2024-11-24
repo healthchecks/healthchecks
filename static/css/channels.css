@@ -2,12 +2,6 @@
     margin-top: 36px;
 }
 
-
-.channel-row.kind-hipchat {
-    filter: grayscale(100%);
-    opacity: 0.5;
-}
-
 .channels-table .channel-row > td {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -34,7 +28,6 @@
     color: #999;
 }
 
-
 .channels-table .channel-row:hover > td {
     background: var(--table-bg-hover);
 }
@@ -43,7 +36,8 @@ table.channels-table > tbody > tr > th {
     border-top: 0;
 }
 
-.edit-name, .edit-checks {
+.edit-name,
+.edit-checks {
     padding: 12px 6px;
     border: 1px solid transparent;
 }
@@ -63,7 +57,7 @@ table.channels-table > tbody > tr > th {
 
 .rw .channel-row:hover .edit-name,
 .rw .channel-row:hover .edit-checks {
-    border: 1px dotted #AAA;
+    border: 1px dotted #aaa;
     cursor: pointer;
 }
 
@@ -141,15 +135,16 @@ table.channels-table > tbody > tr > th {
 }
 
 .btn img.ai-icon {
-   height: 1.4em;
-   margin-right: 2px;
+    height: 1.4em;
+    margin-right: 2px;
 }
 
 .add-integration h2 {
     margin-top: 0;
 }
 
-.setup-guide h2, .integration-settings h2 {
+.setup-guide h2,
+.integration-settings h2 {
     margin: 0 0 1em 0;
 }
 
@@ -160,7 +155,6 @@ table.channels-table > tbody > tr > th {
 
 .ai-step .step-no::after {
     content: counter(ai-step);
-
 }
 
 .ai-step .step-no {
@@ -196,7 +190,8 @@ table.channels-table > tbody > tr > th {
     animation: marker-ripple 1.2s ease-out infinite;
 }
 
-.ai-step p, .ai-step ul {
+.ai-step p,
+.ai-step ul {
     margin-left: 80px;
 }
 
@@ -205,18 +200,19 @@ table.channels-table > tbody > tr > th {
 }
 
 @keyframes marker-ripple {
-  0%, 35% {
-    transform: scale(0);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 0.3;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(4);
-  }
+    0%,
+    35% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(4);
+    }
 }
 
 .ai-guide-screenshot {
@@ -246,6 +242,5 @@ body.dark img.kind-matrix {
 }
 
 img.kind-ntfy {
-    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.2));
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
 }
-
