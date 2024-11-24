@@ -1,4 +1,5 @@
-.kind-simple, .kind-cron {
+.kind-simple,
+.kind-cron {
     width: 70px;
 }
 
@@ -46,15 +47,17 @@
 }
 
 #grace-slider .noUi-connect {
-  background: #f0ad4e;
+    background: #f0ad4e;
 }
 
-#period-slider .noUi-value, #grace-slider .noUi-value {
+#period-slider .noUi-value,
+#grace-slider .noUi-value {
     cursor: pointer;
     color: var(--text-muted);
 }
 
-#period-slider .noUi-value:hover, #grace-slider .noUi-value:hover {
+#period-slider .noUi-value:hover,
+#grace-slider .noUi-value:hover {
     color: var(--text-color);
 }
 
@@ -74,10 +77,6 @@
 
 #update-cron-form .modal-body {
     padding: 40px;
-}
-
-#update-timeout-grace-cron {
-    xwidth: 70px;
 }
 
 #update-timeout-grace-cron-unit {
@@ -190,6 +189,6 @@
     display: flex;
 }
 
-.select-group select { 
+.select-group select {
     border-left: 0;
-} 
+}
