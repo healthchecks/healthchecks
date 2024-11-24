@@ -1,284 +1,284 @@
 @font-face {
-  font-family: 'icomoon';
-  src:
-    url('../fonts/icomoon.ttf?l2mf5g') format('truetype'),
-    url('../fonts/icomoon.woff?l2mf5g') format('woff'),
-    url('../fonts/icomoon.svg?ra7l2mf5g8ae#icomoon') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
+    font-family: "icomoon";
+    src:
+        url("../fonts/icomoon.ttf?l2mf5g") format("truetype"),
+        url("../fonts/icomoon.woff?l2mf5g") format("woff"),
+        url("../fonts/icomoon.svg?ra7l2mf5g8ae#icomoon") format("svg");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
 }
 
-[class^="ic-"], [class*=" ic-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
-  speak: never;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
+[class^="ic-"],
+[class*=" ic-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: "icomoon" !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
 
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .ic-group:after {
-  content: "\e932";
-  color: #f0ad4e;
+    content: "\e932";
+    color: #f0ad4e;
 }
 .ic-rocketchat:before {
-  content: "\e930";
-  color: #f5455c;
+    content: "\e930";
+    color: #f5455c;
 }
 .ic-ntfy:before {
-  content: "\e927";
-  color: rgb(51, 133, 116);
+    content: "\e927";
+    color: rgb(51, 133, 116);
 }
 .ic-ntfy:after {
-  content: "\e928";
-  margin-left: -1em;
-  color: rgb(255, 255, 255);
+    content: "\e928";
+    margin-left: -1em;
+    color: rgb(255, 255, 255);
 }
 
 .ic-gotify:before {
-  content: "\e925";
-  color: rgb(255, 255, 255);
+    content: "\e925";
+    color: rgb(255, 255, 255);
 }
 .ic-gotify:after {
-  content: "\e926";
-  margin-left: -1em;
-  color: rgb(0, 181, 255);
+    content: "\e926";
+    margin-left: -1em;
+    color: rgb(0, 181, 255);
 }
 .ic-call:before {
-  content: "\e91a";
-  color: rgb(255, 255, 255);
+    content: "\e91a";
+    color: rgb(255, 255, 255);
 }
 .ic-call:after {
-  content: "\e91d";
-  margin-left: -1em;
-  color: rgb(232, 26, 52);
-  opacity: 0.98;
+    content: "\e91d";
+    margin-left: -1em;
+    color: rgb(232, 26, 52);
+    opacity: 0.98;
 }
 .ic-victorops:before {
-  content: "\e900";
-  color: rgb(255, 255, 255);
+    content: "\e900";
+    color: rgb(255, 255, 255);
 }
 .ic-victorops:after {
-  content: "\e91e";
-  margin-left: -1em;
-  color: rgb(44, 45, 46);
+    content: "\e91e";
+    margin-left: -1em;
+    color: rgb(44, 45, 46);
 }
 .ic-zulip:before {
-  content: "\e90f";
-  color: rgb(255, 255, 255);
+    content: "\e90f";
+    color: rgb(255, 255, 255);
 }
 .ic-zulip:after {
-  content: "\e91f";
-  margin-left: -1em;
-  color: rgb(100, 146, 254);
+    content: "\e91f";
+    margin-left: -1em;
+    color: rgb(100, 146, 254);
 }
 .ic-signal:after {
-  content: "\e91c";
-  color: #2592e9;
+    content: "\e91c";
+    color: #2592e9;
 }
 .ic-linenotify:before {
-  content: "\e91b";
-  color: rgb(255, 255, 255);
+    content: "\e91b";
+    color: rgb(255, 255, 255);
 }
 .ic-linenotify:after {
-  content: "\e920";
-  margin-left: -1em;
-  color: rgb(0, 195, 0);
+    content: "\e920";
+    margin-left: -1em;
+    color: rgb(0, 195, 0);
 }
 .ic-spike:before {
-  content: "\e919";
-  color: rgb(255, 255, 255);
+    content: "\e919";
+    color: rgb(255, 255, 255);
 }
 .ic-spike:after {
-  content: "\e921";
-  margin-left: -1em;
-  color: rgb(0, 123, 255);
+    content: "\e921";
+    margin-left: -1em;
+    color: rgb(0, 123, 255);
 }
 .ic-pd:before {
-  content: "\e90b";
-  color: rgb(255, 255, 255);
+    content: "\e90b";
+    color: rgb(255, 255, 255);
 }
 .ic-pd:after {
-  content: "\e922";
-  margin-left: -1em;
-  color: rgb(4, 172, 56);
+    content: "\e922";
+    margin-left: -1em;
+    color: rgb(4, 172, 56);
 }
 .ic-shell:before {
-  content: "\e917";
-  color: rgb(255, 255, 255);
+    content: "\e917";
+    color: rgb(255, 255, 255);
 }
 .ic-shell:after {
-  content: "\e923";
-  margin-left: -1em;
-  color: rgb(34, 34, 34);
+    content: "\e923";
+    margin-left: -1em;
+    color: rgb(34, 34, 34);
 }
 .ic-msteams:before {
-  content: "\e916";
-  color: rgb(255, 255, 255);
+    content: "\e916";
+    color: rgb(255, 255, 255);
 }
 .ic-msteams:after {
-  content: "\e924";
-  margin-left: -1em;
-  color: rgb(78, 86, 190);
+    content: "\e924";
+    margin-left: -1em;
+    color: rgb(78, 86, 190);
 }
 .ic-msteamsw:before {
-  content: "\e916";
-  color: rgb(255, 255, 255);
+    content: "\e916";
+    color: rgb(255, 255, 255);
 }
 .ic-msteamsw:after {
-  content: "\e924";
-  margin-left: -1em;
-  color: rgb(78, 86, 190);
+    content: "\e924";
+    margin-left: -1em;
+    color: rgb(78, 86, 190);
 }
 .ic-opsgenie:after {
-  content: "\e910";
-  color: #2684ff;
+    content: "\e910";
+    color: #2684ff;
 }
 .ic-mattermost:after {
-  content: "\e907";
-  color: #045acc;
+    content: "\e907";
+    color: #045acc;
 }
 .ic-apprise:after {
-  content: "\e915";
-  color: #236b6b;
+    content: "\e915";
+    color: #236b6b;
 }
 .ic-matrix:after {
-  content: "\e901";
+    content: "\e901";
 }
 .ic-pagertree:before {
-  content: "\e90d";
-  color: rgb(255, 255, 255);
+    content: "\e90d";
+    color: rgb(255, 255, 255);
 }
 .ic-pagertree:after {
-  content: "\e929";
-  margin-left: -1em;
-  color: rgb(51, 173, 226);
+    content: "\e929";
+    margin-left: -1em;
+    color: rgb(51, 173, 226);
 }
 .ic-po:before {
-  content: "\e90e";
-  color: rgb(255, 255, 255);
+    content: "\e90e";
+    color: rgb(255, 255, 255);
 }
 .ic-po:after {
-  content: "\e92a";
-  margin-left: -1em;
-  color: rgb(36, 157, 241);
+    content: "\e92a";
+    margin-left: -1em;
+    color: rgb(36, 157, 241);
 }
 .ic-email:before {
-  content: "\e90a";
-  color: rgb(255, 255, 255);
+    content: "\e90a";
+    color: rgb(255, 255, 255);
 }
 .ic-email:after {
-  content: "\e92b";
-  margin-left: -1em;
-  color: rgb(79, 93, 115);
+    content: "\e92b";
+    margin-left: -1em;
+    color: rgb(79, 93, 115);
 }
 .ic-webhook:after {
-  content: "\e908";
-  color: #c73a63;
+    content: "\e908";
+    color: #c73a63;
 }
 .ic-sms:before {
-  content: "\e904";
-  color: rgb(255, 255, 255);
+    content: "\e904";
+    color: rgb(255, 255, 255);
 }
 .ic-sms:after {
-  content: "\e92c";
-  margin-left: -1em;
-  color: rgb(149, 193, 68);
+    content: "\e92c";
+    margin-left: -1em;
+    color: rgb(149, 193, 68);
 }
 .ic-pushbullet:before {
-  content: "\e909";
-  color: rgb(255, 255, 255);
+    content: "\e909";
+    color: rgb(255, 255, 255);
 }
 .ic-pushbullet:after {
-  content: "\e92d";
-  margin-left: -1em;
-  color: rgb(103, 191, 121);
+    content: "\e92d";
+    margin-left: -1em;
+    color: rgb(103, 191, 121);
 }
 .ic-discord:before {
-  content: "\e90c";
-  color: rgb(255, 255, 255);
+    content: "\e90c";
+    color: rgb(255, 255, 255);
 }
 .ic-discord:after {
-  content: "\e92e";
-  margin-left: -1em;
-  color: rgb(114, 137, 218);
+    content: "\e92e";
+    margin-left: -1em;
+    color: rgb(114, 137, 218);
 }
 .ic-hipchat:before {
-  content: "\e902";
-  color: #0052cc;
+    content: "\e902";
+    color: #0052cc;
 }
 .ic-slack:before {
-  content: "\e905";
-  color: rgb(255, 255, 255);
+    content: "\e905";
+    color: rgb(255, 255, 255);
 }
 .ic-slack:after {
-  content: "\e92f";
-  margin-left: -1em;
-  color: rgb(86, 182, 139);
+    content: "\e92f";
+    margin-left: -1em;
+    color: rgb(86, 182, 139);
 }
 .ic-telegram:after {
-  content: "\e906";
-  color: #2ca5e0;
+    content: "\e906";
+    color: #2ca5e0;
 }
 .ic-trello:before {
-  content: "\e911";
-  color: rgb(255, 255, 255);
+    content: "\e911";
+    color: rgb(255, 255, 255);
 }
 .ic-trello:after {
-  content: "\e931";
-  margin-left: -1em;
-  color: rgb(0, 121, 191);
+    content: "\e931";
+    margin-left: -1em;
+    color: rgb(0, 121, 191);
 }
 .ic-whatsapp:after {
-  content: "\e903";
-  color: #25d366;
+    content: "\e903";
+    color: #25d366;
 }
 .ic-up:before {
-  content: "\e86c";
+    content: "\e86c";
 }
 .ic-new:before {
-  content: "\e86c";
+    content: "\e86c";
 }
 .ic-ok:before {
-  content: "\e86c";
+    content: "\e86c";
 }
 .ic-grace:before {
-  content: "\e000";
+    content: "\e000";
 }
 .ic-missing:before {
-  content: "\e001";
+    content: "\e001";
 }
 .ic-desc:before {
-  content: "\e313";
+    content: "\e313";
 }
 .ic-asc:before {
-  content: "\e316";
+    content: "\e316";
 }
 .ic-dots:before {
-  content: "\e5d3";
+    content: "\e5d3";
 }
 .ic-down:before {
-  content: "\e7f7";
+    content: "\e7f7";
 }
 .ic-paused:before {
-  content: "\e7f6";
+    content: "\e7f6";
 }
 .ic-settings:before {
-  content: "\e913";
+    content: "\e913";
 }
 .ic-delete:before {
-  content: "\e918";
+    content: "\e918";
 }
 .ic-timer:before {
-  content: "\e425";
+    content: "\e425";
 }
 .ic-clippy:before {
-  content: "\e912";
+    content: "\e912";
 }
