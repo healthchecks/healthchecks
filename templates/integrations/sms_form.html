@@ -9,16 +9,11 @@ SMS Settings - {% site_name %}
 {% endif %}
 {% endblock %}
 
-
 {% block content %}
 <div class="row">
 <div class="col-sm-12">
     <h1>SMS</h1>
-
-    <p>
-        Get a SMS message to the specified phone number when a
-        check goes down.
-    </p>
+    <p>Get a SMS message to the specified phone number when a check goes down.</p>
 
     {% if show_pricing and profile.sms_limit == 0 %}
     <p class="alert alert-info">
