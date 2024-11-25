@@ -1,9 +1,9 @@
 @font-face {
     font-family: "icomoon";
     src:
-        url("../fonts/icomoon.ttf?l2mf5g") format("truetype"),
-        url("../fonts/icomoon.woff?l2mf5g") format("woff"),
-        url("../fonts/icomoon.svg?ra7l2mf5g8ae#icomoon") format("svg");
+        url("../fonts/icomoon.ttf?h6raa2") format("truetype"),
+        url("../fonts/icomoon.woff?h6raa2") format("woff"),
+        url("../fonts/icomoon.svg?h6raa2#icomoon") format("svg");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -81,7 +81,7 @@
 }
 .ic-signal:after {
     content: "\e91c";
-    color: #2592e9;
+    color: #3b45fd;
 }
 .ic-linenotify:before {
     content: "\e91b";
@@ -210,10 +210,6 @@
     margin-left: -1em;
     color: rgb(114, 137, 218);
 }
-.ic-hipchat:before {
-    content: "\e902";
-    color: #0052cc;
-}
 .ic-slack:before {
     content: "\e905";
     color: rgb(255, 255, 255);
@@ -223,9 +219,14 @@
     margin-left: -1em;
     color: rgb(86, 182, 139);
 }
-.ic-telegram:after {
+.ic-telegram:before {
     content: "\e906";
     color: #2ca5e0;
+}
+.ic-telegram:after {
+    content: "\e914";
+    margin-left: -1em;
+    color: rgb(255, 255, 255);
 }
 .ic-trello:before {
     content: "\e911";
