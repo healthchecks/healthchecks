@@ -1,9 +1,9 @@
 @font-face {
     font-family: "icomoon";
     src:
-        url("../fonts/icomoon.ttf?h6raa2") format("truetype"),
-        url("../fonts/icomoon.woff?h6raa2") format("woff"),
-        url("../fonts/icomoon.svg?h6raa2#icomoon") format("svg");
+        url("../fonts/icomoon.ttf?es1cqw") format("truetype"),
+        url("../fonts/icomoon.woff?es1cqw") format("woff"),
+        url("../fonts/icomoon.svg?es1cqw#icomoon") format("svg");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -28,18 +28,18 @@
     content: "\e932";
     color: #f0ad4e;
 }
-.ic-rocketchat:before {
+.ic-rocketchat:after {
     content: "\e930";
     color: #f5455c;
 }
 .ic-ntfy:before {
     content: "\e927";
-    color: rgb(51, 133, 116);
+    color: rgb(255, 255, 255);
 }
 .ic-ntfy:after {
     content: "\e928";
     margin-left: -1em;
-    color: rgb(255, 255, 255);
+    color: rgb(51, 133, 116);
 }
 
 .ic-gotify:before {
@@ -221,12 +221,12 @@
 }
 .ic-telegram:before {
     content: "\e906";
-    color: #2ca5e0;
+    color: rgb(255, 255, 255);
 }
 .ic-telegram:after {
     content: "\e914";
     margin-left: -1em;
-    color: rgb(255, 255, 255);
+    color: rgb(38, 164, 227);
 }
 .ic-trello:before {
     content: "\e911";
