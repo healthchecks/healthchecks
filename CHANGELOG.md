@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - De-emphasize the unsubscribe link in email notifications
 - In the checks list, move the "Add Check" button to the top of the page
 - Implement filtering by status in the checks list page
+- Increase ntfy.sh topic max length to 64
 
 ### Bug Fixes
 - Improve recipient address validation in the smtp listener (#1077)
