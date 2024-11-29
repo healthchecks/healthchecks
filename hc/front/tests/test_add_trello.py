@@ -34,9 +34,24 @@ class AddTrelloTestCase(BaseTestCase):
         self.assertEqual(c.trello.token, "0" * 64)
         self.assertEqual(c.project, self.project)
 
-    def test_it_handles_256_char_token(self) -> None:
+    def test_it_handles_opaque_token(self) -> None:
+        token = "".join(chr(i) for i in range(1, 128))
         form = {
-            "token": "0" * 256,
+            "token": token,
+            "board_name": "My Board",
+            "list_name": "My List",
+            "list_id": "1" * 32,
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        elf.client.post(self.url, form)
+
+        c = Channel.objects.get()
+        self.assertEqual(c.trello.token, token)
+
+    def test_it_handles_1000_char_token(self) -> None:
+        form = {
+            "token": "0" * 1000,
             "board_name": "My Board",
             "list_name": "My List",
             "list_id": "1" * 32,
@@ -46,7 +61,7 @@ class AddTrelloTestCase(BaseTestCase):
         self.client.post(self.url, form)
 
         c = Channel.objects.get()
-        self.assertEqual(c.trello.token, "0" * 256)
+        self.assertEqual(c.trello.token, "0" * 1000)
 
     @override_settings(TRELLO_APP_KEY=None)
     def test_it_requires_trello_app_key(self) -> None:
