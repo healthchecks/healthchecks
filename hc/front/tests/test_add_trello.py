@@ -44,7 +44,7 @@ class AddTrelloTestCase(BaseTestCase):
         }
 
         self.client.login(username="alice@example.org", password="password")
-        elf.client.post(self.url, form)
+        self.client.post(self.url, form)
 
         c = Channel.objects.get()
         self.assertEqual(c.trello.token, token)
