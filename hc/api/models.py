@@ -32,6 +32,7 @@ from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries, seconds_in_month
 from hc.lib.s3 import get_object, put_object, remove_objects
+from hc.lib.urls import absolute_reverse
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -245,14 +246,15 @@ class Check(models.Model):
         return settings.PING_ENDPOINT + str(self.code)
 
     def details_url(self, full: bool = True) -> str:
-        result = reverse("hc-details", args=[self.code])
-        return settings.SITE_ROOT + result if full else result
+        if not full:
+            return reverse("hc-details", args=[self.code])
+        return absolute_reverse("hc-details", args=[self.code])
 
     def get_absolute_url(self) -> str:
         return self.details_url(full=False)
 
     def cloaked_url(self) -> str:
-        return settings.SITE_ROOT + reverse("hc-uncloak", args=[self.unique_key])
+        return absolute_reverse("hc-uncloak", args=[self.unique_key])
 
     def email(self) -> str:
         return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
@@ -421,7 +423,7 @@ class Check(models.Model):
 
             # Optimization: construct API URLs manually instead of using reverse().
             # This is significantly quicker when returning hundreds of checks.
-            update_url = settings.SITE_ROOT + f"/api/v{v}/checks/{self.code}"
+            update_url = f"{settings.SITE_ROOT}/api/v{v}/checks/{self.code}"
             result["update_url"] = update_url
             result["pause_url"] = update_url + "/pause"
             result["resume_url"] = update_url + "/resume"
@@ -653,7 +655,7 @@ class Ping(models.Model):
     def to_dict(self) -> PingDict:
         if self.has_body():
             args = [self.owner.code, self.n]
-            body_url = settings.SITE_ROOT + reverse("hc-api-ping-body", args=args)
+            body_url = absolute_reverse("hc-api-ping-body", args=args)
         else:
             body_url = None
 
@@ -899,22 +901,20 @@ class Channel(models.Model):
 
     def send_verify_link(self) -> None:
         args = [self.code, self.make_token()]
-        verify_link = reverse("hc-verify-email", args=args)
-        verify_link = settings.SITE_ROOT + verify_link
+        verify_link = absolute_reverse("hc-verify-email", args=args)
         emails.verify_email(self.email.value, {"verify_link": verify_link})
 
     def get_unsub_link(self) -> str:
         signer = TimestampSigner(salt="alerts")
         signed_token = signer.sign(self.make_token())
         args = [self.code, signed_token]
-        verify_link = reverse("hc-unsubscribe-alerts", args=args)
-        return settings.SITE_ROOT + verify_link
+        return absolute_reverse("hc-unsubscribe-alerts", args=args)
 
     def send_signal_captcha_alert(self, challenge: str, raw: str) -> None:
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()
-        submit_url = settings.SITE_ROOT + reverse("hc-signal-captcha")
+        submit_url = absolute_reverse("hc-signal-captcha")
         submit_url += "?" + urlencode({"host": hostname, "challenge": challenge})
         html_message = f"""
             On host <b>{hostname}</b>, run:<br>
@@ -1144,8 +1144,7 @@ class Notification(models.Model):
         get_latest_by = "created"
 
     def status_url(self) -> str:
-        path = reverse("hc-api-notification-status", args=[self.code])
-        return settings.SITE_ROOT + path
+        return absolute_reverse("hc-api-notification-status", args=[self.code])
 
 
 class FlipDict(TypedDict):

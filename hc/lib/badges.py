@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.signing import base64_hmac
 from django.template.loader import render_to_string
 from django.urls import reverse
+from hc.lib.urls import absolute_reverse
 
 WIDTHS = {
     "a": 7,
@@ -112,8 +113,6 @@ def get_badge_url(
         sig += "-2"
 
     if tag == "*":
-        url = reverse("hc-badge-all", args=[badge_key, sig, fmt])
+        return absolute_reverse("hc-badge-all", args=[badge_key, sig, fmt])
     else:
-        url = reverse("hc-badge", args=[badge_key, sig, tag, fmt])
-
-    return settings.SITE_ROOT + url
+        return absolute_reverse("hc-badge", args=[badge_key, sig, tag, fmt])

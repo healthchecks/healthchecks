@@ -70,6 +70,7 @@ from hc.front.templatetags.hc_extras import (
 from hc.lib import curl
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
+from hc.lib.urls import absolute_reverse
 
 logger = logging.getLogger(__name__)
 
@@ -1161,7 +1162,7 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             url = get_badge_url(project.badge_key, label, fmt, with_late)
         elif form.cleaned_data["target"] == "check":
             check = project.check_set.get(code=form.cleaned_data["check"])
-            url = settings.SITE_ROOT + reverse(
+            url = absolute_reverse(
                 "hc-badge-check", args=[states, check.prepare_badge_key(), fmt]
             )
             label = check.name_then_code()
@@ -1534,7 +1535,7 @@ def add_pd(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     if settings.PD_APP_ID:
         state = token_urlsafe()
 
-        redirect_url = settings.SITE_ROOT + reverse("hc-add-pd-complete")
+        redirect_url = absolute_reverse("hc-add-pd-complete")
         redirect_url += "?" + urlencode({"state": state})
 
         install_url = "https://app.pagerduty.com/install/integration?" + urlencode(
@@ -1779,7 +1780,7 @@ def add_pushbullet(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
     authorize_url = "https://www.pushbullet.com/authorize?" + urlencode(
         {
             "client_id": settings.PUSHBULLET_CLIENT_ID,
-            "redirect_uri": settings.SITE_ROOT + reverse(add_pushbullet_complete),
+            "redirect_uri": absolute_reverse(add_pushbullet_complete),
             "response_type": "code",
             "state": state,
         }
@@ -1850,7 +1851,7 @@ def add_discord(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         {
             "client_id": settings.DISCORD_CLIENT_ID,
             "scope": "webhook.incoming",
-            "redirect_uri": settings.SITE_ROOT + reverse(add_discord_complete),
+            "redirect_uri": absolute_reverse(add_discord_complete),
             "response_type": "code",
             "state": state,
         }
@@ -1884,7 +1885,7 @@ def add_discord_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
         "client_secret": settings.DISCORD_CLIENT_SECRET,
         "code": request.GET.get("code"),
         "grant_type": "authorization_code",
-        "redirect_uri": settings.SITE_ROOT + reverse(add_discord_complete),
+        "redirect_uri": absolute_reverse(add_discord_complete),
     }
     result = curl.post("https://discordapp.com/api/oauth2/token", data)
 
@@ -1924,18 +1925,14 @@ def add_pushover(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     if request.method == "POST":
         state = token_urlsafe().lower()
 
-        failure_url = settings.SITE_ROOT + reverse("hc-channels", args=[project.code])
-        success_url = (
-            settings.SITE_ROOT
-            + reverse("hc-add-pushover", args=[project.code])
-            + "?"
-            + urlencode(
-                {
-                    "state": state,
-                    "prio": request.POST.get("po_priority", "0"),
-                    "prio_up": request.POST.get("po_priority_up", "0"),
-                }
-            )
+        failure_url = absolute_reverse("hc-channels", args=[project.code])
+        success_url = absolute_reverse("hc-add-pushover", args=[project.code])
+        success_url += "?" + urlencode(
+            {
+                "state": state,
+                "prio": request.POST.get("po_priority", "0"),
+                "prio_up": request.POST.get("po_priority_up", "0"),
+            }
         )
         assert settings.PUSHOVER_SUBSCRIPTION_URL
         subscription_url = (
@@ -2327,7 +2324,7 @@ def add_trello(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         channel.assign_all_checks()
         return redirect("hc-channels", project.code)
 
-    return_url = settings.SITE_ROOT + reverse("hc-add-trello", args=[project.code])
+    return_url = absolute_reverse("hc-add-trello", args=[project.code])
     authorize_url = "https://trello.com/1/authorize?" + urlencode(
         {
             "expiration": "never",

@@ -22,6 +22,7 @@ from django.utils.timezone import now
 from hc.lib import emails
 from hc.lib.date import month_boundaries, week_boundaries
 from hc.lib.signing import sign_bounce_id
+from hc.lib.urls import absolute_reverse
 
 if TYPE_CHECKING:
     # Importing Check at runtime would cause a circular import, so only import it
@@ -106,13 +107,12 @@ class Profile(models.Model):
         return f"Profile for {self.user.email}"
 
     def notifications_url(self) -> str:
-        return settings.SITE_ROOT + reverse("hc-notifications")
+        return absolute_reverse("hc-notifications")
 
     def reports_unsub_url(self) -> str:
         signer = TimestampSigner(salt="reports")
         signed_username = signer.sign(self.user.username)
-        path = reverse("hc-unsubscribe-reports", args=[signed_username])
-        return settings.SITE_ROOT + path
+        return absolute_reverse("hc-unsubscribe-reports", args=[signed_username])
 
     def prepare_token(self) -> str:
         token = token_urlsafe(24)
@@ -134,13 +134,13 @@ class Profile(models.Model):
         self, membership: Member | None = None, redirect_url: str | None = None
     ) -> None:
         token = self.prepare_token()
-        path = reverse("hc-check-token", args=[self.user.username, token])
+        url = absolute_reverse("hc-check-token", args=[self.user.username, token])
         if redirect_url:
-            path += "?next=%s" % redirect_url
+            url += "?next=%s" % redirect_url
 
         ctx = {
             "button_text": "Log In",
-            "button_url": settings.SITE_ROOT + path,
+            "button_url": url,
             "membership": membership,
         }
         emails.login(self.user.email, ctx)
@@ -152,23 +152,23 @@ class Profile(models.Model):
             "e": new_email,
         }
         signed_payload = TimestampSigner().sign_object(payload)
-        path = reverse("hc-change-email-verify", args=[signed_payload])
+        url = absolute_reverse("hc-change-email-verify", args=[signed_payload])
 
         ctx = {
             "button_text": "Log In",
-            "button_url": settings.SITE_ROOT + path,
+            "button_url": url,
         }
         emails.login(new_email, ctx)
 
     def send_transfer_request(self, project: Project) -> None:
         token = self.prepare_token()
         settings_path = reverse("hc-project-settings", args=[project.code])
-        path = reverse("hc-check-token", args=[self.user.username, token])
-        path += "?next=%s" % settings_path
+        url = absolute_reverse("hc-check-token", args=[self.user.username, token])
+        url += f"?next={settings_path}"
 
         ctx = {
             "button_text": "Project Settings",
-            "button_url": settings.SITE_ROOT + path,
+            "button_url": url,
             "project": project,
         }
         emails.transfer_request(self.user.email, ctx)
@@ -176,14 +176,14 @@ class Profile(models.Model):
     def send_sms_limit_notice(self, transport: str) -> None:
         ctx = {"transport": transport, "limit": self.sms_limit}
         if self.sms_limit != 500 and settings.USE_PAYMENTS:
-            ctx["url"] = settings.SITE_ROOT + reverse("hc-pricing")
+            ctx["url"] = absolute_reverse("hc-pricing")
 
         emails.sms_limit(self.user.email, ctx)
 
     def send_call_limit_notice(self) -> None:
         ctx: dict[str, Any] = {"limit": self.call_limit}
         if self.call_limit != 500 and settings.USE_PAYMENTS:
-            ctx["url"] = settings.SITE_ROOT + reverse("hc-pricing")
+            ctx["url"] = absolute_reverse("hc-pricing")
 
         emails.call_limit(self.user.email, ctx)
 
@@ -453,12 +453,11 @@ class Project(models.Model):
         frag = urlencode({self.api_key_readonly: str(self)}, quote_via=quote)
         return reverse("hc-dashboard") + "#" + frag
 
-    def checks_url(self, full: bool = True) -> str:
-        result = reverse("hc-checks", args=[self.code])
-        return settings.SITE_ROOT + result if full else result
+    def checks_url(self) -> str:
+        return absolute_reverse("hc-checks", args=[self.code])
 
     def get_absolute_url(self) -> str:
-        return self.checks_url(full=False)
+        return reverse("hc-checks", args=[self.code])
 
 
 class Member(models.Model):

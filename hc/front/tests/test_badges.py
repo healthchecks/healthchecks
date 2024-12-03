@@ -6,6 +6,7 @@ from hc.api.models import Check
 from hc.test import BaseTestCase
 
 
+@override_settings(SITE_ROOT="https://example.org")
 class BadgesTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
@@ -13,7 +14,8 @@ class BadgesTestCase(BaseTestCase):
         self.project.badge_key = "alices-badge-key"
         self.project.save()
 
-        Check.objects.create(project=self.project, tags="foo a-B_1  baz@")
+        self.check = Check.objects.create(project=self.project, tags="foo a-B_1  baz@")
+        self.check.prepare_badge_key()
 
         self.url = f"/projects/{self.project.code}/badges/"
 
@@ -44,14 +46,25 @@ class BadgesTestCase(BaseTestCase):
 
         self.assertContains(r, "![Overall Status]")
 
-    def test_it_previews_svg(self) -> None:
+    def test_it_previews_tag_svg(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         payload = {"target": "tag", "tag": "foo", "fmt": "svg", "states": "2"}
         r = self.client.post(self.url, payload)
 
-        self.assertContains(r, "badge/alices-badge-key/")
+        self.assertContains(r, "https://example.org/badge/alices-badge-key/")
         self.assertContains(r, "foo.svg")
         self.assertContains(r, "![foo]")
+
+    def test_it_previews_check_svg(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+        payload = {
+            "target": "check",
+            "check": self.check.code,
+            "fmt": "svg",
+            "states": "2",
+        }
+        r = self.client.post(self.url, payload)
+        self.assertContains(r, f"https://example.org/b/2/{self.check.badge_key}.svg")
 
     def test_it_handles_special_characters_in_tags(self) -> None:
         self.client.login(username="alice@example.org", password="password")

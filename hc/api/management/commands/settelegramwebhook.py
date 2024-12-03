@@ -4,9 +4,9 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.urls import reverse
 
 from hc.lib import curl
+from hc.lib.urls import absolute_reverse
 
 SETWEBHOOK_TMPL = "https://api.telegram.org/bot%s/setWebhook"
 
@@ -19,7 +19,7 @@ class Command(BaseCommand):
             return "Abort: settings.TELEGRAM_TOKEN is not set"
 
         form = {
-            "url": settings.SITE_ROOT + reverse("hc-telegram-webhook"),
+            "url": absolute_reverse("hc-telegram-webhook"),
             "allowed_updates": ["message", "channel_post"],
         }
 

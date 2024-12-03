@@ -50,7 +50,7 @@ class ChecksAdmin(ModelAdmin[Check]):
         return qs
 
     def project_(self, obj: Check) -> str:
-        url = obj.project.checks_url(full=False)
+        url = obj.project.get_absolute_url()
         name = obj.project.name or "Default"
         return format_html("""{} &rsaquo; <a href="{}">{}</a>""", obj.email, url, name)
 
