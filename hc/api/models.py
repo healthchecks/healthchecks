@@ -1169,7 +1169,12 @@ class Flip(models.Model):
                 fields=["processed"],
                 name="api_flip_not_processed",
                 condition=models.Q(processed=None),
-            )
+            ),
+            # For efficiently selecting flips in hc.front.views._get_events
+            models.Index(
+                fields=["owner", "created"],
+                name="api_flip_owner_created",
+            ),
         ]
 
     def to_dict(self) -> FlipDict:
