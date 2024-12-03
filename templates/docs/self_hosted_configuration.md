@@ -846,13 +846,14 @@ Default: `http://localhost:8000`
 The base URL of this Healthchecks instance. Healthchecks uses `SITE_ROOT` whenever
 it needs to construct absolute URLs.
 
-Note: if you want to serve Healthchecks on a subpath
-(e.g., `https://example.org/healthchecks/`), you will need to adjust `SITE_ROOT`
-but this alone will not do the trick. Healthchecks uses the `SITE_ROOT` setting
-only for formatting absolute URLs. Healthchecks does not use it for routing requests,
-or for setting the `SCRIPT_NAME` environment variable. Serving Healthchecks on
-subpath is currently not well tested or documented – it may be possible to get to
-work, but you may run into issues (PRs welcome).
+Note: if you are setting up Healthchecks on a subpath
+(e.g., `https://example.org/healthchecks/`), `SITE_ROOT` should contain **only the the
+domain portion**, and not the subpath (for the previous example, it should be
+just `https://example.org`, without `/healthchecks/`). When constructing URLs,
+Healthchecks will take the subpath portion from the `SCRIPT_NAME` WSGI parameter or from
+the [FORCE_SCRIPT_NAME](https://docs.djangoproject.com/en/5.1/ref/settings/#force-script-name)
+setting. Serving Healthchecks on subpath is currently not well tested or documented
+– it may be possible to get to work, but you may run into issues (PRs welcome).
 
 ## `SLACK_CLIENT_ID` {: #SLACK_CLIENT_ID }
 
