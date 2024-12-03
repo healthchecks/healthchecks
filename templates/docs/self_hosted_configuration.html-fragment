@@ -593,6 +593,13 @@ its web UI and documentation.</p>
 <p>Default: <code>http://localhost:8000</code></p>
 <p>The base URL of this Healthchecks instance. Healthchecks uses <code>SITE_ROOT</code> whenever
 it needs to construct absolute URLs.</p>
+<p>Note: if you want to serve Healthchecks on a subpath
+(e.g., <code>https://example.org/healthchecks/</code>), you will need to adjust <code>SITE_ROOT</code>
+but this alone will not do the trick. Healthchecks uses the <code>SITE_ROOT</code> setting
+only for formatting absolute URLs. Healthchecks does not use it for routing requests,
+or for setting the <code>SCRIPT_NAME</code> environment variable. Serving Healthchecks on
+subpath is currently not well tested – it may be possible to get to work, but you may
+run into issues (PRs welcome). There is no official documentation to get it to work.</p>
 <h2 id="SLACK_CLIENT_ID"><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Slack Client ID, used by the Healthchecks integration for Slack.</p>
