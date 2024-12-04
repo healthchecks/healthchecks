@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.test import SimpleTestCase
 from django.test.utils import override_settings
 
-from hc.lib.badges import get_badge_svg, get_width, get_badge_url
+from hc.lib.badges import get_badge_svg, get_badge_url, get_width
 
 
 class BadgesTestCase(SimpleTestCase):
@@ -26,6 +26,6 @@ class BadgesTestCase(SimpleTestCase):
         self.assertNotIn("8,5", svg)
 
     @override_settings(SITE_ROOT="https://example.org")
-    def test_it_generates_absolute_url(self):
+    def test_it_generates_absolute_url(self) -> None:
         url = get_badge_url("fake-key", "prod")
         self.assertTrue(url.startswith("https://example.org/badge/fake-key/"))

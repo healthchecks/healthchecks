@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any
+from urllib.parse import urlparse
 from uuid import UUID
 
 from django import template
@@ -13,6 +14,7 @@ from django.utils.safestring import SafeString, mark_safe
 from django.utils.timezone import now
 
 from hc.lib.date import format_approx_duration, format_duration, format_hms
+from hc.lib.urls import absolute_url
 
 if TYPE_CHECKING:
     from hc.api.models import Check
@@ -55,7 +57,7 @@ def absolute_site_logo_url() -> str:
     """
     url = settings.SITE_LOGO_URL or static("img/logo.png")
     if url.startswith("/"):
-        url = settings.SITE_ROOT + url
+        url = absolute_url(url)
 
     return url
 
@@ -72,8 +74,7 @@ def site_root() -> str:
 
 @register.simple_tag
 def site_hostname() -> str:
-    parts = settings.SITE_ROOT.split("://")
-    return parts[1]
+    return urlparse(settings.SITE_ROOT).netloc
 
 
 @register.simple_tag

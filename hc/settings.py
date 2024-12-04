@@ -4,12 +4,14 @@ Django settings for healthchecks project.
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+
 from __future__ import annotations
 
 import os
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 import django_stubs_ext
 
@@ -195,6 +197,10 @@ TIME_ZONE = "UTC"
 USE_I18N = False
 
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
+_site_root_parts = urlparse(SITE_ROOT)
+if _site_root_parts.path:
+    FORCE_SCRIPT_NAME = _site_root_parts.path
+
 SITE_NAME = os.getenv("SITE_NAME", "Mychecks")
 SITE_LOGO_URL = os.getenv("SITE_LOGO_URL")
 MASTER_BADGE_LABEL = os.getenv("MASTER_BADGE_LABEL", SITE_NAME)
@@ -205,7 +211,7 @@ PING_BODY_LIMIT = envint("PING_BODY_LIMIT", "10000")
 # then we need to bump up DATA_UPLOAD_MAX_MEMORY_SIZE too:
 if PING_BODY_LIMIT and PING_BODY_LIMIT > 2621440:
     DATA_UPLOAD_MAX_MEMORY_SIZE = PING_BODY_LIMIT
-STATIC_URL = "/static/"
+STATIC_URL = f"{_site_root_parts.path}/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "static-collected"
 STATICFILES_FINDERS = (
