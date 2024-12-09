@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.8-dev - Unreleased
+## v3.8 - 2024-12-09
 
 ### Improvements
 - Rewrite the docker/fetchstatus.py script to reduce Docker container CPU use (#1071)
