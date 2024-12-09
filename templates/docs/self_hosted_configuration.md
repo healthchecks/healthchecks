@@ -846,14 +846,27 @@ Default: `http://localhost:8000`
 The base URL of this Healthchecks instance. Healthchecks uses `SITE_ROOT` whenever
 it needs to construct absolute URLs.
 
-Note: if you are setting up Healthchecks on a subpath
-(e.g., `https://example.org/healthchecks/`), `SITE_ROOT` should contain **only the the
-domain portion**, and not the subpath (for the previous example, it should be
-just `https://example.org`, without `/healthchecks/`). When constructing URLs,
-Healthchecks will take the subpath portion from the `SCRIPT_NAME` WSGI parameter or from
-the [FORCE_SCRIPT_NAME](https://docs.djangoproject.com/en/5.1/ref/settings/#force-script-name)
-setting. Serving Healthchecks on subpath is currently not well tested or documented
-– it may be possible to get to work, but you may run into issues (PRs welcome).
+If the SITE_ROOT contains a path (for example, <code>http://localhost:8000<b>/prefix</b></code>),
+then Healthchecks will automatically set the following additional Django settings:
+
+* <code>FORCE_SCRIPT_NAME = "<b>/prefix</b></code>". This is required for correct
+URL generation in management commands, where the path cannot be determined from the
+HTTP request. `FORCE_SCRIPT_NAME` is a standard Django setting, read more about it in
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#force-script-name).
+* <code>LOGIN_URL=<b>/prefix</b>/accounts/login/</code>. Required
+for correct redirection to a log-in page when an unauthenticated user requests a
+page that requires authentication. `LOGIN_URL` is a standard Django setting, read more
+about it in
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#login-url).
+* <code>STATIC_URL=<b>/prefix</b>/static/</code>. Required for correct
+URL generation to static files (JS, CSS, images). `STATIC_URL` is a standard Django
+setting, read more about it in
+[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#static-url).
+
+**On using `local_settings.py`:** Healthchecks only sets the above additional settings
+if you specify `SITE_ROOT` via an environment variable. If you instead specify it in
+`local_settings.py`, you will also need to set `FORCE_SCRIPT_NAME`, `LOGIN_URL`,
+and `STATIC_URL` there.
 
 ## `SLACK_CLIENT_ID` {: #SLACK_CLIENT_ID }
 

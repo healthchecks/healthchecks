@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - In the checks list, move the "Add Check" button to the top of the page
 - Implement filtering by status in the checks list page
 - Increase ntfy.sh topic max length to 64
+- Implement support for path in SITE_ROOT, e.g. SITE_ROOT=http://example.org/hc (#1091)
 
 ### Bug Fixes
 - Improve recipient address validation in the smtp listener (#1077)

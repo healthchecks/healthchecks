@@ -593,14 +593,27 @@ its web UI and documentation.</p>
 <p>Default: <code>http://localhost:8000</code></p>
 <p>The base URL of this Healthchecks instance. Healthchecks uses <code>SITE_ROOT</code> whenever
 it needs to construct absolute URLs.</p>
-<p>Note: if you are setting up Healthchecks on a subpath
-(e.g., <code>https://example.org/healthchecks/</code>), <code>SITE_ROOT</code> should contain <strong>only the the
-domain portion</strong>, and not the subpath (for the previous example, it should be
-just <code>https://example.org</code>, without <code>/healthchecks/</code>). When constructing URLs,
-Healthchecks will take the subpath portion from the <code>SCRIPT_NAME</code> WSGI parameter or from
-the <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#force-script-name">FORCE_SCRIPT_NAME</a>
-setting. Serving Healthchecks on subpath is currently not well tested or documented
-– it may be possible to get to work, but you may run into issues (PRs welcome).</p>
+<p>If the SITE_ROOT contains a path (for example, <code>http://localhost:8000<b>/prefix</b></code>),
+then Healthchecks will automatically set the following additional Django settings:</p>
+<ul>
+<li><code>FORCE_SCRIPT_NAME = "<b>/prefix</b></code>". This is required for correct
+URL generation in management commands, where the path cannot be determined from the
+HTTP request. <code>FORCE_SCRIPT_NAME</code> is a standard Django setting, read more about it in
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#force-script-name">Django documentation</a>.</li>
+<li><code>LOGIN_URL=<b>/prefix</b>/accounts/login/</code>. Required
+for correct redirection to a log-in page when an unauthenticated user requests a
+page that requires authentication. <code>LOGIN_URL</code> is a standard Django setting, read more
+about it in
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#login-url">Django documentation</a>.</li>
+<li><code>STATIC_URL=<b>/prefix</b>/static/</code>. Required for correct
+URL generation to static files (JS, CSS, images). <code>STATIC_URL</code> is a standard Django
+setting, read more about it in
+<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#static-url">Django documentation</a>.</li>
+</ul>
+<p><strong>On using <code>local_settings.py</code>:</strong> Healthchecks only sets the above additional settings
+if you specify <code>SITE_ROOT</code> via an environment variable. If you instead specify it in
+<code>local_settings.py</code>, you will also need to set <code>FORCE_SCRIPT_NAME</code>, <code>LOGIN_URL</code>,
+and <code>STATIC_URL</code> there.</p>
 <h2 id="SLACK_CLIENT_ID"><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Slack Client ID, used by the Healthchecks integration for Slack.</p>
