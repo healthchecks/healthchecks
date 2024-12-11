@@ -1258,6 +1258,7 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "enable_victorops": settings.VICTOROPS_ENABLED is True,
         "enable_webhooks": settings.WEBHOOKS_ENABLED is True,
         "enable_whatsapp": settings.TWILIO_USE_WHATSAPP,
+        "enable_zammad": settings.ZAMMAD_ENABLED is True,
         "enable_zulip": settings.ZULIP_ENABLED is True,
         "use_payments": settings.USE_PAYMENTS,
     }
@@ -2022,6 +2023,25 @@ def add_victorops(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_victorops.html", ctx)
 
+@require_setting("ZAMMAD_ENABLED")
+@login_required
+def add_zammad(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddZammadForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="zammad")
+            channel.value = form.get_value()
+            channel.save()
+
+            channel.assign_all_checks()
+            return redirect("hc-channels", project.code)
+    else:
+        form = forms.AddZammadForm()
+
+    ctx = {"page": "channels", "project": project, "form": form}
+    return render(request, "integrations/zammad_form.html", ctx)
 
 @require_setting("ZULIP_ENABLED")
 @login_required
