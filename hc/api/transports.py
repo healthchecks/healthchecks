@@ -1646,12 +1646,12 @@ class Zammad(HttpTransport):
         }
         # payload
         data = {
-            "title": "Healthcheck down",
+            "title": tmpl("zammad_title.html", **ctx),
             "group": self.channel.zammad.group,
             "state_id": 1,
             "customer": self.channel.zammad.customer,
             "article": {
-                "subject": "Healthcheck down",
+                "subject": tmpl("zammad_title.html", **ctx),
                 "body": tmpl("zammad_message.html", **ctx),
                 "type": "web"
             }
