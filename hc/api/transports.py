@@ -1622,3 +1622,39 @@ class Ntfy(HttpTransport):
         # Give up database connection before potentially long network IO:
         close_old_connections()
         self.post(url, headers=headers, json=payload)
+
+class Zammad(HttpTransport):
+    def notify(self, flip: Flip, notification: Notification) -> None:
+
+        # url
+        base = self.channel.zammad.url
+        if not base.endswith("/"):
+            base += "/"
+        url = urljoin(base, "api/v1/tickets")
+
+        # header authentication
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": "Bearer %s" % self.channel.zammad.token,
+        }
+
+        ctx = {
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": self.last_ping(flip),
+            "down_checks": self.down_checks(flip.owner),
+        }
+        # payload
+        data = {
+            "title": "Healthcheck down",
+            "group": self.channel.zammad.group,
+            "state_id": 1,
+            "customer": self.channel.zammad.customer,
+            "article": {
+                "subject": "Healthcheck down",
+                "body": tmpl("zammad_message.html", **ctx),
+                "type": "web"
+            }
+        }
+        self.post(url, headers=headers, json=data)
+

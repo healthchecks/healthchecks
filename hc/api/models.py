@@ -74,6 +74,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "webhook": ("Webhook", transports.Webhook),
     "whatsapp": ("WhatsApp", transports.WhatsApp),
     "zulip": ("Zulip", transports.Zulip),
+    "zammad": ("Zammad", transports.Zammad),
 }
 
 
@@ -831,6 +832,12 @@ class NtfyConf(BaseModel):
         return NTFY_PRIORITIES[self.priority]
 
 
+class ZammadConf(BaseModel):
+    url: str
+    token: str
+    customer: str
+    group: str
+
 class TrelloConf(BaseModel):
     token: str
     list_id: str
@@ -888,6 +895,7 @@ class Channel(models.Model):
             "whatsapp",
             "ntfy",
             "group",
+            "zammad",
         )
 
     def assign_all_checks(self) -> None:
@@ -1128,6 +1136,11 @@ class Channel(models.Model):
     def ntfy(self) -> NtfyConf:
         assert self.kind == "ntfy"
         return NtfyConf.model_validate_json(self.value, strict=True)
+
+    @property
+    def zammad(self) -> ZammadConf:
+        assert self.kind == "zammad"
+        return ZammadConf.model_validate_json(self.value, strict=True)
 
 
 class Notification(models.Model):
