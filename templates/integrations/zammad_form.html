@@ -11,7 +11,7 @@
         <div class="jumbotron">
             <p>
             <a href="https://zammad.com/">Zammad</a> is a web-based, open source user support/ticketing solution. If you use or plan on using zammad,
-            you can can integrate it with your {{ site_name }} account in few simple steps. This integration will utilize the /api/v1/tickets endpoint
+            you can can integrate it with your {{ site_name }} account in few simple steps. This integration will utilize the <em>/api/v1/tickets</em> endpoint
             of zammad to create a new ticket if a healtcheck goes down.
             </p>
         </div>
@@ -35,13 +35,13 @@
                     {% if form.url.errors %}
                     <div class="help-block">{{ form.url.errors|join:"" }}</div>
                     {% else %}
-                    <div class="help-block">Zammad server's root URL, <em>without</em> the api endpoint.</div>
+                    <div class="help-block">Zammad server's root URL, <em>without</em> the api endpoint like https://example.zammad.com</div>
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group {{ form.token.css_classes }}">
-                <label for="token" class="col-sm-3 control-label">Bearer Token</label>
+                <label for="token" class="col-sm-3 control-label">Personal Access Token</label>
                 <div class="col-sm-6">
                     <input
                         id="token"
@@ -53,13 +53,13 @@
                     {% if form.token.errors %}
                     <div class="help-block">{{ form.token.errors|join:"" }}</div>
                     {% else %}
-                    <div class="help-block">If publishing to the topic requires an access token, specify it here. This requires at least ...</div>
+                    <div class="help-block">Create a personal access token with the permission <strong>ticket.agent</strong>.</div>
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group {{ form.customer.css_classes }}">
-                <label for="customer" class="col-sm-3 control-label">Customer to create the ticket with</label>
+                <label for="customer" class="col-sm-3 control-label">User to create the ticket with</label>
                 <div class="col-sm-6">
                     <input
                         id="customer"
@@ -71,7 +71,7 @@
                     {% if form.customer.errors %}
                     <div class="help-block">{{ form.customer.errors|join:"" }}</div>
                     {% else %}
-                    <div class="help-block">Zammad requires a customer (email address) to create a ticket for.</div>
+                    <div class="help-block">Zammad requires a user to create the ticket for. Create one and paste the email here.</div>
                     {% endif %}
                 </div>
             </div>
@@ -89,7 +89,7 @@
                     {% if form.group.errors %}
                     <div class="help-block">{{ form.group.errors|join:"" }}</div>
                     {% else %}
-                    <div class="help-block">Zammad requires a customer (email address) to create a ticket for.</div>
+                    <div class="help-block">Zammad requires a ticket to create a ticket for. Paste the name here.</div>
                     {% endif %}
                 </div>
             </div>
