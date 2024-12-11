@@ -895,7 +895,6 @@ class Channel(models.Model):
             "whatsapp",
             "ntfy",
             "group",
-            "zammad",
         )
 
     def assign_all_checks(self) -> None:
