@@ -42,6 +42,16 @@
     color: rgb(51, 133, 116);
 }
 
+.ic-zammad:before {
+    content: '\e000';
+    color: rgb(255, 255, 255);
+}
+.ic-zammad:after {
+    content: '\e001';
+    margin-left: -1em;
+    color: red;
+}
+
 .ic-gotify:before {
     content: "\e925";
     color: rgb(255, 255, 255);
