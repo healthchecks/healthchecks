@@ -10,9 +10,9 @@
         <h1>Zammad</h1>
         <div class="jumbotron">
             <p>
-            <a href="https://zammad.com/">Zammad</a> is is a simple HTTP-based pub-sub
-            notification service. If you use or plan on using zammad,
-            you can can integrate it with your {{ site_name }} account in few simple steps.
+            <a href="https://zammad.com/">Zammad</a> is a web-based, open source user support/ticketing solution. If you use or plan on using zammad,
+            you can can integrate it with your {{ site_name }} account in few simple steps. This integration will utilize the /api/v1/tickets endpoint
+            of zammad to create a new ticket if a healtcheck goes down.
             </p>
         </div>
 
@@ -20,23 +20,6 @@
 
         <form method="post" class="form-horizontal">
             {% csrf_token %}
-            <div class="form-group {{ form.topic.css_classes }}">
-                <label for="topic" class="col-sm-3 control-label">Topic</label>
-                <div class="col-sm-6">
-                    <input
-                        id="topic"
-                        name="topic"
-                        type="text"
-                        maxlength="64"
-                        class="form-control"
-                        value="{{ form.topic.value|default:'' }}"
-                        required>
-                    {% if form.topic.errors %}
-                    <div class="help-block">{{ form.topic.errors|join:"" }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
             <div class="form-group {{ form.url.css_classes }}">
                 <label for="url" class="col-sm-3 control-label">Server URL</label>
                 <div class="col-sm-6">
@@ -46,19 +29,19 @@
                         type="text"
                         class="form-control"
                         placeholder="https://"
-                        value="{{ form.url.value|default:'https://ntfy.sh' }}"
+                        value="{{ form.url.value|default:'https://' }}"
                         required>
 
                     {% if form.url.errors %}
                     <div class="help-block">{{ form.url.errors|join:"" }}</div>
                     {% else %}
-                    <div class="help-block">ntfy server's root URL, <em>without</em> the topic name.</div>
+                    <div class="help-block">Zammad server's root URL, <em>without</em> the api endpoint.</div>
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group {{ form.token.css_classes }}">
-                <label for="token" class="col-sm-3 control-label">Access Token</label>
+                <label for="token" class="col-sm-3 control-label">Bearer Token</label>
                 <div class="col-sm-6">
                     <input
                         id="token"
@@ -68,63 +51,47 @@
                         value="{{ form.token.value|default:'' }}">
 
                     {% if form.token.errors %}
-                    <div class="help-block">{{ form.url.errors|join:"" }}</div>
+                    <div class="help-block">{{ form.token.errors|join:"" }}</div>
                     {% else %}
-                    <div class="help-block">If publishing to the topic requires an access token, specify it here.</div>
+                    <div class="help-block">If publishing to the topic requires an access token, specify it here. This requires at least ...</div>
                     {% endif %}
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Priority for "down" events</label>
-                <div class="col-sm-8">
-                    <select id="priority" name="priority" class="form-control no-caret">
-                        <option value="5" {% if form.priority.value == 5 %}selected="selected"{% endif %}>
-                            Max priority: Really long vibration bursts, default notification sound with a pop-over notification.
-                        </option>
-                        <option value="4" {% if form.priority.value == 4 %}selected="selected"{% endif %}>
-                            High priority: Long vibration burst, default notification sound with a pop-over notification.
-                        </option>
-                        <option value="3" {% if form.priority.value == 3 %}selected="selected"{% endif %}>
-                            Default priority: Short default vibration and sound. Default notification behavior.
-                        </option>
-                        <option value="2" {% if form.priority.value == 2 %}selected="selected"{% endif %}>
-                            Low priority: No vibration or sound. Notification will not visibly show up until notification drawer is pulled down.
-                        </option>
-                        <option value="1" {% if form.priority.value == 1 %}selected="selected"{% endif %}>
-                            Min priority: No vibration or sound. The notification will be under the fold in 'Other notifications'.
-                        </option>
-                        <option value="0" {% if form.priority.value == 0 %}selected="selected"{% endif %}>
-                            Disabled: Will not notify about Down events.
-                        </option>
-                    </select>
-               </div>
+            <div class="form-group {{ form.customer.css_classes }}">
+                <label for="customer" class="col-sm-3 control-label">Customer to create the ticket with</label>
+                <div class="col-sm-6">
+                    <input
+                        id="customer"
+                        name="customer"
+                        type="text"
+                        class="form-control"
+                        value="{{ form.customer.value|default:'healthchecks@example.com' }}">
+
+                    {% if form.customer.errors %}
+                    <div class="help-block">{{ form.customer.errors|join:"" }}</div>
+                    {% else %}
+                    <div class="help-block">Zammad requires a customer (email address) to create a ticket for.</div>
+                    {% endif %}
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Priority for "up" events</label>
-                <div class="col-sm-8">
-                    <select name="priority_up" class="form-control no-caret">
-                        <option value="5" {% if form.priority_up.value == 5 %}selected="selected"{% endif %}>
-                            Max priority: Really long vibration bursts, default notification sound with a pop-over notification.
-                        </option>
-                        <option value="4" {% if form.priority_up.value == 4 %}selected="selected"{% endif %}>
-                            High priority: Long vibration burst, default notification sound with a pop-over notification.
-                        </option>
-                        <option value="3" {% if form.priority_up.value == 3 %}selected="selected"{% endif %}>
-                            Default priority: Short default vibration and sound. Default notification behavior.
-                        </option>
-                        <option value="2" {% if form.priority_up.value == 2 %}selected="selected"{% endif %}>
-                            Low priority: No vibration or sound. Notification will not visibly show up until notification drawer is pulled down.
-                        </option>
-                        <option value="1" {% if form.priority_up.value == 1 %}selected="selected"{% endif %}>
-                            Min priority: No vibration or sound. The notification will be under the fold in 'Other notifications'.
-                        </option>
-                        <option value="0" {% if form.priority_up.value == 0 %}selected="selected"{% endif %}>
-                            Disabled: Will not notify about Up events.
-                        </option>
-                    </select>
-               </div>
+            <div class="form-group {{ form.group.css_classes }}">
+                <label for="group" class="col-sm-3 control-label">Group to create the ticket in</label>
+                <div class="col-sm-6">
+                    <input
+                        id="group"
+                        name="group"
+                        type="text"
+                        class="form-control"
+                        value="{{ form.group.value|default:'' }}">
+
+                    {% if form.group.errors %}
+                    <div class="help-block">{{ form.group.errors|join:"" }}</div>
+                    {% else %}
+                    <div class="help-block">Zammad requires a customer (email address) to create a ticket for.</div>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="form-group">
@@ -140,6 +107,5 @@
 {% block scripts %}
 {% compress js %}
 <script src="{% static 'js/selectize.min.js' %}"></script>
-<script src="{% static 'js/ntfy_form.js' %}"></script>
 {% endcompress %}
 {% endblock %}
