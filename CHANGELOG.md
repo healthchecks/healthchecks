@@ -1,9 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.9-dev - Unreleased
+## v3.8.1 - 2024-12-13
 
 ### Improvements
+- Update Dockerfile to use Python 3.13.1
 - Improve Matrix notifications (include tags, period, last ping type etc.)
 
 ## v3.8 - 2024-12-09
