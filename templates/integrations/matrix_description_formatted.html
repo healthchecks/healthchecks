@@ -1,6 +1,58 @@
-{% load humanize %}
-{% if status == "down" %}
-    🔴 <b>{{ check.name_then_code }}</b> is <b>DOWN</b>.{% if ping %} Last ping was {{ ping.created|naturaltime }}.{% endif %}
+{% load humanize hc_extras %}
+{% if flip.new_status == "down" and flip.reason == "timeout" %}
+🔴 <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b> (success signal did not arrive on time, grace time passed).
+{% elif flip.new_status == "down" and flip.reason == "fail" %}
+🔴 <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b> (received a failure signal).
 {% else %}
-    🟢 <b>{{ check.name_then_code }}</b> is now <b>UP</b>.
+{% if flip.new_status == "up" %}🟢{% endif %} <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>{{ flip.new_status|upper }}</b>.
+{% endif %}
+<br>
+
+<br>
+{% if check.project.name %}
+<b>Project:</b> {{ check.project.name }}<br>
+{% endif %}
+
+{% if check.tags_list %}
+<b>Tags:</b> {% for tag in check.tags_list%}<code>{{ tag }}</code> {% endfor %}<br>
+{% endif %}
+
+{% if check.kind == "simple" %}
+<b>Period:</b> {{ check.timeout|hc_duration }}<br>
+{% endif %}
+
+{% if check.kind == "cron" or check.kind == "oncalendar" %}
+<b>Schedule:</b> <code>{{ check.schedule }}</code><br>
+<b>Time Zone:</b> {{ check.tz }}<br>
+{% endif %}
+
+<b>Total Pings:</b> {% if ping %}{{ ping.n }}{% else %}0{% endif %}<br>
+
+{% if ping is None %}
+<b>Last Ping:</b> Never<br>
+{% else %}
+<b>Last Ping:</b> {{ ping.get_kind_display }}, {{ ping.created|naturaltime }}<br>
+{% endif %}
+
+{% if body %}
+<b>Last Ping Body:</b><br>
+<pre>{{ body }}</pre>
+{% endif %}
+
+{% if down_checks is not None %}
+    <br>
+    {% if down_checks %}
+        {% if down_checks|length > 10 %}
+            {{ down_checks|length }} other checks are {% if status == "down" %}also{% else %}still{% endif %} down.<br>
+        {% else %}
+            The following checks are {% if status == "down" %}also{% else %}still{% endif %} down:<br>
+            <ul>
+            {% for c in down_checks %}
+                <li><a href="{{ c.cloaked_url }}">{{ c.name_then_code }}</a> (last ping: {{ c.last_ping|naturaltime|default:"never" }})</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% else %}
+        All the other checks are up.<br>
+    {% endif %}
 {% endif %}

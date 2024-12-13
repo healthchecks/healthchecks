@@ -847,10 +847,14 @@ class Matrix(HttpTransport):
         return url
 
     def notify(self, flip: Flip, notification: Notification) -> None:
+        ping = self.last_ping(flip)
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
-            "ping": self.last_ping(flip),
+            "ping": ping,
+            "body": get_ping_body(ping, maxlen=1000),
+            "down_checks": self.down_checks(flip.owner),
         }
         plain = tmpl("matrix_description.html", **ctx)
         formatted = tmpl("matrix_description_formatted.html", **ctx)

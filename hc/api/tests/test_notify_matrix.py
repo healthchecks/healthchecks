@@ -42,6 +42,7 @@ class NotifyMatrixTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -56,9 +57,25 @@ class NotifyMatrixTestCase(BaseTestCase):
         self.assertIn("test-token", url)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn("Foo is DOWN.", payload["body"])
+        self.assertIn('Foo is DOWN', payload["body"])
         self.assertIn("Last ping was 10 minutes ago.", payload["body"])
-        self.assertIn("Last ping was 10 minutes ago.", payload["formatted_body"])
+
+        self.assertIn("is <b>DOWN</b>", payload["formatted_body"])
+        self.assertIn("grace time passed", payload["formatted_body"])
+        self.assertIn("Success, 10 minutes ago", payload["formatted_body"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_failure(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.flip.save()
+        self.channel.notify(self.flip)
+        assert Notification.objects.count() == 1
+
+        method, url = mock_post.call_args.args
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("received a failure signal", payload["formatted_body"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
@@ -70,4 +87,4 @@ class NotifyMatrixTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertNotIn("Last ping was", payload["body"])
-        self.assertNotIn("Last ping was", payload["formatted_body"])
+        self.assertIn("<b>Last Ping:</b> Never", payload["formatted_body"])
