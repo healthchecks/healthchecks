@@ -1,4 +1,4 @@
-FROM python:3.13.0-slim-bookworm AS builder
+FROM python:3.13.1-slim-bookworm AS builder
 
 COPY requirements.txt /tmp
 RUN \
