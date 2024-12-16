@@ -927,6 +927,7 @@ class Telegram(HttpTransport):
 
         ping = self.last_ping(flip)
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
             "down_checks": self.down_checks(flip.owner),

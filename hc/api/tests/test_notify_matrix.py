@@ -68,7 +68,6 @@ class NotifyMatrixTestCase(BaseTestCase):
         mock_post.return_value.status_code = 200
 
         self.flip.reason = "fail"
-        self.flip.save()
         self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 

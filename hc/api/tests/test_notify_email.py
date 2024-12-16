@@ -121,7 +121,6 @@ class NotifyEmailTestCase(BaseTestCase):
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_handles_reason_failure(self) -> None:
         self.flip.reason = "fail"
-        self.flip.save()
         self.channel.notify(self.flip)
 
         email = mail.outbox[0]

@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -40,6 +39,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -54,6 +54,7 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("The check", payload["text"])
         self.assertIn(">DB Backup</a>", payload["text"])
         self.assertIn(self.check.cloaked_url(), payload["text"])
+        self.assertIn("grace time passed", payload["text"])
 
         self.assertIn("<b>Project:</b> Alices Project\n", payload["text"])
         self.assertIn("<b>Tags:</b> foo, bar, baz\n", payload["text"])
@@ -64,6 +65,16 @@ class NotifyTelegramTestCase(BaseTestCase):
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["text"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_failure(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("received a failure signal", payload["text"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_exitstatus(self, mock_post: Mock) -> None:
