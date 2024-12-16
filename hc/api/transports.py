@@ -838,11 +838,11 @@ class VictorOps(HttpTransport):
 
 class Matrix(HttpTransport):
     def get_url(self) -> str:
-        s = quote(self.channel.value)
+        room_id = quote(self.channel.value)
 
         assert isinstance(settings.MATRIX_HOMESERVER, str)
         url = settings.MATRIX_HOMESERVER
-        url += "/_matrix/client/r0/rooms/%s/send/m.room.message?" % s
+        url += f"/_matrix/client/r0/rooms/{room_id}/send/m.room.message?"
         url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
         return url
 
