@@ -102,6 +102,7 @@ class NotifySignalTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     def get_html(self, email: EmailMessage) -> str:
         assert isinstance(email, EmailMultiAlternatives)
@@ -125,6 +126,7 @@ class NotifySignalTestCase(BaseTestCase):
         params = socketobj.req["params"]
         self.assertIn("Daily Backup is DOWN", params["message"])
         self.assertEqual(params["textStyle"][0], "10:12:BOLD")
+        self.assertIn("grace time passed", params["message"])
 
         self.assertIn("Project: Alices Project", params["message"])
         self.assertIn("Tags: foo, bar", params["message"])
@@ -136,6 +138,17 @@ class NotifySignalTestCase(BaseTestCase):
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", params["message"])
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_reason_fail(self, socket: Mock) -> None:
+        socketobj = setup_mock(socket, {})
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        assert socketobj.req
+        params = socketobj.req["params"]
+        self.assertIn("received a failure signal", params["message"])
 
     @patch("hc.api.transports.socket.socket")
     def test_it_shows_exitstatus(self, socket: Mock) -> None:
@@ -504,15 +517,16 @@ class NotifySignalTestCase(BaseTestCase):
         email = emails["alice@example.org"]
         self.assertEqual(
             email.subject,
-            "Signal notification failed: The check Foo & Co is DOWN.",
+            "Signal notification failed: The check Foo & Co is DOWN"
+            " (success signal did not arrive on time, grace time passed).",
         )
         # The plaintext version should have no HTML markup, and should
         # have no &amp;, &lt; &gt; stuff:
-        self.assertIn("The check Foo & Co is DOWN.", email.body)
+        self.assertIn("The check Foo & Co is DOWN", email.body)
         # The HTML version should retain styling, and escape special characters
         # in project name, check name, etc.:
         html = self.get_html(email)
-        self.assertIn("The check <b>Foo &amp; Co</b> is <b>DOWN</b>.", html)
+        self.assertIn("The check <b>Foo &amp; Co</b> is <b>DOWN</b>", html)
 
     @patch("hc.api.transports.socket.socket")
     def test_it_handles_null_data(self, socket: Mock) -> None:

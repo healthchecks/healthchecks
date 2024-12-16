@@ -1507,7 +1507,7 @@ class Signal(Transport):
                         raise TransportError("signal-cli call timed out")
 
             except OSError as e:
-                msg = "signal-cli call failed (%s)" % e
+                msg = f"signal-cli call failed ({e})"
                 # Log the exception, so any configured logging handlers can pick it up
                 logger.exception(msg)
 
@@ -1524,6 +1524,7 @@ class Signal(Transport):
             raise TransportError("Rate limit exceeded")
 
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
             "ping": self.last_ping(flip),
