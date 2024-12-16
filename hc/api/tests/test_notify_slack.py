@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -41,6 +40,7 @@ class NotifySlackTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = status
+        self.flip.reason = "timeout"
 
     @override_settings(SITE_ROOT="http://testserver", SITE_LOGO_URL=None)
     @patch("hc.api.transports.curl.request", autospec=True)
@@ -56,6 +56,10 @@ class NotifySlackTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         attachment = payload["attachments"][0]
+        self.assertEqual(
+            attachment["text"],
+            "Reason: success signal did not arrive on time, grace time passed.",
+        )
         self.assertEqual(attachment["fallback"], """The check "Foobar" is DOWN.""")
 
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
@@ -67,6 +71,19 @@ class NotifySlackTestCase(BaseTestCase):
         serialized = json.dumps(payload)
         self.assertNotIn(str(self.check.code), serialized)
         self.assertIn("http://testserver/static/img/logo.png", serialized)
+
+    @override_settings(SITE_ROOT="http://testserver", SITE_LOGO_URL=None)
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_failure(self, mock_post: Mock) -> None:
+        self._setup_data("https://example.org")
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        attachment = payload["attachments"][0]
+        self.assertEqual(attachment["text"], "Reason: received a failure signal.")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_slack_with_complex_value(self, mock_post: Mock) -> None:

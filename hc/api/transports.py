@@ -441,6 +441,9 @@ class Slackalike(HttpTransport):
             ],
         }
 
+        if flip.reason:
+            result["attachments"][0]["text"] = f"Reason: {flip.reason_long()}."
+
         if check.desc:
             fields.add("Description", check.desc, short=False)
 
