@@ -436,13 +436,11 @@ class Slackalike(HttpTransport):
                     "mrkdwn_in": ["fields"],
                     "title": f"“{name}” is {flip.new_status.upper()}.",
                     "title_link": check.cloaked_url(),
+                    "text": f"Reason: {flip.reason_long()}." if flip.reason else None,
                     "fields": fields,
                 }
             ],
         }
-
-        if flip.reason:
-            result["attachments"][0]["text"] = f"Reason: {flip.reason_long()}."
 
         if check.desc:
             fields.add("Description", check.desc, short=False)
