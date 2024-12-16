@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import timedelta as td
@@ -57,8 +56,8 @@ class NotifyMatrixTestCase(BaseTestCase):
         self.assertIn("test-token", url)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn('Foo is DOWN', payload["body"])
-        self.assertIn("Last ping was 10 minutes ago.", payload["body"])
+        self.assertIn("Foo is DOWN", payload["body"])
+        self.assertIn("grace time passed", payload["body"])
 
         self.assertIn("is <b>DOWN</b>", payload["formatted_body"])
         self.assertIn("grace time passed", payload["formatted_body"])
@@ -75,6 +74,7 @@ class NotifyMatrixTestCase(BaseTestCase):
 
         method, url = mock_post.call_args.args
         payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("received a failure signal", payload["body"])
         self.assertIn("received a failure signal", payload["formatted_body"])
 
     @patch("hc.api.transports.curl.request", autospec=True)

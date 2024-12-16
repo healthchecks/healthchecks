@@ -1,10 +1,10 @@
 {% load humanize hc_extras %}
-{% if flip.new_status == "down" and flip.reason == "timeout" %}
-🔴 <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b> (success signal did not arrive on time, grace time passed).
-{% elif flip.new_status == "down" and flip.reason == "fail" %}
-🔴 <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b> (received a failure signal).
+{% if flip.new_status == "down" %}
+    🔴 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a>
+    is <b>DOWN</b>{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
 {% else %}
-{% if flip.new_status == "up" %}🟢{% endif %} <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>{{ flip.new_status|upper }}</b>.
+    🟢 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a>
+    is <b>UP</b>.
 {% endif %}
 <br>
 

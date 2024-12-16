@@ -1202,6 +1202,13 @@ class Flip(models.Model):
         q = q.order_by(F("last_notify_duration").asc(nulls_last=True))
         return [ch for ch in q if not ch.transport.is_noop(self.new_status)]
 
+    def reason_long(self) -> str | None:
+        if self.reason == "timeout":
+            return "success signal did not arrive on time, grace time passed"
+        if self.reason == "fail":
+            return "received a failure signal"
+        return None
+
 
 class TokenBucket(models.Model):
     value = models.CharField(max_length=80, unique=True)
