@@ -1,5 +1,5 @@
 {% if status == "down" %}
-    {{ check.name_then_code|safe }} is DOWN
+    {{ check.name_then_code|safe }} is DOWN{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
 {% else %}
     {{ check.name_then_code|safe }} received a ping and is now UP
 {% endif %}

@@ -616,7 +616,8 @@ class PagerDuty(HttpTransport):
             details["Schedule"] = check.schedule
             details["Time zone"] = check.tz
 
-        description = tmpl("pd_description.html", check=check, status=flip.new_status)
+        ctx = {"flip": flip, "check": check, "status": flip.new_status}
+        description = tmpl("pd_description.html", **ctx)
         payload = {
             "service_key": self.channel.pd.service_key,
             "incident_key": check.unique_key,
