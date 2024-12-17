@@ -1,7 +1,6 @@
 {% load humanize %}
 {% if status == "down" %}
-    {{ check.name_then_code|safe }} is DOWN.
-    {% if ping %}Last ping was {{ ping.created|naturaltime }}.{% endif %}
+    {{ check.name_then_code|safe }} is DOWN{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
 {% else %}
-    {{ check.name_then_code|safe }} received a ping and is now UP
+    {{ check.name_then_code|safe }} is UP.
 {% endif %}

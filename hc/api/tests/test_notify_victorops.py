@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import timedelta as td
@@ -38,6 +37,7 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -49,8 +49,18 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["message_type"], "CRITICAL")
         self.assertEqual(payload["entity_id"], self.check.unique_key)
-        self.assertIn("Foo is DOWN.", payload["state_message"])
-        self.assertIn("Last ping was 10 minutes ago.", payload["state_message"])
+        self.assertIn("Foo is DOWN", payload["state_message"])
+        self.assertIn("grace time passed", payload["state_message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("received a failure signal", payload["state_message"])
 
     @override_settings(VICTOROPS_ENABLED=False)
     def test_it_requires_victorops_enabled(self) -> None:
@@ -70,9 +80,7 @@ class NotifyVictorOpsTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(
-            payload["state_message"], "Foo & Bar received a ping and is now UP"
-        )
+        self.assertEqual(payload["state_message"], "Foo & Bar is UP.")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_retry_404(self, mock_post: Mock) -> None:

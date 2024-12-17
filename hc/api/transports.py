@@ -823,9 +823,9 @@ class VictorOps(HttpTransport):
             raise TransportError("Splunk On-Call notifications are not enabled.")
 
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
-            "ping": self.last_ping(flip),
         }
         mtype = "CRITICAL" if flip.new_status == "down" else "RECOVERY"
         payload = {
