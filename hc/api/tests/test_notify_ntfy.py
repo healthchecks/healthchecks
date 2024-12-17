@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -49,6 +48,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -58,7 +58,10 @@ class NotifyNtfyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(payload["title"], "Foo is DOWN")
+        self.assertEqual(
+            payload["title"],
+            "Foo is DOWN (success signal did not arrive on time, grace time passed)",
+        )
         self.assertIn("Project: Alices Project", payload["message"])
         self.assertIn("Tags: foo, bar", payload["message"])
         self.assertIn("Period: 1 day", payload["message"])
@@ -67,6 +70,19 @@ class NotifyNtfyTestCase(BaseTestCase):
 
         self.assertEqual(payload["actions"][0]["url"], self.check.cloaked_url())
         self.assertNotIn("All the other checks are up.", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(
+            payload["title"],
+            "Foo is DOWN (received a failure signal)",
+        )
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_reports_last_pings_exit_code(self, mock_post: Mock) -> None:
@@ -101,7 +117,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(payload["title"], "<Name> is DOWN")
+        self.assertIn("<Name> is DOWN", payload["title"])
         self.assertIn("Project: <Alice's Project>", payload["message"])
         self.assertIn("Tags: <foo>", payload["message"])
         self.assertIn("<Foobar>", payload["message"])

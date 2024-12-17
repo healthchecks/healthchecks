@@ -1603,6 +1603,7 @@ class Ntfy(HttpTransport):
 
     def notify(self, flip: Flip, notification: Notification) -> None:
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
             "ping": self.last_ping(flip),
