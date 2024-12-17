@@ -730,6 +730,7 @@ class Pushover(HttpTransport):
             self.post(url, data=cancel_payload)
 
         ctx = {
+            "flip": flip,
             "check": check,
             "status": flip.new_status,
             "ping": self.last_ping(flip),

@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import timedelta as td
@@ -42,6 +41,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = status
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -59,11 +59,23 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(payload["url"], self.check.cloaked_url())
         self.assertIn("112233", payload["message"])
         self.assertIn("10 minutes ago", payload["message"])
+        self.assertIn("grace time passed", payload["message"])
 
         # Only one check in the project, so there should be no note about
         # other checks:
         self.assertNotIn("All the other checks are up.", payload["message"])
         self.assertEqual(payload["tags"], self.check.unique_key)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        self._setup_data("123|0")
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertIn("received a failure signal", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_cron_schedule(self, mock_post: Mock) -> None:
