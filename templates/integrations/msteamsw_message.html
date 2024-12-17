@@ -1,0 +1,7 @@
+{% load linemode %}{% linemode %}
+{% if status == "down" %}
+    {% line %}🔴 “{{ check.name_then_code }}” is DOWN{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.{% endline %}
+{% else %}
+    {% line %}🟢 “{{ check.name_then_code }}” is UP.{% endline %}
+{% endif %}
+{% endlinemode %}

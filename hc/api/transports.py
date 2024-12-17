@@ -1229,7 +1229,13 @@ class MsTeamsWorkflow(HttpTransport):
         check = flip.owner
         name = check.name_then_code()
         fields = SlackFields()
-        indicator = "🔴" if flip.new_status == "down" else "🟢"
+        ctx = {
+            "flip": flip,
+            "check": flip.owner,
+            "status": flip.new_status,
+        }
+        text = tmpl("msteamsw_message.html", **ctx)
+
         result: JSONDict = {
             "type": "message",
             "attachments": [
@@ -1244,7 +1250,7 @@ class MsTeamsWorkflow(HttpTransport):
                         "body": [
                             {
                                 "type": "TextBlock",
-                                "text": f"{indicator} “{escape(name)}” is {flip.new_status.upper()}.",
+                                "text": text,
                                 "weight": "bolder",
                                 "size": "medium",
                                 "wrap": True,

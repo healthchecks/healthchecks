@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -18,6 +17,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check(project=self.project)
+        self.check.name = "Foo"
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
@@ -39,6 +39,7 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     def facts(self, payload: Any) -> dict[str, str]:
         card = payload["attachments"][0]["content"]
@@ -49,8 +50,6 @@ class NotifyMsTeamsTestCase(BaseTestCase):
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.check.name = "_underscores_ & more"
-
         self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
@@ -60,10 +59,14 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         card = payload["attachments"][0]["content"]
         # summary and title should be the same, except
         # title should have any special HTML characters escaped
-        self.assertEqual(card["fallbackText"], "“_underscores_ &amp; more” is DOWN.")
+        self.assertEqual(card["fallbackText"], "“Foo” is DOWN.")
 
         heading = card["body"][0]
-        self.assertEqual(heading["text"], "🔴 “_underscores_ &amp; more” is DOWN.")
+        self.assertEqual(
+            heading["text"],
+            "🔴 “Foo” is DOWN (success signal did not"
+            " arrive on time, grace time passed).",
+        )
 
         facts = self.facts(payload)
         self.assertEqual(facts["Last Ping:"], "Success, 10 minutes ago")
@@ -72,6 +75,30 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         # The payload should not contain check's code
         serialized = json.dumps(payload)
         self.assertNotIn(str(self.check.code), serialized)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        text = payload["attachments"][0]["content"]["body"][0]["text"]
+        self.assertEqual(text, "🔴 “Foo” is DOWN (received a failure signal).")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_escapes_special_characters(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.check.name = "_underscores_ & more"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        card = payload["attachments"][0]["content"]
+        self.assertEqual(card["fallbackText"], "“_underscores_ &amp; more” is DOWN.")
+        heading = card["body"][0]
+        self.assertIn("🔴 “_underscores_ &amp; more” is DOWN", heading["text"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_cron_schedule_and_tz(self, mock_post: Mock) -> None:
