@@ -1565,9 +1565,9 @@ class Gotify(HttpTransport):
         url += "?" + urlencode({"token": self.channel.gotify.token})
 
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
-            "ping": self.last_ping(flip),
             "down_checks": self.down_checks(flip.owner),
         }
         payload = {

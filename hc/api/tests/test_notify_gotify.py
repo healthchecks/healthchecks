@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -38,6 +37,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -52,7 +52,17 @@ class NotifyGotidyTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(self.check.cloaked_url(), payload["message"])
-        self.assertIn("Last ping was 10 minutes ago.", payload["message"])
+        self.assertIn("grace time passed", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("received a failure signal", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_subpath(self, mock_post: Mock) -> None:
