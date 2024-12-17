@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -40,6 +39,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = status
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -52,12 +52,30 @@ class NotifyOpsgenieTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["alias"], self.check.unique_key)
-        self.assertIn("""The check "Foo" is DOWN.""", payload["message"])
+        self.assertIn(
+            """The check "Foo" is DOWN (success signal did not arrive """
+            """on time, grace time passed).""",
+            payload["message"],
+        )
 
         details = payload["details"]
         self.assertIn("cloaked", details["Full details"])
         self.assertEqual(details["Last ping"], "Success, 10 minutes ago")
         self.assertEqual(details["Total pings"], 112233)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        self._setup_data(json.dumps({"key": "123", "region": "us"}))
+        mock_post.return_value.status_code = 202
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn(
+            """The check "Foo" is DOWN (received a failure signal).""",
+            payload["message"],
+        )
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_oncalendar_schedule(self, mock_post: Mock) -> None:

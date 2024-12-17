@@ -546,7 +546,7 @@ class Opsgenie(HttpTransport):
 
         headers = {
             "Content-Type": "application/json",
-            "Authorization": "GenieKey %s" % self.channel.opsgenie.key,
+            "Authorization": f"GenieKey {self.channel.opsgenie.key}",
         }
 
         check = flip.owner
@@ -556,7 +556,7 @@ class Opsgenie(HttpTransport):
         }
 
         if flip.new_status == "down":
-            ctx = {"check": check, "ping": self.last_ping(flip)}
+            ctx = {"flip": flip, "check": check, "ping": self.last_ping(flip)}
             payload["tags"] = cast(JSONValue, check.tags_list())
             payload["message"] = tmpl("opsgenie_message.html", **ctx)
             payload["description"] = check.desc
