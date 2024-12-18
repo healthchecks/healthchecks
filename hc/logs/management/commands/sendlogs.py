@@ -7,8 +7,8 @@ from django.core.mail import mail_admins
 from django.core.management.base import BaseCommand
 from django.utils.timezone import now
 
-from hc.logs.models import Record
 from hc.lib.urls import absolute_reverse
+from hc.logs.models import Record
 
 YEAR_AGO = now() - td(days=365)
 

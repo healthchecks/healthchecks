@@ -13,8 +13,8 @@ from typing import Any
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import close_old_connections
-from django.utils.timezone import now
 from django.urls import set_script_prefix
+from django.utils.timezone import now
 
 from hc.api.models import Check, Flip
 from hc.lib.statsd import statsd
