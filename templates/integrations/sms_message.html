@@ -1,6 +1,6 @@
 {% load humanize %}
 {% if status == "down" %}
-    {{ site_name }}: The check "{{ check.name_then_code|safe }}" is DOWN.{% if ping %} Last ping was {{ ping.created|naturaltime }}.{% endif %}
+    {{ site_name }}: The check "{{ check.name_then_code|safe }}" is DOWN{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
 {% else %}
     {{ site_name }}: The check "{{ check.name_then_code|safe }}" is UP.
 {% endif %}

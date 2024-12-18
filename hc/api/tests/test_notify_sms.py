@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -41,6 +40,7 @@ class NotifySmsTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
     @patch("hc.api.transports.curl.request", autospec=True)
@@ -53,8 +53,8 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEqual(payload["To"], "+1234567890")
         self.assertEqual(payload["From"], "+000")
         self.assertNotIn("\xa0", payload["Body"])
-        self.assertIn("""The check "Foo" is DOWN.""", payload["Body"])
-        self.assertIn("""Last ping was 10 minutes ago.""", payload["Body"])
+        self.assertIn("""The check "Foo" is DOWN""", payload["Body"])
+        self.assertIn("grace time passed", payload["Body"])
 
         n = Notification.objects.get()
         callback_path = f"/api/v3/notifications/{n.code}/status"
@@ -63,6 +63,17 @@ class NotifySmsTestCase(BaseTestCase):
         # sent SMS counter should go up
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.sms_sent, 1)
+
+    @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertIn("received a failure signal", payload["Body"])
 
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_configuration(self) -> None:

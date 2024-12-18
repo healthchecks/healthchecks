@@ -989,9 +989,9 @@ class Sms(HttpTransport):
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
         text = tmpl(
             "sms_message.html",
+            flip=flip,
             check=flip.owner,
             status=flip.new_status,
-            ping=self.last_ping(flip),
             site_name=settings.SITE_NAME,
         )
 
