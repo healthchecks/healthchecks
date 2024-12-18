@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -39,6 +38,7 @@ class NotifyZulipTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     def definition(self, **kwargs: str) -> dict[str, str]:
         d = {
@@ -62,12 +62,22 @@ class NotifyZulipTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["topic"], "Foobar is DOWN")
-        self.assertIn("is **DOWN**.", payload["content"])
-        self.assertIn("Last ping was 10 minutes ago.", payload["content"])
+        self.assertIn("is **DOWN**", payload["content"])
+        self.assertIn("grace time passed", payload["content"])
 
         # payload should not contain check's code
         serialized = json.dumps(payload)
         self.assertNotIn(str(self.check.code), serialized)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertIn("received a failure signal", payload["content"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_uses_custom_topic(self, mock_post: Mock) -> None:

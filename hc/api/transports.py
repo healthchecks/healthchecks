@@ -1333,9 +1333,9 @@ class Zulip(HttpTransport):
         auth = (self.channel.zulip.bot_email, self.channel.zulip.api_key)
         content = tmpl(
             "zulip_content.html",
+            flip=flip,
             check=flip.owner,
             status=flip.new_status,
-            ping=self.last_ping(flip),
         )
         data = {
             "type": self.channel.zulip.mtype,
