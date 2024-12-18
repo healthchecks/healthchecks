@@ -1356,6 +1356,7 @@ class Spike(HttpTransport):
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
             "ping": self.last_ping(flip),
@@ -1376,7 +1377,7 @@ class LineNotify(HttpTransport):
     def notify(self, flip: Flip, notification: Notification) -> None:
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": "Bearer %s" % self.channel.linenotify_token,
+            "Authorization": f"Bearer {self.channel.linenotify_token}",
         }
         ctx = {
             "check": flip.owner,

@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import timedelta as td
@@ -38,6 +37,7 @@ class NotifySpikeTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -48,9 +48,25 @@ class NotifySpikeTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["check_id"], self.check.unique_key)
-        self.assertEqual(payload["title"], "Foo is DOWN")
-        self.assertIn("Foo is DOWN.", payload["message"])
+        self.assertEqual(
+            payload["title"],
+            "Foo is DOWN (success signal did not arrive on time, grace time passed)",
+        )
+        self.assertIn("Foo is DOWN", payload["message"])
+        self.assertIn("grace time passed", payload["message"])
         self.assertIn("Last ping was 10 minutes ago.", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual(payload["title"], "Foo is DOWN (received a failure signal)")
+        self.assertIn("Foo is DOWN", payload["message"])
+        self.assertIn("received a failure signal", payload["message"])
 
     @override_settings(SPIKE_ENABLED=False)
     def test_it_requires_spike_enabled(self) -> None:
@@ -63,6 +79,7 @@ class NotifySpikeTestCase(BaseTestCase):
         self.check.name = "Foo & Bar"
         self.check.save()
         self.flip.new_status = "up"
+        self.flip.reason = ""
 
         mock_post.return_value.status_code = 200
 
