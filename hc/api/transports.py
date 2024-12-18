@@ -639,6 +639,7 @@ class PagerTree(HttpTransport):
         url = self.channel.value
         headers = {"Content-Type": "application/json"}
         ctx = {
+            "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
             "ping": self.last_ping(flip),
@@ -650,7 +651,7 @@ class PagerTree(HttpTransport):
             "description": tmpl("pagertree_description.html", **ctx),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
-            "tags": ",".join(flip.owner.tags_list()),
+            "tags": " ".join(flip.owner.tags_list()),
         }
 
         self.post(url, json=payload, headers=headers)

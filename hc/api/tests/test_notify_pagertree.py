@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import timedelta as td
@@ -38,6 +37,7 @@ class NotifyPagertreeTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -49,7 +49,30 @@ class NotifyPagertreeTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["event_type"], "trigger")
         self.assertEqual(payload["incident_key"], self.check.unique_key)
-        self.assertIn("Foo is DOWN.", payload["description"])
+        self.assertEqual(
+            "Foo is DOWN (success signal did not arrive on time, grace time passed)",
+            payload["title"],
+        )
+
+        self.assertIn(
+            "Foo is DOWN (success signal did not arrive on time, grace time passed).",
+            payload["description"],
+        )
+        self.assertIn("Last ping was 10 minutes ago.", payload["description"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertEqual("Foo is DOWN (received a failure signal)", payload["title"])
+
+        self.assertIn(
+            "Foo is DOWN (received a failure signal).", payload["description"]
+        )
         self.assertIn("Last ping was 10 minutes ago.", payload["description"])
 
     @override_settings(PAGERTREE_ENABLED=False)
@@ -69,7 +92,7 @@ class NotifyPagertreeTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(payload["title"], "Foo & Bar is DOWN")
+        self.assertIn("Foo & Bar is DOWN", payload["title"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
