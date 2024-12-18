@@ -771,7 +771,7 @@ class RocketChat(HttpTransport):
         result: JSONDict = {
             "alias": settings.SITE_NAME,
             "avatar": absolute_site_logo_url(),
-            "text": f"[{check.name_then_code()}]({url}) is {flip.new_status.upper()}.",
+            "text": tmpl("rocketchat_message.html", flip=flip, check=check),
             "attachments": [{"color": color, "fields": fields}],
         }
 

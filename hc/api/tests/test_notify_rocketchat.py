@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import timedelta as td
@@ -37,6 +36,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -49,12 +49,35 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.assertEqual(url, "https://example.org")
 
         text = mock_post.call_args.kwargs["json"]["text"]
-        self.assertTrue(text.endswith("is DOWN."))
+        self.assertIn(
+            "is DOWN (success signal did not arrive on time, grace time passed).", text
+        )
 
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
         self.assertEqual(fields["Last Ping"], "Success, 10 minutes ago")
         self.assertEqual(fields["Total Pings"], "112233")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.reason = "fail"
+        self.channel.notify(self.flip)
+
+        text = mock_post.call_args.kwargs["json"]["text"]
+        self.assertIn("is DOWN (received a failure signal).", text)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_does_not_escape_name(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.check.name = "Foo & Bar"
+        self.check.save()
+        self.channel.notify(self.flip)
+
+        text = mock_post.call_args.kwargs["json"]["text"]
+        self.assertIn("[Foo & Bar]", text)
 
     @override_settings(ROCKETCHAT_ENABLED=False)
     def test_it_requires_rocketchat_enabled(self) -> None:
