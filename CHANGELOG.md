@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.9-dev - Unreleased
+
+### Improvements
+- Update notification templates to include failure reason (#1069)
+
 ## v3.8.1 - 2024-12-13
 
 ### Improvements
