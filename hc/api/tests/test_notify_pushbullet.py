@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from datetime import timedelta as td
@@ -37,6 +36,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "up"
+        self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
@@ -50,8 +50,20 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
         payload = kwargs["json"]
         self.assertEqual(payload["type"], "note")
-        self.assertIn("""The check "Foo" is DOWN.""", payload["body"])
-        self.assertIn("""Last ping was 10 minutes ago.""", payload["body"])
+        self.assertIn("""The check "Foo" is DOWN""", payload["body"])
+        self.assertIn("grace time passed", payload["body"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
+        self.flip.new_status = "down"
+        self.flip.reason = "fail"
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+
+        _, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn("received a failure signal", payload["body"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_up(self, mock_post: Mock) -> None:
@@ -62,9 +74,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
 
         _, kwargs = mock_post.call_args
         self.assertEqual(kwargs["json"]["type"], "note")
-        self.assertEqual(
-            kwargs["json"]["body"], 'The check "Foo" received a ping and is now UP.'
-        )
+        self.assertEqual(kwargs["json"]["body"], 'The check "Foo" is UP.')
         self.assertEqual(kwargs["headers"]["Access-Token"], "fake-token")
 
     @patch("hc.api.transports.curl.request", autospec=True)
@@ -78,7 +88,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         _, kwargs = mock_post.call_args
         self.assertEqual(
             kwargs["json"]["body"],
-            'The check "Foo & Bar" received a ping and is now UP.',
+            'The check "Foo & Bar" is UP.',
         )
 
     @patch("hc.api.transports.curl.request", autospec=True)

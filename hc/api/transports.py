@@ -665,9 +665,9 @@ class Pushbullet(HttpTransport):
         }
         text = tmpl(
             "pushbullet_message.html",
+            flip=flip,
             check=flip.owner,
             status=flip.new_status,
-            ping=self.last_ping(flip),
         )
         payload = {"type": "note", "title": settings.SITE_NAME, "body": text}
         self.post(url, json=payload, headers=headers)
