@@ -1,10 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.9-dev - Unreleased
+## v3.8.2 - 2024-12-19
 
 ### Improvements
 - Update notification templates to include failure reason (#1069)
+
+### Bug Fixes
+- Fix fetchstatus.py to handle SITE_ROOT with a path (#1107)
 
 ## v3.8.1 - 2024-12-13
 

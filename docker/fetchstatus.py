@@ -6,12 +6,13 @@ The /api/v3/status/ endpoint tests if the database connection is alive.
 This script is intended to be used in the Dockerfile, in the
 HEALTHCHECK instruction.
 
-When making the HTTP request, we must pass a valid Host header. To
-figure this out, we need to see `settings.ALLOWED_HOSTS`. Loading full
-Django settings is a heavy operation, and this script runs every 10 seconds,
-so instead we replicate the logic that settings.py uses for reading ALLOWED_HOSTS:
+When making the HTTP request, we must pass a valid Host header and a valid
+path (in case the app is not running at the root of the domnain). To
+figure this out, we need to see `settings.SITE_ROOT`. Loading full
+Django settings is a heavy operation so instead we replicate the logic that
+settings.py uses for reading SITE_ROOT:
 
-* Load it from `ALLOWED_HOSTS` env var
+* Load it from `SITE_ROOT` environment variable
 * if hc/local_settings.py exists, import it and read it from there
 
 """
@@ -19,25 +20,18 @@ so instead we replicate the logic that settings.py uses for reading ALLOWED_HOST
 from __future__ import annotations
 
 import os
-from urllib.request import Request, urlopen
+from urllib.request import urlopen
 
-# Read ALLOWED_HOSTS from environment, same as settings.py would do:
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
-# If local_settings.py exists, load it from there,
-# also same as settings.py would do
+# Read SITE_ROOT from environment, same as settings.py would do:
+SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
+# If local_settings.py exists, load it from there
 if os.path.exists("hc/local_settings.py"):
     from hc import local_settings
 
-    ALLOWED_HOSTS = getattr(local_settings, "ALLOWED_HOSTS", ALLOWED_HOSTS)
+    SITE_ROOT = getattr(local_settings, "SITE_ROOT", SITE_ROOT)
 
-# Use the first item in ALLOWED_HOSTS in our Host header
-# (unless is a wildcard, wildcard would not pass as a valid host value)
-host = ALLOWED_HOSTS[0]
-if host == "*":
-    host = "localhost"
-
-req = Request("http://localhost:8000/api/v3/status/", headers={"Host": host})
-with urlopen(req) as response:
+SITE_ROOT = SITE_ROOT.removesuffix("/")
+with urlopen(f"{SITE_ROOT}/api/v3/status/") as response:
     assert response.status == 200
 
 print("Status OK")
