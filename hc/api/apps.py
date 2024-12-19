@@ -2,17 +2,19 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from typing import Any
+from urllib.parse import urlsplit
 
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.checks import Error, Warning, register
+from django.http.request import split_domain_port, validate_host
 
 
 class ApiConfig(AppConfig):
     name = "hc.api"
 
 
-@register()  # W001, W002
+@register()  # W001, W002, W005, E002
 def settings_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
@@ -20,13 +22,23 @@ def settings_check(
 ) -> list[Warning]:
     items = []
 
-    site_root_parts = settings.SITE_ROOT.split("://")
-    if site_root_parts[0] not in ("http", "https"):
+    site_root_parts = urlsplit(settings.SITE_ROOT)
+    if not site_root_parts.scheme:
         items.append(
             Warning(
                 "Invalid settings.SITE_ROOT value",
                 hint="SITE_ROOT should start with either http:// or https://",
                 id="hc.api.W001",
+            )
+        )
+
+    host, _ = split_domain_port(site_root_parts.netloc)
+    if site_root_parts.scheme and not validate_host(host, settings.ALLOWED_HOSTS):
+        items.append(
+            Error(
+                "The hostname in settings.SITE_ROOT is not found in settings.ALLOWED_HOSTS",
+                hint=f"Add '{host}' to settings.ALLOWED_HOSTS",
+                id="hc.api.E002",
             )
         )
 
@@ -45,7 +57,7 @@ def settings_check(
             Warning(
                 "settings.SECURE_PROXY_SSL_HEADER is not 2-element tuple",
                 hint="See https://healthchecks.io/docs/self_hosted_configuration/#SECURE_PROXY_SSL_HEADER",
-                id="hc.api.W003",
+                id="hc.api.W005",
             )
         )
 
