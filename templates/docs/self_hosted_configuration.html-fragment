@@ -596,10 +596,6 @@ it needs to construct absolute URLs.</p>
 <p>If the SITE_ROOT contains a path (for example, <code>http://localhost:8000<b>/prefix</b></code>),
 then Healthchecks will automatically set the following additional Django settings:</p>
 <ul>
-<li><code>FORCE_SCRIPT_NAME = "<b>/prefix</b></code>". This is required for correct
-URL generation in management commands, where the path cannot be determined from the
-HTTP request. <code>FORCE_SCRIPT_NAME</code> is a standard Django setting, read more about it in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#force-script-name">Django documentation</a>.</li>
 <li><code>LOGIN_URL=<b>/prefix</b>/accounts/login/</code>. Required
 for correct redirection to a log-in page when an unauthenticated user requests a
 page that requires authentication. <code>LOGIN_URL</code> is a standard Django setting, read more
@@ -612,8 +608,7 @@ setting, read more about it in
 </ul>
 <p><strong>On using <code>local_settings.py</code>:</strong> Healthchecks only sets the above additional settings
 if you specify <code>SITE_ROOT</code> via an environment variable. If you instead specify it in
-<code>local_settings.py</code>, you will also need to set <code>FORCE_SCRIPT_NAME</code>, <code>LOGIN_URL</code>,
-and <code>STATIC_URL</code> there.</p>
+<code>local_settings.py</code>, you will also need to set <code>LOGIN_URL</code>and <code>STATIC_URL</code> there.</p>
 <h2 id="SLACK_CLIENT_ID"><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Slack Client ID, used by the Healthchecks integration for Slack.</p>

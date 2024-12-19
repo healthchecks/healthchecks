@@ -62,11 +62,6 @@ def _allow_redirect(redirect_url: str | None) -> bool:
     if not redirect_url:
         return False
 
-    # resolve() ignores FORCE_SCRIPT_NAME in URLs, so we chop it off ourselves
-    # https://code.djangoproject.com/ticket/31724
-    if settings.FORCE_SCRIPT_NAME:
-        redirect_url = redirect_url.removeprefix(settings.FORCE_SCRIPT_NAME)
-
     parsed = urlparse(redirect_url)
     if parsed.netloc:
         # Allow redirects only to relative URLs

@@ -13,7 +13,6 @@ from typing import Any
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import close_old_connections
-from django.urls import set_script_prefix
 from django.utils.timezone import now
 
 from hc.api.models import Check, Flip
@@ -23,12 +22,6 @@ logger = logging.getLogger("hc")
 
 
 def notify(flip: Flip) -> str | None:
-    # reverse() omits script prefix when running on non-main thread
-    # https://code.djangoproject.com/ticket/35985
-    # As a workaround, we set it ourselves:
-    if settings.FORCE_SCRIPT_NAME:
-        set_script_prefix(settings.FORCE_SCRIPT_NAME)
-
     # First, mark the flip as processed:
     q = Flip.objects.filter(id=flip.id, processed=None)
     num_updated = q.update(processed=now())

@@ -849,10 +849,6 @@ it needs to construct absolute URLs.
 If the SITE_ROOT contains a path (for example, <code>http://localhost:8000<b>/prefix</b></code>),
 then Healthchecks will automatically set the following additional Django settings:
 
-* <code>FORCE_SCRIPT_NAME = "<b>/prefix</b></code>". This is required for correct
-URL generation in management commands, where the path cannot be determined from the
-HTTP request. `FORCE_SCRIPT_NAME` is a standard Django setting, read more about it in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#force-script-name).
 * <code>LOGIN_URL=<b>/prefix</b>/accounts/login/</code>. Required
 for correct redirection to a log-in page when an unauthenticated user requests a
 page that requires authentication. `LOGIN_URL` is a standard Django setting, read more
@@ -865,8 +861,7 @@ setting, read more about it in
 
 **On using `local_settings.py`:** Healthchecks only sets the above additional settings
 if you specify `SITE_ROOT` via an environment variable. If you instead specify it in
-`local_settings.py`, you will also need to set `FORCE_SCRIPT_NAME`, `LOGIN_URL`,
-and `STATIC_URL` there.
+`local_settings.py`, you will also need to set `LOGIN_URL`and `STATIC_URL` there.
 
 ## `SLACK_CLIENT_ID` {: #SLACK_CLIENT_ID }
 
