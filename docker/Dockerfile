@@ -1,6 +1,6 @@
 FROM python:3.13.1-slim-bookworm AS builder
 
-SHELL ["/bin/bash", "-o", "pipefail"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 COPY requirements.txt /tmp
 RUN \
