@@ -19,8 +19,8 @@ def settings_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
     **kwargs: dict[str, Any],
-) -> list[Warning]:
-    items = []
+) -> list[Error | Warning]:
+    items: list[Error | Warning] = []
 
     site_root_parts = urlsplit(settings.SITE_ROOT)
     if not site_root_parts.scheme:
