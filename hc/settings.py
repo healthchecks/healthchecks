@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 def envbool(s: str, default: str) -> bool:
     v = os.getenv(s, default=default)
     if v not in ("", "True", "False"):
-        msg = "Unexpected value %s=%s, use 'True' or 'False'" % (s, v)
+        msg = f"Unexpected value {s}={v}, use 'True' or 'False'"
         raise Exception(msg)
     return v == "True"
 
