@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
+from django.http.request import split_domain_port
 import django_stubs_ext
 
 django_stubs_ext.monkeypatch()
@@ -38,7 +39,6 @@ def envint(s: str, default: str) -> int | None:
 SECRET_KEY = os.getenv("SECRET_KEY", "---")
 METRICS_KEY = os.getenv("METRICS_KEY")
 DEBUG = envbool("DEBUG", "True")
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "healthchecks@example.org")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 USE_PAYMENTS = envbool("USE_PAYMENTS", "False")
@@ -210,6 +210,14 @@ if PING_BODY_LIMIT and PING_BODY_LIMIT > 2621440:
 _site_root_parts = urlparse(SITE_ROOT)
 LOGIN_URL = f"{_site_root_parts.path}/accounts/login/"
 STATIC_URL = f"{_site_root_parts.path}/static/"
+if v := os.getenv("ALLOWED_HOSTS"):
+    # If ALLOWED_HOSTS is set in environment, use it
+    ALLOWED_HOSTS = v.split(",")
+else:
+    # Otherwise, populate it with the domain from SITE_ROOT
+    domain, _ = split_domain_port(_site_root_parts.netloc)
+    ALLOWED_HOSTS = [domain]
+
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "static-collected"
 STATICFILES_FINDERS = (

@@ -98,13 +98,16 @@ request/response cycle to the listed addresses. Example:</p>
 <p>Note: for error notifications to work, make sure you have also specified working
 SMTP credentials in the <code>EMAIL_...</code> environment variables.</p>
 <h2 id="ALLOWED_HOSTS"><code>ALLOWED_HOSTS</code></h2>
-<p>Default: <code>*</code></p>
-<p>The host/domain names that this site can serve. You can specify multiple domain names
-by separating them with commas:</p>
-<div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">my-hc.example.org,alternative-name.example.org</span>
+<p>Default: the domain part of <code>SITE_ROOT</code></p>
+<p>The host/domain names that this site can serve. Healthchecks populates this setting
+automatically with the domain part of <a href="#SITE_ROOT">SITE_ROOT</a>. You do not need
+to set it unless you serve Healthchecks on more than one domain.</p>
+<p>If you do serve the same Healthchecks instance on more than one domain, specify
+them all in <code>ALLOWED_HOSTS</code>, separated by commas:</p>
+<div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">first.example.org,second.example.org</span>
 </code></pre></div>
 
-<p>Apart from the comma-separated syntax, this is a standard Django setting.
+<p>Aside from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#allowed-hosts">Django documentation</a>.</p>
 <h2 id="APPRISE_ENABLED"><code>APPRISE_ENABLED</code></h2>
@@ -592,9 +595,14 @@ its web UI and documentation.</p>
 <h2 id="SITE_ROOT"><code>SITE_ROOT</code></h2>
 <p>Default: <code>http://localhost:8000</code></p>
 <p>The base URL of this Healthchecks instance. Healthchecks uses <code>SITE_ROOT</code> whenever
-it needs to construct absolute URLs.</p>
+it needs to construct absolute URLs. Healthchecks also uses <code>SITE_ROOT</code> to set
+several other settings, detailed below.</p>
+<p>If the <a href="#ALLOWED_HOSTS">ALLOWED_HOSTS</a> setting is not set, Healthchecks
+automatically populates it with the domain part of <code>SITE_ROOT</code>. Under typical scenarios
+you can use the automatically populated value and do not need to set
+<code>ALLOWED_HOSTS</code> yourself.</p>
 <p>If the SITE_ROOT contains a path (for example, <code>http://localhost:8000<b>/prefix</b></code>),
-then Healthchecks will automatically set the following additional Django settings:</p>
+then Healthchecks automatically sets the following additional Django settings:</p>
 <ul>
 <li><code>LOGIN_URL=<b>/prefix</b>/accounts/login/</code>. Required
 for correct redirection to a log-in page when an unauthenticated user requests a
@@ -608,7 +616,8 @@ setting, read more about it in
 </ul>
 <p><strong>On using <code>local_settings.py</code>:</strong> Healthchecks only sets the above additional settings
 if you specify <code>SITE_ROOT</code> via an environment variable. If you instead specify it in
-<code>local_settings.py</code>, you will also need to set <code>LOGIN_URL</code>and <code>STATIC_URL</code> there.</p>
+<code>local_settings.py</code>, you will also need to set <code>ALLOWED_HOSTS</code>, <code>LOGIN_URL</code>, and
+<code>STATIC_URL</code> there.</p>
 <h2 id="SLACK_CLIENT_ID"><code>SLACK_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Slack Client ID, used by the Healthchecks integration for Slack.</p>

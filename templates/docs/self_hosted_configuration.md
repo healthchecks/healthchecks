@@ -106,16 +106,20 @@ SMTP credentials in the `EMAIL_...` environment variables.
 
 ## `ALLOWED_HOSTS` {: #ALLOWED_HOSTS }
 
-Default: `*`
+Default: the domain part of `SITE_ROOT`
 
-The host/domain names that this site can serve. You can specify multiple domain names
-by separating them with commas:
+The host/domain names that this site can serve. Healthchecks populates this setting
+automatically with the domain part of [SITE_ROOT](#SITE_ROOT). You do not need
+to set it unless you serve Healthchecks on more than one domain.
+
+If you do serve the same Healthchecks instance on more than one domain, specify
+them all in `ALLOWED_HOSTS`, separated by commas:
 
 ```ini
-ALLOWED_HOSTS=my-hc.example.org,alternative-name.example.org
+ALLOWED_HOSTS=first.example.org,second.example.org
 ```
 
-Apart from the comma-separated syntax, this is a standard Django setting.
+Aside from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
 [Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#allowed-hosts).
 
@@ -844,10 +848,16 @@ its web UI and documentation.
 Default: `http://localhost:8000`
 
 The base URL of this Healthchecks instance. Healthchecks uses `SITE_ROOT` whenever
-it needs to construct absolute URLs.
+it needs to construct absolute URLs. Healthchecks also uses `SITE_ROOT` to set
+several other settings, detailed below.
+
+If the [ALLOWED_HOSTS](#ALLOWED_HOSTS) setting is not set, Healthchecks
+automatically populates it with the domain part of `SITE_ROOT`. Under typical scenarios
+you can use the automatically populated value and do not need to set
+`ALLOWED_HOSTS` yourself.
 
 If the SITE_ROOT contains a path (for example, <code>http://localhost:8000<b>/prefix</b></code>),
-then Healthchecks will automatically set the following additional Django settings:
+then Healthchecks automatically sets the following additional Django settings:
 
 * <code>LOGIN_URL=<b>/prefix</b>/accounts/login/</code>. Required
 for correct redirection to a log-in page when an unauthenticated user requests a
@@ -861,7 +871,8 @@ setting, read more about it in
 
 **On using `local_settings.py`:** Healthchecks only sets the above additional settings
 if you specify `SITE_ROOT` via an environment variable. If you instead specify it in
-`local_settings.py`, you will also need to set `LOGIN_URL`and `STATIC_URL` there.
+`local_settings.py`, you will also need to set `ALLOWED_HOSTS`, `LOGIN_URL`, and
+`STATIC_URL` there.
 
 ## `SLACK_CLIENT_ID` {: #SLACK_CLIENT_ID }
 
