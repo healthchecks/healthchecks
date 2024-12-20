@@ -20,7 +20,8 @@ settings.py uses for reading SITE_ROOT:
 from __future__ import annotations
 
 import os
-from urllib.request import urlopen
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 # Read SITE_ROOT from environment, same as settings.py would do:
 SITE_ROOT = os.getenv("SITE_ROOT", "http://localhost:8000")
@@ -30,8 +31,10 @@ if os.path.exists("hc/local_settings.py"):
 
     SITE_ROOT = getattr(local_settings, "SITE_ROOT", SITE_ROOT)
 
-SITE_ROOT = SITE_ROOT.removesuffix("/")
-with urlopen(f"{SITE_ROOT}/api/v3/status/") as response:
+parsed_site_root = urlparse(SITE_ROOT.removesuffix("/"))
+url = f"http://localhost:8000{parsed_site_root.path}/api/v3/status/"
+headers = {"Host": parsed_site_root.netloc}
+with urlopen(Request(url, headers=headers)) as response:
     assert response.status == 200
 
 print("Status OK")

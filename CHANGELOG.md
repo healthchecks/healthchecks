@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.9 - 2024-12-20
+
+### Improvements
+- Change the default value of ALLOWED_HOSTS from "*" to the domain part of SITE_ROOT
+
+### Bug Fixes
+- Fix fetchstatus.py (again) to handle SITE_ROOT with a path (#1108)
+
 ## v3.8.2 - 2024-12-19
 
 ### Improvements
