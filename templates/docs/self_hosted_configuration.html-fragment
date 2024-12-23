@@ -89,7 +89,7 @@ from environment variables. Below is a list of environment variables it reads an
 
 <h2 id="ADMINS"><code>ADMINS</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
-<p>A comma-sepparated list of email addresses to send code error notifications to.
+<p>A comma-separated list of email addresses to send code error notifications to.
 When <code>DEBUG=False</code>, Healthchecks will send the details of exceptions raised in the
 request/response cycle to the listed addresses. Example:</p>
 <div class="highlight"><pre><span></span><code><span class="na">ADMINS</span><span class="o">=</span><span class="s">alice@example.org,bob@example.org</span>
@@ -518,8 +518,8 @@ other guarantee that it sets/strips this header appropriately.</p>
 <p><strong>Note on using <code>local_settings.py</code>:</strong>
 When Healthchecks reads settings from environment variables, it expects
 <code>SECURE_PROXY_SSL_HEADER</code> to contain header name and value, separated with comma.
-If you set <code>SECURE_PROXY_SSL_HEADER</code> in <code>local_settings.py</code>, it should be a
-a tuple with two elements instead:</p>
+If you set <code>SECURE_PROXY_SSL_HEADER</code> in <code>local_settings.py</code>, it should be a tuple
+with two elements instead:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># in local_settings.py</span>
 <span class="na">SECURE_PROXY_SSL_HEADER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">(&quot;HTTP_X_FORWARDED_PROTO&quot;, &quot;https&quot;)</span>
 </code></pre></div>
@@ -548,7 +548,7 @@ TCP socket.</p>
 </code></pre></div>
 
 <p>Healthchecks uses <a href="https://github.com/AsamK/signal-cli">signal-cli</a> to send Signal
-notifications. Healthcecks interacts with signal-cli over UNIX or TCP socket (requires
+notifications. Healthchecks interacts with signal-cli over UNIX or TCP socket (requires
 signal-cli 0.10.0 or later).</p>
 <p>To enable the Signal integration:</p>
 <ul>

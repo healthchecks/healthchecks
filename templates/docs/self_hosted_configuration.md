@@ -93,7 +93,7 @@ from environment variables. Below is a list of environment variables it reads an
 
 Default: `""` (empty string)
 
-A comma-sepparated list of email addresses to send code error notifications to.
+A comma-separated list of email addresses to send code error notifications to.
 When `DEBUG=False`, Healthchecks will send the details of exceptions raised in the
 request/response cycle to the listed addresses. Example:
 
@@ -738,8 +738,8 @@ other guarantee that it sets/strips this header appropriately.
 **Note on using `local_settings.py`:**
 When Healthchecks reads settings from environment variables, it expects
 `SECURE_PROXY_SSL_HEADER` to contain header name and value, separated with comma.
-If you set `SECURE_PROXY_SSL_HEADER` in `local_settings.py`, it should be a
-a tuple with two elements instead:
+If you set `SECURE_PROXY_SSL_HEADER` in `local_settings.py`, it should be a tuple
+with two elements instead:
 
 ```ini
 # in local_settings.py
@@ -783,7 +783,7 @@ SIGNAL_CLI_SOCKET=example.org:7583
 ```
 
 Healthchecks uses [signal-cli](https://github.com/AsamK/signal-cli) to send Signal
-notifications. Healthcecks interacts with signal-cli over UNIX or TCP socket (requires
+notifications. Healthchecks interacts with signal-cli over UNIX or TCP socket (requires
 signal-cli 0.10.0 or later).
 
 To enable the Signal integration:
