@@ -314,6 +314,15 @@ class AddPdForm(forms.Form):
 
 ZULIP_TARGETS = (("stream", "Stream"), ("private", "Private"))
 
+class AddZammadForm(forms.Form):
+    error_css_class = "has-error"
+    url = LaxURLField(max_length=512, required=True)
+    token = forms.CharField(max_length=100, required=True)
+    customer = forms.CharField(max_length=100, required=True)
+    group = forms.CharField(max_length=60, required=False)
+    
+    def get_value(self) -> str:
+        return json.dumps(dict(self.cleaned_data), sort_keys=True)
 
 class AddZulipForm(forms.Form):
     error_css_class = "has-error"
