@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.10-dev - Unreleased
+
+### Improvements
+- Add "badge_url" field in Check API responses (#1100)
+
 ## v3.9 - 2024-12-20
 
 ### Improvements
