@@ -45,7 +45,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 26)
+        self.assertEqual(len(doc), 27)
 
         self.assertEqual(doc["uuid"], str(self.a1.code))
         self.assertEqual(doc["slug"], "alice-1-custom-slug")
@@ -67,6 +67,12 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(doc["failure_kw"], "ERROR")
         self.assertTrue(doc["filter_subject"])
         self.assertFalse(doc["filter_body"])
+        self.assertEqual(
+            doc["badge_url"], f"http://localhost:8000/b/2/{self.a1.badge_key}.svg"
+        )
+        self.assertEqual(
+            doc["update_url"], f"http://localhost:8000/api/v1/checks/{self.a1.code}"
+        )
 
     def test_it_handles_invalid_uuid(self) -> None:
         r = self.get("not-an-uuid")
@@ -83,7 +89,7 @@ class GetCheckTestCase(BaseTestCase):
         self.assertEqual(r["Access-Control-Allow-Origin"], "*")
 
         doc = r.json()
-        self.assertEqual(len(doc), 26)
+        self.assertEqual(len(doc), 27)
 
         self.assertEqual(doc["timeout"], 3600)
         self.assertEqual(doc["grace"], 900)

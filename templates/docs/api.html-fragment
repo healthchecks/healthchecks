@@ -189,6 +189,7 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/1b9d0386-d07e-44b0-8995-4a9a372de43c.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
@@ -215,6 +216,7 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
@@ -256,6 +258,7 @@ and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/1b9d0386-d07e-44b0-8995-4a9a372de43c.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a6c7b0a8a66bed0df66abfdab3c77736861703ee&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
 <span class="w">    </span><span class="p">},</span>
@@ -277,6 +280,7 @@ and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span>
@@ -325,6 +329,7 @@ using the read-only API key) as an identifier.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
@@ -362,6 +367,7 @@ easily construct these URLs themselves <em>if</em> they know the check's unique 
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;tz&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;UTC&quot;</span>
@@ -631,6 +637,7 @@ the limit is 20 checks per account.</dd>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -882,6 +889,7 @@ field values.</dd>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -938,6 +946,7 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -996,6 +1005,7 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -1048,6 +1058,7 @@ check that was just deleted.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v3/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>

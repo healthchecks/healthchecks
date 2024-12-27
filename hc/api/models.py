@@ -404,6 +404,9 @@ class Check(models.Model):
             "failure_kw": self.failure_kw,
             "filter_subject": self.filter_subject,
             "filter_body": self.filter_body,
+            # Optimization: construct badge URLs manually instead of using reverse().
+            # This is significantly quicker when returning hundreds of checks.
+            "badge_url": f"{settings.SITE_ROOT}/b/2/{self.badge_key}.svg",
         }
 
         if self.last_duration:
