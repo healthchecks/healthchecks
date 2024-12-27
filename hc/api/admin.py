@@ -28,7 +28,7 @@ class ChecksAdmin(ModelAdmin[Check]):
         css = {"all": ("css/admin/checks.css",)}
 
     search_fields = ["name", "code", "project__owner__email"]
-    readonly_fields = ("code",)
+    readonly_fields = ("code", "badge_key")
     raw_id_fields = ("project",)
     list_select_related = ("project",)
     list_display = (

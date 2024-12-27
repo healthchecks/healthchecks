@@ -195,7 +195,7 @@ class Check(models.Model):
     failure_kw = models.CharField(max_length=200, blank=True)
     methods = models.CharField(max_length=30, blank=True)
     manual_resume = models.BooleanField(default=False)
-    badge_key = models.UUIDField(null=True, unique=True)
+    badge_key = models.UUIDField(default=uuid.uuid4, null=True, unique=True)
 
     n_pings = models.IntegerField(default=0)
     last_ping = models.DateTimeField(null=True, blank=True)
