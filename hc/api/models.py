@@ -124,6 +124,7 @@ class CheckDict(TypedDict, total=False):
     failure_kw: str
     filter_subject: bool
     filter_body: bool
+    badge_url: str
     last_duration: int
     unique_key: str
     ping_url: str
