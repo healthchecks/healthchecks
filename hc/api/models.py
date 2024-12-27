@@ -382,12 +382,6 @@ class Check(models.Model):
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
 
-    def prepare_badge_key(self) -> uuid.UUID:
-        if not self.badge_key:
-            self.badge_key = uuid.uuid4()
-            Check.objects.filter(id=self.id).update(badge_key=self.badge_key)
-        return self.badge_key
-
     def to_dict(self, *, readonly: bool = False, v: int = 3) -> CheckDict:
         with_started = v == 1
         result: CheckDict = {

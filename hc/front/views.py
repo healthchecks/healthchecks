@@ -1163,7 +1163,7 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         elif form.cleaned_data["target"] == "check":
             check = project.check_set.get(code=form.cleaned_data["check"])
             url = absolute_reverse(
-                "hc-badge-check", args=[states, check.prepare_badge_key(), fmt]
+                "hc-badge-check", args=[states, check.badge_key, fmt]
             )
             label = check.name_then_code()
 

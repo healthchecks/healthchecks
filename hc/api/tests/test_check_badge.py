@@ -12,12 +12,11 @@ class CheckBadgeTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project, name="foobar")
-        badge_key = self.check.prepare_badge_key()
 
-        self.svg_url = f"/b/2/{badge_key}.svg"
-        self.json_url = f"/b/2/{badge_key}.json"
-        self.with_late_url = f"/b/3/{badge_key}.json"
-        self.shields_url = f"/b/2/{badge_key}.shields"
+        self.svg_url = f"/b/2/{self.check.badge_key}.svg"
+        self.json_url = f"/b/2/{self.check.badge_key}.json"
+        self.with_late_url = f"/b/3/{self.check.badge_key}.json"
+        self.shields_url = f"/b/2/{self.check.badge_key}.shields"
 
     def test_it_handles_bad_badge_key(self) -> None:
         r = self.client.get("/b/2/869fe06a-a604-4140-b15a-118637c25f3e.svg")

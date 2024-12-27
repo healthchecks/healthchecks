@@ -15,7 +15,6 @@ class BadgesTestCase(BaseTestCase):
         self.project.save()
 
         self.check = Check.objects.create(project=self.project, tags="foo a-B_1  baz@")
-        self.check.prepare_badge_key()
 
         self.url = f"/projects/{self.project.code}/badges/"
 
