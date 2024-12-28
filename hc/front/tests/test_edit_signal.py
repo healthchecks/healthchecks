@@ -50,6 +50,20 @@ class EditSignalTestCase(BaseTestCase):
         # Make sure it does not call assign_all_checks
         self.assertFalse(self.channel.checks.exists())
 
+    def test_it_handles_username(self) -> None:
+        form = {
+            "label": "My Phone",
+            "phone": "foobar.123",
+            "down": "true",
+            "up": "false",
+        }
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url, form)
+
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.phone.value, "foobar.123")
+
     @override_settings(SIGNAL_CLI_SOCKET=None)
     def test_it_handles_disabled_integration(self) -> None:
         self.client.login(username="alice@example.org", password="password")

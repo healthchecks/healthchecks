@@ -571,3 +571,16 @@ class NotifySignalTestCase(BaseTestCase):
         n = Notification.objects.get()
 
         self.assertEqual(n.error, "signal-cli call failed (-1)")
+
+    @patch("hc.api.transports.socket.socket")
+    def test_it_handles_username(self, socket: Mock) -> None:
+        payload = {"value": "foobar.123", "up": True, "down": True}
+        self.channel.value = json.dumps(payload)
+        self.channel.save()
+
+        socketobj = setup_mock(socket, {})
+        self.channel.notify(self.flip)
+
+        assert socketobj.req
+        params = socketobj.req["params"]
+        self.assertEqual(params["recipient"], ["u:foobar.123"])

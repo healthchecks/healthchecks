@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add "badge_url" field in Check API responses (#1100)
+- Add support for Signal usernames
 
 ## v3.9 - 2024-12-20
 

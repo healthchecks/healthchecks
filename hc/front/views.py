@@ -2270,7 +2270,7 @@ def add_whatsapp(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 def signal_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     adding = channel._state.adding
     if request.method == "POST":
-        form = forms.PhoneUpDownForm(request.POST)
+        form = forms.SignalForm(request.POST)
         if form.is_valid():
             channel.name = form.cleaned_data["label"]
             channel.value = form.get_json()
@@ -2280,9 +2280,9 @@ def signal_form(request: HttpRequest, channel: Channel) -> HttpResponse:
                 channel.assign_all_checks()
             return redirect("hc-channels", channel.project.code)
     elif adding:
-        form = forms.PhoneUpDownForm()
+        form = forms.SignalForm()
     else:
-        form = forms.PhoneUpDownForm(
+        form = forms.SignalForm(
             {
                 "label": channel.name,
                 "phone": channel.phone.value,
@@ -2693,7 +2693,7 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
     if not TokenBucket.authorize_signal_verification(request.user):
         return render_result("Verification rate limit exceeded")
 
-    form = forms.PhoneNumberForm(request.POST)
+    form = forms.SignalRecipientForm(request.POST)
     if not form.is_valid():
         return render_result("Invalid phone number")
 

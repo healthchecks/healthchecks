@@ -1431,6 +1431,9 @@ class Signal(Transport):
     @classmethod
     def send(cls, recipient: str, message: str) -> None:
         plaintext, styles = extract_signal_styles(message)
+        if "." in recipient:
+            # usernames must be prefixed with "u:"
+            recipient = f"u:{recipient}"
         payload = {
             "jsonrpc": "2.0",
             "method": "send",

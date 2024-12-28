@@ -53,15 +53,6 @@ class AddSmsTestCase(BaseTestCase):
             r = self.client.post(self.url, form)
             self.assertContains(r, "Invalid phone number format.")
 
-    def test_it_trims_whitespace(self) -> None:
-        form = {"phone": "   +1234567890   ", "down": True}
-
-        self.client.login(username="alice@example.org", password="password")
-        self.client.post(self.url, form)
-
-        c = Channel.objects.get()
-        self.assertEqual(c.phone.value, "+1234567890")
-
     @override_settings(TWILIO_AUTH=None)
     def test_it_requires_credentials(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -97,7 +88,7 @@ class AddSmsTestCase(BaseTestCase):
         self.assertEqual(c.phone.value, "+1234567890")
 
     def test_it_strips_spaces(self) -> None:
-        form = {"phone": "+123 45 678 90", "down": True}
+        form = {"phone": "   +123 45 678 90   ", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)

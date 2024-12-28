@@ -46,15 +46,15 @@ Signal Settings - {% site_name %}
         </div>
 
         <div class="form-group {{ form.phone.css_classes }}">
-            <label for="id_number" class="col-sm-2 control-label">Phone Number</label>
+            <label for="id_number" class="col-sm-2 control-label">Phone or Username</label>
             <div class="col-sm-6">
                 <div class="input-group">
                     <input
                         id="id_number"
-                        type="tel"
+                        type="text"
                         class="form-control"
                         name="phone"
-                        placeholder="+1234567890"
+                        placeholder="+1234567890 or xyz.123"
                         value="{{ form.phone.value|default:"" }}">
 
                     <span class="input-group-btn">
