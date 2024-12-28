@@ -22,7 +22,7 @@ class AddSignalTestCase(BaseTestCase):
     def test_it_creates_channel(self) -> None:
         form = {
             "label": "My Phone",
-            "phone": "+1234567890",
+            "recipient": "+1234567890",
             "down": "true",
             "up": "true",
         }
@@ -45,7 +45,7 @@ class AddSignalTestCase(BaseTestCase):
     def test_it_handles_username(self) -> None:
         form = {
             "label": "My Phone",
-            "phone": "foobar.123",
+            "recipient": "foobar.123",
             "down": "true",
             "up": "true",
         }
@@ -71,7 +71,7 @@ class AddSignalTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 403)
 
     def test_it_handles_down_false_up_true(self) -> None:
-        form = {"phone": "+1234567890", "up": True}
+        form = {"recipient": "+1234567890", "up": True}
 
         self.client.login(username="alice@example.org", password="password")
         self.client.post(self.url, form)
@@ -81,7 +81,7 @@ class AddSignalTestCase(BaseTestCase):
         self.assertTrue(c.phone.notify_up)
 
     def test_it_rejects_unchecked_up_and_down(self) -> None:
-        form = {"phone": "+1234567890"}
+        form = {"recipient": "+1234567890"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -90,17 +90,17 @@ class AddSignalTestCase(BaseTestCase):
     def test_it_rejects_bad_phone(self) -> None:
         for v in ["not a phone number", False, 15, "+123456789A"]:
             self.client.login(username="alice@example.org", password="password")
-            r = self.client.post(self.url, {"phone": v})
+            r = self.client.post(self.url, {"recipient": v})
             self.assertContains(r, "Invalid phone number format.")
 
     def test_it_rejects_bad_username(self) -> None:
         for v in ["a.123", "foobar.0"]:
             self.client.login(username="alice@example.org", password="password")
-            r = self.client.post(self.url, {"phone": v})
+            r = self.client.post(self.url, {"recipient": v})
             self.assertContains(r, "Invalid username format.")
 
     def test_it_strips_invisible_formatting_characters(self) -> None:
-        form = {"phone": "\u202c+1234567890\u202c", "down": True}
+        form = {"recipient": "\u202c+1234567890\u202c", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -110,7 +110,7 @@ class AddSignalTestCase(BaseTestCase):
         self.assertEqual(c.phone.value, "+1234567890")
 
     def test_it_strips_hyphens(self) -> None:
-        form = {"phone": "+123-4567890", "down": True}
+        form = {"recipient": "+123-4567890", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
@@ -120,7 +120,7 @@ class AddSignalTestCase(BaseTestCase):
         self.assertEqual(c.phone.value, "+1234567890")
 
     def test_it_strips_spaces(self) -> None:
-        form = {"phone": "   +123 45 678 90   ", "down": True}
+        form = {"recipient": "   +123 45 678 90   ", "down": True}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)

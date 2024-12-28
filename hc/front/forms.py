@@ -284,15 +284,14 @@ class PhoneUpDownForm(PhoneNumberForm):
 class SignalRecipientForm(forms.Form):
     error_css_class = "has-error"
     label = forms.CharField(max_length=100, required=False)
-    phone = forms.CharField()
+    recipient = forms.CharField()
 
-    def clean_phone(self) -> str:
-        v = self.cleaned_data["phone"]
+    def clean_recipient(self) -> str:
+        v = self.cleaned_data["recipient"]
 
         stripped = v.encode("ascii", "ignore").decode("ascii")
         assert isinstance(stripped, str)
         stripped = stripped.replace(" ", "").replace("-", "")
-
         if "." in stripped:
             # Assume it is a username
             if not re.match(r"^\w{3,48}\.\d{2,10}$", stripped):
@@ -321,7 +320,7 @@ class SignalForm(SignalRecipientForm):
     def get_json(self) -> str:
         return json.dumps(
             {
-                "value": self.cleaned_data["phone"],
+                "value": self.cleaned_data["recipient"],
                 "up": self.cleaned_data["up"],
                 "down": self.cleaned_data["down"],
             }

@@ -19,7 +19,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
     @patch("hc.front.views.Signal")
     def test_it_works(self, mock_signal: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"phone": "+1234567890"})
+        r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "All good, the message was sent")
 
     @patch("hc.front.views.Signal")
@@ -27,7 +27,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
         mock_signal.send.side_effect = TransportError("CAPTCHA proof required")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"phone": "+1234567890"})
+        r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "We hit a Signal rate-limit")
 
     @patch("hc.front.views.Signal")
@@ -35,7 +35,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
         mock_signal.send.side_effect = TransportError("Recipient not found")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"phone": "+1234567890"})
+        r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "Recipient not found")
 
     @patch("hc.front.views.Signal")
@@ -43,13 +43,13 @@ class VerifySignalNumberTestCase(BaseTestCase):
         mock_signal.send.side_effect = TransportError("signal-cli call failed (123)")
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"phone": "+1234567890"})
+        r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "signal-cli call failed")
 
     @patch("hc.front.views.Signal")
     def test_it_handles_invalid_phone_number(self, mock_signal: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"phone": "+123"})
+        r = self.client.post(self.url, {"recipient": "+123"})
         self.assertContains(r, "Invalid phone number")
 
     def test_it_requires_post(self) -> None:
@@ -58,14 +58,14 @@ class VerifySignalNumberTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 405)
 
     def test_it_requires_authenticated_user(self) -> None:
-        r = self.client.post(self.url, {"phone": "+1234567890"})
+        r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertRedirects(r, "/accounts/login/?next=" + self.url)
 
     def test_it_obeys_per_account_rate_limit(self) -> None:
         TokenBucket.objects.create(value=f"signal-verify-{self.alice.id}", tokens=0)
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"phone": "+1234567890"})
+        r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "Verification rate limit exceeded")
 
     @override_settings(SECRET_KEY="test-secret")
@@ -76,5 +76,5 @@ class VerifySignalNumberTestCase(BaseTestCase):
         obj.save()
 
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"phone": "+123456789"})
+        r = self.client.post(self.url, {"recipient": "+123456789"})
         self.assertContains(r, "Verification rate limit exceeded")

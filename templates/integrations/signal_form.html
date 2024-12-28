@@ -45,7 +45,7 @@ Signal Settings - {% site_name %}
             </div>
         </div>
 
-        <div class="form-group {{ form.phone.css_classes }}">
+        <div class="form-group {{ form.recipient.css_classes }}">
             <label for="id_number" class="col-sm-2 control-label">Phone or Username</label>
             <div class="col-sm-6">
                 <div class="input-group">
@@ -53,9 +53,9 @@ Signal Settings - {% site_name %}
                         id="id_number"
                         type="text"
                         class="form-control"
-                        name="phone"
+                        name="recipient"
                         placeholder="+1234567890 or xyz.123"
-                        value="{{ form.phone.value|default:"" }}">
+                        value="{{ form.recipient.value|default:"" }}">
 
                     <span class="input-group-btn">
                         <button
@@ -69,9 +69,9 @@ Signal Settings - {% site_name %}
                     </span>
                 </div>
 
-                {% if form.phone.errors %}
+                {% if form.recipient.errors %}
                 <div class="help-block">
-                    {{ form.phone.errors|join:"" }}
+                    {{ form.recipient.errors|join:"" }}
                 </div>
                 {% else %}
                 <span class="help-block">

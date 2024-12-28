@@ -32,7 +32,7 @@ class EditSignalTestCase(BaseTestCase):
     def test_it_updates_channel(self) -> None:
         form = {
             "label": "My Phone",
-            "phone": "+1234567890",
+            "recipient": "+1234567890",
             "down": "true",
             "up": "false",
         }
@@ -53,7 +53,7 @@ class EditSignalTestCase(BaseTestCase):
     def test_it_handles_username(self) -> None:
         form = {
             "label": "My Phone",
-            "phone": "foobar.123",
+            "recipient": "foobar.123",
             "down": "true",
             "up": "false",
         }

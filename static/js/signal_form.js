@@ -15,7 +15,7 @@ $(function () {
             url: url,
             type: "post",
             headers: { "X-CSRFToken": token },
-            data: { phone: $("#id_number").val() },
+            data: { recipient: $("#id_number").val() },
             success: function (data) {
                 $("#verify-result").html(data);
                 $("#submit-btn").attr("disabled", data.indexOf("alert-success") == -1);

@@ -2285,7 +2285,7 @@ def signal_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         form = forms.SignalForm(
             {
                 "label": channel.name,
-                "phone": channel.phone.value,
+                "recipient": channel.phone.value,
                 "up": channel.phone.notify_up,
                 "down": channel.phone.notify_down,
             }
@@ -2697,13 +2697,13 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
     if not form.is_valid():
         return render_result("Invalid phone number")
 
-    phone = form.cleaned_data["phone"]
+    recipient = form.cleaned_data["recipient"]
     # Enforce per-recipient rate limit (6 messages per minute)
-    if not TokenBucket.authorize_signal(phone):
+    if not TokenBucket.authorize_signal(recipient):
         return render_result("Verification rate limit exceeded")
 
     try:
-        Signal.send(phone, f"Test message from {settings.SITE_NAME}")
+        Signal.send(recipient, f"Test message from {settings.SITE_NAME}")
     except TransportError as e:
         return render_result(e.message)
 
