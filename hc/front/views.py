@@ -58,7 +58,7 @@ from hc.api.models import (
     Ping,
     TokenBucket,
 )
-from hc.api.transports import Signal, Telegram, TransportError
+from hc.api.transports import Signal, Telegram, TransportError, SignalRateLimitFailure
 from hc.front import forms
 from hc.front.decorators import require_setting
 from hc.front.templatetags.hc_extras import (
@@ -2704,6 +2704,9 @@ def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
 
     try:
         Signal.send(recipient, f"Test message from {settings.SITE_NAME}")
+    except SignalRateLimitFailure as e:
+        Channel().send_signal_captcha_alert(e.token, e.reply.decode())
+        return render_result(e.message)
     except TransportError as e:
         return render_result(e.message)
 
