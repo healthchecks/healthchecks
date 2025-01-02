@@ -1,4 +1,4 @@
-{% load humanize %}
+{% load hc_extras humanize %}
 {% with check.get_status as status %}
     {% if status == "down" %}
         This check is down. Last ping was {{ check.last_ping|naturaltime }}.
@@ -23,7 +23,7 @@
 
     {% if check.last_start %}
         <br />
-        Currently running, started {{ check.last_start|naturaltime }}.
+        Currently running, started {{ check.last_start|hms }} ago.
     {% else %}
         <br /> &nbsp;
     {% endif %}

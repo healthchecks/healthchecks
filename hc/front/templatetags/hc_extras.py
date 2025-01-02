@@ -34,7 +34,10 @@ def hc_approx_duration(d: timedelta) -> str:
 
 
 @register.filter
-def hms(d: timedelta) -> str:
+def hms(d: datetime | timedelta) -> str:
+    if isinstance(d, datetime):
+        return format_hms(now() - d)
+
     return format_hms(d)
 
 
