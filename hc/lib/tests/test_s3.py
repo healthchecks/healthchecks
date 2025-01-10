@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from unittest import skipIf
-from unittest.mock import Mock, patch
+from unittest.mock import call, Mock, patch
 
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -22,13 +22,12 @@ except ImportError:
 class S3TestCase(TestCase):
     @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
-    def test_get_object_handles_nosuchkey(self, client: Mock, stats: Mock) -> None:
+    def test_get_object_handles_nosuchkey(self, client: Mock, statsd: Mock) -> None:
         e = S3Error("NoSuchKey", "b", "c", "d", "e", Mock())
         client.get_object.return_value.read = Mock(side_effect=e)
         self.assertIsNone(get_object("dummy-code", 1))
-        client.get_object.assert_called_once()
         # Should not increase the error counter for NoSuchKey responses
-        stats.incr.assert_not_called()
+        self.assertEqual(statsd.incr.mock_calls, [call("hc.lib.s3.getObject")])
 
     @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
@@ -37,7 +36,10 @@ class S3TestCase(TestCase):
         client.get_object.return_value.read = Mock(side_effect=e)
         self.assertIsNone(get_object("dummy-code", 1))
         client.get_object.assert_called_once()
-        statsd.incr.assert_called_once()
+        self.assertEqual(
+            statsd.incr.mock_calls,
+            [call("hc.lib.s3.getObject"), call("hc.lib.s3.getObjectErrors")],
+        )
 
     @patch("hc.lib.s3._client")
     def test_get_object_handles_urllib_exceptions(self, client: Mock) -> None:

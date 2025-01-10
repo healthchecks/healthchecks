@@ -76,6 +76,7 @@ def get_object(code: str, n: int) -> bytes | None:
     if not settings.S3_BUCKET:
         return None
 
+    statsd.incr("hc.lib.s3.getObject")
     with statsd.timer("hc.lib.s3.getObjectTime"):
         key = "%s/%s" % (code, enc(n))
         response = None
