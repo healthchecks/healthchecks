@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Add support for Signal usernames
 - Update the "Currently running, started ... ago" template to use seconds precision
 
+### Bug Fixes
+- Fix incorrect status value in Webhook integration's $JSON placeholder
+
 ## v3.9 - 2024-12-20
 
 ### Improvements

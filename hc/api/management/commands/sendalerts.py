@@ -32,11 +32,6 @@ def notify(flip: Flip) -> str | None:
     # Set or clear dates for followup nags
     check = flip.owner
     check.project.update_next_nag_dates()
-    # Transport classes should use flip's status, not check's status
-    # (which can already be different by the time the notification goes out).
-    # To make sure we catch template bugs, set check's status to an obnoxious,
-    # invalid value:
-    check.status = "IF_YOU_SEE_THIS_WE_HAVE_A_BUG"
     channels = flip.select_channels()
     if not channels:
         return None

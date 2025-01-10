@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from django.utils.timezone import now
 
 from hc.api.management.commands.sendalerts import Command, notify
-from hc.api.models import Check, Flip
+from hc.api.models import Channel, Check, Flip
 from hc.test import BaseTestCase
 
 
@@ -178,3 +178,29 @@ class SendAlertsTestCase(BaseTestCase):
 
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.next_nag_date, original_nag_date)
+
+    def test_it_does_not_clobber_check_status(self) -> None:
+        check = Check(project=self.project, status="down")
+        check.last_ping = now() - td(days=2)
+        check.save()
+
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        channel = Channel.objects.create(project=self.project, kind="webhook")
+        channel.checks.add(check)
+
+        with patch("hc.api.models.Channel.transport") as Webhook:
+            Webhook.is_noop.return_value = False
+            notify(flip)
+
+            args, kwargs = Webhook.notify.call_args
+            # Before sending a notification, we used to set flip.owner.status value
+            # to "IF_YOU_SEE_THIS_WE_HAVE_A_BUG". The idea was to use it as 0xDEADBEEF:
+            # if it surfaces anywhere in notification contents we know we have a bug.
+            # Problem is, webhooks have a $JSON placeholder, which calls
+            # Check.get_status(), which reads Check.status. So we *must not*
+            # clobber flip.owner.status.
+            self.assertEqual(args[0].owner.status, "down")
