@@ -1259,10 +1259,10 @@ class TokenBucket(models.Model):
         email = mailbox + "@" + domain
 
         salted_encoded = (email + settings.SECRET_KEY).encode()
-        value = "em-%s" % hashlib.sha1(salted_encoded).hexdigest()
+        hashed = hashlib.sha1(salted_encoded).hexdigest()
 
         # 20 login attempts for a single email per hour:
-        return TokenBucket.authorize(value, 20, 3600)
+        return TokenBucket.authorize(f"em-{hashed}", 20, 3600)
 
     @staticmethod
     def authorize_invite(user: User) -> bool:
@@ -1274,25 +1274,23 @@ class TokenBucket(models.Model):
     @staticmethod
     def authorize_login_password(email: str) -> bool:
         salted_encoded = (email + settings.SECRET_KEY).encode()
-        value = "pw-%s" % hashlib.sha1(salted_encoded).hexdigest()
+        hashed = hashlib.sha1(salted_encoded).hexdigest()
 
         # 20 password attempts per day
-        return TokenBucket.authorize(value, 20, 3600 * 24)
+        return TokenBucket.authorize(f"pw-{hashed}", 20, 3600 * 24)
 
     @staticmethod
     def authorize_telegram(telegram_id: int) -> bool:
-        value = "tg-%s" % telegram_id
-
         # 6 messages for a single chat per minute:
-        return TokenBucket.authorize(value, 6, 60)
+        return TokenBucket.authorize(f"tg-{telegram_id}", 6, 60)
 
     @staticmethod
     def authorize_signal(phone: str) -> bool:
         salted_encoded = (phone + settings.SECRET_KEY).encode()
-        value = "signal-%s" % hashlib.sha1(salted_encoded).hexdigest()
+        hashed = hashlib.sha1(salted_encoded).hexdigest()
 
         # 6 messages for a single recipient per minute:
-        return TokenBucket.authorize(value, 6, 60)
+        return TokenBucket.authorize(f"signal-{hashed}", 6, 60)
 
     @staticmethod
     def authorize_signal_verification(user: User) -> bool:
@@ -1304,9 +1302,10 @@ class TokenBucket(models.Model):
     @staticmethod
     def authorize_pushover(user_key: str) -> bool:
         salted_encoded = (user_key + settings.SECRET_KEY).encode()
-        value = "po-%s" % hashlib.sha1(salted_encoded).hexdigest()
+        hashed = hashlib.sha1(salted_encoded).hexdigest()
+
         # 6 messages for a single user key per minute:
-        return TokenBucket.authorize(value, 6, 60)
+        return TokenBucket.authorize(f"po-{hashed}", 6, 60)
 
     @staticmethod
     def authorize_sudo_code(user: User) -> bool:
