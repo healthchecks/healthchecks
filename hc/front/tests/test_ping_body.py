@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from hc.api.models import Check, Ping
+from unittest.mock import Mock, patch
+
+from django.utils.timezone import now
+
+from hc.api.models import Check, Ping, TokenBucket
+from hc.lib.s3 import GetObjectError
 from hc.test import BaseTestCase
 
 
@@ -50,3 +55,25 @@ class PingBodyTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.content, b"Hello\x01\x99World")
+
+    def test_it_handles_unhealthy_s3(self) -> None:
+        self.ping.object_size = 123
+        self.ping.save()
+
+        obj = TokenBucket(value="s3_get_object_error")
+        obj.tokens = 0.0
+        obj.updated = now()
+        obj.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 503)
+
+    def test_it_handles_s3_error(self) -> None:
+        self.ping.object_size = 123
+        self.ping.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        with patch("hc.api.models.get_object", Mock(side_effect=GetObjectError)):
+            r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 503)

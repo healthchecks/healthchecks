@@ -1156,6 +1156,8 @@ response header and the ping body is returned verbatim in the response body.</p>
 <dd>Access denied, wrong API key.</dd>
 <dt>404 Not Found</dt>
 <dd>The check does not exist, the ping does not exist, or the ping has no body data.</dd>
+<dt>503 Service Unavailable</dt>
+<dd>External object storage service is unavailable, please try later.</dd>
 </dl>
 <h3>Example Request</h3>
 <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v3/checks/f618072a-7bde-4eee-af63-71a77c5723bc/pings/397/body<span class="w"> </span><span class="se">\</span>

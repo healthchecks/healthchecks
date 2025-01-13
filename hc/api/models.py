@@ -31,7 +31,7 @@ from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries, seconds_in_month
-from hc.lib.s3 import get_object, put_object, remove_objects
+from hc.lib.s3 import GetObjectError, get_object, put_object, remove_objects
 from hc.lib.urls import absolute_reverse
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
@@ -650,6 +650,9 @@ class Ping(models.Model):
     exitstatus = models.SmallIntegerField(null=True)
     rid = models.UUIDField(null=True)
 
+    class GetBodyError(Exception):
+        pass
+
     def to_dict(self) -> PingDict:
         if self.has_body():
             args = [self.owner.code, self.n]
@@ -683,14 +686,32 @@ class Ping(models.Model):
 
     def get_body_bytes(self) -> bytes | None:
         if self.object_size and self.n:
-            return get_object(str(self.owner.code), self.n)
+            # Do not attemt to touch S3 if we have recorded more than 3
+            # errors (503 responses, request timeouts) in the last minute
+            # when accessing S3.
+            # If we don't do this, a S3 outage can clog our requests handlers and
+            # cause a bigger issue.
+            if not TokenBucket.s3_is_healthy():
+                raise self.GetBodyError()
+
+            try:
+                return get_object(str(self.owner.code), self.n)
+            except GetObjectError:
+                # If S3 access resulted in error, record this fact:
+                TokenBucket.record_s3_get_object_error()
+                raise self.GetBodyError()
+
         if self.body_raw:
             return self.body_raw
 
         return None
 
     def get_body(self) -> str | None:
-        body_bytes = self.get_body_bytes()
+        try:
+            body_bytes = self.get_body_bytes()
+        except self.GetBodyError:
+            return None
+
         if body_bytes:
             return bytes(body_bytes).decode(errors="replace")
 
@@ -1214,7 +1235,9 @@ class TokenBucket(models.Model):
     updated = models.DateTimeField(default=now)
 
     @staticmethod
-    def authorize(value: str, capacity: int, refill_time_secs: int) -> bool:
+    def authorize(
+        value: str, capacity: int, refill_time_secs: int, force: bool = False
+    ) -> bool:
         frozen_now = now()
         obj, created = TokenBucket.objects.get_or_create(value=value)
 
@@ -1224,7 +1247,7 @@ class TokenBucket(models.Model):
             obj.tokens = min(1.0, obj.tokens + duration_secs / refill_time_secs)
 
         obj.tokens -= 1.0 / capacity
-        if obj.tokens < 0:
+        if obj.tokens < 0 and not force:
             # Not enough tokens
             return False
 
@@ -1330,3 +1353,22 @@ class TokenBucket(models.Model):
         # During that period, allow the code to only be used once,
         # so an eavesdropping attacker cannot reuse a code.
         return TokenBucket.authorize(value, 1, 90)
+
+    @staticmethod
+    def s3_is_healthy() -> bool:
+        """Return True if fewer than 3 GetObject errors in the last minute."""
+        try:
+            obj = TokenBucket.objects.get(value="s3_get_object_error")
+        except TokenBucket.DoesNotExist:
+            return True
+
+        duration_secs = (now() - obj.updated).total_seconds()
+        # How many tokens we would have after top-up:
+        tokens = min(1.0, obj.tokens + duration_secs / 60)
+        return tokens >= 1.0 / 3
+
+    @staticmethod
+    def record_s3_get_object_error() -> None:
+        # Use force=True, we are recording the S3 error after the error already
+        # happened, and want to record it even if the tokens field would go negative.
+        TokenBucket.authorize("s3_get_object_error", 3, 60, force=True)

@@ -47,3 +47,27 @@ class TokenBucketTestCase(BaseTestCase):
             TokenBucket.authorize_login_email(email)
 
         self.assertEqual(TokenBucket.objects.count(), 1)
+
+    def test_s3_get_object_healthy_works(self) -> None:
+        obj = TokenBucket(value="s3_get_object_error")
+        obj.tokens = 0.34  # above 1/3
+        obj.updated = now()
+        obj.save()
+        self.assertTrue(TokenBucket.s3_is_healthy())
+
+    def test_s3_get_object_healthy_negative_works(self) -> None:
+        obj = TokenBucket(value="s3_get_object_error")
+        obj.tokens = 0.1  # below 1/3
+        obj.updated = now()
+        obj.save()
+        self.assertFalse(TokenBucket.s3_is_healthy())
+
+    def test_record_s3_get_object_error_works(self) -> None:
+        obj = TokenBucket(value="s3_get_object_error")
+        obj.tokens = 0.0
+        obj.updated = now()
+        obj.save()
+
+        TokenBucket.record_s3_get_object_error()
+        obj.refresh_from_db()
+        self.assertTrue(obj.tokens < 0)

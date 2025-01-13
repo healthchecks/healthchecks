@@ -58,7 +58,7 @@ from hc.api.models import (
     Ping,
     TokenBucket,
 )
-from hc.api.transports import Signal, Telegram, TransportError, SignalRateLimitFailure
+from hc.api.transports import Signal, SignalRateLimitFailure, Telegram, TransportError
 from hc.front import forms
 from hc.front.decorators import require_setting
 from hc.front.templatetags.hc_extras import (
@@ -802,7 +802,11 @@ def ping_body(request: AuthenticatedHttpRequest, code: UUID, n: int) -> HttpResp
     check, rw = _get_check_for_user(request, code)
     ping = get_object_or_404(Ping, owner=check, n=n)
 
-    body = ping.get_body_bytes()
+    try:
+        body = ping.get_body_bytes()
+    except Ping.GetBodyError:
+        return HttpResponse(status=503)
+
     if not body:
         raise Http404("not found")
 

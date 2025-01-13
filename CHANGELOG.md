@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Add "badge_url" field in Check API responses (#1100)
 - Add support for Signal usernames
 - Update the "Currently running, started ... ago" template to use seconds precision
+- Implement S3 outage mitigation (don't attempt GetObject calls if many recent errors)
 
 ### Bug Fixes
 - Fix incorrect status value in Webhook integration's $JSON placeholder

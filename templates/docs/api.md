@@ -1317,6 +1317,10 @@ response header and the ping body is returned verbatim in the response body.
 404 Not Found
 :   The check does not exist, the ping does not exist, or the ping has no body data.
 
+503 Service Unavailable
+:   External object storage service is unavailable, please try later.
+
+
 ### Example Request
 
 ```bash

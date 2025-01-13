@@ -23,6 +23,10 @@ _client = None
 logger = logging.getLogger(__name__)
 
 
+class GetObjectError(Exception):
+    pass
+
+
 def client() -> Minio:
     if not settings.S3_BUCKET:
         raise Exception("Object storage is not configured")
@@ -78,28 +82,19 @@ def get_object(code: str, n: int) -> bytes | None:
 
     statsd.incr("hc.lib.s3.getObject")
     with statsd.timer("hc.lib.s3.getObjectTime"):
-        key = "%s/%s" % (code, enc(n))
+        key = f"{code}/{enc(n)}"
         response = None
         try:
             response = client().get_object(settings.S3_BUCKET, key)
             return response.read()
-        except S3Error as e:
-            if e.code == "NoSuchKey":
+        except (S3Error, InvalidResponseError, HTTPError) as e:
+            if isinstance(e, S3Error) and e.code == "NoSuchKey":
                 # It's not an error condition if an object does not exist.
-                # Return None, don't log exception, don't increase error counter.
+                # Return None, don't log, don't raise.
                 return None
 
-            logger.exception("S3Error in hc.lib.s3.get_object")
-            statsd.incr("hc.lib.s3.getObjectErrors")
-            return None
-        except InvalidResponseError:
-            logger.exception("InvalidResponseError in hc.lib.s3.get_object")
-            statsd.incr("hc.lib.s3.getObjectErrors")
-            return None
-        except HTTPError:
-            logger.exception("HTTPError in hc.lib.s3.get_object")
-            statsd.incr("hc.lib.s3.getObjectErrors")
-            return None
+            logger.exception(f"{e.__class__.__name__} in hc.lib.s3.get_object")
+            raise GetObjectError() from e
         finally:
             if response:
                 response.close()
