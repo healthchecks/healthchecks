@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Add support for Signal usernames
 - Update the "Currently running, started ... ago" template to use seconds precision
 - Implement S3 outage mitigation (don't attempt GetObject calls if many recent errors)
+- Add last ping body in MS Teams Workflows notifications (#1024)
 
 ### Bug Fixes
 - Fix incorrect status value in Webhook integration's $JSON placeholder

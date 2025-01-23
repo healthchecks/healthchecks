@@ -1237,6 +1237,21 @@ class MsTeamsWorkflow(HttpTransport):
         }
         text = tmpl("msteamsw_message.html", **ctx)
 
+        blocks: JSONList = [
+            {
+                "type": "TextBlock",
+                "text": text,
+                "weight": "bolder",
+                "size": "medium",
+                "wrap": True,
+                "style": "heading",
+            },
+            {
+                "type": "FactSet",
+                "facts": fields,
+            },
+        ]
+
         result: JSONDict = {
             "type": "message",
             "attachments": [
@@ -1248,20 +1263,7 @@ class MsTeamsWorkflow(HttpTransport):
                         "type": "AdaptiveCard",
                         "fallbackText": f"“{escape(name)}” is {flip.new_status.upper()}.",
                         "version": "1.2",
-                        "body": [
-                            {
-                                "type": "TextBlock",
-                                "text": text,
-                                "weight": "bolder",
-                                "size": "medium",
-                                "wrap": True,
-                                "style": "heading",
-                            },
-                            {
-                                "type": "FactSet",
-                                "facts": fields,
-                            },
-                        ],
+                        "body": blocks,
                         "actions": [
                             {
                                 "type": "Action.OpenUrl",
@@ -1297,6 +1299,22 @@ class MsTeamsWorkflow(HttpTransport):
         else:
             fields.add("Total Pings:", "0")
             fields.add("Last Ping:", "Never")
+
+        if body := get_ping_body(ping, maxlen=1000):
+            blocks.append(
+                {
+                    "type": "TextBlock",
+                    "text": "Last Ping Body:",
+                    "weight": "bolder",
+                }
+            )
+            blocks.append(
+                {
+                    "type": "CodeBlock",
+                    "codeSnippet": body,
+                    "language": "PlainText",
+                }
+            )
 
         return result
 

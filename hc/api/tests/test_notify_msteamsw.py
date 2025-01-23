@@ -188,3 +188,17 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         facts = self.facts(payload)
         self.assertEqual(facts["Last Ping:"], "Ignored, 10 minutes ago")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.ping.body_raw = b"Hello World"
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        blocks = payload["attachments"][0]["content"]["body"]
+        self.assertEqual(blocks[-1]["type"], "CodeBlock")
+        self.assertEqual(blocks[-1]["codeSnippet"], "Hello World")
