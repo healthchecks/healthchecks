@@ -51,7 +51,7 @@ not displayed.
 
 ![List of checks with durations](IMG_URL/checks_durations.png)
 
-You can also see the durations of the previous runs when viewing an individual 
+You can also see the durations of the previous runs when viewing an individual
 check:
 
 ![Log of received pings with durations](IMG_URL/details_durations.png)
@@ -67,7 +67,8 @@ start event with a matching `rid` value when calculating the execution time.
 
 The run IDs must be in a specific format: they must be UUID values in the canonical
 textual representation (example: `728b3763-ea80-4113-9fc0-f49b3adf226a`, note no
-curly braces and no uppercase characters).
+curly braces). The letters in the UUID are allowed to be either in the lower or
+upper case.
 
 The client is free to pick run ID values randomly or use a deterministic process
 to generate them. The only thing that matters is that the start and the success
@@ -112,6 +113,3 @@ To illustrate, let's assume the grace time of 1 minute and look at the above exa
 again. The event #4 ran for 6 minutes 39 seconds and so overshot the time budget
 of 1 minute. But SITE_NAME generated no alerts because **the most recently started
 run completed within the time limit** (it took 37 seconds, which is less than 1 minute).
-
-
-
