@@ -412,6 +412,17 @@
         </li>
         {% endif %}
 
+        {% if enable_zammad %}
+        <li>
+            <img src="{% static 'img/integrations/zammad.png' %}"
+                class="icon" alt="Zammad icon" />
+
+            <h2>Zammad</h2>
+            <p>Zammad is a web based open source helpdesk/customer support system.</p>
+            <a href="{% url 'hc-add-zammad' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
         {% if enable_zulip %}
         <li>
             <img src="{% static 'img/integrations/zulip.png' %}"
