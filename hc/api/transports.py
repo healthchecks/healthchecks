@@ -146,9 +146,9 @@ class Email(Transport):
         unsub_link = self.channel.get_unsub_link()
 
         headers = {
-            "List-Unsubscribe": "<%s>" % unsub_link,
+            "List-Unsubscribe": f"<{unsub_link}>",
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-            "X-Bounce-ID": sign_bounce_id("n.%s" % notification.code),
+            "X-Bounce-ID": sign_bounce_id(f"n.{notification.code}"),
         }
 
         from hc.accounts.models import Profile
