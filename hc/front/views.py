@@ -742,6 +742,10 @@ def validate_schedule(request: HttpRequest) -> HttpResponse:
 def ping_details(
     request: AuthenticatedHttpRequest, code: UUID, n: int | None = None
 ) -> HttpResponse:
+    # This view makes two non-obvious SQL queries:
+    # * it calls ping.get_body(), which reads self.owner.code, triggering a query
+    # * the template calls ping.duration() which queries past "/start" events
+
     check, rw = _get_check_for_user(request, code)
     q = Ping.objects.filter(owner=check)
     if n:
