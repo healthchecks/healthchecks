@@ -197,7 +197,7 @@ class EmailForm(forms.Form):
 
 class AddUrlForm(forms.Form):
     error_css_class = "has-error"
-    value = LaxURLField(max_length=1000)
+    value = LaxURLField(max_length=1000, assume_scheme="https")
 
 
 class WebhookForm(forms.Form):
@@ -207,12 +207,12 @@ class WebhookForm(forms.Form):
     method_down = forms.ChoiceField(initial="GET", choices=_choices("GET,POST,PUT"))
     body_down = forms.CharField(max_length=1000, required=False)
     headers_down = HeadersField(required=False)
-    url_down = LaxURLField(max_length=1000, required=False)
+    url_down = LaxURLField(max_length=1000, required=False, assume_scheme="https")
 
     method_up = forms.ChoiceField(initial="GET", choices=_choices("GET,POST,PUT"))
     body_up = forms.CharField(max_length=1000, required=False)
     headers_up = HeadersField(required=False)
-    url_up = LaxURLField(max_length=1000, required=False)
+    url_up = LaxURLField(max_length=1000, required=False, assume_scheme="https")
 
     def clean(self) -> None:
         super().clean()
@@ -365,7 +365,7 @@ class AddZulipForm(forms.Form):
     error_css_class = "has-error"
     bot_email = forms.EmailField(max_length=100)
     api_key = forms.CharField(max_length=50)
-    site = LaxURLField(max_length=100)
+    site = LaxURLField(max_length=100, assume_scheme="https")
     mtype = forms.ChoiceField(choices=ZULIP_TARGETS)
     to = forms.CharField(max_length=100)
     topic = forms.CharField(max_length=100, required=False)
@@ -387,7 +387,7 @@ class AddTrelloForm(forms.Form):
 class AddGotifyForm(forms.Form):
     error_css_class = "has-error"
     token = forms.CharField(max_length=50)
-    url = LaxURLField(max_length=1000)
+    url = LaxURLField(max_length=1000, assume_scheme="https")
 
     def get_value(self) -> str:
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
@@ -414,7 +414,7 @@ class GroupForm(forms.Form):
 class NtfyForm(forms.Form):
     error_css_class = "has-error"
     topic = forms.CharField(max_length=64)
-    url = LaxURLField(max_length=1000)
+    url = LaxURLField(max_length=1000, assume_scheme="https")
     token = forms.CharField(max_length=100, required=False)
     priority = forms.IntegerField(initial=3, min_value=0, max_value=5)
     priority_up = forms.IntegerField(initial=3, min_value=0, max_value=5)
