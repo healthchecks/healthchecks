@@ -45,8 +45,8 @@ execution times.
 
 Note: if you use the "start" signal to [measure job run times](../measuring_script_run_time/),
 then Grace Time also specifies the maximum allowed time gap between "start" and
-"success" signals. Whenever SITE_NAME receives a "start" signal, it expects a subsequent 
-"success" signal within Grace Time. If the success signal does not arrive within the 
+"success" signals. Whenever SITE_NAME receives a "start" signal, it expects a subsequent
+"success" signal within Grace Time. If the success signal does not arrive within the
 configured Grace Time, SITE_NAME will mark the check as failed and send out alerts.
 
 ## Cron Schedules
@@ -73,8 +73,9 @@ alert for a late check.
 ## OnCalendar Schedules
 
 Use "OnCalendar" schedules to monitor systemd timers that use `OnCalendar=` schedules.
-Same as with systemd timers, you can specify more than one `OnCalendar` expression,
-and SITE_NAME will expect a ping whenever any schedule matches.
+Same as with systemd timers, you can specify more than one `OnCalendar` expression
+(separated with newlines, one schedule per line), and SITE_NAME will expect a ping
+whenever any schedule matches.
 
 See [systemd.time(7) man page](https://www.man7.org/linux/man-pages/man7/systemd.time.7.html#CALENDAR_EVENTS)
 for complete OnCalendar syntax reference.

@@ -55,7 +55,7 @@ Each check is always in one of the following states, depicted by a status icon:
 
 <span class="status ic-paused"></span>
 :   **Paused**. You can manually pause the monitoring of specific checks. For example,
-    if a frequently running cron job has a known problem, and a fix is in the works 
+    if a frequently running cron job has a known problem, and a fix is in the works
     but not yet ready, you can pause monitoring the corresponding check temporarily to
     avoid unwanted alerts about a known issue.
 
@@ -96,10 +96,35 @@ Read more about Ping URLs in [Pinging API](http_api/).
 **Grace Time** is one of the configuration parameters you can set for each check.
 It is the additional time to wait before sending an alert when a check
 is late. Use this parameter to account for minor, expected deviations in job
-execution times. If you use "start" signals to
-[measure job execution time](measuring_script_run_time/), Grace Time also sets the
-maximum allowed time gap between "start" and "success" signals. If a job
-sends a "start" signal but does not send a "success" signal within grace time,
+execution times.
+
+When a check is considered *late* depends on whether the check uses a simple
+or cron schedule, and whether or not you are
+[tracking job durations](measuring_script_run_time/) using the "start" events.
+
+For **simple schedules**, the check is late when the checks's configured period has passed.
+For example, consider a periodic task that should run every hour, and the gaps between
+runs should not deviate by more than 5 minutes (Period = 1 hour,
+Grace Time = 5 minutes). And let's say the last successful ping arrived at 12:00.
+
+* At 13:00 the check will be declared late (because 1 hour will have passed
+  since the last ping).
+* At 13:05 the check will be declared down and the alerts will go out (because
+  1 hour + 5 minutes will have passed since the last ping).
+
+For **cron and OnCalendar schedules**, the check enters the late state at the exact
+moment when the current wall clock time matches the schedule. Let's consider a cron
+job with the schedule `10 * * * *` (10 minutes past every hour) and grace time of 5 minutes.
+And let's say the last successful ping arrived at 12:30.
+
+* At 13:10 the check will be declared late (because 13:10 is the next scheduled time
+  the cron job is expected to send a ping according to the cron schedule).
+* At 13:15 the check will be declared down and the alerts will go out (because 5
+  minutes will have passed since the time the cron job was expected to check in).
+
+If you use "start" signals to [measure job execution time](measuring_script_run_time/),
+Grace Time also sets the maximum allowed time gap between "start" and "success" signals.
+If a job sends a "start" signal but does not send a "success" signal within grace time,
 SITE_NAME will assume failure and send out alerts.
 
 ---
@@ -115,7 +140,7 @@ For more information on integrations, see
 ---
 
 **Project**. To keep things organized, you can group checks and integrations in **Projects**.
-Your account starts with a single default project, but you can create 
+Your account starts with a single default project, but you can create
 additional projects as needed. You can transfer existing checks between projects
 while preserving their configuration and ping URLs.
 
@@ -124,4 +149,3 @@ project team. The project's team is the set of people you have granted read-only
 read-write access to the project.
 
 For more information on projects, see [Projects and teams](projects_teams/).
-

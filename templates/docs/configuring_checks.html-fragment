@@ -38,8 +38,8 @@ execution times.</li>
 </ul>
 <p>Note: if you use the "start" signal to <a href="../measuring_script_run_time/">measure job run times</a>,
 then Grace Time also specifies the maximum allowed time gap between "start" and
-"success" signals. Whenever SITE_NAME receives a "start" signal, it expects a subsequent 
-"success" signal within Grace Time. If the success signal does not arrive within the 
+"success" signals. Whenever SITE_NAME receives a "start" signal, it expects a subsequent
+"success" signal within Grace Time. If the success signal does not arrive within the
 configured Grace Time, SITE_NAME will mark the check as failed and send out alerts.</p>
 <h2>Cron Schedules</h2>
 <p>Use "Cron" for monitoring cron jobs and other processes with more complex schedules.
@@ -60,8 +60,9 @@ alert for a late check.</li>
 </ul>
 <h2>OnCalendar Schedules</h2>
 <p>Use "OnCalendar" schedules to monitor systemd timers that use <code>OnCalendar=</code> schedules.
-Same as with systemd timers, you can specify more than one <code>OnCalendar</code> expression,
-and SITE_NAME will expect a ping whenever any schedule matches.</p>
+Same as with systemd timers, you can specify more than one <code>OnCalendar</code> expression
+(separated with newlines, one schedule per line), and SITE_NAME will expect a ping
+whenever any schedule matches.</p>
 <p>See <a href="https://www.man7.org/linux/man-pages/man7/systemd.time.7.html#CALENDAR_EVENTS">systemd.time(7) man page</a>
 for complete OnCalendar syntax reference.</p>
 <p><img alt="Editing cron schedule" src="IMG_URL/edit_oncalendar_schedule.png" /></p>
