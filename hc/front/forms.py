@@ -32,6 +32,12 @@ def _choices(csv: str) -> list[tuple[str, str]]:
 
 
 class LaxURLField(forms.URLField):
+    """Subclass of URLField which additionally accepts URLs without a tld.
+
+    For example, unlike URLField, it accepts "http://home_server"
+
+    """
+
     default_validators = [WebhookValidator()]
 
 
