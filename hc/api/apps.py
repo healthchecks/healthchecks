@@ -14,7 +14,7 @@ class ApiConfig(AppConfig):
     name = "hc.api"
 
 
-@register()  # W001, W002, W005, E002
+@register()  # W001, W002, W005, E002, E003
 def settings_check(
     app_configs: Sequence[AppConfig] | None,
     databases: Sequence[str] | None,
@@ -58,6 +58,15 @@ def settings_check(
                 "settings.SECURE_PROXY_SSL_HEADER is not 2-element tuple",
                 hint="See https://healthchecks.io/docs/self_hosted_configuration/#SECURE_PROXY_SSL_HEADER",
                 id="hc.api.W005",
+            )
+        )
+
+    if settings.TIME_ZONE != "UTC":
+        items.append(
+            Error(
+                "settings.TIME_ZONE is not 'UTC'",
+                hint="Healthchecks is designed to use UTC internally, changing this setting will break things",
+                id="hc.api.E003",
             )
         )
 
