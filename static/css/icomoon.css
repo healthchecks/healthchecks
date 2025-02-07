@@ -1,9 +1,9 @@
 @font-face {
     font-family: "icomoon";
     src:
-        url("../fonts/icomoon.ttf?es1cqw") format("truetype"),
-        url("../fonts/icomoon.woff?es1cqw") format("woff"),
-        url("../fonts/icomoon.svg?es1cqw#icomoon") format("svg");
+        url("../fonts/icomoon.ttf?c3nntr") format("truetype"),
+        url("../fonts/icomoon.woff?c3nntr") format("woff"),
+        url("../fonts/icomoon.svg?c3nntr#icomoon") format("svg");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -177,7 +177,7 @@
 .ic-email:after {
     content: "\e92b";
     margin-left: -1em;
-    color: rgb(79, 93, 115);
+    color: rgb(89, 140, 220);
 }
 .ic-webhook:after {
     content: "\e908";
