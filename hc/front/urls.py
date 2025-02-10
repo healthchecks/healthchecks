@@ -26,6 +26,7 @@ check_urls = [
     ),
     path("pings/<int:n>/", views.ping_details, name="hc-ping-details"),
     path("pings/<int:n>/body/", views.ping_body, name="hc-ping-body"),
+    path("retry/", views.retry_failed_check, name="hc-retry-failed-check"),
 ]
 
 channel_urls = [

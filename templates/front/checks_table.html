@@ -122,6 +122,14 @@
             <div class="last-ping">{% include "front/last_ping_cell.html" with check=check %}</div>
         </td>
         <td class="actions">
+            {% if check.status == "down" %}
+            <form action="{% url 'hc-retry-failed-check' check.code %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning btn-sm" title="Retry Failed Job">
+                    <span class="ic-retry"></span> Retry
+                </button>
+            </form>
+            {% endif %}
             {% if rw %}
             <button class="btn pause" type="button">
                 <span class="ic-paused"></span>

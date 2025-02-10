@@ -2757,3 +2757,9 @@ def log_events(request: HttpRequest, code: UUID) -> HttpResponse:
 
 
 # Forks: add custom views after this line
+
+def retry_failed_check(request, check_id):
+    check = get_object_or_404(Check, code=code, status="down")
+    check.ping()  # Simulate a retry
+    messages.success(request, f"Retry triggered for {check.name}.")
+    return redirect("hc-checks")  # Redirect to the checks page
