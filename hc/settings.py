@@ -179,7 +179,7 @@ if os.getenv("DB") == "postgres":
         }
     }
 
-if os.getenv("DB") == "mysql":
+if os.getenv("DB") in ["mysql", "mariadb"]:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
