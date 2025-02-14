@@ -148,7 +148,7 @@ class ProfileAdmin(ModelAdmin[Profile]):
     )
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Profile]:
-        qs = super(ProfileAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         qs = qs.prefetch_related("user__project_set")
         qs = qs.annotate(num_members=Count("user__project__member", distinct=True))
         qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
@@ -189,7 +189,7 @@ class ProfileAdmin(ModelAdmin[Profile]):
     def checks(self, obj: WithAnnotations[Profile, ProfileAnnotations]) -> str:
         tmpl = "{} of {}"
         if obj.num_checks > 1:
-            tmpl = "<b>%s</b>" % tmpl
+            tmpl = "<b>{} of {}</b>"
         return format_html(tmpl, obj.num_checks, obj.check_limit)
 
     def invited(self, obj: WithAnnotations[Profile, ProfileAnnotations]) -> str:
@@ -251,7 +251,7 @@ class ProjectAdmin(ModelAdmin[Project]):
         css = {"all": ("css/admin/projects.css",)}
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Project]:
-        qs = super(ProjectAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         qs = qs.annotate(num_channels=Count("channel", distinct=True))
         qs = qs.annotate(num_checks=Count("check", distinct=True))
         qs = qs.annotate(num_members=Count("member", distinct=True))

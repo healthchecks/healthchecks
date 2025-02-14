@@ -15,7 +15,7 @@ class CheckTokenTestCase(BaseTestCase):
 
         signed_token = TimestampSigner().sign("secret-token")
         self.url = f"/accounts/check_token/alice/{signed_token}/"
-        self.checks_url = "/projects/%s/checks/" % self.project.code
+        self.checks_url = f"/projects/{self.project.code}/checks/"
 
     def test_it_shows_form(self) -> None:
         r = self.client.get(self.url)

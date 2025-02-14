@@ -169,13 +169,10 @@ class LoginTestCase(BaseTestCase):
 
     def test_it_handles_password_login_with_redirect(self) -> None:
         check = Check.objects.create(project=self.project)
-
         form = {"action": "login", "email": "alice@example.org", "password": "password"}
-
-        samples = [self.channels_url, "/checks/%s/details/" % check.code]
-
+        samples = [self.channels_url, f"/checks/{check.code}/details/"]
         for s in samples:
-            r = self.client.post("/accounts/login/?next=%s" % s, form)
+            r = self.client.post(f"/accounts/login/?next={s}", form)
             self.assertRedirects(r, s)
 
     def test_it_handles_bad_next_parameter(self) -> None:
