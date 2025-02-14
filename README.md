@@ -15,7 +15,7 @@ The building blocks are:
 
 * Python 3.10+
 * Django 5.1
-* PostgreSQL or MySQL
+* PostgreSQL, MySQL or MariaDB
 
 Healthchecks is licensed under the BSD 3-clause license.
 
