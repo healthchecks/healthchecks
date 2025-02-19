@@ -165,6 +165,15 @@
         </li>
         {% endif %}
 
+        {% if enable_github %}
+        <li>
+            <img src="{% static 'img/integrations/github.png' %}" class="icon kind-github" alt="GitHub icon" />
+            <h2>GitHub Issues</h2>
+            <p> Create a GitHub issue when a check goes down.</p>
+            <a href="{% url 'hc-add-github' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+        {% endif %}
+
         <li>
             <img src="{% static 'img/integrations/gotify.png' %}" class="icon" alt="Gotify icon" />
             <h2>Gotify</h2>

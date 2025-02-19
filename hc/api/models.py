@@ -49,6 +49,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "call": ("Phone Call", transports.Call),
     "discord": ("Discord", transports.Discord),
     "email": ("Email", transports.Email),
+    "github": ("GitHub", transports.GitHub),
     "gotify": ("Gotify", transports.Gotify),
     "group": ("Group", transports.Group),
     "linenotify": ("LINE Notify", transports.LineNotify),
@@ -857,6 +858,11 @@ class TrelloConf(BaseModel):
     list_name: str
 
 
+class GitHubConf(BaseModel):
+    installation_id: int
+    repo: str
+
+
 class GotifyConf(BaseModel):
     url: str
     token: str
@@ -1125,6 +1131,10 @@ class Channel(models.Model):
     @property
     def zulip(self) -> ZulipConf:
         return ZulipConf.model_validate_json(self.value)
+
+    @property
+    def github(self) -> GitHubConf:
+        return GitHubConf.model_validate_json(self.value)
 
     @property
     def linenotify_token(self) -> str:

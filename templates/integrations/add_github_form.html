@@ -1,0 +1,39 @@
+{% extends "base_project.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}{% site_name %} Integration for GitHub{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <p class="alert alert-success">Success, GitHub connected!</p>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" action="{% url 'hc-add-github' project.code %}" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group {{ form.repo_name.css_classes }}">
+            <label for="repo_name" class="col-sm-2 control-label">Repository</label>
+            <div class="col-sm-6">
+                <select name="repo_name" class="form-control">
+                    {% for repo in repo_names %}
+                    <option>{{ repo }}</option>
+                    {% endfor %}
+                </select>
+                <div class="help-block">
+                    Note: If you do not see the repository you are looking for in the list,
+                    make sure {% site_name %} GitHub app is installed
+                    in the GitHub account that owns the repository.
+                    <a href="{{ install_url }}">Install…</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

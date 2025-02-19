@@ -4,6 +4,7 @@ from django.urls import include, path
 
 from hc.front import views
 
+# /checks/<code>/
 check_urls = [
     path("name/", views.update_name, name="hc-update-name"),
     path("details/", views.details, name="hc-details"),
@@ -28,9 +29,11 @@ check_urls = [
     path("pings/<int:n>/body/", views.ping_body, name="hc-ping-body"),
 ]
 
+# /integrations/
 channel_urls = [
     path("add_pushbullet/", views.add_pushbullet_complete),
     path("add_discord/", views.add_discord_complete),
+    path("add_github/", views.add_github_select),
     path("add_pagerduty/", views.add_pd_complete, name="hc-add-pd-complete"),
     path("add_pushover/", views.pushover_help, name="hc-pushover-help"),
     path("telegram/", views.telegram_help, name="hc-telegram-help"),
@@ -42,6 +45,7 @@ channel_urls = [
     path("add_slack_btn/", views.add_slack_complete),
     path("add_telegram/", views.add_telegram, name="hc-add-telegram"),
     path("add_trello/settings/", views.trello_settings, name="hc-trello-settings"),
+    path("add_github/", views.add_github_select, name="hc-github-settings"),
     path("<uuid:code>/checks/", views.channel_checks, name="hc-channel-checks"),
     path("<uuid:code>/name/", views.update_channel_name, name="hc-channel-name"),
     path("<uuid:code>/edit/", views.edit_channel, name="hc-edit-channel"),
@@ -57,11 +61,13 @@ channel_urls = [
     ),
 ]
 
+# /projects/<code>/
 project_urls = [
     path("add_apprise/", views.add_apprise, name="hc-add-apprise"),
     path("add_call/", views.add_call, name="hc-add-call"),
     path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.add_email, name="hc-add-email"),
+    path("add_github/", views.add_github, name="hc-add-github"),
     path("add_gotify/", views.add_gotify, name="hc-add-gotify"),
     path("add_group/", views.add_group, name="hc-add-group"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),
@@ -102,6 +108,7 @@ project_urls = [
     path("integrations/", views.channels, name="hc-channels"),
 ]
 
+# /
 urlpatterns = [
     path("", views.index, name="hc-index"),
     path("tv/", views.dashboard, name="hc-dashboard"),

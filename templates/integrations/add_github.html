@@ -1,0 +1,23 @@
+{% extends "base_project.html" %}
+{% load static hc_extras %}
+
+{% block title %}{% site_name %} Integration for GitHub{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <div class="jumbotron">
+        <p>With this integration, {% site_name %} will create an issue in your chosen
+            GitHub repository when a check goes down.
+        </p>
+
+        <div class="text-center">
+        <a href="{{ authorize_url }}" class="btn btn-primary btn-lg">
+            <img class="ai-icon" src="{% static 'img/integrations/github-white.png' %}" alt="GitHub mark" />
+            Connect GitHub
+        </a>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

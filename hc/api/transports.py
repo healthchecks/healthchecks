@@ -24,7 +24,7 @@ from hc.front.templatetags.hc_extras import (
     fix_asterisks,
     sortchecks,
 )
-from hc.lib import curl, emails
+from hc.lib import curl, emails, github
 from hc.lib.date import format_duration
 from hc.lib.html import extract_signal_styles
 from hc.lib.signing import sign_bounce_id
@@ -1661,3 +1661,32 @@ class Ntfy(HttpTransport):
         # Give up database connection before potentially long network IO:
         close_old_connections()
         self.post(url, headers=headers, json=payload)
+
+
+class GitHub(HttpTransport):
+    def is_noop(self, status: str) -> bool:
+        return status != "down"
+
+    def notify(self, flip: Flip, notification: Notification) -> None:
+        ping = self.last_ping(flip)
+        ctx = {
+            "flip": flip,
+            "check": flip.owner,
+            "status": flip.new_status,
+            "ping": ping,
+            "body": get_ping_body(ping, maxlen=1000),
+        }
+
+        url = f"https://api.github.com/repos/{self.channel.github.repo}/issues"
+        payload = {
+            "title": tmpl("github_title.html", **ctx),
+            "body": tmpl("github_body.html", **ctx),
+        }
+
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
+
+        inst_id = self.channel.github.installation_id
+        token = github.get_installation_access_token(inst_id)
+        headers = {"Authorization": f"Bearer {token}"}
+        self.post(url, json=payload, headers=headers)

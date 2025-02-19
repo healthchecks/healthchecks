@@ -72,6 +72,8 @@
     {% with ch.group_channels|length as num_members %}
     {{ num_members }} member{{ num_members|pluralize}}
     {% endwith %}
+{% elif ch.kind == "github" %}
+    GitHub repo <span>{{ ch.github.repo }}</span>
 {% else %}
     {{ ch.get_kind_display }}
 {% endif %}

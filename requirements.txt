@@ -8,6 +8,7 @@ oncalendar==1.1
 psycopg==3.2.4
 pycurl==7.45.4
 pydantic==2.10.6
+PyJWT[crypto]==2.10.1
 pyotp==2.9.0
 segno==1.6.1
 statsd==4.0.1

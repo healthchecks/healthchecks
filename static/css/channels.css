@@ -241,6 +241,10 @@ body.dark img.kind-matrix {
     filter: invert();
 }
 
+body.dark img.kind-github {
+    content: url("../img/integrations/github-white.png");
+}
+
 img.kind-ntfy {
     filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
 }

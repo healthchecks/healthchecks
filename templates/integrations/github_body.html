@@ -1,0 +1,34 @@
+{% load hc_extras humanize linemode %}{% linemode %}
+{% line %}The check [{{ check.name_then_code }}]({{ check.cloaked_url }}) is **DOWN**{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.{% endline %}
+{% line %}{% endline %}
+
+{% if check.project.name %}
+{% line %}**Project:** {{ check.project.name }}{% endline %}
+{% endif %}
+
+{% if check.tags_list %}
+{% line %}**Tags:** {% for tag in check.tags_list %}`{{ tag }}` {% endfor %}{% endline %}
+{% endif %}
+
+{% if check.kind == "simple" %}
+{% line %}**Period:** {{ check.timeout|hc_duration }}{% endline %}
+{% endif %}
+
+{% if check.kind == "cron" or check.kind == "oncalendar" %}
+{% line %}**Schedule:** `{{ check.schedule }}`{% endline %}
+{% line %}**Time Zone:** {{ check.tz }}{% endline %}
+{% endif %}
+
+{% line %}**Total Pings:** {% if ping %}{{ ping.n }}{% else %}0{% endif %}{% endline %}
+
+{% if ping is None %}
+{% line %}**Last Ping:** Never{% endline %}
+{% else %}
+{% line %}**Last Ping:** {{ ping.get_kind_display }}, {{ ping.created|naturaltime }}{% endline %}
+{% endif %}
+
+{% if body %}
+{% line %}**Last Ping Body:**{% endline %}
+{% line %}<pre>{{ body }}</pre>{% endline %}
+{% endif %}
+{% endlinemode %}

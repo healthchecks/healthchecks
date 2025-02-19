@@ -67,7 +67,7 @@ from hc.front.templatetags.hc_extras import (
     site_hostname,
     sortchecks,
 )
-from hc.lib import curl
+from hc.lib import curl, github
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
@@ -1245,6 +1245,7 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_call": bool(settings.TWILIO_AUTH),
         "enable_discord": bool(settings.DISCORD_CLIENT_ID),
+        "enable_github": bool(settings.GITHUB_CLIENT_ID),
         "enable_matrix": bool(settings.MATRIX_ACCESS_TOKEN),
         "enable_mattermost": settings.MATTERMOST_ENABLED is True,
         "enable_msteams": settings.MSTEAMS_ENABLED is True,
@@ -2754,6 +2755,80 @@ def log_events(request: HttpRequest, code: UUID) -> HttpResponse:
         # to specify "return any events after *this* point".
         response["X-Last-Event-Timestamp"] = str(events[0].created.timestamp())
     return response
+
+
+@require_setting("GITHUB_CLIENT_ID")
+@login_required
+def add_github(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+
+    if request.method == "POST":
+        if "add_github_repos" not in request.session:
+            return HttpResponseForbidden()
+
+        request.session.pop("add_github_project")
+        request.session.pop("add_github_token")
+        repos = request.session.pop("add_github_repos")
+        repo_name = request.POST["repo_name"]
+        if repo_name not in repos:
+            return HttpResponseForbidden()
+
+        channel = Channel(kind="github", project=project)
+        channel.value = json.dumps(
+            {"installation_id": repos[repo_name], "repo": repo_name}
+        )
+        channel.name = repo_name
+        channel.save()
+        channel.assign_all_checks()
+
+        messages.success(request, "Success, integration added!")
+        return redirect("hc-channels", project.code)
+
+    state = token_urlsafe()
+    authorize_url = "https://github.com/login/oauth/authorize?"
+    authorize_url += urlencode({"client_id": settings.GITHUB_CLIENT_ID, "state": state})
+    ctx = {
+        "authorize_url": authorize_url,
+    }
+
+    request.session["add_github_state"] = state
+    request.session["add_github_project"] = str(project.code)
+    return render(request, "integrations/add_github.html", ctx)
+
+
+@require_setting("GITHUB_CLIENT_ID")
+@login_required
+def add_github_select(request: HttpRequest) -> HttpResponse:
+    if "add_github_project" not in request.session:
+        return HttpResponseForbidden()
+
+    project_code = UUID(request.session["add_github_project"])
+    project = _get_rw_project_for_user(request, project_code)
+
+    # Exchange code for access token, store it in session
+    if "add_github_state" in request.session:
+        state = request.session.pop("add_github_state")
+        if request.GET.get("state") != state:
+            return HttpResponseForbidden()
+
+        code = request.GET["code"]
+        request.session["add_github_token"] = github.get_user_access_token(code)
+
+    if "add_github_token" not in request.session:
+        return HttpResponseForbidden()
+
+    install_url = f"{settings.GITHUB_PUBLIC_LINK}/installations/new"
+    repos = github.get_repos(request.session["add_github_token"])
+    if not repos:
+        return redirect(install_url)
+
+    request.session["add_github_repos"] = repos
+    ctx = {
+        "repo_names": sorted(repos.keys()),
+        "project": project,
+        "install_url": install_url,
+    }
+    return render(request, "integrations/add_github_form.html", ctx)
 
 
 # Forks: add custom views after this line
