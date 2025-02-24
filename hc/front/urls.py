@@ -45,7 +45,6 @@ channel_urls = [
     path("add_slack_btn/", views.add_slack_complete),
     path("add_telegram/", views.add_telegram, name="hc-add-telegram"),
     path("add_trello/settings/", views.trello_settings, name="hc-trello-settings"),
-    path("add_github/", views.add_github_select, name="hc-github-settings"),
     path("<uuid:code>/checks/", views.channel_checks, name="hc-channel-checks"),
     path("<uuid:code>/name/", views.update_channel_name, name="hc-channel-name"),
     path("<uuid:code>/edit/", views.edit_channel, name="hc-edit-channel"),

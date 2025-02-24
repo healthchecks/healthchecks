@@ -73,6 +73,7 @@ def get_installation_access_token(installation_id: int) -> str:
         "iss": settings.GITHUB_CLIENT_ID,
     }
 
+    assert settings.GITHUB_PRIVATE_KEY
     encoded = jwt.encode(payload, settings.GITHUB_PRIVATE_KEY, algorithm="RS256")
     url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
     result = curl.post(url, headers={"Authorization": f"Bearer {encoded}"})
