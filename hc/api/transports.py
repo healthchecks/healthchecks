@@ -1668,14 +1668,20 @@ class GitHub(HttpTransport):
         return status != "down"
 
     def notify(self, flip: Flip, notification: Notification) -> None:
+        if not settings.GITHUB_PRIVATE_KEY:
+            raise TransportError("GitHub notifications are not enabled.")
+
         ping = self.last_ping(flip)
         ctx = {
             "flip": flip,
             "check": flip.owner,
             "status": flip.new_status,
             "ping": ping,
-            "body": get_ping_body(ping, maxlen=1000),
         }
+
+        body = get_ping_body(ping, maxlen=1000)
+        if body and "```" not in body:
+            ctx["body"] = body
 
         url = f"https://api.github.com/repos/{self.channel.github.repo}/issues"
         payload = {

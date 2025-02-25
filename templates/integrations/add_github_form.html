@@ -10,7 +10,7 @@
 
     <h2>Integration Settings</h2>
 
-    <form method="post" action="{% url 'hc-add-github' project.code %}" class="form-horizontal">
+    <form method="post" action="{% url 'hc-add-github-save' project.code %}" class="form-horizontal">
         {% csrf_token %}
         <div class="form-group {{ form.repo_name.css_classes }}">
             <label for="repo_name" class="col-sm-2 control-label">Repository</label>

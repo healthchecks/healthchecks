@@ -2762,32 +2762,11 @@ def log_events(request: HttpRequest, code: UUID) -> HttpResponse:
 def add_github(request: HttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
 
-    if request.method == "POST":
-        if "add_github_repos" not in request.session:
-            return HttpResponseForbidden()
-
-        request.session.pop("add_github_project")
-        request.session.pop("add_github_token")
-        repos = request.session.pop("add_github_repos")
-        repo_name = request.POST["repo_name"]
-        if repo_name not in repos:
-            return HttpResponseForbidden()
-
-        channel = Channel(kind="github", project=project)
-        channel.value = json.dumps(
-            {"installation_id": repos[repo_name], "repo": repo_name}
-        )
-        channel.name = repo_name
-        channel.save()
-        channel.assign_all_checks()
-
-        messages.success(request, "Success, integration added!")
-        return redirect("hc-channels", project.code)
-
     state = token_urlsafe()
     authorize_url = "https://github.com/login/oauth/authorize?"
     authorize_url += urlencode({"client_id": settings.GITHUB_CLIENT_ID, "state": state})
     ctx = {
+        "project": project,
         "authorize_url": authorize_url,
     }
 
@@ -2829,6 +2808,35 @@ def add_github_select(request: HttpRequest) -> HttpResponse:
         "install_url": install_url,
     }
     return render(request, "integrations/add_github_form.html", ctx)
+
+
+@require_setting("GITHUB_CLIENT_ID")
+@login_required
+@require_POST
+def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+
+    if "add_github_repos" not in request.session:
+        return HttpResponseForbidden()
+
+    if "repo_name" not in request.POST:
+        return HttpResponseBadRequest()
+
+    request.session.pop("add_github_project")
+    request.session.pop("add_github_token")
+    repos = request.session.pop("add_github_repos")
+    repo_name = request.POST["repo_name"]
+    if repo_name not in repos:
+        return HttpResponseForbidden()
+
+    channel = Channel(kind="github", project=project)
+    channel.value = json.dumps({"installation_id": repos[repo_name], "repo": repo_name})
+    channel.name = repo_name
+    channel.save()
+    channel.assign_all_checks()
+
+    messages.success(request, "Success, integration added!")
+    return redirect("hc-channels", project.code)
 
 
 # Forks: add custom views after this line
