@@ -6,78 +6,118 @@
   },
   "iconSets": [
     {
+      "selection": [],
+      "id": 17,
+      "metadata": {
+        "name": "Untitled Set 2",
+        "importSize": {
+          "width": 98,
+          "height": 98
+        }
+      },
+      "height": 1024,
+      "prevSize": 32,
+      "icons": [],
+      "invisible": false,
+      "colorThemes": []
+    },
+    {
+      "selection": [],
+      "id": 16,
+      "metadata": {
+        "name": "Untitled Set",
+        "importSize": {
+          "width": 98,
+          "height": 96
+        }
+      },
+      "height": 1024,
+      "prevSize": 32,
+      "icons": [],
+      "invisible": false,
+      "colorThemes": []
+    },
+    {
       "selection": [
         {
-          "order": 455,
+          "order": 545,
+          "id": 123,
+          "name": "github",
+          "prevSize": 32,
+          "code": 59650,
+          "tempChar": ""
+        },
+        {
+          "order": 546,
           "id": 122,
           "name": "group",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59698,
-          "tempChar": "",
+          "tempChar": "",
           "ligatures": ""
         },
         {
-          "order": 456,
+          "order": 547,
           "id": 121,
           "name": "rocketchat",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59696,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
-          "order": 457,
+          "order": 548,
           "id": 120,
           "name": "ntfy",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59687,
           "codes": [
             59687,
             59688
           ],
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ]
         },
         {
-          "order": 459,
+          "order": 549,
           "id": 117,
           "name": "gotify",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59685,
           "codes": [
             59685,
             59686
           ],
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ]
         },
         {
-          "order": 460,
+          "order": 550,
           "id": 116,
           "name": "call",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59674,
           "codes": [
             59674,
             59677
           ],
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ]
         },
         {
-          "order": 461,
+          "order": 551,
           "id": 115,
           "name": "victorops",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59648,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "codes": [
             59648,
@@ -85,14 +125,14 @@
           ]
         },
         {
-          "order": 462,
+          "order": 552,
           "id": 114,
           "name": "zulip",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59663,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "codes": [
             59663,
@@ -101,21 +141,21 @@
         },
         {
           "id": 111,
-          "order": 463,
-          "prevSize": 24,
+          "order": 553,
+          "prevSize": 32,
           "code": 59676,
           "name": "signal",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 110,
-          "order": 464,
-          "prevSize": 24,
+          "order": 554,
+          "prevSize": 32,
           "code": 59675,
           "name": "linenotify",
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "codes": [
             59675,
@@ -123,14 +163,14 @@
           ]
         },
         {
-          "order": 465,
+          "order": 555,
           "id": 108,
           "name": "spike",
-          "prevSize": 24,
+          "prevSize": 32,
           "code": 59673,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "codes": [
             59673,
@@ -138,13 +178,13 @@
           ]
         },
         {
-          "order": 466,
+          "order": 556,
           "id": 72,
           "name": "pd",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59659,
           "codes": [
@@ -153,13 +193,13 @@
           ]
         },
         {
-          "order": 467,
+          "order": 557,
           "id": 73,
           "name": "shell",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59671,
           "codes": [
@@ -168,13 +208,13 @@
           ]
         },
         {
-          "order": 468,
+          "order": 558,
           "id": 74,
           "name": "msteams, msteamsw",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59670,
           "codes": [
@@ -187,45 +227,45 @@
           ]
         },
         {
-          "order": 469,
+          "order": 559,
           "id": 75,
           "name": "opsgenie",
-          "prevSize": 24,
-          "tempChar": "",
+          "prevSize": 32,
+          "tempChar": "",
           "code": 59664
         },
         {
-          "order": 470,
+          "order": 560,
           "id": 76,
           "name": "mattermost",
-          "prevSize": 24,
-          "tempChar": "",
+          "prevSize": 32,
+          "tempChar": "",
           "code": 59655
         },
         {
-          "order": 472,
+          "order": 561,
           "id": 78,
           "name": "apprise",
-          "prevSize": 24,
-          "tempChar": "",
+          "prevSize": 32,
+          "tempChar": "",
           "code": 59669
         },
         {
-          "order": 473,
+          "order": 562,
           "id": 79,
           "name": "matrix",
-          "prevSize": 24,
-          "tempChar": "",
+          "prevSize": 32,
+          "tempChar": "",
           "code": 59649
         },
         {
-          "order": 475,
+          "order": 563,
           "id": 81,
           "name": "pagertree",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59661,
           "codes": [
@@ -234,13 +274,13 @@
           ]
         },
         {
-          "order": 476,
+          "order": 564,
           "id": 82,
           "name": "po",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59662,
           "codes": [
@@ -249,13 +289,13 @@
           ]
         },
         {
-          "order": 500,
+          "order": 565,
           "id": 84,
           "name": "email",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59658,
           "codes": [
@@ -264,21 +304,21 @@
           ]
         },
         {
-          "order": 478,
+          "order": 566,
           "id": 85,
           "name": "webhook",
-          "prevSize": 24,
-          "tempChar": "",
+          "prevSize": 32,
+          "tempChar": "",
           "code": 59656
         },
         {
-          "order": 479,
+          "order": 567,
           "id": 86,
           "name": "sms",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59652,
           "codes": [
@@ -287,13 +327,13 @@
           ]
         },
         {
-          "order": 480,
+          "order": 568,
           "id": 87,
           "name": "pushbullet",
-          "prevSize": 24,
+          "prevSize": 32,
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59657,
           "codes": [
@@ -303,12 +343,12 @@
         },
         {
           "id": 88,
-          "order": 481,
-          "prevSize": 24,
+          "order": 569,
+          "prevSize": 32,
           "name": "discord",
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59660,
           "codes": [
@@ -318,12 +358,12 @@
         },
         {
           "id": 90,
-          "order": 483,
-          "prevSize": 24,
+          "order": 570,
+          "prevSize": 32,
           "name": "slack",
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59653,
           "codes": [
@@ -334,12 +374,12 @@
         },
         {
           "id": 91,
-          "order": 484,
-          "prevSize": 24,
+          "order": 571,
+          "prevSize": 32,
           "name": "telegram",
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59654,
           "codes": [
@@ -349,12 +389,12 @@
         },
         {
           "id": 92,
-          "order": 485,
-          "prevSize": 24,
+          "order": 572,
+          "prevSize": 32,
           "name": "trello",
           "tempChar": [
-            "",
-            ""
+            "",
+            ""
           ],
           "code": 59665,
           "codes": [
@@ -364,10 +404,10 @@
         },
         {
           "id": 93,
-          "order": 486,
-          "prevSize": 24,
+          "order": 573,
+          "prevSize": 32,
           "name": "whatsapp",
-          "tempChar": "",
+          "tempChar": "",
           "code": 59651,
           "codes": [
             59651,
@@ -375,108 +415,108 @@
           ]
         },
         {
-          "order": 487,
+          "order": 574,
           "id": 94,
           "name": "clippy",
           "prevSize": 16,
-          "tempChar": "",
+          "tempChar": "",
           "code": 59666
         },
         {
           "ligatures": "check_circle",
           "id": 96,
-          "order": 489,
-          "prevSize": 24,
+          "order": 575,
+          "prevSize": 32,
           "name": "up, new, ok",
-          "tempChar": "",
+          "tempChar": "",
           "code": 59500
         },
         {
           "ligatures": "error",
           "id": 97,
-          "order": 490,
-          "prevSize": 24,
+          "order": 576,
+          "prevSize": 32,
           "name": "grace",
-          "tempChar": "",
+          "tempChar": "",
           "code": 57344
         },
         {
           "ligatures": "error_outline",
           "id": 98,
-          "order": 491,
-          "prevSize": 24,
+          "order": 577,
+          "prevSize": 32,
           "name": "missing",
-          "tempChar": "",
+          "tempChar": "",
           "code": 57345
         },
         {
           "ligatures": "keyboard_arrow_down",
           "id": 99,
-          "order": 492,
-          "prevSize": 24,
+          "order": 578,
+          "prevSize": 32,
           "name": "desc",
-          "tempChar": "",
+          "tempChar": "",
           "code": 58131
         },
         {
           "ligatures": "keyboard_arrow_up",
           "id": 100,
-          "order": 493,
-          "prevSize": 24,
+          "order": 579,
+          "prevSize": 32,
           "name": "asc",
-          "tempChar": "",
+          "tempChar": "",
           "code": 58134
         },
         {
           "ligatures": "more_horiz",
           "id": 101,
-          "order": 494,
-          "prevSize": 24,
+          "order": 580,
+          "prevSize": 32,
           "name": "dots",
-          "tempChar": "",
+          "tempChar": "",
           "code": 58835
         },
         {
           "ligatures": "notifications_active",
           "id": 102,
-          "order": 495,
-          "prevSize": 24,
+          "order": 581,
+          "prevSize": 32,
           "name": "down",
-          "tempChar": "",
+          "tempChar": "",
           "code": 59383
         },
         {
           "ligatures": "notifications_off",
           "id": 103,
-          "order": 496,
-          "prevSize": 24,
+          "order": 582,
+          "prevSize": 32,
           "name": "paused",
-          "tempChar": "",
+          "tempChar": "",
           "code": 59382
         },
         {
-          "order": 497,
+          "order": 583,
           "id": 104,
           "name": "settings",
-          "prevSize": 24,
-          "tempChar": "",
+          "prevSize": 32,
+          "tempChar": "",
           "code": 59667
         },
         {
-          "order": 498,
+          "order": 584,
           "id": 105,
-          "prevSize": 24,
+          "prevSize": 32,
           "name": "delete",
-          "tempChar": "",
+          "tempChar": "",
           "code": 59672
         },
         {
           "ligatures": "timer",
           "id": 106,
-          "order": 499,
-          "prevSize": 24,
+          "order": 585,
+          "prevSize": 32,
           "name": "timer",
-          "tempChar": "",
+          "tempChar": "",
           "code": 58405
         }
       ],
@@ -491,6 +531,21 @@
       "height": 1024,
       "prevSize": 24,
       "icons": [
+        {
+          "id": 123,
+          "paths": [
+            "M512.422 10.447c-282.279 0-510.474 229.878-510.474 514.267 0 227.328 146.213 419.756 349.048 487.863 25.36 5.12 34.649-11.065 34.649-24.68 0-11.922-0.836-52.788-0.836-95.368-142.002 30.657-171.572-61.304-171.572-61.304-22.821-59.601-56.633-74.919-56.633-74.919-46.477-31.504 3.385-31.504 3.385-31.504 51.555 3.406 78.608 52.788 78.608 52.788 45.631 78.326 119.16 56.195 148.741 42.569 4.221-33.207 17.753-56.195 32.12-68.963-113.256-11.922-232.417-56.195-232.417-253.733 0-56.195 20.271-102.17 52.391-137.927-5.068-12.769-22.821-65.567 5.078-136.234 0 0 43.102-13.625 140.288 52.788 38.26-10.766 82.205-16.979 127.594-17.032l0.030-0c43.102 0 87.040 5.966 127.613 17.032 97.196-66.414 140.298-52.788 140.298-52.788 27.899 70.666 10.136 123.465 5.068 136.234 32.967 35.756 52.402 81.732 52.402 137.927 0 197.538-119.16 240.953-233.263 253.733 18.599 16.175 34.649 46.822 34.649 95.357 0 68.963-0.836 124.312-0.836 141.333 0 13.625 9.3 29.811 34.649 24.701 202.836-68.127 349.048-260.545 349.048-487.873 0.836-284.39-228.195-514.267-509.628-514.267z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 24,
+          "tags": [
+            "github"
+          ]
+        },
         {
           "id": 122,
           "paths": [

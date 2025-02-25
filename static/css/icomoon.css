@@ -1,9 +1,9 @@
 @font-face {
     font-family: "icomoon";
     src:
-        url("../fonts/icomoon.ttf?c3nntr") format("truetype"),
-        url("../fonts/icomoon.woff?c3nntr") format("woff"),
-        url("../fonts/icomoon.svg?c3nntr#icomoon") format("svg");
+        url("../fonts/icomoon.ttf?f9uhnl") format("truetype"),
+        url("../fonts/icomoon.woff?f9uhnl") format("woff"),
+        url("../fonts/icomoon.svg?f9uhnl#icomoon") format("svg");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -24,6 +24,13 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.ic-github:after {
+    content: "\e902";
+    color: #24292f;
+}
+body.dark .ic-github:after {
+    color: #fff;
+}
 .ic-group:after {
     content: "\e932";
     color: #f0ad4e;
