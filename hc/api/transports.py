@@ -1687,6 +1687,7 @@ class GitHub(HttpTransport):
         payload = {
             "title": tmpl("github_title.html", **ctx),
             "body": tmpl("github_body.html", **ctx),
+            "labels": self.channel.github.labels,
         }
 
         # Give up database connection before potentially long network IO:

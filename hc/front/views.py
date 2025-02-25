@@ -2819,7 +2819,8 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
     if "add_github_repos" not in request.session:
         return HttpResponseForbidden()
 
-    if "repo_name" not in request.POST:
+    form = forms.AddGitHubForm(request.POST)
+    if not form.is_valid():
         return HttpResponseBadRequest()
 
     request.session.pop("add_github_project")
@@ -2830,7 +2831,13 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
         return HttpResponseForbidden()
 
     channel = Channel(kind="github", project=project)
-    channel.value = json.dumps({"installation_id": repos[repo_name], "repo": repo_name})
+    channel.value = json.dumps(
+        {
+            "installation_id": repos[repo_name],
+            "repo": repo_name,
+            "labels": form.get_labels(),
+        }
+    )
     channel.name = repo_name
     channel.save()
     channel.assign_all_checks()

@@ -38,7 +38,9 @@ class NotifyGitHubTestCase(BaseTestCase):
 
         self.channel = Channel(project=self.project)
         self.channel.kind = "github"
-        self.channel.value = json.dumps({"installation_id": 123, "repo": "alice/foo"})
+        self.channel.value = json.dumps(
+            {"installation_id": 123, "repo": "alice/foo", "labels": ["foo", "bar"]}
+        )
         self.channel.save()
         self.channel.checks.add(self.check)
 
@@ -57,6 +59,7 @@ class NotifyGitHubTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertEqual(payload["title"], "DB Backup is DOWN")
+        self.assertEqual(payload["labels"], ["foo", "bar"])
         self.assertIn("[DB Backup]", payload["body"])
         self.assertIn(self.check.cloaked_url(), payload["body"])
         self.assertIn("grace time passed", payload["body"])

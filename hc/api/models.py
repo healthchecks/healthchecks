@@ -861,6 +861,7 @@ class TrelloConf(BaseModel):
 class GitHubConf(BaseModel):
     installation_id: int
     repo: str
+    labels: list[str]
 
 
 class GotifyConf(BaseModel):

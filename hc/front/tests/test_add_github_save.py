@@ -20,7 +20,7 @@ class AddGitHubSaveTestCase(BaseTestCase):
 
     def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, {"repo_name": "alice/foo"})
+        r = self.client.post(self.url, {"repo_name": "alice/foo", "labels": "foo, bar"})
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
@@ -28,6 +28,7 @@ class AddGitHubSaveTestCase(BaseTestCase):
         self.assertEqual(c.name, "alice/foo")
         self.assertEqual(c.github.installation_id, 123)
         self.assertEqual(c.github.repo, "alice/foo")
+        self.assertEqual(c.github.labels, ["foo", "bar"])
 
     def test_it_rejects_get(self) -> None:
         self.client.login(username="alice@example.org", password="password")
