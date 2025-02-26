@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Implement S3 outage mitigation (don't attempt GetObject calls if many recent errors)
 - Add last ping body in MS Teams Workflows notifications (#1024)
 - Update "?rid=<uuid>" handling to allow UUIDs with uppercase letters (#1116, @wie-niet)
+- New integration: GitHub issues (#671)
 
 ### Bug Fixes
 - Fix incorrect status value in Webhook integration's $JSON placeholder
