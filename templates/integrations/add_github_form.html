@@ -9,7 +9,6 @@
     <p class="alert alert-success">Success, GitHub connected!</p>
 
     <h2>Integration Settings</h2>
-
     <form method="post" action="{% url 'hc-add-github-save' project.code %}" class="form-horizontal">
         {% csrf_token %}
         <div class="form-group {{ form.repo_name.css_classes }}">
@@ -21,9 +20,11 @@
                     {% endfor %}
                 </select>
                 <div class="help-block">
-                    Note: If you do not see the repository you are looking for in the list,
+                    When a check goes down, {% site_name %} will create a new issue
+                    in this repository.<br>
+                    If you do not see the repository you are looking for,
                     make sure {% site_name %} GitHub app is installed
-                    in the GitHub account that owns the repository.
+                    in the repository owner's GitHub account.
                     <a href="{{ install_url }}">Install…</a>
                 </div>
             </div>
@@ -40,7 +41,11 @@
                 {% if form.token.errors %}
                 <div class="help-block">{{ form.labels.errors|join:"" }}</div>
                 {% else %}
-                <div class="help-block">Optional, separate multiple labels with commas.</div>
+                <div class="help-block">
+                    {% site_name %} will attach these labels to the issues it creates.
+                    <br>
+                    Optional, separate multiple labels with commas.
+                </div>
                 {% endif %}
             </div>
         </div>
