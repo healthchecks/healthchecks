@@ -55,6 +55,8 @@
     {% if event.channel.name %}
         to group "{{ event.channel.name }}"
     {% endif %}
+{% elif event.channel.kind == "github" %}
+    Created GitHub issue in {{ event.channel.github.repo }}
 {% else %}
     Sent alert to {{ event.channel.get_kind_display }}
     {% if event.channel.name %}
