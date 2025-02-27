@@ -58,6 +58,7 @@ class AddGitHubSaveTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"repo_name": "alice/bar"})
         self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.wsgi_request._tests_reason, "unexpected repo")
 
     def test_it_handles_no_session(self) -> None:
         session = self.client.session
@@ -67,3 +68,4 @@ class AddGitHubSaveTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"repo_name": "alice/foo"})
         self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.wsgi_request._tests_reason, "repos not in session")

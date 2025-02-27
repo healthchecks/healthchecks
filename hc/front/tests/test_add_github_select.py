@@ -78,6 +78,7 @@ class AddGitHubSelectTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url + "?state=test-state&code=test-code")
         self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.wsgi_request._tests_reason, "project not in session")
 
     def test_it_handles_no_state_and_no_token(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -87,6 +88,7 @@ class AddGitHubSelectTestCase(BaseTestCase):
 
         r = self.client.get(self.url + "?state=test-state&code=test-code")
         self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.wsgi_request._tests_reason, "token not in session")
 
     @patch("hc.front.views.github", autospec=True)
     def test_it_handles_wrong_state(self, github: Mock) -> None:
@@ -99,6 +101,7 @@ class AddGitHubSelectTestCase(BaseTestCase):
 
         r = self.client.get(self.url + "?state=wrong-state&code=test-code")
         self.assertEqual(r.status_code, 403)
+        self.assertEqual(r.wsgi_request._tests_reason, "wrong state")
 
     @patch("hc.front.views.github", autospec=True)
     def test_it_redirects_to_install_page(self, github: Mock) -> None:
