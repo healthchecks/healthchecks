@@ -12,6 +12,11 @@ class OAuthResponse(BaseModel):
 
 
 def get_user_access_token(code: str) -> str:
+    """Exchange OAuth code for user access token."""
+
+    # Reference:
+    # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app
+
     url = "https://github.com/login/oauth/access_token"
     data = {
         "client_id": settings.GITHUB_CLIENT_ID,
@@ -33,6 +38,11 @@ class InstallationsResponse(BaseModel):
 
 
 def get_installation_ids(user_access_token: str) -> list[int]:
+    """Retrieve the installation ids the user has access to."""
+
+    # Reference:
+    # https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-app-installations-accessible-to-the-user-access-token
+
     url = "https://api.github.com/user/installations"
     headers = {"Authorization": f"Bearer {user_access_token}"}
     result = curl.get(url, headers=headers)
@@ -49,6 +59,18 @@ class RepositoriesResponse(BaseModel):
 
 
 def get_repos(user_access_token: str) -> dict[str, int]:
+    """Retrieve the repositories the user has access to.
+
+    Return a dict with repo names as keys and the corresponding installation ids
+    as values:
+
+        {"owner/repo_name": inst_id, ...}
+
+    """
+
+    # Reference:
+    # https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repositories-for-a-user
+
     results = {}
     for inst_id in get_installation_ids(user_access_token):
         url = f"https://api.github.com/user/installations/{inst_id}/repositories"
@@ -66,6 +88,11 @@ class AccessTokensResponse(BaseModel):
 
 
 def get_installation_access_token(installation_id: int) -> str:
+    """Acquire the installation access token for a specific installation id."""
+
+    # Reference:
+    # https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app
+
     iat = int(time.time())
     payload = {
         "iat": int(time.time()),
