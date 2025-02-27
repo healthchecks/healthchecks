@@ -2779,7 +2779,6 @@ def add_github(request: HttpRequest, code: UUID) -> HttpResponse:
 @login_required
 def add_github_select(request: HttpRequest) -> HttpResponse:
     if "add_github_project" not in request.session:
-        request._tests_reason = "project not in session"
         return HttpResponseForbidden()
 
     project_code = UUID(request.session["add_github_project"])
@@ -2789,14 +2788,12 @@ def add_github_select(request: HttpRequest) -> HttpResponse:
     if "add_github_state" in request.session:
         state = request.session.pop("add_github_state")
         if request.GET.get("state") != state:
-            request._tests_reason = "wrong state"
             return HttpResponseForbidden()
 
         code = request.GET["code"]
         request.session["add_github_token"] = github.get_user_access_token(code)
 
     if "add_github_token" not in request.session:
-        request._tests_reason = "token not in session"
         return HttpResponseForbidden()
 
     install_url = f"{settings.GITHUB_PUBLIC_LINK}/installations/new"
@@ -2820,7 +2817,6 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
 
     if "add_github_repos" not in request.session:
-        request._tests_reason = "repos not in session"
         return HttpResponseForbidden()
 
     form = forms.AddGitHubForm(request.POST)
@@ -2832,7 +2828,6 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
     repos = request.session.pop("add_github_repos")
     repo_name = request.POST["repo_name"]
     if repo_name not in repos:
-        request._tests_reason = "unexpected repo"
         return HttpResponseForbidden()
 
     channel = Channel(kind="github", project=project)
