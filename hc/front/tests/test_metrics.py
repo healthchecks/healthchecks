@@ -18,7 +18,8 @@ class MetricsTestCase(BaseTestCase):
         self.check.save()
 
         key = "R" * 32
-        self.url = f"/projects/{self.project.code}/checks/metrics/{key}"
+        self.url = f"/projects/{self.project.code}/metrics/{key}"
+        self.auth_url = f"/projects/{self.project.code}/metrics/"
 
     def test_it_works(self) -> None:
         r = self.client.get(self.url)
@@ -31,6 +32,15 @@ class MetricsTestCase(BaseTestCase):
         self.assertContains(r, f"hc_check_started{alice_spec} 0")
         self.assertContains(r, 'hc_tag_up{tag="foo"} 1')
         self.assertContains(r, "hc_checks_total 1")
+
+    def test_authenticated_request_requires_bearer_token(self) -> None:
+        r = self.client.get(self.auth_url)
+        self.assertEqual(r.status_code, 401)
+
+    def test_authenticated_request_accepts_bearer_token(self) -> None:
+        headers = {"Authorization": "Bearer " + "R" * 32}
+        r = self.client.get(self.auth_url, headers=headers)
+        self.assertEqual(r.status_code, 200)
 
     def test_it_escapes_newline(self) -> None:
         self.check.name = "Line 1\nLine2"
@@ -47,7 +57,8 @@ class MetricsTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_it_checks_api_key(self) -> None:
-        url = "/projects/%s/checks/metrics/%s" % (self.project.code, "X" * 32)
+        rw_key = "X" * 32
+        url = f"/projects/{self.project.code}/checks/metrics/{rw_key}"
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
 

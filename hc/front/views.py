@@ -2485,7 +2485,15 @@ def add_prometheus(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
 
 
 @require_setting("PROMETHEUS_ENABLED")
-def metrics(request: HttpRequest, code: UUID, key: str) -> HttpResponse:
+def metrics(request: HttpRequest, code: UUID, key: str | None = None) -> HttpResponse:
+    if key is None:
+        # If key was not in the URL, expect it in the Authorization request header
+        key = request.META.get("HTTP_AUTHORIZATION", "")
+        if not key.startswith("Bearer "):
+            return HttpResponse(status=401)
+
+        key = key.lstrip("Bearer ")
+
     if len(key) != 32:
         return HttpResponseBadRequest()
 

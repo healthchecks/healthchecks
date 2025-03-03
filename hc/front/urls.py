@@ -104,6 +104,7 @@ project_urls = [
         views.metrics,
         name="hc-metrics",
     ),
+    path("metrics/", views.metrics),
     path("checks/status/", views.status, name="hc-status"),
     path("integrations/", views.channels, name="hc-channels"),
 ]
