@@ -72,3 +72,14 @@ details pages in SITE_NAME. Construct the URLs like so:
 ```
 SITE_ROOT/cloaked/{unique_key}/
 ```
+
+## Working With Grafana Cloud
+
+Grafana Cloud requires the metrics endpoints to be authenticated using either
+HTTP "Basic" or "Bearer" authentication scheme. It refuses to scrape public endpoints.
+To fulfil this requirement, SITE_NAME provides an alternate metrics endpoint which
+requires "Bearer" authentication. Use the following settings with Grafana Cloud:
+
+* Scrape Job URL: `SITE_ROOT/projects/{your-project-uuid}/metrics/`
+* Authentication type: Bearer
+* Bearer token: the read-only API key

@@ -54,6 +54,20 @@
   metrics_path: /projects/{{ project.code }}/metrics/<strong>YOUR-READ-ONLY-API-KEY</strong>
   static_configs:
   - targets: ['{% site_hostname %}']</pre>
+                <p>
+                    <strong>Note for Grafana Cloud users:</strong> Grafana Cloud
+                    requires the metrics endpoints to be authenticated using either
+                    HTTP "Basic" or "Bearer" authentication scheme. It refuses to
+                    scrape public endpoints. To fulfil this requirement,
+                    {% site_name %} provides an alternate metrics endpoint which
+                    requires "Bearer" authentication. Use the following settings
+                    with Grafana Cloud:
+                </p>
+                <ul>
+                    <li>Scrape Job URL: <code>{{ project.auth_metrics_url }}</code></li>
+                    <li>Authentication type: Bearer</li>
+                    <li>Bearer token: the read-only API key</li>
+                </ul>
           </div>
       </div>
 

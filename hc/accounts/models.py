@@ -456,6 +456,9 @@ class Project(models.Model):
     def checks_url(self) -> str:
         return absolute_reverse("hc-checks", args=[self.code])
 
+    def auth_metrics_url(self) -> str:
+        return absolute_reverse("hc-auth-metrics", args=[self.code])
+
     def get_absolute_url(self) -> str:
         return reverse("hc-checks", args=[self.code])
 

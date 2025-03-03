@@ -61,3 +61,14 @@ the Prometheus endpoint:</p>
 details pages in SITE_NAME. Construct the URLs like so:</p>
 <div class="highlight"><pre><span></span><code>SITE_ROOT/cloaked/{unique_key}/
 </code></pre></div>
+
+<h2>Working With Grafana Cloud</h2>
+<p>Grafana Cloud requires the metrics endpoints to be authenticated using either
+HTTP "Basic" or "Bearer" authentication scheme. It refuses to scrape public endpoints.
+To fulfil this requirement, SITE_NAME provides an alternate metrics endpoint which
+requires "Bearer" authentication. Use the following settings with Grafana Cloud:</p>
+<ul>
+<li>Scrape Job URL: <code>SITE_ROOT/projects/{your-project-uuid}/metrics/</code></li>
+<li>Authentication type: Bearer</li>
+<li>Bearer token: the read-only API key</li>
+</ul>
