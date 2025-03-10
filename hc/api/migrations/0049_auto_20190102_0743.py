@@ -7,7 +7,6 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("api", "0048_auto_20190102_0737")]
 
     operations = [

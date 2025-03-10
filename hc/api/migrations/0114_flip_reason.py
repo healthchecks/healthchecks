@@ -4,15 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0113_alter_channel_kind'),
+        ("api", "0113_alter_channel_kind"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='flip',
-            name='reason',
-            field=models.CharField(choices=[('', 'Unknown'), ('timeout', 'Timeout'), ('fail', 'Fail signal')], default='', max_length=8),
+            model_name="flip",
+            name="reason",
+            field=models.CharField(
+                choices=[
+                    ("", "Unknown"),
+                    ("timeout", "Timeout"),
+                    ("fail", "Fail signal"),
+                ],
+                default="",
+                max_length=8,
+            ),
         ),
     ]

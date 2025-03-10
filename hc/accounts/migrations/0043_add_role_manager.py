@@ -3,7 +3,6 @@ from hc.accounts.models import Member
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("accounts", "0042_remove_member_rw"),
     ]

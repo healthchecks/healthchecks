@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("accounts", "0013_remove_profile_team_access_allowed")]
 
     operations = [

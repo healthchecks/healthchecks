@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('payments', '0006_subscription_invoice_email'),
+        ("payments", "0006_subscription_invoice_email"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='subscription',
-            name='next_billing_date',
+            model_name="subscription",
+            name="next_billing_date",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='subscription',
-            name='renew_notice_date',
+            model_name="subscription",
+            name="renew_notice_date",
             field=models.DateField(blank=True, null=True),
         ),
     ]

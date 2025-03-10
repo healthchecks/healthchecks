@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("payments", "0008_subscription_setup_date"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

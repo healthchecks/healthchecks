@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("accounts", "0007_profile_check_limit")]
 
     operations = [

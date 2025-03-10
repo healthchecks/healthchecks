@@ -5,15 +5,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0117_fill_badge_key'),
+        ("api", "0117_fill_badge_key"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='check',
-            name='badge_key',
+            model_name="check",
+            name="badge_key",
             field=models.UUIDField(default=uuid.uuid4, unique=True),
         ),
     ]

@@ -6,8 +6,11 @@ from urllib.parse import urlparse
 
 from django.test.utils import override_settings
 
-from hc.front.templatetags.hc_extras import (absolute_site_logo_url,
-                                             hc_duration, site_hostname)
+from hc.front.templatetags.hc_extras import (
+    absolute_site_logo_url,
+    hc_duration,
+    site_hostname,
+)
 
 
 class HcExtrasTestCase(TestCase):

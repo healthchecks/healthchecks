@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0108_move_body_to_body_raw'),
+        ("api", "0108_move_body_to_body_raw"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='ping',
-            name='body',
+            model_name="ping",
+            name="body",
         ),
     ]

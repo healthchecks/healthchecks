@@ -1,10 +1,8 @@
-
 from django.db import models, migrations
 from datetime import timedelta as td
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("api", "0005_auto_20150630_2021")]
 
     operations = [

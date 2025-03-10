@@ -4,15 +4,47 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0112_alter_channel_kind'),
+        ("api", "0112_alter_channel_kind"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='channel',
-            name='kind',
-            field=models.CharField(choices=[('apprise', 'Apprise'), ('call', 'Phone Call'), ('discord', 'Discord'), ('email', 'Email'), ('gotify', 'Gotify'), ('group', 'Group'), ('linenotify', 'LINE Notify'), ('matrix', 'Matrix'), ('mattermost', 'Mattermost'), ('msteams', 'MS Teams Connector (stops working Jan 2025)'), ('msteamsw', 'Microsoft Teams'), ('ntfy', 'ntfy'), ('opsgenie', 'Opsgenie'), ('pagertree', 'PagerTree'), ('pd', 'PagerDuty'), ('po', 'Pushover'), ('pushbullet', 'Pushbullet'), ('rocketchat', 'Rocket.Chat'), ('shell', 'Shell Command'), ('signal', 'Signal'), ('slack', 'Slack'), ('sms', 'SMS'), ('spike', 'Spike'), ('telegram', 'Telegram'), ('trello', 'Trello'), ('victorops', 'Splunk On-Call'), ('webhook', 'Webhook'), ('whatsapp', 'WhatsApp'), ('zulip', 'Zulip')], max_length=20),
+            model_name="channel",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("apprise", "Apprise"),
+                    ("call", "Phone Call"),
+                    ("discord", "Discord"),
+                    ("email", "Email"),
+                    ("gotify", "Gotify"),
+                    ("group", "Group"),
+                    ("linenotify", "LINE Notify"),
+                    ("matrix", "Matrix"),
+                    ("mattermost", "Mattermost"),
+                    ("msteams", "MS Teams Connector (stops working Jan 2025)"),
+                    ("msteamsw", "Microsoft Teams"),
+                    ("ntfy", "ntfy"),
+                    ("opsgenie", "Opsgenie"),
+                    ("pagertree", "PagerTree"),
+                    ("pd", "PagerDuty"),
+                    ("po", "Pushover"),
+                    ("pushbullet", "Pushbullet"),
+                    ("rocketchat", "Rocket.Chat"),
+                    ("shell", "Shell Command"),
+                    ("signal", "Signal"),
+                    ("slack", "Slack"),
+                    ("sms", "SMS"),
+                    ("spike", "Spike"),
+                    ("telegram", "Telegram"),
+                    ("trello", "Trello"),
+                    ("victorops", "Splunk On-Call"),
+                    ("webhook", "Webhook"),
+                    ("whatsapp", "WhatsApp"),
+                    ("zulip", "Zulip"),
+                ],
+                max_length=20,
+            ),
         ),
     ]

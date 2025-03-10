@@ -5,7 +5,6 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("accounts", "0025_remove_member_team")]
 
     operations = [

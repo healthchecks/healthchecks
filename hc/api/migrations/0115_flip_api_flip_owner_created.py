@@ -4,14 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0114_flip_reason'),
+        ("api", "0114_flip_reason"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='flip',
-            index=models.Index(fields=['owner', 'created'], name='api_flip_owner_created'),
+            model_name="flip",
+            index=models.Index(
+                fields=["owner", "created"], name="api_flip_owner_created"
+            ),
         ),
     ]

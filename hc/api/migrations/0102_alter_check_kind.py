@@ -4,15 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0101_alter_channel_kind'),
+        ("api", "0101_alter_channel_kind"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='check',
-            name='kind',
-            field=models.CharField(choices=[('simple', 'Simple'), ('cron', 'Cron'), ('oncalendar', 'OnCalendar')], default='simple', max_length=10),
+            model_name="check",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("simple", "Simple"),
+                    ("cron", "Cron"),
+                    ("oncalendar", "OnCalendar"),
+                ],
+                default="simple",
+                max_length=10,
+            ),
         ),
     ]
