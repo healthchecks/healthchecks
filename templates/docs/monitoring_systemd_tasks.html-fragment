@@ -1,0 +1,101 @@
+<h1>How to Monitor Systemd Tasks with SITE_NAME</h1>
+<p>SITE_NAME can monitor your Systemd scheduled tasks and notify you when they don't run
+at expected times. Assuming curl or wget is available, you will not need to install
+new software on your servers.</p>
+<p>SITE_NAME monitoring works by listening for "start" and "success" signals sent as HTTP
+requests by the monitored task. When SITE_NAME does not receive the HTTP request at the
+expected time, it notifies you. This monitoring technique, also called
+"heartbeat monitoring", can detect various failure modes:</p>
+<ul>
+<li>The whole machine goes down (power outage, hardware failure, somebody trips on
+  cables, etc.).</li>
+<li>Systemd does not start the task due to an invalid configuration.</li>
+<li>The task exits with a non-zero exit code.</li>
+<li>The task runs at the wrong time or keeps running for an abnormally long time.</li>
+</ul>
+<p>Each Systemd scheduled task is defined by two files:</p>
+<ul>
+<li>The <code>.service</code> file describes the command to run, the system user to run it as,
+  the environment variables to set, and what other services must already be running.</li>
+<li>The <code>.timer</code> file contains the task's schedule.</li>
+</ul>
+<h2>Using curl</h2>
+<p>To monitor a task with SITE_NAME, you will need to make changes in the <code>.service</code> file.
+Let's consider a service "copy-media.service" which copies <code>/opt/media</code> directory to a
+remote host:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Copy /opt/media to remote_host</span>
+<span class="na">Requires</span><span class="o">=</span><span class="s">network-online.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">Type</span><span class="o">=</span><span class="s">oneshot</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">rsync -a /opt/media/ remote_user@remote_host:/opt/media/</span>
+</code></pre></div>
+
+<p>Here's the same service, extended to send a start signal to SITE_NAME before the
+main command runs, and to report the command's exit status to SITE_NAME after it
+completes:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Copy /opt/media to remote_host, with SITE_NAME monitoring</span>
+<span class="na">Requires</span><span class="o">=</span><span class="s">network-online.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">Type</span><span class="o">=</span><span class="s">oneshot</span>
+<span class="na">ExecStartPre</span><span class="o">=</span><span class="s">-curl -sS -m 10 --retry 5 PING_URL/start</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">rsync -a /opt/media/ remote_user@remote_host:/opt/media/</span>
+<span class="na">ExecStopPost</span><span class="o">=</span><span class="s">curl -sS -m 10 --retry 5 PING_URL/${EXIT_STATUS}</span>
+</code></pre></div>
+
+<p>The <code>ExecStartPre</code> command runs before the main process. The "-" prefix in front of the
+command is important and tells Systemd to ignore curl failure (timeout or non-zero exit
+status), which could otherwise prevent the main command from running.</p>
+<p>The <code>ExecStopPost</code> command runs after the main process finishes. Systemd provides an
+<code>$EXIT_STATUS</code> variable with the exit status of the main process (a 0-255 number).
+SITE_NAME will consider exit status 0 as success, and anything above 0 as failure.</p>
+<p>curl flags:</p>
+<ul>
+<li><code>-sS</code> means "suppress output except errors". This is so that if the curl call fails,
+  the error is printed in system logs.</li>
+<li><code>-m &lt;seconds&gt;</code> is the maximum in seconds that the HTTP request is allowed to take.</li>
+<li><code>--retry &lt;num&gt;</code> is how many times curl will retry transient failures
+  (timeouts, HTTP 5xx status codes).</li>
+</ul>
+<p>This example only requires curl to be installed on the system but does not capture
+the command's output.</p>
+<p>Read more about <a href="https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#ExecStartPre=">ExecStartPre</a>
+and <a href="https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#ExecStopPost=">ExecStopPost</a>
+in Systemd documentation.</p>
+<h2>Using runitor</h2>
+<p>An alternative is to use <a href="https://github.com/bdd/runitor">runitor</a> which takes care of
+sending the start, success, and failure signals, and also captures and truncates
+command's output:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Copy /opt/media to remote_host, with runitor</span>
+<span class="na">Requires</span><span class="o">=</span><span class="s">network-online.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">Type</span><span class="o">=</span><span class="s">oneshot</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">runitor -uuid your-uuid-here -- rsync -a /opt/media/ remote_user@remote_host:/opt/media/</span>
+</code></pre></div>
+
+<p>Of course, the above example relies on the runitor binary being available in the
+system PATH.</p>
+<h2>OnCalendar Schedules</h2>
+<p>Inside the <code>.timer</code> file, the task's schedule is set using the <code>OnCalendar</code> option
+which takes a calendar event expression:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Run copy-media.service every 4 hours on workdays</span>
+
+<span class="k">[Timer]</span>
+<span class="na">OnCalendar</span><span class="o">=</span><span class="s">Mon-Fri *-*-* 0/4:00</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">timers.target</span>
+</code></pre></div>
+
+<p>The calendar event expressions are different from cron expressions. SITE_NAME supports
+them natively–you can specify a check's schedule using
+the same expression you use in the <code>.timer</code> file:</p>
+<p><img alt="Editing OnCalendar schedule" src="IMG_URL/edit_oncalendar_schedule.png" /></p>
+<p>Read more about <a href="https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html#Calendar%20Events">calendar event expressions</a>
+in Systemd docs.</p>
