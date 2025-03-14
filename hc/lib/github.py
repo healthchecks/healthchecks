@@ -87,7 +87,7 @@ class AccessTokensResponse(BaseModel):
     token: str
 
 
-def get_installation_access_token(installation_id: int) -> str:
+def get_installation_access_token(installation_id: int) -> str | None:
     """Acquire the installation access token for a specific installation id."""
 
     # Reference:
