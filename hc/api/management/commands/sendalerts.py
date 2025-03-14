@@ -79,10 +79,11 @@ class Command(BaseCommand):
     def on_notify_done(self, future: Future[str | None]) -> None:
         close_old_connections()
         self.seats.release()
-        if logs := future.result():
-            self.stdout.write(logs)
 
-        if exc := future.exception():
+        try:
+            if logs := future.result():
+                self.stdout.write(logs)
+        except Exception as exc:
             logger.error("Exception in notify", exc_info=exc)
             raise exc
 
