@@ -1695,5 +1695,8 @@ class GitHub(HttpTransport):
 
         inst_id = self.channel.github.installation_id
         token = github.get_installation_access_token(inst_id)
+        if token is None:
+            raise TransportError(f"GitHub denied access to {self.channel.github.repo}")
+
         headers = {"Authorization": f"Bearer {token}"}
         self.post(url, json=payload, headers=headers)

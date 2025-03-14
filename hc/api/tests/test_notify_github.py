@@ -133,6 +133,15 @@ class NotifyGitHubTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 400")
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_no_access_token(self, mock_post: Mock) -> None:
+        with patch("hc.api.transports.github") as mock:
+            mock.get_installation_access_token.return_value = None
+            self.channel.notify(self.flip)
+
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "GitHub denied access to alice/foo")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 

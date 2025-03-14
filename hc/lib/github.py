@@ -104,5 +104,9 @@ def get_installation_access_token(installation_id: int) -> str:
     encoded = jwt.encode(payload, settings.GITHUB_PRIVATE_KEY, algorithm="RS256")
     url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
     result = curl.post(url, headers={"Authorization": f"Bearer {encoded}"})
+    if result.status_code == 404:
+        # The installation does not exist (our GitHub app has been uninstalled)
+        return None
+
     doc = AccessTokensResponse.model_validate_json(result.content, strict=True)
     return doc.token
