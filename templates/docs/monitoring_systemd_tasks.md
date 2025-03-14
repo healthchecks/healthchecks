@@ -11,7 +11,7 @@ expected time, it notifies you. This monitoring technique, also called
 
 * The whole machine goes down (power outage, hardware failure, somebody trips on
   cables, etc.).
-* Systemd does not start the task due to an invalid configuration.
+* Systemd does not start the task because of an invalid configuration.
 * The task exits with a non-zero exit code.
 * The task runs at the wrong time or keeps running for an abnormally long time.
 
