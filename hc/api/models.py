@@ -920,7 +920,7 @@ class Channel(models.Model):
         checks = Check.objects.filter(project=self.project)
         self.checks.add(*checks)
 
-    def make_token(self, use_sha1=False) -> str:
+    def make_token(self, use_sha1: bool = False) -> str:
         seed = str(self.code) + settings.SECRET_KEY
         seed_bytes = seed.encode()
         if use_sha1:
