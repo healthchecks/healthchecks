@@ -13,7 +13,17 @@ class VerifyEmailTestCase(BaseTestCase):
 
     def test_it_works(self) -> None:
         token = self.channel.make_token()
-        url = "/integrations/%s/verify/%s/" % (self.channel.code, token)
+        url = f"/integrations/{self.channel.code}/verify/{token}/"
+
+        r = self.client.get(url)
+        assert r.status_code == 200, r.status_code
+
+        channel = Channel.objects.get(code=self.channel.code)
+        assert channel.email_verified
+
+    def test_it_works_with_sha1_token(self) -> None:
+        token = self.channel.make_token(use_sha1=True)
+        url = f"/integrations/{self.channel.code}/verify/{token}/"
 
         r = self.client.get(url)
         assert r.status_code == 200, r.status_code
@@ -22,7 +32,7 @@ class VerifyEmailTestCase(BaseTestCase):
         assert channel.email_verified
 
     def test_it_handles_bad_token(self) -> None:
-        url = "/integrations/%s/verify/bad-token/" % self.channel.code
+        url = f"/integrations/{self.channel.code}/verify/bad-token/"
 
         r = self.client.get(url)
         assert r.status_code == 200, r.status_code
@@ -34,7 +44,7 @@ class VerifyEmailTestCase(BaseTestCase):
         # Valid UUID, and even valid token but there is no channel for it:
         code = "6837d6ec-fc08-4da5-a67f-08a9ed1ccf62"
         token = self.channel.make_token()
-        url = "/integrations/%s/verify/%s/" % (code, token)
+        url = f"/integrations/{code}/verify/{token}/"
 
         r = self.client.get(url)
         assert r.status_code == 404
