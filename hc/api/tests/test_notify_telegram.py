@@ -266,6 +266,17 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertTrue(self.channel.disabled)
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_403_deactivated(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 403
+        mock_post.return_value.content = b"""{
+            "description": "Forbidden: user is deactivated"
+        }"""
+
+        self.channel.notify(self.flip)
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
