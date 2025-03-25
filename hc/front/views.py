@@ -2823,7 +2823,6 @@ def add_github_select(request: HttpRequest) -> HttpResponse:
     if not repos:
         return redirect(install_url)
 
-    request.session["add_github_repos"] = repos
     ctx = {
         "repo_names": sorted(repos.keys()),
         "project": project,
@@ -2837,18 +2836,25 @@ def add_github_select(request: HttpRequest) -> HttpResponse:
 @require_POST
 def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
-
-    if "add_github_repos" not in request.session:
+    if "add_github_token" not in request.session:
         return HttpResponseForbidden()
+
+    token = request.session.pop("add_github_token")
+    request.session.pop("add_github_project")
 
     form = forms.AddGitHubForm(request.POST)
     if not form.is_valid():
         return HttpResponseBadRequest()
 
-    request.session.pop("add_github_project")
-    request.session.pop("add_github_token")
-    repos = request.session.pop("add_github_repos")
-    repo_name = request.POST["repo_name"]
+    try:
+        # Fetch user's available repos from GitHub again, to make sure the user
+        # still has access to the repo we are about to use in the integration.
+        repos = github.get_repos(token)
+    except github.BadCredentials:
+        messages.warning(request, "GitHub setup failed, GitHub access was revoked.")
+        return redirect("hc-channels", project.code)
+
+    repo_name = form.cleaned_data["repo_name"]
     if repo_name not in repos:
         return HttpResponseForbidden()
 

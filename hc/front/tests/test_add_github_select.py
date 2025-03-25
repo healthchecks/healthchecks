@@ -39,7 +39,6 @@ class AddGitHubSelectTestCase(BaseTestCase):
         self.assertContains(r, "http://example.org/installations/new")
 
         self.assertEqual(self.client.session["add_github_token"], "test-token")
-        self.assertEqual(self.client.session["add_github_repos"], {"alice/foo": 123})
 
     @patch("hc.front.views.github", autospec=True)
     def test_it_skips_oauth_code_exchange(self, github: Mock) -> None:
@@ -143,8 +142,8 @@ class AddGitHubSelectTestCase(BaseTestCase):
         r = self.client.get(self.url + "?state=test-state")
         self.assertEqual(r.status_code, 400)
 
-    @patch("hc.front.views.github.get_repos", autospec=True)
-    def test_it_handles_bad_credentials(self, get_repos: Mock) -> None:
+    @patch("hc.front.views.github.get_repos", Mock(side_effect=BadCredentials))
+    def test_it_handles_bad_credentials(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -152,9 +151,7 @@ class AddGitHubSelectTestCase(BaseTestCase):
         session["add_github_token"] = "test-token"
         session.save()
 
-        with patch("hc.front.views.github.get_repos", Mock(side_effect=BadCredentials)):
-            url = self.url + "?state=test-state&code=test-code"
-            r = self.client.get(url, follow=True)
+        r = self.client.get(self.url + "?state=test-state&code=test-code", follow=True)
 
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "GitHub setup failed, GitHub access was revoked.")

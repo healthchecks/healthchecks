@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from unittest.mock import patch, Mock
+
 from django.test.utils import override_settings
 
 from hc.api.models import Channel
+from hc.lib.github import BadCredentials
 from hc.test import BaseTestCase
 
 
@@ -15,10 +18,12 @@ class AddGitHubSaveTestCase(BaseTestCase):
         session = self.client.session
         session["add_github_project"] = "DEADBEEF"
         session["add_github_token"] = "CAFEBABE"
-        session["add_github_repos"] = {"alice/foo": 123}
         session.save()
 
-    def test_it_works(self) -> None:
+    @patch("hc.front.views.github", autospec=True)
+    def test_it_works(self, github: Mock) -> None:
+        github.get_repos.return_value = {"alice/foo": 123}
+
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"repo_name": "alice/foo", "labels": "foo, bar"})
         self.assertRedirects(r, self.channels_url)
@@ -59,10 +64,20 @@ class AddGitHubSaveTestCase(BaseTestCase):
         r = self.client.post(self.url, {})
         self.assertEqual(r.status_code, 400)
 
-    def test_it_handles_unexpected_repo_name(self) -> None:
+    @patch("hc.front.views.github", autospec=True)
+    def test_it_handles_unexpected_repo_name(self, github: Mock) -> None:
+        github.get_repos.return_value = {"alice/foo": 123}
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"repo_name": "alice/bar"})
         self.assertEqual(r.status_code, 403)
+
+    @patch("hc.front.views.github.get_repos", Mock(side_effect=BadCredentials))
+    def test_it_handles_bad_credentials(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, {"repo_name": "alice/bar"}, follow=True)
+
+        self.assertRedirects(r, self.channels_url)
+        self.assertContains(r, "GitHub setup failed, GitHub access was revoked.")
 
     def test_it_handles_no_session(self) -> None:
         session = self.client.session
