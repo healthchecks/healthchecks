@@ -114,3 +114,30 @@ class AddGitHubSelectTestCase(BaseTestCase):
         self.assertRedirects(
             r, "http://example.org/installations/new", fetch_redirect_response=False
         )
+
+    def test_it_handles_access_denied(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        session = self.client.session
+        session["add_github_project"] = str(self.project.code)
+        session["add_github_state"] = "test-state"
+        session.save()
+
+        r = self.client.get(
+            self.url + "?error=access_denied&state=test-state", follow=True
+        )
+        self.assertRedirects(r, self.channels_url)
+
+        self.assertRedirects(r, self.channels_url)
+        self.assertContains(r, "GitHub setup was cancelled.")
+
+    def test_it_handles_missing_code(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        session = self.client.session
+        session["add_github_project"] = str(self.project.code)
+        session["add_github_state"] = "test-state"
+        session.save()
+
+        r = self.client.get(self.url + "?state=test-state")
+        self.assertEqual(r.status_code, 400)

@@ -2798,6 +2798,13 @@ def add_github_select(request: HttpRequest) -> HttpResponse:
         if request.GET.get("state") != state:
             return HttpResponseForbidden()
 
+        if request.GET.get("error") == "access_denied":
+            messages.warning(request, "GitHub setup was cancelled.")
+            return redirect("hc-channels", project.code)
+
+        if "code" not in request.GET:
+            return HttpResponseBadRequest()
+
         code = request.GET["code"]
         request.session["add_github_token"] = github.get_user_access_token(code)
 
