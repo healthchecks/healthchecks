@@ -5,11 +5,11 @@ django-compressor==4.5.1
 django-stubs-ext==5.1.3
 fido2==1.2.0
 oncalendar==1.1
-psycopg==3.2.4
-pycurl==7.45.4
+psycopg==3.2.6
+pycurl==7.45.6
 pydantic==2.10.6
 PyJWT[crypto]==2.10.1
 pyotp==2.9.0
-segno==1.6.1
+segno==1.6.6
 statsd==4.0.1
 whitenoise==6.9.0
