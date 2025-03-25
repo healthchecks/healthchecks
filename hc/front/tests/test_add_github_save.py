@@ -30,6 +30,11 @@ class AddGitHubSaveTestCase(BaseTestCase):
         self.assertEqual(c.github.repo, "alice/foo")
         self.assertEqual(c.github.labels, ["foo", "bar"])
 
+        # It should clean up session
+        session = self.client.session
+        self.assertNotIn("add_github_project", session)
+        self.assertNotIn("add_github_token", session)
+
     def test_it_rejects_get(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)

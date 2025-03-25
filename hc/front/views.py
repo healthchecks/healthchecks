@@ -2812,7 +2812,14 @@ def add_github_select(request: HttpRequest) -> HttpResponse:
         return HttpResponseForbidden()
 
     install_url = f"{settings.GITHUB_PUBLIC_LINK}/installations/new"
-    repos = github.get_repos(request.session["add_github_token"])
+    try:
+        repos = github.get_repos(request.session["add_github_token"])
+    except github.BadCredentials:
+        messages.warning(request, "GitHub setup failed, GitHub access was revoked.")
+        request.session.pop("add_github_project")
+        request.session.pop("add_github_token")
+        return redirect("hc-channels", project.code)
+
     if not repos:
         return redirect(install_url)
 

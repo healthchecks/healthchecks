@@ -4,6 +4,7 @@ from unittest.mock import patch, Mock
 
 from django.test.utils import override_settings
 
+from hc.lib.github import BadCredentials
 from hc.test import BaseTestCase
 
 
@@ -141,3 +142,24 @@ class AddGitHubSelectTestCase(BaseTestCase):
 
         r = self.client.get(self.url + "?state=test-state")
         self.assertEqual(r.status_code, 400)
+
+    @patch("hc.front.views.github.get_repos", autospec=True)
+    def test_it_handles_bad_credentials(self, get_repos: Mock) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        session = self.client.session
+        session["add_github_project"] = str(self.project.code)
+        session["add_github_token"] = "test-token"
+        session.save()
+
+        with patch("hc.front.views.github.get_repos", Mock(side_effect=BadCredentials)):
+            url = self.url + "?state=test-state&code=test-code"
+            r = self.client.get(url, follow=True)
+
+        self.assertRedirects(r, self.channels_url)
+        self.assertContains(r, "GitHub setup failed, GitHub access was revoked.")
+
+        # It should clean up session
+        session = self.client.session
+        self.assertNotIn("add_github_project", session)
+        self.assertNotIn("add_github_token", session)
