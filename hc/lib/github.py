@@ -1,3 +1,4 @@
+import logging
 import time
 
 import jwt
@@ -5,6 +6,8 @@ from django.conf import settings
 from pydantic import BaseModel
 
 from hc.lib import curl
+
+logger = logging.getLogger(__name__)
 
 
 class BadCredentials(Exception):
@@ -61,7 +64,10 @@ def get_installation_ids(user_access_token: str) -> list[int]:
         # - We then try to use the token to load user's installations
         raise BadCredentials()
 
-    assert doc.installations
+    if doc.installations is None:
+        logger.warning(b"Unexpected response from GitHub: {result.content}")
+
+    assert doc.installations is not None
     return [item.id for item in doc.installations]
 
 
