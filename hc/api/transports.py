@@ -808,6 +808,9 @@ class RocketChat(HttpTransport):
     def notify(self, flip: Flip, notification: Notification) -> None:
         if not settings.ROCKETCHAT_ENABLED:
             raise TransportError("Rocket.Chat notifications are not enabled.")
+
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
         self.post(self.channel.value, json=self.payload(flip))
 
 
