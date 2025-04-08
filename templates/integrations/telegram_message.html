@@ -2,7 +2,7 @@
 {% if status == "down" %}
     {% line %}🔴 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is <b>DOWN</b>{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.{% endline %}
 {% elif down_checks is not None %}
-    {% line %}🟠 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>.{% endline %}
+    {% line %}🟠 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>. ({{ down_checks|length }} other checks are {% if status == "down" %}also{% else %}still{% endif %} down.){% endline %}
 {% else %}
     {% line %}🟢 The check <a href="{{ check.cloaked_url }}">{{ check.name_then_code }}</a> is now <b>UP</b>.{% endline %}
 {% endif %}
