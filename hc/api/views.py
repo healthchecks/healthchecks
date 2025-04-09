@@ -42,7 +42,8 @@ from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 from hc.lib.signing import unsign_bounce_id
 from hc.lib.string import is_valid_uuid_string
 from hc.lib.tz import all_timezones, legacy_timezones
-
+success_keywords = settings.PING_SUCCESS_KEYWORDS
+failure_keywords = settings.PING_FAILURE_KEYWORDS
 
 class BadChannelException(Exception):
     def __init__(self, message: str):
@@ -187,20 +188,27 @@ def ping(
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
     remote_addr = remote_addr.split(",")[0]
     if "." in remote_addr and ":" in remote_addr:
-        # If remote_addr is in a ipv4address:port format (like in Azure App Service),
-        # remove the port:
         remote_addr = remote_addr.split(":")[0]
 
     scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")
-    body = request.body[: settings.PING_BODY_LIMIT]
+    body = request.body.decode("utf-8")[: settings.PING_BODY_LIMIT]  # Decode the body
 
-    if exitstatus is not None and exitstatus > 0:
+    # Retrieve keywords from the Check object
+    success_keywords = check.success_kw.split(",") if check.success_kw else []
+    failure_keywords = check.failure_kw.split(",") if check.failure_kw else []
+    start_keywords = check.start_kw.split(",") if check.start_kw else []
+
+    # Apply keyword-based filtering
+    if any(keyword.strip() in body for keyword in success_keywords):
+        action = "success"
+    elif any(keyword.strip() in body for keyword in failure_keywords):
         action = "fail"
-
-    if check.methods == "POST" and method != "POST":
-        action = "ign"
+    elif any(keyword.strip() in body for keyword in start_keywords):
+        action = "start"
+    else:
+        action = "unknown"
 
     rid, rid_str = None, request.GET.get("rid")
     if rid_str is not None:
@@ -210,10 +218,11 @@ def ping(
 
     check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
 
-    response = HttpResponse("OK")
+    response = HttpResponse(action.capitalize())  # Return "Success", "Fail", or "Unknown"
     if settings.PING_BODY_LIMIT is not None:
         response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
     response["Access-Control-Allow-Origin"] = "*"
+    print("Response: ",response)
     return response
 
 
