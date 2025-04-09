@@ -42,7 +42,7 @@ class ChecksAdmin(ModelAdmin[Check]):
         "last_start",
         "last_ping",
     )
-    list_filter = ("status", "kind", "last_ping", "last_start")
+    list_filter = ("status", "success_keywords", "failure_keywords", "kind", "last_ping", "last_start")
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Check]:
         qs = super().get_queryset(request)

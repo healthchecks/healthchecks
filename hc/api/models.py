@@ -207,7 +207,10 @@ class Check(models.Model):
     has_confirmation_link = models.BooleanField(default=False)
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
-
+    success_keywords = models.TextField(blank=True, help_text="Comma-separated list of success keywords.")
+    failure_keywords = models.TextField(blank=True, help_text="Comma-separated list of failure keywords.")
+    
+    
     class Meta:
         indexes = [
             # Index for the alert_after field. Exclude rows with status=down.
@@ -442,7 +445,7 @@ class Check(models.Model):
         scheme: str,
         method: str,
         ua: str,
-        body: bytes,
+        body: str,
         action: str,
         rid: uuid.UUID | None,
         exitstatus: int | None = None,
@@ -490,7 +493,9 @@ class Check(models.Model):
 
             self.alert_after = self.going_down_after()
             self.n_pings = models.F("n_pings") + 1
-            body_lowercase = body.decode(errors="replace").lower()
+
+            # Convert body to lowercase for keyword matching
+            body_lowercase = body.lower()
             self.has_confirmation_link = "confirm" in body_lowercase
             self.save()
             self.refresh_from_db()
@@ -504,24 +509,21 @@ class Check(models.Model):
             ping.remote_addr = remote_addr
             ping.scheme = scheme
             ping.method = method
-            # If User-Agent is longer than 200 characters, truncate it:
-            ping.ua = ua[:200]
+            ping.ua = ua[:200]  # Truncate User-Agent if too long
             if len(body) > 100 and settings.S3_BUCKET:
                 ping.object_size = len(body)
             else:
-                ping.body_raw = body
+                ping.body_raw = body.encode()  # Store body as bytes
             ping.rid = rid
             ping.exitstatus = exitstatus
             ping.save()
 
-        # Upload ping body to S3 outside the DB transaction, because this operation
-        # can potentially take a long time:
         if ping.object_size:
-            put_object(self.code, ping.n, body)
+            put_object(self.code, ping.n, body.encode())
 
-        # Every 100 received pings, prune old pings and notifications:
         if self.n_pings % 100 == 0:
             self.prune()
+
 
     def prune(self, wait: bool = False) -> None:
         """Remove old pings and notifications."""
