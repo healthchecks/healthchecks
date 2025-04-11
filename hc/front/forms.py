@@ -130,6 +130,9 @@ class FilteringRulesForm(forms.Form):
     start_kw = forms.CharField(required=False, max_length=200)
     success_kw = forms.CharField(required=False, max_length=200)
     failure_kw = forms.CharField(required=False, max_length=200)
+    req_start_kw = forms.CharField(required=False, max_length=200)
+    req_success_kw = forms.CharField(required=False, max_length=200)
+    req_failure_kw = forms.CharField(required=False, max_length=200)
     methods = forms.ChoiceField(required=False, choices=(("", "Any"), ("POST", "POST")))
     manual_resume = forms.BooleanField(required=False)
 
